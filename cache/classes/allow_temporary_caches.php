@@ -60,9 +60,6 @@ class allow_temporary_caches {
      * If there are no other instances of this object, then all temporary caches will be discarded.
      */
     public function __destruct() {
-        global $CFG;
-        require_once($CFG->dirroot . '/cache/disabledlib.php');
-
         self::$references--;
         if (self::$references === 0) {
             \cache_factory_disabled::clear_temporary_caches();

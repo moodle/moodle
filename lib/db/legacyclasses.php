@@ -58,10 +58,15 @@ $legacyclasses = [
     \cache_session::class => 'session_cache.php',
     \cache_cached_object::class => 'cached_object.php',
     \cache_config::class => 'config.php',
+    \cache_config_writer::class => 'config_writer.php',
+    \cache_config_disabled::class => 'disabled_config.php',
+    \cache_disabled::class => 'disabled_cache.php',
+    \config_writer::class => 'config_writer.php',
     \cache_data_source::class => 'data_source_interface.php',
     \cache_data_source_versionable::class => 'versionable_data_source_interface.php',
     \cache_exception::class => 'exception/cache_exception.php',
     \cache_factory::class => 'factory.php',
+    \cache_factory_disabled::class => 'disabled_factory.php',
     \cache_helper::class => 'helper.php',
     \cache_is_key_aware::class => 'key_aware_cache_interface.php',
     \cache_is_lockable::class => 'lockable_cache_interface.php',
@@ -75,6 +80,11 @@ $legacyclasses = [
     \cache_ttl_wrapper::class => 'ttl_wrapper.php',
     \cacheable_object::class => 'cacheable_object_interface.php',
     \cacheable_object_array::class => 'cacheable_object_array.php',
+    \cache_definition_mappings_form::class => 'form/cache_definition_mappings_form.php',
+    \cache_definition_sharing_form::class => 'form/cache_definition_sharing_form.php',
+    \cache_lock_form::class => 'form/cache_lock_form.php',
+    \cache_mode_mappings_form::class => 'form/cache_mode_mappings_form.php',
+
 
     // Output API.
     \theme_config::class => 'output/theme_config.php',

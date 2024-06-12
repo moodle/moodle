@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
 /**
  * Cache dummy store.
  *
@@ -61,7 +63,7 @@ class cachestore_dummy extends cache_store {
 
     /**
      * Cache definition
-     * @var cache_definition
+     * @var definition
      */
     protected $definition;
 
@@ -110,9 +112,9 @@ class cachestore_dummy extends cache_store {
 
     /**
      * Initialises the store instance for a definition.
-     * @param cache_definition $definition
+     * @param definition $definition
      */
-    public function initialise(cache_definition $definition) {
+    public function initialise(definition $definition) {
         // If the definition isn't using static acceleration then we need to be store data here.
         // The reasoning behind this is that:
         //   - If the definition is using static acceleration then the cache loader is going to
@@ -261,10 +263,10 @@ class cachestore_dummy extends cache_store {
     /**
      * Generates an instance of the cache store that can be used for testing.
      *
-     * @param cache_definition $definition
+     * @param definition $definition
      * @return false
      */
-    public static function initialise_test_instance(cache_definition $definition) {
+    public static function initialise_test_instance(definition $definition) {
         $cache = new cachestore_dummy('Dummy store test');
         if ($cache->is_ready()) {
             $cache->initialise($definition);
@@ -289,3 +291,8 @@ class cachestore_dummy extends cache_store {
         return $this->name;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(dummy_cachestore::class, \cachestore_dummy::class);

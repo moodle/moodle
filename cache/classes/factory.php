@@ -116,7 +116,6 @@ class cache_factory {
             if (defined('CACHE_DISABLE_ALL') && CACHE_DISABLE_ALL !== false) {
                 // The cache has been disabled. Load disabledlib and start using the factory designed to handle this
                 // situation. It will use disabled alternatives where available.
-                require_once($CFG->dirroot.'/cache/disabledlib.php');
                 self::$instance = new cache_factory_disabled();
             } else if ((defined('PHPUNIT_TEST') && PHPUNIT_TEST) || defined('BEHAT_SITE_RUNNING')) {
                 // We're using the test factory.
@@ -464,12 +463,10 @@ class cache_factory {
     /**
      * Creates a dummy store object for use when a loader has no potential stores to use.
      *
-     * @param cache_definition $definition
-     * @return cachestore_dummy
+     * @param definition $definition
+     * @return dummy_cachestore
      */
     protected function create_dummy_store(cache_definition $definition) {
-        global $CFG;
-        require_once($CFG->dirroot.'/cache/classes/dummystore.php');
         $store = new cachestore_dummy();
         $store->initialise($definition);
         return $store;
@@ -597,8 +594,6 @@ class cache_factory {
      * MUC it was decided that this was just to risky and abusable.
      */
     protected static function disable() {
-        global $CFG;
-        require_once($CFG->dirroot.'/cache/disabledlib.php');
         self::$instance = new cache_factory_disabled();
     }
 

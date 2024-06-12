@@ -28,7 +28,6 @@
 require_once('../config.php');
 require_once($CFG->dirroot.'/lib/adminlib.php');
 require_once($CFG->dirroot.'/cache/locallib.php');
-require_once($CFG->dirroot.'/cache/forms.php');
 
 // The first time the user visits this page we are going to reparse the definitions.
 // Just ensures that everything is up to date.
