@@ -657,11 +657,6 @@ class core_renderer extends renderer_base {
     public function htmlattributes() {
         $return = get_html_lang(true);
 
-        // Ensure that the callback exists prior to cache purge.
-        // This is a critical page path.
-        // TODO MDL-81134 Remove after LTS+1.
-        require_once(__DIR__ . '/classes/hook/output/before_html_attributes.php');
-
         $hook = new before_html_attributes($this);
 
         if ($this->page->theme->doctype !== 'html5') {
@@ -809,11 +804,6 @@ class core_renderer extends renderer_base {
             $output .= "\n".$CFG->additionalhtmltopofbody;
         }
 
-        // Ensure that the callback exists prior to cache purge.
-        // This is a critical page path.
-        // TODO MDL-81134 Remove after LTS+1.
-        require_once(__DIR__ . '/classes/hook/output/before_standard_top_of_body_html_generation.php');
-
         // Allow components to add content to the top of the body.
         $hook = new before_standard_top_of_body_html_generation($this, $output);
         $hook->process_legacy_callbacks();
@@ -874,11 +864,6 @@ class core_renderer extends renderer_base {
             // in any case we do not want any links during installation!
             return '';
         }
-
-        // Ensure that the callback exists prior to cache purge.
-        // This is a critical page path.
-        // TODO MDL-81134 Remove after LTS+1.
-        require_once(__DIR__ . '/classes/hook/output/before_standard_footer_html_generation.php');
 
         $hook = new before_standard_footer_html_generation($this);
         $hook->process_legacy_callbacks();
@@ -1105,11 +1090,6 @@ class core_renderer extends renderer_base {
      */
     public function standard_after_main_region_html() {
         global $CFG;
-
-        // Ensure that the callback exists prior to cache purge.
-        // This is a critical page path.
-        // TODO MDL-81134 Remove after LTS+1.
-        require_once(__DIR__ . '/classes/hook/output/after_standard_main_region_html_generation.php');
 
         $hook = new after_standard_main_region_html_generation($this);
 
@@ -1356,11 +1336,6 @@ class core_renderer extends renderer_base {
     public function header() {
         global $USER, $CFG, $SESSION;
 
-        // Ensure that the callback exists prior to cache purge.
-        // This is a critical page path.
-        // TODO MDL-81134 Remove after LTS+1.
-        require_once(__DIR__ . '/classes/hook/output/before_http_headers.php');
-
         $hook = new before_http_headers($this);
         $hook->process_legacy_callbacks();
         di::get(hook_manager::class)->dispatch($hook);
@@ -1480,11 +1455,6 @@ class core_renderer extends renderer_base {
      */
     public function footer() {
         global $CFG, $DB, $PERF;
-
-        // Ensure that the callback exists prior to cache purge.
-        // This is a critical page path.
-        // TODO MDL-81134 Remove after LTS+1.
-        require_once(__DIR__ . '/classes/hook/output/before_footer_html_generation.php');
 
         $hook = new before_footer_html_generation($this);
         $hook->process_legacy_callbacks();
