@@ -21,7 +21,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import UserSearch from 'core_user/comboboxsearch/user';
-import Url from 'core/url';
 import * as Repository from 'gradereport_grader/local/user/repository';
 
 // Define our standard lookups.
@@ -34,12 +33,17 @@ const courseID = component.querySelector(selectors.courseid).dataset.courseid;
 
 export default class User extends UserSearch {
 
-    constructor() {
+    /**
+     * Construct the class.
+     * @param {string} baseUrl The base URL for the page.
+     */
+    constructor(baseUrl) {
         super();
+        this.baseUrl = baseUrl;
     }
 
-    static init() {
-        return new User();
+    static init(baseUrl) {
+        return new User(baseUrl);
     }
 
     /**
@@ -57,10 +61,9 @@ export default class User extends UserSearch {
      * @returns {string|*}
      */
     selectAllResultsLink() {
-        return Url.relativeUrl('/grade/report/grader/index.php', {
-            id: courseID,
-            gpr_search: this.getSearchTerm()
-        }, false);
+        const url = new URL(this.baseUrl);
+        url.searchParams.set('gpr_search', this.getSearchTerm());
+        return url.toString();
     }
 
     /**
@@ -70,10 +73,9 @@ export default class User extends UserSearch {
      * @returns {string|*}
      */
     selectOneLink(userID) {
-        return Url.relativeUrl('/grade/report/grader/index.php', {
-            id: courseID,
-            gpr_search: this.getSearchTerm(),
-            gpr_userid: userID,
-        }, false);
+        const url = new URL(this.baseUrl);
+        url.searchParams.set('gpr_search', this.getSearchTerm());
+        url.searchParams.set('gpr_userid', userID);
+        return url.toString();
     }
 }

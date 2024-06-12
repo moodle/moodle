@@ -37,6 +37,9 @@ class action_bar extends \core_grades\output\action_bar {
     /** @var int|null $currentgroupid The user report view mode. */
     protected $currentgroupid;
 
+    /** @var string $usersearch String to search matching users. */
+    protected $usersearch;
+
     /**
      * The class constructor.
      *
@@ -44,12 +47,20 @@ class action_bar extends \core_grades\output\action_bar {
      * @param int $userview The user report view mode.
      * @param int|null $userid The user ID or 0 if displaying all users.
      * @param int|null $currentgroupid The ID of the current group.
+     * @param string $usersearch String to search matching user.
      */
-    public function __construct(\context $context, int $userview, ?int $userid = null, ?int $currentgroupid = null) {
+    public function __construct(
+        \context $context,
+        int $userview,
+        ?int $userid = null,
+        ?int $currentgroupid = null,
+        string $usersearch = ''
+    ) {
         parent::__construct($context);
         $this->userview = $userview;
         $this->userid = $userid;
         $this->currentgroupid = $currentgroupid;
+        $this->usersearch = $usersearch;
     }
 
     /**
@@ -88,7 +99,7 @@ class action_bar extends \core_grades\output\action_bar {
             }
             $data['userselector'] = [
                 'courseid' => $courseid,
-                'content' => $userreportrenderer->users_selector(get_course($courseid), $this->userid, $this->currentgroupid)
+                'content' => $userreportrenderer->users_selector(get_course($courseid), $this->userid, $this->currentgroupid, $this->usersearch)
             ];
 
             // Do not output the 'view mode' selector when in zero state or when the current user is viewing its own report.

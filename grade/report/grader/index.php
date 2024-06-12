@@ -45,11 +45,12 @@ $graderreportsifirst  = optional_param('sifirst', null, PARAM_NOTAGS);
 $graderreportsilast   = optional_param('silast', null, PARAM_NOTAGS);
 
 $studentsperpage = optional_param('perpage', null, PARAM_INT);
+$baseurl = new moodle_url('/grade/report/grader/index.php', ['id' => $courseid]);
 
 $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$courseid)));
 $PAGE->set_pagelayout('report');
 $PAGE->requires->js_call_amd('gradereport_grader/stickycolspan', 'init');
-$PAGE->requires->js_call_amd('gradereport_grader/user', 'init');
+$PAGE->requires->js_call_amd('gradereport_grader/user', 'init', [$baseurl->out(false)]);
 $PAGE->requires->js_call_amd('gradereport_grader/feedback_modal', 'init');
 $PAGE->requires->js_call_amd('core_grades/gradebooksetup_forms', 'init');
 
@@ -60,7 +61,6 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
 
 // Conditionally add the group JS if we have groups enabled.
 if ($course->groupmode) {
-    $baseurl = new moodle_url('/grade/report/grader/index.php', ['id' => $courseid]);
     $PAGE->requires->js_call_amd('core_course/actionbar/group', 'init', [$baseurl->out(false)]);
 }
 
