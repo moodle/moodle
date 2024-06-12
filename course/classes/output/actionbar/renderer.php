@@ -26,6 +26,17 @@ namespace core_course\output\actionbar;
 class renderer extends \plugin_renderer_base {
 
     /**
+     * Renders the user selector trigger element in the action bar.
+     *
+     * @param user_selector $userselector The user selector object.
+     * @return string The HTML output.
+     */
+    public function render_user_selector(user_selector $userselector): string {
+        $data = $userselector->export_for_template($this);
+        return parent::render_from_template($userselector->get_template(), $data);
+    }
+
+    /**
      * Renders the group selector trigger element in the action bar.
      *
      * @param group_selector $groupselector The group selector object.
