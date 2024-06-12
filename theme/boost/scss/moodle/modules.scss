@@ -1497,6 +1497,12 @@ $popout-header-height: 4rem;
     background-color: $card-bg;
 }
 
+.path-mod-assign .gradingtable thead tr {
+    position: sticky;
+    top: $navbar-height;
+    z-index: 1;
+}
+
 /**
  * Mod LTI.
  */
