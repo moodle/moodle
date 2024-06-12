@@ -5164,13 +5164,20 @@ EOT;
      * @dataProvider get_home_page_provider
      * @param string $user Whether the user is logged, guest or not logged.
      * @param int $expected Expected value after calling the get_home_page method.
-     * @param int $defaulthomepage The $CFG->defaulthomepage setting value.
-     * @param int $enabledashboard Whether the dashboard should be enabled or not.
-     * @param int $userpreference User preference for the home page setting.
+     * @param int|null $defaulthomepage The $CFG->defaulthomepage setting value.
+     * @param int|null $enabledashboard Whether the dashboard should be enabled or not.
+     * @param int|null $userpreference User preference for the home page setting.
+     * $param int|null $allowguestmymoodle The $CFG->allowguestmymoodle setting value.
      * @covers ::get_home_page
      */
-    public function test_get_home_page(string $user, int $expected, ?int $defaulthomepage = null, ?int $enabledashboard = null,
-            ?int $userpreference = null): void {
+    public function test_get_home_page(
+        string $user,
+        int $expected,
+        ?int $defaulthomepage = null,
+        ?int $enabledashboard = null,
+        ?int $userpreference = null,
+        ?int $allowguestmymoodle = null,
+    ): void {
         global $CFG, $USER;
 
         $this->resetAfterTest();
@@ -5187,6 +5194,9 @@ EOT;
         if (isset($enabledashboard)) {
             $CFG->enabledashboard = $enabledashboard;
         }
+        if (isset($allowguestmymoodle)) {
+            $CFG->allowguestmymoodle = $allowguestmymoodle;
+        }
 
         if ($USER) {
             set_user_preferences(['user_home_page_preference' => $userpreference], $USER->id);
@@ -5201,21 +5211,37 @@ EOT;
      *
      * @return array
      */
-    public function get_home_page_provider(): array {
+    public static function get_home_page_provider(): array {
         return [
             'No logged user' => [
                 'user' => 'nologged',
                 'expected' => HOMEPAGE_SITE,
             ],
-            'Guest user' => [
+            'Guest user. Dashboard set as default home page and enabled for guests' => [
+                'user' => 'guest',
+                'expected' => HOMEPAGE_MY,
+            ],
+            'Guest user. Dashboard set as default home page but disabled for guests' => [
                 'user' => 'guest',
                 'expected' => HOMEPAGE_SITE,
+                'defaulthomepage' => HOMEPAGE_MY,
+                'enabledashboard' => 1,
+                'userpreference' => null,
+                'allowguestmymoodle' => 0,
+            ],
+            'Guest user. My courses set as default home page' => [
+                'user' => 'guest',
+                'expected' => HOMEPAGE_SITE,
+                'defaulthomepage' => HOMEPAGE_MYCOURSES,
+            ],
+            'Guest user. User preference set as default page' => [
+                'user' => 'guest',
+                'expected' => HOMEPAGE_SITE,
+                'defaulthomepage' => HOMEPAGE_USER,
             ],
             'Logged user. Dashboard set as default home page and enabled' => [
                 'user' => 'logged',
                 'expected' => HOMEPAGE_MY,
-                'defaulthomepage' => HOMEPAGE_MY,
-                'enabledashboard' => 1,
             ],
             'Logged user. Dashboard set as default home page but disabled' => [
                 'user' => 'logged',
