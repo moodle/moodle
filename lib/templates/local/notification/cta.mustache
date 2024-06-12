@@ -51,7 +51,7 @@
 
 <div class="cta alert alert-primary alert-block fade in {{ extraclasses }}" {{# region }}data-region="{{ region }}"{{/ region}}>
     <div class="d-flex">
-        <div class="cta-icon mr-2 icon-size-5 flex-shrink-0">
+        <div class="cta-icon me-2 icon-size-5 flex-shrink-0">
             {{# pix }} {{ icon.pix }}, {{ icon.component }} {{/ pix }}
         </div>
         <div class="align-self-center flex-grow-1">
@@ -61,7 +61,7 @@
                     {{# data }}
                    data-{{ name }}="{{ value }}"
                     {{/ data }}
-                >{{ title }}{{#newwindow}}<span class="ml-1">{{#pix}}i/externallink, core, {{#str}}opensinnewwindow{{/str}}{{/pix}}</span>{{/newwindow}}</a>
+                >{{ title }}{{#newwindow}}<span class="ms-1">{{#pix}}i/externallink, core, {{#str}}opensinnewwindow{{/str}}{{/pix}}</span>{{/newwindow}}</a>
             {{/ actions }}
         </div>
     </div>

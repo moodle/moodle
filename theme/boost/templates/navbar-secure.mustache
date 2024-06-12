@@ -32,7 +32,7 @@
     <div class="container-fluid">
         <div class="navbar-brand d-flex align-items-center m-0 p-0 aabtn">
             {{# output.should_display_navbar_logo }}
-                <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
+                <img src="{{output.get_compact_logo_url}}" class="logo me-1" alt="{{sitename}}">
             {{/ output.should_display_navbar_logo }}
             {{{ sitename }}}
         </div>
@@ -44,7 +44,7 @@
         {{/ output.secure_layout_language_menu }}
 
         {{# output.secure_layout_login_info }}
-        <div class="ml-auto nav-link">
+        <div class="ms-auto nav-link">
             {{{ . }}}
         </div>
         {{/ output.secure_layout_login_info }}

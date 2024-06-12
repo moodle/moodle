@@ -429,7 +429,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $count ++;
         $html  = html_writer::start_tag('div', ['class' => 'detail-pair', 'role' => 'row']);
         $html .= html_writer::tag('div', $label, ['class' => 'detail-pair-label mb-2', 'role' => 'cell']);
-        $html .= html_writer::tag('div', $value, ['class' => 'detail-pair-value pl-2', 'role' => 'cell']);
+        $html .= html_writer::tag('div', $value, ['class' => 'detail-pair-value ps-2', 'role' => 'cell']);
         $html .= html_writer::end_tag('div');
         return $html;
     }
@@ -522,7 +522,7 @@ class core_backup_renderer extends plugin_renderer_base {
     public function substage_buttons($haserrors) {
         $output  = html_writer::start_tag('div', array('continuebutton'));
         if (!$haserrors) {
-            $attrs = ['type' => 'submit', 'value' => get_string('continue'), 'class' => 'btn btn-primary mr-1'];
+            $attrs = ['type' => 'submit', 'value' => get_string('continue'), 'class' => 'btn btn-primary me-1'];
             $output .= html_writer::empty_tag('input', $attrs);
         }
         $attrs = array('type' => 'submit', 'name' => 'cancel', 'value' => get_string('cancel'), 'class' => 'btn btn-secondary');
@@ -880,7 +880,7 @@ class core_backup_renderer extends plugin_renderer_base {
                 'type' => 'submit',
                 'name' => 'searchcourses',
                 'value' => get_string('search'),
-                'class' => 'btn btn-secondary ml-1'
+                'class' => 'btn btn-secondary ms-1'
             );
             $output .= html_writer::empty_tag('input', $attrs);
             $output .= html_writer::end_tag('div');
@@ -946,7 +946,7 @@ class core_backup_renderer extends plugin_renderer_base {
             'type' => 'submit',
             'name' => 'searchcourses',
             'value' => get_string('search'),
-            'class' => 'btn btn-secondary ml-1'
+            'class' => 'btn btn-secondary ms-1'
         );
         $output .= html_writer::empty_tag('input', $attrs);
         $output .= html_writer::end_tag('div');

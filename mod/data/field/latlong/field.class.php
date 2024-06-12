@@ -227,7 +227,7 @@ class data_field_latlong extends data_field_base {
             }
             // NB! If you are editing this, make sure you don't break the javascript reference "previousSibling"
             // which allows the "Go" button to refer to the drop-down selector.
-            $str .= '\n</select><input type="button" class="btn ml-1 btn-secondary" value="' . get_string('go');
+            $str .= '\n</select><input type="button" class="btn ms-1 btn-secondary" value="' . get_string('go');
             $str .= '" onclick="if(previousSibling.value){self.location=previousSibling.value}"/>';
             $str .= '</form>';
         } else {

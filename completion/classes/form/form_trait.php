@@ -238,7 +238,7 @@ trait form_trait {
         $component = "mod_{$modname}";
         $itemnames = component_gradeitems::get_itemname_mapping_for_component($component);
 
-        $indentation = ['parentclass' => 'ml-2'];
+        $indentation = ['parentclass' => 'ms-2'];
         $receiveagradeel = 'receiveagrade' . $suffix;
         $completionusegradeel = 'completionusegrade' . $suffix;
         $completionpassgradeel = 'completionpassgrade' . $suffix;

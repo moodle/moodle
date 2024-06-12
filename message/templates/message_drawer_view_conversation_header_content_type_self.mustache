@@ -42,7 +42,7 @@
 
 <div class="d-flex align-items-center">
     <div class="align-self-stretch" >
-        <a class="h-100 mr-2 d-flex align-items-center" href="#" data-route-back>
+        <a class="h-100 me-2 d-flex align-items-center" href="#" data-route-back>
             {{> core_message/message_drawer_icon_back }}
         </a>
     </div>
@@ -58,10 +58,10 @@
                 >
             </div>
         {{/imageurl}}
-        <div class="w-100 text-truncate ml-2">
+        <div class="w-100 text-truncate ms-2">
             <div class="d-flex">
                 <strong class="m-0 text-truncate">{{name}}</strong>
-                <span class="{{^isfavourite}}hidden{{/isfavourite}} ml-1 text-primary" data-region="favourite-icon-container">
+                <span class="{{^isfavourite}}hidden{{/isfavourite}} ms-1 text-primary" data-region="favourite-icon-container">
                     {{#pix}} i/star-rating, core {{/pix}}
                 </span>
             </div>
@@ -72,7 +72,7 @@
             {{/showonlinestatus}}
         </div>
     </div>
-    <div class="ml-auto dropdown">
+    <div class="ms-auto dropdown">
         <button class="btn btn-link btn-icon icon-size-3" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {{#pix}} i/moremenu, core {{/pix}}
         </button>

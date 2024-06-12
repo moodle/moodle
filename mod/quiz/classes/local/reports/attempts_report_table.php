@@ -797,7 +797,7 @@ abstract class attempts_report_table extends \table_sql {
         if (has_capability('mod/quiz:deleteattempts', $this->context)) {
             $deletebuttonparams = [
                 'type'  => 'submit',
-                'class' => 'btn btn-secondary mr-1',
+                'class' => 'btn btn-secondary me-1',
                 'id'    => 'deleteattemptsbutton',
                 'name'  => 'delete',
                 'value' => get_string('deleteselected', 'quiz_overview'),

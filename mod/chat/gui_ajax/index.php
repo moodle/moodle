@@ -104,7 +104,7 @@ $table->data = [[
     'id="input-message" value="Loading..." size="48" /></span>'.
     '<span class="mb-3"><input type="button" id="button-send" class="btn btn-secondary mx-1" ' .
     'value="'.get_string('send', 'chat').'" />' .$OUTPUT->help_icon('usingchat', 'chat'). '</span></div>' .
-    ' <div class="mb-3 d-flex ml-auto"><a id="choosetheme" href="###">'.
+    ' <div class="mb-3 d-flex ms-auto"><a id="choosetheme" href="###">'.
     get_string('themes').
     ' &raquo; </a></div></div>',
 ]];

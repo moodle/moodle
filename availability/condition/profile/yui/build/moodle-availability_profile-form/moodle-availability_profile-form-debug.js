@@ -35,7 +35,7 @@ M.availability_profile.form.initInner = function(standardFields, customFields) {
 
 M.availability_profile.form.getNode = function(json) {
     // Create HTML structure.
-    var html = '<span class="availability-group"><label><span class="pr-3">' +
+    var html = '<span class="availability-group"><label><span class="pe-3">' +
             M.util.get_string('conditiontitle', 'availability_profile') + '</span> ' +
             '<select name="field" class="custom-select">' +
             '<option value="choose">' + M.util.get_string('choosedots', 'moodle') + '</option>';

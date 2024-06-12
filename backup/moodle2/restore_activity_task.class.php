@@ -328,7 +328,7 @@ abstract class restore_activity_task extends restore_task {
         }
 
         $activityincluded->get_ui()->set_icon(new image_icon('monologo', get_string('pluginname', $this->modulename),
-            $this->modulename, ['class' => 'ml-1']));
+            $this->modulename, ['class' => 'ms-1']));
         $this->add_setting($activityincluded);
         // Look for "activities" root setting.
         $activities = $this->plan->get_setting('activities');

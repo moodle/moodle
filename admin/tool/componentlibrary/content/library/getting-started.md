@@ -12,7 +12,7 @@ weight: 1
   }
 </style>
 <div class="d-flex">
-  <div class="w-50 ml-auto mr-auto">
+  <div class="w-50 ms-auto me-auto">
 {{< image "logo.png" "The Moodle logo" "img-fluid">}}
 </div>
 </div>

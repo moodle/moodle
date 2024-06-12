@@ -72,7 +72,7 @@ class mod_folder_renderer extends plugin_renderer_base {
         if ($downloadable) {
             $downloadbutton = new single_button(new moodle_url('/mod/folder/download_folder.php', ['id' => $cm->id]),
                 get_string('downloadfolder', 'folder'), 'get');
-            $downloadbutton->class = 'navitem ml-auto';
+            $downloadbutton->class = 'navitem ms-auto';
             $data['download_button'] = $downloadbutton->export_for_template($this->output);
             $data['hasbuttons'] = true;
         }

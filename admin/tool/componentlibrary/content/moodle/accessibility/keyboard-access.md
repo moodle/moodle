@@ -28,18 +28,18 @@ The focus outlines colours in Moodle have been made more accessible in [MDL-6787
 <div id="focusexamples">
     <p> Normal buttons</p>
     <div>
-        <span class="mr-2"><button class="btn btn-primary">Primary</button></span>
-        <span class="mr-2"><button class="btn btn-secondary">Secondary</button></span>
-        <span class="mr-2"><button class="btn btn-danger">Danger</button></span>
-        <span class="mr-2"><button class="btn btn-outline-secondary">Outline</button></span>
+        <span class="me-2"><button class="btn btn-primary">Primary</button></span>
+        <span class="me-2"><button class="btn btn-secondary">Secondary</button></span>
+        <span class="me-2"><button class="btn btn-danger">Danger</button></span>
+        <span class="me-2"><button class="btn btn-outline-secondary">Outline</button></span>
         <span class=""><a href="#" class="aalink">clickable link</a></span>
     </div>
     <p  class="mt-4"> keyboard focus</p>
     <div>
-        <span class="mr-2"><button class="focusloop btn btn-primary">Primary</button></span>
-        <span class="mr-2"><button class="focusloop btn btn-secondary">Secondary</button></span>
-        <span class="mr-2"><button class="focusloop btn btn-danger">Danger</button></span>
-        <span class="mr-2"><button class="focusloop btn btn-outline-secondary">Outline</button></span>
+        <span class="me-2"><button class="focusloop btn btn-primary">Primary</button></span>
+        <span class="me-2"><button class="focusloop btn btn-secondary">Secondary</button></span>
+        <span class="me-2"><button class="focusloop btn btn-danger">Danger</button></span>
+        <span class="me-2"><button class="focusloop btn btn-outline-secondary">Outline</button></span>
         <span class=""><a href="#" class="focusloop aalink">clickable link</a></span>
     </div>
     <button id="showfocus" class="btn btn-success btn-large mt-5" type="button">Show focus</button>

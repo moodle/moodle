@@ -102,8 +102,8 @@ Use primary buttons for the positive action on the page, for example "Save" or "
             <div class="card-body">
                 <strong>Save Changes?</strong>
                 <div class="d-flex">
-                    <button type="button" class="btn btn-secondary mr-1">Cancel</button>
-                    <button type="button" class="btn btn-primary mr-1">Save</button>
+                    <button type="button" class="btn btn-secondary me-1">Cancel</button>
+                    <button type="button" class="btn btn-primary me-1">Save</button>
                 </div>
             </div>
         </div>
@@ -113,7 +113,7 @@ Use primary buttons for the positive action on the page, for example "Save" or "
             <div class="card-body">
                 <strong>Delete profile</strong>
                 <div class="d-flex">
-                    <button type="button" class="btn btn-primary mr-1">Cancel</button>
+                    <button type="button" class="btn btn-primary me-1">Cancel</button>
                     <button type="button" class="btn btn-secondary">Delete</button>
                 </div>
             </div>
@@ -143,7 +143,7 @@ The meaning of buttons must be very clear.
                 <strong>Save Changes?</strong>
                 <p>Would you like to not save your changes before exiting?</p>
                 <div class="d-flex">
-                    <button type="button" class="btn btn-primary mr-1">Yes</button>
+                    <button type="button" class="btn btn-primary me-1">Yes</button>
                     <button type="button" class="btn btn-secondary">No</button>
                 </div>
             </div>
@@ -156,7 +156,7 @@ The meaning of buttons must be very clear.
                 <strong>Save Changes</strong>
                 <p>Would you like to save your changes before exiting?</p>
                 <div class="d-flex">
-                    <button type="button" class="btn btn-primary mr-1">Save</button>
+                    <button type="button" class="btn btn-primary me-1">Save</button>
                     <button type="button" class="btn btn-secondary">Discard</button>
                 </div>
             </div>

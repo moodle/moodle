@@ -650,7 +650,7 @@ class mod_quiz_mod_form extends moodleform_mod {
             $completionattemptsexhaustedel,
             null,
             get_string('completionattemptsexhausted', 'quiz'),
-            ['group' => 'cattempts', 'parentclass' => 'ml-4']
+            ['group' => 'cattempts', 'parentclass' => 'ms-4']
         );
         $completionpassgradeel = 'completionpassgrade' . $suffix;
         $mform->hideIf($completionattemptsexhaustedel, $completionpassgradeel, 'notchecked');

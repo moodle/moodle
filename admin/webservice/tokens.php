@@ -132,7 +132,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->container_start('d-flex flex-wrap');
 echo $OUTPUT->heading(get_string('managetokens', 'core_webservice'));
 echo html_writer::div($OUTPUT->render(new single_button(new moodle_url($PAGE->url, ['action' => 'create']),
-    get_string('createtoken', 'core_webservice'), 'get', single_button::BUTTON_PRIMARY)), 'ml-auto');
+    get_string('createtoken', 'core_webservice'), 'get', single_button::BUTTON_PRIMARY)), 'ms-auto');
 echo $OUTPUT->container_end();
 
 if (!empty($SESSION->webservicenewlycreatedtoken)) {

@@ -333,7 +333,7 @@ abstract class backup_activity_task extends backup_task {
             $activityincluded = new backup_activity_generic_setting($settingname, base_setting::IS_BOOLEAN, true);
         }
         $activityincluded->get_ui()->set_icon(new image_icon('monologo', get_string('pluginname', $this->modulename),
-            $this->modulename, array('class' => 'ml-1')));
+            $this->modulename, array('class' => 'ms-1')));
         $this->add_setting($activityincluded);
 
         // Look for "activities" root setting.

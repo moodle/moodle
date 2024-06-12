@@ -64,13 +64,13 @@
                 {{#haschildren}}
                 <a id="drop-down-{{sort}}" href="#" class="list-group-item list-group-item-action icons-collapse-expand {{^isopen}}collapsed {{/isopen}}d-flex" data-toggle="collapse" data-target="#drop-down-menu-{{sort}}" aria-expanded="{{#isopen}}true{{/isopen}}{{^isopen}}false{{/isopen}}" aria-controls="drop-down-menu-{{sort}}">
                     {{{text}}}
-                    <span class="ml-auto expanded-icon icon-no-margin mx-2">
+                    <span class="ms-auto expanded-icon icon-no-margin mx-2">
                         {{#pix}} t/expanded, core {{/pix}}
                         <span class="sr-only">
                             {{#str}} collapse, core {{/str}}
                         </span>
                     </span>
-                    <span class="ml-auto collapsed-icon icon-no-margin mx-2">
+                    <span class="ms-auto collapsed-icon icon-no-margin mx-2">
                         {{#pix}} t/collapsed, core {{/pix}}
                         <span class="sr-only">
                             {{#str}} expand, core {{/str}}
@@ -80,7 +80,7 @@
                 <div class="collapse {{#isopen}}show {{/isopen}}list-group-item p-0 border-0" role="menu" id="drop-down-menu-{{sort}}" aria-labelledby="drop-down-{{sort}}">
                     {{#children}}
                         {{^divider}}
-                             <a href="{{{url}}}" class="pl-5 {{^isactive}}bg-light{{/isactive}}{{#isactive}}active{{/isactive}} list-group-item list-group-item-action">{{{text}}}</a>
+                             <a href="{{{url}}}" class="ps-5 {{^isactive}}bg-light{{/isactive}}{{#isactive}}active{{/isactive}} list-group-item list-group-item-action">{{{text}}}</a>
                         {{/divider}}
                     {{/children}}
                 </div>

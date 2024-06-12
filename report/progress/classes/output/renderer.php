@@ -47,7 +47,7 @@ class renderer extends plugin_renderer_base {
         );
         $activityincludeselect->set_label(get_string('include', 'report_progress'));
         return \html_writer::div($this->output->render($activityincludeselect),
-                'include-activity-selector d-inline-block mr-3' );
+                'include-activity-selector d-inline-block me-3' );
     }
 
     /**
@@ -88,7 +88,7 @@ class renderer extends plugin_renderer_base {
             return $groupoutput;
         }
 
-        return \html_writer::div($groupoutput, 'd-inline-block mr-3');
+        return \html_writer::div($groupoutput, 'd-inline-block me-3');
     }
 
     /**
@@ -111,7 +111,7 @@ class renderer extends plugin_renderer_base {
         );
         $sorttable->set_label(get_string('activitysection', 'report_progress'));
         return \html_writer::div($this->output->render($sorttable),
-                'activity-section-selector include-activity-selector d-inline-block ml-3');
+                'activity-section-selector include-activity-selector d-inline-block ms-3');
     }
 
     /**

@@ -87,7 +87,7 @@ class column_sort_ui implements renderable, templatable {
         $params['addcolumn'] = $addcolumn->export_for_template($output);
         $resetcolums = new reset_columns($returnurl);
         $params['resetcolumns'] = $resetcolums->export_for_template($output);
-        $params['extraclasses'] = 'pr-1';
+        $params['extraclasses'] = 'pe-1';
         $urltoredirect = new moodle_url('/admin/settings.php', ['section' => 'manageqbanks']);
 
         $params['urltomanageqbanks'] = get_string('qbankgotomanageqbanks', 'qbank_columnsortorder', $urltoredirect->out());

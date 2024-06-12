@@ -85,7 +85,7 @@ class report_helper {
             echo \html_writer::tag(
                 'div',
                 $options,
-                ['class' => 'tertiary-navigation full-width-bottom-border ml-0 d-flex', 'id' => 'tertiary-navigation']);
+                ['class' => 'tertiary-navigation full-width-bottom-border ms-0 d-flex', 'id' => 'tertiary-navigation']);
         } else {
             echo $OUTPUT->heading($pluginname, 2, 'mb-3');
         }

@@ -160,9 +160,9 @@ class core_calendar_renderer extends plugin_renderer_base {
             $output .= html_writer::tag('div', $event->courselink);
         }
         if (!empty($event->time)) {
-            $output .= html_writer::tag('span', $event->time, array('class' => 'date float-sm-right mr-1'));
+            $output .= html_writer::tag('span', $event->time, array('class' => 'date float-sm-right me-1'));
         } else {
-            $attrs = array('class' => 'date float-sm-right mr-1');
+            $attrs = array('class' => 'date float-sm-right me-1');
             $output .= html_writer::tag('span', calendar_time_representation($event->timestart), $attrs);
         }
 
@@ -264,7 +264,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         }
         $select = html_writer::label($label, $filterid, false, $labelattributes);
         $select .= html_writer::select($courseoptions, 'course', $selected, false,
-                ['class' => 'cal_courses_flt ml-1 mr-auto mr-2 mb-2', 'id' => $filterid]);
+                ['class' => 'cal_courses_flt ms-1 me-auto me-2 mb-2', 'id' => $filterid]);
 
         return $select;
     }
@@ -284,7 +284,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         $output = $this->output->heading(get_string('managesubscriptions', 'calendar'));
         $output .= html_writer::start_div('header d-flex flex-wrap mt-5');
         $headerattr = [
-            'class' => 'mr-auto',
+            'class' => 'me-auto',
             'aria-describedby' => 'subscription_details_table',
         ];
         $output .= html_writer::tag('h3', get_string('yoursubscriptions', 'calendar'), $headerattr);

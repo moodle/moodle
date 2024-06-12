@@ -63,7 +63,7 @@
 
         <div data-region="active-filters" class="form-vertical">
             {{#hasactivefilters}}
-                <ul class="list-group reportbuilder-sortable-list mt-2 ml-0">
+                <ul class="list-group reportbuilder-sortable-list mt-2 ms-0">
                     {{#activefilters}}
                         <li class="list-group-item list-group-item-action d-flex align-items-start text-dark"
                             data-region="active-filter" data-filter-id="{{id}}" data-filter-name="{{heading}}" data-filter-position="{{sortorder}}">
@@ -76,7 +76,7 @@
                                     {{{headingeditable}}}
                                 </div>
                             </div>
-                            <button class="btn btn-link p-0 ml-auto"
+                            <button class="btn btn-link p-0 ms-auto"
                                     type="button"
                                     data-action="report-remove-filter"
                                     title="{{#str}}deletefilter, core_reportbuilder, {{{heading}}}{{/str}}"

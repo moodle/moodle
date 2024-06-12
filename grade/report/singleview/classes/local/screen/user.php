@@ -195,7 +195,7 @@ class user extends tablelike implements selectable_items {
 
         $formatteddefinition = $this->format_definition($grade);
 
-        $itemicon = html_writer::div($this->format_icon($item), 'mr-1');
+        $itemicon = html_writer::div($this->format_icon($item), 'me-1');
         $itemtype = \html_writer::span(\grade_helper::get_element_type_string($gradetreeitem),
             'd-block text-uppercase small dimmed_text');
 

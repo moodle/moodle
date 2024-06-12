@@ -1967,7 +1967,7 @@ class page_wiki_restoreversion extends page_wiki {
         echo $OUTPUT->container_start('mt-2', 'wiki_restoreform');
         $yesbutton = new single_button($restoreurl, get_string('yes'), 'post');
         $nobutton = new single_button($return, get_string('no'), 'post');
-        $nobutton->class .= ' ml-2';
+        $nobutton->class .= ' ms-2';
         echo $OUTPUT->render($yesbutton);
         echo $OUTPUT->render($nobutton);
         echo $OUTPUT->container_end();

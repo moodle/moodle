@@ -91,9 +91,9 @@
             <div class="navitem-divider d-none d-sm-flex order-3"></div>
         {{/itemselector}}
         {{#pagetoggler}}
-            <div class="d-flex row ml-0 ml-sm-auto order-4 px-0">
+            <div class="d-flex row ms-0 ms-sm-auto order-4 px-0">
                 {{#bulkactions}}
-                    <div class="d-flex navitem ml-0 ml-sm-auto mr-3">{{{bulkactions}}}</div>
+                    <div class="d-flex navitem ms-0 ms-sm-auto me-3">{{{bulkactions}}}</div>
                     {{#js}}
                         require(['gradereport_singleview/bulkactions'], function(bulkactions) {
                         bulkactions.init();
@@ -101,7 +101,7 @@
                     {{/js}}
                     <div class="navitem-divider d-none d-sm-flex"></div>
                 {{/bulkactions}}
-                <div class="d-flex navitem ml-0 mr-auto mr-sm-0 ml-sm-auto">
+                <div class="d-flex navitem ms-0 me-auto me-sm-0 ms-sm-auto">
                     {{>gradereport_singleview/page_toggler}}
                 </div>
             </div>

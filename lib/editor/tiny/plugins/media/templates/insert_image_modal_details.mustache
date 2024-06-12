@@ -67,37 +67,37 @@
                     <label class="form-check-label" for="{{elementid}}_tiny_image_presentation">{{#str}} presentation, tiny_media {{/str}}</label>
                 </div>
                 <!-- Row 2: Original size radiobutton -->
-                <div class="form-check mb-2 pl-0">
+                <div class="form-check mb-2 ps-0">
                     <input type="radio" class="tiny_image_sizeoriginal" id="{{elementid}}_tiny_image_sizeoriginal" name="radioOptions">
                     <label class="form-check-label" for="{{elementid}}_tiny_image_sizeoriginal">{{#str}} sizeoriginal, tiny_media {{/str}}</label>
                 </div>
                 <!-- Row 3: Custom size radiobutton -->
-                <div class="form-check pl-0 mb-2">
+                <div class="form-check ps-0 mb-2">
                     <input type="radio" class="tiny_image_sizecustom" id="{{elementid}}_tiny_image_sizecustom" name="radioOptions">
                     <label class="form-check-label" for="{{elementid}}_tiny_image_sizecustom">{{#str}} sizecustom, tiny_media {{/str}}</label>
                 </div>
                 <!-- Row 4: Image size -->
                 <div class="tiny_image_properties mb-2">
                     <!-- Row 1: Image width and height -->
-                    <div id="{{elementid}}_tiny_image_size" class="tiny_image_size container ml-1">
+                    <div id="{{elementid}}_tiny_image_size" class="tiny_image_size container ms-1">
                         <div class="d-flex justify-content-start">
                             <!-- Column 1: Width Input -->
-                            <div class="flex-item mr-2">
+                            <div class="flex-item me-2">
                                 <div class="form-group mb-0">
-                                    <input type="number" min="0" class="tiny_image_widthentry form-control mr-1 input-mini" id="{{elementid}}_tiny_image_widthentry" value="{{width}}">
-                                    <label for="{{elementid}}_tiny_image_widthentry" class="ml-1">{{#str}} width, tiny_media {{/str}}</label>
+                                    <input type="number" min="0" class="tiny_image_widthentry form-control me-1 input-mini" id="{{elementid}}_tiny_image_widthentry" value="{{width}}">
+                                    <label for="{{elementid}}_tiny_image_widthentry" class="ms-1">{{#str}} width, tiny_media {{/str}}</label>
                                 </div>
                             </div>
                             <!-- Column 2: "X" Text -->
-                            <div class="flex-item mr-1 mt-2">X</div>
+                            <div class="flex-item me-1 mt-2">X</div>
                             <!-- Column 3: Height Input -->
-                            <div class="flex-item mr-1">
+                            <div class="flex-item me-1">
                                 <div class="form-group mb-0">
-                                    <input type="number" min="0" class="tiny_image_heightentry form-control ml-1 input-mini" id="{{elementid}}_tiny_image_heightentry" value="{{height}}">
-                                    <label for="{{elementid}}_tiny_image_heightentry" class="ml-1">{{#str}} height, tiny_media {{/str}}</label>
+                                    <input type="number" min="0" class="tiny_image_heightentry form-control ms-1 input-mini" id="{{elementid}}_tiny_image_heightentry" value="{{height}}">
+                                    <label for="{{elementid}}_tiny_image_heightentry" class="ms-1">{{#str}} height, tiny_media {{/str}}</label>
                                 </div>
                             </div>
-                            <div class="tiny_image_customhelpicon flex-item ml-1">{{#sizecustomhelpicon}}{{> core/help_icon }}{{/sizecustomhelpicon}}</div>
+                            <div class="tiny_image_customhelpicon flex-item ms-1">{{#sizecustomhelpicon}}{{> core/help_icon }}{{/sizecustomhelpicon}}</div>
                         </div>
                     </div>
                     <!-- Row 2: Keep proportion -->

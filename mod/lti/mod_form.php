@@ -369,7 +369,7 @@ class mod_lti_mod_form extends moodleform_mod {
                 || !empty($this->current->secureicon) || !empty($this->current->icon));
 
             $selectcontentindicatorinner = $iscontentitem ?
-                $OUTPUT->pix_icon('i/valid', get_string('contentselected', 'mod_lti'), 'moodle', ['class' => 'mr-1'])
+                $OUTPUT->pix_icon('i/valid', get_string('contentselected', 'mod_lti'), 'moodle', ['class' => 'me-1'])
                 . get_string('contentselected', 'mod_lti') : '';
             $selectcontentindicator = html_writer::div($selectcontentindicatorinner, '',
                 ['aria-role' => 'status', 'id' => 'id_selectcontentindicator']);

@@ -61,6 +61,6 @@ class facility_index extends column_base {
     }
 
     public function get_extra_classes(): array {
-        return ['pr-3'];
+        return ['pe-3'];
     }
 }

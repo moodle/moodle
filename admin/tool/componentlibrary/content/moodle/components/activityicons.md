@@ -37,7 +37,7 @@ In places like the course page and the activity chooser icons have a more promin
 The CSS classes for these icons are ```activityiconcontainer``` wrapper class with the added activity name. And the ```activityicon``` class for the image. See the template ```course/format/templates/local/content/cm/title.mustache``` for more info.
 
 <div class="media mb-3">
-    <div class="activityiconcontainer assessment mr-3">
+    <div class="activityiconcontainer assessment me-3">
         {{< image "quiz/monologo.svg" "Quiz icon" "activityicon">}}    </div>
     <div class="media-body align-self-center">
         <div class="text-uppercase small">quiz</div>
@@ -114,7 +114,7 @@ $iconurl = get_fast_modinfo($courseid)->get_cm($cmid)->get_icon_url()->out(false
 {{< /php >}}
 
 <div class="media mb-3">
-    <div class="activityiconcontainer lti mr-3">
+    <div class="activityiconcontainer lti me-3">
         <img alt="lti icon" title="lti icon" src="https://moodle.org/theme/moodleorg/pix/moodle_logo_small.svg" class="activityicon ">    </div>
     <div class="media-body align-self-center">
         <div class="text-uppercase small">external</div>
@@ -139,7 +139,7 @@ function h5pactivity_is_branded(): bool {
 {{< /php >}}
 
 <div class="media mb-3">
-    <div class="activityiconcontainer mr-3">
+    <div class="activityiconcontainer me-3">
         {{< image "h5pactivity/monologo.svg" "H5P activity icon" "activityicon">}}    </div>
     <div class="media-body align-self-center">
         <div class="text-uppercase small">h5pactivity</div>
@@ -150,7 +150,7 @@ function h5pactivity_is_branded(): bool {
 ## Examples
 
 <div class="media mb-3">
-    <div class="activityiconcontainer administration mr-3">
+    <div class="activityiconcontainer administration me-3">
         {{< image "quiz/monologo.svg" "Admin icon" "activityicon">}}    </div>
     <div class="media-body align-self-center">
         <div class="text-uppercase small">Administration</div>
@@ -159,7 +159,7 @@ function h5pactivity_is_branded(): bool {
 </div>
 
 <div class="media mb-3">
-    <div class="activityiconcontainer assessment mr-3">
+    <div class="activityiconcontainer assessment me-3">
         {{< image "quiz/monologo.svg" "Assessment icon" "activityicon">}}    </div>
     <div class="media-body align-self-center">
         <div class="text-uppercase small">Assessment</div>
@@ -168,7 +168,7 @@ function h5pactivity_is_branded(): bool {
 </div>
 
 <div class="media mb-3">
-    <div class="activityiconcontainer collaboration mr-3">
+    <div class="activityiconcontainer collaboration me-3">
         {{< image "wiki/monologo.svg" "Collaboration icon" "activityicon">}}    </div>
     <div class="media-body align-self-center">
         <div class="text-uppercase small">Collaboration</div>
@@ -177,7 +177,7 @@ function h5pactivity_is_branded(): bool {
 </div>
 
 <div class="media mb-3">
-    <div class="activityiconcontainer communication mr-3">
+    <div class="activityiconcontainer communication me-3">
         {{< image "choice/monologo.svg" "Communication icon" "activityicon">}}    </div>
     <div class="media-body align-self-center">
         <div class="text-uppercase small">Communication</div>
@@ -186,7 +186,7 @@ function h5pactivity_is_branded(): bool {
 </div>
 
 <div class="media mb-3">
-    <div class="activityiconcontainer interactivecontent mr-3">
+    <div class="activityiconcontainer interactivecontent me-3">
         {{< image "lesson/monologo.svg" "Interactive content icon" "activityicon">}}    </div>
     <div class="media-body align-self-center">
         <div class="text-uppercase small">Interactive content</div>
@@ -195,7 +195,7 @@ function h5pactivity_is_branded(): bool {
 </div>
 
 <div class="media mb-3">
-    <div class="activityiconcontainer content mr-3">
+    <div class="activityiconcontainer content me-3">
         {{< image "book/monologo.svg" "Resource icon" "activityicon">}}    </div>
     <div class="media-body align-self-center">
         <div class="text-uppercase small">Resource</div>
@@ -204,7 +204,7 @@ function h5pactivity_is_branded(): bool {
 </div>
 
 <div class="media mb-3">
-    <div class="activityiconcontainer mr-3">
+    <div class="activityiconcontainer me-3">
         {{< image "lti/monologo.svg" "Other icon" "activityicon">}}    </div>
     <div class="media-body align-self-center">
         <div class="text-uppercase small">Other</div>
