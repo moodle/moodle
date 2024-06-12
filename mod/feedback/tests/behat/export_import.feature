@@ -40,7 +40,7 @@ Feature: Exporting and importing feedbacks
       | Label            | multichoice1                |
       | Multiple choice type | Multiple choice - single answer |
       | Multiple choice values | option a\noption b\noption c  |
-    And I select "Add a page break" from the "typ" singleselect
+    And I add a page break to the feedback
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | this is a multiple choice 2        |
       | Label                          | multichoice2                       |
@@ -68,7 +68,6 @@ Feature: Exporting and importing feedbacks
       | Label                  | shorttext                   |
       | Maximum characters accepted | 200                    |
     Then following "Export questions" should export feedback identical to "mod/feedback/tests/fixtures/testexport.xml"
-    And I log out
 
   @javascript @_file_upload
   Scenario: Import feedback deleting old items
@@ -78,10 +77,10 @@ Feature: Exporting and importing feedbacks
       | Question               | Existing question |
       | Label                  | numeric           |
       | Range to               | 100               |
-    And I select "Import questions" from the "jump" singleselect
+    And I press "Actions"
+    And I choose "Import" in the open action menu
     And I upload "mod/feedback/tests/fixtures/testexport.xml" file to "File" filemanager
-    And I press "Save"
-    And I select "Add question" from the "jump" singleselect
+    And I press "Import"
     Then I should not see "Existing question"
     And I should see "this is an information question"
     And I should see "label text"
@@ -101,11 +100,11 @@ Feature: Exporting and importing feedbacks
       | Question               | Existing question |
       | Label                  | numeric           |
       | Range to               | 100               |
-    And I select "Import questions" from the "jump" singleselect
+    And I press "Actions"
+    And I choose "Import" in the open action menu
     And I set the field "Append new items" to "1"
     And I upload "mod/feedback/tests/fixtures/testexport.xml" file to "File" filemanager
-    And I press "Save"
-    And I select "Add question" from the "jump" singleselect
+    And I press "Import"
     Then I should see "Existing question"
     And "Existing question" "text" should appear before "this is an information question" "text"
     And I should see "this is an information question"

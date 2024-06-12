@@ -33,7 +33,7 @@ Feature: Testing multichoice questions in feedback
       | Multiple choice values | option a\noption b\noption c  |
     And I add a "Text and media area" question to the feedback with:
       | Contents | this is the first page of the feedback |
-    And I select "Add a page break" from the "typ" singleselect
+    And I add a page break to the feedback
     And I add a "Multiple choice" question to the feedback with:
       | Question         | this is a multiple choice 2 |
       | Label            | multichoice2                |
@@ -42,7 +42,7 @@ Feature: Testing multichoice questions in feedback
       | Required | 1 |
     And I add a "Text and media area" question to the feedback with:
       | Contents | this is the second page of the feedback |
-    And I select "Add a page break" from the "typ" singleselect
+    And I add a page break to the feedback
     And I add a "Multiple choice" question to the feedback with:
       | Question         | this is a multiple choice 3 |
       | Label            | multichoice3                |
@@ -161,7 +161,6 @@ Feature: Testing multichoice questions in feedback
     And I should see "1 (100.00 %)" in the "option a" "table_row"
     And I should not see "%" in the "option b" "table_row"
     And I should not see "%" in the "option c" "table_row"
-    And I log out
 
   @javascript
   Scenario: Non-rated multiple-answers multiple choice questions in feedback
@@ -173,7 +172,7 @@ Feature: Testing multichoice questions in feedback
       | Multiple choice values | option a\noption b\noption c  |
     And I add a "Text and media area" question to the feedback with:
       | Contents | this is the first page of the feedback |
-    And I select "Add a page break" from the "typ" singleselect
+    And I add a page break to the feedback
     And I add a "Multiple choice" question to the feedback with:
       | Question         | this is a multiple choice 2 |
       | Label            | multichoice2                |
@@ -182,7 +181,7 @@ Feature: Testing multichoice questions in feedback
       | Required | 1 |
     And I add a "Text and media area" question to the feedback with:
       | Contents | this is the second page of the feedback |
-    And I select "Add a page break" from the "typ" singleselect
+    And I add a page break to the feedback
     And I add a "Multiple choice" question to the feedback with:
       | Question         | this is a multiple choice 3 |
       | Label            | multichoice3                |
@@ -301,7 +300,6 @@ Feature: Testing multichoice questions in feedback
     And I should see "1 (100.00 %)" in the "option a" "table_row"
     And I should see "1 (100.00 %)" in the "option b" "table_row"
     And I should not see "%" in the "option c" "table_row"
-    And I log out
 
   @javascript
   Scenario: Non-rated single-answer dropdown multiple choice questions in feedback
@@ -312,7 +310,7 @@ Feature: Testing multichoice questions in feedback
       | Multiple choice values | option a\noption b\noption c  |
     And I add a "Text and media area" question to the feedback with:
       | Contents | this is the first page of the feedback |
-    And I select "Add a page break" from the "typ" singleselect
+    And I add a page break to the feedback
     And I add a "Multiple choice" question to the feedback with:
       | Question         | this is a multiple choice 2 |
       | Label            | multichoice2                |
@@ -321,7 +319,7 @@ Feature: Testing multichoice questions in feedback
       | Required | 1 |
     And I add a "Text and media area" question to the feedback with:
       | Contents | this is the second page of the feedback |
-    And I select "Add a page break" from the "typ" singleselect
+    And I add a page break to the feedback
     And I add a "Multiple choice" question to the feedback with:
       | Question         | this is a multiple choice 3 |
       | Label            | multichoice3                |
