@@ -87,7 +87,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_metadata().
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new collection('mod_choice');
         $newcollection = provider::get_metadata($collection);
         $itemcollection = $newcollection->get_collection();
@@ -108,7 +108,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_contexts_for_userid().
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $cm = get_coursemodule_from_instance('choice', $this->choice->id);
 
         $contextlist = provider::get_contexts_for_userid($this->student->id);
@@ -121,7 +121,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::export_user_data().
      */
-    public function test_export_for_context() {
+    public function test_export_for_context(): void {
         $cm = get_coursemodule_from_instance('choice', $this->choice->id);
         $cmcontext = \context_module::instance($cm->id);
 
@@ -134,7 +134,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $choice = $this->choice;
@@ -167,7 +167,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_user_() {
+    public function test_delete_data_for_user_(): void {
         global $DB;
 
         $choice = $this->choice;
@@ -227,7 +227,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_users_in_context().
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $cm = get_coursemodule_from_instance('choice', $this->choice->id);
         $cmcontext = \context_module::instance($cm->id);
 
@@ -243,7 +243,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_users_in_context() with invalid context type.
      */
-    public function test_get_users_in_context_invalid_context_type() {
+    public function test_get_users_in_context_invalid_context_type(): void {
         $systemcontext = \context_system::instance();
 
         $userlist = new \core_privacy\local\request\userlist($systemcontext, 'mod_choice');
@@ -255,7 +255,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_users().
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
 
         $choice = $this->choice;

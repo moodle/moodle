@@ -64,7 +64,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test create_cohorts
      */
-    public function test_create_cohorts() {
+    public function test_create_cohorts(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -200,7 +200,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_cohorts
      */
-    public function test_delete_cohorts() {
+    public function test_delete_cohorts(): void {
         global $USER, $CFG, $DB;
 
         $this->resetAfterTest(true);
@@ -232,7 +232,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_cohorts
      */
-    public function test_get_cohorts() {
+    public function test_get_cohorts(): void {
         $this->resetAfterTest(true);
 
         // Custom fields.
@@ -315,7 +315,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_cohorts
      */
-    public function test_update_cohorts() {
+    public function test_update_cohorts(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -414,7 +414,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Verify handling of 'id' param.
      */
-    public function test_update_cohorts_invalid_id_param() {
+    public function test_update_cohorts_invalid_id_param(): void {
         $this->resetAfterTest(true);
         $cohort = self::getDataGenerator()->create_cohort();
 
@@ -444,7 +444,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_cohorts without permission on the dest category.
      */
-    public function test_update_cohorts_missing_dest() {
+    public function test_update_cohorts_missing_dest(): void {
         global $USER, $CFG, $DB;
 
         $this->resetAfterTest(true);
@@ -485,7 +485,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_cohorts without permission on the src category.
      */
-    public function test_update_cohorts_missing_src() {
+    public function test_update_cohorts_missing_src(): void {
         global $USER, $CFG, $DB;
 
         $this->resetAfterTest(true);
@@ -526,7 +526,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_cohort_members
      */
-    public function test_add_cohort_members() {
+    public function test_add_cohort_members(): void {
         global $DB;
 
         $this->resetAfterTest(true); // Reset all changes automatically after this test.
@@ -577,7 +577,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_cohort_members
      */
-    public function test_delete_cohort_members() {
+    public function test_delete_cohort_members(): void {
         global $DB;
 
         $this->resetAfterTest(true); // Reset all changes automatically after this test.
@@ -634,7 +634,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Search cohorts.
      */
-    public function test_search_cohorts() {
+    public function test_search_cohorts(): void {
         global $DB, $CFG;
         $this->resetAfterTest(true);
 

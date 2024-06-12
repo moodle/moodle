@@ -40,7 +40,7 @@ class phpxmlrpc_test extends \basic_testcase {
      *
      * @coversNothing
      */
-    public function test_phpxmlrpc_availability() {
+    public function test_phpxmlrpc_availability(): void {
         // All these classes need to be at hand.
         $this->assertInstanceOf(\PhpXmlRpc\Client::class, new Client('https://example.com'));
         $this->assertInstanceOf(\PhpXmlRpc\Request::class, new Request(''));

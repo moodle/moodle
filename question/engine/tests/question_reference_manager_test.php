@@ -32,7 +32,7 @@ use core_question_generator;
  */
 class question_reference_manager_test extends advanced_testcase {
 
-    public function test_questions_with_references() {
+    public function test_questions_with_references(): void {
         global $DB;
         $this->resetAfterTest();
 

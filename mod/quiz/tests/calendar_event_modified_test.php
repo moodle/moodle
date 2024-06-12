@@ -94,7 +94,7 @@ class calendar_event_modified_test extends \advanced_testcase {
     /**
      * An unkown event type should not change the quiz instance.
      */
-    public function test_mod_quiz_core_calendar_event_timestart_updated_unknown_event() {
+    public function test_mod_quiz_core_calendar_event_timestart_updated_unknown_event(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -118,7 +118,7 @@ class calendar_event_modified_test extends \advanced_testcase {
      * A QUIZ_EVENT_TYPE_OPEN event should update the timeopen property of
      * the quiz activity.
      */
-    public function test_mod_quiz_core_calendar_event_timestart_updated_open_event() {
+    public function test_mod_quiz_core_calendar_event_timestart_updated_open_event(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -152,7 +152,7 @@ class calendar_event_modified_test extends \advanced_testcase {
      * A QUIZ_EVENT_TYPE_CLOSE event should update the timeclose property of
      * the quiz activity.
      */
-    public function test_mod_quiz_core_calendar_event_timestart_updated_close_event() {
+    public function test_mod_quiz_core_calendar_event_timestart_updated_close_event(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -186,7 +186,7 @@ class calendar_event_modified_test extends \advanced_testcase {
      * A QUIZ_EVENT_TYPE_OPEN event should not update the timeopen property of
      * the quiz activity if it's an override.
      */
-    public function test_mod_quiz_core_calendar_event_timestart_updated_open_event_override() {
+    public function test_mod_quiz_core_calendar_event_timestart_updated_open_event_override(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -229,7 +229,7 @@ class calendar_event_modified_test extends \advanced_testcase {
      * then the callback should not update the quiz activity otherwise that
      * would be a security issue.
      */
-    public function test_student_role_cant_update_quiz_activity() {
+    public function test_student_role_cant_update_quiz_activity(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -273,7 +273,7 @@ class calendar_event_modified_test extends \advanced_testcase {
      * able to update the quiz activity dates by changing the calendar
      * event.
      */
-    public function test_teacher_role_can_update_quiz_activity() {
+    public function test_teacher_role_can_update_quiz_activity(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -327,7 +327,7 @@ class calendar_event_modified_test extends \advanced_testcase {
     /**
      * An unkown event type should not have any limits
      */
-    public function test_mod_quiz_core_calendar_get_valid_event_timestart_range_unknown_event() {
+    public function test_mod_quiz_core_calendar_get_valid_event_timestart_range_unknown_event(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -351,7 +351,7 @@ class calendar_event_modified_test extends \advanced_testcase {
     /**
      * The open event should be limited by the quiz's timeclose property, if it's set.
      */
-    public function test_mod_quiz_core_calendar_get_valid_event_timestart_range_open_event() {
+    public function test_mod_quiz_core_calendar_get_valid_event_timestart_range_open_event(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -384,7 +384,7 @@ class calendar_event_modified_test extends \advanced_testcase {
     /**
      * An override event should not have any limits.
      */
-    public function test_mod_quiz_core_calendar_get_valid_event_timestart_range_override_event() {
+    public function test_mod_quiz_core_calendar_get_valid_event_timestart_range_override_event(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -420,7 +420,7 @@ class calendar_event_modified_test extends \advanced_testcase {
     /**
      * The close event should be limited by the quiz's timeopen property, if it's set.
      */
-    public function test_mod_quiz_core_calendar_get_valid_event_timestart_range_close_event() {
+    public function test_mod_quiz_core_calendar_get_valid_event_timestart_range_close_event(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -454,7 +454,7 @@ class calendar_event_modified_test extends \advanced_testcase {
      * When the close date event is changed and it results in the time close value of
      * the quiz being updated then the open quiz attempts should also be updated.
      */
-    public function test_core_calendar_event_timestart_updated_update_quiz_attempt() {
+    public function test_core_calendar_event_timestart_updated_update_quiz_attempt(): void {
         global $DB;
 
         $this->resetAfterTest();

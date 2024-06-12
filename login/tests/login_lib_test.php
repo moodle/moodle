@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/login/lib.php');
  */
 class login_lib_test extends \advanced_testcase {
 
-    public function test_core_login_process_password_reset_one_time_without_username_protection() {
+    public function test_core_login_process_password_reset_one_time_without_username_protection(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -59,7 +59,7 @@ class login_lib_test extends \advanced_testcase {
         $sink->clear();
     }
 
-    public function test_core_login_process_password_reset_two_consecutive_times_without_username_protection() {
+    public function test_core_login_process_password_reset_two_consecutive_times_without_username_protection(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -84,7 +84,7 @@ class login_lib_test extends \advanced_testcase {
         $sink->clear();
     }
 
-    public function test_core_login_process_password_reset_three_consecutive_times_without_username_protection() {
+    public function test_core_login_process_password_reset_three_consecutive_times_without_username_protection(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -105,7 +105,7 @@ class login_lib_test extends \advanced_testcase {
         $this->assertCount(2, $emails); // Third time email is not sent.
     }
 
-    public function test_core_login_process_password_reset_one_time_with_username_protection() {
+    public function test_core_login_process_password_reset_one_time_with_username_protection(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -127,7 +127,7 @@ class login_lib_test extends \advanced_testcase {
         $sink->clear();
     }
 
-    public function test_core_login_process_password_reset_with_preexisting_expired_request_without_username_protection() {
+    public function test_core_login_process_password_reset_with_preexisting_expired_request_without_username_protection(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest();
@@ -161,7 +161,7 @@ class login_lib_test extends \advanced_testcase {
         $sink->clear();
     }
 
-    public function test_core_login_process_password_reset_disabled_auth() {
+    public function test_core_login_process_password_reset_disabled_auth(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user(array('auth' => 'oauth2'));
 
@@ -179,7 +179,7 @@ class login_lib_test extends \advanced_testcase {
         $sink->clear();
     }
 
-    public function test_core_login_process_password_reset_auth_not_supporting_email_reset() {
+    public function test_core_login_process_password_reset_auth_not_supporting_email_reset(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -200,13 +200,13 @@ class login_lib_test extends \advanced_testcase {
         $sink->clear();
     }
 
-    public function test_core_login_process_password_reset_missing_parameters() {
+    public function test_core_login_process_password_reset_missing_parameters(): void {
         $this->expectException('moodle_exception');
         $this->expectExceptionMessage(get_string('cannotmailconfirm', 'error'));
         core_login_process_password_reset(null, null);
     }
 
-    public function test_core_login_process_password_reset_invalid_username_with_username_protection() {
+    public function test_core_login_process_password_reset_invalid_username_with_username_protection(): void {
         global $CFG;
         $this->resetAfterTest();
         $CFG->protectusernames = 1;
@@ -214,7 +214,7 @@ class login_lib_test extends \advanced_testcase {
         $this->assertEquals('emailpasswordconfirmmaybesent', $status);
     }
 
-    public function test_core_login_process_password_reset_invalid_username_without_username_protection() {
+    public function test_core_login_process_password_reset_invalid_username_without_username_protection(): void {
         global $CFG;
         $this->resetAfterTest();
         $CFG->protectusernames = 0;
@@ -222,7 +222,7 @@ class login_lib_test extends \advanced_testcase {
         $this->assertEquals('emailpasswordconfirmnotsent', $status);
     }
 
-    public function test_core_login_process_password_reset_invalid_email_without_username_protection() {
+    public function test_core_login_process_password_reset_invalid_email_without_username_protection(): void {
         global $CFG;
         $this->resetAfterTest();
         $CFG->protectusernames = 0;
@@ -328,7 +328,7 @@ class login_lib_test extends \advanced_testcase {
      * @param array $errors Key-value array containing error messages for the username and email fields.
      * @param array $options Options for $CFG->protectusernames, $CFG->allowaccountssameemail and $user->confirmed.
      */
-    public function test_core_login_validate_forgot_password_data($data, $errors = [], $options = []) {
+    public function test_core_login_validate_forgot_password_data($data, $errors = [], $options = []): void {
         $this->resetAfterTest();
 
         // Set config settings we need for our environment.
@@ -383,7 +383,7 @@ class login_lib_test extends \advanced_testcase {
      *
      * Email addresses should be handled as case-insensitive but accent sensitive.
      */
-    public function test_core_login_process_password_reset_email_sensitivity() {
+    public function test_core_login_process_password_reset_email_sensitivity(): void {
         global $CFG;
         require_once($CFG->libdir.'/phpmailer/moodle_phpmailer.php');
 

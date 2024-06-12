@@ -77,7 +77,7 @@ class graphlib_test extends \basic_testcase {
      * @param array $mock
      * @return void
      */
-    public function test_graphlib($mock) {
+    public function test_graphlib($mock): void {
         $graph = new \graph(300, 200);
         ob_start();
         $graph->parameter['title'] = strip_tags(format_string($mock['survey_name'], true));

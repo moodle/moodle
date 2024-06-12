@@ -50,7 +50,7 @@ class completion_test extends \advanced_testcase {
      * Tests get_pages for transitive dependencies.
      * @throws coding_exception
      */
-    public function test_get_pages() {
+    public function test_get_pages(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

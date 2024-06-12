@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/question/engine/upgrade/tests/helper.php');
  */
 class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base {
 
-    public function test_random_deferredfeedback_history620() {
+    public function test_random_deferredfeedback_history620(): void {
         $quiz = (object) array(
             'id' => '2177',
             'course' => '5174',
@@ -259,7 +259,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_random_deferredfeedback_qsession4225582() {
+    public function test_random_deferredfeedback_qsession4225582(): void {
         $quiz = (object) array(
             'id' => '4410',
             'course' => '5444',
@@ -507,7 +507,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_random_deferredfeedback_qsession3481928() {
+    public function test_random_deferredfeedback_qsession3481928(): void {
         $quiz = (object) array(
             'id' => '2624',
             'course' => '5233',
@@ -776,7 +776,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_numerical_deferredfeedback_qsession55() {
+    public function test_numerical_deferredfeedback_qsession55(): void {
         $quiz = (object) array(
             'id' => '2',
             'course' => '2',

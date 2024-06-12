@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  */
 class competency_rule_test extends \externallib_advanced_testcase {
 
-    public function test_rule_all_matching() {
+    public function test_rule_all_matching(): void {
         $this->resetAfterTest(true);
 
         $this->setAdminUser();
@@ -82,7 +82,7 @@ class competency_rule_test extends \externallib_advanced_testcase {
         $this->assertFalse($cr->matches($uc13));
     }
 
-    public function test_rule_points_validation() {
+    public function test_rule_points_validation(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
@@ -212,7 +212,7 @@ class competency_rule_test extends \externallib_advanced_testcase {
         $this->assertTrue($rule->validate_config($config));
     }
 
-    public function test_rule_points_matching() {
+    public function test_rule_points_matching(): void {
         $this->resetAfterTest(true);
 
         $this->setAdminUser();

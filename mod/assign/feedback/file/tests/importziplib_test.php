@@ -47,7 +47,7 @@ class importziplib_test extends \advanced_testcase {
     /**
      * Test the assignfeedback_file_zip_importer->is_valid_filename_for_import() method.
      */
-    public function test_is_valid_filename_for_import() {
+    public function test_is_valid_filename_for_import(): void {
         // Do the initial assign setup.
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();

@@ -56,7 +56,7 @@ class content_test extends \advanced_testcase {
      *
      * @covers ::get_name
      */
-    public function test_get_name() {
+    public function test_get_name(): void {
         $this->resetAfterTest();
 
         // Create content.
@@ -96,7 +96,7 @@ class content_test extends \advanced_testcase {
      *
      * @covers ::set_name
      */
-    public function test_set_name(string $newname, string $expected) {
+    public function test_set_name(string $newname, string $expected): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -125,7 +125,7 @@ class content_test extends \advanced_testcase {
      *
      * @covers ::get_content_type
      */
-    public function test_get_content_type() {
+    public function test_get_content_type(): void {
         $this->resetAfterTest();
 
         // Create content.
@@ -143,7 +143,7 @@ class content_test extends \advanced_testcase {
      *
      * @covers ::set_configdata
      */
-    public function test_configdata_changes() {
+    public function test_configdata_changes(): void {
         $this->resetAfterTest();
 
         $configdata = "{img: 'icon.svg'}";
@@ -166,7 +166,7 @@ class content_test extends \advanced_testcase {
      *
      * @covers ::set_contextid
      */
-    public function test_set_contextid() {
+    public function test_set_contextid(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $context = context_system::instance();
@@ -197,7 +197,7 @@ class content_test extends \advanced_testcase {
      *
      * @covers ::set_visibility
      */
-    public function test_set_visibility() {
+    public function test_set_visibility(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $context = context_system::instance();
@@ -333,7 +333,7 @@ class content_test extends \advanced_testcase {
      *
      * @covers ::is_view_allowed
      */
-    public function test_is_view_allowed() {
+    public function test_is_view_allowed(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $context = context_system::instance();
@@ -371,7 +371,7 @@ class content_test extends \advanced_testcase {
      *
      * @covers ::get_uses
      */
-    public function test_get_uses() {
+    public function test_get_uses(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $context = context_system::instance();

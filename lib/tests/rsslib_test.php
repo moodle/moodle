@@ -45,7 +45,7 @@ class rsslib_test extends \advanced_testcase {
         \moodle_simplepie::reset_cache();
     }
 
-    public function test_getfeed() {
+    public function test_getfeed(): void {
         $feed = new \moodle_simplepie($this->getExternalTestFileUrl('/rsstest.xml'), self::TIMEOUT);
 
         $this->assertInstanceOf('\moodle_simplepie', $feed);
@@ -99,7 +99,7 @@ EOD;
     /*
      * Test retrieving a url which doesn't exist.
      */
-    public function test_failurl() {
+    public function test_failurl(): void {
         global $CFG;
 
         // We do not want this in php error log.
@@ -113,7 +113,7 @@ EOD;
     /*
      * Test retrieving a url with broken proxy configuration.
      */
-    public function test_failproxy() {
+    public function test_failproxy(): void {
         global $CFG;
 
         $oldproxy = $CFG->proxyhost;
@@ -133,7 +133,7 @@ EOD;
     /*
      * Test retrieving a url which sends a redirect to another valid feed.
      */
-    public function test_redirect() {
+    public function test_redirect(): void {
         $feed = new \moodle_simplepie($this->getExternalTestFileUrl('/rss_redir.php'), self::TIMEOUT);
 
         $this->assertNull($feed->error());
@@ -146,7 +146,7 @@ EOD;
      *
      * @covers ::rss_get_userid_from_token
      */
-    public function test_rss_get_userid_from_token() {
+    public function test_rss_get_userid_from_token(): void {
         global $USER;
 
         $this->resetAfterTest();

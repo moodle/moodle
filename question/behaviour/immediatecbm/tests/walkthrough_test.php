@@ -34,7 +34,7 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class walkthrough_test extends \qbehaviour_walkthrough_test_base {
-    public function test_immediatecbm_feedback_multichoice_right() {
+    public function test_immediatecbm_feedback_multichoice_right(): void {
 
         // Create a true-false question with correct answer true.
         $mc = \test_question_maker::make_a_multichoice_single_question();
@@ -128,7 +128,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assertEqualsWithDelta($autogradedstep->get_fraction(), -2, 0.0000001);
     }
 
-    public function test_immediatecbm_feedback_multichoice_try_to_submit_blank() {
+    public function test_immediatecbm_feedback_multichoice_try_to_submit_blank(): void {
 
         // Create a true-false question with correct answer true.
         $mc = \test_question_maker::make_a_multichoice_single_question();
@@ -181,7 +181,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 new \question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
     }
 
-    public function test_immediatecbm_feedback_shortanswer_try_to_submit_no_certainty() {
+    public function test_immediatecbm_feedback_shortanswer_try_to_submit_no_certainty(): void {
 
         // Create a short answer question with correct answer true.
         $sa = \test_question_maker::make_question('shortanswer');
@@ -215,7 +215,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_does_not_contain_validation_error_expectation());
     }
 
-    public function test_immediatecbm_feedback_multichoice_wrong_on_finish() {
+    public function test_immediatecbm_feedback_multichoice_wrong_on_finish(): void {
 
         // Create a true-false question with correct answer true.
         $mc = \test_question_maker::make_a_multichoice_single_question();
@@ -261,7 +261,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_incorrect_expectation());
     }
 
-    public function test_immediatecbm_cbm_truefalse_no_certainty_feedback_when_not_answered() {
+    public function test_immediatecbm_cbm_truefalse_no_certainty_feedback_when_not_answered(): void {
 
         // Create a true-false question with correct answer true.
         $tf = \test_question_maker::make_question('truefalse', 'true');

@@ -36,7 +36,7 @@ class mathslib_test extends \basic_testcase {
     /**
      * Tests the basic formula evaluation.
      */
-    public function test__basic() {
+    public function test__basic(): void {
         $formula = new calc_formula('=1+2');
         $res = $formula->evaluate();
         $this->assertSame($res, 3, '3+1 is: %s');
@@ -45,7 +45,7 @@ class mathslib_test extends \basic_testcase {
     /**
      * Tests the formula params.
      */
-    public function test__params() {
+    public function test__params(): void {
         $formula = new calc_formula('=a+b+c', array('a'=>10, 'b'=>20, 'c'=>30));
         $res = $formula->evaluate();
         $this->assertSame(60, $res, '10+20+30 is: %s');
@@ -54,7 +54,7 @@ class mathslib_test extends \basic_testcase {
     /**
      * Tests the changed params.
      */
-    public function test__changing_params() {
+    public function test__changing_params(): void {
         $formula = new calc_formula('=a+b+c', array('a'=>10, 'b'=>20, 'c'=>30));
         $res = $formula->evaluate();
         $this->assertSame(60, $res, '10+20+30 is: %s');
@@ -66,13 +66,13 @@ class mathslib_test extends \basic_testcase {
     /**
      * Tests the spreadsheet emulation function in formula.
      */
-    public function test__calc_function() {
+    public function test__calc_function(): void {
         $formula = new calc_formula('=sum(a, b, c)', array('a'=>10, 'b'=>20, 'c'=>30));
         $res = $formula->evaluate();
         $this->assertSame(60, $res, 'sum(a, b, c) is: %s');
     }
 
-    public function test_other_functions() {
+    public function test_other_functions(): void {
         $formula = new calc_formula('=average(1,2,3)');
         $this->assertSame(2, $formula->evaluate());
 
@@ -83,7 +83,7 @@ class mathslib_test extends \basic_testcase {
         $this->assertSame(8, $formula->evaluate());
     }
 
-    public function test_conditional_functions() {
+    public function test_conditional_functions(): void {
         // Test ifthenelse.
         $formula = new calc_formula('=ifthenelse(1,2,3)');
         $this->assertSame(2, (int)$formula->evaluate());
@@ -145,7 +145,7 @@ class mathslib_test extends \basic_testcase {
         $this->assertSame(0, (int) $formula->evaluate());
     }
 
-    public function test_conditional_operators() {
+    public function test_conditional_operators(): void {
         $formula = new calc_formula('=2==2');
         $this->assertSame(1, $formula->evaluate());
 
@@ -168,7 +168,7 @@ class mathslib_test extends \basic_testcase {
     /**
      * Tests the min and max functions.
      */
-    public function test__minmax_function() {
+    public function test__minmax_function(): void {
         $formula = new calc_formula('=min(a, b, c)', array('a'=>10, 'b'=>20, 'c'=>30));
         $res = $formula->evaluate();
         $this->assertSame(10, $res, 'minimum is: %s');
@@ -180,7 +180,7 @@ class mathslib_test extends \basic_testcase {
     /**
      * Tests special chars.
      */
-    public function test__specialchars() {
+    public function test__specialchars(): void {
         $formula = new calc_formula('=gi1 + gi2 + gi11', array('gi1'=>10, 'gi2'=>20, 'gi11'=>30));
         $res = $formula->evaluate();
         $this->assertSame(60, $res, 'sum is: %s');
@@ -189,7 +189,7 @@ class mathslib_test extends \basic_testcase {
     /**
      * Tests some slightly more complex expressions.
      */
-    public function test__more_complex_expressions() {
+    public function test__more_complex_expressions(): void {
         $formula = new calc_formula('=pi() + a', array('a'=>10));
         $res = $formula->evaluate();
         $this->assertSame(pi()+10, $res);
@@ -204,7 +204,7 @@ class mathslib_test extends \basic_testcase {
     /**
      * Tests some slightly more complex expressions.
      */
-    public function test__error_handling() {
+    public function test__error_handling(): void {
         $formula = new calc_formula('=pi( + a', array('a'=>10));
         $res = $formula->evaluate();
         $this->assertFalse($res);
@@ -222,7 +222,7 @@ class mathslib_test extends \basic_testcase {
 
     }
 
-    public function test_rounding_function() {
+    public function test_rounding_function(): void {
         // Rounding to the default number of decimal places.
         // The default == 0.
 
@@ -295,7 +295,7 @@ class mathslib_test extends \basic_testcase {
         $this->assertSame(120.0, $formula->evaluate());
     }
 
-    public function test_scientific_notation() {
+    public function test_scientific_notation(): void {
         $formula = new calc_formula('=10e10');
         $this->assertEqualsWithDelta(1e11, $formula->evaluate(), 1e11 * 1e-15);
 
@@ -312,7 +312,7 @@ class mathslib_test extends \basic_testcase {
         $this->assertEqualsWithDelta(1e22, $formula->evaluate(), 1e22 * 1e-15);
     }
 
-    public function test_rand_float() {
+    public function test_rand_float(): void {
         $formula = new calc_formula('=rand_float()');
         $result = $formula->evaluate();
         $this->assertTrue(is_float($result));

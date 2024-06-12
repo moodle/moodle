@@ -92,7 +92,7 @@ class builders_exported_posts_test extends \advanced_testcase {
      * Test the build function throws exception if not given all of the forums for
      * the list of posts.
      */
-    public function test_build_throws_exception_on_missing_forums() {
+    public function test_build_throws_exception_on_missing_forums(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -117,7 +117,7 @@ class builders_exported_posts_test extends \advanced_testcase {
      * Test the build function throws exception if not given all of the discussions for
      * the list of posts.
      */
-    public function test_build_throws_exception_on_missing_discussions() {
+    public function test_build_throws_exception_on_missing_discussions(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -142,7 +142,7 @@ class builders_exported_posts_test extends \advanced_testcase {
      * Test the build function returns the exported posts in the order that the posts are
      * given.
      */
-    public function test_build_returns_posts_in_order() {
+    public function test_build_returns_posts_in_order(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -185,7 +185,7 @@ class builders_exported_posts_test extends \advanced_testcase {
     /**
      * Test the build function loads authors.
      */
-    public function test_build_loads_authors() {
+    public function test_build_loads_authors(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -230,7 +230,7 @@ class builders_exported_posts_test extends \advanced_testcase {
     /**
      * Test the build function loads attachments.
      */
-    public function test_build_loads_attachments() {
+    public function test_build_loads_attachments(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -306,7 +306,7 @@ class builders_exported_posts_test extends \advanced_testcase {
     /**
      * Test the build function loads author groups.
      */
-    public function test_build_loads_author_groups() {
+    public function test_build_loads_author_groups(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -376,7 +376,7 @@ class builders_exported_posts_test extends \advanced_testcase {
     /**
      * Test the build function loads tags.
      */
-    public function test_build_loads_tags() {
+    public function test_build_loads_tags(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -437,7 +437,7 @@ class builders_exported_posts_test extends \advanced_testcase {
     /**
      * Test the build function loads read_receipts.
      */
-    public function test_build_loads_read_receipts() {
+    public function test_build_loads_read_receipts(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();

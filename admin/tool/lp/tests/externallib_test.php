@@ -131,7 +131,7 @@ class externallib_test extends externallib_advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
     }
 
-    public function test_search_users_by_capability() {
+    public function test_search_users_by_capability(): void {
         global $CFG;
         $this->resetAfterTest(true);
 
@@ -214,7 +214,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Ensures that overrides, as well as system permissions, are respected.
      */
-    public function test_search_users_by_capability_the_comeback() {
+    public function test_search_users_by_capability_the_comeback(): void {
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
 
@@ -275,7 +275,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertArrayHasKey($slave1->id, $result['users']);
     }
 
-    public function test_search_users() {
+    public function test_search_users(): void {
         global $CFG;
         $this->resetAfterTest(true);
 
@@ -398,7 +398,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEmpty($result['users'][0]['institution']);
     }
 
-    public function test_data_for_user_competency_summary_in_plan() {
+    public function test_data_for_user_competency_summary_in_plan(): void {
         global $CFG;
 
         $this->setUser($this->creator);
@@ -428,7 +428,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals('A', $summary->usercompetencysummary->evidence[1]->gradename);
     }
 
-    public function test_data_for_user_competency_summary() {
+    public function test_data_for_user_competency_summary(): void {
         $this->setUser($this->creator);
 
         $dg = $this->getDataGenerator();
@@ -446,7 +446,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals('A', $summary->evidence[1]->gradename);
     }
 
-    public function test_data_for_course_competency_page() {
+    public function test_data_for_course_competency_page(): void {
         $this->setAdminUser();
 
         $dg = $this->getDataGenerator();

@@ -35,7 +35,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test the comment validation callback.
      */
-    public function test_qbank_comment_comment_validate() {
+    public function test_qbank_comment_comment_validate(): void {
         $commentparams = new \stdClass();
         $commentparams->commentarea = 'question';
         $commentparams->component = 'qbank_comment';
@@ -53,7 +53,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test the comment display callback.
      */
-    public function test_qbank_comment_comment_display() {
+    public function test_qbank_comment_comment_display(): void {
         $comment = new \stdClass();
         $comment->text = 'test';
         $comments = [$comment];
@@ -75,7 +75,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test the comment preview callback.
      */
-    public function test_qbank_comment_preview_display() {
+    public function test_qbank_comment_preview_display(): void {
         $this->resetAfterTest();
         global $PAGE;
         $PAGE->set_url('/');
@@ -102,7 +102,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test the comment preview callback.
      */
-    public function test_qbank_comment_output_fragment_question_comment() {
+    public function test_qbank_comment_output_fragment_question_comment(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         global $PAGE;

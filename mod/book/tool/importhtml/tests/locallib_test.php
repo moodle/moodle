@@ -43,7 +43,7 @@ class locallib_test extends \advanced_testcase {
         $this->resetAfterTest();
     }
 
-    public function test_import_chapters_events() {
+    public function test_import_chapters_events(): void {
         $course = $this->getDataGenerator()->create_course();
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
         $context = \context_module::instance($book->cmid);

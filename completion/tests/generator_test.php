@@ -40,7 +40,7 @@ class generator_test extends \advanced_testcase {
      *
      * @covers ::create_default_completion
      */
-    public function test_create_default_completion($course, $module, bool $exception, int $count, int $completion = 0) {
+    public function test_create_default_completion($course, $module, bool $exception, int $count, int $completion = 0): void {
         global $DB;
 
         $this->resetAfterTest(true);

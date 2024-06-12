@@ -43,7 +43,7 @@ class reset_test extends \advanced_testcase {
     /**
      * Reset course item test
      */
-    public function test_reset_course_items() {
+    public function test_reset_course_items(): void {
         global $CFG;
         $this->resetAfterTest();
         $CFG->bigbluebuttonbn_recordings_enabled = false;
@@ -57,7 +57,7 @@ class reset_test extends \advanced_testcase {
     /**
      * Reset get_status test
      */
-    public function test_reset_getstatus() {
+    public function test_reset_getstatus(): void {
         $this->resetAfterTest();
         $result = reset::reset_getstatus('events');
         $this->assertEquals([
@@ -70,7 +70,7 @@ class reset_test extends \advanced_testcase {
     /**
      * Reset event test
      */
-    public function test_reset_events() {
+    public function test_reset_events(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -92,7 +92,7 @@ class reset_test extends \advanced_testcase {
     /**
      * Reset tags test
      */
-    public function test_reset_tags() {
+    public function test_reset_tags(): void {
         $this->resetAfterTest();
         list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance(null,
                 ['course' => $this->get_course()->id],
@@ -109,7 +109,7 @@ class reset_test extends \advanced_testcase {
     /**
      * Reset recordings test
      */
-    public function test_reset_recordings() {
+    public function test_reset_recordings(): void {
         $this->initialise_mock_server();
         $this->resetAfterTest();
         list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance(null,

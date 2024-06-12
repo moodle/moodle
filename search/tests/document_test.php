@@ -65,7 +65,7 @@ class document_test extends \advanced_testcase {
      * @covers ::export_for_template
      * @return void
      */
-    public function test_search_user_accesses() {
+    public function test_search_user_accesses(): void {
         global $PAGE;
 
         $area = new mock_search_area();
@@ -114,7 +114,7 @@ class document_test extends \advanced_testcase {
      *
      * @covers ::set_doc_icon
      */
-    public function test_get_and_set_doc_icon() {
+    public function test_get_and_set_doc_icon(): void {
         $document = $this->getMockBuilder('\core_search\document')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
@@ -151,7 +151,7 @@ class document_test extends \advanced_testcase {
         array $capexceptions = [],
         bool $expected = true,
         bool $owndocument = false
-    ) {
+    ): void {
         global $DB, $PAGE;
 
         $area = new mock_search_area();

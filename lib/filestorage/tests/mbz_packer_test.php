@@ -30,7 +30,7 @@ require_once($CFG->libdir . '/filestorage/file_progress.php');
  */
 class mbz_packer_test extends \advanced_testcase {
 
-    public function test_archive_with_both_options() {
+    public function test_archive_with_both_options(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -99,7 +99,7 @@ class mbz_packer_test extends \advanced_testcase {
     /**
      * @dataProvider usezipbackups_provider
      */
-    public function test_extract_to_pathname_returnvalue_successful($usezipbackups) {
+    public function test_extract_to_pathname_returnvalue_successful($usezipbackups): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -122,7 +122,7 @@ class mbz_packer_test extends \advanced_testcase {
     /**
      * @dataProvider usezipbackups_provider
      */
-    public function test_extract_to_pathname_returnvalue_failure($usezipbackups) {
+    public function test_extract_to_pathname_returnvalue_failure($usezipbackups): void {
         global $CFG;
         $this->resetAfterTest();
 

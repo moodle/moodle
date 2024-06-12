@@ -42,7 +42,7 @@ class report_graderlib_test extends \advanced_testcase {
      *
      * process_data() processes submitted grade and feedback data
      */
-    public function test_process_data() {
+    public function test_process_data(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);
@@ -112,7 +112,7 @@ class report_graderlib_test extends \advanced_testcase {
         $this->assertEquals($studentgrade->finalgrade, $toobig);
     }
 
-    public function test_collapsed_preferences() {
+    public function test_collapsed_preferences(): void {
         $this->resetAfterTest(true);
 
         $emptypreferences = array('aggregatesonly' => array(), 'gradesonly' => array());
@@ -239,7 +239,7 @@ class report_graderlib_test extends \advanced_testcase {
      * @covers \grade_report_grader::get_collapsed_preferences
      * @covers \grade_report_grader::filter_collapsed_categories
      */
-    public function test_old_collapsed_preferences() {
+    public function test_old_collapsed_preferences(): void {
         $this->resetAfterTest(true);
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -459,7 +459,7 @@ class report_graderlib_test extends \advanced_testcase {
      * Previously, with an ungraded quiz (which results in a grade item with type GRADETYPE_NONE)
      * there was a bug in get_right_rows in some situations.
      */
-    public function test_get_right_rows() {
+    public function test_get_right_rows(): void {
         global $USER, $DB;
         $this->resetAfterTest(true);
 

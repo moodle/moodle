@@ -52,7 +52,7 @@ class get_h5pactivity_access_information_test extends externallib_advanced_testc
      * @param int $enabletracking if tracking is enabled
      * @param array $enabledcaps capabilities enabled
      */
-    public function test_get_h5pactivity_access_information(string $role, int $enabletracking, array $enabledcaps) {
+    public function test_get_h5pactivity_access_information(string $role, int $enabletracking, array $enabledcaps): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -124,7 +124,7 @@ class get_h5pactivity_access_information_test extends externallib_advanced_testc
     /**
      * Test dml_missing_record_exception in get_h5pactivity_access_information.
      */
-    public function test_dml_missing_record_exception() {
+    public function test_dml_missing_record_exception(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

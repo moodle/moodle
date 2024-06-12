@@ -134,7 +134,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_mod_workshop_get_workshops_by_courses
      */
-    public function test_mod_workshop_get_workshops_by_courses() {
+    public function test_mod_workshop_get_workshops_by_courses(): void {
 
         // Create additional course.
         $course2 = self::getDataGenerator()->create_course();
@@ -234,7 +234,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test mod_workshop_get_workshop_access_information for students.
      */
-    public function test_mod_workshop_get_workshop_access_information_student() {
+    public function test_mod_workshop_get_workshop_access_information_student(): void {
 
         self::setUser($this->student);
         $result = mod_workshop_external::get_workshop_access_information($this->workshop->id);
@@ -310,7 +310,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test mod_workshop_get_workshop_access_information for teachers.
      */
-    public function test_mod_workshop_get_workshop_access_information_teacher() {
+    public function test_mod_workshop_get_workshop_access_information_teacher(): void {
 
         self::setUser($this->teacher);
         $result = mod_workshop_external::get_workshop_access_information($this->workshop->id);
@@ -339,7 +339,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test mod_workshop_get_user_plan for students.
      */
-    public function test_mod_workshop_get_user_plan_student() {
+    public function test_mod_workshop_get_user_plan_student(): void {
 
         self::setUser($this->student);
         $result = mod_workshop_external::get_user_plan($this->workshop->id);
@@ -364,7 +364,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test mod_workshop_get_user_plan for teachers.
      */
-    public function test_mod_workshop_get_user_plan_teacher() {
+    public function test_mod_workshop_get_user_plan_teacher(): void {
 
         self::setUser($this->teacher);
         $result = mod_workshop_external::get_user_plan($this->workshop->id);
@@ -409,7 +409,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_view_workshop invalid id.
      */
-    public function test_view_workshop_invalid_id() {
+    public function test_view_workshop_invalid_id(): void {
         $this->expectException('moodle_exception');
         mod_workshop_external::view_workshop(0);
     }
@@ -417,7 +417,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_view_workshop user not enrolled.
      */
-    public function test_view_workshop_user_not_enrolled() {
+    public function test_view_workshop_user_not_enrolled(): void {
         // Test not-enrolled user.
         $usernotenrolled = self::getDataGenerator()->create_user();
         $this->setUser($usernotenrolled);
@@ -428,7 +428,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_view_workshop user student.
      */
-    public function test_view_workshop_user_student() {
+    public function test_view_workshop_user_student(): void {
         // Test user with full capabilities.
         $this->setUser($this->student);
 
@@ -455,7 +455,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_view_workshop user missing capabilities.
      */
-    public function test_view_workshop_user_missing_capabilities() {
+    public function test_view_workshop_user_missing_capabilities(): void {
         // Test user with no capabilities.
         // We need a explicit prohibit since this capability is only defined in authenticated user and guest roles.
         assign_capability('mod/workshop:view', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
@@ -471,7 +471,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_add_submission.
      */
-    public function test_add_submission() {
+    public function test_add_submission(): void {
         $fs = get_file_storage();
 
         // Test user with full capabilities.
@@ -542,7 +542,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_add_submission invalid phase.
      */
-    public function test_add_submission_invalid_phase() {
+    public function test_add_submission_invalid_phase(): void {
         $this->setUser($this->student);
 
         $this->expectException('moodle_exception');
@@ -552,7 +552,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_add_submission empty title.
      */
-    public function test_add_submission_empty_title() {
+    public function test_add_submission_empty_title(): void {
         $this->setUser($this->student);
 
         // Switch to submission phase.
@@ -566,7 +566,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_add_submission already added.
      */
-    public function test_add_submission_already_added() {
+    public function test_add_submission_already_added(): void {
         $this->setUser($this->student);
 
         $usercontext = \context_user::instance($this->student->id);
@@ -648,7 +648,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_update_submission.
      */
-    public function test_update_submission() {
+    public function test_update_submission(): void {
 
         // Create the submission that will be updated.
         $submissionid = $this->create_test_submission($this->student);
@@ -718,7 +718,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_update_submission belonging to other user.
      */
-    public function test_update_submission_of_other_user() {
+    public function test_update_submission_of_other_user(): void {
         // Create the submission that will be updated.
         $submissionid = $this->create_test_submission($this->student);
 
@@ -731,7 +731,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_update_submission invalid phase.
      */
-    public function test_update_submission_invalid_phase() {
+    public function test_update_submission_invalid_phase(): void {
         // Create the submission that will be updated.
         $submissionid = $this->create_test_submission($this->student);
 
@@ -748,7 +748,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_update_submission empty title.
      */
-    public function test_update_submission_empty_title() {
+    public function test_update_submission_empty_title(): void {
         // Create the submission that will be updated.
         $submissionid = $this->create_test_submission($this->student);
 
@@ -761,7 +761,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_delete_submission.
      */
-    public function test_delete_submission() {
+    public function test_delete_submission(): void {
 
         // Create the submission that will be deleted.
         $submissionid = $this->create_test_submission($this->student);
@@ -791,7 +791,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_delete_submission_with_assessments.
      */
-    public function test_delete_submission_with_assessments() {
+    public function test_delete_submission_with_assessments(): void {
 
         // Create the submission that will be deleted.
         $submissionid = $this->create_test_submission($this->student);
@@ -810,7 +810,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_delete_submission_invalid_phase.
      */
-    public function test_delete_submission_invalid_phase() {
+    public function test_delete_submission_invalid_phase(): void {
 
         // Create the submission that will be deleted.
         $submissionid = $this->create_test_submission($this->student);
@@ -827,7 +827,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_delete_submission_as_teacher.
      */
-    public function test_delete_submission_as_teacher() {
+    public function test_delete_submission_as_teacher(): void {
 
         // Create the submission that will be deleted.
         $submissionid = $this->create_test_submission($this->student);
@@ -842,7 +842,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_delete_submission_other_user.
      */
-    public function test_delete_submission_other_user() {
+    public function test_delete_submission_other_user(): void {
 
         $anotheruser = self::getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($anotheruser->id, $this->course->id, $this->studentrole->id, 'manual');
@@ -857,7 +857,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_get_submissions_student.
      */
-    public function test_get_submissions_student() {
+    public function test_get_submissions_student(): void {
 
         // Create a couple of submissions with files.
         $firstsubmissionid = $this->create_test_submission($this->student);  // Create submission with files.
@@ -887,7 +887,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_get_submissions_published_student.
      */
-    public function test_get_submissions_published_student() {
+    public function test_get_submissions_published_student(): void {
 
         $workshop = new workshop($this->workshop, $this->cm, $this->course);
         $workshop->switch_phase(workshop::PHASE_CLOSED);
@@ -915,7 +915,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_get_submissions_from_student_with_feedback_from_teacher.
      */
-    public function test_get_submissions_from_student_with_feedback_from_teacher() {
+    public function test_get_submissions_from_student_with_feedback_from_teacher(): void {
         global $DB;
 
         // Create a couple of submissions with files.
@@ -948,7 +948,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_get_submissions_from_students_as_teacher.
      */
-    public function test_get_submissions_from_students_as_teacher() {
+    public function test_get_submissions_from_students_as_teacher(): void {
 
         // Create a couple of submissions with files.
         $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
@@ -982,7 +982,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_get_submission_student.
      */
-    public function test_get_submission_student() {
+    public function test_get_submission_student(): void {
 
         // Create a couple of submissions with files.
         $firstsubmissionid = $this->create_test_submission($this->student);  // Create submission with files.
@@ -1018,7 +1018,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_get_submission_i_reviewed.
      */
-    public function test_get_submission_i_reviewed() {
+    public function test_get_submission_i_reviewed(): void {
 
         // Create a couple of submissions with files.
         $firstsubmissionid = $this->create_test_submission($this->student);  // Create submission with files.
@@ -1044,7 +1044,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_get_submission_other_student.
      */
-    public function test_get_submission_other_student() {
+    public function test_get_submission_other_student(): void {
 
         // Create a couple of submissions with files.
         $firstsubmissionid = $this->create_test_submission($this->student);  // Create submission with files.
@@ -1057,7 +1057,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_get_submission_published_student.
      */
-    public function test_get_submission_published_student() {
+    public function test_get_submission_published_student(): void {
 
         $workshop = new workshop($this->workshop, $this->cm, $this->course);
         $workshop->switch_phase(workshop::PHASE_CLOSED);
@@ -1088,7 +1088,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_get_submission_from_student_with_feedback_from_teacher.
      */
-    public function test_get_submission_from_student_with_feedback_from_teacher() {
+    public function test_get_submission_from_student_with_feedback_from_teacher(): void {
         global $DB;
 
         // Create a couple of submissions with files.
@@ -1139,7 +1139,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_get_submission_from_students_as_teacher.
      */
-    public function test_get_submission_from_students_as_teacher() {
+    public function test_get_submission_from_students_as_teacher(): void {
         // Create a couple of submissions with files.
         $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
         $submissionid1 = $workshopgenerator->create_submission($this->workshop->id, $this->student->id);
@@ -1160,7 +1160,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_submission_assessments_student.
      */
-    public function test_get_submission_assessments_student() {
+    public function test_get_submission_assessments_student(): void {
 
         // Create the submission that will be deleted.
         $submissionid = $this->create_test_submission($this->student);
@@ -1195,7 +1195,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_submission_assessments_invalid_phase.
      */
-    public function test_get_submission_assessments_invalid_phase() {
+    public function test_get_submission_assessments_invalid_phase(): void {
 
         // Create the submission that will be deleted.
         $submissionid = $this->create_test_submission($this->student);
@@ -1213,7 +1213,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_submission_assessments_teacher.
      */
-    public function test_get_submission_assessments_teacher() {
+    public function test_get_submission_assessments_teacher(): void {
 
         // Create the submission that will be deleted.
         $submissionid = $this->create_test_submission($this->student);
@@ -1235,7 +1235,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_assessment_author.
      */
-    public function test_get_assessment_author() {
+    public function test_get_assessment_author(): void {
 
         // Create the submission.
         $submissionid = $this->create_test_submission($this->anotherstudentg1);
@@ -1261,7 +1261,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_assessment_reviewer.
      */
-    public function test_get_assessment_reviewer() {
+    public function test_get_assessment_reviewer(): void {
 
         // Create the submission.
         $submissionid = $this->create_test_submission($this->anotherstudentg1);
@@ -1287,7 +1287,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_assessment_teacher.
      */
-    public function test_get_assessment_teacher() {
+    public function test_get_assessment_teacher(): void {
 
         // Create the submission.
         $submissionid = $this->create_test_submission($this->anotherstudentg1);
@@ -1311,7 +1311,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_assessment_student_invalid_phase.
      */
-    public function test_get_assessment_student_invalid_phase() {
+    public function test_get_assessment_student_invalid_phase(): void {
 
         // Create the submission.
         $submissionid = $this->create_test_submission($this->anotherstudentg1);
@@ -1332,7 +1332,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_assessment_student_invalid_user.
      */
-    public function test_get_assessment_student_invalid_user() {
+    public function test_get_assessment_student_invalid_user(): void {
 
         // Create the submission.
         $submissionid = $this->create_test_submission($this->anotherstudentg1);
@@ -1355,7 +1355,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_assessment_form_definition_reviewer_new_assessment.
      */
-    public function test_get_assessment_form_definition_reviewer_new_assessment() {
+    public function test_get_assessment_form_definition_reviewer_new_assessment(): void {
 
         // Create the submission.
         $submissionid = $this->create_test_submission($this->anotherstudentg1);
@@ -1388,7 +1388,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_assessment_form_definition_teacher_new_assessment.
      */
-    public function test_get_assessment_form_definition_teacher_new_assessment() {
+    public function test_get_assessment_form_definition_teacher_new_assessment(): void {
 
         // Create the submission.
         $submissionid = $this->create_test_submission($this->anotherstudentg1);
@@ -1409,7 +1409,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_assessment_form_definition_invalid_phase.
      */
-    public function test_get_assessment_form_definition_invalid_phase() {
+    public function test_get_assessment_form_definition_invalid_phase(): void {
 
         // Create the submission.
         $submissionid = $this->create_test_submission($this->anotherstudentg1);
@@ -1428,7 +1428,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_reviewer_assessments.
      */
-    public function test_get_reviewer_assessments() {
+    public function test_get_reviewer_assessments(): void {
 
         // Create the submission.
         $submissionid1 = $this->create_test_submission($this->student);
@@ -1471,7 +1471,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_reviewer_assessments_other_student.
      */
-    public function test_get_reviewer_assessments_other_student() {
+    public function test_get_reviewer_assessments_other_student(): void {
 
         $workshop = new workshop($this->workshop, $this->cm, $this->course);
         $workshop->switch_phase(workshop::PHASE_ASSESSMENT);
@@ -1484,7 +1484,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_reviewer_assessments_invalid_phase.
      */
-    public function test_get_reviewer_assessments_invalid_phase() {
+    public function test_get_reviewer_assessments_invalid_phase(): void {
 
         $workshop = new workshop($this->workshop, $this->cm, $this->course);
         $workshop->switch_phase(workshop::PHASE_SUBMISSION);
@@ -1497,7 +1497,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test update_assessment.
      */
-    public function test_update_assessment() {
+    public function test_update_assessment(): void {
 
         // Create the submission.
         $submissionid = $this->create_test_submission($this->anotherstudentg1);
@@ -1601,7 +1601,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_grades.
      */
-    public function test_get_grades() {
+    public function test_get_grades(): void {
 
         $timenow = time();
         $submissiongrade = array(
@@ -1651,7 +1651,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_grades_other_student.
      */
-    public function test_get_grades_other_student() {
+    public function test_get_grades_other_student(): void {
 
         // Create the submission that will be deleted.
         $submissionid = $this->create_test_submission($this->student);
@@ -1666,7 +1666,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test evaluate_assessment.
      */
-    public function test_evaluate_assessment() {
+    public function test_evaluate_assessment(): void {
         global $DB;
 
         $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
@@ -1710,7 +1710,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test evaluate_assessment_ignore_parameters.
      */
-    public function test_evaluate_assessment_ignore_parameters() {
+    public function test_evaluate_assessment_ignore_parameters(): void {
         $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
         $submissionid = $workshopgenerator->create_submission($this->workshop->id, $this->student->id);
         $assessmentid = $workshopgenerator->create_assessment($submissionid, $this->anotherstudentg1->id, array(
@@ -1740,7 +1740,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test evaluate_assessment_no_permissions.
      */
-    public function test_evaluate_assessment_no_permissions() {
+    public function test_evaluate_assessment_no_permissions(): void {
         $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
         $submissionid = $workshopgenerator->create_submission($this->workshop->id, $this->student->id);
         $assessmentid = $workshopgenerator->create_assessment($submissionid, $this->anotherstudentg1->id, array(
@@ -1760,7 +1760,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_grades_report.
      */
-    public function test_get_grades_report() {
+    public function test_get_grades_report(): void {
 
         $workshop = new workshop($this->workshop, $this->cm, $this->course);
         $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
@@ -1810,7 +1810,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_grades_report_invalid_phase.
      */
-    public function test_get_grades_report_invalid_phase() {
+    public function test_get_grades_report_invalid_phase(): void {
         $this->setUser($this->teacher);
         $this->expectException('moodle_exception');
         $this->expectExceptionMessage(get_string('nothingfound', 'workshop'));
@@ -1820,7 +1820,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_grades_report_missing_permissions.
      */
-    public function test_get_grades_report_missing_permissions() {
+    public function test_get_grades_report_missing_permissions(): void {
         $this->setUser($this->student);
         $this->expectException('required_capability_exception');
         mod_workshop_external::get_grades_report($this->workshop->id);
@@ -1829,7 +1829,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_view_submission.
      */
-    public function test_view_submission() {
+    public function test_view_submission(): void {
 
         // Create a couple of submissions with files.
         $firstsubmissionid = $this->create_test_submission($this->student);  // Create submission with files.
@@ -1859,7 +1859,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test evaluate_submission.
      */
-    public function test_evaluate_submission() {
+    public function test_evaluate_submission(): void {
         global $DB;
 
         $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
@@ -1887,7 +1887,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test evaluate_submission_invalid_phase_for_override.
      */
-    public function test_evaluate_submission_invalid_phase_for_override() {
+    public function test_evaluate_submission_invalid_phase_for_override(): void {
         global $DB;
 
         $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
@@ -1912,7 +1912,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test evaluate_submission_no_permissions.
      */
-    public function test_evaluate_submission_no_permissions() {
+    public function test_evaluate_submission_no_permissions(): void {
 
         $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
         $submissionid = $workshopgenerator->create_submission($this->workshop->id, $this->student->id);
@@ -1931,7 +1931,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test evaluate_submission_invalid_grade.
      */
-    public function test_evaluate_submission_invalid_grade() {
+    public function test_evaluate_submission_invalid_grade(): void {
 
         $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
         $submissionid = $workshopgenerator->create_submission($this->workshop->id, $this->student->id);

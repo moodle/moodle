@@ -75,7 +75,7 @@ class helper_test extends \advanced_testcase {
      *
      * @covers ::question_history_url
      */
-    public function test_question_history_url() {
+    public function test_question_history_url(): void {
         $this->resetAfterTest();
         $filter = urlencode('filters[]');
         $actionurl = helper::question_history_url(
@@ -99,7 +99,7 @@ class helper_test extends \advanced_testcase {
      *
      * @covers ::question_history_url
      */
-    public function test_question_history_url_null_filter() {
+    public function test_question_history_url_null_filter(): void {
         $this->resetAfterTest();
         $actionurl = helper::question_history_url(
             $this->questiondata->questionbankentryid,

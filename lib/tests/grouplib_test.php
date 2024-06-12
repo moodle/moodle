@@ -28,7 +28,7 @@ use core_group\visibility;
  */
 class grouplib_test extends \advanced_testcase {
 
-    public function test_groups_get_group_by_idnumber() {
+    public function test_groups_get_group_by_idnumber(): void {
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
@@ -100,7 +100,7 @@ class grouplib_test extends \advanced_testcase {
         $this->assertEquals($group, groups_get_group_by_idnumber($course->id, $idnumber2));
     }
 
-    public function test_groups_get_grouping_by_idnumber() {
+    public function test_groups_get_grouping_by_idnumber(): void {
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
@@ -172,7 +172,7 @@ class grouplib_test extends \advanced_testcase {
         $this->assertEquals($grouping, groups_get_grouping_by_idnumber($course->id, $idnumber2));
     }
 
-    public function test_groups_get_members_ids_sql() {
+    public function test_groups_get_members_ids_sql(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -209,7 +209,7 @@ class grouplib_test extends \advanced_testcase {
         $this->assertTrue(array_key_exists($student1->id, $users));
     }
 
-    public function test_groups_get_members_ids_sql_multiple_groups() {
+    public function test_groups_get_members_ids_sql_multiple_groups(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -256,7 +256,7 @@ class grouplib_test extends \advanced_testcase {
         $this->assertTrue(array_key_exists($student2->id, $users));
     }
 
-    public function test_groups_get_members_ids_sql_multiple_groups_join_types() {
+    public function test_groups_get_members_ids_sql_multiple_groups_join_types(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -364,7 +364,7 @@ class grouplib_test extends \advanced_testcase {
         $this->assertFalse(array_key_exists($student4->id, $users));
     }
 
-    public function test_groups_get_members_ids_sql_valid_context() {
+    public function test_groups_get_members_ids_sql_valid_context(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -399,7 +399,7 @@ class grouplib_test extends \advanced_testcase {
         $this->assertTrue(array_key_exists($student2->id, $users));
     }
 
-    public function test_groups_get_members_ids_sql_empty_context() {
+    public function test_groups_get_members_ids_sql_empty_context(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -432,7 +432,7 @@ class grouplib_test extends \advanced_testcase {
         list($sql, $params) = groups_get_members_ids_sql(USERSWITHOUTGROUP);
     }
 
-    public function test_groups_get_members_ids_sql_invalid_context() {
+    public function test_groups_get_members_ids_sql_invalid_context(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -504,7 +504,7 @@ class grouplib_test extends \advanced_testcase {
         ], $records);
     }
 
-    public function test_groups_get_group_by_name() {
+    public function test_groups_get_group_by_name(): void {
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
@@ -568,7 +568,7 @@ class grouplib_test extends \advanced_testcase {
         $this->assertEquals($group2->id, groups_get_group_by_name($course->id, $name2));
     }
 
-    public function test_groups_get_grouping() {
+    public function test_groups_get_grouping(): void {
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
@@ -632,7 +632,7 @@ class grouplib_test extends \advanced_testcase {
         $this->assertEquals($group2->id, groups_get_grouping_by_name($course->id, $name2));
     }
 
-    public function test_groups_get_course_data() {
+    public function test_groups_get_course_data(): void {
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
@@ -745,7 +745,7 @@ class grouplib_test extends \advanced_testcase {
     /**
      * Tests for groups_group_visible.
      */
-    public function test_groups_group_visible() {
+    public function test_groups_group_visible(): void {
         global $CFG, $DB;
 
         $generator = $this->getDataGenerator();
@@ -929,7 +929,7 @@ class grouplib_test extends \advanced_testcase {
         $this->assertTrue($result); // Cm with visible groups.
     }
 
-    function test_groups_get_groupmode() {
+    function test_groups_get_groupmode(): void {
         global $DB;
         $generator = $this->getDataGenerator();
         $this->resetAfterTest();
@@ -1000,7 +1000,7 @@ class grouplib_test extends \advanced_testcase {
     /**
      * Tests for groups_allgroups_course_menu() .
      */
-    public function test_groups_allgroups_course_menu() {
+    public function test_groups_allgroups_course_menu(): void {
         global $SESSION;
 
         $this->resetAfterTest();
@@ -1064,7 +1064,7 @@ class grouplib_test extends \advanced_testcase {
      * This unit test checks that groups_get_all_groups returns groups in
      * alphabetical order even if they are in a grouping.
      */
-    public function test_groups_ordering() {
+    public function test_groups_ordering(): void {
         $generator = $this->getDataGenerator();
         $this->resetAfterTest();
 
@@ -1095,7 +1095,7 @@ class grouplib_test extends \advanced_testcase {
     /**
      * Tests for groups_get_all_groups when grouping is set and we want members as well.
      */
-    public function test_groups_get_all_groups_in_grouping_with_members() {
+    public function test_groups_get_all_groups_in_grouping_with_members(): void {
         $generator = $this->getDataGenerator();
         $this->resetAfterTest();
 
@@ -1165,7 +1165,7 @@ class grouplib_test extends \advanced_testcase {
     /**
      * Tests for groups_get_user_groups() method.
      */
-    public function test_groups_get_user_groups() {
+    public function test_groups_get_user_groups(): void {
         $this->resetAfterTest(true);
         $generator = $this->getDataGenerator();
 
@@ -1249,25 +1249,25 @@ class grouplib_test extends \advanced_testcase {
         return $testgroups;
     }
 
-    public function test_groups_sort_menu_options_empty() {
+    public function test_groups_sort_menu_options_empty(): void {
         $this->assertEquals(array(), groups_sort_menu_options(array(), array()));
     }
 
-    public function test_groups_sort_menu_options_allowed_goups_only() {
+    public function test_groups_sort_menu_options_allowed_goups_only(): void {
         $this->assertEquals(array(
             100 => 'test group 100',
             101 => 'test group 101',
         ), groups_sort_menu_options($this->make_group_list(2), array()));
     }
 
-    public function test_groups_sort_menu_options_user_goups_only() {
+    public function test_groups_sort_menu_options_user_goups_only(): void {
         $this->assertEquals(array(
             100 => 'test group 100',
             101 => 'test group 101',
         ), groups_sort_menu_options(array(), $this->make_group_list(2)));
     }
 
-    public function test_groups_sort_menu_options_user_both() {
+    public function test_groups_sort_menu_options_user_both(): void {
         $this->assertEquals(array(
             1 => array(get_string('mygroups', 'group') => array(
                 100 => 'test group 100',
@@ -1280,7 +1280,7 @@ class grouplib_test extends \advanced_testcase {
         ), groups_sort_menu_options($this->make_group_list(4), $this->make_group_list(2)));
     }
 
-    public function test_groups_sort_menu_options_user_both_many_groups() {
+    public function test_groups_sort_menu_options_user_both_many_groups(): void {
         $this->assertEquals(array(
             1 => array(get_string('mygroups', 'group') => array(
                 100 => 'test group 100',
@@ -1305,7 +1305,7 @@ class grouplib_test extends \advanced_testcase {
     /**
      * Tests for groups_user_groups_visible.
      */
-    public function test_groups_user_groups_visible() {
+    public function test_groups_user_groups_visible(): void {
         global $DB;
 
         $generator = $this->getDataGenerator();
@@ -1758,7 +1758,7 @@ class grouplib_test extends \advanced_testcase {
      *
      * @covers ::groups_get_groups_members
      */
-    public function test_groups_get_groups_members() {
+    public function test_groups_get_groups_members(): void {
         $this->resetAfterTest(true);
         $generator = $this->getDataGenerator();
 
@@ -1839,7 +1839,7 @@ class grouplib_test extends \advanced_testcase {
     /**
      * Tests for groups_get_activity_shared_group_members() method.
      */
-    public function test_groups_get_activity_shared_group_members() {
+    public function test_groups_get_activity_shared_group_members(): void {
         $this->resetAfterTest(true);
         $generator = $this->getDataGenerator();
 
@@ -1963,7 +1963,7 @@ class grouplib_test extends \advanced_testcase {
      *
      * @covers \groups_get_all_groups()
      */
-    public function test_get_all_groups_with_visibility() {
+    public function test_get_all_groups_with_visibility(): void {
         list($users, $groups, $course) = $this->create_groups_with_visibilty();
 
         // Assign users to groups.
@@ -2050,7 +2050,7 @@ class grouplib_test extends \advanced_testcase {
      *
      * @covers \groups_get_my_groups()
      */
-    public function test_get_my_groups_with_visibility() {
+    public function test_get_my_groups_with_visibility(): void {
         list($users, $groups) = $this->create_groups_with_visibilty();
 
         // Assign users to groups.
@@ -2091,7 +2091,7 @@ class grouplib_test extends \advanced_testcase {
      *
      * @covers \groups_get_user_groups()
      */
-    public function test_get_user_groups_with_visibility() {
+    public function test_get_user_groups_with_visibility(): void {
         list($users, $groups, $course) = $this->create_groups_with_visibilty();
 
         // Assign users to groups.

@@ -29,7 +29,7 @@ class entities_sorter_test extends \advanced_testcase {
     /**
      * Test the entity returns expected values.
      */
-    public function test_entity_sort_into_children() {
+    public function test_entity_sort_into_children(): void {
         $this->resetAfterTest();
         $sorter = new sorter_entity(
             function($entity) {
@@ -59,7 +59,7 @@ class entities_sorter_test extends \advanced_testcase {
     /**
      * Test the entity returns expected values.
      */
-    public function test_entity_flatten_children() {
+    public function test_entity_flatten_children(): void {
         $this->resetAfterTest();
         $sorter = new sorter_entity(
             function($entity) {

@@ -142,7 +142,7 @@ class file_temp_cleanup_task_test extends \basic_testcase {
      * @param array $expected The expected results
      * @covers ::execute
      */
-    public function test_cron_delete_from_temp($nodes, $expected) {
+    public function test_cron_delete_from_temp($nodes, $expected): void {
         global $CFG;
 
         $tmpdir = realpath($CFG->tempdir);

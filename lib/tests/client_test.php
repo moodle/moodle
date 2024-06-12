@@ -83,7 +83,7 @@ class client_test extends advanced_testcase {
      * @param array $expected
      * @throws ReflectionException
      */
-    public function test_map_userinfo_to_fields(array $mapping, array $expected) {
+    public function test_map_userinfo_to_fields(array $mapping, array $expected): void {
         $dataset = [
             "name" => (object) [
                 "firstname" => "John",

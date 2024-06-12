@@ -30,7 +30,7 @@ class sessionlib_test extends \advanced_testcase {
     /**
      * @covers ::cron_setup_user
      */
-    public function test_cron_setup_user() {
+    public function test_cron_setup_user(): void {
         // This function uses the $GLOBALS super global. Disable the VariableNameLowerCase sniff for this function.
         // phpcs:disable moodle.NamingConventions.ValidVariableName.VariableNameLowerCase
 
@@ -245,7 +245,7 @@ class sessionlib_test extends \advanced_testcase {
      * @param array $config Array of key value config settings
      * @param bool $secure Wether cookies should be secure or not
      */
-    public function test_is_moodle_cookie_secure($config, $secure) {
+    public function test_is_moodle_cookie_secure($config, $secure): void {
         global $CFG;
         $this->resetAfterTest();
         foreach ($config as $key => $value) {
@@ -254,7 +254,7 @@ class sessionlib_test extends \advanced_testcase {
         $this->assertEquals($secure, is_moodle_cookie_secure());
     }
 
-    public function test_sesskey() {
+    public function test_sesskey(): void {
         global $USER;
         $this->resetAfterTest();
 
@@ -281,7 +281,7 @@ class sessionlib_test extends \advanced_testcase {
         $this->assertFalse(sesskey());
     }
 
-    public function test_confirm_sesskey() {
+    public function test_confirm_sesskey(): void {
         $this->resetAfterTest();
 
         $sesskey = sesskey();
@@ -303,7 +303,7 @@ class sessionlib_test extends \advanced_testcase {
         $this->assertFalse(confirm_sesskey());
     }
 
-    public function test_require_sesskey() {
+    public function test_require_sesskey(): void {
         $this->resetAfterTest();
 
         $sesskey = sesskey();

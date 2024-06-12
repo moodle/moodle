@@ -42,7 +42,7 @@ class types_external_location_test extends \advanced_testcase {
      * @param   string  $summary Summary
      * @covers ::__construct
      */
-    public function test_invalid_configs($name, $fields, $summary) {
+    public function test_invalid_configs($name, $fields, $summary): void {
         $record = new external_location($name, $fields, $summary);
         $this->assertDebuggingCalled();
     }
@@ -56,7 +56,7 @@ class types_external_location_test extends \advanced_testcase {
      * @param   string  $summary Summary
      * @covers ::__construct
      */
-    public function test_invalid_configs_debug_normal($name, $fields, $summary) {
+    public function test_invalid_configs_debug_normal($name, $fields, $summary): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -74,7 +74,7 @@ class types_external_location_test extends \advanced_testcase {
      * @param   string  $summary Summary
      * @covers ::__construct
      */
-    public function test_valid_configs($name, $fields, $summary) {
+    public function test_valid_configs($name, $fields, $summary): void {
         $record = new external_location($name, $fields, $summary);
         $this->assertDebuggingNotCalled();
     }

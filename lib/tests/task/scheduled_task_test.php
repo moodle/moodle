@@ -74,7 +74,7 @@ class scheduled_task_test extends \advanced_testcase {
         $this->assertEquals($expected, $testclass->eval_cron_field($field, $min, $max));
     }
 
-    public function test_get_next_scheduled_time() {
+    public function test_get_next_scheduled_time(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -312,7 +312,7 @@ class scheduled_task_test extends \advanced_testcase {
         $this->assertEquals(strtotime('2023-10-29 02:00 Europe/London'), $four);
     }
 
-    public function test_timezones() {
+    public function test_timezones(): void {
         global $CFG, $USER;
 
         // The timezones used in this test are chosen because they do not use DST - that would break the test.
@@ -425,7 +425,7 @@ class scheduled_task_test extends \advanced_testcase {
     /**
      * Tests that the reset function deletes old tasks.
      */
-    public function test_reset_scheduled_tasks_for_component_delete() {
+    public function test_reset_scheduled_tasks_for_component_delete(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -463,7 +463,7 @@ class scheduled_task_test extends \advanced_testcase {
             'component' => 'moodle')));
     }
 
-    public function test_get_next_scheduled_task() {
+    public function test_get_next_scheduled_task(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -548,7 +548,7 @@ class scheduled_task_test extends \advanced_testcase {
         $this->assertNull($task);
     }
 
-    public function test_get_broken_scheduled_task() {
+    public function test_get_broken_scheduled_task(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -580,7 +580,7 @@ class scheduled_task_test extends \advanced_testcase {
      * Tests the use of 'R' syntax in time fields of tasks to get
      * tasks be configured with a non-uniform time.
      */
-    public function test_random_time_specification() {
+    public function test_random_time_specification(): void {
 
         // Testing non-deterministic things in a unit test is not really
         // wise, so we just test the values have changed within allowed bounds.
@@ -618,7 +618,7 @@ class scheduled_task_test extends \advanced_testcase {
      * Test that the file_temp_cleanup_task removes directories and
      * files as expected.
      */
-    public function test_file_temp_cleanup_task() {
+    public function test_file_temp_cleanup_task(): void {
         global $CFG;
         $backuptempdir = make_backup_temp_directory('');
 
@@ -677,7 +677,7 @@ class scheduled_task_test extends \advanced_testcase {
     /**
      * Test that the function to clear the fail delay from a task works correctly.
      */
-    public function test_clear_fail_delay() {
+    public function test_clear_fail_delay(): void {
 
         $this->resetAfterTest();
 

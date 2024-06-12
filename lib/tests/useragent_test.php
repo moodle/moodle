@@ -1147,7 +1147,7 @@ class useragent_test extends advanced_testcase {
     /**
      * Test instance generation.
      */
-    public function test_instance() {
+    public function test_instance(): void {
         $this->assertInstanceOf('core_useragent', core_useragent::instance());
         $this->assertInstanceOf('core_useragent', core_useragent::instance(true));
     }
@@ -1155,7 +1155,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_useragent_edge($useragent, $tests) {
+    public function test_useragent_edge($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 
@@ -1186,7 +1186,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_useragent_ie($useragent, $tests) {
+    public function test_useragent_ie($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 
@@ -1236,7 +1236,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_useragent_msword($useragent, $tests) {
+    public function test_useragent_msword($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 
@@ -1251,7 +1251,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_useragent_supports($useragent, $tests) {
+    public function test_useragent_supports($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 
@@ -1277,7 +1277,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_useragent_webkit($useragent, $tests) {
+    public function test_useragent_webkit($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 
@@ -1310,7 +1310,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_useragent_webkit_android($useragent, $tests) {
+    public function test_useragent_webkit_android($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 
@@ -1346,7 +1346,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_useragent_chrome($useragent, $tests) {
+    public function test_useragent_chrome($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 
@@ -1383,7 +1383,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_useragent_safari($useragent, $tests) {
+    public function test_useragent_safari($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 
@@ -1420,7 +1420,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_useragent_ios_safari($useragent, $tests) {
+    public function test_useragent_ios_safari($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 
@@ -1457,7 +1457,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_useragent_ios($useragent, $tests) {
+    public function test_useragent_ios($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 
@@ -1478,7 +1478,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_useragent_gecko($useragent, $tests) {
+    public function test_useragent_gecko($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 
@@ -1522,7 +1522,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_useragent_firefox($useragent, $tests) {
+    public function test_useragent_firefox($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 
@@ -1563,7 +1563,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_useragent_opera($useragent, $tests) {
+    public function test_useragent_opera($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 
@@ -1600,7 +1600,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_get_device_type($useragent, $tests) {
+    public function test_get_device_type($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 
@@ -1616,7 +1616,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_get_browser_version_classes($useragent, $tests) {
+    public function test_get_browser_version_classes($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 
@@ -1630,7 +1630,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_useragent_web_crawler($useragent, $tests) {
+    public function test_useragent_web_crawler($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 
@@ -1641,7 +1641,7 @@ class useragent_test extends advanced_testcase {
     /**
      * @dataProvider user_agents_providers
      */
-    public function test_useragent_moodle_app($useragent, $tests) {
+    public function test_useragent_moodle_app($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
 

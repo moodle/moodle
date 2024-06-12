@@ -78,7 +78,7 @@ class inbound_test extends \advanced_testcase {
     /**
      * Test that the enabled check perform as expected.
      */
-    public function test_is_enabled() {
+    public function test_is_enabled(): void {
         global $CFG;
 
         // First clear all of the settings set in the setUp.
@@ -124,7 +124,7 @@ class inbound_test extends \advanced_testcase {
      * Test that data items conform to RFCs 5231, and 5322 standards for
      * addressing, and to RFC 5233 for sub-addressing.
      */
-    public function test_address_constraints() {
+    public function test_address_constraints(): void {
         $handler = $this->helper_create_handler('handler_one');
 
         // Using the handler created, generate an address for our data entry.
@@ -164,7 +164,7 @@ class inbound_test extends \advanced_testcase {
      * testing the multiple handlers, multiple users, and multiple data
      * items.
      */
-    public function test_address_uniqueness() {
+    public function test_address_uniqueness(): void {
         // Generate a set of handlers. These are in two components, and each
         // component has two different generators.
         $handlers = array();
@@ -210,7 +210,7 @@ class inbound_test extends \advanced_testcase {
     /**
      * Test address parsing of a generated address.
      */
-    public function test_address_parsing() {
+    public function test_address_parsing(): void {
         $dataid = 42;
 
         // Generate a handler to use for this set of tests.
@@ -239,7 +239,7 @@ class inbound_test extends \advanced_testcase {
     /**
      * Test address parsing of an address with an unrecognised format.
      */
-    public function test_address_validation_invalid_format_failure() {
+    public function test_address_validation_invalid_format_failure(): void {
         // Create test data.
         $user = $this->getDataGenerator()->create_user();
         $handler = $this->helper_create_handler('handler_one');
@@ -268,7 +268,7 @@ class inbound_test extends \advanced_testcase {
     /**
      * Test address parsing of an address with an unknown handler.
      */
-    public function test_address_validation_unknown_handler() {
+    public function test_address_validation_unknown_handler(): void {
         global $DB;
 
         // Create test data.
@@ -297,7 +297,7 @@ class inbound_test extends \advanced_testcase {
     /**
      * Test address parsing of an address with a disabled handler.
      */
-    public function test_address_validation_disabled_handler() {
+    public function test_address_validation_disabled_handler(): void {
         global $DB;
 
         // Create test data.
@@ -326,7 +326,7 @@ class inbound_test extends \advanced_testcase {
     /**
      * Test address parsing of an address for an invalid user.
      */
-    public function test_address_validation_invalid_user() {
+    public function test_address_validation_invalid_user(): void {
         global $DB;
 
         // Create test data.
@@ -350,7 +350,7 @@ class inbound_test extends \advanced_testcase {
     /**
      * Test address parsing of an address for a disabled user.
      */
-    public function test_address_validation_disabled_user() {
+    public function test_address_validation_disabled_user(): void {
         global $DB;
 
         // Create test data.
@@ -378,7 +378,7 @@ class inbound_test extends \advanced_testcase {
     /**
      * Test address parsing of an address for an invalid key.
      */
-    public function test_address_validation_invalid_key() {
+    public function test_address_validation_invalid_key(): void {
         global $DB;
 
         // Create test data.
@@ -408,7 +408,7 @@ class inbound_test extends \advanced_testcase {
     /**
      * Test address parsing of an address for an expired key.
      */
-    public function test_address_validation_expired_key() {
+    public function test_address_validation_expired_key(): void {
         global $DB;
 
         // Create test data.
@@ -441,7 +441,7 @@ class inbound_test extends \advanced_testcase {
     /**
      * Test address parsing of an address for an invalid hash.
      */
-    public function test_address_validation_invalid_hash() {
+    public function test_address_validation_invalid_hash(): void {
         global $DB;
 
         // Create test data.
@@ -474,7 +474,7 @@ class inbound_test extends \advanced_testcase {
     /**
      * Test address parsing of an address for an invalid sender.
      */
-    public function test_address_validation_invalid_sender() {
+    public function test_address_validation_invalid_sender(): void {
         global $DB;
 
         // Create test data.
@@ -498,7 +498,7 @@ class inbound_test extends \advanced_testcase {
     /**
      * Test address parsing of an address for an address which is correct.
      */
-    public function test_address_validation_success() {
+    public function test_address_validation_success(): void {
         global $DB;
 
         // Create test data.
@@ -523,7 +523,7 @@ class inbound_test extends \advanced_testcase {
      * Test that a handler with no default expiration does not have an
      * expiration time applied.
      */
-    public function test_default_hander_expiry_unlimited() {
+    public function test_default_hander_expiry_unlimited(): void {
         global $DB;
 
         // Set the default expiry of the handler to 0 - no expiration.
@@ -554,7 +554,7 @@ class inbound_test extends \advanced_testcase {
     /**
      * Test application of the default expiry on a handler.
      */
-    public function test_default_hander_expiry_low() {
+    public function test_default_hander_expiry_low(): void {
         global $DB;
 
         // Set the default expiry of the handler to 60 seconds.
@@ -585,7 +585,7 @@ class inbound_test extends \advanced_testcase {
     /**
      * Test application of the default expiry on a handler.
      */
-    public function test_default_hander_expiry_medium() {
+    public function test_default_hander_expiry_medium(): void {
         global $DB;
 
         // Set the default expiry of the handler to 3600 seconds.

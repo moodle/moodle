@@ -41,7 +41,7 @@ class manager_test extends advanced_testcase {
     /**
      * Test editing a license.
      */
-    public function test_edit_existing_license() {
+    public function test_edit_existing_license(): void {
         $this->resetAfterTest();
 
         // Create initial custom license to edit.
@@ -84,7 +84,7 @@ class manager_test extends advanced_testcase {
         $this->assertSame(date('Ymd', $formdata['version']) . '00', $actual->version);
     }
 
-    public function test_edit_license_not_exists() {
+    public function test_edit_license_not_exists(): void {
         $manager = new \tool_licensemanager\manager();
 
         // We're testing a private method, so we need to setup reflector magic.
@@ -104,7 +104,7 @@ class manager_test extends advanced_testcase {
         $method->invoke($manager, \tool_licensemanager\manager::ACTION_UPDATE, $formdata['shortname']);
     }
 
-    public function test_edit_license_no_shortname() {
+    public function test_edit_license_no_shortname(): void {
         $manager = new \tool_licensemanager\manager();
 
         // We're testing a private method, so we need to setup reflector magic.
@@ -126,7 +126,7 @@ class manager_test extends advanced_testcase {
     /**
      * Test creating a new license.
      */
-    public function test_edit_create_license() {
+    public function test_edit_create_license(): void {
         $this->resetAfterTest();
 
         $licensecount = count(license_manager::get_licenses());
@@ -166,7 +166,7 @@ class manager_test extends advanced_testcase {
     /**
      * Test changing the order of licenses.
      */
-    public function test_change_license_order() {
+    public function test_change_license_order(): void {
         $this->resetAfterTest();
 
         $licenseorder = array_keys(license_manager::get_licenses());

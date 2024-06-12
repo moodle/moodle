@@ -37,7 +37,7 @@ class types_subsystem_link_test extends \advanced_testcase {
      * @param   string  $summary Summary
      * @covers ::__construct
      */
-    public function test_invalid_configs($name, $privacyfields, $summary) {
+    public function test_invalid_configs($name, $privacyfields, $summary): void {
         $record = new subsystem_link($name, $privacyfields, $summary);
         $this->assertDebuggingCalled();
     }
@@ -50,7 +50,7 @@ class types_subsystem_link_test extends \advanced_testcase {
      * @param   string  $summary Summary
      * @covers ::__construct
      */
-    public function test_invalid_configs_debug_normal($name, $privacyfields, $summary) {
+    public function test_invalid_configs_debug_normal($name, $privacyfields, $summary): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -67,7 +67,7 @@ class types_subsystem_link_test extends \advanced_testcase {
      * @param   string  $summary Summary
      * @covers ::__construct
      */
-    public function test_valid_configs($name, $privacyfields, $summary) {
+    public function test_valid_configs($name, $privacyfields, $summary): void {
         $record = new subsystem_link($name, $privacyfields, $summary);
         $this->assertDebuggingNotCalled();
     }

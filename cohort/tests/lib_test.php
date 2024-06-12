@@ -55,7 +55,7 @@ class lib_test extends \advanced_testcase {
         ]);
     }
 
-    public function test_cohort_add_cohort() {
+    public function test_cohort_add_cohort(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -89,7 +89,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals('Test value 1', $customfieldsdata->testfield1);
     }
 
-    public function test_cohort_add_cohort_missing_name() {
+    public function test_cohort_add_cohort_missing_name(): void {
         $cohort = new \stdClass();
         $cohort->contextid = \context_system::instance()->id;
         $cohort->name = null;
@@ -102,7 +102,7 @@ class lib_test extends \advanced_testcase {
         cohort_add_cohort($cohort);
     }
 
-    public function test_cohort_add_cohort_event() {
+    public function test_cohort_add_cohort_event(): void {
         $this->resetAfterTest();
 
         // Setup cohort data structure.
@@ -136,7 +136,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEventContextNotUsed($event);
     }
 
-    public function test_cohort_update_cohort() {
+    public function test_cohort_update_cohort(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -180,7 +180,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals('Test value updated', $customfieldsdata->testfield1);
     }
 
-    public function test_cohort_update_cohort_event() {
+    public function test_cohort_update_cohort_event(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -223,7 +223,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEventContextNotUsed($event);
     }
 
-    public function test_cohort_delete_cohort() {
+    public function test_cohort_delete_cohort(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -240,7 +240,7 @@ class lib_test extends \advanced_testcase {
         $this->assertFalse($DB->record_exists('customfield_data', ['instanceid' => $cohort->id, 'fieldid' => $field->get('id')]));
     }
 
-    public function test_cohort_delete_cohort_event() {
+    public function test_cohort_delete_cohort_event(): void {
 
         $this->resetAfterTest();
 
@@ -267,7 +267,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEventContextNotUsed($event);
     }
 
-    public function test_cohort_delete_category() {
+    public function test_cohort_delete_category(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -283,7 +283,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals(\context_system::instance()->id, $newcohort->contextid);
     }
 
-    public function test_cohort_add_member() {
+    public function test_cohort_add_member(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -296,7 +296,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($DB->record_exists('cohort_members', array('cohortid'=>$cohort->id, 'userid'=>$user->id)));
     }
 
-    public function test_cohort_add_member_event() {
+    public function test_cohort_add_member_event(): void {
         global $USER;
         $this->resetAfterTest();
 
@@ -326,7 +326,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEventContextNotUsed($event);
     }
 
-    public function test_cohort_remove_member() {
+    public function test_cohort_remove_member(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -341,7 +341,7 @@ class lib_test extends \advanced_testcase {
         $this->assertFalse($DB->record_exists('cohort_members', array('cohortid'=>$cohort->id, 'userid'=>$user->id)));
     }
 
-    public function test_cohort_remove_member_event() {
+    public function test_cohort_remove_member_event(): void {
         global $USER;
         $this->resetAfterTest();
 
@@ -371,7 +371,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEventContextNotUsed($event);
     }
 
-    public function test_cohort_is_member() {
+    public function test_cohort_is_member(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -384,7 +384,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue(cohort_is_member($cohort->id, $user->id));
     }
 
-    public function test_cohort_get_cohorts() {
+    public function test_cohort_get_cohorts(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -443,7 +443,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals(1, $result['allcohorts']);
     }
 
-    public function test_cohort_get_all_cohorts() {
+    public function test_cohort_get_all_cohorts(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -507,7 +507,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals(2, $result['allcohorts']);
     }
 
-    public function test_cohort_get_available_cohorts() {
+    public function test_cohort_get_available_cohorts(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -696,7 +696,7 @@ class lib_test extends \advanced_testcase {
      * @covers \cohort_get_cohort, \cohort_get_cohorts, \cohort_get_all_cohorts
      * @covers \cohort_get_available_cohorts, \cohort_get_user_cohorts
      */
-    public function test_get_functions_return_custom_fields() {
+    public function test_get_functions_return_custom_fields(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -829,7 +829,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Create a cohort with allowcohortthemes enabled/disabled.
      */
-    public function test_cohort_add_theme_cohort() {
+    public function test_cohort_add_theme_cohort(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -871,7 +871,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Update a cohort with allowcohortthemes enabled/disabled.
      */
-    public function test_cohort_update_theme_cohort() {
+    public function test_cohort_update_theme_cohort(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -914,7 +914,7 @@ class lib_test extends \advanced_testcase {
      *
      * @covers \cohort_get_custom_fields_data
      */
-    public function test_cohort_get_custom_fields_data() {
+    public function test_cohort_get_custom_fields_data(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -945,7 +945,7 @@ class lib_test extends \advanced_testcase {
      *
      * @covers ::cohort_get_cohort
      */
-    public function test_cohort_get_cohort() {
+    public function test_cohort_get_cohort(): void {
         $this->resetAfterTest();
 
         $cat = $this->getDataGenerator()->create_category();

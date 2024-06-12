@@ -30,7 +30,7 @@ class legacy_polyfill_test extends \advanced_testcase {
     /**
      * Test that the core_portfolio\privacy\legacy_polyfill works and that the static _export_portfolio_user_data can be called.
      */
-    public function test_export_portfolio_user_data() {
+    public function test_export_portfolio_user_data(): void {
         $userid = 476;
         $context = \context_system::instance();
 
@@ -46,7 +46,7 @@ class legacy_polyfill_test extends \advanced_testcase {
     /**
      * Test for _get_metadata shim.
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new \core_privacy\local\metadata\collection('core_portfolio');
         $this->assertSame($collection, test_legacy_polyfill_portfolio_provider::get_metadata($collection));
     }
@@ -54,7 +54,7 @@ class legacy_polyfill_test extends \advanced_testcase {
     /**
      * Test the _delete_portfolio_for_context shim.
      */
-    public function test_delete_portfolio_for_context() {
+    public function test_delete_portfolio_for_context(): void {
         $context = \context_system::instance();
 
         $mock = $this->createMock(test_portfolio_legacy_polyfill_mock_wrapper::class);
@@ -69,7 +69,7 @@ class legacy_polyfill_test extends \advanced_testcase {
     /**
      * Test the _delete_portfolio_for_context shim.
      */
-    public function test_delete_portfolio_for_user() {
+    public function test_delete_portfolio_for_user(): void {
         $userid = 696;
         $context = \context_system::instance();
 

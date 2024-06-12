@@ -54,7 +54,7 @@ class provider_test extends provider_testcase {
         $PAGE->get_renderer('core');
     }
 
-    public function test_get_contexts_for_userid_gradebook_edits() {
+    public function test_get_contexts_for_userid_gradebook_edits(): void {
         $dg = $this->getDataGenerator();
 
         $c1 = $dg->create_course();
@@ -179,7 +179,7 @@ class provider_test extends provider_testcase {
         $this->assertArrayHasKey($c1ctx->id, $contexts);
     }
 
-    public function test_get_contexts_for_userid_grades_and_history() {
+    public function test_get_contexts_for_userid_grades_and_history(): void {
         $dg = $this->getDataGenerator();
 
         $c1 = $dg->create_course();
@@ -253,7 +253,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that the appropriate user IDs are returned for a given context.
      */
-    public function test_get_users_in_context_gradebook_edits() {
+    public function test_get_users_in_context_gradebook_edits(): void {
         $dg = $this->getDataGenerator();
 
         $c1 = $dg->create_course();
@@ -348,7 +348,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that the appropriate user IDs are returned for a given context.
      */
-    public function test_get_users_in_context_grades_and_history() {
+    public function test_get_users_in_context_grades_and_history(): void {
         $dg = $this->getDataGenerator();
 
         $c1 = $dg->create_course();
@@ -404,7 +404,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals([$u2->id], $userlist->get_userids());
     }
 
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $fs = new \file_storage();
@@ -644,7 +644,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals(0, count($files));
     }
 
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $fs = new \file_storage();
@@ -895,7 +895,7 @@ class provider_test extends provider_testcase {
     /**
      * Test deleting multiple users for a context works.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
         $dg = $this->getDataGenerator();
 
@@ -966,7 +966,7 @@ class provider_test extends provider_testcase {
         $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u4->id, 'itemid' => $gi2a->id]));
     }
 
-    public function test_export_data_for_user_about_grades_and_history() {
+    public function test_export_data_for_user_about_grades_and_history(): void {
         $dg = $this->getDataGenerator();
 
         $c1 = $dg->create_course();
@@ -1283,7 +1283,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals(get_string('privacy:request:historyactiondelete', 'core_grades'), $grade['action']);
     }
 
-    public function test_export_data_for_user_with_scale() {
+    public function test_export_data_for_user_with_scale(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
@@ -1316,7 +1316,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals('Reasonable', $data->grades[2]['grade_formatted']);
     }
 
-    public function test_export_data_for_user_about_gradebook_edits() {
+    public function test_export_data_for_user_about_gradebook_edits(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();

@@ -34,7 +34,7 @@ class mustache_quote_helper_test extends \basic_testcase {
      *
      * @covers ::quote
      */
-    public function test_quote() {
+    public function test_quote(): void {
         $engine = new \Mustache_Engine();
         $context = new \Mustache_Context([
             'world' => '{{planet}}',

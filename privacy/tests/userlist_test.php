@@ -43,7 +43,7 @@ class userlist_test extends advanced_testcase {
      *
      * @covers ::add_from_sql
      */
-    public function test_add_from_sql() {
+    public function test_add_from_sql(): void {
         global $DB;
 
         $sql = "SELECT c.id FROM {user} c";
@@ -61,7 +61,7 @@ class userlist_test extends advanced_testcase {
      *
      * @covers ::add_user
      */
-    public function test_add_user() {
+    public function test_add_user(): void {
         $this->resetAfterTest();
 
         $u1 = $this->getDataGenerator()->create_user();
@@ -80,7 +80,7 @@ class userlist_test extends advanced_testcase {
      *
      * @covers ::add_users
      */
-    public function test_add_users() {
+    public function test_add_users(): void {
         $this->resetAfterTest();
 
         $u1 = $this->getDataGenerator()->create_user();

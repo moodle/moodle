@@ -29,7 +29,7 @@ class editorlib_test extends \advanced_testcase {
     /**
      * Tests the installation of event handlers from file
      */
-    public function test_get_preferred_editor() {
+    public function test_get_preferred_editor(): void {
 
         // Fake a user agent.
         $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_5; en-US) AppleWebKit/534.10 (KHTML, like Gecko) Chrome/8.0.552.21     5 Safari/534.10';

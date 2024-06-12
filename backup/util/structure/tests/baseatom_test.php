@@ -41,7 +41,7 @@ class baseatom_test extends \basic_testcase {
     /**
      * Correct base_atom_tests
      */
-    function test_base_atom() {
+    function test_base_atom(): void {
         $name_with_all_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_';
         $value_to_test = 'Some <value> to test';
 
@@ -80,7 +80,7 @@ class baseatom_test extends \basic_testcase {
     /**
      * Throwing exception base_atom tests
      */
-    function test_base_atom_exceptions() {
+    function test_base_atom_exceptions(): void {
         // empty names
         try {
             $instance = new mock_base_atom('');

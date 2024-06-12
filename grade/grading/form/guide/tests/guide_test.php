@@ -36,7 +36,7 @@ class guide_test extends \advanced_testcase {
     /**
      * Unit test to get draft instance and create new instance.
      */
-    public function test_get_or_create_instance() {
+    public function test_get_or_create_instance(): void {
         global $DB;
 
         $this->resetAfterTest(true);

@@ -34,7 +34,7 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class walkthrough_test extends \qbehaviour_walkthrough_test_base {
-    public function test_deferred_cbm_truefalse_high_certainty() {
+    public function test_deferred_cbm_truefalse_high_certainty(): void {
 
         // Create a true-false question with correct answer true.
         $tf = \test_question_maker::make_question('truefalse', 'true');
@@ -111,7 +111,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assertEqualsWithDelta(-6, $autogradedstep->get_fraction(), 0.0000001);
     }
 
-    public function test_deferred_cbm_truefalse_low_certainty() {
+    public function test_deferred_cbm_truefalse_low_certainty(): void {
 
         // Create a true-false question with correct answer true.
         $tf = \test_question_maker::make_question('truefalse', 'true');
@@ -150,7 +150,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->quba->get_response_summary($this->slot));
     }
 
-    public function test_deferred_cbm_truefalse_default_certainty() {
+    public function test_deferred_cbm_truefalse_default_certainty(): void {
 
         // Create a true-false question with correct answer true.
         $tf = \test_question_maker::make_question('truefalse', 'true');
@@ -183,7 +183,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->quba->get_response_summary($this->slot));
     }
 
-    public function test_deferredcbm_resume_multichoice_single() {
+    public function test_deferredcbm_resume_multichoice_single(): void {
 
         // Create a multiple-choice question.
         $mc = \test_question_maker::make_a_multichoice_single_question();
@@ -250,7 +250,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
             $this->quba->get_response_summary($this->slot));
     }
 
-    public function test_deferred_cbm_truefalse_no_certainty_feedback_when_not_answered() {
+    public function test_deferred_cbm_truefalse_no_certainty_feedback_when_not_answered(): void {
 
         // Create a true-false question with correct answer true.
         $tf = \test_question_maker::make_question('truefalse', 'true');

@@ -43,7 +43,7 @@ class googledocs_search_content_test extends \googledocs_content_testcase {
      * @param array $expected The expected array which contains the generated repository content nodes
      */
     public function test_get_content_nodes(string $query, bool $sortcontent, array $filterextensions,
-            array $shareddrives, array $searccontents, array $expected) {
+            array $shareddrives, array $searccontents, array $expected): void {
 
         // Mock the service object.
         $servicemock = $this->createMock(rest::class);

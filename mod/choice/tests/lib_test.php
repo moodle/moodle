@@ -47,7 +47,7 @@ class lib_test extends \externallib_advanced_testcase {
      * Test choice_view
      * @return void
      */
-    public function test_choice_view() {
+    public function test_choice_view(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -81,7 +81,7 @@ class lib_test extends \externallib_advanced_testcase {
      * Test choice_can_view_results
      * @return void
      */
-    public function test_choice_can_view_results() {
+    public function test_choice_can_view_results(): void {
         global $DB, $USER;
 
         $this->resetAfterTest();
@@ -139,7 +139,7 @@ class lib_test extends \externallib_advanced_testcase {
 
     }
 
-    public function test_choice_user_submit_response_validation() {
+    public function test_choice_user_submit_response_validation(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -165,7 +165,7 @@ class lib_test extends \externallib_advanced_testcase {
      * Test choice_get_user_response
      * @return void
      */
-    public function test_choice_get_user_response() {
+    public function test_choice_get_user_response(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -206,7 +206,7 @@ class lib_test extends \externallib_advanced_testcase {
      * Test choice_get_my_response
      * @return void
      */
-    public function test_choice_get_my_response() {
+    public function test_choice_get_my_response(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -248,7 +248,7 @@ class lib_test extends \externallib_advanced_testcase {
      * Test choice_get_availability_status
      * @return void
      */
-    public function test_choice_get_availability_status() {
+    public function test_choice_get_availability_status(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -308,7 +308,7 @@ class lib_test extends \externallib_advanced_testcase {
     /*
      * The choice's event should not be shown to a user when the user cannot view the choice activity at all.
      */
-    public function test_choice_core_calendar_provide_event_action_in_hidden_section() {
+    public function test_choice_core_calendar_provide_event_action_in_hidden_section(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -348,7 +348,7 @@ class lib_test extends \externallib_advanced_testcase {
     /*
      * The choice's event should not be shown to a user who does not have permission to view the choice.
      */
-    public function test_choice_core_calendar_provide_event_action_for_non_user() {
+    public function test_choice_core_calendar_provide_event_action_for_non_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -379,7 +379,7 @@ class lib_test extends \externallib_advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_choice_core_calendar_provide_event_action_open() {
+    public function test_choice_core_calendar_provide_event_action_open(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -408,7 +408,7 @@ class lib_test extends \externallib_advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_choice_core_calendar_provide_event_action_open_for_user() {
+    public function test_choice_core_calendar_provide_event_action_open_for_user(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -444,7 +444,7 @@ class lib_test extends \externallib_advanced_testcase {
      * An event should not have an action if the user has already submitted a response
      * to the choice activity.
      */
-    public function test_choice_core_calendar_provide_event_action_already_submitted() {
+    public function test_choice_core_calendar_provide_event_action_already_submitted(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -485,7 +485,7 @@ class lib_test extends \externallib_advanced_testcase {
      * An event should not have an action if the user has already submitted a response
      * to the choice activity.
      */
-    public function test_choice_core_calendar_provide_event_action_already_submitted_for_user() {
+    public function test_choice_core_calendar_provide_event_action_already_submitted_for_user(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -520,7 +520,7 @@ class lib_test extends \externallib_advanced_testcase {
         $this->assertNull($action);
     }
 
-    public function test_choice_core_calendar_provide_event_action_closed() {
+    public function test_choice_core_calendar_provide_event_action_closed(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -546,7 +546,7 @@ class lib_test extends \externallib_advanced_testcase {
         $this->assertNull($action);
     }
 
-    public function test_choice_core_calendar_provide_event_action_closed_for_user() {
+    public function test_choice_core_calendar_provide_event_action_closed_for_user(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -575,7 +575,7 @@ class lib_test extends \externallib_advanced_testcase {
         $this->assertNull($action);
     }
 
-    public function test_choice_core_calendar_provide_event_action_open_in_future() {
+    public function test_choice_core_calendar_provide_event_action_open_in_future(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -607,7 +607,7 @@ class lib_test extends \externallib_advanced_testcase {
         $this->assertFalse($actionevent->is_actionable());
     }
 
-    public function test_choice_core_calendar_provide_event_action_open_in_future_for_user() {
+    public function test_choice_core_calendar_provide_event_action_open_in_future_for_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -648,7 +648,7 @@ class lib_test extends \externallib_advanced_testcase {
         $this->assertFalse($actionevent->is_actionable());
     }
 
-    public function test_choice_core_calendar_provide_event_action_no_time_specified() {
+    public function test_choice_core_calendar_provide_event_action_no_time_specified(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -676,7 +676,7 @@ class lib_test extends \externallib_advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_choice_core_calendar_provide_event_action_no_time_specified_for_user() {
+    public function test_choice_core_calendar_provide_event_action_no_time_specified_for_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -713,7 +713,7 @@ class lib_test extends \externallib_advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_choice_core_calendar_provide_event_action_already_completed() {
+    public function test_choice_core_calendar_provide_event_action_already_completed(): void {
         $this->resetAfterTest();
         set_config('enablecompletion', 1);
         $this->setAdminUser();
@@ -744,7 +744,7 @@ class lib_test extends \externallib_advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_choice_core_calendar_provide_event_action_already_completed_for_user() {
+    public function test_choice_core_calendar_provide_event_action_already_completed_for_user(): void {
         $this->resetAfterTest();
         set_config('enablecompletion', 1);
         $this->setAdminUser();
@@ -810,7 +810,7 @@ class lib_test extends \externallib_advanced_testcase {
      * This function should work given either an instance of the module (cm_info), such as when checking the active rules,
      * or if passed a stdClass of similar structure, such as when checking the the default completion settings for a mod type.
      */
-    public function test_mod_choice_completion_get_active_rule_descriptions() {
+    public function test_mod_choice_completion_get_active_rule_descriptions(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -846,7 +846,7 @@ class lib_test extends \externallib_advanced_testcase {
     /**
      * An unkown event type should not change the choice instance.
      */
-    public function test_mod_choice_core_calendar_event_timestart_updated_unknown_event() {
+    public function test_mod_choice_core_calendar_event_timestart_updated_unknown_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -889,7 +889,7 @@ class lib_test extends \externallib_advanced_testcase {
      * A CHOICE_EVENT_TYPE_OPEN event should update the timeopen property of
      * the choice activity.
      */
-    public function test_mod_choice_core_calendar_event_timestart_updated_open_event() {
+    public function test_mod_choice_core_calendar_event_timestart_updated_open_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -950,7 +950,7 @@ class lib_test extends \externallib_advanced_testcase {
      * A CHOICE_EVENT_TYPE_CLOSE event should update the timeclose property of
      * the choice activity.
      */
-    public function test_mod_choice_core_calendar_event_timestart_updated_close_event() {
+    public function test_mod_choice_core_calendar_event_timestart_updated_close_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -1010,7 +1010,7 @@ class lib_test extends \externallib_advanced_testcase {
     /**
      * An unkown event type should not have any limits
      */
-    public function test_mod_choice_core_calendar_get_valid_event_timestart_range_unknown_event() {
+    public function test_mod_choice_core_calendar_get_valid_event_timestart_range_unknown_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -1048,7 +1048,7 @@ class lib_test extends \externallib_advanced_testcase {
     /**
      * The open event should be limited by the choice's timeclose property, if it's set.
      */
-    public function test_mod_choice_core_calendar_get_valid_event_timestart_range_open_event() {
+    public function test_mod_choice_core_calendar_get_valid_event_timestart_range_open_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -1095,7 +1095,7 @@ class lib_test extends \externallib_advanced_testcase {
     /**
      * The close event should be limited by the choice's timeopen property, if it's set.
      */
-    public function test_mod_choice_core_calendar_get_valid_event_timestart_range_close_event() {
+    public function test_mod_choice_core_calendar_get_valid_event_timestart_range_close_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -1145,7 +1145,7 @@ class lib_test extends \externallib_advanced_testcase {
      * allowmultiple: false
      * limitanswers: false
      */
-    public function test_choice_user_submit_response_no_multiple_no_limits() {
+    public function test_choice_user_submit_response_no_multiple_no_limits(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -1193,7 +1193,7 @@ class lib_test extends \externallib_advanced_testcase {
      * allowmultiple: true
      * limitanswers: false
      */
-    public function test_choice_user_submit_response_multiples_no_limits() {
+    public function test_choice_user_submit_response_multiples_no_limits(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -1244,7 +1244,7 @@ class lib_test extends \externallib_advanced_testcase {
      * allowmultiple: false
      * limitanswers: true
      */
-    public function test_choice_user_submit_response_no_multiples_limits() {
+    public function test_choice_user_submit_response_no_multiples_limits(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -1290,7 +1290,7 @@ class lib_test extends \externallib_advanced_testcase {
      * allowmultiple: true
      * limitanswers: true
      */
-    public function test_choice_user_submit_response_multiples_limits() {
+    public function test_choice_user_submit_response_multiples_limits(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -1336,7 +1336,7 @@ class lib_test extends \externallib_advanced_testcase {
     /**
      * A user who does not have capabilities to add events to the calendar should be able to create an choice.
      */
-    public function test_creation_with_no_calendar_capabilities() {
+    public function test_creation_with_no_calendar_capabilities(): void {
         $this->resetAfterTest();
         $course = self::getDataGenerator()->create_course();
         $context = \context_course::instance($course->id);

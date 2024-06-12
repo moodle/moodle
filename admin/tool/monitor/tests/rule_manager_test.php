@@ -37,7 +37,7 @@ class rule_manager_test extends \advanced_testcase {
     /**
      * Test add_rule method.
      */
-    public function test_add_rule() {
+    public function test_add_rule(): void {
         $this->setAdminUser();
         $this->resetAfterTest(true);
 
@@ -69,7 +69,7 @@ class rule_manager_test extends \advanced_testcase {
     /**
      * Test get_rule method.
      */
-    public function test_get_rule() {
+    public function test_get_rule(): void {
         $this->setAdminUser();
         $this->resetAfterTest(true);
 
@@ -83,7 +83,7 @@ class rule_manager_test extends \advanced_testcase {
     /**
      * Test update_rule method.
      */
-    public function test_update_rule() {
+    public function test_update_rule(): void {
         $this->setAdminUser();
         $this->resetAfterTest(true);
 
@@ -102,7 +102,7 @@ class rule_manager_test extends \advanced_testcase {
     /**
      * Test get_rules_by_courseid method.
      */
-    public function test_get_rules_by_courseid() {
+    public function test_get_rules_by_courseid(): void {
         $this->setAdminUser();
         $this->resetAfterTest(true);
 
@@ -133,7 +133,7 @@ class rule_manager_test extends \advanced_testcase {
     /**
      * Test get_rules_by_plugin method.
      */
-    public function test_get_rules_by_plugin() {
+    public function test_get_rules_by_plugin(): void {
         $this->setAdminUser();
         $this->resetAfterTest(true);
 
@@ -160,7 +160,7 @@ class rule_manager_test extends \advanced_testcase {
     /**
      * Test get_rules_by_event method.
      */
-    public function test_get_rules_by_event() {
+    public function test_get_rules_by_event(): void {
         $this->setAdminUser();
         $this->resetAfterTest(true);
 

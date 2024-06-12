@@ -64,7 +64,7 @@ class portfolio_caller_test extends \advanced_testcase {
     /**
      * Test the method mod_workshop_portfolio_caller::load_data()
      */
-    public function test_load_data() {
+    public function test_load_data(): void {
         $this->resetAfterTest(true);
 
         $student1 = $this->getDataGenerator()->create_user();
@@ -89,7 +89,7 @@ class portfolio_caller_test extends \advanced_testcase {
     /**
      * Test the method mod_workshop_portfolio_caller::get_return_url()
      */
-    public function test_get_return_url() {
+    public function test_get_return_url(): void {
         $this->resetAfterTest(true);
 
         $student1 = $this->getDataGenerator()->create_user();
@@ -109,7 +109,7 @@ class portfolio_caller_test extends \advanced_testcase {
     /**
      * Test the method mod_workshop_portfolio_caller::get_navigation()
      */
-    public function test_get_navigation() {
+    public function test_get_navigation(): void {
         $this->resetAfterTest(true);
 
         $student1 = $this->getDataGenerator()->create_user();
@@ -127,7 +127,7 @@ class portfolio_caller_test extends \advanced_testcase {
     /**
      * Test the method mod_workshop_portfolio_caller::check_permissions()
      */
-    public function test_check_permissions_exportownsubmissionassessment() {
+    public function test_check_permissions_exportownsubmissionassessment(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -154,7 +154,7 @@ class portfolio_caller_test extends \advanced_testcase {
     /**
      * Test the method mod_workshop_portfolio_caller::get_sha1()
      */
-    public function test_get_sha1() {
+    public function test_get_sha1(): void {
         $this->resetAfterTest(true);
 
         $student1 = $this->getDataGenerator()->create_user();
@@ -176,7 +176,7 @@ class portfolio_caller_test extends \advanced_testcase {
      * Test function display_name()
      * Assert that this function can return the name of the module ('Workshop').
      */
-    public function test_display_name() {
+    public function test_display_name(): void {
         $this->resetAfterTest(true);
 
         $name = \mod_workshop_portfolio_caller::display_name();

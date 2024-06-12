@@ -111,7 +111,7 @@ class sync_members_test extends \advanced_testcase {
     /**
      * Test for sync_members::do_context_membership_request().
      */
-    public function test_do_context_membership_request() {
+    public function test_do_context_membership_request(): void {
         // Suppress output.
         ob_start();
         $members = $this->task->do_context_membership_request($this->context);
@@ -122,7 +122,7 @@ class sync_members_test extends \advanced_testcase {
     /**
      * Test for sync_members::do_resourcelink_membership_request().
      */
-    public function test_do_resourcelink_membership_request() {
+    public function test_do_resourcelink_membership_request(): void {
         $members = $this->task->do_resourcelink_membership_request($this->resourcelink);
         $this->assertFalse($members);
     }
@@ -130,7 +130,7 @@ class sync_members_test extends \advanced_testcase {
     /**
      * Test for sync_members::execute() when auth_lti is disabled.
      */
-    public function test_execute_authdisabled() {
+    public function test_execute_authdisabled(): void {
         ob_start();
         $this->task->execute();
         $output = ob_get_clean();
@@ -141,7 +141,7 @@ class sync_members_test extends \advanced_testcase {
     /**
      * Test for sync_members::execute() when enrol_lti is disabled.
      */
-    public function test_execute_enroldisabled() {
+    public function test_execute_enroldisabled(): void {
         // Enable auth_lti.
         $this->enable_auth();
 
@@ -155,7 +155,7 @@ class sync_members_test extends \advanced_testcase {
     /**
      * Test for sync_members::execute().
      */
-    public function test_execute() {
+    public function test_execute(): void {
         // Enable auth_lti.
         $this->enable_auth();
 
@@ -176,7 +176,7 @@ class sync_members_test extends \advanced_testcase {
     /**
      * Test for sync_members::fetch_members_from_consumer() with no resource link nor context associated with the consumer.
      */
-    public function test_fetch_members_from_consumer_noresourcelink_nocontext() {
+    public function test_fetch_members_from_consumer_noresourcelink_nocontext(): void {
         // Suppress output.
         ob_start();
         $members = $this->task->fetch_members_from_consumer($this->consumer);
@@ -187,14 +187,14 @@ class sync_members_test extends \advanced_testcase {
     /**
      * Test for sync_members::get_name().
      */
-    public function test_get_name() {
+    public function test_get_name(): void {
         $this->assertEquals(get_string('tasksyncmembers', 'enrol_lti'), $this->task->get_name());
     }
 
     /**
      * Test for sync_members::should_sync_enrol().
      */
-    public function test_should_sync_enrol() {
+    public function test_should_sync_enrol(): void {
         $this->assertTrue($this->task->should_sync_enrol(helper::MEMBER_SYNC_ENROL_AND_UNENROL));
         $this->assertTrue($this->task->should_sync_enrol(helper::MEMBER_SYNC_ENROL_NEW));
         $this->assertFalse($this->task->should_sync_enrol(helper::MEMBER_SYNC_UNENROL_MISSING));
@@ -203,7 +203,7 @@ class sync_members_test extends \advanced_testcase {
     /**
      * Test for sync_members::should_sync_unenrol().
      */
-    public function test_should_sync_unenrol() {
+    public function test_should_sync_unenrol(): void {
         $this->assertTrue($this->task->should_sync_unenrol(helper::MEMBER_SYNC_ENROL_AND_UNENROL));
         $this->assertFalse($this->task->should_sync_unenrol(helper::MEMBER_SYNC_ENROL_NEW));
         $this->assertTrue($this->task->should_sync_unenrol(helper::MEMBER_SYNC_UNENROL_MISSING));
@@ -212,7 +212,7 @@ class sync_members_test extends \advanced_testcase {
     /**
      * Test for sync_members::sync_member_information().
      */
-    public function test_sync_member_information() {
+    public function test_sync_member_information(): void {
         list($users, $enrolledcount) = $this->task->sync_member_information($this->tool, $this->consumer, $this->members);
         $membercount = count($this->members);
         $this->assertCount(10, $this->members);
@@ -223,7 +223,7 @@ class sync_members_test extends \advanced_testcase {
     /**
      * Test for sync_members::sync_profile_images().
      */
-    public function test_sync_profile_images() {
+    public function test_sync_profile_images(): void {
         $task = $this->task;
         list($users, $enrolledcount) = $task->sync_member_information($this->tool, $this->consumer, $this->members);
         $membercount = count($this->members);
@@ -240,7 +240,7 @@ class sync_members_test extends \advanced_testcase {
     /**
      * Test for sync_members::sync_unenrol().
      */
-    public function test_sync_unenrol() {
+    public function test_sync_unenrol(): void {
         $tool = $this->tool;
         $task = $this->task;
 

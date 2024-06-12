@@ -37,7 +37,7 @@ class task_clean_events_test extends \advanced_testcase {
     /**
      * Tests the cleaning up of events.
      */
-    public function test_clean_events() {
+    public function test_clean_events(): void {
         global $DB;
 
         // Create the necessary items for testing.

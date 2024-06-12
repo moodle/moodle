@@ -48,7 +48,7 @@ class get_h5pactivities_by_courses_test extends externallib_advanced_testcase {
     /**
      * Test test_get_h5pactivities_by_courses user student.
      */
-    public function test_get_h5pactivities_by_courses() {
+    public function test_get_h5pactivities_by_courses(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest();

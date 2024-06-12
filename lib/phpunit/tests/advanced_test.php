@@ -31,7 +31,7 @@ class advanced_test extends \advanced_testcase {
         require_once(__DIR__ . '/fixtures/adhoc_test_task.php');
     }
 
-    public function test_debugging() {
+    public function test_debugging(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -76,7 +76,7 @@ class advanced_test extends \advanced_testcase {
         $this->assertDebuggingCalled('pokus', DEBUG_MINIMAL);
     }
 
-    public function test_set_user() {
+    public function test_set_user(): void {
         global $USER, $DB, $SESSION;
 
         $this->resetAfterTest();
@@ -123,7 +123,7 @@ class advanced_test extends \advanced_testcase {
         $this->assertObjectNotHasProperty('sometestvalue', $SESSION);
     }
 
-    public function test_set_admin_user() {
+    public function test_set_admin_user(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -133,7 +133,7 @@ class advanced_test extends \advanced_testcase {
         $this->assertTrue(is_siteadmin());
     }
 
-    public function test_set_guest_user() {
+    public function test_set_guest_user(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -143,7 +143,7 @@ class advanced_test extends \advanced_testcase {
         $this->assertTrue(isguestuser());
     }
 
-    public function test_database_reset() {
+    public function test_database_reset(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -206,7 +206,7 @@ class advanced_test extends \advanced_testcase {
         $this->assertEquals(2, $DB->count_records('user'));
     }
 
-    public function test_change_detection() {
+    public function test_change_detection(): void {
         global $DB, $CFG, $COURSE, $SITE, $USER;
 
         $this->preventResetByRollback();
@@ -287,12 +287,12 @@ class advanced_test extends \advanced_testcase {
         }
     }
 
-    public function test_getDataGenerator() {
+    public function test_getDataGenerator(): void {
         $generator = $this->getDataGenerator();
         $this->assertInstanceOf('testing_data_generator', $generator);
     }
 
-    public function test_database_mock1() {
+    public function test_database_mock1(): void {
         global $DB;
 
         try {
@@ -306,14 +306,14 @@ class advanced_test extends \advanced_testcase {
         // Rest continues after reset.
     }
 
-    public function test_database_mock2() {
+    public function test_database_mock2(): void {
         global $DB;
 
         // Now the database should be back to normal.
         $this->assertFalse($DB->get_record('user', array('id'=>9999)));
     }
 
-    public function test_assert_time_current() {
+    public function test_assert_time_current(): void {
         $this->assertTimeCurrent(time());
 
         $this->setCurrentTimeStart();
@@ -395,7 +395,7 @@ class advanced_test extends \advanced_testcase {
         ];
     }
 
-    public function test_message_processors_reset() {
+    public function test_message_processors_reset(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -422,7 +422,7 @@ class advanced_test extends \advanced_testcase {
         $this->assertEquals(count($processors1) + 1, count($processors3));
     }
 
-    public function test_message_redirection() {
+    public function test_message_redirection(): \phpunit_message_sink {
         $this->preventResetByRollback(); // Messaging is not compatible with transactions...
         $this->resetAfterTest(false);
 
@@ -544,7 +544,7 @@ class advanced_test extends \advanced_testcase {
     /**
      * @depends test_message_redirection
      */
-    public function test_message_redirection_noreset($sink) {
+    public function test_message_redirection_noreset(\phpunit_message_sink $sink): void {
         if ($this->isInIsolation()) {
             $this->markTestSkipped('State cannot be carried over between tests in isolated tests');
         }
@@ -575,11 +575,11 @@ class advanced_test extends \advanced_testcase {
     /**
      * @depends test_message_redirection_noreset
      */
-    public function test_message_redirection_reset() {
+    public function test_message_redirection_reset(): void {
         $this->assertFalse(\phpunit_util::is_redirecting_messages(), 'Test reset must stop message redirection.');
     }
 
-    public function test_set_timezone() {
+    public function test_set_timezone(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -622,7 +622,7 @@ class advanced_test extends \advanced_testcase {
 
     }
 
-    public function test_locale_reset() {
+    public function test_locale_reset(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -671,7 +671,7 @@ class advanced_test extends \advanced_testcase {
     /**
      * This test sets a user agent and makes sure that it is cleared when the test is reset.
      */
-    public function test_it_resets_useragent_after_test() {
+    public function test_it_resets_useragent_after_test(): void {
         $this->resetAfterTest();
         $fakeagent = 'New user agent set.';
 

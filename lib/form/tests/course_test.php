@@ -36,7 +36,7 @@ class course_test extends \basic_testcase {
     /**
      * Test constructor supports all declared attributes.
      */
-    public function test_constructor_attributes() {
+    public function test_constructor_attributes(): void {
         $attributes = [
             'exclude' => [1, 2],
             'requiredcapabilities' => ['moodle/course:update'],

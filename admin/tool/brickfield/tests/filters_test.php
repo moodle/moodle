@@ -27,7 +27,7 @@ use tool_brickfield\local\tool\filter;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class filters_test extends \advanced_testcase {
-    public function test_constructor() {
+    public function test_constructor(): void {
         $this->resetAfterTest();
 
         // Variables.
@@ -56,7 +56,7 @@ class filters_test extends \advanced_testcase {
         $this->assertEquals($object->url, $url);
     }
 
-    public function test_get_course_sql() {
+    public function test_get_course_sql(): void {
         $this->resetAfterTest();
         $object = new filter();
 
@@ -73,7 +73,7 @@ class filters_test extends \advanced_testcase {
 
     }
 
-    public function test_validate_filters() {
+    public function test_validate_filters(): void {
         $this->resetAfterTest();
         // Variables.
         $courseid = 0;
@@ -102,7 +102,7 @@ class filters_test extends \advanced_testcase {
         $this->assertFalse($output);
     }
 
-    public function test_has_course_filters() {
+    public function test_has_course_filters(): void {
         $this->resetAfterTest();
 
         $object = new filter();
@@ -114,7 +114,7 @@ class filters_test extends \advanced_testcase {
         $this->assertTrue($output);
     }
 
-    public function test_has_capability_in_context() {
+    public function test_has_capability_in_context(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -151,7 +151,7 @@ class filters_test extends \advanced_testcase {
         $this->assertTrue($output);
     }
 
-    public function test_get_errormessage() {
+    public function test_get_errormessage(): void {
         $this->resetAfterTest();
         // Variables.
         $courseid = 0;

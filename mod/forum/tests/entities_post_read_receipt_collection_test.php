@@ -30,7 +30,7 @@ class entities_post_read_receipt_collection_test extends \advanced_testcase {
     /**
      * Test the entity returns expected values.
      */
-    public function test_entity() {
+    public function test_entity(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();

@@ -60,7 +60,7 @@ class administration_helper_test extends \advanced_testcase {
     /**
      * Test the numerous summaries the helper can produce.
      */
-    public function test_get_summaries() {
+    public function test_get_summaries(): void {
         // First the preparation.
         $config = cache_config_writer::instance();
         $this->assertTrue($config->add_store_instance('summariesstore', 'file'));
@@ -151,7 +151,7 @@ class administration_helper_test extends \advanced_testcase {
     /**
      * Test instantiating an add store form.
      */
-    public function test_get_add_store_form() {
+    public function test_get_add_store_form(): void {
         $form = cache_factory::get_administration_display_helper()->get_add_store_form('file');
         $this->assertInstanceOf('moodleform', $form);
 
@@ -166,7 +166,7 @@ class administration_helper_test extends \advanced_testcase {
     /**
      * Test instantiating a form to edit a store instance.
      */
-    public function test_get_edit_store_form() {
+    public function test_get_edit_store_form(): void {
         // Always instantiate a new core display helper here.
         $administrationhelper = new local\administration_display_helper;
         $config = cache_config_writer::instance();
@@ -193,7 +193,7 @@ class administration_helper_test extends \advanced_testcase {
     /**
      * Test the hash_key functionality.
      */
-    public function test_hash_key() {
+    public function test_hash_key(): void {
         $this->resetAfterTest();
         set_debugging(DEBUG_ALL);
 

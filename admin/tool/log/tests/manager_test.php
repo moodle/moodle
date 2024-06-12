@@ -24,7 +24,7 @@ namespace tool_log;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manager_test extends \advanced_testcase {
-    public function test_get_log_manager() {
+    public function test_get_log_manager(): void {
         global $CFG;
         $this->resetAfterTest();
 

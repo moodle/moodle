@@ -33,7 +33,7 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class walkthrough_test extends \qbehaviour_walkthrough_test_base {
-    public function test_deferredfeedback_feedback_truefalse() {
+    public function test_deferredfeedback_feedback_truefalse(): void {
 
         // Create a true-false question with correct answer true.
         $tf = \test_question_maker::make_question('truefalse', 'true');
@@ -107,7 +107,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assertEqualsWithDelta($autogradedstep->get_fraction(), 0, 0.0000001);
     }
 
-    public function test_deferredfeedback_feedback_multichoice_single() {
+    public function test_deferredfeedback_feedback_multichoice_single(): void {
 
         // Create a true-false question with correct answer true.
         $mc = \test_question_maker::make_a_multichoice_single_question();
@@ -162,7 +162,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_incorrect_expectation());
     }
 
-    public function test_deferredfeedback_resume_multichoice_single() {
+    public function test_deferredfeedback_resume_multichoice_single(): void {
 
         // Create a multiple-choice question.
         $mc = \test_question_maker::make_a_multichoice_single_question();
@@ -215,7 +215,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_correct_expectation());
     }
 
-    public function test_deferredfeedback_resume_multichoice_single_emptyanswer_first() {
+    public function test_deferredfeedback_resume_multichoice_single_emptyanswer_first(): void {
 
         // Create a multiple-choice question.
         $mc = \test_question_maker::make_a_multichoice_single_question();

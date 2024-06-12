@@ -41,7 +41,7 @@ class tests_content_writer_test extends advanced_testcase {
     /**
      * It should be possible to store and retrieve data.
      */
-    public function test_export_data() {
+    public function test_export_data(): void {
         $context = \context_system::instance();
         $writer = $this->get_writer_instance();
 
@@ -66,7 +66,7 @@ class tests_content_writer_test extends advanced_testcase {
     /**
      * It should be possible to store and retrieve data at the same point in different contexts.
      */
-    public function test_export_data_no_context_clash() {
+    public function test_export_data_no_context_clash(): void {
         $writer = $this->get_writer_instance();
 
         $context = \context_system::instance();
@@ -99,7 +99,7 @@ class tests_content_writer_test extends advanced_testcase {
     /**
      * Test export and recover with children.
      */
-    public function test_get_data_with_children() {
+    public function test_get_data_with_children(): void {
         $writer = $this->get_writer_instance();
         $context = \context_system::instance();
 
@@ -115,7 +115,7 @@ class tests_content_writer_test extends advanced_testcase {
     /**
      * It should be possible to store and retrieve metadata.
      */
-    public function test_export_metadata() {
+    public function test_export_metadata(): void {
         $context = \context_system::instance();
         $writer = $this->get_writer_instance();
 
@@ -149,7 +149,7 @@ class tests_content_writer_test extends advanced_testcase {
     /**
      * It should be possible to store and retrieve metadata at the same point in different contexts.
      */
-    public function test_export_metadata_no_context_clash() {
+    public function test_export_metadata_no_context_clash(): void {
         $writer = $this->get_writer_instance();
 
         $context = \context_system::instance();
@@ -192,7 +192,7 @@ class tests_content_writer_test extends advanced_testcase {
     /**
      * It should be possible to store and retrieve user preferences.
      */
-    public function test_export_user_preference() {
+    public function test_export_user_preference(): void {
         $context = \context_system::instance();
         $adminuser = \core_user::get_user_by_username('admin');
         $usercontext = \context_user::instance($adminuser->id);
@@ -232,7 +232,7 @@ class tests_content_writer_test extends advanced_testcase {
     /**
      * It should be possible to store and retrieve user preferences at the same point in different contexts.
      */
-    public function test_export_user_preference_no_context_clash() {
+    public function test_export_user_preference_no_context_clash(): void {
         $writer = $this->get_writer_instance();
         $context = \context_system::instance();
         $coursecontext = \context_course::instance(SITEID);
@@ -272,7 +272,7 @@ class tests_content_writer_test extends advanced_testcase {
     /**
      * Test export and recover with children.
      */
-    public function test_get_metadata_with_children() {
+    public function test_get_metadata_with_children(): void {
         $writer = $this->get_writer_instance();
         $context = \context_system::instance();
 
@@ -287,7 +287,7 @@ class tests_content_writer_test extends advanced_testcase {
     /**
      * It should be possible to export files in the files and children contexts.
      */
-    public function test_export_file_special_folders() {
+    public function test_export_file_special_folders(): void {
         $context = \context_system::instance();
 
         $filea = $this->get_stored_file('/', 'files');
@@ -309,7 +309,7 @@ class tests_content_writer_test extends advanced_testcase {
      * It should be possible to export mutliple files in the same subcontext/path space but different context and not
      * have them clash.
      */
-    public function test_export_file_no_context_clash() {
+    public function test_export_file_no_context_clash(): void {
         $writer = $this->get_writer_instance();
         $context = \context_system::instance();
         $filea = $this->get_stored_file('/foo/', 'foo.txt');
@@ -339,7 +339,7 @@ class tests_content_writer_test extends advanced_testcase {
     /**
      * Test export and recover with children.
      */
-    public function test_get_file_with_children() {
+    public function test_get_file_with_children(): void {
         $writer = $this->get_writer_instance();
         $context = \context_system::instance();
 
@@ -362,7 +362,7 @@ class tests_content_writer_test extends advanced_testcase {
     /**
      * It should be possible to export related data in the files and children contexts.
      */
-    public function test_export_related_data() {
+    public function test_export_related_data(): void {
         $context = \context_system::instance();
 
         $writer = $this->get_writer_instance()
@@ -392,7 +392,7 @@ class tests_content_writer_test extends advanced_testcase {
     /**
      * It should be possible to export related data in the same location,but in a different context.
      */
-    public function test_export_related_data_no_context_clash() {
+    public function test_export_related_data_no_context_clash(): void {
         $writer = $this->get_writer_instance();
 
         $context = \context_system::instance();
@@ -418,7 +418,7 @@ class tests_content_writer_test extends advanced_testcase {
     /**
      * Test export and recover with children.
      */
-    public function test_get_related_data_with_children() {
+    public function test_get_related_data_with_children(): void {
         $writer = $this->get_writer_instance();
         $context = \context_system::instance();
 
@@ -433,7 +433,7 @@ class tests_content_writer_test extends advanced_testcase {
     /**
      * It should be possible to export related files in the files and children contexts.
      */
-    public function test_export_custom_file() {
+    public function test_export_custom_file(): void {
         $context = \context_system::instance();
 
         $writer = $this->get_writer_instance()
@@ -461,7 +461,7 @@ class tests_content_writer_test extends advanced_testcase {
      * It should be possible to export related files in the same location
      * in different contexts.
      */
-    public function test_export_custom_file_no_context_clash() {
+    public function test_export_custom_file_no_context_clash(): void {
         $writer = $this->get_writer_instance();
         $context = \context_system::instance();
 
@@ -487,7 +487,7 @@ class tests_content_writer_test extends advanced_testcase {
     /**
      * Test export and recover with children.
      */
-    public function test_get_custom_file_with_children() {
+    public function test_get_custom_file_with_children(): void {
         $writer = $this->get_writer_instance();
         $context = \context_system::instance();
 

@@ -41,7 +41,7 @@ class filter_test extends \advanced_testcase {
      *
      * @dataProvider map_language_code_expected_mappings
      */
-    public function test_map_language_code($moodlelangcode, $mathjaxlangcode) {
+    public function test_map_language_code($moodlelangcode, $mathjaxlangcode): void {
 
         $filter = new filter_mathjaxloader(\context_system::instance(), []);
         $this->assertEquals($mathjaxlangcode, $filter->map_language_code($moodlelangcode));

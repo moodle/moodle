@@ -39,7 +39,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test that the assessable_uploaded event is fired when an online text submission is saved.
      */
-    public function test_assessable_uploaded() {
+    public function test_assessable_uploaded(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -85,7 +85,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test that the submission_created event is fired when an onlinetext submission is saved.
      */
-    public function test_submission_created() {
+    public function test_submission_created(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -124,7 +124,7 @@ class events_test extends \advanced_testcase {
      * Test that the submission_updated event is fired when an onlinetext
      * submission is saved and an existing submission already exists.
      */
-    public function test_submission_updated() {
+    public function test_submission_updated(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();

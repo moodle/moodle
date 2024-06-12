@@ -254,7 +254,7 @@ EOD;
     /**
      * Test for if heading exists where doc length is above 1800
      */
-    public function test_check_fail() {
+    public function test_check_fail(): void {
         $results = $this->get_checker_results($this->htmlfail);
         $this->assertNotEmpty($results);
 
@@ -263,7 +263,7 @@ EOD;
     /**
      * Test for if marquee does not exist.
      */
-    public function test_check_pass() {
+    public function test_check_pass(): void {
         $results = $this->get_checker_results($this->htmlpass1);
         $this->assertEmpty($results);
 

@@ -43,7 +43,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::parse_charset()
      */
-    public function test_parse_charset() {
+    public function test_parse_charset(): void {
         $this->assertSame('windows-1250', core_text::parse_charset('Cp1250'));
         // Some encoding moodle does not use.
         $this->assertSame('windows-1252', core_text::parse_charset('ms-ansi'));
@@ -54,7 +54,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::convert()
      */
-    public function test_convert() {
+    public function test_convert(): void {
         $this->assertSame('', core_text::convert('', 'utf-8', 'utf-8'));
         $utf8 = "Žluťoučký koníček";
         $iso2 = pack("H*", "ae6c75bb6f75e86bfd206b6f6eede8656b");
@@ -116,7 +116,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::substr()
      */
-    public function test_substr() {
+    public function test_substr(): void {
         $str = "Žluťoučký koníček";
         $this->assertSame($str, core_text::substr($str, 0));
         $this->assertSame('luťoučký koníček', core_text::substr($str, 1));
@@ -166,7 +166,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::strlen()
      */
-    public function test_strlen() {
+    public function test_strlen(): void {
         $str = "Žluťoučký koníček";
         $this->assertSame(17, core_text::strlen($str));
 
@@ -211,7 +211,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::str_max_bytes()
      */
-    public function test_str_max_bytes() {
+    public function test_str_max_bytes(): void {
         // These are all 3 byte characters, so this is a 12-byte string.
         $str = '言語設定';
 
@@ -266,7 +266,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::strtolower()
      */
-    public function test_strtolower() {
+    public function test_strtolower(): void {
         $str = "Žluťoučký koníček";
         $low = 'žluťoučký koníček';
         $this->assertSame($low, core_text::strtolower($str));
@@ -308,7 +308,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::strtoupper()
      */
-    public function test_strtoupper() {
+    public function test_strtoupper(): void {
         $str = "Žluťoučký koníček";
         $up  = 'ŽLUŤOUČKÝ KONÍČEK';
         $this->assertSame($up, core_text::strtoupper($str));
@@ -347,7 +347,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::strrev()
      */
-    public function test_strrev() {
+    public function test_strrev(): void {
         $strings = array(
             "Žluťoučký koníček" => "kečínok ýkčuoťulŽ",
             'ŽLUŤOUČKÝ KONÍČEK' => "KEČÍNOK ÝKČUOŤULŽ",
@@ -372,7 +372,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::strpos()
      */
-    public function test_strpos() {
+    public function test_strpos(): void {
         $str = "Žluťoučký koníček";
         $this->assertSame(10, core_text::strpos($str, 'koníč'));
 
@@ -385,7 +385,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::strrpos()
      */
-    public function test_strrpos() {
+    public function test_strrpos(): void {
         $str = "Žluťoučký koníček";
         $this->assertSame(11, core_text::strrpos($str, 'o'));
 
@@ -398,7 +398,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::specialtoascii()
      */
-    public function test_specialtoascii() {
+    public function test_specialtoascii(): void {
         $str = "Žluťoučký koníček";
         $this->assertSame('Zlutoucky konicek', core_text::specialtoascii($str));
 
@@ -427,7 +427,7 @@ class text_test extends advanced_testcase {
      * @covers ::encode_mimeheader()
      * @covers \moodle_phpmailer::encodeHeader()
      */
-    public function test_encode_mimeheader() {
+    public function test_encode_mimeheader(): void {
         global $CFG;
         require_once($CFG->libdir.'/phpmailer/moodle_phpmailer.php');
         $mailer = new moodle_phpmailer();
@@ -470,7 +470,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::entities_to_utf8()
      */
-    public function test_entities_to_utf8() {
+    public function test_entities_to_utf8(): void {
         $str = "&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&iacute;&#269;ek&copy;&quot;&amp;&lt;&gt;&sect;&laquo;";
         $this->assertSame("Žluťoučký koníček©\"&<>§«", core_text::entities_to_utf8($str));
 
@@ -483,7 +483,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::utf8_to_entities()
      */
-    public function test_utf8_to_entities() {
+    public function test_utf8_to_entities(): void {
         $str = "&#x17d;luťoučký kon&iacute;ček&copy;&quot;&amp;&lt;&gt;&sect;&laquo;";
         $this->assertSame("&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&iacute;&#x10d;ek&copy;&quot;&amp;&lt;&gt;&sect;&laquo;", core_text::utf8_to_entities($str));
         $this->assertSame("&#381;lu&#357;ou&#269;k&#253; kon&iacute;&#269;ek&copy;&quot;&amp;&lt;&gt;&sect;&laquo;", core_text::utf8_to_entities($str, true));
@@ -502,7 +502,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::trim_utf8_bom()
      */
-    public function test_trim_utf8_bom() {
+    public function test_trim_utf8_bom(): void {
         $bom = "\xef\xbb\xbf";
         $str = "Žluťoučký koníček";
         $this->assertSame($str.$bom, core_text::trim_utf8_bom($bom.$str.$bom));
@@ -516,7 +516,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::remove_unicode_non_characters()
      */
-    public function test_remove_unicode_non_characters() {
+    public function test_remove_unicode_non_characters(): void {
         // Confirm that texts which don't contain these characters are unchanged.
         $this->assertSame('Frogs!', core_text::remove_unicode_non_characters('Frogs!'));
 
@@ -542,7 +542,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::get_encodings()
      */
-    public function test_get_encodings() {
+    public function test_get_encodings(): void {
         $encodings = core_text::get_encodings();
         $this->assertTrue(is_array($encodings));
         $this->assertTrue(count($encodings) > 1);
@@ -554,7 +554,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::code2utf8()
      */
-    public function test_code2utf8() {
+    public function test_code2utf8(): void {
         $this->assertSame('Ž', core_text::code2utf8(381));
     }
 
@@ -563,7 +563,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::utf8ord()
      */
-    public function test_utf8ord() {
+    public function test_utf8ord(): void {
         $this->assertSame(ord(''), core_text::utf8ord(''));
         $this->assertSame(ord('f'), core_text::utf8ord('f'));
         $this->assertSame(0x03B1, core_text::utf8ord('α'));
@@ -580,7 +580,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::strtotitle()
      */
-    public function test_strtotitle() {
+    public function test_strtotitle(): void {
         $str = "žluťoučký koníček";
         $this->assertSame("Žluťoučký Koníček", core_text::strtotitle($str));
 
@@ -593,7 +593,7 @@ class text_test extends advanced_testcase {
      *
      * @covers ::strrchr()
      */
-    public function test_strrchr() {
+    public function test_strrchr(): void {
         $str = "Žluťoučký koníček";
         $this->assertSame('koníček', core_text::strrchr($str, 'koní'));
         $this->assertSame('Žluťoučký ', core_text::strrchr($str, 'koní', true));
@@ -612,7 +612,7 @@ class text_test extends advanced_testcase {
      * @param bool $expected
      * @covers ::is_charset_supported()
      */
-    public function test_is_charset_supported(string $charset, bool $expected) {
+    public function test_is_charset_supported(string $charset, bool $expected): void {
         $charset = core_text::parse_charset($charset);
         $this->assertEquals($expected, core_text::is_charset_supported($charset));
     }

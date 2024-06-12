@@ -29,7 +29,7 @@ class setuplib_test extends \advanced_testcase {
     /**
      * Test get_docs_url_standard in the normal case when we should link to Moodle docs.
      */
-    public function test_get_docs_url_standard() {
+    public function test_get_docs_url_standard(): void {
         global $CFG;
         if (empty($CFG->docroot)) {
             $docroot = 'http://docs.moodle.org/';
@@ -45,7 +45,7 @@ class setuplib_test extends \advanced_testcase {
     /**
      * Test get_docs_url_standard in the special case of an absolute HTTP URL.
      */
-    public function test_get_docs_url_http() {
+    public function test_get_docs_url_http(): void {
         $url = 'http://moodle.org/';
         $this->assertEquals($url, get_docs_url($url));
     }
@@ -53,7 +53,7 @@ class setuplib_test extends \advanced_testcase {
     /**
      * Test get_docs_url_standard in the special case of an absolute HTTPS URL.
      */
-    public function test_get_docs_url_https() {
+    public function test_get_docs_url_https(): void {
         $url = 'https://moodle.org/';
         $this->assertEquals($url, get_docs_url($url));
     }
@@ -61,7 +61,7 @@ class setuplib_test extends \advanced_testcase {
     /**
      * Test get_docs_url_standard in the special case of a link relative to wwwroot.
      */
-    public function test_get_docs_url_wwwroot() {
+    public function test_get_docs_url_wwwroot(): void {
         global $CFG;
         $this->assertSame($CFG->wwwroot . '/lib/tests/setuplib_test.php',
                 get_docs_url('%%WWWROOT%%/lib/tests/setuplib_test.php'));
@@ -70,7 +70,7 @@ class setuplib_test extends \advanced_testcase {
     /**
      * Test if get_exception_info() removes file system paths.
      */
-    public function test_exception_info_removes_serverpaths() {
+    public function test_exception_info_removes_serverpaths(): void {
         global $CFG;
 
         // This doesn't test them all possible ones, but these are set for unit tests.
@@ -93,7 +93,7 @@ class setuplib_test extends \advanced_testcase {
             'Exception debug info does not contain system paths');
     }
 
-    public function test_localcachedir() {
+    public function test_localcachedir(): void {
         global $CFG;
 
         $this->resetAfterTest(true);
@@ -166,7 +166,7 @@ class setuplib_test extends \advanced_testcase {
         $this->assertTimeCurrent(filemtime($timestampfile));
     }
 
-    public function test_make_unique_directory_basedir_is_file() {
+    public function test_make_unique_directory_basedir_is_file(): void {
         global $CFG;
 
         // Start with a file instead of a directory.
@@ -184,7 +184,7 @@ class setuplib_test extends \advanced_testcase {
         unlink($base);
     }
 
-    public function test_make_unique_directory() {
+    public function test_make_unique_directory(): void {
         global $CFG;
 
         // Create directories should be both directories, and writable.
@@ -200,7 +200,7 @@ class setuplib_test extends \advanced_testcase {
         $this->assertNotEquals($firstdir, $seconddir);
     }
 
-    public function test_get_request_storage_directory() {
+    public function test_get_request_storage_directory(): void {
         $this->resetAfterTest(true);
 
         // Making a call to get_request_storage_directory should always give the same result.
@@ -237,7 +237,7 @@ class setuplib_test extends \advanced_testcase {
     }
 
 
-    public function test_make_request_directory() {
+    public function test_make_request_directory(): void {
         // Every request directory should be unique.
         $firstdir   = make_request_directory();
         $seconddir  = make_request_directory();
@@ -276,7 +276,7 @@ class setuplib_test extends \advanced_testcase {
         $this->assertEquals(0, strpos($fifthdir, $newrequestdir));
     }
 
-    public function test_merge_query_params() {
+    public function test_merge_query_params(): void {
         $original = array(
             'id' => '1',
             'course' => '2',
@@ -357,7 +357,7 @@ class setuplib_test extends \advanced_testcase {
     /**
      * Test the link processed by get_exception_info().
      */
-    public function test_get_exception_info_link() {
+    public function test_get_exception_info_link(): void {
         global $CFG, $SESSION;
 
         $httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
@@ -456,7 +456,7 @@ class setuplib_test extends \advanced_testcase {
      * @param string $input the input for get_real_size()
      * @param int $expectedbytes the expected bytes
      */
-    public function test_get_real_size($input, $expectedbytes) {
+    public function test_get_real_size($input, $expectedbytes): void {
         $this->assertEquals($expectedbytes, get_real_size($input));
     }
 
@@ -481,7 +481,7 @@ class setuplib_test extends \advanced_testcase {
     /**
      * Test the \core\uuid::generate_uuid_via_pecl_uuid_extension() function.
      */
-    public function test_core_uuid_generate_uuid_via_pecl_uuid_extension() {
+    public function test_core_uuid_generate_uuid_via_pecl_uuid_extension(): void {
         if (!extension_loaded('uuid')) {
             $this->markTestSkipped("PHP 'uuid' extension not loaded.");
         }
@@ -498,7 +498,7 @@ class setuplib_test extends \advanced_testcase {
     /**
      * Test the \core\uuid::generate_uuid_via_random_bytes() function.
      */
-    public function test_core_uuid_generate_uuid_via_random_bytes() {
+    public function test_core_uuid_generate_uuid_via_random_bytes(): void {
         try {
             random_bytes(1);
         } catch (\Exception $e) {
@@ -514,7 +514,7 @@ class setuplib_test extends \advanced_testcase {
     /**
      * Test the \core\uuid::generate() function.
      */
-    public function test_core_uuid_generate() {
+    public function test_core_uuid_generate(): void {
         $uuid = \core\uuid::generate();
         $this->assertTrue(self::is_valid_uuid_v4($uuid), "Invalid v4 UUID: '$uuid'");
     }

@@ -58,7 +58,7 @@ class private_replies_test extends \advanced_testcase {
      * Ensure that the forum_post_is_visible_privately function reports that a post is visible to a user when another
      * user wrote the post, and it is not private.
      */
-    public function test_forum_post_is_visible_privately_not_private() {
+    public function test_forum_post_is_visible_privately_not_private(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -80,7 +80,7 @@ class private_replies_test extends \advanced_testcase {
      * Ensure that the forum_post_is_visible_privately function reports that a post is visible to a user when another
      * user wrote the post, and the user under test is the intended recipient.
      */
-    public function test_forum_post_is_visible_privately_private_to_user() {
+    public function test_forum_post_is_visible_privately_private_to_user(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -104,7 +104,7 @@ class private_replies_test extends \advanced_testcase {
      * Ensure that the forum_post_is_visible_privately function reports that a post is visible to a user when another
      * user wrote the post, and the user under test is a role with the view capability.
      */
-    public function test_forum_post_is_visible_privately_private_to_user_view_as_teacher() {
+    public function test_forum_post_is_visible_privately_private_to_user_view_as_teacher(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -128,7 +128,7 @@ class private_replies_test extends \advanced_testcase {
      * Ensure that the forum_post_is_visible_privately function reports that a post is not visible to a user when
      * another user wrote the post, and the user under test is a role without the view capability.
      */
-    public function test_forum_post_is_visible_privately_private_to_user_view_as_other_student() {
+    public function test_forum_post_is_visible_privately_private_to_user_view_as_other_student(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -152,7 +152,7 @@ class private_replies_test extends \advanced_testcase {
      * Ensure that the forum_post_is_visible_privately function reports that a post is visible to a user who wrote a
      * private reply, but not longer holds the view capability.
      */
-    public function test_forum_post_is_visible_privately_private_to_user_view_as_author() {
+    public function test_forum_post_is_visible_privately_private_to_user_view_as_author(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -177,7 +177,7 @@ class private_replies_test extends \advanced_testcase {
     /**
      * Ensure that the forum_user_can_reply_privately returns true for a teacher replying to a forum post.
      */
-    public function test_forum_user_can_reply_privately_as_teacher() {
+    public function test_forum_user_can_reply_privately_as_teacher(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -198,7 +198,7 @@ class private_replies_test extends \advanced_testcase {
     /**
      * Ensure that the forum_user_can_reply_privately returns true for a teacher replying to a forum post.
      */
-    public function test_forum_user_can_reply_privately_as_student() {
+    public function test_forum_user_can_reply_privately_as_student(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -218,7 +218,7 @@ class private_replies_test extends \advanced_testcase {
     /**
      * Ensure that the forum_user_can_reply_privately returns false where the parent post is already a private reply.
      */
-    public function test_forum_user_can_reply_privately_parent_is_already_private() {
+    public function test_forum_user_can_reply_privately_parent_is_already_private(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();

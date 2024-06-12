@@ -40,7 +40,7 @@ class copy_content_test extends \externallib_advanced_testcase {
      *
      * @covers ::execute
      */
-    public function test_copy_content_with_permission() {
+    public function test_copy_content_with_permission(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
 
@@ -84,7 +84,7 @@ class copy_content_test extends \externallib_advanced_testcase {
      *
      * @covers ::execute
      */
-    public function test_copy_content() {
+    public function test_copy_content(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
 

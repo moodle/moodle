@@ -35,7 +35,7 @@ class send_email_test extends \advanced_testcase {
     /**
      * Test sending email task.
      */
-    public function test_sending_email_task() {
+    public function test_sending_email_task(): void {
         global $DB, $SITE;
 
         $this->preventResetByRollback(); // Messaging is not compatible with transactions.

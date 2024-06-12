@@ -47,7 +47,7 @@ class provider_test extends provider_testcase {
     /**
      * Test getting the context for the user ID related to this plugin.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         global $DB;
         // Create profile category.
         $categoryid = $this->add_profile_category();
@@ -68,7 +68,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data is exported correctly for this plugin.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         // Create profile category.
         $categoryid = $this->add_profile_category();
         // Create textarea profile field.
@@ -95,7 +95,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user data is deleted using the context.
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
         // Create profile category.
         $categoryid = $this->add_profile_category();
@@ -123,7 +123,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user data is deleted for this user.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
         // Create profile category.
         $categoryid = $this->add_profile_category();
@@ -153,7 +153,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that only users with a user context are fetched.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest();
 
         $component = 'profilefield_textarea';
@@ -189,7 +189,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data for users in approved userlist is deleted.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $this->resetAfterTest();
 
         $component = 'profilefield_textarea';

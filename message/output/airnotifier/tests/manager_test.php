@@ -29,7 +29,7 @@ use message_airnotifier_manager;
 class manager_test extends \advanced_testcase {
 
     /** Test check_configuration by default **/
-    public function test_check_configuration_default() {
+    public function test_check_configuration_default(): void {
         global $CFG;
         $this->resetAfterTest(true);
 
@@ -50,7 +50,7 @@ class manager_test extends \advanced_testcase {
     }
 
     /** Test check_configuration with token **/
-    public function test_check_configuration_with_token() {
+    public function test_check_configuration_with_token(): void {
         global $CFG;
         $this->resetAfterTest(true);
 
@@ -73,7 +73,7 @@ class manager_test extends \advanced_testcase {
     }
 
     /** Test check_configuration bad settings **/
-    public function test_check_configuration_incorrect_settings() {
+    public function test_check_configuration_incorrect_settings(): void {
         global $CFG;
         $this->resetAfterTest(true);
 
@@ -100,7 +100,7 @@ class manager_test extends \advanced_testcase {
     }
 
     /** Test has_enabled_devices **/
-    public function test_has_enabled_devices() {
+    public function test_has_enabled_devices(): void {
         global $CFG, $DB, $USER;
         $this->resetAfterTest(true);
 

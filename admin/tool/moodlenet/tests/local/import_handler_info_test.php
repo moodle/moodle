@@ -38,7 +38,7 @@ class import_handler_info_test extends \advanced_testcase {
      * @param string $description description of the mod.
      * @param bool $expectexception whether we expect an exception during init or not.
      */
-    public function test_initialisation($modname, $description, $expectexception) {
+    public function test_initialisation($modname, $description, $expectexception): void {
         $this->resetAfterTest();
         // Skip those cases we cannot init.
         if ($expectexception) {

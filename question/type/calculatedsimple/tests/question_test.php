@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_test extends \advanced_testcase {
-    public function test_is_complete_response() {
+    public function test_is_complete_response(): void {
         $question = \test_question_maker::make_question('calculatedsimple');
 
         $this->assertFalse($question->is_complete_response(array()));
@@ -43,7 +43,7 @@ class question_test extends \advanced_testcase {
         $this->assertFalse($question->is_complete_response(array('answer' => 'test')));
     }
 
-    public function test_is_gradable_response() {
+    public function test_is_gradable_response(): void {
         $question = \test_question_maker::make_question('calculatedsimple');
 
         $this->assertFalse($question->is_gradable_response(array()));
@@ -52,7 +52,7 @@ class question_test extends \advanced_testcase {
         $this->assertTrue($question->is_gradable_response(array('answer' => 'test')));
     }
 
-    public function test_grading() {
+    public function test_grading(): void {
         $question = \test_question_maker::make_question('calculatedsimple');
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
@@ -63,7 +63,7 @@ class question_test extends \advanced_testcase {
                 $question->grade_response(array('answer' => $values['a'] + $values['b'])));
     }
 
-    public function test_get_correct_response() {
+    public function test_get_correct_response(): void {
         $question = \test_question_maker::make_question('calculatedsimple');
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
@@ -72,7 +72,7 @@ class question_test extends \advanced_testcase {
                 $question->get_correct_response());
     }
 
-    public function test_get_question_summary() {
+    public function test_get_question_summary(): void {
         $question = \test_question_maker::make_question('calculatedsimple');
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
@@ -81,7 +81,7 @@ class question_test extends \advanced_testcase {
         $this->assertEquals('What is ' . $values['a'] . ' + ' . $values['b'] . '?', $qsummary);
     }
 
-    public function test_summarise_response() {
+    public function test_summarise_response(): void {
         $question = \test_question_maker::make_question('calculatedsimple');
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
@@ -89,7 +89,7 @@ class question_test extends \advanced_testcase {
         $this->assertEquals('3.1', $question->summarise_response(array('answer' => '3.1')));
     }
 
-    public function test_classify_response() {
+    public function test_classify_response(): void {
         $question = \test_question_maker::make_question('calculatedsimple');
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();

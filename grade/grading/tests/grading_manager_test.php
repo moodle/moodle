@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/grade/grading/lib.php'); // Include the code to t
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class grading_manager_test extends \advanced_testcase {
-    public function test_basic_instantiation() {
+    public function test_basic_instantiation(): void {
         $manager1 = get_grading_manager();
 
         $fakecontext = (object)array(
@@ -50,7 +50,7 @@ class grading_manager_test extends \advanced_testcase {
     /**
      * Unit test to set and get grading areas
      */
-    public function test_set_and_get_grading_area() {
+    public function test_set_and_get_grading_area(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -92,7 +92,7 @@ class grading_manager_test extends \advanced_testcase {
     /**
      * Unit test to check the tokenize method
      */
-    public function test_tokenize() {
+    public function test_tokenize(): void {
 
         $UTFfailuremessage = 'A test using UTF-8 characters has failed. Consider updating PHP and PHP\'s PCRE or INTL extensions (MDL-30494)';
 

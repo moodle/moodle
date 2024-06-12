@@ -44,7 +44,7 @@ class googledocs_drive_content_test extends \googledocs_content_testcase {
      * @param array $expected The expected array which contains the generated repository content nodes
      */
     public function test_get_content_nodes(string $query, string $path, bool $sortcontent, array $filterextensions,
-            array $shareddrives, array $drivecontents, array $expected) {
+            array $shareddrives, array $drivecontents, array $expected): void {
 
         // Mock the service object.
         $servicemock = $this->createMock(\repository_googledocs\rest::class);
@@ -201,7 +201,7 @@ class googledocs_drive_content_test extends \googledocs_content_testcase {
      * @param string $nodepath The node path string
      * @param array $expected The expected array containing the repository navigation nodes
      */
-    public function test_get_navigation(string $nodepath, array $expected) {
+    public function test_get_navigation(string $nodepath, array $expected): void {
         // Mock the service object.
         $servicemock = $this->createMock(\repository_googledocs\rest::class);
 

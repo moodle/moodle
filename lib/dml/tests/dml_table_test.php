@@ -81,7 +81,7 @@ class dml_table_test extends \database_driver_testcase {
         string $fieldprefix,
         string $tablealias,
         string $expected
-    ) {
+    ): void {
         $dbman = $this->tdb->get_manager();
 
         $xmldbtable = new xmldb_table($tablename);
@@ -165,7 +165,7 @@ class dml_table_test extends \database_driver_testcase {
         string $fieldprefix,
         \stdClass $result,
         \stdClass $expected
-    ) {
+    ): void {
         $dbman = $this->tdb->get_manager();
 
         $tablename = 'test_table_extraction';
@@ -201,7 +201,7 @@ class dml_table_test extends \database_driver_testcase {
         string $fieldprefix,
         string $tablealias,
         string $expected
-    ) {
+    ): void {
         $dbman = $this->tdb->get_manager();
 
         $tablename = 'test_table_extraction';

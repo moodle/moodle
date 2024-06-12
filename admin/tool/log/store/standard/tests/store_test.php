@@ -40,7 +40,7 @@ class store_test extends \advanced_testcase {
      * @param bool $jsonformat True to test with JSON format
      * @dataProvider log_writing_provider
      */
-    public function test_log_writing(bool $jsonformat) {
+    public function test_log_writing(bool $jsonformat): void {
         global $DB;
         $this->resetAfterTest();
         $this->preventResetByRollback(); // Logging waits till the transaction gets committed.
@@ -238,7 +238,7 @@ class store_test extends \advanced_testcase {
     /**
      * Test logmanager::get_supported_reports returns all reports that require this store.
      */
-    public function test_get_supported_reports() {
+    public function test_get_supported_reports(): void {
         $logmanager = get_log_manager();
         $allreports = \core_component::get_plugin_list('report');
 
@@ -261,7 +261,7 @@ class store_test extends \advanced_testcase {
     /**
      * Verify that gc disabling works
      */
-    public function test_gc_enabled_as_expected() {
+    public function test_gc_enabled_as_expected(): void {
         if (!gc_enabled()) {
             $this->markTestSkipped('Garbage collector (gc) is globally disabled.');
         }
@@ -275,7 +275,7 @@ class store_test extends \advanced_testcase {
      * Test sql_reader::get_events_select_iterator.
      * @return void
      */
-    public function test_events_traversable() {
+    public function test_events_traversable(): void {
         global $DB;
 
         $this->disable_gc();
@@ -332,7 +332,7 @@ class store_test extends \advanced_testcase {
     /**
      * Test that the standard log cleanup works correctly.
      */
-    public function test_cleanup_task() {
+    public function test_cleanup_task(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -372,12 +372,12 @@ class store_test extends \advanced_testcase {
      * @param mixed $value Value to encode and decode
      * @dataProvider decode_other_provider
      */
-    public function test_decode_other($value) {
+    public function test_decode_other($value): void {
         $this->assertEquals($value, \logstore_standard\log\store::decode_other(serialize($value)));
         $this->assertEquals($value, \logstore_standard\log\store::decode_other(json_encode($value)));
     }
 
-    public function test_decode_other_with_wrongly_encoded_contents() {
+    public function test_decode_other_with_wrongly_encoded_contents(): void {
         $this->assertSame(null, \logstore_standard\log\store::decode_other(null));
     }
 
@@ -404,7 +404,7 @@ class store_test extends \advanced_testcase {
      * @param bool $jsonformat True to test with JSON format
      * @dataProvider log_writing_provider
      */
-    public function test_backup_restore(bool $jsonformat) {
+    public function test_backup_restore(bool $jsonformat): void {
         global $DB;
         $this->resetAfterTest();
         $this->preventResetByRollback();

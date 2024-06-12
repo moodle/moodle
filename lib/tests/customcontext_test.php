@@ -54,7 +54,7 @@ class customcontext_test extends \advanced_testcase {
     /**
      * Test case for custom context classes
      */
-    public function test_customcontexts() {
+    public function test_customcontexts(): void {
         global $CFG;
         static $customcontexts = array(
             11 => 'context_bogus1',

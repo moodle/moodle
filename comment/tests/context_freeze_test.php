@@ -72,7 +72,7 @@ class context_freeze_test extends \advanced_testcase {
     /**
      * Test that a student cannot delete their own comments in frozen contexts via the external service.
      */
-    public function test_delete_student_external() {
+    public function test_delete_student_external(): void {
         global $CFG;
         require_once($CFG->dirroot . '/comment/lib.php');
 
@@ -95,7 +95,7 @@ class context_freeze_test extends \advanced_testcase {
     /**
      * Test that a student cannot delete their own comments in frozen contexts.
      */
-    public function test_delete_student() {
+    public function test_delete_student(): void {
         global $CFG;
         require_once($CFG->dirroot . '/comment/lib.php');
 
@@ -118,7 +118,7 @@ class context_freeze_test extends \advanced_testcase {
     /**
      * Test that an admin cannot delete comments in frozen contexts via the external service.
      */
-    public function test_delete_admin_external() {
+    public function test_delete_admin_external(): void {
         global $CFG;
         require_once($CFG->dirroot . '/comment/lib.php');
 
@@ -140,7 +140,7 @@ class context_freeze_test extends \advanced_testcase {
     /**
      * Test that an admin cannot delete comments in frozen contexts.
      */
-    public function test_delete_admin() {
+    public function test_delete_admin(): void {
         global $CFG;
         require_once($CFG->dirroot . '/comment/lib.php');
 

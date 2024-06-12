@@ -37,7 +37,7 @@ class url_test extends \advanced_testcase {
      * @param string $path the expected path component of the URL.
      * @param bool $exception whether or not an exception is expected during construction.
      */
-    public function test_parsing($urlstring, $host, $path, $exception) {
+    public function test_parsing($urlstring, $host, $path, $exception): void {
         if ($exception) {
             $this->expectException(\coding_exception::class);
             $url = new url($urlstring);

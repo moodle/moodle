@@ -54,7 +54,7 @@ class exporters_post_test extends \advanced_testcase {
      * @param bool $istimed True if this is a timed post
      * @param int $addtime Seconds to be added to the current time
      */
-    public function test_export_post($istimed = false, $addtime = 0) {
+    public function test_export_post($istimed = false, $addtime = 0): void {
         global $CFG, $PAGE;
         $this->resetAfterTest();
 
@@ -219,7 +219,7 @@ class exporters_post_test extends \advanced_testcase {
     /**
      * Test exporting of a deleted post.
      */
-    public function test_export_deleted_post() {
+    public function test_export_deleted_post(): void {
         global $CFG, $PAGE;
         $this->resetAfterTest();
 
@@ -327,7 +327,7 @@ class exporters_post_test extends \advanced_testcase {
     /**
      * Test exporting of a post the user can't view.
      */
-    public function test_export_post_no_view_capability() {
+    public function test_export_post_no_view_capability(): void {
         global $CFG, $PAGE;
         $this->resetAfterTest();
 

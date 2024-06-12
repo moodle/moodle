@@ -42,7 +42,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_create_type() {
+    public function test_create_type(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -83,7 +83,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_create_type_custom_options() {
+    public function test_create_type_custom_options(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -153,7 +153,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_create_instance() {
+    public function test_create_instance(): void {
         global $DB;
         $this->resetAfterTest(true);
 

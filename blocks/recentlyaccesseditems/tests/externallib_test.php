@@ -38,7 +38,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test the get_recent_items function.
      */
-    public function test_get_recent_items() {
+    public function test_get_recent_items(): void {
 
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();

@@ -93,7 +93,7 @@ class dates_test extends advanced_testcase {
      * @param int|null $availableto The "available to" time in the database activity.
      * @param array $expected The expected value of calling get_dates_for_module()
      */
-    public function test_get_dates_for_module(?int $availablefrom, ?int $availableto, array $expected) {
+    public function test_get_dates_for_module(?int $availablefrom, ?int $availableto, array $expected): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();

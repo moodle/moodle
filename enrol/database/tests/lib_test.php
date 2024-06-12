@@ -51,7 +51,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test for getting user enrolment actions.
      */
-    public function test_get_user_enrolment_actions() {
+    public function test_get_user_enrolment_actions(): void {
         global $CFG, $PAGE;
         $this->resetAfterTest();
 

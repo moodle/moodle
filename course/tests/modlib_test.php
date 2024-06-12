@@ -37,7 +37,7 @@ class modlib_test extends \advanced_testcase {
     /**
      * Test prepare_new_moduleinfo_data
      */
-    public function test_prepare_new_moduleinfo_data() {
+    public function test_prepare_new_moduleinfo_data(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -86,7 +86,7 @@ class modlib_test extends \advanced_testcase {
      * Test prepare_new_moduleinfo_data with suffix (which is currently only used by the completion rules).
      * @covers ::prepare_new_moduleinfo_data
      */
-    public function test_prepare_new_moduleinfo_data_with_suffix() {
+    public function test_prepare_new_moduleinfo_data_with_suffix(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -129,7 +129,7 @@ class modlib_test extends \advanced_testcase {
     /**
      * Test get_moduleinfo_data
      */
-    public function test_get_moduleinfo_data() {
+    public function test_get_moduleinfo_data(): void {
         global $DB;
         $this->resetAfterTest(true);
         $this->setAdminUser();
@@ -212,7 +212,7 @@ class modlib_test extends \advanced_testcase {
      *
      * @covers \add_moduleinfo
      */
-    public function test_add_moduleinfo() {
+    public function test_add_moduleinfo(): void {
         global $DB;
         $this->resetAfterTest(true);
 

@@ -44,7 +44,7 @@ require_once($CFG->libdir.'/moodlelib.php');
  */
 class string_manager_standard_test extends \advanced_testcase {
 
-    public function test_string_manager_instance() {
+    public function test_string_manager_instance(): void {
         $this->resetAfterTest();
 
         $otherroot = __DIR__.'/fixtures/langtest';
@@ -52,7 +52,7 @@ class string_manager_standard_test extends \advanced_testcase {
         $this->assertInstanceOf('core_string_manager', $stringman);
     }
 
-    public function test_get_language_dependencies() {
+    public function test_get_language_dependencies(): void {
         $this->resetAfterTest();
 
         $otherroot = __DIR__.'/fixtures/langtest';
@@ -76,7 +76,7 @@ class string_manager_standard_test extends \advanced_testcase {
         $this->assertSame(array('bb', 'bc'), $stringman->get_language_dependencies('bc'));
     }
 
-    public function test_deprecated_strings() {
+    public function test_deprecated_strings(): void {
         $stringman = get_string_manager();
 
         // Check non-deprecated string.
@@ -115,7 +115,7 @@ class string_manager_standard_test extends \advanced_testcase {
      * @dataProvider get_deprecated_strings_provider
      * @param   string      $string     The string to be tested
      */
-    public function test_validate_deprecated_strings_files($string) {
+    public function test_validate_deprecated_strings_files($string): void {
         $stringman = get_string_manager();
 
         $result = preg_match('/^(.*),(.*)$/', $string, $matches);
@@ -136,7 +136,7 @@ class string_manager_standard_test extends \advanced_testcase {
     /**
      * Test for $CFG->langlist (without installation of additional languages)
      */
-    public function test_get_list_of_translations() {
+    public function test_get_list_of_translations(): void {
         $this->resetAfterTest();
         $stringman = get_string_manager();
 
@@ -162,7 +162,7 @@ class string_manager_standard_test extends \advanced_testcase {
     /**
      * Test {@see core_string_manager_standard::get_list_of_countries()} under different conditions.
      */
-    public function test_get_list_of_countries() {
+    public function test_get_list_of_countries(): void {
 
         $this->resetAfterTest();
         $stringman = get_string_manager();

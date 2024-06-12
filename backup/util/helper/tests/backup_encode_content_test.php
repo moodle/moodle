@@ -41,7 +41,7 @@ class backup_encode_content_test extends \basic_testcase {
     /**
      * Test the encode_content_links method for course.
      */
-    public function test_course_encode_content_links() {
+    public function test_course_encode_content_links(): void {
         global $CFG;
         $httpsroot = "https://moodle.org";
         $httproot = "http://moodle.org";

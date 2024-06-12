@@ -119,7 +119,7 @@ class sqlsrv_native_moodle_database_test extends \advanced_testcase {
      * @param string $expected The expected resultant query
      * @dataProvider add_no_lock_to_temp_tables_provider
      */
-    public function test_add_no_lock_to_temp_tables($input, $expected) {
+    public function test_add_no_lock_to_temp_tables($input, $expected): void {
         $sqlsrv = new sqlsrv_native_moodle_database();
 
         $reflector = new \ReflectionObject($sqlsrv);
@@ -244,7 +244,7 @@ EOT
      * @param string $expectedmainquery the expected main query
      * @param bool $expectedresult the expected result
      */
-    public function test_has_query_order_by(string $sql, string $expectedmainquery, bool $expectedresult) {
+    public function test_has_query_order_by(string $sql, string $expectedmainquery, bool $expectedresult): void {
         $mainquery = preg_replace('/\(((?>[^()]+)|(?R))*\)/', '()', $sql);
         $this->assertSame($expectedmainquery, $mainquery);
 

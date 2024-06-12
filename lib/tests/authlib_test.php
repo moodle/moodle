@@ -26,7 +26,7 @@ namespace core;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class authlib_test extends \advanced_testcase {
-    public function test_lockout() {
+    public function test_lockout(): void {
         global $CFG;
         require_once("$CFG->libdir/authlib.php");
 
@@ -110,7 +110,7 @@ class authlib_test extends \advanced_testcase {
         ini_set('error_log', $oldlog);
     }
 
-    public function test_authenticate_user_login() {
+    public function test_authenticate_user_login(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -436,7 +436,7 @@ class authlib_test extends \advanced_testcase {
         unset($CFG->enableloginrecaptcha);
     }
 
-    public function test_user_loggedin_event_exceptions() {
+    public function test_user_loggedin_event_exceptions(): void {
         try {
             $event = \core\event\user_loggedin::create(array('objectid' => 1));
             $this->fail('\core\event\user_loggedin requires other[\'username\']');
@@ -448,7 +448,7 @@ class authlib_test extends \advanced_testcase {
     /**
      * Test the {@link signup_validate_data()} duplicate email validation.
      */
-    public function test_signup_validate_data_same_email() {
+    public function test_signup_validate_data_same_email(): void {
         global $CFG;
         require_once($CFG->libdir . '/authlib.php');
         require_once($CFG->libdir . '/phpmailer/moodle_phpmailer.php');

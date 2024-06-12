@@ -40,7 +40,7 @@ class events_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_search_results_viewed() {
+    public function test_search_results_viewed(): void {
 
         $this->resetAfterTest();
 

@@ -76,7 +76,7 @@ EOD;
     /**
      * Test for headers not containing text
      */
-    public function test_check() {
+    public function test_check(): void {
         $results = $this->get_checker_results($this->htmlfail);
         $this->assertTrue($results[0]->element->tagName == 'h2');
 

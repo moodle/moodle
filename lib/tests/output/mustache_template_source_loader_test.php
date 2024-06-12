@@ -29,7 +29,7 @@ class mustache_template_source_loader_test extends \advanced_testcase {
     /**
      * Ensure that stripping comments from templates does not mutilate the template body.
      */
-    public function test_strip_template_comments() {
+    public function test_strip_template_comments(): void {
 
         $templatebody = <<<'TBD'
         <h1>{{# str }} pluginname, mod_lemmings {{/ str }}</h1>
@@ -170,7 +170,7 @@ TBC;
      * @param bool $includecomments Whether to strip comments
      * @param string $expected The expected output
      */
-    public function test_load($loader, $component, $name, $includecomments, $expected) {
+    public function test_load($loader, $component, $name, $includecomments, $expected): void {
         $this->assertEquals($expected, $loader->load($component, $name, 'boost', $includecomments));
     }
 
@@ -337,7 +337,7 @@ TBC;
      * @param bool $includecomments Whether to strip comments
      * @param string $expected The expected output
      */
-    public function test_load_with_dependencies($loader, $component, $name, $includecomments, $expected) {
+    public function test_load_with_dependencies($loader, $component, $name, $includecomments, $expected): void {
         $actual = $loader->load_with_dependencies($component, $name, 'boost', $includecomments);
         $this->assertEquals($expected, $actual);
     }
@@ -493,7 +493,7 @@ TEMPLATE;
      * @param string $source The template to test
      * @param string $expected The expected output
      */
-    public function test_scan_template_source_for_dependencies($loader, $source, $expected) {
+    public function test_scan_template_source_for_dependencies($loader, $source, $expected): void {
         $actual = \phpunit_util::call_internal_method(
             $loader,
             'scan_template_source_for_dependencies',

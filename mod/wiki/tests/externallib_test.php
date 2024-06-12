@@ -247,7 +247,7 @@ class externallib_test extends externallib_advanced_testcase {
     /*
      * Test get wikis by courses
      */
-    public function test_mod_wiki_get_wikis_by_courses() {
+    public function test_mod_wiki_get_wikis_by_courses(): void {
 
         // Create additional course.
         $course2 = self::getDataGenerator()->create_course();
@@ -390,7 +390,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test view_wiki.
      */
-    public function test_view_wiki() {
+    public function test_view_wiki(): void {
 
         // Test invalid instance id.
         try {
@@ -448,7 +448,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test view_page.
      */
-    public function test_view_page() {
+    public function test_view_page(): void {
 
         // Test invalid page id.
         try {
@@ -506,7 +506,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwikis.
      */
-    public function test_get_subwikis() {
+    public function test_get_subwikis(): void {
 
         // Test invalid wiki id.
         try {
@@ -563,7 +563,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwiki_pages using an invalid wiki instance.
      */
-    public function test_get_subwiki_pages_invalid_instance() {
+    public function test_get_subwiki_pages_invalid_instance(): void {
         $this->expectException(\moodle_exception::class);
         mod_wiki_external::get_subwiki_pages(0);
     }
@@ -571,7 +571,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwiki_pages using a user not enrolled in the course.
      */
-    public function test_get_subwiki_pages_unenrolled_user() {
+    public function test_get_subwiki_pages_unenrolled_user(): void {
         // Create and use the user.
         $usernotenrolled = self::getDataGenerator()->create_user();
         $this->setUser($usernotenrolled);
@@ -583,7 +583,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwiki_pages using a hidden wiki as student.
      */
-    public function test_get_subwiki_pages_hidden_wiki_as_student() {
+    public function test_get_subwiki_pages_hidden_wiki_as_student(): void {
         // Create a hidden wiki and try to get the list of pages.
         $hiddenwiki = $this->getDataGenerator()->create_module('wiki',
                             array('course' => $this->course->id, 'visible' => false));
@@ -596,7 +596,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwiki_pages without the viewpage capability.
      */
-    public function test_get_subwiki_pages_without_viewpage_capability() {
+    public function test_get_subwiki_pages_without_viewpage_capability(): void {
         // Prohibit capability = mod/wiki:viewpage on the course for students.
         $contextcourse = \context_course::instance($this->course->id);
         assign_capability('mod/wiki:viewpage', CAP_PROHIBIT, $this->studentrole->id, $contextcourse->id);
@@ -610,7 +610,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwiki_pages using an invalid userid.
      */
-    public function test_get_subwiki_pages_invalid_userid() {
+    public function test_get_subwiki_pages_invalid_userid(): void {
         // Create an individual wiki.
         $indwiki = $this->getDataGenerator()->create_module('wiki',
                                 array('course' => $this->course->id, 'wikimode' => 'individual'));
@@ -622,7 +622,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwiki_pages using an invalid groupid.
      */
-    public function test_get_subwiki_pages_invalid_groupid() {
+    public function test_get_subwiki_pages_invalid_groupid(): void {
         // Create testing data.
         $this->create_collaborative_wikis_with_groups();
 
@@ -633,7 +633,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwiki_pages, check that a student can't see another user pages in an individual wiki without groups.
      */
-    public function test_get_subwiki_pages_individual_student_see_other_user() {
+    public function test_get_subwiki_pages_individual_student_see_other_user(): void {
         // Create an individual wiki.
         $indwiki = $this->getDataGenerator()->create_module('wiki',
                                 array('course' => $this->course->id, 'wikimode' => 'individual'));
@@ -647,7 +647,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test get_subwiki_pages, check that a student can't get the pages from another group in
      * a collaborative wiki using separate groups.
      */
-    public function test_get_subwiki_pages_collaborative_separate_groups_student_see_other_group() {
+    public function test_get_subwiki_pages_collaborative_separate_groups_student_see_other_group(): void {
         // Create testing data.
         $this->create_collaborative_wikis_with_groups();
 
@@ -660,7 +660,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test get_subwiki_pages, check that a student can't get the pages from another group in
      * an individual wiki using separate groups.
      */
-    public function test_get_subwiki_pages_individual_separate_groups_student_see_other_group() {
+    public function test_get_subwiki_pages_individual_separate_groups_student_see_other_group(): void {
         // Create testing data.
         $this->create_individual_wikis_with_groups();
 
@@ -673,7 +673,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test get_subwiki_pages, check that a student can't get the pages from all participants in
      * a collaborative wiki using separate groups.
      */
-    public function test_get_subwiki_pages_collaborative_separate_groups_student_see_all_participants() {
+    public function test_get_subwiki_pages_collaborative_separate_groups_student_see_all_participants(): void {
         // Create testing data.
         $this->create_collaborative_wikis_with_groups();
 
@@ -686,7 +686,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test get_subwiki_pages, check that a student can't get the pages from all participants in
      * an individual wiki using separate groups.
      */
-    public function test_get_subwiki_pages_individual_separate_groups_student_see_all_participants() {
+    public function test_get_subwiki_pages_individual_separate_groups_student_see_all_participants(): void {
         // Create testing data.
         $this->create_individual_wikis_with_groups();
 
@@ -698,7 +698,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwiki_pages without groups and collaborative wiki.
      */
-    public function test_get_subwiki_pages_collaborative() {
+    public function test_get_subwiki_pages_collaborative(): void {
 
         // Test user with full capabilities.
         $this->setUser($this->student);
@@ -764,7 +764,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwiki_pages without groups.
      */
-    public function test_get_subwiki_pages_individual() {
+    public function test_get_subwiki_pages_individual(): void {
 
         // Create an individual wiki to test userid param.
         $indwiki = $this->getDataGenerator()->create_module('wiki',
@@ -821,7 +821,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwiki_pages with groups and collaborative wikis.
      */
-    public function test_get_subwiki_pages_separate_groups_collaborative() {
+    public function test_get_subwiki_pages_separate_groups_collaborative(): void {
 
         // Create testing data.
         $this->create_collaborative_wikis_with_groups();
@@ -868,7 +868,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwiki_pages with groups and collaborative wikis.
      */
-    public function test_get_subwiki_pages_visible_groups_collaborative() {
+    public function test_get_subwiki_pages_visible_groups_collaborative(): void {
 
         // Create testing data.
         $this->create_collaborative_wikis_with_groups();
@@ -916,7 +916,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwiki_pages with groups and individual wikis.
      */
-    public function test_get_subwiki_pages_separate_groups_individual() {
+    public function test_get_subwiki_pages_separate_groups_individual(): void {
 
         // Create testing data.
         $this->create_individual_wikis_with_groups();
@@ -963,7 +963,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwiki_pages with groups and individual wikis.
      */
-    public function test_get_subwiki_pages_visible_groups_individual() {
+    public function test_get_subwiki_pages_visible_groups_individual(): void {
 
         // Create testing data.
         $this->create_individual_wikis_with_groups();
@@ -1010,7 +1010,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_page_contents using an invalid pageid.
      */
-    public function test_get_page_contents_invalid_pageid() {
+    public function test_get_page_contents_invalid_pageid(): void {
         $this->expectException(\moodle_exception::class);
         mod_wiki_external::get_page_contents(0);
     }
@@ -1018,7 +1018,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_page_contents using a user not enrolled in the course.
      */
-    public function test_get_page_contents_unenrolled_user() {
+    public function test_get_page_contents_unenrolled_user(): void {
         // Create and use the user.
         $usernotenrolled = self::getDataGenerator()->create_user();
         $this->setUser($usernotenrolled);
@@ -1030,7 +1030,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_page_contents using a hidden wiki as student.
      */
-    public function test_get_page_contents_hidden_wiki_as_student() {
+    public function test_get_page_contents_hidden_wiki_as_student(): void {
         // Create a hidden wiki and try to get a page contents.
         $hiddenwiki = $this->getDataGenerator()->create_module('wiki',
                             array('course' => $this->course->id, 'visible' => false));
@@ -1044,7 +1044,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_page_contents without the viewpage capability.
      */
-    public function test_get_page_contents_without_viewpage_capability() {
+    public function test_get_page_contents_without_viewpage_capability(): void {
         // Prohibit capability = mod/wiki:viewpage on the course for students.
         $contextcourse = \context_course::instance($this->course->id);
         assign_capability('mod/wiki:viewpage', CAP_PROHIBIT, $this->studentrole->id, $contextcourse->id);
@@ -1059,7 +1059,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test get_page_contents, check that a student can't get a page from another group when
      * using separate groups.
      */
-    public function test_get_page_contents_separate_groups_student_see_other_group() {
+    public function test_get_page_contents_separate_groups_student_see_other_group(): void {
         // Create testing data.
         $this->create_individual_wikis_with_groups();
 
@@ -1072,7 +1072,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test get_page_contents without groups. We won't test all the possible cases because that's already
      * done in the tests for get_subwiki_pages.
      */
-    public function test_get_page_contents() {
+    public function test_get_page_contents(): void {
 
         // Test user with full capabilities.
         $this->setUser($this->student);
@@ -1116,7 +1116,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test get_page_contents with groups. We won't test all the possible cases because that's already
      * done in the tests for get_subwiki_pages.
      */
-    public function test_get_page_contents_with_groups() {
+    public function test_get_page_contents_with_groups(): void {
 
         // Create testing data.
         $this->create_individual_wikis_with_groups();
@@ -1152,7 +1152,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwiki_files using a wiki without files.
      */
-    public function test_get_subwiki_files_no_files() {
+    public function test_get_subwiki_files_no_files(): void {
         $result = mod_wiki_external::get_subwiki_files($this->wiki->id);
         $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_files_returns(), $result);
         $this->assertCount(0, $result['files']);
@@ -1163,7 +1163,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test get_subwiki_files, check that a student can't get files from another group's subwiki when
      * using separate groups.
      */
-    public function test_get_subwiki_files_separate_groups_student_see_other_group() {
+    public function test_get_subwiki_files_separate_groups_student_see_other_group(): void {
         // Create testing data.
         $this->create_collaborative_wikis_with_groups();
 
@@ -1175,7 +1175,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwiki_files using a collaborative wiki without groups.
      */
-    public function test_get_subwiki_files_collaborative_no_groups() {
+    public function test_get_subwiki_files_collaborative_no_groups(): void {
         $this->setUser($this->student);
 
         // Add a file as subwiki attachment.
@@ -1227,7 +1227,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_subwiki_files using an individual wiki with visible groups.
      */
-    public function test_get_subwiki_files_visible_groups_individual() {
+    public function test_get_subwiki_files_visible_groups_individual(): void {
         // Create testing data.
         $this->create_individual_wikis_with_groups();
 
@@ -1273,7 +1273,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test get_page_for_editing. We won't test all the possible cases because that's already
      * done in the tests for wiki_parser_proxy::get_section.
      */
-    public function test_get_page_for_editing() {
+    public function test_get_page_for_editing(): void {
 
         $this->create_individual_wikis_with_groups();
 
@@ -1312,7 +1312,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test test_get_page_locking.
      */
-    public function test_get_page_locking() {
+    public function test_get_page_locking(): void {
 
         $this->create_individual_wikis_with_groups();
 
@@ -1371,7 +1371,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test new_page. We won't test all the possible cases because that's already
      * done in the tests for wiki_create_page.
      */
-    public function test_new_page() {
+    public function test_new_page(): void {
 
         $this->create_individual_wikis_with_groups();
 
@@ -1443,7 +1443,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test edit_page. We won't test all the possible cases because that's already
      * done in the tests for wiki_save_section / wiki_save_page.
      */
-    public function test_edit_page() {
+    public function test_edit_page(): void {
 
         $this->create_individual_wikis_with_groups();
 

@@ -40,7 +40,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test view_folder
      */
-    public function test_view_folder() {
+    public function test_view_folder(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -110,7 +110,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test test_mod_folder_get_folders_by_courses
      */
-    public function test_mod_folder_get_folders_by_courses() {
+    public function test_mod_folder_get_folders_by_courses(): void {
         global $DB;
 
         $this->resetAfterTest(true);

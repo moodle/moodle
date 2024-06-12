@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  */
 class restore_log_rule_test extends \basic_testcase {
 
-    function test_process_keeps_log_unmodified() {
+    function test_process_keeps_log_unmodified(): void {
 
         // Prepare a tiny log entry.
         $originallog = new \stdClass();
@@ -54,7 +54,7 @@ class restore_log_rule_test extends \basic_testcase {
         $this->assertEquals($originallog, $log);
     }
 
-    public function test_build_regexp() {
+    public function test_build_regexp(): void {
         $original = 'Any (string) with [placeholders] like {this} and {this}. [end].';
         $expectation = '~Any \(string\) with (.*) like (.*) and (.*)\. (.*)\.~';
 

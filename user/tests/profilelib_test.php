@@ -37,7 +37,7 @@ class profilelib_test extends \advanced_testcase {
      * Tests profile_get_custom_fields function and checks it is consistent
      * with profile_user_record.
      */
-    public function test_get_custom_fields() {
+    public function test_get_custom_fields(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
 
@@ -84,7 +84,7 @@ class profilelib_test extends \advanced_testcase {
     /**
      * Make sure that all profile fields can be initialised without arguments.
      */
-    public function test_default_constructor() {
+    public function test_default_constructor(): void {
         global $DB, $CFG;
         require_once($CFG->dirroot . '/user/profile/definelib.php');
         $datatypes = profile_list_datatypes();
@@ -100,7 +100,7 @@ class profilelib_test extends \advanced_testcase {
     /**
      * Test profile_view function
      */
-    public function test_profile_view() {
+    public function test_profile_view(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -142,7 +142,7 @@ class profilelib_test extends \advanced_testcase {
     /**
      * Test that {@link user_not_fully_set_up()} takes required custom fields into account.
      */
-    public function test_profile_has_required_custom_fields_set() {
+    public function test_profile_has_required_custom_fields_set(): void {
         global $CFG;
         require_once($CFG->dirroot.'/mnet/lib.php');
 
@@ -210,7 +210,7 @@ class profilelib_test extends \advanced_testcase {
     /**
      * Test that user generator sets the custom profile fields
      */
-    public function test_profile_fields_in_generator() {
+    public function test_profile_fields_in_generator(): void {
         global $CFG;
         require_once($CFG->dirroot.'/mnet/lib.php');
 
@@ -240,7 +240,7 @@ class profilelib_test extends \advanced_testcase {
     /**
      * Tests the profile_get_custom_field_data_by_shortname function when working normally.
      */
-    public function test_profile_get_custom_field_data_by_shortname_normal() {
+    public function test_profile_get_custom_field_data_by_shortname_normal(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -272,7 +272,7 @@ class profilelib_test extends \advanced_testcase {
     /**
      * Tests the profile_get_custom_field_data_by_shortname function with a field that doesn't exist.
      */
-    public function test_profile_get_custom_field_data_by_shortname_missing() {
+    public function test_profile_get_custom_field_data_by_shortname_missing(): void {
         $this->assertNull(profile_get_custom_field_data_by_shortname('speciality'));
     }
 

@@ -36,7 +36,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test list all.
      */
-    public function test_list_templates() {
+    public function test_list_templates(): void {
         $result = external::list_templates('', '');
         $count = count($result);
         // We have 3 templates in this tool - and there must be more else where.
@@ -46,7 +46,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test we can filter by component.
      */
-    public function test_list_templates_for_component() {
+    public function test_list_templates_for_component(): void {
         $result = external::list_templates('tool_templatelibrary', '');
         $count = count($result);
         $this->assertEquals(3, $count);
@@ -59,7 +59,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test we can filter by a string.
      */
-    public function test_list_templates_with_filter() {
+    public function test_list_templates_with_filter(): void {
         $result = external::list_templates('tool_templatelibrary', 'page');
         $count = count($result);
         // Should be only one matching template.
@@ -67,7 +67,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals($result[0], "tool_templatelibrary/list_templates_page");
     }
 
-    public function test_load_canonical_template() {
+    public function test_load_canonical_template(): void {
         global $CFG;
 
         $originaltheme = $CFG->theme;

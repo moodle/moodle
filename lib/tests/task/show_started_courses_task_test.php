@@ -46,7 +46,7 @@ class show_started_courses_task_test extends advanced_testcase {
         int $yesterdayhidden,
         int $tomorrowhidden,
         bool $createvisible = true
-    ) {
+    ): void {
         global $DB;
 
         $this->resetAfterTest();

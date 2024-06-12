@@ -42,7 +42,7 @@ class eventobservers_test extends \advanced_testcase {
     /**
      * Test observer for course delete event.
      */
-    public function test_course_deleted() {
+    public function test_course_deleted(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -117,7 +117,7 @@ class eventobservers_test extends \advanced_testcase {
     /**
      * This tests if writing of the events to the table tool_monitor_events is working fine.
      */
-    public function test_flush() {
+    public function test_flush(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -215,7 +215,7 @@ class eventobservers_test extends \advanced_testcase {
     /**
      * Test the notification sending features.
      */
-    public function test_process_event() {
+    public function test_process_event(): void {
 
         global $DB, $USER;
 
@@ -352,7 +352,7 @@ class eventobservers_test extends \advanced_testcase {
     /**
      * Test that same events are not used twice to calculate conditions for a single subscription.
      */
-    public function test_multiple_notification_not_sent() {
+    public function test_multiple_notification_not_sent(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -440,7 +440,7 @@ class eventobservers_test extends \advanced_testcase {
     /**
      * Tests for replace_placeholders method.
      */
-    public function test_replace_placeholders() {
+    public function test_replace_placeholders(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -525,7 +525,7 @@ class eventobservers_test extends \advanced_testcase {
     /**
      * Test observer for user delete event.
      */
-    public function test_user_deleted() {
+    public function test_user_deleted(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -580,7 +580,7 @@ class eventobservers_test extends \advanced_testcase {
     /**
      * Test observer for course module delete event.
      */
-    public function test_course_module_deleted() {
+    public function test_course_module_deleted(): void {
         global $DB;
 
         $this->setAdminUser();

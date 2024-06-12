@@ -73,7 +73,7 @@ class search_content_test extends \advanced_testcase {
     /**
      * Tests all functionality in the search area.
      */
-    public function test_search_area() {
+    public function test_search_area(): void {
         global $CFG, $USER, $DB;
         require_once($CFG->dirroot . '/search/tests/fixtures/testable_core_search.php');
 

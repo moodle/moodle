@@ -48,7 +48,7 @@ class delete_content_test extends externallib_advanced_testcase {
     /**
      * Test the behaviour of delete_content().
      */
-    public function test_delete_content() {
+    public function test_delete_content(): void {
         global $DB;
         $this->resetAfterTest();
         $records = [];

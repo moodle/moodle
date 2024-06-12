@@ -26,7 +26,7 @@ namespace mod_imscp;
  */
 class generator_test extends \advanced_testcase {
 
-    public function test_create_instance() {
+    public function test_create_instance(): void {
         global $DB, $CFG, $USER;
         $this->resetAfterTest();
         $this->setAdminUser();

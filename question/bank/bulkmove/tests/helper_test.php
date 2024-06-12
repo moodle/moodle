@@ -171,7 +171,7 @@ class helper_test extends \advanced_testcase {
      *
      * @covers ::bulk_move_questions
      */
-    public function test_bulk_move_questions() {
+    public function test_bulk_move_questions(): void {
         global $DB;
         $this->helper_setup();
 
@@ -209,7 +209,7 @@ class helper_test extends \advanced_testcase {
      *
      * @covers ::get_displaydata
      */
-    public function test_get_displaydata() {
+    public function test_get_displaydata(): void {
         $this->helper_setup();
         $coursecontext = \context_course::instance($this->course->id);
         $contexts = new question_edit_contexts($coursecontext);

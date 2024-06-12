@@ -30,7 +30,7 @@ require_once(__DIR__.'/fixtures/lib.php');
  */
 class grade_scale_test extends \grade_base_testcase {
 
-    public function test_grade_scale() {
+    public function test_grade_scale(): void {
         $this->sub_test_scale_construct();
         $this->sub_test_grade_scale_insert();
         $this->sub_test_grade_scale_update();

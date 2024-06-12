@@ -66,7 +66,7 @@ class userselector_test extends \advanced_testcase {
     /**
      * No identity fields are not shown to student user (no permission to view identity fields).
      */
-    public function test_hidden_siteidentity_fields_no_access() {
+    public function test_hidden_siteidentity_fields_no_access(): void {
         $this->resetAfterTest();
         $env = $this->setup_hidden_siteidentity();
         $this->setUser($env->student);
@@ -85,7 +85,7 @@ class userselector_test extends \advanced_testcase {
     /**
      * Teacher can see students' identity fields only within the course.
      */
-    public function test_hidden_siteidentity_fields_course_only_access() {
+    public function test_hidden_siteidentity_fields_course_only_access(): void {
         $this->resetAfterTest();
         $env = $this->setup_hidden_siteidentity();
         $this->setUser($env->teacher);
@@ -113,7 +113,7 @@ class userselector_test extends \advanced_testcase {
     /**
      * Teacher can be prevented from seeing students' identity fields even within the course.
      */
-    public function test_hidden_siteidentity_fields_course_prevented_access() {
+    public function test_hidden_siteidentity_fields_course_prevented_access(): void {
         $this->resetAfterTest();
         $env = $this->setup_hidden_siteidentity();
         $this->setUser($env->teacher);
@@ -134,7 +134,7 @@ class userselector_test extends \advanced_testcase {
     /**
      * Manager can see students' identity fields anywhere.
      */
-    public function test_hidden_siteidentity_fields_anywhere_access() {
+    public function test_hidden_siteidentity_fields_anywhere_access(): void {
         $this->resetAfterTest();
         $env = $this->setup_hidden_siteidentity();
         $this->setUser($env->manager);
@@ -162,7 +162,7 @@ class userselector_test extends \advanced_testcase {
     /**
      * Manager can be prevented from seeing hidden fields outside the course.
      */
-    public function test_hidden_siteidentity_fields_schismatic_access() {
+    public function test_hidden_siteidentity_fields_schismatic_access(): void {
         $this->resetAfterTest();
         $env = $this->setup_hidden_siteidentity();
         $this->setUser($env->manager);
@@ -196,7 +196,7 @@ class userselector_test extends \advanced_testcase {
     /**
      * Two capabilities must be currently set to prevent manager from seeing hidden fields.
      */
-    public function test_hidden_siteidentity_fields_hard_to_prevent_access() {
+    public function test_hidden_siteidentity_fields_hard_to_prevent_access(): void {
         $this->resetAfterTest();
         $env = $this->setup_hidden_siteidentity();
         $this->setUser($env->manager);
@@ -230,7 +230,7 @@ class userselector_test extends \advanced_testcase {
      * However, this was found as violating the principle of respecting site privacy settings. So the feature has been
      * dropped in Moodle 3.6.
      */
-    public function test_hidden_siteidentity_fields_explicit_extrafields() {
+    public function test_hidden_siteidentity_fields_explicit_extrafields(): void {
         $this->resetAfterTest();
         $env = $this->setup_hidden_siteidentity();
         $this->setUser($env->manager);

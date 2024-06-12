@@ -28,6 +28,6 @@ class ui_test extends \basic_testcase {
     /**
      * Test backup_ui class
      */
-    public function test_backup_ui() {
+    public function test_backup_ui(): void {
     }
 }

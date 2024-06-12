@@ -37,7 +37,7 @@ class restore_test extends \restore_date_testcase {
      * During restore, we add default options for any questions like that.
      * That is what is tested in this file.
      */
-    public function test_restore_create_missing_qtype_essay_options() {
+    public function test_restore_create_missing_qtype_essay_options(): void {
         global $DB;
 
         // Create a course with one essay question in its question bank.

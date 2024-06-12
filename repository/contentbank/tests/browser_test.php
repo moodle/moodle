@@ -36,7 +36,7 @@ class browser_test extends \advanced_testcase {
      * within the system context. By default, every authenticated user should be able to access/view the content in
      * the system context.
      */
-    public function test_get_content_system_context_user_has_capabilities() {
+    public function test_get_content_system_context_user_has_capabilities(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);
@@ -125,7 +125,7 @@ class browser_test extends \advanced_testcase {
      * content within the system context. By default, every non-authenticated user should not be able to access/view
      * the content in the system context.
      */
-    public function test_get_content_system_context_user_missing_capabilities() {
+    public function test_get_content_system_context_user_missing_capabilities(): void {
         $this->resetAfterTest(true);
 
         $systemcontext = \context_system::instance();
@@ -150,7 +150,7 @@ class browser_test extends \advanced_testcase {
      * bank content within the course category context. By default, every authenticated user that has access to
      * any category course should be able to access/view the content in the course category context.
      */
-    public function test_get_content_course_category_context_user_has_capabilities() {
+    public function test_get_content_course_category_context_user_has_capabilities(): void {
         global $CFG;
 
         $this->resetAfterTest(true);
@@ -222,7 +222,7 @@ class browser_test extends \advanced_testcase {
      * that cannot access/view course content from the course category should not be able to access/view the
      * content in the course category context.
      */
-    public function test_get_content_course_category_context_user_missing_capabilities() {
+    public function test_get_content_course_category_context_user_missing_capabilities(): void {
         $this->resetAfterTest(true);
 
          // Create a course category 'Category'.
@@ -274,7 +274,7 @@ class browser_test extends \advanced_testcase {
      * bank content within the course context. By default, admin, managers, course creators, editing teachers enrolled
      * in the course should be able to access/view the content.
      */
-    public function test_get_content_course_context_user_has_capabilities() {
+    public function test_get_content_course_context_user_has_capabilities(): void {
         global $CFG;
 
         $this->resetAfterTest(true);
@@ -323,7 +323,7 @@ class browser_test extends \advanced_testcase {
      * bank content within the course context. By default, every user which is not an admin, manager, course creator,
      * editing teacher enrolled in the course should not be able to access/view the content.
      */
-    public function test_get_content_course_context_user_missing_capabilities() {
+    public function test_get_content_course_context_user_missing_capabilities(): void {
         $this->resetAfterTest(true);
 
         // Create course1.
@@ -369,7 +369,7 @@ class browser_test extends \advanced_testcase {
     /**
      * Test get_navigation() in the system context.
      */
-    public function test_get_navigation_system_context() {
+    public function test_get_navigation_system_context(): void {
         $this->resetAfterTest(true);
 
         $systemcontext = \context_system::instance();
@@ -387,7 +387,7 @@ class browser_test extends \advanced_testcase {
     /**
      * Test get_navigation() in the course category context.
      */
-    public function test_get_navigation_course_category_context() {
+    public function test_get_navigation_course_category_context(): void {
         $this->resetAfterTest(true);
 
         $systemcontext = \context_system::instance();
@@ -427,7 +427,7 @@ class browser_test extends \advanced_testcase {
     /**
      * Test get_navigation() in the course context.
      */
-    public function test_get_navigation_course_context() {
+    public function test_get_navigation_course_context(): void {
         $this->resetAfterTest(true);
 
         $systemcontext = \context_system::instance();

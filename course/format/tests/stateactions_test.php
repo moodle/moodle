@@ -897,7 +897,7 @@ class stateactions_test extends \advanced_testcase {
         bool $validcms = true,
         string $role = 'admin',
         bool $expectedexception = false
-    ) {
+    ): void {
         $this->resetAfterTest();
 
         // Create a course with 3 sections.

@@ -127,7 +127,7 @@ class cm_completion_details_test extends advanced_testcase {
      * @param int $completion The completion tracking mode.
      * @param bool $expectedresult Expected result.
      */
-    public function test_has_completion(int $completion, bool $expectedresult) {
+    public function test_has_completion(int $completion, bool $expectedresult): void {
         $cmcompletion = $this->setup_data($completion);
 
         $this->assertEquals($expectedresult, $cmcompletion->has_completion());
@@ -160,7 +160,7 @@ class cm_completion_details_test extends advanced_testcase {
      * @param int $completion The completion tracking mode.
      * @param bool $expectedresult Expected result.
      */
-    public function test_is_automatic(int $completion, bool $expectedresult) {
+    public function test_is_automatic(int $completion, bool $expectedresult): void {
         $cmcompletion = $this->setup_data($completion);
 
         $this->assertEquals($expectedresult, $cmcompletion->is_automatic());
@@ -193,7 +193,7 @@ class cm_completion_details_test extends advanced_testcase {
      * @param int $completion The completion tracking mode.
      * @param bool $expectedresult Expected result.
      */
-    public function test_is_manual(int $completion, bool $expectedresult) {
+    public function test_is_manual(int $completion, bool $expectedresult): void {
         $cmcompletion = $this->setup_data($completion);
 
         $this->assertEquals($expectedresult, $cmcompletion->is_manual());
@@ -217,7 +217,7 @@ class cm_completion_details_test extends advanced_testcase {
      * @dataProvider overall_completion_provider
      * @param int $state
      */
-    public function test_get_overall_completion(int $state) {
+    public function test_get_overall_completion(int $state): void {
         $completiondata = (object)['completionstate' => $state];
         $cmcompletion = $this->setup_data(COMPLETION_TRACKING_AUTOMATIC, [], $completiondata);
         $this->assertEquals($state, $cmcompletion->get_overall_completion());
@@ -497,7 +497,7 @@ class cm_completion_details_test extends advanced_testcase {
      * @param array $expecteddetails Expected completion details returned by get_details().
      */
     public function test_get_details(int $completion, ?int $completionview,
-             ?int $completiongrade, ?int $completionpassgrade, array $expecteddetails) {
+             ?int $completiongrade, ?int $completionpassgrade, array $expecteddetails): void {
         $options = [];
         $getdatareturn = (object)[
             'viewed' => $completionview,
@@ -597,7 +597,7 @@ class cm_completion_details_test extends advanced_testcase {
      * @param array $expectedorder The expected order of completion conditions returned about the module.
      */
     public function test_get_details_custom_order(bool $completionview, bool $completiongrade, array $customcompletionrules,
-            string $modname, array $expectedorder) {
+            string $modname, array $expectedorder): void {
 
         $options['customcompletion'] = [];
         $customcompletiondata = [];

@@ -34,7 +34,7 @@ class generator_test extends \advanced_testcase {
         $manager::enable_plugin('chat', 1);
     }
 
-    public function test_create_instance() {
+    public function test_create_instance(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();

@@ -165,7 +165,7 @@ class user_repository_test extends \advanced_testcase {
      *
      * @covers ::save
      */
-    public function test_save_new_unchanged_user_defaults() {
+    public function test_save_new_unchanged_user_defaults(): void {
         $this->resetAfterTest();
         $user = $this->generate_user();
         $userrepo = new user_repository();
@@ -186,7 +186,7 @@ class user_repository_test extends \advanced_testcase {
      *
      * @covers ::save
      */
-    public function test_save_new_changed_user_defaults() {
+    public function test_save_new_changed_user_defaults(): void {
         $this->resetAfterTest();
         $user = $this->generate_user(1, ['city' => 'Perth']);
         $userrepo = new user_repository();
@@ -207,7 +207,7 @@ class user_repository_test extends \advanced_testcase {
      *
      * @covers ::save
      */
-    public function test_save_existing() {
+    public function test_save_existing(): void {
         $this->resetAfterTest();
         $user = $this->generate_user();
         $userrepo = new user_repository();
@@ -237,7 +237,7 @@ class user_repository_test extends \advanced_testcase {
      *
      * @covers ::save
      */
-    public function test_save_existing_localid_mismatch() {
+    public function test_save_existing_localid_mismatch(): void {
         $this->resetAfterTest();
         $user = $this->generate_user();
         $userrepo = new user_repository();
@@ -270,7 +270,7 @@ class user_repository_test extends \advanced_testcase {
      *
      * @covers ::save
      */
-    public function test_save_stale_id() {
+    public function test_save_stale_id(): void {
         global $CFG;
         $this->resetAfterTest();
         $instructoruser = $this->getDataGenerator()->create_user();
@@ -302,7 +302,7 @@ class user_repository_test extends \advanced_testcase {
      *
      * @covers ::save
      */
-    public function test_save_uniqueness_constraint() {
+    public function test_save_uniqueness_constraint(): void {
         $this->resetAfterTest();
         $user = $this->generate_user();
         $userrepo = new user_repository();
@@ -318,7 +318,7 @@ class user_repository_test extends \advanced_testcase {
      *
      * @covers ::find
      */
-    public function test_find() {
+    public function test_find(): void {
         $this->resetAfterTest();
         $user = $this->generate_user();
         $userrepo = new user_repository();
@@ -336,7 +336,7 @@ class user_repository_test extends \advanced_testcase {
      *
      * @covers ::find_by_resource
      */
-    public function test_find_by_resource() {
+    public function test_find_by_resource(): void {
         global $CFG;
         $this->resetAfterTest();
         $user = $this->generate_user();
@@ -371,7 +371,7 @@ class user_repository_test extends \advanced_testcase {
      *
      * @covers ::find_by_resource_link
      */
-    public function test_find_by_resource_link() {
+    public function test_find_by_resource_link(): void {
         global $CFG;
         $this->resetAfterTest();
         $user = $this->generate_user();
@@ -410,7 +410,7 @@ class user_repository_test extends \advanced_testcase {
      *
      * @covers ::exists
      */
-    public function test_exists() {
+    public function test_exists(): void {
         $this->resetAfterTest();
         $user = $this->generate_user();
         $userrepo = new user_repository();
@@ -425,7 +425,7 @@ class user_repository_test extends \advanced_testcase {
      *
      * @covers ::delete
      */
-    public function test_delete() {
+    public function test_delete(): void {
         $this->resetAfterTest();
         $user = $this->generate_user();
         $userrepo = new user_repository();
@@ -448,7 +448,7 @@ class user_repository_test extends \advanced_testcase {
      *
      * @covers ::delete_by_deployment
      */
-    public function test_delete_by_deployment() {
+    public function test_delete_by_deployment(): void {
         global $CFG;
         $this->resetAfterTest();
         $user = $this->generate_user();
@@ -497,7 +497,7 @@ class user_repository_test extends \advanced_testcase {
      *
      * @covers ::save
      */
-    public function test_save_deleted() {
+    public function test_save_deleted(): void {
         $this->resetAfterTest();
         $user = $this->generate_user();
         $userrepo = new user_repository();

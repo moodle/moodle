@@ -48,7 +48,7 @@ class hide_ended_courses_task_test extends \core\task\show_started_courses_task_
         int $yesterdayvisible,
         int $tomorrowvisible,
         bool $createhidden = true
-    ) {
+    ): void {
         global $DB;
 
         $this->resetAfterTest();

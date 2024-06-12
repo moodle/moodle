@@ -30,7 +30,7 @@ class data_registry_test extends \advanced_testcase {
      *
      * This test is not great because we only test a limited set of values. This is a fault of the underlying API.
      */
-    public function test_get_effective_context_value_invalid_element() {
+    public function test_get_effective_context_value_invalid_element(): void {
         $this->expectException(\coding_exception::class);
         data_registry::get_effective_context_value(\context_system::instance(), 'invalid');
     }
@@ -40,7 +40,7 @@ class data_registry_test extends \advanced_testcase {
      *
      * This test is not great because we only test a limited set of values. This is a fault of the underlying API.
      */
-    public function test_get_effective_contextlevel_value_invalid_element() {
+    public function test_get_effective_contextlevel_value_invalid_element(): void {
         $this->expectException(\coding_exception::class);
         data_registry::get_effective_contextlevel_value(\context_system::instance(), 'invalid');
     }

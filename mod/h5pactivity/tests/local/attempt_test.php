@@ -64,7 +64,7 @@ class attempt_test extends \advanced_testcase {
     /**
      * Test for create_attempt method.
      */
-    public function test_create_attempt() {
+    public function test_create_attempt(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/lib/xapi/tests/helper.php');
 
@@ -104,7 +104,7 @@ class attempt_test extends \advanced_testcase {
     /**
      * Test for last_attempt method
      */
-    public function test_last_attempt() {
+    public function test_last_attempt(): void {
 
         list($cm, $student) = $this->generate_testing_scenario();
 
@@ -146,7 +146,7 @@ class attempt_test extends \advanced_testcase {
      * @param bool $hasresult generate result
      * @param array $results 0 => insert ok, 1 => maxscore, 2 => rawscore, 3 => count
      */
-    public function test_save_statement(string $subcontent, bool $hasdefinition, bool $hasresult, array $results) {
+    public function test_save_statement(string $subcontent, bool $hasdefinition, bool $hasresult, array $results): void {
 
         list($cm, $student) = $this->generate_testing_scenario();
 
@@ -212,7 +212,7 @@ class attempt_test extends \advanced_testcase {
     /**
      * Test delete results from attempt.
      */
-    public function test_delete_results() {
+    public function test_delete_results(): void {
 
         list($cm, $student) = $this->generate_testing_scenario();
 
@@ -224,7 +224,7 @@ class attempt_test extends \advanced_testcase {
     /**
      * Test delete attempt.
      */
-    public function test_delete_attempt() {
+    public function test_delete_attempt(): void {
         global $DB;
 
         list($cm, $student) = $this->generate_testing_scenario();
@@ -265,7 +265,7 @@ class attempt_test extends \advanced_testcase {
      * @param bool $hasstudent if user is specificed
      * @param int[] 0-3 => statements count results, 4-5 => totals
      */
-    public function test_delete_all_attempts(bool $hasstudent, array $results) {
+    public function test_delete_all_attempts(bool $hasstudent, array $results): void {
         global $DB;
 
         list($cm, $student, $course) = $this->generate_testing_scenario();

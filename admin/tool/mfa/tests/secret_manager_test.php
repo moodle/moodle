@@ -31,7 +31,7 @@ class secret_manager_test extends \advanced_testcase {
      *
      * @covers ::create_secret
      */
-    public function test_create_secret() {
+    public function test_create_secret(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -85,7 +85,7 @@ class secret_manager_test extends \advanced_testcase {
      * @covers ::get_record
      * @covers ::delete_records
      */
-    public function test_add_secret_to_db() {
+    public function test_add_secret_to_db(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -122,7 +122,7 @@ class secret_manager_test extends \advanced_testcase {
      * @covers ::validate_secret
      * @covers ::create_secret
      */
-    public function test_validate_secret() {
+    public function test_validate_secret(): void {
         global $DB;
 
         // Test adding a code and getting it returned, then validated.
@@ -182,7 +182,7 @@ class secret_manager_test extends \advanced_testcase {
      * @covers ::create_secret
      * @covers ::revoke_secret
      */
-    public function test_revoke_secret() {
+    public function test_revoke_secret(): void {
         global $DB, $SESSION;
 
         $this->resetAfterTest(true);
@@ -213,7 +213,7 @@ class secret_manager_test extends \advanced_testcase {
      * @covers ::create_secret
      * @covers ::revoke_secret
      */
-    public function test_has_active_secret() {
+    public function test_has_active_secret(): void {
         global $DB;
 
         $this->resetAfterTest(true);

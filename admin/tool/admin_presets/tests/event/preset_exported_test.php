@@ -30,7 +30,7 @@ class preset_exported_test extends \advanced_testcase {
     /**
      * Test preset_exported event.
      */
-    public function test_preset_exported_event() {
+    public function test_preset_exported_event(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

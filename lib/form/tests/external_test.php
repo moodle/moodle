@@ -43,7 +43,7 @@ class external_test extends advanced_testcase {
     /**
      * Test the core_form_get_filetypes_browser_data external function
      */
-    public function test_get_filetypes_browser_data() {
+    public function test_get_filetypes_browser_data(): void {
 
         $data = external::get_filetypes_browser_data('', true, '');
         $data = external_api::clean_returnvalue(external::get_filetypes_browser_data_returns(), $data);

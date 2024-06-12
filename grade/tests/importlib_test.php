@@ -80,7 +80,7 @@ class importlib_test extends \advanced_testcase {
      *
      * @covers ::grade_import_commit
      */
-    public function test_grade_import_commit() {
+    public function test_grade_import_commit(): void {
         global $USER, $DB, $CFG;
         $this->resetAfterTest();
 

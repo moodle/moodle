@@ -46,7 +46,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test that plugin is returned as enabled media plugin.
      */
-    public function test_is_installed() {
+    public function test_is_installed(): void {
         $sortorder = \core\plugininfo\media::get_enabled_plugins();
         $this->assertEquals(['vimeo' => 'vimeo'], $sortorder);
     }
@@ -54,7 +54,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test embedding without media filter (for example for displaying URL resorce).
      */
-    public function test_embed_url() {
+    public function test_embed_url(): void {
         global $CFG;
 
         $url = new \moodle_url('http://vimeo.com/1176321');
@@ -83,7 +83,7 @@ class player_test extends \advanced_testcase {
      *
      * filter_mediaplugin is enabled by default.
      */
-    public function test_embed_link() {
+    public function test_embed_link(): void {
         global $CFG;
         $url = new \moodle_url('http://vimeo.com/1176321');
         $text = \html_writer::link($url, 'Watch this one');
@@ -100,7 +100,7 @@ class player_test extends \advanced_testcase {
      *
      * filter_mediaplugin is enabled by default.
      */
-    public function test_embed_media() {
+    public function test_embed_media(): void {
         global $CFG;
         $url = new \moodle_url('http://vimeo.com/1176321');
         $trackurl = new \moodle_url('http://example.org/some_filename.vtt');
@@ -130,7 +130,7 @@ class player_test extends \advanced_testcase {
      * Test embedding without media filter (for example for displaying URL resorce)
      * and test that player plugin is parsing the URL with the code.
      */
-    public function test_embed_url_with_code() {
+    public function test_embed_url_with_code(): void {
         global $CFG;
 
         $url = new \moodle_url('https://vimeo.com/1176321/abcdef12345');
@@ -163,7 +163,7 @@ class player_test extends \advanced_testcase {
      *
      * filter_mediaplugin is enabled by default.
      */
-    public function test_embed_link_with_code() {
+    public function test_embed_link_with_code(): void {
         global $CFG;
         $url = new \moodle_url('https://vimeo.com/1176321/abcdef12345');
         $text = \html_writer::link($url, 'Watch this one');
@@ -184,7 +184,7 @@ class player_test extends \advanced_testcase {
      *
      * filter_mediaplugin is enabled by default.
      */
-    public function test_embed_media_with_code() {
+    public function test_embed_media_with_code(): void {
         global $CFG;
         $url = new \moodle_url('https://vimeo.com/1176321/abcdef12345');
         $trackurl = new \moodle_url('http://example.org/some_filename.vtt');
@@ -216,7 +216,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test that mediaplugin filter skip the process when the URL is invalid.
      */
-    public function test_skip_invalid_url_format_with_code() {
+    public function test_skip_invalid_url_format_with_code(): void {
         $url = new \moodle_url('https://vimeo.com/_________/abcdef12345s');
         $text = \html_writer::link($url, 'Invalid Vimeo URL');
         $content = format_text($text, FORMAT_HTML);

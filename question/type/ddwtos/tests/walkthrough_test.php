@@ -51,7 +51,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         return new \question_contains_tag_with_attributes('span', $expectedattrs);
     }
 
-    public function test_interactive_behaviour() {
+    public function test_interactive_behaviour(): void {
 
         // Create a drag-and-drop question.
         $dd = \test_question_maker::make_question('ddwtos');
@@ -161,7 +161,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_mark(2);
     }
 
-    public function test_deferred_feedback() {
+    public function test_deferred_feedback(): void {
 
         // Create a drag-and-drop question.
         $dd = \test_question_maker::make_question('ddwtos');
@@ -244,7 +244,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_mark(2);
     }
 
-    public function test_deferred_feedback_unanswered() {
+    public function test_deferred_feedback_unanswered(): void {
 
         // Create a drag-and-drop question.
         $dd = \test_question_maker::make_question('ddwtos');
@@ -300,7 +300,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_drop_box_expectation('3', 3, true));
     }
 
-    public function test_deferred_feedback_partial_answer() {
+    public function test_deferred_feedback_partial_answer(): void {
 
         // Create a drag-and-drop question.
         $dd = \test_question_maker::make_question('ddwtos');
@@ -355,7 +355,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_partcorrect_expectation());
     }
 
-    public function test_interactive_grading() {
+    public function test_interactive_grading(): void {
 
         // Create a drag-and-drop question.
         $dd = \test_question_maker::make_question('ddwtos');
@@ -511,7 +511,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                         $this->quba->get_field_prefix($this->slot) . 'p3', '1'));
     }
 
-    public function test_interactive_correct_no_submit() {
+    public function test_interactive_correct_no_submit(): void {
 
         // Create a drag-and-drop question.
         $dd = \test_question_maker::make_question('ddwtos');
@@ -567,7 +567,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_mark(3);
     }
 
-    public function test_interactive_partial_no_submit() {
+    public function test_interactive_partial_no_submit(): void {
 
         // Create a drag-and-drop question.
         $dd = \test_question_maker::make_question('ddwtos');
@@ -623,7 +623,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_mark(1);
     }
 
-    public function test_interactive_no_right_clears() {
+    public function test_interactive_no_right_clears(): void {
 
         // Create a drag-and-drop question.
         $dd = \test_question_maker::make_question('ddwtos');
@@ -690,7 +690,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_no_hint_visible_expectation());
     }
 
-    public function test_display_of_right_answer_when_shuffled() {
+    public function test_display_of_right_answer_when_shuffled(): void {
 
         // Create a drag-and-drop question.
         $dd = \test_question_maker::make_question('ddwtos');

@@ -44,7 +44,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 preg_quote($state->default_string(true), '~') . '~');
     }
 
-    public function test_deferred_feedback() {
+    public function test_deferred_feedback(): void {
 
         // Create a multianswer question.
         $q = \test_question_maker::make_question('multianswer', 'fourmc');
@@ -94,7 +94,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_does_not_contain_validation_error_expectation());
     }
 
-    public function test_deferred_feedback_numericalzero_not_answered() {
+    public function test_deferred_feedback_numericalzero_not_answered(): void {
         // Tests the situation found in MDL-35370.
 
         // Create a multianswer question with one numerical subquestion, right answer zero.
@@ -122,7 +122,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_does_not_contain_validation_error_expectation());
     }
 
-    public function test_deferred_feedback_numericalzero_0_answer() {
+    public function test_deferred_feedback_numericalzero_0_answer(): void {
         // Tests the situation found in MDL-35370.
 
         // Create a multianswer question with one numerical subquestion, right answer zero.
@@ -161,7 +161,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_does_not_contain_validation_error_expectation());
     }
 
-    public function test_deferred_feedback_numericalzero_0_wrong() {
+    public function test_deferred_feedback_numericalzero_0_wrong(): void {
         // Tests the situation found in MDL-35370.
 
         // Create a multianswer question with one numerical subquestion, right answer zero.
@@ -200,7 +200,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_does_not_contain_validation_error_expectation());
     }
 
-    public function test_interactive_feedback() {
+    public function test_interactive_feedback(): void {
 
         // Create a multianswer question.
         $q = \test_question_maker::make_question('multianswer', 'fourmc');
@@ -328,7 +328,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub4_answer', $choices, '1', true));
     }
 
-    public function test_interactive_partial_response_does_not_reveal_answer() {
+    public function test_interactive_partial_response_does_not_reveal_answer(): void {
 
         // Create a multianswer question.
         $q = \test_question_maker::make_question('multianswer', 'fourmc');
@@ -386,7 +386,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->currentoutput);
     }
 
-    public function test_interactivecountback_feedback() {
+    public function test_interactivecountback_feedback(): void {
 
         // Create a multianswer question.
         $q = \test_question_maker::make_question('multianswer', 'fourmc');
@@ -478,7 +478,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub4_answer', $choices, '1', false));
     }
 
-    public function test_deferred_feedback_multiple() {
+    public function test_deferred_feedback_multiple(): void {
 
         // Create a multianswer question.
         $q = \test_question_maker::make_question('multianswer', 'multiple');
@@ -540,7 +540,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
      *
      * @covers \qtype_multianswer_renderer::subquestion
      */
-    public function test_corrupted_question() {
+    public function test_corrupted_question(): void {
         global $DB;
 
         $syscontext = \context_system::instance();

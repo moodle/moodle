@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/question/type/gapselect/tests/helper.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class walkthrough_test extends \qbehaviour_walkthrough_test_base {
-    public function test_interactive_behaviour() {
+    public function test_interactive_behaviour(): void {
 
         // Create a gapselect question.
         $q = \test_question_maker::make_question('gapselect');
@@ -148,7 +148,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_mark(2);
     }
 
-    public function test_multilang_behaviour() {
+    public function test_multilang_behaviour(): void {
 
         // Enable multilang filter to on content and heading.
         filter_set_global_state('multilang', TEXTFILTER_ON);
@@ -171,7 +171,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                         ['1' => 'mat', '2' => 'bat'], null, true));
     }
 
-    public function test_choices_containing_dollars() {
+    public function test_choices_containing_dollars(): void {
 
         // Choices with a currency like entry (e.g. $3) should display.
         $q = \test_question_maker::make_question('gapselect', 'currency');

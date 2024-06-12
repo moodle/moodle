@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/question/engine/upgrade/tests/helper.php');
  */
 class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base {
 
-    public function test_essay_deferredfeedback_history98220() {
+    public function test_essay_deferredfeedback_history98220(): void {
         $quiz = (object) array(
             'id' => '4140',
             'course' => '5012',
@@ -264,7 +264,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_essay_deferredfeedback_history820() {
+    public function test_essay_deferredfeedback_history820(): void {
         $quiz = (object) array(
             'id' => '142',
             'course' => '187',
@@ -443,7 +443,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_essay_deferredfeedback_missing() {
+    public function test_essay_deferredfeedback_missing(): void {
         $quiz = (object) array(
             'id' => '142',
             'course' => '187',

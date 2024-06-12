@@ -37,7 +37,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test report_log_supports_logstore.
      */
-    public function test_report_participation_supports_logstore() {
+    public function test_report_participation_supports_logstore(): void {
         $logmanager = get_log_manager();
         $allstores = \core_component::get_plugin_list_with_class('logstore', 'log\store');
 
@@ -59,7 +59,7 @@ class lib_test extends \advanced_testcase {
      *
      * @covers ::get_until()
      */
-    public function test_report_get_until() {
+    public function test_report_get_until(): void {
         global $DB;
         $this->resetAfterTest();
         $this->preventResetByRollback();

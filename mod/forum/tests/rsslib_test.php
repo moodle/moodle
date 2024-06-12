@@ -37,7 +37,7 @@ class rsslib_test extends \advanced_testcase {
     /**
      * Ensure that deleted posts are not included.
      */
-    public function test_forum_rss_feed_discussions_sql_respect_deleted() {
+    public function test_forum_rss_feed_discussions_sql_respect_deleted(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -68,7 +68,7 @@ class rsslib_test extends \advanced_testcase {
     /**
      * Ensure that deleted posts are not included.
      */
-    public function test_forum_rss_feed_posts_sql_respect_deleted() {
+    public function test_forum_rss_feed_posts_sql_respect_deleted(): void {
         global $DB;
 
         $this->resetAfterTest();

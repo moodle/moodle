@@ -32,7 +32,7 @@ namespace core_question;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class generator_test extends \advanced_testcase {
-    public function test_create() {
+    public function test_create(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -50,7 +50,7 @@ class generator_test extends \advanced_testcase {
         $this->assertSame(1, $cat->sortorder);
     }
 
-    public function test_idnumbers_in_categories_and_questions() {
+    public function test_idnumbers_in_categories_and_questions(): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         list($category, $course, $qcat, $questions) = $generator->setup_course_and_questions();

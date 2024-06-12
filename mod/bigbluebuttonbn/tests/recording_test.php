@@ -55,7 +55,7 @@ class recording_test extends \advanced_testcase {
      * @dataProvider get_status_provider
      * @covers ::get
      */
-    public function test_get_allrecordings_status_refresh(int $status) {
+    public function test_get_allrecordings_status_refresh(int $status): void {
         $this->resetAfterTest();
         ['recordings' => $recordings] = $this->create_activity_with_recordings(
             $this->get_course(),
@@ -157,7 +157,7 @@ class recording_test extends \advanced_testcase {
      * @param int $type
      * @dataProvider get_allrecordings_types_provider
      */
-    public function test_get_recording_for_group($type) {
+    public function test_get_recording_for_group($type): void {
         $this->resetAfterTest();
 
         $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
@@ -218,7 +218,7 @@ class recording_test extends \advanced_testcase {
      * @param int $type
      * @dataProvider get_allrecordings_types_provider
      */
-    public function test_get_recordings_from_deleted_activity($type) {
+    public function test_get_recordings_from_deleted_activity($type): void {
         $this->resetAfterTest(true);
         $this->initialise_mock_server();
         $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
@@ -267,7 +267,7 @@ class recording_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_recordings_breakoutroom() {
+    public function test_recordings_breakoutroom(): void {
         $this->resetAfterTest();
         $this->initialise_mock_server();
         [$context, $cm, $bbbactivity] = $this->create_instance();

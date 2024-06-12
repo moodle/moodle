@@ -32,31 +32,31 @@ namespace core;
  */
 class markdown_test extends \basic_testcase {
 
-    public function test_paragraphs() {
+    public function test_paragraphs(): void {
         $text = "one\n\ntwo";
         $result = "<p>one</p>\n\n<p>two</p>\n";
         $this->assertSame($result, markdown_to_html($text));
     }
 
-    public function test_headings() {
+    public function test_headings(): void {
         $text = "Header 1\n====================\n\n## Header 2";
         $result = "<h1>Header 1</h1>\n\n<h2>Header 2</h2>\n";
         $this->assertSame($result, markdown_to_html($text));
     }
 
-    public function test_lists() {
+    public function test_lists(): void {
         $text = "* one\n* two\n* three\n";
         $result = "<ul>\n<li>one</li>\n<li>two</li>\n<li>three</li>\n</ul>\n";
         $this->assertSame($result, markdown_to_html($text));
     }
 
-    public function test_links() {
+    public function test_links(): void {
         $text = "some [example link](http://example.com/)";
         $result = "<p>some <a href=\"http://example.com/\">example link</a></p>\n";
         $this->assertSame($result, markdown_to_html($text));
     }
 
-    public function test_tabs() {
+    public function test_tabs(): void {
         $text = "a\tbb\tccc\tя\tюэ\t水\tabcd\tabcde\tabcdef";
         $result = "<p>a   bb  ccc я   юэ  水   abcd    abcde   abcdef</p>\n";
         $this->assertSame($result, markdown_to_html($text));

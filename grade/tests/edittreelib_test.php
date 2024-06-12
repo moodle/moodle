@@ -33,7 +33,7 @@ require_once($CFG->dirroot.'/grade/edit/tree/lib.php');
  * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 class edittreelib_test extends \advanced_testcase {
-    public function test_format_number() {
+    public function test_format_number(): void {
         $numinput = array(0,   1,   1.01, '1.010', 1.2345);
         $numoutput = array(0.0, 1.0, 1.01,  1.01,   1.2345);
 
@@ -43,7 +43,7 @@ class edittreelib_test extends \advanced_testcase {
         }
     }
 
-    public function test_grade_edit_tree_column_range_get_item_cell() {
+    public function test_grade_edit_tree_column_range_get_item_cell(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);

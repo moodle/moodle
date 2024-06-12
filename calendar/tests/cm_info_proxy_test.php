@@ -30,7 +30,7 @@ class cm_info_proxy_test extends \advanced_testcase {
     /**
      * Test creating cm_info_std_proxy, using getter and setter.
      */
-    public function test_proxy() {
+    public function test_proxy(): void {
         $this->resetAfterTest(true);
 
         $course = $this->getDataGenerator()->create_course();

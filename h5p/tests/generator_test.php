@@ -43,7 +43,7 @@ class generator_test extends \advanced_testcase {
      * Test the returned data of generate_h5p_data() when the method is called without requesting
      * creation of library files.
      */
-    public function test_generate_h5p_data_no_files_created_return_data() {
+    public function test_generate_h5p_data_no_files_created_return_data(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -99,7 +99,7 @@ class generator_test extends \advanced_testcase {
      * Test the returned data of generate_h5p_data() when the method requests
      * creation of library files.
      */
-    public function test_generate_h5p_data_files_created_return_data() {
+    public function test_generate_h5p_data_files_created_return_data(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -159,7 +159,7 @@ class generator_test extends \advanced_testcase {
      * @param bool $createlibraryfiles Whether to create library files on the filesystem
      * @param bool $expected The expectation whether the files have been created or not
      **/
-    public function test_generate_h5p_data_files_creation(bool $createlibraryfiles, bool $expected) {
+    public function test_generate_h5p_data_files_creation(bool $createlibraryfiles, bool $expected): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -215,7 +215,7 @@ class generator_test extends \advanced_testcase {
      * @dataProvider generate_h5p_data_xapistates_provider
      * @param array|null $filerecord
      */
-    public function test_generate_h5p_data_xapistates(?array $filerecord) {
+    public function test_generate_h5p_data_xapistates(?array $filerecord): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -326,7 +326,7 @@ class generator_test extends \advanced_testcase {
      * Test the behaviour of create_library_record(). Test whether the library data is properly
      * saved in the database.
      */
-    public function test_create_library_record() {
+    public function test_create_library_record(): void {
         $this->resetAfterTest();
 
         $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
@@ -369,7 +369,7 @@ class generator_test extends \advanced_testcase {
      * @param array $h5pdata The h5p content data
      * @param \stdClass $expected The expected saved data
      **/
-    public function test_create_h5p_record(array $h5pdata, \stdClass $expected) {
+    public function test_create_h5p_record(array $h5pdata, \stdClass $expected): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -492,7 +492,7 @@ class generator_test extends \advanced_testcase {
      * @param array $contentslibrariestdata The h5p contents libraries data.
      * @param \stdClass $expected The expected saved data.
      **/
-    public function test_create_contents_libraries_record(array $contentslibrariestdata, \stdClass $expected) {
+    public function test_create_contents_libraries_record(array $contentslibrariestdata, \stdClass $expected): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -552,7 +552,7 @@ class generator_test extends \advanced_testcase {
      * @param array $librarydependencydata The library dependency data.
      * @param \stdClass $expected The expected saved data.
      **/
-    public function test_create_library_dependency_record(array $librarydependencydata, \stdClass $expected) {
+    public function test_create_library_dependency_record(array $librarydependencydata, \stdClass $expected): void {
         global $DB;
 
         $this->resetAfterTest();

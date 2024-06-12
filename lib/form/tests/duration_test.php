@@ -135,7 +135,7 @@ class duration_test extends \basic_testcase {
     /**
      * Testcase for testing conversion of seconds to the best possible unit with a non-default default unit.
      */
-    public function test_seconds_to_unit_different_default_unit() {
+    public function test_seconds_to_unit_different_default_unit(): void {
         $mform = $this->get_test_form();
         $element = $mform->addElement('duration', 'testel', null,
                 ['defaultunit' => DAYSECS, 'optional' => false]);

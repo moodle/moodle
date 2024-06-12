@@ -52,7 +52,7 @@ class import_info_test extends \advanced_testcase {
     /**
      * Test for creation and getters.
      */
-    public function test_getters() {
+    public function test_getters(): void {
         $this->resetAfterTest();
         [$user, $resource, $importinfo] = $this->create_test_info();
 
@@ -64,7 +64,7 @@ class import_info_test extends \advanced_testcase {
     /**
      * Test for setters.
      */
-    public function test_set_config() {
+    public function test_set_config(): void {
         $this->resetAfterTest();
         [$user, $resource, $importinfo] = $this->create_test_info();
 
@@ -79,7 +79,7 @@ class import_info_test extends \advanced_testcase {
     /**
      * Verify the object can be stored and loaded.
      */
-    public function test_persistence() {
+    public function test_persistence(): void {
         $this->resetAfterTest();
         [$user, $resource, $importinfo] = $this->create_test_info();
 

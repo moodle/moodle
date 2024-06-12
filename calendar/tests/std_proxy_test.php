@@ -54,7 +54,7 @@ class std_proxy_test extends \advanced_testcase {
      * @param string $member   Object member to retrieve.
      * @param mixed  $expected Expected value of member.
      */
-    public function test_proxy($id, $member, $expected) {
+    public function test_proxy($id, $member, $expected): void {
         $proxy = new std_proxy($id, function($id) {
             return $this->objects[$id];
         });
@@ -70,7 +70,7 @@ class std_proxy_test extends \advanced_testcase {
      * @param string $member      Object member to retrieve.
      * @param mixed  $storedvalue Value as would be stored externally.
      */
-    public function test_base_values($id, $member, $storedvalue) {
+    public function test_base_values($id, $member, $storedvalue): void {
         $proxy = new std_proxy(
             $id,
             function($id) {
@@ -89,7 +89,7 @@ class std_proxy_test extends \advanced_testcase {
      * @dataProvider get_set_testcases
      * @param int $id ID of the object being proxied.
      */
-    public function test_get_invalid_member($id) {
+    public function test_get_invalid_member($id): void {
         $proxy = new std_proxy($id, function($id) {
             return $this->objects[$id];
         });
@@ -104,7 +104,7 @@ class std_proxy_test extends \advanced_testcase {
      * @dataProvider get_set_testcases
      * @param int $id Object ID.
      */
-    public function test_get_proxied_instance($id) {
+    public function test_get_proxied_instance($id): void {
         $proxy = new std_proxy($id, function($id) {
             return $this->objects[$id];
         });

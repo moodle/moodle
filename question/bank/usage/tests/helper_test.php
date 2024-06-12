@@ -108,7 +108,7 @@ class helper_test extends \advanced_testcase {
      *
      * @covers ::get_question_attempts_count_in_quiz
      */
-    public function test_get_question_attempts_count_in_quiz() {
+    public function test_get_question_attempts_count_in_quiz(): void {
         $this->attempt_quiz();
         foreach ($this->questions as $question) {
             $questionattemptcount = helper::get_question_attempts_count_in_quiz($question->id, $this->quiz->id);
@@ -122,7 +122,7 @@ class helper_test extends \advanced_testcase {
      *
      * @covers ::get_question_entry_usage_count
      */
-    public function test_get_question_entry_usage_count() {
+    public function test_get_question_entry_usage_count(): void {
         foreach ($this->questions as $question) {
             $count = helper::get_question_entry_usage_count(\question_bank::load_question($question->id));
             // Test that the attempt data matches the usage data for the count.

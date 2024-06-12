@@ -43,7 +43,7 @@ class language_menu_test extends \advanced_testcase {
      * @param string $language
      * @param array $expected
      */
-    public function test_get_lang_menu(bool $withadditionallangs, string $language, array $expected) {
+    public function test_get_lang_menu(bool $withadditionallangs, string $language, array $expected): void {
         global $CFG, $PAGE;
 
         // Mimic multiple langs installed. To trigger responses 'get_list_of_translations'.

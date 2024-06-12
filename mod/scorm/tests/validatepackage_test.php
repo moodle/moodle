@@ -53,7 +53,7 @@ class validatepackage_test extends \advanced_testcase {
     }
 
 
-    public function test_validate_package() {
+    public function test_validate_package(): void {
         global $CFG;
 
         $this->resetAfterTest(true);

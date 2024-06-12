@@ -41,7 +41,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_activity_completion_status_manually
      */
-    public function test_update_activity_completion_status_manually() {
+    public function test_update_activity_completion_status_manually(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);
@@ -88,7 +88,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_activity_completion_status
      */
-    public function test_get_activities_completion_status() {
+    public function test_get_activities_completion_status(): void {
         global $DB, $CFG, $PAGE;
 
         $this->resetAfterTest(true);
@@ -317,7 +317,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test override_activity_completion_status
      */
-    public function test_override_activity_completion_status() {
+    public function test_override_activity_completion_status(): void {
         global $DB, $CFG;
         $this->resetAfterTest(true);
 
@@ -380,7 +380,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test overriding the activity completion status as a user without the capability to do so.
      */
-    public function test_override_status_user_without_capability() {
+    public function test_override_status_user_without_capability(): void {
         global $DB, $CFG;
         $this->resetAfterTest(true);
 
@@ -409,7 +409,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_course_completion_status
      */
-    public function test_get_course_completion_status() {
+    public function test_get_course_completion_status(): void {
         global $DB, $CFG, $COMPLETION_CRITERIA_TYPES;
         require_once($CFG->dirroot.'/completion/criteria/completion_criteria_self.php');
         require_once($CFG->dirroot.'/completion/criteria/completion_criteria_date.php');
@@ -540,7 +540,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test mark_course_self_completed
      */
-    public function test_mark_course_self_completed() {
+    public function test_mark_course_self_completed(): void {
         global $DB, $CFG;
         require_once($CFG->dirroot.'/completion/criteria/completion_criteria_self.php');
 

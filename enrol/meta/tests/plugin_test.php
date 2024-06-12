@@ -74,7 +74,7 @@ class plugin_test extends \advanced_testcase {
         return true;
     }
 
-    public function test_sync() {
+    public function test_sync(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest(true);
@@ -444,7 +444,7 @@ class plugin_test extends \advanced_testcase {
 
     }
 
-    public function test_add_to_group() {
+    public function test_add_to_group(): void {
         global $CFG, $DB;
 
         require_once($CFG->dirroot.'/group/lib.php');
@@ -540,7 +540,7 @@ class plugin_test extends \advanced_testcase {
      * Enrol users from another course into a course where one of the members is already enrolled
      * and is a member of the same group.
      */
-    public function test_add_to_group_with_member() {
+    public function test_add_to_group_with_member(): void {
         global $CFG, $DB;
 
         require_once($CFG->dirroot.'/group/lib.php');
@@ -635,7 +635,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Test user_enrolment_created event.
      */
-    public function test_user_enrolment_created_event() {
+    public function test_user_enrolment_created_event(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -667,7 +667,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Test user_enrolment_deleted event.
      */
-    public function test_user_enrolment_deleted_event() {
+    public function test_user_enrolment_deleted_event(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -700,7 +700,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Test user_enrolment_updated event.
      */
-    public function test_user_enrolment_updated_event() {
+    public function test_user_enrolment_updated_event(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -735,7 +735,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Test that a new group with the name of the course is created.
      */
-    public function test_enrol_meta_create_new_group() {
+    public function test_enrol_meta_create_new_group(): void {
         global $DB, $CFG;
         $this->resetAfterTest();
         // Create two courses.
@@ -775,7 +775,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Test that enrolment timestart-timeend is respected in meta course.
      */
-    public function test_timeend() {
+    public function test_timeend(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest(true);
@@ -899,7 +899,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Test for getting user enrolment actions.
      */
-    public function test_get_user_enrolment_actions() {
+    public function test_get_user_enrolment_actions(): void {
         global $CFG, $PAGE;
         $this->resetAfterTest();
 
@@ -951,7 +951,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Test how data for instance editing is validated.
      */
-    public function test_edit_instance_validation() {
+    public function test_edit_instance_validation(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -1096,7 +1096,7 @@ class plugin_test extends \advanced_testcase {
      *
      * @covers ::fill_enrol_custom_fields
      */
-    public function test_fill_enrol_custom_fields() {
+    public function test_fill_enrol_custom_fields(): void {
         $this->resetAfterTest();
 
         $metaplugin = enrol_get_plugin('meta');
@@ -1149,7 +1149,7 @@ class plugin_test extends \advanced_testcase {
      *
      * @covers ::validate_enrol_plugin_data
      */
-    public function test_validate_enrol_plugin_data() {
+    public function test_validate_enrol_plugin_data(): void {
         $this->resetAfterTest();
 
         $cat = $this->getDataGenerator()->create_category();
@@ -1223,7 +1223,7 @@ class plugin_test extends \advanced_testcase {
      *
      * @covers ::find_instance
      */
-    public function test_find_instance() {
+    public function test_find_instance(): void {
         global $DB;
         $this->resetAfterTest();
 

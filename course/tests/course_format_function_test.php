@@ -37,7 +37,7 @@ class course_format_function_test extends \basic_testcase {
      * Tests clean_param_if_not_null function
      * @covers ::clean_param_if_not_null
      */
-    public function test_clean_param_if_not_null() {
+    public function test_clean_param_if_not_null(): void {
         $this->assertNull(clean_param_if_not_null(null));
         $n = '3x';
         $this->assertEquals(clean_param($n, PARAM_INT), clean_param_if_not_null($n, PARAM_INT));
@@ -53,7 +53,7 @@ class course_format_function_test extends \basic_testcase {
      * Tests contract_value function
      * @covers ::contract_value
      */
-    public function test_contract_value() {
+    public function test_contract_value(): void {
         $input = [
             'abc' => '<p>All together Now</p>',
             'abcformat' => '1',
@@ -80,7 +80,7 @@ class course_format_function_test extends \basic_testcase {
      * Tests expand_value function
      * @covers ::expand_value
      */
-    public function test_expand_value() {
+    public function test_expand_value(): void {
         $input = [
             'abc_editor' => [ 'text' => '<p>All together Now</p>', 'format' => '1' ],
             'jolly' => 'Roger',

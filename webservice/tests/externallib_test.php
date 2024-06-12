@@ -43,7 +43,7 @@ class externallib_test extends externallib_advanced_testcase {
         set_config('enablewebservices', '1');
     }
 
-    public function test_get_site_info() {
+    public function test_get_site_info(): void {
         global $DB, $USER, $CFG, $PAGE;
 
         $this->resetAfterTest(true);
@@ -201,7 +201,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_site_info with values > PHP_INT_MAX. We check only userquota since maxbytes require PHP ini changes.
      */
-    public function test_get_site_info_max_int() {
+    public function test_get_site_info_max_int(): void {
         $this->resetAfterTest(true);
 
         self::setUser(self::getDataGenerator()->create_user());
@@ -218,7 +218,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_site_info with missing components.
      */
-    public function test_get_site_missing_components() {
+    public function test_get_site_missing_components(): void {
         global $USER, $DB;
 
         $this->resetAfterTest(true);

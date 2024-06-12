@@ -53,7 +53,7 @@ class iri_test extends advanced_testcase {
      * @param string $expected Expected result
      * @param string $type = null If some special type is provided
      */
-    public function test_generate(string $value, string $expected, string $type = null) {
+    public function test_generate(string $value, string $expected, string $type = null): void {
         $iri = iri::generate($value, $type);
         $this->assertEquals($iri, $expected);
     }
@@ -66,7 +66,7 @@ class iri_test extends advanced_testcase {
      * @param string $value Value to generate IRI
      * @param string $type = null If some special type is provided
      */
-    public function test_extract(string $expected, string $value, string $type = null) {
+    public function test_extract(string $expected, string $value, string $type = null): void {
         $extract = iri::extract($value, $type);
         $this->assertEquals($extract, $expected);
     }
@@ -110,7 +110,7 @@ class iri_test extends advanced_testcase {
      * @param string $value Value to generate IRI
      * @param bool $expected Expected result
      */
-    public function test_check(string $value, bool $expected) {
+    public function test_check(string $value, bool $expected): void {
         $check = iri::check($value);
         $this->assertEquals($check, $expected);
     }

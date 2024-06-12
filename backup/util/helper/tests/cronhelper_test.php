@@ -47,7 +47,7 @@ class cronhelper_test extends \advanced_testcase {
     /**
      * Test {@link backup_cron_automated_helper::calculate_next_automated_backup}.
      */
-    public function test_next_automated_backup() {
+    public function test_next_automated_backup(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -260,7 +260,7 @@ class cronhelper_test extends \advanced_testcase {
     /**
      * Test {@link backup_cron_automated_helper::get_backups_to_delete}.
      */
-    public function test_get_backups_to_delete() {
+    public function test_get_backups_to_delete(): void {
         $this->resetAfterTest();
         // Active only backup_auto_max_kept config to 2 days.
         set_config('backup_auto_max_kept', '2', 'backup');
@@ -336,7 +336,7 @@ class cronhelper_test extends \advanced_testcase {
     /**
      * Test {@link backup_cron_automated_helper::is_course_modified}.
      */
-    public function test_is_course_modified() {
+    public function test_is_course_modified(): void {
         $this->resetAfterTest();
         $this->preventResetByRollback();
 
@@ -408,7 +408,7 @@ class cronhelper_test extends \advanced_testcase {
     /**
      * Test the selection and ordering of courses to be backed up.
      */
-    public function test_get_courses() {
+    public function test_get_courses(): void {
         $this->resetAfterTest();
 
         list($course1, $course2, $course3, $course4) = $this->course_setup();
@@ -444,7 +444,7 @@ class cronhelper_test extends \advanced_testcase {
      * Test the selection and ordering of courses to be backed up.
      * Where it is not yet time to start backups for courses with existing backups.
      */
-    public function test_get_courses_starttime() {
+    public function test_get_courses_starttime(): void {
         $this->resetAfterTest();
 
         list($course1, $course2, $course3, $course4) = $this->course_setup();

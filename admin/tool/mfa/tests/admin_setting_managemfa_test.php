@@ -38,7 +38,7 @@ class admin_setting_managemfa_test extends \advanced_testcase {
      *
      * @covers ::get_factor_combinations
      */
-    public function test_get_factor_combinations_default() {
+    public function test_get_factor_combinations_default(): void {
         $namagemfa = new \tool_mfa\local\admin_setting_managemfa();
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
         $combinations = $namagemfa->get_factor_combinations($factors, 0, count($factors) - 1);
@@ -141,7 +141,7 @@ class admin_setting_managemfa_test extends \advanced_testcase {
      * @param array $factorset configured factors
      * @param int $combinationscount expected count of available combinations
      */
-    public function test_get_factor_combinations_with_data_provider($factorset, $combinationscount) {
+    public function test_get_factor_combinations_with_data_provider($factorset, $combinationscount): void {
         $this->resetAfterTest();
         $enabledcount = 0;
 
@@ -174,7 +174,7 @@ class admin_setting_managemfa_test extends \advanced_testcase {
      *
      * @covers ::get_factor_combinations
      */
-    public function test_factor_combination_checker() {
+    public function test_factor_combination_checker(): void {
         $this->resetAfterTest();
         $managemfa = new \tool_mfa\local\admin_setting_managemfa();
         $user = $this->getDataGenerator()->create_user();

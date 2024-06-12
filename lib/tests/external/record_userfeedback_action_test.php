@@ -63,7 +63,7 @@ class record_userfeedback_action_test extends externallib_advanced_testcase {
      *
      * @covers ::execute
      */
-    public function test_record_userfeedback_action(string $action) {
+    public function test_record_userfeedback_action(string $action): void {
         $this->resetAfterTest();
 
         $context = context_system::instance();

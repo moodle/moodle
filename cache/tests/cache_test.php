@@ -121,7 +121,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests cache configuration
      */
-    public function test_cache_config() {
+    public function test_cache_config(): void {
         global $CFG;
 
         if (defined('TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH') && TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH &&
@@ -197,7 +197,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests for cache keys that would break on windows.
      */
-    public function test_windows_nasty_keys() {
+    public function test_windows_nasty_keys(): void {
         $instance = cache_config_testing::instance();
         $instance->phpunit_add_definition('phpunit/windowskeytest', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -216,7 +216,7 @@ class cache_test extends \advanced_testcase {
      *
      * set_identifiers cannot be called after initial cache instantiation, as you need to create a difference cache.
      */
-    public function test_set_identifiers() {
+    public function test_set_identifiers(): void {
         $instance = cache_config_testing::instance();
         $instance->phpunit_add_definition('phpunit/identifier', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -237,7 +237,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests the default application cache
      */
-    public function test_default_application_cache() {
+    public function test_default_application_cache(): void {
         $cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'phpunit', 'applicationtest');
         $this->assertInstanceOf(cache_application::class, $cache);
         $this->run_on_cache($cache);
@@ -258,7 +258,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests the default session cache
      */
-    public function test_default_session_cache() {
+    public function test_default_session_cache(): void {
         $cache = cache::make_from_params(cache_store::MODE_SESSION, 'phpunit', 'applicationtest');
         $this->assertInstanceOf(cache_session::class, $cache);
         $this->run_on_cache($cache);
@@ -267,7 +267,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests the default request cache
      */
-    public function test_default_request_cache() {
+    public function test_default_request_cache(): void {
         $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'phpunit', 'applicationtest');
         $this->assertInstanceOf(cache_request::class, $cache);
         $this->run_on_cache($cache);
@@ -276,7 +276,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests using a cache system when there are no stores available (who knows what the admin did to achieve this).
      */
-    public function test_on_cache_without_store() {
+    public function test_on_cache_without_store(): void {
         $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_definition('phpunit/nostoretest1', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -535,7 +535,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests a definition using a data loader
      */
-    public function test_definition_data_loader() {
+    public function test_definition_data_loader(): void {
         $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_definition('phpunit/datasourcetest', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -579,7 +579,7 @@ class cache_test extends \advanced_testcase {
      * @covers ::get_versioned
      * @covers ::set_versioned
      */
-    public function test_definition_data_loader_versioned() {
+    public function test_definition_data_loader_versioned(): void {
         // Create two definitions, one using a non-versionable data source and the other using
         // a versionable one.
         $instance = cache_config_testing::instance(true);
@@ -631,7 +631,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests a definition using an overridden loader
      */
-    public function test_definition_overridden_loader() {
+    public function test_definition_overridden_loader(): void {
         $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_definition('phpunit/overridetest', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -656,7 +656,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test the mappingsonly setting.
      */
-    public function test_definition_mappings_only() {
+    public function test_definition_mappings_only(): void {
         /** @var cache_config_testing $instance */
         $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_definition('phpunit/mappingsonly', array(
@@ -685,7 +685,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test a very basic definition.
      */
-    public function test_definition() {
+    public function test_definition(): void {
         $instance = cache_config_testing::instance();
         $instance->phpunit_add_definition('phpunit/test', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -703,7 +703,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test a definition using the simple keys.
      */
-    public function test_definition_simplekeys() {
+    public function test_definition_simplekeys(): void {
         $instance = cache_config_testing::instance();
         $instance->phpunit_add_definition('phpunit/simplekeytest', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -729,7 +729,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test a negative TTL on an application cache.
      */
-    public function test_application_ttl_negative() {
+    public function test_application_ttl_negative(): void {
         $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_definition('phpunit/ttltest', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -778,7 +778,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test a positive TTL on an application cache.
      */
-    public function test_application_ttl_positive() {
+    public function test_application_ttl_positive(): void {
         $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_definition('phpunit/ttltest', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -827,7 +827,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test a negative TTL on an session cache.
      */
-    public function test_session_ttl_positive() {
+    public function test_session_ttl_positive(): void {
         $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_definition('phpunit/ttltest', array(
             'mode' => cache_store::MODE_SESSION,
@@ -876,7 +876,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests manual locking operations on an application cache
      */
-    public function test_application_manual_locking() {
+    public function test_application_manual_locking(): void {
         $instance = cache_config_testing::instance();
         $instance->phpunit_add_definition('phpunit/lockingtest', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -914,7 +914,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests application cache event invalidation
      */
-    public function test_application_event_invalidation() {
+    public function test_application_event_invalidation(): void {
         $instance = cache_config_testing::instance();
         $instance->phpunit_add_definition('phpunit/eventinvalidationtest', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -949,7 +949,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests session cache event invalidation
      */
-    public function test_session_event_invalidation() {
+    public function test_session_event_invalidation(): void {
         $instance = cache_config_testing::instance();
         $instance->phpunit_add_definition('phpunit/test_session_event_invalidation', array(
             'mode' => cache_store::MODE_SESSION,
@@ -985,7 +985,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests application cache definition invalidation
      */
-    public function test_application_definition_invalidation() {
+    public function test_application_definition_invalidation(): void {
         $instance = cache_config_testing::instance();
         $instance->phpunit_add_definition('phpunit/definitioninvalidation', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -1021,7 +1021,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests session cache definition invalidation
      */
-    public function test_session_definition_invalidation() {
+    public function test_session_definition_invalidation(): void {
         $instance = cache_config_testing::instance();
         $instance->phpunit_add_definition('phpunit/test_session_definition_invalidation', array(
             'mode' => cache_store::MODE_SESSION,
@@ -1060,7 +1060,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests application cache event invalidation over a distributed setup.
      */
-    public function test_distributed_application_event_invalidation() {
+    public function test_distributed_application_event_invalidation(): void {
         global $CFG;
         // This is going to be an intense wee test.
         // We need to add data the to cache, invalidate it by event, manually force it back without MUC knowing to simulate a
@@ -1186,7 +1186,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests application cache event purge
      */
-    public function test_application_event_purge() {
+    public function test_application_event_purge(): void {
         $instance = cache_config_testing::instance();
         $instance->phpunit_add_definition('phpunit/eventpurgetest', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -1237,7 +1237,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests session cache event purge
      */
-    public function test_session_event_purge() {
+    public function test_session_event_purge(): void {
         $instance = cache_config_testing::instance();
         $instance->phpunit_add_definition('phpunit/eventpurgetest', array(
             'mode' => cache_store::MODE_SESSION,
@@ -1288,7 +1288,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests application cache definition purge
      */
-    public function test_application_definition_purge() {
+    public function test_application_definition_purge(): void {
         $instance = cache_config_testing::instance();
         $instance->phpunit_add_definition('phpunit/definitionpurgetest', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -1317,7 +1317,7 @@ class cache_test extends \advanced_testcase {
      * Test the use of an alt path.
      * If we can generate a config instance we are done :)
      */
-    public function test_alt_cache_path() {
+    public function test_alt_cache_path(): void {
         global $CFG;
         if ((defined('TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH') && TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH) || !empty($CFG->altcacheconfigpath)) {
             $this->markTestSkipped('Skipped testing alt cache path as it is already being used.');
@@ -1331,7 +1331,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test disabling the cache stores.
      */
-    public function test_disable_stores() {
+    public function test_disable_stores(): void {
         $instance = cache_config_testing::instance();
         $instance->phpunit_add_definition('phpunit/disabletest1', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -1395,7 +1395,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test disabling the cache.
      */
-    public function test_disable() {
+    public function test_disable(): void {
         global $CFG;
 
         if ((defined('TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH') && TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH) || !empty($CFG->altcacheconfigpath)) {
@@ -1478,7 +1478,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test that multiple application loaders work ok.
      */
-    public function test_multiple_application_loaders() {
+    public function test_multiple_application_loaders(): void {
         $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_file_store('phpunittest1');
         $instance->phpunit_add_file_store('phpunittest2');
@@ -1909,7 +1909,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test that multiple application loaders work ok.
      */
-    public function test_multiple_session_loaders() {
+    public function test_multiple_session_loaders(): void {
         /* @var cache_config_testing $instance */
         $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_session_store('phpunittest1');
@@ -1978,7 +1978,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test switching users with session caches.
      */
-    public function test_session_cache_switch_user() {
+    public function test_session_cache_switch_user(): void {
         $this->resetAfterTest(true);
         $cache = cache::make_from_params(cache_store::MODE_SESSION, 'phpunit', 'sessioncache');
         $user1 = $this->getDataGenerator()->create_user();
@@ -2006,7 +2006,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test switching users with session caches.
      */
-    public function test_session_cache_switch_user_application_mapping() {
+    public function test_session_cache_switch_user_application_mapping(): void {
         $this->resetAfterTest(true);
         $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_file_store('testfilestore');
@@ -2042,7 +2042,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test two session caches being used at once to confirm collisions don't occur.
      */
-    public function test_dual_session_caches() {
+    public function test_dual_session_caches(): void {
         $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_definition('phpunit/testsess1', array(
             'mode' => cache_store::MODE_SESSION,
@@ -2076,7 +2076,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test multiple session caches when switching user.
      */
-    public function test_session_cache_switch_user_multiple() {
+    public function test_session_cache_switch_user_multiple(): void {
         $this->resetAfterTest(true);
         $cache1 = cache::make_from_params(cache_store::MODE_SESSION, 'phpunit', 'sessioncache1');
         $cache2 = cache::make_from_params(cache_store::MODE_SESSION, 'phpunit', 'sessioncache2');
@@ -2110,7 +2110,7 @@ class cache_test extends \advanced_testcase {
      *
      * @covers \cache_application
      */
-    public function test_application_locking_multiple_identifier_cache() {
+    public function test_application_locking_multiple_identifier_cache(): void {
         // Get an arbitrary definition (modinfo).
         $instance = cache_config_testing::instance(true);
         $definitions = $instance->get_definitions();
@@ -2133,7 +2133,7 @@ class cache_test extends \advanced_testcase {
      *
      * @covers ::set_implementation
      */
-    public function test_application_locking_before_write() {
+    public function test_application_locking_before_write(): void {
         $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_definition('phpunit/test_application_locking', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -2232,7 +2232,7 @@ class cache_test extends \advanced_testcase {
      * @covers \cache_loader
      * @return void
      */
-    public function test_application_locking_multiple_layers() {
+    public function test_application_locking_multiple_layers(): void {
 
         $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_definition('phpunit/test_application_locking', array(
@@ -2400,7 +2400,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test the static cache_helper method purge_stores_used_by_definition.
      */
-    public function test_purge_stores_used_by_definition() {
+    public function test_purge_stores_used_by_definition(): void {
         $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_definition('phpunit/test_purge_stores_used_by_definition', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -2422,7 +2422,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test purge routines.
      */
-    public function test_purge_routines() {
+    public function test_purge_routines(): void {
         $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_definition('phpunit/purge1', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -2469,7 +2469,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests that ad-hoc caches are correctly purged with a purge_all call.
      */
-    public function test_purge_all_with_adhoc_caches() {
+    public function test_purge_all_with_adhoc_caches(): void {
         $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core_cache', 'test');
         $cache->set('test', 123);
         cache_helper::purge_all();
@@ -2479,7 +2479,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test that the default stores all support searching.
      */
-    public function test_defaults_support_searching() {
+    public function test_defaults_support_searching(): void {
         $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_definition('phpunit/search1', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -2532,7 +2532,7 @@ class cache_test extends \advanced_testcase {
      * Note: All the assertGreaterThanOrEqual() in this test should be assertGreaterThan() be because of some microtime()
      * resolution problems under some OSs / PHP versions, we are accepting equal as valid outcome. For more info see MDL-57147.
      */
-    public function test_static_acceleration() {
+    public function test_static_acceleration(): void {
         $instance = cache_config_testing::instance();
         $instance->phpunit_add_definition('phpunit/accelerated', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -2762,7 +2762,7 @@ class cache_test extends \advanced_testcase {
         $this->assertEquals('b', $returnedinstance2->name);
     }
 
-    public function test_identifiers_have_separate_caches() {
+    public function test_identifiers_have_separate_caches(): void {
         $cachepg = cache::make('core', 'databasemeta', array('dbfamily' => 'pgsql'));
         $cachepg->set(1, 'here');
         $cachemy = cache::make('core', 'databasemeta', array('dbfamily' => 'mysql'));
@@ -2772,7 +2772,7 @@ class cache_test extends \advanced_testcase {
         $this->assertFalse($cachemy->get(1));
     }
 
-    public function test_performance_debug() {
+    public function test_performance_debug(): void {
         global $CFG;
         $this->resetAfterTest(true);
         $CFG->perfdebug = 15;
@@ -3107,7 +3107,7 @@ class cache_test extends \advanced_testcase {
     }
 
 
-    public function test_static_cache() {
+    public function test_static_cache(): void {
         global $CFG;
         $this->resetAfterTest(true);
         $CFG->perfdebug = 15;
@@ -3140,7 +3140,7 @@ class cache_test extends \advanced_testcase {
         $this->assertEquals(3, $endstats[$applicationid]['stores']['** static accel. **']['hits']);
     }
 
-    public function test_performance_debug_off() {
+    public function test_performance_debug_off(): void {
         global $CFG;
         $this->resetAfterTest(true);
         $CFG->perfdebug = 7;
@@ -3201,7 +3201,7 @@ class cache_test extends \advanced_testcase {
      * A new request is started a short time later.
      * The cache should be filled.
      */
-    public function test_session_event_purge_same_second() {
+    public function test_session_event_purge_same_second(): void {
         $instance = cache_config_testing::instance();
         $instance->phpunit_add_definition('phpunit/eventpurgetest', array(
             'mode' => cache_store::MODE_SESSION,
@@ -3241,7 +3241,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test that values set in different sessions are stored with different key prefixes.
      */
-    public function test_session_distinct_storage_key() {
+    public function test_session_distinct_storage_key(): void {
         $this->resetAfterTest();
 
         // Prepare a dummy session cache configuration.

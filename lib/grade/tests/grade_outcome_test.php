@@ -30,7 +30,7 @@ require_once(__DIR__.'/fixtures/lib.php');
  */
 class grade_outcome_test extends \grade_base_testcase {
 
-    public function test_grade_outcome() {
+    public function test_grade_outcome(): void {
         $this->sub_test_grade_outcome_construct();
         $this->sub_test_grade_outcome_insert();
         $this->sub_test_grade_outcome_update();

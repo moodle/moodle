@@ -36,7 +36,7 @@ class questionanswers_test extends \advanced_testcase {
     /**
      * Test find course areas.
      */
-    public function test_find_course_areas() {
+    public function test_find_course_areas(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -122,7 +122,7 @@ class questionanswers_test extends \advanced_testcase {
     /**
      * Test find relevant areas.
      */
-    public function test_find_relevant_areas() {
+    public function test_find_relevant_areas(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -153,7 +153,7 @@ class questionanswers_test extends \advanced_testcase {
     /**
      * Test find system areas.
      */
-    public function test_find_system_areas() {
+    public function test_find_system_areas(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

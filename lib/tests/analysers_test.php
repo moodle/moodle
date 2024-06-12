@@ -40,7 +40,7 @@ class analysers_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_courses_analyser() {
+    public function test_courses_analyser(): void {
         $this->resetAfterTest(true);
 
         $course1 = $this->getDataGenerator()->create_course();
@@ -86,7 +86,7 @@ class analysers_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_site_courses_analyser() {
+    public function test_site_courses_analyser(): void {
         $this->resetAfterTest(true);
 
         $course1 = $this->getDataGenerator()->create_course();
@@ -128,7 +128,7 @@ class analysers_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_student_enrolments_analyser() {
+    public function test_student_enrolments_analyser(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -194,7 +194,7 @@ class analysers_test extends \advanced_testcase {
      *
      * @return null
      */
-    public function test_get_analysables_iterator() {
+    public function test_get_analysables_iterator(): void {
         global $DB;
 
         $this->resetAfterTest(true);

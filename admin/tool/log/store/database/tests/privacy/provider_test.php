@@ -95,7 +95,7 @@ class provider_test extends provider_testcase {
         }
     }
 
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $admin = \core_user::get_user(2);
         $u1 = $this->getDataGenerator()->create_user();
         $u2 = $this->getDataGenerator()->create_user();
@@ -155,7 +155,7 @@ class provider_test extends provider_testcase {
     /**
      * Check that user IDs are returned for a given context.
      */
-    public function test_add_userids_for_context() {
+    public function test_add_userids_for_context(): void {
         $admin = \core_user::get_user(2);
         $u1 = $this->getDataGenerator()->create_user();
         $u2 = $this->getDataGenerator()->create_user();
@@ -201,7 +201,7 @@ class provider_test extends provider_testcase {
         $this->assertEmpty(array_diff($expectedresult, $userids));
     }
 
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
         $u1 = $this->getDataGenerator()->create_user();
         $u2 = $this->getDataGenerator()->create_user();
@@ -242,7 +242,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals(2, $DB->count_records('logstore_standard_log', ['userid' => $u2->id]));
     }
 
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
         $u1 = $this->getDataGenerator()->create_user();
         $u2 = $this->getDataGenerator()->create_user();
@@ -286,7 +286,7 @@ class provider_test extends provider_testcase {
     /**
      * Check that data is removed for the listed users in a given context.
      */
-    public function test_delete_data_for_userlist() {
+    public function test_delete_data_for_userlist(): void {
         global $DB;
 
         $u1 = $this->getDataGenerator()->create_user();
@@ -328,7 +328,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals($u2->id, $currentrecord->userid);
     }
 
-    public function test_export_data_for_user() {
+    public function test_export_data_for_user(): void {
         $admin = \core_user::get_user(2);
         $u1 = $this->getDataGenerator()->create_user();
         $u2 = $this->getDataGenerator()->create_user();

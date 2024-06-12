@@ -42,7 +42,7 @@ class filetypes_util_test extends advanced_testcase {
     /**
      * Test normalizing list of extensions.
      */
-    public function test_normalize_file_types() {
+    public function test_normalize_file_types(): void {
 
         $this->resetAfterTest(true);
         $util = new filetypes_util();
@@ -74,7 +74,7 @@ class filetypes_util_test extends advanced_testcase {
     /**
      * Test MIME type formal recognition.
      */
-    public function test_looks_like_mimetype() {
+    public function test_looks_like_mimetype(): void {
 
         $this->resetAfterTest(true);
         $util = new filetypes_util();
@@ -93,7 +93,7 @@ class filetypes_util_test extends advanced_testcase {
     /**
      * Test getting/checking group.
      */
-    public function test_is_filetype_group() {
+    public function test_is_filetype_group(): void {
 
         $this->resetAfterTest(true);
         $util = new filetypes_util();
@@ -111,7 +111,7 @@ class filetypes_util_test extends advanced_testcase {
     /**
      * Test describing list of extensions.
      */
-    public function test_describe_file_types() {
+    public function test_describe_file_types(): void {
 
         $this->resetAfterTest(true);
         $util = new filetypes_util();
@@ -169,7 +169,7 @@ class filetypes_util_test extends advanced_testcase {
     /**
      * Test expanding mime types into extensions.
      */
-    public function test_expand() {
+    public function test_expand(): void {
 
         $this->resetAfterTest(true);
         $util = new filetypes_util();
@@ -207,7 +207,7 @@ class filetypes_util_test extends advanced_testcase {
     /**
      * Test checking that a type is among others.
      */
-    public function test_is_listed() {
+    public function test_is_listed(): void {
 
         $this->resetAfterTest(true);
         $util = new filetypes_util();
@@ -250,7 +250,7 @@ class filetypes_util_test extends advanced_testcase {
     /**
      * Test getting types not present in a list.
      */
-    public function test_get_not_listed() {
+    public function test_get_not_listed(): void {
 
         $this->resetAfterTest(true);
         $util = new filetypes_util();
@@ -273,7 +273,7 @@ class filetypes_util_test extends advanced_testcase {
     /**
      * Test populating the tree for the browser.
      */
-    public function test_data_for_browser() {
+    public function test_data_for_browser(): void {
 
         $this->resetAfterTest(true);
         $util = new filetypes_util();
@@ -411,7 +411,7 @@ class filetypes_util_test extends advanced_testcase {
      * @param string $list The space , or ; separated list of types supported
      * @param boolean $expected The expected result. True if the file is allowed, false if not.
      */
-    public function test_is_allowed_file_type($filename, $list, $expected) {
+    public function test_is_allowed_file_type($filename, $list, $expected): void {
         $util = new filetypes_util();
         $this->assertSame($expected, $util->is_allowed_file_type($filename, $list));
     }
@@ -480,7 +480,7 @@ class filetypes_util_test extends advanced_testcase {
      * @param string $filetypes The filetypes to check
      * @param array $expected The expected result. The list of non existant file types.
      */
-    public function test_get_unknown_file_types($filetypes, $expected) {
+    public function test_get_unknown_file_types($filetypes, $expected): void {
         $util = new filetypes_util();
         $this->assertSame($expected, $util->get_unknown_file_types($filetypes));
     }

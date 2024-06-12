@@ -26,7 +26,7 @@ namespace tool_brickfield\local\tool;
  */
 class errors_test extends \advanced_testcase {
 
-    public function test_toolname() {
+    public function test_toolname(): void {
         $this->resetAfterTest();
 
         $object = new errors();
@@ -34,7 +34,7 @@ class errors_test extends \advanced_testcase {
         $this->assertEquals($output, 'Error list summary');
     }
 
-    public function test_toolshortname() {
+    public function test_toolshortname(): void {
         $this->resetAfterTest();
 
         $object = new errors();
@@ -42,7 +42,7 @@ class errors_test extends \advanced_testcase {
         $this->assertEquals($output, 'Error list');
     }
 
-    public function test_pluginname() {
+    public function test_pluginname(): void {
         $this->resetAfterTest();
 
         $object = new errors();
@@ -50,7 +50,7 @@ class errors_test extends \advanced_testcase {
         $this->assertEquals($output, 'errors');
     }
 
-    public function test_get_output() {
+    public function test_get_output(): void {
         $this->resetAfterTest();
         $category = $this->getDataGenerator()->create_category();
 

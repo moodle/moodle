@@ -39,7 +39,7 @@ class googledocs_shared_drives_content_test extends \googledocs_content_testcase
      * @param bool $sortcontent Whether the contents should be sorted in alphabetical order
      * @param array $expected The expected array which contains the generated repository content nodes
      */
-    public function test_get_content_nodes(array $shareddrives, bool $sortcontent, array $expected) {
+    public function test_get_content_nodes(array $shareddrives, bool $sortcontent, array $expected): void {
         // Mock the service object.
         $servicemock = $this->createMock(\repository_googledocs\rest::class);
 

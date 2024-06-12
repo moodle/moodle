@@ -72,7 +72,7 @@ class provider_test extends provider_testcase {
     /**
      * Test {@link workshopform_numerrors\privacy\provider::export_assessment_form()} implementation.
      */
-    public function test_export_assessment_form() {
+    public function test_export_assessment_form(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();

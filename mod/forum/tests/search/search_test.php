@@ -62,7 +62,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_search_enabled() {
+    public function test_search_enabled(): void {
 
         $searcharea = \core_search\manager::get_search_area($this->forumpostareaid);
         list($componentname, $varname) = $searcharea->get_config_var_name();
@@ -82,7 +82,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_posts_indexing() {
+    public function test_posts_indexing(): void {
         global $DB;
 
         // Returns the instance as long as the area is supported.
@@ -173,7 +173,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_posts_document() {
+    public function test_posts_document(): void {
         global $DB;
 
         // Returns the instance as long as the area is supported.
@@ -229,7 +229,7 @@ class search_test extends \advanced_testcase {
     /**
      * Group support for forum posts.
      */
-    public function test_posts_group_support() {
+    public function test_posts_group_support(): void {
         // Get the search area and test generators.
         $searcharea = \core_search\manager::get_search_area($this->forumpostareaid);
         $generator = $this->getDataGenerator();
@@ -297,7 +297,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_posts_access() {
+    public function test_posts_access(): void {
         global $DB;
 
         // Returns the instance as long as the area is supported.
@@ -364,7 +364,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_attach_files() {
+    public function test_attach_files(): void {
         global $DB;
 
         $fs = get_file_storage();
@@ -465,7 +465,7 @@ class search_test extends \advanced_testcase {
     /**
      * Tests that reindexing works in order starting from the forum with most recent discussion.
      */
-    public function test_posts_get_contexts_to_reindex() {
+    public function test_posts_get_contexts_to_reindex(): void {
         global $DB;
 
         $generator = $this->getDataGenerator();

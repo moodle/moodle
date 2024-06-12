@@ -62,7 +62,7 @@ class provider_test extends provider_testcase {
     /**
      * Test getting the context for the user ID related to this plugin.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $this->h5pactivity_setup_test_scenario_data();
@@ -80,7 +80,7 @@ class provider_test extends provider_testcase {
     /**
      * Test getting the user IDs for the context related to this plugin.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $this->h5pactivity_setup_test_scenario_data();
@@ -102,7 +102,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data is exported correctly for this plugin.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $this->h5pactivity_setup_test_scenario_data();
@@ -151,7 +151,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -177,7 +177,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -226,7 +226,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::delete_data_for_users().
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
         $component = 'mod_h5pactivity';
 

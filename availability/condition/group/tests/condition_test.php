@@ -36,7 +36,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests constructing and using condition.
      */
-    public function test_usage() {
+    public function test_usage(): void {
         global $CFG, $USER;
         $this->resetAfterTest();
         $CFG->enableavailability = true;
@@ -115,7 +115,7 @@ class condition_test extends \advanced_testcase {
      * Tests the constructor including error conditions. Also tests the
      * string conversion feature (intended for debugging only).
      */
-    public function test_constructor() {
+    public function test_constructor(): void {
         // Invalid id (not int).
         $structure = (object)array('id' => 'bourne');
         try {
@@ -139,7 +139,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests the save() function.
      */
-    public function test_save() {
+    public function test_save(): void {
         $structure = (object)array('id' => 123);
         $cond = new condition($structure);
         $structure->type = 'group';
@@ -154,7 +154,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests the update_dependency_id() function.
      */
-    public function test_update_dependency_id() {
+    public function test_update_dependency_id(): void {
         $cond = new condition((object)array('id' => 123));
         $this->assertFalse($cond->update_dependency_id('frogs', 123, 456));
         $this->assertFalse($cond->update_dependency_id('groups', 12, 34));
@@ -167,7 +167,7 @@ class condition_test extends \advanced_testcase {
      * Tests the filter_users (bulk checking) function. Also tests the SQL
      * variant get_user_list_sql.
      */
-    public function test_filter_users() {
+    public function test_filter_users(): void {
         global $DB;
         $this->resetAfterTest();
 

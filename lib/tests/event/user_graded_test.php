@@ -42,7 +42,7 @@ class user_graded_test extends \advanced_testcase {
     /**
      * Tests the event details.
      */
-    public function test_event() {
+    public function test_event(): void {
         global $CFG;
         require_once("$CFG->libdir/gradelib.php");
 
@@ -87,7 +87,7 @@ class user_graded_test extends \advanced_testcase {
     /**
      * Tests that the event is fired in the correct locations in core.
      */
-    public function test_event_is_triggered() {
+    public function test_event_is_triggered(): void {
         global $DB;
 
         // Create the items we need to test with.

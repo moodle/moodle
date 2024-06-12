@@ -141,7 +141,7 @@ class get_mapping_information_test extends \advanced_testcase {
         string $pluginname,
         string $fieldstocreate,
         string $fieldstoremove
-    ) {
+    ): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -191,7 +191,7 @@ class get_mapping_information_test extends \advanced_testcase {
      * @covers ::execute
      *
      */
-    public function test_get_mapping_information_for_wrong_preset() {
+    public function test_get_mapping_information_for_wrong_preset(): void {
         global $USER;
 
         $this->resetAfterTest();

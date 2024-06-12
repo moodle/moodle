@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_test extends \advanced_testcase {
-    public function test_get_question_summary() {
+    public function test_get_question_summary(): void {
         $essay = \test_question_maker::make_an_essay_question();
         $essay->questiontext = 'Hello <img src="http://example.com/globe.png" alt="world" />';
         $this->assertEquals('Hello [world]', $essay->get_question_summary());
@@ -100,7 +100,7 @@ class question_test extends \advanced_testcase {
         ];
     }
 
-    public function test_is_same_response() {
+    public function test_is_same_response(): void {
         $essay = \test_question_maker::make_an_essay_question();
 
         $essay->responsetemplate = '';
@@ -144,7 +144,7 @@ class question_test extends \advanced_testcase {
                 array('answer' => '0')));
     }
 
-    public function test_is_same_response_with_template() {
+    public function test_is_same_response_with_template(): void {
         $essay = \test_question_maker::make_an_essay_question();
 
         $essay->responsetemplate = 'Once upon a time';
@@ -188,7 +188,7 @@ class question_test extends \advanced_testcase {
                 array('answer' => '0')));
     }
 
-    public function test_is_complete_response() {
+    public function test_is_complete_response(): void {
         $this->resetAfterTest(true);
 
         // Create sample attachments.
@@ -302,7 +302,7 @@ class question_test extends \advanced_testcase {
     /**
      * test_get_question_definition_for_external_rendering
      */
-    public function test_get_question_definition_for_external_rendering() {
+    public function test_get_question_definition_for_external_rendering(): void {
         $this->resetAfterTest();
 
         $essay = \test_question_maker::make_an_essay_question();

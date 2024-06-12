@@ -42,7 +42,7 @@ class phpunit_dataset_test extends advanced_testcase {
     /**
      * @covers ::from_files
      */
-    public function test_from_files() {
+    public function test_from_files(): void {
 
         $ds = new phpunit_dataset();
 
@@ -148,7 +148,7 @@ class phpunit_dataset_test extends advanced_testcase {
      * @covers ::from_file
      */
     public function test_from_file(string $fullpath, string $tablename, ?string $exception,
-        array $tables, array $columns, array $rows) {
+        array $tables, array $columns, array $rows): void {
 
         $ds = new phpunit_dataset();
 
@@ -238,7 +238,7 @@ class phpunit_dataset_test extends advanced_testcase {
      * @covers ::from_string
      */
     public function test_from_string(string $content, string $type, string $tablename, ?string $exception,
-        array $tables, array $columns, array $rows) {
+        array $tables, array $columns, array $rows): void {
 
         $ds = new phpunit_dataset();
 
@@ -381,7 +381,7 @@ class phpunit_dataset_test extends advanced_testcase {
      * @covers ::from_array
      */
     public function test_from_array(array $structure, ?string $exception,
-        array $tables, array $columns, array $rows, ?bool $repeated = false) {
+        array $tables, array $columns, array $rows, ?bool $repeated = false): void {
 
         $ds = new phpunit_dataset();
 
@@ -472,7 +472,7 @@ class phpunit_dataset_test extends advanced_testcase {
      * @covers ::load_csv
      */
     public function test_load_csv(array $files, ?string $exception,
-        array $tables, array $columns, array $rows) {
+        array $tables, array $columns, array $rows): void {
 
         $ds = new phpunit_dataset();
 
@@ -640,7 +640,7 @@ class phpunit_dataset_test extends advanced_testcase {
      * @covers ::load_xml
      */
     public function test_load_xml(array $files, ?string $exception,
-        array $tables, array $columns, array $rows) {
+        array $tables, array $columns, array $rows): void {
 
         $ds = new phpunit_dataset();
 
@@ -771,7 +771,7 @@ class phpunit_dataset_test extends advanced_testcase {
      * @dataProvider to_database_provider
      * @covers ::to_database
      */
-    public function test_to_database(array $files, ?array $filter, ?string $exception, array $columns, array $rows) {
+    public function test_to_database(array $files, ?array $filter, ?string $exception, array $columns, array $rows): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -908,7 +908,7 @@ class phpunit_dataset_test extends advanced_testcase {
      * @dataProvider get_rows_provider
      * @covers ::get_rows
      */
-    public function test_get_rows(array $files, array $filter, ?string $exception, array $rows) {
+    public function test_get_rows(array $files, array $filter, ?string $exception, array $rows): void {
 
         $ds = new phpunit_dataset();
 

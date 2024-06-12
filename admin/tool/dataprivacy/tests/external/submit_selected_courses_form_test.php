@@ -43,7 +43,7 @@ class submit_selected_courses_form_test extends \externallib_advanced_testcase {
     /**
      * Test for submit_selected_courses_form().
      */
-    public function test_submit_selected_courses_form() {
+    public function test_submit_selected_courses_form(): void {
         global $DB;
         $this->resetAfterTest();
 

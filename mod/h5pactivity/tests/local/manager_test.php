@@ -33,7 +33,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test for static create methods.
      */
-    public function test_create() {
+    public function test_create(): void {
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -138,7 +138,7 @@ class manager_test extends \advanced_testcase {
      * @param array $result1 student 1 results (scaled, timemodified, attempt number)
      * @param array $result2 student 2 results (scaled, timemodified, attempt number)
      */
-    public function test_get_users_scaled_score(int $enabletracking, int $gradingmethod, array $result1, array $result2) {
+    public function test_get_users_scaled_score(int $enabletracking, int $gradingmethod, array $result1, array $result2): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -252,7 +252,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test static get_grading_methods.
      */
-    public function test_get_grading_methods() {
+    public function test_get_grading_methods(): void {
         $methods = manager::get_grading_methods();
         $this->assertCount(5, $methods);
         $this->assertNotEmpty($methods[manager::GRADEHIGHESTATTEMPT]);
@@ -270,7 +270,7 @@ class manager_test extends \advanced_testcase {
      * @param int $gradingmethod new grading method
      * @param int $result the expected result
      */
-    public function test_get_selected_attempt(int $enabletracking, int $gradingmethod, int $result) {
+    public function test_get_selected_attempt(int $enabletracking, int $gradingmethod, int $result): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -329,7 +329,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test static get_review_modes.
      */
-    public function test_get_review_modes() {
+    public function test_get_review_modes(): void {
         $methods = manager::get_review_modes();
         $this->assertCount(2, $methods);
         $this->assertNotEmpty($methods[manager::REVIEWCOMPLETION]);
@@ -339,7 +339,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test get_grader method.
      */
-    public function test_get_grader() {
+    public function test_get_grader(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -364,7 +364,7 @@ class manager_test extends \advanced_testcase {
      * @param bool $useloggedin if test must be done with the loggedin user
      * @param bool $result the expected result
      */
-    public function test_can_view_all_attempts(int $enabletracking, bool $usestudent, bool $useloggedin, bool $result) {
+    public function test_can_view_all_attempts(int $enabletracking, bool $usestudent, bool $useloggedin, bool $result): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -442,7 +442,7 @@ class manager_test extends \advanced_testcase {
      * @param bool $result the expected result
      */
     public function test_can_view_own_attempts(int $enabletracking, int $reviewmode,
-            bool $useloggedin, bool $hasattempts, bool $result) {
+            bool $useloggedin, bool $hasattempts, bool $result): void {
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -530,7 +530,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test static count_attempts of one user.
      */
-    public function test_count_attempts() {
+    public function test_count_attempts(): void {
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -567,7 +567,7 @@ class manager_test extends \advanced_testcase {
      * @param bool $extrarole if an extra role without submit capability is required
      * @param int $result the expected result
      */
-    public function test_count_attempts_all(bool $canview, bool $cansubmit, bool $extrarole, int $result) {
+    public function test_count_attempts_all(bool $canview, bool $cansubmit, bool $extrarole, int $result): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -634,7 +634,7 @@ class manager_test extends \advanced_testcase {
      * @param bool $allpotentialusers if the join should return all potential users or only the submitted ones.
      * @param int $result the expected result
      */
-    public function test_get_active_users_join(bool $allpotentialusers, int $result) {
+    public function test_get_active_users_join(bool $allpotentialusers, int $result): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -802,7 +802,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test static count_attempts.
      */
-    public function test_count_users_attempts() {
+    public function test_count_users_attempts(): void {
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -843,7 +843,7 @@ class manager_test extends \advanced_testcase {
      * @param array $results the expected classname (or null)
      */
     public function test_get_report(int $enabletracking, int $reviewmode, bool $createattempts,
-            string $role, array $results) {
+            string $role, array $results): void {
 
         $this->resetAfterTest();
         $this->setAdminUser();

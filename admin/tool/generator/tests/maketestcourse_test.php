@@ -30,7 +30,7 @@ class maketestcourse_test extends \advanced_testcase {
     /**
      * Creates a small test course and checks all the components have been put in place.
      */
-    public function test_make_xs_course() {
+    public function test_make_xs_course(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -137,7 +137,7 @@ class maketestcourse_test extends \advanced_testcase {
     /**
      * Creates an small test course with fixed data set and checks the used sections and users.
      */
-    public function test_fixed_data_set() {
+    public function test_fixed_data_set(): void {
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -178,7 +178,7 @@ class maketestcourse_test extends \advanced_testcase {
     /**
      * Creates a small test course specifying a maximum size and checks the generated files size is limited.
      */
-    public function test_filesize_limit() {
+    public function test_filesize_limit(): void {
 
         $this->resetAfterTest();
         $this->setAdminUser();

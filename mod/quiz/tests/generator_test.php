@@ -26,7 +26,7 @@ namespace mod_quiz;
  * @covers \mod_quiz_generator
  */
 class generator_test extends \advanced_testcase {
-    public function test_generator() {
+    public function test_generator(): void {
         global $DB, $SITE;
 
         $this->resetAfterTest(true);
@@ -56,7 +56,7 @@ class generator_test extends \advanced_testcase {
                 $DB->get_field('quiz', 'timecreated', ['id' => $cm->instance]), 2);
     }
 
-    public function test_generating_a_user_override() {
+    public function test_generating_a_user_override(): void {
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
@@ -87,7 +87,7 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals(strtotime('2022-10-20'), $event->timestart);
     }
 
-    public function test_generating_a_group_override() {
+    public function test_generating_a_group_override(): void {
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
