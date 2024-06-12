@@ -48,7 +48,7 @@ class provider_test extends provider_testcase {
         $this->resetAfterTest();
     }
 
-    public function test_export_user_preferences() {
+    public function test_export_user_preferences(): void {
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();

@@ -36,7 +36,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      *  Verify that a collection of metadata is returned for this component and that it just links to an external location.
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new \core_privacy\local\metadata\collection('portfolio_googledocs');
         $collection = \portfolio_googledocs\privacy\provider::get_metadata($collection);
         $this->assertNotEmpty($collection);

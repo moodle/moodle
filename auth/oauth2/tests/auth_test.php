@@ -27,7 +27,7 @@ namespace auth_oauth2;
  */
 class auth_test extends \advanced_testcase {
 
-    public function test_get_password_change_info() {
+    public function test_get_password_change_info(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user(['auth' => 'oauth2']);

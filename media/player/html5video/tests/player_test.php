@@ -47,7 +47,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test that plugin is returned as enabled media plugin.
      */
-    public function test_is_installed() {
+    public function test_is_installed(): void {
         $sortorder = \core\plugininfo\media::get_enabled_plugins();
         $this->assertEquals(['html5video' => 'html5video'], $sortorder);
     }
@@ -55,7 +55,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test method get_supported_extensions()
      */
-    public function test_get_supported_extensions() {
+    public function test_get_supported_extensions(): void {
         $nativeextensions = file_get_typegroup('extension', 'html_video');
 
         // Make sure that the list of extensions from the setting is exactly the same as html_video group.
@@ -67,7 +67,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test method list_supported_urls()
      */
-    public function test_list_supported_urls() {
+    public function test_list_supported_urls(): void {
         global $CFG;
         require_once($CFG->libdir . '/filelib.php');
 
@@ -86,7 +86,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test embedding without media filter (for example for displaying file resorce).
      */
-    public function test_embed_url() {
+    public function test_embed_url(): void {
         global $CFG;
 
         $url = new \moodle_url('http://example.org/1.webm');
@@ -116,7 +116,7 @@ class player_test extends \advanced_testcase {
      *
      * filter_mediaplugin is enabled by default.
      */
-    public function test_embed_link() {
+    public function test_embed_link(): void {
         global $CFG;
         $url = new \moodle_url('http://example.org/some_filename.mp4');
         $text = \html_writer::link($url, 'Watch this one');
@@ -132,7 +132,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test that mediaplugin filter does not work on <video> tags.
      */
-    public function test_embed_media() {
+    public function test_embed_media(): void {
         $url = new \moodle_url('http://example.org/some_filename.mp4');
         $trackurl = new \moodle_url('http://example.org/some_filename.vtt');
         $text = '<video controls="true"><source src="'.$url.'"/><source src="somethinginvalid"/>' .

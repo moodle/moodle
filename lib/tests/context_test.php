@@ -31,7 +31,7 @@ class context_test extends \advanced_testcase {
      * Tests legacy class name.
      * @coversNothing
      */
-    public function test_legacy_classname() {
+    public function test_legacy_classname(): void {
         $this->assertSame('core\context', context::class);
 
         $context = \context_system::instance();
@@ -43,7 +43,7 @@ class context_test extends \advanced_testcase {
      * Tests covered method.
      * @covers ::instance_by_id
      */
-    public function test_factory_methods() {
+    public function test_factory_methods(): void {
         $context = context::instance_by_id(SYSCONTEXTID);
         $this->assertSame('core\\context\\system', get_class($context));
     }
@@ -53,7 +53,7 @@ class context_test extends \advanced_testcase {
      * @covers ::__set
      * @covers ::__unset
      */
-    public function test_propery_change_protection() {
+    public function test_propery_change_protection(): void {
         $context = context\system::instance();
 
         $context->contextlevel = -10;
@@ -79,7 +79,7 @@ class context_test extends \advanced_testcase {
      * Tests covered method.
      * @covers ::__get
      */
-    public function test_incorrect_property() {
+    public function test_incorrect_property(): void {
         $context = context\system::instance();
 
         $a = $context->whatever;
@@ -90,7 +90,7 @@ class context_test extends \advanced_testcase {
      * Tests covered method.
      * @covers ::getIterator
      */
-    public function test_iterator() {
+    public function test_iterator(): void {
         $context = context\system::instance();
         $array = iterator_to_array($context->getIterator());
         $expected = [

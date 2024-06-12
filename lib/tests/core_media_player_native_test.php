@@ -43,7 +43,7 @@ class core_media_player_native_test extends \advanced_testcase {
     /**
      * Test method get_supported_extensions
      */
-    public function test_get_supported_extensions() {
+    public function test_get_supported_extensions(): void {
         global $CFG;
         require_once($CFG->libdir . '/filelib.php');
         $nativeextensions = file_get_typegroup('extension', ['html_video', 'html_audio']);
@@ -58,7 +58,7 @@ class core_media_player_native_test extends \advanced_testcase {
     /**
      * Test method list_supported_urls
      */
-    public function test_list_supported_urls() {
+    public function test_list_supported_urls(): void {
         global $CFG;
         require_once($CFG->libdir . '/filelib.php');
         $nativeextensions = file_get_typegroup('extension', ['html_video', 'html_audio']);
@@ -76,7 +76,7 @@ class core_media_player_native_test extends \advanced_testcase {
     /**
      * Test method get_attribute
      */
-    public function test_get_attribute() {
+    public function test_get_attribute(): void {
         $urls = [
             new \moodle_url('http://example.org/some_filename.mp4'),
             new \moodle_url('http://example.org/some_filename_hires.mp4'),
@@ -94,7 +94,7 @@ class core_media_player_native_test extends \advanced_testcase {
     /**
      * Test methods add_attributes and remove_attributes
      */
-    public function test_add_remove_attributes() {
+    public function test_add_remove_attributes(): void {
         $urls = [
             new \moodle_url('http://example.org/some_filename.mp4'),
             new \moodle_url('http://example.org/some_filename_hires.mp4'),
@@ -133,7 +133,7 @@ class core_media_player_native_test extends \advanced_testcase {
     /**
      * Test method replace_sources
      */
-    public function test_replace_sources() {
+    public function test_replace_sources(): void {
         $urls = [
             new \moodle_url('http://example.org/some_filename.mp4'),
             new \moodle_url('http://example.org/some_filename_hires.mp4'),

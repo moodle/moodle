@@ -26,7 +26,7 @@ namespace mod_glossary;
  */
 class generator_test extends \advanced_testcase {
 
-    public function test_create_instance() {
+    public function test_create_instance(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -46,7 +46,7 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals('Another glossary', $records[$glossary->id]->name);
     }
 
-    public function test_create_content() {
+    public function test_create_content(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();

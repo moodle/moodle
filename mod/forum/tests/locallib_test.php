@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/forum/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class locallib_test extends \advanced_testcase {
-    public function test_forum_update_calendar() {
+    public function test_forum_update_calendar(): void {
         global $DB;
 
         $this->resetAfterTest();

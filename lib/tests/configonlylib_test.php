@@ -34,7 +34,7 @@ class configonlylib_test extends \advanced_testcase {
     /**
      * Test cleaning of invalid utf-8 entities.
      */
-    public function test_min_fix_utf8() {
+    public function test_min_fix_utf8(): void {
         $this->assertSame('abc', min_fix_utf8('abc'));
         $this->assertSame("žlutý koníček přeskočil potůček \n\t\r", min_fix_utf8("žlutý koníček přeskočil potůček \n\t\r\0"));
         $this->assertSame('aš', min_fix_utf8('a'.chr(130).'š'), 'This fails with buggy iconv() when mbstring extenstion is not available as fallback.');
@@ -43,7 +43,7 @@ class configonlylib_test extends \advanced_testcase {
     /**
      * Test minimalistic parameter cleaning.
      */
-    public function test_min_clean_param() {
+    public function test_min_clean_param(): void {
         $this->assertSame('foo', min_clean_param('foo', 'RAW'));
         $this->assertSame('aš', min_clean_param('a'.chr(130).'š', 'RAW'));
 
@@ -60,7 +60,7 @@ class configonlylib_test extends \advanced_testcase {
     /**
      * Test minimalistic getting of page parameters.
      */
-    public function test_min_optional_param() {
+    public function test_min_optional_param(): void {
         $this->resetAfterTest();
 
         $_GET['foo'] = 'bar';
@@ -81,7 +81,7 @@ class configonlylib_test extends \advanced_testcase {
     /**
      * Test fail-safe minimalistic slashargument processing.
      */
-    public function test_min_get_slash_argument() {
+    public function test_min_get_slash_argument(): void {
         global $CFG;
 
         $this->resetAfterTest();

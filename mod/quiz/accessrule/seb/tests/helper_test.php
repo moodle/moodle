@@ -34,7 +34,7 @@ class helper_test extends \advanced_testcase {
     /**
      * Test that we can check valid seb string.
      */
-    public function test_is_valid_seb_config() {
+    public function test_is_valid_seb_config(): void {
         $validseb = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
 <plist version=\"1.0\"><dict><key>showTaskBar</key><true/><key>allowWlan</key><false/><key>showReloadButton</key><true/>"
@@ -57,7 +57,7 @@ class helper_test extends \advanced_testcase {
     /**
      * Test that we can get seb file headers.
      */
-    public function test_get_seb_file_headers() {
+    public function test_get_seb_file_headers(): void {
         $expiretime = 1582767914;
         $headers = \quizaccess_seb\helper::get_seb_file_headers($expiretime);
 
@@ -73,7 +73,7 @@ class helper_test extends \advanced_testcase {
     /**
      * Test that the course module must exist to get a seb config file content.
      */
-    public function test_can_not_get_config_content_with_invalid_cmid() {
+    public function test_can_not_get_config_content_with_invalid_cmid(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -99,7 +99,7 @@ class helper_test extends \advanced_testcase {
     /**
      * Test that the user must be enrolled to get seb config content.
      */
-    public function test_can_not_get_config_content_when_user_not_enrolled_in_course() {
+    public function test_can_not_get_config_content_when_user_not_enrolled_in_course(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -117,7 +117,7 @@ class helper_test extends \advanced_testcase {
     /**
      * Test that if SEB quiz settings can't be found, a seb config content won't be provided.
      */
-    public function test_can_not_get_config_content_if_config_not_found_for_cmid() {
+    public function test_can_not_get_config_content_if_config_not_found_for_cmid(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -136,7 +136,7 @@ class helper_test extends \advanced_testcase {
     /**
      * That that if config is empty for a quiz, a seb config content won't be provided.
      */
-    public function test_can_not_get_config_content_if_config_empty() {
+    public function test_can_not_get_config_content_if_config_empty(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -156,7 +156,7 @@ class helper_test extends \advanced_testcase {
     /**
      * Test config content is provided successfully.
      */
-    public function test_config_provided() {
+    public function test_config_provided(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();

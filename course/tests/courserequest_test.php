@@ -33,7 +33,7 @@ require_once($CFG->dirroot.'/course/lib.php');
  */
 class courserequest_test extends \advanced_testcase {
 
-    public function test_create_request() {
+    public function test_create_request(): void {
         global $DB, $USER;
         $this->resetAfterTest(true);
 
@@ -78,7 +78,7 @@ class courserequest_test extends \advanced_testcase {
         $this->assertEquals($cat1->id, $cr->category);
     }
 
-    public function test_approve_request() {
+    public function test_approve_request(): void {
         global $DB;
         $this->resetAfterTest(true);
         $this->preventResetByRollback();
@@ -139,7 +139,7 @@ class courserequest_test extends \advanced_testcase {
         $this->assertEquals($data->category, $course->category);
     }
 
-    public function test_reject_request() {
+    public function test_reject_request(): void {
         global $DB;
         $this->resetAfterTest(true);
         $this->preventResetByRollback();

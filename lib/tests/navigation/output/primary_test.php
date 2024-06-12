@@ -54,7 +54,7 @@ class primary_test extends \advanced_testcase {
      *                             otherwise consider the user as non-logged in
      * @param array $expecteditems An array of nodes expected with content in them.
      */
-    public function test_primary_export(bool $withcustom, bool $withlang, string $userloggedin, array $expecteditems) {
+    public function test_primary_export(bool $withcustom, bool $withlang, string $userloggedin, array $expecteditems): void {
         global $PAGE, $CFG;
         if ($withcustom) {
             $CFG->custommenuitems = "Course search|/course/search.php
@@ -152,7 +152,7 @@ class primary_test extends \advanced_testcase {
      * @param string $config
      * @param array $expected
      */
-    public function test_get_custom_menu(string $config, array $expected) {
+    public function test_get_custom_menu(string $config, array $expected): void {
         $actual = $this->get_custom_menu($config);
         $this->assertEquals($expected, $actual);
     }
@@ -321,7 +321,7 @@ class primary_test extends \advanced_testcase {
      * @throws \ReflectionException
      * @throws \moodle_exception
      */
-    public function test_merge_primary_and_custom() {
+    public function test_merge_primary_and_custom(): void {
         global $PAGE;
 
         $menu = $this->merge_and_render_menus();

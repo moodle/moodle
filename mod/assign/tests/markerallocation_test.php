@@ -38,7 +38,7 @@ class markerallocation_test extends \advanced_testcase {
     /**
      * Create all the needed elements to test the difference between both functions.
      */
-    public function test_markerusers() {
+    public function test_markerusers(): void {
         $this->resetAfterTest();
         global $DB;
 

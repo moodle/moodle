@@ -107,7 +107,7 @@ class statement_test extends advanced_testcase {
      * @param array $extras extra item elements
      * @param array $extravalues extra string values
      */
-    public function test_create(bool $useagent, array $extras, array $extravalues) {
+    public function test_create(bool $useagent, array $extras, array $extravalues): void {
 
         $this->resetAfterTest();
 
@@ -239,7 +239,7 @@ class statement_test extends advanced_testcase {
      * @param array $extras extra item elements
      * @param array $extravalues extra string values
      */
-    public function test_create_from_data(bool $useagent, array $extras, array $extravalues) {
+    public function test_create_from_data(bool $useagent, array $extras, array $extravalues): void {
         $this->resetAfterTest();
 
         // Create one course with a group.
@@ -317,7 +317,7 @@ class statement_test extends advanced_testcase {
      * Test adding attachments to statement.
      *
      */
-    public function test_add_attachment() {
+    public function test_add_attachment(): void {
 
         // Our statement.
         $statement = new statement();
@@ -349,7 +349,7 @@ class statement_test extends advanced_testcase {
      * Test adding attachments to statement.
      *
      */
-    public function test_add_attachment_from_data() {
+    public function test_add_attachment_from_data(): void {
 
         $this->resetAfterTest();
 
@@ -399,7 +399,7 @@ class statement_test extends advanced_testcase {
      * @param string $method the method to test
      * @param bool $exception if an exception is expected
      */
-    public function test_invalid_gets(string $method, bool $exception) {
+    public function test_invalid_gets(string $method, bool $exception): void {
         $statement = new statement();
         if ($exception) {
             $this->expectException(xapi_exception::class);
@@ -436,7 +436,7 @@ class statement_test extends advanced_testcase {
     /**
      * Try to get a user from a group statement.
      */
-    public function test_invalid_get_user() {
+    public function test_invalid_get_user(): void {
 
         $this->resetAfterTest();
 
@@ -462,7 +462,7 @@ class statement_test extends advanced_testcase {
     /**
      * Try to get a group from an agent statement.
      */
-    public function test_invalid_get_group() {
+    public function test_invalid_get_group(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -482,7 +482,7 @@ class statement_test extends advanced_testcase {
     /**
      * Try to get activity Id from a statement with agent object.
      */
-    public function test_invalid_get_activity_id() {
+    public function test_invalid_get_activity_id(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -547,7 +547,7 @@ class statement_test extends advanced_testcase {
     /**
      * Test minify statement.
      */
-    public function test_minify() {
+    public function test_minify(): void {
 
         $this->resetAfterTest();
 

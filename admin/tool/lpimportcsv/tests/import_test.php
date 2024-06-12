@@ -27,7 +27,7 @@ use core_competency\api;
  */
 class import_test extends \advanced_testcase {
 
-    public function test_import_framework() {
+    public function test_import_framework(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 

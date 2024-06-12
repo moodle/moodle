@@ -46,7 +46,7 @@ class auth_server_config_reader_test extends \advanced_testcase {
      * @return void
      */
     public function test_read_configuration(string $issuerurl, ResponseInterface $httpresponse, ?string $altwellknownsuffix = null,
-            array $expected = []) {
+            array $expected = []): void {
 
         $mock = new MockHandler([$httpresponse]);
         $handlerstack = HandlerStack::create($mock);

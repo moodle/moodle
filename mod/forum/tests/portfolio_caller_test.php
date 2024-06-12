@@ -32,7 +32,7 @@ class portfolio_caller_test extends \advanced_testcase {
      * Ensure that a file will be loaded in an instance of the caller when supplied valid and
      * accessible post and attachment file ids.
      */
-    public function test_file_in_user_post_is_loaded() {
+    public function test_file_in_user_post_is_loaded(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/forum/locallib.php');
         $this->resetAfterTest(true);
@@ -77,7 +77,7 @@ class portfolio_caller_test extends \advanced_testcase {
      * Ensure that files will not be loaded if the supplied attachment id is for a file that is not attached to
      * the supplied post id.
      */
-    public function test_file_not_in_user_post_not_loaded() {
+    public function test_file_not_in_user_post_not_loaded(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/forum/locallib.php');
         $this->resetAfterTest(true);

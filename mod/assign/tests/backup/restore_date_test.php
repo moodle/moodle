@@ -34,7 +34,7 @@ class restore_date_test extends \restore_date_testcase {
     /**
      * Test restore dates.
      */
-    public function test_restore_dates() {
+    public function test_restore_dates(): void {
         global $DB, $USER;
 
         $record = ['cutoffdate' => 100, 'allowsubmissionsfromdate' => 100, 'duedate' => 100, 'timemodified' => 100];
@@ -86,7 +86,7 @@ class restore_date_test extends \restore_date_testcase {
     /**
      * Test backup and restore of an assignment with non-default settings.
      */
-    public function test_restore_settings() {
+    public function test_restore_settings(): void {
         global $DB;
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['startdate' => $this->startdate]);

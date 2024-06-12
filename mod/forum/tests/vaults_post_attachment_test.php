@@ -36,7 +36,7 @@ class vaults_post_attachment_test extends \advanced_testcase {
     /**
      * Test get_attachments_for_posts.
      */
-    public function test_get_attachments_for_posts() {
+    public function test_get_attachments_for_posts(): void {
         $this->resetAfterTest();
 
         $filestorage = get_file_storage();
@@ -104,7 +104,7 @@ class vaults_post_attachment_test extends \advanced_testcase {
     /**
      * Test get_inline_attachments_for_posts.
      */
-    public function test_get_inline_attachments_for_posts() {
+    public function test_get_inline_attachments_for_posts(): void {
         $this->resetAfterTest();
 
         $filestorage = get_file_storage();

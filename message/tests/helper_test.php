@@ -37,7 +37,7 @@ class helper_test extends \advanced_testcase {
         $this->resetAfterTest(true);
     }
 
-    public function test_get_member_info_ordering() {
+    public function test_get_member_info_ordering(): void {
         // Create a conversation with several users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -65,7 +65,7 @@ class helper_test extends \advanced_testcase {
     /**
      * Test search_get_user_details returns the correct profile data when $CFG->messagingallusers is disabled.
      */
-    public function test_search_get_user_details_sitewide_disabled() {
+    public function test_search_get_user_details_sitewide_disabled(): void {
         global $DB;
         set_config('messagingallusers', false);
 
@@ -120,7 +120,7 @@ class helper_test extends \advanced_testcase {
     /**
      * Test search_get_user_details returns the correct profile data we limit the data we wish to be returned.
      */
-    public function test_search_get_user_details_limited_data() {
+    public function test_search_get_user_details_limited_data(): void {
         set_config('messagingallusers', false);
 
         // Two students sharing course 1, visible profile within course (no groups).
@@ -156,7 +156,7 @@ class helper_test extends \advanced_testcase {
     /**
      * Test search_get_user_details returns the correct profile data when $CFG->messagingallusers is enabled.
      */
-    public function test_search_get_user_details_sitewide_enabled() {
+    public function test_search_get_user_details_sitewide_enabled(): void {
         global $DB;
         set_config('messagingallusers', true);
 
@@ -216,7 +216,7 @@ class helper_test extends \advanced_testcase {
      * @param string $goodhtml html good structured.
      * @param bool $removebody true if we want to remove tag body.
      */
-    public function test_prevent_unclosed_html_tags(string $message, string $goodhtml, bool $removebody) {
+    public function test_prevent_unclosed_html_tags(string $message, string $goodhtml, bool $removebody): void {
         $this->setAdminUser();
 
         $html = \core_message\helper::prevent_unclosed_html_tags($message, $removebody);

@@ -51,7 +51,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests constructing and using condition as part of tree.
      */
-    public function test_in_tree() {
+    public function test_in_tree(): void {
         global $USER, $CFG;
         $this->resetAfterTest();
 
@@ -101,7 +101,7 @@ class condition_test extends \advanced_testcase {
      * Tests the constructor including error conditions. Also tests the
      * string conversion feature (intended for debugging only).
      */
-    public function test_constructor() {
+    public function test_constructor(): void {
         // No parameters.
         $structure = new \stdClass();
         try {
@@ -165,7 +165,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests the save() function.
      */
-    public function test_save() {
+    public function test_save(): void {
         $structure = (object)['cm' => 42, 'e' => COMPLETION_COMPLETE];
         $cond = new condition($structure);
         $structure->type = 'completion';
@@ -175,7 +175,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests the is_available and get_description functions.
      */
-    public function test_usage() {
+    public function test_usage(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/assign/locallib.php');
         $this->resetAfterTest();
@@ -688,7 +688,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests completion_value_used static function.
      */
-    public function test_completion_value_used() {
+    public function test_completion_value_used(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
         $prevvalue = condition::OPTION_PREVIOUS;
@@ -768,7 +768,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests the update_dependency_id() function.
      */
-    public function test_update_dependency_id() {
+    public function test_update_dependency_id(): void {
         $cond = new condition((object)[
             'cm' => 42, 'e' => COMPLETION_COMPLETE, 'selfid' => 43
         ]);

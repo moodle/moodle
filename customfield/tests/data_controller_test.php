@@ -45,7 +45,7 @@ class data_controller_test extends \advanced_testcase {
     /**
      * Test for function data_controller::create()
      */
-    public function test_constructor() {
+    public function test_constructor(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -115,7 +115,7 @@ class data_controller_test extends \advanced_testcase {
     /**
      * Test for function \core_customfield\field_controller::create() in case of wrong parameters
      */
-    public function test_constructor_errors() {
+    public function test_constructor_errors(): void {
         global $DB;
         $this->resetAfterTest();
 

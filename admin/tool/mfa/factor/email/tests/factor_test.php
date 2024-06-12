@@ -32,7 +32,7 @@ class factor_test extends \advanced_testcase {
      * @covers ::check_verification_code
      * @covers ::post_pass_state
      */
-    public function test_check_verification_code() {
+    public function test_check_verification_code(): void {
         global $DB, $USER;
         $this->resetAfterTest(true);
 

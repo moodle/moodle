@@ -36,7 +36,7 @@ require_once($CFG->dirroot.'/enrol/self/locallib.php');
  */
 class self_test extends \advanced_testcase {
 
-    public function test_basics() {
+    public function test_basics(): void {
         $this->assertTrue(enrol_is_enabled('self'));
         $plugin = enrol_get_plugin('self');
         $this->assertInstanceOf('enrol_self_plugin', $plugin);
@@ -44,7 +44,7 @@ class self_test extends \advanced_testcase {
         $this->assertEquals(ENROL_EXT_REMOVED_KEEP, get_config('enrol_self', 'expiredaction'));
     }
 
-    public function test_sync_nothing() {
+    public function test_sync_nothing(): void {
         global $SITE;
 
         $selfplugin = enrol_get_plugin('self');
@@ -56,7 +56,7 @@ class self_test extends \advanced_testcase {
         $selfplugin->sync($trace, $SITE->id);
     }
 
-    public function test_longtimnosee() {
+    public function test_longtimnosee(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -316,7 +316,7 @@ class self_test extends \advanced_testcase {
         $this->assertDebuggingCalled('send_expiry_notifications() in self enrolment plugin needs expirynotifyhour setting');
     }
 
-    public function test_expired() {
+    public function test_expired(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -433,7 +433,7 @@ class self_test extends \advanced_testcase {
         $this->assertEquals(1, $DB->count_records('role_assignments', array('roleid'=>$teacherrole->id)));
     }
 
-    public function test_send_expiry_notifications() {
+    public function test_send_expiry_notifications(): void {
         global $DB, $CFG;
         $this->resetAfterTest();
         $this->preventResetByRollback(); // Messaging does not like transactions...
@@ -608,7 +608,7 @@ class self_test extends \advanced_testcase {
         $this->assertEquals(6, $sink->count());
     }
 
-    public function test_show_enrolme_link() {
+    public function test_show_enrolme_link(): void {
         global $DB, $CFG;
         $this->resetAfterTest();
         $this->preventResetByRollback(); // Messaging does not like transactions...
@@ -740,7 +740,7 @@ class self_test extends \advanced_testcase {
     /**
      * This will check user enrolment only, rest has been tested in test_show_enrolme_link.
      */
-    public function test_can_self_enrol() {
+    public function test_can_self_enrol(): void {
         global $DB, $CFG, $OUTPUT;
         $this->resetAfterTest();
         $this->preventResetByRollback();
@@ -785,7 +785,7 @@ class self_test extends \advanced_testcase {
      *
      * @covers ::is_self_enrol_available
      */
-    public function test_is_self_enrol_available() {
+    public function test_is_self_enrol_available(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -952,7 +952,7 @@ class self_test extends \advanced_testcase {
     /**
      * Test enrol_self_check_group_enrolment_key
      */
-    public function test_enrol_self_check_group_enrolment_key() {
+    public function test_enrol_self_check_group_enrolment_key(): void {
         global $DB;
         self::resetAfterTest(true);
 
@@ -989,7 +989,7 @@ class self_test extends \advanced_testcase {
     /**
      * Test get_welcome_email_contact().
      */
-    public function test_get_welcome_email_contact() {
+    public function test_get_welcome_email_contact(): void {
         global $DB;
         self::resetAfterTest(true);
 
@@ -1072,7 +1072,7 @@ class self_test extends \advanced_testcase {
     /**
      * Test for getting user enrolment actions.
      */
-    public function test_get_user_enrolment_actions() {
+    public function test_get_user_enrolment_actions(): void {
         global $CFG, $DB, $PAGE;
         $this->resetAfterTest();
 
@@ -1121,7 +1121,7 @@ class self_test extends \advanced_testcase {
      *
      * @covers ::find_instance
      */
-    public function test_find_instance() {
+    public function test_find_instance(): void {
         global $DB;
         $this->resetAfterTest();
 

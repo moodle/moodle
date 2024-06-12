@@ -59,7 +59,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for event note_deleted.
      */
-    public function test_note_deleted_event() {
+    public function test_note_deleted_event(): void {
         // Delete a note.
         $sink = $this->redirectEvents();
         note_delete($this->eventnote);
@@ -87,7 +87,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for event note_created.
      */
-    public function test_note_created_event() {
+    public function test_note_created_event(): void {
 
         // Delete a note.
         $sink = $this->redirectEvents();
@@ -111,7 +111,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for event note_updated.
      */
-    public function test_note_updated_event() {
+    public function test_note_updated_event(): void {
 
         // Delete a note.
         $sink = $this->redirectEvents();
@@ -138,7 +138,7 @@ class events_test extends \advanced_testcase {
      * It's not possible to use the moodle API to simulate the viewing of notes, so here we
      * simply create the event and trigger it.
      */
-    public function test_notes_viewed() {
+    public function test_notes_viewed(): void {
         $coursecontext = \context_course::instance($this->eventnote->courseid);
         // Trigger event for notes viewed.
         $event = \core\event\notes_viewed::create(array(

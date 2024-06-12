@@ -335,7 +335,7 @@ class column_manager_test extends advanced_testcase {
      *
      * @return void
      */
-    public function test_enable_columns() {
+    public function test_enable_columns(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $questionbank = $this->get_question_bank();

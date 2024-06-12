@@ -107,7 +107,7 @@ class tgz_packer_test extends \advanced_testcase implements file_progress {
     /**
      * Tests getting the item.
      */
-    public function test_get_packer() {
+    public function test_get_packer(): void {
         $packer = get_file_packer('application/x-gzip');
         $this->assertInstanceOf('tgz_packer', $packer);
     }
@@ -115,7 +115,7 @@ class tgz_packer_test extends \advanced_testcase implements file_progress {
     /**
      * Tests basic archive and extract to file paths.
      */
-    public function test_to_normal_files() {
+    public function test_to_normal_files(): void {
         global $CFG;
         $packer = get_file_packer('application/x-gzip');
 
@@ -156,7 +156,7 @@ class tgz_packer_test extends \advanced_testcase implements file_progress {
     /**
      * Tests archive and extract to Moodle file system.
      */
-    public function test_to_stored_files() {
+    public function test_to_stored_files(): void {
         global $CFG;
         $packer = get_file_packer('application/x-gzip');
 
@@ -222,7 +222,7 @@ class tgz_packer_test extends \advanced_testcase implements file_progress {
     /**
      * Tests extracting with a list of specified files.
      */
-    public function test_only_specified_files() {
+    public function test_only_specified_files(): void {
         global $CFG;
         $packer = get_file_packer('application/x-gzip');
 
@@ -254,7 +254,7 @@ class tgz_packer_test extends \advanced_testcase implements file_progress {
     /**
      * Tests extracting files returning only a boolean state with success.
      */
-    public function test_extract_to_pathname_returnvalue_successful() {
+    public function test_extract_to_pathname_returnvalue_successful(): void {
         $packer = get_file_packer('application/x-gzip');
 
         // Prepare files.
@@ -272,7 +272,7 @@ class tgz_packer_test extends \advanced_testcase implements file_progress {
     /**
      * Tests extracting files returning only a boolean state with failure.
      */
-    public function test_extract_to_pathname_returnvalue_failure() {
+    public function test_extract_to_pathname_returnvalue_failure(): void {
         $packer = get_file_packer('application/x-gzip');
 
         // Create sample files.
@@ -290,7 +290,7 @@ class tgz_packer_test extends \advanced_testcase implements file_progress {
     /**
      * Tests the progress reporting.
      */
-    public function test_file_progress() {
+    public function test_file_progress(): void {
         global $CFG;
 
         // Set up.
@@ -347,7 +347,7 @@ class tgz_packer_test extends \advanced_testcase implements file_progress {
     /**
      * Tests the list_files function with and without an index file.
      */
-    public function test_list_files() {
+    public function test_list_files(): void {
         global $CFG;
 
         // Set up.
@@ -414,7 +414,7 @@ class tgz_packer_test extends \advanced_testcase implements file_progress {
         return $actualinfo;
     }
 
-    public function test_is_tgz_file() {
+    public function test_is_tgz_file(): void {
         global $CFG;
 
         // Set up.

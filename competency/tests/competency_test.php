@@ -25,7 +25,7 @@ namespace core_competency;
  */
 class competency_test extends \advanced_testcase {
 
-    public function test_get_framework_depth() {
+    public function test_get_framework_depth(): void {
         $this->resetAfterTest();
 
         $ccg = $this->getDataGenerator()->get_plugin_generator('core_competency');

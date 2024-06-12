@@ -83,13 +83,13 @@ class dml_test extends \database_driver_testcase {
         return $source; // No changes, so far.
     }
 
-    public function test_diagnose() {
+    public function test_diagnose(): void {
         $DB = $this->tdb;
         $result = $DB->diagnose();
         $this->assertNull($result, 'Database self diagnostics failed %s');
     }
 
-    public function test_get_server_info() {
+    public function test_get_server_info(): void {
         $DB = $this->tdb;
         $result = $DB->get_server_info();
         $this->assertIsArray($result);
@@ -97,7 +97,7 @@ class dml_test extends \database_driver_testcase {
         $this->assertArrayHasKey('version', $result);
     }
 
-    public function test_get_in_or_equal() {
+    public function test_get_in_or_equal(): void {
         $DB = $this->tdb;
 
         // SQL_PARAMS_QM - IN or =.
@@ -305,7 +305,7 @@ class dml_test extends \database_driver_testcase {
         $this->assertSame($value, 'onevalue');
     }
 
-    public function test_fix_table_names() {
+    public function test_fix_table_names(): void {
         $DB = new moodle_database_for_testing();
         $prefix = $DB->get_prefix();
 
@@ -327,7 +327,7 @@ class dml_test extends \database_driver_testcase {
         $this->assertSame($expected, $DB->public_fix_table_names($sql));
     }
 
-    public function test_fix_sql_params() {
+    public function test_fix_sql_params(): void {
         $DB = $this->tdb;
         $prefix = $DB->get_prefix();
 
@@ -482,7 +482,7 @@ class dml_test extends \database_driver_testcase {
     /**
      * Test the database debugging as SQL comment.
      */
-    public function test_add_sql_debugging() {
+    public function test_add_sql_debugging(): void {
         global $CFG;
         $DB = $this->tdb;
 
@@ -533,7 +533,7 @@ EOD;
      *
      * @covers ::add_sql_debugging
      */
-    public function test_sql_debugging_anon_class() {
+    public function test_sql_debugging_anon_class(): void {
         global $CFG;
         $CFG->debugsqltrace = 100;
 
@@ -553,7 +553,7 @@ EOD;
         $this->assertEquals(get_site(), $site);
     }
 
-    public function test_strtok() {
+    public function test_strtok(): void {
         // Strtok was previously used by bound emulation, make sure it is not used any more.
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
@@ -575,7 +575,7 @@ EOD;
         $this->assertSame(strtok('?'), 'b');
     }
 
-    public function test_tweak_param_names() {
+    public function test_tweak_param_names(): void {
 
         // Note the tweak_param_names() method is only available in the oracle driver,
         // hence we look for expected results indirectly, by testing various DML methods.
@@ -719,7 +719,7 @@ EOD;
         $this->assertEquals(0, $DB->count_records($tablename));
     }
 
-    public function test_get_tables() {
+    public function test_get_tables(): void {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
@@ -739,7 +739,7 @@ EOD;
         $this->assertTrue(count($DB->get_tables()) == $original_count);
     }
 
-    public function test_get_indexes() {
+    public function test_get_indexes(): void {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
@@ -785,7 +785,7 @@ EOD;
      * conceptually and also in practice, because they cause DBs to use full scans in a
      * number of situations. But if we support them, we need to ensure get_indexes() work on them.
      */
-    public function test_get_indexes_unique_mixed_nullability() {
+    public function test_get_indexes_unique_mixed_nullability(): void {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
         $table = $this->get_test_table();
@@ -810,7 +810,7 @@ EOD;
         $this->assertSame($indexcolumns, $index['columns']);
     }
 
-    public function test_get_columns() {
+    public function test_get_columns(): void {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
@@ -989,19 +989,19 @@ EOD;
         $this->assertFalse($columns['id']->auto_increment);
     }
 
-    public function test_get_manager() {
+    public function test_get_manager(): void {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
         $this->assertInstanceOf('database_manager', $dbman);
     }
 
-    public function test_setup_is_unicodedb() {
+    public function test_setup_is_unicodedb(): void {
         $DB = $this->tdb;
         $this->assertTrue($DB->setup_is_unicodedb());
     }
 
-    public function test_set_debug() { // Tests get_debug() too.
+    public function test_set_debug(): void { // Tests get_debug() too.
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
@@ -1036,7 +1036,7 @@ EOD;
         $DB->set_debug($prevdebug);
     }
 
-    public function test_execute() {
+    public function test_execute(): void {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
@@ -1126,7 +1126,7 @@ EOD;
         $this->assertSame($newonetext, $record->onetext);
     }
 
-    public function test_get_recordset() {
+    public function test_get_recordset(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1228,7 +1228,7 @@ EOD;
         //  * where_clause() is used internally and is tested in test_get_records()
     }
 
-    public function test_get_recordset_static() {
+    public function test_get_recordset_static(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1280,7 +1280,7 @@ EOD;
         $this->assertEquals(3, $i);
     }
 
-    public function test_get_recordset_iterator_keys() {
+    public function test_get_recordset_iterator_keys(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1345,7 +1345,7 @@ EOD;
         $this->assertEquals(3, $count);
     }
 
-    public function test_get_recordset_list() {
+    public function test_get_recordset_list(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1436,7 +1436,7 @@ EOD;
         //  * where_clause() is used internally and is tested in test_get_records()
     }
 
-    public function test_get_recordset_select() {
+    public function test_get_recordset_select(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1473,7 +1473,7 @@ EOD;
         //  * limits are tested in test_get_recordset_sql()
     }
 
-    public function test_get_recordset_sql() {
+    public function test_get_recordset_sql(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1516,7 +1516,7 @@ EOD;
         // Note: fetching nulls, empties, LOBs already tested by test_insert_record() no needed here.
     }
 
-    public function test_export_table_recordset() {
+    public function test_export_table_recordset(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1546,7 +1546,7 @@ EOD;
         $this->assertEqualsCanonicalizing($ids, $rids);
     }
 
-    public function test_get_records() {
+    public function test_get_records(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1654,7 +1654,7 @@ EOD;
         // Note: delegate limits testing to test_get_records_sql().
     }
 
-    public function test_get_records_list() {
+    public function test_get_records_list(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1684,7 +1684,7 @@ EOD;
         // Note: delegate limits testing to test_get_records_sql().
     }
 
-    public function test_get_records_sql() {
+    public function test_get_records_sql(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1803,7 +1803,7 @@ EOD;
         // Note: fetching nulls, empties, LOBs already tested by test_update_record() no needed here.
     }
 
-    public function test_get_records_menu() {
+    public function test_get_records_menu(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1831,7 +1831,7 @@ EOD;
         // Note: delegate limits testing to test_get_records_sql().
     }
 
-    public function test_get_records_select_menu() {
+    public function test_get_records_select_menu(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1863,7 +1863,7 @@ EOD;
         // Note: delegate limits testing to test_get_records_sql().
     }
 
-    public function test_get_records_sql_menu() {
+    public function test_get_records_sql_menu(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1895,7 +1895,7 @@ EOD;
         // Note: delegate limits testing to test_get_records_sql().
     }
 
-    public function test_get_record() {
+    public function test_get_record(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1918,7 +1918,7 @@ EOD;
     }
 
 
-    public function test_get_record_select() {
+    public function test_get_record_select(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1941,7 +1941,7 @@ EOD;
         // Note: delegates limit testing to test_get_records_sql().
     }
 
-    public function test_get_record_sql() {
+    public function test_get_record_sql(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1997,7 +1997,7 @@ EOD;
         }
     }
 
-    public function test_get_field() {
+    public function test_get_field(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -2045,7 +2045,7 @@ EOD;
         }
     }
 
-    public function test_get_field_select() {
+    public function test_get_field_select(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -2062,7 +2062,7 @@ EOD;
         $this->assertEquals(3, $DB->get_field_select($tablename, 'course', "id = ?", array(1)));
     }
 
-    public function test_get_field_sql() {
+    public function test_get_field_sql(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -2079,7 +2079,7 @@ EOD;
         $this->assertEquals(3, $DB->get_field_sql("SELECT course FROM {{$tablename}} WHERE id = ?", array(1)));
     }
 
-    public function test_get_fieldset() {
+    public function test_get_fieldset(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -2105,7 +2105,7 @@ EOD;
         $this->assertEquals(4, $fieldset[2]);
     }
 
-    public function test_get_fieldset_select() {
+    public function test_get_fieldset_select(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -2131,7 +2131,7 @@ EOD;
         $this->assertEquals(6, $fieldset[2]);
     }
 
-    public function test_get_fieldset_sql() {
+    public function test_get_fieldset_sql(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -2168,7 +2168,7 @@ EOD;
         $this->assertEquals($binarydata, $fieldset[2]);
     }
 
-    public function test_insert_record_raw() {
+    public function test_insert_record_raw(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -2238,7 +2238,7 @@ EOD;
         $this->assertEquals(5, $record->id);
     }
 
-    public function test_insert_record() {
+    public function test_insert_record(): void {
         // All the information in this test is fetched from DB by get_recordset() so we
         // have such method properly tested against nulls, empties and friends...
 
@@ -2520,7 +2520,7 @@ EOD;
         }
     }
 
-    public function test_insert_records() {
+    public function test_insert_records(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -2628,7 +2628,7 @@ EOD;
         }
     }
 
-    public function test_insert_record_with_nullable_unique_index() {
+    public function test_insert_record_with_nullable_unique_index(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -2690,7 +2690,7 @@ EOD;
 
     }
 
-    public function test_import_record() {
+    public function test_import_record(): void {
         // All the information in this test is fetched from DB by get_recordset() so we
         // have such method properly tested against nulls, empties and friends...
 
@@ -2856,7 +2856,7 @@ EOD;
         $this->assertEquals(false, $rs->key()); // Ensure recordset key() method to be working ok after closing.
     }
 
-    public function test_update_record_raw() {
+    public function test_update_record_raw(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -2897,7 +2897,7 @@ EOD;
         }
     }
 
-    public function test_update_record() {
+    public function test_update_record(): void {
 
         // All the information in this test is fetched from DB by get_record() so we
         // have such method properly tested against nulls, empties and friends...
@@ -3091,7 +3091,7 @@ EOD;
         $this->assertEquals(1e300, $DB->get_field($tablename, 'onetext', array('id' => $id)));
     }
 
-    public function test_set_field() {
+    public function test_set_field(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3191,7 +3191,7 @@ EOD;
         // go to set_field_select() because set_field() is just one wrapper over it.
     }
 
-    public function test_set_field_select() {
+    public function test_set_field_select(): void {
 
         // All the information in this test is fetched from DB by get_field() so we
         // have such method properly tested against nulls, empties and friends...
@@ -3337,7 +3337,7 @@ EOD;
         }
     }
 
-    public function test_count_records() {
+    public function test_count_records(): void {
         $DB = $this->tdb;
 
         $dbman = $DB->get_manager();
@@ -3373,7 +3373,7 @@ EOD;
         }
     }
 
-    public function test_count_records_select() {
+    public function test_count_records_select(): void {
         $DB = $this->tdb;
 
         $dbman = $DB->get_manager();
@@ -3395,7 +3395,7 @@ EOD;
         $this->assertSame(2, $DB->count_records_select($tablename, 'course > ?', array(3)));
     }
 
-    public function test_count_records_sql() {
+    public function test_count_records_sql(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3432,7 +3432,7 @@ EOD;
         }
     }
 
-    public function test_record_exists() {
+    public function test_record_exists(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3466,7 +3466,7 @@ EOD;
         }
     }
 
-    public function test_record_exists_select() {
+    public function test_record_exists_select(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3486,7 +3486,7 @@ EOD;
         $this->assertTrue($DB->record_exists_select($tablename, "course = ?", array(3)));
     }
 
-    public function test_record_exists_sql() {
+    public function test_record_exists_sql(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3506,7 +3506,7 @@ EOD;
         $this->assertTrue($DB->record_exists_sql("SELECT * FROM {{$tablename}} WHERE course = ?", array(3)));
     }
 
-    public function test_recordset_locks_delete() {
+    public function test_recordset_locks_delete(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3538,7 +3538,7 @@ EOD;
         $this->assertEquals(4, $DB->count_records($tablename, array()));
     }
 
-    public function test_recordset_locks_update() {
+    public function test_recordset_locks_update(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3570,7 +3570,7 @@ EOD;
         $this->assertEquals(2, $DB->count_records($tablename, array('course' => 10)));
     }
 
-    public function test_delete_records() {
+    public function test_delete_records(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3630,7 +3630,7 @@ EOD;
         }
     }
 
-    public function test_delete_records_select() {
+    public function test_delete_records_select(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3650,7 +3650,7 @@ EOD;
         $this->assertEquals(1, $DB->count_records($tablename));
     }
 
-    public function test_delete_records_subquery() {
+    public function test_delete_records_subquery(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3673,7 +3673,7 @@ EOD;
         $this->assertEquals(1, $DB->count_records($tablename));
     }
 
-    public function test_delete_records_list() {
+    public function test_delete_records_list(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3696,7 +3696,7 @@ EOD;
         $this->assertEquals(1, $DB->count_records($tablename));
     }
 
-    public function test_object_params() {
+    public function test_object_params(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3807,13 +3807,13 @@ EOD;
         }
     }
 
-    public function test_sql_null_from_clause() {
+    public function test_sql_null_from_clause(): void {
         $DB = $this->tdb;
         $sql = "SELECT 1 AS id ".$DB->sql_null_from_clause();
         $this->assertEquals(1, $DB->get_field_sql($sql));
     }
 
-    public function test_sql_bitand() {
+    public function test_sql_bitand(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3842,7 +3842,7 @@ EOD;
         $this->assertEquals(2, reset($result)->res);
     }
 
-    public function test_sql_bitnot() {
+    public function test_sql_bitnot(): void {
         $DB = $this->tdb;
 
         $not = $DB->sql_bitnot(2);
@@ -3852,7 +3852,7 @@ EOD;
         $this->assertEquals(5, $DB->get_field_sql($sql));
     }
 
-    public function test_sql_bitor() {
+    public function test_sql_bitor(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3881,7 +3881,7 @@ EOD;
         $this->assertEquals(11, reset($result)->res);
     }
 
-    public function test_sql_bitxor() {
+    public function test_sql_bitxor(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3910,13 +3910,13 @@ EOD;
         $this->assertEquals(9, reset($result)->res);
     }
 
-    public function test_sql_modulo() {
+    public function test_sql_modulo(): void {
         $DB = $this->tdb;
         $sql = "SELECT ".$DB->sql_modulo(10, 7)." AS res ".$DB->sql_null_from_clause();
         $this->assertEquals(3, $DB->get_field_sql($sql));
     }
 
-    public function test_sql_ceil() {
+    public function test_sql_ceil(): void {
         $DB = $this->tdb;
         $sql = "SELECT ".$DB->sql_ceil(665.666)." AS res ".$DB->sql_null_from_clause();
         $this->assertEquals(666, $DB->get_field_sql($sql));
@@ -3960,7 +3960,7 @@ EOD;
         $this->assertEquals(['uno'], $fieldset);
     }
 
-    public function test_cast_char2int() {
+    public function test_cast_char2int(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -4013,7 +4013,7 @@ EOD;
         $this->assertSame('0200', next($records)->nametext);
     }
 
-    public function test_cast_char2real() {
+    public function test_cast_char2real(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -4070,7 +4070,7 @@ EOD;
         $this->assertEquals('011.13333333', $DB->get_field_sql($sql));
     }
 
-    public function test_sql_compare_text() {
+    public function test_sql_compare_text(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -4133,7 +4133,7 @@ EOD;
         $this->assertSame($clob, $record->description);
     }
 
-    public function test_unique_index_collation_trouble() {
+    public function test_unique_index_collation_trouble(): void {
         // Note: this is a work in progress, we should probably move this to ddl test.
 
         $DB = $this->tdb;
@@ -4173,7 +4173,7 @@ EOD;
         }
     }
 
-    public function test_sql_equal() {
+    public function test_sql_equal(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -4229,7 +4229,7 @@ EOD;
         $this->assertGreaterThanOrEqual(4, count($records)); // At very least, there are 4 records with CI/AI names matching.
     }
 
-    public function test_sql_like() {
+    public function test_sql_like(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -4345,7 +4345,7 @@ EOD;
         ], $DB->get_fieldset_select($tablename, 'name', $select, $params));
     }
 
-    public function test_coalesce() {
+    public function test_coalesce(): void {
         $DB = $this->tdb;
 
         // Testing not-null occurrences, return 1st.
@@ -4385,7 +4385,7 @@ EOD;
         $this->assertSame('', $DB->get_field_sql($sql, array('paramvalue' => '')));
     }
 
-    public function test_sql_concat() {
+    public function test_sql_concat(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -4531,7 +4531,7 @@ EOD;
      * @param array $params Any parameters to provide to the query
      * @param @string $expected The expected result
      */
-    public function test_concat_join($concat, $fields, $params, $expected) {
+    public function test_concat_join($concat, $fields, $params, $expected): void {
         $DB = $this->tdb;
         $sql = "SELECT " . $DB->sql_concat_join($concat, $fields) . " AS result" . $DB->sql_null_from_clause();
         $result = $DB->get_field_sql($sql, $params);
@@ -4673,14 +4673,14 @@ EOD;
         ], $DB->get_records_sql($sql));
     }
 
-    public function test_sql_fullname() {
+    public function test_sql_fullname(): void {
         $DB = $this->tdb;
         $sql = "SELECT ".$DB->sql_fullname(':first', ':last')." AS fullname ".$DB->sql_null_from_clause();
         $params = array('first'=>'Firstname', 'last'=>'Surname');
         $this->assertEquals("Firstname Surname", $DB->get_field_sql($sql, $params));
     }
 
-    public function test_sql_order_by_text() {
+    public function test_sql_order_by_text(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -4741,7 +4741,7 @@ EOD;
         $this->assertEquals(null, array_shift($records)->name);
     }
 
-    public function test_sql_substring() {
+    public function test_sql_substring(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -4802,7 +4802,7 @@ EOD;
         $this->assertEquals(substr($string, $start - 1), $record->name); // PHP's substr is 0-based.
     }
 
-    public function test_sql_length() {
+    public function test_sql_length(): void {
         $DB = $this->tdb;
         $this->assertEquals($DB->get_field_sql(
             "SELECT ".$DB->sql_length("'aeiou'").$DB->sql_null_from_clause()), 5);
@@ -4810,7 +4810,7 @@ EOD;
             "SELECT ".$DB->sql_length("'áéíóú'").$DB->sql_null_from_clause()), 5);
     }
 
-    public function test_sql_position() {
+    public function test_sql_position(): void {
         $DB = $this->tdb;
         $this->assertEquals($DB->get_field_sql(
             "SELECT ".$DB->sql_position("'ood'", "'Moodle'").$DB->sql_null_from_clause()), 2);
@@ -4818,7 +4818,7 @@ EOD;
             "SELECT ".$DB->sql_position("'Oracle'", "'Moodle'").$DB->sql_null_from_clause()), 0);
     }
 
-    public function test_sql_empty() {
+    public function test_sql_empty(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -4856,7 +4856,7 @@ EOD;
         $this->assertSame('', $record->namenotnullnodeflt);
     }
 
-    public function test_sql_isempty() {
+    public function test_sql_isempty(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -4897,7 +4897,7 @@ EOD;
         $this->assertSame('', $record->descriptionnull);
     }
 
-    public function test_sql_isnotempty() {
+    public function test_sql_isnotempty(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -4938,7 +4938,7 @@ EOD;
         $this->assertSame('lalala', $record->descriptionnull); // So 'lalala' is the first non-empty 'descriptionnull' record.
     }
 
-    public function test_sql_regex() {
+    public function test_sql_regex(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
         if (!$DB->sql_regex_supported()) {
@@ -4986,7 +4986,7 @@ EOD;
     /**
      * Test some complicated variations of set_field_select.
      */
-    public function test_set_field_select_complicated() {
+    public function test_set_field_select_complicated(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -5016,7 +5016,7 @@ EOD;
      * Test some more complex SQL syntax which moodle uses and depends on to work
      * useful to determine if new database libraries can be supported.
      */
-    public function test_get_records_sql_complicated() {
+    public function test_get_records_sql_complicated(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -5162,7 +5162,7 @@ EOD;
         $this->assertCount($currentcount, $results);
     }
 
-    public function test_replace_all_text() {
+    public function test_replace_all_text(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -5256,7 +5256,7 @@ EOD;
         $this->assertEquals($expected, $result);
     }
 
-    public function test_onelevel_commit() {
+    public function test_onelevel_commit(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -5277,7 +5277,7 @@ EOD;
         $this->assertEquals(1, $DB->count_records($tablename));
     }
 
-    public function test_transaction_ignore_error_trouble() {
+    public function test_transaction_ignore_error_trouble(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -5360,7 +5360,7 @@ EOD;
         // NOTE: SQL_QUERY_STRUCTURE is intentionally not tested here because it should never fail.
     }
 
-    public function test_onelevel_rollback() {
+    public function test_onelevel_rollback(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -5388,7 +5388,7 @@ EOD;
         $this->assertEquals(0, $DB->count_records($tablename));
     }
 
-    public function test_nested_transactions() {
+    public function test_nested_transactions(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -5531,7 +5531,7 @@ EOD;
         $this->assertEquals(3, $i);
     }
 
-    public function test_transactions_forbidden() {
+    public function test_transactions_forbidden(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -5558,7 +5558,7 @@ EOD;
         $this->assertEquals(1, $DB->count_records($tablename));
     }
 
-    public function test_wrong_transactions() {
+    public function test_wrong_transactions(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -5645,7 +5645,7 @@ EOD;
         $DB->delete_records($tablename);
     }
 
-    public function test_concurent_transactions() {
+    public function test_concurent_transactions(): void {
         // Notes about this test:
         // 1- MySQL needs to use one engine with transactions support (InnoDB).
         // 2- MSSQL needs to have enabled versioning for read committed
@@ -5720,7 +5720,7 @@ EOD;
         $DB2->dispose();
     }
 
-    public function test_session_locks() {
+    public function test_session_locks(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -5764,7 +5764,7 @@ EOD;
         $DB2->dispose();
     }
 
-    public function test_bound_param_types() {
+    public function test_bound_param_types(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -5826,7 +5826,7 @@ EOD;
         $this->assertCount(1, $records);
     }
 
-    public function test_bound_param_reserved() {
+    public function test_bound_param_reserved(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -5854,7 +5854,7 @@ EOD;
         $this->assertTrue(true);
     }
 
-    public function test_limits_and_offsets() {
+    public function test_limits_and_offsets(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -5967,7 +5967,7 @@ EOD;
     /**
      * Test debugging messages about invalid limit number values.
      */
-    public function test_invalid_limits_debugging() {
+    public function test_invalid_limits_debugging(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -6032,7 +6032,7 @@ EOD;
         $this->assertDebuggingCalled("Negative limitnum parameter detected: -2, did you pass the correct arguments?");
     }
 
-    public function test_queries_counter() {
+    public function test_queries_counter(): void {
 
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
@@ -6111,7 +6111,7 @@ EOD;
         $this->assertEquals($totaldbqueries, $DB->perf_get_queries());
     }
 
-    public function test_sql_intersect() {
+    public function test_sql_intersect(): void {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
@@ -6196,7 +6196,7 @@ EOD;
     /**
      * Test that the database has full utf8 support (4 bytes).
      */
-    public function test_four_byte_character_insertion() {
+    public function test_four_byte_character_insertion(): void {
         $DB = $this->tdb;
 
         if ($DB->get_dbfamily() === 'mysql' && strpos($DB->get_dbcollation(), 'utf8_') === 0) {
@@ -6243,7 +6243,7 @@ EOD;
      * @dataProvider get_server_info_mysql_provider
      */
     public function test_get_server_info_mysql(
-        string $mysqliserverinfo, string $versionfromdb, bool $cfgversionfromdb, string $expecteddbversion) {
+        string $mysqliserverinfo, string $versionfromdb, bool $cfgversionfromdb, string $expecteddbversion): void {
         // Avoid to run MySQL-ish related tests when running tests on other DB families.
         $DB = $this->tdb;
         if ($DB->get_dbfamily() != 'mysql') {
@@ -6357,7 +6357,7 @@ EOD;
      * @see \mysqli_native_moodle_database::get_server_info
      * @covers \mysqli_native_moodle_database::get_server_info
      */
-    public function test_get_server_info_dbfamily_mysql() {
+    public function test_get_server_info_dbfamily_mysql(): void {
         $DB = $this->tdb;
         if ($DB->get_dbfamily() != 'mysql') {
             $this->markTestSkipped("Not MySQL family");

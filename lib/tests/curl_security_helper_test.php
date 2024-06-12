@@ -37,7 +37,7 @@ class curl_security_helper_test extends \advanced_testcase {
      * @param bool $expected the expected result.
      * @dataProvider curl_security_url_data_provider
      */
-    public function test_curl_security_helper_url_is_blocked($dns, $url, $blockedhosts, $allowedports, $expected) {
+    public function test_curl_security_helper_url_is_blocked($dns, $url, $blockedhosts, $allowedports, $expected): void {
         $this->resetAfterTest(true);
         $helper = $this->getMockBuilder('\core\files\curl_security_helper')
             ->onlyMethods(['get_host_list_by_name'])
@@ -167,7 +167,7 @@ class curl_security_helper_test extends \advanced_testcase {
      * @param bool $expected the expected result.
      * @dataProvider curl_security_settings_data_provider
      */
-    public function test_curl_security_helper_is_enabled($blockedhosts, $allowedports, $expected) {
+    public function test_curl_security_helper_is_enabled($blockedhosts, $allowedports, $expected): void {
         $this->resetAfterTest(true);
         $helper = new \core\files\curl_security_helper();
         set_config('curlsecurityblockedhosts', $blockedhosts);
@@ -199,7 +199,7 @@ class curl_security_helper_test extends \advanced_testcase {
      * @param bool $expected the expected result.
      * @dataProvider curl_security_host_data_provider
      */
-    public function test_curl_security_helper_host_is_blocked($host, $blockedhosts, $expected) {
+    public function test_curl_security_helper_host_is_blocked($host, $blockedhosts, $expected): void {
         $this->resetAfterTest(true);
         $helper = new \core\files\curl_security_helper();
         set_config('curlsecurityblockedhosts', $blockedhosts);
@@ -253,7 +253,7 @@ class curl_security_helper_test extends \advanced_testcase {
      * @param bool $expected the expected result.
      * @dataProvider curl_security_port_data_provider
      */
-    public function test_curl_security_helper_port_is_blocked($port, $allowedports, $expected) {
+    public function test_curl_security_helper_port_is_blocked($port, $allowedports, $expected): void {
         $this->resetAfterTest(true);
         $helper = new \core\files\curl_security_helper();
         set_config('curlsecurityallowedport', $allowedports);
@@ -289,7 +289,7 @@ class curl_security_helper_test extends \advanced_testcase {
     /**
      * Test for \core\files\curl_security_helper::get_blocked_url_string().
      */
-    public function test_curl_security_helper_get_blocked_url_string() {
+    public function test_curl_security_helper_get_blocked_url_string(): void {
         $helper = new \core\files\curl_security_helper();
         $this->assertEquals(get_string('curlsecurityurlblocked', 'admin'), $helper->get_blocked_url_string());
     }

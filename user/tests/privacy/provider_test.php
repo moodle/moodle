@@ -44,7 +44,7 @@ class provider_test extends provider_testcase {
     /**
      * Check that context information is returned correctly.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         // Create some other users as well.
@@ -59,7 +59,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data is exported as expected for a user.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user([
             'firstaccess' => 1535760000,
@@ -141,7 +141,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user data is deleted for one user.
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user([
@@ -210,7 +210,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user data is deleted for one user.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user([
@@ -286,7 +286,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that only users with a user context are fetched.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest();
 
         $component = 'core_user';
@@ -312,7 +312,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data for users in approved userlist is deleted.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
 
         $this->resetAfterTest();

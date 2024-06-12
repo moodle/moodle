@@ -61,7 +61,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Tests the core_notes_myprofile_navigation() function.
      */
-    public function test_core_notes_myprofile_navigation() {
+    public function test_core_notes_myprofile_navigation(): void {
         global $USER;
 
         // Set up the test.
@@ -81,7 +81,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Tests the core_notes_myprofile_navigation() function.
      */
-    public function test_core_notes_myprofile_navigation_as_guest() {
+    public function test_core_notes_myprofile_navigation_as_guest(): void {
         global $USER;
 
         $this->setGuestUser();
@@ -97,7 +97,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Tests the core_notes_myprofile_navigation() function.
      */
-    public function test_core_notes_myprofile_navigation_notes_disabled() {
+    public function test_core_notes_myprofile_navigation_notes_disabled(): void {
         global $USER;
 
         $this->setAdminUser();

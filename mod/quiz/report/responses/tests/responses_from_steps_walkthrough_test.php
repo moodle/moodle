@@ -53,7 +53,7 @@ class responses_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthroug
      * @param array $csvdata of data read from csv file "questionsXX.csv", "stepsXX.csv" and "responsesXX.csv".
      * @dataProvider get_data_for_walkthrough
      */
-    public function test_walkthrough_from_csv($quizsettings, $csvdata) {
+    public function test_walkthrough_from_csv($quizsettings, $csvdata): void {
 
         $this->resetAfterTest(true);
         question_bank::get_qtype('random')->clear_caches_before_testing();

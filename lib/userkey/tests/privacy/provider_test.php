@@ -40,7 +40,7 @@ class provider_test extends provider_testcase {
     /**
      * Export for a user with no keys in the specified instance will not have any data exported.
      */
-    public function test_export_userkeys_no_keys() {
+    public function test_export_userkeys_no_keys(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -56,7 +56,7 @@ class provider_test extends provider_testcase {
     /**
      * Export for a user with a key against a script where no instance is specified.
      */
-    public function test_export_userkeys_basic_key() {
+    public function test_export_userkeys_basic_key(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -93,7 +93,7 @@ class provider_test extends provider_testcase {
     /**
      * Export for a user with a key against a script where additional data is specified.
      */
-    public function test_export_userkeys_complex_key() {
+    public function test_export_userkeys_complex_key(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -131,7 +131,7 @@ class provider_test extends provider_testcase {
     /**
      * Export for a user with a key against a script where no instance is specified.
      */
-    public function test_export_userkeys_basic_key_without_filter() {
+    public function test_export_userkeys_basic_key_without_filter(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -168,7 +168,7 @@ class provider_test extends provider_testcase {
     /**
      * Export for a user with a key against a script where additional data is specified.
      */
-    public function test_export_userkeys_complex_key_with_filter() {
+    public function test_export_userkeys_complex_key_with_filter(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -214,7 +214,7 @@ class provider_test extends provider_testcase {
     /**
      * Export for a user with keys against multiple scripts where additional data is specified.
      */
-    public function test_export_userkeys_multiple_complex_key_with_filter() {
+    public function test_export_userkeys_multiple_complex_key_with_filter(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -269,7 +269,7 @@ class provider_test extends provider_testcase {
     /**
      * Export for keys against multiple users.
      */
-    public function test_export_userkeys_multiple_users() {
+    public function test_export_userkeys_multiple_users(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -321,7 +321,7 @@ class provider_test extends provider_testcase {
     /**
      * Delete for all users in a script.
      */
-    public function test_delete_all_userkeys_in_script() {
+    public function test_delete_all_userkeys_in_script(): void {
         global $DB;
         $this->resetAfterTest();
 

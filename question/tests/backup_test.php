@@ -95,7 +95,7 @@ class backup_test extends \advanced_testcase {
     /**
      * This function tests backup and restore of question tags and course level question tags.
      */
-    public function test_backup_question_tags() {
+    public function test_backup_question_tags(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -217,7 +217,7 @@ class backup_test extends \advanced_testcase {
     /**
      * Test that the question author is retained when they are enrolled in to the course.
      */
-    public function test_backup_question_author_retained_when_enrolled() {
+    public function test_backup_question_author_retained_when_enrolled(): void {
         global $DB, $USER, $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -278,7 +278,7 @@ class backup_test extends \advanced_testcase {
      * Test that the question author is retained when they are not enrolled in to the course,
      * but we are restoring the backup at the same site.
      */
-    public function test_backup_question_author_retained_when_not_enrolled() {
+    public function test_backup_question_author_retained_when_not_enrolled(): void {
         global $DB, $USER, $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -335,7 +335,7 @@ class backup_test extends \advanced_testcase {
      * Test that the current user is set as a question author when we are restoring the backup
      * at the another site and the question author is not enrolled in to the course.
      */
-    public function test_backup_question_author_reset() {
+    public function test_backup_question_author_reset(): void {
         global $DB, $USER, $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();

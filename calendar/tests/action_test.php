@@ -32,7 +32,7 @@ class action_test extends \advanced_testcase {
      * @dataProvider getters_testcases()
      * @param array $constructorparams Associative array of constructor parameters.
      */
-    public function test_getters($constructorparams) {
+    public function test_getters($constructorparams): void {
         $action = new action(
             $constructorparams['name'],
             $constructorparams['url'],

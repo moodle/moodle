@@ -64,7 +64,7 @@ class update_course_test extends \externallib_advanced_testcase {
         array $expected,
         bool $expectexception,
         bool $assertdebug
-    ) {
+    ): void {
 
         $this->resetAfterTest();
 
@@ -184,7 +184,7 @@ class update_course_test extends \externallib_advanced_testcase {
      * @covers ::execute
      *
      */
-    public function test_execute_wrong_courseid() {
+    public function test_execute_wrong_courseid(): void {
 
         $this->resetAfterTest();
 
@@ -206,7 +206,7 @@ class update_course_test extends \externallib_advanced_testcase {
      *
      * @covers ::execute
      */
-    public function test_execute_target_params() {
+    public function test_execute_target_params(): void {
 
         $this->resetAfterTest();
 

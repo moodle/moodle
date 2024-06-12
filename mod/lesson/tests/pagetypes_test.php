@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/mod/lesson/pagetypes/essay.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 class pagetypes_test extends \advanced_testcase {
-    public function test_lesson_essay_extract_useranswer() {
+    public function test_lesson_essay_extract_useranswer(): void {
         // Test that reponseformat is added when not present.
         $answer = 'O:8:"stdClass":6:{s:4:"sent";i:1;s:6:"graded";i:1;s:5:"score";s:1:"1";'
                 . 's:6:"answer";s:64:"<p>This is my answer <b>with bold</b> and <i>italics</i><br></p>";'

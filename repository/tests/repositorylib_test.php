@@ -40,7 +40,7 @@ class repositorylib_test extends \advanced_testcase {
      *
      * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
      */
-    public function test_install_repository() {
+    public function test_install_repository(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest(true);
@@ -64,7 +64,7 @@ class repositorylib_test extends \advanced_testcase {
         $this->assertEquals($repositorypluginname, $info->type);
     }
 
-    public function test_get_unused_filename() {
+    public function test_get_unused_filename(): void {
         global $USER;
 
         $this->resetAfterTest(true);
@@ -118,7 +118,7 @@ class repositorylib_test extends \advanced_testcase {
         $this->assertEquals('test4 (1).txt', repository::get_unused_filename($draftitemid, '/', 'test4 (1).txt'));
     }
 
-    public function test_draftfile_exists() {
+    public function test_draftfile_exists(): void {
         global $USER;
 
         $this->resetAfterTest(true);
@@ -159,7 +159,7 @@ class repositorylib_test extends \advanced_testcase {
         }
     }
 
-    public function test_delete_selected_files() {
+    public function test_delete_selected_files(): void {
         global $USER;
 
         $this->resetAfterTest(true);
@@ -213,7 +213,7 @@ class repositorylib_test extends \advanced_testcase {
         $this->assertEquals(2, count($areafiles));
     }
 
-    public function test_can_be_edited_by_user() {
+    public function test_can_be_edited_by_user(): void {
         $this->resetAfterTest(true);
 
         $syscontext = \context_system::instance();
@@ -293,7 +293,7 @@ class repositorylib_test extends \advanced_testcase {
 
     }
 
-    public function test_check_capability() {
+    public function test_check_capability(): void {
         $this->resetAfterTest(true);
 
         $syscontext = \context_system::instance();
@@ -518,7 +518,7 @@ class repositorylib_test extends \advanced_testcase {
         $this->assertTrue($notprivaterepo->check_capability());
     }
 
-    function test_delete_all_for_context() {
+    function test_delete_all_for_context(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -623,7 +623,7 @@ class repositorylib_test extends \advanced_testcase {
         $fs->create_file_from_string($filerecord, hash("md5", $filepath . $filename));
     }
 
-    public function test_listing_and_filter() {
+    public function test_listing_and_filter(): void {
         $this->resetAfterTest(true);
         $this->setUser($this->getDataGenerator()->create_user());
         $repoid = $this->getDataGenerator()->create_repository('user')->id;

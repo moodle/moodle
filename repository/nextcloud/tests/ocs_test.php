@@ -48,7 +48,7 @@ class ocs_test extends \advanced_testcase {
     /**
      * Test whether required REST API functions are declared.
      */
-    public function test_api_functions() {
+    public function test_api_functions(): void {
         $mock = $this->createMock(\core\oauth2\client::class);
         $mock->expects($this->once())->method('get_issuer')->willReturn($this->issuer);
 

@@ -46,7 +46,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test report downloaded event.
      */
-    public function test_report_downloaded() {
+    public function test_report_downloaded(): void {
         // There is no proper API to call to generate chapters for a book, so what we are
         // doing here is simply making sure that the events returns the right information.
 
@@ -78,7 +78,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test report viewed event.
      */
-    public function test_report_viewed() {
+    public function test_report_viewed(): void {
         // There is no proper API to call to generate chapters for a book, so what we are
         // doing here is simply making sure that the events returns the right information.
 
@@ -108,7 +108,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test response submitted event.
      */
-    public function test_response_submitted() {
+    public function test_response_submitted(): void {
         // There is no proper API to call to generate chapters for a book, so what we are
         // doing here is simply making sure that the events returns the right information.
 

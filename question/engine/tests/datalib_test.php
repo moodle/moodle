@@ -54,7 +54,7 @@ class datalib_test extends \qbehaviour_walkthrough_test_base {
      * Then we change the max mark for the essay question in the other
      * usage to 2, using a qubaid_join, and verify.
      */
-    public function test_set_max_mark_in_attempts() {
+    public function test_set_max_mark_in_attempts(): void {
 
         // Set up some things the tests will need.
         $this->resetAfterTest();
@@ -127,7 +127,7 @@ class datalib_test extends \qbehaviour_walkthrough_test_base {
         $this->assertEquals( 2, $quba2->get_question_max_mark(2));
     }
 
-    public function test_load_used_variants() {
+    public function test_load_used_variants(): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
@@ -155,7 +155,7 @@ class datalib_test extends \qbehaviour_walkthrough_test_base {
                     new qubaid_list(array($quba->get_id()))));
     }
 
-    public function test_repeated_usage_saving_new_usage() {
+    public function test_repeated_usage_saving_new_usage(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -192,7 +192,7 @@ class datalib_test extends \qbehaviour_walkthrough_test_base {
         $this->assertEquals(2, $DB->count_records('question_attempt_steps') - $initialqasrows);
     }
 
-    public function test_repeated_usage_saving_existing_usage() {
+    public function test_repeated_usage_saving_existing_usage(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -234,7 +234,7 @@ class datalib_test extends \qbehaviour_walkthrough_test_base {
     /**
      * Test that database operations on an empty usage work without errors.
      */
-    public function test_save_and_load_an_empty_usage() {
+    public function test_save_and_load_an_empty_usage(): void {
         $this->resetAfterTest();
 
         // Create a new usage.

@@ -27,7 +27,7 @@ use TCPDF_STATIC;
  */
 class pdflib_test extends \advanced_testcase {
 
-    public function test_gettcpdf_producer() {
+    public function test_gettcpdf_producer(): void {
         global $CFG;
         require_once($CFG->libdir.'/pdflib.php');
 
@@ -37,7 +37,7 @@ class pdflib_test extends \advanced_testcase {
         $this->assertEquals('TCPDF (http://www.tcpdf.org)', $producer);
     }
 
-    public function test_qrcode() {
+    public function test_qrcode(): void {
         global $CFG;
         require_once($CFG->libdir.'/pdflib.php');
 

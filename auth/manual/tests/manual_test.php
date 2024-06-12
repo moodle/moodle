@@ -51,7 +51,7 @@ class manual_test extends \advanced_testcase {
     /**
      * Test user_update_password method.
      */
-    public function test_user_update_password() {
+    public function test_user_update_password(): void {
         $user = $this->getDataGenerator()->create_user();
         $expectedtime = time();
         $passwordisupdated = $this->authplugin->user_update_password($user, 'MyNewPassword*');
@@ -66,7 +66,7 @@ class manual_test extends \advanced_testcase {
     /**
      * Test test_password_expire method.
      */
-    public function test_password_expire() {
+    public function test_password_expire(): void {
         $userrecord = array();
         $expirationtime = 31 * DAYSECS;
         $userrecord['timecreated'] = time() - $expirationtime;

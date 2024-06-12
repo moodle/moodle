@@ -36,7 +36,7 @@ class roles_test extends \advanced_testcase {
      * Test select separate group prevent all
      *
      */
-    public function test_get_users_select_separate_groups_prevent_all() {
+    public function test_get_users_select_separate_groups_prevent_all(): void {
         $this->resetAfterTest();
         $numstudents = 12;
         $numteachers = 3;
@@ -70,7 +70,7 @@ class roles_test extends \advanced_testcase {
      * Test select separate groups
      *
      */
-    public function test_get_users_select_separate_groups() {
+    public function test_get_users_select_separate_groups(): void {
         $this->resetAfterTest();
         $numstudents = 12;
         $numteachers = 3;

@@ -50,7 +50,7 @@ class events_test extends \advanced_testcase {
      * There is no easy way to trigger this event using the API, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_questions_imported() {
+    public function test_questions_imported(): void {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
@@ -101,7 +101,7 @@ class events_test extends \advanced_testcase {
      * There is no easy way to trigger this event using the API, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_questions_exported() {
+    public function test_questions_exported(): void {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
@@ -150,7 +150,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the question created event.
      */
-    public function test_question_created() {
+    public function test_question_created(): void {
 
         $this->setAdminUser();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -176,7 +176,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the question deleted event.
      */
-    public function test_question_deleted() {
+    public function test_question_deleted(): void {
 
         $this->setAdminUser();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -203,7 +203,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the question updated event.
      */
-    public function test_question_updated() {
+    public function test_question_updated(): void {
 
         global $CFG;
         require_once($CFG->dirroot . '/question/type/description/questiontype.php');
@@ -244,7 +244,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the question moved event.
      */
-    public function test_question_moved() {
+    public function test_question_moved(): void {
 
         $this->setAdminUser();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -278,7 +278,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for viewing the question, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_question_viewed() {
+    public function test_question_viewed(): void {
 
         $this->setAdminUser();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');

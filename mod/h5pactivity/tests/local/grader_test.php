@@ -49,7 +49,7 @@ class grader_test extends \advanced_testcase {
     /**
      * Test for grade item delete.
      */
-    public function test_grade_item_delete() {
+    public function test_grade_item_delete(): void {
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -82,7 +82,7 @@ class grader_test extends \advanced_testcase {
      * @param bool $reset if has to reset grades
      * @param string $idnumber the new idnumber
      */
-    public function test_grade_item_update(int $newgrade, bool $reset, string $idnumber) {
+    public function test_grade_item_update(int $newgrade, bool $reset, string $idnumber): void {
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -198,7 +198,7 @@ class grader_test extends \advanced_testcase {
      * @param int $completion 1 all student have the activity completed, 0 one have incompleted
      * @param array $results expected results (user1 grade, user2 grade)
      */
-    public function test_update_grades(int $newgrade, bool $all, int $completion, array $results) {
+    public function test_update_grades(int $newgrade, bool $all, int $completion, array $results): void {
 
         $this->resetAfterTest();
         $this->setAdminUser();

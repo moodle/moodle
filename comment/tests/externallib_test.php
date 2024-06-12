@@ -97,7 +97,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_comments
      */
-    public function test_get_comments() {
+    public function test_get_comments(): void {
         global $CFG;
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
@@ -172,7 +172,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_comments not enabled site level
      */
-    public function test_add_comments_not_enabled_site_level() {
+    public function test_add_comments_not_enabled_site_level(): void {
         global $CFG;
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
@@ -196,7 +196,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_comments not enabled module level
      */
-    public function test_add_comments_not_enabled_module_level() {
+    public function test_add_comments_not_enabled_module_level(): void {
         global $DB;
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
@@ -221,7 +221,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_comments
      */
-    public function test_add_comments_single() {
+    public function test_add_comments_single(): void {
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
         // Add a comment as student 1.
@@ -264,7 +264,7 @@ class externallib_test extends externallib_advanced_testcase {
      *
      * This simply verifies that the entire operation fails.
      */
-    public function test_add_comments_multiple_contains_invalid() {
+    public function test_add_comments_multiple_contains_invalid(): void {
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
         // Try to create some comments as student 1, but provide a bad area for the second comment.
@@ -295,7 +295,7 @@ class externallib_test extends externallib_advanced_testcase {
      *
      * This simply verifies that the entire operation fails.
      */
-    public function test_add_comments_multiple_all_valid() {
+    public function test_add_comments_multiple_all_valid(): void {
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
         // Try to create some comments as student 1.
@@ -335,7 +335,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_comments invalid area
      */
-    public function test_add_comments_invalid_area() {
+    public function test_add_comments_invalid_area(): void {
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
         // Try to create a comment with an invalid area, verifying failure.
@@ -357,7 +357,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_comment invalid comment.
      */
-    public function test_delete_comments_invalid_comment_id() {
+    public function test_delete_comments_invalid_comment_id(): void {
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
         $this->setUser($student1);
 
@@ -368,7 +368,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_comment own user.
      */
-    public function test_delete_comments_own_user() {
+    public function test_delete_comments_own_user(): void {
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
         // Create a few comments as student 1.
@@ -405,7 +405,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_comment other student.
      */
-    public function test_delete_comment_other_student() {
+    public function test_delete_comment_other_student(): void {
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
         // Create a comment as the student.
@@ -431,7 +431,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_comment as teacher.
      */
-    public function test_delete_comments_as_teacher() {
+    public function test_delete_comments_as_teacher(): void {
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
         // Create a comment as the student.

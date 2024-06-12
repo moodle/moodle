@@ -35,7 +35,7 @@ class calculation_info_test extends \advanced_testcase {
      * @param mixed $info4
      * @return null
      */
-    public function test_calculation_info_add_pull($info1, $info2, $info3, $info4) {
+    public function test_calculation_info_add_pull($info1, $info2, $info3, $info4): void {
         require_once(__DIR__ . '/fixtures/test_indicator_max.php');
         require_once(__DIR__ . '/fixtures/test_indicator_min.php');
         $this->resetAfterTest();

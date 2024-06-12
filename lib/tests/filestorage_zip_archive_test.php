@@ -40,7 +40,7 @@ class filestorage_zip_archive_test extends \advanced_testcase {
      * @param string $string   Parameter sent to mangle_pathname method.
      * @param string $expected Expected return value.
      */
-    public function test_mangle_pathname($string, $expected) {
+    public function test_mangle_pathname($string, $expected): void {
         $ziparchive = new zip_archive();
 
         $method = new \ReflectionMethod('zip_archive', 'mangle_pathname');

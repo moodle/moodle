@@ -29,7 +29,7 @@ use core_minify;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class minify_test extends \advanced_testcase {
-    public function test_css() {
+    public function test_css(): void {
         $css = "
 body {
 background: #fff;
@@ -41,7 +41,7 @@ color: #281f18;
         $this->assertSame("body{background:#fff;margin:0;padding:0;color:#281f18}", core_minify::css($css));
     }
 
-    public function test_css_files() {
+    public function test_css_files(): void {
         global $CFG;
 
         $testfile1 = "$CFG->tempdir/test1.css";
@@ -75,7 +75,7 @@ color: #281f18;
         unlink($testfile2);
     }
 
-    public function test_js() {
+    public function test_js(): void {
         $js = "
 function hm()
 {
@@ -89,7 +89,7 @@ function hm()
         $this->assertStringContainsString($js, $result);
     }
 
-    public function test_js_files() {
+    public function test_js_files(): void {
         global $CFG;
 
         $testfile1 = "$CFG->tempdir/test1.js";

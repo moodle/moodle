@@ -202,7 +202,7 @@ class restore_test extends \advanced_testcase {
         return $this->async_restore_course($backupid, 0, $userid, 0);
     }
 
-    public function test_async_restore_existing_idnumber_in_new_course() {
+    public function test_async_restore_existing_idnumber_in_new_course(): void {
         $this->resetAfterTest();
 
         $dg = $this->getDataGenerator();
@@ -214,7 +214,7 @@ class restore_test extends \advanced_testcase {
         $this->assertEquals('', $c2->idnumber);
     }
 
-    public function test_async_restore_course_info_in_existing_course() {
+    public function test_async_restore_course_info_in_existing_course(): void {
         global $DB;
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
@@ -250,7 +250,7 @@ class restore_test extends \advanced_testcase {
         $this->assertEquals($chat2->chattime, $restoredchat2->chattime);
     }
 
-    public function test_async_restore_course_info_in_existing_course_delete_first() {
+    public function test_async_restore_course_info_in_existing_course_delete_first(): void {
         global $DB;
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
@@ -281,7 +281,7 @@ class restore_test extends \advanced_testcase {
         $this->assertEmpty($restoredchat2);
     }
 
-    public function test_restore_existing_idnumber_in_new_course() {
+    public function test_restore_existing_idnumber_in_new_course(): void {
         $this->resetAfterTest();
 
         $dg = $this->getDataGenerator();
@@ -293,7 +293,7 @@ class restore_test extends \advanced_testcase {
         $this->assertEquals('', $c2->idnumber);
     }
 
-    public function test_restore_non_existing_idnumber_in_new_course() {
+    public function test_restore_non_existing_idnumber_in_new_course(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -309,7 +309,7 @@ class restore_test extends \advanced_testcase {
         $this->assertEquals('ABC', $c2->idnumber);
     }
 
-    public function test_restore_existing_idnumber_in_existing_course() {
+    public function test_restore_existing_idnumber_in_existing_course(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -326,7 +326,7 @@ class restore_test extends \advanced_testcase {
         $this->assertEquals('ABC', $c1->idnumber);
     }
 
-    public function test_restore_non_existing_idnumber_in_existing_course() {
+    public function test_restore_non_existing_idnumber_in_existing_course(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -343,7 +343,7 @@ class restore_test extends \advanced_testcase {
         $this->assertEquals('ABC', $c2->idnumber);
     }
 
-    public function test_restore_idnumber_in_existing_course_without_permissions() {
+    public function test_restore_idnumber_in_existing_course_without_permissions(): void {
         global $DB;
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
@@ -367,7 +367,7 @@ class restore_test extends \advanced_testcase {
         $this->assertEquals('DEF', $c2->idnumber);
     }
 
-    public function test_restore_course_info_in_new_course() {
+    public function test_restore_course_info_in_new_course(): void {
         global $DB;
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
@@ -387,7 +387,7 @@ class restore_test extends \advanced_testcase {
         $this->assertEquals($startdate, $c2->startdate);
     }
 
-    public function test_restore_course_with_users() {
+    public function test_restore_course_with_users(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -423,7 +423,7 @@ class restore_test extends \advanced_testcase {
             $events[0]->get_description());
     }
 
-    public function test_restore_course_info_in_existing_course() {
+    public function test_restore_course_info_in_existing_course(): void {
         global $DB;
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
@@ -459,7 +459,7 @@ class restore_test extends \advanced_testcase {
         $this->assertEquals($chat2->chattime, $restoredchat2->chattime);
     }
 
-    public function test_restore_course_shortname_in_existing_course_without_permissions() {
+    public function test_restore_course_shortname_in_existing_course_without_permissions(): void {
         global $DB;
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
@@ -483,7 +483,7 @@ class restore_test extends \advanced_testcase {
         $this->assertEquals(FORMAT_MOODLE, $restored->summaryformat);
     }
 
-    public function test_restore_course_fullname_in_existing_course_without_permissions() {
+    public function test_restore_course_fullname_in_existing_course_without_permissions(): void {
         global $DB;
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
@@ -507,7 +507,7 @@ class restore_test extends \advanced_testcase {
         $this->assertEquals(FORMAT_MOODLE, $restored->summaryformat);
     }
 
-    public function test_restore_course_summary_in_existing_course_without_permissions() {
+    public function test_restore_course_summary_in_existing_course_without_permissions(): void {
         global $DB;
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
@@ -531,7 +531,7 @@ class restore_test extends \advanced_testcase {
         $this->assertEquals($c2->summaryformat, $restored->summaryformat);
     }
 
-    public function test_restore_course_startdate_in_existing_course_without_permissions() {
+    public function test_restore_course_startdate_in_existing_course_without_permissions(): void {
         global $DB;
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
@@ -577,7 +577,7 @@ class restore_test extends \advanced_testcase {
      * @author Matthew Hilton
      * @covers \core_courseformat
      */
-    public function test_restore_editor_courseformat() {
+    public function test_restore_editor_courseformat(): void {
         $this->resetAfterTest();
 
         // Setup user with restore permissions.

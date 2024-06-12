@@ -66,7 +66,7 @@ class lib_test extends \advanced_testcase {
         parent::tearDown();
     }
 
-    public function test_normalize_grades() {
+    public function test_normalize_grades(): void {
         // fixture set-up
         $assessments = array();
         $assessments[1] = (object)array(
@@ -96,7 +96,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($norm[7]->dimgrades[4], 0);
     }
 
-    public function test_normalize_grades_max_equals_min() {
+    public function test_normalize_grades_max_equals_min(): void {
         // fixture set-up
         $assessments = array();
         $assessments[1] = (object)array(
@@ -112,7 +112,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($norm[1]->dimgrades[3], 100);
     }
 
-    public function test_average_assessment_same_weights() {
+    public function test_average_assessment_same_weights(): void {
         // fixture set-up
         $assessments = array();
         $assessments[18] = (object)array(
@@ -131,7 +131,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals(grade_floatval($average->dimgrades[2]), grade_floatval(50));
     }
 
-    public function test_average_assessment_different_weights() {
+    public function test_average_assessment_different_weights(): void {
         // fixture set-up
         $assessments = array();
         $assessments[11] = (object)array(
@@ -155,7 +155,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals(grade_floatval($average->dimgrades[5]), grade_floatval((95.0 + 92.0*3 + 88.0)/5));
     }
 
-    public function test_average_assessment_noweight() {
+    public function test_average_assessment_noweight(): void {
         // fixture set-up
         $assessments = array();
         $assessments[11] = (object)array(
@@ -172,7 +172,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($average);
     }
 
-    public function test_weighted_variance() {
+    public function test_weighted_variance(): void {
         // fixture set-up
         $assessments[11] = (object)array(
             'weight'        => 1,
@@ -203,7 +203,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($variance[4], 4);
     }
 
-    public function test_assessments_distance_zero() {
+    public function test_assessments_distance_zero(): void {
         // fixture set-up
         $diminfo = array(
             3 => (object)array('weight' => 1, 'min' => 0, 'max' => 100, 'variance' => 12.34567),
@@ -216,7 +216,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($this->evaluator->assessments_distance($assessment1, $assessment2, $diminfo, $settings), 0);
     }
 
-    public function test_assessments_distance_equals() {
+    public function test_assessments_distance_equals(): void {
         /*
         // fixture set-up
         $diminfo = array(
@@ -246,7 +246,7 @@ class lib_test extends \advanced_testcase {
 
     }
 
-    public function test_assessments_distance_zero_variance() {
+    public function test_assessments_distance_zero_variance(): void {
         // Fixture set-up: an assessment form of the strategy "Number of errors",
         // three assertions, same weight.
         $diminfo = array(

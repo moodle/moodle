@@ -70,7 +70,7 @@ class behat_form_text_test extends \basic_testcase {
      * @param mixed $expectation value to be checked.
      * @dataProvider provider_test_set_get_value()
      */
-    public function test_set_get_value($value, $expectation) {
+    public function test_set_get_value($value, $expectation): void {
         $session = $this->createMock(Session::class);
         $node = $this->createMock(NodeElement::class);
         $node->method('getValue')->willReturn($value);
@@ -115,7 +115,7 @@ class behat_form_text_test extends \basic_testcase {
      * @param bool  $result expected return status of the function.
      * @dataProvider provider_test_matches()
      */
-    public function test_matches($decsep, $value, $match, $result) {
+    public function test_matches($decsep, $value, $match, $result): void {
         global $CFG;
 
         // Switch of string manager to avoid having to (slow) customise the lang file.

@@ -109,7 +109,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test various blog related events.
      */
-    public function test_blog_entry_created_event() {
+    public function test_blog_entry_created_event(): void {
         global $USER;
 
         $this->setAdminUser();
@@ -143,7 +143,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for event blog_entry_updated.
      */
-    public function test_blog_entry_updated_event() {
+    public function test_blog_entry_updated_event(): void {
         global $USER;
 
         $this->setAdminUser();
@@ -174,7 +174,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for event blog_entry_deleted.
      */
-    public function test_blog_entry_deleted_event() {
+    public function test_blog_entry_deleted_event(): void {
         global $USER, $DB;
 
         $this->setAdminUser();
@@ -205,7 +205,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for event blog_association_deleted.
      */
-    public function test_blog_association_deleted_event() {
+    public function test_blog_association_deleted_event(): void {
         global $USER;
 
         $this->setAdminUser();
@@ -250,7 +250,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for event blog_association_created.
      */
-    public function test_blog_association_created_event() {
+    public function test_blog_association_created_event(): void {
         global $USER;
 
         $this->setAdminUser();
@@ -298,7 +298,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for event blog_association_created validations.
      */
-    public function test_blog_association_created_event_validations() {
+    public function test_blog_association_created_event_validations(): void {
 
         $this->resetAfterTest();
 
@@ -356,7 +356,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for event blog_entries_viewed.
      */
-    public function test_blog_entries_viewed_event() {
+    public function test_blog_entries_viewed_event(): void {
 
         $this->setAdminUser();
 
@@ -381,7 +381,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test comment_created event.
      */
-    public function test_blog_comment_created_event() {
+    public function test_blog_comment_created_event(): void {
         global $USER, $CFG;
 
         $this->setAdminUser();
@@ -417,7 +417,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test comment_deleted event.
      */
-    public function test_blog_comment_deleted_event() {
+    public function test_blog_comment_deleted_event(): void {
         global $USER, $CFG;
 
         $this->setAdminUser();
@@ -457,7 +457,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for this, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_external_blog_added_event() {
+    public function test_external_blog_added_event(): void {
 
         // Trigger an event: external blog added.
         $eventparams = array(
@@ -486,7 +486,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for this, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_external_blog_updated_event() {
+    public function test_external_blog_updated_event(): void {
 
         // Trigger an event: external blog updated.
         $eventparams = array(
@@ -515,7 +515,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for this, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_external_blog_removed_event() {
+    public function test_external_blog_removed_event(): void {
 
         // Trigger an event: external blog removed.
         $eventparams = array(
@@ -542,7 +542,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for this, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_external_blogs_viewed_event() {
+    public function test_external_blogs_viewed_event(): void {
 
         // Trigger an event: external blogs viewed.
         $eventparams = array(

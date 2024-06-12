@@ -100,7 +100,7 @@ class application_registration_repository_test extends \advanced_testcase {
      * @covers ::save
      * @param array $regdata the registration data
      */
-    public function test_save_new(array $regdata) {
+    public function test_save_new(array $regdata): void {
         $this->resetAfterTest();
 
         $reg = application_registration::create_draft($regdata['name'], $regdata['uniqueid']);
@@ -182,7 +182,7 @@ class application_registration_repository_test extends \advanced_testcase {
      *
      * @covers ::save
      */
-    public function test_save_existing() {
+    public function test_save_existing(): void {
         $this->resetAfterTest();
         $repository = new application_registration_repository();
 
@@ -227,7 +227,7 @@ class application_registration_repository_test extends \advanced_testcase {
      *
      * @covers ::save
      */
-    public function test_save_duplicate_unique_constraints() {
+    public function test_save_duplicate_unique_constraints(): void {
         $this->resetAfterTest();
         $testregistration = $this->generate_application_registration();
         $testregistration2 = $this->generate_application_registration();
@@ -243,7 +243,7 @@ class application_registration_repository_test extends \advanced_testcase {
      *
      * @covers ::find
      */
-    public function test_find() {
+    public function test_find(): void {
         $this->resetAfterTest();
         $testregistration = $this->generate_application_registration();
         $repository = new application_registration_repository();
@@ -260,7 +260,7 @@ class application_registration_repository_test extends \advanced_testcase {
      *
      * @covers ::find_by_uniqueid
      */
-    public function test_find_by_uniqueid() {
+    public function test_find_by_uniqueid(): void {
         $this->resetAfterTest();
         $testregistration = $this->generate_application_registration('https://lms.example.org', 'abc12345');
         $repository = new application_registration_repository();
@@ -277,7 +277,7 @@ class application_registration_repository_test extends \advanced_testcase {
      *
      * @covers ::find_by_platform_uniqueid
      */
-    public function test_find_by_platform_uniqueid() {
+    public function test_find_by_platform_uniqueid(): void {
         $this->resetAfterTest();
         $repository = new application_registration_repository();
 
@@ -307,7 +307,7 @@ class application_registration_repository_test extends \advanced_testcase {
      *
      * @covers ::find_all
      */
-    public function test_find_all() {
+    public function test_find_all(): void {
         $this->resetAfterTest();
         // None to begin with.
         $repository = new application_registration_repository();
@@ -335,7 +335,7 @@ class application_registration_repository_test extends \advanced_testcase {
      *
      * @covers ::find_by_platform
      */
-    public function test_find_by_platform() {
+    public function test_find_by_platform(): void {
         $this->resetAfterTest();
         // None to begin with.
         $repository = new application_registration_repository();
@@ -359,7 +359,7 @@ class application_registration_repository_test extends \advanced_testcase {
      *
      * @covers ::exists
      */
-    public function test_exists() {
+    public function test_exists(): void {
         $this->resetAfterTest();
         $testregistration = $this->generate_application_registration();
         $repository = new application_registration_repository();
@@ -374,7 +374,7 @@ class application_registration_repository_test extends \advanced_testcase {
      *
      * @covers ::delete
      */
-    public function test_delete() {
+    public function test_delete(): void {
         $this->resetAfterTest();
         global $DB;
         $reg = $this->generate_application_registration();
@@ -394,7 +394,7 @@ class application_registration_repository_test extends \advanced_testcase {
      *
      * @covers ::find_by_deployment
      */
-    public function test_find_by_deployment() {
+    public function test_find_by_deployment(): void {
         $this->resetAfterTest();
         $appregrepo = new application_registration_repository();
         $deploymentrepo = new deployment_repository();

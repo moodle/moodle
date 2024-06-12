@@ -77,7 +77,7 @@ class category_hooks_test extends \advanced_testcase {
         return $mockcategory;
     }
 
-    public function test_can_course_category_delete_hook() {
+    public function test_can_course_category_delete_hook(): void {
         $category1 = \core_course_category::create(array('name' => 'Cat1'));
         $category2 = \core_course_category::create(array('name' => 'Cat2', 'parent' => $category1->id));
         $category3 = \core_course_category::create(array('name' => 'Cat3'));
@@ -104,7 +104,7 @@ class category_hooks_test extends \advanced_testcase {
         $this->assertSame($mockcategory2, $argument);
     }
 
-    public function test_can_course_category_delete_move_hook() {
+    public function test_can_course_category_delete_move_hook(): void {
         $category1 = \core_course_category::create(array('name' => 'Cat1'));
         $category2 = \core_course_category::create(array('name' => 'Cat2', 'parent' => $category1->id));
         $category3 = \core_course_category::create(array('name' => 'Cat3'));
@@ -136,7 +136,7 @@ class category_hooks_test extends \advanced_testcase {
         $this->assertEquals($category3->id, $argument->id);
     }
 
-    public function test_pre_course_category_delete_hook() {
+    public function test_pre_course_category_delete_hook(): void {
         $category1 = \core_course_category::create(array('name' => 'Cat1'));
         $category2 = \core_course_category::create(array('name' => 'Cat2', 'parent' => $category1->id));
 
@@ -152,7 +152,7 @@ class category_hooks_test extends \advanced_testcase {
         $this->assertEquals($mockcategory2->get_db_record(), $argument);
     }
 
-    public function test_pre_course_category_delete_move_hook() {
+    public function test_pre_course_category_delete_move_hook(): void {
         $category1 = \core_course_category::create(array('name' => 'Cat1'));
         $category2 = \core_course_category::create(array('name' => 'Cat2', 'parent' => $category1->id));
         $category3 = \core_course_category::create(array('name' => 'Cat3'));
@@ -178,7 +178,7 @@ class category_hooks_test extends \advanced_testcase {
         $this->assertEquals($category3->id, $argument->id);
     }
 
-    public function test_get_course_category_contents_hook() {
+    public function test_get_course_category_contents_hook(): void {
         $category1 = \core_course_category::create(array('name' => 'Cat1'));
         $category2 = \core_course_category::create(array('name' => 'Cat2', 'parent' => $category1->id));
 

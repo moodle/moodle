@@ -25,7 +25,7 @@ namespace core_competency;
  */
 class user_evidence_competency_test extends \advanced_testcase {
 
-    public function test_get_user_competencies_by_userevidenceid() {
+    public function test_get_user_competencies_by_userevidenceid(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest(true);

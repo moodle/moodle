@@ -47,7 +47,7 @@ class vaults_discussion_test extends \advanced_testcase {
     /**
      * Test get_from_id.
      */
-    public function test_get_from_id() {
+    public function test_get_from_id(): void {
         $this->resetAfterTest();
 
         $vault = $this->vault;
@@ -65,7 +65,7 @@ class vaults_discussion_test extends \advanced_testcase {
     /**
      * Test get_first_discussion_in_forum.
      */
-    public function test_get_first_discussion_in_forum() {
+    public function test_get_first_discussion_in_forum(): void {
         $this->resetAfterTest();
 
         $vault = $this->vault;
@@ -91,7 +91,7 @@ class vaults_discussion_test extends \advanced_testcase {
     /**
      * Test get_all_discussions_in_forum
      */
-    public function test_get_all_discussions_in_forum() {
+    public function test_get_all_discussions_in_forum(): void {
         $this->resetAfterTest();
 
         $vault = $this->vault;

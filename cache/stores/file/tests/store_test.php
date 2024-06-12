@@ -51,7 +51,7 @@ class store_test extends \cachestore_tests {
      * The deleting of cache simulates some other process purging
      * the cache.
      */
-    public function test_cache_get_with_prescan_and_purge() {
+    public function test_cache_get_with_prescan_and_purge(): void {
         global $CFG;
 
         $definition = cache_definition::load_adhoc(cache_store::MODE_REQUEST, 'cachestore_file', 'phpunit_test');
@@ -101,7 +101,7 @@ class store_test extends \cachestore_tests {
         $this->assertEquals(21, $store->get_last_io_bytes());
     }
 
-    public function test_lock() {
+    public function test_lock(): void {
         $store = new \cachestore_file('Test');
 
         $this->assertTrue($store->acquire_lock('lock', '123'));

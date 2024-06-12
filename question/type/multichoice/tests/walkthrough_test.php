@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @covers     \qtype_multichoice_single_base
  */
 class walkthrough_test extends \qbehaviour_walkthrough_test_base {
-    public function test_deferredfeedback_feedback_multichoice_single() {
+    public function test_deferredfeedback_feedback_multichoice_single(): void {
 
         // Create a multichoice, single question.
         $mc = \test_question_maker::make_a_multichoice_single_question();
@@ -94,7 +94,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 get_string('deletedchoice', 'qtype_multichoice'), $this->currentoutput);
     }
 
-    public function test_deferredfeedback_feedback_multichoice_single_showstandardunstruction_yes() {
+    public function test_deferredfeedback_feedback_multichoice_single_showstandardunstruction_yes(): void {
 
         // Create a multichoice, single question.
         $mc = \test_question_maker::make_a_multichoice_single_question();
@@ -108,7 +108,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assertStringContainsString($standardinstruction, $this->currentoutput);
     }
 
-    public function test_deferredfeedback_feedback_multichoice_single_showstandardunstruction_no() {
+    public function test_deferredfeedback_feedback_multichoice_single_showstandardunstruction_no(): void {
 
         // Create a multichoice, single question.
         $mc = \test_question_maker::make_a_multichoice_single_question();
@@ -122,7 +122,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assertStringNotContainsString($standardinstruction, $this->currentoutput);
     }
 
-    public function test_deferredfeedback_feedback_multichoice_multi() {
+    public function test_deferredfeedback_feedback_multichoice_multi(): void {
         // Create a multichoice, multi question.
         $mc = \test_question_maker::make_a_multichoice_multi_question();
         $mc->shuffleanswers = false;
@@ -147,7 +147,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     /**
      * Test for clear choice option.
      */
-    public function test_deferredfeedback_feedback_multichoice_clearchoice() {
+    public function test_deferredfeedback_feedback_multichoice_clearchoice(): void {
 
         // Create a multichoice, single question.
         $mc = \test_question_maker::make_a_multichoice_single_question();
@@ -213,7 +213,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
             new \question_pattern_expectation('/class="r1"/'));
     }
 
-    public function test_each_attempt_builds_on_last_and_regrade() {
+    public function test_each_attempt_builds_on_last_and_regrade(): void {
 
         // Create a multichoice, single question.
         $mc = \test_question_maker::make_a_multichoice_single_question();
@@ -278,7 +278,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assertEquals(3, $newqa->get_mark());
     }
 
-    public function test_deferredfeedback_feedback_multichoice_multi_showstandardunstruction_yes() {
+    public function test_deferredfeedback_feedback_multichoice_multi_showstandardunstruction_yes(): void {
 
         // Create a multichoice, multi question.
         $mc = \test_question_maker::make_a_multichoice_multi_question();
@@ -292,7 +292,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assertStringContainsString($standardinstruction, $this->currentoutput);
     }
 
-    public function test_deferredfeedback_feedback_multichoice_multi_showstandardunstruction_no() {
+    public function test_deferredfeedback_feedback_multichoice_multi_showstandardunstruction_no(): void {
 
         // Create a multichoice, multi question.
         $mc = \test_question_maker::make_a_multichoice_multi_question();

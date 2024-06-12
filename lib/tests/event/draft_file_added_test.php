@@ -38,7 +38,7 @@ class draft_file_added_test extends \advanced_testcase {
     /**
      * Test draft file added event.
      */
-    public function test_event() {
+    public function test_event(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);

@@ -40,7 +40,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that export_user_preferences returns no data if the user has not visited the myoverview block.
      */
-    public function test_export_user_preferences_no_pref() {
+    public function test_export_user_preferences_no_pref(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -58,7 +58,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @dataProvider user_preference_provider
      */
-    public function test_export_user_preferences($type, $value, $expected) {
+    public function test_export_user_preferences($type, $value, $expected): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         set_user_preference($type, $value, $user);

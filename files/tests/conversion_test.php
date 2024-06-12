@@ -53,7 +53,7 @@ class conversion_test extends \advanced_testcase {
      * Ensure that get_conversions_for_file returns an existing conversion
      * record with matching sourcefileid and targetformat.
      */
-    public function test_get_conversions_for_file_existing_conversion_incomplete() {
+    public function test_get_conversions_for_file_existing_conversion_incomplete(): void {
         $this->resetAfterTest();
 
         $sourcefile = $this->create_stored_file();
@@ -82,7 +82,7 @@ class conversion_test extends \advanced_testcase {
      *
      * @covers \core_files\conversion::get_conversions_for_file
      */
-    public function test_get_conversions_for_multiple_files_existing_conversion_incomplete() {
+    public function test_get_conversions_for_multiple_files_existing_conversion_incomplete(): void {
         $this->resetAfterTest();
 
         // Create a bunch of files with the same content.
@@ -127,7 +127,7 @@ class conversion_test extends \advanced_testcase {
      * record with matching sourcefileid and targetformat when a second
      * conversion to a different format exists.
      */
-    public function test_get_conversions_for_file_existing_conversion_multiple_formats_incomplete() {
+    public function test_get_conversions_for_file_existing_conversion_multiple_formats_incomplete(): void {
         $this->resetAfterTest();
 
         $sourcefile = $this->create_stored_file();
@@ -159,7 +159,7 @@ class conversion_test extends \advanced_testcase {
      * Ensure that get_conversions_for_file returns an existing conversion
      * record with matching sourcefileid and targetformat.
      */
-    public function test_get_conversions_for_file_existing_conversion_complete() {
+    public function test_get_conversions_for_file_existing_conversion_complete(): void {
         $this->resetAfterTest();
 
         $sourcefile = $this->create_stored_file();
@@ -195,7 +195,7 @@ class conversion_test extends \advanced_testcase {
      * Ensure that get_conversions_for_file returns an existing conversion
      * record with matching sourcefileid and targetformat.
      */
-    public function test_get_conversions_for_file_existing_conversion_multiple_formats_complete() {
+    public function test_get_conversions_for_file_existing_conversion_multiple_formats_complete(): void {
         $this->resetAfterTest();
 
         $sourcefile = $this->create_stored_file();
@@ -236,7 +236,7 @@ class conversion_test extends \advanced_testcase {
      * Ensure that get_conversions_for_file returns an existing conversion
      * record does not exist, but the file has previously been converted.
      */
-    public function test_get_conversions_for_file_existing_target() {
+    public function test_get_conversions_for_file_existing_target(): void {
         $this->resetAfterTest();
 
         $sourcefile = $this->create_stored_file();
@@ -263,7 +263,7 @@ class conversion_test extends \advanced_testcase {
     /**
      * Ensure that set_sourcefile sets the correct fileid.
      */
-    public function test_set_sourcefile() {
+    public function test_set_sourcefile(): void {
         $this->resetAfterTest();
 
         $sourcefile = $this->create_stored_file();
@@ -278,7 +278,7 @@ class conversion_test extends \advanced_testcase {
     /**
      * Ensure that store_destfile_from_path stores the file as expected.
      */
-    public function test_store_destfile_from_path() {
+    public function test_store_destfile_from_path(): void {
         $this->resetAfterTest();
 
         $sourcefile = $this->create_stored_file();
@@ -297,7 +297,7 @@ class conversion_test extends \advanced_testcase {
     /**
      * Ensure that store_destfile_from_path stores the file as expected.
      */
-    public function test_store_destfile_from_path_delete_existing() {
+    public function test_store_destfile_from_path_delete_existing(): void {
         $this->resetAfterTest();
 
         $sourcefile = $this->create_stored_file();
@@ -325,7 +325,7 @@ class conversion_test extends \advanced_testcase {
     /**
      * Ensure that store_destfile_from_path stores the file as expected.
      */
-    public function test_store_destfile_from_string() {
+    public function test_store_destfile_from_string(): void {
         $this->resetAfterTest();
 
         $sourcefile = $this->create_stored_file();
@@ -345,7 +345,7 @@ class conversion_test extends \advanced_testcase {
      * Ensure that store_destfile_from_string stores the file as expected when
      * an existing destfile is found.
      */
-    public function test_store_destfile_from_string_delete_existing() {
+    public function test_store_destfile_from_string_delete_existing(): void {
         $this->resetAfterTest();
 
         $sourcefile = $this->create_stored_file();
@@ -373,7 +373,7 @@ class conversion_test extends \advanced_testcase {
     /**
      * Ensure that the get_status functions cast the status to integer correctly.
      */
-    public function test_get_status() {
+    public function test_get_status(): void {
         $conversion = new conversion(0, (object) [
             'status' => (string) 1,
         ]);
@@ -384,7 +384,7 @@ class conversion_test extends \advanced_testcase {
     /**
      * Ensure that get_converter_instance returns false when no converter is set.
      */
-    public function test_get_converter_instance_none_set() {
+    public function test_get_converter_instance_none_set(): void {
         $conversion = new conversion(0, (object) []);
         $this->assertFalse($conversion->get_converter_instance());
     }
@@ -392,7 +392,7 @@ class conversion_test extends \advanced_testcase {
     /**
      * Ensure that get_converter_instance returns false when no valid converter is set.
      */
-    public function test_get_converter_instance_invalid_set() {
+    public function test_get_converter_instance_invalid_set(): void {
         $conversion = new conversion(0, (object) [
             'converter' => '\\fileconverter_not_a_valid_converter\\converter',
         ]);
@@ -402,7 +402,7 @@ class conversion_test extends \advanced_testcase {
     /**
      * Ensure that get_converter_instance returns an instance when a valid converter is set.
      */
-    public function test_get_converter_instance_valid_set() {
+    public function test_get_converter_instance_valid_set(): void {
         $conversion = new conversion(0, (object) [
             'converter' => \fileconverter_unoconv\converter::class,
         ]);
@@ -412,7 +412,7 @@ class conversion_test extends \advanced_testcase {
     /**
      * Test that all old conversion records are removed periodically.
      */
-    public function test_remove_old_conversion_records_old() {
+    public function test_remove_old_conversion_records_old(): void {
         $this->resetAfterTest();
         global $DB;
 
@@ -432,7 +432,7 @@ class conversion_test extends \advanced_testcase {
     /**
      * Test that all old conversion records are removed periodically.
      */
-    public function test_remove_old_conversion_records_young() {
+    public function test_remove_old_conversion_records_young(): void {
         $this->resetAfterTest();
         global $DB;
 
@@ -452,7 +452,7 @@ class conversion_test extends \advanced_testcase {
     /**
      * Test orphan records are removed.
      */
-    public function test_remove_orphan_records() {
+    public function test_remove_orphan_records(): void {
         global $DB;
         $this->resetAfterTest();
 

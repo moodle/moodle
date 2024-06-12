@@ -54,7 +54,7 @@ class external_value_test extends advanced_testcase {
      * @param mixed $requiredstr The string value of the $required param in the debugging message.
      * @return void
      */
-    public function test_required_param_validation($required, $debuggingexpected, $requiredstr = '') {
+    public function test_required_param_validation($required, $debuggingexpected, $requiredstr = ''): void {
         $externalvalue = new external_value(PARAM_INT, 'Cool description', $required);
         if ($debuggingexpected) {
             $this->assertDebuggingCalled("Invalid \$required parameter value: '{$requiredstr}' .

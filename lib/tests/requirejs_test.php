@@ -31,7 +31,7 @@ class requirejs_test extends \advanced_testcase {
     /**
      * Test requirejs loader
      */
-    public function test_requirejs() {
+    public function test_requirejs(): void {
         global $CFG;
 
         // Find a core module.

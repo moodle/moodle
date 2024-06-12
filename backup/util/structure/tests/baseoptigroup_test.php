@@ -43,7 +43,7 @@ class baseoptigroup_test extends \basic_testcase {
     /**
      * Correct creation tests (s)
      */
-    function test_creation() {
+    function test_creation(): void {
         $instance = new mock_base_optigroup('optigroup', null, true);
         $this->assertInstanceOf('base_optigroup', $instance);
         $this->assertEquals($instance->get_name(), 'optigroup');
@@ -77,7 +77,7 @@ class baseoptigroup_test extends \basic_testcase {
     /**
      * Incorrect creation tests (attributes and final elements)
      */
-    function test_wrong_creation() {
+    function test_wrong_creation(): void {
 
         // Create instance with invalid name
         try {

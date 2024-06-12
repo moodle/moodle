@@ -60,7 +60,7 @@ class migration_claim_test extends \advanced_testcase {
      */
     public function test_migration_claim(array $migrationclaimdata, string $deploymentid, string $platform,
             string $clientid, string $exp, string $nonce, legacy_consumer_repository $legacyconsumerrepo,
-            array $expected) {
+            array $expected): void {
 
         if (!empty($expected['exception'])) {
             $this->expectException($expected['exception']);

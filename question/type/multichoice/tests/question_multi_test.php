@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  */
 class question_multi_test extends \advanced_testcase {
 
-    public function test_get_expected_data() {
+    public function test_get_expected_data(): void {
         $question = \test_question_maker::make_a_multichoice_multi_question();
         $question->start_attempt(new question_attempt_step(), 1);
 
@@ -44,7 +44,7 @@ class question_multi_test extends \advanced_testcase {
                 'choice2' => PARAM_BOOL, 'choice3' => PARAM_BOOL), $question->get_expected_data());
     }
 
-    public function test_is_complete_response() {
+    public function test_is_complete_response(): void {
         $question = \test_question_maker::make_a_multichoice_multi_question();
         $question->start_attempt(new question_attempt_step(), 1);
 
@@ -56,7 +56,7 @@ class question_multi_test extends \advanced_testcase {
                 array('choice0' => '1', 'choice1' => '1', 'choice2' => '1', 'choice3' => '1')));
     }
 
-    public function test_is_gradable_response() {
+    public function test_is_gradable_response(): void {
         $question = \test_question_maker::make_a_multichoice_multi_question();
         $question->start_attempt(new question_attempt_step(), 1);
 
@@ -68,7 +68,7 @@ class question_multi_test extends \advanced_testcase {
                 array('choice0' => '1', 'choice1' => '1', 'choice2' => '1', 'choice3' => '1')));
     }
 
-    public function test_is_same_response() {
+    public function test_is_same_response(): void {
         $question = \test_question_maker::make_a_multichoice_multi_question();
         $question->start_attempt(new question_attempt_step(), 1);
 
@@ -89,7 +89,7 @@ class question_multi_test extends \advanced_testcase {
                 array('choice0' => '1', 'choice1' => '0', 'choice2' => '1', 'choice3' => '0')));
     }
 
-    public function test_grading() {
+    public function test_grading(): void {
         $question = \test_question_maker::make_a_multichoice_multi_question();
         $question->start_attempt(new question_attempt_step(), 1);
 
@@ -103,14 +103,14 @@ class question_multi_test extends \advanced_testcase {
                 $question->grade_response($question->prepare_simulated_post_data(array('B' => 1))));
     }
 
-    public function test_get_correct_response() {
+    public function test_get_correct_response(): void {
         $question = \test_question_maker::make_a_multichoice_multi_question();
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEquals($question->prepare_simulated_post_data(array('A' => 1, 'C' => 1)), $question->get_correct_response());
     }
 
-    public function test_get_question_summary() {
+    public function test_get_question_summary(): void {
         $mc = \test_question_maker::make_a_multichoice_single_question();
         $mc->start_attempt(new question_attempt_step(), 1);
 
@@ -122,7 +122,7 @@ class question_multi_test extends \advanced_testcase {
         }
     }
 
-    public function test_summarise_response() {
+    public function test_summarise_response(): void {
         $mc = \test_question_maker::make_a_multichoice_multi_question();
         $mc->shuffleanswers = false;
         $mc->start_attempt(new question_attempt_step(), 1);
@@ -132,7 +132,7 @@ class question_multi_test extends \advanced_testcase {
         $this->assertEquals('B; C', $summary);
     }
 
-    public function test_summarise_response_clearchoice() {
+    public function test_summarise_response_clearchoice(): void {
         $mc = \test_question_maker::make_a_multichoice_multi_question();
         $mc->shuffleanswers = false;
         $mc->start_attempt(new question_attempt_step(), 1);
@@ -142,7 +142,7 @@ class question_multi_test extends \advanced_testcase {
         $this->assertNull($summary);
     }
 
-    public function test_un_summarise_response() {
+    public function test_un_summarise_response(): void {
         $mc = \test_question_maker::make_a_multichoice_multi_question();
         $mc->shuffleanswers = false;
         $mc->start_attempt(new question_attempt_step(), 1);
@@ -152,7 +152,7 @@ class question_multi_test extends \advanced_testcase {
         $this->assertEquals([], $mc->un_summarise_response(''));
     }
 
-    public function test_classify_response() {
+    public function test_classify_response(): void {
         $mc = \test_question_maker::make_a_multichoice_multi_question();
         $mc->start_attempt(new question_attempt_step(), 1);
 
@@ -164,7 +164,7 @@ class question_multi_test extends \advanced_testcase {
         $this->assertEquals(array(), $mc->classify_response(array()));
     }
 
-    public function test_prepare_simulated_post_data() {
+    public function test_prepare_simulated_post_data(): void {
         $mc = \test_question_maker::make_a_multichoice_multi_question();
         $mc->start_attempt(new question_attempt_step(), 1);
         $correctanswers = array(
@@ -186,7 +186,7 @@ class question_multi_test extends \advanced_testcase {
     /**
      * test_get_question_definition_for_external_rendering
      */
-    public function test_get_question_definition_for_external_rendering() {
+    public function test_get_question_definition_for_external_rendering(): void {
         $question = \test_question_maker::make_a_multichoice_multi_question();
         $question->start_attempt(new question_attempt_step(), 1);
         $qa = \test_question_maker::get_a_qa($question);

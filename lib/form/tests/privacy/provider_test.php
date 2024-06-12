@@ -40,7 +40,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * When no preference exists, there should be no export.
      */
-    public function test_no_preference() {
+    public function test_no_preference(): void {
         global $USER;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -56,7 +56,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * @param string $val Value of the preference filemanager_recentviewmode
      * @param string $desc Text describing the preference
      */
-    public function test_filemanager_recentviewmode(string $val, string $desc) {
+    public function test_filemanager_recentviewmode(string $val, string $desc): void {
         $this->resetAfterTest();
 
         // Create test user, add some preferences.

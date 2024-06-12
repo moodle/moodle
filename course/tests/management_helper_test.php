@@ -76,7 +76,7 @@ class management_helper_test extends \advanced_testcase {
      * In order to show/hide the user must have moodle/category:manage on the parent context.
      * In order to view hidden categories the user must have moodle/category:viewhiddencategories
      */
-    public function test_action_category_hide_and_show() {
+    public function test_action_category_hide_and_show(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -234,7 +234,7 @@ class management_helper_test extends \advanced_testcase {
      *
      * This mimics the logic of {@link test_action_category_hide_and_show()}
      */
-    public function test_action_category_hide_and_show_by_id() {
+    public function test_action_category_hide_and_show_by_id(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -389,7 +389,7 @@ class management_helper_test extends \advanced_testcase {
     /**
      * Test moving courses between categories.
      */
-    public function test_action_category_move_courses_into() {
+    public function test_action_category_move_courses_into(): void {
         global $DB, $CFG;
         $this->resetAfterTest(true);
 
@@ -524,7 +524,7 @@ class management_helper_test extends \advanced_testcase {
     /**
      * Test moving a categories up and down.
      */
-    public function test_action_category_movedown_and_moveup() {
+    public function test_action_category_movedown_and_moveup(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -659,7 +659,7 @@ class management_helper_test extends \advanced_testcase {
      *
      * \core_course\management\helper::action_category_resort_courses
      */
-    public function test_action_category_resort_courses() {
+    public function test_action_category_resort_courses(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -761,7 +761,7 @@ class management_helper_test extends \advanced_testcase {
      *
      * \core_course\management\helper::action_category_resort_courses
      */
-    public function test_action_category_resort_subcategories() {
+    public function test_action_category_resort_subcategories(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -857,7 +857,7 @@ class management_helper_test extends \advanced_testcase {
      * @see \core_course\management\helper::action_course_hide
      * @see \core_course\management\helper::action_course_show
      */
-    public function test_action_course_hide_show() {
+    public function test_action_course_hide_show(): void {
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
@@ -921,7 +921,7 @@ class management_helper_test extends \advanced_testcase {
      * @see \core_course\management\helper::action_course_hide_by_record
      * @see \core_course\management\helper::action_course_show_by_record
      */
-    public function test_action_course_hide_show_by_record() {
+    public function test_action_course_hide_show_by_record(): void {
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
@@ -982,7 +982,7 @@ class management_helper_test extends \advanced_testcase {
     /**
      * Tests moving a course up and down by one.
      */
-    public function test_action_course_movedown_and_moveup() {
+    public function test_action_course_movedown_and_moveup(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -1092,7 +1092,7 @@ class management_helper_test extends \advanced_testcase {
     /**
      * Tests the fetching of actions for a category.
      */
-    public function test_get_category_listitem_actions() {
+    public function test_get_category_listitem_actions(): void {
         global $PAGE;
         $this->resetAfterTest(true);
 
@@ -1126,7 +1126,7 @@ class management_helper_test extends \advanced_testcase {
     /**
      * Tests fetching the course actions.
      */
-    public function test_get_course_detail_actions() {
+    public function test_get_course_detail_actions(): void {
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
@@ -1159,7 +1159,7 @@ class management_helper_test extends \advanced_testcase {
     /**
      * Test fetching course details.
      */
-    public function test_get_course_detail_array() {
+    public function test_get_course_detail_array(): void {
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
@@ -1194,7 +1194,7 @@ class management_helper_test extends \advanced_testcase {
         $this->assertArrayHasKey('modulesused', $details);
     }
 
-    public function test_move_courses_into_category() {
+    public function test_move_courses_into_category(): void {
         global $DB, $CFG;
         $this->resetAfterTest(true);
 

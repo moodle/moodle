@@ -32,7 +32,7 @@ require_once(__DIR__ . '/../../../engine/lib.php');
  */
 class question_cbm_test extends \basic_testcase {
 
-    public function test_adjust_fraction() {
+    public function test_adjust_fraction(): void {
         $this->assertEqualsWithDelta( 1,   question_cbm::adjust_fraction( 1,    question_cbm::LOW), 0.0000001);
         $this->assertEqualsWithDelta( 2,   question_cbm::adjust_fraction( 1,    question_cbm::MED), 0.0000001);
         $this->assertEqualsWithDelta( 3,   question_cbm::adjust_fraction( 1,    question_cbm::HIGH), 0.0000001);

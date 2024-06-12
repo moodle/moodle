@@ -56,7 +56,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the mnet access control created event.
      */
-    public function test_mnet_access_control_created() {
+    public function test_mnet_access_control_created(): void {
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
         mnet_update_sso_access_control('username', $this->mnethost->id, 'enabled');
@@ -74,7 +74,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the mnet access control updated event.
      */
-    public function test_mnet_access_control_updated() {
+    public function test_mnet_access_control_updated(): void {
         global $DB;
 
         // Create a mnet access control.

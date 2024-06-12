@@ -34,7 +34,7 @@ class privacy_legacy_quizaccess_polyfill_test extends \advanced_testcase {
      * Test that the core_quizaccess\privacy\legacy_polyfill works and that the static _export_quizaccess_user_data can
      * be called.
      */
-    public function test_export_quizaccess_user_data() {
+    public function test_export_quizaccess_user_data(): void {
         $quiz = $this->createMock(quiz_settings::class);
         $user = (object) [];
         $returnvalue = (object) [];
@@ -53,7 +53,7 @@ class privacy_legacy_quizaccess_polyfill_test extends \advanced_testcase {
     /**
      * Test the _delete_quizaccess_for_context shim.
      */
-    public function test_delete_quizaccess_for_context() {
+    public function test_delete_quizaccess_for_context(): void {
         $context = \context_system::instance();
 
         $quiz = $this->createMock(quiz_settings::class);
@@ -70,7 +70,7 @@ class privacy_legacy_quizaccess_polyfill_test extends \advanced_testcase {
     /**
      * Test the _delete_quizaccess_for_user shim.
      */
-    public function test_delete_quizaccess_for_user() {
+    public function test_delete_quizaccess_for_user(): void {
         $context = \context_system::instance();
 
         $quiz = $this->createMock(quiz_settings::class);
@@ -88,7 +88,7 @@ class privacy_legacy_quizaccess_polyfill_test extends \advanced_testcase {
     /**
      * Test the _delete_quizaccess_for_users shim.
      */
-    public function test_delete_quizaccess_for_users() {
+    public function test_delete_quizaccess_for_users(): void {
         $context = $this->createMock(\context_module::class);
         $user = (object) [];
         $approveduserlist = new \core_privacy\local\request\approved_userlist($context, 'mod_quiz', [$user]);

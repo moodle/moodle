@@ -120,7 +120,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::add_category
      */
-    public function test_add_category_no_idnumber() {
+    public function test_add_category_no_idnumber(): void {
         global $DB;
 
         $id = $this->qcobject->add_category($this->topcat->id . ',' . $this->topcat->contextid,
@@ -136,7 +136,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::add_category
      */
-    public function test_add_category_set_idnumber_0() {
+    public function test_add_category_set_idnumber_0(): void {
         global $DB;
 
         $id = $this->qcobject->add_category($this->topcat->id . ',' . $this->topcat->contextid,
@@ -153,7 +153,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::add_category
      */
-    public function test_add_category_try_to_set_duplicate_idnumber() {
+    public function test_add_category_try_to_set_duplicate_idnumber(): void {
         global $DB;
 
         $this->qcobject->add_category($this->topcat->id . ',' . $this->topcat->contextid,
@@ -172,7 +172,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::update_category
      */
-    public function test_update_category() {
+    public function test_update_category(): void {
         global $DB;
 
         $id = $this->qcobject->add_category($this->topcat->id . ',' . $this->topcat->contextid,
@@ -191,7 +191,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::update_category
      */
-    public function test_update_category_removing_idnumber() {
+    public function test_update_category_removing_idnumber(): void {
         global $DB;
 
         $id = $this->qcobject->add_category($this->topcat->id . ',' . $this->topcat->contextid,
@@ -210,7 +210,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::update_category
      */
-    public function test_update_category_dont_change_idnumber() {
+    public function test_update_category_dont_change_idnumber(): void {
         global $DB;
 
         $id = $this->qcobject->add_category($this->topcat->id . ',' . $this->topcat->contextid,
@@ -230,7 +230,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::update_category
      */
-    public function test_update_category_try_to_set_duplicate_idnumber() {
+    public function test_update_category_try_to_set_duplicate_idnumber(): void {
         global $DB;
 
         $this->qcobject->add_category($this->topcat->id . ',' . $this->topcat->contextid,
@@ -251,7 +251,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::add_category
      */
-    public function test_question_category_created() {
+    public function test_question_category_created(): void {
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
         $categoryid = $this->qcobjectquiz->add_category($this->defaultcategory, 'newcategory', '', true);
@@ -269,7 +269,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::delete_category
      */
-    public function test_question_category_deleted() {
+    public function test_question_category_deleted(): void {
         // Create the category.
         $categoryid = $this->qcobjectquiz->add_category($this->defaultcategory, 'newcategory', '', true);
 
@@ -291,7 +291,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::update_category
      */
-    public function test_question_category_updated() {
+    public function test_question_category_updated(): void {
         // Create the category.
         $categoryid = $this->qcobjectquiz->add_category($this->defaultcategory, 'newcategory', '', true);
 
@@ -315,7 +315,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::add_category
      */
-    public function test_question_category_viewed() {
+    public function test_question_category_viewed(): void {
         // Create the category.
         $categoryid = $this->qcobjectquiz->add_category($this->defaultcategory, 'newcategory', '', true);
 
@@ -345,7 +345,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::get_real_question_ids_in_category
      */
-    public function test_get_real_question_ids_in_category_shortanswer() {
+    public function test_get_real_question_ids_in_category_shortanswer(): void {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $categoryid = $this->defaultcategoryobj->id;
 
@@ -362,7 +362,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::get_real_question_ids_in_category
      */
-    public function test_get_real_question_ids_in_category_multianswer() {
+    public function test_get_real_question_ids_in_category_multianswer(): void {
         global $DB;
         $countq = $DB->count_records('question');
         $countqbe = $DB->count_records('question_bank_entries');
@@ -385,7 +385,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::get_real_question_ids_in_category
      */
-    public function test_get_real_question_ids_in_category_multianswer_two_versions() {
+    public function test_get_real_question_ids_in_category_multianswer_two_versions(): void {
         global $DB;
         $countq = $DB->count_records('question');
         $countqv = $DB->count_records('question_versions');
@@ -414,7 +414,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::get_real_question_ids_in_category
      */
-    public function test_get_real_question_ids_in_category_multianswer_bad_data() {
+    public function test_get_real_question_ids_in_category_multianswer_bad_data(): void {
         global $DB;
         $countqbe = $DB->count_records('question_bank_entries');
 

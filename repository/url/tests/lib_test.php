@@ -40,7 +40,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Check that the url escaper performs as expected
      */
-    public function test_escape_url() {
+    public function test_escape_url(): void {
         $this->resetAfterTest();
 
         $repoid = $this->getDataGenerator()->create_repository('url')->id;

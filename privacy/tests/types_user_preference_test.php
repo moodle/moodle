@@ -37,7 +37,7 @@ class types_user_preference_test extends \advanced_testcase {
      * @param   string  $summary Summary
      * @covers ::__construct
      */
-    public function test_invalid_configs($name, $summary) {
+    public function test_invalid_configs($name, $summary): void {
         $record = new user_preference($name, $summary);
         $this->assertDebuggingCalled();
     }
@@ -50,7 +50,7 @@ class types_user_preference_test extends \advanced_testcase {
      * @param   string  $summary Summary
      * @covers ::__construct
      */
-    public function test_invalid_configs_debug_normal($name, $summary) {
+    public function test_invalid_configs_debug_normal($name, $summary): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -67,7 +67,7 @@ class types_user_preference_test extends \advanced_testcase {
      * @param   string  $summary Summary
      * @covers ::__construct
      */
-    public function test_valid_configs($name, $summary) {
+    public function test_valid_configs($name, $summary): void {
         $record = new user_preference($name, $summary);
         $this->assertDebuggingNotCalled();
     }

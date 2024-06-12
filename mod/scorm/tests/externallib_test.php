@@ -92,7 +92,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test view_scorm
      */
-    public function test_view_scorm() {
+    public function test_view_scorm(): void {
         global $DB;
 
         // Test invalid instance id.
@@ -139,7 +139,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get scorm attempt count
      */
-    public function test_mod_scorm_get_scorm_attempt_count_own_empty() {
+    public function test_mod_scorm_get_scorm_attempt_count_own_empty(): void {
         // Set to the student user.
         self::setUser($this->student);
 
@@ -149,7 +149,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals(0, $result['attemptscount']);
     }
 
-    public function test_mod_scorm_get_scorm_attempt_count_own_with_complete() {
+    public function test_mod_scorm_get_scorm_attempt_count_own_with_complete(): void {
         // Set to the student user.
         self::setUser($this->student);
 
@@ -164,7 +164,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals(2, $result['attemptscount']);
     }
 
-    public function test_mod_scorm_get_scorm_attempt_count_own_incomplete() {
+    public function test_mod_scorm_get_scorm_attempt_count_own_incomplete(): void {
         // Set to the student user.
         self::setUser($this->student);
 
@@ -179,7 +179,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals(1, $result['attemptscount']);
     }
 
-    public function test_mod_scorm_get_scorm_attempt_count_others_as_teacher() {
+    public function test_mod_scorm_get_scorm_attempt_count_others_as_teacher(): void {
         // As a teacher.
         self::setUser($this->teacher);
 
@@ -194,7 +194,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals(1, $result['attemptscount']);
     }
 
-    public function test_mod_scorm_get_scorm_attempt_count_others_as_student() {
+    public function test_mod_scorm_get_scorm_attempt_count_others_as_student(): void {
         // Create a second student.
         $student2 = self::getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($student2->id, $this->course->id, $this->studentrole->id, 'manual');
@@ -207,7 +207,7 @@ class externallib_test extends externallib_advanced_testcase {
         mod_scorm_external::get_scorm_attempt_count($this->scorm->id, $this->student->id);
     }
 
-    public function test_mod_scorm_get_scorm_attempt_count_invalid_instanceid() {
+    public function test_mod_scorm_get_scorm_attempt_count_invalid_instanceid(): void {
         // As student.
         self::setUser($this->student);
 
@@ -216,7 +216,7 @@ class externallib_test extends externallib_advanced_testcase {
         mod_scorm_external::get_scorm_attempt_count(0, $this->student->id);
     }
 
-    public function test_mod_scorm_get_scorm_attempt_count_invalid_userid() {
+    public function test_mod_scorm_get_scorm_attempt_count_invalid_userid(): void {
         // As student.
         self::setUser($this->student);
 
@@ -227,7 +227,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get scorm scoes
      */
-    public function test_mod_scorm_get_scorm_scoes() {
+    public function test_mod_scorm_get_scorm_scoes(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -327,7 +327,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get scorm scoes (with a complex SCORM package)
      */
-    public function test_mod_scorm_get_scorm_scoes_complex_package() {
+    public function test_mod_scorm_get_scorm_scoes_complex_package(): void {
         global $CFG;
 
         // As student.
@@ -367,7 +367,7 @@ class externallib_test extends externallib_advanced_testcase {
     /*
      * Test get scorm user data
      */
-    public function test_mod_scorm_get_scorm_user_data() {
+    public function test_mod_scorm_get_scorm_user_data(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -429,7 +429,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test insert scorm tracks
      */
-    public function test_mod_scorm_insert_scorm_tracks() {
+    public function test_mod_scorm_insert_scorm_tracks(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -518,7 +518,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get scorm sco tracks
      */
-    public function test_mod_scorm_get_scorm_sco_tracks() {
+    public function test_mod_scorm_get_scorm_sco_tracks(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -613,7 +613,7 @@ class externallib_test extends externallib_advanced_testcase {
     /*
      * Test get scorms by courses
      */
-    public function test_mod_scorm_get_scorms_by_courses() {
+    public function test_mod_scorm_get_scorms_by_courses(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -847,7 +847,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test launch_sco
      */
-    public function test_launch_sco() {
+    public function test_launch_sco(): void {
         global $DB;
 
         // Test invalid instance id.
@@ -917,7 +917,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test mod_scorm_get_scorm_access_information.
      */
-    public function test_mod_scorm_get_scorm_access_information() {
+    public function test_mod_scorm_get_scorm_access_information(): void {
         global $DB;
 
         $this->resetAfterTest(true);

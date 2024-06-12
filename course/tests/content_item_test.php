@@ -36,7 +36,7 @@ class content_item_test extends \advanced_testcase {
     /**
      * Test the content_item class.
      */
-    public function test_content_item() {
+    public function test_content_item(): void {
         $this->resetAfterTest();
 
         $contentitem = new content_item(22, 'Item name', new lang_string_title('modulename', 'mod_assign'),
@@ -58,7 +58,7 @@ class content_item_test extends \advanced_testcase {
     /**
      * Test confirming that plugins can return custom titles for a content item.
      */
-    public function test_content_item_custom_string_title() {
+    public function test_content_item_custom_string_title(): void {
         $this->resetAfterTest();
 
         $contentitem = new content_item(22, 'Item name', new string_title('My custom string'),

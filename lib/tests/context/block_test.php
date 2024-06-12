@@ -33,7 +33,7 @@ class block_test extends \advanced_testcase {
      * Tests legacy class name.
      * @covers \context_block
      */
-    public function test_legacy_classname() {
+    public function test_legacy_classname(): void {
         $this->resetAfterTest();
 
         $block = $this->getDataGenerator()->create_block('online_users');
@@ -48,7 +48,7 @@ class block_test extends \advanced_testcase {
      * @covers ::instance
      * @covers \core\context::instance_by_id
      */
-    public function test_factory_methods() {
+    public function test_factory_methods(): void {
         $this->resetAfterTest();
 
         $block = $this->getDataGenerator()->create_block('online_users');
@@ -66,7 +66,7 @@ class block_test extends \advanced_testcase {
      * Tests covered method.
      * @covers ::get_short_name
      */
-    public function test_get_short_name() {
+    public function test_get_short_name(): void {
         $this->assertSame('block', block::get_short_name());
     }
 
@@ -74,7 +74,7 @@ class block_test extends \advanced_testcase {
      * Tests levels.
      * @coversNothing
      */
-    public function test_level() {
+    public function test_level(): void {
         $this->assertSame(80, block::LEVEL);
         $this->assertSame(CONTEXT_BLOCK, block::LEVEL);
     }
@@ -83,7 +83,7 @@ class block_test extends \advanced_testcase {
      * Tests covered method.
      * @covers ::get_level_name
      */
-    public function test_get_level_name() {
+    public function test_get_level_name(): void {
         $this->assertSame('Block', block::get_level_name());
     }
 
@@ -91,7 +91,7 @@ class block_test extends \advanced_testcase {
      * Tests covered method.
      * @covers ::get_context_name
      */
-    public function test_get_context_name() {
+    public function test_get_context_name(): void {
         $this->resetAfterTest();
 
         $block = $this->getDataGenerator()->create_block('online_users');
@@ -108,7 +108,7 @@ class block_test extends \advanced_testcase {
      * Tests covered method.
      * @covers ::get_url
      */
-    public function test_get_url() {
+    public function test_get_url(): void {
         $this->resetAfterTest();
 
         $block = $this->getDataGenerator()->create_block('online_users');
@@ -124,7 +124,7 @@ class block_test extends \advanced_testcase {
      * Tests covered method.
      * @covers ::get_compatible_role_archetypes
      */
-    public function test_get_compatible_role_archetypes() {
+    public function test_get_compatible_role_archetypes(): void {
         global $DB;
 
         $allarchetypes = $DB->get_fieldset_select('role', 'DISTINCT archetype', 'archetype IS NOT NULL');
@@ -138,7 +138,7 @@ class block_test extends \advanced_testcase {
      * Tests covered method.
      * @covers ::get_possible_parent_levels
      */
-    public function test_get_possible_parent_levels() {
+    public function test_get_possible_parent_levels(): void {
         $result = block::get_possible_parent_levels();
         // All except itself.
         $this->assertContains(system::LEVEL, $result);
@@ -157,7 +157,7 @@ class block_test extends \advanced_testcase {
      * Tests covered method.
      * @covers ::get_capabilities
      */
-    public function test_get_capabilities() {
+    public function test_get_capabilities(): void {
         $this->resetAfterTest();
 
         $block = $this->getDataGenerator()->create_block('online_users');
@@ -178,7 +178,7 @@ class block_test extends \advanced_testcase {
      * Tests covered method.
      * @covers ::create_level_instances
      */
-    public function test_create_level_instances() {
+    public function test_create_level_instances(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -194,7 +194,7 @@ class block_test extends \advanced_testcase {
      * Tests covered method.
      * @covers ::get_child_contexts
      */
-    public function test_get_child_contexts() {
+    public function test_get_child_contexts(): void {
         $this->resetAfterTest();
 
         $block = $this->getDataGenerator()->create_block('online_users');
@@ -208,7 +208,7 @@ class block_test extends \advanced_testcase {
      * Tests covered method.
      * @covers ::get_cleanup_sql
      */
-    public function test_get_cleanup_sql() {
+    public function test_get_cleanup_sql(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -225,7 +225,7 @@ class block_test extends \advanced_testcase {
      * Tests covered method.
      * @covers ::build_paths
      */
-    public function test_build_paths() {
+    public function test_build_paths(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -247,7 +247,7 @@ class block_test extends \advanced_testcase {
      * Tests covered method.
      * @covers ::set_locked
      */
-    public function test_set_locked() {
+    public function test_set_locked(): void {
         global $DB;
         $this->resetAfterTest();
 

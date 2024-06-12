@@ -37,7 +37,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test that a new group with the name of the cohort is created.
      */
-    public function test_enrol_cohort_create_new_group() {
+    public function test_enrol_cohort_create_new_group(): void {
         global $DB;
         $this->resetAfterTest();
         // Create a category.
@@ -83,7 +83,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test for getting user enrolment actions.
      */
-    public function test_get_user_enrolment_actions() {
+    public function test_get_user_enrolment_actions(): void {
         global $CFG, $PAGE;
         $this->resetAfterTest();
 
@@ -132,7 +132,7 @@ class lib_test extends \advanced_testcase {
         $this->assertCount(1, $actions);
     }
 
-    public function test_enrol_cohort_unenrolaction_suspend_only() {
+    public function test_enrol_cohort_unenrolaction_suspend_only(): void {
         global $CFG, $DB, $PAGE;
         $this->resetAfterTest();
 
@@ -215,7 +215,7 @@ class lib_test extends \advanced_testcase {
      *
      * @covers ::validate_plugin_data_context
      */
-    public function test_validate_plugin_data_context() {
+    public function test_validate_plugin_data_context(): void {
         $this->resetAfterTest();
 
         $cohortplugin = enrol_get_plugin('cohort');
@@ -260,7 +260,7 @@ class lib_test extends \advanced_testcase {
      *
      * @covers ::fill_enrol_custom_fields
      */
-    public function test_fill_enrol_custom_fields() {
+    public function test_fill_enrol_custom_fields(): void {
         $this->resetAfterTest();
 
         $cohortplugin = enrol_get_plugin('cohort');
@@ -315,7 +315,7 @@ class lib_test extends \advanced_testcase {
      *
      * @covers ::validate_enrol_plugin_data
      */
-    public function test_validate_enrol_plugin_data() {
+    public function test_validate_enrol_plugin_data(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -407,7 +407,7 @@ class lib_test extends \advanced_testcase {
      *
      * @covers ::find_instance
      */
-    public function test_find_instance() {
+    public function test_find_instance(): void {
         global $DB;
         $this->resetAfterTest();
 

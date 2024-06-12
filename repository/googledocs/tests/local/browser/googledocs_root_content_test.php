@@ -38,7 +38,7 @@ class googledocs_root_content_test extends \googledocs_content_testcase {
      * @param array $shareddrives The array containing the existing shared drives
      * @param array $expected The expected array which contains the generated repository content nodes
      */
-    public function test_get_content_nodes(array $shareddrives, array $expected) {
+    public function test_get_content_nodes(array $shareddrives, array $expected): void {
         // Mock the service object.
         $servicemock = $this->createMock(\repository_googledocs\rest::class);
 

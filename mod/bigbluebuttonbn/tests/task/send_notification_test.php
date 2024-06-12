@@ -32,7 +32,7 @@ class send_notification_test extends advanced_testcase {
      * Test that the debug message is correctly output.
      *
      */
-    public function test_generate_message() {
+    public function test_generate_message(): void {
         $this->resetAfterTest();
         $task = new send_notification();
         $message = $task->generate_message();

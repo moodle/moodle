@@ -32,7 +32,7 @@ require_once($CFG->libdir . '/filelib.php');
  */
 class filetypes_test extends \advanced_testcase {
 
-    public function test_add_type() {
+    public function test_add_type(): void {
         $this->resetAfterTest();
 
         // Check the filetypes to be added do not exist yet (basically this
@@ -91,7 +91,7 @@ class filetypes_test extends \advanced_testcase {
         }
     }
 
-    public function test_update_type() {
+    public function test_update_type(): void {
         $this->resetAfterTest();
 
         // Check previous value for the MIME type of Word documents.
@@ -148,7 +148,7 @@ class filetypes_test extends \advanced_testcase {
         }
     }
 
-    public function test_delete_type() {
+    public function test_delete_type(): void {
         $this->resetAfterTest();
 
         // Filetype exists.
@@ -178,7 +178,7 @@ class filetypes_test extends \advanced_testcase {
         $this->assertArrayNotHasKey('frog', $types);
     }
 
-    public function test_revert_type_to_default() {
+    public function test_revert_type_to_default(): void {
         $this->resetAfterTest();
 
         // Delete and then revert.
@@ -209,7 +209,7 @@ class filetypes_test extends \advanced_testcase {
      * Check that the logic cleans up the variable by deleting parts that are
      * no longer needed.
      */
-    public function test_cleanup() {
+    public function test_cleanup(): void {
         global $CFG;
         $this->resetAfterTest();
 

@@ -117,7 +117,7 @@ class messagelib_test extends \advanced_testcase {
     /**
      * Test message_get_blocked_users throws an exception because has been removed.
      */
-    public function test_message_get_blocked_users() {
+    public function test_message_get_blocked_users(): void {
         $this->expectException('coding_exception');
         $this->expectExceptionMessage(
             'message_get_blocked_users() has been removed, please use \core_message\api::get_blocked_users() instead.'
@@ -128,7 +128,7 @@ class messagelib_test extends \advanced_testcase {
     /**
      * Test message_get_contacts throws an exception because has been removed.
      */
-    public function test_message_get_contacts() {
+    public function test_message_get_contacts(): void {
         $this->expectException('coding_exception');
         $this->expectExceptionMessage('message_get_contacts() has been removed.');
         message_get_contacts();
@@ -137,7 +137,7 @@ class messagelib_test extends \advanced_testcase {
     /**
      * Test message_search_users.
      */
-    public function test_message_search_users() {
+    public function test_message_search_users(): void {
         global $USER;
 
         // Set this user as the admin.
@@ -160,7 +160,7 @@ class messagelib_test extends \advanced_testcase {
     /**
      * Test message_get_messages.
      */
-    public function test_message_get_messages() {
+    public function test_message_get_messages(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -234,7 +234,7 @@ class messagelib_test extends \advanced_testcase {
     /**
      * Test message_get_messages with only group conversations between users.
      */
-    public function test_message_get_messages_only_group_conversations() {
+    public function test_message_get_messages_only_group_conversations(): void {
         $this->resetAfterTest(true);
 
         // Set this user as the admin.

@@ -39,7 +39,7 @@ class collection_test extends \advanced_testcase {
      *
      * @covers ::add_type
      */
-    public function test_add_type_generic_type() {
+    public function test_add_type_generic_type(): void {
         $collection = new collection('core_privacy');
 
         // Mock a new types\type.
@@ -56,7 +56,7 @@ class collection_test extends \advanced_testcase {
      *
      * @covers ::add_type
      */
-    public function test_add_type_known_type() {
+    public function test_add_type_known_type(): void {
         $collection = new collection('core_privacy');
 
         $linked = new types\subsystem_link('example', [], 'langstring');
@@ -72,7 +72,7 @@ class collection_test extends \advanced_testcase {
      *
      * @covers ::add_type
      */
-    public function test_add_type_multiple() {
+    public function test_add_type_multiple(): void {
         $collection = new collection('core_privacy');
 
         $a = new types\subsystem_link('example', [], 'langstring');
@@ -90,7 +90,7 @@ class collection_test extends \advanced_testcase {
      *
      * @covers ::add_database_table
      */
-    public function test_add_database_table() {
+    public function test_add_database_table(): void {
         $collection = new collection('core_privacy');
 
         $name = 'example';
@@ -113,7 +113,7 @@ class collection_test extends \advanced_testcase {
      *
      * @covers ::add_user_preference
      */
-    public function test_add_user_preference() {
+    public function test_add_user_preference(): void {
         $collection = new collection('core_privacy');
 
         $name = 'example';
@@ -134,7 +134,7 @@ class collection_test extends \advanced_testcase {
      *
      * @covers ::link_external_location
      */
-    public function test_link_external_location() {
+    public function test_link_external_location(): void {
         $collection = new collection('core_privacy');
 
         $name = 'example';
@@ -157,7 +157,7 @@ class collection_test extends \advanced_testcase {
      *
      * @covers ::link_subsystem
      */
-    public function test_link_subsystem() {
+    public function test_link_subsystem(): void {
         $collection = new collection('core_privacy');
 
         $name = 'example';
@@ -178,7 +178,7 @@ class collection_test extends \advanced_testcase {
      *
      * @covers ::link_plugintype
      */
-    public function test_link_plugintype() {
+    public function test_link_plugintype(): void {
         $collection = new collection('core_privacy');
 
         $name = 'example';
@@ -215,7 +215,7 @@ class collection_test extends \advanced_testcase {
      * @param   string  $component The component to test
      * @covers ::get_component
      */
-    public function test_get_component($component) {
+    public function test_get_component($component): void {
         $collection = new collection($component);
 
         $this->assertEquals($component, $collection->get_component());

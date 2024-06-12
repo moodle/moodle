@@ -71,7 +71,7 @@ class antivirus_test extends advanced_testcase {
         @unlink($this->tempfile);
     }
 
-    public function test_manager_get_antivirus() {
+    public function test_manager_get_antivirus(): void {
         // We are using clamav plugin in the test,
         // as the only plugin we know exists for sure.
         $antivirusviaget = \core\antivirus\manager::get_antivirus('clamav');
@@ -79,7 +79,7 @@ class antivirus_test extends advanced_testcase {
         $this->assertEquals($antivirusdirect, $antivirusviaget);
     }
 
-    public function test_manager_scan_file_no_virus() {
+    public function test_manager_scan_file_no_virus(): void {
         // Run mock scanning.
         $this->assertFileExists($this->tempfile);
         $this->assertEmpty(\core\antivirus\manager::scan_file($this->tempfile, 'OK', true));
@@ -87,7 +87,7 @@ class antivirus_test extends advanced_testcase {
         $this->assertFileExists($this->tempfile);
     }
 
-    public function test_manager_scan_file_error() {
+    public function test_manager_scan_file_error(): void {
         // Run mock scanning.
         $this->assertFileExists($this->tempfile);
         $this->assertEmpty(\core\antivirus\manager::scan_file($this->tempfile, 'ERROR', true));
@@ -96,7 +96,7 @@ class antivirus_test extends advanced_testcase {
     }
 
     // Check API for NA status i.e. when no scanners are enabled.
-    public function test_antivirus_check_na() {
+    public function test_antivirus_check_na(): void {
         global $CFG;
         $CFG->antiviruses = '';
         // Enable logs.
@@ -111,7 +111,7 @@ class antivirus_test extends advanced_testcase {
     }
 
     // Check API for UNKNOWN status i.e. when the system's logstore reader is not '\core\log\sql_internal_table_reader'.
-    public function test_antivirus_check_unknown() {
+    public function test_antivirus_check_unknown(): void {
         // Run mock scanning.
         $this->assertFileExists($this->tempfile);
         $this->assertEmpty(\core\antivirus\manager::scan_file($this->tempfile, 'OK', true));
@@ -121,7 +121,7 @@ class antivirus_test extends advanced_testcase {
     }
 
     // Check API for OK status i.e. antivirus enabled, logstore is ok, no scanner issues occurred recently.
-    public function test_antivirus_check_ok() {
+    public function test_antivirus_check_ok(): void {
         // Enable logs.
         $this->enable_logging();
         // Run mock scanning.
@@ -133,7 +133,7 @@ class antivirus_test extends advanced_testcase {
     }
 
     // Check API for ERROR status i.e. scanner issue within a certain timeframe/threshold.
-    public function test_antivirus_check_error() {
+    public function test_antivirus_check_error(): void {
         global $USER, $DB;
         // Enable logs.
         $this->enable_logging();
@@ -146,7 +146,7 @@ class antivirus_test extends advanced_testcase {
         $this->assertFileExists($this->tempfile);
     }
 
-    public function test_manager_scan_file_virus() {
+    public function test_manager_scan_file_virus(): void {
         // Run mock scanning without deleting infected file.
         $this->assertFileExists($this->tempfile);
         $this->expectException(\core\antivirus\scanner_exception::class);
@@ -161,7 +161,7 @@ class antivirus_test extends advanced_testcase {
         $this->assertFileDoesNotExist($this->tempfile);
     }
 
-    public function test_manager_send_message_to_user_email_scan_file_virus() {
+    public function test_manager_send_message_to_user_email_scan_file_virus(): void {
         $sink = $this->redirectEmails();
         $exception = null;
         try {
@@ -177,7 +177,7 @@ class antivirus_test extends advanced_testcase {
         $sink->close();
     }
 
-    public function test_manager_send_message_to_admin_email_scan_file_virus() {
+    public function test_manager_send_message_to_admin_email_scan_file_virus(): void {
         $sink = $this->redirectMessages();
         $exception = null;
         try {
@@ -194,7 +194,7 @@ class antivirus_test extends advanced_testcase {
         $sink->close();
     }
 
-    public function test_manager_quarantine_file_virus() {
+    public function test_manager_quarantine_file_virus(): void {
         try {
             set_config('enablequarantine', true, 'antivirus');
             \core\antivirus\manager::scan_file($this->tempfile, 'FOUND', true);
@@ -211,7 +211,7 @@ class antivirus_test extends advanced_testcase {
         $this->assertEquals(0, count($quarantinedfiles));
     }
 
-    public function test_manager_none_quarantine_file_virus() {
+    public function test_manager_none_quarantine_file_virus(): void {
         try {
             \core\antivirus\manager::scan_file($this->tempfile, 'FOUND', true);
         } catch (\core\antivirus\scanner_exception $ex) {
@@ -222,23 +222,23 @@ class antivirus_test extends advanced_testcase {
         $this->assertEquals(0, count($quarantinedfiles));
     }
 
-    public function test_manager_scan_data_no_virus() {
+    public function test_manager_scan_data_no_virus(): void {
         // Run mock scanning.
         $this->assertEmpty(\core\antivirus\manager::scan_data('OK'));
     }
 
-    public function test_manager_scan_data_error() {
+    public function test_manager_scan_data_error(): void {
         // Run mock scanning.
         $this->assertEmpty(\core\antivirus\manager::scan_data('ERROR'));
     }
 
-    public function test_manager_scan_data_virus() {
+    public function test_manager_scan_data_virus(): void {
         // Run mock scanning.
         $this->expectException(\core\antivirus\scanner_exception::class);
         $this->assertEmpty(\core\antivirus\manager::scan_data('FOUND'));
     }
 
-    public function test_manager_send_message_to_user_email_scan_data_virus() {
+    public function test_manager_send_message_to_user_email_scan_data_virus(): void {
         $sink = $this->redirectEmails();
         set_config('notifyemail', 'fake@example.com', 'antivirus');
         $exception = null;
@@ -254,7 +254,7 @@ class antivirus_test extends advanced_testcase {
         $sink->close();
     }
 
-    public function test_manager_send_message_to_admin_email_scan_data_virus() {
+    public function test_manager_send_message_to_admin_email_scan_data_virus(): void {
         $sink = $this->redirectMessages();
         $exception = null;
         try {
@@ -271,7 +271,7 @@ class antivirus_test extends advanced_testcase {
         $sink->close();
     }
 
-    public function test_manager_quarantine_data_virus() {
+    public function test_manager_quarantine_data_virus(): void {
         set_config('enablequarantine', true, 'antivirus');
         $exception = null;
         try {
@@ -290,7 +290,7 @@ class antivirus_test extends advanced_testcase {
     }
 
 
-    public function test_manager_none_quarantine_data_virus() {
+    public function test_manager_none_quarantine_data_virus(): void {
         $exception = null;
         try {
             \core\antivirus\manager::scan_data('FOUND');

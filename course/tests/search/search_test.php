@@ -72,7 +72,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_courses_indexing() {
+    public function test_courses_indexing(): void {
 
         // Returns the instance as long as the area is supported.
         $searcharea = \core_search\manager::get_search_area($this->coursesareaid);
@@ -115,7 +115,7 @@ class search_test extends \advanced_testcase {
     /**
      * Tests course indexing support for contexts.
      */
-    public function test_courses_indexing_contexts() {
+    public function test_courses_indexing_contexts(): void {
         global $DB, $USER, $SITE;
 
         $searcharea = \core_search\manager::get_search_area($this->coursesareaid);
@@ -196,7 +196,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_courses_document() {
+    public function test_courses_document(): void {
 
         // Returns the instance as long as the area is supported.
         $searcharea = \core_search\manager::get_search_area($this->coursesareaid);
@@ -226,7 +226,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_courses_access() {
+    public function test_courses_access(): void {
         $this->resetAfterTest();
 
         // Returns the instance as long as the area is supported.
@@ -259,7 +259,7 @@ class search_test extends \advanced_testcase {
     /**
      * Indexing section contents.
      */
-    public function test_section_indexing() {
+    public function test_section_indexing(): void {
         global $DB, $USER;
 
         // Returns the instance as long as the area is supported.
@@ -352,7 +352,7 @@ class search_test extends \advanced_testcase {
     /**
      * Document contents for sections.
      */
-    public function test_section_document() {
+    public function test_section_document(): void {
         global $DB;
 
         $searcharea = \core_search\manager::get_search_area($this->sectionareaid);
@@ -386,7 +386,7 @@ class search_test extends \advanced_testcase {
     /**
      * Document access for sections.
      */
-    public function test_section_access() {
+    public function test_section_access(): void {
         global $DB;
 
         $searcharea = \core_search\manager::get_search_area($this->sectionareaid);
@@ -461,7 +461,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_customfield_indexing() {
+    public function test_customfield_indexing(): void {
         // Returns the instance as long as the area is supported.
         $searcharea = \core_search\manager::get_search_area($this->customfieldareaid);
         $this->assertInstanceOf('\core_course\search\customfield', $searcharea);
@@ -508,7 +508,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_customfield_document() {
+    public function test_customfield_document(): void {
         global $DB;
         // Returns the instance as long as the area is supported.
         $searcharea = \core_search\manager::get_search_area($this->customfieldareaid);
@@ -543,7 +543,7 @@ class search_test extends \advanced_testcase {
     /**
      * Document accesses for customfield area.
      */
-    public function test_customfield_access() {
+    public function test_customfield_access(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -615,7 +615,7 @@ class search_test extends \advanced_testcase {
     /**
      * Test document icon for course area.
      */
-    public function test_get_doc_icon_for_course_area() {
+    public function test_get_doc_icon_for_course_area(): void {
         $searcharea = \core_search\manager::get_search_area($this->coursesareaid);
 
         $document = $this->getMockBuilder('\core_search\document')
@@ -631,7 +631,7 @@ class search_test extends \advanced_testcase {
     /**
      * Test document icon for section area.
      */
-    public function test_get_doc_icon_for_section_area() {
+    public function test_get_doc_icon_for_section_area(): void {
         $searcharea = \core_search\manager::get_search_area($this->sectionareaid);
 
         $document = $this->getMockBuilder('\core_search\document')
@@ -647,7 +647,7 @@ class search_test extends \advanced_testcase {
     /**
      * Test assigned search categories.
      */
-    public function test_get_category_names() {
+    public function test_get_category_names(): void {
         $coursessearcharea = \core_search\manager::get_search_area($this->coursesareaid);
         $sectionsearcharea = \core_search\manager::get_search_area($this->sectionareaid);
         $customfieldssearcharea = \core_search\manager::get_search_area($this->customfieldareaid);

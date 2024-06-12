@@ -53,7 +53,7 @@ class contentbank_content_uploaded_test extends \advanced_testcase {
      *
      * @covers ::create_from_record
      */
-    public function test_content_created() {
+    public function test_content_created(): void {
         global $USER, $CFG;
 
         $this->resetAfterTest();

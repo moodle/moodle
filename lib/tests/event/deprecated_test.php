@@ -29,7 +29,7 @@ class deprecated_test extends \advanced_testcase {
     /**
      * Test event properties and methods.
      */
-    public function test_deprecated_course_module_instances_list_viewed_events() {
+    public function test_deprecated_course_module_instances_list_viewed_events(): void {
 
         // Make sure the abstract class course_module_instances_list_viewed generates a debugging notice.
         require_once(__DIR__ . '/../fixtures/event_mod_badfixtures.php');

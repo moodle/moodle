@@ -31,7 +31,7 @@ class html2text_test extends \basic_testcase {
     /**
      * ALT as image replacements.
      */
-    public function test_images() {
+    public function test_images(): void {
         $this->assertSame('[edit]', html_to_text('<img src="edit.png" alt="edit" />'));
 
         $text = 'xx<img src="gif.gif" alt="some gif" />xx';
@@ -42,7 +42,7 @@ class html2text_test extends \basic_testcase {
     /**
      * No magic quotes messing.
      */
-    public function test_no_strip_slashes() {
+    public function test_no_strip_slashes(): void {
         $this->assertSame('[\edit]', html_to_text('<img src="edit.png" alt="\edit" />'));
 
         $text = '\\magic\\quotes\\are\\\\horrible';
@@ -53,7 +53,7 @@ class html2text_test extends \basic_testcase {
     /**
      * core_text integration.
      */
-    public function test_core_text() {
+    public function test_core_text(): void {
         $text = '<strong>Žluťoučký koníček</strong>';
         $result = html_to_text($text, null, false, false);
         $this->assertSame($result, 'ŽLUŤOUČKÝ KONÍČEK');
@@ -62,7 +62,7 @@ class html2text_test extends \basic_testcase {
     /**
      * Protect 0.
      */
-    public function test_zero() {
+    public function test_zero(): void {
         $text = '0';
         $result = html_to_text($text, null, false, false);
         $this->assertSame($result, $text);
@@ -73,7 +73,7 @@ class html2text_test extends \basic_testcase {
     /**
      * Test the links list enumeration.
      */
-    public function test_build_link_list() {
+    public function test_build_link_list(): void {
 
         // Note the trailing whitespace left intentionally in the text after first link.
         $text = 'Total of <a title="List of integrated issues"
@@ -112,7 +112,7 @@ have been fixed <strong><a href="http://third.url/view.php">last week</a></stron
     /**
      * Various invalid HTML typed by users that ignore html strict.
      **/
-    public function test_invalid_html() {
+    public function test_invalid_html(): void {
         $text = 'Gin & Tonic';
         $result = html_to_text($text, null, false, false);
         $this->assertSame($result, $text);
@@ -129,7 +129,7 @@ have been fixed <strong><a href="http://third.url/view.php">last week</a></stron
     /**
      * Basic text formatting.
      */
-    public function test_simple() {
+    public function test_simple(): void {
         $this->assertSame("_Hello_ WORLD!\n", html_to_text('<p><i>Hello</i> <b>world</b>!</p>'));
         $this->assertSame("All the WORLD’S a stage.\n\n-- William Shakespeare\n", html_to_text('<p>All the <strong>world’s</strong> a stage.</p><p>-- William Shakespeare</p>'));
         $this->assertSame("HELLO WORLD!\n\n", html_to_text('<h1>Hello world!</h1>'));
@@ -139,7 +139,7 @@ have been fixed <strong><a href="http://third.url/view.php">last week</a></stron
     /**
      * Test line wrapping.
      */
-    public function test_text_nowrap() {
+    public function test_text_nowrap(): void {
         $long = "Here is a long string, more than 75 characters long, since by default html_to_text wraps text at 75 chars.";
         $wrapped = "Here is a long string, more than 75 characters long, since by default\nhtml_to_text wraps text at 75 chars.";
         $this->assertSame($long, html_to_text($long, 0));
@@ -149,14 +149,14 @@ have been fixed <strong><a href="http://third.url/view.php">last week</a></stron
     /**
      * Whitespace removal.
      */
-    public function test_trailing_whitespace() {
+    public function test_trailing_whitespace(): void {
         $this->assertSame('With trailing whitespace and some more text', html_to_text("With trailing whitespace   \nand some   more text", 0));
     }
 
     /**
      * PRE parsing.
      */
-    public function test_html_to_text_pre_parsing_problem() {
+    public function test_html_to_text_pre_parsing_problem(): void {
         $strorig = 'Consider the following function:<br /><pre><span style="color: rgb(153, 51, 102);">void FillMeUp(char* in_string) {'.
             '<br />  int i = 0;<br />  while (in_string[i] != \'\0\') {<br />    in_string[i] = \'X\';<br />    i++;<br />  }<br />'.
             '}</span></pre>What would happen if a non-terminated string were input to this function?<br /><br />';
@@ -181,7 +181,7 @@ What would happen if a non-terminated string were input to this function?
     /**
      * Scripts should be stripped.
      */
-    public function test_strip_scripts() {
+    public function test_strip_scripts(): void {
         $this->assertSame('Interesting text',
                 html_to_text('Interesting <script type="text/javascript">var what_a_mess = "Yuck!";</script> text', 0));
     }

@@ -81,7 +81,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers ::get_extension
      */
-    public function test_get_extension(string $filename, string $expected) {
+    public function test_get_extension(string $filename, string $expected): void {
         $this->resetAfterTest();
 
         $cb = new contentbank();
@@ -112,7 +112,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers ::load_context_supported_extensions
      */
-    public function test_get_extension_supporter_for_admins(array $supporters, string $extension, string $expected) {
+    public function test_get_extension_supporter_for_admins(array $supporters, string $extension, string $expected): void {
         $this->resetAfterTest();
 
         $cb = new contentbank();
@@ -136,7 +136,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers ::load_context_supported_extensions
      */
-    public function test_get_extension_supporter_for_users(array $supporters, string $extension, string $expected) {
+    public function test_get_extension_supporter_for_users(array $supporters, string $extension, string $expected): void {
         $this->resetAfterTest();
 
         $cb = new contentbank();
@@ -161,7 +161,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers ::load_context_supported_extensions
      */
-    public function test_get_extension_supporter_for_teachers(array $supporters, string $extension, string $expected) {
+    public function test_get_extension_supporter_for_teachers(array $supporters, string $extension, string $expected): void {
         $this->resetAfterTest();
 
         $cb = new contentbank();
@@ -187,7 +187,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers ::get_extension_supporter
      */
-    public function test_get_extension_supporter(array $supporters, string $extension, string $expected) {
+    public function test_get_extension_supporter(array $supporters, string $extension, string $expected): void {
         $this->resetAfterTest();
 
         $cb = new contentbank();
@@ -361,7 +361,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers ::create_content_from_file
      */
-    public function test_create_content_from_file() {
+    public function test_create_content_from_file(): void {
         global $USER, $CFG;
 
         $this->resetAfterTest();
@@ -395,7 +395,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers  ::delete_contents
      */
-    public function test_delete_contents() {
+    public function test_delete_contents(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -444,7 +444,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers  ::delete_contents
      */
-    public function test_delete_contents_for_empty_contentbank() {
+    public function test_delete_contents_for_empty_contentbank(): void {
 
         $this->resetAfterTest();
         $cb = new \core_contentbank\contentbank();
@@ -467,7 +467,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers  ::move_contents
      */
-    public function test_move_contents() {
+    public function test_move_contents(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -500,7 +500,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers  ::move_contents
      */
-    public function test_move_contents_for_empty_contentbank() {
+    public function test_move_contents_for_empty_contentbank(): void {
 
         $this->resetAfterTest();
         $cb = new \core_contentbank\contentbank();
@@ -613,7 +613,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers  ::get_content_from_id
      */
-    public function test_get_content_from_id() {
+    public function test_get_content_from_id(): void {
 
         $this->resetAfterTest();
         $cb = new \core_contentbank\contentbank();

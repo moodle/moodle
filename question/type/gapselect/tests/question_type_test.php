@@ -46,7 +46,7 @@ class question_type_test extends \question_testcase {
         $this->qtype = null;
     }
 
-    public function test_save_question() {
+    public function test_save_question(): void {
         $this->resetAfterTest();
 
         $syscontext = \context_system::instance();
@@ -80,15 +80,15 @@ class question_type_test extends \question_testcase {
         return \test_question_maker::get_question_data('gapselect');
     }
 
-    public function test_name() {
+    public function test_name(): void {
         $this->assertEquals($this->qtype->name(), 'gapselect');
     }
 
-    public function test_can_analyse_responses() {
+    public function test_can_analyse_responses(): void {
         $this->assertTrue($this->qtype->can_analyse_responses());
     }
 
-    public function test_initialise_question_instance() {
+    public function test_initialise_question_instance(): void {
         $qdata = $this->get_test_question_data();
 
         $expected = \test_question_maker::make_question('gapselect');
@@ -99,12 +99,12 @@ class question_type_test extends \question_testcase {
         $this->assertEquals($expected, $q);
     }
 
-    public function test_get_random_guess_score() {
+    public function test_get_random_guess_score(): void {
         $q = $this->get_test_question_data();
         $this->assertEqualsWithDelta(0.5, $this->qtype->get_random_guess_score($q), 0.0000001);
     }
 
-    public function test_get_possible_responses() {
+    public function test_get_possible_responses(): void {
         $q = $this->get_test_question_data();
 
         $this->assertEquals(array(
@@ -123,7 +123,7 @@ class question_type_test extends \question_testcase {
         ), $this->qtype->get_possible_responses($q));
     }
 
-    public function test_xml_import() {
+    public function test_xml_import(): void {
         $xml = '  <question type="gapselect">
     <name>
       <text>A select missing words question</text>
@@ -212,7 +212,7 @@ class question_type_test extends \question_testcase {
         $this->assertEquals($expectedq->hint, $q->hint);
     }
 
-    public function test_xml_export() {
+    public function test_xml_export(): void {
         $qdata = new \stdClass();
         $qdata->id = 123;
         $qdata->contextid = \context_system::instance()->id;

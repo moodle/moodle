@@ -28,7 +28,7 @@ class progress_display_test extends \advanced_testcase {
     /**
      * Test basic function of progress_display, updating status and outputting wibbler.
      */
-    public function test_progress_display_update() {
+    public function test_progress_display_update(): void {
         ob_start();
         $progress = new core_mock_progress_display();
         $progress->start_progress('');
@@ -50,7 +50,7 @@ class progress_display_test extends \advanced_testcase {
     /**
      * Test wibbler states. Wibbler should reverse direction at the start and end of its sequence.
      */
-    public function test_progress_display_wibbler() {
+    public function test_progress_display_wibbler(): void {
         ob_start();
         $progress = new core_mock_progress_display();
         $progress->start_progress('');

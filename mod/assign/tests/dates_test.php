@@ -132,7 +132,7 @@ class dates_test extends advanced_testcase {
     public function test_get_dates_for_module(?int $from, ?int $due,
             ?int $userfrom, ?int $userdue,
             ?int $groupfrom, ?int $groupdue,
-            array $expected) {
+            array $expected): void {
 
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();

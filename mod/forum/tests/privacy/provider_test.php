@@ -131,7 +131,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * posted and has no other metadata stored will not have any link to
      * that context.
      */
-    public function test_user_has_never_posted() {
+    public function test_user_has_never_posted(): void {
         // Create a course, with a forum, our user under test, another user, and a discussion + post from the other user.
         $course = $this->getDataGenerator()->create_course();
         $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
@@ -165,7 +165,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * posted and has subscribed to the forum will have relevant
      * information returned.
      */
-    public function test_user_has_never_posted_subscribed_to_forum() {
+    public function test_user_has_never_posted_subscribed_to_forum(): void {
         global $DB;
 
         // Create a course, with a forum, our user under test, another user, and a discussion + post from the other user.
@@ -220,7 +220,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * posted and has subscribed to the discussion will have relevant
      * information returned.
      */
-    public function test_user_has_never_posted_subscribed_to_discussion() {
+    public function test_user_has_never_posted_subscribed_to_discussion(): void {
         global $DB;
 
         // Create a course, with a forum, our user under test, another user, and a discussion + post from the other user.
@@ -289,7 +289,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * Test that a user who has posted their own discussion will have all
      * content returned.
      */
-    public function test_user_has_posted_own_discussion() {
+    public function test_user_has_posted_own_discussion(): void {
         $course = $this->getDataGenerator()->create_course();
         $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
         $course = $this->getDataGenerator()->create_course();
@@ -326,7 +326,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * Test that a user who has posted a reply to another users discussion will have all content returned, and
      * appropriate content removed.
      */
-    public function test_user_has_posted_reply() {
+    public function test_user_has_posted_reply(): void {
         global $DB;
 
         // Create several courses and forums. We only insert data into the final one.
@@ -398,7 +398,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test private reply in a range of scenarios.
      */
-    public function test_user_private_reply() {
+    public function test_user_private_reply(): void {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course();
@@ -486,7 +486,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * Test that the rating of another users content will have only the
      * rater's information returned.
      */
-    public function test_user_has_rated_others() {
+    public function test_user_has_rated_others(): void {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course();
@@ -556,7 +556,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that ratings of a users own content will all be returned.
      */
-    public function test_user_has_been_rated() {
+    public function test_user_has_been_rated(): void {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course();
@@ -623,7 +623,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that per-user daily digest settings are included correctly.
      */
-    public function test_user_forum_digest() {
+    public function test_user_forum_digest(): void {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course();
@@ -698,7 +698,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that the per-user, per-forum user tracking data is exported.
      */
-    public function test_user_tracking_data() {
+    public function test_user_tracking_data(): void {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course();
@@ -761,7 +761,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that the posts which a user has read are returned correctly.
      */
-    public function test_user_read_posts() {
+    public function test_user_read_posts(): void {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course();
@@ -938,7 +938,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that posts with attachments have their attachments correctly exported.
      */
-    public function test_post_attachment_inclusion() {
+    public function test_post_attachment_inclusion(): void {
         global $DB;
 
         $fs = get_file_storage();
@@ -1005,7 +1005,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that posts which include tags have those tags exported.
      */
-    public function test_post_tags() {
+    public function test_post_tags(): void {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course();
@@ -1063,7 +1063,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that all user data is deleted from a context.
      */
-    public function test_all_users_deleted_from_context() {
+    public function test_all_users_deleted_from_context(): void {
         global $DB;
 
         $fs = get_file_storage();
@@ -1268,7 +1268,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that all user data is deleted for a specific context.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $fs = get_file_storage();
@@ -1483,7 +1483,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that user data for specific users is deleted from a specified context.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
 
         $fs = get_file_storage();
@@ -1695,7 +1695,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that the discussion author is listed as a user in the context.
      */
-    public function test_get_users_in_context_post_author() {
+    public function test_get_users_in_context_post_author(): void {
         global $DB;
         $component = 'mod_forum';
 
@@ -1720,7 +1720,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that all post authors are included as a user in the context.
      */
-    public function test_get_users_in_context_post_authors() {
+    public function test_get_users_in_context_post_authors(): void {
         global $DB;
         $component = 'mod_forum';
 
@@ -1754,7 +1754,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that all post raters are included as a user in the context.
      */
-    public function test_get_users_in_context_post_ratings() {
+    public function test_get_users_in_context_post_ratings(): void {
         global $DB;
         $component = 'mod_forum';
 
@@ -1803,7 +1803,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that all users with a digest preference are included as a user in the context.
      */
-    public function test_get_users_in_context_digest_preference() {
+    public function test_get_users_in_context_digest_preference(): void {
         global $DB;
         $component = 'mod_forum';
 
@@ -1841,7 +1841,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that all users with a forum subscription preference included as a user in the context.
      */
-    public function test_get_users_in_context_with_subscription() {
+    public function test_get_users_in_context_with_subscription(): void {
         global $DB;
         $component = 'mod_forum';
 
@@ -1878,7 +1878,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that all users with a per-discussion subscription preference included as a user in the context.
      */
-    public function test_get_users_in_context_with_discussion_subscription() {
+    public function test_get_users_in_context_with_discussion_subscription(): void {
         global $DB;
         $component = 'mod_forum';
 
@@ -1920,7 +1920,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that all users with read tracking are included as a user in the context.
      */
-    public function test_get_users_in_context_with_read_post_tracking() {
+    public function test_get_users_in_context_with_read_post_tracking(): void {
         global $DB;
         $component = 'mod_forum';
 
@@ -1962,7 +1962,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that all users with tracking preferences are included as a user in the context.
      */
-    public function test_get_users_in_context_with_tracking_preferences() {
+    public function test_get_users_in_context_with_tracking_preferences(): void {
         global $DB;
         $component = 'mod_forum';
 

@@ -50,21 +50,21 @@ class question_type_test extends \advanced_testcase {
         $this->qtype = null;
     }
 
-    public function test_name() {
+    public function test_name(): void {
         $this->assertEquals($this->qtype->name(), 'calculated');
     }
 
-    public function test_can_analyse_responses() {
+    public function test_can_analyse_responses(): void {
         $this->assertTrue($this->qtype->can_analyse_responses());
     }
 
-    public function test_get_random_guess_score() {
+    public function test_get_random_guess_score(): void {
         $q = \test_question_maker::get_question_data('calculated');
         $q->options->answers[17]->fraction = 0.1;
         $this->assertEquals(0.1, $this->qtype->get_random_guess_score($q));
     }
 
-    public function test_load_question() {
+    public function test_load_question(): void {
         $this->resetAfterTest();
 
         $syscontext = \context_system::instance();
@@ -150,7 +150,7 @@ class question_type_test extends \advanced_testcase {
         return get_string('answerwithtolerance', 'qtype_calculated', $a);
     }
 
-    public function test_get_possible_responses() {
+    public function test_get_possible_responses(): void {
         $q = \test_question_maker::get_question_data('calculated');
 
         $this->assertEquals(array(
@@ -165,7 +165,7 @@ class question_type_test extends \advanced_testcase {
         ), $this->qtype->get_possible_responses($q));
     }
 
-    public function test_get_possible_responses_no_star() {
+    public function test_get_possible_responses_no_star(): void {
         $q = \test_question_maker::get_question_data('calculated');
         unset($q->options->answers[17]);
 
@@ -182,7 +182,7 @@ class question_type_test extends \advanced_testcase {
         ), $this->qtype->get_possible_responses($q));
     }
 
-    public function test_get_short_question_name() {
+    public function test_get_short_question_name(): void {
         $this->resetAfterTest();
 
         // Enable multilang filter to on content and heading.
@@ -203,17 +203,17 @@ class question_type_test extends \advanced_testcase {
         $this->assertEquals("Lorem ipsum", $this->qtype->get_short_question_name($shortquestionname, 20));
     }
 
-    public function test_placehodler_regex() {
+    public function test_placehodler_regex(): void {
         preg_match_all(qtype_calculated::PLACEHODLER_REGEX, '= {={a} + {b}}', $matches);
         $this->assertEquals([['{a}', '{b}'], ['a', 'b']], $matches);
     }
 
-    public function test_formulas_in_text_regex() {
+    public function test_formulas_in_text_regex(): void {
         preg_match_all(qtype_calculated::FORMULAS_IN_TEXT_REGEX, '= {={a} + {b}}', $matches);
         $this->assertEquals([['{={a} + {b}}'], ['{a} + {b}']], $matches);
     }
 
-    public function test_find_dataset_names() {
+    public function test_find_dataset_names(): void {
         $this->assertEquals([], $this->qtype->find_dataset_names('Frog.'));
 
         $this->assertEquals(['a' => 'a', 'b' => 'b'],
@@ -236,7 +236,7 @@ class question_type_test extends \advanced_testcase {
                         '));
     }
 
-    public function test_calculate_answer_nan_inf() {
+    public function test_calculate_answer_nan_inf(): void {
         $answer = qtype_calculated_calculate_answer('acos(1.1)', [], 0.1, 1, 2, 2);
         $this->assertIsObject($answer);
         $this->assertNan($answer->answer);

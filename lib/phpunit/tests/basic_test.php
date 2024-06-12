@@ -42,7 +42,7 @@ class basic_test extends \basic_testcase {
      * Tests that bootstrapping has occurred correctly
      * @return void
      */
-    public function test_bootstrap() {
+    public function test_bootstrap(): void {
         global $CFG;
 
         // The httpswwwroot has been deprecated, we keep it as an alias for backwards compatibility with plugins only.
@@ -55,7 +55,7 @@ class basic_test extends \basic_testcase {
      * This is just a verification if I understand the PHPUnit assert docs right --skodak
      * @return void
      */
-    public function test_assert_behaviour() {
+    public function test_assert_behaviour(): void {
         // Arrays.
         $a = array('a', 'b', 'c');
         $b = array('a', 'c', 'b');
@@ -120,7 +120,7 @@ class basic_test extends \basic_testcase {
      * Make sure there are no sloppy Windows line endings
      * that would break our tests.
      */
-    public function test_lineendings() {
+    public function test_lineendings(): void {
         $string = <<<STRING
 a
 b
@@ -132,7 +132,7 @@ STRING;
     /**
      * Make sure asserts in setUp() do not create problems.
      */
-    public function test_setup_assert() {
+    public function test_setup_assert(): void {
         $this->assertTrue($this->testassertexecuted);
         $this->testassertexecuted = false;
     }
@@ -140,7 +140,7 @@ STRING;
     /**
      * Test assert Tag
      */
-    public function test_assert_tag() {
+    public function test_assert_tag(): void {
         // This should succeed.
         self::assertTag(['id' => 'testid'], "<div><span id='testid'></span></div>");
         $this->expectException(\PHPUnit\Framework\ExpectationFailedException::class);

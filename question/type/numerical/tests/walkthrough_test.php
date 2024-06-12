@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/question/type/numerical/tests/helper.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class walkthrough_test extends \qbehaviour_walkthrough_test_base {
-    public function test_interactive_currency() {
+    public function test_interactive_currency(): void {
 
         // Create a gapselect question.
         $q = \test_question_maker::make_question('numerical', 'currency');
@@ -101,7 +101,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->quba->get_response_summary($this->slot));
     }
 
-    public function test_deferredfeedback_currency() {
+    public function test_deferredfeedback_currency(): void {
 
         // Create a gapselect question.
         $q = \test_question_maker::make_question('numerical', 'currency');
@@ -175,7 +175,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     // Todo. Test validation if you try to type a unit into a question that does
     // not expect one.
 
-    public function test_deferredfeedback_unit() {
+    public function test_deferredfeedback_unit(): void {
 
         // Create a gapselect question.
         $q = \test_question_maker::make_question('numerical', 'unit');

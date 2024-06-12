@@ -34,7 +34,7 @@ class user_test extends \advanced_testcase {
      * @param array $expectations various expectations for the test cases.
      * @covers ::create
      */
-    public function test_create(array $args, array $expectations) {
+    public function test_create(array $args, array $expectations): void {
         if ($expectations['valid']) {
             $user = user::create(...array_values($args));
             $this->assertInstanceOf(user::class, $user);
@@ -242,7 +242,7 @@ class user_test extends \advanced_testcase {
      * @param array $expectations various expectations for the test cases.
      * @covers ::create_from_resource_link
      */
-    public function test_create_from_resource_link(array $args, array $expectations) {
+    public function test_create_from_resource_link(array $args, array $expectations): void {
         if ($expectations['valid']) {
             $user = user::create_from_resource_link(...array_values($args));
             $this->assertInstanceOf(user::class, $user);
@@ -487,7 +487,7 @@ class user_test extends \advanced_testcase {
      * @param array $expectations the array of expectations
      * @covers ::__construct
      */
-    public function test_setters_and_getters(string $methodname, $arg, array $expectations) {
+    public function test_setters_and_getters(string $methodname, $arg, array $expectations): void {
         $user = $this->create_test_user();
         $setter = 'set_'.$methodname;
         $getter = 'get_'.$methodname;

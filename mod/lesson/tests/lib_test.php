@@ -42,7 +42,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test for lesson_get_group_override_priorities().
      */
-    public function test_lesson_get_group_override_priorities() {
+    public function test_lesson_get_group_override_priorities(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -90,7 +90,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test check_updates_since callback.
      */
-    public function test_check_updates_since() {
+    public function test_check_updates_since(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -225,7 +225,7 @@ class lib_test extends \advanced_testcase {
         $this->assertCount(1, $updates->usertimers->itemids);
     }
 
-    public function test_lesson_core_calendar_provide_event_action_open() {
+    public function test_lesson_core_calendar_provide_event_action_open(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         // Create a course.
@@ -252,7 +252,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_lesson_core_calendar_provide_event_action_open_as_non_user() {
+    public function test_lesson_core_calendar_provide_event_action_open_as_non_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -282,7 +282,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_lesson_core_calendar_provide_event_action_open_for_user() {
+    public function test_lesson_core_calendar_provide_event_action_open_for_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -319,7 +319,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_lesson_core_calendar_provide_event_action_open_in_hidden_section() {
+    public function test_lesson_core_calendar_provide_event_action_open_in_hidden_section(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -349,7 +349,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_lesson_core_calendar_provide_event_action_closed() {
+    public function test_lesson_core_calendar_provide_event_action_closed(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -381,7 +381,7 @@ class lib_test extends \advanced_testcase {
         $this->assertFalse($actionevent->is_actionable());
     }
 
-    public function test_lesson_core_calendar_provide_event_action_closed_for_user() {
+    public function test_lesson_core_calendar_provide_event_action_closed_for_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -418,7 +418,7 @@ class lib_test extends \advanced_testcase {
         $this->assertFalse($actionevent->is_actionable());
     }
 
-    public function test_lesson_core_calendar_provide_event_action_open_in_future() {
+    public function test_lesson_core_calendar_provide_event_action_open_in_future(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -449,7 +449,7 @@ class lib_test extends \advanced_testcase {
         $this->assertFalse($actionevent->is_actionable());
     }
 
-    public function test_lesson_core_calendar_provide_event_action_open_in_future_for_user() {
+    public function test_lesson_core_calendar_provide_event_action_open_in_future_for_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -486,7 +486,7 @@ class lib_test extends \advanced_testcase {
         $this->assertFalse($actionevent->is_actionable());
     }
 
-    public function test_lesson_core_calendar_provide_event_action_no_time_specified() {
+    public function test_lesson_core_calendar_provide_event_action_no_time_specified(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -515,7 +515,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_lesson_core_calendar_provide_event_action_no_time_specified_for_user() {
+    public function test_lesson_core_calendar_provide_event_action_no_time_specified_for_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -551,7 +551,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_lesson_core_calendar_provide_event_action_after_attempt() {
+    public function test_lesson_core_calendar_provide_event_action_after_attempt(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -601,7 +601,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($action);
     }
 
-    public function test_lesson_core_calendar_provide_event_action_after_attempt_for_user() {
+    public function test_lesson_core_calendar_provide_event_action_after_attempt_for_user(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -652,7 +652,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($action);
     }
 
-    public function test_lesson_core_calendar_provide_event_action_already_completed() {
+    public function test_lesson_core_calendar_provide_event_action_already_completed(): void {
         $this->resetAfterTest();
         set_config('enablecompletion', 1);
         $this->setAdminUser();
@@ -683,7 +683,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_lesson_core_calendar_provide_event_action_already_completed_for_user() {
+    public function test_lesson_core_calendar_provide_event_action_already_completed_for_user(): void {
         $this->resetAfterTest();
         set_config('enablecompletion', 1);
         $this->setAdminUser();
@@ -742,7 +742,7 @@ class lib_test extends \advanced_testcase {
      * This function should work given either an instance of the module (cm_info), such as when checking the active rules,
      * or if passed a stdClass of similar structure, such as when checking the the default completion settings for a mod type.
      */
-    public function test_mod_lesson_completion_get_active_rule_descriptions() {
+    public function test_mod_lesson_completion_get_active_rule_descriptions(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -786,7 +786,7 @@ class lib_test extends \advanced_testcase {
     /**
      * An unknown event type should not change the lesson instance.
      */
-    public function test_mod_lesson_core_calendar_event_timestart_updated_unknown_event() {
+    public function test_mod_lesson_core_calendar_event_timestart_updated_unknown_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -827,7 +827,7 @@ class lib_test extends \advanced_testcase {
     /**
      * A LESSON_EVENT_TYPE_OPEN event should update the available property of the lesson activity.
      */
-    public function test_mod_lesson_core_calendar_event_timestart_updated_open_event() {
+    public function test_mod_lesson_core_calendar_event_timestart_updated_open_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -887,7 +887,7 @@ class lib_test extends \advanced_testcase {
     /**
      * A LESSON_EVENT_TYPE_CLOSE event should update the deadline property of the lesson activity.
      */
-    public function test_mod_lesson_core_calendar_event_timestart_updated_close_event() {
+    public function test_mod_lesson_core_calendar_event_timestart_updated_close_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
         $this->resetAfterTest(true);
@@ -940,7 +940,7 @@ class lib_test extends \advanced_testcase {
     /**
      * An unknown event type should not have any limits.
      */
-    public function test_mod_lesson_core_calendar_get_valid_event_timestart_range_unknown_event() {
+    public function test_mod_lesson_core_calendar_get_valid_event_timestart_range_unknown_event(): void {
         global $CFG;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -978,7 +978,7 @@ class lib_test extends \advanced_testcase {
     /**
      * The open event should be limited by the lesson's deadline property, if it's set.
      */
-    public function test_mod_lesson_core_calendar_get_valid_event_timestart_range_open_event() {
+    public function test_mod_lesson_core_calendar_get_valid_event_timestart_range_open_event(): void {
         global $CFG;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -1023,7 +1023,7 @@ class lib_test extends \advanced_testcase {
     /**
      * The close event should be limited by the lesson's available property, if it's set.
      */
-    public function test_mod_lesson_core_calendar_get_valid_event_timestart_range_close_event() {
+    public function test_mod_lesson_core_calendar_get_valid_event_timestart_range_close_event(): void {
         global $CFG;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -1068,7 +1068,7 @@ class lib_test extends \advanced_testcase {
     /**
      * A user who does not have capabilities to add events to the calendar should be able to create an lesson.
      */
-    public function test_creation_with_no_calendar_capabilities() {
+    public function test_creation_with_no_calendar_capabilities(): void {
         $this->resetAfterTest();
         $course = self::getDataGenerator()->create_course();
         $context = \context_course::instance($course->id);

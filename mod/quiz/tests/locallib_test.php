@@ -43,7 +43,7 @@ class locallib_test extends \advanced_testcase {
 
     use \quiz_question_helper_test_trait;
 
-    public function test_quiz_rescale_grade() {
+    public function test_quiz_rescale_grade(): void {
         $quiz = new \stdClass();
         $quiz->decimalpoints = 2;
         $quiz->questiondecimalpoints = 3;
@@ -86,7 +86,7 @@ class locallib_test extends \advanced_testcase {
      * @covers ::quiz_attempt_state
      */
     public function test_quiz_attempt_state(string $attemptstate,
-            ?int $relativetimefinish, ?int $relativetimeclose, int $expectedstate) {
+            ?int $relativetimefinish, ?int $relativetimeclose, int $expectedstate): void {
 
         $attempt = new \stdClass();
         $attempt->state = $attemptstate;
@@ -109,7 +109,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * @covers ::quiz_question_tostring
      */
-    public function test_quiz_question_tostring() {
+    public function test_quiz_question_tostring(): void {
         $question = new \stdClass();
         $question->qtype = 'multichoice';
         $question->name = 'The question name';
@@ -124,7 +124,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * @covers ::quiz_question_tostring
      */
-    public function test_quiz_question_tostring_does_not_filter() {
+    public function test_quiz_question_tostring_does_not_filter(): void {
         $question = new \stdClass();
         $question->qtype = 'multichoice';
         $question->name = 'The question name';
@@ -140,7 +140,7 @@ class locallib_test extends \advanced_testcase {
      * Test quiz_view
      * @return void
      */
-    public function test_quiz_view() {
+    public function test_quiz_view(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;
@@ -180,7 +180,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Return false when there are not overrides for this quiz instance.
      */
-    public function test_quiz_is_overriden_calendar_event_no_override() {
+    public function test_quiz_is_overriden_calendar_event_no_override(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest();
@@ -204,7 +204,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Return false if the given event isn't an quiz module event.
      */
-    public function test_quiz_is_overriden_calendar_event_no_module_event() {
+    public function test_quiz_is_overriden_calendar_event_no_module_event(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest();
@@ -227,7 +227,7 @@ class locallib_test extends \advanced_testcase {
      * Return false if there is overrides for this use but they belong to another quiz
      * instance.
      */
-    public function test_quiz_is_overriden_calendar_event_different_quiz_instance() {
+    public function test_quiz_is_overriden_calendar_event_different_quiz_instance(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest();
@@ -259,7 +259,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Return true if there is a user override for this event and quiz instance.
      */
-    public function test_quiz_is_overriden_calendar_event_user_override() {
+    public function test_quiz_is_overriden_calendar_event_user_override(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest();
@@ -290,7 +290,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Return true if there is a group override for the event and quiz instance.
      */
-    public function test_quiz_is_overriden_calendar_event_group_override() {
+    public function test_quiz_is_overriden_calendar_event_group_override(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest();
@@ -324,7 +324,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test test_quiz_get_user_timeclose().
      */
-    public function test_quiz_get_user_timeclose() {
+    public function test_quiz_get_user_timeclose(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -531,7 +531,7 @@ class locallib_test extends \advanced_testcase {
         return [$quiz, $tagobjects];
     }
 
-    public function test_quiz_override_summary() {
+    public function test_quiz_override_summary(): void {
         global $DB, $PAGE;
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
@@ -636,7 +636,7 @@ class locallib_test extends \advanced_testcase {
     /**
      *  Test quiz_send_confirmation function.
      */
-    public function test_quiz_send_confirmation() {
+    public function test_quiz_send_confirmation(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest();

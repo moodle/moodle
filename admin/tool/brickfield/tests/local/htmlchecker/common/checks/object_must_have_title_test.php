@@ -63,7 +63,7 @@ EOD;
     /**
      * Test for missing title attribute within object element.
      */
-    public function test_check_fail() {
+    public function test_check_fail(): void {
         $results = $this->get_checker_results($this->htmlfail);
         $this->assertTrue($results[0]->element->tagName == 'object');
     }
@@ -71,7 +71,7 @@ EOD;
     /**
      * Test for present title attribute within object element.
      */
-    public function test_check_pass() {
+    public function test_check_pass(): void {
         $results = $this->get_checker_results($this->htmlpass);
         $this->assertEmpty($results);
     }

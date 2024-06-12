@@ -40,7 +40,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_choice_results
      */
-    public function test_get_choice_results() {
+    public function test_get_choice_results(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -147,7 +147,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_choice_options
      */
-    public function test_get_choice_options() {
+    public function test_get_choice_options(): void {
         global $DB;
 
         // Warningcodes.
@@ -256,7 +256,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test submit_choice_response
      */
-    public function test_submit_choice_response() {
+    public function test_submit_choice_response(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -295,7 +295,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test view_choice
      */
-    public function test_view_choice() {
+    public function test_view_choice(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -351,7 +351,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_choices_by_courses
      */
-    public function test_get_choices_by_courses() {
+    public function test_get_choices_by_courses(): void {
         global $DB;
         $this->resetAfterTest(true);
         // As admin.
@@ -416,7 +416,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_choice_responses
      */
-    public function test_delete_choice_responses() {
+    public function test_delete_choice_responses(): void {
         global $DB;
 
         $this->resetAfterTest(true);

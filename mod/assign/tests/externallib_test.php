@@ -44,7 +44,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test get_grades
      */
-    public function test_get_grades() {
+    public function test_get_grades(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -144,7 +144,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test get_assignments
      */
-    public function test_get_assignments() {
+    public function test_get_assignments(): void {
         global $DB, $USER, $CFG;
 
         $this->resetAfterTest(true);
@@ -332,7 +332,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test get_assignments with submissionstatement.
      */
-    public function test_get_assignments_with_submissionstatement() {
+    public function test_get_assignments_with_submissionstatement(): void {
         global $DB, $USER, $CFG;
 
         $this->resetAfterTest(true);
@@ -390,7 +390,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
      *
      * @covers \mod_assign_external::get_assignments
      */
-    public function test_get_assignments_when_submissionattachments_is_enabled() {
+    public function test_get_assignments_when_submissionattachments_is_enabled(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -462,7 +462,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test get_submissions
      */
-    public function test_get_submissions() {
+    public function test_get_submissions(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -562,7 +562,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test get_submissions with teamsubmission enabled
      */
-    public function test_get_submissions_group_submission() {
+    public function test_get_submissions_group_submission(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -608,7 +608,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
      * Test get_submissions with teamsubmission enabled
      * and a group having a higher attemptnumber than another
      */
-    public function test_get_submissions_group_submission_attemptnumber() {
+    public function test_get_submissions_group_submission_attemptnumber(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -688,7 +688,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test get_user_flags
      */
-    public function test_get_user_flags() {
+    public function test_get_user_flags(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -759,7 +759,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test get_user_mappings
      */
-    public function test_get_user_mappings() {
+    public function test_get_user_mappings(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -820,7 +820,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test lock_submissions
      */
-    public function test_lock_submissions() {
+    public function test_lock_submissions(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -881,7 +881,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test unlock_submissions
      */
-    public function test_unlock_submissions() {
+    public function test_unlock_submissions(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -947,7 +947,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test submit_for_grading
      */
-    public function test_submit_for_grading() {
+    public function test_submit_for_grading(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -1003,7 +1003,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test save_user_extensions
      */
-    public function test_save_user_extensions() {
+    public function test_save_user_extensions(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -1070,7 +1070,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test reveal_identities
      */
-    public function test_reveal_identities() {
+    public function test_reveal_identities(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -1130,7 +1130,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test revert_submissions_to_draft
      */
-    public function test_revert_submissions_to_draft() {
+    public function test_revert_submissions_to_draft(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -1177,7 +1177,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test save_submission
      */
-    public function test_save_submission() {
+    public function test_save_submission(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -1268,7 +1268,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test save_grade
      */
-    public function test_save_grade() {
+    public function test_save_grade(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -1345,7 +1345,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test save grades with advanced grading data
      */
-    public function test_save_grades_with_advanced_grading() {
+    public function test_save_grades_with_advanced_grading(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -1495,7 +1495,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test save grades for a team submission
      */
-    public function test_save_grades_with_group_submission() {
+    public function test_save_grades_with_group_submission(): void {
         global $DB, $USER, $CFG;
         require_once($CFG->dirroot . '/group/lib.php');
 
@@ -1620,7 +1620,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test copy_previous_attempt
      */
-    public function test_copy_previous_attempt() {
+    public function test_copy_previous_attempt(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -1697,7 +1697,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test set_user_flags
      */
-    public function test_set_user_flags() {
+    public function test_set_user_flags(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -1783,7 +1783,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test view_grading_table
      */
-    public function test_view_grading_table_invalid_instance() {
+    public function test_view_grading_table_invalid_instance(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -1802,7 +1802,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test view_grading_table
      */
-    public function test_view_grading_table_not_enrolled() {
+    public function test_view_grading_table_not_enrolled(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -1824,7 +1824,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test view_grading_table
      */
-    public function test_view_grading_table_correct() {
+    public function test_view_grading_table_correct(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -1863,7 +1863,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test view_grading_table
      */
-    public function test_view_grading_table_without_capability() {
+    public function test_view_grading_table_without_capability(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -1895,7 +1895,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test subplugins availability
      */
-    public function test_subplugins_availability() {
+    public function test_subplugins_availability(): void {
         global $CFG;
 
         require_once($CFG->dirroot . '/mod/assign/adminlib.php');
@@ -1938,7 +1938,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test test_view_submission_status
      */
-    public function test_view_submission_status() {
+    public function test_view_submission_status(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -2007,7 +2007,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test get_submission_status for a draft submission.
      */
-    public function test_get_submission_status_in_draft_status() {
+    public function test_get_submission_status_in_draft_status(): void {
         $this->resetAfterTest(true);
 
         list($assign, $instance, $student1, $student2, $teacher, $g1, $g2) = $this->create_submission_for_testing_status();
@@ -2073,7 +2073,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test get_submission_status for a submitted submission.
      */
-    public function test_get_submission_status_in_submission_status() {
+    public function test_get_submission_status_in_submission_status(): void {
         $this->resetAfterTest(true);
 
         list($assign, $instance, $student1, $student2, $teacher, $g1, $g2) = $this->create_submission_for_testing_status(true);
@@ -2106,7 +2106,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test get_submission_status using the teacher role.
      */
-    public function test_get_submission_status_in_submission_status_for_teacher() {
+    public function test_get_submission_status_in_submission_status_for_teacher(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -2179,7 +2179,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test get_submission_status for a reopened submission.
      */
-    public function test_get_submission_status_in_reopened_status() {
+    public function test_get_submission_status_in_reopened_status(): void {
         global $USER;
 
         $this->resetAfterTest(true);
@@ -2281,7 +2281,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test access control for get_submission_status.
      */
-    public function test_get_submission_status_access_control() {
+    public function test_get_submission_status_access_control(): void {
         $this->resetAfterTest(true);
 
         list($assign, $instance, $student1, $student2, $teacher, $g1, $g2) = $this->create_submission_for_testing_status();
@@ -2297,7 +2297,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test hidden grader for get_submission_status.
      */
-    public function test_get_submission_status_hidden_grader() {
+    public function test_get_submission_status_hidden_grader(): void {
         $this->resetAfterTest(true);
 
         list($assign, $instance, $student1, $student2, $teacher, $g1, $g2) = $this->create_submission_for_testing_status(true);
@@ -2358,7 +2358,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test get_submission_status with override for student.
      */
-    public function test_get_submission_status_with_override() {
+    public function test_get_submission_status_with_override(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -2422,7 +2422,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
      *
      * @covers \mod_assign_external::get_submission_status
      */
-    public function test_get_submission_status_with_time_limit_enabled() {
+    public function test_get_submission_status_with_time_limit_enabled(): void {
         $this->resetAfterTest();
 
         set_config('enabletimelimit', '1', 'assign');
@@ -2496,7 +2496,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * get_participant should throw an excaption if the requested assignment doesn't exist.
      */
-    public function test_get_participant_no_assignment() {
+    public function test_get_participant_no_assignment(): void {
         $this->resetAfterTest(true);
         $this->expectException(\moodle_exception::class);
         mod_assign_external::get_participant('-1', '-1', false);
@@ -2506,7 +2506,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
      * get_participant should throw a require_login_exception if the user doesn't have access
      * to view assignments.
      */
-    public function test_get_participant_no_view_capability() {
+    public function test_get_participant_no_view_capability(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -2528,7 +2528,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
      * get_participant should throw a required_capability_exception if the user doesn't have access
      * to view assignment grades.
      */
-    public function test_get_participant_no_grade_capability() {
+    public function test_get_participant_no_grade_capability(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -2552,7 +2552,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * get_participant should throw an exception if the user isn't enrolled in the course.
      */
-    public function test_get_participant_no_participant() {
+    public function test_get_participant_no_participant(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -2572,7 +2572,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
      * get_participant should return a summarised list of details with a different fullname if blind
      * marking is on for the requested assignment.
      */
-    public function test_get_participant_blind_marking() {
+    public function test_get_participant_blind_marking(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -2602,7 +2602,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * get_participant should return a summarised list of details if requested.
      */
-    public function test_get_participant_no_user() {
+    public function test_get_participant_no_user(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -2657,7 +2657,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * get_participant should return user details if requested.
      */
-    public function test_get_participant_full_details() {
+    public function test_get_participant_full_details(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -2687,7 +2687,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
      * get_participant should return group details if a group submission was
      * submitted.
      */
-    public function test_get_participant_group_submission() {
+    public function test_get_participant_group_submission(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -2741,7 +2741,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
      * @param array $expectedproperties array of expected assign properties.
      */
     public function test_get_participant_relative_dates(array $courseconfig, array $assignconfig, array $enrolconfig,
-            array $expectedproperties) {
+            array $expectedproperties): void {
         $this->resetAfterTest();
 
         set_config('enablecourserelativedates', true); // Enable relative dates at site level.
@@ -2796,7 +2796,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
      *
      * @throws coding_exception
      */
-    public function test_list_participants_user_info_with_special_characters() {
+    public function test_list_participants_user_info_with_special_characters(): void {
         global $CFG, $DB;
         $this->resetAfterTest(true);
         $CFG->showuseridentity = 'idnumber,email,phone1,phone2,department,institution';
@@ -2847,7 +2847,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test for the type of the user-related properties in mod_assign_external::list_participants_returns().
      */
-    public function test_list_participants_returns_user_property_types() {
+    public function test_list_participants_returns_user_property_types(): void {
         // Get user properties.
         $userdesc = core_user_external::user_description();
         $this->assertTrue(isset($userdesc->keys));
@@ -2882,7 +2882,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
      * @covers ::get_participant
      * @covers ::list_participants
      */
-    public function test_participants_info_with_groups() {
+    public function test_participants_info_with_groups(): void {
         global $CFG;
         $this->resetAfterTest(true);
         $CFG->showuseridentity = 'idnumber,email,phone1,phone2,department,institution';
@@ -2928,7 +2928,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test test_view_assign
      */
-    public function test_view_assign() {
+    public function test_view_assign(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;

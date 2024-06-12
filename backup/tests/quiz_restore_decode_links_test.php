@@ -36,7 +36,7 @@ class quiz_restore_decode_links_test extends \advanced_testcase {
     /**
      * Test restore_decode_rule class
      */
-    public function test_restore_quiz_decode_links() {
+    public function test_restore_quiz_decode_links(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);

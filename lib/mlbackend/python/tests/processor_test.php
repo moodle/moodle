@@ -34,14 +34,14 @@ class processor_test extends \advanced_testcase {
      * @param string $required A sample of the required package version
      * @param int $result Expected value returned by the tested method
      */
-    public function test_check_pip_package_version($actual, $required, $result) {
+    public function test_check_pip_package_version($actual, $required, $result): void {
         $this->assertSame($result, \mlbackend_python\processor::check_pip_package_version($actual, $required));
     }
 
     /**
      * Check that the {@link \mlbackend_python\processor::check_pip_package_version()} can be called with single argument.
      */
-    public function test_check_pip_package_version_default() {
+    public function test_check_pip_package_version_default(): void {
 
         $this->assertSame(-1, \mlbackend_python\processor::check_pip_package_version('0.0.1'));
         $this->assertSame(0, \mlbackend_python\processor::check_pip_package_version(

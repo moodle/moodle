@@ -77,7 +77,7 @@ class qubaid_condition_test extends \advanced_testcase {
         $this->assertEquals($expectedparams, $params);
     }
 
-    public function test_qubaid_list_one_join() {
+    public function test_qubaid_list_one_join(): void {
         $qubaids = new qubaid_list(array(1));
         $this->check_typical_question_attempts_query($qubaids,
                 "SELECT qa.id, qa.maxmark
@@ -86,7 +86,7 @@ class qubaid_condition_test extends \advanced_testcase {
             array('qubaid1' => 1, 'slot' => 1));
     }
 
-    public function test_qubaid_list_several_join() {
+    public function test_qubaid_list_several_join(): void {
         $qubaids = new qubaid_list(array(1, 3, 7));
         $this->check_typical_question_attempts_query($qubaids,
                 "SELECT qa.id, qa.maxmark
@@ -95,7 +95,7 @@ class qubaid_condition_test extends \advanced_testcase {
             array('qubaid2' => 1, 'qubaid3' => 3, 'qubaid4' => 7, 'slot' => 1));
     }
 
-    public function test_qubaid_join() {
+    public function test_qubaid_join(): void {
         $qubaids = new qubaid_join("{other_table} ot", 'ot.usageid', 'ot.id = 1');
 
         $this->check_typical_question_attempts_query($qubaids,
@@ -105,7 +105,7 @@ class qubaid_condition_test extends \advanced_testcase {
             WHERE ot.id = 1 AND qa.slot = :slot", array('slot' => 1));
     }
 
-    public function test_qubaid_join_no_where_join() {
+    public function test_qubaid_join_no_where_join(): void {
         $qubaids = new qubaid_join("{other_table} ot", 'ot.usageid');
 
         $this->check_typical_question_attempts_query($qubaids,
@@ -115,7 +115,7 @@ class qubaid_condition_test extends \advanced_testcase {
             WHERE 1 = 1 AND qa.slot = :slot", array('slot' => 1));
     }
 
-    public function test_qubaid_list_one_in() {
+    public function test_qubaid_list_one_in(): void {
         global $CFG;
         $qubaids = new qubaid_list(array(1));
         $this->check_typical_in_query($qubaids,
@@ -124,7 +124,7 @@ class qubaid_condition_test extends \advanced_testcase {
             WHERE qa.questionusageid = :qubaid5", array('qubaid5' => 1));
     }
 
-    public function test_qubaid_list_several_in() {
+    public function test_qubaid_list_several_in(): void {
         global $CFG;
         $qubaids = new qubaid_list(array(1, 2, 3));
         $this->check_typical_in_query($qubaids,
@@ -134,7 +134,7 @@ class qubaid_condition_test extends \advanced_testcase {
                 array('qubaid6' => 1, 'qubaid7' => 2, 'qubaid8' => 3));
     }
 
-    public function test_qubaid_join_in() {
+    public function test_qubaid_join_in(): void {
         global $CFG;
         $qubaids = new qubaid_join("{other_table} ot", 'ot.usageid', 'ot.id = 1');
 
@@ -145,7 +145,7 @@ class qubaid_condition_test extends \advanced_testcase {
                 array());
     }
 
-    public function test_qubaid_join_no_where_in() {
+    public function test_qubaid_join_no_where_in(): void {
         global $CFG;
         $qubaids = new qubaid_join("{other_table} ot", 'ot.usageid');
 

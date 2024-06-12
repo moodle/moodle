@@ -71,7 +71,7 @@ class exporter_test extends \advanced_testcase {
         $this->invaliddata = array('stringA' => 'A string');
     }
 
-    public function test_get_read_structure() {
+    public function test_get_read_structure(): void {
         $structure = core_testable_exporter::get_read_structure();
 
         $this->assertInstanceOf(external_single_structure::class, $structure);
@@ -82,7 +82,7 @@ class exporter_test extends \advanced_testcase {
         $this->assertInstanceOf(external_multiple_structure::class, $structure->keys['otherstrings']);
     }
 
-    public function test_get_create_structure() {
+    public function test_get_create_structure(): void {
         $structure = core_testable_exporter::get_create_structure();
 
         $this->assertInstanceOf(external_single_structure::class, $structure);
@@ -93,7 +93,7 @@ class exporter_test extends \advanced_testcase {
         $this->assertArrayNotHasKey('otherstrings', $structure->keys);
     }
 
-    public function test_get_update_structure() {
+    public function test_get_update_structure(): void {
         $structure = core_testable_exporter::get_update_structure();
 
         $this->assertInstanceOf(external_single_structure::class, $structure);
@@ -104,7 +104,7 @@ class exporter_test extends \advanced_testcase {
         $this->assertArrayNotHasKey('otherstrings', $structure->keys);
     }
 
-    public function test_invalid_data() {
+    public function test_invalid_data(): void {
         global $PAGE;
         $exporter = new core_testable_exporter($this->invaliddata, $this->validrelated);
         $output = $PAGE->get_renderer('core');
@@ -115,14 +115,14 @@ class exporter_test extends \advanced_testcase {
         $result = $exporter->export($output);
     }
 
-    public function test_invalid_related() {
+    public function test_invalid_related(): void {
         $this->expectException(\coding_exception::class);
         $this->expectExceptionMessage('Exporter class is missing required related data: (core\core_testable_exporter) ' .
             'simplestdClass => stdClass');
         $exporter = new core_testable_exporter($this->validdata, $this->invalidrelated);
     }
 
-    public function test_invalid_related_all_cases() {
+    public function test_invalid_related_all_cases(): void {
         global $PAGE;
 
         foreach ($this->invalidrelated as $key => $value) {
@@ -139,7 +139,7 @@ class exporter_test extends \advanced_testcase {
         }
     }
 
-    public function test_valid_data_and_related() {
+    public function test_valid_data_and_related(): void {
         global $PAGE;
         $output = $PAGE->get_renderer('core');
         $exporter = new core_testable_exporter($this->validdata, $this->validrelated);
@@ -148,7 +148,7 @@ class exporter_test extends \advanced_testcase {
         $this->assertSame(array('String &gt;a', 'String b'), $result->otherstrings);
     }
 
-    public function test_format_text() {
+    public function test_format_text(): void {
         global $PAGE;
 
         $this->resetAfterTest();
@@ -189,7 +189,7 @@ class exporter_test extends \advanced_testcase {
         $this->assertEquals(FORMAT_HTML, $result->stringAformat);
     }
 
-    public function test_properties_description() {
+    public function test_properties_description(): void {
         $properties = core_testable_exporter::read_properties_definition();
         // Properties default description.
         $this->assertEquals('stringA', $properties['stringA']['description']);

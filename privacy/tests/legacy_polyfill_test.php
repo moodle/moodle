@@ -50,7 +50,7 @@ class legacy_polyfill_test extends \advanced_testcase {
      *
      * @covers ::get_reason
      */
-    public function test_null_provider() {
+    public function test_null_provider(): void {
         $this->assertEquals('thisisareason', test_legacy_polyfill_null_provider::get_reason());
     }
 
@@ -60,7 +60,7 @@ class legacy_polyfill_test extends \advanced_testcase {
      *
      * @covers ::get_metadata
      */
-    public function test_metadata_provider() {
+    public function test_metadata_provider(): void {
         $collection = new collection('core_privacy');
         $this->assertSame($collection, test_legacy_polyfill_metadata_provider::get_metadata($collection));
     }
@@ -71,7 +71,7 @@ class legacy_polyfill_test extends \advanced_testcase {
      *
      * @covers ::export_user_preferences
      */
-    public function test_user_preference_provider() {
+    public function test_user_preference_provider(): void {
         $userid = 417;
 
         $mock = $this->createMock(test_legacy_polyfill_mock_wrapper::class);
@@ -89,7 +89,7 @@ class legacy_polyfill_test extends \advanced_testcase {
      *
      * @covers ::get_contexts_for_userid
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $userid = 417;
         $contextlist = new contextlist('core_privacy');
 
@@ -110,7 +110,7 @@ class legacy_polyfill_test extends \advanced_testcase {
      *
      * @covers ::export_user_data
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         $contextlist = new approved_contextlist(\core_user::get_user_by_username('admin'), 'core_privacy', [98]);
 
         $mock = $this->createMock(test_legacy_polyfill_mock_wrapper::class);
@@ -128,7 +128,7 @@ class legacy_polyfill_test extends \advanced_testcase {
      *
      * @covers ::delete_data_for_all_users_in_context
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         $mock = $this->createMock(test_legacy_polyfill_mock_wrapper::class);
         $mock->expects($this->once())
             ->method('get_return_value')
@@ -144,7 +144,7 @@ class legacy_polyfill_test extends \advanced_testcase {
      *
      * @covers ::delete_data_for_user
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         $contextlist = new approved_contextlist(\core_user::get_user_by_username('admin'), 'core_privacy', [98]);
 
         $mock = $this->createMock(test_legacy_polyfill_mock_wrapper::class);

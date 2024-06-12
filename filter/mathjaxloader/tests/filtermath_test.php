@@ -40,7 +40,7 @@ class filtermath_test extends \advanced_testcase {
      *
      * @dataProvider math_filtering_inputs
      */
-    public function test_math_filtering($inputtext, $expected) {
+    public function test_math_filtering($inputtext, $expected): void {
         $filter = new filter_mathjaxloader(\context_system::instance(), []);
         $this->assertEquals($expected, $filter->filter($inputtext));
     }

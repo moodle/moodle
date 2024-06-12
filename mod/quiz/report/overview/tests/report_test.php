@@ -327,7 +327,7 @@ class report_test extends \advanced_testcase {
      *
      * @covers ::regrade_question
      */
-    public function test_regrade_question() {
+    public function test_regrade_question(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();

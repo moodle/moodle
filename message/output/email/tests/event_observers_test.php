@@ -29,7 +29,7 @@ class event_observers_test extends \advanced_testcase {
     /**
      * Test the message viewed event observer.
      */
-    public function test_message_viewed_observer() {
+    public function test_message_viewed_observer(): void {
         global $DB;
 
         $this->preventResetByRollback(); // Messaging is not compatible with transactions.

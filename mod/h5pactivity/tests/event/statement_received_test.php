@@ -39,7 +39,7 @@ class statement_received_test extends advanced_testcase {
     /**
      * Test statement_recieved event.
      */
-    public function test_statement_received() {
+    public function test_statement_received(): void {
         global $USER;
 
         $this->resetAfterTest();

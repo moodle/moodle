@@ -40,7 +40,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test view_imscp
      */
-    public function test_view_imscp() {
+    public function test_view_imscp(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -111,7 +111,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_imscps_by_courses
      */
-    public function test_get_imscps_by_courses() {
+    public function test_get_imscps_by_courses(): void {
         global $DB, $USER;
         $this->resetAfterTest(true);
         // As admin.

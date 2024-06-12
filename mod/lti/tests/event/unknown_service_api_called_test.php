@@ -27,7 +27,7 @@ class unknown_service_api_called_test extends \advanced_testcase {
     /*
      * Ensure create event works.
      */
-    public function test_create_event() {
+    public function test_create_event(): void {
         $event = unknown_service_api_called::create();
         $this->assertInstanceOf('\mod_lti\event\unknown_service_api_called', $event);
     }
@@ -35,7 +35,7 @@ class unknown_service_api_called_test extends \advanced_testcase {
     /*
      * Ensure event context works.
      */
-    public function test_event_context() {
+    public function test_event_context(): void {
         $event = unknown_service_api_called::create();
         $this->assertEquals(\context_system::instance(), $event->get_context());
     }
@@ -43,7 +43,7 @@ class unknown_service_api_called_test extends \advanced_testcase {
     /*
      * Ensure we can trigger the event.
      */
-    public function test_trigger_event() {
+    public function test_trigger_event(): void {
         $event = unknown_service_api_called::create();
 
         $sink = $this->redirectEvents();
@@ -55,7 +55,7 @@ class unknown_service_api_called_test extends \advanced_testcase {
     /*
      * Ensure get/set message data is functioning as expected.
      */
-    public function test_get_message_data() {
+    public function test_get_message_data(): void {
         $data = (object) array(
             'foo' => 'bar',
             'bat' => 'baz',

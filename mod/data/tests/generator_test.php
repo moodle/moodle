@@ -31,7 +31,7 @@ class generator_test extends \advanced_testcase {
     /**
      * @covers ::create_instance
      */
-    public function test_generator() {
+    public function test_generator(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -75,7 +75,7 @@ class generator_test extends \advanced_testcase {
     /**
      * @covers ::create_field
      */
-    public function test_create_field() {
+    public function test_create_field(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -125,7 +125,7 @@ class generator_test extends \advanced_testcase {
     /**
      * @covers ::create_entry
      */
-    public function test_create_entry() {
+    public function test_create_entry(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -247,7 +247,7 @@ class generator_test extends \advanced_testcase {
      * @covers ::create_preset
      * @param stdClass|null $record data for the preset that will be created (like name or description)
      */
-    public function test_create_preset(?stdClass $record) {
+    public function test_create_preset(?stdClass $record): void {
         global $USER;
 
         $this->resetAfterTest();

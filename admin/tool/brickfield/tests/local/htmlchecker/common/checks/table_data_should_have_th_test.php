@@ -117,7 +117,7 @@ EOD;
     /**
      * Test that th does not exist
      */
-    public function test_check_fail() {
+    public function test_check_fail(): void {
         $results = $this->get_checker_results($this->htmlfail1);
         $this->assertTrue($results[0]->element->tagName == 'table');
 
@@ -128,7 +128,7 @@ EOD;
     /**
      * Test that th does exist
      */
-    public function test_check_pass() {
+    public function test_check_pass(): void {
         $results = $this->get_checker_results($this->htmlpass1);
         $this->assertEmpty($results);
 

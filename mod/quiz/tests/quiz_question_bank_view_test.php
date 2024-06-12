@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/question/editlib.php');
  */
 class quiz_question_bank_view_test extends \advanced_testcase {
 
-    public function test_viewing_question_bank_should_not_load_individual_questions() {
+    public function test_viewing_question_bank_should_not_load_individual_questions(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $generator = $this->getDataGenerator();

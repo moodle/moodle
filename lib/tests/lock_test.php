@@ -119,7 +119,7 @@ class lock_test extends \advanced_testcase {
      * Tests the testable lock factories classes.
      * @return void
      */
-    public function test_locks() {
+    public function test_locks(): void {
         // Run the suite on the current configured default (may be non-core).
         $this->run_on_lock_factory(\core\lock\lock_config::get_lock_factory_class());
 

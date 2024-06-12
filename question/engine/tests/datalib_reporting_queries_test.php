@@ -66,7 +66,7 @@ class datalib_reporting_queries_test extends \qbehaviour_walkthrough_test_base {
      * operations on the data, we use a single method to do the set-up, which
      * calls diffents methods to test each query.
      */
-    public function test_reporting_queries() {
+    public function test_reporting_queries(): void {
         // We create two usages, each with two questions, a short-answer marked
         // out of 5, and and essay marked out of 10.
         //

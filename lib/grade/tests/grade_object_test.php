@@ -30,7 +30,7 @@ require_once(__DIR__ . '/fixtures/lib.php');
  */
 class grade_object_test extends \grade_base_testcase {
 
-    public function test_fetch_all_helper() {
+    public function test_fetch_all_helper(): void {
         // Simple ID lookup.
         $params = array('id' => $this->grade_items[0]->id);
         $items = \grade_object::fetch_all_helper('grade_items', 'grade_item', $params);

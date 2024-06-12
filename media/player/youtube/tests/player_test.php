@@ -46,7 +46,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test that plugin is returned as enabled media plugin.
      */
-    public function test_is_installed() {
+    public function test_is_installed(): void {
         $sortorder = \core\plugininfo\media::get_enabled_plugins();
         $this->assertEquals(['youtube' => 'youtube'], $sortorder);
     }
@@ -54,7 +54,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test supported link types
      */
-    public function test_supported() {
+    public function test_supported(): void {
         $manager = core_media_manager::instance();
 
         // Format: youtube.
@@ -113,7 +113,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test embedding without media filter (for example for displaying URL resorce).
      */
-    public function test_embed_url() {
+    public function test_embed_url(): void {
         global $CFG;
 
         $url = new \moodle_url('http://www.youtube.com/v/vyrwMmsufJc');
@@ -142,7 +142,7 @@ class player_test extends \advanced_testcase {
      *
      * filter_mediaplugin is enabled by default.
      */
-    public function test_embed_link() {
+    public function test_embed_link(): void {
         global $CFG;
         $url = new \moodle_url('http://www.youtube.com/v/vyrwMmsufJc');
         $text = \html_writer::link($url, 'Watch this one');
@@ -159,7 +159,7 @@ class player_test extends \advanced_testcase {
      *
      * filter_mediaplugin is enabled by default.
      */
-    public function test_embed_media() {
+    public function test_embed_media(): void {
         global $CFG;
         $url = new \moodle_url('http://www.youtube.com/v/vyrwMmsufJc');
         $trackurl = new \moodle_url('http://example.org/some_filename.vtt');
@@ -191,7 +191,7 @@ class player_test extends \advanced_testcase {
      *
      * @covers \media_youtube_plugin::embed_external
      */
-    public function test_youtube_nocookie() {
+    public function test_youtube_nocookie(): void {
         // Turn on the no cookie option.
         set_config('nocookie', true, 'media_youtube');
 

@@ -202,7 +202,7 @@ class filter_test extends \basic_testcase {
     /**
      * @dataProvider get_convert_urls_into_links_test_cases
      */
-    function test_convert_urls_into_links($text, $correctresult) {
+    function test_convert_urls_into_links($text, $correctresult): void {
         $testablefilter = new testable_filter_urltolink();
         $testablefilter->convert_urls_into_links($text);
         $this->assertEquals($correctresult, $text);

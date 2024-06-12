@@ -36,7 +36,7 @@ class datalib_test extends \advanced_testcase {
     /**
      * Do a test of the user search SQL with database users.
      */
-    public function test_users_search_sql() {
+    public function test_users_search_sql(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -154,19 +154,19 @@ class datalib_test extends \advanced_testcase {
         }
     }
 
-    public function test_users_order_by_sql_simple() {
+    public function test_users_order_by_sql_simple(): void {
         list($sort, $params) = users_order_by_sql();
         $this->assert_same_sql('lastname, firstname, id', $sort);
         $this->assertEquals(array(), $params);
     }
 
-    public function test_users_order_by_sql_table_prefix() {
+    public function test_users_order_by_sql_table_prefix(): void {
         list($sort, $params) = users_order_by_sql('u');
         $this->assert_same_sql('u.lastname, u.firstname, u.id', $sort);
         $this->assertEquals(array(), $params);
     }
 
-    public function test_users_order_by_sql_search_no_extra_fields() {
+    public function test_users_order_by_sql_search_no_extra_fields(): void {
         global $CFG, $DB;
         $this->resetAfterTest(true);
 
@@ -182,7 +182,7 @@ class datalib_test extends \advanced_testcase {
                 'usersortexact3' => 'search'), $params);
     }
 
-    public function test_users_order_by_sql_search_with_extra_fields_and_prefix() {
+    public function test_users_order_by_sql_search_with_extra_fields_and_prefix(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
 
@@ -220,7 +220,7 @@ class datalib_test extends \advanced_testcase {
                 'usersortexact3' => 'search', 'usersortexact4' => 'search'), $params);
     }
 
-    public function test_get_admin() {
+    public function test_get_admin(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
 
@@ -252,7 +252,7 @@ class datalib_test extends \advanced_testcase {
         $this->assertEquals($odlread, $DB->perf_get_reads());
     }
 
-    public function test_get_admins() {
+    public function test_get_admins(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
 
@@ -283,7 +283,7 @@ class datalib_test extends \advanced_testcase {
         $this->assertEquals($odlread+1, $DB->perf_get_reads());
     }
 
-    public function test_get_course() {
+    public function test_get_course(): void {
         global $DB, $PAGE, $SITE;
         $this->resetAfterTest();
 
@@ -338,7 +338,7 @@ class datalib_test extends \advanced_testcase {
         ], reset($courses));
     }
 
-    public function test_increment_revision_number() {
+    public function test_increment_revision_number(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -395,7 +395,7 @@ class datalib_test extends \advanced_testcase {
         $this->assertEquals($record1->cacherev, $record2->cacherev);
     }
 
-    public function test_get_coursemodule_from_id() {
+    public function test_get_coursemodule_from_id(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -461,7 +461,7 @@ class datalib_test extends \advanced_testcase {
         }
     }
 
-    public function test_get_coursemodule_from_instance() {
+    public function test_get_coursemodule_from_instance(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -525,7 +525,7 @@ class datalib_test extends \advanced_testcase {
         }
     }
 
-    public function test_get_coursemodules_in_course() {
+    public function test_get_coursemodules_in_course(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -594,7 +594,7 @@ class datalib_test extends \advanced_testcase {
         }
     }
 
-    public function test_get_all_instances_in_courses() {
+    public function test_get_all_instances_in_courses(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -649,7 +649,7 @@ class datalib_test extends \advanced_testcase {
         }
     }
 
-    public function test_get_all_instances_in_course() {
+    public function test_get_all_instances_in_course(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -705,7 +705,7 @@ class datalib_test extends \advanced_testcase {
     /**
      * Test max courses in category
      */
-    public function test_max_courses_in_category() {
+    public function test_max_courses_in_category(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -770,7 +770,7 @@ class datalib_test extends \advanced_testcase {
     /**
      * Test debug message for max courses in category
      */
-    public function test_debug_max_courses_in_category() {
+    public function test_debug_max_courses_in_category(): void {
         global $CFG;
         $this->resetAfterTest();
 

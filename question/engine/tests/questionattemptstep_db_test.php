@@ -35,7 +35,7 @@ require_once(__DIR__ . '/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class questionattemptstep_db_test extends \data_loading_method_test_base {
-    public function test_load_with_data() {
+    public function test_load_with_data(): void {
         $records = new question_test_recordset(array(
             array('attemptstepid', 'questionattemptid', 'sequencenumber', 'state', 'fraction', 'timecreated', 'userid', 'name', 'value', 'qtype', 'contextid'),
             array(             1,                   1,                0,  'todo',       null,    1256228502,       13,   null,    null, 'description', 1),
@@ -54,7 +54,7 @@ class questionattemptstep_db_test extends \data_loading_method_test_base {
         $this->assertEquals(array('x' => 'a', '_y' => '_b', '-z' => '!c', '-_t' => '!_d'), $step->get_all_data());
     }
 
-    public function test_load_without_data() {
+    public function test_load_without_data(): void {
         $records = new question_test_recordset(array(
             array('attemptstepid', 'questionattemptid', 'sequencenumber', 'state', 'fraction', 'timecreated', 'userid', 'name', 'value', 'contextid'),
             array(             2,                   1,                1,  'complete',   null,    1256228505,       13,   null,    null, 1),
@@ -68,7 +68,7 @@ class questionattemptstep_db_test extends \data_loading_method_test_base {
         $this->assertEquals(array(), $step->get_all_data());
     }
 
-    public function test_load_dont_be_too_greedy() {
+    public function test_load_dont_be_too_greedy(): void {
         $records = new question_test_recordset(array(
             array('attemptstepid', 'questionattemptid', 'sequencenumber', 'state', 'fraction', 'timecreated', 'userid', 'name', 'value', 'contextid'),
             array(             1,                   1,                0,  'todo',       null,    1256228502,       13,    'x',  'right', 1),

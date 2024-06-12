@@ -29,7 +29,7 @@ class config_key_test extends \advanced_testcase {
     /**
      * Test that trying to generate the hash key with bad xml will result in an error.
      */
-    public function test_config_key_not_generated_with_bad_xml() {
+    public function test_config_key_not_generated_with_bad_xml(): void {
         $this->expectException(\invalid_parameter_exception::class);
         $this->expectExceptionMessage("Invalid a PList XML string, representing SEB config");
         config_key::generate("<?xml This is some bad xml for sure.");
@@ -38,7 +38,7 @@ class config_key_test extends \advanced_testcase {
     /**
      * Test that a config key is generated with empty configuration. SEB would be using defaults for all settings.
      */
-    public function test_config_key_hash_generated_with_empty_string() {
+    public function test_config_key_hash_generated_with_empty_string(): void {
         $hash = config_key::generate('')->get_hash();
         $this->assertEquals('4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945', $hash);
     }
@@ -46,7 +46,7 @@ class config_key_test extends \advanced_testcase {
     /**
      * Check that the Config Key hash is not altered if the originatorVersion is present in the XML or not.
      */
-    public function test_presence_of_originator_version_does_not_effect_hash() {
+    public function test_presence_of_originator_version_does_not_effect_hash(): void {
         $xmlwithoriginatorversion = file_get_contents(__DIR__ . '/fixtures/simpleunencrypted.seb');
         $xmlwithoutoriginatorversion = file_get_contents(__DIR__ . '/fixtures/simpleunencryptedwithoutoriginator.seb');
         $hashwithorigver = config_key::generate($xmlwithoriginatorversion)->get_hash();

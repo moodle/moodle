@@ -36,7 +36,7 @@ class accessibility_review_test extends advanced_testcase {
         require_once(__DIR__ . '/../block_accessreview.php');
     }
 
-    public function test_get_toggle_link() {
+    public function test_get_toggle_link(): void {
         $rc = new ReflectionClass(block_accessreview::class);
         $rm = $rc->getMethod('get_toggle_link');
 
@@ -45,7 +45,7 @@ class accessibility_review_test extends advanced_testcase {
         $this->assertNotEmpty($output);
     }
 
-    public function test_get_download_link() {
+    public function test_get_download_link(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -70,7 +70,7 @@ class accessibility_review_test extends advanced_testcase {
         $this->assertEmpty($result);
     }
 
-    public function test_get_report_link() {
+    public function test_get_report_link(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();

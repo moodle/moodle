@@ -38,7 +38,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test getting licenses from database or cache.
      */
-    public function test_get_licenses() {
+    public function test_get_licenses(): void {
         $this->resetAfterTest();
 
         // Reset the cache, to make sure we are not getting cached licenses.
@@ -74,7 +74,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test saving a license.
      */
-    public function test_save() {
+    public function test_save(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -120,7 +120,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test ability to get a license by it's short name.
      */
-    public function test_get_license_by_shortname() {
+    public function test_get_license_by_shortname(): void {
 
         $license = license_manager::get_license_by_shortname('cc-nc-4.0');
         $actual = $license->fullname;
@@ -132,7 +132,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test disabling a license.
      */
-    public function test_disable_license() {
+    public function test_disable_license(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -151,7 +151,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test enabling a license.
      */
-    public function test_enable_license() {
+    public function test_enable_license(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -170,7 +170,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test deleting a custom license.
      */
-    public function test_delete() {
+    public function test_delete(): void {
         $this->resetAfterTest();
 
         // Create a custom license.
@@ -191,7 +191,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test trying to delete a license currently in use by a file.
      */
-    public function test_delete_license_in_use_by_file() {
+    public function test_delete_license_in_use_by_file(): void {
         $this->resetAfterTest();
 
         // Create a custom license.
@@ -226,7 +226,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test trying to delete a core license.
      */
-    public function test_delete_license_core() {
+    public function test_delete_license_core(): void {
         // Should not be able to delete a standard/core license.
         $this->expectException(moodle_exception::class);
         license_manager::delete('cc-nc-4.0');
@@ -235,7 +235,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test trying to delete a license which doesn't exist.
      */
-    public function test_delete_license_not_exists() {
+    public function test_delete_license_not_exists(): void {
         // Should throw an exception if license with shortname doesn't exist.
         $this->expectException(moodle_exception::class);
         license_manager::delete('somefakelicense');
@@ -244,7 +244,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test setting active licenses.
      */
-    public function test_set_active_licenses() {
+    public function test_set_active_licenses(): void {
         $this->resetAfterTest();
 
         // Private method used internally, test through disable and enable public methods.
@@ -258,7 +258,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test getting active licenses.
      */
-    public function test_get_active_licenses() {
+    public function test_get_active_licenses(): void {
         $this->resetAfterTest();
 
         license_manager::disable('allrightsreserved');
@@ -277,7 +277,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test getting active licenses as array.
      */
-    public function test_get_active_licenses_as_array() {
+    public function test_get_active_licenses_as_array(): void {
         $this->resetAfterTest();
 
         license_manager::disable('allrightsreserved');
@@ -298,7 +298,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test resetting the license cache.
      */
-    public function test_reset_license_cache() {
+    public function test_reset_license_cache(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -326,7 +326,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test that all licenses are installed correctly.
      */
-    public function test_install_licenses() {
+    public function test_install_licenses(): void {
         global $DB;
 
         $this->resetAfterTest();

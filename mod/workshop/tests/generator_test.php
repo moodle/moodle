@@ -26,7 +26,7 @@ namespace mod_workshop;
  */
 class generator_test extends \advanced_testcase {
 
-    public function test_create_instance() {
+    public function test_create_instance(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -46,7 +46,7 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals('Another workshop', $records[$workshop->id]->name);
     }
 
-    public function test_create_submission() {
+    public function test_create_submission(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -68,7 +68,7 @@ class generator_test extends \advanced_testcase {
         $this->assertSame('My custom title', $submissions[$id]->title);
     }
 
-    public function test_create_assessment() {
+    public function test_create_assessment(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();

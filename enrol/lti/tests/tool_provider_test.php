@@ -72,7 +72,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Passing non-existent tool ID.
      */
-    public function test_constructor_with_non_existent_tool() {
+    public function test_constructor_with_non_existent_tool(): void {
         $this->expectException('dml_exception');
         new tool_provider(-1);
     }
@@ -80,7 +80,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Constructor test.
      */
-    public function test_constructor() {
+    public function test_constructor(): void {
         global $CFG, $SITE;
 
         $tool = $this->tool;
@@ -121,7 +121,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for handle request.
      */
-    public function test_handle_request_no_request_data() {
+    public function test_handle_request_no_request_data(): void {
         $tool = $this->tool;
         $tp = new tool_provider($tool->id);
 
@@ -140,7 +140,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::onError().
      */
-    public function test_on_error() {
+    public function test_on_error(): void {
         $tool = $this->tool;
         $tp = new dummy_tool_provider($tool->id);
         $message = "THIS IS AN ERROR!";
@@ -153,7 +153,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::onRegister() with no tool consumer set.
      */
-    public function test_on_register_no_consumer() {
+    public function test_on_register_no_consumer(): void {
         $tool = $this->tool;
 
         $tp = new dummy_tool_provider($tool->id);
@@ -166,7 +166,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::onRegister() without return URL.
      */
-    public function test_on_register_no_return_url() {
+    public function test_on_register_no_return_url(): void {
         $tool = $this->tool;
 
         $dataconnector = new data_connector();
@@ -192,7 +192,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::onRegister() when registration fails.
      */
-    public function test_on_register_failed() {
+    public function test_on_register_failed(): void {
         global $CFG;
         $tool = $this->tool;
 
@@ -225,7 +225,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::onRegister() when registration succeeds.
      */
-    public function test_on_register() {
+    public function test_on_register(): void {
         global $CFG, $DB;
         $tool = $this->tool;
 
@@ -275,7 +275,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::onLaunch().
      */
-    public function test_on_launch_no_frame_embedding() {
+    public function test_on_launch_no_frame_embedding(): void {
         $tp = $this->build_dummy_tp();
 
         // Capture output of onLaunch() method and save it as a string.
@@ -290,7 +290,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::onLaunch().
      */
-    public function test_on_launch_with_frame_embedding() {
+    public function test_on_launch_with_frame_embedding(): void {
         global $CFG;
         $CFG->allowframembedding = true;
 
@@ -307,7 +307,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::onLaunch() with invalid secret and no tool proxy (for LTI 1 launches).
      */
-    public function test_on_launch_with_invalid_secret_and_no_proxy() {
+    public function test_on_launch_with_invalid_secret_and_no_proxy(): void {
         $tp = $this->build_dummy_tp('badsecret');
 
         // Suppress session header errors.
@@ -319,7 +319,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::onLaunch() with invalid launch URL.
      */
-    public function test_on_launch_proxy_with_invalid_launch_url() {
+    public function test_on_launch_proxy_with_invalid_launch_url(): void {
         $proxy = [
             'tool_profile' => [
                 'resource_handler' => [
@@ -345,7 +345,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::onLaunch() with invalid launch URL.
      */
-    public function test_on_launch_proxy_with_valid_launch_url() {
+    public function test_on_launch_proxy_with_valid_launch_url(): void {
         $tool = $this->tool;
 
         $proxy = [
@@ -378,7 +378,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::onLaunch() for a request with message type other than basic-lti-launch-request.
      */
-    public function test_on_launch_proxy_with_invalid_message_type() {
+    public function test_on_launch_proxy_with_invalid_message_type(): void {
         $tool = $this->tool;
 
         $proxy = [
@@ -407,7 +407,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::onLaunch() to verify that a user image can be set from the resource link's custom_user_image setting.
      */
-    public function test_on_launch_with_user_image_from_resource_link() {
+    public function test_on_launch_with_user_image_from_resource_link(): void {
         global $DB;
 
         $userimageurl = $this->getExternalTestFileUrl('test.jpg');
@@ -434,7 +434,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::onLaunch() to verify that a LTI user has been enrolled.
      */
-    public function test_on_launch_user_enrolment() {
+    public function test_on_launch_user_enrolment(): void {
         global $DB;
 
         $tp = $this->build_dummy_tp($this->tool->secret);
@@ -459,7 +459,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::onLaunch() when the consumer object has not been set.
      */
-    public function test_on_launch_no_consumer() {
+    public function test_on_launch_no_consumer(): void {
         global $DB;
 
         $tool = $this->tool;
@@ -479,7 +479,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::onLaunch() when we have a non-existent consumer data.
      */
-    public function test_on_launch_invalid_consumer() {
+    public function test_on_launch_invalid_consumer(): void {
         $tool = $this->tool;
 
         $dataconnector = new data_connector();
@@ -496,7 +496,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::map_tool_to_consumer().
      */
-    public function test_map_tool_to_consumer() {
+    public function test_map_tool_to_consumer(): void {
         global $DB;
 
         $tp = $this->build_dummy_tp();
@@ -513,7 +513,7 @@ class tool_provider_test extends \advanced_testcase {
     /**
      * Test for tool_provider::map_tool_to_consumer().
      */
-    public function test_map_tool_to_consumer_no_consumer() {
+    public function test_map_tool_to_consumer_no_consumer(): void {
         $tp = new dummy_tool_provider($this->tool->id);
         $this->expectException('moodle_exception');
         $tp->map_tool_to_consumer();

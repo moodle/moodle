@@ -41,7 +41,7 @@ class attempts_test extends \advanced_testcase {
      * Test the functions quiz_update_open_attempts(), get_list_of_overdue_attempts() and
      * update_overdue_attempts().
      */
-    public function test_bulk_update_functions() {
+    public function test_bulk_update_functions(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -467,7 +467,7 @@ class attempts_test extends \advanced_testcase {
     /**
      * Test the group event handlers
      */
-    public function test_group_event_handlers() {
+    public function test_group_event_handlers(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -538,7 +538,7 @@ class attempts_test extends \advanced_testcase {
     /**
      * Test the functions quiz_create_attempt_handling_errors
      */
-    public function test_quiz_create_attempt_handling_errors() {
+    public function test_quiz_create_attempt_handling_errors(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 

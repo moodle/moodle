@@ -68,7 +68,7 @@ class external_test extends externallib_advanced_testcase {
                 'datatype' => 'textarea', 'signup' => 1, 'visible' => 1, 'required' => 1, 'sortorder' => 2))->id;
     }
 
-    public function test_get_signup_settings() {
+    public function test_get_signup_settings(): void {
         global $CFG;
 
         $CFG->defaultcity = 'Bcn';
@@ -113,7 +113,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_signup_settings with mathjax in a profile field.
      */
-    public function test_get_signup_settings_with_mathjax_in_profile_fields() {
+    public function test_get_signup_settings_with_mathjax_in_profile_fields(): void {
         // Enable MathJax filter in content and headings.
         $this->configure_filters([
             ['name' => 'mathjaxloader', 'state' => TEXTFILTER_ON, 'move' => -1, 'applytostrings' => true],
@@ -151,7 +151,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals($fieldname, $namedarray['mathjaxname']['name']);
     }
 
-    public function test_signup_user() {
+    public function test_signup_user(): void {
         global $DB;
 
         $username = 'pepe';

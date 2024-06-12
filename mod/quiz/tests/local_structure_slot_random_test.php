@@ -41,7 +41,7 @@ class local_structure_slot_random_test extends \advanced_testcase {
     /**
      * Constructor test.
      */
-    public function test_constructor() {
+    public function test_constructor(): void {
         global $SITE;
 
         $this->resetAfterTest();
@@ -93,7 +93,7 @@ class local_structure_slot_random_test extends \advanced_testcase {
         $this->assertEquals(1, $record->maxmark);
     }
 
-    public function test_get_quiz_quiz() {
+    public function test_get_quiz_quiz(): void {
         global $SITE, $DB;
 
         $this->resetAfterTest();
@@ -129,7 +129,7 @@ class local_structure_slot_random_test extends \advanced_testcase {
         $this->assertEquals($quiz, $randomslot->get_quiz());
     }
 
-    public function test_set_quiz() {
+    public function test_set_quiz(): void {
         global $SITE, $DB;
 
         $this->resetAfterTest();
@@ -207,7 +207,7 @@ class local_structure_slot_random_test extends \advanced_testcase {
         return [$randomslot, $tags];
     }
 
-    public function test_set_tags_filter() {
+    public function test_set_tags_filter(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -226,7 +226,7 @@ class local_structure_slot_random_test extends \advanced_testcase {
             (array)json_decode($tagspropery)->filters->qtagids->values);
     }
 
-    public function test_insert() {
+    public function test_insert(): void {
         global $SITE;
 
         $this->resetAfterTest();

@@ -35,7 +35,7 @@ require_once(__DIR__ . '/helpers.php');
  */
 class questionusagebyactivity_test extends \advanced_testcase {
 
-    public function test_set_get_preferred_model() {
+    public function test_set_get_preferred_model(): void {
         // Set up
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
                 \context_system::instance());
@@ -45,7 +45,7 @@ class questionusagebyactivity_test extends \advanced_testcase {
         $this->assertEquals('deferredfeedback', $quba->get_preferred_behaviour());
     }
 
-    public function test_set_get_id() {
+    public function test_set_get_id(): void {
         // Set up
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
                 \context_system::instance());
@@ -55,7 +55,7 @@ class questionusagebyactivity_test extends \advanced_testcase {
         $this->assertEquals(123, $quba->get_id());
     }
 
-    public function test_fake_id() {
+    public function test_fake_id(): void {
         // Set up
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
                 \context_system::instance());
@@ -64,7 +64,7 @@ class questionusagebyactivity_test extends \advanced_testcase {
         $this->assertNotEmpty($quba->get_id());
     }
 
-    public function test_create_usage_and_add_question() {
+    public function test_create_usage_and_add_question(): void {
         // Exercise SUT
         $context = \context_system::instance();
         $quba = question_engine::make_questions_usage_by_activity('unit_test', $context);
@@ -80,7 +80,7 @@ class questionusagebyactivity_test extends \advanced_testcase {
         $this->assertEquals($quba->get_question_state($slot), question_state::$notstarted);
     }
 
-    public function test_get_question() {
+    public function test_get_question(): void {
         // Set up.
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
                 \context_system::instance());
@@ -95,7 +95,7 @@ class questionusagebyactivity_test extends \advanced_testcase {
         $quba->get_question($slot + 1, false);
     }
 
-    public function test_extract_responses() {
+    public function test_extract_responses(): void {
         // Start a deferred feedback attempt with CBM and add the question to it.
         $tf = \test_question_maker::make_question('truefalse', 'true');
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
@@ -121,7 +121,7 @@ class questionusagebyactivity_test extends \advanced_testcase {
         $this->assertEquals(array('answer' => 1, '-certainty' => 3), $submitteddata);
     }
 
-    public function test_access_out_of_sequence_throws_exception() {
+    public function test_access_out_of_sequence_throws_exception(): void {
         // Start a deferred feedback attempt with CBM and add the question to it.
         $tf = \test_question_maker::make_question('truefalse', 'true');
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
@@ -159,7 +159,7 @@ class questionusagebyactivity_test extends \advanced_testcase {
     /**
      * Test function preload all step users.
      */
-    public function test_preload_all_step_users() {
+    public function test_preload_all_step_users(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         // Set up.

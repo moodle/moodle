@@ -72,7 +72,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Test for initialising field and data controllers
      */
-    public function test_initialise() {
+    public function test_initialise(): void {
         $f = \core_customfield\field_controller::create($this->cfields[1]->get('id'));
         $this->assertTrue($f instanceof field_controller);
 
@@ -91,7 +91,7 @@ class plugin_test extends \advanced_testcase {
      *
      * Create a configuration form and submit it with the same values as in the field
      */
-    public function test_config_form() {
+    public function test_config_form(): void {
         $this->setAdminUser();
         $submitdata = (array)$this->cfields[1]->to_record();
         $submitdata['configdata'] = $this->cfields[1]->get('configdata');
@@ -107,7 +107,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Test for instance form functions
      */
-    public function test_instance_form() {
+    public function test_instance_form(): void {
         global $CFG;
         require_once($CFG->dirroot . '/customfield/tests/fixtures/test_instance_form.php');
         $this->setAdminUser();
@@ -136,7 +136,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Test for min/max date validation
      */
-    public function test_instance_form_validation() {
+    public function test_instance_form_validation(): void {
         $this->setAdminUser();
         $handler = $this->cfcat->get_handler();
         $submitdata = (array)$this->courses[1];
@@ -154,7 +154,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Test for data_controller::get_value and export_value
      */
-    public function test_get_export_value() {
+    public function test_get_export_value(): void {
         $this->assertEquals(1546300800, $this->cfdata[1]->get_value());
         $this->assertStringMatchesFormat('%a 1 January 2019%a', $this->cfdata[1]->export_value());
 
@@ -189,14 +189,14 @@ class plugin_test extends \advanced_testcase {
      *
      * @dataProvider parse_value_provider
      */
-    public function test_parse_value(string $value, int $expected) {
+    public function test_parse_value(string $value, int $expected): void {
         $this->assertSame($expected, $this->cfields[1]->parse_value($value));
     }
 
     /**
      * Deleting fields and data
      */
-    public function test_delete() {
+    public function test_delete(): void {
         $this->cfcat->get_handler()->delete_all();
     }
 }

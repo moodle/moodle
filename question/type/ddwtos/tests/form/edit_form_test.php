@@ -68,7 +68,7 @@ class edit_form_test extends \advanced_testcase {
     /**
      * Test the form shows the right number of groups of choices.
      */
-    public function test_number_of_choice_groups() {
+    public function test_number_of_choice_groups(): void {
         list($form) = $this->get_form('qtype_ddwtos_edit_form');
         // Use reflection to get the protected property we need.
         $property = new \ReflectionProperty('qtype_ddwtos_edit_form', '_form');
@@ -81,7 +81,7 @@ class edit_form_test extends \advanced_testcase {
     /**
      * Test the form correctly validates the HTML allowed in choices.
      */
-    public function test_choices_validation() {
+    public function test_choices_validation(): void {
         list($form, $category) = $this->get_form('qtype_ddwtos_edit_form');
 
         $submitteddata = [

@@ -143,7 +143,7 @@ class helper_test extends \advanced_testcase {
      *
      * @covers \qbank_deletequestion\helper::delete_questions
      */
-    public function test_delete_question_has_multiple_version() {
+    public function test_delete_question_has_multiple_version(): void {
         global $DB;
         $qcategory = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
         $question1 = $this->qgenerator->create_question('shortanswer', null, ['category' => $qcategory->id,

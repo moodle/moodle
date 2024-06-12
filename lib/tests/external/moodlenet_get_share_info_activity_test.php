@@ -42,7 +42,7 @@ class moodlenet_get_share_info_activity_test extends externallib_advanced_testca
      * Test the behaviour of moodlenet_get_share_info_activity().
      * @covers ::execute
      */
-    public function test_moodlenet_get_share_info_activity() {
+    public function test_moodlenet_get_share_info_activity(): void {
         global $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();

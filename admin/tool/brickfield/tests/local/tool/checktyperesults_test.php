@@ -26,7 +26,7 @@ namespace tool_brickfield\local\tool;
  */
 class checktyperesults_test extends \advanced_testcase {
 
-    public function test_toolname() {
+    public function test_toolname(): void {
         $this->resetAfterTest();
 
         $object = new checktyperesults();
@@ -34,7 +34,7 @@ class checktyperesults_test extends \advanced_testcase {
         $this->assertEquals($output, 'Content types summary');
     }
 
-    public function test_toolshortname() {
+    public function test_toolshortname(): void {
         $this->resetAfterTest();
 
         $object = new checktyperesults();
@@ -42,7 +42,7 @@ class checktyperesults_test extends \advanced_testcase {
         $this->assertEquals($output, 'Content types');
     }
 
-    public function test_pluginname() {
+    public function test_pluginname(): void {
         $this->resetAfterTest();
 
         $object = new checktyperesults();
@@ -50,7 +50,7 @@ class checktyperesults_test extends \advanced_testcase {
         $this->assertEquals($output, 'checktyperesults');
     }
 
-    public function test_get_output() {
+    public function test_get_output(): void {
         $this->resetAfterTest();
         $category = $this->getDataGenerator()->create_category();
 

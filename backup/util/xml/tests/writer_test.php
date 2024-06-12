@@ -54,7 +54,7 @@ class writer_test extends \basic_testcase {
     /**
      * test xml_writer public methods
      */
-    function test_xml_writer_public_api() {
+    function test_xml_writer_public_api(): void {
         global $CFG;
         // Instantiate xml_output
         $xo = new memory_xml_output();

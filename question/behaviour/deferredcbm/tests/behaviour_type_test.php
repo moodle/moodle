@@ -44,25 +44,25 @@ class behaviour_type_test extends \qbehaviour_walkthrough_test_base {
         $this->behaviourtype = question_engine::get_behaviour_type('deferredcbm');
     }
 
-    public function test_is_archetypal() {
+    public function test_is_archetypal(): void {
         $this->assertTrue($this->behaviourtype->is_archetypal());
     }
 
-    public function test_get_unused_display_options() {
+    public function test_get_unused_display_options(): void {
         $this->assertEquals(array('correctness', 'marks', 'specificfeedback', 'generalfeedback', 'rightanswer'),
                 $this->behaviourtype->get_unused_display_options());
     }
 
-    public function test_can_questions_finish_during_the_attempt() {
+    public function test_can_questions_finish_during_the_attempt(): void {
         $this->assertFalse($this->behaviourtype->can_questions_finish_during_the_attempt());
     }
 
-    public function test_adjust_random_guess_score() {
+    public function test_adjust_random_guess_score(): void {
         $this->assertEquals(0, $this->behaviourtype->adjust_random_guess_score(0));
         $this->assertEquals(1, $this->behaviourtype->adjust_random_guess_score(1));
     }
 
-    public function test_summarise_usage_max_mark_1() {
+    public function test_summarise_usage_max_mark_1(): void {
 
         // Create a usage comprising 3 true-false questions.
         $this->quba->set_preferred_behaviour('deferredcbm');
@@ -98,7 +98,7 @@ class behaviour_type_test extends \qbehaviour_walkthrough_test_base {
                 $summarydata['qbehaviour_cbm_judgement1']['content']);
     }
 
-    public function test_summarise_usage_max_mark_3() {
+    public function test_summarise_usage_max_mark_3(): void {
 
         // Create a usage comprising 3 true-false questions.
         $this->quba->set_preferred_behaviour('deferredcbm');
@@ -134,7 +134,7 @@ class behaviour_type_test extends \qbehaviour_walkthrough_test_base {
                 $summarydata['qbehaviour_cbm_judgement1']['content']);
     }
 
-    public function test_calculate_bonus() {
+    public function test_calculate_bonus(): void {
         $this->assertEqualsWithDelta(0.05,  $this->behaviourtype->calculate_bonus(1, 1 / 2), question_testcase::GRADE_DELTA);
         $this->assertEqualsWithDelta(-0.01, $this->behaviourtype->calculate_bonus(2, 9 / 10), question_testcase::GRADE_DELTA);
         $this->assertEqualsWithDelta(0,     $this->behaviourtype->calculate_bonus(3, 1), question_testcase::GRADE_DELTA);

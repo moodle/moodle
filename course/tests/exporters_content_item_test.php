@@ -40,7 +40,7 @@ class exporters_content_item_test extends \advanced_testcase {
     /**
      * Test confirming a content_item can be exported for a course.
      */
-    public function test_export_course_content_item() {
+    public function test_export_course_content_item(): void {
         $this->resetAfterTest();
         global $PAGE;
 
@@ -79,7 +79,7 @@ class exporters_content_item_test extends \advanced_testcase {
     /**
      * Test that legacy items (with id of -1) are exported correctly.
      */
-    public function test_export_course_content_item_legacy() {
+    public function test_export_course_content_item_legacy(): void {
         $this->resetAfterTest();
         global $PAGE;
 

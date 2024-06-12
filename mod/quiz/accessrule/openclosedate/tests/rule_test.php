@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/openclosedate/rule.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class rule_test extends \basic_testcase {
-    public function test_no_dates() {
+    public function test_no_dates(): void {
         $quiz = new \stdClass();
         $quiz->timeopen = 0;
         $quiz->timeclose = 0;
@@ -61,7 +61,7 @@ class rule_test extends \basic_testcase {
         $this->assertFalse($rule->time_left_display($attempt, 0));
     }
 
-    public function test_start_date() {
+    public function test_start_date(): void {
         $quiz = new \stdClass();
         $quiz->timeopen = 10000;
         $quiz->timeclose = 0;
@@ -88,7 +88,7 @@ class rule_test extends \basic_testcase {
         $this->assertFalse($rule->time_left_display($attempt, 0));
     }
 
-    public function test_close_date() {
+    public function test_close_date(): void {
         $quiz = new \stdClass();
         $quiz->timeopen = 0;
         $quiz->timeclose = 20000;
@@ -122,7 +122,7 @@ class rule_test extends \basic_testcase {
         $this->assertEquals($rule->time_left_display($attempt, 20100), -100);
     }
 
-    public function test_both_dates() {
+    public function test_both_dates(): void {
         $quiz = new \stdClass();
         $quiz->timeopen = 10000;
         $quiz->timeclose = 20000;
@@ -162,7 +162,7 @@ class rule_test extends \basic_testcase {
         $this->assertEquals($rule->time_left_display($attempt, 20100), -100);
     }
 
-    public function test_close_date_with_overdue() {
+    public function test_close_date_with_overdue(): void {
         $quiz = new \stdClass();
         $quiz->timeopen = 0;
         $quiz->timeclose = 20000;

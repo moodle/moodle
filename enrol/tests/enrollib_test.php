@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class enrollib_test extends advanced_testcase {
 
-    public function test_enrol_get_all_users_courses() {
+    public function test_enrol_get_all_users_courses(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -234,7 +234,7 @@ class enrollib_test extends advanced_testcase {
      * Test enrol_course_delete() without passing a user id. When a value for user id is not present, the method
      * should delete all enrolment related data in the course.
      */
-    public function test_enrol_course_delete_without_userid() {
+    public function test_enrol_course_delete_without_userid(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -297,7 +297,7 @@ class enrollib_test extends advanced_testcase {
      * @param array $excludedcapabilities The capabilities that should be excluded from the user's role
      * @param bool $expected The expected results
      */
-    public function test_enrol_course_delete_with_userid($excludedcapabilities, $expected) {
+    public function test_enrol_course_delete_with_userid($excludedcapabilities, $expected): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -443,7 +443,7 @@ class enrollib_test extends advanced_testcase {
     }
 
 
-    public function test_enrol_user_sees_own_courses() {
+    public function test_enrol_user_sees_own_courses(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -542,7 +542,7 @@ class enrollib_test extends advanced_testcase {
         $this->assertEquals($reads, $DB->perf_get_reads());
     }
 
-    public function test_enrol_get_shared_courses() {
+    public function test_enrol_get_shared_courses(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -571,7 +571,7 @@ class enrollib_test extends advanced_testcase {
         $this->assertEquals($sharedcourse->id, $course1->id);
     }
 
-    public function test_enrol_get_shared_courses_different_methods() {
+    public function test_enrol_get_shared_courses_different_methods(): void {
         global $DB, $CFG;
 
         require_once($CFG->dirroot . '/enrol/self/externallib.php');
@@ -630,7 +630,7 @@ class enrollib_test extends advanced_testcase {
     /**
      * Test user enrolment created event.
      */
-    public function test_user_enrolment_created_event() {
+    public function test_user_enrolment_created_event(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -664,7 +664,7 @@ class enrollib_test extends advanced_testcase {
     /**
      * Test user_enrolment_deleted event.
      */
-    public function test_user_enrolment_deleted_event() {
+    public function test_user_enrolment_deleted_event(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -698,7 +698,7 @@ class enrollib_test extends advanced_testcase {
     /**
      * Test enrol_instance_created, enrol_instance_updated and enrol_instance_deleted events.
      */
-    public function test_instance_events() {
+    public function test_instance_events(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -758,7 +758,7 @@ class enrollib_test extends advanced_testcase {
     /**
      * Confirms that timemodified field was updated after modification of user enrollment
      */
-    public function test_enrollment_update_timemodified() {
+    public function test_enrollment_update_timemodified(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -813,7 +813,7 @@ class enrollib_test extends advanced_testcase {
      * Test to confirm that enrol_get_my_courses only return the courses that
      * the logged in user is enrolled in.
      */
-    public function test_enrol_get_my_courses_only_enrolled_courses() {
+    public function test_enrol_get_my_courses_only_enrolled_courses(): void {
         $user = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
@@ -861,7 +861,7 @@ class enrollib_test extends advanced_testcase {
      * @throws coding_exception
      * @throws dml_exception
      */
-    public function test_enrol_get_my_courses_include_hidden() {
+    public function test_enrol_get_my_courses_include_hidden(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);
@@ -912,7 +912,7 @@ class enrollib_test extends advanced_testcase {
      * Tests the enrol_get_my_courses function when using the $allaccessible parameter, which
      * includes a wider range of courses (enrolled courses + other accessible ones).
      */
-    public function test_enrol_get_my_courses_all_accessible() {
+    public function test_enrol_get_my_courses_all_accessible(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);
@@ -1081,7 +1081,7 @@ class enrollib_test extends advanced_testcase {
      *
      * @return void
      */
-    public function test_course_users() {
+    public function test_course_users(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -1115,7 +1115,7 @@ class enrollib_test extends advanced_testcase {
      * @covers \enrol_get_course_users()
      * @return void
      */
-    public function test_course_users_in_groups() {
+    public function test_course_users_in_groups(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -1151,7 +1151,7 @@ class enrollib_test extends advanced_testcase {
      *
      * @return void
      */
-    public function test_count_enrolled_users() {
+    public function test_count_enrolled_users(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -1308,7 +1308,7 @@ class enrollib_test extends advanced_testcase {
         $limit,
         $offset,
         $expectedcourses
-    ) {
+    ): void {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -1374,7 +1374,7 @@ class enrollib_test extends advanced_testcase {
      *
      * @return void
      */
-    public function test_enrol_get_course_users_roles() {
+    public function test_enrol_get_course_users_roles(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -1424,7 +1424,7 @@ class enrollib_test extends advanced_testcase {
     /**
      * Test enrol_calculate_duration function
      */
-    public function test_enrol_calculate_duration() {
+    public function test_enrol_calculate_duration(): void {
         // Start time 07/01/2019 @ 12:00am (UTC).
         $timestart = 1561939200;
         // End time 07/05/2019 @ 12:00am (UTC).
@@ -1454,7 +1454,7 @@ class enrollib_test extends advanced_testcase {
         bool $useprohibit,
         int $expectedmatch,
         int $expectedcount
-    ) {
+    ): void {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -1517,7 +1517,7 @@ class enrollib_test extends advanced_testcase {
      * Test last_time_enrolments_synced not recorded with "force" option for enrol_check_plugins.
      * @covers ::enrol_check_plugins
      */
-    public function test_enrol_check_plugins_with_forced_option() {
+    public function test_enrol_check_plugins_with_forced_option(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
 
@@ -1548,7 +1548,7 @@ class enrollib_test extends advanced_testcase {
      *
      * @param mixed $config Config value.
      */
-    public function test_enrol_check_plugins_with_empty_config_value($config) {
+    public function test_enrol_check_plugins_with_empty_config_value($config): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -1564,7 +1564,7 @@ class enrollib_test extends advanced_testcase {
      * Test last_time_enrolments_synced is recorded without "force" option for enrol_check_plugins.
      * @covers ::enrol_check_plugins
      */
-    public function test_last_time_enrolments_synced_is_set_if_not_forced() {
+    public function test_last_time_enrolments_synced_is_set_if_not_forced(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
 
@@ -1585,7 +1585,7 @@ class enrollib_test extends advanced_testcase {
      * Test last_time_enrolments_synced is recorded correctly without "force" option for enrol_check_plugins.
      * @covers ::enrol_check_plugins
      */
-    public function test_last_time_enrolments_synced_is_set_if_not_forced_if_have_not_passed_interval() {
+    public function test_last_time_enrolments_synced_is_set_if_not_forced_if_have_not_passed_interval(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -1610,7 +1610,7 @@ class enrollib_test extends advanced_testcase {
      *
      * @covers ::enrol_selfenrol_available
      */
-    public function test_enrol_selfenrol_available() {
+    public function test_enrol_selfenrol_available(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest();

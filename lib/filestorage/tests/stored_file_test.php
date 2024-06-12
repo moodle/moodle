@@ -35,7 +35,7 @@ class stored_file_test extends advanced_testcase {
      * an image that is not supposed to be rotated.
      * @covers ::rotate_image()
      */
-    public function test_rotate_image_does_not_rotate_image() {
+    public function test_rotate_image_does_not_rotate_image(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -64,7 +64,7 @@ class stored_file_test extends advanced_testcase {
      * that is supposed to be rotated.
      * @covers ::rotate_image()
      */
-    public function test_rotate_image_rotates_image() {
+    public function test_rotate_image_rotates_image(): void {
         global $CFG;
         $this->resetAfterTest();
 

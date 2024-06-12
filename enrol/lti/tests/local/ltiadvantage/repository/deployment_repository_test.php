@@ -93,7 +93,7 @@ class deployment_repository_test extends \advanced_testcase {
      *
      * @covers ::save
      */
-    public function test_save_new() {
+    public function test_save_new(): void {
         $this->resetAfterTest();
         $deploymentrepo = new deployment_repository();
         $deployment = $this->create_test_deployment();
@@ -110,7 +110,7 @@ class deployment_repository_test extends \advanced_testcase {
      *
      * @covers ::save
      */
-    public function test_save_existing() {
+    public function test_save_existing(): void {
         $this->resetAfterTest();
         $deploymentrepo = new deployment_repository();
         $deployment = $this->create_test_deployment();
@@ -129,7 +129,7 @@ class deployment_repository_test extends \advanced_testcase {
      *
      * @covers ::save
      */
-    public function test_save_unique_constraints_not_met() {
+    public function test_save_unique_constraints_not_met(): void {
         $this->resetAfterTest();
         $deployment1 = $this->create_test_deployment('Deploy_ID_123');
         $deployment2 = $this->create_test_deployment('Deploy_ID_123', $deployment1->get_registrationid());
@@ -145,7 +145,7 @@ class deployment_repository_test extends \advanced_testcase {
      *
      * @covers ::exists
      */
-    public function test_exists() {
+    public function test_exists(): void {
         $this->resetAfterTest();
         $deploymentrepo = new deployment_repository();
         $deployment = $this->create_test_deployment();
@@ -160,7 +160,7 @@ class deployment_repository_test extends \advanced_testcase {
      *
      * @covers ::find
      */
-    public function test_find() {
+    public function test_find(): void {
         $this->resetAfterTest();
         $deployment = $this->create_test_deployment();
         $deploymentrepo = new deployment_repository();
@@ -177,7 +177,7 @@ class deployment_repository_test extends \advanced_testcase {
      *
      * @covers ::delete
      */
-    public function test_delete() {
+    public function test_delete(): void {
         $this->resetAfterTest();
         $deployment = $this->create_test_deployment();
         $deploymentrepo = new deployment_repository();
@@ -195,7 +195,7 @@ class deployment_repository_test extends \advanced_testcase {
      *
      * @covers ::delete_by_registration
      */
-    public function test_delete_by_registration() {
+    public function test_delete_by_registration(): void {
         $this->resetAfterTest();
         $deployment = $this->create_test_deployment();
         $deploymentrepo = new deployment_repository();
@@ -223,7 +223,7 @@ class deployment_repository_test extends \advanced_testcase {
      *
      * @covers ::count_by_registration
      */
-    public function test_count_by_registration() {
+    public function test_count_by_registration(): void {
         $this->resetAfterTest();
         $deployment = $this->create_test_deployment();
         $deploymentrepo = new deployment_repository();
@@ -245,7 +245,7 @@ class deployment_repository_test extends \advanced_testcase {
      *
      * @covers ::find_by_registration
      */
-    public function test_find_by_registration() {
+    public function test_find_by_registration(): void {
         $this->resetAfterTest();
         $deployment = $this->create_test_deployment();
         $deploymentrepo = new deployment_repository();
@@ -265,7 +265,7 @@ class deployment_repository_test extends \advanced_testcase {
      *
      * @covers ::find_all_by_registration
      */
-    public function test_find_all_by_registration() {
+    public function test_find_all_by_registration(): void {
         $this->resetAfterTest();
         $registration1 = application_registration::create(
             'Test',

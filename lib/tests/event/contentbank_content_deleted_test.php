@@ -51,7 +51,7 @@ class contentbank_content_deleted_test extends \advanced_testcase {
      *
      * @covers ::create_from_record
      */
-    public function test_content_deleted() {
+    public function test_content_deleted(): void {
         global $DB;
 
         $this->resetAfterTest();

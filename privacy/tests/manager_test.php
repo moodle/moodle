@@ -64,7 +64,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::get_metadata_for_components
      */
-    public function test_get_metadata_for_components() {
+    public function test_get_metadata_for_components(): void {
         // Get a mock manager, in which the core components list is mocked to include all mock plugins.
         // testcomponent is a core provider, testcomponent2 is a null provider, testcomponent3 is subplugin provider (non core).
         $mockman = $this->get_mock_manager_with_core_components(['mod_testcomponent', 'mod_testcomponent2', 'mod_testcomponent3']);
@@ -87,7 +87,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::get_contexts_for_userid
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         // Get a mock manager, in which the core components list is mocked to include all mock plugins.
         // testcomponent is a core provider, testcomponent2 is a null provider, testcomponent3 is subplugin provider (non core).
         $mockman = $this->get_mock_manager_with_core_components(['mod_testcomponent', 'mod_testcomponent2', 'mod_testcomponent3']);
@@ -114,7 +114,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::component_is_compliant
      */
-    public function test_component_is_compliant() {
+    public function test_component_is_compliant(): void {
         // Get a mock manager, in which the core components list is mocked to include all mock plugins.
         // testcomponent is a core provider, testcomponent2 is a null provider, testcomponent3 is subplugin provider (non core).
         $mockman = $this->get_mock_manager_with_core_components(['mod_testcomponent', 'mod_testcomponent2', 'mod_testcomponent3']);
@@ -160,7 +160,7 @@ class manager_test extends \advanced_testcase {
      * @param   boolean $expected
      * @covers ::component_is_compliant
      */
-    public function test_component_is_compliant_examples($component, $expected) {
+    public function test_component_is_compliant_examples($component, $expected): void {
         $manager = new \core_privacy\manager();
 
         $this->assertEquals($expected, $manager->component_is_compliant($component));
@@ -171,7 +171,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::export_user_data
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         // Get a mock manager, in which the core components list is mocked to include all mock plugins.
         // testcomponent is a core provider, testcomponent2 is a null provider, testcomponent3 is subplugin provider (non core).
         $mockman = $this->get_mock_manager_with_core_components(['mod_testcomponent', 'mod_testcomponent2', 'mod_testcomponent3', 'mod_testcomponent4']);
@@ -206,7 +206,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::delete_data_for_user
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         $this->resetAfterTest();
         // Get a mock manager, in which the core components list is mocked to include all mock plugins.
         // testcomponent is a core provider, testcomponent2 is a null provider, testcomponent3 is subplugin provider (non core).
@@ -239,7 +239,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::get_metadata_for_components
      */
-    public function test_installed_plugins() {
+    public function test_installed_plugins(): void {
         $manager = new \core_privacy\manager();
         $metadata = $manager->get_metadata_for_components();
         $this->assertNotEmpty($metadata);
@@ -250,7 +250,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::get_null_provider_reason
      */
-    public function test_get_null_provider_reason() {
+    public function test_get_null_provider_reason(): void {
         $manager = new \core_privacy\manager();
         // Null providers return the reason string.
         $this->assertEquals('testcomponent2 null provider reason', $manager->get_null_provider_reason('mod_testcomponent2'));
@@ -264,7 +264,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::plugintype_class_callback
      */
-    public function test_plugintype_class_callback() {
+    public function test_plugintype_class_callback(): void {
         \core_privacy\manager::plugintype_class_callback('doesnotexist', 'unusable', 'foo', ['bar']);
     }
 
@@ -273,7 +273,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::component_class_callback
      */
-    public function test_component_class_callback() {
+    public function test_component_class_callback(): void {
         \core_privacy\manager::component_class_callback('foo_bar', 'unusable', 'foo', ['bar']);
     }
 
@@ -285,7 +285,7 @@ class manager_test extends \advanced_testcase {
      * @param   bool    $expected
      * @covers ::is_empty_subsystem
      */
-    public function test_is_empty_subsystem($component, $expected) {
+    public function test_is_empty_subsystem($component, $expected): void {
         $this->assertEquals($expected, \core_privacy\manager::is_empty_subsystem($component));
     }
 
@@ -324,7 +324,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::get_contexts_for_userid
      */
-    public function test_get_contexts_for_userid_with_failing() {
+    public function test_get_contexts_for_userid_with_failing(): void {
         // Get a mock manager, in which the core components list is mocked to include all mock plugins.
         // testcomponent is a core provider, testcomponent2 isa null provider, testcomponent3 is subplugin provider (non core).
         $mockman = $this->get_mock_manager_with_core_components(['mod_component_broken', 'mod_component_a']);
@@ -361,7 +361,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::export_user_data
      */
-    public function test_export_user_data_with_failing() {
+    public function test_export_user_data_with_failing(): void {
         $user = \core_user::get_user_by_username('admin');
         $mockman = $this->get_mock_manager_with_core_components(['mod_component_broken', 'mod_component_a']);
         $context = \context_system::instance();
@@ -396,7 +396,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::delete_data_for_user
      */
-    public function test_delete_data_for_user_with_failing() {
+    public function test_delete_data_for_user_with_failing(): void {
         $user = \core_user::get_user_by_username('admin');
         $mockman = $this->get_mock_manager_with_core_components(['mod_component_broken', 'mod_component_a']);
         $context = \context_system::instance();
@@ -431,7 +431,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::delete_data_for_all_users_in_context
      */
-    public function test_delete_data_for_all_users_in_context_with_failing() {
+    public function test_delete_data_for_all_users_in_context_with_failing(): void {
         $user = \core_user::get_user_by_username('admin');
         $mockman = $this->get_mock_manager_with_core_components(['mod_component_broken', 'mod_component_a']);
         $context = \context_system::instance();
@@ -461,7 +461,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::get_metadata_for_components
      */
-    public function test_get_metadata_for_components_with_failing() {
+    public function test_get_metadata_for_components_with_failing(): void {
         $user = \core_user::get_user_by_username('admin');
         $mockman = $this->get_mock_manager_with_core_components(['mod_component_broken', 'mod_component_a']);
         $context = \context_system::instance();

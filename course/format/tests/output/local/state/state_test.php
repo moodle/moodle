@@ -45,7 +45,7 @@ class state_test extends \advanced_testcase {
      *
      * @param string $format The course format of the course where the method will be executed.
      */
-    public function test_state(string $format = 'topics') {
+    public function test_state(string $format = 'topics'): void {
         global $PAGE;
 
         $this->resetAfterTest();

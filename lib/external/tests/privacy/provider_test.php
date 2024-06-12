@@ -135,7 +135,7 @@ class provider_test extends provider_testcase {
      *
      * @covers \core_external\privacy\provider::delete_data_for_all_users_in_context
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $dg = $this->getDataGenerator();
@@ -174,7 +174,7 @@ class provider_test extends provider_testcase {
      * Test the export_user_data function.
      * @covers \core_external\privacy\provider::export_user_data
      */
-    public function test_export_data_for_user() {
+    public function test_export_data_for_user(): void {
         global $DB;
 
         $dg = $this->getDataGenerator();
@@ -257,7 +257,7 @@ class provider_test extends provider_testcase {
      *
      * @covers \core_external\privacy\provider::get_users_in_context
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
 
         $component = 'core_external';
         // Create user u1.
@@ -343,7 +343,7 @@ class provider_test extends provider_testcase {
      *
      * @covers \core_external\privacy\provider::delete_data_for_users
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
 
         $component = 'core_external';
         // Create user u1.

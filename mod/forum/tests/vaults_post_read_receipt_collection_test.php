@@ -36,7 +36,7 @@ class vaults_post_read_receipt_collection_test extends \advanced_testcase {
     /**
      * Test get_from_user_id_and_post_ids.
      */
-    public function test_get_from_user_id_and_post_ids() {
+    public function test_get_from_user_id_and_post_ids(): void {
         global $DB;
         $this->resetAfterTest();
 

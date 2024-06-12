@@ -37,7 +37,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test report_downloaded event.
      */
-    public function test_report_downloaded() {
+    public function test_report_downloaded(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -86,7 +86,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test report_viewed event.
      */
-    public function test_report_viewed() {
+    public function test_report_viewed(): void {
         global $DB;
 
         $this->resetAfterTest();

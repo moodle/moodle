@@ -26,7 +26,7 @@ namespace tool_brickfield\local\tool;
  */
 class activityresults_test extends \advanced_testcase {
 
-    public function test_toolname() {
+    public function test_toolname(): void {
         $this->resetAfterTest();
 
         $object = new activityresults();
@@ -34,7 +34,7 @@ class activityresults_test extends \advanced_testcase {
         $this->assertEquals($output, 'Activity breakdown summary');
     }
 
-    public function test_toolshortname() {
+    public function test_toolshortname(): void {
         $this->resetAfterTest();
 
         $object = new activityresults();
@@ -42,7 +42,7 @@ class activityresults_test extends \advanced_testcase {
         $this->assertEquals($output, 'Activity breakdown');
     }
 
-    public function test_pluginname() {
+    public function test_pluginname(): void {
         $this->resetAfterTest();
 
         $object = new activityresults();
@@ -50,7 +50,7 @@ class activityresults_test extends \advanced_testcase {
         $this->assertEquals($output, 'activityresults');
     }
 
-    public function test_get_output() {
+    public function test_get_output(): void {
         $this->resetAfterTest();
 
         $category = $this->getDataGenerator()->create_category();

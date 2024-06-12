@@ -41,7 +41,7 @@ class moved_test extends \advanced_testcase {
      * test_event_h5p_viewed description
      * @runInSeparateProcess
      */
-    public function test_event_h5p_viewed() {
+    public function test_event_h5p_viewed(): void {
         $this->resetAfterTest(true);
 
         $user = $this->getDataGenerator()->create_user();

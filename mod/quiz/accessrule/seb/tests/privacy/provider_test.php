@@ -74,7 +74,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that the module context for a user who last modified the module is retrieved.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $this->setup_test_data();
 
         $contexts = provider::get_contexts_for_userid($this->user->id);
@@ -85,7 +85,7 @@ class provider_test extends provider_testcase {
     /**
      * That that no module context is found for a user who has not modified any quiz settings.
      */
-    public function test_get_no_contexts_for_userid() {
+    public function test_get_no_contexts_for_userid(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -97,7 +97,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user data is exported in format expected.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         $this->setup_test_data();
 
         $context = \context_module::instance($this->quiz->cmid);
@@ -160,7 +160,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that a userlist with module context is populated by usermodified user.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->setup_test_data();
 
         // Create empty userlist with quiz module context.
@@ -174,7 +174,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data is deleted for a list of users.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $this->setup_test_data();
 
         $approveduserlist = new approved_userlist(\context_module::instance($this->quiz->cmid),
@@ -195,7 +195,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data is deleted for a list of contexts.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         $this->setup_test_data();
 
         $context = \context_module::instance($this->quiz->cmid);
@@ -217,7 +217,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data is deleted for a single context.
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         $this->setup_test_data();
 
         $context = \context_module::instance($this->quiz->cmid);

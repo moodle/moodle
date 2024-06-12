@@ -38,7 +38,7 @@ class async_backup_test extends \advanced_testcase {
     /**
      * Tests the asynchronous backup.
      */
-    public function test_async_backup() {
+    public function test_async_backup(): void {
         global $CFG, $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -181,7 +181,7 @@ class async_backup_test extends \advanced_testcase {
     /**
      * Tests the asynchronous backup will resolve in duplicate cases.
      */
-    public function test_complete_async_backup() {
+    public function test_complete_async_backup(): void {
         global $CFG, $DB, $USER;
 
         $this->resetAfterTest(true);

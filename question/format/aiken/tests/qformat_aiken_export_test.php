@@ -50,7 +50,7 @@ class qformat_aiken_export_test extends advanced_testcase {
         );
     }
 
-    public function test_export_questions() {
+    public function test_export_questions(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         // Create a new course category and and a new course in that.
@@ -84,7 +84,7 @@ EOT;
         $this->assert_same_aiken($expectedoutput, $exporter->exportprocess());
     }
 
-    public function test_export_multiline_question() {
+    public function test_export_multiline_question(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         // Create a new course category and and a new course in that.

@@ -138,7 +138,7 @@ class httpsreplace_test extends \advanced_testcase {
      * @param string $expectedcontent What content we are expecting afterwards.
      * @dataProvider upgrade_http_links_provider
      */
-    public function test_upgrade_http_links($content, $ouputregex, $expectedcontent) {
+    public function test_upgrade_http_links($content, $ouputregex, $expectedcontent): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -212,7 +212,7 @@ class httpsreplace_test extends \advanced_testcase {
      * @param string $expectedcount Number of urls from that domain that we expect to be replaced.
      * @dataProvider http_link_stats_provider
      */
-    public function test_http_link_stats($content, $domain, $expectedcount) {
+    public function test_http_link_stats($content, $domain, $expectedcount): void {
         $this->resetAfterTest();
 
         $finder = new tool_httpreplace_url_finder_mock();
@@ -230,7 +230,7 @@ class httpsreplace_test extends \advanced_testcase {
     /**
      * Test links and text are not changed
      */
-    public function test_links_and_text() {
+    public function test_links_and_text(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -261,7 +261,7 @@ class httpsreplace_test extends \advanced_testcase {
     /**
      * If we have an http wwwroot then we shouldn't report it.
      */
-    public function test_httpwwwroot() {
+    public function test_httpwwwroot(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -286,7 +286,7 @@ class httpsreplace_test extends \advanced_testcase {
     /**
      * Test that links in excluded tables are not replaced
      */
-    public function test_upgrade_http_links_excluded_tables() {
+    public function test_upgrade_http_links_excluded_tables(): void {
         $this->resetAfterTest();
 
         set_config('test_upgrade_http_links', '<img src="http://somesite/someimage.png" />');
@@ -306,7 +306,7 @@ class httpsreplace_test extends \advanced_testcase {
     /**
      * Test renamed domains
      */
-    public function test_renames() {
+    public function test_renames(): void {
         global $DB, $CFG;
         $this->resetAfterTest();
         $this->expectOutputRegex('/UPDATE/');
@@ -339,7 +339,7 @@ class httpsreplace_test extends \advanced_testcase {
     /**
      * When there are many different pieces of contents from the same site, we should only run replace once
      */
-    public function test_multiple() {
+    public function test_multiple(): void {
         global $DB;
         $this->resetAfterTest();
         $original1 = '';
@@ -376,7 +376,7 @@ class httpsreplace_test extends \advanced_testcase {
     /**
      * Test the tool when the column name is a reserved word in SQL (in this case 'where')
      */
-    public function test_reserved_words() {
+    public function test_reserved_words(): void {
         global $DB;
 
         $this->resetAfterTest();

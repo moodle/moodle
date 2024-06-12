@@ -37,7 +37,7 @@ class events_test extends \advanced_testcase {
      * Test the competency framework created event.
      *
      */
-    public function test_competency_framework_created() {
+    public function test_competency_framework_created(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -68,7 +68,7 @@ class events_test extends \advanced_testcase {
      * Test the competency framework deleted event.
      *
      */
-    public function test_competency_framework_deleted() {
+    public function test_competency_framework_deleted(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -95,7 +95,7 @@ class events_test extends \advanced_testcase {
      * Test the competency framework updated event.
      *
      */
-    public function test_competency_framework_updated() {
+    public function test_competency_framework_updated(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -123,7 +123,7 @@ class events_test extends \advanced_testcase {
      * Test the competency framework viewed event.
      *
      */
-    public function test_competency_framework_viewed() {
+    public function test_competency_framework_viewed(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -150,7 +150,7 @@ class events_test extends \advanced_testcase {
      * Test the competency viewed event.
      *
      */
-    public function test_competency_viewed() {
+    public function test_competency_viewed(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -175,7 +175,7 @@ class events_test extends \advanced_testcase {
      * Test the template viewed event.
      *
      */
-    public function test_template_viewed() {
+    public function test_template_viewed(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -198,7 +198,7 @@ class events_test extends \advanced_testcase {
      * Test the template created event.
      *
      */
-    public function test_template_created() {
+    public function test_template_created(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -227,7 +227,7 @@ class events_test extends \advanced_testcase {
      * Test the template deleted event.
      *
      */
-    public function test_template_deleted() {
+    public function test_template_deleted(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -254,7 +254,7 @@ class events_test extends \advanced_testcase {
      * Test the template updated event.
      *
      */
-    public function test_template_updated() {
+    public function test_template_updated(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -282,7 +282,7 @@ class events_test extends \advanced_testcase {
      * Test the competency updated event.
      *
      */
-    public function test_competency_updated() {
+    public function test_competency_updated(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -315,7 +315,7 @@ class events_test extends \advanced_testcase {
      * Test the competency created event.
      *
      */
-    public function test_competency_created() {
+    public function test_competency_created(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -346,7 +346,7 @@ class events_test extends \advanced_testcase {
      * Test the competency created event by duplicate framework.
      *
      */
-    public function test_competency_created_by_duplicateframework() {
+    public function test_competency_created_by_duplicateframework(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -382,7 +382,7 @@ class events_test extends \advanced_testcase {
      * Test the competency deleted event.
      *
      */
-    public function test_competency_deleted() {
+    public function test_competency_deleted(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -412,7 +412,7 @@ class events_test extends \advanced_testcase {
      * Test the competency deleted event by delete framework.
      *
      */
-    public function test_competency_deleted_by_deleteframework() {
+    public function test_competency_deleted_by_deleteframework(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -448,7 +448,7 @@ class events_test extends \advanced_testcase {
      * Test the plan created event.
      *
      */
-    public function test_plan_created() {
+    public function test_plan_created(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -476,7 +476,7 @@ class events_test extends \advanced_testcase {
      * Test the plan created event using template_cohort.
      *
      */
-    public function test_plan_created_using_templatecohort() {
+    public function test_plan_created_using_templatecohort(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -519,7 +519,7 @@ class events_test extends \advanced_testcase {
      * Test the plan updated event.
      *
      */
-    public function test_plan_updated() {
+    public function test_plan_updated(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -547,7 +547,7 @@ class events_test extends \advanced_testcase {
      * Test the plan deleted event.
      *
      */
-    public function test_plan_deleted() {
+    public function test_plan_deleted(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -574,7 +574,7 @@ class events_test extends \advanced_testcase {
      * Test the plan viewed event.
      *
      */
-    public function test_plan_viewed() {
+    public function test_plan_viewed(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -599,7 +599,7 @@ class events_test extends \advanced_testcase {
      * Test the evidence of prior learning created event.
      *
      */
-    public function test_user_evidence_created() {
+    public function test_user_evidence_created(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -630,7 +630,7 @@ class events_test extends \advanced_testcase {
      * Test the evidence of prior learning  deleted event.
      *
      */
-    public function test_user_evidence_deleted() {
+    public function test_user_evidence_deleted(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -659,7 +659,7 @@ class events_test extends \advanced_testcase {
      * Test the evidence of prior learning  updated event.
      *
      */
-    public function test_user_evidence_updated() {
+    public function test_user_evidence_updated(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -689,7 +689,7 @@ class events_test extends \advanced_testcase {
      * Test the user competency viewed event in plan.
      *
      */
-    public function test_user_competency_viewed_in_plan() {
+    public function test_user_competency_viewed_in_plan(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -771,7 +771,7 @@ class events_test extends \advanced_testcase {
      * Test the user competency viewed event in course.
      *
      */
-    public function test_user_competency_viewed_in_course() {
+    public function test_user_competency_viewed_in_course(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -833,7 +833,7 @@ class events_test extends \advanced_testcase {
      * Test the user competency plan viewed event.
      *
      */
-    public function test_user_competency_plan_viewed() {
+    public function test_user_competency_plan_viewed(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -918,7 +918,7 @@ class events_test extends \advanced_testcase {
      * Test the user competency viewed event.
      *
      */
-    public function test_user_competency_viewed() {
+    public function test_user_competency_viewed(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -968,7 +968,7 @@ class events_test extends \advanced_testcase {
      * Test the plan approved event.
      *
      */
-    public function test_plan_approved() {
+    public function test_plan_approved(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -996,7 +996,7 @@ class events_test extends \advanced_testcase {
      * Test the plan unapproved event.
      *
      */
-    public function test_plan_unapproved() {
+    public function test_plan_unapproved(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -1024,7 +1024,7 @@ class events_test extends \advanced_testcase {
      * Test the plan reopened event.
      *
      */
-    public function test_plan_reopened() {
+    public function test_plan_reopened(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -1052,7 +1052,7 @@ class events_test extends \advanced_testcase {
      * Test the plan completed event.
      *
      */
-    public function test_plan_completed() {
+    public function test_plan_completed(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -1080,7 +1080,7 @@ class events_test extends \advanced_testcase {
      * Test the plan unlinked event.
      *
      */
-    public function test_plan_unlinked() {
+    public function test_plan_unlinked(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -1113,7 +1113,7 @@ class events_test extends \advanced_testcase {
      * Test the plan review requested event.
      *
      */
-    public function test_plan_review_requested() {
+    public function test_plan_review_requested(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -1141,7 +1141,7 @@ class events_test extends \advanced_testcase {
      * Test the plan review request cancelled event.
      *
      */
-    public function test_plan_review_request_cancelled() {
+    public function test_plan_review_request_cancelled(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -1169,7 +1169,7 @@ class events_test extends \advanced_testcase {
      * Test the plan review started event.
      *
      */
-    public function test_plan_review_started() {
+    public function test_plan_review_started(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -1197,7 +1197,7 @@ class events_test extends \advanced_testcase {
      * Test the plan review stopped event.
      *
      */
-    public function test_plan_review_stopped() {
+    public function test_plan_review_stopped(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -1224,7 +1224,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test plan comment created event.
      */
-    public function test_plan_comment_created() {
+    public function test_plan_comment_created(): void {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -1261,7 +1261,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test plan comment deleted event.
      */
-    public function test_plan_comment_deleted() {
+    public function test_plan_comment_deleted(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -1297,7 +1297,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test evidence_created event.
      */
-    public function test_evidence_created() {
+    public function test_evidence_created(): void {
         global $USER;
 
         $this->resetAfterTest(true);
@@ -1356,7 +1356,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test evidence_created event by linking an invalid user competency to an evidence.
      */
-    public function test_evidence_created_with_invalid_user_competency() {
+    public function test_evidence_created_with_invalid_user_competency(): void {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
         $syscontext = \context_system::instance();
@@ -1390,7 +1390,7 @@ class events_test extends \advanced_testcase {
      *
      * These data are validated by \core_competency\evidence_created::validate_data().
      */
-    public function test_evidence_created_with_missing_data() {
+    public function test_evidence_created_with_missing_data(): void {
         $eventdata = [
             'contextid'  => 1,
             'objectid' => 1,
@@ -1455,7 +1455,7 @@ class events_test extends \advanced_testcase {
      * Test the user competency grade rated event.
      *
      */
-    public function test_user_competency_rated() {
+    public function test_user_competency_rated(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -1504,7 +1504,7 @@ class events_test extends \advanced_testcase {
      * Test the user competency grade rated in course event.
      *
      */
-    public function test_user_competency_rated_in_course() {
+    public function test_user_competency_rated_in_course(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -1561,7 +1561,7 @@ class events_test extends \advanced_testcase {
      * Test the user competency grade rated in plan event.
      *
      */
-    public function test_user_competency_rated_in_plan() {
+    public function test_user_competency_rated_in_plan(): void {
          $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -1611,7 +1611,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test user competency comment created event.
      */
-    public function test_user_competency_comment_created() {
+    public function test_user_competency_comment_created(): void {
         $this->resetAfterTest(true);
 
         $dg = $this->getDataGenerator();
@@ -1653,7 +1653,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test plan comment deleted event.
      */
-    public function test_user_competency_comment_deleted() {
+    public function test_user_competency_comment_deleted(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();

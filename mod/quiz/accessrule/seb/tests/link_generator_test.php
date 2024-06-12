@@ -37,7 +37,7 @@ class link_generator_test extends \advanced_testcase {
     /**
      * Test that a http link is generated correctly.
      */
-    public function test_http_link_generated() {
+    public function test_http_link_generated(): void {
         $course = $this->getDataGenerator()->create_course();
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
@@ -49,7 +49,7 @@ class link_generator_test extends \advanced_testcase {
     /**
      * Test that a http link is generated correctly.
      */
-    public function test_https_link_generated() {
+    public function test_https_link_generated(): void {
         $course = $this->getDataGenerator()->create_course();
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
@@ -61,7 +61,7 @@ class link_generator_test extends \advanced_testcase {
     /**
      * Test that a seb link is generated correctly.
      */
-    public function test_seb_link_generated() {
+    public function test_seb_link_generated(): void {
         $course = $this->getDataGenerator()->create_course();
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
@@ -73,7 +73,7 @@ class link_generator_test extends \advanced_testcase {
     /**
      * Test that a sebs link is generated correctly.
      */
-    public function test_sebs_link_generated() {
+    public function test_sebs_link_generated(): void {
         $course = $this->getDataGenerator()->create_course();
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
@@ -85,7 +85,7 @@ class link_generator_test extends \advanced_testcase {
     /**
      * Test that link_generator can't not be instantiated with fake course module.
      */
-    public function test_course_module_does_not_exist() {
+    public function test_course_module_does_not_exist(): void {
         $this->expectException(\dml_exception::class);
         $this->expectExceptionMessageMatches("/^Can't find data record in database.*/");
         $generator = link_generator::get_link(123456, false);

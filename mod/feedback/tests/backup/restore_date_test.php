@@ -30,7 +30,7 @@ require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
  */
 class restore_date_test extends \restore_date_testcase {
 
-    public function test_restore_dates() {
+    public function test_restore_dates(): void {
         global $DB, $USER;
 
         $time = 10000;
@@ -59,7 +59,7 @@ class restore_date_test extends \restore_date_testcase {
     /**
      * Test that dependency for items is restored correctly.
      */
-    public function test_restore_item_dependency() {
+    public function test_restore_item_dependency(): void {
         global $DB;
         // Create a course and a feedback activity.
         $course = $this->getDataGenerator()->create_course();

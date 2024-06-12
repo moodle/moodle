@@ -27,13 +27,13 @@ class destinations_test extends \basic_testcase {
     /**
      * test backup_destination class
      */
-    function test_backup_destination() {
+    function test_backup_destination(): void {
     }
 
     /**
      * test backup_destination_osfs class
      */
-    function test_backup_destination_osfs() {
+    function test_backup_destination_osfs(): void {
     }
 }
 

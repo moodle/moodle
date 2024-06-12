@@ -40,7 +40,7 @@ class exporters_content_items_test extends \advanced_testcase {
     /**
      * Test confirming the collection of content_items can be exported for a course.
      */
-    public function test_export_course_content_items() {
+    public function test_export_course_content_items(): void {
         $this->resetAfterTest();
         global $PAGE;
 

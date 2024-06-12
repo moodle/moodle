@@ -27,7 +27,7 @@ use tool_uploadcourse_helper;
  */
 class helper_test extends \advanced_testcase {
 
-    public function test_generate_shortname() {
+    public function test_generate_shortname(): void {
         $data = (object) array('fullname' => 'Ah bh Ch 01 02 03', 'idnumber' => 'ID123');
 
         $this->assertSame($data->fullname, tool_uploadcourse_helper::generate_shortname($data, '%f'));
@@ -43,14 +43,14 @@ class helper_test extends \advanced_testcase {
         $this->assertNull(tool_uploadcourse_helper::generate_shortname(array(), '%f'));
     }
 
-    public function test_get_course_formats() {
+    public function test_get_course_formats(): void {
         $result = tool_uploadcourse_helper::get_course_formats();
         $this->assertSame(array_keys(\core_component::get_plugin_list('format')), $result);
         // Should be similar as first result, as cached.
         $this->assertSame($result, tool_uploadcourse_helper::get_course_formats());
     }
 
-    public function test_get_enrolment_data() {
+    public function test_get_enrolment_data(): void {
         $this->resetAfterTest(true);
         $data = array(
             'enrolment_1' => 'unknown',
@@ -96,7 +96,7 @@ class helper_test extends \advanced_testcase {
         $this->assertSame(tool_uploadcourse_helper::get_enrolment_data($data), $expected);
     }
 
-    public function test_get_enrolment_plugins() {
+    public function test_get_enrolment_plugins(): void {
         $this->resetAfterTest(true);
         $actual = tool_uploadcourse_helper::get_enrolment_plugins();
         $this->assertSame(array_keys(enrol_get_plugins(false)), array_keys($actual));
@@ -105,7 +105,7 @@ class helper_test extends \advanced_testcase {
         $this->assertEquals($actual, $secondactual);
     }
 
-    public function test_get_restore_content_dir() {
+    public function test_get_restore_content_dir(): void {
         global $CFG;
         require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
         $this->resetAfterTest(true);
@@ -197,7 +197,7 @@ class helper_test extends \advanced_testcase {
         $CFG->keeptempdirectoriesonbackup = $oldcfg;
     }
 
-    public function test_get_role_ids() {
+    public function test_get_role_ids(): void {
         $this->getDataGenerator();
         // Mimic function result.
         $expected = array();
@@ -213,7 +213,7 @@ class helper_test extends \advanced_testcase {
         $this->assertSame($actual, tool_uploadcourse_helper::get_role_ids());
     }
 
-    public function test_get_role_names() {
+    public function test_get_role_names(): void {
         $this->resetAfterTest(true);
 
         create_role('Villain', 'villain', 'The bad guys');
@@ -246,7 +246,7 @@ class helper_test extends \advanced_testcase {
     /**
      * Test custom field data processing
      */
-    public function test_get_custom_course_field_data() {
+    public function test_get_custom_course_field_data(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -318,7 +318,7 @@ class helper_test extends \advanced_testcase {
         $this->assertArrayNotHasKey('customfield_mytext', $fields);
     }
 
-    public function test_increment_idnumber() {
+    public function test_increment_idnumber(): void {
         $this->resetAfterTest(true);
 
         $c1 = $this->getDataGenerator()->create_course(array('idnumber' => 'C1'));
@@ -330,7 +330,7 @@ class helper_test extends \advanced_testcase {
         $this->assertEquals('DoesNotExist', tool_uploadcourse_helper::increment_idnumber('DoesNotExist'));
     }
 
-    public function test_increment_shortname() {
+    public function test_increment_shortname(): void {
         $this->resetAfterTest(true);
 
         $c1 = $this->getDataGenerator()->create_course(array('shortname' => 'C1'));
@@ -343,7 +343,7 @@ class helper_test extends \advanced_testcase {
         $this->assertEquals('DoesNotExist_2', tool_uploadcourse_helper::increment_shortname('DoesNotExist'));
     }
 
-    public function test_resolve_category() {
+    public function test_resolve_category(): void {
         $this->resetAfterTest(true);
 
         $c1 = $this->getDataGenerator()->create_category(array('name' => 'First level'));
@@ -377,7 +377,7 @@ class helper_test extends \advanced_testcase {
         $this->assertArrayHasKey('couldnotresolvecatgorybypath', $errors);
     }
 
-    public function test_resolve_category_by_idnumber() {
+    public function test_resolve_category_by_idnumber(): void {
         $this->resetAfterTest(true);
 
         $c1 = $this->getDataGenerator()->create_category(array('idnumber' => 'C1'));
@@ -395,7 +395,7 @@ class helper_test extends \advanced_testcase {
         $this->assertEmpty(tool_uploadcourse_helper::resolve_category_by_idnumber('DoesNotExist'));
     }
 
-    public function test_resolve_category_by_path() {
+    public function test_resolve_category_by_path(): void {
         $this->resetAfterTest(true);
 
         $cat1 = $this->getDataGenerator()->create_category(array('name' => 'Cat 1'));

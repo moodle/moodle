@@ -40,7 +40,7 @@ class external_test extends \advanced_testcase {
     /**
      * Checks the get_relevant_users function used when selecting users in search filter.
      */
-    public function test_get_relevant_users() {
+    public function test_get_relevant_users(): void {
         // Set up two users to search for and one to do the searching.
         $generator = $this->getDataGenerator();
         $student1 = $generator->create_user(['firstname' => 'Amelia', 'lastname' => 'Aardvark']);
