@@ -429,7 +429,7 @@ export default class extends BaseComponent {
             return (cmList.length || sectionInfo.hassummary || sectionInfo.rawtitle);
         });
         if (!needsConfirmation) {
-            this.reactive.dispatch('sectionDelete', sectionIds);
+            this._dispatchSectionDelete(sectionIds, target);
             return;
         }
 
@@ -455,9 +455,23 @@ export default class extends BaseComponent {
                 // Stop the default save button behaviour which is to close the modal.
                 e.preventDefault();
                 modal.destroy();
-                this.reactive.dispatch('sectionDelete', sectionIds);
+                this._dispatchSectionDelete(sectionIds, target);
             }
         );
+    }
+
+    /**
+     * Dispatch the section delete action and handle the redirection if necessary.
+     *
+     * @param {Array} sectionIds  the IDs of the sections to delete.
+     * @param {Element} target the dispatch action element
+     */
+    async _dispatchSectionDelete(sectionIds, target) {
+        await this.reactive.dispatch('sectionDelete', sectionIds);
+        if (target.baseURI.includes('section.php')) {
+            // Redirect to the course main page if the section is the current page.
+            window.location.href = this.reactive.get('course').baseurl;
+        }
     }
 
     /**

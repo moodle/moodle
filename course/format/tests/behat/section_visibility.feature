@@ -94,3 +94,15 @@ Feature: Varify section visibility interface
     And I open the action menu in "page-header" "region"
     And I choose "Hide" in the open action menu
     And I should see "Hidden from students" in the "[data-region='sectionbadges']" "css_element"
+
+  @javascript
+  Scenario: The section action menu should be updated properly when a section is hidden/shown
+    Given I open section "1" edit menu
+    When I choose "Hide" in the open action menu
+    Then I should see "Hidden from students" in the "Section 1" "section"
+    And I open section "1" edit menu
+    And I should see "Show" in the "Section 1" "section"
+    And I press the escape key
+    # Confirm the Section 2 menu hasn't been updated.
+    And I open section "2" edit menu
+    And I should see "Hide" in the "Section 2" "section"
