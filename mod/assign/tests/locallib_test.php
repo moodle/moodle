@@ -2759,6 +2759,66 @@ class locallib_test extends \advanced_testcase {
     }
 
     /**
+     * Test reopen behavior when in "Automatic" mode.
+     *
+     * @coversNothing
+     */
+    public function test_attempt_reopen_method_automatic(): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+
+        $assign = $this->create_instance($course, [
+            'attemptreopenmethod' => ASSIGN_ATTEMPT_REOPEN_METHOD_AUTOMATIC,
+            'maxattempts' => 3,
+            'submissiondrafts' => 1,
+            'assignsubmission_onlinetext_enabled' => 1,
+        ]);
+        $PAGE->set_url(new \moodle_url('/mod/assign/view.php', ['id' => $assign->get_course_module()->id]));
+
+        // Set grade to pass to 80.
+        $gradeitem = $assign->get_grade_item();
+        $gradeitem->gradepass = '80.0';
+        $gradeitem->update();
+
+        // Student should be able to see an add submission button.
+        $this->setUser($student);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $student);
+        $this->assertNotEquals(false, strpos($output, get_string('addsubmission', 'assign')));
+
+        // Add a submission as a student.
+        $this->add_submission($student, $assign);
+        $this->submit_for_grading($student, $assign);
+
+        // Verify the student cannot make a new attempt.
+        $output = $assign->view_student_summary($student, true);
+        $this->assertEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
+
+        // Mark the submission as non-passing.
+        $this->mark_submission($teacher, $assign, $student, 50.0);
+
+        // Check the student now has a button for Add a new attempt.
+        $this->setUser($student);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $student);
+        $this->assertNotEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
+
+        // Add a second submission.
+        $this->add_submission($student, $assign);
+        $this->submit_for_grading($student, $assign);
+
+        // Mark the submission as passing.
+        $this->mark_submission($teacher, $assign, $student, 80.0, [], 1);
+
+        // Check the student now has a button for Add a new attempt.
+        $this->setUser($student);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $student);
+        $this->assertNotEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
+    }
+
+    /**
      * Test student visibility for each stage of the marking workflow.
      */
     public function test_markingworkflow(): void {
