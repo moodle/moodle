@@ -36,7 +36,16 @@ require_once($CFG->dirroot . '/user/lib.php');
  * @package    core_webservice
  * @copyright  2017 John Okely <john@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @deprecated since 4.5 MDL-79496. Table replaced with a report builder system report.
+ * @todo MDL-79909 This will be deleted in Moodle 6.0.
  */
+#[\core\attribute\deprecated(
+    replacement: null,
+    since: '4.5',
+    reason: 'Table replaced with a report builder system report',
+    mdl: 'MDL-79496',
+)]
 class token_table extends \table_sql {
 
     /**

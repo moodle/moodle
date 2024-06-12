@@ -23,6 +23,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_reportbuilder\system_report_factory;
+use core_webservice\reportbuilder\local\systemreports\tokens;
+
 require(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
@@ -125,31 +128,12 @@ if ($action === 'delete') {
     die();
 }
 
-// Pre-populate the form with the values that come as a part of the URL - typically when using the table_sql control
-// links.
-$filterdata = (object)[
-    'name' => $fname,
-    'users' => $fusers,
-    'services' => $fservices,
-];
-
-$filter = new \core_webservice\token_filter($PAGE->url, $filterdata);
-
-$filter->set_data($filterdata);
-
-if ($filter->is_submitted()) {
-    $filterdata = $filter->get_data();
-
-    if (isset($filterdata->resetbutton)) {
-        redirect($PAGE->url);
-    }
-}
-
 echo $OUTPUT->header();
+echo $OUTPUT->container_start('d-flex flex-wrap');
 echo $OUTPUT->heading(get_string('managetokens', 'core_webservice'));
-
 echo html_writer::div($OUTPUT->render(new single_button(new moodle_url($PAGE->url, ['action' => 'create']),
-    get_string('createtoken', 'core_webservice'), 'get', single_button::BUTTON_PRIMARY)), 'my-3');
+    get_string('createtoken', 'core_webservice'), 'get', single_button::BUTTON_PRIMARY)), 'ml-auto');
+echo $OUTPUT->container_end();
 
 if (!empty($SESSION->webservicenewlycreatedtoken)) {
     $webservicemanager = new webservice();
@@ -167,24 +151,7 @@ if (!empty($SESSION->webservicenewlycreatedtoken)) {
     }
 }
 
-$filter->display();
-
-$table = new \core_webservice\token_table('webservicetokens', $filterdata);
-
-// In order to not lose the filter form values by clicking the table control links, make them part of the table's baseurl.
-$baseurl = new moodle_url($PAGE->url, ['fname' => $filterdata->name]);
-
-foreach ($filterdata->users as $i => $userid) {
-    $baseurl->param("fusers[{$i}]", $userid);
-}
-
-foreach ($filterdata->services as $i => $serviceid) {
-    $baseurl->param("fservices[{$i}]", $serviceid);
-}
-
-$table->define_baseurl($baseurl);
-
-$table->attributes['class'] = 'admintable generaltable';
-$table->out(30, false);
+$report = system_report_factory::create(tokens::class, context_system::instance());
+echo $report->output();
 
 echo $OUTPUT->footer();

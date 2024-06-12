@@ -1,4 +1,4 @@
-@core @core_admin @javascript
+@core @core_admin @core_webservice @javascript
 Feature: Verify the breadcrumbs in webservice tokens site administration pages
   Whenever I navigate to manage tokens page in site administration
   As an admin
@@ -19,7 +19,7 @@ Feature: Verify the breadcrumbs in webservice tokens site administration pages
     And "Web services" "link" should exist in the ".breadcrumb" "css_element"
     And I set the field "User" to "John Doe"
     And I press "Save changes"
-    When I click on "Delete" "link"
+    When I press "Delete" action in the "John Doe" report row
     Then "Delete token" "text" should exist in the ".breadcrumb" "css_element"
     And "Manage tokens" "link" should exist in the ".breadcrumb" "css_element"
     And "Web services" "link" should exist in the ".breadcrumb" "css_element"

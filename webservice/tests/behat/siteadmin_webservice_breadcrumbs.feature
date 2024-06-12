@@ -1,4 +1,4 @@
-@core @core_admin @javascript
+@core @core_admin @core_webservice @javascript
 Feature: Verify the breadcrumbs in external webservice site administration pages
   Whenever I navigate to external webservice page in site administration
   As an admin
