@@ -25,14 +25,12 @@
 namespace mod_quiz;
 
 use advanced_testcase;
-use context_course;
 use context_module;
+use core\context;
 use mod_quiz\task\quiz_notify_attempt_manual_grading_completed;
 use question_engine;
-use mod_quiz\quiz_settings;
+use question_usage_by_activity;
 use stdClass;
-
-defined('MOODLE_INTERNAL') || die();
 
 
 /**
@@ -43,35 +41,35 @@ defined('MOODLE_INTERNAL') || die();
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcase {
-    /** @var \stdClass $course Test course to contain quiz. */
-    protected $course;
+    /** @var stdClass $course Test course to contain quiz. */
+    protected stdClass $course;
 
-    /** @var \stdClass $quiz A test quiz. */
-    protected $quiz;
+    /** @var stdClass $quiz A test quiz. */
+    protected stdClass $quiz;
 
     /** @var context The quiz context. */
-    protected $context;
+    protected context $context;
 
     /** @var stdClass The course_module. */
-    protected $cm;
+    protected stdClass $cm;
 
     /** @var stdClass The student test. */
-    protected $student;
+    protected stdClass $student;
 
-    /** @var stdClass The teacher test. */
-    protected $teacher;
+    /** @var stdClass The student role. */
+    protected stdClass $studentrole;
 
     /** @var quiz_settings Object containing the quiz settings. */
-    protected $quizobj;
+    protected quiz_settings $quizobj;
 
     /** @var question_usage_by_activity The question usage for this quiz attempt. */
-    protected $quba;
+    protected question_usage_by_activity $quba;
 
     /**
      * Standard test setup.
      *
-     * Create a course with a quiz and a student and a(n editing) teacher.
-     * the quiz has a truefalse question and an essay question.
+     * Create a course with a quiz and a student.
+     * The quiz has a truefalse question and an essay question.
      *
      * Also create some bits of a quiz attempt to be used later.
      */
@@ -83,31 +81,21 @@ class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcas
 
         // Setup test data.
         $this->course = $this->getDataGenerator()->create_course();
-        $this->quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
-        $this->context = context_module::instance($this->quiz->cmid);
-        $this->cm = get_coursemodule_from_instance('quiz', $this->quiz->id);
 
-        // Create users.
+        // Create a user enrolled as a student.
         $this->student = self::getDataGenerator()->create_user();
-        $this->teacher = self::getDataGenerator()->create_user();
-
-        // Users enrolments.
-        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
-        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
-
-        // Allow student to receive messages.
-        $coursecontext = context_course::instance($this->course->id);
-        assign_capability('mod/quiz:emailnotifyattemptgraded', CAP_ALLOW, $studentrole->id, $coursecontext, true);
-
-        $this->getDataGenerator()->enrol_user($this->student->id, $this->course->id, $studentrole->id);
-        $this->getDataGenerator()->enrol_user($this->teacher->id, $this->course->id, $teacherrole->id);
+        $this->studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $this->getDataGenerator()->enrol_user($this->student->id, $this->course->id, $this->studentrole->id);
 
         // Make a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
         $this->quiz = $quizgenerator->create_instance(['course' => $this->course->id, 'questionsperpage' => 0,
             'grade' => 100.0, 'sumgrades' => 2]);
+        $this->context = context_module::instance($this->quiz->cmid);
+        $this->cm = get_coursemodule_from_instance('quiz', $this->quiz->id);
 
         // Create a truefalse question and an essay question.
+        /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
         $truefalse = $questiongenerator->create_question('truefalse', null, ['category' => $cat->id]);
@@ -131,7 +119,7 @@ class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcas
         $timenow = time();
 
         // Create an attempt to be completely graded (one hour ago).
-        $attempt1 = quiz_create_attempt($this->quizobj, 1, null, $timenow - HOURSECS, false, $this->student->id);
+        $attempt1 = quiz_create_attempt($this->quizobj, 1, false, $timenow - HOURSECS, false, $this->student->id);
         quiz_start_new_attempt($this->quizobj, $this->quba, $attempt1, 1, $timenow - HOURSECS);
         quiz_attempt_save_started($this->quizobj, $this->quba, $attempt1);
 
@@ -149,6 +137,8 @@ class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcas
         $update->id = $attemptobj1->get_attemptid();
         $update->timemodified = $timenow;
         $update->sumgrades = $attemptobj1->get_question_usage()->get_total_mark();
+        $update->gradednotificationsenttime = null; // Processfinish detects the notification is not required, so sets this.
+        // Unset to allow testing of our logic.
         $DB->update_record('quiz_attempts', $update);
         $attemptobj1->get_quizobj()->get_grade_calculator()->recompute_final_grade();
 
@@ -172,7 +162,7 @@ class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcas
         $timenow = time();
 
         // Create an attempt which won't be graded (1 hour ago).
-        $attempt2 = quiz_create_attempt($this->quizobj, 2, null, $timenow - HOURSECS, false, $this->student->id);
+        $attempt2 = quiz_create_attempt($this->quizobj, 2, false, $timenow - HOURSECS, false, $this->student->id);
         quiz_start_new_attempt($this->quizobj, $this->quba, $attempt2, 2, $timenow - HOURSECS);
         quiz_attempt_save_started($this->quizobj, $this->quba, $attempt2);
 
@@ -198,13 +188,13 @@ class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcas
 
         // Create an attempt for a user without the capability.
         $timenow = time();
-        $attempt = quiz_create_attempt($this->quizobj, 3, null, $timenow, false, $this->teacher->id);
+        $attempt = quiz_create_attempt($this->quizobj, 3, false, $timenow, false, $this->student->id);
         quiz_start_new_attempt($this->quizobj, $this->quba, $attempt, 3, $timenow - HOURSECS);
         quiz_attempt_save_started($this->quizobj, $this->quba, $attempt);
 
         // Process some responses and submit.
         $attemptobj = quiz_attempt::create($attempt->id);
-        $tosubmit = [2 => ['answer' => 'Answer of teacher.', 'answerformat' => FORMAT_HTML]];
+        $tosubmit = [2 => ['answer' => 'Essay answer.', 'answerformat' => FORMAT_HTML]];
         $attemptobj->process_submitted_actions($timenow - 30 * MINSECS, false, $tosubmit);
         $attemptobj->process_finish($timenow - 20 * MINSECS, false);
 
@@ -216,15 +206,16 @@ class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcas
         $update->id = $attemptobj->get_attemptid();
         $update->timemodified = $timenow;
         $update->sumgrades = $attemptobj->get_question_usage()->get_total_mark();
+        $update->gradednotificationsenttime = null; // Processfinish detects the notification is not required, so sets this.
+        // Unset to allow testing of our logic.
         $DB->update_record('quiz_attempts', $update);
         $attemptobj->get_quizobj()->get_grade_calculator()->recompute_final_grade();
 
         // Run the quiz notify attempt manual graded task.
-        ob_start();
+        $this->expectOutputRegex("~Not sending an email because user does not have mod/quiz:emailnotifyattemptgraded capability.~");
         $task = new quiz_notify_attempt_manual_grading_completed();
         $task->set_time_for_testing($timenow + 5 * HOURSECS + 1);
         $task->execute();
-        ob_get_clean();
 
         $attemptobj = quiz_attempt::create($attempt->id);
         $this->assertEquals($attemptobj->get_attempt()->timefinish, $attemptobj->get_attempt()->gradednotificationsenttime);
@@ -236,9 +227,12 @@ class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcas
     public function test_notify_manual_grading_completed_task_with_capability() {
         global $DB;
 
+        // Allow student to receive messages.
+        assign_capability('mod/quiz:emailnotifyattemptgraded', CAP_ALLOW, $this->studentrole->id, $this->context, true);
+
         // Create an attempt with capability.
         $timenow = time();
-        $attempt = quiz_create_attempt($this->quizobj, 4, null, $timenow, false, $this->student->id);
+        $attempt = quiz_create_attempt($this->quizobj, 4, false, $timenow, false, $this->student->id);
         quiz_start_new_attempt($this->quizobj, $this->quba, $attempt, 4, $timenow - HOURSECS);
         quiz_attempt_save_started($this->quizobj, $this->quba, $attempt);
 
@@ -260,11 +254,10 @@ class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcas
         $attemptobj->get_quizobj()->get_grade_calculator()->recompute_final_grade();
 
         // Run the quiz notify attempt manual graded task.
-        ob_start();
+        $this->expectOutputRegex("~Sending email to user {$this->student->id}~");
         $task = new quiz_notify_attempt_manual_grading_completed();
         $task->set_time_for_testing($timenow + 5 * HOURSECS + 1);
         $task->execute();
-        ob_get_clean();
 
         $attemptobj = quiz_attempt::create($attempt->id);
 
