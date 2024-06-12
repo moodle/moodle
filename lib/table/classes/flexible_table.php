@@ -101,6 +101,9 @@ class flexible_table {
     /** @var string Key of field returned by db query that is the id field of the user table or equivalent. */
     public $useridfield = 'id';
 
+    /** @var bool Whether to make the table to be scrolled horizontally with ease. Make table responsive across all viewports. */
+    public bool $responsive = true;
+
     /** @var array The sticky attribute of each table column. */
     protected $columnsticky = [];
 
@@ -1202,7 +1205,9 @@ class flexible_table {
 
             echo html_writer::end_tag('tbody');
             echo html_writer::end_tag('table');
-            echo html_writer::end_tag('div');
+            if ($this->responsive) {
+                echo html_writer::end_tag('div');
+            }
             $this->wrap_html_finish();
 
             // Paging bar.
@@ -1860,7 +1865,9 @@ class flexible_table {
         $this->wrap_html_start();
         // Start of main data table.
 
-        echo html_writer::start_tag('div', ['class' => 'no-overflow']);
+        if ($this->responsive) {
+            echo html_writer::start_tag('div', ['class' => 'no-overflow']);
+        }
         echo html_writer::start_tag('table', $this->attributes) . $this->render_caption();
     }
 

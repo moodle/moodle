@@ -1,0 +1,11 @@
+issueNumber: MDL-80748
+notes:
+  core_table:
+    - message: >+
+        A new `$reponsive` property (defaulting to `true`) has been added to the
+        `core_table\flexible_table` class.
+
+        This property allows you to control whether the table is rendered as a
+        responsive table.
+
+      type: improved
