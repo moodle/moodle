@@ -705,6 +705,10 @@ class stateactions {
         $this->validate_cms($course, $ids, __FUNCTION__, ['moodle/course:manageactivities']);
         $modinfo = get_fast_modinfo($course);
         $cms = $this->get_cm_info($modinfo, $ids);
+        $cms = $this->filter_cms_with_section_delegate($cms);
+        if (empty($cms)) {
+            return;
+        }
         list($insql, $inparams) = $DB->get_in_or_equal(array_keys($cms), SQL_PARAMS_NAMED);
         $DB->set_field_select('course_modules', 'indent', $indent, "id $insql", $inparams);
         rebuild_course_cache($course->id, false, true);
@@ -1069,6 +1073,26 @@ class stateactions {
         if (!empty($sectionids)) {
             $this->section_state($updates, $course, $sectionids);
         }
+    }
+
+    /**
+     * Remove course modules with section delegate from a list.
+     *
+     * @param cm_info[] $cms the list of course modules to filter.
+     * @return cm_info[] the filtered list of course modules indexed by id.
+     */
+    protected function filter_cms_with_section_delegate(array $cms): array {
+        $filtered = [];
+        $modules = [];
+        foreach ($cms as $cm) {
+            if (!isset($modules[$cm->module])) {
+                $modules[$cm->module] = sectiondelegate::has_delegate_class('mod_' . $cm->modname);
+            }
+            if (!$modules[$cm->module]) {
+                $filtered[$cm->id] = $cm;
+            }
+        }
+        return $filtered;
     }
 
     /**
