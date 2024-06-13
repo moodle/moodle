@@ -14,7 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use core\output\named_templatable;
+namespace core\output;
+
+use core\context\system as context_system;
+use core\exception\moodle_exception;
+use core\exception\coding_exception;
+use core\output\actions\component_action;
+use moodle_page;
+use moodle_url;
+use Mustache_Exception_UnknownTemplateException;
 
 /**
  * Simple base class for Moodle renderers.
@@ -46,7 +54,7 @@ class renderer_base {
     protected $target;
 
     /**
-     * @var Mustache_Engine $mustache The mustache template compiler
+     * @var \Mustache_Engine The mustache template compiler
      */
     private $mustache;
 
@@ -59,7 +67,7 @@ class renderer_base {
      * Return an instance of the mustache class.
      *
      * @since 2.9
-     * @return Mustache_Engine
+     * @return \Mustache_Engine
      */
     protected function get_mustache() {
         global $CFG;
@@ -84,14 +92,14 @@ class renderer_base {
                 }
             }
 
-            $loader = new \core\output\mustache_filesystem_loader();
-            $stringhelper = new \core\output\mustache_string_helper();
-            $cleanstringhelper = new \core\output\mustache_clean_string_helper();
-            $quotehelper = new \core\output\mustache_quote_helper();
-            $jshelper = new \core\output\mustache_javascript_helper($this->page);
-            $pixhelper = new \core\output\mustache_pix_helper($this);
-            $shortentexthelper = new \core\output\mustache_shorten_text_helper();
-            $userdatehelper = new \core\output\mustache_user_date_helper();
+            $loader = new mustache_filesystem_loader();
+            $stringhelper = new mustache_string_helper();
+            $cleanstringhelper = new mustache_clean_string_helper();
+            $quotehelper = new mustache_quote_helper();
+            $jshelper = new mustache_javascript_helper($this->page);
+            $pixhelper = new mustache_pix_helper($this);
+            $shortentexthelper = new mustache_shorten_text_helper();
+            $userdatehelper = new mustache_user_date_helper();
 
             // We only expose the variables that are exposed to JS templates.
             $safeconfig = $this->page->requires->get_config_for_javascript($this->page, $this);
@@ -106,12 +114,12 @@ class renderer_base {
                              'userdate' => array($userdatehelper, 'transform'),
                          );
 
-            $this->mustache = new \core\output\mustache_engine(array(
+            $this->mustache = new mustache_engine(array(
                 'cache' => $cachedir,
                 'escape' => 's',
                 'loader' => $loader,
                 'helpers' => $helpers,
-                'pragmas' => [Mustache_Engine::PRAGMA_BLOCKS],
+                'pragmas' => [\Mustache_Engine::PRAGMA_BLOCKS],
                 // Don't allow the JavaScript helper to be executed from within another
                 // helper. If it's allowed it can be used by users to inject malicious
                 // JS into the page.
@@ -168,7 +176,7 @@ class renderer_base {
         // but will be different from template to template. This is useful for
         // e.g. aria attributes that only work with id attributes and must be
         // unique in a page.
-        $mustache->addHelper('uniqid', new \core\output\mustache_uniqid_helper());
+        $mustache->addHelper('uniqid', new mustache_uniqid_helper());
         if (isset($this->templatecache[$templatename])) {
             $template = $this->templatecache[$templatename];
         } else {
@@ -404,3 +412,8 @@ class renderer_base {
         return $this->page;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(renderer_base::class, \renderer_base::class);

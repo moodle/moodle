@@ -16,8 +16,6 @@
 
 namespace core\output;
 
-use renderable;
-
 /**
  * Class to render a sticky footer element.
  *

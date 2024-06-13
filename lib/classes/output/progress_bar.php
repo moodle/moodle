@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use core\exception\coding_exception;
+
 /**
  * Progress bar class.
  *
@@ -202,3 +206,8 @@ class progress_bar implements renderable, templatable {
         ];
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(progress_bar::class, \progress_bar::class);

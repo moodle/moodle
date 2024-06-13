@@ -14,6 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output\requirements;
+
+use core_component;
+use core\context\course as context_course;
+use core\exception\coding_exception;
+use core\output\core_renderer;
+use core\output\js_writer;
+use core\output\html_writer;
+use core\output\renderer_base;
+use lang_string;
+use moodle_page;
+use moodle_url;
+use stdClass;
+
 /**
  * This class tracks all the things that are needed by the current page.
  *
@@ -45,7 +59,6 @@
  * @category output
  */
 class page_requirements_manager {
-
     /**
      * @var array List of string available from JS
      */
@@ -131,7 +144,7 @@ class page_requirements_manager {
     protected $yui3loader;
 
     /**
-     * @var YUI_config default YUI loader configuration
+     * @var yui default YUI loader configuration
      */
     protected $YUI_config;
 
@@ -165,7 +178,7 @@ class page_requirements_manager {
         $sep = empty($CFG->yuislasharguments) ? '?' : '/';
 
         $this->yui3loader = new stdClass();
-        $this->YUI_config = new YUI_config();
+        $this->YUI_config = new yui();
 
         // Set up some loader options.
         $this->yui3loader->local_base = $CFG->wwwroot . '/lib/yuilib/'. $CFG->yui3version . '/';
@@ -1812,3 +1825,8 @@ EOF;
         return $this->onetimeitemsoutput[$thing] = true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(page_requirements_manager::class, \page_requirements_manager::class);

@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use core\exception\coding_exception;
+use core\output\actions\component_action;
+use moodle_url;
+use stdClass;
+
 /**
  * Simple form with just one select field that gets submitted automatically.
  *
@@ -287,3 +294,8 @@ class single_select implements renderable, templatable {
         return $data;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(single_select::class, \single_select::class);

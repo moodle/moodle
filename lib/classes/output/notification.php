@@ -33,7 +33,7 @@ namespace core\output;
  * @package core
  * @category output
  */
-class notification implements \renderable, \templatable {
+class notification implements renderable, templatable {
 
     /**
      * A notification of level 'success'.

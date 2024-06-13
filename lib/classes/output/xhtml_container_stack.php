@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use stdClass;
+
 /**
  * This class keeps track of which HTML tags are currently open.
  *
@@ -62,7 +66,7 @@ class xhtml_container_stack {
      * @param string $closehtml The HTML required to close the container.
      */
     public function push($type, $closehtml) {
-        $container = new stdClass;
+        $container = new stdClass();
         $container->type = $type;
         $container->closehtml = $closehtml;
         if ($this->isdebugging) {
@@ -151,3 +155,8 @@ class xhtml_container_stack {
         return '<ul>' . implode("\n", $this->log) . '</ul>';
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(xhtml_container_stack::class, \xhtml_container_stack::class);

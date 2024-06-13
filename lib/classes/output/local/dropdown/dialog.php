@@ -17,7 +17,7 @@
 namespace core\output\local\dropdown;
 
 use core\output\named_templatable;
-use renderable;
+use core\output\renderable;
 
 /**
  * Class to render a dropdown dialog element.

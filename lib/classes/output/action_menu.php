@@ -14,7 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use core\exception\coding_exception;
 use core\output\local\action_menu\subpanel;
+use core\output\action_menu\link as action_menu_link;
+use core\output\action_menu\filler as action_menu_filler;
+use lang_string;
+use moodle_page;
+use stdClass;
 
 /**
  * An action menu.
@@ -29,7 +37,6 @@ use core\output\local\action_menu\subpanel;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class action_menu implements renderable, templatable {
-
     /**
      * Top right alignment.
      */
@@ -664,3 +671,8 @@ class action_menu implements renderable, templatable {
         return $secondary;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(action_menu::class, \action_menu::class);

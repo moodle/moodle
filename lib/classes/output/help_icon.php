@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use moodle_url;
+use stdClass;
+
 /**
  * Data structure representing a help icon.
  *
@@ -24,7 +29,6 @@
  * @category output
  */
 class help_icon implements renderable, templatable {
-
     /**
      * @var string lang pack identifier (without the "_help" suffix),
      * both get_string($identifier, $component) and get_string($identifier.'_help', $component)
@@ -116,3 +120,8 @@ class help_icon implements renderable, templatable {
         return $data;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(help_icon::class, \help_icon::class);

@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use core\exception\coding_exception;
+use core_table\output\html_table;
+use core_table\output\html_table_cell;
+use core_table\output\html_table_row;
+use core_text;
+use moodle_url;
+
 /**
  * Simple html output class
  *
@@ -24,7 +33,6 @@
  * @category output
  */
 class html_writer {
-
     /**
      * Outputs a tag with attributes and contents
      *
@@ -434,11 +442,11 @@ class html_writer {
      * @return string
      */
     public static function alist(array $items, array $attributes = null, $tag = 'ul') {
-        $output = html_writer::start_tag($tag, $attributes)."\n";
+        $output = self::start_tag($tag, $attributes)."\n";
         foreach ($items as $item) {
-            $output .= html_writer::tag('li', $item)."\n";
+            $output .= self::tag('li', $item)."\n";
         }
-        $output .= html_writer::end_tag($tag);
+        $output .= self::end_tag($tag);
         return $output;
     }
 
@@ -553,7 +561,7 @@ class html_writer {
             'cellpadding'   => $table->cellpadding,
             'cellspacing'   => $table->cellspacing,
         ));
-        $output = html_writer::start_tag('table', $attributes) . "\n";
+        $output = self::start_tag('table', $attributes) . "\n";
 
         $countcols = 0;
 
@@ -563,7 +571,7 @@ class html_writer {
             if ($table->captionhide) {
                 $captionattributes['class'] = 'accesshide';
             }
-            $output .= html_writer::tag(
+            $output .= self::tag(
                 'caption',
                 $table->caption,
                 $captionattributes
@@ -573,8 +581,8 @@ class html_writer {
         if (!empty($table->head)) {
             $countcols = count($table->head);
 
-            $output .= html_writer::start_tag('thead', array()) . "\n";
-            $output .= html_writer::start_tag('tr', array()) . "\n";
+            $output .= self::start_tag('thead', array()) . "\n";
+            $output .= self::start_tag('tr', array()) . "\n";
             $keys = array_keys($table->head);
             $lastkey = end($keys);
 
@@ -618,28 +626,28 @@ class html_writer {
                     $attributes['scope'] = !empty($heading->scope) ? $heading->scope : 'col';
                 }
 
-                $output .= html_writer::tag($tagtype, $heading->text, $attributes) . "\n";
+                $output .= self::tag($tagtype, $heading->text, $attributes) . "\n";
             }
-            $output .= html_writer::end_tag('tr') . "\n";
-            $output .= html_writer::end_tag('thead') . "\n";
+            $output .= self::end_tag('tr') . "\n";
+            $output .= self::end_tag('thead') . "\n";
 
             if (empty($table->data)) {
                 // For valid XHTML strict every table must contain either a valid tr
                 // or a valid tbody... both of which must contain a valid td
-                $output .= html_writer::start_tag('tbody', array('class' => 'empty'));
-                $output .= html_writer::tag('tr', html_writer::tag('td', '', array('colspan'=>count($table->head))));
-                $output .= html_writer::end_tag('tbody');
+                $output .= self::start_tag('tbody', array('class' => 'empty'));
+                $output .= self::tag('tr', self::tag('td', '', array('colspan'=>count($table->head))));
+                $output .= self::end_tag('tbody');
             }
         }
 
         if (!empty($table->data)) {
             $keys       = array_keys($table->data);
             $lastrowkey = end($keys);
-            $output .= html_writer::start_tag('tbody', array());
+            $output .= self::start_tag('tbody', array());
 
             foreach ($table->data as $key => $row) {
                 if (($row === 'hr') && ($countcols)) {
-                    $output .= html_writer::tag('td', html_writer::tag('div', '', array('class' => 'tabledivider')), array('colspan' => $countcols));
+                    $output .= self::tag('td', self::tag('div', '', array('class' => 'tabledivider')), array('colspan' => $countcols));
                 } else {
                     // Convert array rows to html_table_rows and cell strings to html_table_cell objects
                     if (!($row instanceof html_table_row)) {
@@ -668,7 +676,7 @@ class html_writer {
                         'id'            => $row->id,
                         'style'         => $row->style,
                     ));
-                    $output .= html_writer::start_tag('tr', $trattributes) . "\n";
+                    $output .= self::start_tag('tr', $trattributes) . "\n";
                     $keys2 = array_keys($row->cells);
                     $lastkey = end($keys2);
 
@@ -715,14 +723,14 @@ class html_writer {
                         if ($cell->header === true) {
                             $tagtype = 'th';
                         }
-                        $output .= html_writer::tag($tagtype, $cell->text, $tdattributes) . "\n";
+                        $output .= self::tag($tagtype, $cell->text, $tdattributes) . "\n";
                     }
                 }
-                $output .= html_writer::end_tag('tr') . "\n";
+                $output .= self::end_tag('tr') . "\n";
             }
-            $output .= html_writer::end_tag('tbody') . "\n";
+            $output .= self::end_tag('tbody') . "\n";
         }
-        $output .= html_writer::end_tag('table') . "\n";
+        $output .= self::end_tag('table') . "\n";
 
         if ($table->responsive) {
             return self::div($output, 'table-responsive');
@@ -868,3 +876,8 @@ class html_writer {
         return self::end_tag('span');
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(html_writer::class, \html_writer::class);

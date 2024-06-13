@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use core\output\actions\confirm_action;
+use core\output\actions\component_action;
+use moodle_url;
+use stdClass;
+
 /**
  * Data structure representing a simple form with only one button.
  *
@@ -24,7 +31,6 @@
  * @category output
  */
 class single_button implements renderable {
-
     /**
      * Possible button types. From boostrap.
      */
@@ -264,3 +270,8 @@ class single_button implements renderable {
         return $data;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(single_button::class, \single_button::class);

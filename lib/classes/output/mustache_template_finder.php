@@ -14,21 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * List the valid locations to search for a template with a given name.
- *
- * @package    core
- * @category   output
- * @copyright  2015 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\output;
 
-use coding_exception;
-use moodle_exception;
+use core\exception\coding_exception;
+use core\exception\moodle_exception;
 use core_component;
-use theme_config;
 
 /**
  * Get information about valid locations for mustache templates.
@@ -38,7 +28,6 @@ use theme_config;
  * @since      2.9
  */
 class mustache_template_finder {
-
     /**
      * Helper function for getting a list of valid template directories for a specific component.
      *

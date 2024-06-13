@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Mustache helper to load strings from string_manager and perform HTML escaping on them.
- *
- * @package    core
- * @category   output
- * @copyright  2021 Shamim Rezaie <shamim@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\output;
 
 use Mustache_LambdaHelper;
@@ -30,6 +21,7 @@ use Mustache_LambdaHelper;
 /**
  * This class will load language strings in a template.
  *
+ * @package core
  * @copyright  2021 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      4.0

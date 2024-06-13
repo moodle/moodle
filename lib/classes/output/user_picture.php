@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use core\context\user as context_user;
+use moodle_page;
+use moodle_url;
+use stdClass;
+
 /**
  * Data structure representing a user picture.
  *
@@ -33,7 +40,7 @@ class user_picture implements renderable {
     /**
      * @var int The course id. Used when constructing the link to the user's
      * profile, page course id used if not specified.
-     */
+    */
     public $courseid;
 
     /**
@@ -300,3 +307,8 @@ class user_picture implements renderable {
         return $defaulturl;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(user_picture::class, \user_picture::class);

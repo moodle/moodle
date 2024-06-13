@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
 /**
  * Simple javascript output class
  *
@@ -24,7 +26,6 @@
  * @category output
  */
 class js_writer {
-
     /**
      * Returns javascript code calling the function
      *
@@ -145,3 +146,8 @@ class js_writer {
         return $output . ");\n";
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(js_writer::class, \js_writer::class);

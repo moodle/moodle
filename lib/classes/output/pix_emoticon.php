@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
 /**
  * Data structure representing an emoticon image
  *
@@ -38,3 +40,8 @@ class pix_emoticon extends pix_icon implements renderable {
         parent::__construct($pix, $alt, $component, $attributes);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(pix_emoticon::class, \pix_emoticon::class);

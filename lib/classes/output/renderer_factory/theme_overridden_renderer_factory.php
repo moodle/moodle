@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output\renderer_factory;
+
+use core\exception\coding_exception;
+use core\output\renderer_base;
+use core\output\theme_config;
+use moodle_page;
+
 /**
  * This is renderer factory allows themes to override the standard renderers using php code.
  *
@@ -116,3 +123,8 @@ class theme_overridden_renderer_factory extends renderer_factory_base {
         throw new coding_exception('Request for an unknown renderer ' . $component . ', ' . $subtype . ', ' . $target);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(theme_overridden_renderer_factory::class, \theme_overridden_renderer_factory::class);

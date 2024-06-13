@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_table;
+
+use core\exception\coding_exception;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -30,8 +34,7 @@ use core\dataformat;
  * @copyright  2016 Brendan Heywood (brendan@catalyst-au.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class table_dataformat_export_format extends table_default_export_format_parent {
-
+class dataformat_export_format extends base_export_format {
     /** @var \core\dataformat\base $dataformat */
     protected $dataformat;
 
@@ -146,3 +149,8 @@ class table_dataformat_export_format extends table_default_export_format_parent 
         exit();
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(dataformat_export_format::class, \table_dataformat_export_format::class);

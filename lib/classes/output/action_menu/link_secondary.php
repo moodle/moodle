@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output\action_menu;
+
+use core\output\pix_icon;
+use moodle_url;
+
 /**
  * A secondary action menu action
  *
@@ -22,7 +27,7 @@
  * @copyright 2013 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class action_menu_link_secondary extends action_menu_link {
+class link_secondary extends link {
     /**
      * Constructs the object.
      *
@@ -35,3 +40,8 @@ class action_menu_link_secondary extends action_menu_link {
         parent::__construct($url, $icon, $text, false, $attributes);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(link_secondary::class, \action_menu_link_secondary::class);

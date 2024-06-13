@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use core_useragent;
+use moodle_url;
+use stdClass;
+
 /**
  * A renderer that generates output for ajax scripts.
  *
@@ -27,7 +33,6 @@
  * @category output
  */
 class core_renderer_ajax extends core_renderer {
-
     /**
      * Returns a template fragment representing a fatal error.
      *
@@ -88,14 +93,19 @@ class core_renderer_ajax extends core_renderer {
      * @param string $messagetype The type of notification to show the message in.
      *         See constants on \core\output\notification.
      */
-    public function redirect_message($encodedurl, $message, $delay, $debugdisableredirect,
-                                     $messagetype = \core\output\notification::NOTIFY_INFO) {}
+    public function redirect_message(
+        $encodedurl,
+        $message,
+        $delay,
+        $debugdisableredirect,
+        $messagetype = notification::NOTIFY_INFO,
+    ) {}
 
     /**
      * Prepares the start of an AJAX output.
      */
     public function header() {
-        // unfortunately YUI iframe upload does not support application/json
+        // Unfortunately YUI iframe upload does not support application/json.
         if (!empty($_FILES)) {
             @header('Content-type: text/plain; charset=utf-8');
             if (!core_useragent::supports_json_contenttype()) {
@@ -132,3 +142,8 @@ class core_renderer_ajax extends core_renderer {
      */
     public function heading($text, $level = 2, $classes = 'main', $id = null) {}
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(core_renderer_ajax::class, \core_renderer_ajax::class);

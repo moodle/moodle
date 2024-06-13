@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_block\output;
+
 /**
  * This class represents how a block appears on a page.
  *
@@ -32,7 +34,6 @@
  * @category output
  */
 class block_contents {
-
     /** Used when the block cannot be collapsed **/
     const NOT_HIDEABLE = 0;
 
@@ -159,3 +160,8 @@ class block_contents {
         return isset($this->attributes['data-block']) && $this->attributes['data-block'] == '_fake';
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(block_contents::class, \block_contents::class);

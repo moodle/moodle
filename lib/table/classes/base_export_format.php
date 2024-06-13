@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_table;
+
+use flexible_table;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -21,11 +25,13 @@ global $CFG;
 require_once("{$CFG->libdir}/tablelib.php");
 
 /**
+ * The table base export format.
+ *
  * @package   moodlecore
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class table_default_export_format_parent {
+class base_export_format {
     /**
      * @var flexible_table or child class reference pointing to table class
      * object from which to export data.
@@ -93,3 +99,8 @@ class table_default_export_format_parent {
         return array_map([$this, 'format_text'], $row);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(base_export_format::class, \table_default_export_format_parent::class);

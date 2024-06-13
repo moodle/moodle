@@ -14,7 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_table;
+
+use core\context;
 use core_table\local\filter\filterset;
+use core\exception\coding_exception;
+use core\output\renderable;
+use html_writer;
+use moodle_url;
+use paging_bar;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -128,7 +137,7 @@ class flexible_table {
      */
     var $started_output = false;
 
-    /** @var table_dataformat_export_format */
+    /** @var dataformat_export_format */
     var $exportclass = null;
 
     /**
@@ -209,8 +218,8 @@ class flexible_table {
 
     /**
      * Get, and optionally set, the export class.
-     * @param table_dataformat_export_format $exportclass (optional) if passed, set the table to use this export class.
-     * @return table_dataformat_export_format the export class in use (after any set).
+     * @param dataformat_export_format $exportclass (optional) if passed, set the table to use this export class.
+     * @return dataformat_export_format the export class in use (after any set).
      */
     function export_class_instance($exportclass = null) {
         if (!is_null($exportclass)) {
@@ -218,7 +227,7 @@ class flexible_table {
             $this->exportclass = $exportclass;
             $this->exportclass->table = $this;
         } else if (is_null($this->exportclass) && !empty($this->download)) {
-            $this->exportclass = new table_dataformat_export_format($this, $this->download);
+            $this->exportclass = new dataformat_export_format($this, $this->download);
             if (!$this->exportclass->document_started()) {
                 $this->exportclass->start_document($this->filename, $this->sheettitle);
             }
@@ -1735,7 +1744,7 @@ class flexible_table {
      * @return string
      */
     protected function get_dynamic_table_html_start(): string {
-        if (is_a($this, \core_table\dynamic::class)) {
+        if (is_a($this, dynamic::class)) {
             $sortdata = array_map(function($sortby, $sortorder) {
                 return [
                     'sortby' => $sortby,
@@ -1773,7 +1782,7 @@ class flexible_table {
     protected function get_dynamic_table_html_end(): string {
         global $PAGE;
 
-        if (is_a($this, \core_table\dynamic::class)) {
+        if (is_a($this, dynamic::class)) {
             $output = '';
 
             $perpageurl = new moodle_url($PAGE->url);
@@ -1948,7 +1957,7 @@ class flexible_table {
     public function get_context(): context {
         global $PAGE;
 
-        if (is_a($this, \core_table\dynamic::class)) {
+        if (is_a($this, dynamic::class)) {
             throw new coding_exception('The get_context function must be defined for a dynamic table');
         }
 
@@ -1990,8 +1999,12 @@ class flexible_table {
      * Attempt to guess the base URL.
      */
     public function guess_base_url(): void {
-        if (is_a($this, \core_table\dynamic::class)) {
+        if (is_a($this, dynamic::class)) {
             throw new coding_exception('The guess_base_url function must be defined for a dynamic table');
         }
     }
 }
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(flexible_table::class, \flexible_table::class);

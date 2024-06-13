@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output\renderer_factory;
+
+use moodle_page;
+use core\output\renderer_base;
+
 /**
  * A renderer factory is just responsible for creating an appropriate renderer
  * for any given part of Moodle.
@@ -30,8 +35,7 @@
  * @package core
  * @category output
  */
-interface renderer_factory {
-
+interface renderer_factory_interface {
     /**
      * Return the renderer for a particular part of Moodle.
      *
@@ -59,3 +63,8 @@ interface renderer_factory {
      */
     public function get_renderer(moodle_page $page, $component, $subtype=null, $target=null);
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(renderer_factory_interface::class, \renderer_factory::class);

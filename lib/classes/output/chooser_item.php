@@ -24,13 +24,9 @@
 
 namespace core\output;
 
-use coding_exception;
-use context;
-use pix_icon;
-use renderer_base;
-use renderable;
+use core\exception\coding_exception;
+use core\context;
 use stdClass;
-use templatable;
 
 /**
  * The chooser_item renderable class.

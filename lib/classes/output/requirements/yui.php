@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output\requirements;
+
+use cache;
+use core_component;
+use core_minify;
+use core\exception\coding_exception;
+use DirectoryIterator;
+
 /**
  * This class represents the YUI configuration.
  *
@@ -23,7 +31,7 @@
  * @package core
  * @category output
  */
-class YUI_config {
+class yui {
     /**
      * These settings must be public so that when the object is converted to json they are exposed.
      * Note: Some of these are camelCase because YUI uses camelCase variable names.
@@ -349,3 +357,8 @@ class YUI_config {
         }
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(yui::class, \YUI_config::class);

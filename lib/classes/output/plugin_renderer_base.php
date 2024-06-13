@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use core\exception\coding_exception;
+use moodle_page;
+
 /**
  * Basis for all plugin renderers.
  *
@@ -24,7 +29,6 @@
  * @category output
  */
 class plugin_renderer_base extends renderer_base {
-
     /**
      * @var renderer_base|core_renderer A reference to the current renderer.
      * The renderer provided here will be determined by the page but will in 90%
@@ -129,3 +133,8 @@ class plugin_renderer_base extends renderer_base {
         }
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(plugin_renderer_base::class, \plugin_renderer_base::class);

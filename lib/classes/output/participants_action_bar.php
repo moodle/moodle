@@ -16,7 +16,7 @@
 
 namespace core\output;
 
-use context_course;
+use core\context\course as context_course;
 use moodle_page;
 use navigation_node;
 use moodle_url;
@@ -28,7 +28,7 @@ use moodle_url;
  * @copyright  2021 Peter Dias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class participants_action_bar implements \renderable {
+class participants_action_bar implements renderable {
     /** @var object $course The course we are dealing with. */
     private $course;
     /** @var moodle_page $page The current page. */

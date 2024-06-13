@@ -68,7 +68,7 @@ class mustache_engine extends \Mustache_Engine {
     /**
      * Get the current set of Mustache helpers.
      *
-     * @see Mustache_Engine::setHelpers
+     * @see \Mustache_Engine::setHelpers
      *
      * @return \Mustache_HelperCollection
      */

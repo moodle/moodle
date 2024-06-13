@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use moodle_url;
+use stdClass;
+
 /**
  * Component representing initials bar.
  *
@@ -24,7 +29,6 @@
  * @category output
  */
 class initials_bar implements renderable, templatable {
-
     /**
      * @var string Currently selected letter.
      */
@@ -146,3 +150,8 @@ class initials_bar implements renderable, templatable {
         return $data;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(initials_bar::class, \initials_bar::class);

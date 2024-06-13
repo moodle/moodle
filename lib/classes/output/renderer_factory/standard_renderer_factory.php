@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output\renderer_factory;
+
+use core\exception\coding_exception;
+use core\output\renderer_base;
+use moodle_page;
+
 /**
  * This is the default renderer factory for Moodle.
  *
@@ -26,7 +32,6 @@
  * @category output
  */
 class standard_renderer_factory extends renderer_factory_base {
-
     /**
      * Implement the subclass method
      *
@@ -78,3 +83,8 @@ class standard_renderer_factory extends renderer_factory_base {
         return new $classname($page, $target);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(standard_renderer_factory::class, \standard_renderer_factory::class);

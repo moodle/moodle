@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use core\exception\moodle_exception;
+use moodle_url;
+
 /**
  * Custom menu class
  *
@@ -31,7 +36,6 @@
  * @category output
  */
 class custom_menu extends custom_menu_item {
-
     /**
      * @var string The language we should render for, null disables multilang support.
      */
@@ -177,3 +181,8 @@ class custom_menu extends custom_menu_item {
         return ($itema > $itemb) ? +1 : -1;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(custom_menu::class, \custom_menu::class);

@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use core\exception\coding_exception;
+use moodle_page;
+use moodle_url;
+use stdClass;
+
 /**
  * Component representing a paging bar.
  *
@@ -24,7 +31,6 @@
  * @category output
  */
 class paging_bar implements renderable, templatable {
-
     /**
      * @var int The maximum number of pagelinks to display.
      */
@@ -253,3 +259,8 @@ class paging_bar implements renderable, templatable {
         return $data;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(paging_bar::class, \paging_bar::class);

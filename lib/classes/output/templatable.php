@@ -14,16 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
 /**
  * Interface marking other classes having the ability to export their data for use by templates.
  *
  * @copyright 2015 Damyon Wiese
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package core
  * @category output
  * @since 2.9
  */
 interface templatable {
-
     /**
      * Function to export the renderer data in a format that is suitable for a
      * mustache template. This means:
@@ -31,7 +33,12 @@ interface templatable {
      * 2. Any additional info that is required for the template is pre-calculated (e.g. capability checks).
      *
      * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
-     * @return stdClass|array
+     * @return \stdClass|array
      */
     public function export_for_template(renderer_base $output);
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(templatable::class, \templatable::class);

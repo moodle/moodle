@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
 /**
  * Renderable for the main page header.
  *
@@ -24,7 +26,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class context_header implements renderable, templatable {
-    /**
+/**
      * @var string $heading Main heading.
      */
     public $heading;
@@ -145,3 +147,8 @@ class context_header implements renderable, templatable {
         ];
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(context_header::class, \context_header::class);

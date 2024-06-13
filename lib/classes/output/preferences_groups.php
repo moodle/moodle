@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
 /**
  * Represents a set of preferences groups.
  *
@@ -37,3 +39,8 @@ class preferences_groups implements renderable {
         $this->groups = $groups;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(preferences_groups::class, \preferences_groups::class);

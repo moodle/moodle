@@ -31,6 +31,7 @@ use core\navigation\views\primary;
 use core\navigation\views\secondary;
 use core\navigation\output\primary as primaryoutput;
 use core\output\activity_header;
+use core\output\xhtml_container_stack;
 
 /**
  * $PAGE is a central store of information about the current page we are

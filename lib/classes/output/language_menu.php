@@ -33,7 +33,7 @@ namespace core\output;
  * @copyright  2021 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class language_menu implements \renderable, \templatable {
+class language_menu implements renderable, templatable {
 
     /** @var \moodle_page $page the moodle page that the languague menu belongs to */
     protected $page;

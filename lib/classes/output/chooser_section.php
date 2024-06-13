@@ -23,13 +23,9 @@
  */
 
 namespace core\output;
-defined('MOODLE_INTERNAL') || die();
 
 use lang_string;
-use renderer_base;
-use renderable;
 use stdClass;
-use templatable;
 
 /**
  * The chooser_section renderable class.

@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output\requirements;
+
+use html_writer;
+use js_writer;
+
 /**
  * This requirements manager captures the appropriate html for creating a fragment to
  * be inserted elsewhere.
@@ -53,7 +58,6 @@ class fragment_requirements_manager extends page_requirements_manager {
         $output .= html_writer::script($prefix . implode(";\n", $this->amdjscode) . $suffix);
         return $output;
     }
-
 
     /**
      * Generate any HTML that needs to go at the end of the page.
@@ -116,3 +120,8 @@ class fragment_requirements_manager extends page_requirements_manager {
         return $output;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(fragment_requirements_manager::class, \fragment_requirements_manager::class);

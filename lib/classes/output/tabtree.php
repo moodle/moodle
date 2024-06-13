@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
 /**
  * Stores tabs list
  *
@@ -70,7 +72,7 @@ class tabtree extends tabobject {
      * Export for template.
      *
      * @param renderer_base $output Renderer.
-     * @return object
+     * @return \stdClass
      */
     public function export_for_template(renderer_base $output) {
         $tabs = [];
@@ -89,3 +91,8 @@ class tabtree extends tabobject {
         ];
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(tabtree::class, \tabtree::class);

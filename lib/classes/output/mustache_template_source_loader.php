@@ -14,18 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Load template source strings.
- *
- * @package    core
- * @category   output
- * @copyright  2018 Ryan Wyllie <ryan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\output;
-
-defined('MOODLE_INTERNAL') || die();
 
 use \Mustache_Tokenizer;
 

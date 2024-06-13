@@ -14,18 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Mustache helper that will convert a timestamp to a date string.
- *
- * @package    core
- * @category   output
- * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\output;
-
-defined('MOODLE_INTERNAL') || die();
 
 use Mustache_LambdaHelper;
 
@@ -36,7 +25,6 @@ use Mustache_LambdaHelper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mustache_user_date_helper {
-
     /**
      * Read a timestamp and format from the string.
      *

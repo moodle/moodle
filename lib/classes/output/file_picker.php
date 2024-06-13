@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use core\context\user as context_user;
+use moodle_url;
+use stdClass;
+
 /**
  * Data structure representing a file picker.
  *
@@ -24,7 +30,6 @@
  * @category output
  */
 class file_picker implements renderable {
-
     /**
      * @var stdClass An object containing options for the file picker
      */
@@ -91,3 +96,8 @@ class file_picker implements renderable {
         }
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(file_picker::class, \file_picker::class);

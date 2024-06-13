@@ -19,8 +19,6 @@ declare(strict_types=1);
 namespace core\output;
 
 use core\output\dynamic_tabs\base;
-use renderer_base;
-use templatable;
 
 /**
  * Class dynamic tabs

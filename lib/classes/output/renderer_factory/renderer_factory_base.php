@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output\renderer_factory;
+
+use core_component;
+use core\exception\coding_exception;
+use core\output\theme_config;
+
 /**
  * This is a base class to help you implement the renderer_factory interface.
  *
@@ -29,19 +35,16 @@
  * @package core
  * @category output
  */
-abstract class renderer_factory_base implements renderer_factory {
-    /**
-     * @var theme_config The theme we belong to.
-     */
-    protected $theme;
-
+abstract class renderer_factory_base implements renderer_factory_interface {
     /**
      * Constructor.
      *
      * @param theme_config $theme the theme we belong to.
      */
-    public function __construct(theme_config $theme) {
-        $this->theme = $theme;
+    public function __construct(
+        /** @var theme_config The theme we belong to */
+        protected theme_config $theme,
+    ) {
     }
 
     /**
@@ -195,3 +198,8 @@ abstract class renderer_factory_base implements renderer_factory {
         return $classnames;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(renderer_factory_base::class, \renderer_factory_base::class);

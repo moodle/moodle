@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
 /**
  * Data structure representing an icon font.
  *
@@ -23,7 +25,6 @@
  * @category output
  */
 class pix_icon_font implements templatable {
-
     /**
      * @var pix_icon $pixicon The original icon.
      */
@@ -49,7 +50,7 @@ class pix_icon_font implements templatable {
 
         $this->pixicon = $pixicon;
         $this->mapped = false;
-        $iconsystem = \core\output\icon_system::instance();
+        $iconsystem = icon_system::instance();
 
         $this->key = $iconsystem->remap_icon_name($pixicon->pix, $pixicon->component);
         if (!empty($this->key)) {
@@ -91,3 +92,8 @@ class pix_icon_font implements templatable {
         return $data;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(pix_icon_font::class, \pix_icon_font::class);

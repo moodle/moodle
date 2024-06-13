@@ -14,6 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use cache;
+use cache_store;
+use core_component;
+use core_cssparser;
+use core_minify;
+use core_php_time_limit;
+use core_rtlcss;
+use core_scss;
+use core_useragent;
+use core\context\system as context_system;
+use core\exception\coding_exception;
+use core\output\renderer_factory\standard_renderer_factory;
+use dml_exception;
+use moodle_page;
+use moodle_url;
+use stdClass;
+
 /**
  * This class represents the configuration variables of a Moodle theme.
  *
@@ -172,7 +191,7 @@ class theme_config {
      *      your own custom renderers in a lib.php file in this theme (or the parent theme).</li>
      * </ul>
      */
-    public $rendererfactory = 'standard_renderer_factory';
+    public $rendererfactory = standard_renderer_factory::class;
 
     /**
      * @var string Function to do custom CSS post-processing.
@@ -424,23 +443,23 @@ class theme_config {
             $settings = new stdClass();
         }
 
-        if ($config = theme_config::find_theme_config($themename, $settings)) {
-            return new theme_config($config);
+        if ($config = self::find_theme_config($themename, $settings)) {
+            return new self($config);
 
-        } else if ($themename == theme_config::DEFAULT_THEME) {
-            throw new coding_exception('Default theme '.theme_config::DEFAULT_THEME.' not available or broken!');
+        } else if ($themename == self::DEFAULT_THEME) {
+            throw new coding_exception('Default theme '.self::DEFAULT_THEME.' not available or broken!');
 
-        } else if ($config = theme_config::find_theme_config($CFG->theme, $settings)) {
+        } else if ($config = self::find_theme_config($CFG->theme, $settings)) {
             debugging('This page should be using theme ' . $themename .
                     ' which cannot be initialised. Falling back to the site theme ' . $CFG->theme, DEBUG_NORMAL);
-            return new theme_config($config);
+            return new self($config);
 
         } else {
             // bad luck, the requested theme has some problems - admin see details in theme config
             debugging('This page should be using theme ' . $themename .
                     ' which cannot be initialised. Nor can the site theme ' . $CFG->theme .
-                    '. Falling back to ' . theme_config::DEFAULT_THEME, DEBUG_NORMAL);
-            return new theme_config(theme_config::find_theme_config(theme_config::DEFAULT_THEME, $settings));
+                    '. Falling back to ' . self::DEFAULT_THEME, DEBUG_NORMAL);
+            return new self(self::find_theme_config(self::DEFAULT_THEME, $settings));
         }
     }
 
@@ -496,7 +515,7 @@ class theme_config {
 
         // verify all parents and load configs and renderers
         foreach ($this->parents as $parent) {
-            if (!$parent_config = theme_config::find_theme_config($parent, $this->settings)) {
+            if (!$parent_config = self::find_theme_config($parent, $this->settings)) {
                 // this is not good - better exclude faulty parents
                 continue;
             }
@@ -1286,15 +1305,15 @@ class theme_config {
 
         // Getting all the candidate functions.
         $system = false;
-        if (isset($this->iconsystem) && \core\output\icon_system::is_valid_system($this->iconsystem)) {
+        if (isset($this->iconsystem) && icon_system::is_valid_system($this->iconsystem)) {
             return $this->iconsystem;
         }
         foreach ($this->parent_configs as $parent_config) {
-            if (isset($parent_config->iconsystem) && \core\output\icon_system::is_valid_system($parent_config->iconsystem)) {
+            if (isset($parent_config->iconsystem) && icon_system::is_valid_system($parent_config->iconsystem)) {
                 return $parent_config->iconsystem;
             }
         }
-        return \core\output\icon_system::STANDARD;
+        return icon_system::STANDARD;
     }
 
     /**
@@ -1386,7 +1405,7 @@ class theme_config {
                 // We collect the SCSS property until we've found one.
                 if (empty($scss) && !empty($config->scss)) {
                     $candidate = is_string($config->scss) ? "{$path}/{$config->scss}.scss" : $config->scss;
-                    if ($candidate instanceof Closure) {
+                    if ($candidate instanceof \Closure) {
                         $scss = $candidate;
                     } else if (is_string($candidate) && is_readable($candidate)) {
                         $scss = $candidate;
@@ -2060,7 +2079,7 @@ class theme_config {
         // We have to use the variable name $THEME (upper case) because that
         // is what is used in theme config.php files.
 
-        if (!$dir = theme_config::find_theme_location($themename)) {
+        if (!$dir = self::find_theme_location($themename)) {
             return null;
         }
 
@@ -2081,7 +2100,7 @@ class theme_config {
             if ($parentscheck) {
                 // Find all parent theme configs.
                 foreach ($THEME->parents as $parent) {
-                    $parentconfig = theme_config::find_theme_config($parent, $settings, false);
+                    $parentconfig = self::find_theme_config($parent, $settings, false);
                     if (empty($parentconfig)) {
                         return null;
                     }
@@ -2310,3 +2329,7 @@ class theme_config {
     }
 
 }
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(theme_config::class, \theme_config::class);

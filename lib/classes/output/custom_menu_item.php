@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use core\context\system as context_system;
+use moodle_url;
+use stdClass;
+
 /**
  * Custom menu item
  *
@@ -259,3 +265,8 @@ class custom_menu_item implements renderable, templatable {
         return $context;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(custom_menu_item::class, \custom_menu_item::class);

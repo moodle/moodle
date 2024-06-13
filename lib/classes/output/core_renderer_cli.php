@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use core_text;
+use core\check\result as check_result;
+
 /**
  * A renderer that generates output for command-line scripts.
  *
@@ -26,7 +31,6 @@
  * @category output
  */
 class core_renderer_cli extends core_renderer {
-
     /**
      * @var array $progressmaximums stores the largest percentage for a progress bar.
      * @return string ascii fragment
@@ -48,20 +52,20 @@ class core_renderer_cli extends core_renderer {
      * To aid in CLI consistency this status is NOT translated and the visual
      * width is always exactly 10 chars.
      *
-     * @param core\check\result $result
+     * @param check_result $result
      * @return string HTML fragment
      */
-    protected function render_check_result(core\check\result $result) {
+    protected function render_check_result(check_result $result) {
         $status = $result->get_status();
 
         $labels = [
-            core\check\result::NA        => '      ' . cli_ansi_format('<colour:darkGray>' ) . ' NA ',
-            core\check\result::OK        => '      ' . cli_ansi_format('<colour:green>') . ' OK ',
-            core\check\result::INFO      => '    '   . cli_ansi_format('<colour:blue>' ) . ' INFO ',
-            core\check\result::UNKNOWN   => ' '      . cli_ansi_format('<colour:darkGray>' ) . ' UNKNOWN ',
-            core\check\result::WARNING   => ' '      . cli_ansi_format('<colour:black><bgcolour:yellow>') . ' WARNING ',
-            core\check\result::ERROR     => '   '    . cli_ansi_format('<bgcolour:red>') . ' ERROR ',
-            core\check\result::CRITICAL  => ''       . cli_ansi_format('<bgcolour:red>') . ' CRITICAL ',
+            check_result::NA        => '      ' . cli_ansi_format('<colour:darkGray>' ) . ' NA ',
+            check_result::OK        => '      ' . cli_ansi_format('<colour:green>') . ' OK ',
+            check_result::INFO      => '    '   . cli_ansi_format('<colour:blue>' ) . ' INFO ',
+            check_result::UNKNOWN   => ' '      . cli_ansi_format('<colour:darkGray>' ) . ' UNKNOWN ',
+            check_result::WARNING   => ' '      . cli_ansi_format('<colour:black><bgcolour:yellow>') . ' WARNING ',
+            check_result::ERROR     => '   '    . cli_ansi_format('<bgcolour:red>') . ' ERROR ',
+            check_result::CRITICAL  => ''       . cli_ansi_format('<bgcolour:red>') . ' CRITICAL ',
         ];
         $string = $labels[$status] . cli_ansi_format('<colour:normal>');
         return $string;
@@ -70,10 +74,10 @@ class core_renderer_cli extends core_renderer {
     /**
      * Renders a Check API result
      *
-     * @param core\check\result $result
+     * @param check_result $result
      * @return string fragment
      */
-    public function check_result(core\check\result $result) {
+    public function check_result(check_result $result) {
         return $this->render_check_result($result);
     }
 
@@ -235,16 +239,22 @@ class core_renderer_cli extends core_renderer {
      * There is no footer for a cli request, however we must override the
      * footer method to prevent the default footer.
      */
-    public function footer() {}
+    public function footer() {
+    }
 
     /**
      * Render a notification (that is, a status message about something that has
      * just happened).
      *
-     * @param \core\output\notification $notification the notification to print out
+     * @param notification $notification the notification to print out
      * @return string plain text output
      */
-    public function render_notification(\core\output\notification $notification) {
+    public function render_notification(notification $notification) {
         return $this->notification($notification->get_message(), $notification->get_message_type());
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(core_renderer_cli::class, \core_renderer_cli::class);

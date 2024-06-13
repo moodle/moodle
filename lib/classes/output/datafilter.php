@@ -16,10 +16,8 @@
 
 namespace core\output;
 
-use context;
-use renderable;
+use core\context;
 use stdClass;
-use templatable;
 
 /**
  * The filter renderable class.

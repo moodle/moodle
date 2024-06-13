@@ -14,6 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output\action_menu;
+
+use core\output\action_menu;
+use core\output\action_link;
+use core\output\pix_icon;
+use core\output\renderable;
+use core\output\renderer_base;
+use moodle_url;
+use stdClass;
+
 /**
  * An action menu action
  *
@@ -22,7 +32,7 @@
  * @copyright 2013 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class action_menu_link extends action_link implements renderable {
+class link extends action_link implements renderable {
 
     /**
      * True if this is a primary action. False if not.
@@ -104,3 +114,8 @@ class action_menu_link extends action_link implements renderable {
         return $data;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(link::class, \action_menu_link::class);

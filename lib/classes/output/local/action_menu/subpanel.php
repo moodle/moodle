@@ -16,9 +16,9 @@
 
 namespace core\output\local\action_menu;
 
-use action_link;
-use pix_icon;
-use renderable;
+use core\output\action_link;
+use core\output\pix_icon;
+use core\output\renderable;
 use stdClass;
 
 /**

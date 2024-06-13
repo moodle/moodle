@@ -23,14 +23,10 @@
  */
 
 namespace core\output;
-defined('MOODLE_INTERNAL') || die();
 
 use lang_string;
 use moodle_url;
-use renderer_base;
-use renderable;
 use stdClass;
-use templatable;
 
 /**
  * The chooser renderable class.

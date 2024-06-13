@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output\actions;
+
+use core\exception\coding_exception;
+use core\output\renderer_base;
+use core\output\templatable;
+use stdClass;
+
 /**
  * Helper class used by other components that involve an action on the page (URL or JS).
  *
@@ -77,3 +84,8 @@ class component_action implements templatable {
         ];
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(component_action::class, \component_action::class);

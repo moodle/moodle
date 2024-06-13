@@ -14,21 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains class \core\output\inplace_editable
- *
- * @package    core
- * @category   output
- * @copyright  2016 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\output;
 
-use templatable;
-use renderable;
 use lang_string;
-use pix_icon;
 
 /**
  * Class allowing to quick edit a title inline
@@ -53,7 +41,6 @@ use pix_icon;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class inplace_editable implements templatable, renderable {
-
     /**
      * @var string component responsible for diplsying/updating
      */

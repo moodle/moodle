@@ -14,7 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use breadcrumb_navigation_node;
+use cm_info;
+use core_block\output\block_contents;
+use core_block\output\block_move_target;
+use core_completion\cm_completion_details;
+use core\context;
+use core_course\output\activity_information;
+use core_tag\output\taglist;
+use core_text;
+use core_useragent;
+use core\check\check as check_check;
+use core\check\result as check_result;
+use core\context\system as context_system;
+use core\context\course as context_course;
 use core\di;
+use core\exception\coding_exception;
 use core\hook\manager as hook_manager;
 use core\hook\output\after_standard_main_region_html_generation;
 use core\hook\output\before_footer_html_generation;
@@ -22,8 +39,21 @@ use core\hook\output\before_html_attributes;
 use core\hook\output\before_http_headers;
 use core\hook\output\before_standard_footer_html_generation;
 use core\hook\output\before_standard_top_of_body_html_generation;
-use core_completion\cm_completion_details;
-use core_course\output\activity_information;
+use core\output\action_menu\link as action_menu_link;
+use core\output\action_menu\link_primary as action_menu_link_primary;
+use core\output\actions\component_action;
+use core\output\actions\popup_action;
+use core\output\action_menu\filler as action_menu_filler;
+use core\plugin_manager;
+use core\output\action_menu\link_secondary as action_menu_link_secondary;
+use moodleform;
+use moodle_page;
+use moodle_url;
+use navigation_node;
+use rating;
+use rating_manager;
+use stdClass;
+use HTML_QuickForm_element;
 
 /**
  * The standard implementation of the core_renderer interface.
@@ -753,8 +783,14 @@ class core_renderer extends renderer_base {
      * @return string The HTML to display to the user before dying, may contain
      *         meta refresh, javascript refresh, and may have set header redirects
      */
-    public function redirect_message($encodedurl, $message, $delay, $debugdisableredirect,
-                                     $messagetype = \core\output\notification::NOTIFY_INFO) {
+
+    public function redirect_message(
+        $encodedurl,
+        $message,
+        $delay,
+        $debugdisableredirect,
+        $messagetype = notification::NOTIFY_INFO,
+    ) {
         global $CFG;
         $url = str_replace('&amp;', '&', $encodedurl);
 
@@ -1178,7 +1214,7 @@ class core_renderer extends renderer_base {
      * @return string The lang menu HTML or empty string
      */
     public function lang_menu() {
-        $languagemenu = new \core\output\language_menu($this->page);
+        $languagemenu = new language_menu($this->page);
         $data = $languagemenu->export_for_single_select($this);
         if ($data) {
             return $this->render_from_template('core/single_select', $data);
@@ -1258,12 +1294,12 @@ class core_renderer extends renderer_base {
     /**
      * Renders a full check API result including summary and details
      *
-     * @param core\check\check $check the check that was run to get details from
-     * @param core\check\result $result the result of a check
+     * @param check_check $check the check that was run to get details from
+     * @param check_result $result the result of a check
      * @param bool $includedetails if true, details are included as well
      * @return string rendered html
      */
-    protected function render_check_full_result(core\check\check $check, core\check\result $result, bool $includedetails): string {
+    protected function render_check_full_result(check_check $check, check_result $result, bool $includedetails): string {
         // Initially render just badge itself.
         $renderedresult = $this->render_from_template($result->get_template_name(), $result->export_for_template($this));
 
@@ -1272,17 +1308,17 @@ class core_renderer extends renderer_base {
 
         // Wrap in notificaiton.
         $notificationmap = [
-            \core\check\result::NA => \core\output\notification::NOTIFY_INFO,
-            \core\check\result::OK => \core\output\notification::NOTIFY_SUCCESS,
-            \core\check\result::INFO => \core\output\notification::NOTIFY_INFO,
-            \core\check\result::UNKNOWN => \core\output\notification::NOTIFY_WARNING,
-            \core\check\result::WARNING => \core\output\notification::NOTIFY_WARNING,
-            \core\check\result::ERROR => \core\output\notification::NOTIFY_ERROR,
-            \core\check\result::CRITICAL => \core\output\notification::NOTIFY_ERROR,
+            check_result::NA => notification::NOTIFY_INFO,
+            check_result::OK => notification::NOTIFY_SUCCESS,
+            check_result::INFO => notification::NOTIFY_INFO,
+            check_result::UNKNOWN => notification::NOTIFY_WARNING,
+            check_result::WARNING => notification::NOTIFY_WARNING,
+            check_result::ERROR => notification::NOTIFY_ERROR,
+            check_result::CRITICAL => notification::NOTIFY_ERROR,
         ];
 
         // Get type, or default to error.
-        $notificationtype = $notificationmap[$result->get_status()] ?? \core\output\notification::NOTIFY_ERROR;
+        $notificationtype = $notificationmap[$result->get_status()] ?? notification::NOTIFY_ERROR;
         $renderedresult = $this->notification($renderedresult, $notificationtype, false);
 
         // If adding details, add on new line.
@@ -1299,32 +1335,32 @@ class core_renderer extends renderer_base {
     /**
      * Renders a full check API result including summary and details
      *
-     * @param core\check\check $check the check that was run to get details from
-     * @param core\check\result $result the result of a check
+     * @param check_check $check the check that was run to get details from
+     * @param check_result $result the result of a check
      * @param bool $includedetails if details should be included
      * @return string HTML fragment
      */
-    public function check_full_result(core\check\check $check, core\check\result $result, bool $includedetails = false) {
+    public function check_full_result(check_check $check, check_result $result, bool $includedetails = false) {
         return $this->render_check_full_result($check, $result, $includedetails);
     }
 
     /**
      * Renders a Check API result
      *
-     * @param core\check\result $result
+     * @param check_result $result
      * @return string HTML fragment
      */
-    protected function render_check_result(core\check\result $result) {
+    protected function render_check_result(check_result $result) {
         return $this->render_from_template($result->get_template_name(), $result->export_for_template($this));
     }
 
     /**
      * Renders a Check API result
      *
-     * @param core\check\result $result
+     * @param check_result $result
      * @return string HTML fragment
      */
-    public function check_result(core\check\result $result) {
+    public function check_result(check_result $result) {
         return $this->render_check_result($result);
     }
 
@@ -1721,10 +1757,9 @@ class core_renderer extends renderer_base {
      * @param array $params Extra params sent to the download page
      * @return string HTML fragment
      */
-    public function download_dataformat_selector($label, $base, $name = 'dataformat', $params = array()) {
-
-        $formats = core_plugin_manager::instance()->get_plugins_of_type('dataformat');
-        $options = array();
+    public function download_dataformat_selector($label, $base, $name = 'dataformat', $params = []) {
+        $formats = plugin_manager::instance()->get_plugins_of_type('dataformat');
+        $options = [];
         foreach ($formats as $format) {
             if ($format->is_enabled()) {
                 $options[] = array(
@@ -1841,7 +1876,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_image_icon(image_icon $icon) {
-        $system = \core\output\icon_system::instance(\core\output\icon_system::STANDARD);
+        $system = icon_system::instance(icon_system::STANDARD);
         return $system->render_pix_icon($this, $icon);
     }
 
@@ -1869,7 +1904,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_pix_icon(pix_icon $icon) {
-        $system = \core\output\icon_system::instance();
+        $system = icon_system::instance();
         return $system->render_pix_icon($this, $icon);
     }
 
@@ -1880,7 +1915,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_pix_emoticon(pix_emoticon $emoticon) {
-        $system = \core\output\icon_system::instance(\core\output\icon_system::STANDARD);
+        $system = icon_system::instance(icon_system::STANDARD);
         return $system->render_pix_icon($this, $emoticon);
     }
 
@@ -2556,26 +2591,26 @@ EOD;
      * Note: \core\notification::add() may be more suitable for your usage.
      *
      * @param string $message The message to print out.
-     * @param ?string $type   The type of notification. See constants on \core\output\notification.
+     * @param ?string $type   The type of notification. See constants on notification.
      * @param bool $closebutton Whether to show a close icon to remove the notification (default true).
      * @return string the HTML to output.
      */
     public function notification($message, $type = null, $closebutton = true) {
         $typemappings = [
             // Valid types.
-            'success'           => \core\output\notification::NOTIFY_SUCCESS,
-            'info'              => \core\output\notification::NOTIFY_INFO,
-            'warning'           => \core\output\notification::NOTIFY_WARNING,
-            'error'             => \core\output\notification::NOTIFY_ERROR,
+            'success'           => notification::NOTIFY_SUCCESS,
+            'info'              => notification::NOTIFY_INFO,
+            'warning'           => notification::NOTIFY_WARNING,
+            'error'             => notification::NOTIFY_ERROR,
 
             // Legacy types mapped to current types.
-            'notifyproblem'     => \core\output\notification::NOTIFY_ERROR,
-            'notifytiny'        => \core\output\notification::NOTIFY_ERROR,
-            'notifyerror'       => \core\output\notification::NOTIFY_ERROR,
-            'notifysuccess'     => \core\output\notification::NOTIFY_SUCCESS,
-            'notifymessage'     => \core\output\notification::NOTIFY_INFO,
-            'notifyredirect'    => \core\output\notification::NOTIFY_INFO,
-            'redirectmessage'   => \core\output\notification::NOTIFY_INFO,
+            'notifyproblem'     => notification::NOTIFY_ERROR,
+            'notifytiny'        => notification::NOTIFY_ERROR,
+            'notifyerror'       => notification::NOTIFY_ERROR,
+            'notifysuccess'     => notification::NOTIFY_SUCCESS,
+            'notifymessage'     => notification::NOTIFY_INFO,
+            'notifyredirect'    => notification::NOTIFY_INFO,
+            'redirectmessage'   => notification::NOTIFY_INFO,
         ];
 
         $extraclasses = [];
@@ -2604,7 +2639,7 @@ EOD;
             }
         }
 
-        $notification = new \core\output\notification($message, $type, $closebutton);
+        $notification = new notification($message, $type, $closebutton);
         if (count($extraclasses)) {
             $notification->set_extra_classes($extraclasses);
         }
@@ -2649,10 +2684,10 @@ EOD;
      * Render a notification (that is, a status message about something that has
      * just happened).
      *
-     * @param \core\output\notification $notification the notification to print out
+     * @param notification $notification the notification to print out
      * @return string the HTML to output.
      */
-    protected function render_notification(\core\output\notification $notification) {
+    protected function render_notification(notification $notification) {
         return $this->render_from_template($notification->get_template_name(), $notification->export_for_template($this));
     }
 
@@ -3843,7 +3878,7 @@ EOD;
      * @return bool
      */
     public function has_communication_links(): bool {
-        if (during_initial_install() || !core_communication\api::is_available()) {
+        if (during_initial_install() || !\core_communication\api::is_available()) {
             return false;
         }
         return !empty($this->communication_link());
@@ -4358,17 +4393,17 @@ EOD;
      */
     public function tag_list($tags, $label = null, $classes = '', $limit = 10,
             $pagecontext = null, $accesshidelabel = false) {
-        $list = new \core_tag\output\taglist($tags, $label, $classes, $limit, $pagecontext, $accesshidelabel);
+        $list = new taglist($tags, $label, $classes, $limit, $pagecontext, $accesshidelabel);
         return $this->render_from_template('core_tag/taglist', $list->export_for_template($this));
     }
 
     /**
      * Renders element for inline editing of any value
      *
-     * @param \core\output\inplace_editable $element
+     * @param inplace_editable $element
      * @return string
      */
-    public function render_inplace_editable(\core\output\inplace_editable $element) {
+    public function render_inplace_editable(inplace_editable $element) {
         return $this->render_from_template('core/inplace_editable', $element->export_for_template($this));
     }
 
@@ -4458,7 +4493,7 @@ EOD;
         try {
             // We call this to generate a file not found exception if there is no template.
             // We don't want to call export_for_template if there is no template.
-            core\output\mustache_template_finder::get_template_filepath($templatename);
+            mustache_template_finder::get_template_filepath($templatename);
 
             if ($element instanceof templatable) {
                 $elementcontext = $element->export_for_template($this);
@@ -4505,7 +4540,7 @@ EOD;
                 );
                 return $this->render_from_template($templatename, $context);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // No template for this element.
             return false;
         }
@@ -4593,10 +4628,10 @@ EOD;
     /**
      * Renders element for a toggle-all checkbox.
      *
-     * @param \core\output\checkbox_toggleall $element
+     * @param checkbox_toggleall $element
      * @return string
      */
-    public function render_checkbox_toggleall(\core\output\checkbox_toggleall $element) {
+    public function render_checkbox_toggleall(checkbox_toggleall $element) {
         return $this->render_from_template($element->get_template(), $element->export_for_template($this));
     }
 
@@ -4608,7 +4643,7 @@ EOD;
      * @return string
      */
     public function render_participants_tertiary_nav(object $course, ?string $renderedbuttons = null) {
-        $actionbar = new \core\output\participants_action_bar($course, $this->page, $renderedbuttons);
+        $actionbar = new participants_action_bar($course, $this->page, $renderedbuttons);
         $content = $this->render_from_template('core_course/participants_actionbar', $actionbar->export_for_template($this));
         return $content ?: "";
     }
@@ -4763,3 +4798,7 @@ EOD;
         return $output;
     }
 }
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(core_renderer::class, \core_renderer::class);

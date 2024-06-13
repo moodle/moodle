@@ -14,25 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Mustache helper shorten text.
- *
- * @package    core
- * @category   output
- * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\output;
 
-defined('MOODLE_INTERNAL') || die();
-
 use Mustache_LambdaHelper;
-use renderer_base;
 
 /**
  * This class will call shorten_text with the section content.
  *
+ * @package core
  * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -62,4 +51,3 @@ class mustache_shorten_text_helper {
         return shorten_text($text, $length);
     }
 }
-

@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use core_block\output\block_contents;
+use core\exception\coding_exception;
+use moodle_page;
+use moodle_url;
+use stdClass;
+
 /**
  * The maintenance renderer.
  *
@@ -227,3 +235,8 @@ class core_renderer_maintenance extends core_renderer {
         return '';
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(core_renderer_maintenance::class, \core_renderer_maintenance::class);

@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_table\output;
+
 /**
  * Holds all the information required to render a <table> by {@link core_renderer::table()}
  *
@@ -205,3 +207,8 @@ class html_table {
         $this->attributes['class'] = '';
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(html_table::class, \html_table::class);

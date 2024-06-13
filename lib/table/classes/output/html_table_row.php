@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_table\output;
+
 /**
  * Component representing a table row.
  *
@@ -24,7 +26,6 @@
  * @category output
  */
 class html_table_row {
-
     /**
      * @var string Value to use for the id attribute of the row.
      */
@@ -61,3 +62,8 @@ class html_table_row {
         }
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(html_table_row::class, \html_table_row::class);

@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_block\output;
+
+use moodle_url;
+
 /**
  * This class represents a target for where a block can go when it is being moved.
  *
@@ -28,17 +32,19 @@
  * @category output
  */
 class block_move_target {
-
     /**
-     * @var moodle_url Move url
-     */
-    public $url;
-
-    /**
-     * Constructor
+     * Constructor.
+     *
      * @param moodle_url $url
      */
-    public function __construct(moodle_url $url) {
-        $this->url  = $url;
+    public function __construct(
+        /** @var moodle_url Move url */
+        public moodle_url $url,
+    ) {
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(block_move_target::class, \block_move_target::class);

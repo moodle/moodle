@@ -25,7 +25,7 @@ use single_button;
 use single_select;
 use theme_config;
 use url_select;
-use user_picture;
+use core\output\user_picture;
 
 /**
  * Unit tests for lib/outputcomponents.php.

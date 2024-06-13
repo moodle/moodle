@@ -16,10 +16,7 @@
 
 namespace core\output;
 
-use moodle_exception;
-use renderable;
-use renderer_base;
-use templatable;
+use core\exception\moodle_exception;
 
 /**
  * Renderable class for the comboboxsearch.
