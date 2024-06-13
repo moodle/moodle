@@ -54,6 +54,11 @@ class formulation_and_controls extends renderable_base {
         $currentresponse = $question->currentresponse;
         $correctresponse = $question->correctresponse;
 
+        // If we are running behat, force the question into a consistently known state for the sake of avoiding DnD funkyness.
+        if (defined('BEHAT_SITE_RUNNING')) {
+            $currentresponse = array_reverse($correctresponse);
+        }
+
         // Generate fieldnames and ids.
         $responsefieldname = $question->get_response_fieldname();
         $responsename = $this->qa->get_qt_field_name($responsefieldname);
