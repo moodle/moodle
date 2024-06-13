@@ -25,6 +25,7 @@
 namespace core;
 
 use coding_exception;
+use core\dataformat\base;
 use core_php_time_limit;
 use stored_file;
 
@@ -41,15 +42,15 @@ class dataformat {
      * Return an instance of a dataformat writer from given dataformat type
      *
      * @param string $dataformat
-     * @return dataformat\base
-     * @throws coding_exception
+     * @return base
+     *
+     * @throws coding_exception For unknown dataformat
      */
-    protected static function get_format_instance(string $dataformat): \core\dataformat\base {
+    public static function get_format_instance(string $dataformat): base {
         $classname = 'dataformat_' . $dataformat . '\writer';
         if (!class_exists($classname)) {
             throw new coding_exception('Invalid dataformat', $dataformat);
         }
-
         return new $classname();
     }
 
