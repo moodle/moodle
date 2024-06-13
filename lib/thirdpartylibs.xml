@@ -513,7 +513,7 @@ All rights reserved.</copyright>
   </library>
   <library>
     <location>php-jwt</location>
-    <name>A simple library to encode and decode JSON Web Tokens (JWT) in PHP, conforming to RFC 7519</name>
+    <name>PHP-JWT</name>
     <description>A simple library to encode and decode JSON Web Tokens (JWT) in PHP, conforming to RFC 7519</description>
     <version>6.10.0</version>
     <license>BSD</license>
