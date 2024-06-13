@@ -59,15 +59,17 @@ class action_link implements renderable {
      * Constructor
      * @param moodle_url $url
      * @param string $text HTML fragment
-     * @param component_action $action
-     * @param array $attributes associative array of html link attributes + disabled
-     * @param pix_icon $icon optional pix_icon to render with the link text
+     * @param null|component_action $action
+     * @param null|array $attributes associative array of html link attributes + disabled
+     * @param null|pix_icon $icon optional pix_icon to render with the link text
      */
-    public function __construct(moodle_url $url,
+    public function __construct(
+        moodle_url $url,
         $text,
-        component_action $action=null,
-        array $attributes=null,
-        pix_icon $icon=null) {
+        ?component_action $action = null,
+        ?array $attributes = null,
+        ?pix_icon $icon = null
+    ) {
         $this->url = clone($url);
         $this->text = $text;
         if (empty($attributes['id'])) {
@@ -144,14 +146,14 @@ class action_link implements renderable {
         $data->classes = isset($attributes['class']) ? $attributes['class'] : '';
         unset($attributes['class']);
 
-        $data->attributes = array_map(function($key, $value) {
+        $data->attributes = array_map(function ($key, $value) {
             return [
                 'name' => $key,
-                'value' => $value
+                'value' => $value,
             ];
         }, array_keys($attributes), $attributes);
 
-        $data->actions = array_map(function($action) use ($output) {
+        $data->actions = array_map(function ($action) use ($output) {
             return $action->export_for_template($output);
         }, !empty($this->actions) ? $this->actions : []);
         $data->hasactions = !empty($this->actions);

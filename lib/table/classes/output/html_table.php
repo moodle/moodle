@@ -17,7 +17,7 @@
 namespace core_table\output;
 
 /**
- * Holds all the information required to render a <table> by {@link core_renderer::table()}
+ * Holds all the information required to render a <table> by {@see core_renderer::table()}
  *
  * Example of usage:
  * $t = new html_table();
@@ -27,11 +27,10 @@ namespace core_table\output;
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core
+ * @package core_table
  * @category output
  */
 class html_table {
-
     /**
      * @var string Value to use for the id attribute of the table
      */
@@ -40,7 +39,7 @@ class html_table {
     /**
      * @var array Attributes of HTML attributes for the <table> element
      */
-    public $attributes = array();
+    public $attributes = [];
 
     /**
      * @var array An array of headings. The n-th array item is used as a heading of the n-th column.
@@ -54,8 +53,8 @@ class html_table {
 
     /**
      * @var array An array that can be used to make a heading span multiple columns.
-     * In this example, {@link html_table:$data} is supposed to have three columns. For the first two columns,
-     * the same heading is used. Therefore, {@link html_table::$head} should consist of two items.
+     * In this example, {@see html_table:$data} is supposed to have three columns. For the first two columns,
+     * the same heading is used. Therefore, {@see html_table::$head} should consist of two items.
      *
      * Example of usage:
      * $t->headspan = array(2,1);
@@ -122,20 +121,20 @@ class html_table {
     public $data = [];
 
     /**
-     * @deprecated since Moodle 2.0. Styling should be in the CSS.
      * @var string Width of the table, percentage of the page preferred.
+     * @deprecated since Moodle 2.0. Styling should be in the CSS.
      */
     public $width = null;
 
     /**
-     * @deprecated since Moodle 2.0. Styling should be in the CSS.
      * @var string Alignment for the whole table. Can be 'right', 'left' or 'center' (default).
+     * @deprecated since Moodle 2.0. Styling should be in the CSS.
      */
     public $tablealign = null;
 
     /**
-     * @deprecated since Moodle 2.0. Styling should be in the CSS.
      * @var int Padding on each cell, in pixels
+     * @deprecated since Moodle 2.0. Styling should be in the CSS.
      */
     public $cellpadding = null;
 

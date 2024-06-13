@@ -27,25 +27,23 @@ require_once("{$CFG->libdir}/tablelib.php");
 /**
  * The table base export format.
  *
- * @package   moodlecore
+ * @package   core_table
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class base_export_format {
     /**
-     * @var flexible_table or child class reference pointing to table class
-     * object from which to export data.
+     * @var flexible_table or child class reference pointing to table class object from which to export data.
      */
-    var $table;
+    public $table;
 
     /**
-     * @var bool output started. Keeps track of whether any output has been
-     * started yet.
+     * @var bool output started. Keeps track of whether any output has been started yet.
      */
-    var $documentstarted = false;
+    public $documentstarted = false;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param flexible_table $table
      */
@@ -53,39 +51,37 @@ class base_export_format {
         $this->table =& $table;
     }
 
-    /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function table_default_export_format_parent(&$table) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($table);
-    }
-
-    function set_table(&$table) {
+    public function set_table(&$table) {
         $this->table =& $table;
     }
 
-    function add_data($row) {
+    public function add_data($row) {
         return false;
     }
 
-    function add_seperator() {
+    public function add_seperator() {
         return false;
     }
 
-    function document_started() {
+    public function document_started() {
         return $this->documentstarted;
     }
+
     /**
+     * Format the text.
+     *
      * Given text in a variety of format codings, this function returns
      * the text as safe HTML or as plain text dependent on what is appropriate
      * for the download format. The default removes all tags.
+     *
+     * @param string $text
+     * @param int $format
+     * @param null|array $options
+     * @param null|int $courseid
      */
-    function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL) {
-        //use some whitespace to indicate where there was some line spacing.
-        $text = str_replace(array('</p>', "\n", "\r"), '   ', $text);
+    public function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseid = null) {
+        // Use some whitespace to indicate where there was some line spacing.
+        $text = str_replace(['</p>', "\n", "\r"], '   ', $text);
         return html_entity_decode(strip_tags($text), ENT_COMPAT);
     }
 

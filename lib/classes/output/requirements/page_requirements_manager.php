@@ -48,7 +48,7 @@ use stdClass;
  *     $PAGE->requires->js_function_call('init_mymod', array($data), true);
  * </pre>
  *
- * There are some natural restrictions on some methods. For example, {@link css()}
+ * There are some natural restrictions on some methods. For example, {@see css()}
  * can only be called before the <head> tag is output. See the comments on the
  * individual methods for details.
  *
@@ -62,71 +62,71 @@ class page_requirements_manager {
     /**
      * @var array List of string available from JS
      */
-    protected $stringsforjs = array();
+    protected $stringsforjs = [];
 
     /**
      * @var array List of get_string $a parameters - used for validation only.
      */
-    protected $stringsforjs_as = array();
+    protected $stringsforjs_as = []; // phpcs:ignore moodle.NamingConventions.ValidVariableName.MemberNameUnderscore
 
     /**
      * @var array List of JS variables to be initialised
      */
-    protected $jsinitvariables = array('head'=>array(), 'footer'=>array());
+    protected $jsinitvariables = ['head' => [], 'footer' => []];
 
     /**
      * @var array Included JS scripts
      */
-    protected $jsincludes = array('head'=>array(), 'footer'=>array());
+    protected $jsincludes = ['head' => [], 'footer' => []];
 
     /**
      * @var array Inline scripts using RequireJS module loading.
      */
-    protected $amdjscode = array('');
+    protected $amdjscode = [''];
 
     /**
      * @var array List of needed function calls
      */
-    protected $jscalls = array('normal'=>array(), 'ondomready'=>array());
+    protected $jscalls = ['normal' => [], 'ondomready' => []];
 
     /**
      * @var array List of skip links, those are needed for accessibility reasons
      */
-    protected $skiplinks = array();
+    protected $skiplinks = [];
 
     /**
      * @var array Javascript code used for initialisation of page, it should
      * be relatively small
      */
-    protected $jsinitcode = array();
+    protected $jsinitcode = [];
 
     /**
      * @var array of moodle_url Theme sheets, initialised only from core_renderer
      */
-    protected $cssthemeurls = array();
+    protected $cssthemeurls = [];
 
     /**
      * @var array of moodle_url List of custom theme sheets, these are strongly discouraged!
      * Useful mostly only for CSS submitted by teachers that is not part of the theme.
      */
-    protected $cssurls = array();
+    protected $cssurls = [];
 
     /**
      * @var array List of requested event handlers
      */
-    protected $eventhandlers = array();
+    protected $eventhandlers = [];
 
     /**
      * @var array Extra modules
      */
-    protected $extramodules = array();
+    protected $extramodules = [];
 
     /**
      * @var array trackes the names of bits of HTML that are only required once
-     * per page. See {@link has_one_time_item_been_created()},
-     * {@link set_one_time_item_created()} and {@link should_create_one_time_item_now()}.
+     * per page. See {@see has_one_time_item_been_created()},
+     * {@see set_one_time_item_created()} and {@see should_create_one_time_item_now()}.
      */
-    protected $onetimeitemsoutput = array();
+    protected $onetimeitemsoutput = [];
 
     /**
      * @var bool Flag indicated head stuff already printed
@@ -146,27 +146,27 @@ class page_requirements_manager {
     /**
      * @var yui default YUI loader configuration
      */
-    protected $YUI_config;
+    protected $YUI_config; // phpcs:ignore moodle.NamingConventions.ValidVariableName.MemberNameUnderscore
 
     /**
      * @var array $yuicssmodules
      */
-    protected $yuicssmodules = array();
+    protected $yuicssmodules = [];
 
     /**
      * @var array Some config vars exposed in JS, please no secret stuff there
      */
-    protected $M_cfg;
+    protected $M_cfg; // phpcs:ignore moodle.NamingConventions.ValidVariableName.MemberNameUnderscore
 
     /**
      * @var array list of requested jQuery plugins
      */
-    protected $jqueryplugins = array();
+    protected $jqueryplugins = [];
 
     /**
      * @var array list of jQuery plugin overrides
      */
-    protected $jquerypluginoverrides = array();
+    protected $jquerypluginoverrides = [];
 
     /**
      * Page requirements constructor.
@@ -181,8 +181,8 @@ class page_requirements_manager {
         $this->YUI_config = new yui();
 
         // Set up some loader options.
-        $this->yui3loader->local_base = $CFG->wwwroot . '/lib/yuilib/'. $CFG->yui3version . '/';
-        $this->yui3loader->local_comboBase = $CFG->wwwroot . '/theme/yui_combo.php'.$sep;
+        $this->yui3loader->local_base = $CFG->wwwroot . '/lib/yuilib/' . $CFG->yui3version . '/';
+        $this->yui3loader->local_comboBase = $CFG->wwwroot . '/theme/yui_combo.php' . $sep;
 
         $this->yui3loader->base = $this->yui3loader->local_base;
         $this->yui3loader->comboBase = $this->yui3loader->local_comboBase;
@@ -199,56 +199,58 @@ class page_requirements_manager {
 
         // If we've had to patch any YUI modules between releases, we must override the YUI configuration to include them.
         if (!empty($CFG->yuipatchedmodules) && !empty($CFG->yuipatchlevel)) {
-            $this->YUI_config->define_patched_core_modules($this->yui3loader->local_comboBase,
-                    $CFG->yui3version,
-                    $CFG->yuipatchlevel,
-                    $CFG->yuipatchedmodules);
+            $this->YUI_config->define_patched_core_modules(
+                $this->yui3loader->local_comboBase,
+                $CFG->yui3version,
+                $CFG->yuipatchlevel,
+                $CFG->yuipatchedmodules
+            );
         }
 
         $configname = $this->YUI_config->set_config_source('lib/yui/config/yui2.js');
-        $this->YUI_config->add_group('yui2', array(
+        $this->YUI_config->add_group('yui2', [
             // Loader configuration for our 2in3.
             'base' => $CFG->wwwroot . '/lib/yuilib/2in3/' . $CFG->yui2version . '/build/',
-            'comboBase' => $CFG->wwwroot . '/theme/yui_combo.php'.$sep,
+            'comboBase' => $CFG->wwwroot . '/theme/yui_combo.php' . $sep,
             'combine' => $this->yui3loader->combine,
             'ext' => false,
-            'root' => '2in3/' . $CFG->yui2version .'/build/',
-            'patterns' => array(
-                'yui2-' => array(
+            'root' => '2in3/' . $CFG->yui2version . '/build/',
+            'patterns' => [
+                'yui2-' => [
                     'group' => 'yui2',
                     'configFn' => $configname,
-                )
-            )
-        ));
+                ],
+            ],
+        ]);
         $configname = $this->YUI_config->set_config_source('lib/yui/config/moodle.js');
-        $this->YUI_config->add_group('moodle', array(
+        $this->YUI_config->add_group('moodle', [
             'name' => 'moodle',
             'base' => $CFG->wwwroot . '/theme/yui_combo.php' . $sep . 'm/' . $jsrev . '/',
             'combine' => $this->yui3loader->combine,
-            'comboBase' => $CFG->wwwroot . '/theme/yui_combo.php'.$sep,
+            'comboBase' => $CFG->wwwroot . '/theme/yui_combo.php' . $sep,
             'ext' => false,
-            'root' => 'm/'.$jsrev.'/', // Add the rev to the root path so that we can control caching.
-            'patterns' => array(
-                'moodle-' => array(
+            'root' => 'm/' . $jsrev . '/', // Add the rev to the root path so that we can control caching.
+            'patterns' => [
+                'moodle-' => [
                     'group' => 'moodle',
                     'configFn' => $configname,
-                )
-            )
-        ));
+                ],
+            ],
+        ]);
 
-        $this->YUI_config->add_group('gallery', array(
+        $this->YUI_config->add_group('gallery', [
             'name' => 'gallery',
             'base' => $CFG->wwwroot . '/lib/yuilib/gallery/',
             'combine' => $this->yui3loader->combine,
             'comboBase' => $CFG->wwwroot . '/theme/yui_combo.php' . $sep,
             'ext' => false,
             'root' => 'gallery/' . $jsrev . '/',
-            'patterns' => array(
-                'gallery-' => array(
+            'patterns' => [
+                'gallery-' => [
                     'group' => 'gallery',
-                )
-            )
-        ));
+                ],
+            ],
+        ]);
 
         // Set some more loader options applying to groups too.
         if ($CFG->debugdeveloper) {
@@ -291,13 +293,14 @@ class page_requirements_manager {
      * Return the safe config values that get set for javascript in "M.cfg".
      *
      * @since 2.9
+     * @param moodle_page $page The page to add JS to
+     * @param renderer_base $renderer The renderer to use
      * @return array List of safe config values that are available to javascript.
      */
     public function get_config_for_javascript(moodle_page $page, renderer_base $renderer) {
         global $CFG;
 
         if (empty($this->M_cfg)) {
-
             $iconsystem = \core\output\icon_system::instance();
 
             // It is possible that the $page->context is null, so we can't use $page->context->id.
@@ -310,7 +313,7 @@ class page_requirements_manager {
                 $coursecontext = context_course::instance($courseid);
             }
 
-            $this->M_cfg = array(
+            $this->M_cfg = [
                 'wwwroot'               => $CFG->wwwroot,
                 'homeurl'               => $page->navigation->action,
                 'sesskey'               => sesskey(),
@@ -332,14 +335,13 @@ class page_requirements_manager {
                 'langrev'               => get_string_manager()->get_revision(),
                 'templaterev'           => $this->get_templaterev(),
                 'siteId'                => (int) SITEID,
-            );
+            ];
             if ($CFG->debugdeveloper) {
                 $this->M_cfg['developerdebug'] = true;
             }
             if (defined('BEHAT_SITE_RUNNING')) {
                 $this->M_cfg['behatsiterunning'] = true;
             }
-
         }
         return $this->M_cfg;
     }
@@ -369,21 +371,25 @@ class page_requirements_manager {
             $this->js_init_call('M.util.init_frametop');
         }
 
-        // Include block drag/drop if editing is on
+        // Include block drag/drop if editing is on.
         if ($page->user_is_editing()) {
-            $params = array(
+            $params = [
                 'regions' => $page->blocks->get_regions(),
                 'pagehash' => $page->get_edited_page_hash(),
-            );
+            ];
             if (!empty($page->cm->id)) {
                 $params['cmid'] = $page->cm->id;
             }
             // Strings for drag and drop.
-            $this->strings_for_js(array('movecontent',
-                                        'tocontent',
-                                        'emptydragdropregion'),
-                                  'moodle');
-            $page->requires->yui_module('moodle-core-blocks', 'M.core_blocks.init_dragdrop', array($params), null, true);
+            $this->strings_for_js(
+                [
+                    'movecontent',
+                    'tocontent',
+                    'emptydragdropregion',
+                ],
+                'moodle',
+            );
+            $page->requires->yui_module('moodle-core-blocks', 'M.core_blocks.init_dragdrop', [$params], null, true);
             $page->requires->js_call_amd('core_block/edit', 'init', ['pagehash' => $page->get_edited_page_hash()]);
         }
 
@@ -459,7 +465,7 @@ class page_requirements_manager {
      *
      * NOTE: this should not be used in official Moodle distribution!
      *
-     * {@link https://moodledev.io/docs/guides/javascript/jquery}
+     * @link https://moodledev.io/docs/guides/javascript/jquery
      */
     public function jquery() {
         $this->jquery_plugin('jquery');
@@ -521,15 +527,18 @@ class page_requirements_manager {
             return false;
         }
 
-        if ($component !== 'core' and in_array($plugin, array('jquery', 'ui', 'ui-css'))) {
-            debugging("jQuery plugin '$plugin' is included in Moodle core, other components can not use the same name.", DEBUG_DEVELOPER);
+        if ($component !== 'core' && in_array($plugin, ['jquery', 'ui', 'ui-css'])) {
+            debugging(
+                "jQuery plugin '$plugin' is included in Moodle core, other components can not use the same name.",
+                DEBUG_DEVELOPER,
+            );
             $component = 'core';
-        } else if ($component !== 'core' and strpos($component, '_') === false) {
+        } else if ($component !== 'core' && strpos($component, '_') === false) {
             // Let's normalise the legacy activity names, Frankenstyle rulez!
             $component = 'mod_' . $component;
         }
 
-        if (empty($this->jqueryplugins) and ($component !== 'core' or $plugin !== 'jquery')) {
+        if (empty($this->jqueryplugins) && ($component !== 'core' || $plugin !== 'jquery')) {
             // Make sure the jQuery itself is always loaded first,
             // the order of all other plugins depends on order of $PAGE_>requires->.
             $this->jquery_plugin('jquery', 'core');
@@ -541,12 +550,12 @@ class page_requirements_manager {
         }
 
         $componentdir = core_component::get_component_directory($component);
-        if (!file_exists($componentdir) or !file_exists("$componentdir/jquery/plugins.php")) {
+        if (!file_exists($componentdir) || !file_exists("$componentdir/jquery/plugins.php")) {
             debugging("Can not load jQuery plugin '$plugin', missing plugins.php in component '$component'.", DEBUG_DEVELOPER);
             return false;
         }
 
-        $plugins = array();
+        $plugins = [];
         require("$componentdir/jquery/plugins.php");
 
         if (!isset($plugins[$plugin])) {
@@ -557,7 +566,7 @@ class page_requirements_manager {
         $this->jqueryplugins[$plugin] = new stdClass();
         $this->jqueryplugins[$plugin]->plugin    = $plugin;
         $this->jqueryplugins[$plugin]->component = $component;
-        $this->jqueryplugins[$plugin]->urls      = array();
+        $this->jqueryplugins[$plugin]->urls      = [];
 
         foreach ($plugins[$plugin]['files'] as $file) {
             if ($CFG->debugdeveloper) {
@@ -575,12 +584,11 @@ class page_requirements_manager {
             if (!empty($CFG->slasharguments)) {
                 $url = new moodle_url("/theme/jquery.php");
                 $url->set_slashargument("/$component/$file");
-
             } else {
                 // This is not really good, we need slasharguments for relative links, this means no caching...
                 $path = realpath("$componentdir/jquery/$file");
                 if (strpos($path, $CFG->dirroot) === 0) {
-                    $url = $CFG->wwwroot.preg_replace('/^'.preg_quote($CFG->dirroot, '/').'/', '', $path);
+                    $url = $CFG->wwwroot . preg_replace('/^' . preg_quote($CFG->dirroot, '/') . '/', '', $path);
                     // Replace all occurences of backslashes characters in url to forward slashes.
                     $url = str_replace('\\', '/', $url);
                     $url = new moodle_url($url);
@@ -618,7 +626,7 @@ class page_requirements_manager {
      * This code prevents loading of standard 'ui-css' which my be requested by other plugins,
      * the 'yourtheme-ui-css' gets loaded only if some other code requires jquery.
      *
-     * {@link https://moodledev.io/docs/guides/javascript/jquery}
+     * @link https://moodledev.io/docs/guides/javascript/jquery
      *
      * @param string $oldplugin original plugin
      * @param string $newplugin the replacement
@@ -642,8 +650,8 @@ class page_requirements_manager {
             return '';
         }
 
-        $included = array();
-        $urls = array();
+        $included = [];
+        $urls = [];
 
         foreach ($this->jqueryplugins as $name => $unused) {
             if (isset($included[$name])) {
@@ -655,7 +663,7 @@ class page_requirements_manager {
                 // in blank page.
                 $cyclic = true;
                 $oldname = $name;
-                for ($i=0; $i<100; $i++) {
+                for ($i = 0; $i < 100; $i++) {
                     $name = $this->jquerypluginoverrides[$name];
                     if (!array_key_exists($name, $this->jquerypluginoverrides)) {
                         $cyclic = false;
@@ -666,15 +674,12 @@ class page_requirements_manager {
                     // We can not do much with cyclic references here, let's use the old plugin.
                     $name = $oldname;
                     debugging("Cyclic overrides detected for jQuery plugin '$name'");
-
                 } else if (empty($name)) {
                     // Developer requested removal of the plugin.
                     continue;
-
                 } else if (!isset($this->jqueryplugins[$name])) {
                     debugging("Unknown jQuery override plugin '$name' detected");
                     $name = $oldname;
-
                 } else if (isset($included[$name])) {
                     // The plugin was already included, easy.
                     continue;
@@ -687,7 +692,7 @@ class page_requirements_manager {
         }
 
         $output = '';
-        $attributes = array('rel' => 'stylesheet', 'type' => 'text/css');
+        $attributes = ['rel' => 'stylesheet', 'type' => 'text/css'];
         foreach ($urls as $url) {
             if (preg_match('/\.js$/', $url)) {
                 $output .= html_writer::script('', $url);
@@ -743,7 +748,7 @@ class page_requirements_manager {
                     return new moodle_url('/lib/javascript.php', ['rev' => $jsrev, 'jsfile' => $url]);
                 } else {
                     $returnurl = new moodle_url('/lib/javascript.php');
-                    $returnurl->set_slashargument('/'.$jsrev.$url);
+                    $returnurl->set_slashargument('/' . $jsrev . $url);
                     return $returnurl;
                 }
             } else {
@@ -768,77 +773,104 @@ class page_requirements_manager {
         if (strpos($component, 'core_') === 0) {
             // Must be some core stuff - list here is not complete, this is just the stuff used from multiple places
             // so that we do nto have to repeat the definition of these modules over and over again.
-            switch($component) {
+            switch ($component) {
                 case 'core_filepicker':
-                    $module = array('name'     => 'core_filepicker',
-                                    'fullpath' => '/repository/filepicker.js',
-                                    'requires' => array(
-                                        'base', 'node', 'node-event-simulate', 'json', 'async-queue', 'io-base', 'io-upload-iframe', 'io-form',
-                                        'yui2-treeview', 'panel', 'cookie', 'datatable', 'datatable-sort', 'resize-plugin', 'dd-plugin',
-                                        'escape', 'moodle-core_filepicker', 'moodle-core-notification-dialogue'
-                                    ),
-                                    'strings'  => array(array('lastmodified', 'moodle'), array('name', 'moodle'), array('type', 'repository'), array('size', 'repository'),
-                                                        array('invalidjson', 'repository'), array('error', 'moodle'), array('info', 'moodle'),
-                                                        array('nofilesattached', 'repository'), array('filepicker', 'repository'), array('logout', 'repository'),
-                                                        array('nofilesavailable', 'repository'), array('norepositoriesavailable', 'repository'),
-                                                        array('fileexistsdialogheader', 'repository'), array('fileexistsdialog_editor', 'repository'),
-                                                        array('fileexistsdialog_filemanager', 'repository'), array('renameto', 'repository'),
-                                                        array('referencesexist', 'repository'), array('select', 'repository')
-                                                    ));
+                    $module = [
+                        'name' => 'core_filepicker',
+                        'fullpath' => '/repository/filepicker.js',
+                        'requires' => [
+                            'base', 'node', 'node-event-simulate', 'json', 'async-queue', 'io-base', 'io-upload-iframe', 'io-form',
+                            'yui2-treeview', 'panel', 'cookie', 'datatable', 'datatable-sort', 'resize-plugin', 'dd-plugin',
+                            'escape', 'moodle-core_filepicker', 'moodle-core-notification-dialogue',
+                        ],
+                        'strings'  => [
+                            ['lastmodified', 'moodle'],
+                            ['name', 'moodle'],
+                            ['type', 'repository'],
+                            ['size', 'repository'],
+                            ['invalidjson', 'repository'],
+                            ['error', 'moodle'],
+                            ['info', 'moodle'],
+                            ['nofilesattached', 'repository'],
+                            ['filepicker', 'repository'],
+                            ['logout', 'repository'],
+                            ['nofilesavailable', 'repository'],
+                            ['norepositoriesavailable', 'repository'],
+                            ['fileexistsdialogheader', 'repository'],
+                            ['fileexistsdialog_editor', 'repository'],
+                            ['fileexistsdialog_filemanager', 'repository'],
+                            ['renameto', 'repository'],
+                            ['referencesexist', 'repository'],
+                            ['select', 'repository'],
+                        ],
+                    ];
                     break;
                 case 'core_comment':
-                    $module = array('name'     => 'core_comment',
-                                    'fullpath' => '/comment/comment.js',
-                                    'requires' => array('base', 'io-base', 'node', 'json', 'yui2-animation', 'overlay', 'escape'),
-                                    'strings' => array(array('confirmdeletecomments', 'admin'), array('yes', 'moodle'), array('no', 'moodle'))
-                                );
+                    $module = [
+                        'name' => 'core_comment',
+                        'fullpath' => '/comment/comment.js',
+                        'requires' => ['base', 'io-base', 'node', 'json', 'yui2-animation', 'overlay', 'escape'],
+                        'strings' => [['confirmdeletecomments', 'admin'], ['yes', 'moodle'], ['no', 'moodle']],
+                    ];
                     break;
                 case 'core_role':
-                    $module = array('name'     => 'core_role',
-                                    'fullpath' => '/admin/roles/module.js',
-                                    'requires' => array('node', 'cookie'));
+                    $module = [
+                        'name' => 'core_role',
+                        'fullpath' => '/admin/roles/module.js',
+                        'requires' => ['node', 'cookie'],
+                    ];
                     break;
                 case 'core_completion':
                     break;
                 case 'core_message':
-                    $module = array('name'     => 'core_message',
-                                    'requires' => array('base', 'node', 'event', 'node-event-simulate'),
-                                    'fullpath' => '/message/module.js');
+                    $module = [
+                        'name' => 'core_message',
+                        'requires' => ['base', 'node', 'event', 'node-event-simulate'],
+                        'fullpath' => '/message/module.js',
+                    ];
                     break;
                 case 'core_group':
-                    $module = array('name'     => 'core_group',
-                                    'fullpath' => '/group/module.js',
-                                    'requires' => array('node', 'overlay', 'event-mouseenter'));
+                    $module = [
+                        'name' => 'core_group',
+                        'fullpath' => '/group/module.js',
+                        'requires' => ['node', 'overlay', 'event-mouseenter'],
+                    ];
                     break;
                 case 'core_question_engine':
-                    $module = array('name'     => 'core_question_engine',
-                                    'fullpath' => '/question/qengine.js',
-                                    'requires' => array('node', 'event'));
+                    $module = [
+                        'name' => 'core_question_engine',
+                        'fullpath' => '/question/qengine.js',
+                        'requires' => ['node', 'event'],
+                    ];
                     break;
                 case 'core_rating':
-                    $module = array('name'     => 'core_rating',
-                                    'fullpath' => '/rating/module.js',
-                                    'requires' => array('node', 'event', 'overlay', 'io-base', 'json'));
+                    $module = [
+                        'name' => 'core_rating',
+                        'fullpath' => '/rating/module.js',
+                        'requires' => ['node', 'event', 'overlay', 'io-base', 'json'],
+                    ];
                     break;
                 case 'core_dndupload':
-                    $module = array('name'     => 'core_dndupload',
-                                    'fullpath' => '/lib/form/dndupload.js',
-                                    'requires' => array('node', 'event', 'json', 'core_filepicker'),
-                                    'strings'  => array(array('uploadformlimit', 'moodle'), array('droptoupload', 'moodle'), array('maxfilesreached', 'moodle'),
-                                                        array('dndenabled_inbox', 'moodle'), array('fileexists', 'moodle'), array('maxbytesfile', 'error'),
-                                                        array('sizegb', 'moodle'), array('sizemb', 'moodle'), array('sizekb', 'moodle'), array('sizeb', 'moodle'),
-                                                        array('maxareabytesreached', 'moodle'), array('serverconnection', 'error'),
-                                                        array('changesmadereallygoaway', 'moodle'), array('complete', 'moodle')
-                                                    ));
+                    $module = [
+                        'name' => 'core_dndupload',
+                        'fullpath' => '/lib/form/dndupload.js',
+                        'requires' => ['node', 'event', 'json', 'core_filepicker'],
+                        'strings'  => [
+                            ['uploadformlimit', 'moodle'], ['droptoupload', 'moodle'], ['maxfilesreached', 'moodle'],
+                            ['dndenabled_inbox', 'moodle'], ['fileexists', 'moodle'], ['maxbytesfile', 'error'],
+                            ['sizegb', 'moodle'], ['sizemb', 'moodle'], ['sizekb', 'moodle'], ['sizeb', 'moodle'],
+                            ['maxareabytesreached', 'moodle'], ['serverconnection', 'error'],
+                            ['changesmadereallygoaway', 'moodle'], ['complete', 'moodle'],
+                        ],
+                    ];
                     break;
             }
-
         } else {
             if ($dir = core_component::get_component_directory($component)) {
                 if (file_exists("$dir/module.js")) {
-                    if (strpos($dir, $CFG->dirroot.'/') === 0) {
+                    if (strpos($dir, $CFG->dirroot . '/') === 0) {
                         $dir = substr($dir, strlen($CFG->dirroot));
-                        $module = array('name'=>$component, 'fullpath'=>"$dir/module.js", 'requires' => array());
+                        $module = ['name' => $component, 'fullpath' => "$dir/module.js", 'requires' => []];
                     }
                 }
             }
@@ -865,7 +897,7 @@ class page_requirements_manager {
             $module = $this->find_module($module);
         }
 
-        if (empty($module) or empty($module['name']) or empty($module['fullpath'])) {
+        if (empty($module) || empty($module['name']) || empty($module['fullpath'])) {
             throw new coding_exception('Missing YUI3 module details.');
         }
 
@@ -883,7 +915,7 @@ class page_requirements_manager {
 
         // Process module requirements and attempt to load each. This allows
         // moodle modules to require each other.
-        if (!empty($module['requires'])){
+        if (!empty($module['requires'])) {
             foreach ($module['requires'] as $requirement) {
                 $rmodule = $this->find_module($requirement);
                 if (is_array($rmodule)) {
@@ -919,7 +951,7 @@ class page_requirements_manager {
      * Ensure that the specified CSS file is linked to from this page.
      *
      * Because stylesheet links must go in the <head> part of the HTML, you must call
-     * this function before {@link get_head_code()} is called. That normally means before
+     * this function before {@see get_head_code()} is called. That normally means before
      * the call to print_header. If you call it when it is too late, an exception
      * will be thrown.
      *
@@ -942,8 +974,9 @@ class page_requirements_manager {
             throw new coding_exception('Cannot require a CSS file after &lt;head> has been printed.', $stylesheet);
         }
 
+        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
         if ($stylesheet instanceof moodle_url) {
-            // ok
+            // Ok.
         } else if (strpos($stylesheet, '/') === 0) {
             $stylesheet = new moodle_url($stylesheet);
         } else {
@@ -967,7 +1000,7 @@ class page_requirements_manager {
     /**
      * Ensure that a skip link to a given target is printed at the top of the <body>.
      *
-     * You must call this function before {@link get_top_of_body_code()}, (if not, an exception
+     * You must call this function before {@see get_top_of_body_code()}, (if not, an exception
      * will be thrown). That normally means you must call this before the call to print_header.
      *
      * If you ask for a particular skip link to be printed, it is then your responsibility
@@ -1007,16 +1040,21 @@ class page_requirements_manager {
      * @param string $function the name of the JavaScritp function to call. Can
      *      be a compound name like 'Y.Event.purgeElement'. Can also be
      *      used to create and object by using a 'function name' like 'new user_selector'.
-     * @param array $arguments and array of arguments to be passed to the function.
+     * @param null|array $arguments and array of arguments to be passed to the function.
      *      When generating the function call, this will be escaped using json_encode,
      *      so passing objects and arrays should work.
      * @param bool $ondomready If tru the function is only called when the dom is
      *      ready for manipulation.
      * @param int $delay The delay before the function is called.
      */
-    public function js_function_call($function, array $arguments = null, $ondomready = false, $delay = 0) {
+    public function js_function_call(
+        $function,
+        ?array $arguments = null,
+        $ondomready = false,
+        $delay = 0,
+    ) {
         $where = $ondomready ? 'ondomready' : 'normal';
-        $this->jscalls[$where][] = array($function, $arguments, $delay);
+        $this->jscalls[$where][] = [$function, $arguments, $delay];
     }
 
     /**
@@ -1042,7 +1080,7 @@ class page_requirements_manager {
      * @param string $func Optional function from the module to call, defaults to just loading the AMD module.
      * @param array $params The params to pass to the function (will be serialized into JSON).
      */
-    public function js_call_amd($fullmodule, $func = null, $params = array()) {
+    public function js_call_amd($fullmodule, $func = null, $params = []) {
         global $CFG;
 
         $modulepath = explode('/', $fullmodule);
@@ -1056,7 +1094,7 @@ class page_requirements_manager {
         if ($func !== null) {
             $func = clean_param($func, PARAM_ALPHANUMEXT);
 
-            $jsonparams = array();
+            $jsonparams = [];
             foreach ($params as $param) {
                 $jsonparams[] = json_encode($param);
             }
@@ -1096,20 +1134,34 @@ class page_requirements_manager {
      *
      * @param array|string $modules One or more modules
      * @param string $function The function to call once modules have been loaded
-     * @param array $arguments An array of arguments to pass to the function
-     * @param string $galleryversion Deprecated: The gallery version to use
+     * @param null|array $arguments An array of arguments to pass to the function
+     * @param null|string $galleryversion Deprecated: The gallery version to use
      * @param bool $ondomready
      */
-    public function yui_module($modules, $function, array $arguments = null, $galleryversion = null, $ondomready = false) {
+    public function yui_module(
+        $modules,
+        $function,
+        ?array $arguments = null,
+        $galleryversion = null,
+        $ondomready = false,
+    ) {
         if (!is_array($modules)) {
-            $modules = array($modules);
+            $modules = [$modules];
         }
 
         if ($galleryversion != null) {
             debugging('The galleryversion parameter to yui_module has been deprecated since Moodle 2.3.');
         }
 
-        $jscode = 'Y.use('.join(',', array_map('json_encode', convert_to_array($modules))).',function() {'.js_writer::function_call($function, $arguments).'});';
+        $jscode = 'Y.use(' .
+            join(
+                ',',
+                array_map(
+                    'json_encode',
+                    convert_to_array($modules)
+                )
+            ) .
+            ',function() {' . js_writer::function_call($function, $arguments) . '});';
         if ($ondomready) {
             $jscode = "Y.on('domready', function() { $jscode });";
         }
@@ -1121,7 +1173,7 @@ class page_requirements_manager {
      *
      * @param array $modules The list of YUI CSS Modules to include.
      */
-    public function set_yuicssmodules(array $modules = array()) {
+    public function set_yuicssmodules(array $modules = []) {
         $this->yuicssmodules = $modules;
     }
 
@@ -1131,13 +1183,18 @@ class page_requirements_manager {
      *
      * @param string $function the name of the JavaScritp function to with init code,
      *      usually something like 'M.mod_mymodule.init'
-     * @param array $extraarguments and array of arguments to be passed to the function.
+     * @param null|array $extraarguments and array of arguments to be passed to the function.
      *      The first argument is always the YUI3 Y instance with all required dependencies
      *      already loaded.
      * @param bool $ondomready wait for dom ready (helps with some IE problems when modifying DOM)
-     * @param array $module JS module specification array
+     * @param null|array $module JS module specification array
      */
-    public function js_init_call($function, array $extraarguments = null, $ondomready = false, array $module = null) {
+    public function js_init_call(
+        $function,
+        ?array $extraarguments = null,
+        $ondomready = false,
+        ?array $module = null,
+    ) {
         $jscode = js_writer::function_call_with_Y($function, $extraarguments);
         if (!$module) {
             // Detect module automatically.
@@ -1157,10 +1214,14 @@ class page_requirements_manager {
      *
      * @param string $jscode
      * @param bool $ondomready wait for dom ready (helps with some IE problems when modifying DOM)
-     * @param array $module JS module specification array
+     * @param null|array $module JS module specification array
      */
-    public function js_init_code($jscode, $ondomready = false, array $module = null) {
-        $jscode = trim($jscode, " ;\n"). ';';
+    public function js_init_code(
+        $jscode,
+        $ondomready = false,
+        ?array $module = null,
+    ) {
+        $jscode = trim($jscode, " ;\n") . ';';
 
         $uniqid = html_writer::random_id();
         $startjs = " M.util.js_pending('" . $uniqid . "');";
@@ -1212,7 +1273,7 @@ class page_requirements_manager {
      *     alert(M.str.moodle.fullnamedisplay);
      *
      * To substitute the placeholder at client side, use M.util.get_string()
-     * function. It implements the same logic as {@link get_string()}:
+     * function. It implements the same logic as {@see get_string()}:
      *
      *     // Require the string in PHP but keep {$a} as it is.
      *     $PAGE->requires->string_for_js('fullnamedisplay', 'moodle');
@@ -1222,7 +1283,7 @@ class page_requirements_manager {
      *
      * If you do need the same string expanded with different $a values in PHP
      * on server side, then the solution is to put them in your own data structure
-     * (e.g. and array) that you pass to JavaScript with {@link data_for_js()}.
+     * (e.g. and array) that you pass to JavaScript with {@see data_for_js()}.
      *
      * @param string $identifier the desired string.
      * @param string $component the language file to look in.
@@ -1232,9 +1293,11 @@ class page_requirements_manager {
         if (!$component) {
             throw new coding_exception('The $component parameter is required for page_requirements_manager::string_for_js().');
         }
-        if (isset($this->stringsforjs_as[$component][$identifier]) and $this->stringsforjs_as[$component][$identifier] !== $a) {
-            throw new coding_exception("Attempt to re-define already required string '$identifier' " .
-                    "from lang file '$component' with different \$a parameter?");
+        if (isset($this->stringsforjs_as[$component][$identifier]) && $this->stringsforjs_as[$component][$identifier] !== $a) {
+            throw new coding_exception(
+                "Attempt to re-define already required string '$identifier' " .
+                    "from lang file '$component' with different \$a parameter?",
+            );
         }
         if (!isset($this->stringsforjs[$component][$identifier])) {
             $this->stringsforjs[$component][$identifier] = new lang_string($identifier, $component, $a);
@@ -1245,7 +1308,7 @@ class page_requirements_manager {
     /**
      * Make an array of language strings available for JS.
      *
-     * This function calls the above function {@link string_for_js()} for each requested
+     * This function calls the above function {@see string_for_js()} for each requested
      * string in the $identifiers array that is passed to the argument for a single module
      * passed in $module.
      *
@@ -1297,9 +1360,9 @@ class page_requirements_manager {
      * @param bool $inhead initialise in head
      * @return void
      */
-    public function data_for_js($variable, $data, $inhead=false) {
+    public function data_for_js($variable, $data, $inhead = false) {
         $where = $inhead ? 'head' : 'footer';
-        $this->jsinitvariables[$where][] = array($variable, $data);
+        $this->jsinitvariables[$where][] = [$variable, $data];
     }
 
     /**
@@ -1308,10 +1371,15 @@ class page_requirements_manager {
      * @param mixed $selector standard YUI selector for elements, may be array or string, element id is in the form "#idvalue"
      * @param string $event A valid DOM event (click, mousedown, change etc.)
      * @param string $function The name of the function to call
-     * @param array  $arguments An optional array of argument parameters to pass to the function
+     * @param null|array $arguments An optional array of argument parameters to pass to the function
      */
-    public function event_handler($selector, $event, $function, array $arguments = null) {
-        $this->eventhandlers[] = array('selector'=>$selector, 'event'=>$event, 'function'=>$function, 'arguments'=>$arguments);
+    public function event_handler(
+        $selector,
+        $event,
+        $function,
+        ?array $arguments = null,
+    ) {
+        $this->eventhandlers[] = ['selector' => $selector, 'event' => $event, 'function' => $function, 'arguments' => $arguments];
     }
 
     /**
@@ -1439,21 +1507,27 @@ EOF;
         $code = '';
         if ($this->yui3loader->combine) {
             if (!empty($this->yuicssmodules)) {
-                $modules = array();
+                $modules = [];
                 foreach ($this->yuicssmodules as $module) {
                     $modules[] = "$CFG->yui3version/$module/$module-min.css";
                 }
-                $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->comboBase.implode('&amp;', $modules).'" />';
+                $code .= '<link rel="stylesheet" type="text/css" href="' .
+                    $this->yui3loader->comboBase . implode('&amp;', $modules) . '" />';
             }
-            $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->local_comboBase.'rollup/'.$CFG->yui3version.'/yui-moodlesimple' . $yuiformat . '.css" />';
-
+            $code .= '<link rel="stylesheet" type="text/css" href="' .
+                $this->yui3loader->local_comboBase . 'rollup/' . $CFG->yui3version . '/yui-moodlesimple' . $yuiformat .
+                '.css" />';
         } else {
             if (!empty($this->yuicssmodules)) {
                 foreach ($this->yuicssmodules as $module) {
-                    $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.$module.'/'.$module.'-min.css" />';
+                    $code .= '<link rel="stylesheet" type="text/css"href="' .
+                        $this->yui3loader->base . $module . '/' . $module .
+                        '-min.css" />';
                 }
             }
-            $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->local_comboBase.'rollup/'.$CFG->yui3version.'/yui-moodlesimple' . $yuiformat . '.css" />';
+            $code .= '<link rel="stylesheet" type="text/css" href="' .
+                $this->yui3loader->local_comboBase . 'rollup/' . $CFG->yui3version . '/yui-moodlesimple' . $yuiformat .
+                '.css" />';
         }
 
         if ($this->yui3loader->filter === 'RAW') {
@@ -1489,9 +1563,9 @@ EOF;
             $rollupversion .= '_' . $CFG->yuipatchlevel;
         }
 
-        $baserollups = array(
+        $baserollups = [
             'rollup/' . $rollupversion . "/yui-moodlesimple{$yuiformat}.js",
-        );
+        ];
 
         if ($this->yui3loader->combine) {
             return '<script src="' .
@@ -1501,11 +1575,10 @@ EOF;
         } else {
             $code = '';
             foreach ($baserollups as $rollup) {
-                $code .= '<script src="'.$this->yui3loader->local_comboBase.$rollup.'"></script>';
+                $code .= '<script src="' . $this->yui3loader->local_comboBase . $rollup . '"></script>';
             }
             return $code;
         }
-
     }
 
     /**
@@ -1518,7 +1591,7 @@ EOF;
         // Please note custom CSS is strongly discouraged,
         // because it can not be overridden by themes!
         // It is suitable only for things like mod/data which accepts CSS from teachers.
-        $attributes = array('rel'=>'stylesheet', 'type'=>'text/css');
+        $attributes = ['rel' => 'stylesheet', 'type' => 'text/css'];
 
         // Add the YUI code first. We want this to be overridden by any Moodle CSS.
         $code = $this->get_yui3lib_headcss();
@@ -1528,7 +1601,11 @@ EOF;
         // As of IE8 + YUI3.1.1 the reference stylesheet (firstthemesheet) gets
         // ignored whenever another resource is added until such time as a redraw
         // is forced, usually by moving the mouse over the affected element.
-        $code .= html_writer::tag('script', '/** Required in order to fix style inclusion problems in IE with YUI **/', array('id'=>'firstthemesheet', 'type'=>'text/css'));
+        $code .= html_writer::tag(
+            'script',
+            '/** Required in order to fix style inclusion problems in IE with YUI **/',
+            ['id' => 'firstthemesheet', 'type' => 'text/css'],
+        );
 
         $urls = $this->cssthemeurls + $this->cssurls;
         foreach ($urls as $url) {
@@ -1550,7 +1627,7 @@ EOF;
         if (empty($this->extramodules)) {
             return '';
         }
-        return html_writer::script(js_writer::function_call('M.yui.add_module', array($this->extramodules)));
+        return html_writer::script(js_writer::function_call('M.yui.add_module', [$this->extramodules]));
     }
 
     /**
@@ -1588,7 +1665,7 @@ EOF;
 
         // Set up global YUI3 loader object - this should contain all code needed by plugins.
         // Note: in JavaScript just use "YUI().use('overlay', function(Y) { .... });",
-        //       this needs to be done before including any other script.
+        // this needs to be done before including any other script.
         $js .= $this->YUI_config->get_config_functions();
         $js .= js_writer::set_variable('YUI_config', $this->YUI_config, false) . "\n";
         $js .= "M.yui.loader = {modules: {}};\n"; // Backwards compatibility only, not used any more.
@@ -1600,7 +1677,7 @@ EOF;
         if ($this->jsinitvariables['head']) {
             $js = '';
             foreach ($this->jsinitvariables['head'] as $data) {
-                list($var, $value) = $data;
+                [$var, $value] = $data;
                 $js .= js_writer::set_variable($var, $value, true);
             }
             $output .= html_writer::script($js);
@@ -1670,7 +1747,7 @@ EOF;
         if ($CFG->debugdeveloper) {
             $logconfig->level = 'trace';
         }
-        $this->js_call_amd('core/log', 'setConfig', array($logconfig));
+        $this->js_call_amd('core/log', 'setConfig', [$logconfig]);
         // Add any global JS that needs to run on all pages.
         $this->js_call_amd('core/page_global', 'init');
         $this->js_call_amd('core/utility');
@@ -1692,7 +1769,7 @@ EOF;
 
         // Add all needed strings.
         // First add core strings required for some dialogues.
-        $this->strings_for_js(array(
+        $this->strings_for_js([
             'confirm',
             'yes',
             'no',
@@ -1705,17 +1782,17 @@ EOF;
             // TODO MDL-70830 shortforms should preload the collapseall/expandall strings properly.
             'collapseall',
             'expandall',
-        ), 'moodle');
-        $this->strings_for_js(array(
+        ], 'moodle');
+        $this->strings_for_js([
             'debuginfo',
             'line',
             'stacktrace',
-        ), 'debug');
+        ], 'debug');
         $this->string_for_js('labelsep', 'langconfig');
         if (!empty($this->stringsforjs)) {
-            $strings = array();
-            foreach ($this->stringsforjs as $component=>$v) {
-                foreach($v as $indentifier => $langstring) {
+            $strings = [];
+            foreach ($this->stringsforjs as $component => $v) {
+                foreach ($v as $indentifier => $langstring) {
                     $strings[$component][$indentifier] = $langstring->out();
                 }
             }
@@ -1726,7 +1803,7 @@ EOF;
         if ($this->jsinitvariables['footer']) {
             $js = '';
             foreach ($this->jsinitvariables['footer'] as $data) {
-                list($var, $value) = $data;
+                [$var, $value] = $data;
                 $js .= js_writer::set_variable($var, $value, true);
             }
             $output .= html_writer::script($js);
@@ -1766,9 +1843,9 @@ EOF;
     /**
      * Should we generate a bit of content HTML that is only required once  on
      * this page (e.g. the contents of the modchooser), now? Basically, we call
-     * {@link has_one_time_item_been_created()}, and if the thing has not already
+     * {@see has_one_time_item_been_created()}, and if the thing has not already
      * been output, we return true to tell the caller to generate it, and also
-     * call {@link set_one_time_item_created()} to record the fact that it is
+     * call {@see set_one_time_item_created()} to record the fact that it is
      * about to be generated.
      *
      * That is, a typical usage pattern (in a renderer method) is:
@@ -1796,7 +1873,7 @@ EOF;
      * Has a particular bit of HTML that is only required once  on this page
      * (e.g. the contents of the modchooser) already been generated?
      *
-     * Normally, you can use the {@link should_create_one_time_item_now()} helper
+     * Normally, you can use the {@see should_create_one_time_item_now()} helper
      * method rather than calling this method directly.
      *
      * @param string $thing identifier for the bit of content. Should be of the form
@@ -1811,7 +1888,7 @@ EOF;
      * Indicate that a particular bit of HTML that is only required once on this
      * page (e.g. the contents of the modchooser) has been generated (or is about to be)?
      *
-     * Normally, you can use the {@link should_create_one_time_item_now()} helper
+     * Normally, you can use the {@see should_create_one_time_item_now()} helper
      * method rather than calling this method directly.
      *
      * @param string $thing identifier for the bit of content. Should be of the form

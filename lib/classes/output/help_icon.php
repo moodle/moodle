@@ -75,7 +75,7 @@ class help_icon implements renderable, templatable {
         if (!$sm->string_exists($this->identifier, $this->component)) {
             debugging("Help title string does not exist: [$this->identifier, $this->component]");
         }
-        if (!$sm->string_exists($this->identifier.'_help', $this->component)) {
+        if (!$sm->string_exists($this->identifier . '_help', $this->component)) {
             debugging("Help contents string does not exist: [{$this->identifier}_help, $this->component]");
         }
     }
@@ -107,7 +107,7 @@ class help_icon implements renderable, templatable {
         $options = [
             'component' => $this->component,
             'identifier' => $this->identifier,
-            'lang' => current_language()
+            'lang' => current_language(),
         ];
 
         // Debugging feature lets you display string identifier and component.

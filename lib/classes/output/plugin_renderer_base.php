@@ -32,7 +32,7 @@ class plugin_renderer_base extends renderer_base {
     /**
      * @var renderer_base|core_renderer A reference to the current renderer.
      * The renderer provided here will be determined by the page but will in 90%
-     * of cases by the {@link core_renderer}
+     * of cases by the {@see core_renderer}
      */
     protected $output;
 
@@ -124,12 +124,12 @@ class plugin_renderer_base extends renderer_base {
      */
     public function __call($method, $arguments) {
         if (method_exists('renderer_base', $method)) {
-            throw new coding_exception('Protected method called against '.get_class($this).' :: '.$method);
+            throw new coding_exception('Protected method called against ' . get_class($this) . ' :: ' . $method);
         }
         if (method_exists($this->output, $method)) {
-            return call_user_func_array(array($this->output, $method), $arguments);
+            return call_user_func_array([$this->output, $method], $arguments);
         } else {
-            throw new coding_exception('Unknown method called against '.get_class($this).' :: '.$method);
+            throw new coding_exception('Unknown method called against ' . get_class($this) . ' :: ' . $method);
         }
     }
 }

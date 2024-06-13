@@ -25,7 +25,6 @@ namespace core\output;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class theme_usage {
-
     /** @var string The theme usage type for users. */
     public const THEME_USAGE_TYPE_USER = 'user';
 
@@ -61,7 +60,6 @@ class theme_usage {
         $isused = $cache->get($themename);
 
         if ($isused === false) {
-
             $sqlunions = [];
 
             // For each context, check if the config is enabled and there is at least one use.
@@ -119,7 +117,6 @@ class theme_usage {
             // Cache the result so we don't have to keep checking for this theme.
             $cache->set($themename, $isused);
             return $isused;
-
         } else {
             return $isused;
         }

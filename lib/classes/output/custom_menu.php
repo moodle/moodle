@@ -44,7 +44,7 @@ class custom_menu extends custom_menu_item {
     /**
      * Creates the custom menu
      *
-     * @param string $definition the menu items definition in syntax required by {@link convert_text_to_menu_nodes()}
+     * @param string $definition the menu items definition in syntax required by {@see convert_text_to_menu_nodes()}
      * @param string $currentlanguage the current language code, null disables multilang support
      */
     public function __construct($definition = '', $currentlanguage = null) {
@@ -62,7 +62,7 @@ class custom_menu extends custom_menu_item {
      * @param array $children
      */
     public function override_children(array $children) {
-        $this->children = array();
+        $this->children = [];
         foreach ($children as $child) {
             if ($child instanceof custom_menu_item) {
                 $this->children[] = $child;
@@ -100,7 +100,7 @@ class custom_menu extends custom_menu_item {
         $root = new custom_menu();
         $lastitem = $root;
         $lastdepth = 0;
-        $hiddenitems = array();
+        $hiddenitems = [];
         $lines = explode("\n", $text);
         foreach ($lines as $linenumber => $line) {
             $line = trim($line);

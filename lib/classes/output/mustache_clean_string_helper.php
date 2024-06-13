@@ -27,7 +27,6 @@ use Mustache_LambdaHelper;
  * @since      4.0
  */
 class mustache_clean_string_helper {
-
     /** @var mustache_string_helper A string helper instance that is being used internally for fetching strings */
     private $stringhelper;
 

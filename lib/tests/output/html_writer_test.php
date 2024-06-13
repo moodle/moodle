@@ -14,15 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use core_table\output\html_table;
+use core_table\output\html_table_cell;
+use core_table\output\html_table_row;
+
+// phpcs:disable moodle.Commenting.DocblockDescription.Missing
+
 /**
  * Unit tests for the html_writer class.
  *
+ * @package core
  * @copyright 2010 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \html_writer
- * @coversDefaultClass \html_writer
+ * @covers \core\output\html_writer
+ * @coversDefaultClass \\core\output\html_writer
  */
-final class html_writer_test extends basic_testcase {
+final class html_writer_test extends \basic_testcase {
     /**
      * @covers ::start_tag
      */
@@ -34,16 +43,20 @@ final class html_writer_test extends basic_testcase {
      * @covers ::start_tag
      */
     public function test_start_tag_with_attr(): void {
-        $this->assertSame('<div class="frog">',
-            html_writer::start_tag('div', array('class' => 'frog')));
+        $this->assertSame(
+            '<div class="frog">',
+            html_writer::start_tag('div', ['class' => 'frog'])
+        );
     }
 
     /**
      * @covers ::start_tag
      */
     public function test_start_tag_with_attrs(): void {
-        $this->assertSame('<div class="frog" id="mydiv">',
-            html_writer::start_tag('div', array('class' => 'frog', 'id' => 'mydiv')));
+        $this->assertSame(
+            '<div class="frog" id="mydiv">',
+            html_writer::start_tag('div', ['class' => 'frog', 'id' => 'mydiv']),
+        );
     }
 
     /**
@@ -64,48 +77,60 @@ final class html_writer_test extends basic_testcase {
      * @covers ::empty_Tag
      */
     public function test_empty_tag_with_attrs(): void {
-        $this->assertSame('<input type="submit" value="frog" />',
-            html_writer::empty_tag('input', array('type' => 'submit', 'value' => 'frog')));
+        $this->assertSame(
+            '<input type="submit" value="frog" />',
+            html_writer::empty_tag('input', ['type' => 'submit', 'value' => 'frog']),
+        );
     }
 
     /**
      * @covers ::nonempty_tag
      */
     public function test_nonempty_tag_with_content(): void {
-        $this->assertSame('<div>Hello world!</div>',
-            html_writer::nonempty_tag('div', 'Hello world!'));
+        $this->assertSame(
+            '<div>Hello world!</div>',
+            html_writer::nonempty_tag('div', 'Hello world!'),
+        );
     }
 
     /**
      * @covers ::nonempty_tag
      */
     public function test_nonempty_tag_empty(): void {
-        $this->assertSame('',
-            html_writer::nonempty_tag('div', ''));
+        $this->assertSame(
+            '',
+            html_writer::nonempty_tag('div', ''),
+        );
     }
 
     /**
      * @covers ::nonempty_tag
      */
     public function test_nonempty_tag_null(): void {
-        $this->assertSame('',
-            html_writer::nonempty_tag('div', null));
+        $this->assertSame(
+            '',
+            html_writer::nonempty_tag('div', null),
+        );
     }
 
     /**
      * @covers ::nonempty_tag
      */
     public function test_nonempty_tag_zero(): void {
-        $this->assertSame('<div class="score">0</div>',
-            html_writer::nonempty_tag('div', 0, array('class' => 'score')));
+        $this->assertSame(
+            '<div class="score">0</div>',
+            html_writer::nonempty_tag('div', 0, ['class' => 'score'])
+        );
     }
 
     /**
      * @covers ::nonempty_tag
      */
     public function test_nonempty_tag_zero_string(): void {
-        $this->assertSame('<div class="score">0</div>',
-            html_writer::nonempty_tag('div', '0', array('class' => 'score')));
+        $this->assertSame(
+            '<div class="score">0</div>',
+            html_writer::nonempty_tag('div', '0', ['class' => 'score'])
+        );
     }
 
     /**
@@ -113,20 +138,30 @@ final class html_writer_test extends basic_testcase {
      */
     public function test_div(): void {
         // All options.
-        $this->assertSame('<div class="frog" id="kermit">ribbit</div>',
-                html_writer::div('ribbit', 'frog', array('id' => 'kermit')));
+        $this->assertSame(
+            '<div class="frog" id="kermit">ribbit</div>',
+            html_writer::div('ribbit', 'frog', ['id' => 'kermit'])
+        );
         // Combine class from attributes and $class.
-        $this->assertSame('<div class="amphibian frog">ribbit</div>',
-                html_writer::div('ribbit', 'frog', array('class' => 'amphibian')));
+        $this->assertSame(
+            '<div class="amphibian frog">ribbit</div>',
+            html_writer::div('ribbit', 'frog', ['class' => 'amphibian'])
+        );
         // Class only.
-        $this->assertSame('<div class="frog">ribbit</div>',
-                html_writer::div('ribbit', 'frog'));
+        $this->assertSame(
+            '<div class="frog">ribbit</div>',
+            html_writer::div('ribbit', 'frog')
+        );
         // Attributes only.
-        $this->assertSame('<div id="kermit">ribbit</div>',
-                html_writer::div('ribbit', '', array('id' => 'kermit')));
+        $this->assertSame(
+            '<div id="kermit">ribbit</div>',
+            html_writer::div('ribbit', '', ['id' => 'kermit'])
+        );
         // No options.
-        $this->assertSame('<div>ribbit</div>',
-                html_writer::div('ribbit'));
+        $this->assertSame(
+            '<div>ribbit</div>',
+            html_writer::div('ribbit')
+        );
     }
 
     /**
@@ -134,20 +169,30 @@ final class html_writer_test extends basic_testcase {
      */
     public function test_start_div(): void {
         // All options.
-        $this->assertSame('<div class="frog" id="kermit">',
-                html_writer::start_div('frog', array('id' => 'kermit')));
+        $this->assertSame(
+            '<div class="frog" id="kermit">',
+            html_writer::start_div('frog', ['id' => 'kermit'])
+        );
         // Combine class from attributes and $class.
-        $this->assertSame('<div class="amphibian frog">',
-                html_writer::start_div('frog', array('class' => 'amphibian')));
+        $this->assertSame(
+            '<div class="amphibian frog">',
+            html_writer::start_div('frog', ['class' => 'amphibian'])
+        );
         // Class only.
-        $this->assertSame('<div class="frog">',
-                html_writer::start_div('frog'));
+        $this->assertSame(
+            '<div class="frog">',
+            html_writer::start_div('frog')
+        );
         // Attributes only.
-        $this->assertSame('<div id="kermit">',
-                html_writer::start_div('', array('id' => 'kermit')));
+        $this->assertSame(
+            '<div id="kermit">',
+            html_writer::start_div('', ['id' => 'kermit'])
+        );
         // No options.
-        $this->assertSame('<div>',
-                html_writer::start_div());
+        $this->assertSame(
+            '<div>',
+            html_writer::start_div()
+        );
     }
 
     /**
@@ -162,20 +207,30 @@ final class html_writer_test extends basic_testcase {
      */
     public function test_span(): void {
         // All options.
-        $this->assertSame('<span class="frog" id="kermit">ribbit</span>',
-                html_writer::span('ribbit', 'frog', array('id' => 'kermit')));
+        $this->assertSame(
+            '<span class="frog" id="kermit">ribbit</span>',
+            html_writer::span('ribbit', 'frog', ['id' => 'kermit'])
+        );
         // Combine class from attributes and $class.
-        $this->assertSame('<span class="amphibian frog">ribbit</span>',
-                html_writer::span('ribbit', 'frog', array('class' => 'amphibian')));
+        $this->assertSame(
+            '<span class="amphibian frog">ribbit</span>',
+            html_writer::span('ribbit', 'frog', ['class' => 'amphibian'])
+        );
         // Class only.
-        $this->assertSame('<span class="frog">ribbit</span>',
-                html_writer::span('ribbit', 'frog'));
+        $this->assertSame(
+            '<span class="frog">ribbit</span>',
+            html_writer::span('ribbit', 'frog')
+        );
         // Attributes only.
-        $this->assertSame('<span id="kermit">ribbit</span>',
-                html_writer::span('ribbit', '', array('id' => 'kermit')));
+        $this->assertSame(
+            '<span id="kermit">ribbit</span>',
+            html_writer::span('ribbit', '', ['id' => 'kermit'])
+        );
         // No options.
-        $this->assertSame('<span>ribbit</span>',
-                html_writer::span('ribbit'));
+        $this->assertSame(
+            '<span>ribbit</span>',
+            html_writer::span('ribbit')
+        );
     }
 
     /**
@@ -183,20 +238,30 @@ final class html_writer_test extends basic_testcase {
      */
     public function test_start_span(): void {
         // All options.
-        $this->assertSame('<span class="frog" id="kermit">',
-                html_writer::start_span('frog', array('id' => 'kermit')));
+        $this->assertSame(
+            '<span class="frog" id="kermit">',
+            html_writer::start_span('frog', ['id' => 'kermit'])
+        );
         // Combine class from attributes and $class.
-        $this->assertSame('<span class="amphibian frog">',
-                html_writer::start_span('frog', array('class' => 'amphibian')));
+        $this->assertSame(
+            '<span class="amphibian frog">',
+            html_writer::start_span('frog', ['class' => 'amphibian'])
+        );
         // Class only.
-        $this->assertSame('<span class="frog">',
-                html_writer::start_span('frog'));
+        $this->assertSame(
+            '<span class="frog">',
+            html_writer::start_span('frog')
+        );
         // Attributes only.
-        $this->assertSame('<span id="kermit">',
-                html_writer::start_span('', array('id' => 'kermit')));
+        $this->assertSame(
+            '<span id="kermit">',
+            html_writer::start_span('', ['id' => 'kermit'])
+        );
         // No options.
-        $this->assertSame('<span>',
-                html_writer::start_span());
+        $this->assertSame(
+            '<span>',
+            html_writer::start_span()
+        );
     }
 
     /**
@@ -208,9 +273,9 @@ final class html_writer_test extends basic_testcase {
 
     /**
      * @covers ::table
-     * @covers \html_table_row
-     * @covers \html_table_cell
-     * @covers \html_table
+     * @covers \core_table\output\html_table_row
+     * @covers \core_table\output\html_table_cell
+     * @covers \core_table\output\html_table
      */
     public function test_table(): void {
         $row = new html_table_row();
@@ -268,11 +333,11 @@ EOF;
 
         $table = new html_table();
         $table->id = "whodat";
-        $table->data = array(
-            array('fred', 'MDK'),
-            array('bob',  'Burgers'),
-            array('dave', 'Competitiveness')
-        );
+        $table->data = [
+            ['fred', 'MDK'],
+            ['bob', 'Burgers'],
+            ['dave', 'Competitiveness'],
+        ];
         $table->caption = "Who even knows?";
         $table->captionhide = true;
         $table->responsive = false;

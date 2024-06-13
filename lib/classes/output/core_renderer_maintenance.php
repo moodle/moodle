@@ -70,7 +70,7 @@ class core_renderer_maintenance extends core_renderer {
      * @param boolean $fakeblocksonly
      * @return string
      */
-    public function blocks($region, $classes = array(), $tag = 'aside', $fakeblocksonly = false) {
+    public function blocks($region, $classes = [], $tag = 'aside', $fakeblocksonly = false) {
         return '';
     }
 
@@ -158,11 +158,19 @@ class core_renderer_maintenance extends core_renderer {
         if ($continue instanceof single_button) {
             $continue->type = single_button::BUTTON_PRIMARY;
         } else if (is_string($continue)) {
-            $continue = new single_button(new moodle_url($continue), get_string('continue'), 'post',
-                $displayoptions['type'] ?? single_button::BUTTON_PRIMARY);
+            $continue = new single_button(
+                new moodle_url($continue),
+                get_string('continue'),
+                'post',
+                $displayoptions['type'] ?? single_button::BUTTON_PRIMARY
+            );
         } else if ($continue instanceof moodle_url) {
-            $continue = new single_button($continue, get_string('continue'), 'post',
-                $displayoptions['type'] ?? single_button::BUTTON_PRIMARY);
+            $continue = new single_button(
+                $continue,
+                get_string('continue'),
+                'post',
+                $displayoptions['type'] ?? single_button::BUTTON_PRIMARY
+            );
         } else {
             throw new coding_exception('The continue param to $OUTPUT->confirm() must be either a URL' .
                                        ' (string/moodle_url) or a single_button instance.');
@@ -228,10 +236,10 @@ class core_renderer_maintenance extends core_renderer {
      * Does nothing. The maintenance renderer cannot produce user pictures.
      *
      * @param stdClass $user
-     * @param array $options
+     * @param null|array $options
      * @return string
      */
-    public function user_picture(stdClass $user, array $options = null) {
+    public function user_picture(stdClass $user, ?array $options = null) {
         return '';
     }
 }

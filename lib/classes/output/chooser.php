@@ -36,7 +36,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class chooser implements renderable, templatable {
-
     /** @var moodle_url The form action URL. */
     public $actionurl;
     /** @var lang_string The instructions to display. */
@@ -81,7 +80,7 @@ class chooser implements renderable, templatable {
         $this->params[] = [
             'name' => $name,
             'value' => $value,
-            'id' => $id
+            'id' => $id,
         ];
     }
 
@@ -120,11 +119,10 @@ class chooser implements renderable, templatable {
         $data->sesskey = sesskey();
         $data->title = (string) $this->title;
 
-        $data->sections = array_map(function($section) use ($output) {
+        $data->sections = array_map(function ($section) use ($output) {
             return $section->export_for_template($output);
         }, $this->sections);
 
         return $data;
     }
-
 }

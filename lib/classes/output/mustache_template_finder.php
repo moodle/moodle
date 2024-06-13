@@ -26,6 +26,7 @@ use core_component;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      2.9
+ * @package core
  */
 class mustache_template_finder {
     /**
@@ -48,14 +49,14 @@ class mustache_template_finder {
         $themename = clean_param($themename, PARAM_COMPONENT);
 
         // Validate the component.
-        $dirs = array();
+        $dirs = [];
         $compdirectory = core_component::get_component_directory($component);
         if (!$compdirectory) {
             throw new coding_exception("Component was not valid: " . s($component));
         }
 
         // Find the parent themes.
-        $parents = array();
+        $parents = [];
         if ($themename === $PAGE->theme->name) {
             $parents = $PAGE->theme->parents;
         } else {
@@ -97,7 +98,7 @@ class mustache_template_finder {
                                        ' (' . s($name) . ' requested) ');
         }
 
-        list($component, $templatename) = explode('/', $name, 2);
+        [$component, $templatename] = explode('/', $name, 2);
         $component = clean_param($component, PARAM_COMPONENT);
 
         $dirs = self::get_template_directories_for_component($component, $themename);

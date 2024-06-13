@@ -33,16 +33,10 @@ use stdClass;
  * @category output
  */
 class custom_menu_item implements renderable, templatable {
-
     /**
      * @var string The text to show for the item
      */
     protected $text;
-
-    /**
-     * @var moodle_url The link to give the icon if it has no children
-     */
-    protected $url;
 
     /**
      * @var string A title to apply to the item. By default the text
@@ -56,59 +50,65 @@ class custom_menu_item implements renderable, templatable {
     protected $sort;
 
     /**
-     * @var custom_menu_item A reference to the parent for this item or NULL if
-     * it is a top level item
-     */
-    protected $parent;
-
-    /**
      * @var array A array in which to store children this item has.
      */
-    protected $children = array();
+    protected $children = [];
 
     /**
      * @var int A reference to the sort var of the last child that was added
      */
     protected $lastsort = 0;
 
-    /** @var array Array of other HTML attributes for the custom menu item. */
-    protected $attributes = [];
-
     /**
      * Constructs the new custom menu item
      *
      * @param string $text
-     * @param moodle_url $url A moodle url to apply as the link for this item [Optional]
+     * @param null|moodle_url $url A moodle url to apply as the link for this item [Optional]
      * @param string $title A title to apply to this item [Optional]
      * @param int $sort A sort or to use if we need to sort differently [Optional]
-     * @param custom_menu_item $parent A reference to the parent custom_menu_item this child
+     * @param null|custom_menu_item $parent A reference to the parent custom_menu_item this child
      *        belongs to, only if the child has a parent. [Optional]
      * @param array $attributes Array of other HTML attributes for the custom menu item.
      */
-    public function __construct($text, moodle_url $url = null, $title = null, $sort = null, custom_menu_item $parent = null,
-        array $attributes = []) {
+    public function __construct(
+        $text,
+        /** @var moodle_url The link to give the icon if it has no children */
+        protected ?moodle_url $url = null,
+        $title = null,
+        $sort = null,
+        /**
+         * @var custom_menu_item A reference to the parent for this item or NULL if
+         * it is a top level item
+         */
+        protected ?custom_menu_item $parent = null,
+        /** @var array Array of other HTML attributes for the custom menu item. */
+        protected array $attributes = [],
+    ) {
 
         // Use class setter method for text to ensure it's always a string type.
         $this->set_text($text);
 
-        $this->url = $url;
         $this->title = $title;
         $this->sort = (int)$sort;
-        $this->parent = $parent;
-        $this->attributes = $attributes;
     }
 
     /**
      * Adds a custom menu item as a child of this node given its properties.
      *
      * @param string $text
-     * @param moodle_url $url
+     * @param null|moodle_url $url
      * @param string $title
      * @param int $sort
      * @param array $attributes Array of other HTML attributes for the custom menu item.
      * @return custom_menu_item
      */
-    public function add($text, moodle_url $url = null, $title = null, $sort = null, $attributes = []) {
+    public function add(
+        $text,
+        ?moodle_url $url = null,
+        $title = null,
+        $sort = null,
+        $attributes = [],
+    ) {
         $key = count($this->children);
         if (empty($sort)) {
             $sort = $this->lastsort + 1;
@@ -195,7 +195,7 @@ class custom_menu_item implements renderable, templatable {
      * Sorts the children this item has
      */
     public function sort() {
-        usort($this->children, array('custom_menu','sort_custom_menu_items'));
+        usort($this->children, ['custom_menu', 'sort_custom_menu_items']);
     }
 
     /**
@@ -252,7 +252,7 @@ class custom_menu_item implements renderable, templatable {
         if (!empty($this->attributes)) {
             $context->attributes = $this->attributes;
         }
-        $context->children = array();
+        $context->children = [];
         if (preg_match("/^#+$/", $this->text)) {
             $context->divider = true;
         }

@@ -22,7 +22,7 @@ namespace core_table\output;
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core
+ * @package core_table
  * @category output
  */
 class html_table_row {
@@ -34,7 +34,7 @@ class html_table_row {
     /**
      * @var array Array of html_table_cell objects
      */
-    public $cells = array();
+    public $cells = [];
 
     /**
      * @var string Value to use for the style attribute of the table row
@@ -44,13 +44,14 @@ class html_table_row {
     /**
      * @var array Attributes of additional HTML attributes for the <tr> element
      */
-    public $attributes = array();
+    public $attributes = [];
 
     /**
      * Constructor
-     * @param array $cells
+     *
+     * @param null|array $cells
      */
-    public function __construct(array $cells=null) {
+    public function __construct(?array $cells = null) {
         $this->attributes['class'] = '';
         $cells = (array)$cells;
         foreach ($cells as $cell) {

@@ -26,18 +26,15 @@ namespace core\output;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class context_header implements renderable, templatable {
-/**
-     * @var string $heading Main heading.
-     */
+    /** @var string $heading Main heading */
     public $heading;
-    /**
-     * @var int $headinglevel Main heading 'h' tag level.
-     */
+
+    /** @var int $headinglevel Main heading 'h' tag level */
     public $headinglevel;
-    /**
-     * @var string|null $imagedata HTML code for the picture in the page header.
-     */
+
+    /** @var string|null $imagedata HTML code for the picture in the page header */
     public $imagedata;
+
     /**
      * @var array $additionalbuttons Additional buttons for the header e.g. Messaging button for the user header.
      *      array elements - title => alternate text for the image, or if no image is available the button text.
@@ -47,9 +44,8 @@ class context_header implements renderable, templatable {
      *                       page => page object. Don't include if the image is an external image.
      */
     public $additionalbuttons;
-    /**
-     * @var string $prefix A string that is before the title.
-     */
+
+    /** @var string $prefix A string that is before the title */
     public $prefix;
 
     /**
@@ -62,7 +58,6 @@ class context_header implements renderable, templatable {
      * @param string $prefix Text that precedes the heading.
      */
     public function __construct($heading = null, $headinglevel = 1, $imagedata = null, $additionalbuttons = null, $prefix = null) {
-
         $this->heading = $heading;
         $this->headinglevel = $headinglevel;
         $this->imagedata = $imagedata;
@@ -101,8 +96,10 @@ class context_header implements renderable, templatable {
                 $class = 'btn';
             }
             // Add the bootstrap 'btn' class for formatting.
-            $this->additionalbuttons[$buttontype]['linkattributes'] = array_merge($button['linkattributes'],
-                array('class' => $class));
+            $this->additionalbuttons[$buttontype]['linkattributes'] = array_merge(
+                $button['linkattributes'],
+                ['class' => $class]
+            );
         }
     }
 

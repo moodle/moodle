@@ -83,7 +83,7 @@ class select_menu implements renderable, templatable {
                             'name' => $groupname,
                             'isgroup' => true,
                             'id' => \html_writer::random_id('select-menu-group'),
-                            'options' => []
+                            'options' => [],
                         ];
                     }
                     foreach ($optoptions as $optvalue => $optoption) {

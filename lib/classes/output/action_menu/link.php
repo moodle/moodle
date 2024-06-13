@@ -33,7 +33,6 @@ use stdClass;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class link extends action_link implements renderable {
-
     /**
      * True if this is a primary action. False if not.
      * @var bool
@@ -49,8 +48,8 @@ class link extends action_link implements renderable {
     /**
      * The number of instances of this action menu link (and its subclasses).
      *
-     * @deprecated since Moodle 4.4.
      * @var int
+     * @deprecated since Moodle 4.4.
      */
     protected static $instance = 1;
 
@@ -63,7 +62,7 @@ class link extends action_link implements renderable {
      * @param bool $primary Whether this is a primary action or not.
      * @param array $attributes Any attribtues associated with the action.
      */
-    public function __construct(moodle_url $url, ?pix_icon $icon, $text, $primary = true, array $attributes = array()) {
+    public function __construct(moodle_url $url, ?pix_icon $icon, $text, $primary = true, array $attributes = []) {
         parent::__construct($url, $text, null, $attributes, $icon);
         $this->primary = (bool)$primary;
         $this->add_class('menu-action');
@@ -104,10 +103,10 @@ class link extends action_link implements renderable {
         $data->disabled = !empty($attributes['disabled']);
         unset($attributes['disabled']);
 
-        $data->attributes = array_map(function($key, $value) {
+        $data->attributes = array_map(function ($key, $value) {
             return [
                 'name' => $key,
-                'value' => $value
+                'value' => $value,
             ];
         }, array_keys($attributes), $attributes);
 

@@ -97,13 +97,13 @@ class choicelist implements named_templatable, renderable {
      * @return \stdClass[]
      */
     public function get_selectable_options(): array {
-        $selectableOptions = [];
+        $selectableoptions = [];
         foreach ($this->options as $option) {
             if ($option['value'] !== $this->selected && !$option['disabled']) {
-                $selectableOptions[] = (object) $option;
+                $selectableoptions[] = (object) $option;
             }
         }
-        return $selectableOptions;
+        return $selectableoptions;
     }
 
     /**

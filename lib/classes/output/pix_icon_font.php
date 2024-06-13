@@ -82,12 +82,12 @@ class pix_icon_font implements templatable {
         if (empty($title)) {
             $title = $alt;
         }
-        $data = array(
+        $data = [
             'extraclasses' => $pixdata['extraclasses'],
             'title' => $title,
             'alt' => $alt,
-            'key' => $this->key
-        );
+            'key' => $this->key,
+        ];
 
         return $data;
     }

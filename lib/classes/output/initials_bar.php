@@ -124,7 +124,7 @@ class initials_bar implements renderable, templatable {
             $groupletter = new stdClass();
             $groupletter->name = $letter;
             if (!$this->minirender) {
-                $groupletter->url = $this->url->out(false, array($this->urlvar => $letter));
+                $groupletter->url = $this->url->out(false, [$this->urlvar => $letter]);
             } else {
                 $groupletter->input = $letter;
             }
@@ -140,7 +140,7 @@ class initials_bar implements renderable, templatable {
         $data->class = $this->class;
         $data->title = $this->title;
         if (!$this->minirender) {
-            $data->url = $this->url->out(false, array($this->urlvar => ''));
+            $data->url = $this->url->out(false, [$this->urlvar => '']);
         } else {
             $data->input = 'ALL';
         }

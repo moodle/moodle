@@ -25,9 +25,9 @@ use stdClass;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      2.9
+ * @package core
  */
 class mustache_string_helper {
-
     /**
      * Read a lang string from a template and get it from get_string.
      *

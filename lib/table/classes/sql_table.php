@@ -29,38 +29,39 @@ require_once("{$CFG->libdir}/tablelib.php");
 /**
  * A table whose data is provided by SQL queries.
  *
- * @package   moodlecore
+ * @package   core_table
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class sql_table extends flexible_table {
-    public $countsql = NULL;
-    public $countparams = NULL;
-    /**
-     * @var object sql for querying db. Has fields 'fields', 'from', 'where', 'params'.
-     */
-    public $sql = NULL;
-    /**
-     * @var array|\Traversable Data fetched from the db.
-     */
-    public $rawdata = NULL;
+    /** @var string The SQL query to count records */
+    public $countsql = null;
+
+    /** @var array The parameters for the Count SQL */
+    public $countparams = null;
+
+    /** @var object sql for querying db. Has fields 'fields', 'from', 'where', 'params' */
+    public $sql = null;
+
+    /** @var array|\Traversable Data fetched from the db */
+    public $rawdata = null;
+
+    /** @var bool Overriding default for this */
+
+    public $is_sortable = true; // phpcs:ignore moodle.NamingConventions.ValidVariableName.MemberNameUnderscore
+
+    /** @var bool Overriding default for this */
+    public $is_collapsible = true; // phpcs:ignore moodle.NamingConventions.ValidVariableName.MemberNameUnderscore
 
     /**
-     * @var bool Overriding default for this.
-     */
-    public $is_sortable    = true;
-    /**
-     * @var bool Overriding default for this.
-     */
-    public $is_collapsible = true;
-
-    /**
+     * Create a new instance of the sql_table.
+     *
      * @param string $uniqueid a string identifying this table.Used as a key in
      *                          session  vars.
      */
-    function __construct($uniqueid) {
+    public function __construct($uniqueid) {
         parent::__construct($uniqueid);
-        // some sensible defaults
+        // Set some sensible defaults.
         $this->set_attribute('class', 'generaltable generalbox');
     }
 
@@ -89,8 +90,10 @@ class sql_table extends flexible_table {
      * Closes recordset (for use after building the table).
      */
     public function close_recordset() {
-        if ($this->rawdata && ($this->rawdata instanceof \core\dml\recordset_walk ||
-                $this->rawdata instanceof moodle_recordset)) {
+        if (
+            $this->rawdata && ($this->rawdata instanceof \core\dml\recordset_walk ||
+                $this->rawdata instanceof moodle_recordset)
+        ) {
             $this->rawdata->close();
             $this->rawdata = null;
         }
@@ -98,14 +101,17 @@ class sql_table extends flexible_table {
 
     /**
      * Get any extra classes names to add to this row in the HTML.
-     * @param $row array the data for this row.
+     *
+     * @param array $row the data for this row.
      * @return string added to the class="" attribute of the tr.
      */
-    function get_row_class($row) {
+    public function get_row_class($row) {
         return '';
     }
 
     /**
+     * Set the SQL used to count records.
+     *
      * This is only needed if you want to use different sql to count rows.
      * Used for example when perhaps all db JOINS are not needed when counting
      * records. You don't need to call this function the count_sql
@@ -113,8 +119,11 @@ class sql_table extends flexible_table {
      *
      * We need to count rows returned by the db seperately to the query itself
      * as we need to know how many pages of data we have to display.
+     *
+     * @param string $sql
+     * @param null|array $params
      */
-    function set_count_sql($sql, array $params = NULL) {
+    public function set_count_sql($sql, ?array $params = null) {
         $this->countsql = $sql;
         $this->countparams = $params;
     }
@@ -124,8 +133,13 @@ class sql_table extends flexible_table {
      *      SELECT $fields FROM $from WHERE $where
      * Of course you can use sub-queries, JOINS etc. by putting them in the
      * appropriate clause of the query.
+     *
+     * @param string $fields
+     * @param string $from
+     * @param string $where
+     * @param array $params
      */
-    function set_sql($fields, $from, $where, array $params = array()) {
+    public function set_sql($fields, $from, $where, array $params = []) {
         $this->sql = new stdClass();
         $this->sql->fields = $fields;
         $this->sql->from = $from;
@@ -140,11 +154,11 @@ class sql_table extends flexible_table {
      * @param bool $useinitialsbar do you want to use the initials bar. Bar
      * will only be used if there is a fullname column defined for the table.
      */
-    function query_db($pagesize, $useinitialsbar=true) {
+    public function query_db($pagesize, $useinitialsbar = true) {
         global $DB;
         if (!$this->is_downloading()) {
-            if ($this->countsql === NULL) {
-                $this->countsql = 'SELECT COUNT(1) FROM '.$this->sql->from.' WHERE '.$this->sql->where;
+            if ($this->countsql === null) {
+                $this->countsql = 'SELECT COUNT(1) FROM ' . $this->sql->from . ' WHERE ' . $this->sql->where;
                 $this->countparams = $this->sql->params;
             }
             $grandtotal = $DB->count_records_sql($this->countsql, $this->countparams);
@@ -152,12 +166,12 @@ class sql_table extends flexible_table {
                 $this->initialbars(true);
             }
 
-            list($wsql, $wparams) = $this->get_sql_where();
+            [$wsql, $wparams] = $this->get_sql_where();
             if ($wsql) {
-                $this->countsql .= ' AND '.$wsql;
+                $this->countsql .= ' AND ' . $wsql;
                 $this->countparams = array_merge($this->countparams, $wparams);
 
-                $this->sql->where .= ' AND '.$wsql;
+                $this->sql->where .= ' AND ' . $wsql;
                 $this->sql->params = array_merge($this->sql->params, $wparams);
 
                 $total  = $DB->count_records_sql($this->countsql, $this->countparams);
@@ -168,7 +182,7 @@ class sql_table extends flexible_table {
             $this->pagesize($pagesize, $total);
         }
 
-        // Fetch the attempts
+        // Fetch the attempts.
         $sort = $this->get_sql_sort();
         if ($sort) {
             $sort = "ORDER BY $sort";
@@ -189,14 +203,21 @@ class sql_table extends flexible_table {
     /**
      * Convenience method to call a number of methods for you to display the
      * table.
+     *
+     * @param int $pagesize
+     * @param bool $useinitialsbar
+     * @param string $downloadhelpbutton
      */
-    function out($pagesize, $useinitialsbar, $downloadhelpbutton='') {
+    public function out($pagesize, $useinitialsbar, $downloadhelpbutton = '') {
         global $DB;
         if (!$this->columns) {
-            $onerow = $DB->get_record_sql("SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}",
-                $this->sql->params, IGNORE_MULTIPLE);
-            //if columns is not set then define columns as the keys of the rows returned
-            //from the db.
+            $onerow = $DB->get_record_sql(
+                "SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}",
+                $this->sql->params,
+                IGNORE_MULTIPLE
+            );
+            // If columns is not set then define columns as the keys of the rows returned
+            // from the db.
             $this->define_columns(array_keys((array)$onerow));
             $this->define_headers(array_keys((array)$onerow));
         }

@@ -39,13 +39,12 @@ class external extends external_api {
      * @return external_function_parameters
      */
     public static function load_template_parameters() {
-        return new external_function_parameters(
-                array('component' => new external_value(PARAM_COMPONENT, 'component containing the template'),
-                      'template' => new external_value(PARAM_SAFEPATH, 'name of the template'),
-                      'themename' => new external_value(PARAM_ALPHANUMEXT, 'The current theme.'),
-                      'includecomments' => new external_value(PARAM_BOOL, 'Include comments or not', VALUE_DEFAULT, false)
-                         )
-            );
+        return new external_function_parameters([
+            'component' => new external_value(PARAM_COMPONENT, 'component containing the template'),
+            'template' => new external_value(PARAM_SAFEPATH, 'name of the template'),
+            'themename' => new external_value(PARAM_ALPHANUMEXT, 'The current theme.'),
+            'includecomments' => new external_value(PARAM_BOOL, 'Include comments or not', VALUE_DEFAULT, false),
+        ]);
     }
 
     /**
@@ -60,11 +59,15 @@ class external extends external_api {
         global $DB, $CFG, $PAGE;
 
         $PAGE->set_context(context_system::instance());
-        $params = self::validate_parameters(self::load_template_parameters(),
-                                            array('component' => $component,
-                                                  'template' => $template,
-                                                  'themename' => $themename,
-                                                  'includecomments' => $includecomments));
+        $params = self::validate_parameters(
+            self::load_template_parameters(),
+            [
+                'component' => $component,
+                'template' => $template,
+                'themename' => $themename,
+                'includecomments' => $includecomments,
+            ],
+        );
 
         $loader = new mustache_template_source_loader();
         // Will throw exceptions if the template does not exist.
@@ -72,7 +75,7 @@ class external extends external_api {
             $params['component'],
             $params['template'],
             $params['themename'],
-            $params['includecomments']
+            $params['includecomments'],
         );
     }
 
@@ -108,7 +111,7 @@ class external extends external_api {
      * @param string $themename The name of the current theme.
      * @param bool $includecomments Whether to strip comments from the template source.
      * @param string $lang moodle translation language, null means use current.
-     * @return string the template
+     * @return array the template
      */
     public static function load_template_with_dependencies(
         string $component,
@@ -126,7 +129,7 @@ class external extends external_api {
                 'template' => $template,
                 'themename' => $themename,
                 'includecomments' => $includecomments,
-                'lang' => $lang
+                'lang' => $lang,
             ]
         );
 
@@ -141,14 +144,14 @@ class external extends external_api {
             [],
             $params['lang']
         );
-        $formatdependencies = function($dependency) {
+        $formatdependencies = function ($dependency) {
             $results = [];
             foreach ($dependency as $dependencycomponent => $dependencyvalues) {
                 foreach ($dependencyvalues as $dependencyname => $dependencyvalue) {
                     array_push($results, [
                         'component' => $dependencycomponent,
                         'name' => $dependencyname,
-                        'value' => $dependencyvalue
+                        'value' => $dependencyvalue,
                     ]);
                 }
             }
@@ -159,7 +162,7 @@ class external extends external_api {
         // by external functions (because they don't support dynamic keys).
         return [
             'templates' => $formatdependencies($dependencies['templates']),
-            'strings' => $formatdependencies($dependencies['strings'])
+            'strings' => $formatdependencies($dependencies['strings']),
         ];
     }
 
@@ -172,12 +175,12 @@ class external extends external_api {
         $resourcestructure = new external_single_structure([
             'component' => new external_value(PARAM_COMPONENT, 'component containing the resource'),
             'name' => new external_value(PARAM_TEXT, 'name of the resource'),
-            'value' => new external_value(PARAM_RAW, 'resource value')
+            'value' => new external_value(PARAM_RAW, 'resource value'),
         ]);
 
         return new external_single_structure([
             'templates' => new external_multiple_structure($resourcestructure),
-            'strings' => new external_multiple_structure($resourcestructure)
+            'strings' => new external_multiple_structure($resourcestructure),
         ]);
     }
 

@@ -24,7 +24,7 @@ use stdClass;
 /**
  * Interface to a subpanel implementation.
  *
- * @package    core_admin
+ * @package    core
  * @copyright  2023 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

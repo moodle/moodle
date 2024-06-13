@@ -23,28 +23,29 @@ use moodle_url;
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package core
+ * @copyright Marina Glancy
  */
 class tabobject implements renderable, templatable {
     /** @var string unique id of the tab in this tree, it is used to find selected and/or inactive tabs */
-    var $id;
+    public $id;
     /** @var moodle_url|string link */
-    var $link;
+    public $link;
     /** @var string text on the tab */
-    var $text;
+    public $text;
     /** @var string title under the link, by defaul equals to text */
-    var $title;
+    public $title;
     /** @var bool whether to display a link under the tab name when it's selected */
-    var $linkedwhenselected = false;
+    public $linkedwhenselected = false;
     /** @var bool whether the tab is inactive */
-    var $inactive = false;
+    public $inactive = false;
     /** @var bool indicates that this tab's child is selected */
-    var $activated = false;
+    public $activated = false;
     /** @var bool indicates that this tab is selected */
-    var $selected = false;
+    public $selected = false;
     /** @var array stores children tabobjects */
-    var $subtree = array();
+    public $subtree = [];
     /** @var int level of tab in the tree, 0 for root (instance of tabtree), 1 for the first row of tabs */
-    var $level = 1;
+    public $level = 1;
 
     /**
      * Constructor
@@ -140,7 +141,6 @@ class tabobject implements renderable, templatable {
             'level' => $this->level,
         ];
     }
-
 }
 
 // Alias this class to the old name.

@@ -37,20 +37,21 @@ class popup_action extends component_action {
     /**
      * @var array An array of parameters that will be passed to the openpopup JS function
      */
-    public $params = array(
-            'height' =>  400,
-            'width' => 500,
-            'top' => 0,
-            'left' => 0,
-            'menubar' => false,
-            'location' => false,
-            'scrollbars' => true,
-            'resizable' => true,
-            'toolbar' => true,
-            'status' => true,
-            'directories' => false,
-            'fullscreen' => false,
-            'dependent' => true);
+    public $params = [
+        'height' => 400,
+        'width' => 500,
+        'top' => 0,
+        'left' => 0,
+        'menubar' => false,
+        'location' => false,
+        'scrollbars' => true,
+        'resizable' => true,
+        'toolbar' => true,
+        'status' => true,
+        'directories' => false,
+        'fullscreen' => false,
+        'dependent' => true,
+    ];
 
     /**
      * Constructor
@@ -60,18 +61,18 @@ class popup_action extends component_action {
      * @param string $name The JS function to call for the popup (default 'popup')
      * @param array  $params An array of popup parameters
      */
-    public function __construct($event, $url, $name='popup', $params=array()) {
+    public function __construct($event, $url, $name = 'popup', $params = []) {
         global $CFG;
 
         $url = new moodle_url($url);
 
         if ($name) {
-            $_name = $name;
-            if (($_name = preg_replace("/\s/", '_', $_name)) != $name) {
+            $checkname = $name;
+            if (($checkname = preg_replace("/\s/", '_', $checkname)) != $name) {
                 throw new coding_exception(
-                    'The $name of a popup window shouldn\'t contain spaces - string modified. ' . $name . ' changed to ' . $_name,
+                    "The {$name} of a popup window shouldn't contain spaces - string modified. {$name} changed to {$checkname}",
                 );
-                $name = $_name;
+                $name = $checkname;
             }
         } else {
             $name = 'popup';
@@ -83,7 +84,7 @@ class popup_action extends component_action {
             }
         }
 
-        $attributes = array('url' => $url->out(false), 'name' => $name, 'options' => $this->get_js_options($params));
+        $attributes = ['url' => $url->out(false), 'name' => $name, 'options' => $this->get_js_options($params)];
         if (!empty($params['fullscreen'])) {
             $attributes['fullscreen'] = 1;
         }
@@ -102,7 +103,7 @@ class popup_action extends component_action {
         foreach ($this->params as $var => $val) {
             if (is_string($val) || is_int($val)) {
                 $jsoptions .= "$var=$val,";
-            } elseif (is_bool($val)) {
+            } else if (is_bool($val)) {
                 $jsoptions .= ($val) ? "$var," : "$var=0,";
             }
         }

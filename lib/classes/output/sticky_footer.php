@@ -33,7 +33,6 @@ namespace core\output;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class sticky_footer implements named_templatable, renderable {
-
     /**
      * @var string content of the sticky footer.
      */

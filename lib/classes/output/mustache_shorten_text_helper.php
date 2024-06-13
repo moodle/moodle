@@ -26,7 +26,6 @@ use Mustache_LambdaHelper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mustache_shorten_text_helper {
-
     /**
      * Read a length and text component from the string.
      *
@@ -40,7 +39,7 @@ class mustache_shorten_text_helper {
      */
     public function shorten($args, Mustache_LambdaHelper $helper) {
         // Split the text into an array of variables.
-        list($length, $text) = explode(',', $args, 2);
+        [$length, $text] = explode(',', $args, 2);
         $length = trim($length);
         $text = trim($text);
 

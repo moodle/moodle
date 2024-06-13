@@ -36,7 +36,7 @@ class link_primary extends link {
      * @param string $text
      * @param array $attributes
      */
-    public function __construct(moodle_url $url, ?pix_icon $icon, $text, array $attributes = array()) {
+    public function __construct(moodle_url $url, ?pix_icon $icon, $text, array $attributes = []) {
         parent::__construct($url, $icon, $text, true, $attributes);
     }
 }

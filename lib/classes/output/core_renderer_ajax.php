@@ -40,21 +40,23 @@ class core_renderer_ajax extends core_renderer {
      * @param string $moreinfourl URL where more info can be found about the error
      * @param string $link Link for the Continue button
      * @param array $backtrace The execution backtrace
-     * @param string $debuginfo Debugging information
+     * @param null|string $debuginfo Debugging information
+     * @param string $errorcode
      * @return string A template fragment for a fatal error
      */
     public function fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null, $errorcode = "") {
         global $CFG;
 
-        $this->page->set_context(null); // ugly hack - make sure page context is set to something, we do not want bogus warnings here
+        // Ugly hack - make sure page context is set to something, we do not want bogus warnings here.
+        $this->page->set_context(null);
 
         $e = new stdClass();
         $e->error      = $message;
         $e->errorcode  = $errorcode;
-        $e->stacktrace = NULL;
-        $e->debuginfo  = NULL;
-        $e->reproductionlink = NULL;
-        if (!empty($CFG->debug) and $CFG->debug >= DEBUG_DEVELOPER) {
+        $e->stacktrace = null;
+        $e->debuginfo  = null;
+        $e->reproductionlink = null;
+        if (!empty($CFG->debug) && $CFG->debug >= DEBUG_DEVELOPER) {
             $link = (string) $link;
             if ($link) {
                 $e->reproductionlink = $link;
@@ -99,7 +101,8 @@ class core_renderer_ajax extends core_renderer {
         $delay,
         $debugdisableredirect,
         $messagetype = notification::NOTIFY_INFO,
-    ) {}
+    ) {
+    }
 
     /**
      * Prepares the start of an AJAX output.
@@ -118,7 +121,7 @@ class core_renderer_ajax extends core_renderer {
             @header('Content-type: application/json; charset=utf-8');
         }
 
-        // Headers to make it not cacheable and json
+        // Headers to make it not cacheable and json.
         @header('Cache-Control: no-store, no-cache, must-revalidate');
         @header('Cache-Control: post-check=0, pre-check=0', false);
         @header('Pragma: no-cache');
@@ -131,7 +134,8 @@ class core_renderer_ajax extends core_renderer {
      * There is no footer for an AJAX request, however we must override the
      * footer method to prevent the default footer.
      */
-    public function footer() {}
+    public function footer() {
+    }
 
     /**
      * No need for headers in an AJAX request... this should never happen.
@@ -140,7 +144,8 @@ class core_renderer_ajax extends core_renderer {
      * @param string $classes
      * @param string $id
      */
-    public function heading($text, $level = 2, $classes = 'main', $id = null) {}
+    public function heading($text, $level = 2, $classes = 'main', $id = null) {
+    }
 }
 
 // Alias this class to the old name.

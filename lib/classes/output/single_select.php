@@ -33,16 +33,15 @@ use stdClass;
  * @category output
  */
 class single_select implements renderable, templatable {
-
     /**
      * @var moodle_url Target url - includes hidden fields
      */
-    var $url;
+    public $url;
 
     /**
      * @var string Name of the select element.
      */
-    var $name;
+    public $name;
 
     /**
      * @var array $options associative array value=>label ex.: array(1=>'One, 2=>Two)
@@ -50,62 +49,62 @@ class single_select implements renderable, templatable {
      *         array(array('Odd'=>array(1=>'One', 3=>'Three)), array('Even'=>array(2=>'Two')))
      *         array(1=>'One', '--1uniquekey'=>array('More'=>array(2=>'Two', 3=>'Three')))
      */
-    var $options;
+    public $options;
 
     /**
      * @var string Selected option
      */
-    var $selected;
+    public $selected;
 
     /**
      * @var array Nothing selected
      */
-    var $nothing;
+    public $nothing;
 
     /**
      * @var array Extra select field attributes
      */
-    var $attributes = array();
+    public $attributes = [];
 
     /**
      * @var string Button label
      */
-    var $label = '';
+    public $label = '';
 
     /**
      * @var array Button label's attributes
      */
-    var $labelattributes = array();
+    public $labelattributes = [];
 
     /**
      * @var string Form submit method post or get
      */
-    var $method = 'get';
+    public $method = 'get';
 
     /**
      * @var string Wrapping div class
      */
-    var $class = 'singleselect';
+    public $class = 'singleselect';
 
     /**
      * @var bool True if button disabled, false if normal
      */
-    var $disabled = false;
+    public $disabled = false;
 
     /**
      * @var string Button tooltip
      */
-    var $tooltip = null;
+    public $tooltip = null;
 
     /**
      * @var string Form id
      */
-    var $formid = null;
+    public $formid = null;
 
     /**
      * @var help_icon The help icon for this element.
      */
-    var $helpicon = null;
+    public $helpicon = null;
 
     /** @var component_action[] component action. */
     public $actions = [];
@@ -119,7 +118,14 @@ class single_select implements renderable, templatable {
      * @param ?array $nothing
      * @param string $formid
      */
-    public function __construct(moodle_url $url, $name, array $options, $selected = '', $nothing = array('' => 'choosedots'), $formid = null) {
+    public function __construct(
+        moodle_url $url,
+        $name,
+        array $options,
+        $selected = '',
+        $nothing = ['' => 'choosedots'],
+        $formid = null,
+    ) {
         $this->url      = $url;
         $this->name     = $name;
         $this->options  = $options;
@@ -135,7 +141,7 @@ class single_select implements renderable, templatable {
      * @param string $confirmmessage The yes/no confirmation question. If "Yes" is clicked, the original action will occur.
      */
     public function add_confirm_action($confirmmessage) {
-        $this->add_action(new component_action('submit', 'M.util.show_confirm_dialog', array('message' => $confirmmessage)));
+        $this->add_action(new component_action('submit', 'M.util.show_confirm_dialog', ['message' => $confirmmessage]));
     }
 
     /**
@@ -172,10 +178,9 @@ class single_select implements renderable, templatable {
      * @param string $label
      * @param array $attributes (optional)
      */
-    public function set_label($label, $attributes = array()) {
+    public function set_label($label, $attributes = []) {
         $this->label = $label;
         $this->labelattributes = $attributes;
-
     }
 
     /**
@@ -207,7 +212,7 @@ class single_select implements renderable, templatable {
         unset($attributes['disabled']);
 
         // Map the attributes.
-        $data->attributes = array_map(function($key) use ($attributes) {
+        $data->attributes = array_map(function ($key) use ($attributes) {
             return ['name' => $key, 'value' => $attributes[$key]];
         }, array_keys($attributes));
 
@@ -260,7 +265,7 @@ class single_select implements renderable, templatable {
                     $data->options[] = [
                         'name' => $optgroupname,
                         'optgroup' => true,
-                        'options' => $sublist
+                        'options' => $sublist,
                     ];
                 }
             } else {
@@ -268,7 +273,7 @@ class single_select implements renderable, templatable {
                     'value' => $value,
                     'name' => $options[$value],
                     'selected' => strval($this->selected) === strval($value),
-                    'optgroup' => false
+                    'optgroup' => false,
                 ];
 
                 if ($hasnothing && $nothingkey === $value) {

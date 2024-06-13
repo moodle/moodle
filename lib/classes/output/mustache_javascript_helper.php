@@ -25,7 +25,6 @@ namespace core\output;
  * @since      2.9
  */
 class mustache_javascript_helper {
-
     /** @var \moodle_page $page - Page used to get requirement manager */
     private $page = null;
 

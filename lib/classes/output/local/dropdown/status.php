@@ -30,7 +30,6 @@ use core\output\choicelist;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class status extends dialog {
-
     /**
      * @var choicelist content of dialog.
      */

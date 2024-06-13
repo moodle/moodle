@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
 // This file is deprecated, but it should never have been manually included by anything outside of lib/outputlib.php.
 // Throwing an exception here should be fine because removing the manual inclusion should have no impact.
 throw new \core\exception\coding_exception(

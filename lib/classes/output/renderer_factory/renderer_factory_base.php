@@ -68,15 +68,27 @@ abstract class renderer_factory_base implements renderer_factory_interface {
         }
 
         switch ($target) {
-            case RENDERER_TARGET_CLI: $suffix = '_cli'; break;
-            case RENDERER_TARGET_AJAX: $suffix = '_ajax'; break;
-            case RENDERER_TARGET_TEXTEMAIL: $suffix = '_textemail'; break;
-            case RENDERER_TARGET_HTMLEMAIL: $suffix = '_htmlemail'; break;
-            case RENDERER_TARGET_MAINTENANCE: $suffix = '_maintenance'; break;
-            default: $target = RENDERER_TARGET_GENERAL; $suffix = '';
+            case RENDERER_TARGET_CLI:
+                $suffix = '_cli';
+                break;
+            case RENDERER_TARGET_AJAX:
+                $suffix = '_ajax';
+                break;
+            case RENDERER_TARGET_TEXTEMAIL:
+                $suffix = '_textemail';
+                break;
+            case RENDERER_TARGET_HTMLEMAIL:
+                $suffix = '_htmlemail';
+                break;
+            case RENDERER_TARGET_MAINTENANCE:
+                $suffix = '_maintenance';
+                break;
+            default:
+                $target = RENDERER_TARGET_GENERAL;
+                $suffix = '';
         }
 
-        return array($target, $suffix);
+        return [$target, $suffix];
     }
 
     /**
@@ -102,14 +114,14 @@ abstract class renderer_factory_base implements renderer_factory_interface {
      */
     protected function standard_renderer_classnames($component, $subtype = null) {
         global $CFG; // Needed in included files.
-        $classnames = array();
+        $classnames = [];
 
         // Standardize component name ala frankenstyle.
-        list($plugin, $type) = core_component::normalize_component($component);
+        [$plugin, $type] = core_component::normalize_component($component);
         if ($type === null) {
             $component = $plugin;
         } else {
-            $component = $plugin.'_'.$type;
+            $component = $plugin . '_' . $type;
         }
 
         if ($component !== 'core') {
@@ -121,7 +133,6 @@ abstract class renderer_factory_base implements renderer_factory_interface {
             if (file_exists($rendererfile)) {
                 include_once($rendererfile);
             }
-
         } else if (!empty($subtype)) {
             $coresubsystems = core_component::get_core_subsystems();
             if (!array_key_exists($subtype, $coresubsystems)) { // There may be nulls.
@@ -137,63 +148,63 @@ abstract class renderer_factory_base implements renderer_factory_interface {
 
         if (empty($subtype)) {
             // Theme specific auto-loaded name (only valid when prefixed with the theme name).
-            $classnames[] = array(
+            $classnames[] = [
                 'validwithprefix' => true,
                 'validwithoutprefix' => false,
                 'autoloaded' => true,
-                'classname' => '\\output\\' . $component . '_renderer'
-            );
+                'classname' => '\\output\\' . $component . '_renderer',
+            ];
 
             // Standard autoloaded plugin name (not valid with a prefix).
-            $classnames[] = array(
+            $classnames[] = [
                 'validwithprefix' => false,
                 'validwithoutprefix' => true,
                 'autoloaded' => true,
-                'classname' => '\\' . $component . '\\output\\renderer'
-            );
+                'classname' => '\\' . $component . '\\output\\renderer',
+            ];
             // Legacy class name - (valid with or without a prefix).
-            $classnames[] = array(
+            $classnames[] = [
                 'validwithprefix' => true,
                 'validwithoutprefix' => true,
                 'autoloaded' => false,
-                'classname' => $component . '_renderer'
-            );
+                'classname' => $component . '_renderer',
+            ];
         } else {
             // Theme specific auto-loaded name (only valid when prefixed with the theme name).
-            $classnames[] = array(
+            $classnames[] = [
                 'validwithprefix' => true,
                 'validwithoutprefix' => false,
                 'autoloaded' => true,
-                'classname' => '\\output\\' . $component . '\\' . $subtype . '_renderer'
-            );
+                'classname' => '\\output\\' . $component . '\\' . $subtype . '_renderer',
+            ];
             // Version of the above with subtype being a namespace level on it's own.
-            $classnames[] = array(
+            $classnames[] = [
                 'validwithprefix' => true,
                 'validwithoutprefix' => false,
                 'autoloaded' => true,
-                'classname' => '\\output\\' . $component . '\\' . $subtype . '\\renderer'
-            );
+                'classname' => '\\output\\' . $component . '\\' . $subtype . '\\renderer',
+            ];
             // Standard autoloaded plugin name (not valid with a prefix).
-            $classnames[] = array(
+            $classnames[] = [
                 'validwithprefix' => false,
                 'validwithoutprefix' => true,
                 'autoloaded' => true,
-                'classname' => '\\' . $component . '\\output\\' . $subtype . '_renderer'
-            );
+                'classname' => '\\' . $component . '\\output\\' . $subtype . '_renderer',
+            ];
             // Version of the above with subtype being a namespace level on it's own.
-            $classnames[] = array(
+            $classnames[] = [
                 'validwithprefix' => false,
                 'validwithoutprefix' => true,
                 'autoloaded' => true,
-                'classname' => '\\' . $component . '\\output\\' . $subtype . '\\renderer'
-            );
+                'classname' => '\\' . $component . '\\output\\' . $subtype . '\\renderer',
+            ];
             // Legacy class name - (valid with or without a prefix).
-            $classnames[] = array(
+            $classnames[] = [
                 'validwithprefix' => true,
                 'validwithoutprefix' => true,
                 'autoloaded' => false,
-                'classname' => $component . '_' . $subtype . '_renderer'
-            );
+                'classname' => $component . '_' . $subtype . '_renderer',
+            ];
         }
         return $classnames;
     }

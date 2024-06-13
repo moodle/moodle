@@ -29,7 +29,7 @@ use core\dataformat;
 /**
  * Dataformat exporter
  *
- * @package    core
+ * @package    core_table
  * @subpackage tablelib
  * @copyright  2016 Brendan Heywood (brendan@catalyst-au.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -31,7 +31,6 @@ use stdClass;
  * @category output
  */
 class component_action implements templatable {
-
     /**
      * @var string $event The DOM event that will trigger this action when caught
      */
@@ -48,7 +47,7 @@ class component_action implements templatable {
     /**
      * @var array An array of arguments to pass to the JS function
      */
-    public $jsfunctionargs = array();
+    public $jsfunctionargs = [];
 
     /**
      * Constructor
@@ -56,7 +55,7 @@ class component_action implements templatable {
      * @param string $jsfunction An optional JS function. Required if jsfunctionargs is given
      * @param array $jsfunctionargs An array of arguments to pass to the jsfunction
      */
-    public function __construct($event, $jsfunction, $jsfunctionargs=array()) {
+    public function __construct($event, $jsfunction, $jsfunctionargs = []) {
         $this->event = $event;
 
         $this->jsfunction = $jsfunction;

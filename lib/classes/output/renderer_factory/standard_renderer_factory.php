@@ -45,7 +45,7 @@ class standard_renderer_factory extends renderer_factory_base {
         $classnames = $this->standard_renderer_classnames($component, $subtype);
         $classname = '';
 
-        list($target, $suffix) = $this->get_target_suffix($target);
+        [$target, $suffix] = $this->get_target_suffix($target);
         // First look for a version with a suffix.
         foreach ($classnames as $classnamedetails) {
             if ($classnamedetails['validwithoutprefix']) {

@@ -25,13 +25,14 @@ namespace core\output;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class icon_system_standard extends icon_system {
+    #[\Override]
     public function render_pix_icon(renderer_base $output, pix_icon $icon) {
         $data = $icon->export_for_template($output);
         return $output->render_from_template('core/pix_icon', $data);
     }
 
+    #[\Override]
     public function get_amd_name() {
         return 'core/icon_system_standard';
     }
-
 }

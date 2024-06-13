@@ -64,35 +64,35 @@ class action_menu implements renderable, templatable {
     protected $instance = 0;
 
     /**
-     * An array of primary actions. Please use {@link action_menu::add_primary_action()} to add actions.
+     * An array of primary actions. Please use {@see action_menu::add_primary_action()} to add actions.
      * @var array
      */
-    protected $primaryactions = array();
+    protected $primaryactions = [];
 
     /**
-     * An array of secondary actions. Please use {@link action_menu::add_secondary_action()} to add actions.
+     * An array of secondary actions. Please use {@see action_menu::add_secondary_action()} to add actions.
      * @var array
      */
-    protected $secondaryactions = array();
+    protected $secondaryactions = [];
 
     /**
      * An array of attributes added to the container of the action menu.
      * Initialised with defaults during construction.
      * @var array
      */
-    public $attributes = array();
+    public $attributes = [];
     /**
      * An array of attributes added to the container of the primary actions.
      * Initialised with defaults during construction.
      * @var array
      */
-    public $attributesprimary = array();
+    public $attributesprimary = [];
     /**
      * An array of attributes added to the container of the secondary actions.
      * Initialised with defaults during construction.
      * @var array
      */
-    public $attributessecondary = array();
+    public $attributessecondary = [];
 
     /**
      * The string to use next to the icon for the action icon relating to the secondary (dropdown) menu.
@@ -147,27 +147,27 @@ class action_menu implements renderable, templatable {
      *
      * @param array $actions An array of actions (action_menu_link|pix_icon|string).
      */
-    public function __construct(array $actions = array()) {
+    public function __construct(array $actions = []) {
         static $initialised = 0;
         $this->instance = $initialised;
         $initialised++;
 
-        $this->attributes = array(
-            'id' => 'action-menu-'.$this->instance,
+        $this->attributes = [
+            'id' => 'action-menu-' . $this->instance,
             'class' => 'moodle-actionmenu',
-            'data-enhance' => 'moodle-core-actionmenu'
-        );
-        $this->attributesprimary = array(
-            'id' => 'action-menu-'.$this->instance.'-menubar',
+            'data-enhance' => 'moodle-core-actionmenu',
+        ];
+        $this->attributesprimary = [
+            'id' => 'action-menu-' . $this->instance . '-menubar',
             'class' => 'menubar',
-        );
-        $this->attributessecondary = array(
-            'id' => 'action-menu-'.$this->instance.'-menu',
+        ];
+        $this->attributessecondary = [
+            'id' => 'action-menu-' . $this->instance . '-menu',
             'class' => 'menu',
             'data-rel' => 'menu-content',
-            'aria-labelledby' => 'action-menu-toggle-'.$this->instance,
-            'role' => 'menu'
-        );
+            'aria-labelledby' => 'action-menu-toggle-' . $this->instance,
+            'role' => 'menu',
+        ];
         $this->dropdownalignment = 'dropdown-menu-right';
         foreach ($actions as $action) {
             $this->add($action);
@@ -207,8 +207,11 @@ class action_menu implements renderable, templatable {
      * @param string|null $extraclasses extra classes for the trigger {@see self::set_menu_trigger()}
      * @throws coding_exception
      */
-    public function set_kebab_trigger(?string $triggername = null, ?core_renderer $output = null,
-        ?string $extraclasses = '') {
+    public function set_kebab_trigger(
+        ?string $triggername = null,
+        ?core_renderer $output = null,
+        ?string $extraclasses = ''
+    ) {
         global $OUTPUT;
         if (empty($output)) {
             $output = $OUTPUT;
@@ -307,16 +310,16 @@ class action_menu implements renderable, templatable {
     /**
      * Returns the primary actions ready to be rendered.
      *
-     * @param core_renderer $output The renderer to use for getting icons.
+     * @param null|core_renderer $output The renderer to use for getting icons.
      * @return array
      */
-    public function get_primary_actions(core_renderer $output = null) {
+    public function get_primary_actions(?core_renderer $output = null) {
         global $OUTPUT;
         if ($output === null) {
             $output = $OUTPUT;
         }
         $pixicon = $this->actionicon;
-        $linkclasses = array('toggle-display');
+        $linkclasses = ['toggle-display'];
 
         $title = '';
         if (!empty($this->menutrigger)) {
@@ -328,7 +331,7 @@ class action_menu implements renderable, templatable {
                 't/edit_menu',
                 '',
                 'moodle',
-                array('class' => 'iconsmall actionmenu', 'title' => '')
+                ['class' => 'iconsmall actionmenu', 'title' => '']
             );
             $pixicon = $this->actionicon;
         }
@@ -349,14 +352,14 @@ class action_menu implements renderable, templatable {
             $label = $title;
         }
         $actions = $this->primaryactions;
-        $attributes = array(
+        $attributes = [
             'class' => implode(' ', $linkclasses),
             'title' => $title,
             'aria-label' => $label,
-            'id' => 'action-menu-toggle-'.$this->instance,
+            'id' => 'action-menu-toggle-' . $this->instance,
             'role' => 'menuitem',
             'tabindex' => '-1',
-        );
+        ];
         $link = html_writer::link('#', $string . $this->menutrigger . $pixicon, $attributes);
         if ($this->prioritise) {
             array_unshift($actions, $link);
@@ -395,12 +398,12 @@ class action_menu implements renderable, templatable {
         if (isset($this->attributessecondary['data-align'])) {
             // We've already got one set, lets remove the old class so as to avoid troubles.
             $class = $this->attributessecondary['class'];
-            $search = 'align-'.$this->attributessecondary['data-align'];
+            $search = 'align-' . $this->attributessecondary['data-align'];
             $this->attributessecondary['class'] = str_replace($search, '', $class);
         }
         $align = $this->get_align_string($dialogue) . '-' . $this->get_align_string($button);
         $this->attributessecondary['data-align'] = $align;
-        $this->attributessecondary['class'] .= ' align-'.$align;
+        $this->attributessecondary['class'] .= ' align-' . $align;
     }
 
     /**
@@ -411,15 +414,15 @@ class action_menu implements renderable, templatable {
      */
     protected function get_align_string($align) {
         switch ($align) {
-            case self::TL :
+            case self::TL:
                 return 'tl';
-            case self::TR :
+            case self::TR:
                 return 'tr';
-            case self::BL :
+            case self::BL:
                 return 'bl';
-            case self::BR :
+            case self::BR:
                 return 'br';
-            default :
+            default:
                 return 'tl';
         }
     }
@@ -502,7 +505,7 @@ class action_menu implements renderable, templatable {
             $pos = strpos($this->attributes['class'], $class);
             if ($value === true && $pos === false) {
                 // The value is true and the class has not been set yet. Add it.
-                $this->attributes['class'] .= ' '.$class;
+                $this->attributes['class'] .= ' ' . $class;
             } else if ($value === false && $pos !== false) {
                 // The value is false and the class has been set. Remove it.
                 $this->attributes['class'] = substr($this->attributes['class'], $pos, strlen($class));
@@ -520,7 +523,7 @@ class action_menu implements renderable, templatable {
      */
     public function set_additional_classes(string $class = '') {
         if (!empty($this->attributes['class'])) {
-            $this->attributes['class'] .= " ".$class;
+            $this->attributes['class'] .= " " . $class;
         } else {
             $this->attributes['class'] = $class;
         }
@@ -547,7 +550,7 @@ class action_menu implements renderable, templatable {
         $data->classes = isset($attributes['class']) ? $attributes['class'] : '';
         unset($attributes['class']);
 
-        $data->attributes = array_map(function($key, $value) {
+        $data->attributes = array_map(function ($key, $value) {
             return [ 'name' => $key, 'value' => $value ];
         }, array_keys($attributes), $attributes);
 

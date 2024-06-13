@@ -36,62 +36,62 @@ class url_select implements renderable, templatable {
      *         array(array('Odd'=>array(1=>'One', 3=>'Three)), array('Even'=>array(2=>'Two')))
      *         array(1=>'One', '--1uniquekey'=>array('More'=>array(2=>'Two', 3=>'Three')))
      */
-    var $urls;
+    public $urls;
 
     /**
      * @var string Selected option
      */
-    var $selected;
+    public $selected;
 
     /**
      * @var array Nothing selected
      */
-    var $nothing;
+    public $nothing;
 
     /**
      * @var array Extra select field attributes
      */
-    var $attributes = array();
+    public $attributes = [];
 
     /**
      * @var string Button label
      */
-    var $label = '';
+    public $label = '';
 
     /**
      * @var array Button label's attributes
      */
-    var $labelattributes = array();
+    public $labelattributes = [];
 
     /**
      * @var string Wrapping div class
      */
-    var $class = 'urlselect';
+    public $class = 'urlselect';
 
     /**
      * @var bool True if button disabled, false if normal
      */
-    var $disabled = false;
+    public $disabled = false;
 
     /**
      * @var string Button tooltip
      */
-    var $tooltip = null;
+    public $tooltip = null;
 
     /**
      * @var string Form id
      */
-    var $formid = null;
+    public $formid = null;
 
     /**
      * @var help_icon The help icon for this element.
      */
-    var $helpicon = null;
+    public $helpicon = null;
 
     /**
      * @var string If set, makes button visible with given name for button
      */
-    var $showbutton = null;
+    public $showbutton = null;
 
     /**
      * Constructor
@@ -102,7 +102,7 @@ class url_select implements renderable, templatable {
      * @param string $showbutton Set to text of button if it should be visible
      *   or null if it should be hidden (hidden version always has text 'go')
      */
-    public function __construct(array $urls, $selected = '', $nothing = array('' => 'choosedots'), $formid = null, $showbutton = null) {
+    public function __construct(array $urls, $selected = '', $nothing = ['' => 'choosedots'], $formid = null, $showbutton = null) {
         $this->urls       = $urls;
         $this->selected   = $selected;
         $this->nothing    = $nothing;
@@ -135,7 +135,7 @@ class url_select implements renderable, templatable {
      * @param string $label
      * @param array $attributes (optional)
      */
-    public function set_label($label, $attributes = array()) {
+    public function set_label($label, $attributes = []) {
         $this->label = $label;
         $this->labelattributes = $attributes;
     }
@@ -149,12 +149,11 @@ class url_select implements renderable, templatable {
     protected function clean_url($value) {
         global $CFG;
 
+        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
         if (empty($value)) {
             // Nothing.
-
         } else if (strpos($value, $CFG->wwwroot . '/') === 0) {
             $value = str_replace($CFG->wwwroot, '', $value);
-
         } else if (strpos($value, '/') !== 0) {
             debugging("Invalid url_select urls parameter: url '$value' is not local relative url!", DEBUG_DEVELOPER);
         }
@@ -181,7 +180,7 @@ class url_select implements renderable, templatable {
                         $flattened[$groupname] = [
                             'name' => $groupname,
                             'isgroup' => true,
-                            'options' => []
+                            'options' => [],
                         ];
                     }
                     foreach ($optoptions as $optvalue => $optoption) {
@@ -193,7 +192,6 @@ class url_select implements renderable, templatable {
                         ];
                     }
                 }
-
             } else {
                 $cleanedvalue = $this->clean_url($value);
                 $flattened[$cleanedvalue] = [
@@ -208,7 +206,7 @@ class url_select implements renderable, templatable {
             $value = key($nothing);
             $name = reset($nothing);
             $flattened = [
-                    $value => ['name' => $name, 'value' => $value, 'selected' => $this->selected == $value]
+                    $value => ['name' => $name, 'value' => $value, 'selected' => $this->selected == $value],
                 ] + $flattened;
         }
 

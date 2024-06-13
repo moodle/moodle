@@ -30,7 +30,6 @@ use js_writer;
  * @category output
  */
 class fragment_requirements_manager extends page_requirements_manager {
-
     /**
      * Page fragment constructor.
      */
@@ -84,7 +83,7 @@ class fragment_requirements_manager extends page_requirements_manager {
 
         if (!empty($this->stringsforjs)) {
             // Add all needed strings.
-            $strings = array();
+            $strings = [];
             foreach ($this->stringsforjs as $component => $v) {
                 foreach ($v as $indentifier => $langstring) {
                     $strings[$component][$indentifier] = $langstring->out();
@@ -100,7 +99,7 @@ class fragment_requirements_manager extends page_requirements_manager {
         if ($this->jsinitvariables['footer']) {
             $js = '';
             foreach ($this->jsinitvariables['footer'] as $data) {
-                list($var, $value) = $data;
+                [$var, $value] = $data;
                 $js .= js_writer::set_variable($var, $value, true);
             }
             $output .= html_writer::script($js);

@@ -22,7 +22,7 @@ namespace core_table\output;
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core
+ * @package core_table
  * @category output
  */
 class html_table_cell {
@@ -69,7 +69,7 @@ class html_table_cell {
     /**
      * @var array Attributes of additional HTML attributes for the <td> element
      */
-    public $attributes = array();
+    public $attributes = [];
 
     /**
      * Constructs a table cell

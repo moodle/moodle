@@ -38,10 +38,10 @@ class html_writer {
      *
      * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
      * @param string $contents What goes between the opening and closing tags
-     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
+     * @param null|array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
      * @return string HTML fragment
      */
-    public static function tag($tagname, $contents, array $attributes = null) {
+    public static function tag($tagname, $contents, ?array $attributes = null) {
         return self::start_tag($tagname, $attributes) . $contents . self::end_tag($tagname);
     }
 
@@ -49,10 +49,10 @@ class html_writer {
      * Outputs an opening tag with attributes
      *
      * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
-     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
+     * @param null|array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
      * @return string HTML fragment
      */
-    public static function start_tag($tagname, array $attributes = null) {
+    public static function start_tag($tagname, ?array $attributes = null) {
         return '<' . $tagname . self::attributes($attributes) . '>';
     }
 
@@ -70,10 +70,10 @@ class html_writer {
      * Outputs an empty tag with attributes
      *
      * @param string $tagname The name of tag ('input', 'img', 'br' etc.)
-     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
+     * @param null|array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
      * @return string HTML fragment
      */
-    public static function empty_tag($tagname, array $attributes = null) {
+    public static function empty_tag($tagname, ?array $attributes = null) {
         return '<' . $tagname . self::attributes($attributes) . ' />';
     }
 
@@ -82,10 +82,10 @@ class html_writer {
      *
      * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
      * @param string $contents What goes between the opening and closing tags
-     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
+     * @param null|array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
      * @return string HTML fragment
      */
-    public static function nonempty_tag($tagname, $contents, array $attributes = null) {
+    public static function nonempty_tag($tagname, $contents, ?array $attributes = null) {
         if ($contents === '' || is_null($contents)) {
             return '';
         }
@@ -96,7 +96,7 @@ class html_writer {
      * Outputs a HTML attribute and value
      *
      * @param string $name The name of the attribute ('src', 'href', 'class' etc.)
-     * @param string $value The value of the attribute. The value will be escaped with {@link s()}
+     * @param string $value The value of the attribute. The value will be escaped with {@see s()}
      * @return string HTML fragment
      */
     public static function attribute($name, $value) {
@@ -104,23 +104,23 @@ class html_writer {
             return ' ' . $name . '="' . $value->out() . '"';
         }
 
-        // special case, we do not want these in output
+        // Special case, we do not want these in output.
         if ($value === null) {
             return '';
         }
 
-        // no sloppy trimming here!
+        // No sloppy trimming here!
         return ' ' . $name . '="' . s($value) . '"';
     }
 
     /**
      * Outputs a list of HTML attributes and values
      *
-     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
-     *       The values will be escaped with {@link s()}
+     * @param null|array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
+     *       The values will be escaped with {@see s()}
      * @return string HTML fragment
      */
-    public static function attributes(array $attributes = null) {
+    public static function attributes(?array $attributes = null) {
         $attributes = (array)$attributes;
         $output = '';
         foreach ($attributes as $name => $value) {
@@ -134,10 +134,10 @@ class html_writer {
      *
      * @param string $src The source of image
      * @param string $alt The alternate text for image
-     * @param array $attributes The tag attributes (array('height' => $max_height, 'class' => 'class1') etc.)
+     * @param null|array $attributes The tag attributes (array('height' => $max_height, 'class' => 'class1') etc.)
      * @return string HTML fragment
      */
-    public static function img($src, $alt, array $attributes = null) {
+    public static function img($src, $alt, ?array $attributes = null) {
         $attributes = (array)$attributes;
         $attributes['src'] = $src;
         // In case a null alt text is provided, set it to an empty string.
@@ -161,7 +161,7 @@ class html_writer {
      * @param string $base A string fragment that will be included in the random ID.
      * @return string A unique ID
      */
-    public static function random_id($base='random') {
+    public static function random_id($base = 'random') {
         static $counter = 0;
         static $uniq;
 
@@ -170,7 +170,7 @@ class html_writer {
         }
 
         $counter++;
-        return $base.$uniq.$counter;
+        return $base . $uniq . $counter;
     }
 
     /**
@@ -178,10 +178,10 @@ class html_writer {
      *
      * @param string|moodle_url $url The URL
      * @param string $text The text
-     * @param array $attributes HTML attributes
+     * @param null|array $attributes HTML attributes
      * @return string HTML fragment
      */
-    public static function link($url, $text, array $attributes = null) {
+    public static function link($url, $text, ?array $attributes = null) {
         $attributes = (array)$attributes;
         $attributes['href']  = $url;
         return self::tag('a', $text, $attributes);
@@ -194,16 +194,22 @@ class html_writer {
      * @param string $value The value of the checkbox
      * @param bool $checked Whether the checkbox is checked
      * @param string $label The label for the checkbox
-     * @param array $attributes Any attributes to apply to the checkbox
-     * @param array $labelattributes Any attributes to apply to the label, if present
+     * @param null|array $attributes Any attributes to apply to the checkbox
+     * @param null|array $labelattributes Any attributes to apply to the label, if present
      * @return string html fragment
      */
-    public static function checkbox($name, $value, $checked = true, $label = '',
-        array $attributes = null, array $labelattributes = null) {
+    public static function checkbox(
+        $name,
+        $value,
+        $checked = true,
+        $label = '',
+        ?array $attributes = null,
+        ?array $labelattributes = null,
+    ) {
         $attributes = (array) $attributes;
         $output = '';
 
-        if ($label !== '' and !is_null($label)) {
+        if ($label !== '' && !is_null($label)) {
             if (empty($attributes['id'])) {
                 $attributes['id'] = self::random_id('checkbox_');
             }
@@ -215,7 +221,7 @@ class html_writer {
 
         $output .= self::empty_tag('input', $attributes);
 
-        if ($label !== '' and !is_null($label)) {
+        if ($label !== '' && !is_null($label)) {
             $labelattributes = (array) $labelattributes;
             $labelattributes['for'] = $attributes['id'];
             $output .= self::tag('label', $label, $labelattributes);
@@ -229,11 +235,11 @@ class html_writer {
      *
      * @param string $name name of select element
      * @param bool $selected
-     * @param array $attributes - html select element attributes
+     * @param null|array $attributes - html select element attributes
      * @return string HTML fragment
      */
-    public static function select_yes_no($name, $selected=true, array $attributes = null) {
-        $options = array('1'=>get_string('yes'), '0'=>get_string('no'));
+    public static function select_yes_no($name, $selected = true, ?array $attributes = null) {
+        $options = ['1' => get_string('yes'), '0' => get_string('no')];
         return self::select($options, $name, $selected, null, $attributes);
     }
 
@@ -250,41 +256,46 @@ class html_writer {
      * @param string $name name of select element
      * @param string|array $selected value or array of values depending on multiple attribute
      * @param array|bool|null $nothing add nothing selected option, or false of not added
-     * @param array $attributes html select element attributes
+     * @param null|array $attributes html select element attributes
      * @return string HTML fragment
      */
-    public static function select(array $options, $name, $selected = '', $nothing = array('' => 'choosedots'), array $attributes = null) {
+    public static function select(
+        array $options,
+        $name,
+        $selected = '',
+        $nothing = ['' => 'choosedots'],
+        ?array $attributes = null,
+    ) {
         $attributes = (array)$attributes;
         if (is_array($nothing)) {
-            foreach ($nothing as $k=>$v) {
-                if ($v === 'choose' or $v === 'choosedots') {
+            foreach ($nothing as $k => $v) {
+                if ($v === 'choose' || $v === 'choosedots') {
                     $nothing[$k] = get_string('choosedots');
                 }
             }
-            $options = $nothing + $options; // keep keys, do not override
-
-        } else if (is_string($nothing) and $nothing !== '') {
-            // BC
-            $options = array(''=>$nothing) + $options;
+            $options = $nothing + $options; // Keep keys, do not override.
+        } else if (is_string($nothing) && $nothing !== '') {
+            // BC.
+            $options = ['' => $nothing] + $options;
         }
 
-        // we may accept more values if multiple attribute specified
+        // We may accept more values if multiple attribute specified.
         $selected = (array)$selected;
-        foreach ($selected as $k=>$v) {
+        foreach ($selected as $k => $v) {
             $selected[$k] = (string)$v;
         }
 
         if (!isset($attributes['id'])) {
-            $id = 'menu'.$name;
-            // name may contaion [], which would make an invalid id. e.g. numeric question type editing form, assignment quickgrading
+            $id = 'menu' . $name;
+            // Name may contain [], which would make an invalid id. e.g. numeric question type editing form, assignment quickgrading.
             $id = str_replace('[', '', $id);
             $id = str_replace(']', '', $id);
             $attributes['id'] = $id;
         }
 
         if (!isset($attributes['class'])) {
-            $class = 'menu'.$name;
-            // name may contaion [], which would make an invalid class. e.g. numeric question type editing form, assignment quickgrading
+            $class = 'menu' . $name;
+            // Name may contain [], which would make an invalid class. e.g. numeric question type editing form, assignment quickgrading.
             $class = str_replace('[', '', $class);
             $class = str_replace(']', '', $class);
             $attributes['class'] = $class;
@@ -300,9 +311,9 @@ class html_writer {
         }
 
         $output = '';
-        foreach ($options as $value=>$label) {
+        foreach ($options as $value => $label) {
             if (is_array($label)) {
-                // ignore key, it just has to be unique
+                // Ignore key, it just has to be unique.
                 $output .= self::select_optgroup(key($label), current($label), $selected);
             } else {
                 $output .= self::select_option($label, $value, $selected);
@@ -320,7 +331,7 @@ class html_writer {
      * @return string HTML fragment
      */
     private static function select_option($label, $value, array $selected) {
-        $attributes = array();
+        $attributes = [];
         $value = (string)$value;
         if (in_array($value, $selected, true)) {
             $attributes['selected'] = 'selected';
@@ -341,9 +352,9 @@ class html_writer {
         if (empty($options)) {
             return '';
         }
-        $attributes = array('label'=>$groupname);
+        $attributes = ['label' => $groupname];
         $output = '';
-        foreach ($options as $value=>$label) {
+        foreach ($options as $value => $label) {
             $output .= self::select_option($label, $value, $selected);
         }
         return self::tag('optgroup', $output, $attributes);
@@ -356,12 +367,12 @@ class html_writer {
      * @param string $name fieldname
      * @param int $currenttime A default timestamp in GMT
      * @param int $step minute spacing
-     * @param array $attributes - html select element attributes
+     * @param null|array $attributes - html select element attributes
      * @param float|int|string $timezone the timezone to use to calculate the time
      *        {@link https://moodledev.io/docs/apis/subsystems/time#timezone}
      * @return string HTML fragment
      */
-    public static function select_time($type, $name, $currenttime = 0, $step = 5, array $attributes = null, $timezone = 99) {
+    public static function select_time($type, $name, $currenttime = 0, $step = 5, ?array $attributes = null, $timezone = 99) {
         global $OUTPUT;
 
         if (!$currenttime) {
@@ -371,7 +382,7 @@ class html_writer {
         $currentdate = $calendartype->timestamp_to_date_array($currenttime, $timezone);
 
         $userdatetype = $type;
-        $timeunits = array();
+        $timeunits = [];
 
         switch ($type) {
             case 'years':
@@ -388,17 +399,17 @@ class html_writer {
                 $userdatetype = 'mday';
                 break;
             case 'hours':
-                for ($i=0; $i<=23; $i++) {
-                    $timeunits[$i] = sprintf("%02d",$i);
+                for ($i = 0; $i <= 23; $i++) {
+                    $timeunits[$i] = sprintf("%02d", $i);
                 }
                 break;
             case 'minutes':
                 if ($step != 1) {
-                    $currentdate['minutes'] = ceil($currentdate['minutes']/$step)*$step;
+                    $currentdate['minutes'] = ceil($currentdate['minutes'] / $step) * $step;
                 }
 
-                for ($i=0; $i<=59; $i+=$step) {
-                    $timeunits[$i] = sprintf("%02d",$i);
+                for ($i = 0; $i <= 59; $i += $step) {
+                    $timeunits[$i] = sprintf("%02d", $i);
                 }
                 break;
             default:
@@ -410,21 +421,21 @@ class html_writer {
             'name' => $name,
             'id' => !empty($attributes['id']) ? $attributes['id'] : self::random_id('ts_'),
             'label' => get_string(substr($type, 0, -1), 'form'),
-            'options' => array_map(function($value) use ($timeunits, $currentdate, $userdatetype) {
+            'options' => array_map(function ($value) use ($timeunits, $currentdate, $userdatetype) {
                 return [
                     'name' => $timeunits[$value],
                     'value' => $value,
-                    'selected' => $currentdate[$userdatetype] == $value
+                    'selected' => $currentdate[$userdatetype] == $value,
                 ];
             }, array_keys($timeunits)),
         ];
 
         unset($attributes['id']);
         unset($attributes['name']);
-        $data->attributes = array_map(function($name) use ($attributes) {
+        $data->attributes = array_map(function ($name) use ($attributes) {
             return [
                 'name' => $name,
-                'value' => $attributes[$name]
+                'value' => $attributes[$name],
             ];
         }, array_keys($attributes));
 
@@ -437,14 +448,14 @@ class html_writer {
      * Note: 'list' is a reserved keyword ;-)
      *
      * @param array $items
-     * @param array $attributes
+     * @param null|array $attributes
      * @param string $tag ul or ol
      * @return string
      */
-    public static function alist(array $items, array $attributes = null, $tag = 'ul') {
-        $output = self::start_tag($tag, $attributes)."\n";
+    public static function alist(array $items, ?array $attributes = null, $tag = 'ul') {
+        $output = self::start_tag($tag, $attributes) . "\n";
         foreach ($items as $item) {
-            $output .= self::tag('li', $item)."\n";
+            $output .= self::tag('li', $item) . "\n";
         }
         $output .= self::end_tag($tag);
         return $output;
@@ -454,10 +465,10 @@ class html_writer {
      * Returns hidden input fields created from url parameters.
      *
      * @param moodle_url $url
-     * @param array $exclude list of excluded parameters
+     * @param null|array $exclude list of excluded parameters
      * @return string HTML fragment
      */
-    public static function input_hidden_params(moodle_url $url, array $exclude = null) {
+    public static function input_hidden_params(moodle_url $url, ?array $exclude = null) {
         $exclude = (array)$exclude;
         $params = $url->params();
         foreach ($exclude as $key) {
@@ -466,8 +477,8 @@ class html_writer {
 
         $output = '';
         foreach ($params as $key => $value) {
-            $attributes = array('type'=>'hidden', 'name'=>$key, 'value'=>$value);
-            $output .= self::empty_tag('input', $attributes)."\n";
+            $attributes = ['type' => 'hidden', 'name' => $key, 'value' => $value];
+            $output .= self::empty_tag('input', $attributes) . "\n";
         }
         return $output;
     }
@@ -479,13 +490,11 @@ class html_writer {
      * @param moodle_url|string $url optional url of the external script, $code ignored if specified
      * @return string HTML, the code wrapped in <script> tags.
      */
-    public static function script($jscode, $url=null) {
+    public static function script($jscode, $url = null) {
         if ($jscode) {
             return self::tag('script', "\n//<![CDATA[\n$jscode\n//]]>\n") . "\n";
-
         } else if ($url) {
             return self::tag('script', '', ['src' => $url]) . "\n";
-
         } else {
             return '';
         }
@@ -503,11 +512,11 @@ class html_writer {
      * @return string HTML code
      */
     public static function table(html_table $table) {
-        // prepare table data and populate missing properties with reasonable defaults
+        // Prepare table data and populate missing properties with reasonable defaults.
         if (!empty($table->align)) {
             foreach ($table->align as $key => $aa) {
                 if ($aa) {
-                    $table->align[$key] = 'text-align:'. fix_align_rtl($aa) .';';  // Fix for RTL languages
+                    $table->align[$key] = 'text-align:' . fix_align_rtl($aa) . ';';  // Fix for RTL languages.
                 } else {
                     $table->align[$key] = null;
                 }
@@ -516,7 +525,7 @@ class html_writer {
         if (!empty($table->size)) {
             foreach ($table->size as $key => $ss) {
                 if ($ss) {
-                    $table->size[$key] = 'width:'. $ss .';';
+                    $table->size[$key] = 'width:' . $ss . ';';
                 } else {
                     $table->size[$key] = null;
                 }
@@ -542,7 +551,6 @@ class html_writer {
                 if (!isset($table->wrap[$key])) {
                     $table->wrap[$key] = null;
                 }
-
             }
         }
         if (empty($table->attributes['class'])) {
@@ -552,22 +560,22 @@ class html_writer {
             $table->attributes['class'] .= ' boxalign' . $table->tablealign;
         }
 
-        // explicitly assigned properties override those defined via $table->attributes
+        // Explicitly assigned properties override those defined via $table->attributes.
         $table->attributes['class'] = trim($table->attributes['class']);
-        $attributes = array_merge($table->attributes, array(
+        $attributes = array_merge($table->attributes, [
             'id'            => $table->id,
             'width'         => $table->width,
             'summary'       => $table->summary,
             'cellpadding'   => $table->cellpadding,
             'cellspacing'   => $table->cellspacing,
-        ));
+        ]);
         $output = self::start_tag('table', $attributes) . "\n";
 
         $countcols = 0;
 
         // Output a caption if present.
         if (!empty($table->caption)) {
-            $captionattributes = array();
+            $captionattributes = [];
             if ($table->captionhide) {
                 $captionattributes['class'] = 'accesshide';
             }
@@ -581,13 +589,13 @@ class html_writer {
         if (!empty($table->head)) {
             $countcols = count($table->head);
 
-            $output .= self::start_tag('thead', array()) . "\n";
-            $output .= self::start_tag('tr', array()) . "\n";
+            $output .= self::start_tag('thead', []) . "\n";
+            $output .= self::start_tag('tr', []) . "\n";
             $keys = array_keys($table->head);
             $lastkey = end($keys);
 
             foreach ($table->head as $key => $heading) {
-                // Convert plain string headings into html_table_cell objects
+                // Convert plain string headings into html_table_cell objects.
                 if (!($heading instanceof html_table_cell)) {
                     $headingtext = $heading;
                     $heading = new html_table_cell();
@@ -633,9 +641,9 @@ class html_writer {
 
             if (empty($table->data)) {
                 // For valid XHTML strict every table must contain either a valid tr
-                // or a valid tbody... both of which must contain a valid td
-                $output .= self::start_tag('tbody', array('class' => 'empty'));
-                $output .= self::tag('tr', self::tag('td', '', array('colspan'=>count($table->head))));
+                // or a valid tbody... both of which must contain a valid td.
+                $output .= self::start_tag('tbody', ['class' => 'empty']);
+                $output .= self::tag('tr', self::tag('td', '', ['colspan' => count($table->head)]));
                 $output .= self::end_tag('tbody');
             }
         }
@@ -643,13 +651,13 @@ class html_writer {
         if (!empty($table->data)) {
             $keys       = array_keys($table->data);
             $lastrowkey = end($keys);
-            $output .= self::start_tag('tbody', array());
+            $output .= self::start_tag('tbody', []);
 
             foreach ($table->data as $key => $row) {
                 if (($row === 'hr') && ($countcols)) {
-                    $output .= self::tag('td', self::tag('div', '', array('class' => 'tabledivider')), array('colspan' => $countcols));
+                    $output .= self::tag('td', self::tag('div', '', ['class' => 'tabledivider']), ['colspan' => $countcols]);
                 } else {
-                    // Convert array rows to html_table_rows and cell strings to html_table_cell objects
+                    // Convert array rows to html_table_rows and cell strings to html_table_cell objects.
                     if (!($row instanceof html_table_row)) {
                         $newrow = new html_table_row();
 
@@ -672,18 +680,18 @@ class html_writer {
 
                     // Explicitly assigned properties should override those defined in the attributes.
                     $row->attributes['class'] = trim($row->attributes['class']);
-                    $trattributes = array_merge($row->attributes, array(
+                    $trattributes = array_merge($row->attributes, [
                         'id'            => $row->id,
                         'style'         => $row->style,
-                    ));
+                    ]);
                     $output .= self::start_tag('tr', $trattributes) . "\n";
                     $keys2 = array_keys($row->cells);
                     $lastkey = end($keys2);
 
-                    $gotlastkey = false; //flag for sanity checking
+                    $gotlastkey = false; // Flag for sanity checking.
                     foreach ($row->cells as $key => $cell) {
                         if ($gotlastkey) {
-                            //This should never happen. Why do we have a cell after the last cell?
+                            // This should never happen. Why do we have a cell after the last cell?
                             mtrace("A cell with key ($key) was found after the last key ($lastkey)");
                         }
 
@@ -711,14 +719,14 @@ class html_writer {
                         $tdstyle .= isset($table->size[$key]) ? $table->size[$key] : '';
                         $tdstyle .= isset($table->wrap[$key]) ? $table->wrap[$key] : '';
                         $cell->attributes['class'] = trim($cell->attributes['class']);
-                        $tdattributes = array_merge($cell->attributes, array(
+                        $tdattributes = array_merge($cell->attributes, [
                             'style' => $tdstyle . $cell->style,
                             'colspan' => $cell->colspan,
                             'rowspan' => $cell->rowspan,
                             'id' => $cell->id,
                             'abbr' => $cell->abbr,
                             'scope' => $cell->scope,
-                        ));
+                        ]);
                         $tagtype = 'td';
                         if ($cell->header === true) {
                             $tagtype = 'th';
@@ -760,26 +768,26 @@ class html_writer {
      * @param array $attributes to be inserted in the tab, for example array('accesskey' => 'a')
      * @return string HTML of the label element
      */
-    public static function label($text, $for, $colonize = true, array $attributes=array()) {
+    public static function label($text, $for, $colonize = true, array $attributes = []) {
         if (!is_null($for)) {
-            $attributes = array_merge($attributes, array('for' => $for));
+            $attributes = array_merge($attributes, ['for' => $for]);
         }
         $text = trim($text ?? '');
         $label = self::tag('label', $text, $attributes);
 
         // TODO MDL-12192 $colonize disabled for now yet
         // if (!empty($text) and $colonize) {
-        //     // the $text may end with the colon already, though it is bad string definition style
-        //     $colon = get_string('labelsep', 'langconfig');
-        //     if (!empty($colon)) {
-        //         $trimmed = trim($colon);
-        //         if ((substr($text, -strlen($trimmed)) == $trimmed) or (substr($text, -1) == ':')) {
-        //             //debugging('The label text should not end with colon or other label separator,
-        //             //           please fix the string definition.', DEBUG_DEVELOPER);
-        //         } else {
-        //             $label .= $colon;
-        //         }
-        //     }
+        // the $text may end with the colon already, though it is bad string definition style
+        // $colon = get_string('labelsep', 'langconfig');
+        // if (!empty($colon)) {
+        // $trimmed = trim($colon);
+        // if ((substr($text, -strlen($trimmed)) == $trimmed) or (substr($text, -1) == ':')) {
+        // debugging('The label text should not end with colon or other label separator,
+        // please fix the string definition.', DEBUG_DEVELOPER);
+        // } else {
+        // $label .= $colon;
+        // }
+        // }
         // }
 
         return $label;
@@ -793,12 +801,12 @@ class html_writer {
      * class parameter, the two values are combined with a space between.
      *
      * @param string $class Optional CSS class (or classes as space-separated list)
-     * @param array $attributes Optional other attributes as array
+     * @param null|array $attributes Optional other attributes as array
      * @return array Attributes (or null if still none)
      */
-    private static function add_class($class = '', array $attributes = null) {
+    private static function add_class($class = '', ?array $attributes = null) {
         if ($class !== '') {
-            $classattribute = array('class' => $class);
+            $classattribute = ['class' => $class];
             if ($attributes) {
                 if (array_key_exists('class', $attributes)) {
                     $attributes['class'] = trim($attributes['class'] . ' ' . $class);
@@ -817,10 +825,10 @@ class html_writer {
      *
      * @param string $content HTML content of tag
      * @param string $class Optional CSS class (or classes as space-separated list)
-     * @param array $attributes Optional other attributes as array
+     * @param null|array $attributes Optional other attributes as array
      * @return string HTML code for div
      */
-    public static function div($content, $class = '', array $attributes = null) {
+    public static function div($content, $class = '', ?array $attributes = null) {
         return self::tag('div', $content, self::add_class($class, $attributes));
     }
 
@@ -828,10 +836,10 @@ class html_writer {
      * Starts a <div> tag. (Shortcut function.)
      *
      * @param string $class Optional CSS class (or classes as space-separated list)
-     * @param array $attributes Optional other attributes as array
+     * @param null|array $attributes Optional other attributes as array
      * @return string HTML code for open div tag
      */
-    public static function start_div($class = '', array $attributes = null) {
+    public static function start_div($class = '', ?array $attributes = null) {
         return self::start_tag('div', self::add_class($class, $attributes));
     }
 
@@ -849,10 +857,10 @@ class html_writer {
      *
      * @param string $content HTML content of tag
      * @param string $class Optional CSS class (or classes as space-separated list)
-     * @param array $attributes Optional other attributes as array
+     * @param null|array $attributes Optional other attributes as array
      * @return string HTML code for span
      */
-    public static function span($content, $class = '', array $attributes = null) {
+    public static function span($content, $class = '', ?array $attributes = null) {
         return self::tag('span', $content, self::add_class($class, $attributes));
     }
 
@@ -860,10 +868,10 @@ class html_writer {
      * Starts a <span> tag. (Shortcut function.)
      *
      * @param string $class Optional CSS class (or classes as space-separated list)
-     * @param array $attributes Optional other attributes as array
+     * @param null|array $attributes Optional other attributes as array
      * @return string HTML code for open span tag
      */
-    public static function start_span($class = '', array $attributes = null) {
+    public static function start_span($class = '', ?array $attributes = null) {
         return self::start_tag('span', self::add_class($class, $attributes));
     }
 

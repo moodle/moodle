@@ -25,7 +25,6 @@ namespace core\output;
  * @since      2.9
  */
 class mustache_filesystem_loader extends \Mustache_Loader_FilesystemLoader {
-
     /**
      * Provide a default no-args constructor (we don't really need anything).
      */
@@ -39,7 +38,7 @@ class mustache_filesystem_loader extends \Mustache_Loader_FilesystemLoader {
      * @param string $name
      * @return string Template file name
      */
-    protected function getFileName($name) {
+    protected function getfilename($name) {
         // Call the Moodle template finder.
         return mustache_template_finder::get_template_filepath($name);
     }
@@ -52,7 +51,7 @@ class mustache_filesystem_loader extends \Mustache_Loader_FilesystemLoader {
      *
      * @return bool Whether to check `is_dir` and `file_exists`
      */
-    protected function shouldCheckPath() {
+    protected function shouldcheckpath() {
         return true;
     }
 

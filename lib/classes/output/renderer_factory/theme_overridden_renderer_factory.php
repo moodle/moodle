@@ -40,7 +40,7 @@ class theme_overridden_renderer_factory extends renderer_factory_base {
     /**
      * @var array An array of renderer prefixes
      */
-    protected $prefixes = array();
+    protected $prefixes = [];
 
     /**
      * Constructor.
@@ -64,7 +64,7 @@ class theme_overridden_renderer_factory extends renderer_factory_base {
     public function get_renderer(moodle_page $page, $component, $subtype = null, $target = null) {
         $classnames = $this->standard_renderer_classnames($component, $subtype);
 
-        list($target, $suffix) = $this->get_target_suffix($target);
+        [$target, $suffix] = $this->get_target_suffix($target);
 
         // Theme lib.php and renderers.php files are loaded automatically
         // when loading the theme configs.

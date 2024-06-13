@@ -64,8 +64,10 @@ class activity_header implements renderable, templatable {
                 $this->title = format_string($page->activityrecord->name);
             }
 
-            if (empty($layoutoptions['nodescription']) && !empty($page->activityrecord->intro) &&
-                    trim($page->activityrecord->intro)) {
+            if (
+                empty($layoutoptions['nodescription']) && !empty($page->activityrecord->intro) &&
+                    trim($page->activityrecord->intro)
+            ) {
                 $this->description = format_module_intro($this->page->activityname, $page->activityrecord, $page->cm->id);
             }
         }

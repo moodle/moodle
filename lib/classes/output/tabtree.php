@@ -87,7 +87,7 @@ class tabtree extends tabobject {
 
         return (object) [
             'tabs' => $tabs,
-            'secondrow' => $secondrow ? $secondrow->export_for_template($output) : false
+            'secondrow' => $secondrow ? $secondrow->export_for_template($output) : false,
         ];
     }
 }

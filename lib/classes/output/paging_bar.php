@@ -88,7 +88,7 @@ class paging_bar implements renderable, templatable {
     /**
      * @var array An array of strings. One of them is just a string: the current page
      */
-    public $pagelinks = array();
+    public $pagelinks = [];
 
     /**
      * Constructor paging_bar with only the required params.
@@ -136,7 +136,11 @@ class paging_bar implements renderable, templatable {
             $pagenum = $this->page - 1;
 
             if ($this->page > 0) {
-                $this->previouslink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$pagenum)), get_string('previous'), array('class'=>'previous'));
+                $this->previouslink = html_writer::link(
+                    new moodle_url($this->baseurl, [$this->pagevar => $pagenum]),
+                    get_string('previous'),
+                    ['class' => 'previous'],
+                );
             }
 
             if ($this->perpage > 0) {
@@ -145,23 +149,27 @@ class paging_bar implements renderable, templatable {
                 $lastpage = 1;
             }
 
-            if ($this->page > round(($this->maxdisplay/3)*2)) {
-                $currpage = $this->page - round($this->maxdisplay/3);
+            if ($this->page > round(($this->maxdisplay / 3) * 2)) {
+                $currpage = $this->page - round($this->maxdisplay / 3);
 
-                $this->firstlink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>0)), '1', array('class'=>'first'));
+                $this->firstlink = html_writer::link(
+                    new moodle_url($this->baseurl, [$this->pagevar => 0]),
+                    '1',
+                    ['class' => 'first'],
+                );
             } else {
                 $currpage = 0;
             }
 
             $displaycount = $displaypage = 0;
 
-            while ($displaycount < $this->maxdisplay and $currpage < $lastpage) {
+            while ($displaycount < $this->maxdisplay && $currpage < $lastpage) {
                 $displaypage = $currpage + 1;
 
                 if ($this->page == $currpage) {
                     $this->pagelinks[] = html_writer::span($displaypage, 'current-page');
                 } else {
-                    $pagelink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$currpage)), $displaypage);
+                    $pagelink = html_writer::link(new moodle_url($this->baseurl, [$this->pagevar => $currpage]), $displaypage);
                     $this->pagelinks[] = $pagelink;
                 }
 
@@ -171,13 +179,21 @@ class paging_bar implements renderable, templatable {
 
             if ($currpage < $lastpage) {
                 $lastpageactual = $lastpage - 1;
-                $this->lastlink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$lastpageactual)), $lastpage, array('class'=>'last'));
+                $this->lastlink = html_writer::link(
+                    new moodle_url($this->baseurl, [$this->pagevar => $lastpageactual]),
+                    $lastpage,
+                    ['class' => 'last'],
+                );
             }
 
             $pagenum = $this->page + 1;
 
             if ($pagenum != $lastpage) {
-                $this->nextlink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$pagenum)), get_string('next'), array('class'=>'next'));
+                $this->nextlink = html_writer::link(
+                    new moodle_url($this->baseurl, [$this->pagevar => $pagenum]),
+                    get_string('next'),
+                    ['class' => 'next'],
+                );
             }
         }
     }
@@ -206,7 +222,7 @@ class paging_bar implements renderable, templatable {
         if ($this->page > 0) {
             $data->previous = [
                 'page' => $this->page,
-                'url' => (new moodle_url($this->baseurl, [$this->pagevar => $this->page - 1]))->out(false)
+                'url' => (new moodle_url($this->baseurl, [$this->pagevar => $this->page - 1]))->out(false),
             ];
         }
 
@@ -215,7 +231,7 @@ class paging_bar implements renderable, templatable {
             $currpage = $this->page - round($this->maxdisplay / 3);
             $data->first = [
                 'page' => 1,
-                'url' => (new moodle_url($this->baseurl, [$this->pagevar => 0]))->out(false)
+                'url' => (new moodle_url($this->baseurl, [$this->pagevar => 0]))->out(false),
             ];
         }
 
@@ -226,7 +242,7 @@ class paging_bar implements renderable, templatable {
 
         $displaycount = 0;
         $displaypage = 0;
-        while ($displaycount < $this->maxdisplay and $currpage < $lastpage) {
+        while ($displaycount < $this->maxdisplay && $currpage < $lastpage) {
             $displaypage = $currpage + 1;
 
             $iscurrent = $this->page == $currpage;
@@ -235,7 +251,7 @@ class paging_bar implements renderable, templatable {
             $data->pages[] = [
                 'page' => $displaypage,
                 'active' => $iscurrent,
-                'url' => $iscurrent ? null : $link->out(false)
+                'url' => $iscurrent ? null : $link->out(false),
             ];
 
             $displaycount++;
@@ -245,14 +261,14 @@ class paging_bar implements renderable, templatable {
         if ($currpage < $lastpage) {
             $data->last = [
                 'page' => $lastpage,
-                'url' => (new moodle_url($this->baseurl, [$this->pagevar => $lastpage - 1]))->out(false)
+                'url' => (new moodle_url($this->baseurl, [$this->pagevar => $lastpage - 1]))->out(false),
             ];
         }
 
         if ($this->page + 1 != $lastpage) {
             $data->next = [
                 'page' => $this->page + 2,
-                'url' => (new moodle_url($this->baseurl, [$this->pagevar => $this->page + 1]))->out(false)
+                'url' => (new moodle_url($this->baseurl, [$this->pagevar => $this->page + 1]))->out(false),
             ];
         }
 

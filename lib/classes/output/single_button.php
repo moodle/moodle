@@ -40,7 +40,7 @@ class single_button implements renderable {
         self::BUTTON_SUCCESS,
         self::BUTTON_DANGER,
         self::BUTTON_WARNING,
-        self::BUTTON_INFO
+        self::BUTTON_INFO,
     ];
 
     /**
@@ -117,7 +117,7 @@ class single_button implements renderable {
     /**
      * @var array List of attached actions
      */
-    public $actions = array();
+    public $actions = [];
 
     /**
      * @var array $params URL Params
@@ -143,8 +143,13 @@ class single_button implements renderable {
      * @param string $type whether this is a primary button or another type, used for styling
      * @param array $attributes Attributes for the HTML button tag
      */
-    public function __construct(moodle_url $url, $label, $method = 'post', $type = self::BUTTON_SECONDARY,
-        $attributes = []) {
+    public function __construct(
+        moodle_url $url,
+        $label,
+        $method = 'post',
+        $type = self::BUTTON_SECONDARY,
+        $attributes = []
+    ) {
         if (is_bool($type)) {
             debugging('The boolean $primary is deprecated and replaced by $type,
             use single_button::BUTTON_PRIMARY or self::BUTTON_SECONDARY instead');
@@ -262,7 +267,7 @@ class single_button implements renderable {
 
         // Button actions.
         $actions = $this->actions;
-        $data->actions = array_map(function($action) use ($output) {
+        $data->actions = array_map(function ($action) use ($output) {
             return $action->export_for_template($output);
         }, $actions);
         $data->hasactions = !empty($data->actions);

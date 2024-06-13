@@ -27,7 +27,7 @@ use core\output\renderer_base;
  * if created automatically when the theme is set up.
  *
  * A renderer factory must also have a constructor that takes a theme_config object.
- * (See {@link renderer_factory_base::__construct} for an example.)
+ * (See {@see renderer_factory_base::__construct} for an example.)
  *
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -61,7 +61,7 @@ interface renderer_factory_interface {
      * @param string $target one of rendering target constants
      * @return renderer_base an object implementing the requested renderer interface.
      */
-    public function get_renderer(moodle_page $page, $component, $subtype=null, $target=null);
+    public function get_renderer(moodle_page $page, $component, $subtype = null, $target = null);
 }
 
 // Alias this class to the old name.

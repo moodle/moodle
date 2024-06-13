@@ -20,11 +20,12 @@ namespace core\output;
  * Interface marking other classes as suitable for renderer_base::render()
  *
  * @copyright 2010 Petr Skoda (skodak) info@skodak.org
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package core
  * @category output
  */
 interface renderable {
-    // intentionally empty
+    // Intentionally empty.
 }
 
 // Alias this class to the old name.

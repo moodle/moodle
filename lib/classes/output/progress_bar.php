@@ -35,7 +35,7 @@ use core\exception\coding_exception;
  */
 class progress_bar implements renderable, templatable {
     /** @var string html id */
-    private $html_id;
+    private $htmlid;
     /** @var int total width */
     private $width;
     /** @var int last percentage printed */
@@ -43,7 +43,7 @@ class progress_bar implements renderable, templatable {
     /** @var int time when last printed */
     private $lastupdate = 0;
     /** @var int when did we start printing this */
-    private $time_start = 0;
+    private $timestart = 0;
 
     /**
      * Constructor
@@ -60,9 +60,9 @@ class progress_bar implements renderable, templatable {
         }
 
         if (!empty($htmlid)) {
-            $this->html_id  = $htmlid;
+            $this->htmlid  = $htmlid;
         } else {
-            $this->html_id  = 'pbar_'.uniqid();
+            $this->htmlid  = 'pbar_' . uniqid();
         }
 
         $this->width = $width;
@@ -77,7 +77,7 @@ class progress_bar implements renderable, templatable {
      * @return string id
      */
     public function get_id(): string {
-        return $this->html_id;
+        return $this->htmlid;
     }
 
     /**
@@ -88,7 +88,7 @@ class progress_bar implements renderable, templatable {
     public function create() {
         global $OUTPUT;
 
-        $this->time_start = microtime(true);
+        $this->timestart = microtime(true);
 
         flush();
         echo $OUTPUT->render($this);
@@ -103,21 +103,21 @@ class progress_bar implements renderable, templatable {
      * @return void Echo's output
      * @throws coding_exception
      */
-    private function _update($percent, $msg) {
+    private function update_raw($percent, $msg) {
         global $OUTPUT;
 
-        if (empty($this->time_start)) {
+        if (empty($this->timestart)) {
             throw new coding_exception('You must call create() (or use the $autostart ' .
                 'argument to the constructor) before you try updating the progress bar.');
         }
 
         $estimate = $this->estimate($percent);
 
-        if ($estimate === null) {
+        if ($estimate === null) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
             // Always do the first and last updates.
-        } else if ($estimate == 0) {
+        } else if ($estimate == 0) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
             // Always do the last updates.
-        } else if ($this->lastupdate + 20 < time()) {
+        } else if ($this->lastupdate + 20 < time()) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
             // We must update otherwise browser would time out.
         } else if (round($this->percent, 2) === round($percent, 2)) {
             // No significant change, no need to update anything.
@@ -133,7 +133,7 @@ class progress_bar implements renderable, templatable {
         $this->percent = $percent;
         $this->lastupdate = microtime(true);
 
-        echo $OUTPUT->render_progress_bar_update($this->html_id, $this->percent, $msg, $estimatemsg);
+        echo $OUTPUT->render_progress_bar_update($this->htmlid, $this->percent, $msg, $estimatemsg);
         flush();
     }
 
@@ -153,7 +153,7 @@ class progress_bar implements renderable, templatable {
         if ($pt > 99.99999) {
             return 0; // Nearly done, right?
         }
-        $consumed = microtime(true) - $this->time_start;
+        $consumed = microtime(true) - $this->timestart;
         if ($consumed < 0.001) {
             return null;
         }
@@ -169,7 +169,7 @@ class progress_bar implements renderable, templatable {
      */
     public function update_full($percent, $msg) {
         $percent = max(min($percent, 100), 0);
-        $this->_update($percent, $msg);
+        $this->update_raw($percent, $msg);
     }
 
     /**
@@ -190,7 +190,7 @@ class progress_bar implements renderable, templatable {
     public function restart() {
         $this->percent    = 0;
         $this->lastupdate = 0;
-        $this->time_start = 0;
+        $this->timestart = 0;
     }
 
     /**
@@ -201,7 +201,7 @@ class progress_bar implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output) {
         return [
-            'id' => $this->html_id,
+            'id' => $this->htmlid,
             'width' => $this->width,
         ];
     }
