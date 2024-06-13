@@ -118,6 +118,9 @@ if (!file_exists($featurefile)) {
     exit(0);
 }
 
+// Switch to admin user account.
+\core\session\manager::set_user(get_admin());
+
 $runner = new tool_generator\local\testscenario\runner();
 
 try {
