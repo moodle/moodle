@@ -125,4 +125,20 @@ $legacyclasses = [
         'core_table',
         'output/html_table_cell.php',
     ],
+    \flexible_table::class => [
+        'core_table',
+        'flexible_table.php',
+    ],
+    \table_sql::class => [
+        'core_table',
+        'sql_table.php',
+    ],
+    \table_default_export_format_parent::class => [
+        'core_table',
+        'base_export_format.php',
+    ],
+    \table_dataformat_export_format::class => [
+        'core_table',
+        'dataformat_export_format.php',
+    ],
 ];

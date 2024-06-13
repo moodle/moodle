@@ -1,0 +1,95 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+
+require_once("{$CFG->libdir}/tablelib.php");
+
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class table_default_export_format_parent {
+    /**
+     * @var flexible_table or child class reference pointing to table class
+     * object from which to export data.
+     */
+    var $table;
+
+    /**
+     * @var bool output started. Keeps track of whether any output has been
+     * started yet.
+     */
+    var $documentstarted = false;
+
+    /**
+     * Constructor
+     *
+     * @param flexible_table $table
+     */
+    public function __construct(&$table) {
+        $this->table =& $table;
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function table_default_export_format_parent(&$table) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($table);
+    }
+
+    function set_table(&$table) {
+        $this->table =& $table;
+    }
+
+    function add_data($row) {
+        return false;
+    }
+
+    function add_seperator() {
+        return false;
+    }
+
+    function document_started() {
+        return $this->documentstarted;
+    }
+    /**
+     * Given text in a variety of format codings, this function returns
+     * the text as safe HTML or as plain text dependent on what is appropriate
+     * for the download format. The default removes all tags.
+     */
+    function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL) {
+        //use some whitespace to indicate where there was some line spacing.
+        $text = str_replace(array('</p>', "\n", "\r"), '   ', $text);
+        return html_entity_decode(strip_tags($text), ENT_COMPAT);
+    }
+
+    /**
+     * Format a row of data, removing HTML tags and entities from each of the cells
+     *
+     * @param array $row
+     * @return array
+     */
+    public function format_data(array $row): array {
+        return array_map([$this, 'format_text'], $row);
+    }
+}
