@@ -28,6 +28,12 @@ class qtype_ordering extends question_type {
     /** @var int Number of hints default. */
     const DEFAULT_NUM_HINTS = 2;
 
+    /**
+     * Determine if the question type can have HTML answers.
+     *
+     * @return bool
+     * @codeCoverageIgnore
+     */
     public function has_html_answers(): bool {
         return true;
     }

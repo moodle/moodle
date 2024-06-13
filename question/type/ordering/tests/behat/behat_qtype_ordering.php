@@ -75,6 +75,12 @@ class behat_qtype_ordering extends behat_base {
                 }())"
         );
 
+        // Ensure the script has run and the item is there.
+        $generalcontext->wait_until_exists(
+            '.dtb',
+            'css_element'
+        );
+
         $generalcontext->i_drag_and_i_drop_it_in(
             $this->item_xpath_by_label($label),
             'xpath_element',
@@ -87,6 +93,12 @@ class behat_qtype_ordering extends behat_base {
                     var item = document.querySelector('.dtb');
                     item.parentNode.removeChild(item);
                 }())"
+        );
+
+        // Ensure the script has run and the item is gone.
+        $generalcontext->wait_until_does_not_exists(
+            '.dtb',
+            'css_element'
         );
     }
 }
