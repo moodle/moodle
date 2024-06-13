@@ -28,6 +28,7 @@
   </library>
   <library>
     <location>amd/src/bootstrap/button.js</location>
+    <name>bootstrap-button</name>
     <description>HTML, CSS, and JavaScript framework for developing responsive, mobile-first projects on the web.</description>
     <version>4.6.2</version>
     <license>MIT</license>
