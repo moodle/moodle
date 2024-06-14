@@ -33,6 +33,8 @@ use MoodleQuickForm;
 use tool_mfa\local\factor\object_factor_base;
 use OTPHP\TOTP;
 use stdClass;
+use core\clock;
+use core\di;
 
 /**
  * TOTP factor class.
@@ -63,6 +65,19 @@ class factor extends object_factor_base {
     /** @var string Factor icon */
     protected $icon = 'fa-mobile-screen';
 
+    /** @var clock */
+    private readonly clock $clock;
+
+    /**
+     * Constructor.
+     *
+     * @param string $name
+     */
+    public function __construct(string $name) {
+        parent::__construct($name);
+        $this->clock = di::get(clock::class);
+    }
+
 
     /**
      * Generates TOTP URI for given secret key.
@@ -77,7 +92,7 @@ class factor extends object_factor_base {
         $host = parse_url($CFG->wwwroot, PHP_URL_HOST);
         $sitename = str_replace(':', '', $SITE->fullname);
         $issuer = $sitename.' '.$host;
-        $totp = TOTP::create($secret);
+        $totp = TOTP::create($secret, clock: $this->clock);
         $totp->setLabel($USER->username);
         $totp->setIssuer($issuer);
         return $totp->getProvisioningUri();
@@ -232,8 +247,8 @@ class factor extends object_factor_base {
     public function setup_factor_form_validation(array $data): array {
         $errors = [];
 
-        $totp = TOTP::create($data['secret']);
-        if (!$totp->verify($data['verificationcode'], time(), 1)) {
+        $totp = TOTP::create($data['secret'], clock: $this->clock);
+        if (!$totp->verify($data['verificationcode'], $this->clock->time(), 1)) {
             $errors['verificationcode'] = get_string('error:wrongverification', 'factor_totp');
         }
 
@@ -268,9 +283,9 @@ class factor extends object_factor_base {
         $window = get_config('factor_totp', 'window');
 
         foreach ($factors as $factor) {
-            $totp = TOTP::create($factor->secret);
+            $totp = TOTP::create($factor->secret, clock: $this->clock);
             $factorresult = $this->validate_code($data['verificationcode'], $window, $totp, $factor);
-            $time = userdate(time(), get_string('systimeformat', 'factor_totp'));
+            $time = userdate($this->clock->time(), get_string('systimeformat', 'factor_totp'));
 
             switch ($factorresult) {
                 case self::TOTP_USED:
@@ -311,14 +326,14 @@ class factor extends object_factor_base {
         }
 
         // Check if the code is valid, returning early.
-        if ($totp->verify($code, time(), $window)) {
+        if ($totp->verify($code, $this->clock->time(), $window)) {
             return self::TOTP_VALID;
         }
 
         // Check for clock skew in the past and future 10 periods.
         for ($i = 1; $i <= 10; $i++) {
-            $pasttimestamp = time() - $i * $totp->getPeriod();
-            $futuretimestamp = time() + $i * $totp->getPeriod();
+            $pasttimestamp = $this->clock->time() - $i * $totp->getPeriod();
+            $futuretimestamp = $this->clock->time() + $i * $totp->getPeriod();
 
             if ($totp->verify($code, $pasttimestamp, $window)) {
                 return self::TOTP_OLD;
@@ -339,7 +354,7 @@ class factor extends object_factor_base {
      * @return string
      */
     public function generate_secret_code(): string {
-        $totp = TOTP::create();
+        $totp = TOTP::create(clock: $this->clock);
         return substr($totp->getSecret(), 0, 16);
     }
 
@@ -358,9 +373,9 @@ class factor extends object_factor_base {
             $row->factor = $this->name;
             $row->secret = $data->secret;
             $row->label = $data->devicename;
-            $row->timecreated = time();
+            $row->timecreated = $this->clock->time();
             $row->createdfromip = $USER->lastip;
-            $row->timemodified = time();
+            $row->timemodified = $this->clock->time();
             $row->lastverified = 0;
             $row->revoked = 0;
 
