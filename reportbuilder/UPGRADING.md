@@ -2,6 +2,20 @@
 
 ## 4.5dev
 
+### Added
+
+- System reports now support native entity column aggregation via each columns `set_aggregation()` method
+
+  For more information see [MDL-76392](https://tracker.moodle.org/browse/MDL-76392)
+- The following external methods now return tags data relevant to each custom report:
+    - `core_reportbuilder_list_reports`
+    - `core_reportbuilder_retrieve_report`
+
+  For more information see [MDL-81433](https://tracker.moodle.org/browse/MDL-81433)
+- Added a new database helper method `sql_replace_parameters` to help ensure uniqueness of parameters within a SQL expression
+
+  For more information see [MDL-81434](https://tracker.moodle.org/browse/MDL-81434)
+
 ### Removed
 
 - The following previously deprecated local helper methods have been removed and can no longer be used:
@@ -21,14 +35,8 @@
 - The base datasource `add_all_from_entities` method accepts a new optional parameter to specify which entities to add elements from
 
   For more information see [MDL-81330](https://tracker.moodle.org/browse/MDL-81330)
+- All time related code has been updated to the PSR-20 Clock interface, as such the following methods no longer accept a `$timenow` parameter (instead please use `\core\clock` dependency injection):
+  - `core_reportbuilder_generator::create_schedule`
+  - `core_reportbuilder\local\helpers\schedule::[create_schedule|calculate_next_send_time]`
 
-### Added
-
-- The following external methods now return tags data relevant to each custom report:
-    - `core_reportbuilder_list_reports`
-    - `core_reportbuilder_retrieve_report`
-
-  For more information see [MDL-81433](https://tracker.moodle.org/browse/MDL-81433)
-- Added a new database helper method `sql_replace_parameters` to help ensure uniqueness of parameters within a SQL expression
-
-  For more information see [MDL-81434](https://tracker.moodle.org/browse/MDL-81434)
+  For more information see [MDL-82041](https://tracker.moodle.org/browse/MDL-82041)

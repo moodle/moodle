@@ -24,6 +24,9 @@
   Autoloaded classes are now available to scripts using the `ABORT_AFTER_CONFIG` constant.
 
   For more information see [MDL-80275](https://tracker.moodle.org/browse/MDL-80275)
+- The `\core\dataformat::get_format_instance` method is now public, and can be used to retrieve a writer instance for a given dataformat
+
+  For more information see [MDL-81781](https://tracker.moodle.org/browse/MDL-81781)
 
 ### Added
 
@@ -33,6 +36,24 @@
 - Added an `exception` L2 Namespace to APIs
 
   For more information see [MDL-81903](https://tracker.moodle.org/browse/MDL-81903)
+- Added a mechanism to support autoloading of legacy class files.
+  This will help to reduce the number of require_once calls in the codebase, and move away from the use of monolithic libraries.
+
+  For more information see [MDL-81919](https://tracker.moodle.org/browse/MDL-81919)
+- The following exceptions are now also available in the `\core\exception` namespace:
+    - `\coding_exception`
+    - `\file_serving_exception`
+    - `\invalid_dataroot_permissions`
+    - `\invalid_parameter_exception`
+    - `\invalid_response_exception`
+    - `\invalid_state_exception`
+    - `\moodle_exception`
+    - `\require_login_exception`
+    - `\require_login_session_timeout_exception`
+    - `\required_capability_exception`
+    - `\webservice_parameter_exception`
+
+  For more information see [MDL-81919](https://tracker.moodle.org/browse/MDL-81919)
 
 ### Fixed
 
@@ -48,3 +69,6 @@
   - `endecrypt`
 
   For more information see [MDL-81940](https://tracker.moodle.org/browse/MDL-81940)
+- The following method has been deprecated and should not be used any longer: `print_grade_menu`.
+
+  For more information see [MDL-82157](https://tracker.moodle.org/browse/MDL-82157)

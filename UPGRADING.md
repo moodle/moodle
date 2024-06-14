@@ -32,6 +32,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   Autoloaded classes are now available to scripts using the `ABORT_AFTER_CONFIG` constant.
 
   For more information see [MDL-80275](https://tracker.moodle.org/browse/MDL-80275)
+- The `\core\dataformat::get_format_instance` method is now public, and can be used to retrieve a writer instance for a given dataformat
+
+  For more information see [MDL-81781](https://tracker.moodle.org/browse/MDL-81781)
 
 #### Added
 
@@ -41,6 +44,24 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Added an `exception` L2 Namespace to APIs
 
   For more information see [MDL-81903](https://tracker.moodle.org/browse/MDL-81903)
+- Added a mechanism to support autoloading of legacy class files.
+  This will help to reduce the number of require_once calls in the codebase, and move away from the use of monolithic libraries.
+
+  For more information see [MDL-81919](https://tracker.moodle.org/browse/MDL-81919)
+- The following exceptions are now also available in the `\core\exception` namespace:
+    - `\coding_exception`
+    - `\file_serving_exception`
+    - `\invalid_dataroot_permissions`
+    - `\invalid_parameter_exception`
+    - `\invalid_response_exception`
+    - `\invalid_state_exception`
+    - `\moodle_exception`
+    - `\require_login_exception`
+    - `\require_login_session_timeout_exception`
+    - `\required_capability_exception`
+    - `\webservice_parameter_exception`
+
+  For more information see [MDL-81919](https://tracker.moodle.org/browse/MDL-81919)
 
 #### Fixed
 
@@ -56,6 +77,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   - `endecrypt`
 
   For more information see [MDL-81940](https://tracker.moodle.org/browse/MDL-81940)
+- The following method has been deprecated and should not be used any longer: `print_grade_menu`.
+
+  For more information see [MDL-82157](https://tracker.moodle.org/browse/MDL-82157)
 
 ### mod_assign
 
@@ -115,6 +139,20 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### core_reportbuilder
 
+#### Added
+
+- System reports now support native entity column aggregation via each columns `set_aggregation()` method
+
+  For more information see [MDL-76392](https://tracker.moodle.org/browse/MDL-76392)
+- The following external methods now return tags data relevant to each custom report:
+    - `core_reportbuilder_list_reports`
+    - `core_reportbuilder_retrieve_report`
+
+  For more information see [MDL-81433](https://tracker.moodle.org/browse/MDL-81433)
+- Added a new database helper method `sql_replace_parameters` to help ensure uniqueness of parameters within a SQL expression
+
+  For more information see [MDL-81434](https://tracker.moodle.org/browse/MDL-81434)
+
 #### Removed
 
 - The following previously deprecated local helper methods have been removed and can no longer be used:
@@ -134,17 +172,19 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The base datasource `add_all_from_entities` method accepts a new optional parameter to specify which entities to add elements from
 
   For more information see [MDL-81330](https://tracker.moodle.org/browse/MDL-81330)
+- All time related code has been updated to the PSR-20 Clock interface, as such the following methods no longer accept a `$timenow` parameter (instead please use `\core\clock` dependency injection):
+  - `core_reportbuilder_generator::create_schedule`
+  - `core_reportbuilder\local\helpers\schedule::[create_schedule|calculate_next_send_time]`
 
-#### Added
+  For more information see [MDL-82041](https://tracker.moodle.org/browse/MDL-82041)
 
-- The following external methods now return tags data relevant to each custom report:
-    - `core_reportbuilder_list_reports`
-    - `core_reportbuilder_retrieve_report`
+### core_webservice
 
-  For more information see [MDL-81433](https://tracker.moodle.org/browse/MDL-81433)
-- Added a new database helper method `sql_replace_parameters` to help ensure uniqueness of parameters within a SQL expression
+#### Deprecated
 
-  For more information see [MDL-81434](https://tracker.moodle.org/browse/MDL-81434)
+- The `token_table` and `token_filter` classes have been deprecated, in favour of new report builder implementation.
+
+  For more information see [MDL-79496](https://tracker.moodle.org/browse/MDL-79496)
 
 ### core_question
 
@@ -167,6 +207,20 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `mod_data_renderer::render_fields_footer` method has been deprecated as it's no longer used
 
   For more information see [MDL-81321](https://tracker.moodle.org/browse/MDL-81321)
+
+### core_message
+
+#### Changed
+
+- The `\core_message\helper::togglecontact_link_params` now accepts a new optional param called `isrequested` to indicate the status of the contact request
+
+  For more information see [MDL-81428](https://tracker.moodle.org/browse/MDL-81428)
+
+#### Deprecated
+
+- The `core_message/remove_contact_button` template is deprecated and will be removed in the future version
+
+  For more information see [MDL-81428](https://tracker.moodle.org/browse/MDL-81428)
 
 ### editor_tiny
 
@@ -201,6 +255,37 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-81610](https://tracker.moodle.org/browse/MDL-81610)
 
+### core_course
+
+#### Added
+
+- - New optional sectionNum parameter has been added to activitychooser AMD module initializer. - New option sectionnum parameter has been added to get_course_content_items() external function. - New optional sectionnum parameter has been added to get_content_items_for_user_in_course() function.
+
+  For more information see [MDL-81675](https://tracker.moodle.org/browse/MDL-81675)
+
+#### Deprecated
+
+- The data-sectionid attribute in the activity chooser has been deprecated. Please update your code to use data-sectionnum instead.
+
+  For more information see [MDL-81676](https://tracker.moodle.org/browse/MDL-81676)
+
+#### Changed
+
+- The reset course page has been improved. The words "Delete" and "Remove" have been removed from all the options to make it easier to focus on the data to be removed and avoid inconsistencies and duplicated information. Third party plugins implementing reset methods might need to:
+  - Add static element in the _reset_course_form_definition method before all the options with the Delete string:
+      `$mform->addElement('static', 'assigndelete', get_string('delete'));`
+  - Review all the strings used in the reset page to remove the "Delete" or "Remove" words from them.
+
+  For more information see [MDL-81872](https://tracker.moodle.org/browse/MDL-81872)
+
+### mod_feedback
+
+#### Deprecated
+
+- The method `mod_feedback\output\renderer::create_template_form()` has been deprecated. It is not used anymore.
+
+  For more information see [MDL-81742](https://tracker.moodle.org/browse/MDL-81742)
+
 ### core_completion
 
 #### Changed
@@ -216,14 +301,3 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The base class `info::get_groups` method has a `$userid` parameter to specify for which user you want to retrieve course groups (defaults to current user)
 
   For more information see [MDL-81850](https://tracker.moodle.org/browse/MDL-81850)
-
-### core_course
-
-#### Changed
-
-- The reset course page has been improved. The words "Delete" and "Remove" have been removed from all the options to make it easier to focus on the data to be removed and avoid inconsistencies and duplicated information. Third party plugins implementing reset methods might need to:
-  - Add static element in the _reset_course_form_definition method before all the options with the Delete string:
-      `$mform->addElement('static', 'assigndelete', get_string('delete'));`
-  - Review all the strings used in the reset page to remove the "Delete" or "Remove" words from them.
-
-  For more information see [MDL-81872](https://tracker.moodle.org/browse/MDL-81872)
