@@ -606,6 +606,7 @@ $string['environmentrequirecustomcheck'] = 'this test must pass';
 $string['environmentrequireinstall'] = 'must be installed and enabled';
 $string['environmentrequireversion'] = 'version {$a->needed} is required and you are running {$a->current}';
 $string['environmentsettingok'] = 'recommended setting detected';
+$string['environmentshouldfixcustomcheck'] = 'should be enabled for best results';
 $string['environmentshouldfixsetting'] = 'PHP setting should be changed.';
 $string['environmentxmlerror'] = 'Error reading environment data ({$a->error_code})';
 $string['environmentmariadbwrongdbtype'] = 'Wrong $CFG->dbtype. You need to change it in your config.php file from \'mysqli\' to \'mariadb\'.';
