@@ -535,6 +535,7 @@ span.editinstructions {
     text-decoration: none;
     z-index: 9999;
     border: $alert-border-width solid transparent;
+    width: fit-content;
 
     @include alert-variant(
         theme-color-level('info', $alert-bg-level),
