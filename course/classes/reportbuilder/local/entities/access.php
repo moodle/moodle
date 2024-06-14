@@ -96,15 +96,13 @@ class access extends base {
             ->add_field("{$tablealias}.timeaccess")
             ->add_field("{$user}.id", 'userid')
             ->set_is_sortable(true)
-            ->add_callback([format::class, 'userdate'])
-            ->add_callback(static function(string $value, stdClass $row): string {
-                if (!$row->userid) {
+            ->add_callback(static function(?int $value, stdClass $row, $arguments, ?string $aggregation): string {
+                if ($row->userid === null && $aggregation === null) {
                     return '';
-                }
-                if ($value === '') {
+                } else if ($value === null) {
                     return get_string('never');
                 }
-                return $value;
+                return format::userdate($value, $row);
             });
 
         return $columns;
