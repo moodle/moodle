@@ -51,7 +51,6 @@ class RequestCompressionMiddleware
         }
         $nextHandler = $this->nextHandler;
         $operation = $this->api->getOperation($command->getName());
-        $requestBodySize = $request->getBody()->getSize();
         $compressionInfo = isset($operation['requestcompression'])
             ? $operation['requestcompression']
             : null;
@@ -60,7 +59,7 @@ class RequestCompressionMiddleware
             $compressionInfo,
             $command,
             $operation,
-            $requestBodySize
+            $request
         )) {
             return $nextHandler($command, $request);
         }
@@ -101,7 +100,7 @@ class RequestCompressionMiddleware
         $compressionInfo,
         $command,
         $operation,
-        $requestBodySize
+        $request
     ){
         if ($compressionInfo) {
             if (isset($command['@disable_request_compression'])
@@ -109,8 +108,15 @@ class RequestCompressionMiddleware
             ) {
                 return false;
             } elseif ($this->hasStreamingTraitWithoutRequiresLength($command, $operation)
-                || $requestBodySize >= $this->minimumCompressionSize
             ) {
+                return true;
+            }
+
+            $requestBodySize = $request->hasHeader('content-length')
+                ? (int) $request->getHeaderLine('content-length')
+                : $request->getBody()->getSize();
+
+            if ($requestBodySize >= $this->minimumCompressionSize) {
                 return true;
             }
         }

@@ -12,20 +12,25 @@ get started in minutes by [installing the SDK through Composer][docs-installatio
 or by downloading a single zip or phar file from our [latest release][latest-release].
 
 Jump To:
-* [Getting Started](#Getting-Started)
-* [Quick Examples](#Quick-Examples)
-* [Getting Help](#Getting-Help)
-* [Features](#Features)
-* [Contributing](#Contributing)
-* [More Resources](#Resources)
-* [Related AWS Projects](#Related-AWS-Projects)
+- [AWS SDK for PHP - Version 3](#aws-sdk-for-php---version-3)
+  - [Getting Started](#getting-started)
+  - [Quick Examples](#quick-examples)
+    - [Create an Amazon S3 client](#create-an-amazon-s3-client)
+    - [Upload a file to Amazon S3](#upload-a-file-to-amazon-s3)
+  - [Getting Help](#getting-help)
+  - [Maintenance and support for SDK major versions](#maintenance-and-support-for-sdk-major-versions)
+    - [Opening Issues](#opening-issues)
+  - [Features](#features)
+  - [Contributing](#contributing)
+  - [Resources](#resources)
+  - [Related AWS Projects](#related-aws-projects)
 
 ## Getting Started
 
 1. **Sign up for AWS** – Before you begin, you need to
    sign up for an AWS account and retrieve your [AWS credentials][docs-signup].
 2. **Minimum requirements** – To run the SDK, your system will need to meet the
-   [minimum requirements][docs-requirements], including having **PHP >= 5.5**.
+   [minimum requirements][docs-requirements], including having **PHP >= 7.2.5**.
    We highly recommend having it compiled with the cURL extension and cURL
    7.16.2+ compiled with a TLS backend (e.g., NSS or OpenSSL).
 3. **Install the SDK** – Using [Composer] is the recommended way to install the

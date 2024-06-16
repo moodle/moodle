@@ -155,6 +155,10 @@ class RulesetStandardLibrary
      */
     public function parseUrl($url)
     {
+        if (is_null($url)) {
+            return null;
+        }
+
         $parsed = parse_url($url);
 
         if ($parsed === false || !empty($parsed['query'])) {

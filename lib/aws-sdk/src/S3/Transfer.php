@@ -146,7 +146,7 @@ class Transfer implements PromisorInterface
      *
      * @return PromiseInterface
      */
-    public function promise()
+    public function promise(): PromiseInterface
     {
         // If the promise has been created, just return it.
         if (!$this->promise) {
