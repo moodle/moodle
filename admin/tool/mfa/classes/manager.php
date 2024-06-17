@@ -64,10 +64,10 @@ class manager {
         ];
         $table->attributes['class'] = 'admintable generaltable table table-bordered';
         $table->colclasses = [
-            'text-right',
+            'text-end',
             '',
             '',
-            'text-right',
+            'text-end',
             'text-center',
         ];
         $factors = factor::get_enabled_factors();

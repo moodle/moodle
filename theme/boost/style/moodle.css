@@ -22676,11 +22676,11 @@ button.bg-dark:focus {
   white-space: nowrap;
 }
 
-.text-left {
+.text-left, .text-start {
   text-align: left !important;
 }
 
-.text-right {
+.text-right, .text-end {
   text-align: right !important;
 }
 
@@ -22689,10 +22689,10 @@ button.bg-dark:focus {
 }
 
 @media (min-width: 576px) {
-  .text-sm-left {
+  .text-sm-left, .text-sm-start {
     text-align: left !important;
   }
-  .text-sm-right {
+  .text-sm-right, .text-sm-end {
     text-align: right !important;
   }
   .text-sm-center {
@@ -22700,10 +22700,10 @@ button.bg-dark:focus {
   }
 }
 @media (min-width: 768px) {
-  .text-md-left {
+  .text-md-left, .text-md-start {
     text-align: left !important;
   }
-  .text-md-right {
+  .text-md-right, .text-md-end {
     text-align: right !important;
   }
   .text-md-center {
@@ -22711,10 +22711,10 @@ button.bg-dark:focus {
   }
 }
 @media (min-width: 992px) {
-  .text-lg-left {
+  .text-lg-left, .text-lg-start {
     text-align: left !important;
   }
-  .text-lg-right {
+  .text-lg-right, .text-lg-end {
     text-align: right !important;
   }
   .text-lg-center {
@@ -22722,10 +22722,10 @@ button.bg-dark:focus {
   }
 }
 @media (min-width: 1200px) {
-  .text-xl-left {
+  .text-xl-left, .text-xl-start {
     text-align: left !important;
   }
-  .text-xl-right {
+  .text-xl-right, .text-xl-end {
     text-align: right !important;
   }
   .text-xl-center {

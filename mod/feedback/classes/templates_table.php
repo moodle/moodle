@@ -61,7 +61,7 @@ class mod_feedback_templates_table extends flexible_table {
         $this->define_headers($tableheaders);
         $this->define_baseurl($baseurl);
         $this->column_class('template', 'template');
-        $this->column_class('actions', 'text-right');
+        $this->column_class('actions', 'text-end');
         $this->sortable(false);
     }
 

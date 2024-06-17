@@ -118,7 +118,7 @@ if ($courseitemfilter > 0) {
 
             echo '<tr>';
             echo '<td>'.$shortname.'</td>';
-            echo '<td class="text-right">';
+            echo '<td class="text-end">';
             echo format_float(($c->sumvalue / $c->countvalue), 2);
             echo '</td>';
             echo '</tr>';

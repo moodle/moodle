@@ -207,7 +207,7 @@ Use text utilities as needed to change the alignment of your blockquote.
 {{< /example >}}
 
 {{< example >}}
-<blockquote class="blockquote text-right">
+<blockquote class="blockquote text-end">
   <p class="mb-0">A well-known quote, contained in a blockquote element.</p>
   <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer>
 </blockquote>

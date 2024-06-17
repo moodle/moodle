@@ -144,7 +144,7 @@ class feedback_item_numeric extends feedback_item_base {
 
         if (isset($values->data) AND is_array($values->data)) {
             echo "<table class=\"analysis itemtype_{$item->typ}\">";
-            echo '<tr><th class="text-left">';
+            echo '<tr><th class="text-start">';
             echo $itemnr . ' ';
             if (strval($item->label) !== '') {
                 echo '('. format_string($item->label).') ';

@@ -131,7 +131,7 @@ class feedback_item_textfield extends feedback_item_base {
         $values = feedback_get_group_values($item, $groupid, $courseid);
         if ($values) {
             echo "<table class=\"analysis itemtype_{$item->typ}\">";
-            echo '<tr><th class="text-left">';
+            echo '<tr><th class="text-start">';
             echo $itemnr . ' ';
             if (strval($item->label) !== '') {
                 echo '('. format_string($item->label).') ';

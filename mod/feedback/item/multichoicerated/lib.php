@@ -185,7 +185,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $analysed_item = $this->get_analysed($item, $groupid, $courseid);
         if ($analysed_item) {
             echo "<table class=\"analysis itemtype_{$item->typ}\">";
-            echo '<tr><th class="text-left">';
+            echo '<tr><th class="text-start">';
             echo $itemnr . ' ';
             if (strval($item->label) !== '') {
                 echo '('. format_string($item->label).') ';
@@ -221,7 +221,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
             $chart->set_labels($data['labels']);
             echo '<tr><td>'. $OUTPUT->render($chart) . '</td></tr>';
             $avg = format_float($avg, 2);
-            echo '<tr><td class="text-left"><b>';
+            echo '<tr><td class="text-start"><b>';
             echo get_string('average', 'feedback').': '.$avg.'</b>';
             echo '</td></tr>';
             echo '</table>';

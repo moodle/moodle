@@ -93,13 +93,13 @@
             {{> core_calendar/event_details }}
         </div>
         {{#action.actionable}}
-            <div class="card-footer text-right bg-transparent">
+            <div class="card-footer text-end bg-transparent">
                 <a href="{{action.url}}" class="card-link">{{{action.name}}}</a>
             </div>
         {{/action.actionable}}
         {{^action.actionable}}
             {{#isactionevent}}
-            <div class="card-footer text-right bg-transparent">
+            <div class="card-footer text-end bg-transparent">
                 <a href="{{url}}" class="card-link">{{#str}} gotoactivity, core_calendar {{/str}}</a>
             </div>
             {{/isactionevent}}

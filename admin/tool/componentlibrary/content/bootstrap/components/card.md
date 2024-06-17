@@ -285,7 +285,7 @@ You can quickly change the text alignment of any card—in its entirety or speci
   </div>
 </div>
 
-<div class="card text-right" style="width: 18rem;">
+<div class="card text-end" style="width: 18rem;">
   <div class="card-body">
     <h5 class="card-title">Special title treatment</h5>
     <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
@@ -798,7 +798,7 @@ Cards can be organized into [Masonry](https://masonry.desandro.com/)-like column
   <div class="card">
     {{< placeholder width="100%" height="260" class="card-img" text="Card image" >}}
   </div>
-  <div class="card p-3 text-right">
+  <div class="card p-3 text-end">
     <blockquote class="blockquote mb-0">
       <p>A well-known quote, contained in a blockquote element.</p>
       <footer class="blockquote-footer">

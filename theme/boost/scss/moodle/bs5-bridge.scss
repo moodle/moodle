@@ -49,3 +49,15 @@
         @extend .float#{$infix}-right;
     }
 }
+
+// Generate all text classes for all breakpoints for directions start and end.
+// text-start > text-left, text-sm-end > text-sm-right, ...
+@each $breakpoint in map-keys($grid-breakpoints) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+    .text#{$infix}-start {
+        @extend .text#{$infix}-left;
+    }
+    .text#{$infix}-end {
+        @extend .text#{$infix}-right;
+    }
+}
