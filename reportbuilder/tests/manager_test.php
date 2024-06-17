@@ -25,6 +25,7 @@ use core_user\reportbuilder\datasource\users;
 use stdClass;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\base;
+use core_reportbuilder\exception\{source_invalid_exception, source_unavailable_exception};
 
 defined('MOODLE_INTERNAL') || die();
 

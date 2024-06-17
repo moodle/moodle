@@ -25,7 +25,7 @@ use core\output\notification;
 use core_reportbuilder\external\custom_report_audience_cards_exporter;
 use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\models\audience;
-use core_reportbuilder\report_access_exception;
+use core_reportbuilder\exception\report_access_exception;
 
 /**
  * Audience base class

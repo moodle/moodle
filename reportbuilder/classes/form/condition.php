@@ -59,7 +59,7 @@ class condition extends dynamic_form {
     /**
      * Ensure current user is able to use this form
      *
-     * A {@see \core_reportbuilder\report_access_exception} will be thrown if they can't
+     * A {@see \core_reportbuilder\exception\report_access_exception} will be thrown if they can't
      */
     protected function check_access_for_dynamic_submission(): void {
         permission::require_can_edit_report($this->get_report()->get_report_persistent());
