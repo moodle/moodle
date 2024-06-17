@@ -31,6 +31,8 @@ require_once($CFG->dirroot . '/badges/criteria/award_criteria.php');
 
 /* Include required user badge exporter */
 use core_badges\external\user_badge_exporter;
+/* Include required badge class exporter */
+use core_badges\external\badgeclass_exporter;
 
 /*
  * Number of records per page.
@@ -495,6 +497,79 @@ function badges_prepare_badge_for_external(stdClass $badge, stdClass $user): obj
 
     $exporter = new user_badge_exporter($badge, $related);
     return $exporter->export($PAGE->get_renderer('core'));
+}
+
+/**
+ * Prepare badgeclass for external functions.
+ * @param core_badges\output\badgeclass $badgeclass
+ * @return stdClass
+ */
+function badges_prepare_badgeclass_for_external(core_badges\output\badgeclass $badgeclass): stdClass {
+    global $PAGE;
+    $context = $badgeclass->context;
+
+    $badgeurl = new \moodle_url('/badges/badgeclass.php', [
+        'id' => $badgeclass->badge->id,
+    ]);
+    $badgeurl = $badgeurl->out(false);
+    $file = \moodle_url::make_webservice_pluginfile_url(
+        $badgeclass->context->id,
+        'badges',
+        'badgeimage',
+        $badgeclass->badge->id,
+        '/',
+        'f3'
+    );
+    $image = $file->out(false);
+
+    $badge = (object) [
+        'id'            => $badgeurl,
+        'name'          => $badgeclass->badge->name,
+        'type'          => OPEN_BADGES_V2_TYPE_BADGE,
+        'description'   => $badgeclass->badge->description,
+        'issuer'        => $badgeclass->badge->issuername,
+        'hostedUrl'     => $badgeclass->badge->issuerurl,
+        'image'         => $image,
+    ];
+    // Create a badge instance to be able to get the endorsement and other info.
+    $badgeinstance = new badge($badgeclass->badge->id);
+    $endorsement   = $badgeinstance->get_endorsement();
+    $alignments    = $badgeinstance->get_alignments();
+    $relatedbadges = $badgeinstance->get_related_badges();
+
+    $canconfiguredetails = has_capability('moodle/badges:configuredetails', $context);
+
+    if (!$canconfiguredetails) {
+        // Return only the properties visible by the user.
+        if (!empty($alignments)) {
+            foreach ($alignments as $alignment) {
+                unset($alignment->targetdescription);
+                unset($alignment->targetframework);
+                unset($alignment->targetcode);
+            }
+        }
+
+        if (!empty($relatedbadges)) {
+            foreach ($relatedbadges as $relatedbadge) {
+                unset($relatedbadge->version);
+                unset($relatedbadge->language);
+                unset($relatedbadge->type);
+            }
+        }
+    }
+
+    $related = [
+        'context'       => $context,
+        'endorsement'   => $endorsement ? $endorsement : null,
+        'relatedbadges' => $relatedbadges,
+    ];
+
+    if (!empty($alignments)) {
+        $related['alignment'] = $alignments;
+    }
+
+    $exporter = new badgeclass_exporter($badge, $related);
+    return $exporter->export($PAGE->get_renderer('core', 'badges'));
 }
 
 /**
