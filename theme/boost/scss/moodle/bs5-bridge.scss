@@ -61,3 +61,22 @@
         @extend .text#{$infix}-right;
     }
 }
+
+.border-start {
+    @extend .border-left;
+}
+.border-end {
+    @extend .border-right;
+}
+.border-start-0 {
+    @extend .border-left-0;
+}
+.border-end-0 {
+    @extend .border-right-0;
+}
+.rounded-start {
+    @extend .rounded-left;
+}
+.rounded-end {
+    @extend .rounded-right;
+}

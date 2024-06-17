@@ -19421,7 +19421,7 @@ button.bg-dark:focus {
   border-top: 1px solid #dee2e6 !important;
 }
 
-.border-right {
+.border-right, .border-end {
   border-right: 1px solid #dee2e6 !important;
 }
 
@@ -19429,7 +19429,7 @@ button.bg-dark:focus {
   border-bottom: 1px solid #dee2e6 !important;
 }
 
-.border-left {
+.border-left, .border-start {
   border-left: 1px solid #dee2e6 !important;
 }
 
@@ -19441,7 +19441,7 @@ button.bg-dark:focus {
   border-top: 0 !important;
 }
 
-.border-right-0 {
+.border-right-0, .border-end-0 {
   border-right: 0 !important;
 }
 
@@ -19449,7 +19449,7 @@ button.bg-dark:focus {
   border-bottom: 0 !important;
 }
 
-.border-left-0 {
+.border-left-0, .border-start-0 {
   border-left: 0 !important;
 }
 
@@ -19502,7 +19502,7 @@ button.bg-dark:focus {
   border-top-right-radius: 0.25rem !important;
 }
 
-.rounded-right {
+.rounded-right, .rounded-end {
   border-top-right-radius: 0.25rem !important;
   border-bottom-right-radius: 0.25rem !important;
 }
@@ -19512,7 +19512,7 @@ button.bg-dark:focus {
   border-bottom-left-radius: 0.25rem !important;
 }
 
-.rounded-left {
+.rounded-left, .rounded-start {
   border-top-left-radius: 0.25rem !important;
   border-bottom-left-radius: 0.25rem !important;
 }
