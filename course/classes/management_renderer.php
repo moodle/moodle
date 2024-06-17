@@ -211,7 +211,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                     $viewcaturl,
                     $icon,
                     array(
-                            'class' => 'float-left',
+                            'class' => 'float-start',
                             'data-action' => 'collapse',
                             'title' => get_string('collapsecategory', 'moodle', $text),
                             'aria-controls' => 'subcategoryof'.$category->id
@@ -224,7 +224,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                     $viewcaturl,
                     $icon,
                     array(
-                            'class' => 'float-left',
+                            'class' => 'float-start',
                             'data-action' => 'expand',
                             'title' => get_string('expandcategory', 'moodle', $text)
                     )
@@ -235,14 +235,14 @@ class core_course_management_renderer extends plugin_renderer_base {
                     '',
                     'moodle',
                     array('class' => 'tree-icon'));
-            $icon = html_writer::span($icon, 'float-left');
+            $icon = html_writer::span($icon, 'float-start');
         }
         $actions = \core_course\management\helper::get_category_listitem_actions($category);
         $hasactions = !empty($actions) || $category->can_create_course();
 
         $html = html_writer::start_tag('li', $attributes);
         $html .= html_writer::start_div('clearfix');
-        $html .= html_writer::start_div('float-left ' . $checkboxclass);
+        $html .= html_writer::start_div('float-start ' . $checkboxclass);
         $html .= html_writer::start_div('custom-control custom-checkbox me-1 ');
         $html .= html_writer::empty_tag('input', $bcatinput);
         $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'sr-only');
@@ -253,15 +253,15 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::end_div();
         $html .= $icon;
         if ($hasactions) {
-            $textattributes = array('class' => 'float-left categoryname aalink');
+            $textattributes = array('class' => 'float-start categoryname aalink');
         } else {
-            $textattributes = array('class' => 'float-left categoryname without-actions');
+            $textattributes = array('class' => 'float-start categoryname without-actions');
         }
         if (isset($textlabel)) {
             $textattributes['aria-label'] = $textlabel;
         }
         $html .= html_writer::link($viewcaturl, $text, $textattributes);
-        $html .= html_writer::start_div('float-right d-flex');
+        $html .= html_writer::start_div('float-end d-flex');
         if ($category->idnumber) {
             $html .= html_writer::tag('span', s($category->idnumber), array('class' => 'text-muted idnumber'));
         }
@@ -620,10 +620,10 @@ class core_course_management_renderer extends plugin_renderer_base {
 
         if ($category->can_resort_courses()) {
             // In order for dnd to be available the user must be able to resort the category children..
-            $html .= html_writer::div($this->output->pix_icon('i/move_2d', get_string('dndcourse')), 'float-left drag-handle');
+            $html .= html_writer::div($this->output->pix_icon('i/move_2d', get_string('dndcourse')), 'float-start drag-handle');
         }
 
-        $html .= html_writer::start_div('float-left ' . $checkboxclass);
+        $html .= html_writer::start_div('float-start ' . $checkboxclass);
         $html .= html_writer::start_div('custom-control custom-checkbox me-1 ');
         $html .= html_writer::empty_tag('input', $bulkcourseinput);
         $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'sr-only');
@@ -1201,7 +1201,7 @@ class core_course_management_renderer extends plugin_renderer_base {
 
         $html  = html_writer::start_tag('li', $attributes);
         $html .= html_writer::start_div('clearfix');
-        $html .= html_writer::start_div('float-left');
+        $html .= html_writer::start_div('float-start');
         if ($bulkcourseinput) {
             $html .= html_writer::start_div('custom-control custom-checkbox me-1');
             $html .= html_writer::empty_tag('input', $bulkcourseinput);
@@ -1212,9 +1212,9 @@ class core_course_management_renderer extends plugin_renderer_base {
             $html .= html_writer::end_div();
         }
         $html .= html_writer::end_div();
-        $html .= html_writer::link($viewcourseurl, $text, array('class' => 'float-left coursename aalink'));
-        $html .= html_writer::tag('span', $categoryname, array('class' => 'float-left ms-3 text-muted'));
-        $html .= html_writer::start_div('float-right');
+        $html .= html_writer::link($viewcourseurl, $text, array('class' => 'float-start coursename aalink'));
+        $html .= html_writer::tag('span', $categoryname, array('class' => 'float-start ms-3 text-muted'));
+        $html .= html_writer::start_div('float-end');
         $html .= $this->search_listitem_actions($course);
         $html .= html_writer::tag('span', s($course->idnumber), array('class' => 'text-muted idnumber'));
         $html .= html_writer::end_div();

@@ -105,7 +105,7 @@ Use [flexbox utilities][flex], [float utilities][float], or [text alignment][tex
 
 {{< example >}}
 <div class="clearfix">
-  <div class="spinner-border float-right" role="status">
+  <div class="spinner-border float-end" role="status">
     <span class="sr-only">Loading...</span>
   </div>
 </div>

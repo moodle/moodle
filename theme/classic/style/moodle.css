@@ -20313,11 +20313,11 @@ button.bg-dark:focus {
     align-self: stretch !important;
   }
 }
-.float-left {
+.float-left, .float-start {
   float: left !important;
 }
 
-.float-right {
+.float-right, .float-end {
   float: right !important;
 }
 
@@ -20326,10 +20326,10 @@ button.bg-dark:focus {
 }
 
 @media (min-width: 576px) {
-  .float-sm-left {
+  .float-sm-left, .float-sm-start {
     float: left !important;
   }
-  .float-sm-right {
+  .float-sm-right, .float-sm-end {
     float: right !important;
   }
   .float-sm-none {
@@ -20337,10 +20337,10 @@ button.bg-dark:focus {
   }
 }
 @media (min-width: 768px) {
-  .float-md-left {
+  .float-md-left, .float-md-start {
     float: left !important;
   }
-  .float-md-right {
+  .float-md-right, .float-md-end {
     float: right !important;
   }
   .float-md-none {
@@ -20348,10 +20348,10 @@ button.bg-dark:focus {
   }
 }
 @media (min-width: 992px) {
-  .float-lg-left {
+  .float-lg-left, .float-lg-start {
     float: left !important;
   }
-  .float-lg-right {
+  .float-lg-right, .float-lg-end {
     float: right !important;
   }
   .float-lg-none {
@@ -20359,10 +20359,10 @@ button.bg-dark:focus {
   }
 }
 @media (min-width: 1200px) {
-  .float-xl-left {
+  .float-xl-left, .float-xl-start {
     float: left !important;
   }
-  .float-xl-right {
+  .float-xl-right, .float-xl-end {
     float: right !important;
   }
   .float-xl-none {
@@ -25433,14 +25433,6 @@ body.h5p-embed .h5pmessages {
   z-index: 1 !important; /* stylelint-disable-line declaration-no-important */
 }
 
-.float-left {
-  float: left !important; /* stylelint-disable-line declaration-no-important */
-}
-
-.float-right {
-  float: right !important; /* stylelint-disable-line declaration-no-important */
-}
-
 .img-responsive {
   max-width: 100%;
   height: auto;
@@ -28737,10 +28729,10 @@ span.editinstructions .alert-link {
 #course-category-listings .item-actions .menu-action-text {
   vertical-align: inherit;
 }
-#course-category-listings .listitem > div > .float-left {
+#course-category-listings .listitem > div > .float-start {
   float: left;
 }
-#course-category-listings .listitem > div > .float-right {
+#course-category-listings .listitem > div > .float-end {
   float: right;
   text-align: right;
 }

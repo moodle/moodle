@@ -168,7 +168,7 @@ class factor extends object_factor_base {
             get_string('editphonenumber', 'factor_sms'),
             ['class' => 'btn btn-secondary', 'type' => 'button']);
 
-        $mform->addElement('html', \html_writer::tag('div', $editphonenumber, ['class' => 'float-sm-left col-md-4']));
+        $mform->addElement('html', \html_writer::tag('div', $editphonenumber, ['class' => 'float-sm-start col-md-4']));
 
         // Disable the form check prompt.
         $mform->disable_form_change_checker();

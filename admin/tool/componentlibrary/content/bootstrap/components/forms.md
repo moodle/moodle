@@ -383,7 +383,7 @@ At times, you maybe need to use margin or padding utilities to create that perfe
     </div>
   </div>
   <fieldset class="form-group row">
-    <legend class="col-form-label col-sm-2 float-sm-left pt-0">Radios</legend>
+    <legend class="col-form-label col-sm-2 float-sm-start pt-0">Radios</legend>
     <div class="col-sm-10">
       <div class="form-check">
         <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>

@@ -37,3 +37,15 @@
         @extend .mr#{$infix}-auto;
     }
 }
+
+// Generate all float classes for all breakpoints for directions start and end.
+// float-start > float-left, float-sm-end > float-sm-right, ...
+@each $breakpoint in map-keys($grid-breakpoints) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+    .float#{$infix}-start {
+        @extend .float#{$infix}-left;
+    }
+    .float#{$infix}-end {
+        @extend .float#{$infix}-right;
+    }
+}
