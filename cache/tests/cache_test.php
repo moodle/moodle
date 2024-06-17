@@ -2230,7 +2230,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Test that locking before write works when writing across multiple layers.
      *
-     * @covers \cache_loader
+     * @covers \cache_application
      * @return void
      */
     public function test_application_locking_multiple_layers(): void {
@@ -2310,7 +2310,7 @@ class cache_test extends \advanced_testcase {
     /**
      * Tests that locking fails correctly when either layer of a 2-layer cache has a lock already.
      *
-     * @covers \cache_loader
+     * @covers \cache_application
      */
     public function test_application_locking_multiple_layers_failures(): void {
 

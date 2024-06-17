@@ -1099,8 +1099,6 @@ class framework_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of updateContent() with metadata.
-     *
-     * @covers ::updateContent
      */
     public function test_updateContent_withmetadata(): void {
         global $DB;

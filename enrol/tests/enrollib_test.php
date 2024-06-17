@@ -1739,7 +1739,7 @@ class enrollib_test extends advanced_testcase {
     /**
      * Test the behaviour of validate_enrol_plugin_data().
      *
-     * @covers ::validate_enrol_plugin_data
+     * @covers \enrol_plugin::validate_enrol_plugin_data
      */
     public function test_validate_enrol_plugin_data(): void {
         $this->resetAfterTest();
@@ -1761,7 +1761,7 @@ class enrollib_test extends advanced_testcase {
     /**
      * Test the behaviour of update_enrol_plugin_data().
      *
-     * @covers ::update_enrol_plugin_data
+     * @covers \enrol_plugin::update_enrol_plugin_data
      */
     public function test_update_enrol_plugin_data(): void {
         global $DB;

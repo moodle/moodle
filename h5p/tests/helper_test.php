@@ -205,7 +205,6 @@ class helper_test extends \advanced_testcase {
      * Test the behaviour of save_h5p() when the H5P file contains metadata.
      *
      * @runInSeparateProcess
-     * @covers ::save_h5p
      */
     public function test_save_h5p_metadata(): void {
         global $DB;

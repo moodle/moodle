@@ -883,7 +883,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Tests set_groups_messaging
      *
-     * @covers \core_group::set_groups_messaging
+     * @covers ::set_groups_messaging
      */
     public function test_set_groups_messaging(): void {
         $this->resetAfterTest();
@@ -923,7 +923,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Tests set group messaging where it doesn't exist
      *
-     * @covers \core_group::set_groups_messaging
+     * @covers ::set_groups_messaging
      */
     public function test_set_groups_messaging_doesnt_exist(): void {
         $this->resetAfterTest();

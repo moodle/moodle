@@ -30,13 +30,13 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2023 Kevin Percy <kevin.percy@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 4.2
+ * @covers \core_grades\external\get_feedback
  */
 class get_feedback_test extends \externallib_advanced_testcase {
 
     /**
      * Test get_feedback.
      *
-     * @covers ::get_feedback
      * @dataProvider get_feedback_provider
      * @param string|null $feedback The feedback text added for the grade item.
      * @param array $expected The expected feedback data.
@@ -103,7 +103,6 @@ class get_feedback_test extends \externallib_advanced_testcase {
     /**
      * Test get_feedback with invalid requests.
      *
-     * @covers ::get_feedback
      * @dataProvider get_feedback_invalid_request_provider
      * @param string $loggeduserrole The role of the logged user.
      * @param bool $feedbacknotincourse Whether to request a feedback for a grade item which is not a part of the course.

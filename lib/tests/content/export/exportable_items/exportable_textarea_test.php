@@ -33,7 +33,7 @@ use stdClass;
  * @category    test
  * @copyright   2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers      \core\content\exportable_items\exportable_textarea
+ * @covers      \core\content\export\exportable_items\exportable_textarea
  */
 class exportable_textarea_test extends advanced_testcase {
 

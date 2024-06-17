@@ -530,8 +530,6 @@ EOD;
 
     /**
      * Test the database debugging as SQL comment in anon class
-     *
-     * @covers ::add_sql_debugging
      */
     public function test_sql_debugging_anon_class(): void {
         global $CFG;
@@ -3924,8 +3922,6 @@ EOD;
 
     /**
      * Test DML libraries sql_cast_to_char method
-     *
-     * @covers ::sql_cast_to_char
      */
     public function test_cast_to_char(): void {
         $DB = $this->tdb;

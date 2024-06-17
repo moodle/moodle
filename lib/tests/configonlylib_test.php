@@ -147,7 +147,7 @@ class configonlylib_test extends \advanced_testcase {
     /**
      * Test the min_get_minimum_version function.
      *
-     * @covers ::min_get_minimum_version
+     * @covers ::min_get_minimum_revision
      */
     public function test_min_get_minimum_version(): void {
         // This is fairly hard to write a test for, but we can at least check that it returns a number
@@ -161,7 +161,7 @@ class configonlylib_test extends \advanced_testcase {
     /**
      * Test the min_get_maximum_version function.
      *
-     * @covers ::min_get_maximum_version
+     * @covers ::min_get_maximum_revision
      */
     public function test_min_get_maximum_version(): void {
         // The maximum version should be set to a time in the near future.

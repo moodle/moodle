@@ -291,8 +291,6 @@ class dml_read_slave_test extends \base_testcase {
      * so the latency parameter is applied properly.
      *
      * @return void
-     * @covers ::can_use_readonly
-     * @covers ::commit_delegated_transaction
      */
     public function test_transaction(): void {
         $DB = $this->new_db(true);
@@ -339,8 +337,6 @@ class dml_read_slave_test extends \base_testcase {
      * so the latency parameter is applied properly.
      *
      * @return void
-     * @covers ::can_use_readonly
-     * @covers ::query_end
      */
     public function test_long_update(): void {
         $DB = $this->new_db(true);
@@ -382,8 +378,6 @@ class dml_read_slave_test extends \base_testcase {
      * when the latency parameter is applied properly.
      *
      * @return void
-     * @covers ::can_use_readonly
-     * @covers ::commit_delegated_transaction
      */
     public function test_transaction_with_events(): void {
         $this->with_global_db(function () {

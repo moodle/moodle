@@ -32,7 +32,7 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
  * Unit tests for roles datasource
  *
  * @package     core_role
- * @covers      \core_role\reportbuilder\datasource\roles;
+ * @covers      \core_role\reportbuilder\datasource\roles
  * @copyright   2024 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

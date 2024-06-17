@@ -24,7 +24,7 @@ use core_courseformat\hook\after_cm_name_edited;
  * @package    core_courseformat
  * @copyright  2024 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_courseformat\cmactions
+ * @coversDefaultClass \core_courseformat\local\cmactions
  */
 final class cmactions_test extends \advanced_testcase {
     /**
