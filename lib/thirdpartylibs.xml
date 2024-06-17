@@ -743,7 +743,7 @@ All rights reserved.</copyright>
   <library>
       <location>laravel/serializable-closure</location>
       <name>Serializable Closure</name>
-      <version>1.3.2</version>
+      <version>1.3.3</version>
       <license>MIT</license>
       <repository>https://github.com/laravel/serializable-closure</repository>
   </library>
