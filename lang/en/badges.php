@@ -26,7 +26,7 @@
 
 $string['actions'] = 'Actions';
 $string['activate'] = 'Enable access';
-$string['activatesuccess'] = 'Access to the badges was successfully enabled.';
+$string['activatesuccess'] = 'Access to badge \'{$a}\' enabled.';
 $string['addalignment'] = 'Add external skill or standard';
 $string['addbadge'] = 'Add badges';
 $string['addbadge_help'] = 'Select all badges that should be added to this badge requirement. Hold CTRL key to select multiple items.';
@@ -78,7 +78,7 @@ $string['attachment_help'] = 'If enabled, an issued badge will be attached to th
 $string['award'] = 'Award badge';
 $string['awardedto'] = 'Awarded to {$a}';
 $string['awardedtoyou'] = 'Issued to me';
-$string['awardoncron'] = 'Access to the badges was successfully enabled. Too many users can instantly earn this badge. To ensure site performance, this action will take some time to process.';
+$string['awardoncron'] = 'A high number of users are being awarded the badge \'{$a->badgename}\'. It may take some time for all users to receive it.';
 $string['awards'] = 'Recipients';
 $string['backpackavailability'] = 'External badge verification';
 $string['backpackconnectionok'] = 'Backpack connection successfully established';
@@ -272,7 +272,7 @@ $string['dateawarded'] = 'Date issued';
 $string['dateearned'] = 'Date: {$a}';
 $string['day'] = 'Day(s)';
 $string['deactivate'] = 'Disable access';
-$string['deactivatesuccess'] = 'Access to the badges was successfully disabled.';
+$string['deactivatesuccess'] = 'Access to badge \'{$a}\' disabled.';
 $string['defaultissuercontact'] = 'Badge issuer email address';
 $string['defaultissuercontact_desc'] = 'An email address associated with the badge issuer. For an Open Badges v2.0 backpack, this is used for authentication when publishing badges to a backpack.';
 $string['defaultissuerpassword'] = 'Badge issuer password';
@@ -296,7 +296,6 @@ $string['error:backpackdatainvalid'] = 'The data return from the backpack was in
 $string['error:backpackemailnotfound'] = 'The email \'{$a}\' is not associated with a backpack. You need to <a href="http://backpack.openbadges.org">create a backpack</a> for that account or sign in with another email address.';
 $string['error:badgeawardnotfound'] = 'Cannot verify this awarded badge.  This badge may have been revoked.';
 $string['error:badgenotfound'] = 'Badge not found';
-$string['error:cannotact'] = 'Cannot activate the badge. ';
 $string['error:cannotawardbadge'] = 'Cannot award badge to a user.';
 $string['error:cannotrevokebadge'] = 'Cannot revoke badge from a user.';
 $string['error:cannotdeletecriterion'] = 'This criterion cannot be deleted. ';
@@ -461,8 +460,8 @@ $string['notifydaily'] = 'Daily';
 $string['notifyevery'] = 'Every time';
 $string['notifymonthly'] = 'Monthly';
 $string['notifyweekly'] = 'Weekly';
-$string['numawards'] = 'This badge has been issued to <a href="{$a->link}">{$a->count}</a> user(s).';
-$string['numawardstat'] = 'This badge has been issued {$a} user(s).';
+$string['numawards'] = 'Users awarded badge \'{$a->badgename}\': <a href="{$a->link}">{$a->count}</a>.';
+$string['numawardstat'] = 'Users awarded badge \'{$a->badgename}\': {$a->awards}.';
 $string['overallcrit'] = 'of the selected criteria are complete.';
 $string['oauth2issuer'] = 'OAuth 2 services';
 $string['openbadgesv1'] = 'Open Badges v1.0';
@@ -516,7 +515,6 @@ $string['requiredcohort'] = 'At least one cohort should be added to the cohort c
 $string['requiredcompetency'] = 'At least one competency should be added to the competency criterion.';
 $string['requiredcourse'] = 'At least one course should be added to the courseset criterion.';
 $string['requiredbadge'] = 'At least one badge should be added to the badge criterion.';
-$string['reviewbadge'] = 'Changes in badge access';
 $string['reviewconfirm'] = '<p>This will make your badge visible to users and allow them to start earning it.</p>
 
 <p>It is possible that some users already meet this badge\'s criteria and will be issued this badge immediately after you enable it.</p>
@@ -598,4 +596,6 @@ $string['backpackemail'] = 'Email address';
 $string['backpackemail_help'] = 'The email address associated with your backpack. While you are connected, any badges earned on this site will be associated with this email address.';
 
 // Deprecated since Moodle 4.5.
+$string['error:cannotact'] = 'Cannot activate the badge. ';
 $string['error:duplicatename'] = 'Badge with such name already exists in the system.';
+$string['reviewbadge'] = 'Changes in badge access';

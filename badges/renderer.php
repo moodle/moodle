@@ -242,6 +242,7 @@ class core_badges_renderer extends plugin_renderer_base {
             if ($badge->has_awards()) {
                 $url = new moodle_url('/badges/recipients.php', array('id' => $badge->id));
                 $a = new stdClass();
+                $a->badgename = $badge->name;
                 $a->link = $url->out();
                 $a->count = count($badge->get_awards());
                 $display .= get_string('numawards', 'badges', $a);

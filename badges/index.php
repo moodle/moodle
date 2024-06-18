@@ -161,5 +161,6 @@ $report = system_report_factory::create(badges::class, $PAGE->context);
 $report->set_default_no_results_notice(new lang_string('nobadges', 'badges'));
 
 echo $report->output();
+$PAGE->requires->js_call_amd('core_badges/actions', 'init');
 
 echo $OUTPUT->footer();
