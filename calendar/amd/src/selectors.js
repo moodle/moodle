@@ -73,5 +73,6 @@ define([], function() {
         },
         mainCalendar: '.maincalendar .heightcontainer',
         fullCalendarView: 'page-calendar-view',
+        pageHeaderHeadings: '.page-header-headings h1',
     };
 });
