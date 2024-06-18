@@ -75,7 +75,7 @@ echo $OUTPUT->heading(print_badge_image($badge, $context, 'small') . ' ' . $badg
 
 if ($awards == 'cron') {
     echo $OUTPUT->notification(get_string('awardoncron', 'badges'), 'notifysuccess');
-} else if ($awards != 0) {
+} else if ((int)$awards > 0) {
     echo $OUTPUT->notification(get_string('numawardstat', 'badges', $awards), 'notifysuccess');
 }
 echo $output->print_badge_status_box($badge);
