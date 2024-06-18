@@ -40,6 +40,7 @@ import Pending from 'core/pending';
 import ContentTree from 'core_courseformat/local/courseeditor/contenttree';
 // The jQuery module is only used for interacting with Boostrap 4. It can we removed when MDL-71979 is integrated.
 import jQuery from 'jquery';
+import Notification from "core/notification";
 
 // Load global strings.
 prefetchStrings('core', ['movecoursesection', 'movecoursemodule', 'confirm', 'delete']);
@@ -82,11 +83,15 @@ export default class extends BaseComponent {
             ACTIONMENUTOGGLER: `[data-toggle="dropdown"]`,
             // Availability modal selectors.
             OPTIONSRADIO: `[type='radio']`,
+            COURSEADDSECTION: `#course-addsection`,
+            MAXSECTIONSWARNING: `[data-region='max-sections-warning']`,
+            ADDSECTIONREGION: `[data-region='section-addsection']`,
         };
         // Component css classes.
         this.classes = {
             DISABLED: `disabled`,
             ITALIC: `font-italic`,
+            DISPLAYNONE: `d-none`,
         };
     }
 
@@ -719,12 +724,28 @@ export default class extends BaseComponent {
      * @param {boolean} locked the new locked value.
      */
     _setAddSectionLocked(locked) {
-        const targets = this.getElements(this.selectors.ADDSECTION);
+        const targets = this.getElements(this.selectors.ADDSECTIONREGION);
         targets.forEach(element => {
             element.classList.toggle(this.classes.DISABLED, locked);
-            element.classList.toggle(this.classes.ITALIC, locked);
-            this.setElementLocked(element, locked);
+            const addSectionElement = element.querySelector(this.selectors.ADDSECTION);
+            addSectionElement.classList.toggle(this.classes.DISABLED, locked);
+            this.setElementLocked(addSectionElement, locked);
+            // We tweak the element to show a tooltip as a title attribute.
+            if (locked) {
+                getString('sectionaddmax', 'core_courseformat')
+                    .then((text) => addSectionElement.setAttribute('title', text))
+                    .catch(Notification.exception);
+                addSectionElement.style.pointerEvents = null; // Unlocks the pointer events.
+                addSectionElement.style.userSelect = null; // Unlocks the pointer events.
+            } else {
+                addSectionElement.setAttribute('title', addSectionElement.dataset.addSections);
+            }
         });
+        const courseAddSection = this.getElement(this.selectors.COURSEADDSECTION);
+        const addSection = courseAddSection.querySelector(this.selectors.ADDSECTION);
+        addSection.classList.toggle(this.classes.DISPLAYNONE, locked);
+        const noMoreSections = courseAddSection.querySelector(this.selectors.MAXSECTIONSWARNING);
+        noMoreSections.classList.toggle(this.classes.DISPLAYNONE, !locked);
     }
 
     /**
