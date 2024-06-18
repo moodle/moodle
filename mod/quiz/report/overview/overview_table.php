@@ -204,20 +204,28 @@ class quiz_overview_table extends attempts_report_table {
     }
 
     protected function submit_buttons() {
-        if (has_capability('mod/quiz:regrade', $this->context)) {
-            $regradebuttonparams = [
-                'type'  => 'submit',
-                'class' => 'btn btn-secondary mr-1',
-                'name'  => 'regrade',
-                'value' => get_string('regradeselected', 'quiz_overview'),
-                'data-action' => 'toggle',
-                'data-togglegroup' => $this->togglegroup,
-                'data-toggle' => 'action',
-                'disabled' => true
-            ];
-            echo html_writer::empty_tag('input', $regradebuttonparams);
-        }
+        global $PAGE, $OUTPUT;
         parent::submit_buttons();
+        if (has_capability('mod/quiz:regrade', $this->context)) {
+            $questionslots = [];
+            foreach ($this->questions as $slot => $question) {
+                $questionslots[] = [
+                    'slot' => $slot,
+                    'name' => get_string('questionno', 'question', $question->number),
+                ];
+            }
+            echo html_writer::empty_tag('input', [
+                'type' => 'button',
+                'id' => 'regradeattempts',
+                'class' => 'btn btn-secondary mr-1',
+                'name' => 'regradeattempts',
+                'value' => get_string('regrade_attempts', 'quiz_overview'),
+                'data-slots' => json_encode($questionslots),
+                // There is currently not a good way to render a help icon in a template, so put the required HTML here.
+                'data-help-icon' => $OUTPUT->help_icon('regrade', 'quiz_overview'),
+            ]);
+            $PAGE->requires->js_call_amd('quiz_overview/regrade_modal', 'init');
+        }
     }
 
     public function col_sumgrades($attempt) {

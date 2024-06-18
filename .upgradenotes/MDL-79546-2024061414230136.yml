@@ -1,0 +1,7 @@
+issueNumber: MDL-79546
+notes:
+  quiz:
+    - message: >-
+        The functions quiz_overview_report::regrade_attempts and regrade_batch_of_attempts now
+        have a new optional parameter $slots to only regrade some slots in each attempt (default all).
+      type: improved
