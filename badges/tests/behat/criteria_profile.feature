@@ -22,7 +22,7 @@ Feature: Award badges based on user profile field
     And I set the field "id_field_picture" to "1"
     And I press "Save"
     And I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I log out
     When I log in as "user1"
     And I follow "Profile" in the user menu

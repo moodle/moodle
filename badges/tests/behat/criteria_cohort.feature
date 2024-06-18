@@ -31,7 +31,7 @@ Feature: Award badges based on cohort
     And I set the field "id_cohort_cohorts" to "One Cohort"
     And I press "Save"
     And I press "Enable access"
-    When I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     Then I should see "Recipients (1)"
     And I log out
     And I log in as "user1"
@@ -70,7 +70,7 @@ Feature: Award badges based on cohort
     And I set the field "id_agg_1" to "1"
     And I press "Save"
     When I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     Then I should see "Recipients (1)"
     And I log out
     And I log in as "user1"
@@ -110,7 +110,7 @@ Feature: Award badges based on cohort
     And I set the field "id_cohort_cohorts" to "One Cohort"
     And I press "Save"
     When I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     Then I should see "Recipients (2)"
     And I log out
     And I log in as "user1"
@@ -153,7 +153,7 @@ Feature: Award badges based on cohort
     And I set the field "Any of the selected roles awards the badge" to "1"
     And I press "Save"
     When I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "First User (first@example.com)"
@@ -207,7 +207,7 @@ Feature: Award badges based on cohort
     And I press "Save"
     And I set the field "update" to "Any"
     When I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I select "Recipients (1)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "First User (first@example.com)"
@@ -266,7 +266,7 @@ Feature: Award badges based on cohort
     And I press "Save"
     And I set the field "update" to "Any"
     When I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I select "Recipients (1)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "First User (first@example.com)"
@@ -327,7 +327,7 @@ Feature: Award badges based on cohort
     And I press "Save"
     And I set the field "update" to "All"
     When I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "First User (first@example.com)"
@@ -378,7 +378,7 @@ Feature: Award badges based on cohort
     And I set the field "id_cohort_cohorts" to "One Cohort"
     And I press "Save"
     And I press "Enable access"
-    When I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I should see "Recipients (1)"
     And I navigate to "Badges > Manage badges" in site administration
     And I press "Edit" action in the "Site Badge 2" report row
@@ -387,7 +387,7 @@ Feature: Award badges based on cohort
     And I set the field "id_cohort_cohorts" to "Two Cohort"
     And I press "Save"
     And I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     Then I should see "Recipients (2)"
     And I log out
     And I log in as "user1"
@@ -436,8 +436,8 @@ Feature: Award badges based on cohort
     And I set the field "id_cohort_cohorts" to "One Cohort,Two Cohort"
     And I set the field "id_agg_1" to "1"
     And I press "Save"
-    And I press "Enable access"
-    When I press "Continue"
+    When I press "Enable access"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I should see "Recipients (1)"
     And I navigate to "Badges > Manage badges" in site administration
     And I press "Edit" action in the "Site Badge 2" report row
@@ -448,7 +448,7 @@ Feature: Award badges based on cohort
     And I set the field "id_agg_1" to "1"
     And I press "Save"
     And I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I should see "Recipients (1)"
     And I log out
     And I log in as "user1"

@@ -86,7 +86,7 @@ Feature: Test tertiary navigation as various users
     And I navigate to "Badges" in current page administration
     And I click on "Manage badges" "button"
     And I press "Enable access" action in the "Testing course badge" report row
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I log out
     # Now student should see the Badges link.
     And I am on the "C1" "Course" page logged in as "student1"

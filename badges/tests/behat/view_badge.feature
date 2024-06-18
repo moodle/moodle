@@ -9,26 +9,26 @@ Feature: Display badges
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@example.com |
     # Create system badge and define a criterion.
+    Given the following "core_badges > Badge" exists:
+      | name        | Testing system badge             |
+      | description | Testing system badge description |
+      | image       | badges/tests/behat/badge.png     |
+      | version     | 1.1                              |
+      | status      | 0                                |
+      | type        | 1                                |
+      | language    | ca                               |
+    And the following "core_badges > Criteria" exists:
+      | badge  | Testing system badge |
+      | role   | editingteacher       |
     And I log in as "admin"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name | Testing system badge |
-      | Version | 1.1 |
-      | Language | Catalan |
-      | Description | Testing system badge description |
-      | Image author | http://author.example.com |
-      | Image caption | Test caption image |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
-    And I set the field "type" to "Manual issue by role"
-    And I expand all fieldsets
-    And I set the field "Teacher" to "1"
-    And I press "Save"
+    And I navigate to "Badges > Manage badges" in site administration
+    And I follow "Testing system badge"
+    And I select "Criteria" from the "jump" singleselect
 
   Scenario: Display badge without expired date
     # Enable the badge.
     Given I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     # Award badge to student1.
     And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
@@ -53,7 +53,7 @@ Feature: Display badges
     And I set the field "id_field_firstname" to "1"
     And I press "Save"
     And I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     # Award badge to student1.
     And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
@@ -81,7 +81,7 @@ Feature: Display badges
     And I press "Save"
     And I set the field "update" to "2"
     And I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     # Check badge details are displayed.
     And I select "Recipients (2)" from the "jump" singleselect
     And I press "View issued badge" action in the "Student 1" report row
@@ -101,8 +101,10 @@ Feature: Display badges
     When I click on "Relative date" "radio"
     And I set the field "expireperiod[number]" to "1"
     And I press "Save changes"
+    And I should see "Changes saved"
+    And I select "Overview" from the "jump" singleselect
     And I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     # Award badge to student1.
     And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
@@ -123,8 +125,10 @@ Feature: Display badges
     And I set the field "expireperiod[timeunit]" to "1"
     And I set the field "expireperiod[number]" to "1"
     And I press "Save changes"
+    And I should see "Changes saved"
+    And I select "Overview" from the "jump" singleselect
     And I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     # Award badge to student1.
     And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"

@@ -59,7 +59,7 @@ Feature: Award badges based on activity completion
     And I set the field "Quiz - Test quiz name 1" to "1"
     And I press "Save"
     And I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I should see "Recipients (0)"
     # Pass grade for student1. Activity is considered complete because student1 got a passing grade.
     And user "student1" has attempted "Test quiz name 1" with responses:
@@ -85,7 +85,7 @@ Feature: Award badges based on activity completion
     And I set the field "Quiz - Test quiz name 2" to "1"
     And I press "Save"
     And I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     # Pass grade for student1.
     And user "student1" has attempted "Test quiz name 2" with responses:
       | slot | response |
@@ -119,7 +119,7 @@ Feature: Award badges based on activity completion
     And I press "Save"
     # Enable badge access once students have completed the activity.
     When I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     # Only student1 should earn the badge because student2 did not pass the quiz.
     Then I should see "Recipients (1)"
     And I select "Recipients (1)" from the "jump" singleselect

@@ -14,37 +14,25 @@ Feature: Enable Block Badges in a course
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    # Issue badge 1 of 2
-    And I navigate to "Badges > Add a new badge" in current page administration
-    And I set the following fields to these values:
-      | id_name | Badge 1 |
-      | id_description | Badge 1 |
-    And I upload "blocks/badges/tests/fixtures/badge.png" file to "Image" filemanager
-    And I press "Create badge"
-    And I select "Manual issue by role" from the "Add badge criteria" singleselect
-    And I set the field "Teacher" to "1"
-    And I press "Save"
-    And I press "Enable access"
-    And I press "Continue"
+    And the following "core_badges > Badges" exist:
+      | name    | course | description | image                        | status | type |
+      | Badge 1 | C1     | Badge 1     | badges/tests/behat/badge.png | active | 2    |
+      | Badge 2 | C1     | Badge 2     | badges/tests/behat/badge.png | active | 2    |
+    And the following "core_badges > Criterias" exist:
+      | badge   | role           |
+      | Badge 1 | editingteacher |
+      | Badge 2 | editingteacher |
+    And I am on the "Course 1" "course" page logged in as "teacher1"
+    And I navigate to "Badges > Manage badges" in current page administration
+    And I follow "Badge 1"
     And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Teacher 1 (teacher1@example.com)"
     And I press "Award badge"
     # Issue Badge 2 of 2
     And I am on "Course 1" course homepage
-    And I navigate to "Badges > Add a new badge" in current page administration
-    And I set the following fields to these values:
-      | id_name | Badge 2 |
-      | id_description | Badge 2 |
-    And I upload "blocks/badges/tests/fixtures/badge.png" file to "Image" filemanager
-    And I press "Create badge"
-    And I select "Manual issue by role" from the "Add badge criteria" singleselect
-    And I set the field "Teacher" to "1"
-    And I press "Save"
-    And I press "Enable access"
-    And I press "Continue"
+    And I navigate to "Badges > Manage badges" in current page administration
+    And I follow "Badge 2"
     And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Teacher 1 (teacher1@example.com)"

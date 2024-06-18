@@ -29,37 +29,23 @@ Feature: Award badges
 
   @javascript
   Scenario: Award badge on other badges as criteria
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    # Create course badge 1.
-    And I navigate to "Badges > Add a new badge" in current page administration
-    And I set the following fields to these values:
-      | Name | Course Badge 1 |
-      | Description | Course badge 1 description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
-    And I set the field "type" to "Manual issue by role"
-    And I expand all fieldsets
-    # Set to ANY of the roles awards badge.
-    And I set the field "Teacher" to "1"
-    And I set the field "Any of the selected roles awards the badge" to "1"
-    And I press "Save"
-    And I press "Enable access"
-    And I press "Continue"
-    # Badge #2
-    And I am on "Course 1" course homepage
-    And I navigate to "Badges > Add a new badge" in current page administration
-    And I set the following fields to these values:
-      | Name | Course Badge 2 |
-      | Description | Course badge 2 description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
-    # Set "course badge 1" as criteria
+    Given the following "core_badges > Badges" exist:
+      | name           | course | description                | image                        | status | type |
+      | Course Badge 1 | C1     | Course badge 1 description | badges/tests/behat/badge.png | active | 2    |
+      | Course Badge 2 | C1     | Course badge 2 description | badges/tests/behat/badge.png | 0      | 2    |
+    And the following "core_badges > Criteria" exists:
+      | badge  | Course Badge 1 |
+      | role   | editingteacher |
+    And I am on the "Course 1" "course" page logged in as "teacher1"
+    And I navigate to "Badges > Manage badges" in current page administration
+    And I follow "Course Badge 2"
+    And I select "Criteria" from the "jump" singleselect
+    # Set "course badge 1" as criteria for Badge 2.
     And I set the field "type" to "Awarded badges"
     And I set the field "id_badge_badges" to "Course Badge 1"
     And I press "Save"
     And I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge 1"
@@ -110,13 +96,16 @@ Feature: Award badges
 
   @javascript
   Scenario: Award profile badge
+    Given the following "core_badges > Badge" exists:
+      | name        | Profile Badge                |
+      | description | Test badge description       |
+      | image       | badges/tests/behat/badge.png |
+      | status      | 0                            |
+      | type        | 1                            |
     Given I log in as "admin"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name | Profile Badge |
-      | Description | Test badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    And I navigate to "Badges > Manage badges" in site administration
+    And I follow "Profile Badge"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Profile completion"
     And I expand all fieldsets
     And I set the field "First name" to "1"
@@ -131,7 +120,7 @@ Feature: Award badges
     And I should see "Criterion description"
     And I should not see "Criteria for this badge have not been set up yet."
     And I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I open my profile in edit mode
     And I expand all fieldsets
     And I set the field "Phone" to "123456789"
@@ -142,18 +131,18 @@ Feature: Award badges
 
   @javascript
   Scenario: Award site badge
-    Given I log in as "admin"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name | Site Badge |
-      | Description | Site badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
-    And I set the field "type" to "Manual issue by role"
-    And I set the field "Teacher" to "1"
-    And I press "Save"
-    And I press "Enable access"
-    And I press "Continue"
+    Given the following "core_badges > Badge" exists:
+      | name        | Site Badge                   |
+      | description | Site badge description       |
+      | image       | badges/tests/behat/badge.png |
+      | status      | active                       |
+      | type        | 1                            |
+    And the following "core_badges > Criteria" exists:
+      | badge  | Site Badge     |
+      | role   | editingteacher |
+    And I log in as "admin"
+    And I navigate to "Badges > Manage badges" in site administration
+    And I follow "Site Badge"
     And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Teacher 1 (teacher1@example.com)"
@@ -170,19 +159,19 @@ Feature: Award badges
 
   @javascript
   Scenario: Award course badge
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Badges > Add a new badge" in current page administration
-    And I set the following fields to these values:
-      | Name | Course Badge |
-      | Description | Course badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
-    And I set the field "type" to "Manual issue by role"
-    And I set the field "Teacher" to "1"
-    And I press "Save"
-    And I press "Enable access"
-    And I press "Continue"
+    Given the following "core_badges > Badge" exists:
+      | name        | Course Badge                 |
+      | course      | C1                           |
+      | description | Course badge description     |
+      | image       | badges/tests/behat/badge.png |
+      | status      | active                       |
+      | type        | 2                            |
+    And the following "core_badges > Criteria" exists:
+      | badge  | Course Badge   |
+      | role   | editingteacher |
+    And I am on the "Course 1" "course" page logged in as "teacher1"
+    And I navigate to "Badges > Manage badges" in current page administration
+    And I follow "Course Badge"
     And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Student 2 (student2@example.com)"
@@ -202,20 +191,22 @@ Feature: Award badges
 
   @javascript
   Scenario: Award badge on activity completion
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I change window size to "large"
-    And I navigate to "Badges > Add a new badge" in current page administration
-    And I set the following fields to these values:
-      | Name | Course Badge |
-      | Description | Course badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    Given the following "core_badges > Badge" exists:
+      | name        | Course Badge                 |
+      | course      | C1                           |
+      | description | Course badge description     |
+      | image       | badges/tests/behat/badge.png |
+      | status      | 0                            |
+      | type        | 2                            |
+    And I am on the "Course 1" "course" page logged in as "teacher1"
+    And I navigate to "Badges > Manage badges" in current page administration
+    And I follow "Course Badge"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Activity completion"
     And I set the field "Test assignment name" to "1"
     And I press "Save"
     And I press "Enable access"
-    When I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I log out
     And I log in as "student1"
     And I follow "Profile" in the user menu
@@ -236,25 +227,28 @@ Feature: Award badges
       | section        | 1             |
       | completion     | 2             |
       | completionview | 1             |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    Given the following "core_badges > Badge" exists:
+      | name        | Course Badge                 |
+      | course      | C1                           |
+      | description | Course badge description     |
+      | image       | badges/tests/behat/badge.png |
+      | status      | 0                            |
+      | type        | 2                            |
+    And I am on the "Course 1" "course" page logged in as "teacher1"
     And I navigate to "Course completion" in current page administration
     And I set the field "id_overall_aggregation" to "2"
     And I click on "Condition: Activity completion" "link"
     And I set the field "Assignment - Music history" to "1"
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I navigate to "Badges > Add a new badge" in current page administration
-    And I set the following fields to these values:
-      | Name | Course Badge |
-      | Description | Course badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    And I navigate to "Badges > Manage badges" in current page administration
+    And I follow "Course Badge"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Course completion"
     And I set the field with xpath ".//*[contains(., 'Minimum grade required')]/ancestor::*[contains(concat(' ', @class, ' '), ' fitem ')]//input[1]" to "0"
     And I press "Save"
     And I press "Enable access"
-    When I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I log out
     And I log in as "student1"
     And I follow "Profile" in the user menu
@@ -276,23 +270,19 @@ Feature: Award badges
 
   @javascript
   Scenario: All of the selected roles can award badges
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    # Create course badge 1.
-    And I navigate to "Badges > Add a new badge" in current page administration
-    And I set the following fields to these values:
-      | Name | Course Badge 1 |
-      | Description | Course badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
-    And I set the field "type" to "Manual issue by role"
-    And I expand all fieldsets
-    # Set to ANY of the roles awards badge.
-    And I set the field "Teacher" to "1"
-    And I set the field "Any of the selected roles awards the badge" to "1"
-    And I press "Save"
-    And I press "Enable access"
-    And I press "Continue"
+    Given the following "core_badges > Badge" exists:
+      | name        | Course Badge 1               |
+      | course      | C1                           |
+      | description | Course badge description     |
+      | image       | badges/tests/behat/badge.png |
+      | status      | active                       |
+      | type        | 2                            |
+    And the following "core_badges > Criteria" exists:
+      | badge  | Course Badge 1 |
+      | role   | editingteacher |
+    And I am on the "Course 1" "course" page logged in as "teacher1"
+    And I navigate to "Badges > Manage badges" in current page administration
+    And I follow "Course Badge 1"
     And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     # Award course badge 1 to student 1.
@@ -304,13 +294,16 @@ Feature: Award badges
     And I select "Recipients (1)" from the "jump" singleselect
     Then I should see "Recipients (1)"
     # Add course badge 2.
-    And I am on "Course 1" course homepage
-    And I navigate to "Badges > Add a new badge" in current page administration
-    And I set the following fields to these values:
-      | Name | Course Badge 2 |
-      | Description | Course badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    Given the following "core_badges > Badge" exists:
+      | name        | Course Badge 2               |
+      | course      | C1                           |
+      | description | Course badge description     |
+      | image       | badges/tests/behat/badge.png |
+      | status      | 0                            |
+      | type        | 2                            |
+    And I navigate to "Badges > Manage badges" in current page administration
+    And I follow "Course Badge 2"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Manual issue by role"
     And I expand all fieldsets
     # Set to ALL of the selected roles award badge.
@@ -318,7 +311,7 @@ Feature: Award badges
     And I set the field "All of the selected roles award the badge" to "1"
     And I press "Save"
     And I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     # Award course badge 2 to student 2.
@@ -347,19 +340,19 @@ Feature: Award badges
 
   @javascript
   Scenario: Revoke badge
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Badges > Add a new badge" in current page administration
-    And I set the following fields to these values:
-      | Name | Course Badge |
-      | Description | Course badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
-    And I set the field "type" to "Manual issue by role"
-    And I set the field "Teacher" to "1"
-    And I press "Save"
-    And I press "Enable access"
-    And I press "Continue"
+    Given the following "core_badges > Badge" exists:
+      | name        | Course Badge                 |
+      | course      | C1                           |
+      | description | Course badge description     |
+      | image       | badges/tests/behat/badge.png |
+      | status      | active                       |
+      | type        | 2                            |
+    And the following "core_badges > Criteria" exists:
+      | badge  | Course Badge   |
+      | role   | editingteacher |
+    And I am on the "Course 1" "course" page logged in as "teacher1"
+    And I navigate to "Badges > Manage badges" in current page administration
+    And I follow "Course Badge"
     And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Student 2 (student2@example.com)"
