@@ -4,6 +4,6 @@ notes:
     - message: |
         The following files and their contents have been deprecated:
 
-        - `lib/soaplib.php
+        - `lib/soaplib.php`
         - `lib/tokeniserlib.php`
       type: deprecated

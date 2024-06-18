@@ -49,7 +49,7 @@
  * @copyright (C) 2001-3001 Eloy Lafuente (stronk7) {@link http://contiento.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated Moodle 4.5
- * @todo MDL-89124 Remove this file.
+ * @todo MDL-82194 Remove this file.
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -58,7 +58,6 @@ debugging(
     'The tokeniserlib.php file is deprecated and should not be used any more. ',
     DEBUG_DEVELOPER,
 );
-
 
 /**
  * Some constants

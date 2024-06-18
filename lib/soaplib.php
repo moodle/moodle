@@ -25,7 +25,7 @@
  *             {@link http://maths.york.ac.uk/serving_maths}
  *             and others
  * @deprecated Moodle 4.5
- * @todo MDL-89124 Remove this file.
+ * @todo MDL-82194 Remove this file.
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -34,7 +34,6 @@ debugging(
     'The soaplib.php file is deprecated and should not be used any more. ',
     DEBUG_DEVELOPER,
 );
-
 
 /**
 * Create a new SoapClient object
