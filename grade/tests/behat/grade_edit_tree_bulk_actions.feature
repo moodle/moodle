@@ -116,9 +116,8 @@ Feature: Teachers can perform bulk actions on grade items and categories in the 
     And "Collapse" "link" should exist in the "Category 2" "list_item"
 
   Scenario: A teacher can move multiple grade items to a category
-    Given I set the following fields to these values:
-      | Grade item 1 | 1 |
-      | Grade item 2 | 1 |
+    Given I set the field "Grade item 2" to "1"
+    And I set the field "Grade item 1" to "1"
     And I click on "Move" "button" in the "sticky-footer" "region"
     And I click on "Category 3" "list_item" in the "Move items" "dialogue"
     And I click on "Move" "button" in the "Move items" "dialogue"
