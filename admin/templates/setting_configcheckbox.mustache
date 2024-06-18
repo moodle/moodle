@@ -38,6 +38,6 @@
     }
 }}
 <div class="form-checkbox defaultsnext">
-    <input type="hidden" name="{{name}}" value="{{no}}">
+    {{^readonly}}<input type="hidden" name="{{name}}" value="{{no}}">{{/readonly}}
     <input {{#readonly}}disabled{{/readonly}} type="checkbox" name="{{name}}" value="{{value}}" id="{{id}}" {{#checked}}checked{{/checked}}>
 </div>
