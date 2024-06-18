@@ -29886,6 +29886,35 @@ span.editinstructions .alert-link {
   border-radius: 0.25rem;
 }
 
+/* Styles for the Move activity and Move section modals */
+.move-activity-tree .collapse-list-item {
+  border-radius: 0.25rem;
+}
+.move-activity-tree .collapse-list-item:hover, .move-activity-tree .collapse-list-item:focus {
+  background-color: #cfe2f2;
+}
+.move-activity-tree .collapse-list-item:hover a, .move-activity-tree .collapse-list-item:focus a {
+  color: #083863;
+}
+.move-activity-tree .collapse-list-item a {
+  color: #1d2125;
+}
+.move-activity-tree .collapse-list-item a:hover, .move-activity-tree .collapse-list-item a:focus {
+  text-decoration: none;
+}
+.move-activity-tree .collapse-list-item a.disabled {
+  color: #6a737b;
+}
+.move-activity-tree .collapse-list-item-content .collapse-list-item {
+  padding: 0.5rem 1rem;
+}
+.move-activity-tree ul {
+  margin-left: 1.5rem;
+}
+.move-activity-tree .collapse-list-link {
+  font-weight: bold;
+}
+
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
 :target,
 :focus {

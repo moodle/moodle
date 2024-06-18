@@ -1708,3 +1708,44 @@ $divider-hover-color: $primary !default;
         @include border-radius();
     }
 }
+
+/* Styles for the Move activity and Move section modals */
+.move-activity-tree {
+    .collapse-list-item {
+        @include border-radius();
+
+        &:hover,
+        &:focus {
+            background-color: theme-color-level("primary", $alert-bg-level);
+
+            a {
+                color: theme-color-level("primary", $alert-color-level);
+            }
+        }
+
+        a {
+            color: $list-group-action-active-color;
+
+            &:hover,
+            &:focus {
+                text-decoration: none;
+            }
+        }
+
+        a.disabled {
+            color: $list-group-disabled-color;
+        }
+    }
+
+    .collapse-list-item-content .collapse-list-item {
+        padding: $collapse-list-item-padding-y $collapse-list-item-padding-x;
+    }
+
+    ul {
+        margin-left: map-get($spacers, 4);
+    }
+
+    .collapse-list-link {
+        font-weight: bold;
+    }
+}
