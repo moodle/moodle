@@ -33,7 +33,6 @@ define([
     'core_calendar/view_manager',
     'core_calendar/crud',
     'core_calendar/selectors',
-    'core/config',
     'core/url',
     'core/str',
 ],
@@ -46,7 +45,6 @@ function(
     CalendarViewManager,
     CalendarCrud,
     CalendarSelectors,
-    Config,
     Url,
     Str,
 ) {
@@ -171,8 +169,9 @@ function(
      * Register event listeners for the module.
      *
      * @param {object} root The calendar root element
+     * @param {boolean} isCalendarBlock - A flag indicating whether this is a calendar block.
      */
-    var registerEventListeners = function(root) {
+    var registerEventListeners = function(root, isCalendarBlock) {
         const viewingFullCalendar = document.getElementById(CalendarSelectors.fullCalendarView);
         // Listen the click on the day link to render the day view.
         root.on('click', SELECTORS.VIEW_DAY_LINK, function(e) {
@@ -193,9 +192,13 @@ function(
                     .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
                     .join('&');
                 CalendarViewManager.refreshDayContent(root, year, month, day, courseId, categoryId, root,
-                    'core_calendar/calendar_day').then(function() {
+                    'core_calendar/calendar_day', isCalendarBlock).then(function() {
                     e.preventDefault();
-                    return CalendarViewManager.updateUrl(urlParamString);
+                    // Update the URL if it's not calendar block.
+                    if (!isCalendarBlock) {
+                        CalendarViewManager.updateUrl('?' + urlParamString);
+                    }
+                    return;
                 }).catch(Notification.exception);
             } else {
                 window.location.assign(Url.relativeUrl('calendar/view.php', urlParams));
@@ -266,10 +269,16 @@ function(
     };
 
     return {
-        init: function(root) {
+        /**
+         * Initializes the calendar view manager and registers event listeners.
+         *
+         * @param {HTMLElement} root - The root element where the calendar view manager and event listeners will be attached.
+         * @param {boolean} [isCalendarBlock=false] - A flag indicating whether this is a calendar block.
+         */
+        init: function(root, isCalendarBlock = false) {
             root = $(root);
-            CalendarViewManager.init(root);
-            registerEventListeners(root);
+            CalendarViewManager.init(root, 'month', isCalendarBlock);
+            registerEventListeners(root, isCalendarBlock);
         }
     };
 });
