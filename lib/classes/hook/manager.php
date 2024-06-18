@@ -184,9 +184,6 @@ final class manager implements
             return $hookclassname::get_deprecated_plugin_callbacks();
         }
 
-        // Ensure that the replaces_callbacks attribute is loaded.
-        // TODO MDL-81134 Remove after LTS+1.
-        require_once(dirname(__DIR__) . '/attribute/hook/replaces_callbacks.php');
         if ($replaces = attribute_helper::instance($hookclassname, \core\attribute\hook\replaces_callbacks::class)) {
             return $replaces->callbacks;
         }

@@ -306,17 +306,7 @@ class core_component {
             if (is_readable($cachefile)) {
                 $cache = false;
                 include($cachefile);
-                if (!is_array($cache)) {
-                    // Something is very wrong.
-                } else if (!isset($cache['version'])) {
-                    // Something is very wrong.
-                } else if ((float) $cache['version'] !== (float) self::fetch_core_version()) {
-                    // Outdated cache. We trigger an error log to track an eventual repetitive failure of float comparison.
-                    error_log('Resetting core_component cache after core upgrade to version ' . self::fetch_core_version());
-                } else if ($cache['plugintypes']['mod'] !== "$CFG->dirroot/mod") {
-                    // phpcs:ignore moodle.Commenting.InlineComment.NotCapital
-                    // $CFG->dirroot was changed.
-                } else {
+                if (is_array($cache) && self::is_cache_valid($cache)) {
                     // The cache looks ok, let's use it.
                     self::$plugintypes      = $cache['plugintypes'];
                     self::$plugins          = $cache['plugins'];
@@ -365,6 +355,53 @@ class core_component {
             @unlink($cachefile . '.tmp'); // Just in case anything fails (race condition).
             self::invalidate_opcode_php_cache($cachefile);
         }
+    }
+
+    /**
+     * Check whether the cache content in the supplied cache is valid.
+     *
+     * @param array $cache The content being loaded
+     * @return bool Whether it is valid
+     */
+    protected static function is_cache_valid(array $cache): bool {
+        global $CFG;
+
+        if (!isset($cache['version'])) {
+            // Something is very wrong.
+            return false;
+        }
+
+        if ((float) $cache['version'] !== (float) self::fetch_core_version()) {
+            // Outdated cache. We trigger an error log to track an eventual repetitive failure of float comparison.
+            error_log('Resetting core_component cache after core upgrade to version ' . self::fetch_core_version());
+            return false;
+        }
+
+        if ($cache['plugintypes']['mod'] !== "$CFG->dirroot/mod") {
+            // phpcs:ignore moodle.Commenting.InlineComment.NotCapital
+            // $CFG->dirroot was changed.
+            return false;
+        }
+
+        // Check for key classes which block access to the upgrade in some way.
+        // Note: This list should be kept _extremely_ minimal and generally
+        // when adding a newly discovered classes older ones should be removed.
+        // Always keep moodle_exception in place.
+        $keyclasses = [
+            \core\exception\moodle_exception::class,
+            \core\output\bootstrap_renderer::class,
+        ];
+        foreach ($keyclasses as $classname) {
+            if (!array_key_exists($classname, $cache['classmap'])) {
+                // The cache is missing some key classes. This is likely before the upgrade has run.
+                error_log(
+                    "The '{$classname}' class was not found in the component class cache. Resetting the classmap.",
+                );
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
