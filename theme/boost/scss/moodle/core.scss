@@ -3082,9 +3082,6 @@ blockquote {
 /* Showmore component */
 .showmore-container {
     &.collapsed {
-        .collapsed-content {
-            display: block;
-        }
         .expanded-content {
             display: none;
         }
@@ -3092,9 +3089,6 @@ blockquote {
     &:not(.collapsed) {
         .collapsed-content {
             display: none;
-        }
-        .expanded-content {
-            display: block;
         }
     }
     button {

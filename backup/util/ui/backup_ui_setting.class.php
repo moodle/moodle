@@ -47,6 +47,11 @@ class base_setting_ui {
      */
     protected $label;
     /**
+     * The optional accessible label for the setting.
+     * @var string
+     */
+    protected string $altlabel = '';
+    /**
      * An array of HTML attributes to apply to this setting
      * @var array
      */
@@ -97,6 +102,20 @@ class base_setting_ui {
      */
     public function get_label() {
         return $this->label;
+    }
+
+    /**
+     * Get the visually hidden label for the UI setting.
+     *
+     * @return string
+     */
+    public function get_visually_hidden_label(): ?string {
+        global $PAGE;
+        if ($this->altlabel === '') {
+            return null;
+        }
+        $renderer = $PAGE->get_renderer('core_backup');
+        return $renderer->sr_text($this->altlabel);
     }
 
     /**
@@ -159,6 +178,20 @@ class base_setting_ui {
         }
 
         $this->label = $label;
+    }
+
+    /**
+     * Adds a visually hidden label to the UI setting.
+     *
+     * Some backup fields labels have unaccessible labels for screen readers. For example,
+     * all schema activity user data uses '-' as label. This method adds extra information
+     * for screen readers.
+     *
+     * @param string $label The accessible label to be added.
+     * @return void
+     */
+    public function set_visually_hidden_label(string $label): void {
+        $this->altlabel = clean_param($label, PARAM_CLEANHTML);
     }
 
     /**
@@ -435,6 +468,10 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
         $label = format_string($this->get_label($task), true, array('context' => $context));
         if (!empty($icon)) {
             $label .= $output->render($icon);
+        }
+        $altlabel = $this->get_visually_hidden_label();
+        if (!empty($altlabel)) {
+            $label = $altlabel . $label;
         }
         return $this->apply_options(array(
             'element' => 'checkbox',

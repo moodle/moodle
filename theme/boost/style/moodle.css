@@ -25999,17 +25999,11 @@ blockquote {
 }
 
 /* Showmore component */
-.showmore-container.collapsed .collapsed-content {
-  display: block;
-}
 .showmore-container.collapsed .expanded-content {
   display: none;
 }
 .showmore-container:not(.collapsed) .collapsed-content {
   display: none;
-}
-.showmore-container:not(.collapsed) .expanded-content {
-  display: block;
 }
 .showmore-container button {
   float: right;
