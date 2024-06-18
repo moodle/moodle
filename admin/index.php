@@ -40,13 +40,6 @@ if (!function_exists('iconv')) {
     die();
 }
 
-// Make sure php5-json is available.
-if (!function_exists('json_encode') || !function_exists('json_decode')) {
-    // This also shouldn't happen.
-    echo 'Moodle requires the json PHP extension. Please install or enable the json extension.';
-    die();
-}
-
 // Make sure xml extension is available.
 if (!extension_loaded('xml')) {
     echo 'Moodle requires the xml PHP extension. Please install or enable the xml extension.';
