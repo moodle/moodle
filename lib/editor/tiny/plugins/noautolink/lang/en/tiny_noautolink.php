@@ -23,12 +23,12 @@
  */
 
 $string['buttontitle'] = 'No auto-link';
-$string['errorinvalidurl'] = 'The selected content is not a URL. Please try again.';
 $string['infoaddsuccess'] = 'Auto-link prevention added.';
-$string['infoemptyselection'] = 'Select a URL and try again.';
+$string['infoemptyselection'] = 'Select text and try again.';
 $string['inforemovesuccess'] = 'Auto-link prevention removed.';
 $string['pluginname'] = 'No auto-link';
 $string['privacy:metadata'] = 'The tiny_noautolink plugin does not store any personal data.';
 
 // Deprecated since Moodle 4.5.
 $string['helplinktext'] = 'No auto-link helper';
+$string['errorinvalidurl'] = 'The selected content is not a URL. Please try again.';
