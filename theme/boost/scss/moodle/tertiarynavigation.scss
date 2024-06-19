@@ -49,6 +49,13 @@
         }
     }
 
+    h2 {
+        font-size: 1.4rem;
+        font-weight: bold;
+        margin: 0;
+        align-self: center;
+    }
+
     .navitem:not(:last-child),
     .navitem-divider:not(:last-child) {
         margin-right: 20px;

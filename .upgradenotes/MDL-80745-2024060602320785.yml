@@ -1,0 +1,23 @@
+issueNumber: MDL-80745
+notes:
+  core_grades:
+    - message: >
+        The `core_grades_renderer::group_selector()` method has been deprecated.
+        Please use `\core_course\output\actionbar\renderer` to render a
+        `group_selector` renderable instead.
+      type: deprecated
+  gradereport_grader:
+    - message: >
+        The `gradereport_grader/group` ESM has been deprecated. Please use
+        `core_course/actionbar/group` instead.
+      type: deprecated
+  gradereport_singleview:
+    - message: >
+        The `gradereport_singleview/group` ESM has been deprecated. Please use
+        `core_course/actionbar/group` instead.
+      type: deprecated
+  gradereport_user:
+    - message: >
+        The `gradereport_user/group` ESM has been deprecated. Please use
+        `core_course/actionbar/group` instead.
+      type: deprecated

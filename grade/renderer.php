@@ -47,9 +47,18 @@ class core_grades_renderer extends plugin_renderer_base {
      * @param object $course The course object.
      * @param string|null $groupactionbaseurl This parameter has been deprecated since 4.4 and should not be used anymore.
      * @return string|null The raw HTML to render.
+     * @deprecated since 4.5. Use \core_course\output\actionbar\renderer' instead.
+     * @todo Final deprecation in Moodle 6.0. See MDL-82116.
      */
+    #[\core\attribute\deprecated(
+        replacement: null,
+        since: '4.5',
+        reason: 'Moved to \core_course\output\actionbar\renderer.'
+    )]
     public function group_selector(object $course, ?string $groupactionbaseurl = null): ?string {
         global $USER;
+
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
 
         if ($groupactionbaseurl !== null) {
             debugging(

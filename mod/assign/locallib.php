@@ -4567,9 +4567,13 @@ class assign {
         $buttons = new \mod_assign\output\grading_actionmenu($this->get_course_module()->id,
              $this->is_any_submission_plugin_enabled(), $this->count_submissions());
         $actionformtext = $this->get_renderer()->render($buttons);
+        $currenturl = new moodle_url('/mod/assign/view.php', ['id' => $this->get_course_module()->id, 'action' => 'grading']);
         $PAGE->activityheader->set_attrs(['hidecompletion' => true]);
 
-        $currenturl = new moodle_url('/mod/assign/view.php', ['id' => $this->get_course_module()->id, 'action' => 'grading']);
+        // Conditionally add the group JS if we have groups enabled.
+        if ($this->get_course()->groupmode) {
+            $PAGE->requires->js_call_amd('core_course/actionbar/group', 'init', [$currenturl->out(false)]);
+        }
 
         $header = new assign_header($this->get_instance(),
                                     $this->get_context(),
@@ -4583,10 +4587,7 @@ class assign {
 
         $o .= $actionformtext;
 
-        $o .= $this->get_renderer()->heading(get_string('gradeitem:submissions', 'mod_assign'), 2);
         $o .= $this->get_renderer()->render($gradingactions);
-
-        $o .= groups_print_activity_menu($this->get_course_module(), $currenturl, true);
 
         // Plagiarism update status apearring in the grading book.
         if (!empty($CFG->enableplagiarism)) {

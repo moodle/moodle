@@ -110,7 +110,11 @@ class action_bar extends \core_grades\output\action_bar {
                 ])
             );
             $data['initialselector'] = $initialselector->export_for_template($output);
-            $data['groupselector'] = $gradesrenderer->group_selector($course);
+
+            if ($course->groupmode) {
+                $actionbarrenderer = $PAGE->get_renderer('core_course', 'actionbar');
+                $data['groupselector'] = $actionbarrenderer->render(new \core_course\output\actionbar\group_selector($course));
+            }
 
             $resetlink = new moodle_url('/grade/report/grader/index.php', ['id' => $courseid]);
             $searchinput = $OUTPUT->render_from_template('core_user/comboboxsearch/user_selector', [

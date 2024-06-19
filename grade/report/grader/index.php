@@ -60,7 +60,8 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
 
 // Conditionally add the group JS if we have groups enabled.
 if ($course->groupmode) {
-    $PAGE->requires->js_call_amd('gradereport_grader/group', 'init');
+    $baseurl = new moodle_url('/grade/report/grader/index.php', ['id' => $courseid]);
+    $PAGE->requires->js_call_amd('core_course/actionbar/group', 'init', [$baseurl->out(false)]);
 }
 
 require_login($course);
