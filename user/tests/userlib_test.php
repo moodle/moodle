@@ -942,30 +942,33 @@ class userlib_test extends \advanced_testcase {
 
         // Get student details with required fields.
         $result = user_get_user_details($student1, $course, array('id', 'fullname', 'timezone', 'city', 'address', 'idnumber'));
-        $this->assertCount(4, $result); // Ensure address (never returned), idnumber (identity field) are not returned here.
+        $this->assertCount(5, $result); // Ensure idnumber (identity field) is not returned here.
         $this->assertEquals($student1->id, $result['id']);
         $this->assertEquals($student1fullname, $result['fullname']);
         $this->assertEquals($student1->timezone, $result['timezone']);
         $this->assertEquals($student1->city, $result['city']);
+        $this->assertEquals($student1->address, $result['address']);
 
         // Set new identity fields and hidden fields and try to retrieve them without permission.
         $CFG->showuseridentity = $CFG->showuseridentity . ',idnumber';
         $CFG->hiddenuserfields = 'city';
         $result = user_get_user_details($student1, $course, array('id', 'fullname', 'timezone', 'city', 'address', 'idnumber'));
-        $this->assertCount(3, $result); // Ensure address, city and idnumber are not returned here.
+        $this->assertCount(4, $result); // Ensure city and idnumber are not returned here.
         $this->assertEquals($student1->id, $result['id']);
         $this->assertEquals($student1fullname, $result['fullname']);
         $this->assertEquals($student1->timezone, $result['timezone']);
+        $this->assertEquals($student1->address, $result['address']);
 
         // Now, teacher should have permission to see the idnumber and city fields.
         $this->setUser($teacher);
         $result = user_get_user_details($student1, $course, array('id', 'fullname', 'timezone', 'city', 'address', 'idnumber'));
-        $this->assertCount(5, $result); // Ensure address is not returned here.
+        $this->assertCount(6, $result);
         $this->assertEquals($student1->id, $result['id']);
         $this->assertEquals($student1fullname, $result['fullname']);
         $this->assertEquals($student1->timezone, $result['timezone']);
         $this->assertEquals($student1->idnumber, $result['idnumber']);
         $this->assertEquals($student1->city, $result['city']);
+        $this->assertEquals($student1->address, $result['address']);
 
         // And admins can see anything.
         $this->setAdminUser();
