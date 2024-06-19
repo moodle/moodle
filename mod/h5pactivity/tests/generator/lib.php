@@ -76,7 +76,11 @@ class mod_h5pactivity_generator extends testing_module_generator {
         if (!isset($record->reviewmode)) {
             $record->reviewmode = manager::REVIEWCOMPLETION;
         }
-
+        $globaluser = $USER;
+        if (!empty($record->username)) {
+            $user = core_user::get_user_by_username($record->username);
+            $this->set_user($user);
+        }
         // The 'packagefile' value corresponds to the draft file area ID. If not specified, create from packagefilepath.
         if (empty($record->packagefile)) {
             if (!isloggedin() || isguestuser()) {
@@ -85,21 +89,28 @@ class mod_h5pactivity_generator extends testing_module_generator {
             if (!file_exists($record->packagefilepath)) {
                 throw new coding_exception("File {$record->packagefilepath} does not exist");
             }
+
             $usercontext = context_user::instance($USER->id);
 
             // Pick a random context id for specified user.
             $record->packagefile = file_get_unused_draft_itemid();
 
             // Add actual file there.
-            $filerecord = ['component' => 'user', 'filearea' => 'draft',
-                    'contextid' => $usercontext->id, 'itemid' => $record->packagefile,
-                    'filename' => basename($record->packagefilepath), 'filepath' => '/'];
+            $filerecord = [
+                'component' => 'user',
+                'filearea' => 'draft',
+                'contextid' => $usercontext->id,
+                'itemid' => $record->packagefile,
+                'filename' => basename($record->packagefilepath),
+                'filepath' => '/',
+                'userid' => $USER->id,
+            ];
             $fs = get_file_storage();
             $fs->create_file_from_pathname($filerecord, $record->packagefilepath);
         }
-
-        // Do work to actually add the instance.
-        return parent::create_instance($record, (array)$options);
+        $instance = parent::create_instance($record, (array)$options);
+        $this->set_user($globaluser);
+        return $instance;
     }
 
     /**
