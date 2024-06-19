@@ -433,7 +433,7 @@ abstract class backup_helper {
                 $options,
                 ['class' => 'container-fluid tertiary-navigation full-width-bottom-border', 'id' => 'tertiary-navigation']);
         } else {
-            echo $OUTPUT->heading($current, 2, 'mb-3');
+            echo $OUTPUT->heading(get_string($current), 2, 'mb-3');
         }
     }
 }
