@@ -34986,6 +34986,26 @@ img.userpicture {
   margin-left: 0;
 }
 
+#page-report-outline-index .font-lg {
+  font-size: 1.03125rem;
+}
+
+#page-report-outline-index .generaltable tbody tr {
+  background-color: #fff;
+}
+#page-report-outline-index .generaltable tbody tr.section {
+  padding-left: 2rem;
+}
+#page-report-outline-index .generaltable tbody tr.section h3 {
+  font-size: 1.171875rem;
+}
+#page-report-outline-index .generaltable tbody tr.section h4 {
+  font-size: 1.03125rem;
+}
+#page-report-outline-index .generaltable tbody td.delegated {
+  padding-left: 3.5rem;
+}
+
 .path-backup .mform {
   /* These are long labels with checkboxes on the right. */
 }

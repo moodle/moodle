@@ -73,6 +73,7 @@ $event = \report_outline\event\activity_report_viewed::create(array('context' =>
 $event->trigger();
 
 $showlastaccess = true;
+$showblogs = !empty($CFG->enableblogs) && $CFG->useblogassociations;
 $hiddenfields = explode(',', $CFG->hiddenuserfields);
 
 if (array_search('lastaccess', $hiddenfields) !== false and !has_capability('moodle/user:viewhiddendetails', $context)) {
@@ -80,12 +81,6 @@ if (array_search('lastaccess', $hiddenfields) !== false and !has_capability('moo
 }
 
 $stractivityreport = get_string('pluginname', 'report_outline');
-$stractivity       = get_string('activity');
-$strlast           = get_string('lastaccess');
-$strreports        = get_string('reports');
-$strviews          = get_string('views');
-$strrelatedblogentries = get_string('relatedblogentries', 'blog');
-
 $PAGE->set_title($course->shortname .': '. $stractivityreport);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
@@ -120,22 +115,6 @@ if ($useinternalreader) {
 }
 
 $filterform->display();
-
-echo $OUTPUT->container(get_string('computedfromlogs', 'admin', userdate($minlog)), 'loginfo');
-
-$outlinetable = new html_table();
-$outlinetable->attributes['class'] = 'generaltable boxaligncenter';
-$outlinetable->cellpadding = 5;
-$outlinetable->id = 'outlinetable';
-$outlinetable->head = array($stractivity, $strviews);
-
-if (!empty($CFG->enableblogs) && $CFG->useblogassociations) {
-    $outlinetable->head[] = $strrelatedblogentries;
-}
-
-if ($showlastaccess) {
-    $outlinetable->head[] = $strlast;
-}
 
 $modinfo = get_fast_modinfo($course);
 
@@ -220,88 +199,8 @@ if ($useinternalreader) {
     }
 }
 
-$prevsecctionnum = 0;
-foreach ($modinfo->sections as $sectionnum=>$section) {
-    foreach ($section as $cmid) {
-        $cm = $modinfo->cms[$cmid];
-        if (!$cm->has_view()) {
-            continue;
-        }
-        if (!$cm->uservisible) {
-            continue;
-        }
-        if ($prevsecctionnum != $sectionnum) {
-            $sectionrow = new html_table_row();
-            $sectionrow->attributes['class'] = 'section';
-            $sectioncell = new html_table_cell();
-            $sectioncell->colspan = count($outlinetable->head);
-
-            $sectiontitle = get_section_name($course, $sectionnum);
-
-            $sectioncell->text = $OUTPUT->heading($sectiontitle, 3);
-            $sectionrow->cells[] = $sectioncell;
-            $outlinetable->data[] = $sectionrow;
-
-            $prevsecctionnum = $sectionnum;
-        }
-
-        $dimmed = $cm->visible ? '' : 'class="dimmed"';
-        $modulename = get_string('modulename', $cm->modname);
-
-        $reportrow = new html_table_row();
-        $activitycell = new html_table_cell();
-        $activitycell->attributes['class'] = 'activity';
-
-        $activityicon = $OUTPUT->pix_icon('monologo', $modulename, $cm->modname, array('class'=>'icon'));
-
-        $attributes = array();
-        if (!$cm->visible) {
-            $attributes['class'] = 'dimmed';
-        }
-
-        $activitycell->text = $activityicon . html_writer::link("$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id", format_string($cm->name), $attributes);
-
-        $reportrow->cells[] = $activitycell;
-
-        $numviewscell = new html_table_cell();
-        $numviewscell->attributes['class'] = 'numviews';
-
-        if (!empty($views[$cm->id]->numviews)) {
-            $numviewscell->text = get_string('numviews', 'report_outline', $views[$cm->id]);
-        } else {
-            $numviewscell->text = '-';
-        }
-
-        $reportrow->cells[] = $numviewscell;
-
-        if (!empty($CFG->enableblogs) && $CFG->useblogassociations) {
-            require_once($CFG->dirroot.'/blog/lib.php');
-            $blogcell = new html_table_cell();
-            $blogcell->attributes['class'] = 'blog';
-            if ($blogcount = blog_get_associated_count($course->id, $cm->id)) {
-                $blogurl = new moodle_url('/blog/index.php', array('modid' => $cm->id));
-                $blogcell->text = html_writer::link($blogurl, $blogcount);
-            } else {
-                $blogcell->text = '-';
-            }
-            $reportrow->cells[] = $blogcell;
-        }
-
-        if ($showlastaccess) {
-            $lastaccesscell = new html_table_cell();
-            $lastaccesscell->attributes['class'] = 'lastaccess';
-
-            if (isset($views[$cm->id]->lasttime)) {
-                $timeago = format_time(time() - $views[$cm->id]->lasttime);
-                $lastaccesscell->text = userdate($views[$cm->id]->lasttime)." ($timeago)";
-            }
-            $reportrow->cells[] = $lastaccesscell;
-        }
-        $outlinetable->data[] = $reportrow;
-    }
-}
-echo html_writer::table($outlinetable);
-
+$activitieslist = new report_outline\output\activitieslist($modinfo, $views, $showlastaccess, $minlog, $showblogs);
+echo $OUTPUT->render_from_template('report_outline/report', $activitieslist->export_for_template($OUTPUT));
 echo $OUTPUT->footer();
 
 
