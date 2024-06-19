@@ -46,6 +46,7 @@ class lib_test extends \advanced_testcase {
      * Setup.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
     }
@@ -57,6 +58,7 @@ class lib_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/folder/lib.php');
+        parent::setUpBeforeClass();
     }
 
     /**

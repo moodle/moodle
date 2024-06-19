@@ -47,11 +47,13 @@ class myprofilelib_test extends \advanced_testcase {
         global $CFG;
         require_once($CFG->dirroot . '/lib/myprofilelib.php');
         require_once($CFG->dirroot . '/user/profile/lib.php');
+        parent::setUpBeforeClass();
     }
 
     public function setUp(): void {
         // Set the $PAGE->url value so core_myprofile_navigation() doesn't complain.
         global $PAGE;
+        parent::setUp();
         $PAGE->set_url('/test');
 
         $this->user = $this->getDataGenerator()->create_user();

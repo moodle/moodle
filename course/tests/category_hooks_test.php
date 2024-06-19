@@ -39,6 +39,7 @@ use core_course\test\mock_hooks;
 class category_hooks_test extends \advanced_testcase {
 
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
     }

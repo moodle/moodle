@@ -39,6 +39,7 @@ class events_test extends \advanced_testcase {
      * Tests set up.
      */
     public function setUp(): void {
+        parent::setUp();
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
@@ -50,6 +51,7 @@ class events_test extends \advanced_testcase {
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
+        parent::tearDown();
     }
 
     /**

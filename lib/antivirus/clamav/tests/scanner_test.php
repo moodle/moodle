@@ -29,6 +29,7 @@ class scanner_test extends \advanced_testcase {
     protected $tempfile;
 
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
 
         // Create tempfile.
@@ -39,6 +40,7 @@ class scanner_test extends \advanced_testcase {
 
     protected function tearDown(): void {
         @unlink($this->tempfile);
+        parent::tearDown();
     }
 
     public function test_scan_file_not_exists(): void {

@@ -34,6 +34,7 @@ class backup_cleanup_task_test extends \advanced_testcase {
      * Set up tasks for all tests.
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
     }
 

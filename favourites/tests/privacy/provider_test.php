@@ -39,6 +39,7 @@ use core_privacy\local\request\transform;
 class provider_test extends provider_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
     }
 

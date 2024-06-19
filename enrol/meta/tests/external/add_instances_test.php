@@ -37,6 +37,7 @@ class add_instances_test extends \externallib_advanced_testcase {
      * Test setup
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
     }

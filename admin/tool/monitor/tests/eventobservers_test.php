@@ -35,6 +35,7 @@ class eventobservers_test extends \advanced_testcase {
      * Set up method.
      */
     public function setUp(): void {
+        parent::setUp();
         // Enable monitor.
         set_config('enablemonitor', 1, 'tool_monitor');
     }

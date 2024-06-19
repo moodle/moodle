@@ -35,6 +35,7 @@ class stats_test extends \advanced_testcase {
      * Set up the test environment.
      */
     public function setUp(): void {
+        parent::setUp();
 
         $this->setAdminUser();
     }

@@ -33,6 +33,7 @@ class mnet_hosts_test extends advanced_testcase {
     public static function setUpBeforeClass(): void {
         require_once(__DIR__ . '/../../moodleblock.class.php');
         require_once(__DIR__ . '/../block_mnet_hosts.php');
+        parent::setUpBeforeClass();
     }
 
     /**

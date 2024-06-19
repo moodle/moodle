@@ -53,6 +53,7 @@ class rule_test extends \advanced_testcase {
         if (!empty($this->quiz)) {
             unset($SESSION->quizaccess_seb_access);
         }
+        parent::tearDown();
     }
 
     /**

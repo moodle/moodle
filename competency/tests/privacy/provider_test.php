@@ -52,6 +52,7 @@ class provider_test extends provider_testcase {
 
     public function setUp(): void {
         global $PAGE;
+        parent::setUp();
         $this->resetAfterTest();
 
         // We need this or exporters (core\external\exporter) do not receive the right renderer.

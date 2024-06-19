@@ -34,12 +34,14 @@ final class plugin_manager_test extends \advanced_testcase {
         global $CFG;
         require_once($CFG->dirroot . '/lib/tests/fixtures/testable_plugin_manager.php');
         require_once($CFG->dirroot . '/lib/tests/fixtures/testable_plugininfo_base.php');
+        parent::setUpBeforeClass();
     }
 
     public function tearDown(): void {
         // The caches of the testable singleton must be reset explicitly. It is
         // safer to kill the whole testable singleton at the end of every test.
         testable_core_plugin_manager::reset_caches();
+        parent::tearDown();
     }
 
     public function test_instance(): void {

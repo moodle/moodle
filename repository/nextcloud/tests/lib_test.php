@@ -50,6 +50,7 @@ class lib_test extends \advanced_testcase {
      * SetUp to create an repository instance.
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
 
         // Admin is neccessary to create api and issuer objects.

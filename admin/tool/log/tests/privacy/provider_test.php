@@ -53,6 +53,7 @@ require_once($CFG->dirroot . '/admin/tool/log/store/standard/tests/fixtures/even
 class provider_test extends provider_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->preventResetByRollback(); // Logging waits till the transaction gets committed.
     }

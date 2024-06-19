@@ -46,6 +46,7 @@ class exporter_test extends \advanced_testcase {
     protected $invaliddata = null;
 
     public function setUp(): void {
+        parent::setUp();
         $s = new \stdClass();
         $this->validrelated = array(
             'simplestdClass' => $s,

@@ -88,6 +88,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     protected $c2;
 
     public function setUp(): void {
+        parent::setUp();
 
         $this->resetAfterTest(true);
         $this->setAdminUser();

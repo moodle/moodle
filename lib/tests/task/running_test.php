@@ -27,6 +27,7 @@ namespace core\task;
 final class running_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         require_once(__DIR__ . '/../fixtures/task_fixtures.php');
+        parent::setUpBeforeClass();
     }
 
     /**

@@ -54,6 +54,7 @@ class tool_provider_test extends \advanced_testcase {
      */
     public function setUp(): void {
         global $SESSION;
+        parent::setUp();
         $this->resetAfterTest();
 
         manager::init_empty_session();

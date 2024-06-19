@@ -47,6 +47,7 @@ class events_test extends \core_message\messagelib_test {
      * This is executed before running any test in this file.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 

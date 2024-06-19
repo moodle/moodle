@@ -33,6 +33,7 @@ class progress_test extends \advanced_testcase {
      */
     public function setUp(): void {
         global $CFG;
+        parent::setUp();
 
         $CFG->enablecompletion = true;
         $this->resetAfterTest();

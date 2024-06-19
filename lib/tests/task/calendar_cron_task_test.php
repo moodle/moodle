@@ -34,6 +34,7 @@ class calendar_cron_task_test extends \advanced_testcase {
      * Tests set up
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 

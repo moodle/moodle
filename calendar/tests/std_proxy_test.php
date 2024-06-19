@@ -32,6 +32,7 @@ class std_proxy_test extends \advanced_testcase {
     public $objects;
 
     public function setUp(): void {
+        parent::setUp();
         $this->objects = [
             1 => (object) [
                 'member1' => 'Hello',

@@ -36,6 +36,7 @@ class online_users_test extends \advanced_testcase {
      * simulate various recent accesses.
      */
     protected function setUp(): void {
+        parent::setUp();
 
         // Generate (simulated) recently logged-in users.
         $generator = $this->getDataGenerator()->get_plugin_generator('block_online_users');

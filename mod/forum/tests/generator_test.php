@@ -27,6 +27,7 @@ namespace mod_forum;
  */
 final class generator_test extends \advanced_testcase {
     public function setUp(): void {
+        parent::setUp();
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
@@ -36,6 +37,7 @@ final class generator_test extends \advanced_testcase {
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
+        parent::tearDown();
     }
 
     public function test_generator(): void {

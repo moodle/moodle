@@ -40,11 +40,13 @@ final class questionhint_test extends advanced_testcase {
     protected $qtype;
 
     protected function setUp(): void {
+        parent::setUp();
         $this->qtype = new qtype_ordering();
     }
 
     protected function tearDown(): void {
         $this->qtype = null;
+        parent::tearDown();
     }
     /**
      * Test that hints can be fetched from the DB.

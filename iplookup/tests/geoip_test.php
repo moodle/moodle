@@ -34,6 +34,7 @@ require_once("{$CFG->dirroot}/iplookup/lib.php");
  */
 class geoip_test extends \advanced_testcase {
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 

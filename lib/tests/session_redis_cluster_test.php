@@ -45,6 +45,7 @@ class session_redis_cluster_test extends \advanced_testcase {
      */
     public function setUp(): void {
         global $CFG;
+        parent::setUp();
 
         if (!\cache_helper::is_cluster_available()) {
             $this->markTestSkipped('Could not test core_session with cluster, class RedisCluster is not available.');

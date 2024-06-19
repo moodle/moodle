@@ -31,6 +31,7 @@ final class xsendfilelib_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->libdir . '/xsendfilelib.php');
+        parent::setUpBeforeClass();
     }
 
     public function test_not_enabled(): void {

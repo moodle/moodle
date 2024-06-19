@@ -52,6 +52,7 @@ class comment_created_deleted_test extends advanced_testcase {
     public function setUp(): void {
         global $CFG;
         require_once($CFG->dirroot . '/comment/lib.php');
+        parent::setUp();
 
         $this->resetAfterTest();
         $this->setAdminUser();

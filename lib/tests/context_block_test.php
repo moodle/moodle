@@ -34,6 +34,7 @@ class context_block_test extends \advanced_testcase {
     public function setUp(): void {
         global $CFG;
         require_once("{$CFG->libdir}/accesslib.php");
+        parent::setUp();
     }
 
     /**

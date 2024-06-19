@@ -43,6 +43,7 @@ class externallib_test extends mod_lti_testcase {
      * Set up for every test
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 

@@ -44,6 +44,7 @@ class modinfolib_test extends advanced_testcase {
         global $CFG;
         require_once($CFG->dirroot . '/course/lib.php');
         require_once($CFG->libdir . '/tests/fixtures/sectiondelegatetest.php');
+        parent::setUpBeforeClass();
     }
 
     public function test_section_info_properties(): void {

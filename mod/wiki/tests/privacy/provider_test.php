@@ -74,6 +74,7 @@ class provider_test extends provider_testcase {
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
         $this->resetAfterTest();
 
         $dg = $this->getDataGenerator();

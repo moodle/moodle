@@ -75,6 +75,7 @@ class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcas
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
 
         $this->resetAfterTest();
         $this->setAdminUser();

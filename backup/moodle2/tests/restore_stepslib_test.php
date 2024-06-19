@@ -34,6 +34,7 @@ class restore_stepslib_test extends \advanced_testcase {
         require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
         require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
         require_once($CFG->dirroot . '/backup/moodle2/restore_stepslib.php');
+        parent::setUpBeforeClass();
     }
 
     /**

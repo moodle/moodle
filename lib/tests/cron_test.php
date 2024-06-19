@@ -29,6 +29,7 @@ class cron_test extends \advanced_testcase {
      * Reset relevant caches between tests.
      */
     public function setUp(): void {
+        parent::setUp();
         cron::reset_user_cache();
     }
 

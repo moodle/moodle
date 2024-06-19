@@ -41,6 +41,7 @@ class cohort_handler_test extends advanced_testcase {
      * Setup.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->handler = cohort_handler::create();
     }
 

@@ -55,6 +55,7 @@ class get_state_test extends \externallib_advanced_testcase {
      * Setup testcase.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
 
         $this->sections = [];
@@ -67,6 +68,7 @@ class get_state_test extends \externallib_advanced_testcase {
     public function tearDown(): void {
         unset($this->sections);
         unset($this->activities);
+        parent::tearDown();
     }
 
     /**

@@ -83,6 +83,7 @@ class base_test extends \advanced_testcase {
      */
     protected function setUp(): void {
         global $DB;
+        parent::setUp();
 
         $this->resetAfterTest(true);
 

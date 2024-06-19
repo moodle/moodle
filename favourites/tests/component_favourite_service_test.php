@@ -29,6 +29,7 @@ use core_favourites\local\entity\favourite;
 class component_favourite_service_test extends \advanced_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 

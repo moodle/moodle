@@ -56,6 +56,7 @@ class logging_test extends \advanced_testcase {
             $DB = $this->DB;
             $this->DB = null;
         }
+        parent::tearDown();
     }
 
     /**

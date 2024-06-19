@@ -46,6 +46,7 @@ class badgeslib_test extends advanced_testcase {
 
     protected function setUp(): void {
         global $DB, $CFG;
+        parent::setUp();
         $this->resetAfterTest(true);
         $CFG->enablecompletion = true;
         $user = $this->getDataGenerator()->create_user();

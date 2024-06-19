@@ -39,6 +39,7 @@ class rrule_manager_test extends \advanced_testcase {
      */
     protected function setUp(): void {
         global $DB;
+        parent::setUp();
         $this->resetAfterTest();
 
         // Set our timezone based on the timezone in the RFC's samples (US/Eastern).

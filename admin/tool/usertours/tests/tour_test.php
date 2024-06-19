@@ -33,6 +33,7 @@ class tour_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->libdir . '/formslib.php');
+        parent::setUpBeforeClass();
     }
 
     /**
@@ -40,6 +41,7 @@ class tour_test extends \advanced_testcase {
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
 
         $this->db = $DB;
     }
@@ -51,6 +53,7 @@ class tour_test extends \advanced_testcase {
         global $DB;
 
         $DB = $this->db;
+        parent::tearDown();
     }
 
     /**

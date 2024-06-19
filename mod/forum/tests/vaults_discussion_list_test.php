@@ -44,6 +44,7 @@ class vaults_discussion_list_test extends \advanced_testcase {
      * Set up function for tests.
      */
     public function setUp(): void {
+        parent::setUp();
         $vaultfactory = \mod_forum\local\container::get_vault_factory();
         $this->vault = $vaultfactory->get_discussions_in_forum_vault();
     }

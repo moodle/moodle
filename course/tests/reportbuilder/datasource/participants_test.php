@@ -53,6 +53,7 @@ final class participants_test extends core_reportbuilder_testcase {
 
         require_once("{$CFG->libdir}/gradelib.php");
         require_once("{$CFG->dirroot}/completion/criteria/completion_criteria_self.php");
+        parent::setUpBeforeClass();
     }
 
     /**

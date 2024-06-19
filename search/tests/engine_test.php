@@ -32,6 +32,7 @@ require_once(__DIR__ . '/fixtures/mock_search_area.php');
 class engine_test extends \advanced_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         set_config('enableglobalsearch', true);
 

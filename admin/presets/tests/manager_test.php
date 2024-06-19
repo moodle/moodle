@@ -35,6 +35,7 @@ class manager_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->libdir.'/adminlib.php');
+        parent::setUpBeforeClass();
     }
 
     /**

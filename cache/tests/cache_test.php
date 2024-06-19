@@ -63,6 +63,7 @@ class cache_test extends \advanced_testcase {
         require_once($CFG->dirroot . '/cache/locallib.php');
         require_once($CFG->dirroot . '/cache/tests/fixtures/lib.php');
         require_once($CFG->dirroot . '/cache/tests/fixtures/cache_phpunit_dummy_datasource_versionable.php');
+        parent::setUpBeforeClass();
     }
 
     /**

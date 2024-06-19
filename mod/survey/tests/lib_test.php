@@ -46,12 +46,14 @@ class lib_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/survey/lib.php');
+        parent::setUpBeforeClass();
     }
 
     /**
      * Setup testcase.
      */
     public function setUp(): void {
+        parent::setUp();
         // Survey module is disabled by default, enable it for testing.
         $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
         $manager::enable_plugin('survey', 1);

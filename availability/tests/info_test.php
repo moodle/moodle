@@ -27,6 +27,7 @@ class info_test extends \advanced_testcase {
     public function setUp(): void {
         // Load the mock condition so that it can be used.
         require_once(__DIR__ . '/fixtures/mock_condition.php');
+        parent::setUp();
     }
 
     /**

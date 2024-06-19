@@ -42,6 +42,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Tests set up
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 

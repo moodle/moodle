@@ -35,6 +35,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 class get_search_areas_list_test extends \externallib_advanced_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 

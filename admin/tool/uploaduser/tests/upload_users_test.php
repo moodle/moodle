@@ -40,6 +40,7 @@ class upload_users_test extends advanced_testcase {
         global $CFG;
 
         require_once("{$CFG->dirroot}/{$CFG->admin}/tool/uploaduser/locallib.php");
+        parent::setUpBeforeClass();
     }
 
     /**

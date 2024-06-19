@@ -34,6 +34,7 @@ class antivirus_test extends advanced_testcase {
 
     protected function setUp(): void {
         global $CFG;
+        parent::setUp();
         // Use our special testable fixture plugin.
         $CFG->antiviruses = 'testable';
 
@@ -69,6 +70,7 @@ class antivirus_test extends advanced_testcase {
 
     protected function tearDown(): void {
         @unlink($this->tempfile);
+        parent::tearDown();
     }
 
     public function test_manager_get_antivirus(): void {

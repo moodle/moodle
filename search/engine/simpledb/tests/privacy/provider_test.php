@@ -71,6 +71,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
 
     public function setUp(): void {
         global $DB;
+        parent::setUp();
 
         if ($this->requires_manual_index_update()) {
             // We need to update fulltext index manually, which requires an alter table statement.

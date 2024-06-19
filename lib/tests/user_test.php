@@ -30,6 +30,7 @@ class user_test extends \advanced_testcase {
      * Setup test data.
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
     }
 

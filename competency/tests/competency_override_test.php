@@ -56,6 +56,7 @@ class competency_override_test extends \advanced_testcase {
     protected $context;
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();

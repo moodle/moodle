@@ -37,6 +37,7 @@ class events_test extends \advanced_testcase {
      */
     protected function setUp(): void {
         global $USER;
+        parent::setUp();
 
         $this->resetAfterTest();
 

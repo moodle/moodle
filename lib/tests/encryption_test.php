@@ -43,9 +43,11 @@ class encryption_test extends advanced_testcase {
         }
         remove_dir($CFG->dataroot . '/secret');
         unset($CFG->nokeygeneration);
+        parent::tearDown();
     }
 
     protected function setUp(): void {
+        parent::setUp();
         $this->tearDown();
 
         require_once(__DIR__ . '/fixtures/testable_encryption.php');

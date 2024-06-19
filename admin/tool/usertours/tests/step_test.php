@@ -40,6 +40,7 @@ class step_test extends \advanced_testcase {
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
 
         $this->db = $DB;
     }
@@ -51,6 +52,7 @@ class step_test extends \advanced_testcase {
         global $DB;
 
         $DB = $this->db;
+        parent::tearDown();
     }
 
     /**

@@ -74,6 +74,7 @@ class courselib_test extends advanced_testcase {
 
         require_once($CFG->dirroot . '/course/tests/fixtures/course_capability_assignment.php');
         require_once($CFG->dirroot . '/enrol/imsenterprise/tests/imsenterprise_test.php');
+        parent::setUpBeforeClass();
     }
 
     /**

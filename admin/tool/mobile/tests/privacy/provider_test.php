@@ -43,6 +43,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * Basic setup for these tests.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
     }
 

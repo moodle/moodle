@@ -43,6 +43,7 @@ class inbound_test extends \advanced_testcase {
      */
     public function setUp(): void {
         global $CFG;
+        parent::setUp();
 
         $this->resetAfterTest(true);
 

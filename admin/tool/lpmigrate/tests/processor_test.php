@@ -63,6 +63,7 @@ class processor_test extends \advanced_testcase {
      * Then we attach some competencies from the first framework to courses and CM.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');

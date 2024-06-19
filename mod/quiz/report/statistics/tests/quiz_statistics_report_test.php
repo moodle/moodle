@@ -59,6 +59,7 @@ class quiz_statistics_report_test extends \advanced_testcase {
      */
     public function setUp(): void {
         global $CFG;
+        parent::setUp();
         self::$lockdb = \moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
         self::$lockdb->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, $CFG->dboptions);
 
@@ -90,6 +91,7 @@ class quiz_statistics_report_test extends \advanced_testcase {
         self::$lockdb->dispose();
         self::$lockdb = null;
         self::$lockfactory = null;
+        parent::tearDown();
     }
 
     /**
