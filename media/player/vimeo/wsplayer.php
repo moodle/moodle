@@ -63,7 +63,7 @@ $context = ['embedurl' => $embedurl->out(false)]; // Template context.
 
 if (empty($width) && empty($height)) {
     // Use the full page. The video will keep the ratio.
-    $context['display'] = "position:absolute; top:0; left:0; width:100%; height:100%;";
+    $context['style'] = "position:absolute; top:0; left:0; width:100%; height:100%;";
 } else {
     $context['width'] = $width;
     $context['height'] = $height;
