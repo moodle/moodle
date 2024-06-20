@@ -40,3 +40,7 @@
   - `core_reportbuilder\local\helpers\schedule::[create_schedule|calculate_next_send_time]`
 
   For more information see [MDL-82041](https://tracker.moodle.org/browse/MDL-82041)
+- The following classes have been moved to use the new exception API as a l2 namespace:
+  - `core_reportbuilder\\report_access_exception` => `core_reportbuilder\\exception\\report_access_exception` - `core_reportbuilder\\source_invalid_exception` => `core_reportbuilder\\exception\\source_invalid_exception` - `core_reportbuilder\\source_unavailable_exception` => `core_reportbuilder\\exception\\source_unavailable_exception`
+
+  For more information see [MDL-82133](https://tracker.moodle.org/browse/MDL-82133)

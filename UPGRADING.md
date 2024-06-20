@@ -65,6 +65,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Fixed
 
+- All the setup and tear down methods of `PHPUnit` now are required to, always, call to their parent counterparts. This is a good practice to avoid future problems, especially when updating to PHPUnit >= 10.
+  This includes the following methods:
+    - `setUp()`
+    - `tearDown()`
+    - `setUpBeforeClass()`
+    - `tearDownAfterClass()`
+
+  For more information see [MDL-81523](https://tracker.moodle.org/browse/MDL-81523)
 - Use server timezone when constructing `\DateTimeImmutable` for the system `\core\clock` implementation.
 
   For more information see [MDL-81894](https://tracker.moodle.org/browse/MDL-81894)
@@ -80,6 +88,11 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The following method has been deprecated and should not be used any longer: `print_grade_menu`.
 
   For more information see [MDL-82157](https://tracker.moodle.org/browse/MDL-82157)
+- The following files and their contents have been deprecated:
+  - `lib/soaplib.php`
+  - `lib/tokeniserlib.php`
+
+  For more information see [MDL-82191](https://tracker.moodle.org/browse/MDL-82191)
 
 ### mod_assign
 
@@ -117,6 +130,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-72353](https://tracker.moodle.org/browse/MDL-72353)
 
+#### Changed
+
+- The `report_helper::print_report_selector` method accepts an additional argument for adding content to the tertiary navigation to align with the report selector
+
+  For more information see [MDL-78773](https://tracker.moodle.org/browse/MDL-78773)
+
 ### report_eventlist
 
 #### Deprecated
@@ -136,6 +155,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
    - `behat_grade::select_in_gradebook_tabs`
 
   For more information see [MDL-74581](https://tracker.moodle.org/browse/MDL-74581)
+
+#### Deprecated
+
+- The `core_grades_renderer::group_selector()` method has been deprecated. Please use `\core_course\output\actionbar\renderer` to render a `group_selector` renderable instead.
+
+  For more information see [MDL-80745](https://tracker.moodle.org/browse/MDL-80745)
 
 ### core_reportbuilder
 
@@ -177,6 +202,10 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   - `core_reportbuilder\local\helpers\schedule::[create_schedule|calculate_next_send_time]`
 
   For more information see [MDL-82041](https://tracker.moodle.org/browse/MDL-82041)
+- The following classes have been moved to use the new exception API as a l2 namespace:
+  - `core_reportbuilder\\report_access_exception` => `core_reportbuilder\\exception\\report_access_exception` - `core_reportbuilder\\source_invalid_exception` => `core_reportbuilder\\exception\\source_invalid_exception` - `core_reportbuilder\\source_unavailable_exception` => `core_reportbuilder\\exception\\source_unavailable_exception`
+
+  For more information see [MDL-82133](https://tracker.moodle.org/browse/MDL-82133)
 
 ### core_webservice
 
@@ -185,6 +214,38 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `token_table` and `token_filter` classes have been deprecated, in favour of new report builder implementation.
 
   For more information see [MDL-79496](https://tracker.moodle.org/browse/MDL-79496)
+
+### quiz
+
+#### Added
+
+- The functions quiz_overview_report::regrade_attempts and regrade_batch_of_attempts now have a new optional parameter $slots to only regrade some slots in each attempt (default all).
+
+  For more information see [MDL-79546](https://tracker.moodle.org/browse/MDL-79546)
+
+### gradereport_grader
+
+#### Deprecated
+
+- The `gradereport_grader/group` ESM has been deprecated. Please use `core_course/actionbar/group` instead.
+
+  For more information see [MDL-80745](https://tracker.moodle.org/browse/MDL-80745)
+
+### gradereport_singleview
+
+#### Deprecated
+
+- The `gradereport_singleview/group` ESM has been deprecated. Please use `core_course/actionbar/group` instead.
+
+  For more information see [MDL-80745](https://tracker.moodle.org/browse/MDL-80745)
+
+### gradereport_user
+
+#### Deprecated
+
+- The `gradereport_user/group` ESM has been deprecated. Please use `core_course/actionbar/group` instead.
+
+  For more information see [MDL-80745](https://tracker.moodle.org/browse/MDL-80745)
 
 ### core_question
 

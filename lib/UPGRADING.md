@@ -57,6 +57,14 @@
 
 ### Fixed
 
+- All the setup and tear down methods of `PHPUnit` now are required to, always, call to their parent counterparts. This is a good practice to avoid future problems, especially when updating to PHPUnit >= 10.
+  This includes the following methods:
+    - `setUp()`
+    - `tearDown()`
+    - `setUpBeforeClass()`
+    - `tearDownAfterClass()`
+
+  For more information see [MDL-81523](https://tracker.moodle.org/browse/MDL-81523)
 - Use server timezone when constructing `\DateTimeImmutable` for the system `\core\clock` implementation.
 
   For more information see [MDL-81894](https://tracker.moodle.org/browse/MDL-81894)
@@ -72,3 +80,8 @@
 - The following method has been deprecated and should not be used any longer: `print_grade_menu`.
 
   For more information see [MDL-82157](https://tracker.moodle.org/browse/MDL-82157)
+- The following files and their contents have been deprecated:
+  - `lib/soaplib.php`
+  - `lib/tokeniserlib.php`
+
+  For more information see [MDL-82191](https://tracker.moodle.org/browse/MDL-82191)

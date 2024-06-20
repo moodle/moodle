@@ -13,4 +13,3 @@
 - The `core_message/remove_contact_button` template is deprecated and will be removed in the future version
 
   For more information see [MDL-81428](https://tracker.moodle.org/browse/MDL-81428)
-
