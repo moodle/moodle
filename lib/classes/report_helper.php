@@ -14,16 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Report plugins helper class
- *
- * @package core
- * @subpackage report
- * @copyright 2021 Sujith Haridasan
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core;
+
 use context_course;
 use moodle_url;
 use stdClass;
@@ -32,17 +24,19 @@ use stdClass;
  * A helper class with static methods to help report plugins
  *
  * @package core
+ * @subpackage report
  * @copyright 2021 Sujith Haridasan
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class report_helper {
+
     /**
      * Print the selector dropdown
      *
      * @param string $pluginname The report plugin where the header is modified
-     * @return void
+     * @param string $additional Additional content to display aligned with the selector
      */
-    public static function print_report_selector(string $pluginname):void {
+    public static function print_report_selector(string $pluginname, string $additional = ''): void {
         global $OUTPUT, $PAGE;
 
         if ($reportnode = $PAGE->settingsnav->find('coursereports', \navigation_node::TYPE_CONTAINER)) {
@@ -81,12 +75,18 @@ class report_helper {
             $options = \html_writer::tag(
                 'div',
                 $OUTPUT->render_from_template('core/tertiary_navigation_selector', $selectmenu->export_for_template($OUTPUT)),
-                ['class' => 'row pb-3']
+                ['class' => 'navitem']
             );
+
+            if ($additional) {
+                $options .= \html_writer::div('', 'navitem-divider') .
+                    \html_writer::div($additional, 'navitem');
+            }
+
             echo \html_writer::tag(
                 'div',
                 $options,
-                ['class' => 'tertiary-navigation full-width-bottom-border ml-0', 'id' => 'tertiary-navigation']);
+                ['class' => 'tertiary-navigation full-width-bottom-border ml-0 d-flex', 'id' => 'tertiary-navigation']);
         } else {
             echo $OUTPUT->heading($pluginname, 2, 'mb-3');
         }
