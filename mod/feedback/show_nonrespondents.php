@@ -74,6 +74,9 @@ $actionbar = new \mod_feedback\output\responses_action_bar($cm->id, $url);
 
 require_capability('mod/feedback:viewreports', $context);
 
+$currentgroup = groups_get_activity_group($cm, true);
+$incompleteusers = feedback_get_incomplete_users($cm, $currentgroup);
+
 $canbulkmessaging = has_capability('moodle/course:bulkmessaging', $coursecontext);
 if ($action == 'sendmessage' && $canbulkmessaging) {
     require_sesskey();
@@ -100,6 +103,10 @@ if ($action == 'sendmessage' && $canbulkmessaging) {
 
     $good = 1;
     if (is_array($messageuser)) {
+
+        // Ensure selected users are part of the "incomplete users" set.
+        $messageuser = array_intersect($messageuser, $incompleteusers);
+
         foreach ($messageuser as $userid) {
             $senduser = $DB->get_record('user', array('id'=>$userid));
             $eventdata = new \core\message\message();
@@ -157,15 +164,7 @@ echo $renderer->main_action_bar($actionbar);
 ////////////////////////////////////////////////////////
 /// Print the users with no responses
 ////////////////////////////////////////////////////////
-//get the effective groupmode of this course and module
-if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
-    $groupmode =  $cm->groupmode;
-} else {
-    $groupmode = $course->groupmode;
-}
-
 $groupselect = groups_print_activity_menu($cm, $url->out(), true);
-$mygroupid = groups_get_activity_group($cm);
 
 // preparing the table for output
 $baseurl = new moodle_url('/mod/feedback/show_nonrespondents.php');
@@ -220,18 +219,7 @@ if ($table->get_sql_sort()) {
     $sort = '';
 }
 
-//get students in conjunction with groupmode
-if ($groupmode > 0) {
-    if ($mygroupid > 0) {
-        $usedgroupid = $mygroupid;
-    } else {
-        $usedgroupid = false;
-    }
-} else {
-    $usedgroupid = false;
-}
-
-$matchcount = feedback_count_incomplete_users($cm, $usedgroupid);
+$matchcount = count($incompleteusers);
 $table->initialbars(false);
 
 if ($showall) {
@@ -244,7 +232,7 @@ if ($showall) {
 }
 
 // Return students record including if they started or not the feedback.
-$students = feedback_get_incomplete_users($cm, $usedgroupid, $sort, $startpage, $pagecount, true);
+$students = feedback_get_incomplete_users($cm, $currentgroup, $sort, $startpage, $pagecount, true);
 //####### viewreports-start
 //print the list of students
 echo $OUTPUT->heading(get_string('non_respondents_students', 'feedback', $matchcount), 4);
