@@ -1,0 +1,8 @@
+issueNumber: MDL-78773
+notes:
+  report:
+    - message: >
+        The `report_helper::print_report_selector` method accepts an additional
+        argument for adding content to the tertiary navigation to align with the
+        report selector
+      type: changed
