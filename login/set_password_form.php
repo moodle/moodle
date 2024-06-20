@@ -83,6 +83,13 @@ class login_set_password_form extends moodleform {
         $mform->addRule('password2', get_string('required'), 'required', null, 'client');
         $mform->setType('password2', PARAM_RAW);
 
+        $mform->addElement('checkbox', 'logoutothersessions', get_string('logoutothersessions', 'report_usersessions'));
+        $mform->addHelpButton('logoutothersessions', 'logoutothersessions', 'report_usersessions');
+        $mform->setDefault('logoutothersessions', 1);
+        if (!empty($CFG->passwordchangelogout)) {
+            $mform->getElement('logoutothersessions')->freeze();
+        }
+
         // Hook for plugins to extend form definition.
         $user = $this->_customdata;
         core_login_extend_set_password_form($mform, $user);
