@@ -25,9 +25,9 @@ Feature: Undeployed H5P activities packages should be available only to any user
       | h5pactivity | C1     | Music history | teacher1 | h5p/tests/fixtures/filltheblanks.h5p |
     And I log in as "admin"
     And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I press "Delete" action in the "Teacher 1" report row
-    And I click on "Delete" "button" in the "Delete user" "dialogue"
-    And I should see "Deleted user Teacher 1"
+    And I click on "Delete" "icon" in the "Teacher 1" "table_row"
+    And I press "Delete"
+    And I should not see "Teacher 1"
 
   @javascript
   Scenario: In an H5P activity, as student I should not be able to deploy the package if not deployed by the teacher

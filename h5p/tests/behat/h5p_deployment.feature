@@ -37,9 +37,9 @@ Feature: Undeployed H5P content should be only available to users that can deplo
     And I log out
     And I log in as "admin"
     And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I press "Delete" action in the "Teacher 1" report row
-    And I click on "Delete" "button" in the "Delete user" "dialogue"
-    And I should see "Deleted user Teacher 1"
+    And I click on "Delete" "icon" in the "Teacher 1" "table_row"
+    And I press "Delete"
+    And I should not see "Teacher 1"
 
   @javascript
   Scenario: A student I should not be able to see a package that has been deployed by a deleted user. Then if another user deploys the package, I can see it.
