@@ -17,7 +17,7 @@
     }
 
     // Override Bootstrap .close for better accessibility.
-    .close {
+    .btn-close {
         // Adjust the margins so the focus outline does not look clipped.
         margin: -0.8rem -0.8rem -0.8rem auto;
 

@@ -19,7 +19,7 @@ In order for this to work you need to use the JavaScript syntax used in core Mus
     <img src="http://placekitten.com/50/50" class="rounded mr-2" alt="PlaceKitten">
     <strong class="mr-auto">Bootstrap</strong>
     <small>11 mins ago</small>
-    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+    <button type="button" class="ml-2 mb-1 btn-close" data-dismiss="toast" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>

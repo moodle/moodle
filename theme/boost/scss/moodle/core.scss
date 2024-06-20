@@ -148,7 +148,7 @@ input[type="image"],
 .sr-only-focusable,
 a.dropdown-toggle,
 .moodle-dialogue-base .closebutton,
-button.close,
+button.btn-close,
 .form-autocomplete-selection,
 [role="treeitem"]:not([aria-expanded="true"]) {
     &.focus,
@@ -2612,7 +2612,7 @@ $picker-emojis-per-row: 7 !default;
             color: darken(theme-color-level($color, $alert-color-level), 10%);
         }
         // Darken the close button text colour inside notification alerts for better contrast.
-        .close {
+        .btn-close {
             color: darken(theme-color-level($color, $alert-color-level), 20%);
             opacity: 0.6;
         }

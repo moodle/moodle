@@ -5,3 +5,7 @@
 .g-0 {
     @extend .no-gutters;
 }
+
+.btn-close {
+    @extend .close;
+}
