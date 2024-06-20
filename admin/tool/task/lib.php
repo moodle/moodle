@@ -44,7 +44,7 @@ function tool_task_status_checks(): array {
  * @param string $message Message to output
  * @param string $eol End of line character
  */
-function tool_task_mtrace_wrapper(string $message, string $eol): void {
+function tool_task_mtrace_wrapper(string $message, string $eol = ''): void {
     $message = s($message);
 
     // We autolink urls and emails here but can't use format_text as it does
