@@ -72,14 +72,12 @@ require_login($course, true, $cm);
 
 $actionbar = new \mod_feedback\output\responses_action_bar($cm->id, $url);
 
-if (($formdata = data_submitted()) AND !confirm_sesskey()) {
-    throw new \moodle_exception('invalidsesskey');
-}
-
 require_capability('mod/feedback:viewreports', $context);
 
 $canbulkmessaging = has_capability('moodle/course:bulkmessaging', $coursecontext);
-if ($action == 'sendmessage' AND $canbulkmessaging) {
+if ($action == 'sendmessage' && $canbulkmessaging) {
+    require_sesskey();
+
     $shortname = format_string($course->shortname,
                             true,
                             array('context' => $coursecontext));
