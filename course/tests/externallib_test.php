@@ -2858,8 +2858,13 @@ final class externallib_test extends externallib_advanced_testcase {
 
         $category1 = self::getDataGenerator()->create_category(array('name' => 'Cat 1'));
         $category2 = self::getDataGenerator()->create_category(array('parent' => $category1->id));
-        $course1 = self::getDataGenerator()->create_course(
-            array('category' => $category1->id, 'shortname' => 'c1', 'format' => 'topics'));
+        $numsections = 4;
+        $course1 = self::getDataGenerator()->create_course([
+            'category' => $category1->id,
+            'shortname' => 'c1',
+            'format' => 'topics',
+            'numsections' => $numsections,
+        ]);
 
         $fieldcategory = self::getDataGenerator()->create_custom_field_category(['name' => 'Other fields']);
         $customfield = ['shortname' => 'test', 'name' => 'Custom field', 'type' => 'text',
@@ -3063,6 +3068,20 @@ final class externallib_test extends externallib_advanced_testcase {
         $this->assertCount(0, $result['courses']);
 
         $result = core_course_external::get_courses_by_field('idnumber', 'x');
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(0, $result['courses']);
+
+        $existingsections = $DB->get_records('course_sections', ['course' => $course1->id]);
+        $this->assertEquals(count($existingsections), $numsections + 1); // Includes generic section.
+
+        $section = array_shift($existingsections);
+        $result = core_course_external::get_courses_by_field('sectionid', $section->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(1, $result['courses']);
+        $this->assertEquals($course1->id, $result['courses'][0]['id']);
+
+        // Wrong section.
+        $result = core_course_external::get_courses_by_field('sectionid', 1234);
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
         $this->assertCount(0, $result['courses']);
     }
