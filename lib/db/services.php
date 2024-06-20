@@ -373,7 +373,8 @@ $functions = array(
         'classpath' => 'cohort/externallib.php',
         'description' => 'Deletes all specified cohorts.',
         'type' => 'write',
-        'capabilities' => 'moodle/cohort:manage'
+        'capabilities' => 'moodle/cohort:manage',
+        'ajax' => true,
     ),
     'core_cohort_get_cohort_members' => array(
         'classname' => 'core_cohort_external',

@@ -115,5 +115,21 @@ if (!empty($searchquery)) {
     ]);
 }
 
+// Show the report.
 echo $report->output();
+
+// Show the delete selected button if there are records.
+if ($DB->record_exists('cohort', [])) {
+
+    echo $OUTPUT->render(new single_button(
+        new moodle_url('#'),
+        get_string('deleteselected'),
+        'post',
+        single_button::BUTTON_PRIMARY,
+        ['data-action' => 'cohort-delete-selected']
+    ));
+
+    $PAGE->requires->js_call_amd('core_cohort/actions', 'init');
+}
+
 echo $OUTPUT->footer();
