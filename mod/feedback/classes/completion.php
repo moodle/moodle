@@ -15,16 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains class mod_feedback_completion
- *
- * @package   mod_feedback
- * @copyright 2016 Marina Glancy
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
  * Collects information and methods about feedback completion (either complete.php or show_entries.php)
  *
  * @package   mod_feedback
@@ -557,12 +547,6 @@ class mod_feedback_completion extends mod_feedback_structure {
         $feedbackcompleted = !$feedbackcompleted ? null : $feedbackcompleted;
         $feedbackcompletedtmp = $this->get_current_completed_tmp();
 
-        if (feedback_check_is_switchrole()) {
-            // We do not actually save anything if the role is switched, just delete temporary values.
-            $this->delete_completedtmp();
-            return;
-        }
-
         // Save values.
         $completedid = feedback_save_tmp_values($feedbackcompletedtmp, $feedbackcompleted);
         $this->completed = $DB->get_record('feedback_completed', array('id' => $completedid));
@@ -581,19 +565,6 @@ class mod_feedback_completion extends mod_feedback_structure {
         if ((isloggedin() || $USER->id != $this->userid) && $completion->is_enabled($this->cm) &&
                 $this->cm->completion == COMPLETION_TRACKING_AUTOMATIC && $this->feedback->completionsubmit) {
             $completion->update_state($this->cm, COMPLETION_COMPLETE, $this->userid);
-        }
-    }
-
-    /**
-     * Deletes the temporary completed and all related temporary values
-     */
-    protected function delete_completedtmp() {
-        global $DB;
-
-        if ($completedtmp = $this->get_current_completed_tmp()) {
-            $DB->delete_records('feedback_valuetmp', ['completed' => $completedtmp->id]);
-            $DB->delete_records('feedback_completedtmp', ['id' => $completedtmp->id]);
-            $this->completedtmp = null;
         }
     }
 

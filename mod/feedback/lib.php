@@ -927,23 +927,6 @@ function feedback_get_context() {
 }
 
 /**
- *  returns true if the current role is faked by switching role feature
- *
- * @global object
- * @return boolean
- */
-function feedback_check_is_switchrole() {
-    global $USER;
-    if (isset($USER->switchrole) AND
-            is_array($USER->switchrole) AND
-            count($USER->switchrole) > 0) {
-
-        return true;
-    }
-    return false;
-}
-
-/**
  * count users which have not completed the feedback
  *
  * @global object
