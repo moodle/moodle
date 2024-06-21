@@ -113,14 +113,26 @@ class grading_actionmenu implements templatable, renderable {
             $data['extrafiltersdropdown'] = $OUTPUT->render($extrafiltersdropdown);
         }
 
-        if (groups_get_activity_group($cm) || $this->get_applied_extra_filters_count() > 0) {
+        $activitygroup = groups_get_activity_group($cm);
+        $hasuserfilter = get_user_preferences('assign_filter');
+        $hasextrafilters = $this->get_applied_extra_filters_count() > 0;
+        if ($activitygroup || $hasuserfilter || $hasextrafilters) {
             $url = new moodle_url('/mod/assign/view.php', [
                 'id' => $this->cmid,
                 'action' => 'grading',
                 'group' => 0,
+                'status' => '',
                 'workflowfilter' => '',
+                'sesskey' => sesskey(),
             ]);
             $data['pagereset'] = $url->out(false);
+        }
+
+        if ($this->assign->is_any_submission_plugin_enabled()) {
+            ['statusmenu' => $statusmenu, 'currentvalue' => $currentvalue] = $this->get_status_menu();
+            $statusselect = new \core\output\select_menu('status', $statusmenu, $currentvalue);
+            $statusselect->set_label(get_string('status', 'mod_assign'), [], true);
+            $data['statusselector'] = $statusselect->export_for_template($output);
         }
 
         if ($this->assign->can_grade()) {
@@ -197,6 +209,45 @@ class grading_actionmenu implements templatable, renderable {
         }
 
         return $actions;
+    }
+
+    /**
+     * Get the status menu for the grading action menu.
+     *
+     * @return array An array containing the status menu and the current value.
+     */
+    private function get_status_menu(): array {
+        $statusmenu = [];
+        $currentvalue = '';
+
+        $groupedfilters = $this->assign->get_filters(true);
+        foreach ($groupedfilters as $group => $filters) {
+            foreach ($filters as $filter) {
+                if ($filter['key'] === 'none') {
+                    // The 'none' filter is not a real filter.
+                    $filter['key'] = '';
+                }
+                $url = new moodle_url('/mod/assign/view.php', [
+                    'id' => $this->assign->get_course_module()->id,
+                    'action' => 'grading',
+                    'sesskey' => sesskey(),
+                    'status' => $filter['key'],
+                ]);
+                $statusmenu[$url->out(false)] = $filter['name'];
+
+                if ($filter['active']) {
+                    $currentvalue = $url->out(false);
+                }
+            }
+            if ($group !== array_key_last($groupedfilters)) {
+                $statusmenu[] = '';
+            }
+        }
+
+        return [
+            'statusmenu' => $statusmenu,
+            'currentvalue' => $currentvalue,
+        ];
     }
 
     /**

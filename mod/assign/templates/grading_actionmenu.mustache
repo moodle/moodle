@@ -25,6 +25,7 @@
     Context variables required for this template:
     * userselector - HTML that outputs the user selector
     * groupselector - (optional) HTML that outputs the group selector
+    * statusselector - (optional) The data object containing the required properties to render the status selector
     * extrafiltersdropdown - HTML that outputs the extra filters dropdown
     * actions - (optional) HTML that outputs the bulk action menu
 
@@ -32,6 +33,20 @@
     {
         "userselector": "<div class='user-search'></div>",
         "groupselector": "<div class='group-selector'></div>",
+        "statusselector": {
+            "name": "filter",
+            "value": "submitted",
+            "baseid": "select-menu56789",
+            "label": "Status",
+            "inlinelabel": true,
+            "selectedoption": "Not submitted",
+            "options": [
+                {"name": "All", "value": "", "selected": false, "id": "select-menu-option56789a"},
+                {"name": "Not submitted", "value": "notsubmitted", "selected": true, "id": "select-menu-option56789b"},
+                {"isdivider": true},
+                {"name": "granted extention", "value": "grantedextension", "selected": false, "id": "select-menu-option56789d"}
+            ]
+        },
         "extrafiltersdropdown": "<div class='dropdown extrafilters'></div>",
         "pagereset": "http://moodle.local/mod/assign/view.php?id=2&action=grading&group=0",
         "actions": "<div class='action-menu'></div>"
@@ -56,6 +71,17 @@
             </div>
             <div class="navitem-divider d-none d-sm-flex"></div>
         {{/groupselector}}
+        {{#statusselector}}
+            <div class="navitem">
+                {{>core/select_menu}}
+            </div>
+            <div class="navitem-divider d-none d-sm-flex"></div>
+            {{#js}}
+                document.querySelector('#{{baseid}}').addEventListener('change', function(e) {
+                    window.location.href = e.target.value;
+                });
+            {{/js}}
+        {{/statusselector}}
         {{#extrafiltersdropdown}}
             <div class="navitem">
                 {{{.}}}
