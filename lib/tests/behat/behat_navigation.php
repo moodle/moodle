@@ -1168,7 +1168,7 @@ class behat_navigation extends behat_base {
     protected function select_on_administration_page($nodelist) {
         $parentnodes = $nodelist;
         $lastnode = array_pop($parentnodes);
-        $xpath = '//section[@id=\'region-main\']';
+        $xpath = '//div[@id=\'region-main\']';
 
         // Check if there is a separate tab for this submenu of the page. If found go to it.
         if ($parentnodes) {
