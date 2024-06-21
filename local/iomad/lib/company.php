@@ -3591,7 +3591,8 @@ class company {
             // is the user in a child company?
             $company = new company($companyid);
             $children = $company->get_child_companies_recursive();
-            if ($DB->get_records_sql("SELECT id FROM {company_users}
+            if (!empty($children) &&
+                $DB->get_records_sql("SELECT id FROM {company_users}
                                       WHERE userid = :userid
                                       and companyid IN (" . join(',', array_keys($children)) . ")",
                                       ['userid' => $userid])) {
