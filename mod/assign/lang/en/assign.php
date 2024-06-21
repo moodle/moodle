@@ -666,6 +666,7 @@ $string['viewfeedback'] = 'View feedback';
 $string['viewfeedbackforuser'] = 'View feedback for user: {$a}';
 $string['viewfullgradingpage'] = 'Open the full grading page to provide feedback';
 $string['viewgradebook'] = 'View gradebook';
+$string['viewgrader'] = 'View Grader';
 $string['viewgradingformforstudent'] = 'View grading page for student: (id={$a->id}, fullname={$a->fullname}).';
 $string['viewgrading'] = 'View all submissions';
 $string['viewownsubmissionform'] = 'View own submit assignment page.';

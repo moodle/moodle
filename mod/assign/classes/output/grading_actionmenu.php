@@ -105,12 +105,20 @@ class grading_actionmenu implements templatable, renderable {
         }
 
         if (groups_get_course_group($course)) {
-            $reset = new moodle_url('/mod/assign/view.php', [
+            $url = new moodle_url('/mod/assign/view.php', [
                 'id' => $this->cmid,
                 'action' => 'grading',
                 'group' => 0,
             ]);
-            $data['pagereset'] = $reset->out(false);
+            $data['pagereset'] = $url->out(false);
+        }
+
+        if ($this->assign->can_grade()) {
+            $url = new moodle_url('/mod/assign/view.php', [
+                'id' => $this->assign->get_course_module()->id,
+                'action' => 'grader',
+            ]);
+            $data['graderurl'] = $url->out(false);
         }
 
         $actions = $this->get_actions();
