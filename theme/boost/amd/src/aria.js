@@ -380,7 +380,12 @@ const comboboxFix = () => {
         if (combobox.hasAttribute('value')) {
             combobox.value = option.dataset.shortText || option.textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
         } else {
-            combobox.textContent = option.dataset.shortText || option.textContent;
+            const selectedOptionContainer = combobox.querySelector('[data-selected-option]');
+            if (selectedOptionContainer) {
+                selectedOptionContainer.textContent = option.dataset.shortText || option.textContent;
+            } else {
+                combobox.textContent = option.dataset.shortText || option.textContent;
+            }
         }
 
         if (combobox.dataset.inputElement) {
