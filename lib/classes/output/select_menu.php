@@ -47,7 +47,7 @@ class select_menu implements renderable, templatable {
      *
      * @param string $name Name of the combobox element
      * @param array $options List of options in an associative array format like ['val' => 'Option'].
-     *                       Supports grouped options as well.
+     *                       Supports grouped options as well. Empty string or null values will be rendered as dividers.
      * @param string|null $selected The value of the preselected option.
      */
     public function __construct(string $name, array $options, ?string $selected = null) {
@@ -87,21 +87,29 @@ class select_menu implements renderable, templatable {
                         ];
                     }
                     foreach ($optoptions as $optvalue => $optoption) {
-                        $flattened[$groupname]['options'][$optvalue] = [
-                            'name' => $optoption,
-                            'value' => $optvalue,
-                            'selected' => $this->selected == $optvalue,
-                            'id' => \html_writer::random_id('select-menu-option'),
-                        ];
+                        if (empty($optoption)) {
+                            $flattened[$groupname]['options'][$optvalue] = ['isdivider' => true];
+                        } else {
+                            $flattened[$groupname]['options'][$optvalue] = [
+                                'name' => $optoption,
+                                'value' => $optvalue,
+                                'selected' => $this->selected == $optvalue,
+                                'id' => \html_writer::random_id('select-menu-option'),
+                            ];
+                        }
                     }
                 }
             } else {
-                $flattened[$value] = [
-                    'name' => $option,
-                    'value' => $value,
-                    'selected' => $this->selected == $value,
-                    'id' => \html_writer::random_id('select-menu-option'),
-                ];
+                if (empty($option)) {
+                    $flattened[$value] = ['isdivider' => true];
+                } else {
+                    $flattened[$value] = [
+                        'name' => $option,
+                        'value' => $value,
+                        'selected' => $this->selected == $value,
+                        'id' => \html_writer::random_id('select-menu-option'),
+                    ];
+                }
             }
         }
 
