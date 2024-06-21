@@ -60,7 +60,7 @@
 
         <div id="page-content" class="row">
             <div id="region-main-box" class="col-12">
-                <section id="region-main" {{#hasblocks}}class="has-blocks"{{/hasblocks}} aria-label="{{#str}}content{{/str}}">
+                <div id="region-main" {{#hasblocks}}class="has-blocks"{{/hasblocks}}>
 
                     {{{ output.course_content_header }}}
                     {{#headercontent}}
@@ -69,7 +69,7 @@
                     {{{ output.main_content }}}
                     {{{ output.course_content_footer }}}
 
-                </section>
+                </div>
                 {{#hasblocks}}
                 <section data-region="blocks-column" aria-label="{{#str}}blocks{{/str}}">
                     {{{ sidepreblocks }}}
