@@ -71,7 +71,7 @@
 
         <div id="page-content" class="row {{#haspreblocks}} blocks-pre {{/haspreblocks}} {{#haspostblocks}} blocks-post {{/haspostblocks}}">
             <div id="region-main-box" class="region-main">
-                <section id="region-main" aria-label="{{#str}}content{{/str}}">
+                <div id="region-main">
                     <div class="card">
                         <div class="card-body">
                             {{{ output.course_content_header }}}
@@ -82,7 +82,7 @@
                             {{{ output.course_content_footer }}}
                         </div>
                     </div>
-                </section>
+                </div>
             </div>
             <div class="columnleft {{#haspreblocks}} has-blocks {{/haspreblocks}}">
                 <section data-region="blocks-column" class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
