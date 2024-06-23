@@ -555,6 +555,64 @@ final class report_test extends \advanced_testcase {
     }
 
     /**
+     * Test grade history with grade updated by different sources
+     *
+     * @covers \gradereport_history\output\tablelog::get_sql_and_params
+     *
+     * @return void
+     */
+    public function test_grade_history_with_different_sources(): void {
+        $this->resetAfterTest();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a user and enrol them in the course.
+        $user = $teacher = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create an assignment.
+        $assign = $this->getDataGenerator()->create_module('assign', ['course' => $course]);
+
+        // Create a grade item.
+        $gi = \grade_item::fetch(['iteminstance' => $assign->id, 'itemtype' => 'mod', 'itemmodule' => 'assign']);
+
+        // Create some grade history entries with same time modifies.
+        $time = time();
+        $this->create_grade_history([
+            'itemid' => $gi->id,
+            'userid' => $user->id,
+            'usermodified' => $teacher->id,
+            'finalgrade' => 50,
+            'source' => 'mod/assign',
+            'timemodified' => $time,
+        ]);
+        $this->create_grade_history([
+            'itemid' => $gi->id,
+            'userid' => $user->id,
+            'usermodified' => $teacher->id,
+            'finalgrade' => 60,
+            'source' => 'cli',
+            'timemodified' => $time,
+        ]);
+
+        // Fetch the grade history.
+        $results = $this->get_tablelog_results(\context_course::instance($course->id));
+
+        // Check the grade history.
+        $this->assertCount(2, $results);
+        $assigngrade = array_pop($results);
+        $cligrade = array_pop($results);
+
+        // Check their values.
+        $this->assertEquals(60, $cligrade->finalgrade);
+        $this->assertEquals(50, $cligrade->prevgrade);
+        $this->assertEquals('cli', $cligrade->source);
+        $this->assertEquals(50, $assigngrade->finalgrade);
+        $this->assertEquals(null, $assigngrade->prevgrade);
+        $this->assertEquals('mod/assign', $assigngrade->source);
+    }
+
+    /**
      * Asserts that the array of grade objects contains exactly the right IDs.
      *
      * @param array $expectedids Array of expected IDs.

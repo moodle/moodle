@@ -30,7 +30,11 @@
         "extraclasses": "statusicons",
         "value": "Text information",
         "tabindex": "1",
-        "name": "grade[313][624]"
+        "name": "grade[313][624]",
+        "canapplypenalty": "false",
+        "exemptionname": "exemption[3][2]",
+        "exemptionid": "exemption3_2",
+        "exemptionlabel": "Exempt penalty"
     }
 }}
 <div class="d-flex flex-column h-100" data-collapse="content">
@@ -41,7 +45,12 @@
                     {{>core_grades/grades/grader/scale}}
                 {{/scale}}
                 {{^scale}}
-                    {{>core_grades/grades/grader/input}}
+                    {{#canapplypenalty}}
+                        {{>core_grades/grades/grader/overridden_with_penalty}}
+                    {{/canapplypenalty}}
+                    {{^canapplypenalty}}
+                        {{>core_grades/grades/grader/input}}
+                    {{/canapplypenalty}}
                 {{/scale}}
             {{/iseditable}}
             {{^iseditable}}

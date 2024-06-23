@@ -17,7 +17,8 @@
 defined('MOODLE_INTERNAL') || die;
 
 use core\output\comboboxsearch;
-use \core_grades\output\action_bar;
+use core_grades\output\action_bar;
+use core_grades\output\penalty_indicator;
 use core_message\helper;
 use core_message\api;
 
@@ -235,5 +236,16 @@ class core_grades_renderer extends plugin_renderer_base {
         }
 
         return $this->render_from_template('core_grades/user_heading', $headingdata);
+    }
+
+    /**
+     * Renders the penalty indicator.
+     *
+     * @param penalty_indicator $penaltyindicator
+     * @return string The HTML output
+     */
+    public function render_penalty_indicator(penalty_indicator $penaltyindicator): string {
+        $data = $penaltyindicator->export_for_template($this);
+        return $this->render_from_template($penaltyindicator->get_template(), $data);
     }
 }

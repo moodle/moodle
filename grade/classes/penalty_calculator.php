@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,15 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_grades;
+
+use core_grades\penalty_container;
+
 /**
- * Strings for component 'gradeimport_csv', language 'en', branch 'MOODLE_20_STABLE'
+ * Abstract class for defining the interface between the core penalty system and penalty plugins.
+ * Penalty plugins must override this class under their own namespace to receive calls from the core penalty system.
  *
- * @package   gradeimport_csv
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @package   core_grades
+ * @copyright 2025 Catalyst IT Australia Pty Ltd
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-$string['csv:view'] = 'Import grades from CSV';
-$string['gradepenalties'] = 'Grade penalties will not be applied to imported grades.';
-$string['pluginname'] = 'CSV file';
-$string['privacy:metadata'] = 'The import grades from CSV plugin does not store any personal data.';
+abstract class penalty_calculator {
+    /**
+     * Calculate the grade penalty based on the information provided in the penalty container.
+     * The result should be stored in the penalty container.
+     *
+     * @param penalty_container $container
+     */
+    abstract public static function calculate_penalty(penalty_container $container): void;
+}

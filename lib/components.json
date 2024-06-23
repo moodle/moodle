@@ -23,6 +23,7 @@
         "coursereport": "course\/report",
         "gradeexport": "grade\/export",
         "gradeimport": "grade\/import",
+        "gradepenalty": "grade\/penalty",
         "gradereport": "grade\/report",
         "gradingform": "grade\/grading\/form",
         "mlbackend": "lib\/mlbackend",

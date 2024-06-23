@@ -468,7 +468,10 @@ class tablelog extends \table_sql implements \renderable {
                             FROM {grade_grades_history} h
                            WHERE h.itemid = ggh.itemid
                              AND h.userid = ggh.userid
-                             AND h.timemodified < ggh.timemodified
+                             AND (
+                                    h.timemodified < ggh.timemodified
+                                    OR (h.timemodified = ggh.timemodified AND h.source != ggh.source AND h.id < ggh.id)
+                                 )
                              AND NOT EXISTS (
                               SELECT 1
                                 FROM {grade_grades_history} h2

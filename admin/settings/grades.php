@@ -2,6 +2,8 @@
 
 // This file defines settingpages and externalpages under the "grades" section
 
+use core\plugininfo\gradepenalty;
+
 if (has_capability('moodle/grade:manage', $systemcontext)
  or has_capability('moodle/grade:manageletters', $systemcontext)) { // speedup for non-admins, add all caps used on this page
 
@@ -91,7 +93,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         $temp->add(new admin_setting_my_grades_report());
 
         $temp->add(new admin_setting_configtext('gradereport_mygradeurl', new lang_string('externalurl', 'grades'),
-                new lang_string('externalurl_desc', 'grades'), ''));
+            new lang_string('externalurl_desc', 'grades'), ''));
     }
     $ADMIN->add('grades', $temp);
 
@@ -221,5 +223,48 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         }
     }
 
-} // end of speedup
+    // Penalty.
+    $ADMIN->add('grades', new admin_category('gradepenalty', new lang_string('gradepenalty', 'grades')));
 
+    // Supported modules.
+    $modules = core_grades\penalty_manager::get_supported_modules();
+    if (!empty($modules)) {
+        $temp = new admin_settingpage('supportedplugins', new lang_string('gradepenalty_supportedplugins', 'grades'),
+            'moodle/grade:manage');
+
+        $options = [];
+        foreach ($modules as $module) {
+            $options[$module] = new lang_string('modulename', $module);
+        }
+        $temp->add(new admin_setting_configmultiselect('gradepenalty_enabledmodules',
+            new lang_string('gradepenalty_enabledmodules', 'grades'),
+            new lang_string('gradepenalty_enabledmodules_help', 'grades'), [], $options));
+
+        // Option to apply penalty to overridden grades.
+        $temp->add(new admin_setting_configcheckbox('gradepenalty_overriddengrade',
+            new lang_string('gradepenalty_overriddengrade', 'grades'),
+            new lang_string('gradepenalty_overriddengrade_help', 'grades'), 0));
+
+        $ADMIN->add('gradepenalty', $temp);
+    }
+
+    // External page to manage the penalty plugins.
+    $temp = new admin_externalpage(
+        'managepenaltyplugins',
+        get_string('managepenaltyplugins', 'grades'),
+        new moodle_url('/grade/penalty/manage_penalty_plugins.php'),
+        'moodle/grade:manage'
+    );
+    $ADMIN->add('gradepenalty', $temp);
+
+    // Settings from each penalty plugin.
+    foreach (core_component::get_plugin_list('gradepenalty') as $plugin => $plugindir) {
+        // Check if the plugin is enabled.
+        if (gradepenalty::is_plugin_enabled($plugin)) {
+            // Include all the settings commands for this plugin if there are any.
+            if (file_exists($plugindir . '/settings.php')) {
+                include($plugindir . '/settings.php');
+            }
+        }
+    }
+} // end of speedup

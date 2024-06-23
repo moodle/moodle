@@ -408,6 +408,8 @@ define ('PEPPER_ENTROPY', 112);
 
 /** True if module can provide a grade */
 define('FEATURE_GRADE_HAS_GRADE', 'grade_has_grade');
+/** True if module can support grade penalty */
+define('FEATURE_GRADE_HAS_PENALTY', 'grade_has_penalty');
 /** True if module supports outcomes */
 define('FEATURE_GRADE_OUTCOMES', 'outcomes');
 /** True if module supports advanced grading methods */

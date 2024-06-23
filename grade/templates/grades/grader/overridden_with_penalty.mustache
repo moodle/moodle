@@ -1,0 +1,54 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_grades/grades/grader/overridden_with_penalty
+
+    Input template for grader report cell.
+
+    Example context (json):
+    {
+        "deductedmark": "30.00",
+        "effectivegrade": "70.00",
+        "exemptionid": "exemption3_2",
+        "exemptionlabel": "Exempt penalty",
+        "exemptiontooltip": "Exempt penalty",
+        "exemptionname": "exemption[3][2]",
+        "penaltyexempt": "true",
+        "id": "grade_313_624",
+        "label": "grade_313_624",
+        "name": "grade[313][624]"
+    }
+}}
+
+<div class="container">
+    <div class="row">
+        <div class="mr-0">{{#str}}originalgrade, core_grades{{/str}}: </div>
+        {{>core_grades/grades/grader/input}}
+    </div>
+
+    <div class="row">
+        <div class="mr-0">{{#str}}currentgrade, core_grades{{/str}}: {{{effectivegrade}}}</div>
+    </div>
+
+    <div class="row">
+        <div class="mr-0" title="{{exemptiontooltip}}">{{#str}}exemptpenalty, core_grades{{/str}}:</div>
+        <label for="{{exemptionid}}" class="accesshide">{{{exemptionlabel}}}</label>
+        <input type="checkbox" name="{{exemptionname}}"
+               value="{{deductedmark}}" id="{{exemptionid}}"
+               {{#penaltyexempt}}checked{{/penaltyexempt}}>
+    </div>
+</div>

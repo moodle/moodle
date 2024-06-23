@@ -992,6 +992,17 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
         $output = $OUTPUT->heading($heading);
     }
 
+    // If any grade penalty plugins are enabled, notify the user that grade penalties will not be applied to imported grades.
+    if ($active_type === 'import') {
+        foreach (core_plugin_manager::instance()->get_plugins_of_type('gradepenalty') as $plugin) {
+            if ($plugin->is_enabled()) {
+                $output .= $OUTPUT->notification(get_string('gradepenalties', 'gradeimport_csv'),
+                    \core\output\notification::NOTIFY_INFO, false);
+                break;
+            }
+        }
+    }
+
     if ($return) {
         $returnval .= $output;
     } else {

@@ -4901,6 +4901,9 @@ class settings_navigation extends navigation_node {
             }
         }
 
+        // Grade penalty navigation.
+        \core_grades\penalty_manager::extend_navigation_course($coursenode, $course, $coursecontext);
+
         // Check if we can view the gradebook's setup page.
         if ($adminoptions->gradebook) {
             $url = new moodle_url('/grade/edit/tree/index.php', array('id' => $course->id));
@@ -4956,8 +4959,8 @@ class settings_navigation extends navigation_node {
         // Let plugins hook into course navigation.
         $pluginsfunction = get_plugins_with_function('extend_navigation_course', 'lib.php');
         foreach ($pluginsfunction as $plugintype => $plugins) {
-            // Ignore the report plugin as it was already loaded above.
-            if ($plugintype == 'report') {
+            // Ignore the report and gradepenalty plugins as they were already loaded above.
+            if ($plugintype == 'report' || $plugintype == 'gradepenalty') {
                 continue;
             }
             foreach ($plugins as $pluginfunction) {

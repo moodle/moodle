@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,15 +14,36 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_grades\table;
+
+use core_admin\table\plugin_management_table;
+use core\url;
+
 /**
- * Strings for component 'gradeimport_csv', language 'en', branch 'MOODLE_20_STABLE'
+ * Table to manage grade penalty plugin.
  *
- * @package   gradeimport_csv
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @package   core_grades
+ * @copyright 2024 Catalyst IT Australia Pty Ltd
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class gradepenalty_management_table extends plugin_management_table {
 
-$string['csv:view'] = 'Import grades from CSV';
-$string['gradepenalties'] = 'Grade penalties will not be applied to imported grades.';
-$string['pluginname'] = 'CSV file';
-$string['privacy:metadata'] = 'The import grades from CSV plugin does not store any personal data.';
+    /**
+     * Return the penalty plugin type.
+     *
+     * @return string
+     */
+    protected function get_plugintype(): string {
+        return 'gradepenalty';
+    }
+
+    /**
+     * Get the URL to manage the penalty plugin.
+     *
+     * @param array $params
+     * @return url
+     */
+    protected function get_action_url(array $params = []): url {
+        return new url('/grade/penalty/manage_penalty_plugins.php', $params);
+    }
+}
