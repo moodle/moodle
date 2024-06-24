@@ -438,6 +438,13 @@
         .info {
             display: inline-block;
             margin-right: 1em;
+
+            [data-filterby].active {
+                font-weight: bold;
+            }
+        }
+        .updateavailableinstallall {
+            margin-right: 1em;
         }
     }
 
