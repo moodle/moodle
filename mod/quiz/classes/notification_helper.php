@@ -48,7 +48,7 @@ class notification_helper {
                   JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
              LEFT JOIN {quiz_overrides} qo ON q.id = qo.quiz
                  WHERE (q.timeopen < :futuretime OR qo.timeopen < :qo_futuretime)
-                   AND (q.timeopen > :timenow OR qo.timeopen > :qo_timenow);";
+                   AND (q.timeopen > :timenow OR qo.timeopen > :qo_timenow)";
 
         $params = [
             'timenow' => $timenow,
