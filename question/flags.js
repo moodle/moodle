@@ -29,12 +29,13 @@ M.core_question_flags = {
     flagattributes: null,
     actionurl: null,
     listeners: [],
+    editableSelector: 'div.questionflag.editable',
 
     init: function(Y, actionurl, flagattributes) {
         M.core_question_flags.flagattributes = flagattributes;
         M.core_question_flags.actionurl = actionurl;
 
-        Y.all('div.questionflag').each(function(flagdiv, i) {
+        Y.all(M.core_question_flags.editableSelector).each(function(flagdiv) {
             var checkbox = flagdiv.one('input[type=checkbox]');
             if (!checkbox) {
                 return;
@@ -64,17 +65,17 @@ M.core_question_flags = {
         Y.delegate('click', function(e) {
             e.halt();
             M.core_question_flags.process(this);
-        }, document.body, 'div.questionflag');
+        }, document.body, M.core_question_flags.editableSelector);
         Y.delegate('key', function(e) {
             e.halt();
             if (e.keyCode == 13) {
                 M.core_question_flags.process(this);
             }
-        }, document.body, 'down:enter, space', 'div.questionflag');
+        }, document.body, 'down:enter, space', M.core_question_flags.editableSelector);
         Y.delegate('key', function(e) {
             e.halt();
             M.core_question_flags.process(this);
-        }, document.body, 'up:space', 'div.questionflag');
+        }, document.body, 'up:space', M.core_question_flags.editableSelector);
     },
 
     update_flag: function(input, toggle) {
