@@ -72,7 +72,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
     And I give the grade "10.00" to the user "Student 2" for the grade item "MI 3"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 1         | 20.00 %           | 75.00  | 0–100 | 75.00 %    | 15.00 %                         |
@@ -82,7 +82,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | MI 5         | 20.00 %           | 100.00 | 0–100 | 100.00 %   | 20.00 %                         |
       | CAT1 total   | 40.00 %           | 150.00 | 0–200 | 75.00 %    | -                               |
       | Course total | -                 | 350.00 | 0–500 | 70.00 %    | -                               |
-    And I click on "Student 2" in the "user" search widget
+    And I click on "Student 2" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 1         | 33.33 %           | 20.00  | 0–100 | 20.00 %    | 6.67 %                      |
@@ -102,7 +102,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | Maximum grade           | 50.00 |
       | Minimum grade           | 5.00  |
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 1         | 12.50 %           | 75.00  | 5–50  | 100.00 %   | 18.75 %                      |
@@ -112,7 +112,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | MI 5         | 25.00 %           | 100.00 | 0–100 | 100.00 %   | 25.00 %                      |
       | CAT1 total   | 37.50 %           | 150.00 | 0–150 | 100.00 %   | -                            |
       | Course total | -                 | 350.00 | 0–400 | 87.50 %    | -                            |
-    And I click on "Student 2" in the "user" search widget
+    And I click on "Student 2" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 1         | 25.00 %           | 20.00  | 5–50  | 33.33 %    | 10.00 %                      |
@@ -127,12 +127,12 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | Rescale existing grades | No    |
       | Maximum grade          | 200.00 |
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 5         | 40.00 %           | 150.00 | 0–200 | 75.00 %   | 30.00 %                      |
       | Course total | -                 | 400.00 | 0–500 | 80.00 %    | -                            |
-    And I click on "Student 2" in the "user" search widget
+    And I click on "Student 2" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 5         | 66.67 %           | 30.00 | 0–200  | 15.00 %    | 10.00 %                      |
@@ -141,7 +141,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
     When I set the field "Min and max grades used in calculation" to "Initial min and max grades"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 1         | 16.67 %           | 75.00  | 0–100 | 75.00 %    | 12.50 %                      |
@@ -151,7 +151,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | MI 5         | 33.33 %           | 150.00 | 0–200 | 75.00 %    | 25.00 %                      |
       | CAT1 total   | 33.33 %           | 150.00 | 0–200 | 75.00 %    | -                            |
       | Course total | -                 | 400.00 | 0–600 | 66.67 %    | -                            |
-    And I click on "Student 2" in the "user" search widget
+    And I click on "Student 2" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 1         | 25.00 %           | 20.00  | 0–100 | 20.00 %    | 5.00 %                       |

@@ -37,7 +37,7 @@ Feature: Change grading options in an H5P activity
     And the field "Grading method" matches value "Highest grade"
     And I click on "Save and return to course" "button"
     When I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item          | Grade  | Percentage |
       | Awesome H5P package | 100.00 | 100.00 %   |
@@ -49,7 +49,7 @@ Feature: Change grading options in an H5P activity
       | Grading method | First attempt |
     And I click on "Save and return to course" "button"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item          | Grade | Percentage |
       | Awesome H5P package | 0.00  | 0.00 %     |
@@ -61,7 +61,7 @@ Feature: Change grading options in an H5P activity
       | Grading method | Last attempt |
     And I click on "Save and return to course" "button"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item          | Grade | Percentage |
       | Awesome H5P package | 0.00  | 0.00 %     |
@@ -73,7 +73,7 @@ Feature: Change grading options in an H5P activity
       | Grading method | Average grade |
     And I click on "Save and return to course" "button"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item          | Grade | Percentage  |
       | Awesome H5P package | 33.33 | 33.33 %     |
@@ -85,7 +85,7 @@ Feature: Change grading options in an H5P activity
       | Grading method | Don't calculate a grade |
     And I click on "Save and return to course" "button"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item          | Grade | Percentage |
       | Awesome H5P package | -     | -          |
@@ -97,7 +97,7 @@ Feature: Change grading options in an H5P activity
       | Enable attempt tracking | No |
     And I click on "Save and return to course" "button"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item          | Grade | Percentage |
       | Awesome H5P package | -     | -          |
@@ -110,7 +110,7 @@ Feature: Change grading options in an H5P activity
       | Grading method | Average grade |
     And I click on "Save and return to course" "button"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range | Percentage  |
       | Awesome H5P package | 33.33 | 0–100 | 33.33 %     |
@@ -122,7 +122,7 @@ Feature: Change grading options in an H5P activity
       | Maximum grade           | 50  |
     And I click on "Save and return to course" "button"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range | Percentage  |
       | Awesome H5P package | 16.67 | 0–50  | 33.33 %     |
@@ -135,7 +135,7 @@ Feature: Change grading options in an H5P activity
       | Grading method | Average grade |
     And I click on "Save and return to course" "button"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range | Percentage  |
       | Awesome H5P package | 33.33 | 0–100 | 33.33 %     |
@@ -147,7 +147,7 @@ Feature: Change grading options in an H5P activity
       | Maximum grade           | 50 |
     And I click on "Save and return to course" "button"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range | Percentage  |
       | Awesome H5P package | 33.33 | 0–50  | 66.67 %     |

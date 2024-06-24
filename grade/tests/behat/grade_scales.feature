@@ -84,7 +84,7 @@ Feature: View gradebook when scales are used
       | Range              | F–A      | 0.00–5.00      | 0.00–5.00    |
       | Overall average    | C        | 3.00           | 3.00         |
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 3" in the "user" search widget
+    And I click on "Student 3" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range | Percentage | Contribution to course total |
       | Test assignment one | C     | F–A   | 50.00 %    | 60.00 %                      |
@@ -127,7 +127,7 @@ Feature: View gradebook when scales are used
       | Range              | F–A      | 1.00–5.00      | 0.00–100.00    |
       | Overall average    | C        | 3.00           | <overallavg>   |
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 3" in the "user" search widget
+    And I click on "Student 3" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item                          | Grade          | Range | Percentage    | Contribution to course total |
       | Test assignment one                 | C              | F–A   | 50.00 %       | <contrib3>                   |

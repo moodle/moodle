@@ -44,7 +44,7 @@ Feature: Control the aggregation of the scales
     And I set the following settings for grade item "Course 1" of type "course" on "grader" page:
       | Aggregation | <aggregation> |
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item   | Grade          | Percentage  | Contribution to course total |
       | Grade me     | 10.00          | 10.00 %     | <gradecontrib>               |
@@ -55,7 +55,7 @@ Feature: Control the aggregation of the scales
     And I set the following administration settings values:
       | grade_includescalesinaggregation | 1 |
     And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item   | Grade          | Percentage  | Contribution to course total |
       | Grade me     | 10.00          | 10.00 %     | <gradecontrib2>              |

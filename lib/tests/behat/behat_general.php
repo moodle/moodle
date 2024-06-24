@@ -2575,7 +2575,7 @@ EOF;
         $node = $this->get_combobox_dropdown_node($comboboxname, $itemname);
         $this->execute('behat_general::i_click_on_in_the', [
             $itemname, "list_item",
-            $node, "NodeElement"
+            $node, "NodeElement",
         ]);
         $this->execute("behat_general::i_wait_to_be_redirected");
     }

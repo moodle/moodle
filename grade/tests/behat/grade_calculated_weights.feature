@@ -57,7 +57,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Mean of grades |
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -82,7 +82,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "Sub category" of type "category" on "setup" page:
       | Item weight | 1.0 |
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -103,7 +103,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "Test assignment three" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -122,7 +122,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "Test assignment three" of type "gradeitem" on "setup" page:
       | Extra credit weight | 1.0 |
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -139,7 +139,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Median of grades |
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -156,7 +156,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Lowest grade |
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -173,7 +173,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Highest grade |
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -190,7 +190,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Mode of grades |
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -212,7 +212,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "Test assignment three" of type "gradeitem" on "setup" page:
       | aggregationcoef | 1 |
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -231,7 +231,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "Test assignment three" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:

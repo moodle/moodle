@@ -112,7 +112,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     Given I am on the "Completion course" "grades > Single View > View" page logged in as "teacher1"
     And I click on "Users" "link" in the ".page-toggler" "css_element"
     And I turn editing mode on
-    And I click on "Student First" in the "user" search widget
+    And I click on "Student First" in the "Search users" search combo box
     And I set the field "Override for Test assignment name" to "1"
     When I set the following fields to these values:
       | Grade for Test assignment name | 10.00 |

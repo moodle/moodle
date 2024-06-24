@@ -38,13 +38,13 @@ Feature: Group searching functionality within the user report.
     Then ".groupsearchwidget" "css_element" should not exist
 
   Scenario: A teacher can search for and find a group to find a user in
-    Given I confirm "Tutor group" in "group" search within the gradebook widget exists
-    And I confirm "Marker group" in "group" search within the gradebook widget exists
+    Given I confirm "Tutor group" exists in the "Search groups" search combo box
+    And I confirm "Marker group" exists in the "Search groups" search combo box
     When I set the field "Search groups" to "tutor"
     And I wait "1" seconds
-    Then I confirm "Tutor group" in "group" search within the gradebook widget exists
-    And I confirm "Marker group" in "group" search within the gradebook widget does not exist
-    And I click on "Tutor group" in the "group" search widget
+    Then I confirm "Tutor group" exists in the "Search groups" search combo box
+    And I confirm "Marker group" does not exist in the "Search groups" search combo box
+    And I click on "Tutor group" in the "Search groups" search combo box
     # The search input remains in the field on reload this is in keeping with other search implementations.
     And I click on ".groupsearchwidget" "css_element"
     And the field "Search groups" matches value "tutor"
@@ -54,22 +54,22 @@ Feature: Group searching functionality within the user report.
   Scenario: A teacher can only see the group members in the 'user' search widget after selecting a group option
     # Confirm that all users are initially displayed in the 'user' search widget.
     Given I set the field "Search users" to "Student"
-    And I confirm "Student 1" in "user" search within the gradebook widget exists
-    And I confirm "Student 2" in "user" search within the gradebook widget exists
+    And I confirm "Student 1" exists in the "Search users" search combo box
+    And I confirm "Student 2" exists in the "Search users" search combo box
     # Select a particular group from the 'group' search widget.
-    When I click on "Default group" in the "group" search widget
+    When I click on "Default group" in the "Search groups" search combo box
     # Confirm that only users which are members of the selected group are displayed in the 'user' search widget.
     And I set the field "Search users" to "Student"
-    Then I confirm "Student 1" in "user" search within the gradebook widget exists
-    And I confirm "Student 2" in "user" search within the gradebook widget does not exist
-    And I click on "Tutor group" in the "group" search widget
+    Then I confirm "Student 1" exists in the "Search users" search combo box
+    And I confirm "Student 2" does not exist in the "Search users" search combo box
+    And I click on "Tutor group" in the "Search groups" search combo box
     And I set the field "Search users" to "Student"
-    And I confirm "Student 1" in "user" search within the gradebook widget does not exist
-    And I confirm "Student 2" in "user" search within the gradebook widget does not exist
-    And I click on "All participants" in the "group" search widget
+    And I confirm "Student 1" does not exist in the "Search users" search combo box
+    And I confirm "Student 2" does not exist in the "Search users" search combo box
+    And I click on "All participants" in the "Search groups" search combo box
     And I set the field "Search users" to "Student"
-    And I confirm "Student 1" in "user" search within the gradebook widget exists
-    And I confirm "Student 2" in "user" search within the gradebook widget exists
+    And I confirm "Student 1" exists in the "Search users" search combo box
+    And I confirm "Student 2" exists in the "Search users" search combo box
 
   @accessibility
   Scenario: A teacher can set focus and search using the input with a keyboard

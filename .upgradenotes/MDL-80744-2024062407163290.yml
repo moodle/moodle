@@ -1,0 +1,20 @@
+issueNumber: MDL-80744
+notes:
+  core_grades:
+    - message: >-
+        The behat step definition
+        behat_grade::i_confirm_in_search_within_the_gradebook_widget_exists has
+        been deprecated. Please use
+        behat_general::i_confirm_in_search_combobox_exists instead.
+      type: deprecated
+    - message: >-
+        The behat step definition
+        behat_grade::i_confirm_in_search_within_the_gradebook_widget_does_not_exist
+        has been deprecated. Please use
+        behat_general::i_confirm_in_search_combobox_does_not_exist instead.
+      type: deprecated
+    - message: >-
+        The behat step definition behat_grade::i_click_on_in_search_widget has
+        been deprecated. Please use behat_general::i_click_on_in_search_combobox
+        instead.
+      type: deprecated
