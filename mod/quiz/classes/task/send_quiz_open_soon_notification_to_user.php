@@ -14,16 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_quiz\task;
+
+use core\task\adhoc_task;
+use mod_quiz\notification_helper;
+
 /**
- * Quiz activity version information.
+ * Ad-hoc task to send a notification to a user about an approaching open date.
  *
- * @package   mod_quiz
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod_quiz
+ * @copyright  2024 David Woloszyn <david.woloszyn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class send_quiz_open_soon_notification_to_user extends adhoc_task {
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version = 2024051700;
-$plugin->requires = 2024041600;
-$plugin->component = 'mod_quiz';
+    public function execute(): void {
+        $user = $this->get_custom_data();
+        notification_helper::send_notification_to_user($user);
+    }
+}
