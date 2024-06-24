@@ -4785,4 +4785,35 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $this->AssertTrue($assign->is_userid_filtered($student1->id));
         $this->AssertTrue($assign->is_userid_filtered($student2->id));
     }
+
+    /**
+     * Test get_error_messages like a public function.
+     *
+     * @covers \assign::get_error_messages
+     */
+    public function test_get_error_messages(): void {
+        $this->resetAfterTest();
+
+        // Generate data.
+        $course = $this->getDataGenerator()->create_course();
+        $assign = $this->create_instance($course);
+
+        // Get the empty error message list.
+        $result = $assign->get_error_messages();
+        $this->assertIsArray($result);
+        $this->assertEmpty($result);
+
+        // Generate users.
+        $teacher  = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Set the teacher as user and try to delete the user's submission to create the error.
+        $this->setUser($teacher);
+        $assign->remove_submission($student1->id);
+
+        // Get the created error messages.
+        $result = $assign->get_error_messages();
+        $this->assertIsArray($result);
+        $this->assertNotEmpty($result);
+    }
 }
