@@ -4602,6 +4602,20 @@ EOD;
     }
 
     /**
+      * Renders the header bar.
+      *
+      * @param context_header $contextheader Header bar object.
+      * @return string HTML for the header bar.
+      * @deprecated since 4.5 Please use core_renderer::render($contextheader) instead
+      * @todo MDL-82163 This will be deleted in Moodle 6.0.
+      */
+    #[\core\attribute\deprecated('core_renderer::render($contextheader)', since: '4.5', mdl: 'MDL-82160')]
+    protected function render_context_header(context_header $contextheader) {
+        $context = $contextheader->export_for_template($this);
+        return $this->render_from_template('core/context_header', $context);
+    }
+
+    /**
      * Renders the skip links for the page.
      *
      * @param array $links List of skip links.
