@@ -466,4 +466,14 @@ $tasks = array(
         'month' => '*',
         'dayofweek' => '*',
     ],
+    [
+        'classname' => 'core\task\update_geoip2file_task',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => 'R',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => 'R',
+        'disabled' => true,
+    ],
 );
