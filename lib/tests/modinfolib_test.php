@@ -1787,4 +1787,56 @@ class modinfolib_test extends advanced_testcase {
         $cacherevthree = $DB->get_field('course', 'cacherev', ['id' => $coursethree->id]);
         $this->assertGreaterThan($prevcacherevthree, $cacherevthree);
     }
+
+    /**
+     * Test get_sections_delegated_by_cm method
+     *
+     * @covers \course_modinfo::get_sections_delegated_by_cm
+     */
+    public function test_get_sections_delegated_by_cm(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course(['numsections' => 1]);
+
+        $modinfo = get_fast_modinfo($course);
+        $delegatedsections = $modinfo->get_sections_delegated_by_cm();
+        $this->assertEmpty($delegatedsections);
+
+        // Add a section delegated by a course module.
+        $subsection = $this->getDataGenerator()->create_module('subsection', ['course' => $course]);
+        $modinfo = get_fast_modinfo($course);
+        $delegatedsections = $modinfo->get_sections_delegated_by_cm();
+        $this->assertCount(1, $delegatedsections);
+        $this->assertArrayHasKey($subsection->cmid, $delegatedsections);
+
+        // Add a section delegated by a block.
+        formatactions::section($course)->create_delegated('block_site_main_menu', 1);
+        $modinfo = get_fast_modinfo($course);
+        $delegatedsections = $modinfo->get_sections_delegated_by_cm();
+        // Sections delegated by a block shouldn't be returned.
+        $this->assertCount(1, $delegatedsections);
+    }
+
+    /**
+     * Test get_sections_delegated_by_cm method
+     *
+     * @covers \cm_info::get_delegated_section_info
+     */
+    public function test_get_delegated_section_info(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course(['numsections' => 1]);
+
+        // Add a section delegated by a course module.
+        $subsection = $this->getDataGenerator()->create_module('subsection', ['course' => $course]);
+        $otheractivity = $this->getDataGenerator()->create_module('page', ['course' => $course]);
+
+        $modinfo = get_fast_modinfo($course);
+        $delegatedsections = $modinfo->get_sections_delegated_by_cm();
+
+        $delegated = $modinfo->get_cm($subsection->cmid)->get_delegated_section_info();
+        $this->assertNotNull($delegated);
+        $this->assertEquals($delegated, $delegatedsections[$subsection->cmid]);
+
+        $delegated = $modinfo->get_cm($otheractivity->cmid)->get_delegated_section_info();
+        $this->assertNull($delegated);
+    }
 }
