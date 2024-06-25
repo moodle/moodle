@@ -301,10 +301,6 @@ class mod_feedback_complete_form extends moodleform {
         } else {
             // Add non-group element to the form.
             if (is_array($element)) {
-                if ($this->is_frozen() && $element[0] === 'text') {
-                    // Convert 'text' element to 'static' when freezing for better display.
-                    $element = ['static', $element[1], $element[2]];
-                }
                 $element = call_user_func_array(array($this->_form, 'createElement'), $element);
             }
             $element = $this->_form->addElement($element);
@@ -323,7 +319,7 @@ class mod_feedback_complete_form extends moodleform {
 
         // Set default value.
         if ($setdefaultvalue && ($tmpvalue = $this->get_item_value($item))) {
-            $this->_form->setDefault($element->getName(), s($tmpvalue));
+            $this->_form->setDefault($element->getName(), htmlspecialchars_decode($tmpvalue, ENT_QUOTES));
         }
 
         // Freeze if needed.
