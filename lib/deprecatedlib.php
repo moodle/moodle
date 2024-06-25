@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -30,8 +29,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/* === Functions that needs to be kept longer in deprecated lib than normal time period === */
-
 /**
  * List all core subsystems and their location
  *
@@ -45,14 +42,13 @@ defined('MOODLE_INTERNAL') || die();
  * renderer.php is expected to be there.
  *
  * @deprecated since 2.6, use core_component::get_core_subsystems()
- *
  * @param bool $fullpaths false means relative paths from dirroot, use true for performance reasons
  * @return array of (string)name => (string|null)location
  */
+#[\core\attribute\deprecated('core_component::get_core_subsystems', since: '4.5', mdl: 'MDL-82287')]
 function get_core_subsystems($fullpaths = false) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     global $CFG;
-
-    // NOTE: do not add any other debugging here, keep forever.
 
     $subsystems = core_component::get_core_subsystems();
 
@@ -78,14 +74,13 @@ function get_core_subsystems($fullpaths = false) {
  * Lists all plugin types.
  *
  * @deprecated since 2.6, use core_component::get_plugin_types()
- *
  * @param bool $fullpaths false means relative paths from dirroot
  * @return array Array of strings - name=>location
  */
+#[\core\attribute\deprecated('core_component::get_plugin_types', since: '4.5', mdl: 'MDL-82287')]
 function get_plugin_types($fullpaths = true) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     global $CFG;
-
-    // NOTE: do not add any other debugging here, keep forever.
 
     $types = core_component::get_plugin_types();
 
@@ -112,13 +107,12 @@ function get_plugin_types($fullpaths = true) {
  * Use when listing real plugins of one type.
  *
  * @deprecated since 2.6, use core_component::get_plugin_list()
- *
  * @param string $plugintype type of plugin
  * @return array name=>fulllocation pairs of plugins of given type
  */
+#[\core\attribute\deprecated('core_component::get_plugin_list', since: '4.5', mdl: 'MDL-82287')]
 function get_plugin_list($plugintype) {
-
-    // NOTE: do not add any other debugging here, keep forever.
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
 
     if ($plugintype === '') {
         $plugintype = 'mod';
@@ -132,7 +126,6 @@ function get_plugin_list($plugintype) {
  * in a certain file. The plugin component names and class names are returned.
  *
  * @deprecated since 2.6, use core_component::get_plugin_list_with_class()
- *
  * @param string $plugintype the type of plugin, e.g. 'mod' or 'report'.
  * @param string $class the part of the name of the class after the
  *      frankenstyle prefix. e.g 'thing' if you are looking for classes with
@@ -142,10 +135,9 @@ function get_plugin_list($plugintype) {
  * @return array with frankenstyle plugin names as keys (e.g. 'report_courselist', 'mod_forum')
  *      and the class names as values (e.g. 'report_courselist_thing', 'qtype_multichoice').
  */
+#[\core\attribute\deprecated('core_component::get_plugin_list_with_class', since: '4.5', mdl: 'MDL-82287')]
 function get_plugin_list_with_class($plugintype, $class, $file) {
-
-    // NOTE: do not add any other debugging here, keep forever.
-
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     return core_component::get_plugin_list_with_class($plugintype, $class, $file);
 }
 
@@ -153,15 +145,13 @@ function get_plugin_list_with_class($plugintype, $class, $file) {
  * Returns the exact absolute path to plugin directory.
  *
  * @deprecated since 2.6, use core_component::get_plugin_directory()
- *
  * @param string $plugintype type of plugin
  * @param string $name name of the plugin
  * @return string full path to plugin directory; NULL if not found
  */
+#[\core\attribute\deprecated('core_component::get_plugin_directory', since: '4.5', mdl: 'MDL-82287')]
 function get_plugin_directory($plugintype, $name) {
-
-    // NOTE: do not add any other debugging here, keep forever.
-
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     if ($plugintype === '') {
         $plugintype = 'mod';
     }
@@ -173,14 +163,12 @@ function get_plugin_directory($plugintype, $name) {
  * Normalize the component name using the "frankenstyle" names.
  *
  * @deprecated since 2.6, use core_component::normalize_component()
- *
  * @param string $component
  * @return array two-items list of [(string)type, (string|null)name]
  */
+#[\core\attribute\deprecated('core_component::normalize_component', since: '4.5', mdl: 'MDL-82287')]
 function normalize_component($component) {
-
-    // NOTE: do not add any other debugging here, keep forever.
-
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     return core_component::normalize_component($component);
 }
 
@@ -192,66 +180,34 @@ function normalize_component($component) {
  * @param string $component name such as 'moodle', 'mod_forum'
  * @return string full path to component directory; NULL if not found
  */
+#[\core\attribute\deprecated('core_component::get_component_directory', since: '4.5', mdl: 'MDL-82287')]
 function get_component_directory($component) {
-
-    // NOTE: do not add any other debugging here, keep forever.
-
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     return core_component::get_component_directory($component);
 }
 
 /**
- * Get the context instance as an object. This function will create the
- * context instance if it does not exist yet.
- *
  * @deprecated since 2.2, use context_course::instance() or other relevant class instead
- * @todo This will be deleted in Moodle 2.8, refer MDL-34472
- * @param integer $contextlevel The context level, for example CONTEXT_COURSE, or CONTEXT_MODULE.
- * @param integer $instance The instance id. For $level = CONTEXT_COURSE, this would be $course->id,
- *      for $level = CONTEXT_MODULE, this would be $cm->id. And so on. Defaults to 0
- * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
- *      MUST_EXIST means throw exception if no record or multiple records found
- * @return context The context object.
  */
-function get_context_instance($contextlevel, $instance = 0, $strictness = IGNORE_MISSING) {
-
-    debugging('get_context_instance() is deprecated, please use context_xxxx::instance() instead.', DEBUG_DEVELOPER);
-
-    $instances = (array)$instance;
-    $contexts = array();
-
-    $classname = context_helper::get_class_for_level($contextlevel);
-
-    // we do not load multiple contexts any more, PAGE should be responsible for any preloading
-    foreach ($instances as $inst) {
-        $contexts[$inst] = $classname::instance($inst, $strictness);
-    }
-
-    if (is_array($instance)) {
-        return $contexts;
-    } else {
-        return $contexts[$instance];
-    }
+#[\core\attribute\deprecated('\core\context::instance', since: '2.2', mdl: 'MDL-34472', final: true)]
+function get_context_instance() {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
 }
-/* === End of long term deprecated api list === */
 
 /**
  * @deprecated since 2.5 - do not use, the textrotate.js will work it out automatically
  */
+#[\core\attribute\deprecated('Not replaced', since: '2.0', mdl: 'MDL-19756', final: true)]
 function can_use_rotated_text() {
-    debugging('can_use_rotated_text() is removed. JS feature detection is used automatically.');
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
 }
 
 /**
- * Returns system context or null if can not be created yet.
- *
- * @see context_system::instance()
  * @deprecated since 2.2
- * @param bool $cache use caching
- * @return context system context (null if context table not created yet)
  */
-function get_system_context($cache = true) {
-    debugging('get_system_context() is deprecated, please use context_system::instance() instead.', DEBUG_DEVELOPER);
-    return context_system::instance(0, IGNORE_MISSING, $cache);
+#[\core\attribute\deprecated('\core\context\system::instance', since: '2.2', mdl: 'MDL-34472', final: true)]
+function get_system_context() {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
 }
 
 /**
@@ -259,56 +215,10 @@ function get_system_context($cache = true) {
  * provide this function with the language strings for sortasc and sortdesc.
  *
  * @deprecated use $OUTPUT->arrow() instead.
- * @todo final deprecation of this function once MDL-45448 is resolved
- *
- * If no sort string is associated with the direction, an arrow with no alt text will be printed/returned.
- *
- * @global object
- * @param string $direction 'up' or 'down'
- * @param string $strsort The language string used for the alt attribute of this image
- * @param bool $return Whether to print directly or return the html string
- * @return string|void depending on $return
- *
  */
-function print_arrow($direction='up', $strsort=null, $return=false) {
-    global $OUTPUT;
-
-    debugging('print_arrow() is deprecated. Please use $OUTPUT->arrow() instead.', DEBUG_DEVELOPER);
-
-    if (!in_array($direction, array('up', 'down', 'right', 'left', 'move'))) {
-        return null;
-    }
-
-    $return = null;
-
-    switch ($direction) {
-        case 'up':
-            $sortdir = 'asc';
-            break;
-        case 'down':
-            $sortdir = 'desc';
-            break;
-        case 'move':
-            $sortdir = 'asc';
-            break;
-        default:
-            $sortdir = null;
-            break;
-    }
-
-    // Prepare language string
-    $strsort = '';
-    if (empty($strsort) && !empty($sortdir)) {
-        $strsort  = get_string('sort' . $sortdir, 'grades');
-    }
-
-    $return = ' ' . $OUTPUT->pix_icon('t/' . $direction, $strsort) . ' ';
-
-    if ($return) {
-        return $return;
-    } else {
-        echo $return;
-    }
+#[\core\attribute\deprecated('OUTPUT->[l|r]arrow', since: '2.0', mdl: 'MDL-19756', final: true)]
+function print_arrow() {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
 }
 
 /**

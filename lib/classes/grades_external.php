@@ -122,7 +122,7 @@ class core_grades_external extends external_api {
             )
         );
 
-        list($itemtype, $itemmodule) = normalize_component($params['component']);
+        list($itemtype, $itemmodule) = \core_component::normalize_component($params['component']);
 
         if (! $cm = get_coursemodule_from_id($itemmodule, $activityid)) {
             throw new moodle_exception('invalidcoursemodule');

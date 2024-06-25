@@ -4045,26 +4045,6 @@ class accesslib_test extends advanced_testcase {
         context_user::instance($testusers[102]);
         $this->assertEquals($prevsize + 1, context_inspection::check_context_cache_size());
         unset($testusers);
-
-
-
-        // Test basic test of legacy functions.
-        // Note: watch out, the fake site might be pretty borked already.
-
-        $this->assertEquals(get_system_context(), context_system::instance());
-        $this->assertDebuggingCalled('get_system_context() is deprecated, please use context_system::instance() instead.', DEBUG_DEVELOPER);
-
-        foreach ($DB->get_records('context') as $contextid => $record) {
-            $context = context::instance_by_id($contextid);
-            $this->assertEquals($context, get_context_instance($record->contextlevel, $record->instanceid));
-            $this->assertDebuggingCalled('get_context_instance() is deprecated, please use context_xxxx::instance() instead.', DEBUG_DEVELOPER);
-        }
-
-        // Make sure a debugging is thrown.
-        get_context_instance($record->contextlevel, $record->instanceid);
-        $this->assertDebuggingCalled('get_context_instance() is deprecated, please use context_xxxx::instance() instead.', DEBUG_DEVELOPER);
-        get_system_context();
-        $this->assertDebuggingCalled('get_system_context() is deprecated, please use context_system::instance() instead.', DEBUG_DEVELOPER);
     }
 
     /**
