@@ -1,0 +1,7 @@
+/* Bootstrap 5 bridge classes */
+
+/* These classes are used to bridge the gap between Bootstrap 4 and Bootstrap 5. */
+/* This file should be removed as part of MDL-75669. */
+.g-0 {
+    @extend .no-gutters;
+}
