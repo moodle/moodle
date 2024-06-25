@@ -63,16 +63,6 @@ class MoodleQuickForm_checkbox extends HTML_QuickForm_checkbox implements templa
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function MoodleQuickForm_checkbox($elementName=null, $elementLabel=null, $text='', $attributes=null) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementName, $elementLabel, $text, $attributes);
-    }
-
-    /**
      * get html for help button
      *
      * @return string html for help button

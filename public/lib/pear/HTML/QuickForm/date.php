@@ -288,16 +288,6 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
         }
     }
 
-    /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function HTML_QuickForm_date($elementName = null, $elementLabel = null, $options = array(), $attributes = null) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementName, $elementLabel, $options, $attributes);
-    }
-
     // }}}
     // {{{ _createElements()
 

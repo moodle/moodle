@@ -1,0 +1,7 @@
+issueNumber: MDL-82284
+notes:
+  core:
+    - message: >-
+        Legacy constructors have been removed. These relate to PHP 4 and
+        earlier.
+      type: removed

@@ -58,16 +58,6 @@ class moodlequickform_guideeditor extends HTML_QuickForm_input {
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function moodlequickform_guideeditor($elementname=null, $elementlabel=null, $attributes=null) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementname, $elementlabel, $attributes);
-    }
-
-    /**
      * get html for help button
      *
      * @return  string html for help button

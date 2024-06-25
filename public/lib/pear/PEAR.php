@@ -891,14 +891,6 @@ class PEAR_Error
     }
 
     /**
-     * Old syntax of class constructor for backward compatibility.
-     */
-    public function PEAR_Error($message = 'unknown error', $code = null,
-                        $mode = null, $options = null, $userinfo = null) {
-        self::__construct($message, $code, $mode, $options, $userinfo);
-    }
-
-    /**
      * Get the error mode from an error object.
      *
      * @return int error mode

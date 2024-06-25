@@ -52,16 +52,6 @@ class MoodleQuickForm_header extends HTML_QuickForm_header
         parent::__construct($elementName, $text);
     }
 
-    /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function MoodleQuickForm_header($elementName = null, $text = null) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementName, $text);
-    }
-
    /**
     * Accepts a renderer
     *

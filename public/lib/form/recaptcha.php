@@ -60,16 +60,6 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input implements templata
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function MoodleQuickForm_recaptcha($elementName = null, $elementLabel = null, $attributes = null) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementName, $elementLabel, $attributes);
-    }
-
-    /**
      * Returns the reCAPTCHA element in HTML
      *
      * @return string The HTML to render

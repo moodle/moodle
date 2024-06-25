@@ -79,16 +79,6 @@ class MoodleQuickForm_button extends HTML_QuickForm_button implements templatabl
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function MoodleQuickForm_button($elementName=null, $value=null, $attributes=null) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementName, $value, $attributes);
-    }
-
-    /**
      * get html for help button
      *
      * @return string html for help button

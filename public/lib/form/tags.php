@@ -155,16 +155,6 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function MoodleQuickForm_tags($elementName = null, $elementLabel = null, $options = array(), $attributes = null) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementName, $elementLabel, $options, $attributes);
-    }
-
-    /**
      * Finds the tag collection to use for standard tag selector
      *
      * @return int

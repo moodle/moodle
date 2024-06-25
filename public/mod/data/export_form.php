@@ -20,16 +20,6 @@ class mod_data_export_form extends moodleform {
         parent::__construct($url);
     }
 
-    /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function mod_data_export_form($url, $datafields, $cm, $data) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($url, $datafields, $cm, $data);
-    }
-
     function definition() {
         $mform =& $this->_form;
         $mform->addElement('header', 'exportformat', get_string('chooseexportformat', 'data'));

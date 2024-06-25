@@ -30,23 +30,12 @@ require_once($CFG->libdir.'/authlib.php');
  * Plugin for no authentication.
  */
 class auth_plugin_none extends auth_plugin_base {
-
     /**
      * Constructor.
      */
     public function __construct() {
         $this->authtype = 'none';
         $this->config = get_config('auth_none');
-    }
-
-    /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function auth_plugin_none() {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct();
     }
 
     /**
@@ -133,7 +122,4 @@ class auth_plugin_none extends auth_plugin_base {
     function can_be_manually_set() {
         return true;
     }
-
 }
-
-

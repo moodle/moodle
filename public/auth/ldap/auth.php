@@ -85,7 +85,6 @@ require_once($CFG->dirroot.'/auth/ldap/locallib.php');
  * LDAP authentication plugin.
  */
 class auth_plugin_ldap extends auth_plugin_base {
-
     /** @var string */
     protected $roleauth;
 
@@ -137,16 +136,6 @@ class auth_plugin_ldap extends auth_plugin_base {
         $this->roleauth = 'auth_ldap';
         $this->errorlogtag = '[AUTH LDAP] ';
         $this->init_plugin($this->authtype);
-    }
-
-    /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function auth_plugin_ldap() {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct();
     }
 
     /**

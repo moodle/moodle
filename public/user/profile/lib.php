@@ -118,16 +118,6 @@ class profile_field_base {
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function profile_field_base($fieldid=0, $userid=0) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($fieldid, $userid);
-    }
-
-    /**
      * Abstract method: Adds the profile field to the moodle form class
      * @abstract The following methods must be overwritten by child classes
      * @param MoodleQuickForm $mform instance of the moodleform class

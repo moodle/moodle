@@ -84,16 +84,6 @@ class MoodleQuickForm_selectwithlink extends HTML_QuickForm_select implements te
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function MoodleQuickForm_selectwithlink($elementName=null, $elementLabel=null, $options=null, $attributes=null, $linkdata=null) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementName, $elementLabel, $options, $attributes, $linkdata);
-    }
-
-    /**
      * Sets label to be hidden
      *
      * @param bool $hiddenLabel sets if label should be hidden
