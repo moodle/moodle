@@ -1141,6 +1141,11 @@
         float: none;
         margin: 0 auto 10px;
     }
+
+    /* Bug fix for TinyMCE menu when in fullscreen mode (small screens). */
+    body.tox-fullscreen.path-mod-assign [data-region="grading-navigation"] {
+        display: none;
+    }
 }
 
 /** Start of CSS to make forms vertical in the grading panel (taken from theme/bootstrapbase/less/moodle/forms.less). */
@@ -1215,4 +1220,14 @@ div[id*='mod_assign-timer-'] {
     display: block;
     font-weight: 600;
     font-size: 1.4em;
+}
+
+/* Bug fix for TinyMCE menu when in fullscreen mode. */
+body.tox-fullscreen.path-mod-assign [data-region="grade-panel"] {
+    position: unset;
+}
+
+/* Bug fix for TinyMCE menu when in fullscreen mode and when editor is nested in a popout.*/
+body.path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felement[data-fieldtype="editor"] {
+    overflow: unset;
 }

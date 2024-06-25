@@ -30,3 +30,24 @@
         }
     }
 }
+
+/* Bug fix for TinyMCE menu when in fullscreen mode. */
+body.tox-fullscreen .modal-dialog {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+
+    .modal-header {
+        height: 0;
+        padding: 0;
+    }
+
+    .tox-tinymce-aux {
+        position: relative;
+    }
+}
+
+/* Bug fix TinyMCE menu width dropdowns when in fullscreen mode. */
+body.tox-fullscreen .tox.tox-tinymce-aux {
+    position: relative !important; // stylelint-disable-line declaration-no-important
+}
