@@ -114,8 +114,17 @@ class enrol_manual_plugin extends enrol_plugin {
             $managelink = new moodle_url("/enrol/manual/manage.php", array('enrolid'=>$instance->id));
             $icons[] = $OUTPUT->action_icon($managelink, new pix_icon('t/enrolusers', get_string('enrolusers', 'enrol_manual'), 'core', array('class'=>'iconsmall')));
         }
-        $parenticons = parent::get_action_icons($instance);
-        $icons = array_merge($icons, $parenticons);
+
+        if (has_any_capability(['enrol/manual:config', 'moodle/course:editcoursewelcomemessage'], $context)) {
+            $linkparams = [
+                'courseid' => $instance->courseid,
+                'id' => $instance->id,
+                'type' => $instance->enrol,
+            ];
+            $editlink = new moodle_url('/enrol/editinstance.php', $linkparams);
+            $icon = new pix_icon('t/edit', get_string('edit'), 'core', ['class' => 'iconsmall']);
+            $icons[] = $OUTPUT->action_icon($editlink, $icon);
+        }
 
         return $icons;
     }
@@ -175,7 +184,11 @@ class enrol_manual_plugin extends enrol_plugin {
             }
         }
 
-        $data->notifyall = $data->expirynotify == 2 ? 1 : 0;
+        // This method is used when configuring the enrolment method, and when only updating the welcome message.
+        // The 'expirynotify' property won't be set when updating the welcome message.
+        if (isset($data->expirynotify)) {
+            $data->notifyall = $data->expirynotify == 2 ? 1 : 0;
+        }
 
         return parent::update_instance($instance, $data);
     }
@@ -582,86 +595,92 @@ class enrol_manual_plugin extends enrol_plugin {
      */
     public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
 
-        $options = $this->get_status_options();
-        $mform->addElement('select', 'status', get_string('status', 'enrol_manual'), $options);
-        $mform->addHelpButton('status', 'status', 'enrol_manual');
-        $mform->setDefault('status', $this->get_config('status'));
+        // Main fields.
+        if (has_capability('enrol/manual:config', $context)) {
+            $options = $this->get_status_options();
+            $mform->addElement('select', 'status', get_string('status', 'enrol_manual'), $options);
+            $mform->addHelpButton('status', 'status', 'enrol_manual');
+            $mform->setDefault('status', $this->get_config('status'));
 
-        $roles = $this->get_roleid_options($instance, $context);
-        $mform->addElement('select', 'roleid', get_string('defaultrole', 'role'), $roles);
-        $mform->setDefault('roleid', $this->get_config('roleid'));
+            $roles = $this->get_roleid_options($instance, $context);
+            $mform->addElement('select', 'roleid', get_string('defaultrole', 'role'), $roles);
+            $mform->setDefault('roleid', $this->get_config('roleid'));
 
-        $options = array('optional' => true, 'defaultunit' => 86400);
-        $mform->addElement('duration', 'enrolperiod', get_string('defaultperiod', 'enrol_manual'), $options);
-        $mform->setDefault('enrolperiod', $this->get_config('enrolperiod'));
-        $mform->addHelpButton('enrolperiod', 'defaultperiod', 'enrol_manual');
+            $options = ['optional' => true, 'defaultunit' => 86400];
+            $mform->addElement('duration', 'enrolperiod', get_string('defaultperiod', 'enrol_manual'), $options);
+            $mform->setDefault('enrolperiod', $this->get_config('enrolperiod'));
+            $mform->addHelpButton('enrolperiod', 'defaultperiod', 'enrol_manual');
 
-        $options = $this->get_expirynotify_options();
-        $mform->addElement('select', 'expirynotify', get_string('expirynotify', 'core_enrol'), $options);
-        $mform->addHelpButton('expirynotify', 'expirynotify', 'core_enrol');
+            $options = $this->get_expirynotify_options();
+            $mform->addElement('select', 'expirynotify', get_string('expirynotify', 'core_enrol'), $options);
+            $mform->addHelpButton('expirynotify', 'expirynotify', 'core_enrol');
 
-        $options = array('optional' => false, 'defaultunit' => 86400);
-        $mform->addElement('duration', 'expirythreshold', get_string('expirythreshold', 'core_enrol'), $options);
-        $mform->addHelpButton('expirythreshold', 'expirythreshold', 'core_enrol');
-        $mform->disabledIf('expirythreshold', 'expirynotify', 'eq', 0);
+            $options = ['optional' => false, 'defaultunit' => 86400];
+            $mform->addElement('duration', 'expirythreshold', get_string('expirythreshold', 'core_enrol'), $options);
+            $mform->addHelpButton('expirythreshold', 'expirythreshold', 'core_enrol');
+            $mform->disabledIf('expirythreshold', 'expirynotify', 'eq', 0);
+        }
 
         // Course welcome message.
-        $mform->addElement(
-            'select',
-            'customint1',
-            get_string(
+        if (has_any_capability(['enrol/manual:config', 'moodle/course:editcoursewelcomemessage'], $context)) {
+            $mform->addElement(
+                'select',
+                'customint1',
+                get_string(
+                    identifier: 'sendcoursewelcomemessage',
+                    component: 'core_enrol',
+                ),
+                enrol_send_welcome_email_options(),
+            );
+            $mform->addHelpButton(
+                elementname: 'customint1',
                 identifier: 'sendcoursewelcomemessage',
                 component: 'core_enrol',
-            ),
-            enrol_send_welcome_email_options(),
-        );
-        $mform->addHelpButton(
-            elementname: 'customint1',
-            identifier: 'sendcoursewelcomemessage',
-            component: 'core_enrol',
-        );
+            );
 
-        $options = [
-            'cols' => '60',
-            'rows' => '8',
-        ];
-        $mform->addElement(
-            'textarea',
-            'customtext1',
-            get_string(
-                identifier: 'customwelcomemessage',
-                component: 'core_enrol',
-            ),
-            $options,
-        );
-        $mform->setDefault('customtext1', get_string('customwelcomemessageplaceholder', 'core_enrol'));
-        $mform->hideIf(
-            elementname: 'customtext1',
-            dependenton: 'customint1',
-            condition: 'eq',
-            value: ENROL_DO_NOT_SEND_EMAIL,
-        );
+            $options = [
+                'cols' => '60',
+                'rows' => '8',
+            ];
+            $mform->addElement(
+                'textarea',
+                'customtext1',
+                get_string(
+                    identifier: 'customwelcomemessage',
+                    component: 'core_enrol',
+                ),
+                $options,
+            );
+            $mform->setDefault('customtext1', get_string('customwelcomemessageplaceholder', 'core_enrol'));
+            $mform->hideIf(
+                elementname: 'customtext1',
+                dependenton: 'customint1',
+                condition: 'eq',
+                value: ENROL_DO_NOT_SEND_EMAIL,
+            );
 
-        // Static form elements cannot be hidden by hideIf() so we need to add a dummy group.
-        // See: https://tracker.moodle.org/browse/MDL-66251.
-        $group[] = $mform->createElement(
-            'static',
-            'customwelcomemessage_extra_help',
-            null,
-            get_string(
-                identifier: 'customwelcomemessage_help',
-                component: 'core_enrol',
-            ),
-        );
-        $mform->addGroup($group, 'group_customwelcomemessage_extra_help', '', ' ', false);
-        $mform->hideIf(
-            elementname: 'group_customwelcomemessage_extra_help',
-            dependenton: 'customint1',
-            condition: 'eq',
-            value: ENROL_DO_NOT_SEND_EMAIL,
-        );
+            // Static form elements cannot be hidden by hideIf() so we need to add a dummy group.
+            // See: https://tracker.moodle.org/browse/MDL-66251.
+            $group[] = $mform->createElement(
+                'static',
+                'customwelcomemessage_extra_help',
+                null,
+                get_string(
+                    identifier: 'customwelcomemessage_help',
+                    component: 'core_enrol',
+                ),
+            );
+            $mform->addGroup($group, 'group_customwelcomemessage_extra_help', '', ' ', false);
+            $mform->hideIf(
+                elementname: 'group_customwelcomemessage_extra_help',
+                dependenton: 'customint1',
+                condition: 'eq',
+                value: ENROL_DO_NOT_SEND_EMAIL,
+            );
+        }
 
-        if (enrol_accessing_via_instance($instance)) {
+        // Enrolment changes warning.
+        if (has_capability('enrol/manual:config', $context) && enrol_accessing_via_instance($instance)) {
             $warntext = get_string('instanceeditselfwarningtext', 'core_enrol');
             $mform->addElement('static', 'selfwarn', get_string('instanceeditselfwarning', 'core_enrol'), $warntext);
         }
@@ -681,7 +700,9 @@ class enrol_manual_plugin extends enrol_plugin {
     public function edit_instance_validation($data, $files, $instance, $context) {
         $errors = array();
 
-        if ($data['expirynotify'] > 0 and $data['expirythreshold'] < 86400) {
+        // This method is used when configuring the enrolment method, and when only updating the welcome message.
+        // The 'expirynotify' key won't be set when updating the welcome message.
+        if (isset($data['expirynotify']) && $data['expirynotify'] > 0 && $data['expirythreshold'] < 86400) {
             $errors['expirythreshold'] = get_string('errorthresholdlow', 'core_enrol');
         }
 

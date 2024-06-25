@@ -2748,4 +2748,14 @@ $capabilities = array(
             'manager' => CAP_ALLOW,
         ]
     ],
+
+    // Allow users to edit course welcome messages.
+    'moodle/course:editcoursewelcomemessage' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 );

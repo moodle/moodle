@@ -36,6 +36,22 @@ Feature: A course welcome message will be sent to the user when they are enrolle
     And I should not see "Accepted formats: Plain text or Moodle-auto format. HTML tags and multi-lang tags are also accepted, as well as the following placeholders:"
 
   @javascript
+  Scenario: Teacher can edit the course welcome message
+    Given I am on the "C1" "Enrolled users" page logged in as teacher
+    And I set the field "Participants tertiary navigation" to "Enrolment methods"
+    When I click on "Edit" "link" in the "Manual enrolments" "table_row"
+    Then I should see "Send course welcome message"
+    And I should not see "Enable manual enrolments"
+    And I should not see "Default role"
+    And I should not see "Default enrolment duration"
+    And I should not see "Notify before enrolment expires"
+    And I should not see "Notification threshold"
+    And I set the field "Custom welcome message" to "Hello {$a->fullname}, welcome to the course {$a->coursename}"
+    And I press "Save changes"
+    And I click on "Edit" "link" in the "Manual enrolments" "table_row"
+    And I should see "Hello {$a->fullname}, welcome to the course {$a->coursename}"
+
+  @javascript
   Scenario: Student should not receive a welcome message if the setting is disabled
     Given I am on the "C1" "Enrolled users" page logged in as manager
     And I set the field "Participants tertiary navigation" to "Enrolment methods"
