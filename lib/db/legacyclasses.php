@@ -95,6 +95,7 @@ $legacyclasses = [
     \action_menu_link::class => 'output/action_menu/link.php',
     \action_menu_link_primary::class => 'output/action_menu/link_primary.php',
     \action_menu_link_secondary::class => 'output/action_menu/link_secondary.php',
+    \core\output\local\action_menu\subpanel::class => 'output/action_menu/subpanel.php',
     \preferences_groups::class => 'output/preferences_groups.php',
     \preferences_group::class => 'output/preferences_group.php',
     \progress_bar::class => 'output/progress_bar.php',
