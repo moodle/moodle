@@ -616,6 +616,7 @@ class qtype_multianswer_multiresponse_vertical_renderer extends qtype_multianswe
         $inputattributes = array(
             'type' => 'checkbox',
             'value' => 1,
+            'class' => 'form-check-input',
         );
         if ($options->readonly) {
             $inputattributes['disabled'] = 'disabled';
@@ -648,7 +649,7 @@ class qtype_multianswer_multiresponse_vertical_renderer extends qtype_multianswe
                 unset($inputattributes['checked']);
             }
 
-            $class = 'r' . ($value % 2);
+            $class = 'form-check text-wrap text-break';
             if ($options->correctness && $isselected) {
                 $thisfrac = ($ans->fraction > 0) ? $answerfraction : 0;
                 $feedbackimg = $this->feedback_image($thisfrac);
@@ -661,7 +662,7 @@ class qtype_multianswer_multiresponse_vertical_renderer extends qtype_multianswe
             $result .= html_writer::empty_tag('input', $inputattributes);
             $result .= html_writer::tag('label', $subq->format_text($ans->answer,
                                                                     $ans->answerformat, $qa, 'question', 'answer', $ansid),
-                                        array('for' => $inputattributes['id']));
+                                        ['for' => $inputattributes['id'], 'class' => 'form-check-label text-body']);
             $result .= $feedbackimg;
 
             if ($options->feedback && $isselected && trim($ans->feedback)) {
@@ -741,7 +742,7 @@ class qtype_multianswer_multiresponse_horizontal_renderer
     extends qtype_multianswer_multiresponse_vertical_renderer {
 
     protected function choice_wrapper_start($class) {
-        return html_writer::start_tag('td', array('class' => $class));
+        return html_writer::start_tag('td', ['class' => $class . ' form-check-inline']);
     }
 
     protected function choice_wrapper_end() {
