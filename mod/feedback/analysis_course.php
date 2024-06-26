@@ -25,8 +25,6 @@
 require_once("../../config.php");
 require_once("lib.php");
 
-$current_tab = 'analysis';
-
 $id = required_param('id', PARAM_INT);  //the POST dominated the GET
 $courseitemfilter = optional_param('courseitemfilter', '0', PARAM_INT);
 $courseitemfiltertyp = optional_param('courseitemfiltertyp', '0', PARAM_ALPHANUM);

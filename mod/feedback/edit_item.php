@@ -102,10 +102,6 @@ $PAGE->activityheader->set_attrs([
 $PAGE->add_body_class('limitedwidth');
 echo $OUTPUT->header();
 
-/// print the tabs
-$current_tab = 'edit';
-$id = $cm->id;
-
 //print errormsg
 if (isset($error)) {
     echo $error;
