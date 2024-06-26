@@ -298,9 +298,8 @@ class core_calendar_renderer extends plugin_renderer_base {
      */
     public function render_no_calendar_subscriptions(): string {
         $output = html_writer::start_div('mt-5');
-        $importlink = html_writer::link((new moodle_url('/calendar/import.php', calendar_get_export_import_link_params()))->out(),
-                get_string('importcalendarexternal', 'calendar'));
-        $output .= get_string('nocalendarsubscriptions', 'calendar', $importlink);
+        $importlink = (new moodle_url('/calendar/import.php', calendar_get_export_import_link_params()))->out();
+        $output .= get_string('nocalendarsubscriptionsimportexternal', 'core_calendar', $importlink);
         $output .= html_writer::end_div();
 
         return $output;
@@ -327,7 +326,8 @@ class core_calendar_renderer extends plugin_renderer_base {
         $table->id = 'subscription_details_table';
 
         if (empty($subscriptions)) {
-            $cell = new html_table_cell(get_string('nocalendarsubscriptions', 'calendar'));
+            $importlink = (new moodle_url('/calendar/import.php', calendar_get_export_import_link_params()))->out();
+            $cell = new html_table_cell(get_string('nocalendarsubscriptionsimportexternal', 'core_calendar', $importlink));
             $cell->colspan = 5;
             $table->data[] = new html_table_row(array($cell));
         }
