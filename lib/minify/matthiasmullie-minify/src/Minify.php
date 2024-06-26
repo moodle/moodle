@@ -270,7 +270,7 @@ abstract class Minify
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
             $count = count($minifier->extracted);
-            $placeholder = '/*'.$count.'*/';
+            $placeholder = '/*' . $count . '*/';
             $minifier->extracted[$placeholder] = $match[0];
 
             return $placeholder;
@@ -494,14 +494,20 @@ abstract class Minify
         $parsed = parse_url($path);
         if (
             // file is elsewhere
-            isset($parsed['host']) ||
+            isset($parsed['host'])
             // file responds to queries (may change, or need to bypass cache)
-            isset($parsed['query'])
+            || isset($parsed['query'])
         ) {
             return false;
         }
 
-        return strlen($path) < PHP_MAXPATHLEN && @is_file($path) && is_readable($path);
+        try {
+            return strlen($path) < PHP_MAXPATHLEN && @is_file($path) && is_readable($path);
+        }
+        // catch openbasedir exceptions which are not caught by @ on is_file()
+        catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**
@@ -534,9 +540,9 @@ abstract class Minify
     protected function writeToFile($handler, $content, $path = '')
     {
         if (
-            !is_resource($handler) ||
-            ($result = @fwrite($handler, $content)) === false ||
-            ($result < strlen($content))
+            !is_resource($handler)
+            || ($result = @fwrite($handler, $content)) === false
+            || ($result < strlen($content))
         ) {
             throw new IOException('The file "' . $path . '" could not be written to. Check your disk space and file permissions.');
         }
