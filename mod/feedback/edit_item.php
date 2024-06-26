@@ -99,6 +99,7 @@ $PAGE->activityheader->set_attrs([
     "hidecompletion" => true,
     "description" => ''
 ]);
+$PAGE->add_body_class('limitedwidth');
 echo $OUTPUT->header();
 
 /// print the tabs
