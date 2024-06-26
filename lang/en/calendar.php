@@ -168,7 +168,6 @@ $string['eventtypeuser'] = 'user';
 $string['hideeventtype'] = 'Hide {$a} events';
 $string['showeventtype'] = 'Show {$a} events';
 $string['hourly'] = 'Hourly';
-$string['importcalendarexternal'] = 'Import an external calendar?';
 $string['importcalendar'] = 'Import calendar';
 $string['importcalendarheading'] = 'Import calendar...';
 $string['importcalendarfrom'] = 'Import from';
@@ -193,9 +192,9 @@ $string['namewithsource'] = '{$a->name} ({$a->source})';
 $string['never'] = 'Never';
 $string['newevent'] = 'New event';
 $string['newmonthannouncement'] = 'Calendar is now set to {$a}.';
+$string['nocalendarsubscriptionsimportexternal'] = 'No calendar subscriptions yet. <a href="{$a}">Import an external calendar</a>';
 $string['notitle'] = 'no title';
 $string['noupcomingevents'] = 'There are no upcoming events';
-$string['nocalendarsubscriptions'] = 'No calendar subscriptions yet. Do you want to {$a}';
 $string['oneevent'] = '1 event';
 $string['pollinterval'] = 'Update interval';
 $string['pollinterval_help'] = 'How often you would like the calendar to update with new events.';
@@ -287,3 +286,7 @@ $string['yoursubscriptions'] = 'Imported calendars';
 
 // Deprecated since Moodle 4.4.
 $string['coursecalendar'] = '{$a} calendar';
+
+// Deprecated since Moodle 4.5.
+$string['importcalendarexternal'] = 'Import an external calendar?';
+$string['nocalendarsubscriptions'] = 'No calendar subscriptions yet. Do you want to {$a}';
