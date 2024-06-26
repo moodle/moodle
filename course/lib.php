@@ -29,6 +29,7 @@ use core\hook;
 use core_course\external\course_summary_exporter;
 use core_courseformat\base as course_format;
 use core_courseformat\formatactions;
+use core_courseformat\sectiondelegate;
 use core\output\local\action_menu\subpanel as action_menu_subpanel;
 
 require_once($CFG->libdir.'/completionlib.php');
@@ -1430,6 +1431,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     $courseformat = course_get_format($mod->get_course());
     $usecomponents = $courseformat->supports_components();
     $sectioninfo = $mod->get_section_info();
+    $hasdelegatesection = sectiondelegate::has_delegate_class('mod_'.$mod->modname);
 
     $editcaps = array('moodle/course:manageactivities', 'moodle/course:activityvisibility', 'moodle/role:assign');
     $dupecaps = array('moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport');
@@ -1488,7 +1490,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     }
 
     // Indent.
-    if ($hasmanageactivities && $indent >= 0) {
+    if ($hasmanageactivities && $indent >= 0 && !$hasdelegatesection) {
         $indentlimits = new stdClass();
         $indentlimits->min = 0;
         // Legacy indentation could continue using a limit of 16,
@@ -1569,7 +1571,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     }
 
     // Assign.
-    if (has_capability('moodle/role:assign', $modcontext)){
+    if (has_capability('moodle/role:assign', $modcontext) && !$hasdelegatesection) {
         $actions['assign'] = new action_menu_link_secondary(
             new moodle_url('/admin/roles/assign.php', array('contextid' => $modcontext->id)),
             new pix_icon('t/assignroles', '', 'moodle', array('class' => 'iconsmall')),
