@@ -33170,6 +33170,9 @@ div#dateselector-calendar-panel {
   margin: 0;
   cursor: pointer;
   color: #1d2125;
+  word-break: normal;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 .form-autocomplete-suggestions li:hover, .form-autocomplete-suggestions li:focus, .form-autocomplete-suggestions li[aria-selected=true] {
   background-color: #0f6cbf;

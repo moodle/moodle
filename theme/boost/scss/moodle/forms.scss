@@ -279,6 +279,9 @@ div#dateselector-calendar-panel {
     margin: 0;
     cursor: pointer;
     color: $body-color;
+    word-break: normal;
+    overflow-wrap: anywhere;
+    white-space: normal;
     &:hover,
     &:focus,
     &[aria-selected="true"] {

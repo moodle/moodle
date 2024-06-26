@@ -77,7 +77,7 @@ Feature: Perform basic calendar functionality
   Scenario: Create a group event
     Given I log in as "teacher1"
     And I follow "Full calendar"
-    And I set the field "course" to "C1"
+    And I set the field "course" to "Course 1"
     And I create a calendar event:
       | Type of event | group |
       | Group         | Group 1 |
@@ -217,7 +217,7 @@ Feature: Perform basic calendar functionality
     And I click on "New event" "button"
     Then the field "Type of event" matches value "User"
     And I click on "Close" "button" in the "New event" "dialogue"
-    And I set the field "course" to "C1"
+    And I set the field "course" to "Course 1"
     When I click on "New event" "button"
     Then the field "Type of event" matches value "Course"
 
