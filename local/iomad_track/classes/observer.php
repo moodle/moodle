@@ -23,6 +23,8 @@
 
 namespace local_iomad_track;
 
+use company;
+
 defined('MOODLE_INTERNAL') || die();
 if (!defined('CERTIFICATE')) {
     define('CERTIFICATE', 'iomadcertificate');
