@@ -27,10 +27,16 @@
 defined('MOODLE_INTERNAL') || die();
 
 // Like other files in the db directory this file uses an array.
-// The old class name is the key, the path to the file containing the class is the vlaue.
+// The old class name is the key, the path to the file containing the class is the value.
 // The array must be called $legacyclasses.
 $legacyclasses = [
     \bootstrap_renderer::class => 'output/bootstrap_renderer.php',
+
+    // Core API.
+    \emoticon_manager::class => 'emoticon_manager.php',
+    \lang_string::class => 'lang_string.php',
+
+    // Exception API.
     \coding_exception::class => 'exception/coding_exception.php',
     \file_serving_exception::class => 'exception/file_serving_exception.php',
     \invalid_dataroot_permissions::class => 'exception/invalid_dataroot_permissions.php',
