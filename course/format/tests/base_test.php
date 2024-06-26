@@ -40,7 +40,6 @@ class base_test extends advanced_testcase {
      * Tests the save and load functionality.
      *
      * @author Jason den Dulk
-     * @covers \core_courseformat
      */
     public function test_courseformat_saveandload(): void {
         $this->resetAfterTest();

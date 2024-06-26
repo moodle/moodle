@@ -33,6 +33,7 @@ use zip_archive;
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @runTestsInSeparateProcesses
+ * @covers \core_h5p\file_storage
  */
 class file_storage_test extends \advanced_testcase {
 
@@ -847,8 +848,6 @@ class file_storage_test extends \advanced_testcase {
 
     /**
      * Test H5P custom styles generation.
-     *
-     * @covers ::generate_custom_styles
      */
     public function test_generate_custom_styles(): void {
         \set_config('h5pcustomcss', '.debug { color: #fab; }', 'core_h5p');
@@ -895,8 +894,6 @@ class file_storage_test extends \advanced_testcase {
 
     /**
      * Test H5P custom styles retrieval.
-     *
-     * @covers ::get_custom_styles
      */
     public function test_get_custom_styles(): void {
         global $CFG;

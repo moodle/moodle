@@ -280,9 +280,6 @@ class api_test extends \advanced_testcase {
 
     /**
      * Test the adding and removing of members from room.
-     *
-     * @covers ::add_members_to_room
-     * @covers ::remove_members_from_room
      */
     public function test_adding_and_removing_of_room_membership(): void {
         $course = $this->get_course();
@@ -311,8 +308,6 @@ class api_test extends \advanced_testcase {
 
     /**
      * Test the update of room membership with the change user role.
-     *
-     * @covers ::update_room_membership
      */
     public function test_update_room_membership_on_user_role_change(): void {
         global $DB;
@@ -340,8 +335,6 @@ class api_test extends \advanced_testcase {
 
     /**
      * Test sync_provider method for the sync of available provider.
-     *
-     * @covers ::sync_provider
      */
     public function test_sync_provider(): void {
         // Generate the data.
@@ -358,8 +351,6 @@ class api_test extends \advanced_testcase {
 
     /**
      * Test the removal of all members from the room.
-     *
-     * @covers ::remove_all_members_from_room
      */
     public function test_remove_all_members_from_room(): void {
         $course = $this->get_course();
@@ -382,8 +373,6 @@ class api_test extends \advanced_testcase {
 
     /**
      * Test the configuration of room changes as well as the membership with the change of provider.
-     *
-     * @covers ::configure_room_and_membership_by_provider
      */
     public function test_configure_room_and_membership_by_provider(): void {
         global $DB;

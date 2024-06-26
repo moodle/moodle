@@ -35,7 +35,7 @@ class automated_backup_task_test extends \advanced_testcase {
     /**
      * Test the automated backup and report tasks.
      *
-     * @covers \automated_backup_report_task::execute
+     * @covers \core\task\automated_backup_report_task::execute
      * @covers \backup_cron_automated_helper::send_backup_status_to_admin
      * @covers \backup_cron_automated_helper::run_automated_backup
      * @covers \backup_cron_automated_helper::check_and_push_automated_backups

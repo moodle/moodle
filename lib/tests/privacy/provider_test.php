@@ -29,6 +29,7 @@ use core\moodlenet\share_recorder;
  * @category   test
  * @copyright  2023 David Woloszyn <david.woloszyn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core\privacy\provider
  */
 class provider_test extends provider_testcase {
 

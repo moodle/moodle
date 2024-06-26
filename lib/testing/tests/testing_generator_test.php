@@ -23,7 +23,7 @@ namespace core;
  * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\testing_data_generator
+ * @covers \testing_data_generator
  */
 class testing_generator_test extends \advanced_testcase {
     public function test_get_plugin_generator_good_case(): void {

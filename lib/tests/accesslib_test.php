@@ -5260,7 +5260,7 @@ class accesslib_test extends advanced_testcase {
     /**
      * Test get_navigation_filter_context.
      *
-     * @covers ::get_navigation_filter_context
+     * @covers \core\context_helper::get_navigation_filter_context
      */
     public function test_get_navigation_filter_context(): void {
         $this->resetAfterTest();

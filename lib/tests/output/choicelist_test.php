@@ -36,7 +36,7 @@ class choicelist_test extends advanced_testcase {
     /**
      * Test for a choice without options.
      *
-     * @covers ::_construct
+     * @covers ::__construct
      * @covers ::add_option
      * @covers ::export_for_template
      */
@@ -57,7 +57,7 @@ class choicelist_test extends advanced_testcase {
     /**
      * Test for a choice with basic options.
      *
-     * @covers ::_construct
+     * @covers ::__construct
      * @covers ::add_option
      * @covers ::export_for_template
      */
@@ -82,7 +82,7 @@ class choicelist_test extends advanced_testcase {
     /**
      * Test for a choice with extras options definition.
      *
-     * @covers ::_construct
+     * @covers ::__construct
      * @covers ::add_option
      * @covers ::set_option_extras
      * @covers ::export_for_template
@@ -126,7 +126,7 @@ class choicelist_test extends advanced_testcase {
     /**
      * Test for a choice with option selected.
      *
-     * @covers ::_construct
+     * @covers ::__construct
      * @covers ::add_option
      * @covers ::set_selected_value
      * @covers ::get_selected_value
@@ -196,7 +196,7 @@ class choicelist_test extends advanced_testcase {
     /**
      * Test for a choice with option selected.
      *
-     * @covers ::_construct
+     * @covers ::__construct
      * @covers ::add_option
      * @covers ::set_selected_value
      * @covers ::get_selected_value

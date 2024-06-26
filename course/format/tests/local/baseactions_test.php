@@ -25,7 +25,7 @@ use cm_info;
  * @package    core_courseformat
  * @copyright  2023 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_courseformat\base
+ * @coversDefaultClass \core_courseformat\local\baseactions
  */
 class baseactions_test extends \advanced_testcase {
     /**

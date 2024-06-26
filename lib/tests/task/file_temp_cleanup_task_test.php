@@ -140,7 +140,6 @@ class file_temp_cleanup_task_test extends \basic_testcase {
      * @dataProvider cron_delete_from_temp_provider
      * @param array $nodes List of files and directories
      * @param array $expected The expected results
-     * @covers ::execute
      */
     public function test_cron_delete_from_temp($nodes, $expected): void {
         global $CFG;

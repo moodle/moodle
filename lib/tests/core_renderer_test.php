@@ -30,7 +30,7 @@ use moodle_page;
  */
 final class core_renderer_test extends \advanced_testcase {
     /**
-     * @covers \core\hook\before_standard_top_of_body_html_generation
+     * @covers \core\hook\output\before_standard_top_of_body_html_generation
      */
     public function test_standard_top_of_body_html(): void {
         $page = new moodle_page();
@@ -42,7 +42,7 @@ final class core_renderer_test extends \advanced_testcase {
     }
 
     /**
-     * @covers \core\hook\before_standard_top_of_body_html_generation
+     * @covers \core\hook\output\before_standard_top_of_body_html_generation
      */
     public function test_before_standard_top_of_body_html_generation_hooked(): void {
         require_once(__DIR__ . '/fixtures/core_renderer/before_standard_top_of_body_html_generation_callbacks.php');
@@ -63,7 +63,7 @@ final class core_renderer_test extends \advanced_testcase {
     }
 
     /**
-     * @covers \core\hook\before_footer_html_generation
+     * @covers \core\hook\output\before_footer_html_generation
      */
     public function test_before_footer_html_generation(): void {
         $this->resetAfterTest();
@@ -79,7 +79,7 @@ final class core_renderer_test extends \advanced_testcase {
     }
 
     /**
-     * @covers \core\hook\before_footer_html_generation
+     * @covers \core\hook\output\before_footer_html_generation
      */
     public function test_before_footer_html_generation_hooked(): void {
         $this->resetAfterTest();
@@ -104,7 +104,7 @@ final class core_renderer_test extends \advanced_testcase {
     }
 
     /**
-     * @covers \core\hook\before_standard_footer_html_generation
+     * @covers \core\hook\output\before_standard_footer_html_generation
      */
     public function before_standard_footer_html_generation(): void {
         $page = new moodle_page();
@@ -116,7 +116,7 @@ final class core_renderer_test extends \advanced_testcase {
     }
 
     /**
-     * @covers \core\hook\before_standard_footer_html_generation
+     * @covers \core\hook\output\before_standard_footer_html_generation
      */
     public function test_before_standard_footer_html_generation_hooked(): void {
         require_once(__DIR__ . '/fixtures/core_renderer/before_standard_footer_html_generation_callbacks.php');
@@ -137,7 +137,7 @@ final class core_renderer_test extends \advanced_testcase {
     }
 
     /**
-     * @covers \core\hook\after_standard_main_region_html_generation
+     * @covers \core\hook\output\after_standard_main_region_html_generation
      */
     public function test_after_standard_main_region_html_generation(): void {
         $page = new moodle_page();
@@ -149,7 +149,7 @@ final class core_renderer_test extends \advanced_testcase {
     }
 
     /**
-     * @covers \core\hook\after_standard_main_region_html_generation
+     * @covers \core\hook\output\after_standard_main_region_html_generation
      */
     public function test_after_standard_main_region_html_generation_hooked(): void {
         require_once(__DIR__ . '/fixtures/core_renderer/after_standard_main_region_html_generation_callbacks.php');
@@ -170,7 +170,7 @@ final class core_renderer_test extends \advanced_testcase {
     }
 
     /**
-     * @covers \core\hook\before_html_attributes
+     * @covers \core\hook\output\before_html_attributes
      */
     public function test_htmlattributes(): void {
         $page = new moodle_page();
@@ -182,7 +182,7 @@ final class core_renderer_test extends \advanced_testcase {
     }
 
     /**
-     * @covers \core\hook\before_html_attributes
+     * @covers \core\hook\output\before_html_attributes
      */
     public function test_htmlattributes_hooked(): void {
         require_once(__DIR__ . '/fixtures/core_renderer/htmlattributes_callbacks.php');

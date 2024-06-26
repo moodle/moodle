@@ -35,9 +35,6 @@ class cron_test extends \advanced_testcase {
 
     /**
      * Test the setup_user function.
-     *
-     * @covers ::setup_user
-     * @covers ::reset_user_cache
      */
     public function test_setup_user(): void {
         // This function uses the $GLOBALS super global. Disable the VariableNameLowerCase sniff for this function.

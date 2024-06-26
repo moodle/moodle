@@ -37,6 +37,7 @@ require_once($CFG->dirroot . '/calendar/lib.php');
  * @package core_calendar
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \core_calendar\local\event\container
  */
 class container_test extends \advanced_testcase {
 
@@ -370,7 +371,6 @@ class container_test extends \advanced_testcase {
 
     /**
      * Checks that completed activities events do not show.
-     * @covers \core_calendar\local\event::init
      */
     public function test_event_factory_with_completed_module_related_event(): void {
         global $CFG, $DB;

@@ -921,8 +921,7 @@ final class adhoc_task_test extends \advanced_testcase {
     /**
      * Test send messages when adhoc task reaches the max fail delay time.
      *
-     * @covers ::adhoc_task_failed
-     * @covers ::send_failed_task_max_delay_message
+     * @covers \core\task\failed_task_callbacks::send_failed_task_max_delay_message
      */
     public function test_adhoc_message_max_fail_delay(): void {
         $this->resetAfterTest();

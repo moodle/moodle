@@ -37,7 +37,6 @@ class get_grade_tree_test extends \externallib_advanced_testcase {
     /**
      * Test the return value of the external function.
      *
-     * @covers ::execute
      * @return void
      */
     public function test_execute(): void {

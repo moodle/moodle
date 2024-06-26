@@ -23,7 +23,7 @@ namespace core_adminpresets;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass helper
+ * @coversDefaultClass \core_adminpresets\helper
  */
 class helper_test extends \advanced_testcase {
 

@@ -48,7 +48,9 @@ class processor_test extends \advanced_testcase {
      *
      * @covers ::create_instance
      * @covers ::get_id
-     * @covers ::get_instance
+     * @covers ::get_context
+     * @covers ::get_context_id
+     * @covers ::get_provider
      * @covers ::get_room_name
      */
     public function test_create_instance(): void {
