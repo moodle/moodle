@@ -34,7 +34,9 @@ Feature: In an assignment, students start a new attempt based on their previous 
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I follow "View all submissions"
+    And I change window size to "large"
     And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I change window size to "medium"
     And I set the following fields to these values:
       | Allow another attempt | 1 |
     And I press "Save changes"
@@ -49,7 +51,9 @@ Feature: In an assignment, students start a new attempt based on their previous 
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I follow "View all submissions"
+    And I change window size to "large"
     And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I change window size to "medium"
     And I should see "I'm the student first submission"
 
   @javascript @_alert

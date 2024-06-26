@@ -89,7 +89,9 @@ Feature: availability_grade
     # Give the assignment 40%.
     And I follow "View all submissions"
     # Pick the grade link in the row that has s@example.com in it.
+    And I change window size to "large"
     And I click on "Grade" "link" in the "s@example.com" "table_row"
+    And I change window size to "medium"
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
     And I click on "Edit settings" "link"

@@ -36,7 +36,9 @@ Feature: In an assignment, teacher can annotate PDF files during grading
 
     When I am on the "Test assignment name" Activity page logged in as teacher1
     And I follow "View all submissions"
+    And I change window size to "large"
     And I click on "Grade" "link" in the "Submitted for grading" "table_row"
+    And I change window size to "medium"
     Then I should see "Page 1 of 1"
     And I wait for the complete PDF to load
     And I click on ".linebutton" "css_element"
@@ -54,7 +56,9 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     Then I should see "Page 1 of 1"
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I follow "View all submissions"
+    And I change window size to "large"
     And I click on "Grade" "link" in the "Submitted for grading" "table_row"
+    And I change window size to "medium"
     Then I should see "Page 1 of 3"
     And I wait for the complete PDF to load
     And I click on ".linebutton" "css_element"
@@ -108,7 +112,9 @@ Feature: In an assignment, teacher can annotate PDF files during grading
 
     When I am on the "Test assignment name" Activity page logged in as teacher1
     And I follow "View all submissions"
+    And I change window size to "large"
     And I click on "Grade" "link" in the "Submitted for grading" "table_row"
+    And I change window size to "medium"
     Then I should see "Page 1 of 3"
     And I click on ".navigate-next-button" "css_element"
     And I should see "Page 2 of 3"

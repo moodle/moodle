@@ -61,7 +61,9 @@ Feature: View the grading status of an assignment
     And I am on the "Test assignment name" "assign activity" page logged in as teacher1
     And I follow "View all submissions"
     And I should see "In review" in the "Student 1" "table_row"
+    And I change window size to "large"
     And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I change window size to "medium"
     And I should see "1 of 1"
     And I set the field "Marking workflow state" to "Released"
     And I press "Save changes"
@@ -77,7 +79,9 @@ Feature: View the grading status of an assignment
     And I am on the "Test assignment name" "assign activity" page logged in as teacher1
     And I follow "View all submissions"
     And I should see "Released" in the "Student 1" "table_row"
+    And I change window size to "large"
     And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I change window size to "medium"
     And I should see "1 of 1"
     And I set the field "Marking workflow state" to "In marking"
     And I set the field "Notify student" to "0"
@@ -88,7 +92,9 @@ Feature: View the grading status of an assignment
     # The grade should also remain displayed as it's stored in the assign DB tables, but the final grade should be empty.
     And "Student 1" row "Grade" column of "generaltable" table should contain "50.00"
     And "Student 1" row "Final grade" column of "generaltable" table should contain "-"
+    And I change window size to "large"
     And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I change window size to "medium"
     And I click on "Change filters" "link"
     And I set the field "Workflow filter" to "In review"
     And I should see "0 of 0"
@@ -142,7 +148,9 @@ Feature: View the grading status of an assignment
     And I follow "View all submissions"
     And I should see "Graded - resubmitted" in the "Student 1" "table_row"
     And I wait "10" seconds
+    And I change window size to "large"
     And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I change window size to "medium"
     And I should see "1 of 1"
     And I set the field "Grade out of 100" to "99.99"
     And I set the field "Feedback comments" to "Even better job! Really."

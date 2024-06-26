@@ -72,7 +72,9 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
 
   Scenario: Rescaling should not produce negative grades
     Given I follow "View all submissions"
+    And I change window size to "large"
     And I click on "Grade" "link" in the "Student 2" "table_row"
+    And I change window size to "medium"
     And I wait until the page is ready
     And I am on the "Test assignment name" "assign activity" page
     And I navigate to "Settings" in current page administration
