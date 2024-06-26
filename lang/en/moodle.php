@@ -1863,7 +1863,12 @@ $string['resendemail'] = 'Resend confirmation email';
 $string['reset'] = 'Reset';
 $string['resetcomponent'] = 'Component';
 $string['resetcourse'] = 'Reset course';
-$string['resetinfo'] = 'Delete all user data and reset this course to its original state, keeping activities and settings intact.';
+$string['resetcourseconfirm'] = 'Reset course?';
+$string['resetcoursewarning'] = 'Are you sure you want to reset the course \'{$a}\'?
+<br/><br/>
+This will delete the selected data and reset the course back to its original state. You can\'t undo this action.';
+$string['resetinfo'] = 'This feature allows you to clear all user data and reset the course to its original state. Course activities and settings will remain untouched.';
+$string['resetinfoselect'] = 'Select the data you want to delete or reset from the categories below:';
 $string['resetnotimplemented'] = 'Reset not supported';
 $string['resetnotimplementedinfo'] = 'These activities can\'t be reset:';
 $string['resetrecordexpired'] = 'The password reset link you used is more than {$a} minutes old and has expired. Please initiate a new password reset.';

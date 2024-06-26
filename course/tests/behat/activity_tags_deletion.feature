@@ -22,7 +22,9 @@ Feature: Delete activity tags during course reset
     # Perform course reset without checking anything.
     And I log in as "admin"
     And I am on the "Course 1" "reset" page
-    And I press "Reset"
+    And I press "Deselect all"
+    And I press "Reset course"
+    And I click on "Reset course" "button" in the "Reset course?" "dialogue"
     And I press "Continue"
     # Confirm that book chapter tags are not deleted.
     When I am on the "Test Book" "book activity" page
@@ -30,9 +32,10 @@ Feature: Delete activity tags during course reset
     And I should see "ChapterTag"
     # Delete book chapter tags using course reset.
     And I am on the "Course 1" "reset" page
-    And I expand all fieldsets
+    And I press "Deselect all"
     And I click on "All book tags" "checkbox"
-    And I press "Reset"
+    And I press "Reset course"
+    And I click on "Reset course" "button" in the "Reset course?" "dialogue"
     # Confirm that book chapter tags are deleted.
     And I should see "All book tags" in the "Books" "table_row"
     And I press "Continue"
@@ -47,7 +50,9 @@ Feature: Delete activity tags during course reset
       | admin | forum1 | Discussion 1 | Discussion 1 message | SampleTag, DiscussionTag |
     # Perform course reset without checking anything.
     And I am on the "Course 1" "reset" page logged in as admin
-    And I press "Reset"
+    And I press "Deselect all"
+    And I press "Reset course"
+    And I click on "Reset course" "button" in the "Reset course?" "dialogue"
     And I press "Continue"
     # Confirm that forum discussion tags are not deleted.
     When I am on the "Test Forum" "forum activity" page
@@ -55,12 +60,13 @@ Feature: Delete activity tags during course reset
     Then I should see "SampleTag"
     And I should see "DiscussionTag"
     And I am on the "Course 1" "reset" page
-    And I expand all fieldsets
+    And I press "Deselect all"
     # Depending on <resetcheck> value, either delete all discussion posts or remove all forum discussion tags only.
     And I click on "<resetcheck>" "checkbox"
     # Confirm `Remove all forum tags` is disabled when `Delete all posts` on previous step is checked.
     And the "All forum tags" "checkbox" should be <canbechecked>
-    And I press "Reset"
+    And I press "Reset course"
+    And I click on "Reset course" "button" in the "Reset course?" "dialogue"
     And I should see "<resetmessage>" in the "Forums" "table_row"
     And I press "Continue"
     And I am on the "Test Forum" "forum activity" page
@@ -82,19 +88,22 @@ Feature: Delete activity tags during course reset
       | Test Glossary | Aubergine | Also eggpgplant | admin | SampleTag, GlossaryTag |
     # Perform course reset without checking anything.
     And I am on the "Course 1" "reset" page logged in as admin
-    And I press "Reset"
+    And I press "Deselect all"
+    And I press "Reset course"
+    And I click on "Reset course" "button" in the "Reset course?" "dialogue"
     And I press "Continue"
     # Confirm that glossary entry tags are not deleted.
     When I am on the "Test Glossary" "glossary activity" page
     Then I should see "SampleTag"
     And I should see "GlossaryTag"
     And I am on the "Course 1" "reset" page
-    And I expand all fieldsets
+    And I press "Deselect all"
     # Depending on <resetcheck> value, either delete all glossary entries or remove all glossary entry tags only.
     And I click on "<resetcheck>" "checkbox"
     # Confirm `Remove all forum tags` is disabled when `Delete entries from all glossaries` on previous step is checked.
     And the "All glossary tags" "checkbox" should be <canbechecked>
-    And I press "Reset"
+    And I press "Reset course"
+    And I click on "Reset course" "button" in the "Reset course?" "dialogue"
     And I should see "<resetmessage>" in the "Glossaries" "table_row"
     And I press "Continue"
     And I am on the "Test Glossary" "glossary activity" page

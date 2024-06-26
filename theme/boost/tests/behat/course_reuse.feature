@@ -32,11 +32,11 @@ Feature: Course reuse navigation
     Then I should see "<content>"
 
     Examples:
-      | adminpage     | content                                                           |
-      |   Backup      | Backup settings                                                   |
-      |   Restore     | Upload a backup file                                              |
-      |   Import      | Find a course to import data from:                                |
-      |   Reset       | Delete all user data and reset this course to its original state  |
+      | adminpage     | content                                                                                    |
+      |   Backup      | Backup settings                                                                            |
+      |   Restore     | Upload a backup file                                                                       |
+      |   Import      | Find a course to import data from:                                                         |
+      |   Reset       | This feature allows you to clear all user data and reset the course to its original state  |
 
   Scenario: An Administrator can view the course copy page.
     Given I log in as "admin"
