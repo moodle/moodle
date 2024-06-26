@@ -59,7 +59,7 @@ final class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\message_contact_added', $event);
         $this->assertEquals(\context_user::instance(2), $event->get_context());
-        $url = new \moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
+        $url = new \moodle_url('/message/index.php', ['user1' => $event->userid, 'user2' => $event->relateduserid]);
         $this->assertEquals($url, $event->get_url());
     }
 
@@ -89,7 +89,7 @@ final class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\message_contact_removed', $event);
         $this->assertEquals(\context_user::instance(2), $event->get_context());
-        $url = new \moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
+        $url = new \moodle_url('/message/index.php', ['user1' => $event->userid, 'user2' => $event->relateduserid]);
         $this->assertEquals($url, $event->get_url());
     }
 
@@ -164,15 +164,15 @@ final class events_test extends \advanced_testcase {
      * conditional check to ensure a fake message is sent during unit tests when calling that particular function.
      */
     public function test_message_sent(): void {
-        $event = \core\event\message_sent::create(array(
+        $event = \core\event\message_sent::create([
             'objectid' => 3,
             'userid' => 1,
             'context'  => \context_system::instance(),
             'relateduserid' => 2,
-            'other' => array(
-                'courseid' => 4
-            )
-        ));
+            'other' => [
+                'courseid' => 4,
+            ],
+        ]);
 
         // Trigger and capturing the event.
         $sink = $this->redirectEvents();
@@ -183,7 +183,7 @@ final class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\message_sent', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
-        $url = new \moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
+        $url = new \moodle_url('/message/index.php', ['user1' => $event->userid, 'user2' => $event->relateduserid]);
         $this->assertEquals($url, $event->get_url());
         $this->assertEquals(3, $event->objectid);
         $this->assertEquals(4, $event->other['courseid']);
@@ -194,14 +194,14 @@ final class events_test extends \advanced_testcase {
         $this->expectException('coding_exception');
         $this->expectExceptionMessage('The \'courseid\' value must be set in other');
 
-        $event = \core\event\message_sent::create(array(
+        $event = \core\event\message_sent::create([
             'userid' => 1,
             'context'  => \context_system::instance(),
             'relateduserid' => 2,
-            'other' => array(
+            'other' => [
                 'messageid' => 3,
-            )
-        ));
+            ],
+        ]);
     }
 
     public function test_mesage_sent_via_create_from_ids(): void {
@@ -219,7 +219,7 @@ final class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\message_sent', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
-        $url = new \moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
+        $url = new \moodle_url('/message/index.php', ['user1' => $event->userid, 'user2' => $event->relateduserid]);
         $this->assertEquals($url, $event->get_url());
         $this->assertEquals(3, $event->objectid);
         $this->assertEquals(4, $event->other['courseid']);
@@ -241,8 +241,8 @@ final class events_test extends \advanced_testcase {
             'context'  => \context_system::instance(),
             'other' => [
                 'courseid' => 4,
-                'conversationid' => 54
-            ]
+                'conversationid' => 54,
+            ],
         ]);
 
         // Trigger and capture the event.
@@ -275,8 +275,8 @@ final class events_test extends \advanced_testcase {
             'context'  => \context_system::instance(),
             'relateduserid' => 2,
             'other' => [
-                'conversationid' => 34
-            ]
+                'conversationid' => 34,
+            ],
         ]);
     }
 
@@ -295,7 +295,7 @@ final class events_test extends \advanced_testcase {
             'relateduserid' => 2,
             'other' => [
                 'courseid' => 44,
-            ]
+            ],
         ]);
     }
 
@@ -347,14 +347,14 @@ final class events_test extends \advanced_testcase {
 
         // Get the usage action.
         $mua = $DB->get_record('message_user_actions', ['userid' => $user1->id, 'messageid' => $messageid,
-            'action' => \core_message\api::MESSAGE_ACTION_READ]);
+            'action' => \core_message\api::MESSAGE_ACTION_READ, ]);
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\message_viewed', $event);
         $this->assertEquals(\context_user::instance($user1->id), $event->get_context());
         $this->assertEquals($mua->id, $event->objectid);
         $this->assertEquals($messageid, $event->other['messageid']);
-        $url = new \moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
+        $url = new \moodle_url('/message/index.php', ['user1' => $event->userid, 'user2' => $event->relateduserid]);
         $this->assertEquals($url, $event->get_url());
     }
 
@@ -382,7 +382,7 @@ final class events_test extends \advanced_testcase {
 
         // Get the usage action.
         $mua = $DB->get_record('message_user_actions', ['userid' => $user1->id, 'messageid' => $messageid,
-            'action' => \core_message\api::MESSAGE_ACTION_DELETED]);
+            'action' => \core_message\api::MESSAGE_ACTION_DELETED, ]);
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\message_deleted', $event);
@@ -406,7 +406,7 @@ final class events_test extends \advanced_testcase {
 
         // Get the usage action.
         $mua = $DB->get_record('message_user_actions', ['userid' => $user2->id, 'messageid' => $messageid,
-            'action' => \core_message\api::MESSAGE_ACTION_DELETED]);
+            'action' => \core_message\api::MESSAGE_ACTION_DELETED, ]);
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\message_deleted', $event);
@@ -461,7 +461,7 @@ final class events_test extends \advanced_testcase {
 
         // Get the user actions for the messages deleted by that user.
         $muas = $DB->get_records('message_user_actions', ['userid' => $user1->id,
-            'action' => \core_message\api::MESSAGE_ACTION_DELETED], 'timecreated ASC');
+            'action' => \core_message\api::MESSAGE_ACTION_DELETED, ], 'timecreated ASC');
         $this->assertCount(8, $muas);
 
         // Create a list we can use for testing.
@@ -521,7 +521,7 @@ final class events_test extends \advanced_testcase {
         $this->assertEquals($user2->id, $event->relateduserid);
         $this->assertEquals(\context_system::instance(), $event->get_context());
         $this->assertEquals($course->id, $event->other['courseid']);
-        $url = new \moodle_url('/message/output/popup/notifications.php', array('notificationid' => $event->objectid));
+        $url = new \moodle_url('/message/output/popup/notifications.php', ['notificationid' => $event->objectid]);
         $this->assertEquals($url, $event->get_url());
     }
 
@@ -572,7 +572,7 @@ final class events_test extends \advanced_testcase {
         $this->assertEquals($user2->id, $event->userid);
         $this->assertEquals($user1->id, $event->relateduserid);
         $this->assertEquals(\context_user::instance($user2->id), $event->get_context());
-        $url = new \moodle_url('/message/output/popup/notifications.php', array('notificationid' => $event->objectid));
+        $url = new \moodle_url('/message/output/popup/notifications.php', ['notificationid' => $event->objectid]);
         $this->assertEquals($url, $event->get_url());
     }
 }

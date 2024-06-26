@@ -66,12 +66,12 @@ final class messagelib_test extends \advanced_testcase {
         $this->setAdminUser();
 
         // Create a user to add to the admin's contact list.
-        $user1 = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'user1'));
-        $user2 = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'user2'));
+        $user1 = $this->getDataGenerator()->create_user(['firstname' => 'Test1', 'lastname' => 'user1']);
+        $user2 = $this->getDataGenerator()->create_user(['firstname' => 'Test2', 'lastname' => 'user2']);
 
         // Add users to the admin's contact list.
-        \core_message\api::add_contact($USER->id, $user1->id);
-        \core_message\api::add_contact($USER->id, $user2->id);
+        api::add_contact($USER->id, $user1->id);
+        api::add_contact($USER->id, $user2->id);
 
         $this->assertCount(1, message_search_users(0, 'Test1'));
         $this->assertCount(2, message_search_users(0, 'Test'));
@@ -94,14 +94,18 @@ final class messagelib_test extends \advanced_testcase {
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
 
-        \core_message\api::add_contact($user1->id, $user2->id);
-        \core_message\api::add_contact($user1->id, $user3->id);
+        api::add_contact($user1->id, $user2->id);
+        api::add_contact($user1->id, $user3->id);
 
         // Create some individual conversations.
-        $ic1 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
-            [$user1->id, $user2->id]);
-        $ic2 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
-            [$user1->id, $user3->id]);
+        $ic1 = api::create_conversation(
+            api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id]
+        );
+        $ic2 = api::create_conversation(
+            api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user3->id]
+        );
 
         // Send some messages to individual conversations.
         $im1 = testhelper::send_fake_message_to_conversation($user1, $ic1->id, 'Message 1');
@@ -111,7 +115,7 @@ final class messagelib_test extends \advanced_testcase {
 
         // Mark a message as read by user2.
         $message = $DB->get_record('messages', ['id' => $im1]);
-        \core_message\api::mark_message_as_read($user2->id, $message);
+        api::mark_message_as_read($user2->id, $message);
 
         // Retrieve unread messages sent from user1 to user2.
         $lastmessages = message_get_messages($user2->id, $user1->id, 0, MESSAGE_GET_UNREAD);
@@ -139,8 +143,11 @@ final class messagelib_test extends \advanced_testcase {
         $this->assertArrayHasKey($im1, $lastmessages);
 
         // Create some group conversations.
-        $gc1 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
-            [$user1->id, $user2->id, $user3->id], 'Group chat');
+        $gc1 = api::create_conversation(
+            api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id],
+            'Group chat'
+        );
 
         // Send some messages to group conversations.
         $gm1 = testhelper::send_fake_message_to_conversation($user1, $gc1->id, 'Group message 1');
@@ -167,8 +174,11 @@ final class messagelib_test extends \advanced_testcase {
         $user3 = self::getDataGenerator()->create_user();
 
         // Create some group conversations.
-        $gc1 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
-            [$user1->id, $user2->id, $user3->id], 'Group chat');
+        $gc1 = api::create_conversation(
+            api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id],
+            'Group chat'
+        );
 
         // Send some messages to group conversations.
         $gm1 = testhelper::send_fake_message_to_conversation($user1, $gc1->id, 'Group message 1');
@@ -179,5 +189,4 @@ final class messagelib_test extends \advanced_testcase {
         $lastmessages = message_get_messages($user2->id, $user1->id, 0, MESSAGE_GET_READ_AND_UNREAD);
         $this->assertCount(0, $lastmessages);
     }
-
 }

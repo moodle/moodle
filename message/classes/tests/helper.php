@@ -36,8 +36,8 @@ class helper {
     /**
      * Send a fake message.
      *
-     * {@link message_send()} does not support transaction, this function will simulate a message
-     * sent from a user to another. We should stop using it once {@link message_send()} will support
+     * {@see message_send()} does not support transaction, this function will simulate a message
+     * sent from a user to another. We should stop using it once {@see message_send()} will support
      * transactions. This is not clean at all, this is just used to add rows to the table.
      *
      * @param \stdClass $userfrom user object of the one sending the message.
