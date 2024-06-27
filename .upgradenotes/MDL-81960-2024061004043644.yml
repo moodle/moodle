@@ -1,0 +1,29 @@
+issueNumber: MDL-81960
+notes:
+  core:
+    - message: >-
+        The following classes have been renamed and now support autoloading.
+        Existing classes are currently unaffected.
+
+        | Old class name | New class name |
+
+        | --- | --- |
+
+        | `\moodle_url` | `\core\url` |
+
+        | `\progress_trace` | `\core\output\progress_trace` |
+
+        | `\combined_progress_trace` | `\core\output\progress_trace\combined_progress_trace` |
+
+        | `\error_log_progress_trace` | `\core\output\progress_trace\error_log_progress_trace` |
+
+        | `\html_list_progress_trace` | `\core\output\progress_trace\html_list_progress_trace` |
+
+        | `\html_progress_trace` | `\core\output\progress_trace\html_progress_trace` |
+
+        | `\null_progress_trace` | `\core\output\progress_trace\null_progress_trace` |
+
+        | `\progress_trace_buffer` | `\core\output\progress_trace\progress_trace_buffer` |
+
+        | `\text_progress_trace` | `\core\output\progress_trace\text_progress_trace` |
+      type: improved

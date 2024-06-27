@@ -30,12 +30,12 @@ defined('MOODLE_INTERNAL') || die();
 // The old class name is the key, the path to the file containing the class is the value.
 // The array must be called $legacyclasses.
 $legacyclasses = [
-    // Exception API.
     \bootstrap_renderer::class => 'output/bootstrap_renderer.php',
 
     // Core API.
     \emoticon_manager::class => 'emoticon_manager.php',
     \lang_string::class => 'lang_string.php',
+    \moodle_url::class => 'url.php',
 
     // Exception API.
     \coding_exception::class => 'exception/coding_exception.php',
@@ -148,4 +148,14 @@ $legacyclasses = [
         'core_table',
         'dataformat_export_format.php',
     ],
+
+    // The progress_trace classes.
+    \combined_progress_trace::class => 'output/progress_trace/combined_progress_trace.php',
+    \error_log_progress_trace::class => 'output/progress_trace/error_log_progress_trace.php',
+    \html_list_progress_trace::class => 'output/progress_trace/html_list_progress_trace.php',
+    \html_progress_trace::class => 'output/progress_trace/html_progress_trace.php',
+    \null_progress_trace::class => 'output/progress_trace/null_progress_trace.php',
+    \progress_trace::class => 'output/progress_trace.php',
+    \progress_trace_buffer::class => 'output/progress_trace/progress_trace_buffer.php',
+    \text_progress_trace::class => 'output/progress_trace/text_progress_trace.php',
 ];
