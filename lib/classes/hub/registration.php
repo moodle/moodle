@@ -43,7 +43,7 @@ class registration {
     /** @var array Fields used in a site registration form.
      * IMPORTANT: any new fields with non-empty defaults have to be added to CONFIRM_NEW_FIELDS */
     const FORM_FIELDS = ['policyagreed', 'language', 'countrycode', 'privacy',
-        'contactemail', 'contactable', 'emailalert', 'emailalertemail', 'commnews', 'commnewsemail',
+        'contactemail', 'emailalert', 'emailalertemail', 'commnews', 'commnewsemail',
         'contactname', 'name', 'description', 'imageurl', 'contactphone', 'regioncode', 'geolocation', 'street'];
 
     /** @var array List of new FORM_FIELDS or siteinfo fields added indexed by the version when they were added.

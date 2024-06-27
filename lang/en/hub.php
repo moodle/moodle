@@ -150,8 +150,6 @@ $string['siteprivacy_help'] = 'You can choose to have your site listed publicly 
 $string['siteprivacynotpublished'] = 'Do not list my site';
 $string['siteprivacypublished'] = 'Only display my site name';
 $string['siteprivacylinked'] = 'Display my site name with the link';
-$string['siteregistrationcontact'] = 'Display contact form';
-$string['siteregistrationcontact_help'] = 'If you allow it, other people in our Moodle community (who need a login account) can contact you via a form on our Moodle community site. However, they will never be able to see your email address.';
 $string['siteregistrationemail'] = 'Notifications of new Moodle releases, security alerts and other important news';
 $string['siteregistrationemail_help'] = 'You have the option of subscribing to our low-volume mailing list for notifications of new Moodle releases, security alerts and other important news. You may unsubscribe at any time.';
 $string['siteregistrationupdated'] = 'Site registration updated';
@@ -178,3 +176,7 @@ $string['wrongtoken'] = 'The registration failed for some unknown reason (networ
 
 // Deprecate since 3.11.
 $string['sitecommnewsno'] = 'No, I do not wish to receive any emails';
+
+// Deprecated since 4.5.
+$string['siteregistrationcontact'] = 'Display contact form';
+$string['siteregistrationcontact_help'] = 'If you allow it, other people in our Moodle community (who need a login account) can contact you via a form on our Moodle community site. However, they will never be able to see your email address.';
