@@ -25035,9 +25035,6 @@ dd:after {
 .inplaceeditable.inplaceeditingon select {
   margin-bottom: 0;
 }
-.inplaceeditable .quickediticon .icon {
-  font-size: medium;
-}
 .inplaceeditable .quickediticon img {
   opacity: 0.2;
 }
