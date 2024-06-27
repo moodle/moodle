@@ -294,6 +294,10 @@
     white-space: nowrap;
 }
 
+.path-mod-assign .gradingtable .username .d-inline-block {
+    white-space: nowrap;
+}
+
 .path-mod-assign .gradingtable .moodle-actionmenu[data-enhanced].show .menu a {
     padding-left: 12px;
     padding-right: 12px;

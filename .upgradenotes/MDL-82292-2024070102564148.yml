@@ -1,0 +1,6 @@
+issueNumber: MDL-82292
+notes:
+  mod_assign:
+    - message: |
+        Method assign_grading_table::col_picture has been deprecated.
+      type: deprecated

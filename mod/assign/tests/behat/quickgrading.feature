@@ -114,7 +114,6 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I should not see "1337"
     And I am on the "Test assignment name" "assign activity" page logged in as teacher1
     And I follow "View all submissions"
-    And I click on "Hide User picture" "link"
     And I click on "Hide Full name" "link"
     And I click on "Hide Email address" "link"
     And I click on "Hide Status" "link"
