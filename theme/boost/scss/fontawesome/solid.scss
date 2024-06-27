@@ -1,7 +1,7 @@
 /*!
- * Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com
+ * Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
- * Copyright 2023 Fonticons, Inc.
+ * Copyright 2024 Fonticons, Inc.
  */
 @import 'functions';
 @import 'variables';
@@ -16,8 +16,8 @@
   font-style: normal;
   font-weight: 900;
   font-display: $fa-font-display;
-  src: url('[[font:core|fa-solid-900.woff2]]') format('woff2'),
-    url('[[font:core|fa-solid-900.ttf]]') format('truetype');
+  src: url('#{$fa-font-path}/fa-solid-900.woff2') format('woff2'),
+    url('#{$fa-font-path}/fa-solid-900.ttf') format('truetype');
 }
 
 .fas,
