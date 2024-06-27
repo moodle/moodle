@@ -96,3 +96,16 @@ Feature: Create testing scenarios using generators
     And I should not see "Course cleanup" in the "course-listing" "region"
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I should not see "Teacher Test1"
+
+  Scenario: All available steps are listed in the tool to create testing scenarios
+    Given I log in as "admin"
+    When I navigate to "Development > Create testing scenarios" in site administration
+    Then I should see "This is the list of steps that can be used in the test scenario feature file"
+    And I should see "And the following \"activities\" exist"
+    And I should see "And \"5\" \"course enrolments\" exist with the following data"
+    And I should see "And the following \"course\" exists"
+    And I should see "And the following config values are set as admin"
+    And I should see "I enable \"subsection\" \"mod\" plugin"
+    And I should see "I disable \"page\" \"mod\" plugin"
+    And I should see "And the course \"Course test\" is deleted"
+    And I should see "And the user student1 is deleted"

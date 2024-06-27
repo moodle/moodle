@@ -25,6 +25,7 @@
 use tool_generator\local\testscenario\runner;
 use tool_generator\form\featureimport;
 use tool_generator\output\parsingresult;
+use tool_generator\output\stepsinformation;
 
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
@@ -54,7 +55,7 @@ try {
     die;
 }
 
-echo $output->paragraph(get_string('testscenario_filedesc', 'tool_generator'));
+echo $output->render(new stepsinformation($runner));
 
 $mform = new featureimport();
 

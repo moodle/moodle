@@ -84,6 +84,10 @@ class behat_data_generators extends behat_base {
      * @param string    $entitytype The name of the type entity to add
      * @param TableNode $data
      */
+    #[\core\attribute\example('And the following "activities" exist:
+        | activity | name              | intro           | course   | idnumber | section | visible |
+        | assign   | Activity sample 1 | Test assignment | C1       | sample1  | 1       | 1       |
+        | assign   | Activity sample 2 | Test assignment | C1       | sample2  | 1       | 0       |')]
     public function the_following_entities_exist($entitytype, TableNode $data) {
         if (isset($this->movedentitytypes[$entitytype])) {
             $entitytype = $this->movedentitytypes[$entitytype];
@@ -101,6 +105,10 @@ class behat_data_generators extends behat_base {
      * @param   int $count
      * @param   TableNode $data
      */
+    #[\core\attribute\example('And "5" "course enrolments" exist with the following data:
+        | user   | student[count] |
+        | course | C1             |
+        | role   | student        |')]
     public function the_following_repeated_entities_exist(string $entitytype, int $count, TableNode $data): void {
         $rows = $data->getRowsHash();
 
@@ -130,6 +138,12 @@ class behat_data_generators extends behat_base {
      * @param string    $entitytype The name of the type entity to add
      * @param TableNode $data
      */
+    #[\core\attribute\example('And the following "course" exists:
+        | fullname         | Course test |
+        | shortname        | C1          |
+        | category         | 0           |
+        | numsections      | 3           |
+        | initsections     | 1           |')]
     public function the_following_entity_exists($entitytype, TableNode $data) {
         if (isset($this->movedentitytypes[$entitytype])) {
             $entitytype = $this->movedentitytypes[$entitytype];

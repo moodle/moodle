@@ -58,6 +58,7 @@ class behat_user extends behat_base {
      * @Given the user :identifier is deleted
      * @param string $identifier
      */
+    #[\core\attribute\example('And the user student1 is deleted')]
     public function the_user_is_deleted($identifier) {
         global $DB;
         $userid = $this->get_user_id_by_identifier($identifier);

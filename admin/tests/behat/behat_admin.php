@@ -90,6 +90,8 @@ class behat_admin extends behat_base {
      * @Given /^the following config values are set as admin:$/
      * @param TableNode $table
      */
+    #[\core\attribute\example('And the following config values are set as admin:
+        | sendcoursewelcomemessage | 0 | enrol_manual |')]
     public function the_following_config_values_are_set_as_admin(TableNode $table) {
 
         if (!$data = $table->getRowsHash()) {

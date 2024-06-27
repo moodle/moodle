@@ -1159,6 +1159,7 @@ class behat_course extends behat_base {
      * @Given the course :coursefullname is deleted
      * @param string $coursefullname
      */
+    #[\core\attribute\example('And the course "Course test" is deleted')]
     public function the_course_is_deleted($coursefullname) {
         delete_course($this->get_course_id($coursefullname), false);
         fix_course_sortorder();

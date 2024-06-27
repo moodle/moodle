@@ -2366,6 +2366,7 @@ EOF;
      * @param string $plugin Plugin we look for
      * @param string $plugintype The type of the plugin
      */
+    #[\core\attribute\example('I enable "subsection" "mod" plugin')]
     public function i_enable_plugin($plugin, $plugintype) {
         $class = core_plugin_manager::resolve_plugininfo_class($plugintype);
         $class::enable_plugin($plugin, true);
@@ -2378,6 +2379,7 @@ EOF;
      * @param string $plugin Plugin we look for
      * @param string $plugintype The type of the plugin
      */
+    #[\core\attribute\example('I disable "page" "mod" plugin')]
     public function i_disable_plugin($plugin, $plugintype) {
         $class = core_plugin_manager::resolve_plugininfo_class($plugintype);
         $class::enable_plugin($plugin, false);
