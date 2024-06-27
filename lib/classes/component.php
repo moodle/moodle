@@ -391,6 +391,7 @@ class core_component {
             \core\exception\moodle_exception::class,
             \core\output\bootstrap_renderer::class,
             \core\lang_string::class,
+            \renderable::class,
         ];
         foreach ($keyclasses as $classname) {
             if (!array_key_exists($classname, $cache['classmap'])) {
@@ -728,14 +729,13 @@ $cache = ' . var_export($cache, true) . ';
         self::$classmap = [];
 
         self::load_classes('core', "$CFG->dirroot/lib/classes");
-        self::load_legacy_classes($CFG->libdir);
+        self::load_legacy_classes($CFG->libdir, true);
 
         foreach (self::$subsystems as $subsystem => $fulldir) {
             if (!$fulldir) {
                 continue;
             }
             self::load_classes('core_' . $subsystem, "$fulldir/classes");
-            self::load_legacy_classes($fulldir);
         }
 
         foreach (self::$plugins as $plugintype => $plugins) {
@@ -1449,8 +1449,12 @@ $cache = ' . var_export($cache, true) . ';
      * and the value is the path to the class file within the relative ../classes/ directory.
      *
      * @param string|null $fulldir The directory to the legacy classes.
+     * @param bool $allowsubsystems Whether to allow the specification of alternative subsystems for this path.
      */
-    protected static function load_legacy_classes(?string $fulldir): void {
+    protected static function load_legacy_classes(
+        ?string $fulldir,
+        bool $allowsubsystems = false,
+    ): void {
         if (is_null($fulldir)) {
             return;
         }
@@ -1461,7 +1465,32 @@ $cache = ' . var_export($cache, true) . ';
             require($file);
             if (is_array($legacyclasses)) {
                 foreach ($legacyclasses as $classname => $path) {
-                    self::$classmap[$classname] = "{$fulldir}/classes/{$path}";
+                    if (is_array($path)) {
+                        if (!$allowsubsystems) {
+                            throw new \Exception(
+                                "Invalid legacy classes path entry for {$classname}. " .
+                                    "Only files within the component can be specified.",
+                            );
+                        }
+                        if (count($path) !== 2) {
+                            throw new \Exception(
+                                "Invalid legacy classes path entry for {$classname}. " .
+                                    "Entries must be in the format [subsystem, path].",
+                            );
+                        }
+                        [$subsystem, $path] = $path;
+                        $subsystem = substr($subsystem, 5);
+                        if (!array_key_exists($subsystem, self::$subsystems)) {
+                            throw new \Exception(
+                                "Unknown subsystem '{$subsystem}' for legacy classes entry of '{$classname}'",
+                            );
+                        }
+
+                        $subsystemfulldir = self::$subsystems[$subsystem];
+                        self::$classmap[$classname] = "{$subsystemfulldir}/classes/{$path}";
+                    } else {
+                        self::$classmap[$classname] = "{$fulldir}/classes/{$path}";
+                    }
                 }
             }
         }

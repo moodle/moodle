@@ -18,12 +18,6 @@ namespace core;
 
 use test_output_factory;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/outputfactories.php');
-require_once($CFG->libdir . '/tests/fixtures/test_renderer_factory.php');
-
 /**
  * Unit tests for lib/outputfactories.php.
  *
@@ -32,7 +26,15 @@ require_once($CFG->libdir . '/tests/fixtures/test_renderer_factory.php');
  * @copyright 2014 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class outputfactories_test extends \advanced_testcase {
+final class outputfactories_test extends \advanced_testcase {
+    #[\Override]
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+
+        require_once($CFG->libdir . '/tests/fixtures/test_renderer_factory.php');
+
+        parent::setUpBeforeClass();
+    }
 
     public function test_nonautoloaded_classnames(): void {
         global $PAGE;

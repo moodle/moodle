@@ -14,28 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Perform some custom name mapping for template file names (strip leading component/).
- *
- * @package    core
- * @category   output
- * @copyright  2015 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\output;
-
-use coding_exception;
 
 /**
  * Perform some custom name mapping for template file names.
  *
+ * @package core
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      2.9
  */
 class mustache_filesystem_loader extends \Mustache_Loader_FilesystemLoader {
-
     /**
      * Provide a default no-args constructor (we don't really need anything).
      */
@@ -49,7 +38,7 @@ class mustache_filesystem_loader extends \Mustache_Loader_FilesystemLoader {
      * @param string $name
      * @return string Template file name
      */
-    protected function getFileName($name) {
+    protected function getfilename($name) {
         // Call the Moodle template finder.
         return mustache_template_finder::get_template_filepath($name);
     }
@@ -62,7 +51,7 @@ class mustache_filesystem_loader extends \Mustache_Loader_FilesystemLoader {
      *
      * @return bool Whether to check `is_dir` and `file_exists`
      */
-    protected function shouldCheckPath() {
+    protected function shouldcheckpath() {
         return true;
     }
 

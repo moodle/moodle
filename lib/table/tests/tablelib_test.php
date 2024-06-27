@@ -14,9 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core;
+namespace core_table;
 
-use flexible_table;
 use testable_flexible_table;
 
 defined('MOODLE_INTERNAL') || die();
@@ -28,7 +27,7 @@ require_once($CFG->libdir . '/tests/fixtures/testable_flexible_table.php');
 /**
  * Test some of tablelib.
  *
- * @package    core
+ * @package    core_table
  * @category   test
  * @copyright  2013 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -14,21 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains class \core\output\icon_system
- *
- * @package    core
- * @category   output
- * @copyright  2016 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\output;
-
-use renderer_base;
-use pix_icon;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class allowing different systems for mapping and rendering icons.

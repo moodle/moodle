@@ -16,8 +16,6 @@
 
 namespace core\output;
 
-use renderable;
-
 /**
  * Class to render a sticky footer element.
  *
@@ -35,7 +33,6 @@ use renderable;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class sticky_footer implements named_templatable, renderable {
-
     /**
      * @var string content of the sticky footer.
      */

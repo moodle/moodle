@@ -14,21 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * List the valid locations to search for a template with a given name.
- *
- * @package    core
- * @category   output
- * @copyright  2015 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\output;
 
-use coding_exception;
-use moodle_exception;
+use core\exception\coding_exception;
+use core\exception\moodle_exception;
 use core_component;
-use theme_config;
 
 /**
  * Get information about valid locations for mustache templates.
@@ -36,9 +26,9 @@ use theme_config;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      2.9
+ * @package core
  */
 class mustache_template_finder {
-
     /**
      * Helper function for getting a list of valid template directories for a specific component.
      *
@@ -59,14 +49,14 @@ class mustache_template_finder {
         $themename = clean_param($themename, PARAM_COMPONENT);
 
         // Validate the component.
-        $dirs = array();
+        $dirs = [];
         $compdirectory = core_component::get_component_directory($component);
         if (!$compdirectory) {
             throw new coding_exception("Component was not valid: " . s($component));
         }
 
         // Find the parent themes.
-        $parents = array();
+        $parents = [];
         if ($themename === $PAGE->theme->name) {
             $parents = $PAGE->theme->parents;
         } else {
@@ -108,7 +98,7 @@ class mustache_template_finder {
                                        ' (' . s($name) . ' requested) ');
         }
 
-        list($component, $templatename) = explode('/', $name, 2);
+        [$component, $templatename] = explode('/', $name, 2);
         $component = clean_param($component, PARAM_COMPONENT);
 
         $dirs = self::get_template_directories_for_component($component, $themename);

@@ -33,8 +33,7 @@ namespace core\output;
  * @package core
  * @category output
  */
-class notification implements \renderable, \templatable {
-
+class notification implements renderable, templatable {
     /**
      * A notification of level 'success'.
      */
@@ -78,7 +77,7 @@ class notification implements \renderable, \templatable {
     /**
      * @var array $extraclasses A list of any extra classes that may be required.
      */
-    protected $extraclasses = array();
+    protected $extraclasses = [];
 
     /**
      * Notification constructor.
@@ -129,7 +128,7 @@ class notification implements \renderable, \templatable {
      * @param array $classes
      * @return $this
      */
-    public function set_extra_classes($classes = array()) {
+    public function set_extra_classes($classes = []) {
         $this->extraclasses = $classes;
 
         return $this;
@@ -160,7 +159,7 @@ class notification implements \renderable, \templatable {
      * @return array data context for a mustache template
      */
     public function export_for_template(\renderer_base $output) {
-        return array(
+        return [
             'message'       => clean_text($this->message),
             'extraclasses'  => implode(' ', $this->extraclasses),
             'announce'      => $this->announce,
@@ -169,9 +168,14 @@ class notification implements \renderable, \templatable {
             'isinfo'            => $this->messagetype === 'info',
             'iswarning'         => $this->messagetype === 'warning',
             'iserror'           => $this->messagetype === 'error',
-        );
+        ];
     }
 
+    /**
+     * Get the name of the template to use for this templatable.
+     *
+     * @return string
+     */
     public function get_template_name() {
         $templatemappings = [
             // Current types mapped to template names.

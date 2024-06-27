@@ -18,8 +18,6 @@ declare(strict_types=1);
 
 namespace core\output;
 
-use renderer_base;
-
 /**
  * A single-select combobox widget that is functionally similar to an HTML select element.
  *
@@ -28,7 +26,7 @@ use renderer_base;
  * @copyright 2022 Shamim Rezaie <shamim@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class select_menu implements \renderable, \templatable {
+class select_menu implements renderable, templatable {
     /** @var array List of options. */
     protected $options;
 
@@ -85,7 +83,7 @@ class select_menu implements \renderable, \templatable {
                             'name' => $groupname,
                             'isgroup' => true,
                             'id' => \html_writer::random_id('select-menu-group'),
-                            'options' => []
+                            'options' => [],
                         ];
                     }
                     foreach ($optoptions as $optvalue => $optoption) {

@@ -16,8 +16,6 @@
 
 namespace core\output;
 
-use templatable;
-
 /**
  * A subset of templatable which provides the name of the template to use.
  *
@@ -26,12 +24,11 @@ use templatable;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 interface named_templatable extends templatable {
-
     /**
      * Get the name of the template to use for this templatable.
      *
-     * @param \renderer_base $renderer The renderer requesting the template name
+     * @param renderer_base $renderer The renderer requesting the template name
      * @return string
      */
-    public function get_template_name(\renderer_base $renderer): string;
+    public function get_template_name(renderer_base $renderer): string;
 }

@@ -16,7 +16,7 @@
 
 namespace core\output;
 
-use context_course;
+use core\context\course as context_course;
 use moodle_page;
 use navigation_node;
 use moodle_url;
@@ -28,7 +28,7 @@ use moodle_url;
  * @copyright  2021 Peter Dias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class participants_action_bar implements \renderable {
+class participants_action_bar implements renderable {
     /** @var object $course The course we are dealing with. */
     private $course;
     /** @var moodle_page $page The current page. */
@@ -72,7 +72,7 @@ class participants_action_bar implements \renderable {
                 'renameroles',
             ],
             'groups:group' => [
-                'groups'
+                'groups',
             ],
             'permissions:role' => [
                 'override',
@@ -98,8 +98,10 @@ class participants_action_bar implements \renderable {
 
         $formattedcontent = [];
         $enrolmentsheading = get_string('enrolments', 'enrol');
-        if ($this->page->context->contextlevel != CONTEXT_MODULE &&
-                $this->page->context->contextlevel != CONTEXT_COURSECAT) {
+        if (
+            $this->page->context->contextlevel != CONTEXT_MODULE &&
+                $this->page->context->contextlevel != CONTEXT_COURSECAT
+        ) {
             // Pre-populate the formatted tertiary nav items with the "Enrolled users" node if user can view the participants page.
             $coursecontext = context_course::instance($this->course->id);
             $canviewparticipants = course_can_view_participants($coursecontext);
@@ -108,14 +110,14 @@ class participants_action_bar implements \renderable {
                 $formattedcontent[] = [
                     $enrolmentsheading => [
                         $participantsurl => get_string('enrolledusers', 'enrol'),
-                    ]
+                    ],
                 ];
             }
         }
 
         $nodes = $this->get_ordered_nodes();
         foreach ($nodes as $description => $content) {
-            list($stringid, $location) = explode(':', $description);
+            [$stringid, $location] = explode(':', $description);
             $heading = get_string($stringid, $location);
             $items = [];
             foreach ($content as $key) {
@@ -129,7 +131,7 @@ class participants_action_bar implements \renderable {
                         $params = ['id' => $this->course->id];
                         $items += [
                             (new moodle_url('/group/groupings.php', $params))->out() => get_string('groupings', 'group'),
-                            (new moodle_url('/group/overview.php', $params))->out() => get_string('overview', 'group')
+                            (new moodle_url('/group/overview.php', $params))->out() => get_string('overview', 'group'),
                         ];
                     }
                 }
@@ -145,8 +147,10 @@ class participants_action_bar implements \renderable {
         }
 
         // If we are accessing a page from a module/category context additional nodes will not be visible.
-        if ($this->page->context->contextlevel != CONTEXT_MODULE &&
-                $this->page->context->contextlevel != CONTEXT_COURSECAT) {
+        if (
+            $this->page->context->contextlevel != CONTEXT_MODULE &&
+                $this->page->context->contextlevel != CONTEXT_COURSECAT
+        ) {
             // Need to do some funky code here to find out if we have added third party navigation nodes.
             $thirdpartynodearray = $this->get_thirdparty_node_array() ?: [];
             $formattedcontent = array_merge($formattedcontent, $thirdpartynodearray);

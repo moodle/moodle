@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core;
-
-use xhtml_container_stack;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/outputlib.php');
+namespace core\output;
 
 /**
  * Unit tests for the xhtml_container_stack class.
@@ -32,8 +25,9 @@ require_once($CFG->libdir . '/outputlib.php');
  * @category  test
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \core\output\xhtml_container_stacks
  */
-class xhtml_container_stack_test extends \advanced_testcase {
+final class xhtml_container_stack_test extends \advanced_testcase {
     public function test_push_then_pop(): void {
         // Set up.
         $stack = new xhtml_container_stack();
