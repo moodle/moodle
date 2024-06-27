@@ -17,10 +17,10 @@
 namespace core\output;
 
 use core\exception\coding_exception;
+use core\lang_string;
 use core\output\local\action_menu\subpanel;
 use core\output\action_menu\link as action_menu_link;
 use core\output\action_menu\filler as action_menu_filler;
-use lang_string;
 use moodle_page;
 use stdClass;
 

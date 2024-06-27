@@ -16,8 +16,8 @@
 
 namespace core\output\requirements;
 
-use html_writer;
-use js_writer;
+use core\output\html_writer;
+use core\output\js_writer;
 
 /**
  * This requirements manager captures the appropriate html for creating a fragment to

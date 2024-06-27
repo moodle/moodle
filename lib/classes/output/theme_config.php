@@ -16,6 +16,7 @@
 
 namespace core\output;
 
+use block_manager;
 use cache;
 use cache_store;
 use core_component;
@@ -27,6 +28,7 @@ use core_scss;
 use core_useragent;
 use core\context\system as context_system;
 use core\exception\coding_exception;
+use core\output\renderer_factory\renderer_factory_interface as renderer_factory;
 use core\output\renderer_factory\standard_renderer_factory;
 use dml_exception;
 use moodle_page;

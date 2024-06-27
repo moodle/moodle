@@ -31,6 +31,8 @@ notes:
 
         | `\context_header` | `\core\output\context_header` |
 
+        | `\core\output\local\action_menu\subpanel` | `\core\output\action_menu\subpanel` |
+
         | `\core_renderer_ajax` | `\core\output\core_renderer_ajax` |
 
         | `\core_renderer_cli` | `\core\output\core_renderer_cli` |
