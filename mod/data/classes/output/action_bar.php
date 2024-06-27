@@ -116,7 +116,7 @@ class action_bar {
             $fieldselectparams['newtype'] = $fieldtype;
             $fieldselect->add(new \action_menu_link(
                 new moodle_url('/mod/data/field.php', $fieldselectparams),
-                new \pix_icon('field/' . $fieldtype, $fieldname, 'data'),
+                new \image_icon('icon', $fieldtype, 'datafield_' . $fieldtype),
                 $fieldname,
                 false
             ));
