@@ -20,8 +20,7 @@ namespace core_reportbuilder\local\report;
 
 use coding_exception;
 use lang_string;
-use core_reportbuilder\local\helpers\aggregation;
-use core_reportbuilder\local\helpers\database;
+use core_reportbuilder\local\helpers\{aggregation, database, join_trait};
 use core_reportbuilder\local\aggregation\base;
 use core_reportbuilder\local\models\column as column_model;
 
@@ -33,6 +32,8 @@ use core_reportbuilder\local\models\column as column_model;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class column {
+
+    use join_trait;
 
     /** @var int Column type is integer */
     public const TYPE_INTEGER = 1;
@@ -55,23 +56,11 @@ final class column {
     /** @var int $index Column index within a report */
     private $index;
 
-    /** @var string $columnname Internal reference to name of column */
-    private $columnname;
-
-    /** @var lang_string $columntitle Used as a title for the column in reports */
-    private $columntitle;
-
     /** @var bool $hascustomcolumntitle Used to store if the column has been given a custom title */
     private $hascustomcolumntitle = false;
 
-    /** @var string $entityname Name of the entity this column belongs to */
-    private $entityname;
-
     /** @var int $type Column data type (one of the TYPE_* class constants) */
     private $type = self::TYPE_TEXT;
-
-    /** @var string[] $joins List of SQL joins for this column */
-    private $joins = [];
 
     /** @var array $fields */
     private $fields = [];
@@ -101,16 +90,16 @@ final class column {
     private $attributes = [];
 
     /** @var bool $available Used to know if column is available to the current user or not */
-    protected $available = true;
+    private $available = true;
 
     /** @var bool $deprecated */
-    protected $deprecated = false;
+    private $deprecated = false;
 
     /** @var string $deprecatedmessage */
-    protected $deprecatedmessage;
+    private $deprecatedmessage;
 
     /** @var column_model $persistent */
-    protected $persistent;
+    private $persistent;
 
     /**
      * Column constructor
@@ -129,10 +118,15 @@ final class column {
      *      this value should be the result of calling {@see get_entity_name}, however if creating columns inside reports directly
      *      it should be the name of the entity as passed to {@see \core_reportbuilder\local\report\base::annotate_entity}
      */
-    public function __construct(string $name, ?lang_string $title, string $entityname) {
-        $this->columnname = $name;
-        $this->columntitle = $title;
-        $this->entityname = $entityname;
+    public function __construct(
+        /** @var string Internal name of the column */
+        private string $name,
+        /** @var lang_string|null Title of the column used in reports */
+        private ?lang_string $title,
+        /** @var string Name of the entity this column belongs to */
+        private readonly string $entityname,
+    ) {
+
     }
 
     /**
@@ -142,7 +136,7 @@ final class column {
      * @return self
      */
     public function set_name(string $name): self {
-        $this->columnname = $name;
+        $this->name = $name;
         return $this;
     }
 
@@ -152,7 +146,7 @@ final class column {
      * @return mixed
      */
     public function get_name(): string {
-        return $this->columnname;
+        return $this->name;
     }
 
     /**
@@ -162,7 +156,7 @@ final class column {
      * @return self
      */
     public function set_title(?lang_string $title): self {
-        $this->columntitle = $title;
+        $this->title = $title;
         $this->hascustomcolumntitle = true;
         return $this;
     }
@@ -173,7 +167,7 @@ final class column {
      * @return string
      */
     public function get_title(): string {
-        return $this->columntitle ? (string) $this->columntitle : '';
+        return $this->title ? (string) $this->title : '';
     }
 
     /**
@@ -249,44 +243,6 @@ final class column {
      */
     public function get_type(): int {
         return $this->type;
-    }
-
-    /**
-     * Add join clause required for this column to join to existing tables/entities
-     *
-     * This is necessary in the case where {@see add_field} is selecting data from a table that isn't otherwise queried
-     *
-     * @param string $join
-     * @return self
-     */
-    public function add_join(string $join): self {
-        $this->joins[trim($join)] = trim($join);
-        return $this;
-    }
-
-    /**
-     * Add multiple join clauses required for this column, passing each to {@see add_join}
-     *
-     * Typically when defining columns in entities, you should pass {@see \core_reportbuilder\local\report\base::get_joins} to
-     * this method, so that all entity joins are included in the report when your column is added to it
-     *
-     * @param string[] $joins
-     * @return self
-     */
-    public function add_joins(array $joins): self {
-        foreach ($joins as $join) {
-            $this->add_join($join);
-        }
-        return $this;
-    }
-
-    /**
-     * Return column joins
-     *
-     * @return string[]
-     */
-    public function get_joins(): array {
-        return array_values($this->joins);
     }
 
     /**

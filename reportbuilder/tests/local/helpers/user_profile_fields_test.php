@@ -42,7 +42,7 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_profile_fields_test extends core_reportbuilder_testcase {
+final class user_profile_fields_test extends core_reportbuilder_testcase {
 
     /**
      * Generate custom profile fields, one of each type
@@ -132,33 +132,34 @@ class user_profile_fields_test extends core_reportbuilder_testcase {
     }
 
     /**
-     * Test for add_join
+     * Test that joins added to the profile fields helper are present in its columns/filters
      */
     public function test_add_join(): void {
         $this->resetAfterTest();
 
         $userprofilefields = $this->generate_userprofilefields();
-        $columns = $userprofilefields->get_columns();
-        $this->assertCount(1, ($columns[0])->get_joins());
 
+        // We always join on the user info data table.
+        $columnjoins = $userprofilefields->get_columns()[0]->get_joins();
+        $this->assertCount(1, $columnjoins);
+        $this->assertStringStartsWith('LEFT JOIN {user_info_data}', $columnjoins[0]);
+
+        $filterjoins = $userprofilefields->get_filters()[0]->get_joins();
+        $this->assertCount(1, $filterjoins);
+        $this->assertStringStartsWith('LEFT JOIN {user_info_data}', $filterjoins[0]);
+
+        // Add additional join.
         $userprofilefields->add_join('JOIN {test} t ON t.id = id');
-        $columns = $userprofilefields->get_columns();
-        $this->assertCount(2, ($columns[0])->get_joins());
-    }
 
-    /**
-     * Test for add_joins
-     */
-    public function test_add_joins(): void {
-        $this->resetAfterTest();
+        $columnjoins = $userprofilefields->get_columns()[0]->get_joins();
+        $this->assertCount(2, $columnjoins);
+        $this->assertEquals('JOIN {test} t ON t.id = id', $columnjoins[0]);
+        $this->assertStringStartsWith('LEFT JOIN {user_info_data}', $columnjoins[1]);
 
-        $userprofilefields = $this->generate_userprofilefields();
-        $columns = $userprofilefields->get_columns();
-        $this->assertCount(1, ($columns[0])->get_joins());
-
-        $userprofilefields->add_joins(['JOIN {test} t ON t.id = id', 'JOIN {test2} t2 ON t2.id = id']);
-        $columns = $userprofilefields->get_columns();
-        $this->assertCount(3, ($columns[0])->get_joins());
+        $filterjoins = $userprofilefields->get_filters()[0]->get_joins();
+        $this->assertCount(2, $filterjoins);
+        $this->assertEquals('JOIN {test} t ON t.id = id', $filterjoins[0]);
+        $this->assertStringStartsWith('LEFT JOIN {user_info_data}', $filterjoins[1]);
     }
 
     /**
@@ -262,7 +263,7 @@ class user_profile_fields_test extends core_reportbuilder_testcase {
      *
      * @return array[]
      */
-    public function custom_report_filter_provider(): array {
+    public static function custom_report_filter_provider(): array {
         return [
             'Filter by checkbox profile field' => ['user:profilefield_checkbox', [
                 'user:profilefield_checkbox_operator' => boolean_select::CHECKED,

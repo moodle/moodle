@@ -43,7 +43,7 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class custom_fields_test extends core_reportbuilder_testcase {
+final class custom_fields_test extends core_reportbuilder_testcase {
 
     /**
      * Generate custom fields, one of each type
@@ -117,49 +117,34 @@ class custom_fields_test extends core_reportbuilder_testcase {
     }
 
     /**
-     * Test for add_join
+     * Test that joins added to the custom fields helper are present in its columns/filters
      */
     public function test_add_join(): void {
         $this->resetAfterTest();
 
         $customfields = $this->generate_customfields();
 
-        // By default, we always join on the customfield data table.
-        $columns = $customfields->get_columns();
-        $joins = $columns[0]->get_joins();
+        // We always join on the customfield data table.
+        $columnjoins = $customfields->get_columns()[0]->get_joins();
+        $this->assertCount(1, $columnjoins);
+        $this->assertStringStartsWith('LEFT JOIN {customfield_data}', $columnjoins[0]);
 
-        $this->assertCount(1, $joins);
-        $this->assertStringStartsWith('LEFT JOIN {customfield_data}', $joins[0]);
+        $filterjoins = $customfields->get_filters()[0]->get_joins();
+        $this->assertCount(1, $filterjoins);
+        $this->assertStringStartsWith('LEFT JOIN {customfield_data}', $filterjoins[0]);
 
         // Add additional join.
         $customfields->add_join('JOIN {test} t ON t.id = id');
 
-        $columns = $customfields->get_columns();
-        $joins = $columns[0]->get_joins();
+        $columnjoins = $customfields->get_columns()[0]->get_joins();
+        $this->assertCount(2, $columnjoins);
+        $this->assertEquals('JOIN {test} t ON t.id = id', $columnjoins[0]);
+        $this->assertStringStartsWith('LEFT JOIN {customfield_data}', $columnjoins[1]);
 
-        $this->assertCount(2, $joins);
-        $this->assertEquals('JOIN {test} t ON t.id = id', $joins[0]);
-        $this->assertStringStartsWith('LEFT JOIN {customfield_data}', $joins[1]);
-    }
-
-    /**
-     * Test for add_joins
-     */
-    public function test_add_joins(): void {
-        $this->resetAfterTest();
-
-        $customfields = $this->generate_customfields();
-
-        // Add additional joins.
-        $customfields->add_joins(['JOIN {test} t ON t.id = id', 'JOIN {test2} t2 ON t2.id = id']);
-
-        $columns = $customfields->get_columns();
-        $joins = $columns[0]->get_joins();
-
-        $this->assertCount(3, $joins);
-        $this->assertEquals('JOIN {test} t ON t.id = id', $joins[0]);
-        $this->assertEquals('JOIN {test2} t2 ON t2.id = id', $joins[1]);
-        $this->assertStringStartsWith('LEFT JOIN {customfield_data}', $joins[2]);
+        $filterjoins = $customfields->get_filters()[0]->get_joins();
+        $this->assertCount(2, $filterjoins);
+        $this->assertEquals('JOIN {test} t ON t.id = id', $filterjoins[0]);
+        $this->assertStringStartsWith('LEFT JOIN {customfield_data}', $filterjoins[1]);
     }
 
     /**
@@ -254,7 +239,7 @@ class custom_fields_test extends core_reportbuilder_testcase {
      *
      * @return array[]
      */
-    public function custom_report_filter_provider(): array {
+    public static function custom_report_filter_provider(): array {
         return [
             'Filter by text custom field' => ['course:customfield_text', [
                 'course:customfield_text_operator' => text::IS_EQUAL_TO,

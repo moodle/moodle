@@ -40,64 +40,30 @@ use core_customfield\handler;
  */
 class custom_fields {
 
-    /** @var string $entityname Name of the entity */
-    private $entityname;
+    use join_trait;
 
     /** @var handler $handler The handler for the customfields */
-    private $handler;
-
-    /** @var int $tablefieldalias The table alias and the field name (table.field) that matches the customfield instanceid. */
-    private $tablefieldalias;
-
-    /** @var array additional joins */
-    private $joins = [];
+    private handler $handler;
 
     /**
-     * Class customfields constructor.
+     * Constructor
      *
-     * @param string $tablefieldalias table alias and the field name (table.field) that matches the customfield instanceid.
-     * @param string $entityname name of the entity in the report where we add custom fields.
+     * @param string $tablefieldalias The table/field alias to match the instance ID when adding columns and filters.
+     * @param string $entityname The entity name used when adding columns and filters.
      * @param string $component component name of full frankenstyle plugin name.
      * @param string $area name of the area (each component/plugin may define handlers for multiple areas).
      * @param int $itemid item id if the area uses them (usually not used).
      */
-    public function __construct(string $tablefieldalias, string $entityname, string $component, string $area, int $itemid = 0) {
-        $this->tablefieldalias = $tablefieldalias;
-        $this->entityname = $entityname;
+    public function __construct(
+        /** @var string The table/field alias to match the instance ID when adding columns and filters */
+        private readonly string $tablefieldalias,
+        /** @var string The entity name used when adding columns and filters */
+        private readonly string $entityname,
+        string $component,
+        string $area,
+        int $itemid = 0,
+    ) {
         $this->handler = handler::get_handler($component, $area, $itemid);
-    }
-
-    /**
-     * Additional join that is needed.
-     *
-     * @param string $join
-     * @return self
-     */
-    public function add_join(string $join): self {
-        $this->joins[trim($join)] = trim($join);
-        return $this;
-    }
-
-    /**
-     * Additional joins that are needed.
-     *
-     * @param array $joins
-     * @return self
-     */
-    public function add_joins(array $joins): self {
-        foreach ($joins as $join) {
-            $this->add_join($join);
-        }
-        return $this;
-    }
-
-    /**
-     * Return joins
-     *
-     * @return string[]
-     */
-    private function get_joins(): array {
-        return array_values($this->joins);
     }
 
     /**
