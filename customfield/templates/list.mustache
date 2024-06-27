@@ -78,10 +78,11 @@
             <div class="col-6 categoryinstance">
                 {{#usescategories}}
                     <h3>
-                        <span class="movecategory">
-                        {{> core/drag_handle}}</span>{{{nameeditable}}}
-                        <a href="#" data-role="deletecategory" data-id="{{id}}">{{#pix}}
-                            t/delete, core, {{#str}} delete, moodle {{/str}} {{/pix}}</a>
+                        <span class="movecategory icon-size-3">{{> core/drag_handle}}</span>
+                        {{{nameeditable}}}
+                        <a class="icon-size-3" href="#" data-role="deletecategory" data-id="{{id}}">
+                            {{#pix}} t/delete, core, {{#str}} delete, moodle {{/str}} {{/pix}}
+                        </a>
                     </h3>
                 {{/usescategories}}
             </div>
