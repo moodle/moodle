@@ -119,6 +119,7 @@ class controlmenu implements named_templatable, renderable {
         $menu = new action_menu();
         $menu->set_kebab_trigger(get_string('edit'));
         $menu->attributes['class'] .= ' section-actions';
+        $menu->attributes['data-sectionid'] = $this->section->id;
         foreach ($controls as $value) {
             $url = empty($value['url']) ? '' : $value['url'];
             $icon = empty($value['icon']) ? '' : $value['icon'];
