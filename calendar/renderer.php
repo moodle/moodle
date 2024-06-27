@@ -234,10 +234,12 @@ class core_calendar_renderer extends plugin_renderer_base {
             if (isset($contextrecords[$course->id])) {
                 context_helper::preload_from_record($contextrecords[$course->id]);
             }
-            $coursecontext = context_course::instance($course->id);
+
             // Limit the displayed course name to prevent the dropdown from getting too wide.
-            $coursename = shorten_text($course->fullname, 50, true);
-            $courseoptions[$course->id] = format_string($coursename, true, ['context' => $coursecontext]);
+            $coursename = format_string($course->fullname, true, [
+                'context' => \core\context\course::instance($course->id),
+            ]);
+            $courseoptions[$course->id] = shorten_text($coursename, 50, true);
         }
 
         if ($courseid) {
