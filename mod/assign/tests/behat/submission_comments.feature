@@ -53,7 +53,7 @@ Feature: In an assignment, students can comment in their submissions
       | assign                | user      | onlinetext              |
       | Test assignment name  | student1  | student one submission  |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I click on ".comment-link" "css_element"
     When I set the field "content" to "Teacher feedback first comment"
@@ -71,7 +71,7 @@ Feature: In an assignment, students can comment in their submissions
       | Test assignment name  | student1  | I'm the student submission  |
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I click on ".comment-link" "css_element"
     When I set the field "content" to "Teacher feedback first comment"
@@ -88,7 +88,7 @@ Feature: In an assignment, students can comment in their submissions
       | activity  | course  | name                  | assignsubmission_onlinetext_enabled  | assignmentsubmission_file_enabled  | assignfeedback_comments_enabled  |
       | assign    | C1      | Test assignment name  | 0                                    | 0                                  | 1                                |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     When I set the following fields to these values:
       | Grade out of 100   | 50                        |
@@ -103,7 +103,7 @@ Feature: In an assignment, students can comment in their submissions
       | activity  | course  | name                  | assignsubmission_onlinetext_enabled  | assignmentsubmission_file_enabled  | assignfeedback_comments_enabled  |
       | assign    | C1      | Test assignment name  | 0                                    | 0                                  | 1                                |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 0 |

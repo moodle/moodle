@@ -412,7 +412,9 @@ function assign_supports($feature) {
  * @return void
  */
 function assign_extend_settings_navigation(settings_navigation $settings, navigation_node $navref) {
-    global $DB;
+    global $DB, $CFG;
+
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
     // We want to add these new nodes after the Edit settings node, and before the
     // Locally assigned roles node. Of course, both of those are controlled by capabilities.
@@ -456,6 +458,18 @@ function assign_extend_settings_navigation(settings_navigation $settings, naviga
             $linkname = get_string('revealidentities', 'assign');
             $node = $navref->add($linkname, $url, navigation_node::TYPE_SETTING);
         }
+    }
+
+    $assign = new assign($context, null, null);
+    // If the current user can view grades, include the 'Submissions' navigation node.
+    if ($assign->can_view_grades()) {
+        $url = new moodle_url('/mod/assign/view.php', ['id' => $settings->get_page()->cm->id, 'action' => 'grading']);
+        $navref->add(
+            text: get_string('gradeitem:submissions', 'assign'),
+            action: $url,
+            type: navigation_node::TYPE_SETTING,
+            key: 'mod_assign_submissions'
+        );
     }
 }
 

@@ -48,8 +48,7 @@ class actionmenu implements templatable, renderable {
      * @return array Data to be used for a template.
      */
     public function export_for_template(\renderer_base $output): array {
-        $submissionlink = new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'grading']);
-        $return = ['submissionlink' => $submissionlink->out(false)];
+        $return = [];
 
         if (has_capability('mod/assign:grade', \context_module::instance($this->cmid))) {
             $gradelink = new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'grader']);

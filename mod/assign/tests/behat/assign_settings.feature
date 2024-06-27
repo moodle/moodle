@@ -47,7 +47,7 @@ Feature: Assignments settings can be changed
     And I press "Save changes"
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I set the field "Notify student" to "0"
@@ -58,7 +58,7 @@ Feature: Assignments settings can be changed
     And "Add a new attempt based on previous submission" "button" should not exist
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I open the action menu in "Student 1" "table_row"
     And I follow "Allow another attempt"
 
@@ -81,7 +81,7 @@ Feature: Assignments settings can be changed
     And I press "Save changes"
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I click on "Grade" "link" in the "Student 2" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I set the field "Notify student" to "0"
@@ -106,7 +106,7 @@ Feature: Assignments settings can be changed
     And I press "Save changes"
 
     When I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     And I click on "Grade" "link" in the "Student 3" "table_row"
     And I change window size to "medium"
@@ -119,7 +119,7 @@ Feature: Assignments settings can be changed
     And "Add a new attempt based on previous submission" "button" should not exist
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     And I open the action menu in "Student 3" "table_row"
     And I change window size to "medium"

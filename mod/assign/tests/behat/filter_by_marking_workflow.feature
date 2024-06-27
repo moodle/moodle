@@ -28,14 +28,14 @@ Feature: In an assignment, teachers can filter displayed submissions by marking 
   @javascript
   Scenario: The marking workflow filter is available only when marking workflow is enabled in the assignment.
     Given I am on the "Test assignment" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     And "Advanced" "button" should not exist in the ".tertiary-navigation" "css_element"
     When I am on the "Test assignment" "assign activity editing" page
     And I expand all fieldsets
     And I set the field "Use marking workflow" to "Yes"
     And I press "Save and display"
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     Then "Advanced" "button" should exist in the ".tertiary-navigation" "css_element"
     And I click on "Advanced" "button" in the ".tertiary-navigation" "css_element"
     And "Marking state" "select" should exist in the ".extrafilters .dropdown-menu" "css_element"
@@ -53,7 +53,7 @@ Feature: In an assignment, teachers can filter displayed submissions by marking 
     And I expand all fieldsets
     And I set the field "Use marking workflow" to "Yes"
     And I press "Save and display"
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     # Change the marking workflow state for Student 2 and Student 3.
     And I click on "Grade" "link" in the "Student 2" "table_row"
@@ -89,7 +89,7 @@ Feature: In an assignment, teachers can filter displayed submissions by marking 
     And I should see "+1" in the ".extrafilters .badge" "css_element"
     # Ensure the filter remains applied when navigating away from and returning to the assignment submissions page.
     And I am on the "Test assignment" Activity page
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And the following should exist in the "submissions" table:
       | -2-       |
       | Student 2 |
@@ -129,7 +129,7 @@ Feature: In an assignment, teachers can filter displayed submissions by marking 
     And I expand all fieldsets
     And I set the field "Use marking workflow" to "Yes"
     And I press "Save and display"
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     # Change the marking workflow state for Student 2.
     And I click on "Grade" "link" in the "Student 2" "table_row"

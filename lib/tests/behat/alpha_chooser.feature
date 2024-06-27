@@ -69,7 +69,7 @@ Feature: Initials bar
       | activity | course | idnumber | name           | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
       | assign   | C1     | assign1  | TestAssignment | Test assignment description | 0                                   | 0                             |
     And I am on the "assign1" "Activity" page logged in as "teacher"
-    When I follow "View all submissions"
+    When I navigate to "Submissions" in current page administration
     And ".initialbarall.page-item.active" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
     And ".initialbarall.page-item.active" "css_element" should exist in the ".initialbar.lastinitial" "css_element"
     And ".page-item.active.B" "css_element" should not exist in the ".initialbar.firstinitial" "css_element"
@@ -94,7 +94,7 @@ Feature: Initials bar
     And I should see "Bstudent Astudent"
     And I should not see "Cstudent Cstudent"
     And I am on the "assign1" "Activity" page
-    When I follow "View all submissions"
+    When I navigate to "Submissions" in current page administration
     And ".initialbarall.page-item.active" "css_element" should not exist in the ".initialbar.firstinitial" "css_element"
     And ".initialbarall.page-item.active" "css_element" should not exist in the ".initialbar.lastinitial" "css_element"
     And ".page-item.active.B" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
@@ -125,7 +125,7 @@ Feature: Initials bar
       | activity | course | idnumber | name           | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
       | assign   | C1     | assign1  | TestAssignment | Test assignment description | 0                                   | 0                             |
     And I am on the "assign1" "Activity" page logged in as "teacher"
-    When I follow "View all submissions"
+    When I navigate to "Submissions" in current page administration
     And I choose the "View gradebook" item in the "Actions" action menu
     And I click on "Filter by name" "combobox"
     And ".initialbarall.page-item.active" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
@@ -156,7 +156,7 @@ Feature: Initials bar
     And I should see "Bstudent Astudent"
     And I should not see "Cstudent Cstudent"
     And I am on the "assign1" "Activity" page
-    When I follow "View all submissions"
+    When I navigate to "Submissions" in current page administration
     And I choose the "View gradebook" item in the "Actions" action menu
     And ".initialbarall.page-item.active" "css_element" should not exist in the ".initialbar.firstinitial" "css_element"
     And ".initialbarall.page-item.active" "css_element" should not exist in the ".initialbar.lastinitial" "css_element"

@@ -44,7 +44,7 @@ Feature: Restrict activity availability through grade conditions
     And I should see "Submitted for grading"
 
     And I am on the "Grade assignment" "assign activity" page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     And I click on "Grade" "link" in the "Student First" "table_row"
     And I change window size to "medium"

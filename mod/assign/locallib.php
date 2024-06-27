@@ -4590,7 +4590,7 @@ class assign {
                                     $this->get_context(),
                                     false,
                                     $this->get_course_module()->id,
-                                    get_string('grading', 'assign'),
+                                    get_string('gradeitem:submissions', 'assign'),
                                     '',
                                     '',
                                     $currenturl);
@@ -4705,7 +4705,10 @@ class assign {
      * @return string
      */
     protected function view_grading_page() {
-        global $CFG;
+        global $CFG, $PAGE;
+
+        // Ensure that the 'Submissions' navigation node is highlighted as 'active' in the secondary navigation.
+        $PAGE->set_secondary_active_tab('mod_assign_submissions');
 
         $o = '';
         // Need submit permission to submit an assignment.

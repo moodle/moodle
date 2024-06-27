@@ -34,7 +34,7 @@ Feature: Submissions are unlocked when a new attempt is given
       | Test assignment name  | student1  | I'm the student1 submission  |
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     And I open the action menu in "Student 1" "table_row"
     And I change window size to "medium"
@@ -63,7 +63,7 @@ Feature: Submissions are unlocked when a new attempt is given
       | Test assignment name  | student1  | I'm the student1 submission  |
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     When I open the action menu in "Student 1" "table_row"
     And I change window size to "medium"

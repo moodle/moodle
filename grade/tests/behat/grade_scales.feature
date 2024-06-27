@@ -46,7 +46,7 @@ Feature: View gradebook when scales are used
     And I set the field "grade[modgrade_type]" to "Scale"
     And I set the field "grade[modgrade_scale]" to "Letterscale"
     And I press "Save and display"
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade" to "A"
     And I press "Save changes"
