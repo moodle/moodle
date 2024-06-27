@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['allowedpausing'] = 'Allow pausing';
 $string['allowedtypes'] = 'Recording type';
 $string['allowedtypes_desc'] = 'Which types of recording can be made in the TinyMCE editor? In addition to this setting, there are capabilities which control access to recording options.';
 $string['attachrecording'] = 'Attach recording';
@@ -62,6 +63,7 @@ $string['nowebrtc_title'] = 'WebRTC not supported';
 $string['onlyaudio'] = 'Audio';
 $string['onlyscreen'] = 'Screen';
 $string['onlyvideo'] = 'Video';
+$string['pause'] = 'Pause';
 $string['pluginname'] = 'RecordRTC';
 $string['privacy:metadata'] = 'The RecordRTC plugin does not store any personal data.';
 $string['recordagain'] = 'Record again';
@@ -72,6 +74,7 @@ $string['recordinguploaded'] = 'Recording uploaded';
 $string['recordrtc:recordaudio'] = 'Record audio in the text editor';
 $string['recordrtc:recordscreen'] = 'Record screen in the text editor';
 $string['recordrtc:recordvideo'] = 'Record video in the text editor';
+$string['resume'] = 'Resume';
 $string['screenbitrate'] = 'Screen bitrate';
 $string['screenbitrate_desc'] = 'Quality of Screen recording (larger number means higher quality).';
 $string['screenbuttontitle'] = 'Record screen';

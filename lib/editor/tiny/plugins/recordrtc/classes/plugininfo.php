@@ -85,6 +85,7 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
         $audioallowed = false;
         $videoallowed = false;
         $screenallowed = false;
+        $allowedpausing = (bool) get_config('tiny_recordrtc', 'allowedpausing');
         foreach ($allowedtypes as $value) {
             switch ($value) {
                 case constants::TINYRECORDRTC_AUDIO_TYPE:
@@ -136,6 +137,7 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
             'videoAllowed' => $videoallowed,
             'audioAllowed' => $audioallowed,
             'screenAllowed' => $screenallowed,
+            'pausingAllowed' => $allowedpausing,
         ];
     }
 }
