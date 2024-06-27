@@ -2052,8 +2052,10 @@ class core_admin_renderer extends plugin_renderer_base {
                         // We are checking installed & enabled things
                         if ($environment_result->getLevel() == 'required') {
                             $stringtouse = 'environmentrequirecustomcheck';
-                        } else {
+                        } else if ($environment_result->getLevel() == 'optional') {
                             $stringtouse = 'environmentrecommendcustomcheck';
+                        } else {
+                            $stringtouse = 'environmentshouldfixcustomcheck';
                         }
 
                     } else if ($environment_result->getPart() == 'php_setting') {
@@ -2084,7 +2086,8 @@ class core_admin_renderer extends plugin_renderer_base {
                         if ($status) {                                          //Handle ok result (ok)
                             $status = get_string('statusok');
                         } else {
-                            if ($environment_result->getLevel() == 'optional') {//Handle check result (warning)
+                            // Handle check result (warning).
+                            if (in_array($environment_result->getLevel(), ['optional', 'recommended'])) {
                                 $status = get_string('check');
                                 $warningline = true;
                             } else {                                            //Handle error result (error)
