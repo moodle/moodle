@@ -1251,7 +1251,7 @@ class environment_results {
      */
     var $error_code;
     /**
-     * @var string required/optional
+     * @var string required/optional/recommended.
      */
     var $level;
     /**
@@ -1548,8 +1548,9 @@ function get_level($element) {
     $level = 'required';
     if (isset($element['@']['level'])) {
         $level = $element['@']['level'];
-        if (!in_array($level, array('required', 'optional'))) {
-            debugging('The level of a check in the environment.xml file must be "required" or "optional".', DEBUG_DEVELOPER);
+        if (!in_array($level, ['required', 'optional', 'recommended'])) {
+            debugging('The level of a check in the environment.xml file must be "required", "optional" or "recommended".',
+                DEBUG_DEVELOPER);
             $level = 'required';
         }
     } else {
