@@ -14,16 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Badge assertion library.
- *
- * @package    core
- * @subpackage badges
- * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
- */
-
 namespace core_badges;
 
 defined('MOODLE_INTERNAL') || die();
@@ -44,8 +34,10 @@ use stdClass;
 /**
  * Class that represents badge.
  *
+ * @package    core_badges
  * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 class badge {
     /** @var int Badge id */
@@ -954,25 +946,14 @@ class badge {
      * @return array Issuer informations of the badge.
      */
     public function get_badge_issuer(?int $obversion = null) {
-        global $DB;
-
-        $issuer = [];
-        if ($obversion == OPEN_BADGES_V1) {
-            $data = $DB->get_record('badge', ['id' => $this->id]);
-            $issuer['name'] = $data->issuername;
-            $issuer['url'] = $data->issuerurl;
-            $issuer['email'] = $data->issuercontact;
-        } else {
-            $issuer['name'] = $this->issuername;
-            $issuer['url'] = $this->issuerurl;
-            $issuer['email'] = $this->issuercontact;
-            $issuer['@context'] = OPEN_BADGES_V2_CONTEXT;
-            $issueridurl = new moodle_url('/badges/issuer_json.php', array('id' => $this->id));
-            $issuer['id'] = $issueridurl->out(false);
-            $issuer['type'] = OPEN_BADGES_V2_TYPE_ISSUER;
-        }
-
-        return $issuer;
+        return [
+            'name' => $this->issuername,
+            'url' => $this->issuerurl,
+            'email' => $this->issuercontact,
+            '@context' => OPEN_BADGES_V2_CONTEXT,
+            'id' => (new moodle_url('/badges/issuer_json.php', ['id' => $this->id]))->out(false),
+            'type' => OPEN_BADGES_V2_TYPE_ISSUER,
+        ];
     }
 
     /**

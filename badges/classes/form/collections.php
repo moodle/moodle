@@ -14,16 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Form class for mybackpack.php
- *
- * @package    core
- * @subpackage badges
- * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
- */
-
 namespace core_badges\form;
 
 defined('MOODLE_INTERNAL') || die();
@@ -37,8 +27,10 @@ use moodleform;
 /**
  * Form to select backpack collections.
  *
+ * @package    core_badges
  * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 class collections extends moodleform {
 
@@ -79,22 +71,12 @@ class collections extends moodleform {
             foreach ($groups as $group) {
                 $count = 0;
                 // Handle attributes based on backpack's supported version.
-                if ($sitebackpack->apiversion == OPEN_BADGES_V2) {
-                    // OpenBadges v2 data attributes.
-                    if (empty($group->published)) {
-                        // Only public collections.
-                        continue;
-                    }
-
-                    // Get the number of badges associated with this collection from the assertions array returned.
-                    $count = count($group->assertions);
-                } else {
-                    // OpenBadges v1 data attributes.
-                    $group->entityId = $group->groupId;
-
-                    // Get the number of badges associated with this collection. In that case, the number is returned directly.
-                    $count = $group->badges;
+                if (empty($group->published)) {
+                    // Only public collections.
+                    continue;
                 }
+                // Get the number of badges associated with this collection from the assertions array returned.
+                $count = count($group->assertions);
 
                 if (!$hasgroups) {
                     $mform->addElement('static', 'selectgroup', '', get_string('selectgroup_start', 'badges'));
