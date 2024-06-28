@@ -328,7 +328,7 @@ $CFG->admin = 'admin';
 //
 //
 // Following settings may be used to select session driver, uncomment only one of the handlers.
-//   Database session handler (not compatible with MyISAM):
+//   Database session handler:
 //      $CFG->session_handler_class = '\core\session\database';
 //      $CFG->session_database_acquire_lock_timeout = 120;
 //

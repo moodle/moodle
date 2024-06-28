@@ -510,7 +510,6 @@
             "filetypes",
             "generator",
             "httpsreplace",
-            "innodb",
             "installaddon",
             "langimport",
             "licensemanager",
@@ -674,6 +673,7 @@
             "assignmentupgrade",
             "bloglevelupgrade",
             "health",
+            "innodb",
             "qeupgradehelper",
             "timezoneimport"
         ],

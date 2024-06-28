@@ -501,40 +501,6 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Diagnose database and tables, this function is used
-     * to verify database and driver settings, db engine types, etc.
-     *
-     * @return string null means everything ok, string means problem found.
-     */
-    public function diagnose() {
-        $sloppymyisamfound = false;
-        $prefix = str_replace('_', '\\_', $this->prefix);
-        $sql = "SELECT COUNT('x')
-                  FROM INFORMATION_SCHEMA.TABLES
-                 WHERE table_schema = DATABASE()
-                       AND table_name LIKE BINARY '$prefix%'
-                       AND Engine = 'MyISAM'";
-        $this->query_start($sql, null, SQL_QUERY_AUX);
-        $result = $this->mysqli->query($sql);
-        $this->query_end($result);
-        if ($result) {
-            if ($arr = $result->fetch_assoc()) {
-                $count = reset($arr);
-                if ($count) {
-                    $sloppymyisamfound = true;
-                }
-            }
-            $result->close();
-        }
-
-        if ($sloppymyisamfound) {
-            return get_string('myisamproblem', 'error');
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * Connect to db
      * @param string $dbhost The database host.
      * @param string $dbuser The database username.

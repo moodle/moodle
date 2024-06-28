@@ -1,0 +1,5 @@
+issueNumber: MDL-78776
+notes:
+  tool:
+    - message: The Convert to InnoDB plugin (tool_innodb) has been completely removed.
+      type: removed

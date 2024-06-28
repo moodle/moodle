@@ -1170,5 +1170,16 @@ function xmldb_main_upgrade($oldversion) {
     // Automatically generated Moodle v4.4.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2024062000.00) {
+        // If tool_innodb is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/admin/tool/innodb/version.php')) {
+            // Delete tool_innodb.
+            uninstall_plugin('tool', 'innodb');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024062000.00);
+    }
+
     return true;
 }

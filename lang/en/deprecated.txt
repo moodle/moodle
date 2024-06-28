@@ -114,3 +114,4 @@ blocknotexist,core_debug
 modulenotexist,core_debug
 coursecalendar,core_calendar
 datechanged,core
+myisamproblem,core_error
