@@ -116,7 +116,7 @@ class formatting {
         }
 
         // If the site requires it, strip ALL tags from this string.
-        if (!empty($this->get_striptags())) {
+        if ($this->get_striptags()) {
             if ($escape) {
                 $string = str_replace(['<', '>'], ['&lt;', '&gt;'], strip_tags($string));
             } else {
@@ -387,7 +387,7 @@ class formatting {
             return $this->striptags;
         }
 
-        return $CFG->formatstringstriptags;
+        return !empty($CFG->formatstringstriptags);
     }
 
     /**
