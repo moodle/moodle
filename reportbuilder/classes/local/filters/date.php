@@ -19,8 +19,8 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\filters;
 
 use core\{clock, di};
+use core\lang_string;
 use core_reportbuilder\local\helpers\database;
-use lang_string;
 use MoodleQuickForm;
 
 /**
@@ -69,6 +69,9 @@ class date extends base {
 
     /** @var int Date after [X relative date unit(s)] */
     public const DATE_AFTER = 10;
+
+    /** @var int Relative date unit for a minute */
+    public const DATE_UNIT_MINUTE = 5;
 
     /** @var int Relative date unit for an hour */
     public const DATE_UNIT_HOUR = 0;
@@ -137,6 +140,7 @@ class date extends base {
         // Unit selector for last and next operators.
         $unitlabel = get_string('filterfieldunit', 'core_reportbuilder', $this->get_header());
         $units = [
+            self::DATE_UNIT_MINUTE => get_string('filterdateminutes', 'core_reportbuilder'),
             self::DATE_UNIT_HOUR => get_string('filterdatehours', 'core_reportbuilder'),
             self::DATE_UNIT_DAY => get_string('filterdatedays', 'core_reportbuilder'),
             self::DATE_UNIT_WEEK => get_string('filterdateweeks', 'core_reportbuilder'),
@@ -274,6 +278,18 @@ class date extends base {
         $datestart = $dateend = di::get(clock::class)->now();
 
         switch ($dateunit) {
+            case self::DATE_UNIT_MINUTE:
+                if ($operator === self::DATE_CURRENT) {
+                    $hour = (int) $datestart->format('G');
+                    $minute = (int) $datestart->format('i');
+                    $datestart = $datestart->setTime($hour, $minute);
+                    $dateend = $dateend->setTime($hour, $minute, 59);
+                } else if ($operator === self::DATE_LAST) {
+                    $datestart = $datestart->modify("-{$dateunitvalue} minute");
+                } else if ($operator === self::DATE_NEXT) {
+                    $dateend = $dateend->modify("+{$dateunitvalue} minute");
+                }
+                break;
             case self::DATE_UNIT_HOUR:
                 if ($operator === self::DATE_CURRENT) {
                     $hour = (int) $datestart->format('G');
