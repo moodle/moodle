@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for smsgateway_aws.
+ * Hook listener callbacks for aws sms gateway.
  *
  * @package    smsgateway_aws
  * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
@@ -24,7 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'smsgateway_aws';
-$plugin->version = 2024082200;
-$plugin->requires = 2024041600;
-$plugin->maturity = MATURITY_STABLE;
+$callbacks = [
+    [
+        'hook' => \core_sms\hook\after_sms_gateway_form_hook::class,
+        'callback' => \smsgateway_aws\hook_listener::class . '::set_form_definition_for_aws_sms_gateway',
+    ],
+];

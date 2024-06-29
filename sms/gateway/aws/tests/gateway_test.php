@@ -32,9 +32,22 @@ class gateway_test extends \advanced_testcase {
     public function test_update_message_status(): void {
         $this->resetAfterTest();
 
+        $config = new \stdClass();
+        $config->api_key = 'test_api_key';
+
         $manager = \core\di::get(\core_sms\manager::class);
-        $gw = $manager->create_gateway_instance(gateway::class, true);
-        $othergw = $manager->create_gateway_instance(gateway::class, true);
+        $gw = $manager->create_gateway_instance(
+            classname: gateway::class,
+            name: 'aws',
+            enabled: true,
+            config: $config,
+        );
+        $othergw = $manager->create_gateway_instance(
+            classname: gateway::class,
+            name: 'aws',
+            enabled: true,
+            config: $config,
+        );
 
         $message = new message(
             recipientnumber: '1234567890',
@@ -42,7 +55,7 @@ class gateway_test extends \advanced_testcase {
             component: 'smsgateway_aws',
             messagetype: 'test',
             recipientuserid: null,
-            sensitive: false,
+            issensitive: false,
             gatewayid: $gw->id,
         );
         $message2 = new message(
@@ -51,7 +64,7 @@ class gateway_test extends \advanced_testcase {
             component: 'smsgateway_aws',
             messagetype: 'test',
             recipientuserid: null,
-            sensitive: false,
+            issensitive: false,
             gatewayid: $gw->id,
         );
 

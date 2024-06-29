@@ -22,21 +22,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['api_key'] = 'Key';
-$string['api_key_help'] = 'Amazon API key credential.';
-$string['api_region'] = 'Region';
-$string['api_region_help'] = 'Amazon API gateway region.';
-$string['api_secret'] = 'Secret';
-$string['api_secret_help'] = 'Amazon API secret credential.';
+$string['api_key'] = 'Access key';
+$string['api_region'] = 'Amazon API gateway region';
+$string['api_secret'] = 'Secret access key';
+$string['aws_information'] = 'Complete the following fields using the information provided by AWS';
 $string['aws_sns'] = 'AWS SNS';
-$string['countrycode'] = 'Country number code';
-$string['countrycode_help'] = 'The calling code without the leading + as a default if users do not enter an international number with a + prefix.
-
-See this link for a list of calling codes: {$a}';
-$string['gateway'] = 'SMS Gateway';
-$string['gateway_help'] = 'The SMS provider you wish to send messages via';
+$string['gateway'] = 'AWS service';
+$string['aws_information'] = 'Complete the following fields using the information provided by AWS';
 $string['pluginname'] = 'AWS';
 $string['privacy:metadata'] = 'The AWS SMS gateway plugin does not store any personal data.';
-$string['usecredchain'] = 'Find AWS credentials using the default credential provider chain';
-
-
+$string['usecredchain'] = 'Find AWS credentials using the default provider chain';
