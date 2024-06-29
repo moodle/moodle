@@ -35,11 +35,15 @@ final class manager_test extends \advanced_testcase {
 
     public function test_gateway_manipulation(): void {
         $this->resetAfterTest();
+        $config = (object) [
+            'data' => 'goeshere',
+        ];
 
         $dummy = $this->getMockBuilder(\core_sms\gateway::class)
             ->setConstructorArgs([
                 'enabled' => true,
-                'config' => '',
+                'name' => 'dummy',
+                'config' => json_encode($config),
             ])
             ->onlyMethods(['get_send_priority', 'send'])
             ->getMock();
@@ -48,10 +52,9 @@ final class manager_test extends \advanced_testcase {
         $manager = \core\di::get(\core_sms\manager::class);
         $gateway = $manager->create_gateway_instance(
             classname: $dummygw,
-            config: (object) [
-                'data' => 'goeshere',
-            ],
+            name: 'dummy',
             enabled: true,
+            config: $config,
         );
 
         $this->assertIsInt($gateway->id);
@@ -84,10 +87,11 @@ final class manager_test extends \advanced_testcase {
         $this->expectException(\coding_exception::class);
         $manager->create_gateway_instance(
             classname: \no\class\name\here::class,
+            name: 'dummy',
+            enabled: true,
             config: (object) [
                 'data' => 'goeshere',
             ],
-            enabled: true,
         );
     }
 
@@ -97,10 +101,11 @@ final class manager_test extends \advanced_testcase {
         $this->expectException(\coding_exception::class);
         $manager->create_gateway_instance(
             classname: self::class,
+            name: 'dummy',
+            enabled: true,
             config: (object) [
                 'data' => 'goeshere',
             ],
-            enabled: true,
         );
     }
 
@@ -111,10 +116,15 @@ final class manager_test extends \advanced_testcase {
         // We should prevent removal of gateways which hold any data, but if one has been removed, we should not fail.
         $this->resetAfterTest();
 
+        $config = (object) [
+            'data' => 'goeshere',
+        ];
+
         $dummy = $this->getMockBuilder(\core_sms\gateway::class)
             ->setConstructorArgs([
                 'enabled' => true,
-                'config' => '',
+                'name' => 'dummy',
+                'config' => json_encode($config),
             ])
             ->onlyMethods(['get_send_priority', 'send'])
             ->getMock();
@@ -123,17 +133,15 @@ final class manager_test extends \advanced_testcase {
         $manager = \core\di::get(\core_sms\manager::class);
         $gateway = $manager->create_gateway_instance(
             classname: $dummygw,
-            config: (object) [
-                'data' => 'goeshere',
-            ],
+            name: 'dummy',
             enabled: true,
+            config: $config,
         );
         $uninstalledgateway = $manager->create_gateway_instance(
             classname: $dummygw,
-            config: (object) [
-                'data' => 'goeshere',
-            ],
+            name: 'dummy',
             enabled: true,
+            config: $config,
         );
 
         $db = \core\di::get(\moodle_database::class);
@@ -152,10 +160,15 @@ final class manager_test extends \advanced_testcase {
     public function test_multiple_gateway_instances(): void {
         $this->resetAfterTest();
 
+        $config = (object) [
+            'data' => 'goeshere',
+        ];
+
         $dummy = $this->getMockBuilder(\core_sms\gateway::class)
             ->setConstructorArgs([
                 'enabled' => true,
-                'config' => '',
+                'name' => 'dummy',
+                'config' => json_encode($config),
             ])
             ->onlyMethods(['get_send_priority', 'send'])
             ->setMockClassName('dummygateway')
@@ -164,7 +177,8 @@ final class manager_test extends \advanced_testcase {
         $otherdummy = $this->getMockBuilder(\core_sms\gateway::class)
             ->setConstructorArgs([
                 'enabled' => true,
-                'config' => '',
+                'name' => 'dummy',
+                'config' => json_encode($config),
             ])
             ->onlyMethods(['get_send_priority', 'send'])
             ->setMockClassName('otherdummygw')
@@ -174,15 +188,20 @@ final class manager_test extends \advanced_testcase {
         $manager = \core\di::get(\core_sms\manager::class);
         $gatewaya = $manager->create_gateway_instance(
             classname: $dummygw,
+            name: 'dummy',
             enabled: true,
+            config: $config,
         );
         $gatewayb = $manager->create_gateway_instance(
             classname: $otherdummygw,
+            name: 'dummy',
             enabled: true,
+            config: $config,
         );
         $gatewayc = $manager->create_gateway_instance(
             classname: $dummygw,
-            enabled: false,
+            name: 'dummy',
+            config: $config,
         );
 
         $this->assertNotEquals($gatewaya->id, $gatewayb->id);
@@ -224,14 +243,14 @@ final class manager_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         $manager = \core\di::get(\core_sms\manager::class);
-        $ukgw = $manager->create_gateway_instance(\smsgateway_dummy\gateway::class, true, (object) [
+        $ukgw = $manager->create_gateway_instance(\smsgateway_dummy\gateway::class, 'dummy', true, (object) [
             'startswith' => (object) [
                 '+44' => 100,
                 '+61' => 1,
             ],
             'priority' => 0,
         ]);
-        $augw = $manager->create_gateway_instance(\smsgateway_dummy\gateway::class, true, (object) [
+        $augw = $manager->create_gateway_instance(\smsgateway_dummy\gateway::class, 'dummy', true, (object) [
             'startswith' => (object) [
                 '+44' => 1,
                 '+61' => 100,
@@ -322,8 +341,16 @@ final class manager_test extends \advanced_testcase {
     public function test_send(): void {
         $this->resetAfterTest();
 
+        $config = new \stdClass();
+        $config->priority = 50;
+
         $manager = \core\di::get(\core_sms\manager::class);
-        $gw = $manager->create_gateway_instance(\smsgateway_dummy\gateway::class, true);
+        $gw = $manager->create_gateway_instance(
+            classname: \smsgateway_dummy\gateway::class,
+            name: 'dummy',
+            enabled: true,
+            config: $config,
+        );
 
         $message = $manager->send(
             recipientnumber: '+447123456789',
@@ -350,7 +377,10 @@ final class manager_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         $manager = \core\di::get(\core_sms\manager::class);
-        $gw = $manager->create_gateway_instance(\smsgateway_dummy\gateway::class, true);
+        $config = new \stdClass();
+        $config->priority = 50;
+
+        $gw = $manager->create_gateway_instance(\smsgateway_dummy\gateway::class, 'dummy', true, $config);
 
         $message = $manager->send(
             recipientnumber: '+447123456789',

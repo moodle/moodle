@@ -6,10 +6,26 @@ Feature: Set up SMS factor in user preferences
 
   Background:
     Given I log in as "admin"
+    And I navigate to "Plugins > SMS > Manage SMS gateways" in site administration
+    And I follow "Create a new SMS gateway"
+    And I set the following fields to these values:
+      | SMS gateway provider | AWS           |
+      | Gateway name         | Dummy gateway |
+      | Access key           | key123        |
+      | Secret access key    | secret456     |
+    And I press "Save changes"
     And the following config values are set as admin:
       | enabled | 1 | tool_mfa |
+      | lockout | 3 | tool_mfa |
     And the following config values are set as admin:
-      | enabled | 1 | factor_sms |
+      | enabled    | 1      | factor_sms |
+      | weight     | 100    | factor_sms |
+      | duration   | 1800   | factor_sms |
+    And I navigate to "Plugins > Admin tools > Multi-factor authentication" in site administration
+    And I follow "Edit settings for the SMS mobile phone factor"
+    And I set the field "SMS gateway" to "Dummy gateway (AWS)"
+    And I press "Save changes"
+    And I should see "Changes saved"
     When I follow "Preferences" in the user menu
     And I click on "Multi-factor authentication preferences" "link"
     And I click on "Set up" "button"

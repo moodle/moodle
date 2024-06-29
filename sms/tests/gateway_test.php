@@ -35,8 +35,21 @@ final class gateway_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         $manager = \core\di::get(\core_sms\manager::class);
-        $gw = $manager->create_gateway_instance(\smsgateway_dummy\gateway::class, true);
-        $othergw = $manager->create_gateway_instance(\smsgateway_dummy\gateway::class, true);
+        $config = new \stdClass();
+        $config->api_key = 'test_api_key';
+
+        $gw = $manager->create_gateway_instance(
+            classname: \smsgateway_dummy\gateway::class,
+            name: 'dummy',
+            enabled: true,
+            config: $config,
+        );
+        $othergw = $manager->create_gateway_instance(
+            classname: \smsgateway_dummy\gateway::class,
+            name: 'dummy',
+            enabled: true,
+            config: $config,
+        );
 
         $message = new message(
             recipientnumber: '1234567890',

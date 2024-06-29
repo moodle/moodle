@@ -18,33 +18,38 @@ namespace core_sms;
 
 use coding_exception;
 use Spatie\Cloneable\Cloneable;
+use stdClass;
 
 /**
- * Class gateway
+ * Class gateway.
  *
  * @package    core_sms
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @property-read int $id The id of the gateway in the database
  * @property-read bool $enabled Whether the gateway is enabled
- * @property-read \stdClass $config The configuration for this instance
+ * @property-read stdClass $config The configuration for this instance
+ * @property string $name The name of the gateway config
  */
 abstract class gateway {
     use Cloneable;
 
-    /** @var \stdClass The configuration for this instance */
-    public readonly ?\stdClass $config;
+    /** @var stdClass The configuration for this instance */
+    public readonly stdClass $config;
 
     /**
      * Create a new gateway.
      *
      * @param bool $enabled Whether the gateway is enabled
+     * @param string $name The name of the gateway config
      * @param string $config The configuration for this instance
      * @param int|null $id The id of the gateway in the database
      */
     public function __construct(
         /** @var bool Whether the gateway is enabled */
         public readonly bool $enabled,
+        /** @var string The name of the gateway config */
+        public string $name,
         string $config,
         /** @var null|int The ID of the gateway in the database, or null if it has not been persisted yet */
         public readonly ?int $id = null,
@@ -55,11 +60,12 @@ abstract class gateway {
     /**
      * Convert this object to a stdClass.
      *
-     * @return \stdClass
+     * @return stdClass
      */
-    public function to_record(): \stdClass {
+    public function to_record(): stdClass {
         return (object) [
             'id' => $this->id,
+            'name' => $this->name,
             'gateway' => get_class($this),
             'enabled' => $this->enabled,
             'config' => json_encode($this->config),
