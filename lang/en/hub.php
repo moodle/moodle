@@ -105,15 +105,15 @@ $string['registeredactiveuserdevices'] = 'Number of active users with registered
 $string['registerwithmoodleorg'] = 'Register your site';
 $string['registerwithmoodleorgupdate'] = 'Update your site registration';
 $string['registerwithmoodleorgcomplete'] = 'Complete your site registration';
-$string['registerwithmoodleorginfo'] = 'We\'d love to stay in touch and provide you with important things for your Moodle site! By registering:
+$string['registerwithmoodleorginfo'] = 'Registering your site involves periodically sending <a href="{$a->moreinformation}" class="focus-expand">anonymised site stats</a> to Moodle HQ. This helps us gain insights into how you\'re using Moodle, and make decisions about new features and plugins.
 
-* You can subscribe to receive notifications of new Moodle releases, security alerts and other important news.
-* You can access and activate mobile push notifications from your Moodle site through our free Moodle app.
-* You are contributing to our Moodle statistics of the worldwide community, which help us improve Moodle and our community sites.
-* If you wish, your site can be included in the list of registered Moodle sites in your country.';
-$string['registerwithmoodleorginfoapp'] = 'About the Moodle app';
-$string['registerwithmoodleorginfostats'] = 'Moodle statistics';
-$string['registerwithmoodleorginfosites'] = 'Other sites in my country';
+Plus, it enables you to:
+
+* Stay up to date with important updates, like security alerts and new available releases.
+* Activate mobile push notifications for the <a href="{$a->moodleapp}">Moodle App</a>.
+* Increase the visibility of your site by featuring it on the list of registered Moodle sites in your country (optional).';
+$string['registerwithmoodleorginfosites'] = 'Discover other sites in my country';
+$string['registerwithmoodleorginfostats'] = 'View global Moodle stats';
 $string['registerwithmoodleorgremove'] = 'You are about to unregister your site. You will no longer receive security alert notifications and users will not be able to receive push notifications from your site to their Moodle app. However, you will be able to re-register at any time! Are you sure you want to continue?';
 $string['registrationconfirmed'] = 'Site registration confirmed';
 $string['registrationconfirmedon'] = 'Thank you for registering your site. Registration information will be kept up to date by the \'Site registration\' scheduled task.';
@@ -178,5 +178,6 @@ $string['wrongtoken'] = 'The registration failed for some unknown reason (networ
 $string['sitecommnewsno'] = 'No, I do not wish to receive any emails';
 
 // Deprecated since 4.5.
+$string['registerwithmoodleorginfoapp'] = 'About the Moodle app';
 $string['siteregistrationcontact'] = 'Display contact form';
 $string['siteregistrationcontact_help'] = 'If you allow it, other people in our Moodle community (who need a login account) can contact you via a form on our Moodle community site. However, they will never be able to see your email address.';
