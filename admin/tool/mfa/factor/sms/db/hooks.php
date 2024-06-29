@@ -15,18 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Hooks register for SMS factor.
  *
- * @package     factor_sms
- * @subpackage  tool_mfa
- * @author      Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    factor_sms
+ * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version      = 2024082200;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires     = 2024041600;   // Requires this Moodle version.
-$plugin->component    = 'factor_sms';   // Full name of the plugin (used for diagnostics).
-$plugin->maturity     = MATURITY_STABLE;
+$callbacks = [
+    [
+        'hook' => \core_sms\hook\before_gateway_deleted::class,
+        'callback' => \factor_sms\hook_listener::class . '::check_gateway_usage_in_mfa',
+    ],
+    [
+        'hook' => \core_sms\hook\before_gateway_disabled::class,
+        'callback' => \factor_sms\hook_listener::class . '::check_gateway_usage_in_mfa',
+    ],
+];

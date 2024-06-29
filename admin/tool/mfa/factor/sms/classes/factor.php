@@ -409,10 +409,11 @@ class factor extends object_factor_base {
             recipientnumber: $phonenumber,
             content: $message,
             component: 'factor_sms',
-            messagetype: 'factor',
+            messagetype: 'mfa',
             recipientuserid: null,
-            sensitive: true,
+            issensitive: true,
             async: false,
+            gatewayid: get_config('factor_sms', 'smsgateway'),
         );
     }
 
