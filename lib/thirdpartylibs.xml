@@ -640,7 +640,7 @@ All rights reserved.</copyright>
     <location>psr/http-message</location>
     <name>http-message</name>
     <description>Provide a set of common interfaces for HTTP messages as described in RFC 7230 and RFC 7231</description>
-    <version>1.0.1</version>
+    <version>2.0.0</version>
     <license>MIT</license>
     <repository>https://github.com/php-fig/http-message</repository>
   </library>
