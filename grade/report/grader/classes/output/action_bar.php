@@ -90,14 +90,8 @@ class action_bar extends \core_grades\output\action_bar {
             $firstnameinitial = $SESSION->gradereport["filterfirstname-{$this->context->id}"] ?? '';
             $lastnameinitial  = $SESSION->gradereport["filtersurname-{$this->context->id}"] ?? '';
 
-            $initialselector = \core\output\initials_bar::initials_selector(
-                $course,
-                $this->context,
-                '/grade/report/grader/index.php',
-                $params,
-                $filter,
-            );
-
+            $initialselector = new \core\output\name_filter_bar($course,  $this->context, '/grade/report/grader/index.php',
+                $params, $filter);
             $data['initialselector'] = $initialselector->export_for_template($output);
 
             if ($course->groupmode) {

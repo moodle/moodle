@@ -95,15 +95,8 @@ class quiz_navigation_bar implements templatable, renderable {
             $filter = new \stdClass();
             $filter->usersearch = $this->usersearch;
             $filter->userid = $this->userid;
-            $initialselector = \core\output\initials_bar::initials_selector(
-                $course,
-                $this->context,
-                '/mod/quiz/report.php',
-                $urlparam,
-                $filter,
-                $this->reportmode,
-                $cmid,
-            );
+            $initialselector = new \core\output\name_filter_bar($course,  $this->context, '/mod/quiz/report.php',
+                $urlparam, $filter, $this->reportmode, $cmid);
             $firstnameinitial = $SESSION->{$this->reportmode . 'report'}["filterfirstname-{$this->context->id}"] ?? '';
             $lastnameinitial  = $SESSION->{$this->reportmode . 'report'}["filtersurname-{$this->context->id}"] ?? '';
             $data['initialselector'] = $initialselector->export_for_template($output);
