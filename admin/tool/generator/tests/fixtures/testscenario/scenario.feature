@@ -1,6 +1,8 @@
 Feature: Prepare scenario for testing
   Scenario: Create course content
-    Given the following "course" exists:
+    Given the following config values are set as admin:
+      | sendcoursewelcomemessage | 0 | enrol_manual |
+    And the following "course" exists:
       | fullname         | Course test |
       | shortname        | C1          |
       | category         | 0           |

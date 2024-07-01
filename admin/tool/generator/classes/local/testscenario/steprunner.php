@@ -16,7 +16,7 @@
 
 namespace tool_generator\local\testscenario;
 
-use behat_data_generators;
+use behat_base;
 use Behat\Gherkin\Node\StepNode;
 
 /**
@@ -27,8 +27,8 @@ use Behat\Gherkin\Node\StepNode;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class steprunner {
-    /** @var behat_data_generators the behat data generator instance. */
-    private behat_data_generators $generator;
+    /** @var behat_base|null the behat step class instance. */
+    private ?behat_base $generator = null;
 
     /** @var array the valid steps indexed by given expression tag. */
     private array $validsteps;
@@ -53,12 +53,14 @@ class steprunner {
 
     /**
      * Constructor.
-     * @param behat_data_generators $generator the behat data generator instance.
+     * @param behat_base|null $unused This does nothing, do not use it.
      * @param array $validsteps the valid steps indexed by given expression tag.
      * @param StepNode $stepnode the step node to process.
      */
-    public function __construct(behat_data_generators $generator, array $validsteps, StepNode $stepnode) {
-        $this->generator = $generator;
+    public function __construct($unused, array $validsteps, StepNode $stepnode) {
+        if ($unused !== null) {
+            debugging('Deprecated argument passed to ' . __FUNCTION__, DEBUG_DEVELOPER);
+        }
         $this->validsteps = $validsteps;
         $this->stepnode = $stepnode;
         $this->init();
@@ -73,12 +75,13 @@ class steprunner {
     private function init() {
         $matches = [];
         $linetext = $this->stepnode->getText();
-        foreach ($this->validsteps as $pattern => $method) {
-            if (!$this->match_given($pattern, $linetext, $matches)) {
+        foreach ($this->validsteps as $method) {
+            if (!$this->match_given($method->given, $linetext, $matches)) {
                 continue;
             }
-            $this->method = $method;
-            $this->params = $this->build_method_params($method, $matches);
+            $this->method = $method->name;
+            $this->params = $this->build_method_params($method->name, $matches, $method->generator);
+            $this->generator = $method->generator;
             $this->isvalid = true;
             return;
         }
@@ -89,10 +92,11 @@ class steprunner {
      * Build the method parameters.
      * @param string $methodname the method name.
      * @param array $matches the matches.
+     * @param behat_base $generator the method class.
      * @return array the method parameters.
      */
-    private function build_method_params($methodname, $matches) {
-        $method = new \ReflectionMethod($this->generator, $methodname);
+    private function build_method_params(string $methodname, array $matches, behat_base $generator) {
+        $method = new \ReflectionMethod($generator, $methodname);
         $params = [];
         foreach ($method->getParameters() as $param) {
             $paramname = $param->getName();

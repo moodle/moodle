@@ -16,12 +16,15 @@
 
 namespace tool_generator\local\testscenario;
 
+use behat_admin;
 use behat_data_generators;
+use behat_base;
 use Behat\Gherkin\Parser;
 use Behat\Gherkin\Lexer;
 use Behat\Gherkin\Keywords\ArrayKeywords;
 use ReflectionClass;
 use ReflectionMethod;
+use stdClass;
 
 /**
  * Class to process a scenario generator file.
@@ -72,6 +75,7 @@ class runner {
         require_once($CFG->libdir . '/behat/classes/behat_command.php');
         require_once($CFG->libdir . '/behat/behat_base.php');
         require_once("{$CFG->libdir}/tests/behat/behat_data_generators.php");
+        require_once("{$CFG->dirroot}/admin/tests/behat/behat_admin.php");
         return true;
     }
 
@@ -81,6 +85,15 @@ class runner {
     private function load_generator() {
         $this->generator = new behat_data_generators();
         $this->validsteps = $this->scan_generator($this->generator);
+
+        // Set config values is not inside the general behat generators.
+        $extra = $this->scan_method(
+            new ReflectionMethod(behat_admin::class, 'the_following_config_values_are_set_as_admin'),
+            new behat_admin(),
+        );
+        if ($extra) {
+            $this->validsteps[$extra->given] = $extra;
+        }
     }
 
     /**
@@ -93,12 +106,30 @@ class runner {
         $class = new ReflectionClass($generator);
         $methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
         foreach ($methods as $method) {
-            $given = $this->get_method_given($method);
-            if ($given) {
-                $result[$given] = $method->getName();
+            $scan = $this->scan_method($method, $generator);
+            if ($scan) {
+                $result[$scan->given] = $scan;
             }
         }
         return $result;
+    }
+
+    /**
+     * Scan a method to get the given expression tag.
+     * @param ReflectionMethod $method the method to scan.
+     * @param behat_base $behatclass the behat class instance to use.
+     * @return stdClass|null the method data (given, name, class).
+     */
+    private function scan_method(ReflectionMethod $method, behat_base $behatclass): ?stdClass {
+        $given = $this->get_method_given($method);
+        if (!$given) {
+            return null;
+        }
+        return (object)[
+            'given' => $given,
+            'name' => $method->getName(),
+            'generator' => $behatclass,
+        ];
     }
 
     /**
@@ -146,7 +177,7 @@ class runner {
                 $result->add_scenario($scenario->getNodeType(), $scenario->getTitle());
                 $steps = $scenario->getSteps();
                 foreach ($steps as $step) {
-                    $result->add_step(new steprunner($this->generator, $this->validsteps, $step));
+                    $result->add_step(new steprunner(null, $this->validsteps, $step));
                 }
             }
         }
