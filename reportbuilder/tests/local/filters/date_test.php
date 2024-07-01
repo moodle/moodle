@@ -20,8 +20,8 @@ namespace core_reportbuilder\local\filters;
 
 use advanced_testcase;
 use core\clock;
+use core\lang_string;
 use core_reportbuilder\local\report\filter;
-use lang_string;
 
 /**
  * Unit tests for date report filter
@@ -234,33 +234,39 @@ final class date_test extends advanced_testcase {
      */
     public static function get_sql_filter_relative_provider(): array {
         return [
+            'Before minute' => [date::DATE_BEFORE, 1, date::DATE_UNIT_MINUTE, '-90 second'],
             'Before hour' => [date::DATE_BEFORE, 1, date::DATE_UNIT_HOUR, '-90 minute'],
             'Before day' => [date::DATE_BEFORE, 1, date::DATE_UNIT_DAY, '-25 hour'],
             'Before week' => [date::DATE_BEFORE, 1, date::DATE_UNIT_WEEK, '-10 day'],
             'Before month' => [date::DATE_BEFORE, 1, date::DATE_UNIT_MONTH, '-7 week'],
             'Before year' => [date::DATE_BEFORE, 1, date::DATE_UNIT_YEAR, '-15 month'],
+            'Before two minutes' => [date::DATE_BEFORE, 2, date::DATE_UNIT_MINUTE, '-150 second'],
             'Before two hours' => [date::DATE_BEFORE, 2, date::DATE_UNIT_HOUR, '-150 minute'],
             'Before two days' => [date::DATE_BEFORE, 2, date::DATE_UNIT_DAY, '-50 hour'],
             'Before two weeks' => [date::DATE_BEFORE, 2, date::DATE_UNIT_WEEK, '-20 day'],
             'Before two months' => [date::DATE_BEFORE, 2, date::DATE_UNIT_MONTH, '-15 week'],
             'Before two years' => [date::DATE_BEFORE, 2, date::DATE_UNIT_YEAR, '-30 month'],
 
+            'After minute' => [date::DATE_AFTER, 1, date::DATE_UNIT_MINUTE, '+90 second'],
             'After hour' => [date::DATE_AFTER, 1, date::DATE_UNIT_HOUR, '+90 minute'],
             'After day' => [date::DATE_AFTER, 1, date::DATE_UNIT_DAY, '+25 hour'],
             'After week' => [date::DATE_AFTER, 1, date::DATE_UNIT_WEEK, '+10 day'],
             'After month' => [date::DATE_AFTER, 1, date::DATE_UNIT_MONTH, '+7 week'],
             'After year' => [date::DATE_AFTER, 1, date::DATE_UNIT_YEAR, '+15 month'],
+            'After two minutes' => [date::DATE_AFTER, 2, date::DATE_UNIT_MINUTE, '+150 second'],
             'After two hours' => [date::DATE_AFTER, 2, date::DATE_UNIT_HOUR, '+150 minute'],
             'After two days' => [date::DATE_AFTER, 2, date::DATE_UNIT_DAY, '+50 hour'],
             'After two weeks' => [date::DATE_AFTER, 2, date::DATE_UNIT_WEEK, '+20 day'],
             'After two months' => [date::DATE_AFTER, 2, date::DATE_UNIT_MONTH, '+15 week'],
             'After two years' => [date::DATE_AFTER, 2, date::DATE_UNIT_YEAR, '+30 month'],
 
+            'Last minute' => [date::DATE_LAST, 1, date::DATE_UNIT_MINUTE, '-30 second'],
             'Last hour' => [date::DATE_LAST, 1, date::DATE_UNIT_HOUR, '-30 minute'],
             'Last day' => [date::DATE_LAST, 1, date::DATE_UNIT_DAY, '-6 hour'],
             'Last week' => [date::DATE_LAST, 1, date::DATE_UNIT_WEEK, '-3 day'],
             'Last month' => [date::DATE_LAST, 1, date::DATE_UNIT_MONTH, '-3 week'],
             'Last year' => [date::DATE_LAST, 1, date::DATE_UNIT_YEAR, '-6 month'],
+            'Last two minutes' => [date::DATE_LAST, 2, date::DATE_UNIT_MINUTE, '-90 second'],
             'Last two hours' => [date::DATE_LAST, 2, date::DATE_UNIT_HOUR, '-90 minute'],
             'Last two days' => [date::DATE_LAST, 2, date::DATE_UNIT_DAY, '-25 hour'],
             'Last two weeks' => [date::DATE_LAST, 2, date::DATE_UNIT_WEEK, '-10 day'],
@@ -268,16 +274,19 @@ final class date_test extends advanced_testcase {
             'Last two years' => [date::DATE_LAST, 2, date::DATE_UNIT_YEAR, '-15 month'],
 
             // Current week is tested separately.
+            'Current minute' => [date::DATE_CURRENT, null, date::DATE_UNIT_MINUTE],
             'Current hour' => [date::DATE_CURRENT, null, date::DATE_UNIT_HOUR],
             'Current day' => [date::DATE_CURRENT, null, date::DATE_UNIT_DAY],
             'Current month' => [date::DATE_CURRENT, null, date::DATE_UNIT_MONTH],
             'Current year' => [date::DATE_CURRENT, null, date::DATE_UNIT_YEAR],
 
+            'Next minute' => [date::DATE_NEXT, 1, date::DATE_UNIT_MINUTE, '+30 second'],
             'Next hour' => [date::DATE_NEXT, 1, date::DATE_UNIT_HOUR, '+30 minute'],
             'Next day' => [date::DATE_NEXT, 1, date::DATE_UNIT_DAY, '+6 hour'],
             'Next week' => [date::DATE_NEXT, 1, date::DATE_UNIT_WEEK, '+3 day'],
             'Next month' => [date::DATE_NEXT, 1, date::DATE_UNIT_MONTH, '+3 week'],
             'Next year' => [date::DATE_NEXT, 1, date::DATE_UNIT_YEAR, '+6 month'],
+            'Next two minutes' => [date::DATE_NEXT, 2, date::DATE_UNIT_MINUTE, '+90 second'],
             'Next two hours' => [date::DATE_NEXT, 2, date::DATE_UNIT_HOUR, '+90 minute'],
             'Next two days' => [date::DATE_NEXT, 2, date::DATE_UNIT_DAY, '+25 hour'],
             'Next two weeks' => [date::DATE_NEXT, 2, date::DATE_UNIT_WEEK, '+10 day'],
