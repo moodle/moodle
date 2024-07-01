@@ -651,6 +651,19 @@ function xmldb_local_email_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024032600, 'local', 'email');
     }
 
+    if ($oldversion < 2024070100) {
+
+        // Set up an AdHoc task to add the new email templates.
+        $addtask = new \local_email\task\addtemplate();
+        $addtask->set_custom_data(['templatename' => 'user_signed_up_for_event_reminder']);
+
+        // Queue the task.
+        \core\task\manager::queue_adhoc_task($addtask);
+        
+        // Email savepoint reached.
+        upgrade_plugin_savepoint(true, 2024070100, 'local', 'email');
+    }
+
     return $result;
 
 }
