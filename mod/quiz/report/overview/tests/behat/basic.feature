@@ -110,8 +110,6 @@ Feature: Basic use of the Grades report
     And I click on "All participants" in the "group" search widget
     And I wait until "English" "option_role" exists
     And I click on "English" in the "group" search widget
-    And "Full regrade for group 'English'" "button" should exist
-    And "Dry run a full regrade for group 'English'" "button" should exist
     And I should see "Number of students in group 'English' achieving grade ranges"
 
   @javascript

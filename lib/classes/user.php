@@ -1502,7 +1502,8 @@ class core_user {
      * @param bool $allowcustom Allow search custom profile field.
      * @return array SQL query data in the format ['where' => '', 'params' => []].
      */
-    public static function get_users_search_sql(array $mappings, array $userfields, string $usersearch, \context $context, bool $allowcustom = false): array {
+    public static function get_users_search_sql(array $mappings, array $userfields, string $usersearch,
+            \context $context, bool $allowcustom = false): array {
         global $DB, $USER;
 
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
