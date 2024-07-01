@@ -1631,11 +1631,12 @@ class completion_info {
                 $data->coursemoduleid = $data->cmvcoursemoduleid;
                 $data->userid = $data->cmvuserid;
             }
+            // When reseting all state in the completion, we need to keep current view state.
+            // We cannot assume the activity has been viewed, so we should check if there is any course_modules_viewed already.
+            $data->viewed = is_null($data->cmvuserid) ? 0 : 1;
+
             unset($data->cmvcoursemoduleid);
             unset($data->cmvuserid);
-
-            // When reseting all state in the completion, we need to keep current view state.
-            $data->viewed = 1;
         }
 
         return (array)$data;
