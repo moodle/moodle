@@ -36,7 +36,7 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
  * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class files_test extends core_reportbuilder_testcase {
+final class files_test extends core_reportbuilder_testcase {
 
     /**
      * Test default datasource
@@ -205,7 +205,7 @@ class files_test extends core_reportbuilder_testcase {
      *
      * @return array[]
      */
-    public function datasource_filters_provider(): array {
+    public static function datasource_filters_provider(): array {
         return [
             // File.
             'Filter directory' => ['file:directory', [
@@ -246,6 +246,22 @@ class files_test extends core_reportbuilder_testcase {
             'Filter content hash (no match)' => ['file:contenthash', [
                 'file:contenthash_operator' => text::IS_EQUAL_TO,
                 'file:contenthash_value' => 'f00f',
+            ], 0],
+            'Filter component' => ['file:component', [
+                'file:component_operator' => text::IS_EQUAL_TO,
+                'file:component_value' => 'course',
+            ], 2],
+            'Filter component (no match)' => ['file:component', [
+                'file:component_operator' => text::IS_EQUAL_TO,
+                'file:component_value' => 'reportbuilder',
+            ], 0],
+            'Filter area' => ['file:area', [
+                'file:area_operator' => text::IS_EQUAL_TO,
+                'file:area_value' => 'summary',
+            ], 2],
+            'Filter area (no match)' => ['file:area', [
+                'file:area_operator' => text::IS_EQUAL_TO,
+                'file:area_value' => 'report',
             ], 0],
             'Filter time created' => ['file:timecreated', [
                 'file:timecreated_operator' => date::DATE_RANGE,

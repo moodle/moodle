@@ -425,6 +425,26 @@ class file extends base {
         ))
             ->add_joins($this->get_joins());
 
+        // Component.
+        $filters[] = (new filter(
+            text::class,
+            'component',
+            new lang_string('plugin'),
+            $this->get_entity_name(),
+            "{$filesalias}.component"
+        ))
+            ->add_joins($this->get_joins());
+
+        // Area.
+        $filters[] = (new filter(
+            text::class,
+            'area',
+            new lang_string('pluginarea'),
+            $this->get_entity_name(),
+            "{$filesalias}.filearea"
+        ))
+            ->add_joins($this->get_joins());
+
         // Time created.
         $filters[] = (new filter(
             date::class,
