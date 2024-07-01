@@ -25,14 +25,13 @@ use mod_quiz\quiz_settings;
  * @package   mod_quiz
  * @copyright 2024 The Open University.
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 4.4
+ * @since     Moodle 4.5
+ * @covers \mod_quiz\external\get_users_in_report
  */
-class events_test extends \advanced_testcase {
+final class get_users_in_report_test extends \advanced_testcase {
 
     /**
      * Test get_users_in_report service.
-     *
-     * @covers ::get_users_in_report
      */
     public function test_get_users_in_report(): void {
         $this->resetAfterTest();
@@ -68,7 +67,7 @@ class events_test extends \advanced_testcase {
         $timenow = time();
 
         $users = get_users_in_report::execute($quiz->cmid, 'overview',
-            'quiz_overview_table', 'quiz_overview_options', 'enrolled_with', '', false)['users'];
+            '{"attempts":"enrolled_with","onlygraded":"","gpr_search":"","onlyregraded":""}')['users'];
         $this->assertCount(0, $users);
 
         // User 1 passes quiz 1.
@@ -86,12 +85,12 @@ class events_test extends \advanced_testcase {
 
         // Check all users.
         $users = get_users_in_report::execute($quiz->cmid, 'overview',
-            'quiz_overview_table', 'quiz_overview_options', 'enrolled_with', '', false)['users'];
+            '{"attempts":"enrolled_with","onlygraded":"","gpr_search":"","onlyregraded":""}')['users'];
         $this->assertCount(2, $users);
 
         // Get only attempt has the state is finished.
         $users = get_users_in_report::execute($quiz->cmid, 'overview',
-            'quiz_overview_table', 'quiz_overview_options', 'enrolled_with', 'finished', false)['users'];
+            '{"attempts":"enrolled_with","onlygraded":"","gpr_search":"","onlyregraded":"", "states":"finished"}')['users'];
         $this->assertCount(1, $users);
     }
 }

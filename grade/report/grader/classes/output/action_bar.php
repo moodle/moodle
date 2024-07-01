@@ -31,6 +31,7 @@ class action_bar extends \core_grades\output\action_bar {
 
     /** @var string $usersearch The content that the current user is looking for. */
     protected string $usersearch = '';
+
     /** @var int $userid The ID of the user that the current user is looking for. */
     protected int $userid = 0;
 

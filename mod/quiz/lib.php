@@ -1557,7 +1557,7 @@ function quiz_reset_userdata($data) {
  * returns '' if no attempts have been made yet, unless $returnzero is passed as true.
  *
  * @param stdClass $quiz the quiz object. Only $quiz->id is used at the moment.
- * @param stdClass $cm the cm object. Only $cm->course, $cm->groupmode and
+ * @param cm_info $cm the cm object. Only $cm->course, $cm->groupmode and
  *      $cm->groupingid fields are used at the moment.
  * @param bool $returnzero if false (default), when no attempts have been
  *      made '' is returned instead of 'Attempts: 0'.

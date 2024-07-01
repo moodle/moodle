@@ -310,6 +310,5 @@ $functions = [
         'description' => 'Returns the dataset of users within the quiz report',
         'type' => 'read',
         'ajax' => true,
-        'capabilities' => 'mod/quiz:reviewmyattempts',
     ],
 ];

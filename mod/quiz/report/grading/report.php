@@ -111,7 +111,7 @@ class quiz_grading_report extends report_base {
 
         // Check permissions.
         $this->context = context_module::instance($this->cm->id);
-        require_capability('mod/quiz:grade', $this->context);
+        $this->has_permission($this->context);
         $shownames = has_capability('quiz/grading:viewstudentnames', $this->context);
         // Whether the current user can see custom user fields.
         $showcustomfields = has_capability('quiz/grading:viewidnumber', $this->context);
@@ -341,12 +341,11 @@ class quiz_grading_report extends report_base {
     protected function display_index($includeauto) {
         global $PAGE, $OUTPUT;
 
+        $PAGE->set_navigation_overflow_state(false);
         $this->print_header_and_tabs($this->cm, $this->course, $this->quiz, 'grading');
+        $PAGE->set_navigation_overflow_state(true);
+        $this->print_action_bar('grading', null, $this->cm, $this->list_questions_url());
 
-        if ($groupmode = groups_get_activity_groupmode($this->cm)) {
-            // Groups is being used.
-            groups_print_activity_menu($this->cm, $this->list_questions_url());
-        }
         // Get the current group for the user looking at the report.
         $currentgroup = $this->get_current_group($this->cm, $this->course, $this->context);
         if ($currentgroup == self::NO_GROUPS_ALLOWED) {
@@ -706,6 +705,10 @@ class quiz_grading_report extends report_base {
         global $PAGE;
         $this->renderer = $PAGE->get_renderer('quiz_grading');
         parent::print_header_and_tabs($cm, $course, $quiz, $reportmode);
+    }
+
+    public function has_permission(context $context): void {
+        require_capability('mod/quiz:grade', $context);
     }
 
     /**

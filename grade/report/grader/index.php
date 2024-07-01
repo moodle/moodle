@@ -65,10 +65,8 @@ $extra->courseid = $course->id;
 $extra->service = 'gradereport_grader_get_users_in_report';
 // Conditionally add the group JS if we have groups enabled.
 if ($course->groupmode) {
-//    $baseurl = new moodle_url('/grade/report/grader/index.php', ['id' => $courseid]);
-//    $PAGE->requires->js_call_amd('core_course/actionbar/group', 'init', [$baseurl->out(false)]);
-
-    $PAGE->requires->js_call_amd('core/comboboxsearch/group', 'init', [$extra]);
+    $baseurl = new moodle_url('/grade/report/grader/index.php', ['id' => $courseid]);
+    $PAGE->requires->js_call_amd('core_course/actionbar/group', 'init', [$baseurl->out(false)]);
 }
 $PAGE->requires->js_call_amd('core/searchwidget/user', 'init', [$extra]);
 

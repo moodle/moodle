@@ -12,20 +12,21 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/general_action_bar
+    @template gradereport_grader/action_bar
 
-    The general actions bar for navigating through the report pages.
+    The general actions bar for navigating through the gradebook pages.
 
     Context variables required for this template:
     * generalnavselector - The data object containing the required properties to render the general navigation selector.
+    * groupselector - (optional) HTML that outputs the group selector
 
     Example context (json):
     {
         "generalnavselector": {
             "name": "Gradebook tertiary navigation selector",
-            "value": "opt1",
+            "value": "opt2",
             "baseid": "select-menu56789",
-            "selectedoption": "Grader report",
+            "selectedoption": "Gradebook setup",
             "options": [
                 {
                     "selected": false,
@@ -37,7 +38,7 @@
                                  "name": "Grader report",
                                  "value": "opt1",
                                  "id": "select-menu-option1",
-                                 "selected": true
+                                 "selected": false
                              }
                          ]
                      }
@@ -45,29 +46,23 @@
                 {
                     "selected": false,
                     "isgroup": {
-                        "name": "More",
+                        "name": "Setup",
                         "id": "select-menu-group2",
                         "options": [
                             {
-                                "name": "Import",
+                                "name": "Gradebook setup",
                                 "value": "opt2",
                                 "id": "select-menu-option2",
-                                "selected": false
+                                "selected": true
                             }
                         ]
                     }
                 }
             ]
-        }
+        },
+        "groupselector": "<div class='group-selector'></div>",
+        "collapsedcolumns": "<div class='collapse-columns'></div>",
+        "pagereset": "http://moodle.local/grade/report/grader/index.php?id=2&userid=2&reset=1"
     }
 }}
-<div class="container-fluid tertiary-navigation full-width-bottom-border">
-    <div class="row">
-        {{#generalnavselector}}
-            <div class="navitem">
-                {{>core/tertiary_navigation_selector}}
-            </div>
-            <div class="navitem-divider"></div>
-        {{/generalnavselector}}
-    </div>
-</div>
+{{>core/action_bar}}

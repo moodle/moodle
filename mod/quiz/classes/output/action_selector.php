@@ -17,6 +17,8 @@
 namespace mod_quiz\output;
 
 use core\output\select_menu;
+use templatable;
+use renderable;
 
 /**
  * Renderable class for the general action bar in the quiz report pages.
@@ -27,7 +29,19 @@ use core\output\select_menu;
  * @copyright  2024 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class general_action_bar extends quiz_action_bar {
+class action_selector implements templatable, renderable {
+
+    /** @var \context $context The context object. */
+    protected \context $context;
+
+    /**
+     * The class constructor.
+     *
+     * @param \context $context The context object.
+     */
+    public function __construct(\context $context) {
+        $this->context = $context;
+    }
 
     /**
      * Export the data for the mustache template.
@@ -53,7 +67,7 @@ class general_action_bar extends quiz_action_bar {
      * @return string
      */
     public function get_template(): string {
-        return 'core/general_action_bar';
+        return 'core/navigation_action_bar';
     }
 
     /**

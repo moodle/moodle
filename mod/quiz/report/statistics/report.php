@@ -58,7 +58,7 @@ class quiz_statistics_report extends report_base {
      * Display the report.
      */
     public function display($quiz, $cm, $course) {
-        global $OUTPUT, $DB;
+        global $OUTPUT, $DB, $PAGE;
 
         raise_memory_limit(MEMORY_HUGE);
 
@@ -149,7 +149,11 @@ class quiz_statistics_report extends report_base {
 
         // Print the page header stuff (if not downloading.
         if (!$this->table->is_downloading()) {
+            // Only print headers if not asked to download data.
+            $PAGE->set_navigation_overflow_state(false);
             $this->print_header_and_tabs($cm, $course, $quiz, 'statistics');
+            $PAGE->set_navigation_overflow_state(true);
+            $this->print_action_bar('statistics', null, $cm, $reporturl);
         }
 
         if (!$nostudentsingroup) {
@@ -174,7 +178,6 @@ class quiz_statistics_report extends report_base {
         if (!$this->table->is_downloading()) {
 
             if (groups_get_activity_groupmode($cm)) {
-                groups_print_activity_menu($cm, $reporturl->out());
                 if ($currentgroup && $nostudentsingroup) {
                     $OUTPUT->notification(get_string('nostudentsingroup', 'quiz_statistics'));
                 }

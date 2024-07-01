@@ -492,7 +492,8 @@ abstract class grade_report {
             [
                 'where' => $keywordswhere,
                 'params' => $keywordsparams,
-            ] = $this->get_users_search_sql($mappings, $userfields->get_required_fields());
+            ] = $this->get_users_search_sql($mappings, $userfields->get_required_fields(),
+                $this->usersearch, $this->context);
             $this->userwheresql .= " AND $keywordswhere";
             $this->userwheresql_params = array_merge($this->userwheresql_params, $keywordsparams);
         }
@@ -504,12 +505,16 @@ abstract class grade_report {
      *
      * @param array $mappings Array of field mappings (fieldname => SQL code for the value)
      * @param array $userfields An array that we cast from user profile fields to search within.
+     * @param string $usersearch A user search data.
+     * @param \context $context Context object.
+     * @param bool $allowcustom Allow search custom profile field.
      * @return array SQL query data in the format ['where' => '', 'params' => []].
      */
-    protected function get_users_search_sql(array $mappings, array $userfields): array {
+    protected function get_users_search_sql(array $mappings, array $userfields, string $usersearch,
+            \context $context, bool $allowcustom = false): array {
         global $DB, $USER;
 
-        $canviewfullnames = has_capability('moodle/site:viewfullnames', $this->context);
+        $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
         $params = [];
         $searchkey1 = 'search01';
@@ -535,7 +540,7 @@ abstract class grade_report {
                 "u.maildisplay <> :$maildisplay " .
                 "OR u.id = :$userid1". // Users can always find themselves.
                 "))";
-            $params[$maildisplay] = core_user::MAILDISPLAY_HIDE;
+            $params[$maildisplay] = \core_user::MAILDISPLAY_HIDE;
             $params[$userid1] = $USER->id;
         }
 
@@ -555,7 +560,7 @@ abstract class grade_report {
         $conditions[] = $idnumber;
 
         // Search all user identify fields.
-        $extrasearchfields = fields::get_identity_fields(null, false);
+        $extrasearchfields = fields::get_identity_fields(null, $allowcustom);
         foreach ($extrasearchfields as $fieldindex => $extrasearchfield) {
             if (in_array($extrasearchfield, ['email', 'idnumber', 'country'])) {
                 // Already covered above.
@@ -565,7 +570,7 @@ abstract class grade_report {
             $param = $searchkey3 . '_ident' . $fieldindex;
             $fieldsql = $mappings[$extrasearchfield];
             $condition = $DB->sql_like($fieldsql, ':' . $param, false, false);
-            $params[$param] = "%$this->usersearch%";
+            $params[$param] = "%$usersearch%";
 
             if (!in_array($extrasearchfield, $userfields)) {
                 // User cannot see this field, but allow match if their own account.
@@ -577,9 +582,9 @@ abstract class grade_report {
         }
 
         $where = "(". implode(" OR ", $conditions) .") ";
-        $params[$searchkey1] = "%$this->usersearch%";
-        $params[$searchkey2] = "%$this->usersearch%";
-        $params[$searchkey3] = "%$this->usersearch%";
+        $params[$searchkey1] = "%$usersearch%";
+        $params[$searchkey2] = "%$usersearch%";
+        $params[$searchkey3] = "%$usersearch%";
 
         return [
             'where' => $where,

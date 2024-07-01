@@ -6,7 +6,6 @@ This file has been replaced by UPGRADING.md. See MDL-81125 for further informati
 This file describes API changes in the quiz code.
 
 === 4.5 ===
-* attempts_report::print_standard_header_and_messages has extra params $table, to support to new quiz filter.
 * report_base::print_action_bar has created to allow render new quiz filter.
 * Added a new get_users_in_report() to allow to search user in report.
 * Added a new file `general_action_bar.php` in mod/quiz/classes/output/ to take responsibility for

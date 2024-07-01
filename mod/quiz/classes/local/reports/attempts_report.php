@@ -157,28 +157,23 @@ abstract class attempts_report extends report_base {
      * outputs the standard group selector, number of attempts summary,
      * and messages to cover common cases when the report can't be shown.
      *
-     * @param stdClass $cm the course_module information.
+     * @param \cm_info $cm the course_module information.
      * @param stdClass $course the course settings.
      * @param stdClass $quiz the quiz settings.
      * @param attempts_report_options $options the current report settings.
      * @param int $currentgroup the current group.
      * @param bool $hasquestions whether there are any questions in the quiz.
      * @param bool $hasstudents whether there are any relevant students.
-     * @param null|mixed $table $table The table class for each report type.
      *       With each type of report, the table's type varies, so 'mixed' is selected.
      */
     protected function print_standard_header_and_messages($cm, $course, $quiz,
-            $options, $currentgroup, $hasquestions, $hasstudents, $table = null) {
+            $options, $currentgroup, $hasquestions, $hasstudents) {
         global $OUTPUT, $PAGE;
 
-        if (is_null($table)) {
-            $this->print_header_and_tabs($cm, $course, $quiz, $this->mode);
-        } else {
-            $PAGE->set_navigation_overflow_state(false);
-            $this->print_header_and_tabs($cm, $course, $quiz, $this->mode);
-            $PAGE->set_navigation_overflow_state(true);
-            $this->print_action_bar($this->mode, $options, $table, $cm);
-        }
+        $PAGE->set_navigation_overflow_state(false);
+        $this->print_header_and_tabs($cm, $course, $quiz, $this->mode);
+        $PAGE->set_navigation_overflow_state(true);
+        $this->print_action_bar($this->mode, $options, $cm);
 
         // Print information on the number of existing attempts.
         if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, true, $currentgroup)) {

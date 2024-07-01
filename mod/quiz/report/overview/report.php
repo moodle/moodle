@@ -47,14 +47,8 @@ class quiz_overview_report extends attempts_report {
         list($currentgroup, $studentsjoins, $groupstudentsjoins, $allowedjoins) = $this->init(
                 'overview', 'quiz_overview_settings_form', $quiz, $cm, $course);
 
-        $options = new quiz_overview_options('overview', $quiz, $cm, $course);
-
-        if ($fromform = $this->form->get_data()) {
-            $options->process_settings_from_form($fromform);
-
-        } else {
-            $options->process_settings_from_params();
-        }
+        // Setup options class and report table.
+        [$options, $table] = $this->setup_report_data($quiz, $cm, $course);
 
         $this->form->set_data($options->get_initial_form_data());
 
@@ -63,8 +57,6 @@ class quiz_overview_report extends attempts_report {
         // Prepare for downloading, if applicable.
         $courseshortname = format_string($course->shortname, true,
                 ['context' => context_course::instance($course->id)]);
-        $table = new quiz_overview_table($quiz, $this->context, $this->qmsubselect,
-                $options, $groupstudentsjoins, $studentsjoins, $questions, $options->get_url());
         $filename = quiz_report_download_filename(get_string('overviewfilename', 'quiz_overview'),
                 $courseshortname, $quiz->name);
         $table->is_downloading($options->download, $filename,
@@ -104,7 +96,7 @@ class quiz_overview_report extends attempts_report {
         if (!$table->is_downloading()) {
             // Only print headers if not asked to download data.
             $this->print_standard_header_and_messages($cm, $course, $quiz,
-                    $options, $currentgroup, $hasquestions, $hasstudents, $table);
+                    $options, $currentgroup, $hasquestions, $hasstudents);
 
             // Print the display options.
             $this->form->display();
@@ -166,7 +158,7 @@ class quiz_overview_report extends attempts_report {
             $table->out($options->pagesize, false);
 
             if ($canregrade && !$table->is_downloading()) {
-            $this->display_commit_regrade_if_required($quiz, $groupstudentsjoins, $options);
+                $this->display_commit_regrade_if_required($quiz, $groupstudentsjoins, $options);
             }
         }
 
@@ -651,6 +643,31 @@ class quiz_overview_report extends attempts_report {
         $gradecalculator->recompute_all_attempt_sumgrades();
         $gradecalculator->recompute_all_final_grades();
         quiz_update_grades($quiz);
+    }
+
+    public function setup_report_data(stdClass $quiz, \cm_info $cm, stdClass $course,
+            ?context $context = null): array {
+        if (!is_null($context)) {
+            $this->context = $context;
+        }
+        $questions = quiz_report_get_significant_questions($quiz);
+        $options = new quiz_overview_options('overview', $quiz, $cm, $course);
+        [, $studentsjoins, $groupstudentsjoins, $allowedjoins] = $this->get_students_joins(
+            $cm, $course);
+
+        if (!is_null($this->form)) {
+            if ($fromform = $this->form->get_data()) {
+                $options->process_settings_from_form($fromform);
+
+            } else {
+                $options->process_settings_from_params();
+            }
+        }
+
+        $table = new quiz_overview_table($quiz, $this->context, $this->qmsubselect,
+            $options, $groupstudentsjoins, $studentsjoins, $questions, $options->get_url());
+
+        return [$options, $table, $allowedjoins];
     }
 
     /**

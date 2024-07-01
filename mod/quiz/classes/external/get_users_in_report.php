@@ -53,12 +53,8 @@ class get_users_in_report extends external_api {
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'cmid' => new external_value(PARAM_INT, 'The cmid.'),
-            'mode' => new external_value(PARAM_TEXT, 'Report mode'),
-            'tableclass' => new external_value(PARAM_TEXT, 'Class of table'),
-            'optionclass' => new external_value(PARAM_TEXT, 'Class of report setting'),
-            'attempts' => new external_value(PARAM_TEXT, 'Attempts filter option'),
-            'states' => new external_value(PARAM_TEXT, 'States filter option'),
-            'onlygraded' => new external_value(PARAM_BOOL, 'Only graded filter option'),
+            'mode' => new external_value(PARAM_ALPHA, 'Report mode'),
+            'params' => new external_value(PARAM_RAW_TRIMMED, 'Additional parameters'),
         ]);
     }
 
@@ -67,16 +63,11 @@ class get_users_in_report extends external_api {
      *
      * @param int $cmid the cmid.
      * @param string $mode the report mode.
-     * @param string $tableclass the table class.
-     * @param string $optionclass the report setting class.
-     * @param string $attempts Filter attempts type.
-     * @param string $states States report attempts type.
-     * @param bool $onlygraded Only graded attempt filter.
+     * @param string $params Options setting.
      * @return array User list.
      */
-    public static function execute(int $cmid, string $mode, string $tableclass,
-            string $optionclass, string $attempts, string $states, bool $onlygraded): array {
-        global $CFG, $PAGE, $DB, $SESSION;
+    public static function execute(int $cmid, string $mode, string $params): array {
+        global $CFG, $PAGE;
 
         $warnings = [];
         $users = [];
@@ -85,11 +76,7 @@ class get_users_in_report extends external_api {
             [
                 'cmid' => $cmid,
                 'mode' => $mode,
-                'tableclass' => $tableclass,
-                'optionclass' => $optionclass,
-                'attempts' => $attempts,
-                'states' => $states,
-                'onlygraded' => $onlygraded,
+                'params' => $params,
             ],
         );
 
@@ -110,37 +97,26 @@ class get_users_in_report extends external_api {
 
         $report = new $reportclassname();
         $context = $quizobj->get_context();
+        // Check access permission.
+        $report->has_permission($context);
+        $data = $report->setup_report_data($quiz, $cm, $course, $context);
+        if (empty($data)) {
+            return [
+                'users' => $users,
+                'warnings' => $warnings,
+            ];
+        }
+        // Retrieve necessary data for report.
+        [$options, $table, $allowedjoins] = $data;
         static::$context = $context;
+
         $PAGE->set_context($context);
-        [$currentgroup, $studentsjoins, $groupstudentsjoins, $allowedjoins] = $report->init(
-            $mode, 'quiz_' . $mode . '_settings_form', $quiz, $cm, $course);
-        $qmsubselect = quiz_report_qm_filter_select($quiz);
-        $options = new $optionclass($mode, $quiz, $cm, $course);
-        // Set up filter for report.
-        if (!empty($states)) {
-            $states = explode('-', $states);
-            $options->states = $states;
-        }
-        if (!empty($attempts)) {
-            $options->attempts = $attempts;
-        }
-        if ($onlygraded) {
-            $options->onlygraded = $onlygraded;
-        }
-        $questions = quiz_report_get_significant_questions($quiz);
-        $table = new $tableclass($quiz, $context, $qmsubselect,
-            $options, $groupstudentsjoins, $studentsjoins, $questions, $options->get_url());
+
+        // Get parameter for report.
+        $params = json_decode($params);
+        $options->setup_from_params_array($params);
         // Since the column setup is unnecessary, we have manually configured the setup flag.
         $table->setup = true;
-        // We need to filter by either their first name or last name.
-        if (!empty($SESSION->flextable[$table->uniqueid]['i_first'] ?? '')) {
-            $allowedjoins->wheres .= " AND " . $DB->sql_like('firstname', ':ifirstc', false, false);
-            $allowedjoins->params['ifirstc'] = $SESSION->flextable[$table->uniqueid]['i_first'] . '%';
-        }
-        if (!empty($SESSION->flextable[$table->uniqueid]['i_last'] ?? '')) {
-            $allowedjoins->wheres .= " AND " . $DB->sql_like('lastname', ':ilastc', false, false);
-            $allowedjoins->params['ilastc'] = $SESSION->flextable[$table->uniqueid]['i_last'] . '%';
-        }
         $table->setup_sql_queries($allowedjoins);
         $table->query_db(static::MAX_STUDENTS_PER_PAGE);
         $userfieldsapi = \core_user\fields::for_identity($context)->with_userpic();

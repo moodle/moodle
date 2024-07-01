@@ -83,7 +83,7 @@ class general_action_bar extends action_bar {
      * @return string
      */
     public function get_template(): string {
-        return 'core/general_action_bar';
+        return 'core/navigation_action_bar';
     }
 
     /**

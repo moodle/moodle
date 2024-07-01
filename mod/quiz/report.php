@@ -33,6 +33,8 @@ require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 $id = optional_param('id', 0, PARAM_INT);
 $q = optional_param('q', 0, PARAM_INT);
 $mode = optional_param('mode', '', PARAM_ALPHA);
+$reportsifirst  = optional_param('sifirst', null, PARAM_NOTAGS);
+$reportsilast   = optional_param('silast', null, PARAM_NOTAGS);
 
 if ($id) {
     $quizobj = quiz_settings::create_for_cmid($id);
@@ -79,6 +81,16 @@ if (!class_exists($reportclassname)) {
     throw new \moodle_exception('preprocesserror', 'quiz');
 }
 
+$context = $quizobj->get_context();
+
+// The report object is recreated each time, save search information to SESSION object for future use.
+if (isset($reportsifirst)) {
+    $SESSION->{$mode . 'report'}["filterfirstname-{$context->id}"] = $reportsifirst;
+}
+if (isset($reportsilast)) {
+    $SESSION->{$mode . 'report'}["filtersurname-{$context->id}"] = $reportsilast;
+}
+
 $report = new $reportclassname();
 $report->display($quiz, $cm, $course);
 
@@ -87,7 +99,7 @@ echo $OUTPUT->footer();
 
 // Log that this report was viewed.
 $params = [
-    'context' => $quizobj->get_context(),
+    'context' => $context,
     'other' => [
         'quizid' => $quiz->id,
         'reportname' => $mode

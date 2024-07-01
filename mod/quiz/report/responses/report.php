@@ -54,14 +54,8 @@ class quiz_responses_report extends attempts_report {
         list($currentgroup, $studentsjoins, $groupstudentsjoins, $allowedjoins) = $this->init(
                 'responses', 'quiz_responses_settings_form', $quiz, $cm, $course);
 
-        $options = new quiz_responses_options('responses', $quiz, $cm, $course);
-
-        if ($fromform = $this->form->get_data()) {
-            $options->process_settings_from_form($fromform);
-
-        } else {
-            $options->process_settings_from_params();
-        }
+        // Setup options class and report table.
+        [$options, $table] = $this->setup_report_data($quiz, $cm, $course);
 
         $this->form->set_data($options->get_initial_form_data());
 
@@ -71,13 +65,6 @@ class quiz_responses_report extends attempts_report {
         // Prepare for downloading, if applicable.
         $courseshortname = format_string($course->shortname, true,
                 ['context' => context_course::instance($course->id)]);
-        if ($options->whichtries === question_attempt::LAST_TRY) {
-            $tableclassname = 'quiz_last_responses_table';
-        } else {
-            $tableclassname = 'quiz_first_or_all_responses_table';
-        }
-        $table = new $tableclassname($quiz, $this->context, $this->qmsubselect,
-                $options, $groupstudentsjoins, $studentsjoins, $questions, $options->get_url());
         $filename = quiz_report_download_filename(get_string('responsesfilename', 'quiz_responses'),
                 $courseshortname, $quiz->name);
         $table->is_downloading($options->download, $filename,
@@ -117,7 +104,7 @@ class quiz_responses_report extends attempts_report {
         if (!$table->is_downloading()) {
             // Only print headers if not asked to download data.
             $this->print_standard_header_and_messages($cm, $course, $quiz,
-                    $options, $currentgroup, $hasquestions, $hasstudents, $table);
+                    $options, $currentgroup, $hasquestions, $hasstudents);
 
             // Print the display options.
             $this->form->display();
@@ -189,5 +176,38 @@ class quiz_responses_report extends attempts_report {
             $table->out($options->pagesize, false);
         }
         return true;
+    }
+
+    public function setup_report_data(stdClass $quiz, \cm_info $cm,
+             stdClass $course, ?context $context = null): array {
+        if (!is_null($context)) {
+            $this->context = $context;
+        }
+        $options = new quiz_responses_options('responses', $quiz, $cm, $course);
+
+        if (!is_null($this->form)) {
+            if ($fromform = $this->form->get_data()) {
+                $options->process_settings_from_form($fromform);
+
+            } else {
+                $options->process_settings_from_params();
+            }
+        }
+
+        // Load the required questions.
+        $questions = quiz_report_get_significant_questions($quiz);
+
+        if ($options->whichtries === question_attempt::LAST_TRY) {
+            $tableclassname = 'quiz_last_responses_table';
+        } else {
+            $tableclassname = 'quiz_first_or_all_responses_table';
+        }
+
+        [, $studentsjoins, $groupstudentsjoins, $allowedjoins] = $this->get_students_joins(
+            $cm, $course);
+
+        $table = new $tableclassname($quiz, $this->context, $this->qmsubselect,
+            $options, $groupstudentsjoins, $studentsjoins, $questions, $options->get_url());
+        return [$options, $table, $allowedjoins];
     }
 }

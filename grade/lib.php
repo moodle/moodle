@@ -971,9 +971,9 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
         }
 
         if ($return) {
-            $returnval .= $renderer->render_action_bar($actionbar);
+            $returnval .= $renderer->render($actionbar);
         } else {
-            echo $renderer->render_action_bar($actionbar);
+            echo $renderer->render($actionbar);
         }
     }
 
