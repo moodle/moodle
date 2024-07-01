@@ -121,6 +121,17 @@ abstract class backup_plan_dbops extends backup_dbops {
     }
 
     /**
+     * Given one section id, returns the full section record.
+     *
+     * @param int $sectionid
+     * @return stdClass
+     */
+    public static function get_section_from_id($sectionid): stdClass {
+        global $DB;
+        return $DB->get_record('course_sections', ['id' => $sectionid]);
+    }
+
+    /**
      * Given one course id, return its format in DB
      */
     public static function get_courseformat_from_courseid($courseid) {

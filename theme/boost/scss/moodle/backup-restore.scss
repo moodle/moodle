@@ -12,6 +12,15 @@
             padding: $card-spacer-x;
             margin-bottom: $card-spacer-x;
         }
+
+        &.subsection_level {
+            background-color: $card-bg;
+            @include border-radius($card-border-radius);
+            border: $card-border-width solid $card-border-color;
+            @include clearfix;
+            padding: $card-spacer-x;
+            margin: 0 $card-spacer-x $card-spacer-x $card-spacer-x;
+        }
     }
 
     /* These are long labels with checkboxes on the right. */
@@ -202,4 +211,3 @@
         background: $backup-restore-state12-bg;
     }
 }
-

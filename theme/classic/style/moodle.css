@@ -34997,6 +34997,18 @@ img.userpicture {
   clear: both;
   content: "";
 }
+.path-backup .mform .grouped_settings.subsection_level {
+  background-color: #fff;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  padding: 1.25rem;
+  margin: 0 1.25rem 1.25rem 1.25rem;
+}
+.path-backup .mform .grouped_settings.subsection_level::after {
+  display: block;
+  clear: both;
+  content: "";
+}
 .path-backup .mform .include_setting {
   width: 50%;
   display: inline-block;

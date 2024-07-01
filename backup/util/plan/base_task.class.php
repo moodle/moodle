@@ -103,7 +103,20 @@ abstract class base_task implements checksumable, executable, loggable {
         }
     }
 
+    /**
+     * Check if a setting with the given name exists.
+     *
+     * This method find first in the current settings and then in the plan settings.
+     *
+     * @param string $name Setting name
+     * @return bool
+     */
     public function setting_exists($name) {
+        foreach ($this->settings as $setting) {
+            if ($setting->get_name() == $name) {
+                return true;
+            }
+        }
         return $this->plan->setting_exists($name);
     }
 

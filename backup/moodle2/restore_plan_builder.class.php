@@ -144,6 +144,9 @@ abstract class restore_plan_builder {
             $plan->add_task($task);
             $controller->get_progress()->progress();
 
+            // Some activities may have delegated section integrations.
+            self::build_delegated_section_plan($controller, $infoactivity->moduleid);
+
             // For the given activity path, add as many block tasks as necessary
             // TODO: Add blocks, we need to introspect xml here
             $blocks = backup_general_helper::get_blocks_from_path($task->get_taskbasepath());
@@ -159,6 +162,30 @@ abstract class restore_plan_builder {
             $plan->set_missing_modules();
         }
 
+    }
+
+    /**
+     * Build a course module delegated section backup plan.
+     * @param restore_controller $controller
+     * @param int $cmid the parent course module id.
+     */
+    protected static function build_delegated_section_plan($controller, $cmid) {
+        $info = $controller->get_info();
+
+        // Find if some section depends on that course module.
+        $delegatedsectionid = null;
+        foreach ($info->sections as $sectionid => $section) {
+            // Delegated sections are not course responsability.
+            if (isset($section->parentcmid) && $section->parentcmid == $cmid) {
+                $delegatedsectionid = $sectionid;
+                break;
+            }
+        }
+
+        if (!$delegatedsectionid) {
+            return;
+        }
+        self::build_section_plan($controller, $delegatedsectionid);
     }
 
     /**
@@ -215,6 +242,10 @@ abstract class restore_plan_builder {
 
         // For the given course, add as many section tasks as necessary
         foreach ($info->sections as $sectionid => $section) {
+            // Delegated sections are not course responsability.
+            if (isset($section->parentcmid) && !empty($section->parentcmid)) {
+                continue;
+            }
             self::build_section_plan($controller, $sectionid);
         }
     }

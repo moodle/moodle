@@ -53,6 +53,29 @@ abstract class sectiondelegatemodule extends sectiondelegate {
     }
 
     /**
+     * Get the delegated section id controlled by a specific cm.
+     *
+     * This method is used when reverse search is needed bu we cannot access the database.
+     * This happens mostly on backup and restore. Do NOT use for normal operations.
+     *
+     * @param stdClass|cm_info $cm a course module compatible data structure.
+     * @return int the section id.
+     */
+    public static function delegated_section_id(stdClass|cm_info $cm): int {
+        global $DB;
+        return $DB->get_field(
+            'course_sections',
+            'id',
+            [
+                'course' => $cm->course,
+                'component' => explode('\\', static::class)[0],
+                'itemid' => $cm->instance,
+            ],
+            MUST_EXIST
+        );
+    }
+
+    /**
      * Get the parent section of the current delegated section.
      *
      * @return section_info|null
