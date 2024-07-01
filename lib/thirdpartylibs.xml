@@ -624,7 +624,7 @@ All rights reserved.</copyright>
     <location>psr/http-client</location>
     <name>http-client</name>
     <description>Provides an abstraction that describe the components of a HTTP Client.</description>
-    <version>1.0.0</version>
+    <version>1.0.3</version>
     <license>MIT</license>
     <repository>https://github.com/php-fig/http-client</repository>
   </library>
