@@ -36,13 +36,20 @@ class group_selector implements renderable, templatable {
      */
     protected $course;
 
+    /** @var \cm_info|null $cm An cm object. */
+    protected $cm;
+
     /**
      * The class constructor.
      *
      * @param stdClass $course The course object.
+     * @param \cm_info|null $cm CM info object.
      */
-    public function __construct(stdClass $course) {
+    public function __construct(stdClass $course, ?\cm_info $cm = null) {
         $this->course = $course;
+        if (!is_null($cm)) {
+            $this->cm = $cm;
+        }
     }
 
     /**
@@ -57,8 +64,19 @@ class group_selector implements renderable, templatable {
         $course = $this->course;
         $groupmode = $course->groupmode;
 
+
+        if (!is_null($this->cm)) {
+            $groupmode = groups_get_activity_groupmode($this->cm);
+        }
+
+        // Make sure that group mode is enabled.
+        if (!$groupmode) {
+            return null;
+        }
+
         $sbody = $OUTPUT->render_from_template('core_group/comboboxsearch/searchbody', [
             'courseid' => $course->id,
+            'cmid' => $this->cm->id ?? null,
             'currentvalue' => optional_param('groupsearchvalue', '', PARAM_NOTAGS),
             'instance' => rand(),
         ]);
@@ -67,15 +85,8 @@ class group_selector implements renderable, templatable {
 
         $buttondata = ['label' => $label];
 
-        $context = \context_course::instance($course->id);
+        [$context, $activegroup] = $this->get_group_info($this->course, $this->cm, $groupmode);
 
-        if ($groupmode == VISIBLEGROUPS || has_capability('moodle/site:accessallgroups', $context)) {
-            $allowedgroups = groups_get_all_groups($course->id, 0, $course->defaultgroupingid);
-        } else {
-            $allowedgroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
-        }
-
-        $activegroup = groups_get_course_group($course, true, $allowedgroups);
         $buttondata['group'] = $activegroup;
 
         if ($activegroup) {
@@ -109,5 +120,44 @@ class group_selector implements renderable, templatable {
      */
     public function get_template(): string {
         return 'core/comboboxsearch';
+    }
+
+    /**
+     * Retrieve group info contains context (course or module) and group active.
+     *
+     * @param \stdClass $course The course object.
+     * @param null|\cm_info $cm Course module info.
+     * @param int $groupmode Group mode data.
+     * @return array Group info data context (course or module) and group active.
+     */
+    private function get_group_info(\stdClass $course, ?\cm_info $cm, int $groupmode): array {
+        global $USER;
+
+        // Determine the context based on $cm.
+        if (is_null($cm)) {
+            $context = \context_course::instance($course->id);
+        } else {
+            $context = \context_module::instance($cm->id);
+        }
+
+        // Check if the user can access all groups.
+        $canaccessallgroups = has_capability('moodle/site:accessallgroups', $context);
+        $groupingid = ($cm === null) ? $course->defaultgroupingid : $cm->groupingid;
+
+        // Determine the allowed groups based on $cm and $groupmode.
+        if ($groupmode == VISIBLEGROUPS || $canaccessallgroups) {
+            $allowedgroups = groups_get_all_groups($course->id, 0, $groupingid, 'g.*', false, !is_null($cm));
+        } else {
+            $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $groupingid, 'g.*', false, !is_null($cm));
+        }
+
+        // Determine the active group based on $cm.
+        if (is_null($cm)) {
+            $activegroup = groups_get_course_group($course, true, $allowedgroups);
+        } else {
+            $activegroup = groups_get_activity_group($cm, true, $allowedgroups);
+        }
+
+        return [$context, $activegroup];
     }
 }

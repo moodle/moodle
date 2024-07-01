@@ -108,7 +108,7 @@ class quiz_action_bar implements templatable, renderable {
      * @throws \moodle_exception
      */
     public function export_for_template(\renderer_base $output): array {
-        global $OUTPUT, $USER, $SESSION;
+        global $OUTPUT, $USER, $SESSION, $PAGE;
         $cmid = $this->context->instanceid;
         $cm = $this->options->cm;
         $course = $cm->get_course();
@@ -133,8 +133,9 @@ class quiz_action_bar implements templatable, renderable {
         );
         $data['initialselector'] = $initialselector->export_for_template($output);
         // Set up data for group selector.
-        $data['groupselector'] = \core\output\groups_bar::group_selector($course,
-            $output, $cm);
+        $grouprenderer = $PAGE->get_renderer('core_group');
+        $groupbar = new \core_group\output\group_selector($course, $cm);
+        $data['groupselector'] = $grouprenderer->render_group_bar($groupbar);
         $courseid = $cm->course;
         // Reset link.
         $resetlink = new moodle_url('/mod/quiz/report.php', ['id' => $cm->id, 'mode' => $this->reportmode]);
