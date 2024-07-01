@@ -6,16 +6,18 @@ Feature: Toggle activities visibility from the course page
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email                |
-      | teacher1 | Teacher   | 1        | teacher1@example.com |
-      | student1 | Student   | 1        | student1@example.com |
+      | username           | firstname           | lastname | email                          |
+      | teacher1           | Teacher             | 1        | teacher1@example.com           |
+      | noneditingteacher1 | Non-Editing Teacher | 1        | noneditingteacher1@example.com |
+      | student1           | Student             | 1        | student1@example.com           |
     And the following "courses" exist:
       | fullname | shortname | format | numsections |
       | Course 1 | C1        | topics | 2           |
     And the following "course enrolments" exist:
-      | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
-      | student1 | C1     | student        |
+      | user               | course | role           |
+      | teacher1           | C1     | editingteacher |
+      | noneditingteacher1 | C1     | teacher        |
+      | student1           | C1     | student        |
     And the following "activities" exist:
       | activity | course | section | idnumber | name                 | intro                       | id_visible |
       | assign   | C1     | 1       | 1        | Test assignment name | Test assignment description | 1          |
@@ -53,6 +55,9 @@ Feature: Toggle activities visibility from the course page
     And the field "Availability" matches value "Hide on course page"
     And I press "Save and return to course"
     And "Test forum name" activity should be hidden
+    # Non-editing teacher should see this activity.
+    And I am on the "Course 1" course page logged in as noneditingteacher1
+    And I should see "Test forum name" in the "region-main" "region"
     # Student should not see this activity.
     And I am on the "Course 1" course page logged in as student1
     And I should not see "Test forum name"
@@ -115,12 +120,12 @@ Feature: Toggle activities visibility from the course page
     And "Test assignment name" activity should be available but hidden from course page
     And I turn editing mode off
     And "Test assignment name" activity should be available but hidden from course page
-    And I log out
+    # Non-editing teacher will see the module on the course page:
+    And I am on the "Course 1" course page logged in as noneditingteacher1
+    And I should see "Test assignment name" in the "region-main" "region"
     # Student will not see the module on the course page but can access it from other reports and blocks:
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     And "Test assignment name" activity should be hidden
     And I click on "Test assignment name" "link" in the "Recent activity" "block"
     And I should see "Test assignment name"
     And I should see "Submission status"
-    And I log out
