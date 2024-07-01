@@ -84,8 +84,6 @@ class framework extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
-        global $DB;
-
         $frameworkalias = $this->get_table_alias('competency_framework');
         $contextalias = $this->get_table_alias('context');
 
@@ -100,10 +98,6 @@ class framework extends base {
             ->set_is_sortable(true);
 
         // Description.
-        $descriptionfieldsql = "{$frameworkalias}.description";
-        if ($DB->get_dbfamily() === 'oracle') {
-            $descriptionfieldsql = $DB->sql_order_by_text($descriptionfieldsql, 1024);
-        }
         $columns[] = (new column(
             'description',
             new lang_string('description'),
@@ -112,9 +106,9 @@ class framework extends base {
             ->add_joins($this->get_joins())
             ->add_join($this->get_context_join())
             ->set_type(column::TYPE_LONGTEXT)
-            ->add_field($descriptionfieldsql, 'description')
-            ->add_field("{$frameworkalias}.descriptionformat")
+            ->add_fields("{$frameworkalias}.description, {$frameworkalias}.descriptionformat")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
+            ->set_is_sortable(true)
             ->add_callback(static function(?string $description, stdClass $framework): string {
                 if ($description === null) {
                     return '';

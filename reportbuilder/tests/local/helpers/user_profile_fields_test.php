@@ -130,7 +130,7 @@ final class user_profile_fields_test extends core_reportbuilder_testcase {
             true,
             true,
             true,
-            false,
+            true,
         ], array_map(
             fn(column $column): bool => $column->get_is_sortable(),
             $columns,

@@ -40,7 +40,7 @@ class groupconcatdistinct extends groupconcat {
     }
 
     /**
-     * This aggregation can be performed on all non-timestamp columns in MySQL, Postgres and Oracle only
+     * This aggregation can be performed on all non-timestamp columns in supported DBs
      *
      * @param int $columntype
      * @return bool
@@ -51,7 +51,6 @@ class groupconcatdistinct extends groupconcat {
         $dbsupportedtype = in_array($DB->get_dbfamily(), [
             'mysql',
             'postgres',
-            'oracle',
         ]);
 
         return $dbsupportedtype && parent::compatible($columntype);

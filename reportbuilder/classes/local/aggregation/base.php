@@ -91,8 +91,8 @@ abstract class base {
     ): string {
         global $DB;
 
-        // We need to ensure all values are char.
-        $sqlfieldrequirescast = in_array($DB->get_dbfamily(), ['mssql', 'oracle', 'postgres']);
+        // We need to ensure all values are char in supported DBs.
+        $sqlfieldrequirescast = in_array($DB->get_dbfamily(), ['mssql', 'postgres']);
 
         $concatfields = [];
         foreach ($sqlfields as $sqlfield) {

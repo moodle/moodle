@@ -83,8 +83,6 @@ class role extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
-        global $DB;
-
         $contextalias = $this->get_table_alias('context');
         $rolealias = $this->get_table_alias('role');
 
@@ -97,9 +95,9 @@ class role extends base {
             ->add_joins($this->get_joins())
             ->add_fields("{$rolealias}.name, {$rolealias}.shortname, {$rolealias}.id, {$contextalias}.id AS contextid")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
-            // The sorting is on name, unless empty (determined by single space - thanks Oracle) then we use shortname.
+            // The sorting is on name, unless empty then we use shortname.
             ->set_is_sortable(true, [
-                "CASE WHEN " . $DB->sql_concat("{$rolealias}.name", "' '") . " = ' '
+                "CASE WHEN COALESCE({$rolealias}.name, '') = ''
                       THEN {$rolealias}.shortname
                       ELSE {$rolealias}.name
                  END",
@@ -123,9 +121,9 @@ class role extends base {
         ))
             ->add_joins($this->get_joins())
             ->add_fields("{$rolealias}.name, {$rolealias}.shortname")
-            // The sorting is on name, unless empty (determined by single space - thanks Oracle) then we use shortname.
+            // The sorting is on name, unless empty then we use shortname.
             ->set_is_sortable(true, [
-                "CASE WHEN " . $DB->sql_concat("{$rolealias}.name", "' '") . " = ' '
+                "CASE WHEN COALESCE({$rolealias}.name, '') = ''
                       THEN {$rolealias}.shortname
                       ELSE {$rolealias}.name
                  END",
@@ -161,10 +159,6 @@ class role extends base {
             ->set_is_sortable(true);
 
         // Description column.
-        $descriptionfieldsql = "{$rolealias}.description";
-        if ($DB->get_dbfamily() === 'oracle') {
-            $descriptionfieldsql = $DB->sql_order_by_text($descriptionfieldsql, 1024);
-        }
         $columns[] = (new column(
             'description',
             new lang_string('description'),
@@ -172,8 +166,8 @@ class role extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_LONGTEXT)
-            ->add_field($descriptionfieldsql, 'description')
-            ->add_field("{$rolealias}.shortname")
+            ->add_fields("{$rolealias}.description, {$rolealias}.shortname")
+            ->set_is_sortable(true)
             ->add_callback(fn(?string $description, stdClass $role) => match ($description) {
                 null => '',
                 default => role_get_description($role),

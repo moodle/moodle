@@ -71,12 +71,6 @@ class countdistinct extends base {
      * @return string
      */
     public static function get_field_sql(string $field, int $columntype): string {
-        global $DB;
-
-        if ($columntype === column::TYPE_LONGTEXT && $DB->get_dbfamily() === 'oracle') {
-            $field = $DB->sql_compare_text($field, 255);
-        }
-
         return "COUNT(DISTINCT {$field})";
     }
 
