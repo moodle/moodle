@@ -1,0 +1,8 @@
+issueNumber: MDL-75022
+notes:
+  core_backup:
+    - message: >-
+        Final deprecation and removal of core_backup\copy\copy in
+        backup/util/ui/classes/copy.php. Please use copy_helper from
+        backup/util/helper/copy_helper.class.php instead.
+      type: removed
