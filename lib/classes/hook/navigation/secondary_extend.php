@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace core\hook\navigation;
+use core\hook\stoppable_trait;
 use core\navigation\views\secondary;
 
 /**
@@ -28,6 +29,7 @@ use core\navigation\views\secondary;
 #[\core\attribute\label('Allows plugins to insert nodes into site secondary navigation')]
 #[\core\attribute\tags('navigation')]
 final class secondary_extend {
+    use stoppable_trait;
 
     /**
      * Creates new hook.
