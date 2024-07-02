@@ -101,6 +101,14 @@ Feature: Single section course page
     When I set the field "Edit section name" in the "page-header" "region" to "Custom section name"
     Then "Custom section name" "text" should exist in the ".breadcrumb" "css_element"
 
+  @javascript
+  Scenario: Copy section page permalink URL to clipboard
+    Given I am on the "Course 1 > Section 1" "course > section" page
+    And I turn editing mode on
+    When I choose the "Permalink" item in the "Edit" action menu of the "page-header" "region"
+    And I click on "Copy to clipboard" "link" in the "Permalink" "dialogue"
+    Then I should see "Text copied to clipboard"
+
   Scenario: Blocks are displayed in section page too
     Given I log out
     And the following "blocks" exist:
