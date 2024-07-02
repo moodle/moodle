@@ -17,7 +17,7 @@ Feature: Add the glossary random block when main feature is enabled
 
   Scenario: The glossary random block cannot be added when glossary module is disabled
     Given I navigate to "Plugins > Activity modules > Manage activities" in site administration
-    And I click on "Disable Glossary" "icon" in the "Glossary" "table_row"
+    And I toggle the "Disable Glossary" admin switch "off"
     And I am on "Course 1" course homepage with editing mode on
     When I click on "Add a block" "link"
     Then I should not see "Random glossary entry"

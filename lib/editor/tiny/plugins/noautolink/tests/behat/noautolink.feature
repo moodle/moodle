@@ -7,7 +7,9 @@ Feature: Tiny noautolink
   Background:
     Given I log in as "admin"
     And I navigate to "Plugins > Text editors > TinyMCE editor > General settings" in site administration
-    And I click on "Enable No auto-link" "link"
+    And I toggle the "Enable No auto-link" admin switch "on"
+    When I open my profile in edit mode
+    And I set the field "Description" to "<p>https://moodle.org</p>"
 
   @javascript
   Scenario: Add and remove auto-link prevention to URLs

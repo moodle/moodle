@@ -7,7 +7,7 @@ Feature: Adding and configuring YouTube block
   Background:
     Given I log in as "admin"
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
-    And I click on "Enable YouTube" "icon" in the "YouTube" "table_row"
+    And I toggle the "Enable YouTube" admin switch "on"
 
   @javascript
   Scenario: Category options are not available (except default) in the block settings if the YouTube API key is not set.

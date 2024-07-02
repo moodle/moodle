@@ -303,28 +303,29 @@ abstract class plugin_management_table extends flexible_table implements dynamic
         global $OUTPUT;
 
         $enabled = $row->plugininfo->is_enabled();
-        $params = [
-            'sesskey' => sesskey(),
-            'plugin' => $row->plugininfo->name,
-            'action' => $enabled ? 'disable' : 'enable',
-        ];
-
         if ($enabled) {
-            $icon = $OUTPUT->pix_icon('t/hide', get_string('disableplugin', 'core_admin', $row->plugininfo->displayname));
+            $labelstr = get_string('disableplugin', 'core_admin', $row->plugininfo->displayname);
         } else {
-            $icon = $OUTPUT->pix_icon('t/show', get_string('enableplugin', 'core_admin', $row->plugininfo->displayname));
+            $labelstr = get_string('enableplugin', 'core_admin', $row->plugininfo->displayname);
         }
 
-        return html_writer::link(
-            $this->get_action_url($params),
-            $icon,
-            [
-                'data-toggle-method' => $this->get_toggle_service(),
-                'data-action' => 'togglestate',
-                'data-plugin' => $row->plugin,
-                'data-state' => $enabled ? 1 : 0,
+        $params = [
+            'id' => 'admin-toggle-' . $row->plugininfo->name,
+            'checked' => $enabled,
+            'dataattributes' => [
+                'name' => 'id',
+                'value' => $row->plugininfo->name,
+                'toggle-method' => $this->get_toggle_service(),
+                'action' => 'togglestate',
+                'plugin' => $row->plugin,
+                'state' => $enabled ? 1 : 0,
             ],
-        );
+            'title' => $labelstr,
+            'label' => $labelstr,
+            'labelclasses' => 'sr-only',
+        ];
+
+        return $OUTPUT->render_from_template('core_admin/setting_configtoggle', $params);
     }
 
     protected function col_order(stdClass $row): string {
