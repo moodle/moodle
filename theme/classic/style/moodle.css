@@ -26209,6 +26209,11 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
   font-size: 64px;
 }
 
+img.icon {
+  width: 16px;
+  height: 16px;
+}
+
 .navbar-dark a .icon {
   color: rgba(255, 255, 255, 0.5) !important; /* stylelint-disable-line declaration-no-important */
 }
