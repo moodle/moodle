@@ -101,8 +101,8 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     And I log in as "admin"
     And I am on site homepage
     And I navigate to "Plugins > Activity modules > Assignment > Feedback plugins > Annotate PDF" in site administration
-    And I upload "pix/help.png" file to "" filemanager
-    And I upload "pix/docs.png" file to "" filemanager
+    And I upload "pix/moodlelogo.png" file to "" filemanager
+    And I upload "pix/i/test.png" file to "" filemanager
     And I press "Save changes"
     And I should see "Changes saved"
     And I follow "Test ghostscript path"
