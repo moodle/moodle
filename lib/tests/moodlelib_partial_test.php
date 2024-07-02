@@ -53,10 +53,10 @@ final class moodlelib_partial_test extends \advanced_testcase {
      * @param string $bum The fourth argument.
      */
     public static function example_static_method(
-        $foo,
-        $bar,
-        $baz,
-        $bum
+        string $foo,
+        string $bar,
+        string $baz,
+        string $bum
     ): string {
         return implode('/', [$foo, $bar, $baz, $bum]);
     }
@@ -70,10 +70,10 @@ final class moodlelib_partial_test extends \advanced_testcase {
      * @param string $bum The fourth argument.
      */
     public function example_instance_method(
-        $foo,
-        $bar,
-        $baz,
-        $bum
+        string $foo,
+        string $bar,
+        string $baz,
+        string $bum
     ): string {
         return implode('/', [$foo, $bar, $baz, $bum]);
     }
