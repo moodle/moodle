@@ -1,0 +1,11 @@
+issueNumber: MDL-82210
+notes:
+  theme_boost:
+    - message: >-
+        Upon upgrading Font Awesome from version 4 to 6, the solid family was
+        selected by default. However, FA6 includes additional families such as
+        regular and brands. Support for these families has now been integrated,
+        allowing icons defined with icon_system::FONTAWESOME to use them.
+        Icons can add the FontAwesome family (fa-regular, fa-brands, fa-solid)
+        near the icon name to display it using this styling.
+      type: improved

@@ -35,6 +35,19 @@ class icon_system_fontawesome extends icon_system_font {
      */
     private $map = [];
 
+    /**
+     * @var array $families List of Font Awesome families.
+     */
+    private $families = [
+        'fa-brands',
+        'fa-solid',
+        'fa-regular',
+        'fa-light',
+        'fa-thin',
+        'fa-duotone',
+        'fa-sharp',
+    ];
+
     public function get_core_icon_map() {
         return [
             'core:docs' => 'fa-info-circle',
@@ -473,10 +486,31 @@ class icon_system_fontawesome extends icon_system_font {
                         }
                     }
                 }
+
+                // Add the solid class by default to all icons that have not specific family.
+                foreach ($this->map as $from => $to) {
+                    $this->map[$from] = $this->add_family($to);
+                }
+
                 $cache->set($mapkey, $this->map);
             }
         }
         return $this->map;
+    }
+
+    /**
+     * Add the family to the icon if not present.
+     *
+     * @param string $cssclasses The icon classes.
+     * @return string The icon classes with the family.
+     */
+    protected function add_family(string $cssclasses): string {
+        $family = array_intersect(explode(' ', $cssclasses), $this->families);
+        if (count($family) != 0) {
+            return $cssclasses;
+        }
+
+        return 'fa ' . $cssclasses;
     }
 
     #[\Override]
