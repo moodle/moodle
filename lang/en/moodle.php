@@ -280,7 +280,6 @@ $string['collapsecategory'] = 'Collapse {$a}';
 $string['comebacklater'] = 'Please come back later.';
 $string['commentincontext'] = 'Find this comment in context';
 $string['comments'] = 'Comments';
-$string['commentscount'] = 'Comments ({$a})';
 $string['commentsnotenabled'] = 'Comments feature is not enabled';
 $string['commentsrequirelogin'] = 'You need to log in to view the comments.';
 $string['comparelanguage'] = 'Compare and edit current language';
@@ -2521,4 +2520,5 @@ $string['coursesearch_help'] = 'You can search for multiple words at once and ca
 * -word - don\'t include results containing this word.';
 
 // Deprecated since Moodle 4.5.
+$string['commentscount'] = 'Comments ({$a})';
 $string['datechanged'] = 'Date changed';
