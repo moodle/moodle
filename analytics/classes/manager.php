@@ -778,6 +778,27 @@ class manager {
             } else {
                 $model['enabled'] = clean_param($model['enabled'], PARAM_BOOL);
             }
+
+            // For the core models only, automatically remove references to modules that do not
+            // exist. This allows you to install without error if there are missing plugins.
+            if ($componentname === 'moodle') {
+                $updatedindicators = [];
+                $allmodules = [];
+                foreach ($model['indicators'] as $indicator) {
+                    if (preg_match('~^\\\\mod_([^\\\\]+)\\\\~', $indicator, $matches)) {
+                        if (!$allmodules) {
+                            // The first time, get all modules.
+                            $allmodules = \core\plugin_manager::instance()->get_plugins_of_type('mod');
+                        }
+                        if (!array_key_exists($matches[1], $allmodules)) {
+                            // Module does not exist, so skip indicator.
+                            continue;
+                        }
+                    }
+                    $updatedindicators[] = $indicator;
+                }
+                $model['indicators'] = $updatedindicators;
+            }
         }
 
         static::validate_models_declaration($models);
