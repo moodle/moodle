@@ -1,3 +1,1 @@
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
-	<!ENTITY ns_flows "http://ns.adobe.com/Flows/1.0/">
-]><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -1 16 16" preserveAspectRatio="xMinYMid meet" overflow="visible"><path d="M0 0v14h16V0H0zm5 13H1v-3h4v3zm0-4H1V6h4v3zm0-4H1V2h4v3zm5 8H6v-3h4v3zm0-4H6V6h4v3zm0-4H6V2h4v3zm5 8h-4v-3h4v3zm0-4h-4V6h4v3zm0-4h-4V2h4v3z" fill="#888"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 256V160H224v96H64zm0 64H224v96H64V320zm224 96V320H448v96H288zM448 256H288V160H448v96zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64z"/></svg>

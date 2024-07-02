@@ -1,6 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px" height="16px" viewBox="0 0 16 16" version="1.1" preserveAspectRatio="xMinYMid meet">
-<g id="surface1">
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(60%,60%,60%);fill-opacity:1;" d="M 10.285156 8 C 10.285156 8.15625 10.230469 8.289062 10.117188 8.402344 L 6.117188 12.402344 C 6.003906 12.515625 5.867188 12.570312 5.714844 12.570312 C 5.558594 12.570312 5.425781 12.515625 5.3125 12.402344 C 5.199219 12.289062 5.144531 12.15625 5.144531 12 L 5.144531 4 C 5.144531 3.84375 5.199219 3.710938 5.3125 3.597656 C 5.425781 3.484375 5.558594 3.429688 5.714844 3.429688 C 5.867188 3.429688 6.003906 3.484375 6.117188 3.597656 L 10.117188 7.597656 C 10.230469 7.710938 10.285156 7.84375 10.285156 8 Z M 10.285156 8 "/>
-</g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"/></svg>
