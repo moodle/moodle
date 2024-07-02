@@ -96,6 +96,7 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
     And I press the "back" button in the browser
     And I press the "back" button in the browser
     And I press the "back" button in the browser
+    And I reload the page
     And I should see "Paper is made from trees"
     And I set the following fields to these values:
       | True | 1 |
@@ -117,6 +118,7 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
     And I press "Submit"
     And I should see "Wrong"
     And I press the "back" button in the browser
+    And I reload the page
     And I set the following fields to these values:
       | True | 1 |
     When I press "Submit"
@@ -141,6 +143,7 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
     And I press "Submit"
     And I should see "Correct"
     And I press the "back" button in the browser
+    And I reload the page
     And I set the following fields to these values:
       | False | 1 |
     And I press "Submit"
