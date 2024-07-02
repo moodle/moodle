@@ -37,6 +37,7 @@ Feature: Manage external services tokens
     And "Copy to clipboard" "button" should not exist
 
     # Delete token.
+    And I change the window size to "large"
     And I press "Delete" action in the "Webservice1" report row
     And I should see "Do you really want to delete this web service token for Firstname1 Lastname1 on the service Moodle mobile web service?"
     And I press "Delete"
