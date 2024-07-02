@@ -4,8 +4,7 @@ Feature: I can revert changes after a load
   Background: Apply Starter Moodle to revert it
     Given I log in as "admin"
     And I navigate to "Site admin presets" in site administration
-    And I open the action menu in "Starter" "table_row"
-    And I choose "Review settings and apply" in the open action menu
+    And I press "Review settings and apply" action in the "Starter" report row
     And I should see "Setting changes"
     And I click on "Apply" "button"
     And I click on "Continue" "button"
@@ -32,8 +31,7 @@ Feature: I can revert changes after a load
     And I navigate to "Plugins > Question types > Manage question types" in site administration
     And "Enabled" "icon" should not exist in the "Calculated multichoice" "table_row"
     And I navigate to "Site admin presets" in site administration
-    And I open the action menu in "Starter" "table_row"
-    And I choose "Show version history" in the open action menu
+    And I press "Show version history" action in the "Starter" report row
     When I click on "Restore this version" "link"
     And I navigate to "Advanced features" in site administration
     Then the field "Enable badges" matches value "1"
