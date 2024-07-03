@@ -67,6 +67,11 @@ $string['assign:view'] = 'View assignment';
 $string['assign:viewownsubmissionsummary'] = 'View own submission summary';
 $string['assignfeedback'] = 'Feedback plugin';
 $string['assignfeedbackpluginname'] = 'Feedback plugin';
+$string['assignmentduesoonhtml'] = '<p>Hi {$a->firstname},</p>
+<p>The assignment <strong>{$a->assignmentname}</strong> in course {$a->coursename} is due soon.</p>
+<p><strong>Due: {$a->duedate}</strong></p>
+<p><a href="{$a->url}">Go to activity</a></p>';
+$string['assignmentduesoonsubject'] = 'Due on {$a->duedate}: {$a->assignmentname}';
 $string['assignmentisdue'] = 'Assignment is due';
 $string['assignmentmail'] = '{$a->grader} has posted some feedback on your
 assignment submission for \'{$a->assignment}\'
@@ -375,6 +380,7 @@ $string['maxgrade'] = 'Maximum grade';
 $string['maxgrade'] = 'Maximum Grade';
 $string['maxperpage'] = 'Maximum assignments per page';
 $string['maxperpage_help'] = 'The maximum number of assignments a grader can show in the assignment grading page. This setting is useful in preventing timeouts for courses with a large number of participants.';
+$string['messageprovider:assign_due_soon'] = 'Assignment due soon notification';
 $string['messageprovider:assign_notification'] = 'Assignment notifications';
 $string['modulename'] = 'Assignment';
 $string['modulename_help'] = 'The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback.
@@ -521,6 +527,7 @@ $string['selectlink'] = 'Select...';
 $string['selectuser'] = 'Select {$a}';
 $string['sendlatenotifications'] = 'Notify graders about late submissions';
 $string['sendlatenotifications_help'] = 'If enabled, graders (usually teachers) receive a message whenever a student submits an assignment late. Message methods are configurable.';
+$string['sendnotificationduedatesoon'] = 'Notify user of an approaching assignment due date';
 $string['sendsubmissionreceipts'] = 'Send submission receipt to students';
 $string['sendsubmissionreceipts_help'] = 'This switch enables submission receipts for students. Students will receive a notification every time they successfully submit an assignment.';
 $string['setmarkingallocation'] = 'Set allocated marker';
