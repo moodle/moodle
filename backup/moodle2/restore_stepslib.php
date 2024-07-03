@@ -1629,8 +1629,11 @@ class restore_section_structure_step extends restore_structure_step {
                             $data, true);
                 }
             }
-            $section->component = $data->component ?? null;
-            $section->itemid = $data->itemid ?? null;
+            // Moodle 4.4 implement basic delegated section logic but it is not able to restore
+            // them from a backup. To prevent unexpected retoration errors, all sections with
+            // a component will be restored as a normal section.
+            $section->component = null;
+            $section->itemid = null;
             $newitemid = $DB->insert_record('course_sections', $section);
             $section->id = $newitemid;
 

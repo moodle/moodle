@@ -113,15 +113,6 @@ class restore_stepslib_test extends \advanced_testcase {
         $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course(['numsections' => 2, 'format' => 'topics']);
-        // Section 2 has an existing delegate class.
-        course_update_section(
-            $course,
-            $DB->get_record('course_sections', ['course' => $course->id, 'section' => 2]),
-            [
-                'component' => 'test_component',
-                'itemid' => 1,
-            ]
-        );
 
         $backupid = $this->backup_course($course);
         $newcourseid = $this->restore_replacing_content($backupid);
@@ -132,8 +123,6 @@ class restore_stepslib_test extends \advanced_testcase {
         $this->assertEquals(count($originalsections), count($restoredsections));
 
         $validatefields = ['name', 'summary', 'summaryformat', 'visible', 'component', 'itemid'];
-
-        $this->assertEquals($originalsections[1]->name, $restoredsections[1]->name);
 
         foreach ($validatefields as $field) {
             $this->assertEquals($originalsections[1]->$field, $restoredsections[1]->$field);
