@@ -55,8 +55,8 @@ Feature: Basic use of the Manual grading report
       | quiz     | Quiz 1 | C1     | quiz1    | 1         | tging    |
       | quiz     | Quiz 2 | C1     | quiz2    | 1         | tging    |
     And quiz "Quiz 1" contains the following questions:
-      | question         | page |
-      | Short answer 001 | 1    |
+      | question         | page | displaynumber |
+      | Short answer 001 | 1    | 1a            |
 
   Scenario: Manual grading report without attempts
     When I am on the "Quiz 1" "mod_quiz > Manual grading report" page logged in as "teacher1"
@@ -98,6 +98,7 @@ Feature: Basic use of the Manual grading report
     And I set the field "Mark" to "0.6"
     And I press "Save and show next"
     And I should see "All selected attempts have been graded. Returning to the list of questions."
+    And "Short answer 001" row "Q #" column of "questionstograde" table should contain "1a"
     And "Short answer 001" row "To grade" column of "questionstograde" table should contain "0"
     And "Short answer 001" row "Already graded" column of "questionstograde" table should contain "1"
 

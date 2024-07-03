@@ -113,6 +113,7 @@ function quiz_report_get_significant_questions($quiz) {
         $slotreport->qtype = $slot->qtype;
         $slotreport->length = $slot->length;
         $slotreport->number = $number;
+        $slotreport->displaynumber = $slot->displaynumber ?? $number;
         $number += $slot->length;
         $slotreport->maxmark = $slot->maxmark;
         $slotreport->category = $slot->category;

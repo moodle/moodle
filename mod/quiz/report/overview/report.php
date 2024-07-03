@@ -190,7 +190,7 @@ class quiz_overview_report extends attempts_report {
             if ($options->slotmarks) {
                 foreach ($questions as $slot => $question) {
                     $columns[] = 'qsgrade' . $slot;
-                    $header = get_string('qbrief', 'quiz', $question->number);
+                    $header = get_string('qbrief', 'quiz', $question->displaynumber);
                     if (!$table->is_downloading()) {
                         $header .= '<br />';
                     } else {
