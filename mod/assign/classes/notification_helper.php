@@ -248,7 +248,7 @@ class notification_helper {
             AND component = :component
             AND eventtype = :eventtype";
 
-        return $DB->count_records_select('notifications', $sql, [
+        return $DB->record_exists_select('notifications', $sql, [
             'userid' => $userid,
             'match' => $match,
             'component' => 'mod_assign',
