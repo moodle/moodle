@@ -2293,7 +2293,8 @@ function create_course($data, $editoroptions = NULL) {
         if (!empty($provider)) {
             // Prepare the communication api data.
             $courseimage = course_get_courseimage($course);
-            $communicationroomname = !empty($data->communicationroomname) ? $data->communicationroomname : $data->fullname;
+            $roomnameidentifier = $provider . 'roomname';
+            $communicationroomname = !empty($data->$roomnameidentifier) ? $data->$roomnameidentifier : $data->fullname;
 
             // Communication api call.
             $communication = \core_communication\api::load_by_instance(
@@ -2455,8 +2456,9 @@ function update_course($data, $editoroptions = NULL) {
         $courseimage = course_get_courseimage($data);
 
         // This nasty logic is here because of hide course doesn't pass anything in the data object.
-        if (!empty($data->communicationroomname)) {
-            $communicationroomname = $data->communicationroomname;
+        $roomnameidentifier = $provider . 'roomname';
+        if (!empty($data->$roomnameidentifier)) {
+            $communicationroomname = $data->$roomnameidentifier;
         } else {
             $communicationroomname = $data->fullname ?? $oldcourse->fullname;
         }
