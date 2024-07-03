@@ -102,6 +102,9 @@ class get_enrolled_users_for_search_widget extends external_api {
             $guiuser = $userdata->user;
             $user = new \stdClass();
             $user->fullname = fullname($guiuser);
+            foreach (\core_user\fields::get_name_fields() as $field) {
+                $user->$field = $guiuser->$field ?? null;
+            }
             $user->id = $guiuser->id;
             $user->url = (new moodle_url($actionbaseurl, ['id' => $courseid, 'userid' => $guiuser->id]))->out(false);
             $userpicture = new \user_picture($guiuser);
