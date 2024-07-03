@@ -264,13 +264,13 @@ class api {
         $mform->insertElementBefore(
             $mform->createElement(
                 'text',
-                'communicationroomname',
+                $provider . 'roomname',
                 get_string('communicationroomname', 'communication'),
                 'maxlength="100" size="20"'
             ),
             'addcommunicationoptionshere'
         );
-        $mform->setType('communicationroomname', PARAM_TEXT);
+        $mform->setType($provider . 'roomname', PARAM_TEXT);
 
         $mform->insertElementBefore(
             $mform->createElement(
@@ -375,6 +375,9 @@ class api {
      * @return string
      */
     public function get_room_name(): string {
+        if (!$this->communication) {
+            return '';
+        }
         return $this->communication->get_room_name();
     }
 
@@ -386,7 +389,8 @@ class api {
     public function set_data(\stdClass $instance): void {
         if (!empty($instance->id) && $this->communication) {
             $instance->selectedcommunication = $this->communication->get_provider();
-            $instance->communicationroomname = $this->communication->get_room_name();
+            $roomnameidentifier = $this->get_provider() . 'roomname';
+            $instance->$roomnameidentifier = $this->communication->get_room_name();
 
             $this->communication->get_form_provider()->set_form_data($instance);
         }
