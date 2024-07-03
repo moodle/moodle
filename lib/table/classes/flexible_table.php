@@ -41,53 +41,89 @@ require_once("{$CFG->libdir}/tablelib.php");
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class flexible_table {
-    public $uniqueid        = null;
-    public $attributes      = [];
-    public $headers         = [];
+    public $attributes = [];
+    public $baseurl = null;
 
-    /**
-     * @var string A column which should be considered as a header column.
-     */
-    protected $headercolumn = null;
+    /** @var string The caption of table */
+    public $caption;
 
-    /**
-     * @var string For create header with help icon.
-     */
-    private $helpforheaders = [];
-    public $columns         = [];
-    public $column_style    = [];
-    public $column_class    = [];
+    /** @var array The caption attributes of table */
+    public $captionattributes;
+
+    public $column_class = [];
+    public $column_nosort = ['userpic'];
+    public $column_style = [];
     public $column_suppress = [];
-    public $column_nosort   = ['userpic'];
-    private $column_textsort = [];
+    public $columns = [];
+    public $currentrow = 0;
+    public $currpage = 0;
 
     /**
-     * @var array The sticky attribute of each table column.
+     * Which download plugin to use. Default '' means none - print html table with paging.
+     * Property set by is_downloading which typically passes in cleaned data from $
+     * @var string
      */
-    protected $columnsticky = [];
+    public $download = '';
+
+    /**
+     * Whether data is downloadable from table. Determines whether to display download buttons. Set by method downloadable().
+     * @var bool
+     */
+    public $downloadable = false;
+
+    /** @var dataformat_export_format */
+    public $exportclass = null;
+
+    public $headers = [];
+    public $is_collapsible = false;
+    public $is_sortable = false;
+    public $maxsortkeys = 2;
+    public $pagesize = 30;
+    public $request = [];
 
     /** @var bool Stores if setup has already been called on this flixible table. */
-    public $setup           = false;
-    public $baseurl         = null;
-    public $request         = [];
+    public $setup = false;
 
-    /** @var string[] Columns that are expected to contain a users fullname.  */
-    protected $userfullnamecolumns = ['fullname'];
+    /** @var int[] Array of positions in which to display download controls. */
+    public $showdownloadbuttonsat = [TABLE_P_TOP];
 
-    /** @var array[] Attributes for each column  */
-    private $columnsattributes = [];
+    public $sort_default_column = null;
+    public $sort_default_order = SORT_ASC;
+
+    /** @var bool Has start output been called yet? */
+    public $started_output = false;
+
+    public $totalrows = 0;
+    public $uniqueid = null;
+    public $use_initials = false;
+    public $use_pages = false;
+
+    /** @var string Key of field returned by db query that is the id field of the user table or equivalent. */
+    public $useridfield = 'id';
+
+    /** @var bool Whether to make the table to be scrolled horizontally with ease. Make table responsive across all viewports. */
+    public bool $responsive = true;
+
+    /** @var array The sticky attribute of each table column. */
+    protected $columnsticky = [];
+
+    /** @var string $filename */
+    protected $filename;
 
     /**
-     * @var bool Whether or not to store table properties in the user_preferences table.
+     * The currently applied filerset. This is required for dynamic tables, but can be used by other tables too if desired.
+     * @var filterset
      */
-    private $persistent = false;
-    public $is_collapsible = false;
-    public $is_sortable    = false;
+    protected $filterset = null;
 
-    /**
-     * @var array The fields to sort.
-     */
-    protected $sortdata;
+    /** @var string A column which should be considered as a header column. */
+    protected $headercolumn = null;
+
+    /** @var string For create header with help icon. */
+    private $helpforheaders = [];
+
+    /** @var array List of hidden columns. */
+    protected $hiddencolumns;
 
     /** @var string The manually set first name initial preference */
     protected $ifirst;
@@ -95,84 +131,31 @@ class flexible_table {
     /** @var string The manually set last name initial preference */
     protected $ilast;
 
-    public $use_pages      = false;
-    public $use_initials   = false;
-
-    public $maxsortkeys = 2;
-    public $pagesize    = 30;
-    public $currpage    = 0;
-    public $totalrows   = 0;
-    public $currentrow  = 0;
-    public $sort_default_column = null;
-    public $sort_default_order  = SORT_ASC;
-
-    /** @var int The defeult per page size for the table. */
-    private $defaultperpage = 30;
-
-    /**
-     * @var array Array of positions in which to display download controls.
-     */
-    public $showdownloadbuttonsat = [TABLE_P_TOP];
-
-    /**
-     * @var string Key of field returned by db query that is the id field of the
-     * user table or equivalent.
-     */
-    public $useridfield = 'id';
-
-    /**
-     * @var string which download plugin to use. Default '' means none - print
-     * html table with paging. Property set by is_downloading which typically
-     * passes in cleaned data from $
-     */
-    public $download  = '';
-
-    /**
-     * @var bool whether data is downloadable from table. Determines whether
-     * to display download buttons. Set by method downloadable().
-     */
-    public $downloadable = false;
-
-    /**
-     * @var bool Has start output been called yet?
-     */
-    public $started_output = false;
-
-    /** @var dataformat_export_format */
-    public $exportclass = null;
-
-    /**
-     * @var array For storing user-customised table properties in the user_preferences db table.
-     */
-    private $prefs = [];
-
-    /** @var string $sheettitle */
-    protected $sheettitle;
-
-    /** @var string $filename */
-    protected $filename;
-
-    /** @var array $hiddencolumns List of hidden columns. */
-    protected $hiddencolumns;
-
-    /** @var bool $resetting Whether the table preferences is resetting. */
+    /** @var bool Whether the table preferences is resetting. */
     protected $resetting;
 
-    /**
-     * @var string $caption The caption of table
-     */
-    public $caption;
+    /** @var string */
+    protected $sheettitle;
 
-    /**
-     * @var array $captionattributes The caption attributes of table
-     */
-    public $captionattributes;
+    /** @var array The fields to sort. */
+    protected $sortdata;
 
-    /**
-     * @var filterset The currently applied filerset
-     * This is required for dynamic tables, but can be used by other tables too if desired.
-     */
-    protected $filterset = null;
+    /** @var string[] Columns that are expected to contain a users fullname.  */
+    protected $userfullnamecolumns = ['fullname'];
+
+    private $column_textsort = [];
+
+    /** @var array[] Attributes for each column  */
+    private $columnsattributes = [];
+
+    /** @var int The default per page size for the table. */
+    private $defaultperpage = 30;
+
+    /** @var bool Whether to store table properties in the user_preferences table. */
+    private $persistent = false;
+
+    /** @var array For storing user-customised table properties in the user_preferences db table. */
+    private $prefs = [];
 
     /**
      * Constructor
@@ -1222,7 +1205,9 @@ class flexible_table {
 
             echo html_writer::end_tag('tbody');
             echo html_writer::end_tag('table');
-            echo html_writer::end_tag('div');
+            if ($this->responsive) {
+                echo html_writer::end_tag('div');
+            }
             $this->wrap_html_finish();
 
             // Paging bar.
@@ -1880,7 +1865,9 @@ class flexible_table {
         $this->wrap_html_start();
         // Start of main data table.
 
-        echo html_writer::start_tag('div', ['class' => 'no-overflow']);
+        if ($this->responsive) {
+            echo html_writer::start_tag('div', ['class' => 'no-overflow']);
+        }
         echo html_writer::start_tag('table', $this->attributes) . $this->render_caption();
     }
 

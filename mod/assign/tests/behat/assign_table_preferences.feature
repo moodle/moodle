@@ -48,7 +48,9 @@ Feature: In an assignment, teachers can use table preferences.
     And I am on the "Test assignment" Activity page
     And I follow "View all submissions"
     And I click on "T" "link" in the ".lastinitial" "css_element"
+    And I change window size to "large"
     And I click on "Grade" "link" in the "Student Two" "table_row"
+    And I change window size to "medium"
     And I should see "This is a submission for Student Two"
     And I should see "1 of 1"
     And I follow "Reset table preferences"

@@ -34764,6 +34764,12 @@ img.userpicture {
   background-color: #fff;
 }
 
+.path-mod-assign .gradingtable thead tr {
+  position: sticky;
+  top: 50px;
+  z-index: 1;
+}
+
 /**
  * Mod LTI.
  */

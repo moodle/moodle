@@ -35,7 +35,9 @@ Feature: Submissions are unlocked when a new attempt is given
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I follow "View all submissions"
+    And I change window size to "large"
     And I open the action menu in "Student 1" "table_row"
+    And I change window size to "medium"
     And I follow "Prevent submission changes"
     And I should see "Submission changes not allowed"
     And I click on "Quick grading" "checkbox"
@@ -62,10 +64,14 @@ Feature: Submissions are unlocked when a new attempt is given
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I follow "View all submissions"
+    And I change window size to "large"
     When I open the action menu in "Student 1" "table_row"
+    And I change window size to "medium"
     And I follow "Prevent submission changes"
     Then I should see "Submission changes not allowed"
+    And I change window size to "large"
     And I open the action menu in "Student 1" "table_row"
+    And I change window size to "medium"
     And I follow "Allow another attempt"
     And I should see "Reopened"
     And I should not see "Submission changes not allowed"

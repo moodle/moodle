@@ -33,7 +33,9 @@ Feature: Ensure that a comment remains visible if its popup menu is open
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I follow "View all submissions"
+    And I change window size to "large"
     And I click on "Grade" "link" in the "Submitted for grading" "table_row"
+    And I change window size to "medium"
     And I wait for the complete PDF to load
 
   Scenario: Add an empty comment and open its menu
