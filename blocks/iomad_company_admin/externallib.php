@@ -2393,10 +2393,12 @@ class block_iomad_company_admin_external extends external_api {
                 // Do we have a default access period?
                 if (empty($enrolment['timeend'])) {
                     if (!empty($CFG->commerce_admin_default_license_access_length)) {
-                        $enrolment['timeend'] = $runtime + $CFG->commerce_admin_default_license_access_length;
+                        $enrolment['timeend'] = $runtime + $CFG->commerce_admin_default_license_access_length * 24 *60 * 60;
+                        $validlength = $CFG->commerce_admin_default_license_access_length;
                     } else {
                         // Set it to 30.
                         $enrolment['timeend'] = $runtime + 30 * 24 * 60 * 60;
+                        $validlength = 30;
                     }
                 }
 
@@ -2404,15 +2406,15 @@ class block_iomad_company_admin_external extends external_api {
                 if (!empty($CFG->commerce_admin_default_license_shelf_life)) {
                     $shelflife = $enrolment['timestart'] + $CFG->commerce_admin_default_license_shelf_life * 24 * 60 * 60;
                 } else {
-                    $shelflife =  $enrolment['timeend'] - $enrolment['timestart'];
+                    $shelflife =  $enrolment['timeend'];
                 }
 
                 // Create the license record.
                 $licenserec = array('name' => $enrolment['userid'] . '-' . $enrolment['courseid'] . '-' . $enrolment['timestart'],
                                     'allocation' => $enrolment['quantity'],
-                                    'validlength' => $shelflife,
+                                    'validlength' => $validlength,
                                     'startdate' => $enrolment['timestart'],
-                                    'expirydate' => $enrolment['timeend'],
+                                    'expirydate' => $shelflife,
                                     'companyid' => $company->id,
                                     'instant' => true);
                 $licenseid = $DB->insert_record('companylicense', $licenserec);
