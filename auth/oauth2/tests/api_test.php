@@ -137,6 +137,7 @@ class api_test extends \advanced_testcase {
         $issuer = \core\oauth2\api::create_standard_issuer('google');
 
         $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
 
         $info = [];
         $info['username'] = 'banana';
@@ -167,6 +168,30 @@ class api_test extends \advanced_testcase {
         $match = \auth_oauth2\api::match_username_to_user('apple', $issuer);
 
         $this->assertEquals($newuser->id, $match->get('userid'));
+    }
+
+    /**
+     * Test that we cannot deleted a linked login for another user
+     */
+    public function test_delete_linked_login_other_user(): void {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $issuer = \core\oauth2\api::create_standard_issuer('google');
+
+        $user = $this->getDataGenerator()->create_user();
+
+        api::link_login([
+            'username' => 'banana',
+            'email' => 'banana@example.com',
+        ], $issuer, $user->id);
+
+        /** @var linked_login $linkedlogin */
+        $linkedlogin = api::get_linked_logins($user->id)[0];
+
+        // We are logged in as a different user, so cannot delete this.
+        $this->expectException(\dml_missing_record_exception::class);
+        api::delete_linked_login($linkedlogin->get('id'));
     }
 
     /**
