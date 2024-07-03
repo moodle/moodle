@@ -890,11 +890,13 @@ class quiz_statistics_report extends report_base {
         $questions = quiz_report_get_significant_questions($quiz);
         $questiondata = [];
         foreach ($questions as $qs => $question) {
+            $displaynumber = $question->displaynumber;
             if ($question->qtype === 'random') {
                 $question->id = 0;
                 $question->name = get_string('random', 'quiz');
                 $question->questiontext = get_string('random', 'quiz');
                 $question->parenttype = 'random';
+                $question->number = $displaynumber;
                 $questiondata[$question->slot] = $question;
             } else if ($question->qtype === 'missingtype') {
                 $question->id = is_numeric($question->id) ? (int) $question->id : 0;
@@ -905,7 +907,7 @@ class quiz_statistics_report extends report_base {
                 $q = question_bank::load_question_data($question->id);
                 $q->maxmark = $question->maxmark;
                 $q->slot = $question->slot;
-                $q->number = $question->number;
+                $q->number = $displaynumber;
                 $q->parenttype = null;
                 $questiondata[$question->slot] = $q;
             }

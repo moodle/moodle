@@ -158,15 +158,15 @@ class quiz_responses_report extends attempts_report {
             foreach ($questions as $id => $question) {
                 if ($options->showqtext) {
                     $columns[] = 'question' . $id;
-                    $headers[] = get_string('questionx', 'question', $question->number);
+                    $headers[] = get_string('questionx', 'question', $question->displaynumber);
                 }
                 if ($options->showresponses) {
                     $columns[] = 'response' . $id;
-                    $headers[] = get_string('responsex', 'quiz_responses', $question->number);
+                    $headers[] = get_string('responsex', 'quiz_responses', $question->displaynumber);
                 }
                 if ($options->showright) {
                     $columns[] = 'right' . $id;
-                    $headers[] = get_string('rightanswerx', 'quiz_responses', $question->number);
+                    $headers[] = get_string('rightanswerx', 'quiz_responses', $question->displaynumber);
                 }
             }
 
