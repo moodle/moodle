@@ -102,6 +102,9 @@ class get_enrolled_users_for_selector extends external_api {
             $userforselector = new \stdClass();
             $userforselector->id = $userdata->user->id;
             $userforselector->fullname = fullname($userdata->user);
+            foreach (\core_user\fields::get_name_fields() as $field) {
+                $userforselector->$field = $userdata->user->$field ?? null;
+            }
             $userpicture = new user_picture($userdata->user);
             $userpicture->size = 1;
             $userforselector->profileimageurl = $userpicture->get_url($PAGE)->out(false);
