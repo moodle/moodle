@@ -295,4 +295,34 @@ final class helper_test extends manage_category_test_base {
             $this->assertCount($count + 1, $categorycontext);
         }
     }
+
+    /**
+     * Test that get_categories_for_contexts function returns the correct question count number.
+     *
+     * @covers ::get_categories_for_contexts
+     */
+    public function test_question_category_question_count(): void {
+        global $DB;
+        // Create quiz.
+        $quiz = $this->quiz;
+        // Create category 1 and one hidden question.
+        $qcat = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
+        $q1 = $this->qgenerator->create_question('shortanswer', null, ['category' => $qcat->id]);
+        $DB->set_field('question_versions', 'status', 'hidden', ['questionid' => $q1->id]);
+
+        $contexts = new \core_question\local\bank\question_edit_contexts(\context_module::instance($quiz->cmid));
+        $contexts = $contexts->having_cap('moodle/question:add');
+        foreach ($contexts as $context) {
+            $contextslist[] = $context->id;
+        }
+        $contextslist = join(', ', $contextslist);
+        // Verify we have 0 question in category since it is hidden.
+        $categorycontexts = helper::get_categories_for_contexts($contextslist);
+        $this->assertEquals(0, reset($categorycontexts)->questioncount);
+        // Add an extra question.
+        $this->qgenerator->create_question('shortanswer', null, ['category' => $qcat->id]);
+        $categorycontexts = helper::get_categories_for_contexts($contextslist);
+        // Verify we have 1 question in category.
+        $this->assertEquals(1, reset($categorycontexts)->questioncount);
+    }
 }
