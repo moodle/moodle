@@ -549,7 +549,7 @@ M.course_dndupload = {
         resel.div.appendChild(resel.a);
 
         resel.icon.src = M.util.image_url('i/ajaxloader');
-        resel.icon.className = 'activityicon iconlarge';
+        resel.icon.className = 'activityicon';
         resel.a.appendChild(resel.icon);
 
         resel.namespan.className = 'instancename';

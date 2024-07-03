@@ -1,0 +1,7 @@
+issueNumber: MDL-74251
+notes:
+  theme:
+    - message: >-
+        Removed all references to iconhelp, icon-pre, icon-post, iconlarge, and
+        iconsort classes
+      type: removed

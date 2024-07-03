@@ -398,7 +398,7 @@ case 'plugins':
         $aurl->params(array('savepath'=>$savepath, 'action' => 'list', 'repo_id' => $info->id, 'draftpath'=>$draftpath));
 
         echo '<li>';
-        echo html_writer::empty_tag('img', array('src'=>$info->icon, 'alt'=>$info->name, 'class'=>'icon icon-pre'));
+        echo html_writer::empty_tag('img', ['src' => $info->icon, 'alt' => $info->name, 'class' => 'icon']);
         echo html_writer::link($aurl, s($info->name));
         echo '</li>';
     }
