@@ -42,8 +42,8 @@ export default class Component extends DndSectionItem {
         this.course = descriptor.course;
         this.fullregion = descriptor.fullregion;
 
-        // Prevent topic zero from being draggable.
-        if (this.section.number > 0) {
+        // Prevent topic zero and delegated sections from being draggable.
+        if (this.section.number > 0 && this.section.component === null) {
             this.getDraggableData = this._getDraggableData;
         }
     }

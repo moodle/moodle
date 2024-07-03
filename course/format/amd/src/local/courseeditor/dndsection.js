@@ -117,13 +117,17 @@ export default class extends BaseComponent {
         }
         // We accept any course module unless it can form a subsection loop.
         if (dropdata?.type === 'cm') {
-            if (this.section?.component && dropdata?.delegatesection === true) {
+            if (this.section?.component && dropdata?.hasdelegatedsection === true) {
                 return false;
             }
             return true;
         }
-        // We accept any section but yourself and the next one.
         if (dropdata?.type === 'section') {
+            // Sections controlled by a plugin cannot accept sections.
+            if (this.section.component !== null) {
+                return false;
+            }
+            // We accept any section but yourself and the next one.
             return dropdata?.id != this.id && dropdata?.number != this.section.number + 1;
         }
         return false;

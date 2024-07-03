@@ -172,7 +172,7 @@ export default class Component extends DndCmItem {
         }
         // Check if the completion value has changed.
         const completionElement = this.getElement(this.selectors.CM_COMPLETION);
-        if (completionElement.dataset.value == element.completionstate) {
+        if (!completionElement || completionElement.dataset.value == element.completionstate) {
             return;
         }
 

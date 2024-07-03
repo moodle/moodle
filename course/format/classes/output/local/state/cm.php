@@ -68,6 +68,7 @@ class cm implements renderable {
         $section = $this->section;
         $cm = $this->cm;
         $course = $format->get_course();
+        $delegatedsectioninfo = $cm->get_delegated_section_info();
 
         $data = (object)[
             'id' => $cm->id,
@@ -85,8 +86,12 @@ class cm implements renderable {
             'module' => $cm->modname,
             'plugin' => 'mod_' . $cm->modname,
             // Activities with delegate section has some restriction to prevent structure loops.
-            'delegatesection' => sectiondelegate::has_delegate_class('mod_'.$cm->modname),
+            'hasdelegatedsection' => !empty($delegatedsectioninfo),
         ];
+
+        if (!empty($delegatedsectioninfo)) {
+            $data->delegatesectionid = $delegatedsectioninfo->id;
+        }
 
         // Check the user access type to this cm.
         $info = new info_module($cm);

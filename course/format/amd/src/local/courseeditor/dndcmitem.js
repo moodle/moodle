@@ -106,7 +106,7 @@ export default class extends BaseComponent {
             return false;
         }
         // Prevent delegated sections loops.
-        if (dropdata?.delegatesection === true) {
+        if (dropdata?.hasdelegatedsection === true) {
             const mycminfo = this.reactive.get('cm', this.id);
             const mysection = this.reactive.get('section', mycminfo.sectionid);
             if (mysection?.component !== null) {
