@@ -1,0 +1,5 @@
+issueNumber: MDL-81771
+notes:
+  core_report:
+    - message: Report has been added to subsystem components list
+      type: improved

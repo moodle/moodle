@@ -32,7 +32,7 @@ final class component_test extends advanced_testcase {
      * this is defined here to annoy devs that try to add more without any thinking,
      * always verify that it does not collide with any existing add-on modules and subplugins!!!
      */
-    const SUBSYSTEMCOUNT = 77;
+    const SUBSYSTEMCOUNT = 78;
 
     public function test_get_core_subsystems(): void {
         global $CFG;

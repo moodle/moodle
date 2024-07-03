@@ -1,0 +1,5 @@
+issueNumber: MDL-81771
+notes:
+  core_report:
+    - message: New coursestructure output general class has been created
+      type: improved
