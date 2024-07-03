@@ -59,7 +59,18 @@ class cohorts extends system_report {
 
         // Any columns required by actions should be defined here to ensure they're always available.
         $this->add_base_fields("{$entitymainalias}.id, {$entitymainalias}.contextid, {$entitymainalias}.visible, " .
-            "{$entitymainalias}.component");
+            "{$entitymainalias}.component, {$entitymainalias}.name");
+
+        $this->set_checkbox_toggleall(static function(stdClass $cohort): ?array {
+            if (!has_capability('moodle/cohort:manage', context::instance_by_id($cohort->contextid))) {
+                return null;
+            }
+
+            return [
+                $cohort->id,
+                get_string('selectitem', 'moodle', $cohort->name),
+            ];
+        });
 
         // Check if report needs to show a specific category.
         $contextid = $this->get_parameter('contextid', 0, PARAM_INT);

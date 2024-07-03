@@ -47,6 +47,7 @@ $string['currentusers'] = 'Current users';
 $string['currentusersmatching'] = 'Current users matching';
 $string['defaultcontext'] = 'Default context';
 $string['delcohort'] = 'Delete cohort';
+$string['delcohortsconfirm'] = 'Do you really want to delete the selected cohorts?';
 $string['delconfirm'] = 'Do you really want to delete cohort \'{$a}\'?';
 $string['description'] = 'Description';
 $string['displayedrows'] = '{$a->displayed} rows displayed out of {$a->total}.';

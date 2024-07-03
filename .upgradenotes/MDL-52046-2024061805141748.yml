@@ -1,0 +1,8 @@
+issueNumber: MDL-52046
+notes:
+  core_reportbuilder:
+    - message: >-
+        The return type of the `set_checkbox_toggleall` callback, defined by
+        system reports, can now be null. Use if the checkbox should not be shown
+        for the row.
+      type: improved
