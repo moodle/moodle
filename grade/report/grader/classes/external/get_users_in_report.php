@@ -95,6 +95,9 @@ class get_users_in_report extends external_api {
             $userforselector = new \stdClass();
             $userforselector->id = $user->id;
             $userforselector->fullname = fullname($user);
+            foreach (\core_user\fields::get_name_fields() as $field) {
+                $userforselector->$field = $user->$field ?? null;
+            }
             $userpicture = new user_picture($user);
             $userpicture->size = 1;
             $userforselector->profileimageurl = $userpicture->get_url($PAGE)->out(false);
