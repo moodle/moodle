@@ -39,6 +39,9 @@ if ($hassiteconfig) {
         $temp->add(new admin_setting_configtext('defaultcity', new lang_string('defaultcity', 'core_admin'),
             new lang_string('defaultcity_help', 'core_admin'), ''));
 
+        $temp->add(new admin_setting_countrycodes('allcountrycodes', new lang_string('allcountrycodes', 'core_admin'),
+            new lang_string('configallcountrycodes', 'core_admin')));
+
         $temp->add(new admin_setting_heading('iplookup', new lang_string('iplookup', 'core_admin'),
             new lang_string('iplookupinfo', 'core_admin')));
 
@@ -67,9 +70,6 @@ if ($hassiteconfig) {
 
         $temp->add(new admin_setting_configtext('googlemapkey3', new lang_string('googlemapkey3', 'core_admin'),
             new lang_string('googlemapkey3_help', 'core_admin'), '', PARAM_RAW, 60));
-
-        $temp->add(new admin_setting_countrycodes('allcountrycodes', new lang_string('allcountrycodes', 'core_admin'),
-            new lang_string('configallcountrycodes', 'core_admin')));
     }
 
     $ADMIN->add('location', $temp);
