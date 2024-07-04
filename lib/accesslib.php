@@ -7566,15 +7566,12 @@ class context_block extends context {
      * @return string the human readable context name.
      */
     public function get_context_name($withprefix = true, $short = false, $escape = true) {
-        global $DB, $CFG;
+        global $DB;
 
         $name = '';
         if ($blockinstance = $DB->get_record('block_instances', array('id'=>$this->_instanceid))) {
-            global $CFG;
-            require_once("$CFG->dirroot/blocks/moodleblock.class.php");
-            require_once("$CFG->dirroot/blocks/$blockinstance->blockname/block_$blockinstance->blockname.php");
-            $blockname = "block_$blockinstance->blockname";
-            if ($blockobject = new $blockname()) {
+            $blockobject = block_instance($blockinstance->blockname);
+            if ($blockobject) {
                 if ($withprefix){
                     $name = get_string('block').': ';
                 }

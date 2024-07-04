@@ -170,11 +170,9 @@ class block extends base {
 
         if ($block = $DB->get_record('block', array('name'=>$this->name))) {
             // Inform block it's about to be deleted.
-            if (file_exists("$CFG->dirroot/blocks/$block->name/block_$block->name.php")) {
-                $blockobject = block_instance($block->name);
-                if ($blockobject) {
-                    $blockobject->before_delete();  // Only if we can create instance, block might have been already removed.
-                }
+            $blockobject = block_instance($block->name);
+            if ($blockobject) {
+                $blockobject->before_delete();  // Only if we can create instance, block might have been already removed.
             }
 
             // First delete instances and related contexts.
