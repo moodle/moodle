@@ -49,5 +49,5 @@ Feature: Teacher can delete marking guide
     And I should not see "Criterion 1"
     And I am on the "Course 1" "grades > Grader report > View" page
     And the following should exist in the "user-grades" table:
-      | -1-         | -1-                  | -3- |
+      | -1-         | -2-                  | -3- |
       | Student One | student1@example.com | 70  |
