@@ -56,7 +56,7 @@ Feature: Private groups
   Scenario: Participants in "Visible" groups see their membership and other members:
     Given I am on the "C1" "enrolled users" page logged in as "student1"
     Then the following should exist in the "participants" table:
-      | First name / Surname | Groups                                                         |
+      | First name           | Groups                                                         |
       | Student 1            | Visible/Non-Participation, Visible/Participation               |
       | Student 2            | No groups                                                      |
       | Student 3            | No groups                                                      |
@@ -69,7 +69,7 @@ Feature: Private groups
   Scenario: Participants in "Only visible to members" groups see their membership and other members, plus "Visible"
     Given I am on the "C1" "enrolled users" page logged in as "student2"
     Then the following should exist in the "participants" table:
-      | First name / Surname | Groups                                                                 |
+      | First name           | Groups                                                                 |
       | Student 1            | Visible/Non-Participation, Visible/Participation                       |
       | Student 2            | Only visible to members/Non-Participation, Only visible to members/Participation |
       | Student 3            | No groups                                                              |
@@ -82,7 +82,7 @@ Feature: Private groups
   Scenario: Participants in "Only see own membership" groups see their membership but not other members, plus "Visible"
     Given I am on the "C1" "enrolled users" page logged in as "student3"
     Then the following should exist in the "participants" table:
-      | First name / Surname | Groups                                                                 |
+      | First name           | Groups                                                                 |
       | Student 1            | Visible/Non-Participation, Visible/Participation                       |
       | Student 2            | No groups                                                              |
       | Student 3            | Only see own membership                                                     |
@@ -95,7 +95,7 @@ Feature: Private groups
   Scenario: Participants in "Not visible" groups do not see that group, do see "Visible"
     Given I am on the "C1" "enrolled users" page logged in as "student4"
     Then the following should exist in the "participants" table:
-      | First name / Surname | Groups                                                                 |
+      | First name           | Groups                                                                 |
       | Student 1            | Visible/Non-Participation, Visible/Participation                       |
       | Student 2            | No groups                                                              |
       | Student 3            | No groups                                                              |
@@ -108,7 +108,7 @@ Feature: Private groups
   Scenario: View participants list as a teacher:
     Given I am on the "C1" "enrolled users" page logged in as "teacher1"
     Then the following should exist in the "participants" table:
-      | First name / Surname | Groups                                                                 |
+      | First name           | Groups                                                                 |
       | Student 1            | Visible/Non-Participation, Visible/Participation                       |
       | Student 2            | Only visible to members/Non-Participation, Only visible to members/Participation |
       | Student 3            | Only see own membership                                                     |
@@ -125,10 +125,10 @@ Feature: Private groups
     And I set the field "Type or select..." to "Only see own membership"
     And I click on "Apply filters" "button"
     Then the following should exist in the "participants" table:
-      | First name / Surname | Groups                  |
+      | First name           | Groups                  |
       | Student 3            | Only see own membership |
     And the following should not exist in the "participants" table:
-      | First name / Surname | Groups                  |
+      | First name           | Groups                  |
       | Student 7            | No groups               |
 
   @javascript
@@ -138,7 +138,7 @@ Feature: Private groups
     And I set the field "Type or select..." to "No group"
     And I click on "Apply filters" "button"
     Then the following should exist in the "participants" table:
-      | First name / Surname | Groups     |
+      | First name           | Groups     |
       | Student 2            | No groups  |
       | Student 4            | No groups  |
       | Student 6            | No groups  |
@@ -153,7 +153,7 @@ Feature: Private groups
     And I set the field "Type or select..." to "Only see own membership"
     And I click on "Apply filters" "button"
     Then the following should exist in the "participants" table:
-      | First name / Surname | Groups                                                                   |
+      | First name           | Groups                                                                   |
       | Student 1            | Visible/Non-Participation, Visible/Participation                         |
       | Student 2            | No groups                                                                |
       | Student 4            | No groups                                                                |
@@ -170,7 +170,7 @@ Feature: Private groups
     And I set the field "Type or select..." to "No group"
     And I click on "Apply filters" "button"
     Then the following should exist in the "participants" table:
-      | First name / Surname | Groups                                                                   |
+      | First name           | Groups                                                                   |
       | Student 1            | Visible/Non-Participation, Visible/Participation                         |
       | Student 3            | Only see own membership                                                  |
       | Student 5            | Visible/Non-Participation, Visible/Participation                         |

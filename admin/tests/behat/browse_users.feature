@@ -18,7 +18,7 @@ Feature: An administrator can browse user accounts
     When I navigate to "Users > Accounts > Browse list of users" in site administration
     # Name field always present, email field is default for showidentity.
     Then the following should exist in the "reportbuilder-table" table:
-      | First name / Last name | Email address   |
+      | First name           | Email address   |
       | User One             | one@example.com |
       | User Two             | two@example.com |
     # Should not see other identity fields or non-default name fields.
@@ -34,7 +34,7 @@ Feature: An administrator can browse user accounts
       | alternativefullnameformat | firstnamephonetic lastname |
     When I navigate to "Users > Accounts > Browse list of users" in site administration
     Then the following should exist in the "reportbuilder-table" table:
-      | First name - phonetic / Last name | Email address   |
+      | First name - phonetic           | Email address   |
       | Yewzer One                      | one@example.com |
       | Yoozare Two                     | two@example.com |
 
@@ -43,7 +43,7 @@ Feature: An administrator can browse user accounts
       | showuseridentity | department,profile_field_frog |
     When I navigate to "Users > Accounts > Browse list of users" in site administration
     Then the following should exist in the "reportbuilder-table" table:
-      | First name / Last name | Favourite frog  | Department |
+      | First name           | Favourite frog  | Department |
       | User One             | Kermit          | Attack     |
       | User Two             | Tree            | Defence    |
     And I should not see "Email address" in the "table" "css_element"
@@ -103,7 +103,7 @@ Feature: An administrator can browse user accounts
       | user3    | User      | Three    | three@example.com | Glass              |
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     Then the following should exist in the "reportbuilder-table" table:
-      | First name / Last name | Email address     |
+      | First name             | Email address     |
       | User One               | one@example.com   |
       | User Two               | two@example.com   |
       | User Three             | three@example.com |
@@ -137,7 +137,7 @@ Feature: An administrator can browse user accounts
       | user2 | C1     | student |
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     Then the following should exist in the "reportbuilder-table" table:
-      | First name / Last name | Email address     |
+      | First name             | Email address     |
       | User One               | one@example.com   |
       | User Two               | two@example.com   |
     And I click on "Filters" "button"
@@ -166,7 +166,7 @@ Feature: An administrator can browse user accounts
       | user1 | coursecreator | system       |           |
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     Then the following should exist in the "reportbuilder-table" table:
-      | First name / Last name | Email address     |
+      | First name             | Email address     |
       | User One               | one@example.com   |
       | User Two               | two@example.com   |
       | User Three             | three@example.com |

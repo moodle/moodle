@@ -17,7 +17,7 @@ Feature: In a report, admin can see configuration changes
   Scenario: Display configuration changes report
     When I navigate to "Reports > Config changes" in site administration
     Then the following should exist in the "reportbuilder-table" table:
-      | User       | Plugin | Setting             | New value | Original value |
+      | First name | Plugin | Setting             | New value | Original value |
       | Admin User | quiz   | initialnumfeedbacks | 5         | 2              |
       | Admin User | folder | maxsizetodownload   | 2048      | 0              |
       | Admin User | core   | defaultcity         | Perth     |                |
