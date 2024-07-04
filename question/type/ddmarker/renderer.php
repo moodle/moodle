@@ -68,6 +68,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
 
         $orderedgroup = $question->get_ordered_choices(1);
         $hiddenfields = '';
+        $dragitems = '';
         foreach ($orderedgroup as $choiceno => $drag) {
             $classes = ['marker', 'user-select-none', 'choice' . $choiceno];
             $attr = [];
@@ -81,14 +82,17 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
             }
             $dragoutput = html_writer::start_span(join(' ', $classes), $attr);
             $targeticonhtml = $this->output->image_icon('crosshairs', '', $componentname, ['class' => 'target']);
-            $markertext = html_writer::span($drag->text, 'markertext');
+            $markertext = html_writer::span(question_utils::format_question_fragment($drag->text, $this->page->context),
+                'markertext');
             $dragoutput .= $targeticonhtml . $markertext;
             $dragoutput .= html_writer::end_span();
-            $output .= $dragoutput;
+            $dragitems .= $dragoutput;
             $hiddenfields .= $this->hidden_field_choice($qa, $choiceno, $drag->infinite, $drag->noofdrags);
         }
-
+        $output .= $dragitems;
         $output .= html_writer::end_div();
+        // Add extra hidden drag items so we can make sure the filter will be applied.
+        $output .= html_writer::div($dragitems, 'dd-original d-none');
         $output .= html_writer::end_div();
 
         if ($question->showmisplaced && $qa->get_state()->is_finished()) {

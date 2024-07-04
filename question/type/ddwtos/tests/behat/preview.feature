@@ -18,9 +18,10 @@ Feature: Preview a drag-drop into text question
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype  | name                  | template |
-      | Test questions   | ddwtos | Drag to text          | fox      |
-      | Test questions   | ddwtos | Drag to text infinite | infinite |
+      | questioncategory | qtype  | name                     | template |
+      | Test questions   | ddwtos | Drag to text             | fox      |
+      | Test questions   | ddwtos | Drag to text infinite    | infinite |
+      | Test questions   | ddwtos | Drag to mathjax equation | mathjax  |
 
   @javascript @_bug_phantomjs
   Scenario: Preview a question using the mouse.
@@ -78,3 +79,12 @@ Feature: Preview a drag-drop into text question
     Then I should see "Option1" in the home area of drag and drop into text question
     And I should see "Option2" in the home area of drag and drop into text question
     And I should see "Option3" in the home area of drag and drop into text question
+
+  @javascript
+  Scenario: Preview a drag-drop into text question with mathjax question.
+    Given the "mathjaxloader" filter is "on"
+    And the "mathjaxloader" filter applies to "content and headings"
+    And I am on the "Drag to mathjax equation" "core_question > preview" page logged in as teacher
+    And I press "Fill in correct responses"
+    When I press "Submit and finish"
+    Then ".filter_mathjaxloader_equation" "css_element" should exist in the ".draghome" "css_element"

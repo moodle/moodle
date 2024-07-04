@@ -85,6 +85,10 @@ form.mform fieldset#id_previewareaheader .droppreview {
     display: none;
 }
 
+.que.ddimageortext .MathJax_Display {
+    margin: 0;
+}
+
 .que.ddimageortext .draghomes .draghome.dragplaceholder.active {
     visibility: hidden;
     display: inline-block;

@@ -18,8 +18,9 @@ Feature: Preview a drag-drop onto image question
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype         | name            | template |
-      | Test questions   | ddimageortext | Drag onto image | xsection |
+      | questioncategory | qtype         | name                     | template |
+      | Test questions   | ddimageortext | Drag onto image          | xsection |
+      | Test questions   | ddimageortext | Drag to mathjax equation | mathjax  |
 
   @javascript @_bug_phantomjs
   Scenario: Preview a question using the mouse.
@@ -53,3 +54,12 @@ Feature: Preview a drag-drop onto image question
     And I press "Submit and finish"
     Then the state of "Identify the features" question is shown as "Correct"
     And I should see "Mark 1.00 out of 1.00"
+
+  @javascript
+  Scenario: Preview a drag-drop into image question with mathjax question.
+    Given the "mathjaxloader" filter is "on"
+    And the "mathjaxloader" filter applies to "content and headings"
+    And I am on the "Drag to mathjax equation" "core_question > preview" page logged in as teacher
+    And I press "Fill in correct responses"
+    When I press "Submit and finish"
+    Then ".filter_mathjaxloader_equation" "css_element" should exist in the ".draghome" "css_element"

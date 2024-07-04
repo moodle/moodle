@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_ddwtos_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('fox', 'maths', 'oddgroups', 'missingchoiceno', 'infinite');
+        return ['fox', 'maths', 'oddgroups', 'missingchoiceno', 'infinite', 'mathjax'];
     }
 
     /**
@@ -153,6 +153,30 @@ class qtype_ddwtos_test_helper extends question_test_helper {
         $fromform->penalty = 0.3333333;
         $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
+        return $fromform;
+    }
+
+    /**
+     * Get data required to save a drag-drop into text question where the the answer contain equation
+     *
+     *
+     * @return stdClass data to create a ddwtos question.
+     */
+    public function get_ddwtos_question_form_data_mathjax() {
+        $fromform = new stdClass();
+
+        $fromform->name = 'Drag-and-drop words into sentences question with equation';
+        $fromform->questiontext = ['text' => 'Fill in the correct mathjax equation: y = 2, x =4 : [[1]]', 'format' => FORMAT_HTML];
+        $fromform->defaultmark = 1.0;
+        $fromform->generalfeedback = ['text' => 'The right answer is: "y = x^2"', 'format' => FORMAT_HTML];
+        $fromform->choices = [
+            ['answer' => '$$ y = x^2 $$', 'choicegroup' => '1'],
+            ['answer' => '$$ y = x^5 $$', 'choicegroup' => '1'],
+        ];
+        test_question_maker::set_standard_combined_feedback_form_data($fromform);
+        $fromform->shownumcorrect = 0;
+        $fromform->penalty = 0.3333333;
+        $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         return $fromform;
     }
 

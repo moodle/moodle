@@ -126,3 +126,7 @@
 .que.ddwtos sub {
     bottom: -0.2em;
 }
+
+.que.ddwtos .MathJax_Display {
+    margin: 0;
+}
