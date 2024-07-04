@@ -88,7 +88,7 @@ Feature: Display marking guide information to students
     And I should not see "Grade Critera 2"
     And I am on the "Course 1" "grades > Grader report > View" page
     And the following should exist in the "user-grades" table:
-      | -1-       | -1-                  | -3- |
+      | -1-       | -2-                  | -3- |
       | Student 1 | student1@example.com | 90  |
     And I am on the "Assign 1" "assign activity editing" page
     And I set the following fields to these values:
