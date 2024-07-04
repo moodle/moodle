@@ -25,14 +25,14 @@ namespace mod_quiz;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_quiz\notification_helper
  */
-class notification_helper_test extends \advanced_testcase {
+final class notification_helper_test extends \advanced_testcase {
     /**
      * Run all the tasks related to the notifications.
      */
-    public function run_notification_helper_tasks(): void {
+    protected function run_notification_helper_tasks(): void {
         $task = \core\task\manager::get_scheduled_task(\mod_quiz\task\queue_all_quiz_open_notification_tasks::class);
         $task->execute();
-        $clock = $this->mock_clock_with_frozen();
+        $clock = \core\di::get(\core\clock::class);
 
         $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
         if ($adhoctask) {
@@ -159,6 +159,7 @@ class notification_helper_test extends \advanced_testcase {
         $generator = $this->getDataGenerator();
         $helper = \core\di::get(notification_helper::class);
         $clock = $this->mock_clock_with_frozen();
+        $sink = $this->redirectMessages();
 
         // Create a course and enrol a user.
         $course = $generator->create_course();
@@ -174,6 +175,7 @@ class notification_helper_test extends \advanced_testcase {
             'course' => $course->id,
             'timeopen' => $timeopen,
         ]);
+        $clock->bump(5);
 
         // Get the users within the date range.
         $quizzes = $helper::get_quizzes_within_date_range();
@@ -186,20 +188,23 @@ class notification_helper_test extends \advanced_testcase {
         $this->run_notification_helper_tasks();
 
         // Get the notifications that should have been created during the adhoc task.
-        $notifications = $DB->get_records('notifications', ['useridto' => $user1->id]);
-        $this->assertCount(1, $notifications);
+        $this->assertCount(1, $sink->get_messages());
 
         // Check the subject matches.
+        $messages = $sink->get_messages_by_component('mod_quiz');
+        $message = reset($messages);
         $stringparams = ['timeopen' => userdate($users[$user1->id]->timeopen), 'quizname' => $quiz->name];
         $expectedsubject = get_string('quizopendatesoonsubject', 'mod_quiz', $stringparams);
-        $this->assertEquals($expectedsubject, reset($notifications)->subject);
+        $this->assertEquals($expectedsubject, $message->subject);
+
+        // Clear sink.
+        $sink->clear();
 
         // Run the tasks again.
         $this->run_notification_helper_tasks();
 
-        // There should still only be one notification because nothing has changed.
-        $notifications = $DB->get_records('notifications', ['useridto' => $user1->id]);
-        $this->assertCount(1, $notifications);
+        // There should be no notification because nothing has changed.
+        $this->assertEmpty($sink->get_messages_by_component('mod_quiz'));
 
         // Let's modify the 'timeopen' for the quiz (it will still be within the 48 hour range).
         $updatedata = new \stdClass();
@@ -210,9 +215,10 @@ class notification_helper_test extends \advanced_testcase {
         // Run the tasks again.
         $this->run_notification_helper_tasks();
 
-        // There should now be two notifications.
-        $notifications = $DB->get_records('notifications', ['useridto' => $user1->id]);
-        $this->assertCount(2, $notifications);
+        // There should be a new notification because the 'timeopen' has been updated.
+        $this->assertCount(1, $sink->get_messages_by_component('mod_quiz'));
+        // Clear sink.
+        $sink->clear();
 
         // Let's modify the 'timeopen' one more time.
         $updatedata = new \stdClass();
@@ -230,12 +236,15 @@ class notification_helper_test extends \advanced_testcase {
             'layout' => '',
             'uniqueid' => 123,
         ]);
+        $clock->bump(5);
 
         // Run the tasks again.
         $this->run_notification_helper_tasks();
 
         // No new notification should have been sent.
-        $notifications = $DB->get_records('notifications', ['useridto' => $user1->id]);
-        $this->assertCount(2, $notifications);
+        $this->assertEmpty($sink->get_messages_by_component('mod_quiz'));
+
+        // Clear sink.
+        $sink->clear();
     }
 }
