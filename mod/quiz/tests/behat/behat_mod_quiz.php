@@ -608,7 +608,6 @@ class behat_mod_quiz extends behat_question_base {
     public function i_click_on_shuffle_for_section($heading) {
         $xpath = $this->get_xpath_for_shuffle_checkbox($heading);
         $checkbox = $this->find('xpath', $xpath);
-        $this->ensure_node_is_visible($checkbox);
         $checkbox->click();
     }
 
