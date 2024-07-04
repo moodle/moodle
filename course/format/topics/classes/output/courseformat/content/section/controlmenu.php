@@ -117,13 +117,16 @@ class controlmenu extends controlmenu_base {
         }
 
         $highlightoff = get_string('highlightoff');
+        $highlightofficon = 'i/marked';
+
         $highlighton = get_string('highlight');
+        $highlightonicon = 'i/marker';
 
         if ($course->marker == $section->section) {  // Show the "light globe" on/off.
             $url->param('marker', 0);
             $result = [
                 'url' => $url,
-                'icon' => 'i/marked',
+                'icon' => $highlightofficon,
                 'name' => $highlightoff,
                 'pixattr' => ['class' => ''],
                 'attr' => [
@@ -131,15 +134,16 @@ class controlmenu extends controlmenu_base {
                     'data-action' => 'sectionUnhighlight',
                     'data-sectionreturn' => $sectionreturn,
                     'data-id' => $section->id,
+                    'data-icon' => $highlightofficon,
                     'data-swapname' => $highlighton,
-                    'data-swapicon' => 'i/marker',
+                    'data-swapicon' => $highlightonicon,
                 ],
             ];
         } else {
             $url->param('marker', $section->section);
             $result = [
                 'url' => $url,
-                'icon' => 'i/marker',
+                'icon' => $highlightonicon,
                 'name' => $highlighton,
                 'pixattr' => ['class' => ''],
                 'attr' => [
@@ -147,8 +151,9 @@ class controlmenu extends controlmenu_base {
                     'data-action' => 'sectionHighlight',
                     'data-sectionreturn' => $sectionreturn,
                     'data-id' => $section->id,
+                    'data-icon' => $highlightonicon,
                     'data-swapname' => $highlightoff,
-                    'data-swapicon' => 'i/marked',
+                    'data-swapicon' => $highlightofficon,
                 ],
             ];
         }
