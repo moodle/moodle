@@ -1690,14 +1690,13 @@ class company {
         }
 
         // Deal with program licenses.
-        if ($programlicenses = $DB->get_records_sql("SELECT cl.*
+        if ($programlicenses = $DB->get_records_sql("SELECT DISTINCT cl.id
                                                      FROM {companylicense} cl
                                                      JOIN {companylicense_users} clu ON (cl.id = clu.licenseid)
                                                      WHERE cl.companyid = :companyid
                                                      AND cl.program = 1
                                                      AND clu.userid = :userid
-                                                     AND cl.expirydate > :timestamp
-                                                     GROUP BY cl.id",
+                                                     AND cl.expirydate > :timestamp",
                                                      array('timestamp' => $timestamp,
                                                            'userid' => $userid,
                                                            'companyid' => $this->id))) {
