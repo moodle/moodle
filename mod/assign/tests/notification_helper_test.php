@@ -29,10 +29,10 @@ final class notification_helper_test extends \advanced_testcase {
     /**
      * Run all the tasks related to the notifications.
      */
-    public function run_notification_helper_tasks(): void {
+    protected function run_notification_helper_tasks(): void {
         $task = \core\task\manager::get_scheduled_task(\mod_assign\task\queue_all_assignment_due_soon_notification_tasks::class);
         $task->execute();
-        $clock = $this->mock_clock_with_frozen();
+        $clock = \core\di::get(\core\clock::class);
 
         $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
         if ($adhoctask) {
@@ -136,10 +136,9 @@ final class notification_helper_test extends \advanced_testcase {
             'duedate' => $userduedate,
         ]);
 
-        // User5 will submit the assignment, excluding them from the results.
-        $DB->insert_record('assign_submission', [
-            'assignment' => $assignment->id,
+        $assignmentgenerator->create_submission([
             'userid' => $user5->id,
+            'assignid' => $assignment->cmid,
             'status' => 'submitted',
             'timemodified' => $clock->time(),
         ]);
@@ -158,6 +157,7 @@ final class notification_helper_test extends \advanced_testcase {
         $generator = $this->getDataGenerator();
         $helper = \core\di::get(notification_helper::class);
         $clock = $this->mock_clock_with_frozen();
+        $sink = $this->redirectMessages();
 
         // Create a course and enrol a user.
         $course = $generator->create_course();
@@ -173,6 +173,7 @@ final class notification_helper_test extends \advanced_testcase {
             'course' => $course->id,
             'duedate' => $duedate,
         ]);
+        $clock->bump(5);
 
         // Run the tasks.
         $this->run_notification_helper_tasks();
@@ -184,24 +185,27 @@ final class notification_helper_test extends \advanced_testcase {
         $duedate = $assignmentobj->get_instance($user1->id)->duedate;
 
         // Get the notifications that should have been created during the adhoc task.
-        $notifications = $DB->get_records('notifications', ['useridto' => $user1->id]);
-        $this->assertCount(1, $notifications);
+        $this->assertCount(1, $sink->get_messages_by_component('mod_assign'));
 
         // Check the subject matches.
+        $messages = $sink->get_messages_by_component('mod_assign');
+        $message = reset($messages);
         $stringparams = [
             'duedate' => userdate($duedate),
             'assignmentname' => $assignment->name,
             'type' => $helper::TYPE_DUE_SOON,
         ];
         $expectedsubject = get_string('assignmentduesoonsubject', 'mod_assign', $stringparams);
-        $this->assertEquals($expectedsubject, reset($notifications)->subject);
+        $this->assertEquals($expectedsubject, $message->subject);
+
+        // Clear sink.
+        $sink->clear();
 
         // Run the tasks again.
         $this->run_notification_helper_tasks();
 
-        // There should still only be one notification because nothing has changed.
-        $notifications = $DB->get_records('notifications', ['useridto' => $user1->id]);
-        $this->assertCount(1, $notifications);
+        // There should be no notification because nothing has changed.
+        $this->assertEmpty($sink->get_messages_by_component('mod_assign'));
 
         // Let's modify the 'duedate' for the assignment (it will still be within the 48 hour range).
         $updatedata = new \stdClass();
@@ -212,9 +216,10 @@ final class notification_helper_test extends \advanced_testcase {
         // Run the tasks again.
         $this->run_notification_helper_tasks();
 
-        // There should now be two notifications.
-        $notifications = $DB->get_records('notifications', ['useridto' => $user1->id]);
-        $this->assertCount(2, $notifications);
+        // There should be a new notification because the 'duedate' has been updated.
+        $this->assertCount(1, $sink->get_messages_by_component('mod_assign'));
+        // Clear sink.
+        $sink->clear();
 
         // Let's modify the 'duedate' one more time.
         $updatedata = new \stdClass();
@@ -223,18 +228,21 @@ final class notification_helper_test extends \advanced_testcase {
         $DB->update_record('assign', $updatedata);
 
         // This time, the user will submit the assignment.
-        $DB->insert_record('assign_submission', [
-            'assignment' => $assignment->id,
+        $assignmentgenerator->create_submission([
             'userid' => $user1->id,
+            'assignid' => $assignment->cmid,
             'status' => 'submitted',
             'timemodified' => $clock->time(),
         ]);
+        $clock->bump(5);
 
         // Run the tasks again.
         $this->run_notification_helper_tasks();
 
         // No new notification should have been sent.
-        $notifications = $DB->get_records('notifications', ['useridto' => $user1->id]);
-        $this->assertCount(2, $notifications);
+        $this->assertEmpty($sink->get_messages_by_component('mod_assign'));
+
+        // Clear sink.
+        $sink->clear();
     }
 }
