@@ -52,7 +52,7 @@ abstract class backup_block_task extends backup_task {
         }
 
         $this->blockid    = $blockid;
-        $this->blockname  = $block->blockname;
+        $this->blockname  = clean_param($block->blockname, PARAM_PLUGIN);
         $this->contextid  = context_block::instance($this->blockid)->id;
         $this->moduleid   = $moduleid;
         $this->modulename = null;
