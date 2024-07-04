@@ -48,7 +48,7 @@ Feature: We can change what we are viewing on the grader report
     And I should see "Manual grade"
     And I should see "Course total"
     And the following should exist in the "user-grades" table:
-      | -1-                | -1-                  | -3-       | -4-       | -5-       | -6-       |
+      | -1-                | -2-                  | -3-       | -4-       | -5-       | -6-       |
       | Student 1          | student1@example.com | 80        | 90        | 30        | 170       |
     And I click on grade item menu "Course 1" of type "course" on "grader" page
     And I choose "Show totals only" in the open action menu
@@ -57,7 +57,7 @@ Feature: We can change what we are viewing on the grader report
     And I should not see "Manual grade"
     And I should see "Course total"
     And the following should exist in the "user-grades" table:
-      | -1-                | -1-                  | -3-       |
+      | -1-                | -2-                  | -3-       |
       | Student 1          | student1@example.com | 170       |
     And I click on grade item menu "Course 1" of type "course" on "grader" page
     And I click on "Show grades only" "link"
@@ -66,7 +66,7 @@ Feature: We can change what we are viewing on the grader report
     And I should see "Manual grade"
     And I should not see "Course total"
     And the following should exist in the "user-grades" table:
-      | -1-                | -1-                  | -3-       | -4-       | -5-       |
+      | -1-                | -2-                  | -3-       | -4-       | -5-       |
       | Student 1          | student1@example.com | 80        | 90        | 30        |
 
   @javascript @skip_chrome_zerosize
@@ -83,7 +83,7 @@ Feature: We can change what we are viewing on the grader report
     And I should see "Manual grade"
     And I should see "Course total"
     And the following should exist in the "user-grades" table:
-      | -1-                | -1-                  | -3-       | -4-       | -5-       | -6-       |
+      | -1-                | -2-                  | -3-       | -4-       | -5-       | -6-       |
       | Student 1          | student1@example.com | 80        | -         | 30        | 105.71    |
     And I click on grade item menu "Course 1" of type "course" on "grader" page
     And I choose "Show totals only" in the open action menu
@@ -92,7 +92,7 @@ Feature: We can change what we are viewing on the grader report
     And I should not see "Manual grade"
     And I should see "Course total"
     And the following should exist in the "user-grades" table:
-      | -1-                | -1-                  | -3-       |
+      | -1-                | -2-                  | -3-       |
       | Student 1          | student1@example.com | 105.71    |
     And I click on grade item menu "Course 1" of type "course" on "grader" page
     When I click on "Show grades only" "link"
@@ -101,5 +101,5 @@ Feature: We can change what we are viewing on the grader report
     And I should see "Manual grade"
     And I should not see "Course total"
     And the following should exist in the "user-grades" table:
-      | -1-                | -1-                  | -3-       | -4-       | -5-       |
+      | -1-                | -2-                  | -3-       | -4-       | -5-       |
       | Student 1          | student1@example.com | 80        | -         | 30        |
