@@ -213,6 +213,7 @@ class api {
             'tool_mobile_qrcodetype' => clean_param(get_config('tool_mobile', 'qrcodetype'), PARAM_INT),
             'supportpage' => $sitesupportavailable ? clean_param($CFG->supportpage, PARAM_URL) : '',
             'supportavailability' => clean_param($CFG->supportavailability, PARAM_INT),
+            'showloginform' => (int) get_config('core', 'showloginform'),
         );
 
         $typeoflogin = get_config('tool_mobile', 'typeoflogin');

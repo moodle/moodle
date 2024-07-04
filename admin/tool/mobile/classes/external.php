@@ -191,6 +191,7 @@ class external extends external_api {
                 'tool_mobile_setuplink' => new external_value(PARAM_URL, 'App download page.', VALUE_OPTIONAL),
                 'tool_mobile_qrcodetype' => new external_value(PARAM_INT, 'QR login configuration.', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
+                'showloginform' => new external_value(PARAM_INT, 'Display default login form.'),
             )
         );
     }
