@@ -61,20 +61,27 @@ if ($returnurl) {
 $baseurl = new moodle_url('/blocks/rss_client/managefeeds.php', $urlparams);
 $PAGE->set_url($baseurl);
 
+if ($managesharedfeeds) {
+    $select = '(userid = :userid OR shared = 1)';
+} else {
+    $select = 'userid = :userid';
+}
+
 // Process any actions
 if ($deleterssid && confirm_sesskey()) {
-    $DB->delete_records('block_rss_client', array('id'=>$deleterssid));
+
+    $deleterssid = $DB->get_field_select('block_rss_client', 'id', "id = :id AND {$select}", [
+        'id' => $deleterssid,
+        'userid' => $USER->id
+    ], MUST_EXIST);
+
+    $DB->delete_records('block_rss_client', ['id' => $deleterssid]);
 
     redirect($PAGE->url, get_string('feeddeleted', 'block_rss_client'));
 }
 
 // Display the list of feeds.
-if ($managesharedfeeds) {
-    $select = '(userid = ' . $USER->id . ' OR shared = 1)';
-} else {
-    $select = 'userid = ' . $USER->id;
-}
-$feeds = $DB->get_records_select('block_rss_client', $select, null, $DB->sql_order_by_text('title'));
+$feeds = $DB->get_records_select('block_rss_client', $select, ['userid' => $USER->id], $DB->sql_order_by_text('title'));
 
 $strmanage = get_string('managefeeds', 'block_rss_client');
 
