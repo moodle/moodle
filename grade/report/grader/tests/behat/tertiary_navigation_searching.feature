@@ -279,6 +279,8 @@ Feature: Within the grader report, test that we can search for users
     And I set the field "Search users" to "User"
     And I press the enter key
     And I wait to be redirected
+    # Sometimes with behat we get unattached nodes causing spurious failures.
+    And I wait "1" seconds
     And the following should exist in the "user-grades" table:
       | -1-                |
       | Dummy User         |
@@ -289,8 +291,6 @@ Feature: Within the grader report, test that we can search for users
       | Teacher 1          |
       | Student 1          |
       | Turtle Manatee     |
-    # Sometimes with behat we get unattached nodes causing spurious failures.
-    And I wait "1" seconds
     And I set the field "Search users" to "ABC"
     And I wait until "Turtle Manatee" "option_role" exists
     And I press the tab key
