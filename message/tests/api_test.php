@@ -18,12 +18,6 @@ namespace core_message;
 
 use core_message\tests\helper as testhelper;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
-
 /**
  * Test message API.
  *
@@ -31,19 +25,21 @@ require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
  * @category test
  * @copyright 2016 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \core_message\api
  */
-class api_test extends messagelib_test {
+final class api_test extends \advanced_testcase {
+    public function test_mark_all_read_for_user_touser(): void {
+        $this->resetAfterTest();
 
-    public function test_mark_all_read_for_user_touser() {
         $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
         $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
 
-        $this->send_fake_message($sender, $recipient, 'Notification', 1);
-        $this->send_fake_message($sender, $recipient, 'Notification', 1);
-        $this->send_fake_message($sender, $recipient, 'Notification', 1);
-        $this->send_fake_message($sender, $recipient);
-        $this->send_fake_message($sender, $recipient);
-        $this->send_fake_message($sender, $recipient);
+        testhelper::send_fake_message($sender, $recipient, 'Notification', 1);
+        testhelper::send_fake_message($sender, $recipient, 'Notification', 1);
+        testhelper::send_fake_message($sender, $recipient, 'Notification', 1);
+        testhelper::send_fake_message($sender, $recipient);
+        testhelper::send_fake_message($sender, $recipient);
+        testhelper::send_fake_message($sender, $recipient);
 
         api::mark_all_notifications_as_read($recipient->id);
         api::mark_all_messages_as_read($recipient->id);
@@ -52,23 +48,28 @@ class api_test extends messagelib_test {
         $this->assertDebuggingCalled();
     }
 
-    public function test_mark_all_read_for_user_touser_with_fromuser() {
+    public function test_mark_all_read_for_user_touser_with_fromuser(): void {
+        $this->resetAfterTest();
+
         $sender1 = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
         $sender2 = $this->getDataGenerator()->create_user(array('firstname' => 'Test3', 'lastname' => 'User3'));
         $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
+        $sender1 = $this->getDataGenerator()->create_user(['firstname' => 'Test1', 'lastname' => 'User1']);
+        $sender2 = $this->getDataGenerator()->create_user(['firstname' => 'Test3', 'lastname' => 'User3']);
+        $recipient = $this->getDataGenerator()->create_user(['firstname' => 'Test2', 'lastname' => 'User2']);
 
-        $this->send_fake_message($sender1, $recipient, 'Notification', 1);
-        $this->send_fake_message($sender1, $recipient, 'Notification', 1);
-        $this->send_fake_message($sender1, $recipient, 'Notification', 1);
-        $this->send_fake_message($sender1, $recipient);
-        $this->send_fake_message($sender1, $recipient);
-        $this->send_fake_message($sender1, $recipient);
-        $this->send_fake_message($sender2, $recipient, 'Notification', 1);
-        $this->send_fake_message($sender2, $recipient, 'Notification', 1);
-        $this->send_fake_message($sender2, $recipient, 'Notification', 1);
-        $this->send_fake_message($sender2, $recipient);
-        $this->send_fake_message($sender2, $recipient);
-        $this->send_fake_message($sender2, $recipient);
+        testhelper::send_fake_message($sender1, $recipient, 'Notification', 1);
+        testhelper::send_fake_message($sender1, $recipient, 'Notification', 1);
+        testhelper::send_fake_message($sender1, $recipient, 'Notification', 1);
+        testhelper::send_fake_message($sender1, $recipient);
+        testhelper::send_fake_message($sender1, $recipient);
+        testhelper::send_fake_message($sender1, $recipient);
+        testhelper::send_fake_message($sender2, $recipient, 'Notification', 1);
+        testhelper::send_fake_message($sender2, $recipient, 'Notification', 1);
+        testhelper::send_fake_message($sender2, $recipient, 'Notification', 1);
+        testhelper::send_fake_message($sender2, $recipient);
+        testhelper::send_fake_message($sender2, $recipient);
+        testhelper::send_fake_message($sender2, $recipient);
 
         api::mark_all_notifications_as_read($recipient->id, $sender1->id);
         $conversationid = api::get_conversation_between_users([$recipient->id, $sender1->id]);
@@ -79,15 +80,17 @@ class api_test extends messagelib_test {
     }
 
     public function test_mark_all_read_for_user_touser_with_type() {
+        $this->resetAfterTest();
+
         $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
         $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
 
-        $this->send_fake_message($sender, $recipient, 'Notification', 1);
-        $this->send_fake_message($sender, $recipient, 'Notification', 1);
-        $this->send_fake_message($sender, $recipient, 'Notification', 1);
-        $this->send_fake_message($sender, $recipient);
-        $this->send_fake_message($sender, $recipient);
-        $this->send_fake_message($sender, $recipient);
+        testhelper::send_fake_message($sender, $recipient, 'Notification', 1);
+        testhelper::send_fake_message($sender, $recipient, 'Notification', 1);
+        testhelper::send_fake_message($sender, $recipient, 'Notification', 1);
+        testhelper::send_fake_message($sender, $recipient);
+        testhelper::send_fake_message($sender, $recipient);
+        testhelper::send_fake_message($sender, $recipient);
 
         api::mark_all_notifications_as_read($recipient->id);
         $this->assertEquals(message_count_unread_messages($recipient), 3);
@@ -103,6 +106,7 @@ class api_test extends messagelib_test {
      */
     public function test_count_blocked_users() {
         global $USER;
+        $this->resetAfterTest();
 
         // Set this user as the admin.
         $this->setAdminUser();
@@ -524,7 +528,9 @@ class api_test extends messagelib_test {
     /**
      * Tests getting conversations between 2 users.
      */
-    public function test_get_conversations_between_users() {
+    public function test_get_conversations_between_users(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = new \stdClass();
         $user1->firstname = 'User';
@@ -587,7 +593,9 @@ class api_test extends messagelib_test {
     /**
      * Tests getting self-conversations.
      */
-    public function test_get_self_conversation() {
+    public function test_get_self_conversation(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = new \stdClass();
         $user1->firstname = 'User';
@@ -673,11 +681,11 @@ class api_test extends messagelib_test {
         $time = 1;
         testhelper::send_fake_message_to_conversation($user1, $sc->id, 'Test message to self!', $time);
         testhelper::send_fake_message_to_conversation($user1, $gc->id, 'My hero!', $time + 1);
-        $this->send_fake_message($user3, $user1, 'Don\'t block me.', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 4);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 5);
-        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 6);
+        testhelper::send_fake_message($user3, $user1, 'Don\'t block me.', 0, $time + 2);
+        testhelper::send_fake_message($user1, $user2, 'Yo!', 0, $time + 3);
+        testhelper::send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 4);
+        testhelper::send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 5);
+        testhelper::send_fake_message($user2, $user1, 'Word.', 0, $time + 6);
 
         $convid = api::get_conversation_between_users([$user1->id, $user2->id]);
         $conv2id = api::get_conversation_between_users([$user1->id, $user3->id]);
@@ -760,7 +768,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying that favourited conversations can be retrieved.
      */
-    public function test_get_favourite_conversations() {
+    public function test_get_favourite_conversations(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -775,19 +785,19 @@ class api_test extends messagelib_test {
 
         // Create some conversations for user1.
         $time = 1;
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $messageid1 = $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        testhelper::send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        testhelper::send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        testhelper::send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $messageid1 = testhelper::send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
 
-        $this->send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
-        $this->send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
-        $this->send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
-        $messageid2 = $this->send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
+        testhelper::send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
+        testhelper::send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
+        testhelper::send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
+        $messageid2 = testhelper::send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
 
-        $this->send_fake_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?', 0, $time + 9);
-        $this->send_fake_message($user4, $user1, 'Yah brah, it\'s pretty rad.', 0, $time + 10);
-        $messageid3 = $this->send_fake_message($user1, $user4, 'Dope.', 0, $time + 11);
+        testhelper::send_fake_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?', 0, $time + 9);
+        testhelper::send_fake_message($user4, $user1, 'Yah brah, it\'s pretty rad.', 0, $time + 10);
+        $messageid3 = testhelper::send_fake_message($user1, $user4, 'Dope.', 0, $time + 11);
 
         // Favourite the first 2 conversations for user1.
         $convoids = [];
@@ -819,7 +829,9 @@ class api_test extends messagelib_test {
     /**
      * Tests retrieving favourite conversations with a limit and offset to ensure pagination works correctly.
      */
-    public function test_get_favourite_conversations_limit_offset() {
+    public function test_get_favourite_conversations_limit_offset(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -834,19 +846,19 @@ class api_test extends messagelib_test {
 
         // Create some conversations for user1.
         $time = 1;
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $messageid1 = $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        testhelper::send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        testhelper::send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        testhelper::send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $messageid1 = testhelper::send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
 
-        $this->send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
-        $this->send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
-        $this->send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
-        $messageid2 = $this->send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
+        testhelper::send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
+        testhelper::send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
+        testhelper::send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
+        $messageid2 = testhelper::send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
 
-        $this->send_fake_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?', 0, $time + 9);
-        $this->send_fake_message($user4, $user1, 'Yah brah, it\'s pretty rad.', 0, $time + 10);
-        $messageid3 = $this->send_fake_message($user1, $user4, 'Dope.', 0, $time + 11);
+        testhelper::send_fake_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?', 0, $time + 9);
+        testhelper::send_fake_message($user4, $user1, 'Yah brah, it\'s pretty rad.', 0, $time + 10);
+        $messageid3 = testhelper::send_fake_message($user1, $user4, 'Dope.', 0, $time + 11);
 
         // Favourite the all conversations for user1.
         $convoids = [];
@@ -873,7 +885,9 @@ class api_test extends messagelib_test {
     /**
      * Tests retrieving favourite conversations when a conversation contains a deleted user.
      */
-    public function test_get_favourite_conversations_with_deleted_user() {
+    public function test_get_favourite_conversations_with_deleted_user(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -881,15 +895,15 @@ class api_test extends messagelib_test {
 
         // Send some messages back and forth, have some different conversations with different users.
         $time = 1;
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        testhelper::send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        testhelper::send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        testhelper::send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        testhelper::send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
 
-        $this->send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
-        $this->send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
-        $this->send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
-        $this->send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
+        testhelper::send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
+        testhelper::send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
+        testhelper::send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
+        testhelper::send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
 
         // Favourite the all conversations for user1.
         $convoids = [];
@@ -919,7 +933,9 @@ class api_test extends messagelib_test {
     /**
      * Test confirming that conversations can be marked as favourites.
      */
-    public function test_set_favourite_conversation() {
+    public function test_set_favourite_conversation(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -927,15 +943,15 @@ class api_test extends messagelib_test {
 
         // Send some messages back and forth, have some different conversations with different users.
         $time = 1;
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        testhelper::send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        testhelper::send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        testhelper::send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        testhelper::send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
 
-        $this->send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
-        $this->send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
-        $this->send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
-        $this->send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
+        testhelper::send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
+        testhelper::send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
+        testhelper::send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
+        testhelper::send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
 
         // Favourite the first conversation as user 1.
         $conversationid1 = api::get_conversation_between_users([$user1->id, $user2->id]);
@@ -957,7 +973,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying that trying to mark a non-existent conversation as a favourite, results in an exception.
      */
-    public function test_set_favourite_conversation_nonexistent_conversation() {
+    public function test_set_favourite_conversation_nonexistent_conversation(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         // Try to favourite a non-existent conversation.
@@ -968,7 +986,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying that a conversation cannot be marked as favourite unless the user is a member of that conversation.
      */
-    public function test_set_favourite_conversation_non_member() {
+    public function test_set_favourite_conversation_non_member(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -976,15 +996,15 @@ class api_test extends messagelib_test {
 
         // Send some messages back and forth, have some different conversations with different users.
         $time = 1;
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        testhelper::send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        testhelper::send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        testhelper::send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        testhelper::send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
 
-        $this->send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
-        $this->send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
-        $this->send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
-        $this->send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
+        testhelper::send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
+        testhelper::send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
+        testhelper::send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
+        testhelper::send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
 
         // Try to favourite the first conversation as user 3, who is not a member.
         $conversationid1 = api::get_conversation_between_users([$user1->id, $user2->id]);
@@ -995,7 +1015,9 @@ class api_test extends messagelib_test {
     /**
      * Test confirming that those conversations marked as favourites can be unfavourited.
      */
-    public function test_unset_favourite_conversation() {
+    public function test_unset_favourite_conversation(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -1003,15 +1025,15 @@ class api_test extends messagelib_test {
 
         // Send some messages back and forth, have some different conversations with different users.
         $time = 1;
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        testhelper::send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        testhelper::send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        testhelper::send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        testhelper::send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
 
-        $this->send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
-        $this->send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
-        $this->send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
-        $this->send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
+        testhelper::send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
+        testhelper::send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
+        testhelper::send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
+        testhelper::send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
 
         // Favourite the first conversation as user 1 and the second as user 3.
         $conversationid1 = api::get_conversation_between_users([$user1->id, $user2->id]);
@@ -1038,17 +1060,19 @@ class api_test extends messagelib_test {
     /**
      * Test verifying that a valid conversation cannot be unset as a favourite if it's not marked as a favourite.
      */
-    public function test_unset_favourite_conversation_not_favourite() {
+    public function test_unset_favourite_conversation_not_favourite(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
         // Send some messages back and forth, have some different conversations with different users.
         $time = 1;
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        testhelper::send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        testhelper::send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        testhelper::send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        testhelper::send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
 
         // Now try to unfavourite the conversation as user 1.
         $conversationid1 = api::get_conversation_between_users([$user1->id, $user2->id]);
@@ -1059,7 +1083,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying that a non-existent conversation cannot be unset as a favourite.
      */
-    public function test_unset_favourite_conversation_non_existent_conversation() {
+    public function test_unset_favourite_conversation_non_existent_conversation(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
 
@@ -1141,7 +1167,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying get_conversations when no limits, offsets, type filters or favourite restrictions are used.
      */
-    public function test_get_conversations_no_restrictions() {
+    public function test_get_conversations_no_restrictions(): void {
+        $this->resetAfterTest();
+
         global $DB;
 
         $user1 = self::getDataGenerator()->create_user();
@@ -1267,6 +1295,8 @@ class api_test extends messagelib_test {
      */
     public function test_get_conversations_message_format() {
         global $DB;
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -1293,7 +1323,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying get_conversations identifies if a conversation is muted or not.
      */
-    public function test_get_conversations_some_muted() {
+    public function test_get_conversations_some_muted(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -1339,7 +1371,9 @@ class api_test extends messagelib_test {
     /**
      * Tests retrieving conversations with a limit and offset to ensure pagination works correctly.
      */
-    public function test_get_conversations_limit_offset() {
+    public function test_get_conversations_limit_offset(): void {
+        $this->resetAfterTest();
+
         // Get a bunch of conversations, some group, some individual and in different states.
         list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
             $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
@@ -1378,7 +1412,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying the type filtering behaviour of the
      */
-    public function test_get_conversations_type_filter() {
+    public function test_get_conversations_type_filter(): void {
+        $this->resetAfterTest();
+
         // Get a bunch of conversations, some group, some individual and in different states.
         list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
             $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
@@ -1403,6 +1439,8 @@ class api_test extends messagelib_test {
      */
     public function test_get_conversations_self_conversations() {
         global $DB;
+        $this->resetAfterTest();
+
 
         // Create a conversation between one user and themself.
         $user1 = self::getDataGenerator()->create_user();
@@ -1462,7 +1500,9 @@ class api_test extends messagelib_test {
     /**
      * Tests retrieving conversations when a conversation contains a deleted user.
      */
-    public function test_get_conversations_with_deleted_user() {
+    public function test_get_conversations_with_deleted_user(): void {
+        $this->resetAfterTest();
+
         // Get a bunch of conversations, some group, some individual and in different states.
         list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
             $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
@@ -1519,7 +1559,9 @@ class api_test extends messagelib_test {
     /**
      * Test confirming the behaviour of get_conversations() when users delete all messages.
      */
-    public function test_get_conversations_deleted_messages() {
+    public function test_get_conversations_deleted_messages(): void {
+        $this->resetAfterTest();
+
         // Get a bunch of conversations, some group, some individual and in different states.
         list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
             $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
@@ -1557,7 +1599,9 @@ class api_test extends messagelib_test {
      * Test verifying the behaviour of get_conversations() when fetching favourite conversations with only a single
      * favourite.
      */
-    public function test_get_conversations_favourite_conversations_single() {
+    public function test_get_conversations_favourite_conversations_single(): void {
+        $this->resetAfterTest();
+
         // Get a bunch of conversations, some group, some individual and in different states.
         list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
             $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
@@ -1606,7 +1650,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying the behaviour of get_conversations() when fetching favourite conversations.
      */
-    public function test_get_conversations_favourite_conversations() {
+    public function test_get_conversations_favourite_conversations(): void {
+        $this->resetAfterTest();
+
         // Get a bunch of conversations, some group, some individual and in different states.
         list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
             $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
@@ -1675,6 +1721,8 @@ class api_test extends messagelib_test {
     public function test_get_conversations_user_in_group_and_individual_chat() {
         $this->resetAfterTest();
 
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -1731,6 +1779,8 @@ class api_test extends messagelib_test {
      */
     public function test_get_conversations_group_linked() {
         global $CFG, $DB;
+        $this->resetAfterTest();
+
 
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
@@ -2086,6 +2136,8 @@ class api_test extends messagelib_test {
      */
     public function test_create_conversation_duplicate_conversations() {
         global $DB;
+        $this->resetAfterTest();
+
         $user1 = $this::getDataGenerator()->create_user();
 
         api::create_conversation(api::MESSAGE_CONVERSATION_TYPE_SELF, [$user1->id]);
@@ -2107,6 +2159,10 @@ class api_test extends messagelib_test {
      */
     public function test_get_conversations_mixed($usersdata, $contacts, $messagesdata, $expectations) {
         global $DB;
+        $this->resetAfterTest();
+
+
+        $this->redirectMessages();
 
         // Create all of the users.
         $users = array();
@@ -2131,7 +2187,7 @@ class api_test extends messagelib_test {
             $subject    = $messagedata['subject'];
 
             if (isset($messagedata['state']) && $messagedata['state'] == 'unread') {
-                $messageid = $this->send_fake_message($from, $to, $subject);
+                $messageid = testhelper::send_fake_message($from, $to, $subject);
             } else {
                 // If there is no state, or the state is not 'unread', assume the message is read.
                 $messageid = message_post_message($from, $to, $subject, FORMAT_PLAIN);
@@ -2167,7 +2223,9 @@ class api_test extends messagelib_test {
     /**
      * Tests retrieving user contacts.
      */
-    public function test_get_user_contacts() {
+    public function test_get_user_contacts(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
 
@@ -2227,7 +2285,9 @@ class api_test extends messagelib_test {
     /**
      * Tests retrieving conversation messages.
      */
-    public function test_get_conversation_messages() {
+    public function test_get_conversation_messages(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -2282,7 +2342,9 @@ class api_test extends messagelib_test {
     /**
      * Tests retrieving group conversation messages.
      */
-    public function test_get_group_conversation_messages() {
+    public function test_get_group_conversation_messages(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -2345,7 +2407,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying the sorting param for get_conversation_messages is respected().
      */
-    public function test_get_conversation_messages_sorting() {
+    public function test_get_conversation_messages_sorting(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -2412,7 +2476,9 @@ class api_test extends messagelib_test {
     /**
      * Test retrieving conversation messages by providing a minimum timecreated value.
      */
-    public function test_get_conversation_messages_time_from_only() {
+    public function test_get_conversation_messages_time_from_only(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -2484,7 +2550,9 @@ class api_test extends messagelib_test {
     /**
      * Test retrieving conversation messages by providing a maximum timecreated value.
      */
-    public function test_get_conversation_messages_time_to_only() {
+    public function test_get_conversation_messages_time_to_only(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -2557,7 +2625,9 @@ class api_test extends messagelib_test {
     /**
      * Test retrieving conversation messages by providing a minimum and maximum timecreated value.
      */
-    public function test_get_conversation_messages_time_from_and_to() {
+    public function test_get_conversation_messages_time_from_and_to(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -2606,7 +2676,9 @@ class api_test extends messagelib_test {
     /**
      * Test retrieving conversation messages by providing a limitfrom value.
      */
-    public function test_get_conversation_messages_limitfrom_only() {
+    public function test_get_conversation_messages_limitfrom_only(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -2653,7 +2725,9 @@ class api_test extends messagelib_test {
     /**
      * Test retrieving conversation messages by providing a limitnum value.
      */
-    public function test_get_conversation_messages_limitnum() {
+    public function test_get_conversation_messages_limitnum(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -2699,7 +2773,9 @@ class api_test extends messagelib_test {
     /**
      * Tests retrieving most recent conversation message.
      */
-    public function test_get_most_recent_conversation_message() {
+    public function test_get_most_recent_conversation_message(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -2732,7 +2808,9 @@ class api_test extends messagelib_test {
     /**
      * Tests checking if a user can mark all messages as read.
      */
-    public function test_can_mark_all_messages_as_read() {
+    public function test_can_mark_all_messages_as_read(): void {
+        $this->resetAfterTest();
+
         // Set as the admin.
         $this->setAdminUser();
 
@@ -2743,10 +2821,10 @@ class api_test extends messagelib_test {
 
         // Send some messages back and forth.
         $time = 1;
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        testhelper::send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        testhelper::send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        testhelper::send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        testhelper::send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
 
         $conversationid = api::get_conversation_between_users([$user1->id, $user2->id]);
 
@@ -2769,7 +2847,9 @@ class api_test extends messagelib_test {
     /**
      * Tests checking if a user can delete a conversation.
      */
-    public function test_can_delete_conversation() {
+    public function test_can_delete_conversation(): void {
+        $this->resetAfterTest();
+
         // Set as the admin.
         $this->setAdminUser();
 
@@ -2779,10 +2859,10 @@ class api_test extends messagelib_test {
 
         // Send some messages back and forth.
         $time = 1;
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        testhelper::send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        testhelper::send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        testhelper::send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        testhelper::send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
 
         $conversationid = api::get_conversation_between_users([$user1->id, $user2->id]);
 
@@ -2804,6 +2884,8 @@ class api_test extends messagelib_test {
      */
     public function test_delete_conversation_by_id() {
         global $DB;
+        $this->resetAfterTest();
+
 
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
@@ -2818,10 +2900,10 @@ class api_test extends messagelib_test {
 
         // Send some messages back and forth.
         $time = 1;
-        $m1id = $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $m2id = $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $m3id = $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $m4id = $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        $m1id = testhelper::send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $m2id = testhelper::send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $m3id = testhelper::send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $m4id = testhelper::send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
         $m5id = testhelper::send_fake_message_to_conversation($user1, $sc1->id, 'Hi to myself!', $time + 5);
         $m6id = testhelper::send_fake_message_to_conversation($user2, $sc2->id, 'I am talking with myself', $time + 6);
 
@@ -2893,19 +2975,19 @@ class api_test extends messagelib_test {
         $this->setUser($user1);
 
         // Send some messages back and forth, have some different conversations with different users.
-        $this->send_fake_message($user1, $user2, 'Yo!');
-        $this->send_fake_message($user2, $user1, 'Sup mang?');
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!');
-        $this->send_fake_message($user2, $user1, 'Word.');
+        testhelper::send_fake_message($user1, $user2, 'Yo!');
+        testhelper::send_fake_message($user2, $user1, 'Sup mang?');
+        testhelper::send_fake_message($user1, $user2, 'Writing PHPUnit tests!');
+        testhelper::send_fake_message($user2, $user1, 'Word.');
 
-        $this->send_fake_message($user1, $user3, 'Booyah');
-        $this->send_fake_message($user3, $user1, 'Whaaat?');
-        $this->send_fake_message($user1, $user3, 'Nothing.');
-        $this->send_fake_message($user3, $user1, 'Cool.');
+        testhelper::send_fake_message($user1, $user3, 'Booyah');
+        testhelper::send_fake_message($user3, $user1, 'Whaaat?');
+        testhelper::send_fake_message($user1, $user3, 'Nothing.');
+        testhelper::send_fake_message($user3, $user1, 'Cool.');
 
-        $this->send_fake_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?');
-        $this->send_fake_message($user4, $user1, 'Yah brah, it\'s pretty rad.');
-        $this->send_fake_message($user1, $user4, 'Dope.');
+        testhelper::send_fake_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?');
+        testhelper::send_fake_message($user4, $user1, 'Yah brah, it\'s pretty rad.');
+        testhelper::send_fake_message($user1, $user4, 'Dope.');
 
         // Check the amount for the current user.
         $this->assertEquals(3, api::count_unread_conversations());
@@ -2930,19 +3012,19 @@ class api_test extends messagelib_test {
         $this->setUser($user1);
 
         // Send some messages back and forth, have some different conversations with different users.
-        $this->send_fake_message($user1, $user2, 'Yo!');
-        $this->send_fake_message($user2, $user1, 'Sup mang?');
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!');
-        $this->send_fake_message($user2, $user1, 'Word.');
+        testhelper::send_fake_message($user1, $user2, 'Yo!');
+        testhelper::send_fake_message($user2, $user1, 'Sup mang?');
+        testhelper::send_fake_message($user1, $user2, 'Writing PHPUnit tests!');
+        testhelper::send_fake_message($user2, $user1, 'Word.');
 
-        $this->send_fake_message($user1, $user3, 'Booyah');
-        $this->send_fake_message($user3, $user1, 'Whaaat?');
-        $this->send_fake_message($user1, $user3, 'Nothing.');
-        $this->send_fake_message($user3, $user1, 'Cool.');
+        testhelper::send_fake_message($user1, $user3, 'Booyah');
+        testhelper::send_fake_message($user3, $user1, 'Whaaat?');
+        testhelper::send_fake_message($user1, $user3, 'Nothing.');
+        testhelper::send_fake_message($user3, $user1, 'Cool.');
 
-        $this->send_fake_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?');
-        $this->send_fake_message($user4, $user1, 'Yah brah, it\'s pretty rad.');
-        $this->send_fake_message($user1, $user4, 'Dope.');
+        testhelper::send_fake_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?');
+        testhelper::send_fake_message($user4, $user1, 'Yah brah, it\'s pretty rad.');
+        testhelper::send_fake_message($user1, $user4, 'Dope.');
 
         // Let's disable the last conversation.
         $conversationid = api::get_conversation_between_users([$user1->id, $user4->id]);
@@ -2955,7 +3037,9 @@ class api_test extends messagelib_test {
     /**
      * Tests deleting a conversation.
      */
-    public function test_get_all_message_preferences() {
+    public function test_get_all_message_preferences(): void {
+        $this->resetAfterTest();
+
         $user = self::getDataGenerator()->create_user();
         $this->setUser($user);
 
@@ -2974,7 +3058,9 @@ class api_test extends messagelib_test {
     /**
      * Tests the user can send a message.
      */
-    public function test_can_send_message() {
+    public function test_can_send_message(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -2998,6 +3084,8 @@ class api_test extends messagelib_test {
      */
     public function test_can_send_message_without_sendmessage_cap() {
         global $DB;
+        $this->resetAfterTest();
+
 
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
@@ -3018,7 +3106,9 @@ class api_test extends messagelib_test {
     /**
      * Tests the user can send a message when they are contact.
      */
-    public function test_can_send_message_when_contact() {
+    public function test_can_send_message_when_contact(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -3040,7 +3130,9 @@ class api_test extends messagelib_test {
      * Tests the user can't send a message if they are not a contact and the user
      * has requested messages only from contacts.
      */
-    public function test_can_send_message_when_not_contact() {
+    public function test_can_send_message_when_not_contact(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -3058,7 +3150,9 @@ class api_test extends messagelib_test {
     /**
      * Tests the user can't send a message if they are blocked.
      */
-    public function test_can_send_message_when_blocked() {
+    public function test_can_send_message_when_blocked(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -3077,7 +3171,9 @@ class api_test extends messagelib_test {
      * Tests the user can send a message when site-wide messaging setting is enabled,
      * even if they are not a contact and are not members of the same course.
      */
-    public function test_can_send_message_site_messaging_setting() {
+    public function test_can_send_message_site_messaging_setting(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -3127,6 +3223,8 @@ class api_test extends messagelib_test {
      */
     public function test_can_send_message_with_messageanyuser_cap() {
         global $DB;
+        $this->resetAfterTest();
+
 
         // Create some users.
         $teacher1 = self::getDataGenerator()->create_user();
@@ -3261,7 +3359,9 @@ class api_test extends messagelib_test {
     /**
      * Verify the expected behaviour of the can_send_message_to_conversation() method for authenticated users with default settings.
      */
-    public function test_can_send_message_to_conversation_basic() {
+    public function test_can_send_message_to_conversation_basic(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -3313,6 +3413,8 @@ class api_test extends messagelib_test {
      */
     public function test_can_send_message_to_conversation_sendmessage_cap() {
         global $DB;
+        $this->resetAfterTest();
+
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -3361,6 +3463,8 @@ class api_test extends messagelib_test {
      */
     public function test_can_send_message_to_conversation_messageanyuser_cap() {
         global $DB;
+        $this->resetAfterTest();
+
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -3411,7 +3515,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying that users cannot send messages to conversations they are not a part of.
      */
-    public function test_can_send_message_to_conversation_non_member() {
+    public function test_can_send_message_to_conversation_non_member(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -3456,7 +3562,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying the behaviour of the can_send_message_to_conversation method when privacy is set to contacts only.
      */
-    public function test_can_send_message_to_conversation_privacy_contacts_only() {
+    public function test_can_send_message_to_conversation_privacy_contacts_only(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -3499,7 +3607,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying the behaviour of the can_send_message_to_conversation method when privacy is set to contacts / course members.
      */
-    public function test_can_send_message_to_conversation_privacy_contacts_course() {
+    public function test_can_send_message_to_conversation_privacy_contacts_course(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -3547,7 +3657,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying the behaviour of the can_send_message_to_conversation method when privacy is set to any user.
      */
-    public function test_can_send_message_to_conversation_privacy_sitewide() {
+    public function test_can_send_message_to_conversation_privacy_sitewide(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -3601,7 +3713,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying the behaviour of the can_send_message_to_conversation method when a user is blocked.
      */
-    public function test_can_send_message_to_conversation_when_blocked() {
+    public function test_can_send_message_to_conversation_when_blocked(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -3645,7 +3759,9 @@ class api_test extends messagelib_test {
     /**
      * Tests get_user_privacy_messaging_preference method.
      */
-    public function test_get_user_privacy_messaging_preference() {
+    public function test_get_user_privacy_messaging_preference(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -3693,7 +3809,9 @@ class api_test extends messagelib_test {
     /*
      * Tes get_message_processor api.
      */
-    public function test_get_message_processor() {
+    public function test_get_message_processor(): void {
+        $this->resetAfterTest();
+
         $processors = get_message_processors(true);
         if (empty($processors)) {
             $this->markTestSkipped("No message processors found");
@@ -3728,7 +3846,9 @@ class api_test extends messagelib_test {
     /**
      * Test method update_processor_status.
      */
-    public function test_update_processor_status() {
+    public function test_update_processor_status(): void {
+        $this->resetAfterTest();
+
         $processors = get_message_processors();
         if (empty($processors)) {
             $this->markTestSkipped("No message processors found");
@@ -3784,6 +3904,8 @@ class api_test extends messagelib_test {
      */
     public function test_get_blocked_users() {
         global $USER;
+        $this->resetAfterTest();
+
 
         // Set this user as the admin.
         $this->setAdminUser();
@@ -3813,6 +3935,8 @@ class api_test extends messagelib_test {
     public function test_get_contacts_with_unread_message_count() {
         global $DB;
 
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -3822,19 +3946,19 @@ class api_test extends messagelib_test {
         api::add_contact($user1->id, $user2->id);
         api::add_contact($user2->id, $user3->id);
 
-        $this->send_fake_message($user1, $user2);
-        $this->send_fake_message($user1, $user2);
-        $this->send_fake_message($user1, $user2);
-        $message4id = $this->send_fake_message($user1, $user2);
+        testhelper::send_fake_message($user1, $user2);
+        testhelper::send_fake_message($user1, $user2);
+        testhelper::send_fake_message($user1, $user2);
+        $message4id = testhelper::send_fake_message($user1, $user2);
 
-        $this->send_fake_message($user3, $user2);
-        $message6id = $this->send_fake_message($user3, $user2);
-        $this->send_fake_message($user3, $user2);
-        $this->send_fake_message($user3, $user2);
-        $this->send_fake_message($user3, $user2);
+        testhelper::send_fake_message($user3, $user2);
+        $message6id = testhelper::send_fake_message($user3, $user2);
+        testhelper::send_fake_message($user3, $user2);
+        testhelper::send_fake_message($user3, $user2);
+        testhelper::send_fake_message($user3, $user2);
 
         // Send a message that should never be included as the user is not a contact.
-        $this->send_fake_message($user4, $user2);
+        testhelper::send_fake_message($user4, $user2);
 
         // Get the contacts and the unread message count.
         $messages = api::get_contacts_with_unread_message_count($user2->id);
@@ -3875,12 +3999,12 @@ class api_test extends messagelib_test {
         $this->assertEquals(4, $messageinfo2->messagecount);
 
         // Now, let's populate the database with messages from user2 to user 1.
-        $this->send_fake_message($user2, $user1);
-        $this->send_fake_message($user2, $user1);
-        $messageid = $this->send_fake_message($user2, $user1);
+        testhelper::send_fake_message($user2, $user1);
+        testhelper::send_fake_message($user2, $user1);
+        $messageid = testhelper::send_fake_message($user2, $user1);
 
         // Send a message that should never be included as the user is not a contact.
-        $this->send_fake_message($user4, $user1);
+        testhelper::send_fake_message($user4, $user1);
 
         // Get the contacts and the unread message count.
         $messages = api::get_contacts_with_unread_message_count($user1->id);
@@ -3912,6 +4036,8 @@ class api_test extends messagelib_test {
      * Test returning contacts with unread message count when there are no messages.
      */
     public function test_get_contacts_with_unread_message_count_no_messages() {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -3937,6 +4063,7 @@ class api_test extends messagelib_test {
      */
     public function test_get_non_contacts_with_unread_message_count() {
         global $DB;
+        $this->resetAfterTest();
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -3947,19 +4074,19 @@ class api_test extends messagelib_test {
         api::add_contact($user1->id, $user4->id);
         api::add_contact($user2->id, $user4->id);
 
-        $this->send_fake_message($user1, $user2);
-        $this->send_fake_message($user1, $user2);
-        $this->send_fake_message($user1, $user2);
-        $message4id = $this->send_fake_message($user1, $user2);
+        testhelper::send_fake_message($user1, $user2);
+        testhelper::send_fake_message($user1, $user2);
+        testhelper::send_fake_message($user1, $user2);
+        $message4id = testhelper::send_fake_message($user1, $user2);
 
-        $this->send_fake_message($user3, $user2);
-        $message6id = $this->send_fake_message($user3, $user2);
-        $this->send_fake_message($user3, $user2);
-        $this->send_fake_message($user3, $user2);
-        $this->send_fake_message($user3, $user2);
+        testhelper::send_fake_message($user3, $user2);
+        $message6id = testhelper::send_fake_message($user3, $user2);
+        testhelper::send_fake_message($user3, $user2);
+        testhelper::send_fake_message($user3, $user2);
+        testhelper::send_fake_message($user3, $user2);
 
         // Send a message that should never be included as the user is a contact.
-        $this->send_fake_message($user4, $user2);
+        testhelper::send_fake_message($user4, $user2);
 
 
         // Get the non-contacts and the unread message count.
@@ -3997,12 +4124,12 @@ class api_test extends messagelib_test {
         $this->assertEquals(4, $messageinfo2->messagecount);
 
         // Now, let's populate the database with messages from user2 to user 1.
-        $this->send_fake_message($user2, $user1);
-        $this->send_fake_message($user2, $user1);
-        $messageid = $this->send_fake_message($user2, $user1);
+        testhelper::send_fake_message($user2, $user1);
+        testhelper::send_fake_message($user2, $user1);
+        $messageid = testhelper::send_fake_message($user2, $user1);
 
         // Send a message that should never be included as the user is a contact.
-        $this->send_fake_message($user4, $user1);
+        testhelper::send_fake_message($user4, $user1);
 
         // Get the non-contacts and the unread message count.
         $messages = api::get_non_contacts_with_unread_message_count($user1->id);
@@ -4034,14 +4161,15 @@ class api_test extends messagelib_test {
      */
     public function test_mark_message_as_read() {
         global $DB;
+        $this->resetAfterTest();
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
-        $this->send_fake_message($user1, $user2);
-        $m2id = $this->send_fake_message($user1, $user2);
-        $this->send_fake_message($user2, $user1);
-        $m4id = $this->send_fake_message($user2, $user1);
+        testhelper::send_fake_message($user1, $user2);
+        $m2id = testhelper::send_fake_message($user1, $user2);
+        testhelper::send_fake_message($user2, $user1);
+        $m4id = testhelper::send_fake_message($user2, $user1);
 
         $m2 = $DB->get_record('messages', ['id' => $m2id]);
         $m4 = $DB->get_record('messages', ['id' => $m4id]);
@@ -4074,14 +4202,15 @@ class api_test extends messagelib_test {
      */
     public function test_mark_notification_as_read() {
         global $DB;
+        $this->resetAfterTest();
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
-        $this->send_fake_message($user1, $user2, 'Notification 1', 1);
-        $n2id = $this->send_fake_message($user1, $user2, 'Notification 2', 1);
-        $this->send_fake_message($user2, $user1, 'Notification 3', 1);
-        $n4id = $this->send_fake_message($user2, $user1, 'Notification 4', 1);
+        testhelper::send_fake_message($user1, $user2, 'Notification 1', 1);
+        $n2id = testhelper::send_fake_message($user1, $user2, 'Notification 2', 1);
+        testhelper::send_fake_message($user2, $user1, 'Notification 3', 1);
+        $n4id = testhelper::send_fake_message($user2, $user1, 'Notification 4', 1);
 
         $n2 = $DB->get_record('notifications', ['id' => $n2id]);
         $n4 = $DB->get_record('notifications', ['id' => $n4id]);
@@ -4101,7 +4230,9 @@ class api_test extends messagelib_test {
     /**
      * Test a conversation is not returned if there is none.
      */
-    public function test_get_conversation_between_users_no_conversation() {
+    public function test_get_conversation_between_users_no_conversation(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -4111,15 +4242,21 @@ class api_test extends messagelib_test {
     /**
      * Test count_conversation_members for non existing conversation.
      */
-    public function test_count_conversation_members_no_existing_conversation() {
-        $this->assertEquals(0,
-            api::count_conversation_members(0));
+    public function test_count_conversation_members_no_existing_conversation(): void {
+        $this->resetAfterTest();
+
+        $this->assertEquals(
+            0,
+            api::count_conversation_members(0)
+        );
     }
 
     /**
      * Test count_conversation_members for existing conversation.
      */
-    public function test_count_conversation_members_existing_conversation() {
+    public function test_count_conversation_members_existing_conversation(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -4139,7 +4276,9 @@ class api_test extends messagelib_test {
     /**
      * Test add_members_to_conversation for an individual conversation.
      */
-    public function test_add_members_to_individual_conversation() {
+    public function test_add_members_to_individual_conversation(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -4160,7 +4299,9 @@ class api_test extends messagelib_test {
     /**
      * Test add_members_to_conversation for existing conversation.
      */
-    public function test_add_members_to_existing_conversation() {
+    public function test_add_members_to_existing_conversation(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -4182,7 +4323,9 @@ class api_test extends messagelib_test {
     /**
      * Test add_members_to_conversation for non existing conversation.
      */
-    public function test_add_members_to_no_existing_conversation() {
+    public function test_add_members_to_no_existing_conversation(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
 
         // Throw dml_missing_record_exception for non existing conversation.
@@ -4193,7 +4336,9 @@ class api_test extends messagelib_test {
     /**
      * Test add_member_to_conversation for non existing user.
      */
-    public function test_add_members_to_no_existing_user() {
+    public function test_add_members_to_no_existing_user(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -4215,7 +4360,9 @@ class api_test extends messagelib_test {
     /**
      * Test add_members_to_conversation for current conversation member.
      */
-    public function test_add_members_to_current_conversation_member() {
+    public function test_add_members_to_current_conversation_member(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -4237,7 +4384,9 @@ class api_test extends messagelib_test {
     /**
      * Test add_members_to_conversation for multiple users.
      */
-    public function test_add_members_for_multiple_users() {
+    public function test_add_members_for_multiple_users(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -4260,7 +4409,9 @@ class api_test extends messagelib_test {
     /**
      * Test add_members_to_conversation for multiple users, included non existing and current conversation members
      */
-    public function test_add_members_for_multiple_not_valid_users() {
+    public function test_add_members_for_multiple_not_valid_users(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -4283,7 +4434,9 @@ class api_test extends messagelib_test {
     /**
      * Test remove_members_from_conversation for individual conversation.
      */
-    public function test_remove_members_from_individual_conversation() {
+    public function test_remove_members_from_individual_conversation(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -4303,7 +4456,9 @@ class api_test extends messagelib_test {
     /**
      * Test remove_members_from_conversation for existing conversation.
      */
-    public function test_remove_members_from_existing_conversation() {
+    public function test_remove_members_from_existing_conversation(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -4324,7 +4479,9 @@ class api_test extends messagelib_test {
     /**
      * Test remove_members_from_conversation for non existing conversation.
      */
-    public function test_remove_members_from_no_existing_conversation() {
+    public function test_remove_members_from_no_existing_conversation(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
 
         // Throw dml_missing_record_exception for non existing conversation.
@@ -4335,7 +4492,9 @@ class api_test extends messagelib_test {
     /**
      * Test remove_members_from_conversation for non existing user.
      */
-    public function test_remove_members_for_no_existing_user() {
+    public function test_remove_members_for_no_existing_user(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -4356,7 +4515,9 @@ class api_test extends messagelib_test {
     /**
      * Test remove_members_from_conversation for multiple users.
      */
-    public function test_remove_members_for_multiple_users() {
+    public function test_remove_members_for_multiple_users(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -4380,7 +4541,9 @@ class api_test extends messagelib_test {
     /**
      * Test remove_members_from_conversation for multiple non valid users.
      */
-    public function test_remove_members_for_multiple_no_valid_users() {
+    public function test_remove_members_for_multiple_no_valid_users(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -4406,7 +4569,9 @@ class api_test extends messagelib_test {
     /**
      * Test count_conversation_members for empty conversation.
      */
-    public function test_count_conversation_members_empty_conversation() {
+    public function test_count_conversation_members_empty_conversation(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -4430,6 +4595,7 @@ class api_test extends messagelib_test {
      */
     public function test_can_create_contact_request() {
         global $CFG;
+        $this->resetAfterTest();
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -4461,6 +4627,7 @@ class api_test extends messagelib_test {
      */
     public function test_create_contact_request() {
         global $DB;
+        $this->resetAfterTest();
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -4484,6 +4651,7 @@ class api_test extends messagelib_test {
      */
     public function test_confirm_contact_request() {
         global $DB;
+        $this->resetAfterTest();
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -4509,6 +4677,7 @@ class api_test extends messagelib_test {
      */
     public function test_decline_contact_request() {
         global $DB;
+        $this->resetAfterTest();
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -4526,6 +4695,7 @@ class api_test extends messagelib_test {
      */
     public function test_get_contact_requests() {
         global $PAGE;
+        $this->resetAfterTest();
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -4558,7 +4728,8 @@ class api_test extends messagelib_test {
     /**
      * Test the get_contact_requests() function when the user has blocked the sender of the request.
      */
-    public function test_get_contact_requests_blocked_sender() {
+    public function test_get_contact_requests_blocked_sender(): void {
+        $this->resetAfterTest();
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -4609,6 +4780,7 @@ class api_test extends messagelib_test {
      */
     public function test_add_contact() {
         global $DB;
+        $this->resetAfterTest();
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -4630,6 +4802,7 @@ class api_test extends messagelib_test {
      */
     public function test_remove_contact() {
         global $DB;
+        $this->resetAfterTest();
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -4645,6 +4818,7 @@ class api_test extends messagelib_test {
      */
     public function test_block_user() {
         global $DB;
+        $this->resetAfterTest();
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -4666,6 +4840,7 @@ class api_test extends messagelib_test {
      */
     public function test_unblock_user() {
         global $DB;
+        $this->resetAfterTest();
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -4681,6 +4856,7 @@ class api_test extends messagelib_test {
      */
     public function test_mute_conversation() {
         global $DB;
+        $this->resetAfterTest();
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -4712,6 +4888,7 @@ class api_test extends messagelib_test {
      */
     public function test_unmute_conversation() {
         global $DB;
+        $this->resetAfterTest();
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -4734,7 +4911,9 @@ class api_test extends messagelib_test {
     /**
      * Test if a conversation is muted.
      */
-    public function test_is_conversation_muted() {
+    public function test_is_conversation_muted(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -4757,7 +4936,9 @@ class api_test extends messagelib_test {
     /**
      * Test is contact check.
      */
-    public function test_is_contact() {
+    public function test_is_contact(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -4772,7 +4953,9 @@ class api_test extends messagelib_test {
     /**
      * Test get contact.
      */
-    public function test_get_contact() {
+    public function test_get_contact(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -4787,7 +4970,9 @@ class api_test extends messagelib_test {
     /**
      * Test is blocked checked.
      */
-    public function test_is_blocked() {
+    public function test_is_blocked(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -4803,7 +4988,9 @@ class api_test extends messagelib_test {
     /**
      * Test the contact request exist check.
      */
-    public function test_does_contact_request_exist() {
+    public function test_does_contact_request_exist(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -4819,7 +5006,9 @@ class api_test extends messagelib_test {
     /**
      * Test the get_received_contact_requests_count() function.
      */
-    public function test_get_received_contact_requests_count() {
+    public function test_get_received_contact_requests_count(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -4843,7 +5032,9 @@ class api_test extends messagelib_test {
     /**
      * Test the get_received_contact_requests_count() function when the user has blocked the sender of the request.
      */
-    public function test_get_received_contact_requests_count_blocked_sender() {
+    public function test_get_received_contact_requests_count_blocked_sender(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -4860,7 +5051,9 @@ class api_test extends messagelib_test {
     /**
      * Test the get_contact_requests_between_users() function.
      */
-    public function test_get_contact_requests_between_users() {
+    public function test_get_contact_requests_between_users(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -4908,7 +5101,9 @@ class api_test extends messagelib_test {
     /**
      * Test the user in conversation check.
      */
-    public function test_is_user_in_conversation() {
+    public function test_is_user_in_conversation(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -4927,7 +5122,9 @@ class api_test extends messagelib_test {
     /**
      * Test the user in conversation check when they are not.
      */
-    public function test_is_user_in_conversation_when_not() {
+    public function test_is_user_in_conversation_when_not(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -4949,6 +5146,7 @@ class api_test extends messagelib_test {
      */
     public function test_can_create_group_conversation() {
         global $CFG;
+        $this->resetAfterTest();
 
         $student = self::getDataGenerator()->create_user();
         $teacher = self::getDataGenerator()->create_user();
@@ -4976,7 +5174,9 @@ class api_test extends messagelib_test {
     /**
      * Test creating an individual conversation.
      */
-    public function test_create_conversation_individual() {
+    public function test_create_conversation_individual(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
@@ -5008,7 +5208,9 @@ class api_test extends messagelib_test {
     /**
      * Test creating a group conversation.
      */
-    public function test_create_conversation_group() {
+    public function test_create_conversation_group(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -5062,7 +5264,9 @@ class api_test extends messagelib_test {
     /**
      * Test create message conversation with area.
      */
-    public function test_create_conversation_with_area() {
+    public function test_create_conversation_with_area(): void {
+        $this->resetAfterTest();
+
         $contextid = 111;
         $itemid = 222;
         $name = 'Name of conversation';
@@ -5087,7 +5291,9 @@ class api_test extends messagelib_test {
     /**
      * Test get_conversation_by_area.
      */
-    public function test_get_conversation_by_area() {
+    public function test_get_conversation_by_area(): void {
+        $this->resetAfterTest();
+
         $contextid = 111;
         $itemid = 222;
         $name = 'Name of conversation';
@@ -5116,6 +5322,7 @@ class api_test extends messagelib_test {
      */
     public function test_enable_conversation() {
         global $DB;
+        $this->resetAfterTest();
 
         $name = 'Name of conversation';
 
@@ -5137,6 +5344,8 @@ class api_test extends messagelib_test {
      */
     public function test_disable_conversation() {
         global $DB;
+        $this->resetAfterTest();
+
 
         $name = 'Name of conversation';
 
@@ -5158,6 +5367,7 @@ class api_test extends messagelib_test {
      */
     public function test_update_conversation_name() {
         global $DB;
+        $this->resetAfterTest();
 
         $conversation = api::create_conversation(api::MESSAGE_CONVERSATION_TYPE_GROUP, []);
 
@@ -5173,7 +5383,9 @@ class api_test extends messagelib_test {
     /**
      * Test returning members in a conversation with no contact requests.
      */
-    public function test_get_conversation_members() {
+    public function test_get_conversation_members(): void {
+        $this->resetAfterTest();
+
         $lastaccess = new \stdClass();
         $lastaccess->lastaccess = time();
 
@@ -5244,7 +5456,9 @@ class api_test extends messagelib_test {
     /**
      * Test returning members in a conversation with contact requests.
      */
-    public function test_get_conversation_members_with_contact_requests() {
+    public function test_get_conversation_members_with_contact_requests(): void {
+        $this->resetAfterTest();
+
         $lastaccess = new \stdClass();
         $lastaccess->lastaccess = time();
 
@@ -5335,7 +5549,9 @@ class api_test extends messagelib_test {
     /**
      * Test returning members of a self conversation.
      */
-    public function test_get_conversation_members_with_self_conversation() {
+    public function test_get_conversation_members_with_self_conversation(): void {
+        $this->resetAfterTest();
+
         $lastaccess = new \stdClass();
         $lastaccess->lastaccess = time();
 
@@ -5362,7 +5578,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying that messages can be sent to existing individual conversations.
      */
-    public function test_send_message_to_conversation_individual_conversation() {
+    public function test_send_message_to_conversation_individual_conversation(): void {
+        $this->resetAfterTest();
+
         // Get a bunch of conversations, some group, some individual and in different states.
         list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
             $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
@@ -5412,7 +5630,8 @@ class api_test extends messagelib_test {
     /**
      * Test verifying that messages can be sent to existing group conversations.
      */
-    public function test_send_message_to_conversation_group_conversation() {
+    public function test_send_message_to_conversation_group_conversation(): void {
+        $this->resetAfterTest();
         // Get a bunch of conversations, some group, some individual and in different states.
         list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
             $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
@@ -5464,6 +5683,7 @@ class api_test extends messagelib_test {
      */
     public function test_send_message_to_conversation_linked_group_conversation() {
         global $CFG, $PAGE;
+        $this->resetAfterTest();
 
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
@@ -5525,7 +5745,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying that messages cannot be sent to conversations that don't exist.
      */
-    public function test_send_message_to_conversation_non_existent_conversation() {
+    public function test_send_message_to_conversation_non_existent_conversation(): void {
+        $this->resetAfterTest();
+
         // Get a bunch of conversations, some group, some individual and in different states.
         list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
             $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
@@ -5537,7 +5759,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying that messages cannot be sent to conversations by users who are not members.
      */
-    public function test_send_message_to_conversation_non_member() {
+    public function test_send_message_to_conversation_non_member(): void {
+        $this->resetAfterTest();
+
         // Get a bunch of conversations, some group, some individual and in different states.
         list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
             $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
@@ -5556,7 +5780,9 @@ class api_test extends messagelib_test {
     /**
      * Test verifying that messages cannot be sent to conversations by users who are not members.
      */
-    public function test_send_message_to_conversation_blocked_user() {
+    public function test_send_message_to_conversation_blocked_user(): void {
+        $this->resetAfterTest();
+
         // Get a bunch of conversations, some group, some individual and in different states.
         list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
             $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
@@ -5988,7 +6214,9 @@ class api_test extends messagelib_test {
         $expectedcounts,
         $expectedunreadcounts,
         $deletedusers
-    ) {
+    ): void {
+        $this->resetAfterTest();
+
         $generator = $this->getDataGenerator();
         $users = [
             $generator->create_user(),
@@ -6065,7 +6293,9 @@ class api_test extends messagelib_test {
     /**
      * Test the count_contacts() function.
      */
-    public function test_count_contacts() {
+    public function test_count_contacts(): void {
+        $this->resetAfterTest();
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -6418,7 +6648,9 @@ class api_test extends messagelib_test {
      * Test retrieving conversation messages by providing a timefrom higher than last message timecreated. It should return no
      * messages but keep the return structure to not break when called from the ws.
      */
-    public function test_get_conversation_messages_timefrom_higher_than_last_timecreated() {
+    public function test_get_conversation_messages_timefrom_higher_than_last_timecreated(): void {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();

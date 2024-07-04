@@ -25,11 +25,7 @@
 
 namespace core_message\event;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
+use core_message\tests\helper as testhelper;
 
 /**
  * Class containing the tests for message related events.
@@ -39,22 +35,14 @@ require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
  * @copyright 2014 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \core_message\messagelib_test {
-
-    /**
-     * Test set up.
-     *
-     * This is executed before running any test in this file.
-     */
-    public function setUp(): void {
-        $this->resetAfterTest();
-    }
-
+final class events_test extends \advanced_testcase {
     /**
      * Test the message contact added event.
      */
     public function test_message_contact_added() {
         global $USER;
+
+        $this->resetAfterTest();
 
         // Set this user as the admin.
         $this->setAdminUser();
@@ -83,6 +71,8 @@ class events_test extends \core_message\messagelib_test {
      */
     public function test_message_contact_removed() {
         global $USER;
+
+        $this->resetAfterTest();
 
         // Set this user as the admin.
         $this->setAdminUser();
@@ -115,6 +105,8 @@ class events_test extends \core_message\messagelib_test {
     public function test_message_user_blocked() {
         global $USER;
 
+        $this->resetAfterTest();
+
         // Set this user as the admin.
         $this->setAdminUser();
 
@@ -140,6 +132,8 @@ class events_test extends \core_message\messagelib_test {
      */
     public function test_message_user_unblocked() {
         global $USER;
+
+        $this->resetAfterTest();
 
         // Set this user as the admin.
         $this->setAdminUser();
@@ -175,7 +169,7 @@ class events_test extends \core_message\messagelib_test {
      * We can not use the message_send() function in the unit test to check that the event was fired as there is a
      * conditional check to ensure a fake message is sent during unit tests when calling that particular function.
      */
-    public function test_message_sent() {
+    public function test_message_sent(): void {
         $event = \core\event\message_sent::create(array(
             'objectid' => 3,
             'userid' => 1,
@@ -203,8 +197,7 @@ class events_test extends \core_message\messagelib_test {
         $this->assertEquals(4, $event->other['courseid']);
     }
 
-    public function test_mesage_sent_without_other_courseid() {
-
+    public function test_mesage_sent_without_other_courseid(): void {
         // Creating a message_sent event without other[courseid] leads to exception.
         $this->expectException('coding_exception');
         $this->expectExceptionMessage('The \'courseid\' value must be set in other');
@@ -219,7 +212,9 @@ class events_test extends \core_message\messagelib_test {
         ));
     }
 
-    public function test_mesage_sent_via_create_from_ids() {
+    public function test_mesage_sent_via_create_from_ids(): void {
+        $this->resetAfterTest();
+
         // Containing courseid.
         $event = \core\event\message_sent::create_from_ids(1, 2, 3, 4);
 
@@ -247,7 +242,9 @@ class events_test extends \core_message\messagelib_test {
      * resulting in fake messages being generated and captured under test. As a result, none of the events code, nor message
      * processor code is called during testing.
      */
-    public function test_group_message_sent() {
+    public function test_group_message_sent(): void {
+        $this->resetAfterTest();
+
         $event = \core\event\group_message_sent::create([
             'objectid' => 3,
             'userid' => 1,
@@ -315,7 +312,9 @@ class events_test extends \core_message\messagelib_test {
     /**
      * Test the group message sent event using the create_from_ids() method.
      */
-    public function test_group_message_sent_via_create_from_ids() {
+    public function test_group_message_sent_via_create_from_ids(): void {
+        $this->resetAfterTest();
+
         // Fields are: userfromid, conversationid, messageid, courseid.
         $event = \core\event\group_message_sent::create_from_ids(1, 2, 3, 4);
 
@@ -341,11 +340,13 @@ class events_test extends \core_message\messagelib_test {
     public function test_message_viewed() {
         global $DB;
 
+        $this->resetAfterTest();
+
         // Create users to send messages between.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $messageid = $this->send_fake_message($user1, $user2);
+        $messageid = testhelper::send_fake_message($user1, $user2);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
@@ -373,13 +374,15 @@ class events_test extends \core_message\messagelib_test {
     public function test_message_deleted() {
         global $DB, $USER;
 
+        $this->resetAfterTest();
+
         $this->setAdminUser();
 
         // Create users to send messages between.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $messageid = $this->send_fake_message($user1, $user2);
+        $messageid = testhelper::send_fake_message($user1, $user2);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
@@ -401,7 +404,7 @@ class events_test extends \core_message\messagelib_test {
         $this->setUser($user1);
 
         // Create a read message.
-        $messageid = $this->send_fake_message($user1, $user2);
+        $messageid = testhelper::send_fake_message($user1, $user2);
         $m = $DB->get_record('messages', ['id' => $messageid]);
         \core_message\api::mark_message_as_read($user2->id, $m);
 
@@ -429,6 +432,8 @@ class events_test extends \core_message\messagelib_test {
     public function test_message_deleted_whole_conversation() {
         global $DB;
 
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -439,14 +444,14 @@ class events_test extends \core_message\messagelib_test {
         // Send some messages back and forth.
         $time = 1;
         $messages = [];
-        $messages[] = $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $messages[] = $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $messages[] = $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $messages[] = $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
-        $messages[] = $this->send_fake_message($user1, $user2, 'You doing much?', 0, $time + 5);
-        $messages[] = $this->send_fake_message($user2, $user1, 'Nah', 0, $time + 6);
-        $messages[] = $this->send_fake_message($user1, $user2, 'You nubz0r!', 0, $time + 7);
-        $messages[] = $this->send_fake_message($user2, $user1, 'Ouch.', 0, $time + 8);
+        $messages[] = testhelper::send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $messages[] = testhelper::send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $messages[] = testhelper::send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $messages[] = testhelper::send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        $messages[] = testhelper::send_fake_message($user1, $user2, 'You doing much?', 0, $time + 5);
+        $messages[] = testhelper::send_fake_message($user2, $user1, 'Nah', 0, $time + 6);
+        $messages[] = testhelper::send_fake_message($user1, $user2, 'You nubz0r!', 0, $time + 7);
+        $messages[] = testhelper::send_fake_message($user2, $user1, 'Ouch.', 0, $time + 8);
 
         // Mark the last 4 messages as read.
         $m5 = $DB->get_record('messages', ['id' => $messages[4]]);
@@ -497,7 +502,9 @@ class events_test extends \core_message\messagelib_test {
     /**
      * Test the notification sent event.
      */
-    public function test_notification_sent() {
+    public function test_notification_sent(): void {
+        $this->resetAfterTest();
+
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
@@ -506,7 +513,7 @@ class events_test extends \core_message\messagelib_test {
         $user2 = $this->getDataGenerator()->create_user();
 
         // Send a notification.
-        $notificationid = $this->send_fake_message($user1, $user2, 'Hello world!', 1);
+        $notificationid = testhelper::send_fake_message($user1, $user2, 'Hello world!', 1);
 
         // Containing courseid.
         $event = \core\event\notification_sent::create_from_ids($user1->id, $user2->id, $notificationid, $course->id);
@@ -534,6 +541,8 @@ class events_test extends \core_message\messagelib_test {
     public function test_notification_sent_with_null_course() {
         $event = \core\event\notification_sent::create_from_ids(1, 1, 1, null);
 
+        $this->resetAfterTest();
+
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
         $event->trigger();
@@ -551,12 +560,14 @@ class events_test extends \core_message\messagelib_test {
     public function test_notification_viewed() {
         global $DB;
 
+        $this->resetAfterTest();
+
         // Create users to send notifications between.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
         // Send a notification.
-        $notificationid = $this->send_fake_message($user1, $user2, 'Hello world!', 1);
+        $notificationid = testhelper::send_fake_message($user1, $user2, 'Hello world!', 1);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
