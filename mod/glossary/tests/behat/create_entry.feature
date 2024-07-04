@@ -44,5 +44,6 @@ Feature: Create a glossary entry.
     # Confirm you can download attachment from student's entry as teacher
     When I am on the "Test glossary" "glossary activity" page logged in as teacher1
     Then I should see "Entry 1"
-    And I should see "musicians.xml"
-    And following "musicians.xml" should download between "1" and "3000" bytes
+    And following "musicians.xml" should download a file that:
+      | Has mimetype                 | text/xml       |
+      | Contains text in xml element | Paul McCartney |
