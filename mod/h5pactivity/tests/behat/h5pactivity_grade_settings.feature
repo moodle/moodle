@@ -41,7 +41,7 @@ Feature: Teacher can control h5p activity grading setting
     And I turn editing mode off
     # Confirm that grades are not saved when grade entered is > maximum grade.
     Then the following should exist in the "user-grades" table:
-      | -1-       | -1-                  | -4- |
+      | -1-       | -3-                  | -4- |
       | Student 1 | student1@example.com | -   |
       | Student 2 | student2@example.com | -   |
       | Student 3 | student3@example.com | -   |
@@ -67,7 +67,7 @@ Feature: Teacher can control h5p activity grading setting
     And I turn editing mode off
     # Confirm that corresponding grades are stored for each student.
     And the following should exist in the "user-grades" table:
-      | -1-       | -1-                  | -4- |
+      | -1-       | -3-                  | -4- |
       | Student 1 | student1@example.com | 10  |
       | Student 2 | student2@example.com | 5   |
       | Student 3 | student3@example.com | 0   |
@@ -93,7 +93,7 @@ Feature: Teacher can control h5p activity grading setting
     And I turn editing mode off
     # Confirm that scale set for student is successfully saved.
     Then the following should exist in the "user-grades" table:
-      | -1-       | -1-                  | -4-               |
+      | -1-       | -3-                  | -4-               |
       | Student 1 | student1@example.com | Not yet competent |
       | Student 2 | student2@example.com | Competent         |
       | Student 3 | student3@example.com | -                 |
