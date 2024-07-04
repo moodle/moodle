@@ -286,9 +286,7 @@ class behat_general extends behat_base {
      * @param string $link
      */
     public function click_link($link) {
-
         $linknode = $this->find_link($link);
-        $this->ensure_node_is_visible($linknode);
         $linknode->click();
     }
 
@@ -393,11 +391,8 @@ class behat_general extends behat_base {
      * @param string $selectortype The type of what we look for
      */
     public function i_click_on($element, $selectortype) {
-
         // Gets the node based on the requested selector type and locator.
-        $node = $this->get_selected_node($selectortype, $element);
-        $this->ensure_node_is_visible($node);
-        $node->click();
+        $this->get_selected_node($selectortype, $element)->click();
     }
 
     /**
@@ -458,10 +453,56 @@ class behat_general extends behat_base {
      * @param string $nodeselectortype The type of selector where we look in
      */
     public function i_click_on_in_the($element, $selectortype, $nodeelement, $nodeselectortype) {
+        $node = $this->get_node_in_container($selectortype, $element, $nodeselectortype, $nodeelement);
+        $node->click();
+    }
+
+    /**
+     * Click on the element with some modifier key pressed (alt, shift, meta or control).
+     *
+     * It is important to note that not all HTML elements are compatible with this step because
+     * the webdriver limitations. For example, alt click on checkboxes with a visible label will
+     * produce a normal checkbox click without the modifier.
+     *
+     * @When I :modifier click on :element :selectortype in the :nodeelement :nodeselectortype
+     * @param string $modifier the extra modifier to press (for example, alt+shift or shift)
+     * @param string $element Element we look for
+     * @param string $selectortype The type of what we look for
+     * @param string $nodeelement Element we look in
+     * @param string $nodeselectortype The type of selector where we look in
+     */
+    public function i_key_click_on_in_the($modifier, $element, $selectortype, $nodeelement, $nodeselectortype) {
+        behat_base::require_javascript_in_session($this->getSession());
+
+        $key = null;
+        switch (strtoupper(trim($modifier))) {
+            case '':
+                break;
+            case 'SHIFT':
+                $key = behat_keys::SHIFT;
+                break;
+            case 'CTRL':
+                $key = behat_keys::CONTROL;
+                break;
+            case 'ALT':
+                $key = behat_keys::ALT;
+                break;
+            case 'META':
+                $key = behat_keys::META;
+                break;
+            default:
+                throw new \coding_exception("Unknown modifier key '$modifier'}");
+        }
 
         $node = $this->get_node_in_container($selectortype, $element, $nodeselectortype, $nodeelement);
-        $this->ensure_node_is_visible($node);
+
+        // KeyUP and KeyDown require the element to be displayed in the current window.
+        $this->execute_js_on_node($node, '{{ELEMENT}}.scrollIntoView();');
+        $node->keyDown($key);
         $node->click();
+        // Any click action can move the scroll. Ensure the element is still displayed.
+        $this->execute_js_on_node($node, '{{ELEMENT}}.scrollIntoView();');
+        $node->keyUp($key);
     }
 
     /**
