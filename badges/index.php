@@ -107,9 +107,10 @@ if (!has_any_capability(array(
 $PAGE->set_title($hdr);
 $output = $PAGE->get_renderer('core', 'badges');
 
-if (($delete || $archive) && has_capability('moodle/badges:deletebadge', $PAGE->context)) {
+if ($delete || $archive) {
     $badgeid = ($archive != 0) ? $archive : $delete;
     $badge = new badge($badgeid);
+    require_capability('moodle/badges:deletebadge', $badge->get_context());
     if (!$confirm) {
         echo $output->header();
         // Archive this badge?
