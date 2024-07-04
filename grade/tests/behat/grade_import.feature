@@ -62,7 +62,7 @@ Feature: An admin can import grades into gradebook using a CSV file
     And I should see "Grade import success"
     And I click on "Continue" "button"
     Then the following should exist in the "user-grades" table:
-      | -1-                | -1-                  | -4-       | -5-       |
+      | -1-                | -3-                  | -4-       | -5-       |
       | Student 1          | student1@example.com | 400.00    | 400.00    |
       | Student 2          | student2@example.com |  50.00    |  50.00    |
       | Student 3          | student3@example.com |  50.00    |  50.00    |

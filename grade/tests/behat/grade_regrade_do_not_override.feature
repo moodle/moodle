@@ -32,8 +32,8 @@ Feature: Regrading grades does not unnecessarily mark some as overriden
     And I press "Save changes"
     And I am on the "Course 1" "grades > Grader report > View" page
     And the following should exist in the "gradereport-grader-table" table:
-      |                      |              |              |
-      | First name / Last name | Assignment 1 | Course total |
+      | -1-                  | -4-          | -5-          |
+      | First name           | Assignment 1 | Course total |
       | Student 1            | 80.00        | 80.00        |
       | Student 2            | 60.00        | 60.00        |
     And I turn editing mode on
@@ -65,7 +65,7 @@ Feature: Regrading grades does not unnecessarily mark some as overriden
     When I am on the "Course 1" "grades > Grader report > View" page
     And I turn editing mode off
     Then the following should exist in the "gradereport-grader-table" table:
-      |                      |              |              |
-      | First name / Last name | Assignment 1 | Course total |
+      | -1-                  | -4-          | -5-          |
+      | First name           | Assignment 1 | Course total |
       | Student 1            | 90.00        | 180.00       |
       | Student 2            | 70.00        | 160.00       |
