@@ -69,7 +69,7 @@ Feature: Complete an Ordering question attempt
     And I log out
     And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And the following should exist in the "user-grades" table:
-      | -1-       | -1-                  | -3-     |
+      | -1-       | -2-                  | -3-     |
       | Student 1 | student1@example.com | <grade> |
     Examples:
       | question     | styling        | state             | mark                  | grade | expect  | gradedetails      | correct          | partial                    |  incorrect         | type                                         |
