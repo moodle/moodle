@@ -1,0 +1,7 @@
+issueNumber: MDL-78662
+notes:
+  core_question:
+    - message: >
+        A new utility function `format_question_fragment` has been created so
+        that question content can filter based on filters.
+      type: improved
