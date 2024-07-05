@@ -81,6 +81,26 @@ Feature: Adding questions to a quiz from the question bank
     And I should see "Feature question 5"
     And I should see "Feature question 9"
 
+  Scenario: After closing and reopening the modal, it still works
+    Given the following "question categories" exist:
+      | contextlevel | reference | name           |
+      | Course       | C1        | My collection  |
+    And the following "question" exists:
+      | questioncategory | My collection     |
+      | qtype            | essay             |
+      | name             | Feature question  |
+      | questiontext     | Write about topic |
+      | user             | teacher1          |
+    When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as teacher1
+    And I open the "last" add to quiz menu
+    And I follow "from question bank"
+    And I click on "Close" "button" in the "Add from the question bank at the end" "dialogue"
+    And I open the "last" add to quiz menu
+    And I follow "from question bank"
+    And I set the field "Category" to "My collection"
+    And I press "Apply filters"
+    Then I should see "Feature question"
+
   Scenario: Questions are added in the right place with multiple sections
     Given the following "questions" exist:
       | questioncategory | qtype | name             | questiontext     |
