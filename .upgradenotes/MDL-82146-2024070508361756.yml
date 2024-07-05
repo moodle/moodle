@@ -1,0 +1,7 @@
+issueNumber: MDL-82146
+notes:
+  core_courseformat:
+    - message: >-
+        New $disabled parameter has been added to select, select_optgroup and
+        select_option html_writers to create disabled option elements.
+      type: improved
