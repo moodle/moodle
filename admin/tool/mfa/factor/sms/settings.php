@@ -117,30 +117,3 @@ if (count($gatewayrecords) > 0) {
         ),
     );
 }
-
-
-// TODO MDL-80962 Remove these settings, strings and associated codes (if any).
-/*
-$codeslink = 'https://en.wikipedia.org/wiki/List_of_country_calling_codes';
-$link = \html_writer::link($codeslink, $codeslink);
-
-$settings->add(new admin_setting_configtext('factor_sms/countrycode',
-    get_string('settings:countrycode', 'factor_sms'),
-    get_string('settings:countrycode_help', 'factor_sms', $link), '', PARAM_INT));
-
-$gateways = [
-    'aws_sns' => get_string('settings:aws', 'factor_sms'),
-];
-
-$settings->add(new admin_setting_configselect('factor_sms/gateway',
-    get_string('settings:gateway', 'factor_sms'),
-    get_string('settings:gateway_help', 'factor_sms'),
-    'aws_sns', $gateways));
-
-if (empty(get_config('factor_sms', 'gateway'))) {
-    return;
-}
-
-$class = '\factor_sms\local\smsgateway\\' . get_config('factor_sms', 'gateway');
-call_user_func($class . '::add_settings', $settings);
-*/

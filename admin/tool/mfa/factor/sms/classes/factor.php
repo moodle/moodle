@@ -19,6 +19,7 @@ namespace factor_sms;
 use moodle_url;
 use stdClass;
 use tool_mfa\local\factor\object_factor_base;
+use tool_mfa\local\secret_manager;
 
 /**
  * SMS Factor implementation.
@@ -231,7 +232,7 @@ class factor extends object_factor_base {
             unset($SESSION->tool_mfa_sms_number);
         }
         // Clean temp secrets code.
-        $secretmanager = new \tool_mfa\local\secret_manager('sms');
+        $secretmanager = new secret_manager('sms');
         $secretmanager->cleanup_temp_secrets();
     }
 
@@ -424,7 +425,7 @@ class factor extends object_factor_base {
      * @return bool
      */
     private function check_verification_code(string $enteredcode): bool {
-        return ($this->secretmanager->validate_secret($enteredcode) === \tool_mfa\local\secret_manager::VALID) ? true : false;
+        return $this->secretmanager->validate_secret($enteredcode) === secret_manager::VALID;
     }
 
     /**
@@ -453,8 +454,8 @@ class factor extends object_factor_base {
 
         if (empty($phonenumber)) {
             return get_string('errorsmssent', 'factor_sms');
-        } else {
-            return get_string('logindesc', 'factor_' . $this->name, $phonenumber);
         }
+
+        return get_string('logindesc', 'factor_' . $this->name, $phonenumber);
     }
 }

@@ -1,0 +1,15 @@
+settings:countrycode,factor_sms
+settings:countrycode_help,factor_sms
+settings:aws,factor_sms
+settings:aws:key,factor_sms
+settings:aws:key_help,factor_sms
+settings:aws:region,factor_sms
+settings:aws:region_help,factor_sms
+settings:aws:secret,factor_sms
+settings:aws:secret_help,factor_sms
+settings:aws:usecredchain,factor_sms
+settings:gateway,factor_sms
+settings:gateway_help,factor_sms
+errorawsconection,factor_sms
+event:smssentdescription,factor_sms
+event:smssent,factor_sms
