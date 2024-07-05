@@ -1657,7 +1657,7 @@ EOF;
      * @return string the HTML code to to at the end of the page.
      */
     public function get_end_code() {
-        global $CFG;
+        global $CFG, $USER;
         $output = '';
 
         // Set the log level for the JS logging.
@@ -1670,6 +1670,9 @@ EOF;
         // Add any global JS that needs to run on all pages.
         $this->js_call_amd('core/page_global', 'init');
         $this->js_call_amd('core/utility');
+        $this->js_call_amd('core/storage_validation', 'init', [
+            !empty($USER->currentlogin) ? (int) $USER->currentlogin : null
+        ]);
 
         // Call amd init functions.
         $output .= $this->get_amd_footercode();
