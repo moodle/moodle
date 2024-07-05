@@ -1140,13 +1140,8 @@ $string['recaptchaprivatekey'] = 'ReCAPTCHA secret key';
 $string['recaptchapublickey'] = 'ReCAPTCHA site key';
 $string['register'] = 'Register your site';
 $string['registration'] = 'Registration';
-$string['registration_help'] = 'By registering:
-
-* You will receive security alerts
-* You can activate mobile app push notifications from your site
-* You are contributing to our Moodle statistics of the worldwide community';
-$string['registrationwarning'] = 'Your site is not yet registered.';
-$string['registrationwarningcontactadmin'] = 'Your site is not yet registered. Please notify your administrator.';
+$string['registrationwarning'] = 'Don\'t miss out on important updates and security alerts.';
+$string['registrationwarningcontactadmin'] = 'This site is not registered. Please ask your administrator to register the site so they don\'t miss out on important updates.';
 $string['releasenoteslink'] = 'For information about this version of Moodle, please see the online <a target="_blank" href="{$a}">Release Notes</a>';
 $string['rememberuserlicensepref'] = 'Remember user licence preference';
 $string['rememberuserlicensepref_help'] = 'If enabled, the last licence selected by the user is preselected when uploading a file in the file picker. Otherwise, the default site licence is preselected.';
@@ -1657,3 +1652,10 @@ $string['moodlepartners_help'] = '<p>Moodle Partners are services providers that
 <a href="https://moodle.com/partners">Find a Partner</a>';
 $string['moodleservices'] = 'Moodle services';
 $string['moodleservices_help'] = 'Make sure you get the best from your Moodle learning environment by using these Moodle services:';
+
+// Deprecated since Moodle 4.5.
+$string['registration_help'] = 'By registering:
+
+* You will receive security alerts
+* You can activate mobile app push notifications from your site
+* You are contributing to our Moodle statistics of the worldwide community';

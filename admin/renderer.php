@@ -843,14 +843,14 @@ class core_admin_renderer extends plugin_renderer_base {
                 $registerbutton = $this->single_button(new moodle_url('/admin/registration/index.php'),
                     get_string('register', 'admin'));
                 $str = 'registrationwarning';
+                $type = 'error alert alert-danger';
             } else {
                 $registerbutton = '';
                 $str = 'registrationwarningcontactadmin';
+                $type = 'info';
             }
 
-            return $this->warning( get_string($str, 'admin')
-                    . '&nbsp;' . $this->help_icon('registration', 'admin') . $registerbutton ,
-                'error alert alert-danger');
+            return $this->warning( get_string($str, 'admin') . '&nbsp;' . $registerbutton , $type);
         }
 
         return '';

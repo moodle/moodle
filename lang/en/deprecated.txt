@@ -128,3 +128,4 @@ myisamproblem,core_error
 newpasswordtext,core
 cannotsetpassword,core_error
 registerwithmoodleorginfoapp,core_hub
+registration_help,core_admin
