@@ -1160,6 +1160,7 @@ $string['purgecachesconfirm'] = 'Moodle can cache themes, javascript, language s
 $string['purgecachesfinished'] = 'All caches were purged.';
 $string['purgecachesnoneselected'] = 'Select one or more caches to purge';
 $string['purgecachespage'] = 'Purge caches';
+$string['purgecoursecache'] = 'Courses';
 $string['purgefiltercache'] = 'Text filters';
 $string['purgejscache'] = 'JavaScript';
 $string['purgelangcache'] = 'Language strings';
