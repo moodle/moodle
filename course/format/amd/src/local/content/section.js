@@ -119,7 +119,7 @@ export default class extends DndSection {
      */
     validateDropData(dropdata) {
         // If the format uses one section per page sections dropping in the content is ignored.
-       if (dropdata?.type === 'section' && this.reactive.sectionReturn !== null) {
+        if (dropdata?.type === 'section' && this.reactive.sectionReturn !== null) {
             return false;
         }
         return super.validateDropData(dropdata);
@@ -137,6 +137,16 @@ export default class extends DndSection {
             return null;
         }
         return cms[cms.length - 1];
+    }
+
+    /**
+     * Get a fallback element when there is no CM in the section.
+     *
+     * @returns {element|null} the las course module element of the section.
+     */
+    getLastCmFallback() {
+        // The sectioninfo is always present, even when the section is empty.
+        return this.getElement(this.selectors.SECTIONINFO);
     }
 
     /**

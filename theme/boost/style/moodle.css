@@ -28211,6 +28211,12 @@ table.calendartable caption {
   border-top: 1px solid #1d2125;
   margin-top: -1px;
 }
+.course-content .section.dropready [data-for=sectioninfo] {
+  min-height: 1px;
+}
+.course-content .section.dropready [data-for=sectioninfo].drop-down {
+  margin-top: -1px;
+}
 
 .section .activity .activityinstance .groupinglabel {
   padding-left: 30px;
