@@ -196,47 +196,98 @@ class report_log_renderable implements renderable {
      * @return array list of activities.
      */
     public function get_activities_list() {
-        $activities = array();
+        $activities = [];
+        $disabled = [];
 
         // For site just return site errors option.
         $sitecontext = context_system::instance();
         if ($this->course->id == SITEID && has_capability('report/log:view', $sitecontext)) {
             $activities["site_errors"] = get_string("siteerrors");
-            return $activities;
+            return [$activities, $disabled];
         }
 
         $modinfo = get_fast_modinfo($this->course);
+        $delegatedsections = $modinfo->get_sections_delegated_by_cm();
+
         if (!empty($modinfo->cms)) {
             $section = 0;
             $thissection = array();
             foreach ($modinfo->cms as $cm) {
-                // Exclude activities that aren't visible or have no view link (e.g. label). Account for folders displayed inline.
-                if (!$cm->uservisible || (!$cm->has_view() && strcmp($cm->modname, 'folder') !== 0)) {
+                if (!$modname = $this->get_activity_name($cm)) {
                     continue;
                 }
+
                 if ($cm->sectionnum > 0 and $section <> $cm->sectionnum) {
+                    $sectioninfo = $modinfo->get_section_info($cm->sectionnum);
+
+                    // Don't show subsections here. We are showing them in the corresponding module.
+                    if ($sectioninfo->is_delegated()) {
+                        continue;
+                    }
+
                     $activities[] = $thissection;
                     $thissection = array();
                 }
                 $section = $cm->sectionnum;
-                $modname = strip_tags($cm->get_formatted_name());
-                if (core_text::strlen($modname) > 55) {
-                    $modname = core_text::substr($modname, 0, 50)."...";
-                }
-                if (!$cm->visible) {
-                    $modname = "(".$modname.")";
-                }
                 $key = get_section_name($this->course, $cm->sectionnum);
                 if (!isset($thissection[$key])) {
-                    $thissection[$key] = array();
+                    $thissection[$key] = [];
                 }
                 $thissection[$key][$cm->id] = $modname;
+                // Check if the module is delegating a section.
+                if (array_key_exists($cm->id, $delegatedsections)) {
+                    $delegated = $delegatedsections[$cm->id];
+                    $modules = (empty($delegated->sequence)) ? [] : explode(',', $delegated->sequence);
+                    $thissection[$key] = $thissection[$key] + $this->get_delegated_section_activities($modinfo, $modules);
+                    $disabled[] = $cm->id;
+                }
             }
             if (!empty($thissection)) {
                 $activities[] = $thissection;
             }
         }
+        return [$activities, $disabled];
+    }
+
+    /**
+     * Helper function to return list of activities in a delegated section.
+     *
+     * @param course_modinfo $modinfo
+     * @param array $cms List of cm ids in the section.
+     * @return array list of activities.
+     */
+    protected function get_delegated_section_activities(course_modinfo $modinfo, array $cmids): array {
+        $activities = [];
+        $indenter = '&nbsp;&nbsp;&nbsp;&nbsp;';
+        foreach ($cmids as $cmid) {
+            $cm = $modinfo->cms[$cmid];
+            if ($modname = $this->get_activity_name($cm)) {
+                $activities[$cmid] = $indenter.$modname;
+            }
+        }
         return $activities;
+    }
+
+    /**
+     * Helper function to return the name to show in the dropdown.
+     *
+     * @param cm_info $cm
+     * @return string The name.
+     */
+    private function get_activity_name(cm_info $cm): string {
+        // Exclude activities that aren't visible or have no view link (e.g. label). Account for folders displayed inline.
+        if (!$cm->uservisible || (!$cm->has_view() && strcmp($cm->modname, 'folder') !== 0)) {
+            return '';
+        }
+        $modname = strip_tags($cm->get_formatted_name());
+        if (core_text::strlen($modname) > 55) {
+            $modname = core_text::substr($modname, 0, 50)."...";
+        }
+        if (!$cm->visible) {
+            $modname = "(".$modname.")";
+        }
+
+        return $modname;
     }
 
     /**

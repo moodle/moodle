@@ -34,3 +34,13 @@
         padding-left: $spacer * 3.5;
     }
 }
+
+#page-report-log-index #menumodid option:disabled {
+    // Browsers do not consider the color of a disabled option
+    // if it is the same as the non-disabled options.
+    // Since we are using disabled elements to create a sense of hierarchy,
+    // we intentionally use a slightly different color for them.
+    // We do this because HTML still does not allow nested optgroups in select elements.
+    color: lighten($custom-select-color, 1%);
+    font-weight: bolder;
+}

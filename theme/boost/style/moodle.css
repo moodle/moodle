@@ -35080,6 +35080,11 @@ img.userpicture {
   padding-left: 3.5rem;
 }
 
+#page-report-log-index #menumodid option:disabled {
+  color: #4b535a;
+  font-weight: bolder;
+}
+
 .path-backup .mform {
   /* These are long labels with checkboxes on the right. */
 }
