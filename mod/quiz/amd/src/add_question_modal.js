@@ -30,6 +30,7 @@ export default class AddQuestionModal extends Modal {
 
         // Always show on creation.
         modalConfig.show = true;
+        modalConfig.removeOnClose = true;
 
         // Apply question modal configuration.
         this.setContextId(modalConfig.contextId);

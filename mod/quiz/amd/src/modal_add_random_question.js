@@ -101,6 +101,8 @@ export default class ModalAddRandomQuestion extends Modal {
     }
 
     configure(modalConfig) {
+        modalConfig.removeOnClose = true;
+
         this.setCategory(modalConfig.category);
         this.setReturnUrl(modalConfig.returnUrl);
         this.setCMID(modalConfig.cmid);
