@@ -277,8 +277,11 @@ class content_item_service {
             return course_allowed_module($course, explode('_', $parents[$contentitem->get_component_name()])[1], $user);
         });
 
+        $format = course_get_format($course);
+        $maxsectionsreached = ($format->get_last_section_number() >= $format->get_max_sections());
+
         // Now, check there is no delegated section into a delegated section.
-        if (is_null($sectioninfo) || $sectioninfo->is_delegated()) {
+        if (is_null($sectioninfo) || $sectioninfo->is_delegated() || $maxsectionsreached) {
             $availablecontentitems = array_filter($availablecontentitems, function($contentitem){
                 return !sectiondelegate::has_delegate_class($contentitem->get_component_name());
             });
