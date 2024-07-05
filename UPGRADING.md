@@ -25,6 +25,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Final deprecation of print_error(). Use moodle_exception instead.
 
   For more information see [MDL-74484](https://tracker.moodle.org/browse/MDL-74484)
+- Final deprecation of \core\task\manager::ensure_adhoc_task_qos()
+
+  For more information see [MDL-74843](https://tracker.moodle.org/browse/MDL-74843)
 
 #### Changed
 
@@ -177,6 +180,54 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-82191](https://tracker.moodle.org/browse/MDL-82191)
 
+### core_reportbuilder
+
+#### Added
+
+- The return type of the `set_checkbox_toggleall` callback, defined by system reports, can now be null. Use if the checkbox should not be shown for the row.
+
+  For more information see [MDL-52046](https://tracker.moodle.org/browse/MDL-52046)
+- System reports now support native entity column aggregation via each columns `set_aggregation()` method
+
+  For more information see [MDL-76392](https://tracker.moodle.org/browse/MDL-76392)
+- The following external methods now return tags data relevant to each custom report:
+    - `core_reportbuilder_list_reports`
+    - `core_reportbuilder_retrieve_report`
+
+  For more information see [MDL-81433](https://tracker.moodle.org/browse/MDL-81433)
+- Added a new database helper method `sql_replace_parameters` to help ensure uniqueness of parameters within a SQL expression
+
+  For more information see [MDL-81434](https://tracker.moodle.org/browse/MDL-81434)
+
+#### Removed
+
+- The following previously deprecated local helper methods have been removed and can no longer be used:
+    - `audience::get_all_audiences_menu_types`
+    - `report::get_available_columns`
+
+  For more information see [MDL-76690](https://tracker.moodle.org/browse/MDL-76690)
+
+#### Changed
+
+- In order to better support float values in filter forms, the following filter types now cast given SQL prior to comparison:
+    - `duration`
+    - `filesize`
+    - `number`
+
+  For more information see [MDL-81168](https://tracker.moodle.org/browse/MDL-81168)
+- The base datasource `add_all_from_entities` method accepts a new optional parameter to specify which entities to add elements from
+
+  For more information see [MDL-81330](https://tracker.moodle.org/browse/MDL-81330)
+- All time related code has been updated to the PSR-20 Clock interface, as such the following methods no longer accept a `$timenow` parameter (instead please use `\core\clock` dependency injection):
+  - `core_reportbuilder_generator::create_schedule`
+  - `core_reportbuilder\local\helpers\schedule::[create_schedule|calculate_next_send_time]`
+
+  For more information see [MDL-82041](https://tracker.moodle.org/browse/MDL-82041)
+- The following classes have been moved to use the new exception API as a l2 namespace:
+  - `core_reportbuilder\\report_access_exception` => `core_reportbuilder\\exception\\report_access_exception` - `core_reportbuilder\\source_invalid_exception` => `core_reportbuilder\\exception\\source_invalid_exception` - `core_reportbuilder\\source_unavailable_exception` => `core_reportbuilder\\exception\\source_unavailable_exception`
+
+  For more information see [MDL-82133](https://tracker.moodle.org/browse/MDL-82133)
+
 ### mod_assign
 
 #### Added
@@ -229,6 +280,26 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-72786](https://tracker.moodle.org/browse/MDL-72786)
 
+### theme
+
+#### Removed
+
+- Removed all references to iconhelp, icon-pre, icon-post, iconlarge, and iconsort classes
+
+  For more information see [MDL-74251](https://tracker.moodle.org/browse/MDL-74251)
+
+#### Added
+
+- New `core/context_header` mustache template has been added. This template can be overridden by themes to modify the context header
+
+  For more information see [MDL-81597](https://tracker.moodle.org/browse/MDL-81597)
+
+#### Deprecated
+
+- The method `\core\output\core_renderer::render_context_header` has been deprecated please use `\core\output\core_renderer::render($contextheader)` instead
+
+  For more information see [MDL-82160](https://tracker.moodle.org/browse/MDL-82160)
+
 ### core_grades
 
 #### Removed
@@ -245,50 +316,27 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-80745](https://tracker.moodle.org/browse/MDL-80745)
 
-### core_reportbuilder
-
-#### Added
-
-- System reports now support native entity column aggregation via each columns `set_aggregation()` method
-
-  For more information see [MDL-76392](https://tracker.moodle.org/browse/MDL-76392)
-- The following external methods now return tags data relevant to each custom report:
-    - `core_reportbuilder_list_reports`
-    - `core_reportbuilder_retrieve_report`
-
-  For more information see [MDL-81433](https://tracker.moodle.org/browse/MDL-81433)
-- Added a new database helper method `sql_replace_parameters` to help ensure uniqueness of parameters within a SQL expression
-
-  For more information see [MDL-81434](https://tracker.moodle.org/browse/MDL-81434)
+### core_backup
 
 #### Removed
 
-- The following previously deprecated local helper methods have been removed and can no longer be used:
-    - `audience::get_all_audiences_menu_types`
-    - `report::get_available_columns`
+- Final deprecation and removal of core_backup\copy\copy in backup/util/ui/classes/copy.php. Please use copy_helper from backup/util/helper/copy_helper.class.php instead.
 
-  For more information see [MDL-76690](https://tracker.moodle.org/browse/MDL-76690)
+  For more information see [MDL-75022](https://tracker.moodle.org/browse/MDL-75022)
+
+### core_question
+
+#### Added
+
+- A new utility function `format_question_fragment` has been created so that question content can filter based on filters.
+
+  For more information see [MDL-78662](https://tracker.moodle.org/browse/MDL-78662)
 
 #### Changed
 
-- In order to better support float values in filter forms, the following filter types now cast given SQL prior to comparison:
-    - `duration`
-    - `filesize`
-    - `number`
+- column_base::from_column_name now has an ignoremissing field, which can be used to ignore if the class does not exist, instead of throwing an exception.
 
-  For more information see [MDL-81168](https://tracker.moodle.org/browse/MDL-81168)
-- The base datasource `add_all_from_entities` method accepts a new optional parameter to specify which entities to add elements from
-
-  For more information see [MDL-81330](https://tracker.moodle.org/browse/MDL-81330)
-- All time related code has been updated to the PSR-20 Clock interface, as such the following methods no longer accept a `$timenow` parameter (instead please use `\core\clock` dependency injection):
-  - `core_reportbuilder_generator::create_schedule`
-  - `core_reportbuilder\local\helpers\schedule::[create_schedule|calculate_next_send_time]`
-
-  For more information see [MDL-82041](https://tracker.moodle.org/browse/MDL-82041)
-- The following classes have been moved to use the new exception API as a l2 namespace:
-  - `core_reportbuilder\\report_access_exception` => `core_reportbuilder\\exception\\report_access_exception` - `core_reportbuilder\\source_invalid_exception` => `core_reportbuilder\\exception\\source_invalid_exception` - `core_reportbuilder\\source_unavailable_exception` => `core_reportbuilder\\exception\\source_unavailable_exception`
-
-  For more information see [MDL-82133](https://tracker.moodle.org/browse/MDL-82133)
+  For more information see [MDL-81125](https://tracker.moodle.org/browse/MDL-81125)
 
 ### core_webservice
 
@@ -330,13 +378,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-80745](https://tracker.moodle.org/browse/MDL-80745)
 
-### core_question
+### core_table
 
-#### Changed
+#### Added
 
-- column_base::from_column_name now has an ignoremissing field, which can be used to ignore if the class does not exist, instead of throwing an exception.
+- A new `$reponsive` property (defaulting to `true`) has been added to the `core_table\flexible_table` class.
+  This property allows you to control whether the table is rendered as a responsive table.
 
-  For more information see [MDL-81125](https://tracker.moodle.org/browse/MDL-81125)
+  For more information see [MDL-80748](https://tracker.moodle.org/browse/MDL-80748)
 
 ### mod_data
 
@@ -381,20 +430,6 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Added a new `renderer_base::get_page` getter method
 
   For more information see [MDL-81597](https://tracker.moodle.org/browse/MDL-81597)
-
-### theme
-
-#### Added
-
-- New `core/context_header` mustache template has been added. This template can be overridden by themes to modify the context header
-
-  For more information see [MDL-81597](https://tracker.moodle.org/browse/MDL-81597)
-
-#### Deprecated
-
-- The method `\core\output\core_renderer::render_context_header` has been deprecated please use `\core\output\core_renderer::render($contextheader)` instead
-
-  For more information see [MDL-82160](https://tracker.moodle.org/browse/MDL-82160)
 
 ### core_courseformat
 
@@ -443,6 +478,17 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - get_overall_completion_state() function could also return COMPLETION_COMPLETE_FAIL and not only COMPLETION_COMPLETE and COMPLETION_INCOMPLETE
 
   For more information see [MDL-81749](https://tracker.moodle.org/browse/MDL-81749)
+
+### core_report
+
+#### Added
+
+- Report has been added to subsystem components list
+
+  For more information see [MDL-81771](https://tracker.moodle.org/browse/MDL-81771)
+- New coursestructure output general class has been created
+
+  For more information see [MDL-81771](https://tracker.moodle.org/browse/MDL-81771)
 
 ### theme_boost
 

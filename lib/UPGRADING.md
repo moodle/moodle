@@ -17,6 +17,9 @@
 - Final deprecation of print_error(). Use moodle_exception instead.
 
   For more information see [MDL-74484](https://tracker.moodle.org/browse/MDL-74484)
+- Final deprecation of \core\task\manager::ensure_adhoc_task_qos()
+
+  For more information see [MDL-74843](https://tracker.moodle.org/browse/MDL-74843)
 
 ### Changed
 

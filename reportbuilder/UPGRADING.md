@@ -4,6 +4,9 @@
 
 ### Added
 
+- The return type of the `set_checkbox_toggleall` callback, defined by system reports, can now be null. Use if the checkbox should not be shown for the row.
+
+  For more information see [MDL-52046](https://tracker.moodle.org/browse/MDL-52046)
 - System reports now support native entity column aggregation via each columns `set_aggregation()` method
 
   For more information see [MDL-76392](https://tracker.moodle.org/browse/MDL-76392)
