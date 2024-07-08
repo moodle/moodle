@@ -15,6 +15,8 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template tool_lp/manage_templates_page
+
     Manage learning plan templates template.
 
     Classes required for JS:
@@ -30,6 +32,21 @@
     Context variables required for this template:
     * templates - array of objects containing id, shortname, visible, canmanage, contextname
     * navigation - array of strings containing buttons for navigation
+
+    Example context (json):
+    {
+        "templates": {
+            "id": 1,
+            "shortname": "Template1",
+            "visible": true,
+            "contextnamenoprefix": "System",
+            "cohortscount": 12,
+            "planscount": 6,
+            "pluginbaseurl": "https://example.com",
+            "pagecontextid": 1
+        },
+        "canmanage": true
+    }
 }}
 <div data-region="managetemplates">
 <div class="float-left">
@@ -65,7 +82,7 @@
                     <ul class="dropdown dropdown-menu">
                         <li class="dropdown-item">
                             <a href="{{pluginbaseurl}}/edittemplate.php?id={{id}}&amp;pagecontextid={{pagecontextid}}&amp;return=templates">
-                                {{#pix}}t/edit{{/pix}} {{#str}}edit{{/str}}
+                                {{#pix}}i/settings{{/pix}} {{#str}}edit{{/str}}
                             </a>
                         </li>
                         <li class="dropdown-item">
