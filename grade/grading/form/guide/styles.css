@@ -127,6 +127,7 @@
 .gradingform_guide.editor .addcriterion input,
 .gradingform_guide.editor .addcomment input {
     background: transparent url([[pix:t/add]]) no-repeat;
+    background-size: 0.75rem;
     display: block;
     color: #555;
     font-weight: bold;

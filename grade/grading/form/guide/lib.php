@@ -1016,7 +1016,7 @@ class gradingform_guide_instance extends gradingform_instance {
  */
 function gradingform_guide_get_fontawesome_icon_map(): array {
     return [
-        'gradingform_guide:info' => 'fa-info-circle',
-        'gradingform_guide:plus' => 'fa-plus',
+        'gradingform_guide:info' => 'fa-circle-info',
+        'gradingform_guide:plus' => 'fa-circle-plus',
     ];
 }
