@@ -1432,6 +1432,9 @@ class stateactions_test extends \advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('subsection', 1);
+
         $course = $this->getDataGenerator()->create_course();
         $subsection = $this->getDataGenerator()->create_module('subsection', ['course' => $course]);
         $otheractvity = $this->getDataGenerator()->create_module('forum', ['course' => $course]);
@@ -1510,6 +1513,9 @@ class stateactions_test extends \advanced_testcase {
     public function test_filter_cms_with_section_delegate(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
+
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('subsection', 1);
 
         $course = $this->getDataGenerator()->create_course();
         $subsection = $this->getDataGenerator()->create_module('subsection', ['course' => $course]);

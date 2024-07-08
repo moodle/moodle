@@ -27,6 +27,10 @@
  * Custom code to be run on installing the plugin.
  */
 function xmldb_subsection_install() {
+    global $DB;
+
+    // Disable the chat activity module on new installs by default.
+    $DB->set_field('modules', 'visible', 0, ['name' => 'subsection']);
 
     return true;
 }

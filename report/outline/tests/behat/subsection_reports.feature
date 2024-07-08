@@ -5,7 +5,8 @@ Feature: Subsections are shown in reports
   I need to see sections and subsections structure in reports
 
   Background:
-    Given the following "users" exist:
+    Given I enable "subsection" "mod" plugin
+    And the following "users" exist:
       | username | firstname  | lastname  | email                 |
       | teacher1 | Teacher    | 1         | teacher1@example.com  |
     And the following "courses" exist:

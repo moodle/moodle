@@ -1795,6 +1795,10 @@ class modinfolib_test extends advanced_testcase {
      */
     public function test_get_sections_delegated_by_cm(): void {
         $this->resetAfterTest();
+
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('subsection', 1);
+
         $course = $this->getDataGenerator()->create_course(['numsections' => 1]);
 
         $modinfo = get_fast_modinfo($course);
@@ -1823,6 +1827,10 @@ class modinfolib_test extends advanced_testcase {
      */
     public function test_get_delegated_section_info(): void {
         $this->resetAfterTest();
+
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('subsection', 1);
+
         $course = $this->getDataGenerator()->create_course(['numsections' => 1]);
 
         // Add a section delegated by a course module.

@@ -40,6 +40,9 @@ final class sectiondelegatemodule_test extends \advanced_testcase {
     public function test_get_parent_section(): void {
         $this->resetAfterTest();
 
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('subsection', 1);
+
         $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 2]);
         $module = $this->getDataGenerator()->create_module('subsection', (object)['course' => $course->id, 'section' => 2]);
 
@@ -63,6 +66,9 @@ final class sectiondelegatemodule_test extends \advanced_testcase {
     public function test_get_cm(): void {
         $this->resetAfterTest();
 
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('subsection', 1);
+
         $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 1]);
         $module = $this->getDataGenerator()->create_module('subsection', (object)['course' => $course->id, 'section' => 1]);
 
@@ -85,6 +91,9 @@ final class sectiondelegatemodule_test extends \advanced_testcase {
      */
     public function test_get_course(): void {
         $this->resetAfterTest();
+
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('subsection', 1);
 
         $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 1]);
         $module = $this->getDataGenerator()->create_module('subsection', (object)['course' => $course->id, 'section' => 1]);
