@@ -2,3 +2,4 @@ attemptreopenmethod_none,mod_assign
 groupoverridesdeleted,mod_assign
 useroverridesdeleted,mod_assign
 choosegradingaction,mod_assign
+updategrade,mod_assign
