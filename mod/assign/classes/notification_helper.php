@@ -35,9 +35,19 @@ class notification_helper {
     private const INTERVAL_DUE_SOON = (DAYSECS * 2);
 
     /**
+     * @var int Overdue time interval of 2 hours.
+     */
+    private const INTERVAL_OVERDUE = (HOURSECS * 2);
+
+    /**
      * @var string Due soon notification type.
      */
     public const TYPE_DUE_SOON = 'assign_due_soon';
+
+    /**
+     * @var string Overdue notification type.
+     */
+    public const TYPE_OVERDUE = 'assign_overdue';
 
     /**
      * Get all assignments that have an approaching due date (includes users and groups with due date overrides).
@@ -70,7 +80,48 @@ class notification_helper {
     }
 
     /**
-     * Get all users that have an approaching due date within an assignment.
+     * Get all assignments that are overdue, but not exceeding the cut-off date (includes users and groups with due date overrides).
+     *
+     * We don't want to get every single overdue assignment ever.
+     * We just want the ones within the specified window.
+     *
+     * @return \moodle_recordset Returns the matching assignment records.
+     */
+    public static function get_overdue_assignments(): \moodle_recordset {
+        global $DB;
+
+        $timenow = self::get_time_now();
+        $timewindow = self::get_time_now() - self::INTERVAL_OVERDUE;
+
+        // Get all assignments that:
+        // - Are overdue.
+        // - Do not exceed the window of time in the past.
+        // - Are still within the cut-off (if it is set).
+        $sql = "SELECT DISTINCT a.id
+                  FROM {assign} a
+                  JOIN {course_modules} cm ON a.id = cm.instance
+                  JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
+             LEFT JOIN {assign_overrides} ao ON a.id = ao.assignid
+                 WHERE (a.duedate < :dd_timenow OR ao.duedate < :dd_ao_timenow)
+                   AND (a.duedate > :dd_timewindow OR ao.duedate > :dd_ao_timewindow)
+                   AND ((a.cutoffdate > :co_timenow OR a.cutoffdate = 0) OR
+                       (ao.cutoffdate > :co_ao_timenow OR ao.cutoffdate = 0))";
+
+        $params = [
+            'dd_timenow' => $timenow,
+            'dd_ao_timenow' => $timenow,
+            'dd_timewindow' => $timewindow,
+            'dd_ao_timewindow' => $timewindow,
+            'co_timenow' => $timenow,
+            'co_ao_timenow' => $timenow,
+            'modulename' => 'assign',
+        ];
+
+        return $DB->get_recordset_sql($sql, $params);
+    }
+
+    /**
+     * Get all assignment users that we should send the notification to.
      *
      * @param int $assignmentid The assignment id.
      * @param string $type The notification type.
@@ -90,8 +141,9 @@ class notification_helper {
                 continue;
             }
 
-            // Determine the user's due date with respect to any overrides.
+            // Determine key dates with respect to any overrides.
             $duedate = $assignmentobj->override_exists($user->id)->duedate ?? $assignmentobj->get_instance()->duedate;
+            $cutoffdate = $assignmentobj->override_exists($user->id)->cutoffdate ?? $assignmentobj->get_instance()->cutoffdate;
 
             // If the due date has no value, unset this user.
             if (empty($duedate)) {
@@ -114,6 +166,23 @@ class notification_helper {
                     $match = [
                         'assignmentid' => $assignmentid,
                         'duedate' => $duedate,
+                    ];
+                    break;
+
+                case self::TYPE_OVERDUE:
+                    if ($duedate > self::get_time_now()) {
+                        unset($users[$key]);
+                        break;
+                    }
+                    // Check if the cut-off date is set and passed already.
+                    if (!empty($cutoffdate) && self::get_time_now() > $cutoffdate) {
+                        unset($users[$key]);
+                        break;
+                    }
+                    $match = [
+                        'assignmentid' => $assignmentid,
+                        'duedate' => $duedate,
+                        'cutoffdate' => $cutoffdate,
                     ];
                     break;
 
@@ -197,6 +266,93 @@ class notification_helper {
         $message->customdata = [
             'assignmentid' => $assignmentid,
             'duedate' => $duedate,
+        ];
+
+        message_send($message);
+    }
+
+    /**
+     * Send the overdue notification to the user.
+     *
+     * @param int $assignmentid The assignment id.
+     * @param int $userid The user id.
+     */
+    public static function send_overdue_notification_to_user(int $assignmentid, int $userid): void {
+        // Get assignment data.
+        $assignmentobj = self::get_assignment_data($assignmentid);
+
+        // Get the user and check they are a still a valid participant.
+        $user = $assignmentobj->get_participant($userid);
+        if (empty($user)) {
+            return;
+        }
+
+        // Check if the due date still considered overdue.
+        $assignmentobj->update_effective_access($userid);
+        $duedate = $assignmentobj->get_instance($userid)->duedate;
+        if ($duedate > self::get_time_now()) {
+            return;
+        }
+
+        // Check if the cut-off date is set and passed already.
+        $cutoffdate = $assignmentobj->get_instance($userid)->cutoffdate;
+        if (!empty($cutoffdate) && self::get_time_now() > $cutoffdate) {
+            return;
+        }
+
+        // Check if the user has submitted already.
+        if ($assignmentobj->get_user_submission($userid, false)) {
+            return;
+        }
+
+        // Build the user's notification message.
+        $urlparams = [
+            'id' => $assignmentobj->get_course_module()->id,
+            'action' => 'view',
+        ];
+        $url = new \moodle_url('/mod/assign/view.php', $urlparams);
+
+        // Prepare the cut-off date html string.
+        $snippet = '';
+        if (!empty($cutoffdate)) {
+            $snippet = get_string('assignmentoverduehtmlcutoffsnippet', 'mod_assign', ['cutoffdate' => userdate($cutoffdate)]);
+        }
+
+        $stringparams = [
+            'firstname' => $user->firstname,
+            'assignmentname' => $assignmentobj->get_instance()->name,
+            'coursename' => $assignmentobj->get_course()->fullname,
+            'duedate' => userdate($duedate),
+            'url' => $url,
+            'cutoffsnippet' => $snippet,
+        ];
+
+        $messagedata = [
+            'user' => \core_user::get_user($user->id),
+            'url' => $url->out(false),
+            'subject' => get_string('assignmentoverduesubject', 'mod_assign', $stringparams),
+            'assignmentname' => $assignmentobj->get_instance()->name,
+            'html' => get_string('assignmentoverduehtml', 'mod_assign', $stringparams),
+        ];
+
+        $message = new \core\message\message();
+        $message->component = 'mod_assign';
+        $message->name = self::TYPE_OVERDUE;
+        $message->userfrom = \core_user::get_noreply_user();
+        $message->userto = $messagedata['user'];
+        $message->subject = $messagedata['subject'];
+        $message->fullmessageformat = FORMAT_HTML;
+        $message->fullmessage = html_to_text($messagedata['html']);
+        $message->fullmessagehtml = $messagedata['html'];
+        $message->smallmessage = $messagedata['subject'];
+        $message->notification = 1;
+        $message->contexturl = $messagedata['url'];
+        $message->contexturlname = $messagedata['assignmentname'];
+        // Use custom data to avoid future notifications being sent again.
+        $message->customdata = [
+            'assignmentid' => $assignmentid,
+            'duedate' => $duedate,
+            'cutoffdate' => $cutoffdate,
         ];
 
         message_send($message);

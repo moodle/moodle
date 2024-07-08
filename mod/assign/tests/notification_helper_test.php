@@ -245,4 +245,235 @@ final class notification_helper_test extends \advanced_testcase {
         // Clear sink.
         $sink->clear();
     }
+
+    /**
+     * Run all the tasks related to the 'overdue' notifications.
+     */
+    protected function run_overdue_notification_helper_tasks(): void {
+        $task = \core\task\manager::get_scheduled_task(\mod_assign\task\queue_all_assignment_overdue_notification_tasks::class);
+        $task->execute();
+        $clock = \core\di::get(\core\clock::class);
+
+        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
+        if ($adhoctask) {
+            $this->assertInstanceOf(\mod_assign\task\queue_assignment_overdue_notification_tasks_for_users::class, $adhoctask);
+            $adhoctask->execute();
+            \core\task\manager::adhoc_task_complete($adhoctask);
+        }
+
+        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
+        if ($adhoctask) {
+            $this->assertInstanceOf(\mod_assign\task\send_assignment_overdue_notification_to_user::class, $adhoctask);
+            $adhoctask->execute();
+            \core\task\manager::adhoc_task_complete($adhoctask);
+        }
+    }
+
+    /**
+     * Test getting overdue assignments.
+     */
+    public function test_get_overdue_assignments(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $helper = \core\di::get(notification_helper::class);
+        $clock = $this->mock_clock_with_frozen();
+
+        // Create an overdue assignment.
+        $course = $generator->create_course();
+        $generator->create_module('assign', ['course' => $course->id, 'duedate' => $clock->time() - HOURSECS]);
+
+        // Check that we have a result returned.
+        $result = $helper::get_overdue_assignments();
+        $this->assertTrue($result->valid());
+        $result->close();
+
+        // Time travel 2 hours into the future.
+        // We should have no assignments found as we are only getting overdue assignments within a 2 hour window.
+        $clock->bump(HOURSECS * 2);
+        $result = $helper::get_overdue_assignments();
+        $this->assertFalse($result->valid());
+        $result->close();
+    }
+
+    /**
+     * Test getting users within an assignment that is overdue.
+     */
+    public function test_get_overdue_users_within_assignment(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $helper = \core\di::get(notification_helper::class);
+        $clock = $this->mock_clock_with_frozen();
+
+        // Create a course and enrol some users.
+        $course = $generator->create_course();
+        $user1 = $generator->create_and_enrol($course, 'student');
+        $user2 = $generator->create_and_enrol($course, 'student');
+        $user3 = $generator->create_and_enrol($course, 'student');
+        $user4 = $generator->create_and_enrol($course, 'student');
+        $user5 = $generator->create_and_enrol($course, 'student');
+        $user6 = $generator->create_and_enrol($course, 'student');
+        $user7 = $generator->create_and_enrol($course, 'teacher');
+
+        /** @var \mod_assign_generator $assignmentgenerator */
+        $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
+
+        // Create an overdue assignment.
+        $duedate = $clock->time() - HOURSECS;
+        $assignment = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'duedate' => $duedate,
+        ]);
+
+        // User1 will have a user override, giving them an extra minute for 'duedate'.
+        $userduedate = $duedate + MINSECS;
+        $assignmentgenerator->create_override([
+            'assignid' => $assignment->id,
+            'userid' => $user1->id,
+            'duedate' => $userduedate,
+        ]);
+
+        // User2 and user3 will have a group override, giving them an extra minute for 'duedate'.
+        $groupduedate = $duedate + MINSECS;
+        $group = $generator->create_group(['courseid' => $course->id]);
+        $generator->create_group_member(['groupid' => $group->id, 'userid' => $user2->id]);
+        $generator->create_group_member(['groupid' => $group->id, 'userid' => $user3->id]);
+        $assignmentgenerator->create_override([
+            'assignid' => $assignment->id,
+            'groupid' => $group->id,
+            'duedate' => $groupduedate,
+        ]);
+
+        // User4 will have a user override of one extra week, excluding them from the results.
+        $userduedate = $duedate + WEEKSECS;
+        $assignmentgenerator->create_override([
+            'assignid' => $assignment->id,
+            'userid' => $user4->id,
+            'duedate' => $userduedate,
+        ]);
+
+        // User5 will submit the assignment, excluding them from the results.
+        $assignmentgenerator->create_submission([
+            'userid' => $user5->id,
+            'assignid' => $assignment->cmid,
+            'status' => 'submitted',
+            'timemodified' => $clock->time(),
+        ]);
+
+        // User6 will have a cut-off date override that has already lapsed, excluding them from the results.
+        $usercutoffdate = $clock->time() - MINSECS;
+        $assignmentgenerator->create_override([
+            'assignid' => $assignment->id,
+            'userid' => $user6->id,
+            'cutoffdate' => $usercutoffdate,
+        ]);
+
+        // There should be 3 users with the teacher excluded.
+        $users = $helper::get_users_within_assignment($assignment->id, $helper::TYPE_OVERDUE);
+        $this->assertCount(3, $users);
+        $this->assertArrayHasKey($user1->id, $users);
+        $this->assertArrayHasKey($user2->id, $users);
+        $this->assertArrayHasKey($user3->id, $users);
+    }
+
+    /**
+     * Test sending the assignment overdue notification to a user.
+     */
+    public function test_send_overdue_notification_to_user(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $clock = $this->mock_clock_with_frozen();
+        $sink = $this->redirectMessages();
+
+        // Create a course and enrol a user.
+        $course = $generator->create_course();
+        $user1 = $generator->create_and_enrol($course, 'student');
+
+        /** @var \mod_assign_generator $assignmentgenerator */
+        $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
+
+        // Create an assignment that is overdue.
+        $duedate = $clock->time() - HOURSECS;
+        $cutoffdate = $clock->time() + DAYSECS;
+        $assignment = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'duedate' => $duedate,
+            'cutoffdate' => $cutoffdate,
+        ]);
+        $clock->bump(5);
+
+        // Run the tasks.
+        $this->run_overdue_notification_helper_tasks();
+
+        // Get the notifications that should have been created during the adhoc task.
+        $this->assertCount(1, $sink->get_messages());
+
+        // Check the subject matches.
+        $messages = $sink->get_messages_by_component('mod_assign');
+        $message = reset($messages);
+        $expectedsubject = get_string('assignmentoverduesubject', 'mod_assign', ['assignmentname' => $assignment->name]);
+        $this->assertEquals($expectedsubject, $message->subject);
+
+        // Clear sink.
+        $sink->clear();
+
+        // Run the tasks again.
+        $this->run_overdue_notification_helper_tasks();
+
+        // There should be no notification because nothing has changed.
+        $this->assertEmpty($sink->get_messages_by_component('mod_assign'));
+
+        // Let's modify the 'duedate' for the assignment (it will still be overdue).
+        $updatedata = new \stdClass();
+        $updatedata->id = $assignment->id;
+        $updatedata->duedate = $duedate + MINSECS;
+        $DB->update_record('assign', $updatedata);
+
+        // Clear sink.
+        $sink->clear();
+
+        // Run the tasks again.
+        $this->run_overdue_notification_helper_tasks();
+
+        // There should be a new notification because the 'duedate' has been updated.
+        $this->assertCount(1, $sink->get_messages_by_component('mod_assign'));
+
+        // Let's modify the 'cut-off date'.
+        $updatedata = new \stdClass();
+        $updatedata->id = $assignment->id;
+        $updatedata->cutoffdate = $cutoffdate + MINSECS;
+        $DB->update_record('assign', $updatedata);
+
+        // Clear sink.
+        $sink->clear();
+
+        // Run the tasks again.
+        $this->run_overdue_notification_helper_tasks();
+
+        // There should be a new notification because the 'cut-off date' has been updated.
+        $this->assertCount(1, $sink->get_messages_by_component('mod_assign'));
+
+        // Let's modify the 'duedate' one more time.
+        $updatedata = new \stdClass();
+        $updatedata->id = $assignment->id;
+        $updatedata->duedate = $duedate + (MINSECS * 2);
+        $DB->update_record('assign', $updatedata);
+
+        // This time, the user will submit the assignment.
+        $assignmentgenerator->create_submission([
+            'userid' => $user1->id,
+            'assignid' => $assignment->cmid,
+            'status' => 'submitted',
+            'timemodified' => $clock->time(),
+        ]);
+
+        // Clear sink.
+        $sink->clear();
+
+        // Run the tasks again.
+        $this->run_overdue_notification_helper_tasks();
+
+        // No new notification should have been sent.
+        $this->assertEmpty($sink->get_messages_by_component('mod_assign'));
+    }
 }
