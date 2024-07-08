@@ -1,2 +1,6 @@
 This file describes API changes in /communication/*
 Information provided here is intended especially for developers.
+
+=== 4.4.2 ===
+
+* The get_enrolled_users_for_course() method now accepts an additional argument that can filter only active enrolments.

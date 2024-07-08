@@ -214,8 +214,13 @@ class hook_listener {
             groupid: $group->id,
             context: $context,
         );
+
+        // Filter out users who are not active in this course.
+        $enrolledusers = helper::get_enrolled_users_for_course($course, true);
+        $userids = array_intersect($hook->userids, $enrolledusers);
+
         $communication->add_members_to_room(
-            userids: $hook->userids,
+            userids: $userids,
         );
     }
 
