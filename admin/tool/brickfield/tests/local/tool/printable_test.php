@@ -100,7 +100,7 @@ class printable_test extends \advanced_testcase {
         $object = new printable();
         $object->set_filter($filter);
         $output = $object->get_output();
-        $this->assertStringContainsString('<i class="icon fa fa-tachometer fa-fw "  title="Total activities" '.
+        $this->assertStringContainsString('<i class="icon fa fa-trophy fa-fw "  title="Total activities" '.
             'role="img" aria-label="Total activities">', $output);
     }
 }
