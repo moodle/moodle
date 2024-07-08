@@ -62,26 +62,20 @@ export const registerEventListeners = () => {
 
     // Edit cohort name inplace.
     document.addEventListener(eventTypes.elementUpdated, async(event) => {
-
         const editCohortName = event.target.closest(SELECTORS.EDITNAME);
-
         if (editCohortName) {
-            const newName = await getString('selectitem', 'core', event.target.dataset.value);
             const cohortId = event.target.dataset.itemid;
-            const checkbox = document.querySelector(`input[value="${cohortId}"]`);
+            const checkbox = document.querySelector(`input[value="${cohortId}"][type="checkbox"]`);
             const label = document.querySelector(`label[for="${checkbox.id}"]`);
-
-            if (newName && label) {
-                label.innerHTML = newName;
+            if (label) {
+                label.innerHTML = await getString('selectitem', 'core', event.target.dataset.value);
             }
         }
     });
 
     // Delete multiple cohorts.
     document.addEventListener('click', event => {
-
         const cohortDeleteSelected = event.target.closest(SELECTORS.DELETEBUTTON);
-
         if (cohortDeleteSelected) {
             event.preventDefault();
 

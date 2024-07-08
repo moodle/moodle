@@ -121,8 +121,17 @@ Feature: Add cohorts of users
   @javascript
   Scenario: Edit cohort name in-place
     When I navigate to "Users > Accounts > Cohorts" in site administration
+    Then the following should exist in the "reportbuilder-table" table:
+      | Name             | Cohort ID | Description             |
+      | Test cohort name | 333       | Test cohort description |
     And I set the field "Edit cohort name" to "Students cohort"
-    Then I should not see "Test cohort name"
-    And I should see "Students cohort"
-    And I navigate to "Users > Accounts > Cohorts" in site administration
-    And I should see "Students cohort"
+    And the following should not exist in the "reportbuilder-table" table:
+      | Name             | Cohort ID | Description             |
+      | Test cohort name | 333       | Test cohort description |
+    And the following should exist in the "reportbuilder-table" table:
+      | Name            | Cohort ID | Description             |
+      | Students cohort | 333       | Test cohort description |
+    And I reload the page
+    And the following should exist in the "reportbuilder-table" table:
+      | Name            | Cohort ID | Description             |
+      | Students cohort | 333       | Test cohort description |
