@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 function customfield_date_get_fontawesome_icon_map() {
     return [
-        'customfield_date:checked' => 'fa-check-square-o',
-        'customfield_date:notchecked' => 'fa-square-o',
+        'customfield_date:checked' => 'fa-regular fa-calendar-check',
+        'customfield_date:notchecked' => 'fa-regular fa-calendar',
     ];
 }
