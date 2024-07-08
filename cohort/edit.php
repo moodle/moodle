@@ -29,10 +29,8 @@ require_once($CFG->dirroot.'/cohort/edit_form.php');
 
 $id        = optional_param('id', 0, PARAM_INT);
 $contextid = optional_param('contextid', 0, PARAM_INT);
-$delete    = optional_param('delete', 0, PARAM_BOOL);
 $show      = optional_param('show', 0, PARAM_BOOL);
 $hide      = optional_param('hide', 0, PARAM_BOOL);
-$confirm   = optional_param('confirm', 0, PARAM_BOOL);
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 
 require_login();
@@ -84,25 +82,6 @@ if ($context->contextlevel == CONTEXT_COURSECAT) {
 } else {
     navigation_node::override_active_url(new moodle_url('/cohort/index.php', array()));
     $PAGE->set_heading($COURSE->fullname);
-}
-
-if ($delete and $cohort->id) {
-    $PAGE->url->param('delete', 1);
-    if ($confirm and confirm_sesskey()) {
-        cohort_delete_cohort($cohort);
-        redirect($returnurl);
-    }
-    $strheading = get_string('delcohort', 'cohort');
-    $PAGE->navbar->add($strheading);
-    $PAGE->set_title($strheading);
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading($strheading);
-    $yesurl = new moodle_url('/cohort/edit.php', array('id' => $cohort->id, 'delete' => 1,
-        'confirm' => 1, 'sesskey' => sesskey(), 'returnurl' => $returnurl->out_as_local_url()));
-    $message = get_string('delconfirm', 'cohort', format_string($cohort->name));
-    echo $OUTPUT->confirm($message, $yesurl, $returnurl);
-    echo $OUTPUT->footer();
-    die;
 }
 
 if ($show && $cohort->id && confirm_sesskey()) {

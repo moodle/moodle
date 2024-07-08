@@ -26,13 +26,15 @@ import Notification from 'core/notification';
 import Pending from 'core/pending';
 import {prefetchStrings} from 'core/prefetch';
 import {getString} from 'core/str';
-import {deleteCohorts} from 'core_cohort/repository';
+import {add as addToast} from 'core/toast';
+import {deleteCohort, deleteCohorts} from 'core_cohort/repository';
 import * as reportEvents from 'core_reportbuilder/local/events';
 import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {eventTypes} from 'core/local/inplace_editable/events';
 
 const SELECTORS = {
     CHECKBOXES: '[data-togglegroup="report-select-all"][data-toggle="slave"]:checked',
+    DELETE: '[data-action="cohort-delete"]',
     DELETEBUTTON: '[data-action="cohort-delete-selected"]',
     EDITNAME: '[data-itemtype="cohortname"]',
 };
@@ -44,6 +46,9 @@ export const init = () => {
 
     prefetchStrings('core_cohort', [
         'delcohortsconfirm',
+        'delcohortssuccess',
+        'delconfirm',
+        'delsuccess',
     ]);
 
     prefetchStrings('core', [
@@ -73,10 +78,40 @@ export const registerEventListeners = () => {
         }
     });
 
-    // Delete multiple cohorts.
     document.addEventListener('click', event => {
-        const cohortDeleteSelected = event.target.closest(SELECTORS.DELETEBUTTON);
-        if (cohortDeleteSelected) {
+
+        // Delete single cohort.
+        const cohortDeleteSingle = event.target.closest(SELECTORS.DELETE);
+        if (cohortDeleteSingle) {
+            event.preventDefault();
+
+            const {cohortId, cohortName} = cohortDeleteSingle.dataset;
+
+            Notification.saveCancelPromise(
+                getString('deleteselected', 'core'),
+                getString('delconfirm', 'core_cohort', cohortName),
+                getString('delete', 'core'),
+                {triggerElement: cohortDeleteSingle}
+            ).then(() => {
+                const pendingPromise = new Pending('core_cohort/cohort:delete');
+                const reportElement = event.target.closest(reportSelectors.regions.report);
+
+                // eslint-disable-next-line promise/no-nesting
+                return deleteCohort(cohortId)
+                    .then(() => addToast(getString('delsuccess', 'core_cohort')))
+                    .then(() => {
+                        dispatchEvent(reportEvents.tableReload, {preservePagination: true}, reportElement);
+                        return pendingPromise.resolve();
+                    })
+                    .catch(Notification.exception);
+            }).catch(() => {
+                return;
+            });
+        }
+
+        // Delete multiple cohorts.
+        const cohortDeleteMultiple = event.target.closest(SELECTORS.DELETEBUTTON);
+        if (cohortDeleteMultiple) {
             event.preventDefault();
 
             const reportElement = document.querySelector(reportSelectors.regions.report);
@@ -89,13 +124,14 @@ export const registerEventListeners = () => {
                 getString('deleteselected', 'core'),
                 getString('delcohortsconfirm', 'core_cohort'),
                 getString('delete', 'core'),
-                {triggerElement: cohortDeleteSelected}
+                {triggerElement: cohortDeleteMultiple}
             ).then(() => {
                 const pendingPromise = new Pending('core_cohort/cohorts:delete');
                 const deleteCohortIds = [...cohortDeleteChecked].map(check => check.value);
 
                 // eslint-disable-next-line promise/no-nesting
                 return deleteCohorts(deleteCohortIds)
+                    .then(() => addToast(getString('delcohortssuccess', 'core_cohort')))
                     .then(() => {
                         dispatchEvent(reportEvents.tableReload, {preservePagination: true}, reportElement);
                         return pendingPromise.resolve();
