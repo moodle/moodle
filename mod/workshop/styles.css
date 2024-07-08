@@ -243,15 +243,16 @@
 .path-mod-workshop .userplan dt {
     vertical-align: bottom;
     white-space: normal;
-    color: #999;
-    border-bottom: 1px solid #ddd;
+    color: #495057;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ced4da;
     padding: 3px;
 }
 
 .path-mod-workshop .userplan dt.active {
     vertical-align: top;
-    color: black;
-    border: 1px solid #ddd;
+    color: #212529;
+    border: 1px solid #ced4da;
     border-bottom: 0;
     border-top: 0;
     background: #e7f1c3;
@@ -322,7 +323,7 @@
 
 .path-mod-workshop .userplan dd {
     vertical-align: top;
-    border-right: 1px solid #ddd;
+    border-right: 1px solid #ced4da;
     background-color: #f5f5f5;
     margin: 0;
     min-height: 180px;
@@ -335,7 +336,7 @@
 .path-mod-workshop .userplan dd a:hover,
 .path-mod-workshop .userplan dd a:visited,
 .path-mod-workshop .userplan dd a:active {
-    color: #999;
+    color: #495057;
 }
 
 .path-mod-workshop .userplan dd.active,
@@ -344,7 +345,7 @@
 .path-mod-workshop .userplan dd.active a:hover,
 .path-mod-workshop .userplan dd.active a:visited,
 .path-mod-workshop .userplan dd.active a:active {
-    color: black;
+    color: #212529;
 }
 
 .path-mod-workshop .userplan dd.lastcol {
