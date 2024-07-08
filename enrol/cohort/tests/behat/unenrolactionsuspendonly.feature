@@ -78,7 +78,7 @@ Feature: Unenrol action to disable course enrolment
     And I press "Save changes"
     And I navigate to "Users > Accounts > Cohorts" in site administration
     When I press "Delete" action in the "System cohort" report row
-    And I press "Continue"
+    And I click on "Delete" "button" in the "Delete selected" "dialogue"
     And I am on "Course 001" course homepage
     And I navigate to course participants
     And I should see "Suspended" in the "Student 001" "table_row"
