@@ -474,9 +474,9 @@ function enrol_lti_extend_navigation_course($navigation, $course, $context) {
  */
 function enrol_lti_get_fontawesome_icon_map() {
     return [
-        'enrol_lti:managedeployments' => 'fa-sitemap',
-        'enrol_lti:platformdetails' => 'fa-pencil-square-o',
-        'enrol_lti:enrolinstancewarning' => 'fa-exclamation-circle text-danger',
+        'enrol_lti:enrolinstancewarning' => 'fa-triangle-exclamation text-danger',
+        'enrol_lti:managedeployments' => 'fa-users-gear',
+        'enrol_lti:platformdetails' => 'fa-square-pen',
     ];
 }
 
