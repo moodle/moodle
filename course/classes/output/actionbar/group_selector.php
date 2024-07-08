@@ -37,12 +37,19 @@ class group_selector implements renderable, templatable {
     protected $course;
 
     /**
+     * @var stdClass The context object.
+     */
+    private stdClass $context;
+
+    /**
      * The class constructor.
      *
      * @param stdClass $course The course object.
+     * @param stdClass $context The context object.
      */
-    public function __construct(stdClass $course) {
+    public function __construct(stdClass $course, stdClass $context) {
         $this->course = $course;
+        $this->context = $context;
     }
 
     /**
@@ -55,10 +62,22 @@ class group_selector implements renderable, templatable {
         global $USER, $OUTPUT;
 
         $course = $this->course;
-        $groupmode = $course->groupmode;
+        // Based on the current context level, retrieve the correct group mode and grouping ID.
+        // Also, specify whether only groups with the participation field set to true should be returned.
+        if ($this->context->contextlevel === CONTEXT_MODULE) { // Module context.
+            $cm = get_coursemodule_from_id(false, $this->context->instanceid);
+            $groupmode = groups_get_activity_groupmode($cm);
+            $groupingid = $cm->groupingid;
+            $participationonly = true;
+        } else { // Course context.
+            $groupmode = $course->groupmode;
+            $groupingid = $course->defaultgroupingid;
+            $participationonly = false;
+        }
 
         $sbody = $OUTPUT->render_from_template('core_group/comboboxsearch/searchbody', [
             'courseid' => $course->id,
+            'cmid' => $this->context->contextlevel === CONTEXT_MODULE ? $this->context->instanceid : null,
             'currentvalue' => optional_param('groupsearchvalue', '', PARAM_NOTAGS),
             'instance' => rand(),
         ]);
@@ -67,20 +86,34 @@ class group_selector implements renderable, templatable {
 
         $buttondata = ['label' => $label];
 
-        $context = \context_course::instance($course->id);
-
-        if ($groupmode == VISIBLEGROUPS || has_capability('moodle/site:accessallgroups', $context)) {
-            $allowedgroups = groups_get_all_groups($course->id, 0, $course->defaultgroupingid);
+        if ($groupmode == VISIBLEGROUPS || has_capability('moodle/site:accessallgroups', $this->context)) {
+            $allowedgroups = groups_get_all_groups(
+                courseid: $course->id,
+                userid: 0,
+                groupingid: $groupingid,
+                participationonly: $participationonly
+            );
         } else {
-            $allowedgroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
+            $allowedgroups = groups_get_all_groups(
+                courseid: $course->id,
+                userid: $USER->id,
+                groupingid: $groupingid,
+                participationonly: $participationonly
+            );
         }
 
-        $activegroup = groups_get_course_group($course, true, $allowedgroups);
+        if ($this->context->contextlevel === CONTEXT_MODULE) {
+            $cm = get_coursemodule_from_id(false, $this->context->instanceid);
+            $activegroup = groups_get_activity_group($cm, true, $allowedgroups);
+        } else {
+            $activegroup = groups_get_course_group($course, true, $allowedgroups);
+        }
+
         $buttondata['group'] = $activegroup;
 
         if ($activegroup) {
             $group = groups_get_group($activegroup);
-            $buttondata['selectedgroup'] = format_string($group->name, true, ['context' => $context]);
+            $buttondata['selectedgroup'] = format_string($group->name, true, ['context' => $this->context]);
         } else if ($activegroup === 0) {
             $buttondata['selectedgroup'] = get_string('allparticipants');
         }

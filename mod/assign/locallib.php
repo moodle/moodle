@@ -4575,8 +4575,8 @@ class assign {
         $PAGE->requires->js_call_amd('mod_assign/user', 'init', [$currenturl->out(false)]);
 
         // Conditionally add the group JS if we have groups enabled.
-        if ($this->get_course()->groupmode) {
-            $PAGE->requires->js_call_amd('core_course/actionbar/group', 'init', [$currenturl->out(false)]);
+        if (groups_get_activity_groupmode($this->get_course_module(), $this->get_course())) {
+            $PAGE->requires->js_call_amd('core_course/actionbar/group', 'init', [$currenturl->out(false), $cmid]);
         }
 
         $header = new assign_header($this->get_instance(),
