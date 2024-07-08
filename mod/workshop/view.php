@@ -158,7 +158,7 @@ switch ($workshop->phase) {
         }
 }
 
-echo $output->heading(format_string($currentphasetitle), 3, null, 'mod_workshop-userplanheading');
+echo $output->heading(format_string($currentphasetitle), 2, null, 'mod_workshop-userplanheading');
 echo $output->render($userplan);
 
 switch ($workshop->phase) {
