@@ -44,11 +44,15 @@ $iconsizes: map-merge((
         font-size: $icon-medium-height;
         width: $icon-medium-width;
         height: $icon-medium-height;
+        max-width: $icon-medium-width;
+        max-height: $icon-medium-height;
     }
 
     &.iconsize-big {
         width: $icon-big-width;
         height: $icon-big-height;
+        max-width: $icon-big-width;
+        max-height: $icon-big-height;
         font-size: $icon-big-height;
     }
 }
