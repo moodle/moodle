@@ -27,9 +27,9 @@ namespace mod_assign;
  */
 final class notification_helper_test extends \advanced_testcase {
     /**
-     * Run all the tasks related to the notifications.
+     * Run all the tasks related to the 'due soon' notifications.
      */
-    protected function run_notification_helper_tasks(): void {
+    protected function run_due_soon_notification_helper_tasks(): void {
         $task = \core\task\manager::get_scheduled_task(\mod_assign\task\queue_all_assignment_due_soon_notification_tasks::class);
         $task->execute();
         $clock = \core\di::get(\core\clock::class);
@@ -50,7 +50,7 @@ final class notification_helper_test extends \advanced_testcase {
     }
 
     /**
-     * Test getting assignments with a 'duedate' date within the date range.
+     * Test getting due soon assignments.
      */
     public function test_get_due_soon_assignments(): void {
         $this->resetAfterTest();
@@ -75,10 +75,9 @@ final class notification_helper_test extends \advanced_testcase {
     }
 
     /**
-     * Test getting users within an assignment that are within our date range.
+     * Test getting users within an assignment that have a due date soon.
      */
-    public function test_get_users_within_assignment(): void {
-        global $DB;
+    public function test_get_due_soon_users_within_assignment(): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
         $helper = \core\di::get(notification_helper::class);
@@ -151,7 +150,7 @@ final class notification_helper_test extends \advanced_testcase {
     /**
      * Test sending the assignment due soon notification to a user.
      */
-    public function test_send_notification_to_user(): void {
+    public function test_send_due_soon_notification_to_user(): void {
         global $DB;
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
@@ -176,7 +175,7 @@ final class notification_helper_test extends \advanced_testcase {
         $clock->bump(5);
 
         // Run the tasks.
-        $this->run_notification_helper_tasks();
+        $this->run_due_soon_notification_helper_tasks();
 
         // Get the assignment object.
         [$course, $assigncm] = get_course_and_cm_from_instance($assignment->id, 'assign');
@@ -202,7 +201,7 @@ final class notification_helper_test extends \advanced_testcase {
         $sink->clear();
 
         // Run the tasks again.
-        $this->run_notification_helper_tasks();
+        $this->run_due_soon_notification_helper_tasks();
 
         // There should be no notification because nothing has changed.
         $this->assertEmpty($sink->get_messages_by_component('mod_assign'));
@@ -214,7 +213,7 @@ final class notification_helper_test extends \advanced_testcase {
         $DB->update_record('assign', $updatedata);
 
         // Run the tasks again.
-        $this->run_notification_helper_tasks();
+        $this->run_due_soon_notification_helper_tasks();
 
         // There should be a new notification because the 'duedate' has been updated.
         $this->assertCount(1, $sink->get_messages_by_component('mod_assign'));
@@ -237,7 +236,7 @@ final class notification_helper_test extends \advanced_testcase {
         $clock->bump(5);
 
         // Run the tasks again.
-        $this->run_notification_helper_tasks();
+        $this->run_due_soon_notification_helper_tasks();
 
         // No new notification should have been sent.
         $this->assertEmpty($sink->get_messages_by_component('mod_assign'));
