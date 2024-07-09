@@ -4545,7 +4545,21 @@ class assign {
 
         $markingworkflow = $this->get_instance()->markingworkflow;
 
-        $buttons = new \mod_assign\output\grading_actionmenu(cmid: $this->get_course_module()->id, assign: $this);
+        // Load the table of submissions, to be printed further down.
+        $usequickgrading = $showquickgrading && $quickgrading;
+        $gradingtable = new assign_grading_table($this, $perpage, $filter, 0, $usequickgrading);
+        $gradingtable->responsive = false;
+        $table = $this->get_renderer()->render($gradingtable);
+        // This initialises the selected first/last initials for the action menu.
+        $gradingtable->initialbars(true);
+        $buttons = new \mod_assign\output\grading_actionmenu(
+            cmid: $this->get_course_module()->id,
+            assign: $this,
+            userinitials: [
+                'firstname' => $gradingtable->get_initial_first(),
+                'lastname' => $gradingtable->get_initial_last(),
+            ]
+        );
         $actionformtext = $this->get_renderer()->render($buttons);
         $currenturl = new moodle_url('/mod/assign/view.php', ['id' => $this->get_course_module()->id, 'action' => 'grading']);
         $PAGE->activityheader->set_attrs(['hidecompletion' => true]);
@@ -4573,11 +4587,7 @@ class assign {
             $o .= $this->get_renderer()->notification(get_string('blindmarkingenabledwarning', 'assign'), 'notifymessage');
         }
 
-        // Load and print the table of submissions.
-        $usequickgrading = $showquickgrading && $quickgrading;
-        $gradingtable = new assign_grading_table($this, $perpage, $filter, 0, $usequickgrading);
-        $gradingtable->responsive = false;
-        $table = $this->get_renderer()->render($gradingtable);
+        // Print the table of submissions.
         $footerdata = [
             'perpage' => $gradingtable->get_paging_selector(),
             'pagingbar' => $gradingtable->get_paging_bar(),

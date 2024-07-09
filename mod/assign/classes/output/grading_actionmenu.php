@@ -48,8 +48,12 @@ class grading_actionmenu implements templatable, renderable {
     protected int $submissioncount;
     /** @var assign The assign instance. */
     protected assign $assign;
+
     /** @var bool If there are submissions to download. */
     protected bool $showdownload;
+
+    /** @var array Applied user initials filters, containing 'firstname' and 'lastname'. **/
+    protected array $userinitials;
 
     /**
      * Constructor for this object.
@@ -58,12 +62,14 @@ class grading_actionmenu implements templatable, renderable {
      * @param null|bool $submissionpluginenabled This parameter has been deprecated since 4.5 and should not be used anymore.
      * @param null|int $submissioncount This parameter has been deprecated since 4.5 and should not be used anymore.
      * @param assign|null $assign The assign instance. If not provided, it will be loaded based on the cmid.
+     * @param array $userinitials The user initials to filter the table by.
      */
     public function __construct(
         int $cmid,
         ?bool $submissionpluginenabled = null,
         ?int $submissioncount = null,
-        ?assign $assign = null
+        ?assign $assign = null,
+        array $userinitials = []
     ) {
         $this->cmid = $cmid;
         if (!$assign) {
@@ -72,6 +78,7 @@ class grading_actionmenu implements templatable, renderable {
         }
         $this->assign = $assign;
         $this->showdownload = $this->assign->is_any_submission_plugin_enabled() && $this->assign->count_submissions();
+        $this->userinitials = $userinitials;
     }
 
     /**
@@ -106,6 +113,27 @@ class grading_actionmenu implements templatable, renderable {
         );
         $data['userselector'] = $actionbarrenderer->render($userselector);
 
+        $hasinitials = !empty($this->userinitials['firstname']) || !empty($this->userinitials['lastname']);
+        $additionalparams = ['action' => 'grading', 'id' => $this->cmid];
+
+        if (!empty($userid)) {
+            $additionalparams['userid'] = $userid;
+        } else if (!empty($usersearch)) {
+            $additionalparams['search'] = $usersearch;
+        }
+
+        $initialselector = new \core_course\output\actionbar\initial_selector(
+            course: $course,
+            targeturl: 'mod/assign/view.php',
+            firstinitial: $this->userinitials['firstname'] ?? '',
+            lastinitial: $this->userinitials['lastname'] ?? '',
+            firstinitialparam: 'tifirst',
+            lastinitialparam: 'tilast',
+            additionalparams: $additionalparams
+        );
+
+        $data['initialselector'] = $actionbarrenderer->render($initialselector);
+
         if (groups_get_activity_groupmode($cm, $course)) {
             $data['groupselector'] = $actionbarrenderer->render(
                 new \core_course\output\actionbar\group_selector(null, $PAGE->context));
@@ -119,7 +147,7 @@ class grading_actionmenu implements templatable, renderable {
         $activitygroup = groups_get_activity_group($cm);
         $hasuserfilter = get_user_preferences('assign_filter');
         $hasextrafilters = $this->get_applied_extra_filters_count() > 0;
-        if ($activitygroup || $hasuserfilter || $hasextrafilters) {
+        if ($activitygroup || $hasuserfilter || $hasextrafilters || $hasinitials) {
             $url = new moodle_url('/mod/assign/view.php', [
                 'id' => $this->cmid,
                 'action' => 'grading',
@@ -128,6 +156,8 @@ class grading_actionmenu implements templatable, renderable {
                 'workflowfilter' => '',
                 'markingallocationfilter' => '',
                 'suspendedparticipantsfilter' => 0,
+                'tifirst' => '',
+                'tilast' => '',
             ]);
             $data['pagereset'] = $url->out(false);
         }

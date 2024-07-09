@@ -84,6 +84,12 @@
             </div>
             <div class="navitem-divider d-none d-sm-flex"></div>
         {{/groupselector}}
+        {{#initialselector}}
+            <div class="navitem d-flex flex-column align-self-center">
+                {{{.}}}
+            </div>
+            <div class="navitem-divider"></div>
+        {{/initialselector}}
         {{#statusselector}}
             <div class="navitem">
                 {{>core/select_menu}}
