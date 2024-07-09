@@ -180,8 +180,8 @@ class group_form extends moodleform {
         } else {
             $idnumber = '';
         }
-        if ($data['id'] and $group = $DB->get_record('groups', array('id'=>$data['id']))) {
-            if (core_text::strtolower($group->name) != core_text::strtolower($name)) {
+        if ($data['id'] && $group = $DB->get_record('groups', ['id' => $data['id']])) {
+            if ($group->name != $name) {
                 if (groups_get_group_by_name($COURSE->id,  $name)) {
                     $errors['name'] = get_string('groupnameexists', 'group', $name);
                 }
