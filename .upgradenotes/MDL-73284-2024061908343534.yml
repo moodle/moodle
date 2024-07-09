@@ -1,0 +1,5 @@
+issueNumber: MDL-73284
+notes:
+  core_message:
+    - message: Final deprecation MESSAGE_DEFAULT_LOGGEDOFF / MESSAGE_DEFAULT_LOGGEDIN.
+      type: removed
