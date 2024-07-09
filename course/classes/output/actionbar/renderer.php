@@ -46,4 +46,15 @@ class renderer extends \plugin_renderer_base {
         $data = $groupselector->export_for_template($this);
         return parent::render_from_template($groupselector->get_template(), $data);
     }
+
+    /**
+     * Renders the initial selector trigger element in the action bar.
+     *
+     * @param initial_selector $initialselector The initial selector object.
+     * @return string The HTML output.
+     */
+    protected function render_initial_selector(initial_selector $initialselector): string {
+        $data = $initialselector->export_for_template($this);
+        return parent::render_from_template($initialselector->get_template(), $data);
+    }
 }

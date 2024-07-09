@@ -241,10 +241,6 @@ $string['feedbacks'] = 'Feedbacks';
 $string['feedbacksaved'] = 'Feedback saved';
 $string['feedbackview'] = 'View feedback';
 $string['finalgrade'] = 'Final grade';
-$string['filterbothactive'] = 'First ({$a->first}) Last ({$a->last})';
-$string['filterbyname'] = 'Filter by name';
-$string['filterfirstactive'] = 'First ({$a->first})';
-$string['filterlastactive'] = 'Last ({$a->last})';
 $string['finalgrade_help'] = 'If the overridden checkbox is ticked, a grade may be added or amended.';
 $string['fixedstudents'] = 'Static students column';
 $string['fixedstudents_help'] = 'Allows grades to scroll horizontally without losing sight of the students column, by making it static.';
@@ -917,3 +913,9 @@ $string['gradeitemadvanced'] = 'Advanced grade item options';
 $string['gradeitemadvanced_help'] = 'Select all elements that should be displayed as advanced when editing grade items.';
 $string['aria-toggledropdown'] = 'Toggle the following dropdown';
 $string['aria:dropdowngrades'] = 'Grade items found';
+
+// Deprecated since Moodle 4.5.
+$string['filterbothactive'] = 'First ({$a->first}) Last ({$a->last})';
+$string['filterbyname'] = 'Filter by name';
+$string['filterfirstactive'] = 'First ({$a->first})';
+$string['filterlastactive'] = 'Last ({$a->last})';
