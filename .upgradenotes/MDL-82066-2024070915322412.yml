@@ -1,0 +1,12 @@
+issueNumber: MDL-82066
+notes:
+  core:
+    - message: >-
+        The `get_home_page()` method can now return new constant `HOMEPAGE_URL`,
+        applicable when a third-party hook has extended the default homepage
+        options for the site
+
+
+        A new method, `get_default_home_page_url()` has been added which will
+        return the correct URL when this constant is returned
+      type: changed

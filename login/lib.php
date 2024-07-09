@@ -362,6 +362,9 @@ function core_login_get_return_url() {
                 $urltogo = $CFG->wwwroot.'/my/courses.php';
             }
         }
+        if ($homepage === HOMEPAGE_URL) {
+            $urltogo = (string) get_default_home_page_url();
+        }
     }
     return $urltogo;
 }

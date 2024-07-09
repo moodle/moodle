@@ -5162,18 +5162,18 @@ EOT;
      * @dataProvider get_home_page_provider
      * @param string $user Whether the user is logged, guest or not logged.
      * @param int $expected Expected value after calling the get_home_page method.
-     * @param int|null $defaulthomepage The $CFG->defaulthomepage setting value.
+     * @param int|string|null $defaulthomepage The $CFG->defaulthomepage setting value.
      * @param int|null $enabledashboard Whether the dashboard should be enabled or not.
-     * @param int|null $userpreference User preference for the home page setting.
+     * @param int|string|null $userpreference User preference for the home page setting.
      * $param int|null $allowguestmymoodle The $CFG->allowguestmymoodle setting value.
      * @covers ::get_home_page
      */
     public function test_get_home_page(
         string $user,
         int $expected,
-        ?int $defaulthomepage = null,
+        int|string|null $defaulthomepage = null,
         ?int $enabledashboard = null,
-        ?int $userpreference = null,
+        int|string|null $userpreference = null,
         ?int $allowguestmymoodle = null,
     ): void {
         global $CFG, $USER;
@@ -5210,6 +5210,8 @@ EOT;
      * @return array
      */
     public static function get_home_page_provider(): array {
+        global $CFG;
+
         return [
             'No logged user' => [
                 'user' => 'nologged',
@@ -5271,6 +5273,11 @@ EOT;
                 'defaulthomepage' => HOMEPAGE_SITE,
                 'enabledashboard' => 0,
             ],
+            'Logged user. URL set as default home page.' => [
+                'user' => 'logged',
+                'expected' => HOMEPAGE_URL,
+                'defaulthomepage' => "{$CFG->wwwroot}/home",
+            ],
             'Logged user. User preference set as default page with dashboard enabled and user preference set to dashboard' => [
                 'user' => 'logged',
                 'expected' => HOMEPAGE_MY,
@@ -5299,6 +5306,13 @@ EOT;
                 'enabledashboard' => 0,
                 'userpreference' => HOMEPAGE_MYCOURSES,
             ],
+            'Logged user. User preference set as default page with user preference set to URL.' => [
+                'user' => 'logged',
+                'expected' => HOMEPAGE_URL,
+                'defaulthomepage' => HOMEPAGE_USER,
+                'enabledashboard' => null,
+                'userpreference' => "{$CFG->wwwroot}/home",
+            ],
         ];
     }
 
@@ -5319,6 +5333,31 @@ EOT;
         $CFG->enabledashboard = 0;
         $default = get_default_home_page();
         $this->assertEquals(HOMEPAGE_MYCOURSES, $default);
+    }
+
+    /**
+     * Test getting default home page for {@see HOMEPAGE_URL}
+     *
+     * @covers ::get_default_home_page_url
+     */
+    public function test_get_default_home_page_url(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $this->assertNull(get_default_home_page_url());
+
+        // Site configuration.
+        $CFG->defaulthomepage = "{$CFG->wwwroot}/home";
+        $this->assertEquals($CFG->defaulthomepage, get_default_home_page_url());
+
+        // User preference.
+        $CFG->defaulthomepage = HOMEPAGE_USER;
+
+        $userpreference = "{$CFG->wwwroot}/about";
+        set_user_preference('user_home_page_preference', $userpreference);
+        $this->assertEquals($userpreference, get_default_home_page_url());
     }
 
     /**

@@ -533,6 +533,10 @@ define('HOMEPAGE_USER', 2);
  * The home page should be the users my courses page
  */
 define('HOMEPAGE_MYCOURSES', 3);
+/**
+ * The home page is defined as a URL
+ */
+define('HOMEPAGE_URL', 4);
 
 /**
  * URL of the Moodle sites registration portal.
@@ -9910,12 +9914,16 @@ function get_home_page() {
         } else if ($CFG->defaulthomepage == HOMEPAGE_MYCOURSES && !isguestuser()) {
             return HOMEPAGE_MYCOURSES;
         } else if ($CFG->defaulthomepage == HOMEPAGE_USER && !isguestuser()) {
-            $userhomepage = (int) get_user_preferences('user_home_page_preference', $defaultpage);
+            $userhomepage = get_user_preferences('user_home_page_preference', $defaultpage);
             if (empty($CFG->enabledashboard) && $userhomepage == HOMEPAGE_MY) {
                 // If the user was using the dashboard but it's disabled, return the default home page.
                 $userhomepage = $defaultpage;
+            } else if (clean_param($userhomepage, PARAM_LOCALURL)) {
+                return HOMEPAGE_URL;
             }
-            return $userhomepage;
+            return (int) $userhomepage;
+        } else if (clean_param($CFG->defaulthomepage, PARAM_LOCALURL)) {
+            return HOMEPAGE_URL;
         }
     }
     return HOMEPAGE_SITE;
@@ -9931,6 +9939,31 @@ function get_default_home_page(): int {
     global $CFG;
 
     return (!isset($CFG->enabledashboard) || $CFG->enabledashboard) ? HOMEPAGE_MY : HOMEPAGE_MYCOURSES;
+}
+
+/**
+ * Get the default home page as a URL where it has been configured as one via site configuration or user preference
+ *
+ * It is assumed that callers have already checked that {@see get_home_page} returns {@see HOMEPAGE_URL} prior to
+ * calling this method
+ *
+ * @return \core\url|null
+ */
+function get_default_home_page_url(): ?\core\url {
+    global $CFG;
+
+    if ($defaulthomepage = clean_param($CFG->defaulthomepage, PARAM_LOCALURL)) {
+        return new \core\url($defaulthomepage);
+    }
+
+    if ($CFG->defaulthomepage == HOMEPAGE_USER) {
+        $userhomepage = get_user_preferences('user_home_page_preference');
+        if ($userhomepage = clean_param($userhomepage, PARAM_LOCALURL)) {
+            return new \core\url($userhomepage);
+        }
+    }
+
+    return null;
 }
 
 /**
