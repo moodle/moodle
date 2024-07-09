@@ -297,8 +297,8 @@ Feature: Within the grader report, test that we can search for users
   Scenario: Once a teacher searches, it'll apply the currently set filters and inform the teacher as such
     # Set up a basic filtering case.
     Given I click on "Filter by name" "combobox"
-    And I select "U" in the "First name" "core_grades > initials bar"
-    And I select "E" in the "Last name" "core_grades > initials bar"
+    And I select "U" in the "First name" "core_course > initials bar"
+    And I select "E" in the "Last name" "core_course > initials bar"
     And I press "Apply"
     And I wait until the page is ready
     And the following should exist in the "user-grades" table:
@@ -324,8 +324,8 @@ Feature: Within the grader report, test that we can search for users
       | -1-                |
       | Turtle Manatee     |
     And I click on "Filter by name" "combobox"
-    And I select "T" in the "First name" "core_grades > initials bar"
-    And I select "M" in the "Last name" "core_grades > initials bar"
+    And I select "T" in the "First name" "core_course > initials bar"
+    And I select "M" in the "Last name" "core_course > initials bar"
     And the following should exist in the "user-grades" table:
       | -1-                |
       | Turtle Manatee     |

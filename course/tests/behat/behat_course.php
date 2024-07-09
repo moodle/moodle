@@ -59,6 +59,10 @@ class behat_course extends behat_base {
                     "%core_course/activityChooser%//*[@data-region=%locator%][contains(concat(' ', @class, ' '), ' tab-pane ')]"
                 ]
             ),
+            new behat_component_named_selector(
+                'initials bar',
+                [".//*[contains(concat(' ', @class, ' '), ' initialbar ')]//span[contains(., %locator%)]/parent::div"]
+            ),
         ];
     }
 
