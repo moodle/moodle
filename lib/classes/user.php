@@ -1042,8 +1042,13 @@ class core_user {
             $choices[] = HOMEPAGE_MY;
         }
         $choices[] = HOMEPAGE_MYCOURSES;
+
+        // Allow hook callbacks to extend options.
+        $hook = new \core_user\hook\extend_default_homepage(true);
+        \core\di::get(\core\hook\manager::class)->dispatch($hook);
+        $choices = array_merge($choices, array_keys($hook->get_options()));
+
         $preferences['user_home_page_preference'] = [
-            'type' => PARAM_INT,
             'null' => NULL_ALLOWED,
             'default' => get_default_home_page(),
             'choices' => $choices,
