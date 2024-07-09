@@ -251,8 +251,8 @@ Feature: Anonymous feedback
     And I should see "Non anonymous entries (1)"
     And I click on "," "link" in the "Username 1" "table_row"
     And I should see "(Username 1)"
-    And I should see "usertext"
+    Then the field "this is a short text answer" matches value "usertext"
     And I navigate to "Responses" in current page administration
     And I follow "Response number: 1"
     And I should see "Response number: 1 (Anonymous)"
-    Then I should see "anontext"
+    And the field "this is a short text answer" matches value "anontext"
