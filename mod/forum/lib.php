@@ -6912,3 +6912,50 @@ function forum_refresh_events(int $courseid, stdClass $instance, stdClass $cm): 
 
     forum_update_calendar($instance, $cm->id);
 }
+
+/**
+ * Callback adds navigation to view user posts if the navadduserpostslinks config is on.
+ *
+ * @param navigation_node $usernode User node within navigation
+ * @param stdClass $user User object
+ * @param \core\context\user $usercontext User context
+ * @param stdClass $course Current course
+ * @param \core\context $coursecontext Course context
+ */
+function mod_forum_extend_navigation_user(
+    navigation_node $usernode,
+    stdClass $user,
+    \core\context\user $usercontext,
+    stdClass $course,
+    \core\context $coursecontext,
+): void {
+    global $CFG;
+    if (!empty($CFG->navadduserpostslinks) && $coursecontext instanceof \core\context\system) {
+        $baseargs = ['id' => $user->id];
+
+        // Add nodes for forum posts and discussions if the user can view either or both
+        // There are no capability checks here as the content of the page is based
+        // purely on the forums the current user has access too.
+        $forumtab = \navigation_node::create(get_string('forumposts', 'forum'));
+        $forumtab->add(
+            get_string('posts', 'forum'),
+            new moodle_url('/mod/forum/user.php', $baseargs),
+        );
+        $forumtab->add(
+            get_string('discussions', 'forum'),
+            new moodle_url('/mod/forum/user.php',
+                array_merge($baseargs, ['mode' => 'discussions']),
+            ),
+        );
+
+        // We add the forum link either immediately after the 'viewuserdetails' link, or as the first item in the list.
+        foreach ($usernode->children as $child) {
+            if ($child->key === 'viewuserdetails') {
+                continue;
+            }
+            $addbefore = $child;
+            break;
+        }
+        $usernode->add_node($forumtab, $addbefore->key);
+    }
+}

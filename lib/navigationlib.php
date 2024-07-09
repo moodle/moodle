@@ -2589,16 +2589,6 @@ class global_navigation extends navigation_node {
                 }
             }
 
-            if (!empty($CFG->navadduserpostslinks)) {
-                // Add nodes for forum posts and discussions if the user can view either or both
-                // There are no capability checks here as the content of the page is based
-                // purely on the forums the current user has access too.
-                $forumtab = $usernode->add(get_string('forumposts', 'forum'));
-                $forumtab->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php', $baseargs));
-                $forumtab->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
-                        array_merge($baseargs, array('mode' => 'discussions'))));
-            }
-
             // Add blog nodes.
             if (!empty($CFG->enableblogs)) {
                 if (!$this->cache->cached('userblogoptions'.$user->id)) {
@@ -5200,16 +5190,6 @@ class settings_navigation extends navigation_node {
             // Add the user profile to the dashboard.
             $profilenode = $mainpage->add(get_string('profile'), new moodle_url('/user/profile.php',
                     array('id' => $user->id)), self::TYPE_SETTING, null, 'myprofile');
-
-            if (!empty($CFG->navadduserpostslinks)) {
-                // Add nodes for forum posts and discussions if the user can view either or both
-                // There are no capability checks here as the content of the page is based
-                // purely on the forums the current user has access too.
-                $forumtab = $profilenode->add(get_string('forumposts', 'forum'));
-                $forumtab->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php', $baseargs), null, 'myposts');
-                $forumtab->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
-                        array_merge($baseargs, array('mode' => 'discussions'))), null, 'mydiscussions');
-            }
 
             // Add blog nodes.
             if (!empty($CFG->enableblogs)) {
