@@ -6,11 +6,6 @@ This file has been replaced by UPGRADING.md. See MDL-81125 for further informati
 This files describes API changes in /group/*,
 information provided here is intended especially for developers.
 
-=== 4.5 ===
-* The get_groups_for_selector() in group/classes/external/ has an extra parameter $cmid to allow it to work within a course module.
-* The groupFetch() method in group/amd/src/comboboxsearch/repository.js has an extra parameter $cmid to allow it to work within
-  a course module.
-
 === 4.3 ===
 * The following external methods now return group names correctly formatted:
   - `core_group_get_groups`
