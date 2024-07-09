@@ -492,7 +492,7 @@ async function loadErrorStrings(courseId) {
         {key: 'dndupload', component: 'core_error'},
         {key: 'dndunkownfile', component: 'core_error'},
     ];
-    window.console.log(allStrings);
+
     const loadedStrings = await getStrings(allStrings);
     allStrings.forEach(({key}, index) => {
         errors[key] = loadedStrings[index];
