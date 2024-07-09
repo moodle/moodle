@@ -1482,25 +1482,6 @@ $string['newloginnotificationbodyfull'] = '<p>Hi {$a->userfullname},</p>
 $string['newpassword'] = 'New password';
 $string['newpassword_help'] = 'Enter a new password or leave blank to keep current password.';
 $string['newpasswordfromlost'] = '<strong>NOTICE:</strong> Your <strong>Current password</strong> will have been sent to you in the <strong>second</strong> of the two emails sent as part of the lost password recovery process. Make sure you have received your replacement password before continuing with this screen.';
-$string['newpasswordtext'] = 'Hi {$a->firstname},
-
-Your account password at \'{$a->sitename}\' has been reset
-and you have been issued with a new temporary password.
-
-Your current login information is now:
-   username: {$a->username}
-   password: {$a->newpassword}
-
-Please go to this page to change your password:
-   {$a->link}
-
-In most mail programs, this should appear as a blue link
-which you can just click on.  If that doesn\'t work,
-then cut and paste the address into the address
-line at the top of your web browser window.
-
-Cheers from the \'{$a->sitename}\' administrator,
-{$a->signoff}';
 $string['newpicture'] = 'New picture';
 $string['newpicture_help'] = 'To add a new picture, browse and select an image (in JPG or PNG format) then click "Update profile". The image will be cropped to a square and resized to 100x100 pixels.';
 $string['newpictureusernotsetup'] = 'A profile picture can only be added once all required profile information has been saved.';
@@ -2522,3 +2503,22 @@ $string['commentscount'] = 'Comments ({$a})';
 $string['datechanged'] = 'Date changed';
 $string['registrationcontactno'] = 'No, I do not want to be contacted by other people';
 $string['registrationcontactyes'] = 'Yes, provide a form for other Moodlers to contact me';
+$string['newpasswordtext'] = 'Hi {$a->firstname},
+
+Your account password at \'{$a->sitename}\' has been reset
+and you have been issued with a new temporary password.
+
+Your current login information is now:
+   username: {$a->username}
+   password: {$a->newpassword}
+
+Please go to this page to change your password:
+   {$a->link}
+
+In most mail programs, this should appear as a blue link
+which you can just click on.  If that doesn\'t work,
+then cut and paste the address into the address
+line at the top of your web browser window.
+
+Cheers from the \'{$a->sitename}\' administrator,
+{$a->signoff}';

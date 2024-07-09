@@ -144,7 +144,6 @@ $string['cannotsavemd5file'] = 'Cannot save md5 file';
 $string['cannotsavezipfile'] = 'Cannot save ZIP file';
 $string['cannotservefile'] = 'Cannot serve file due to a server configuration problem.';
 $string['cannotsetparentforcatoritem'] = 'Cannot set parent for category or course item!';
-$string['cannotsetpassword'] = 'Could not set user password!';
 $string['cannotsetprefgrade'] = 'Could not set preference aggregationview to {$a} for this grade category';
 $string['cannotsettheme'] = 'Could not set the theme!';
 $string['cannotsetupblock'] = 'Blocks tables could NOT be set up successfully!';
@@ -658,3 +657,6 @@ $string['prefixtoolong'] = '<p>Error: database table prefix is too long ({$a->db
 // Deprecated since Moodle 4.4.
 $string['cannotmarktopic'] = 'Could not mark that section for this course';
 $string['unknownhelp'] = 'Unknown help section {$a}';
+
+// Deprecated since Moodle 4.5.
+$string['cannotsetpassword'] = 'Could not set user password!';

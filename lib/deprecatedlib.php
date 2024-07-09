@@ -698,3 +698,56 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true, $ret
         echo $output;
     }
 }
+
+/**
+ * Resets specified user's password and send the new password to the user via email.
+ *
+ * @param stdClass $user A {@link $USER} object
+ * @return bool Returns true if mail was sent OK and false if there was an error.
+ * @see setnew_password_and_mail()
+ * @deprecated Since Moodle 4.5
+ * @todo MDL-82646 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated(
+    since: '4.5',
+    mdl: 'MDL-64148',
+    replacement: 'setnew_password_and_mail()',
+    reason: 'It is no longer used',
+)]
+function reset_password_and_mail($user) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    global $CFG;
+
+    $site  = get_site();
+    $supportuser = core_user::get_support_user();
+
+    $userauth = get_auth_plugin($user->auth);
+    if (!$userauth->can_reset_password() or !is_enabled_auth($user->auth)) {
+        trigger_error("Attempt to reset user password for user $user->username with Auth $user->auth.");
+        return false;
+    }
+
+    $newpassword = generate_password();
+
+    if (!$userauth->user_update_password($user, $newpassword)) {
+        throw new \moodle_exception("cannotsetpassword");
+    }
+
+    $a = new stdClass();
+    $a->firstname   = $user->firstname;
+    $a->lastname    = $user->lastname;
+    $a->sitename    = format_string($site->fullname);
+    $a->username    = $user->username;
+    $a->newpassword = $newpassword;
+    $a->link        = $CFG->wwwroot .'/login/change_password.php';
+    $a->signoff     = generate_email_signoff();
+
+    $message = get_string('newpasswordtext', '', $a);
+
+    $subject  = format_string($site->fullname) .': '. get_string('changedpassword');
+
+    unset_user_preference('create_password', $user); // Prevent cron from generating the password.
+
+    // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
+    return email_to_user($user, $supportuser, $subject, $message);
+}

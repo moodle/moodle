@@ -124,3 +124,5 @@ registrationcontactyes,core
 error:duplicatename,core_badges
 error:cannotact,core_badges
 reviewbadge,core_badges
+newpasswordtext,core
+cannotsetpassword,core_error
