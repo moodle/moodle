@@ -70,7 +70,7 @@ function filter_get_name($filter) {
 function filter_get_all_installed() {
     $filternames = array();
     foreach (core_component::get_plugin_list('filter') as $filter => $fulldir) {
-        if (is_readable("$fulldir/filter.php")) {
+        if (class_exists("\\filter_{$filter}\\text_filter") || is_readable("$fulldir/filter.php")) {
             $filternames[$filter] = filter_get_name($filter);
         }
     }

@@ -127,6 +127,11 @@ class filter_manager {
     protected function make_filter_object($filtername, $context, $localconfig) {
         global $CFG;
 
+        $filterclass = "\\filter_{$filtername}\\text_filter";
+        if (class_exists($filterclass)) {
+            return new $filterclass($context, $localconfig);
+        }
+
         $path = $CFG->dirroot .'/filter/'. $filtername .'/filter.php';
         if (!is_readable($path)) {
             return null;
