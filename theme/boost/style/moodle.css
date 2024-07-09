@@ -38450,9 +38450,13 @@ div.editor_atto_toolbar button .icon {
 }
 .courseindex .courseindex-section.current {
   border-left: solid 3px #0f6cbf;
+  /* Skip current badges in delegated sections. */
 }
 .courseindex .courseindex-section.current .current-badge {
   display: inline-block;
+}
+.courseindex .courseindex-section.current .delegated-section .current-badge {
+  display: none;
 }
 .courseindex .courseindex-section.dropready .courseindex-item-content {
   /* Extra dropzone space */

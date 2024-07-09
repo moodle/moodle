@@ -158,6 +158,11 @@ $courseindex-item-current: $primary !default;
             .current-badge {
                 display: inline-block;
             }
+
+            /* Skip current badges in delegated sections. */
+            .delegated-section .current-badge {
+                display: none;
+            }
         }
 
         &.dropready .courseindex-item-content {
