@@ -1816,8 +1816,6 @@ $string['refresh'] = 'Refresh';
 $string['refreshingevents'] = 'Refreshing events';
 $string['registration'] = 'Moodle registration';
 $string['registrationcontact'] = 'Contact from the public';
-$string['registrationcontactno'] = 'No, I do not want to be contacted by other people';
-$string['registrationcontactyes'] = 'Yes, provide a form for other Moodlers to contact me';
 $string['registrationemail'] = 'Email notifications';
 $string['registrationinfo'] = '<p>This page allows you to register your Moodle site with moodle.org.  Registration is free.
 The main benefit of registering is that you will be added to a low-volume mailing list
@@ -2522,3 +2520,5 @@ $string['coursesearch_help'] = 'You can search for multiple words at once and ca
 
 // Deprecated since Moodle 4.5.
 $string['datechanged'] = 'Date changed';
+$string['registrationcontactno'] = 'No, I do not want to be contacted by other people';
+$string['registrationcontactyes'] = 'Yes, provide a form for other Moodlers to contact me';
