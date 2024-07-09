@@ -20,6 +20,7 @@ use behat_admin;
 use behat_data_generators;
 use behat_base;
 use behat_course;
+use behat_general;
 use behat_user;
 use Behat\Gherkin\Parser;
 use Behat\Gherkin\Lexer;
@@ -82,6 +83,7 @@ class runner {
         require_once("{$CFG->dirroot}/admin/tests/behat/behat_admin.php");
         require_once("{$CFG->dirroot}/course/lib.php");
         require_once("{$CFG->dirroot}/course/tests/behat/behat_course.php");
+        require_once("{$CFG->dirroot}/lib/tests/behat/behat_general.php");
         require_once("{$CFG->dirroot}/user/tests/behat/behat_user.php");
         return true;
     }
@@ -93,13 +95,22 @@ class runner {
         $this->generator = new behat_data_generators();
         $this->validsteps = $this->scan_generator($this->generator);
 
-        // Set config values is not inside the general behat generators.
-        $extra = $this->scan_method(
-            new ReflectionMethod(behat_admin::class, 'the_following_config_values_are_set_as_admin'),
-            new behat_admin(),
-        );
-        if ($extra) {
-            $this->validsteps[$extra->given] = $extra;
+        // Add some extra steps from other classes.
+        $extrasteps = [
+            [behat_admin::class, 'the_following_config_values_are_set_as_admin'],
+            [behat_general::class, 'i_enable_plugin'],
+            [behat_general::class, 'i_disable_plugin'],
+        ];
+        foreach ($extrasteps as $callable) {
+            $classname = $callable[0];
+            $method = $callable[1];
+            $extra = $this->scan_method(
+                new ReflectionMethod($classname, $method),
+                new $classname(),
+            );
+            if ($extra) {
+                $this->validsteps[$extra->given] = $extra;
+            }
         }
     }
 
