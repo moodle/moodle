@@ -25,14 +25,15 @@ namespace core_filters;
  */
 class performance_measuring_filter_manager extends filter_manager {
     /** @var int number of filter objects created. */
-    protected $filterscreated = 0;
+    protected int $filterscreated = 0;
 
     /** @var int number of calls to filter_text. */
-    protected $textsfiltered = 0;
+    protected int $textsfiltered = 0;
 
     /** @var int number of calls to filter_string. */
-    protected $stringsfiltered = 0;
+    protected int $stringsfiltered = 0;
 
+    #[\Override]
     protected function unload_all_filters() {
         parent::unload_all_filters();
         $this->filterscreated = 0;
@@ -40,40 +41,51 @@ class performance_measuring_filter_manager extends filter_manager {
         $this->stringsfiltered = 0;
     }
 
+    #[\Override]
     protected function make_filter_object($filtername, $context, $localconfig) {
         $this->filterscreated++;
         return parent::make_filter_object($filtername, $context, $localconfig);
     }
 
-    public function filter_text($text, $context, array $options = array(),
-            array $skipfilters = null) {
+    #[\Override]
+    public function filter_text(
+        $text,
+        $context,
+        array $options = [],
+        ?array $skipfilters = null
+    ) {
         if (!isset($options['stage']) || $options['stage'] === 'post_clean') {
             $this->textsfiltered++;
         }
         return parent::filter_text($text, $context, $options, $skipfilters);
     }
 
+    #[\Override]
     public function filter_string($string, $context) {
         $this->stringsfiltered++;
         return parent::filter_string($string, $context);
     }
 
     /**
-     * Return performance information, in the form required by {@link get_performance_info()}.
+     * Return performance information, in the form required by {@see get_performance_info()}.
+     *
      * @return array the performance info.
      */
-    public function get_performance_summary() {
-        return array(array(
-            'contextswithfilters' => count($this->textfilters),
-            'filterscreated' => $this->filterscreated,
-            'textsfiltered' => $this->textsfiltered,
-            'stringsfiltered' => $this->stringsfiltered,
-        ), array(
-            'contextswithfilters' => 'Contexts for which filters were loaded',
-            'filterscreated' => 'Filters created',
-            'textsfiltered' => 'Pieces of content filtered',
-            'stringsfiltered' => 'Strings filtered',
-        ));
+    public function get_performance_summary(): array {
+        return [
+            [
+                'contextswithfilters' => count($this->textfilters),
+                'filterscreated' => $this->filterscreated,
+                'textsfiltered' => $this->textsfiltered,
+                'stringsfiltered' => $this->stringsfiltered,
+            ],
+            [
+                'contextswithfilters' => 'Contexts for which filters were loaded',
+                'filterscreated' => 'Filters created',
+                'textsfiltered' => 'Pieces of content filtered',
+                'stringsfiltered' => 'Strings filtered',
+            ],
+        ];
     }
 }
 

@@ -26,7 +26,7 @@ use core\url;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class text_filter extends \core_filters\text_filter {
-    /*
+    /**
      * Perform a mapping of the moodle language code to the equivalent for MathJax.
      *
      * @param string $moodlelangcode - The moodle language code - e.g. en_pirate
@@ -38,7 +38,7 @@ class text_filter extends \core_filters\text_filter {
         $mathjaxlangcodes = [
             'ar', 'ast', 'bcc', 'bg', 'br', 'ca', 'cdo', 'ce', 'cs', 'cy', 'da', 'de', 'diq', 'en', 'eo', 'es', 'fa',
             'fi', 'fr', 'gl', 'he', 'ia', 'it', 'ja', 'kn', 'ko', 'lb', 'lki', 'lt', 'mk', 'nl', 'oc', 'pl', 'pt',
-            'pt-br', 'qqq', 'ru', 'scn', 'sco', 'sk', 'sl', 'sv', 'th', 'tr', 'uk', 'vi', 'zh-hans', 'zh-hant'
+            'pt-br', 'qqq', 'ru', 'scn', 'sco', 'sk', 'sl', 'sv', 'th', 'tr', 'uk', 'vi', 'zh-hans', 'zh-hant',
         ];
 
         // List of explicit mappings and known exceptions (moodle => mathjax).
@@ -69,39 +69,29 @@ class text_filter extends \core_filters\text_filter {
         return 'en';
     }
 
-    /*
-     * Add the javascript to enable mathjax processing on this page.
-     *
-     * @param moodle_page $page The current page.
-     * @param context $context The current context.
-     */
+    #[\Override]
     public function setup($page, $context) {
-
-        if ($page->requires->should_create_one_time_item_now('filter_mathjaxloader-scripts')) {
-            $url = get_config('filter_mathjaxloader', 'httpsurl');
-            $lang = $this->map_language_code(current_language());
-            $url = new url($url, array('delayStartupUntil' => 'configured'));
-
-            $page->requires->js($url);
-
-            $config = get_config('filter_mathjaxloader', 'mathjaxconfig');
-            $wwwroot = new url('/');
-
-            $config = str_replace('{wwwroot}', $wwwroot->out(true), $config);
-
-            $params = array('mathjaxconfig' => $config, 'lang' => $lang);
-
-            $page->requires->js_call_amd('filter_mathjaxloader/loader', 'configure', [$params]);
+        if (!$page->requires->should_create_one_time_item_now('filter_mathjaxloader-scripts')) {
+            return;
         }
+        $url = get_config('filter_mathjaxloader', 'httpsurl');
+        $lang = $this->map_language_code(current_language());
+        $url = new url($url, ['delayStartupUntil' => 'configured']);
+
+        $page->requires->js($url);
+
+        $config = get_config('filter_mathjaxloader', 'mathjaxconfig');
+        $wwwroot = new url('/');
+
+        $config = str_replace('{wwwroot}', $wwwroot->out(true), $config);
+
+        $params = ['mathjaxconfig' => $config, 'lang' => $lang];
+
+        $page->requires->js_call_amd('filter_mathjaxloader/loader', 'configure', [$params]);
     }
 
-    /*
-     * This function wraps the filtered text in a span, that mathjaxloader is configured to process.
-     *
-     * @param string $text The text to filter.
-     * @param array $options The filter options.
-     */
-    public function filter($text, array $options = array()) {
+    #[\Override]
+    public function filter($text, array $options = []) {
         global $PAGE;
 
         $legacy = get_config('filter_mathjaxloader', 'texfiltercompatibility');
@@ -148,7 +138,7 @@ class text_filter extends \core_filters\text_filter {
             // inside display math, only the outer display math is wrapped in
             // a span. The span HTML inside a LaTex math environment would break
             // MathJax. See MDL-61981.
-            list($text, $hasdisplayorinline) = $this->wrap_math_in_nolink($text);
+            [$text, $hasdisplayorinline] = $this->wrap_math_in_nolink($text);
         }
 
         if ($hasdisplayorinline || $hasextra) {
@@ -205,8 +195,10 @@ class text_filter extends \core_filters\text_filter {
                 }
             } else {
                 // Display math open.
-                if (($text[$i - 1] === '\\' && $text[$i] === ']' && $displaybracket) ||
-                        ($text[$i - 1] === '$' && $text[$i] === '$' && $displaydollar)) {
+                if (
+                    ($text[$i - 1] === '\\' && $text[$i] === ']' && $displaybracket) ||
+                        ($text[$i - 1] === '$' && $text[$i] === '$' && $displaydollar)
+                ) {
                     // Display math ends, wrap the span around it.
                     $text = $this->insert_span($text, $displaystart, $i);
 
@@ -221,7 +213,7 @@ class text_filter extends \core_filters\text_filter {
 
             ++$i;
         }
-        return array($text, $changesdone);
+        return [$text, $changesdone];
     }
 
     /**
@@ -237,10 +229,12 @@ class text_filter extends \core_filters\text_filter {
      * the defined substring.
      */
     protected function insert_span($text, $start, $end) {
-        return substr_replace($text,
-                '<span class="nolink">'. substr($text, $start, $end - $start + 1) .'</span>',
-                $start,
-                $end - $start + 1);
+        return substr_replace(
+            $text,
+            '<span class="nolink">' . substr($text, $start, $end - $start + 1) . '</span>',
+            $start,
+            $end - $start + 1
+        );
     }
 
     /**
@@ -252,7 +246,7 @@ class text_filter extends \core_filters\text_filter {
      * @return string Returns the input string with HTML tags escaped.
      */
     private function escape_html_tag_wrapper(string $text): string {
-        return preg_replace_callback('/\{([^}]+)\}/', function(array $matches): string {
+        return preg_replace_callback('/\{([^}]+)\}/', function (array $matches): string {
             $search = ['<', '>'];
             $replace = ['&lt;', '&gt;'];
             return str_replace($search, $replace, $matches[0]);

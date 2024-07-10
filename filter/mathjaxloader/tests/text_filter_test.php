@@ -27,11 +27,10 @@ namespace filter_mathjaxloader;
  */
 final class text_filter_test extends \advanced_testcase {
     /**
-     * Test the functionality of {@link text_filter::map_language_code()}.
+     * Test the functionality of {@see text_filter::map_language_code()}.
      *
      * @param string $moodlelangcode the user's current language
      * @param string $mathjaxlangcode the mathjax language to be used for the moodle language
-     *
      * @dataProvider map_language_code_expected_mappings
      */
     public function test_map_language_code($moodlelangcode, $mathjaxlangcode): void {
@@ -44,7 +43,7 @@ final class text_filter_test extends \advanced_testcase {
      *
      * @return array of [moodlelangcode, mathjaxcode] tuples
      */
-    public static function map_language_code_expected_mappings() {
+    public static function map_language_code_expected_mappings(): array {
         return [
             ['cz', 'cs'], // Explicit mapping.
             ['cs', 'cs'], // Implicit mapping (exact match).

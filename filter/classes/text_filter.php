@@ -74,7 +74,7 @@ abstract class text_filter {
      * @param array $options options passed to the filters
      * @return string the HTML content after the filtering has been applied.
      */
-    abstract public function filter($text, array $options = array());
+    abstract public function filter($text, array $options = []);
 
     /**
      * Filter text before changing format to HTML.

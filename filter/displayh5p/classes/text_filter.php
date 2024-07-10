@@ -31,22 +31,14 @@ use core_h5p\local\library\autoloader;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class text_filter extends \core_filters\text_filter {
-    /**
-     * @var boolean $loadresizerjs This is whether to request the resize.js script.
-     */
+    /** @var bool $loadresizerjs This is whether to request the resize.js script */
     private static $loadresizerjs = true;
 
-    /**
-     * Function filter replaces any h5p-sources.
-     *
-     * @param  string $text    HTML content to process
-     * @param  array  $options options passed to the filters
-     * @return string
-     */
-    public function filter($text, array $options = array()) {
+    #[\Override]
+    public function filter($text, array $options = []) {
         global $CFG, $USER;
 
-        if (!is_string($text) or empty($text)) {
+        if (!is_string($text) || empty($text)) {
             // Non string data can not be filtered anyway.
             return $text;
         }
@@ -60,18 +52,18 @@ class text_filter extends \core_filters\text_filter {
         $allowedsources = get_config('filter_displayh5p', 'allowedsources');
         $allowedsources = array_filter(array_map('trim', explode("\n", $allowedsources)));
 
-        $localsource = '('.preg_quote($CFG->wwwroot, '~').'/[^ &\#"\'<]*\.h5p([?][^ "\'<]*)?[^ \#"\'<]*)';
+        $localsource = '(' . preg_quote($CFG->wwwroot, '~') . '/[^ &\#"\'<]*\.h5p([?][^ "\'<]*)?[^ \#"\'<]*)';
         $allowedsources[] = $localsource;
 
-        $params = array(
+        $params = [
             'tagbegin' => '<iframe src="',
-            'tagend' => '</iframe>'
-        );
+            'tagend' => '</iframe>',
+        ];
 
         $specialchars = ['?', '&'];
         $escapedspecialchars = ['\?', '&amp;'];
-        $h5pcontents = array();
-        $h5plinks = array();
+        $h5pcontents = [];
+        $h5plinks = [];
 
         // Check all allowed sources.
         foreach ($allowedsources as $source) {
@@ -82,7 +74,7 @@ class text_filter extends \core_filters\text_filter {
             // only if the user has the proper capabilities.
             $params['canbeedited'] = (!empty($USER->editing)) && ($source == $localsource);
             if ($source == $localsource) {
-                $params['tagbegin'] = '<iframe src="'.$CFG->wwwroot.'/h5p/embed.php?url=';
+                $params['tagbegin'] = '<iframe src="' . $CFG->wwwroot . '/h5p/embed.php?url=';
                 $escapechars = $source;
                 $ultimatepattern = $source;
             } else {
@@ -100,17 +92,33 @@ class text_filter extends \core_filters\text_filter {
                 continue;
             }
 
-            $h5pcontenturl = new filter_object($source, null, null, false,
-                false, null, [$this, 'filterobject_prepare_replacement_callback'], $params + ['ish5plink' => false]);
+            $h5pcontenturl = new filter_object(
+                $source,
+                null,
+                null,
+                false,
+                false,
+                null,
+                [$this, 'filterobject_prepare_replacement_callback'],
+                $params + ['ish5plink' => false]
+            );
 
-            $h5pcontenturl->workregexp = '#'.$ultimatepattern.'#';
+            $h5pcontenturl->workregexp = '#' . $ultimatepattern . '#';
             $h5pcontents[] = $h5pcontenturl;
 
             // Regex to find h5p extensions in an <a> tag.
-            $linkregexp = '~<a [^>]*href=["\']('.$escapechars.'[^"\']*)["\'][^>]*>([^<]*)</a>~is';
+            $linkregexp = '~<a [^>]*href=["\'](' . $escapechars . '[^"\']*)["\'][^>]*>([^<]*)</a>~is';
 
-            $h5plinkurl = new filter_object($linkregexp, null, null, false,
-                false, null, [$this, 'filterobject_prepare_replacement_callback'], $params + ['ish5plink' => true]);
+            $h5plinkurl = new filter_object(
+                $linkregexp,
+                null,
+                null,
+                false,
+                false,
+                null,
+                [$this, 'filterobject_prepare_replacement_callback'],
+                $params + ['ish5plink' => true]
+            );
             $h5plinkurl->workregexp = $linkregexp;
             $h5plinks[] = $h5plinkurl;
         }
@@ -123,7 +131,8 @@ class text_filter extends \core_filters\text_filter {
         // Apply filter inside <a> tag href attribute.
         // We can not use filter_phrase function because it removes all tags and can not be applied in tag attributes.
         foreach ($h5plinks as $h5plink) {
-            $text = preg_replace_callback($h5plink->workregexp,
+            $text = preg_replace_callback(
+                $h5plink->workregexp,
                 function ($matches) use ($h5plink) {
                     if ($matches[1] == $matches[2]) {
                         filter_prepare_phrase_for_replacement($h5plink);
@@ -132,7 +141,9 @@ class text_filter extends \core_filters\text_filter {
                     } else {
                         return $matches[0];
                     }
-                }, $text);
+                },
+                $text
+            );
         }
 
         // The "Edit" button below each H5P content will be displayed only for users with permissions to edit the content (to
@@ -140,7 +151,8 @@ class text_filter extends \core_filters\text_filter {
         // As the H5P URL is required in order to get this information, this action can be done only here(the
         // prepare_replacement_callback method has only the placeholders).
         foreach ($h5pcontents as $h5pcontent) {
-            $text = preg_replace_callback($h5pcontent->workregexp,
+            $text = preg_replace_callback(
+                $h5pcontent->workregexp,
                 function ($matches) use ($h5pcontent) {
                     global $USER, $CFG;
 
@@ -153,7 +165,7 @@ class text_filter extends \core_filters\text_filter {
                         }
 
                         $contenturl = $matches[0];
-                        list($file, $h5p) = \core_h5p\api::get_original_content_from_pluginfile_url($contenturl, true, true);
+                        [$file, $h5p] = \core_h5p\api::get_original_content_from_pluginfile_url($contenturl, true, true);
                         if ($file) {
                             filter_prepare_phrase_for_replacement($h5pcontent);
 
@@ -178,7 +190,9 @@ class text_filter extends \core_filters\text_filter {
                     }
 
                     return $matches[0];
-                }, $text);
+                },
+                $text
+            );
         }
 
         $result = filter_phrases($text, $h5pcontents, null, null, false, true);
@@ -187,18 +201,21 @@ class text_filter extends \core_filters\text_filter {
         // embed.php page is requesting a PARAM_LOCALURL url parameter, so for files/directories use non-alphanumeric
         // characters, we need to encode the parameter. Fetch url parameter added to embed.php and encode the whole url.
         $localurl = '#\?url=([^" <]*[\/]+[^" <]*\.h5p)([?][^"]*)?#';
-        $result = preg_replace_callback($localurl,
+        $result = preg_replace_callback(
+            $localurl,
             function ($matches) {
                 $baseurl = rawurlencode($matches[1]);
                 // Deal with possible parameters in the url link.
                 if (!empty($matches[2])) {
                     $match = explode('?', $matches[2]);
                     if (!empty($match[1])) {
-                        $baseurl = $baseurl."&".$match[1];
+                        $baseurl = $baseurl . "&" . $match[1];
                     }
                 }
-                return "?url=".$baseurl;
-            }, $result);
+                return "?url=" . $baseurl;
+            },
+            $result
+        );
 
         return $result;
     }
@@ -214,7 +231,6 @@ class text_filter extends \core_filters\text_filter {
      * @return array [$hreftagbegin, $hreftagend, $replacementphrase] for filterobject.
      */
     public function filterobject_prepare_replacement_callback($tagbegin, $tagend, $urlmodifier, $canbeedited, $ish5plink) {
-
         $sourceurl = "$1";
         if ($urlmodifier !== "") {
             $sourceurl .= $urlmodifier;

@@ -26,11 +26,17 @@ namespace filter_urltolink;
  * @covers \filter_urltolink\text_filter
  */
 final class text_filter_test extends \basic_testcase {
+    /**
+     * Data provider for test_convert_urls_into_links.
+     *
+     * @return array
+     */
     public static function get_convert_urls_into_links_test_cases(): array {
         // Create a 4095 and 4096 long URLs.
         $superlong4095 = str_pad('http://www.superlong4095.com?this=something', 4095, 'a');
         $superlong4096 = str_pad('http://www.superlong4096.com?this=something', 4096, 'a');
 
+        // phpcs:disable moodle.Files.LineLength.MaxExceeded, moodle.Files.LineLength.TooLong
         $texts = [
             // Just a url.
             'http://moodle.org - URL' => '<a href="http://moodle.org" class="_blanktarget">http://moodle.org</a> - URL',
@@ -70,8 +76,6 @@ final class text_filter_test extends \basic_testcase {
             'URL: www.cc.org/url_(withpar)_go/?i=2' => 'URL: <a href="http://www.cc.org/url_(withpar)_go/?i=2" class="_blanktarget">www.cc.org/url_(withpar)_go/?i=2</a>',
             'URL: http://cc.org/url_(with)_(par)_go/?i=2' => 'URL: <a href="http://cc.org/url_(with)_(par)_go/?i=2" class="_blanktarget">http://cc.org/url_(with)_(par)_go/?i=2</a>',
             'URL: www.cc.org/url_(with)_(par)_go/?i=2' => 'URL: <a href="http://www.cc.org/url_(with)_(par)_go/?i=2" class="_blanktarget">www.cc.org/url_(with)_(par)_go/?i=2</a>',
-            // URL legitimately ending in a bracket. Commented out as part of MDL-22390. See next tests for work-arounds.
-            // 'http://en.wikipedia.org/wiki/Slash_(punctuation)'=>'<a href="http://en.wikipedia.org/wiki/Slash_(punctuation)" class="_blanktarget">http://en.wikipedia.org/wiki/Slash_(punctuation)</a>',
             'http://en.wikipedia.org/wiki/%28#Parentheses_.28_.29 - URL' => '<a href="http://en.wikipedia.org/wiki/%28#Parentheses_.28_.29" class="_blanktarget">http://en.wikipedia.org/wiki/%28#Parentheses_.28_.29</a> - URL',
             'http://en.wikipedia.org/wiki/(#Parentheses_.28_.29 - URL' => '<a href="http://en.wikipedia.org/wiki/(#Parentheses_.28_.29" class="_blanktarget">http://en.wikipedia.org/wiki/(#Parentheses_.28_.29</a> - URL',
             // Escaped brackets in url.
@@ -134,16 +138,14 @@ final class text_filter_test extends \basic_testcase {
             '<table style="background-image: url(http://moodle.org/pic.jpg);">' => '<table style="background-image: url(http://moodle.org/pic.jpg);">',
             '<table style="background-image: url("http://moodle.org/pic.jpg");">' => '<table style="background-image: url("http://moodle.org/pic.jpg");">',
             '<table style="background-image: url( http://moodle.org/pic.jpg );">' => '<table style="background-image: url( http://moodle.org/pic.jpg );">',
-            // Partially escaped img tag
+            // Partially escaped img tag.
             'partially escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" />' => 'partially escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" />',
-            // Fully escaped img tag. Commented out as part of MDL-21183
-            // Htmlspecialchars('fully escaped img tag <img src="http://moodle.org/logo/logo-240x60.gif" />') => 'fully escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" /&gt;',
-            // Double http with www
+            // Double http with www.
             'One more link like http://www.moodle.org to test' => 'One more link like <a href="http://www.moodle.org" class="_blanktarget">http://www.moodle.org</a> to test',
-            // Encoded URLs in the path
+            // Encoded URLs in the path.
             'URL: http://127.0.0.1/one%28parenthesis%29/path?param=value' => 'URL: <a href="http://127.0.0.1/one%28parenthesis%29/path?param=value" class="_blanktarget">http://127.0.0.1/one%28parenthesis%29/path?param=value</a>',
             'URL: www.localhost.com/one%28parenthesis%29/path?param=value' => 'URL: <a href="http://www.localhost.com/one%28parenthesis%29/path?param=value" class="_blanktarget">www.localhost.com/one%28parenthesis%29/path?param=value</a>',
-            // Encoded URLs in the query
+            // Encoded URLs in the query.
             'URL: http://127.0.0.1/path/to?param=value_with%28parenthesis%29&param2=1' => 'URL: <a href="http://127.0.0.1/path/to?param=value_with%28parenthesis%29&param2=1" class="_blanktarget">http://127.0.0.1/path/to?param=value_with%28parenthesis%29&param2=1</a>',
             'URL: www.localhost.com/path/to?param=value_with%28parenthesis%29&param2=1' => 'URL: <a href="http://www.localhost.com/path/to?param=value_with%28parenthesis%29&param2=1" class="_blanktarget">www.localhost.com/path/to?param=value_with%28parenthesis%29&param2=1</a>',
             // Test URL less than 4096 characters in size is converted to link.
@@ -173,6 +175,8 @@ final class text_filter_test extends \basic_testcase {
             '<span class="nolink">URL: http://moodle.org</span>' => '<span class="nolink">URL: http://moodle.org</span>',
         ];
 
+        // phpcs:enable
+
         $data = [];
         foreach ($texts as $text => $correctresult) {
             $data[] = [$text, $correctresult];
@@ -181,7 +185,11 @@ final class text_filter_test extends \basic_testcase {
     }
 
     /**
+     * Test the convert_urls_into_links method.
+     *
      * @dataProvider get_convert_urls_into_links_test_cases
+     * @param string $text
+     * @param string $correctresult
      */
     public function test_convert_urls_into_links($text, $correctresult): void {
         $testablefilter = $this->get_testable_text_filter();
@@ -193,13 +201,15 @@ final class text_filter_test extends \basic_testcase {
     /**
      * Get a copy of the filter configured for testing.
      *
-     * @param array $args
+     * @param array ...$args
      * @return \filter_urltolink\text_filter
      */
     protected function get_testable_text_filter(...$args): text_filter {
         return new class extends text_filter {
+            // phpcs:ignore moodle.Commenting.MissingDocblock.MissingTestcaseMethodDescription
             public function __construct() {
             }
+            // phpcs:ignore moodle.Commenting.MissingDocblock.MissingTestcaseMethodDescription, Generic.CodeAnalysis.UselessOverridingMethod.Found
             public function convert_urls_into_links(&$text) {
                 parent::convert_urls_into_links($text);
             }

@@ -23,9 +23,6 @@
  */
 
 namespace core_filters\external;
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir . '/filterlib.php');
 
 use core_external\external_api;
 use core_external\external_function_parameters;
@@ -49,19 +46,18 @@ class get_available_in_context extends external_api {
      * @since  Moodle 3.4
      */
     public static function execute_parameters() {
-        return new external_function_parameters (
-            array(
-                'contexts' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'contextlevel' => new external_value(PARAM_ALPHA, 'The context level where the filters are:
-                                (coursecat, course, module)'),
-                            'instanceid' => new external_value(PARAM_INT, 'The instance id of item associated with the context.')
-                        )
-                    ), 'The list of contexts to check.'
-                ),
-            )
-        );
+        return new external_function_parameters([
+            'contexts' => new external_multiple_structure(
+                new external_single_structure([
+                    'contextlevel' => new external_value(
+                        PARAM_ALPHA,
+                        'The context level where the filters are: (coursecat, course, module)',
+                    ),
+                    'instanceid' => new external_value(PARAM_INT, 'The instance id of item associated with the context.'),
+                ]),
+                'The list of contexts to check.'
+            ),
+        ]);
     }
 
     /**
@@ -72,8 +68,12 @@ class get_available_in_context extends external_api {
      * @since Moodle 3.4
      */
     public static function execute($contexts) {
-        $params = self::validate_parameters(self::get_available_in_context_parameters(), array('contexts' => $contexts));
-        $filters = $warnings = array();
+        global $CFG;
+
+        require_once($CFG->libdir . '/filterlib.php');
+
+        $params = self::validate_parameters(self::execute_parameters(), ['contexts' => $contexts]);
+        $filters = $warnings = [];
 
         foreach ($params['contexts'] as $contextinfo) {
             try {
@@ -81,12 +81,12 @@ class get_available_in_context extends external_api {
                 self::validate_context($context);
                 $contextinfo['contextid'] = $context->id;
             } catch (Exception $e) {
-                $warnings[] = array(
+                $warnings[] = [
                     'item' => 'context',
                     'itemid' => $contextinfo['instanceid'],
                     'warningcode' => $e->getCode(),
                     'message' => $e->getMessage(),
-                );
+                ];
                 continue;
             }
             $contextfilters = filter_get_available_in_context($context);
@@ -96,10 +96,10 @@ class get_available_in_context extends external_api {
             }
         }
 
-        return array(
+        return [
             'filters' => $filters,
             'warnings' => $warnings,
-        );
+        ];
     }
 
     /**
@@ -109,24 +109,22 @@ class get_available_in_context extends external_api {
      * @since  Moodle 3.4
      */
     public static function execute_returns() {
-        return new external_single_structure(
-            array(
-                'filters' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'contextlevel' => new external_value(PARAM_ALPHA, 'The context level where the filters are:
-                                (coursecat, course, module).'),
-                            'instanceid' => new external_value(PARAM_INT, 'The instance id of item associated with the context.'),
-                            'contextid' => new external_value(PARAM_INT, 'The context id.'),
-                            'filter'  => new external_value(PARAM_PLUGIN, 'Filter plugin name.'),
-                            'localstate' => new external_value(PARAM_INT, 'Filter state: 1 for on, -1 for off, 0 if inherit.'),
-                            'inheritedstate' => new external_value(PARAM_INT, '1 or 0 to use when localstate is set to inherit.'),
-                        )
+        return new external_single_structure([
+            'filters' => new external_multiple_structure(
+                new external_single_structure([
+                    'contextlevel' => new external_value(
+                        PARAM_ALPHA,
+                        'The context level where the filters are: (coursecat, course, module).',
                     ),
-                    'Available filters'
-                ),
-                'warnings' => new external_warnings(),
-            )
-        );
+                    'instanceid' => new external_value(PARAM_INT, 'The instance id of item associated with the context.'),
+                    'contextid' => new external_value(PARAM_INT, 'The context id.'),
+                    'filter'  => new external_value(PARAM_PLUGIN, 'Filter plugin name.'),
+                    'localstate' => new external_value(PARAM_INT, 'Filter state: 1 for on, -1 for off, 0 if inherit.'),
+                    'inheritedstate' => new external_value(PARAM_INT, '1 or 0 to use when localstate is set to inherit.'),
+                ]),
+                'Available filters'
+            ),
+            'warnings' => new external_warnings(),
+        ]);
     }
 }

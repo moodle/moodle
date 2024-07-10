@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -17,6 +16,7 @@
 
 namespace core_filters;
 
+use core\context;
 use moodleform;
 
 defined('MOODLE_INTERNAL') || die();
@@ -27,19 +27,24 @@ require_once($CFG->libdir . '/formslib.php');
  * A Moodle form base class for editing local filter settings.
  *
  * @copyright Tim Hunt
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package    core_filters
  */
 abstract class local_settings_form extends moodleform {
-    /** @var string The filter to manage */
-    protected $filter;
-
-    /** @var \core\context The context */
-    protected $context;
-
-    public function __construct($submiturl, $filter, $context) {
-        $this->filter = $filter;
-        $this->context = $context;
+    /**
+     * Create an instance of the form.
+     *
+     * @param string $submiturl
+     * @param string $filter
+     * @param context $context
+     */
+    public function __construct(
+        string $submiturl,
+        /** @var string The filter to manage */
+        protected string $filter,
+        /** @var \core\context The context */
+        protected context $context,
+    ) {
         parent::__construct($submiturl);
     }
 
@@ -63,7 +68,7 @@ abstract class local_settings_form extends moodleform {
     /**
      * Override this method to add your form controls.
      *
-     * @param $mform the form we are building. $this->_form, but passed in for convenience.
+     * @param \MoodleQuickForm $mform the form we are building. $this->_form, but passed in for convenience.
      */
     abstract protected function definition_inner($mform);
 

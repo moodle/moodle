@@ -40,30 +40,27 @@ namespace filter_multilang;
  */
 class text_filter extends \core_filters\text_filter {
     #[\Override]
-    public function filter($text, array $options = array()) {
+    public function filter($text, array $options = []) {
         global $CFG;
 
-        // [pj] I don't know about you but I find this new implementation funny :P
-        // [skodak] I was laughing while rewriting it ;-)
-        // [nicolasconnault] Should support inverted attributes: <span class="multilang" lang="en"> (Doesn't work curently)
-        // [skodak] it supports it now, though it is slower - any better idea?
-
-        if (empty($text) or is_numeric($text)) {
+        if (empty($text) || is_numeric($text)) {
             return $text;
         }
 
-        if (empty($CFG->filter_multilang_force_old) and !empty($CFG->filter_multilang_converted)) {
-            // new syntax
+        if (empty($CFG->filter_multilang_force_old) && !empty($CFG->filter_multilang_converted)) {
+            // New syntax.
+            // phpcs:ignore moodle.Files.LineLength.TooLong
             $search = '/(<span(\s+lang="[a-zA-Z0-9_-]+"|\s+class="multilang"){2}\s*>.*?<\/span>)(\s*<span(\s+lang="[a-zA-Z0-9_-]+"|\s+class="multilang"){2}\s*>.*?<\/span>)+/is';
         } else {
-            // old syntax
+            // Old syntax.
+            // phpcs:ignore moodle.Files.LineLength.TooLong
             $search = '/(<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.*?<\/(?:lang|span)>)(\s*<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.*?<\/(?:lang|span)>)+/is';
         }
 
         $result = preg_replace_callback($search, [$this, 'process_match'], $text);
 
         if (is_null($result)) {
-            return $text; //error during regex processing (too many nested spans?)
+            return $text; // Error during regex processing (too many nested spans?).
         } else {
             return $result;
         }
@@ -83,7 +80,7 @@ class text_filter extends \core_filters\text_filter {
             return $langblock[0];
         }
 
-        $langlist = array();
+        $langlist = [];
         foreach ($rawlanglist[1] as $index => $lang) {
             $lang = str_replace('-', '_', strtolower($lang)); // Normalize languages.
             $langlist[$lang] = $rawlanglist[2][$index];

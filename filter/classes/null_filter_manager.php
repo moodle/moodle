@@ -28,21 +28,25 @@ use core\context;
  */
 class null_filter_manager {
     /**
-     * As for the equivalent {@link filter_manager} method.
+     * As for the equivalent {@see filter_manager} method.
      *
      * @param string $text The text to filter
      * @param context $context not used.
      * @param array $options not used
-     * @param array $skipfilters not used
+     * @param null|array $skipfilters not used
      * @return string resulting text.
      */
-    public function filter_text($text, $context, array $options = array(),
-            array $skipfilters = null) {
+    public function filter_text(
+        $text,
+        $context,
+        array $options = [],
+        ?array $skipfilters = null
+    ) {
         return $text;
     }
 
     /**
-     * As for the equivalent {@link filter_manager} method.
+     * As for the equivalent {@see filter_manager} method.
      *
      * @param string $string The text to filter
      * @param context $context not used.

@@ -28,7 +28,7 @@ use moodle_page;
  * It is highly recommended to configure servers to be compatible with our slasharguments,
  * otherwise the "?d=600x400" may not work.
  *
- * @package    filter
+ * @package    filter_mediaplugin
  * @subpackage mediaplugin
  * @copyright  2004 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -56,11 +56,11 @@ class text_filter extends \core_filters\text_filter {
     }
 
     #[\Override]
-    public function filter($text, array $options = array()) {
+    public function filter($text, array $options = []) {
         global $CFG, $PAGE;
 
-        if (!is_string($text) or empty($text)) {
-            // non string data can not be filtered anyway
+        if (!is_string($text) || empty($text)) {
+            // Non string data can not be filtered anyway.
             return $text;
         }
 
@@ -70,7 +70,7 @@ class text_filter extends \core_filters\text_filter {
         }
 
         // Check permissions.
-        $this->trusted = !empty($options['noclean']) or !empty($CFG->allowobjectembed);
+        $this->trusted = !empty($options['noclean']) || !empty($CFG->allowobjectembed);
 
         // Looking for tags.
         $matches = preg_split('/(<[^>]*>)/i', $text, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
@@ -92,14 +92,14 @@ class text_filter extends \core_filters\text_filter {
         // and build them so that the callback function can check it for
         // embedded content. Then we rebuild the string.
         foreach ($matches as $idx => $tag) {
-            if (preg_match('|</'.$tagname.'>|', $tag) && !empty($validtag)) {
+            if (preg_match('|</' . $tagname . '>|', $tag) && !empty($validtag)) {
                 $validtag .= $tag;
 
                 // Given we now have a valid <a> tag to process it's time for
                 // ReDoS protection. Stop processing if a word is too large.
                 if (strlen($validtag) < 4096) {
                     if ($tagname === 'a') {
-                        $processed = preg_replace_callback($re, array($this, 'callback'), $validtag);
+                        $processed = preg_replace_callback($re, [$this, 'callback'], $validtag);
                     } else {
                         // For audio and video tags we just process them without precheck for embeddable markers.
                         $processed = $this->process_media_tag($validtag);
@@ -110,8 +110,10 @@ class text_filter extends \core_filters\text_filter {
                 // Wipe it so we can catch any more instances to filter.
                 $validtag = '';
                 $processed = '';
-            } else if (preg_match('/<(a|video|audio)\s[^>]*/', $tag, $tagmatches) && $sizeofmatches > 1 &&
-                    (empty($validtag) || $tagname === strtolower($tagmatches[1]))) {
+            } else if (
+                preg_match('/<(a|video|audio)\s[^>]*/', $tag, $tagmatches) && $sizeofmatches > 1 &&
+                    (empty($validtag) || $tagname === strtolower($tagmatches[1]))
+            ) {
                 // Looking for a starting tag. Ignore tags embedded into each other.
                 $validtag = $tag;
                 $tagname = strtolower($tagmatches[1]);
@@ -147,7 +149,7 @@ class text_filter extends \core_filters\text_filter {
 
         // Get name.
         $name = trim($matches[2]);
-        if (empty($name) or strpos($name, 'http') === 0) {
+        if (empty($name) || strpos($name, 'http') === 0) {
             $name = ''; // Use default name.
         }
 

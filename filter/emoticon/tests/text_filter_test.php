@@ -88,7 +88,7 @@ final class text_filter_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public static function filter_emoticon_provider() {
+    public static function filter_emoticon_provider(): array {
         $grr = '(grr)';
         return [
             'FORMAT_MOODLE is not filtered' => [
@@ -191,11 +191,12 @@ final class text_filter_test extends \advanced_testcase {
     /**
      * Get a copy of the filter configured for testing.
      *
-     * @param array $args
+     * @param array ...$args
      * @return \filter_emoticon\text_filter
      */
     protected function get_testable_filter_emoticon(...$args): text_filter {
         return new class extends text_filter {
+            // phpcs:ignore moodle.Commenting.MissingDocblock.MissingTestcaseMethodDescription
             public function __construct(...$args) {
                 // Reset static emoticon caches.
                 parent::$emoticontexts = [];

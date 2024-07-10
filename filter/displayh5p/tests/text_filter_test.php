@@ -51,7 +51,6 @@ final class text_filter_test extends \advanced_testcase {
             'filter_displayh5p'
         );
 
-
         $filterplugin = new text_filter(null, []);
 
         $filteredtext = $filterplugin->filter($text);
@@ -59,7 +58,7 @@ final class text_filter_test extends \advanced_testcase {
     }
 
     /**
-     * Provides texts to filter for the {@link self::test_filter_urls} method.
+     * Provides texts to filter for the {@see self::test_filter_urls} method.
      *
      * @return array
      */
@@ -103,6 +102,7 @@ final class text_filter_test extends \advanced_testcase {
             ],
             [
                 "https://generic.wordpress.soton.ac.uk/altc/wp-admin/admin-ajax.php?action=h5p_embed&amp;id=13",
+                // phpcs:ignore moodle.Files.LineLength.TooLong
                 "#<iframe src=\"https://generic.wordpress.soton.ac.uk/altc/wp-admin/admin-ajax.php\?action=h5p_embed\&amp\;id=13\"[^>]+?>#",
             ],
             [

@@ -36,22 +36,22 @@ class filter_manager {
      * @var text_filter[][] This list of active filters, by context, for filtering content.
      * An array contextid => ordered array of filter name => filter objects.
      */
-    protected $textfilters = array();
+    protected $textfilters = [];
 
     /**
      * @var text_filter[][] This list of active filters, by context, for filtering strings.
      * An array contextid => ordered array of filter name => filter objects.
      */
-    protected $stringfilters = array();
+    protected $stringfilters = [];
 
     /** @var array Exploded version of $CFG->stringfilters. */
-    protected $stringfilternames = array();
+    protected $stringfilternames = [];
 
     /** @var filter_manager Holds the singleton instance. */
     protected static $singletoninstance;
 
     /**
-     * Constructor. Protected. Use {@link instance()} instead.
+     * Constructor. Protected. Use {@see instance()} instead.
      */
     protected function __construct() {
         $this->stringfilternames = filter_get_string_filters();
@@ -65,7 +65,7 @@ class filter_manager {
     public static function instance() {
         global $CFG;
         if (is_null(self::$singletoninstance)) {
-            if (!empty($CFG->perfdebug) and $CFG->perfdebug > 7) {
+            if (!empty($CFG->perfdebug) && $CFG->perfdebug > 7) {
                 self::$singletoninstance = new performance_measuring_filter_manager();
             } else {
                 self::$singletoninstance = new self();
@@ -88,9 +88,9 @@ class filter_manager {
      * Unloads all filters and other cached information
      */
     protected function unload_all_filters() {
-        $this->textfilters = array();
-        $this->stringfilters = array();
-        $this->stringfilternames = array();
+        $this->textfilters = [];
+        $this->stringfilters = [];
+        $this->stringfilternames = [];
     }
 
     /**
@@ -100,8 +100,8 @@ class filter_manager {
      */
     protected function load_filters($context) {
         $filters = filter_get_active_in_context($context);
-        $this->textfilters[$context->id] = array();
-        $this->stringfilters[$context->id] = array();
+        $this->textfilters[$context->id] = [];
+        $this->stringfilters[$context->id] = [];
         foreach ($filters as $filtername => $localconfig) {
             $filter = $this->make_filter_object($filtername, $context, $localconfig);
             if (is_null($filter)) {
@@ -131,7 +131,7 @@ class filter_manager {
             return new $filterclass($context, $localconfig);
         }
 
-        $path = $CFG->dirroot .'/filter/'. $filtername .'/filter.php';
+        $path = $CFG->dirroot . '/filter/' . $filtername . '/filter.php';
         if (!is_readable($path)) {
             return null;
         }
@@ -148,13 +148,17 @@ class filter_manager {
     /**
      * Apply a list of filters to some content.
      * @param string $text
-     * @param moodle_text_filter[] $filterchain array filter name => filter object.
+     * @param text_filter[] $filterchain array filter name => filter object.
      * @param array $options options passed to the filters.
-     * @param array $skipfilters of filter names. Any filters that should not be applied to this text.
+     * @param null|array $skipfilters of filter names. Any filters that should not be applied to this text.
      * @return string $text
      */
-    protected function apply_filter_chain($text, $filterchain, array $options = array(),
-            array $skipfilters = null) {
+    protected function apply_filter_chain(
+        $text,
+        $filterchain,
+        array $options = [],
+        ?array $skipfilters = null
+    ) {
         if (!isset($options['stage'])) {
             $filtermethod = 'filter';
         } else if (in_array($options['stage'], ['pre_format', 'pre_clean', 'post_clean', 'string'], true)) {
@@ -208,15 +212,19 @@ class filter_manager {
      * @param string $text The text to filter
      * @param context $context the context.
      * @param array $options options passed to the filters
-     * @param array $skipfilters of filter names. Any filters that should not be applied to this text.
+     * @param null|array $skipfilters of filter names. Any filters that should not be applied to this text.
      * @return string resulting text
      */
-    public function filter_text($text, $context, array $options = array(),
-            array $skipfilters = null) {
+    public function filter_text(
+        $text,
+        $context,
+        array $options = [],
+        ?array $skipfilters = null
+    ) {
         $text = $this->apply_filter_chain($text, $this->get_text_filters($context), $options, $skipfilters);
         if (!isset($options['stage']) || $options['stage'] === 'post_clean') {
             // Remove <nolink> tags for XHTML compatibility after the last filtering stage.
-            $text = str_replace(array('<nolink>', '</nolink>'), '', $text);
+            $text = str_replace(['<nolink>', '</nolink>'], '', $text);
         }
         return $text;
     }

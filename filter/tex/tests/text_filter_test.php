@@ -81,7 +81,7 @@ final class text_filter_test extends \advanced_testcase {
             ['$', '$', false],
             ['(', ')', false],
             ['[', ']', false],
-            ['$$', '\\]', false]
+            ['$$', '\\]', false],
         ];
     }
 }

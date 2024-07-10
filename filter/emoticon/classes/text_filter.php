@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -34,7 +33,7 @@ class text_filter extends \core_filters\text_filter {
      * - dimension 2: theme.
      * @var array
      */
-    protected static $emoticontexts = array();
+    protected static $emoticontexts = [];
 
     /**
      * Internal cache used for replacing. Multidimensional array;
@@ -42,22 +41,14 @@ class text_filter extends \core_filters\text_filter {
      * - dimension 2: theme.
      * @var array
      */
-    protected static $emoticonimgs = array();
+    protected static $emoticonimgs = [];
 
-    /**
-     * Apply the filter to the text
-     *
-     * @see \core_filters\filter_manager::apply_filter_chain()
-     * @param string $text to be processed by the text
-     * @param array $options filter options
-     * @return string text after processing
-     */
-    public function filter($text, array $options = array()) {
-
+    #[\Override]
+    public function filter($text, array $options = []) {
         if (!isset($options['originalformat'])) {
-            // if the format is not specified, we are probably called by {@see format_string()}
+            // If the format is not specified, we are probably called by {@see format_string()}
             // in that case, it would be dangerous to replace text with the image because it could
-            // be stripped. therefore, we do nothing
+            // be stripped. therefore, we do nothing.
             return $text;
         }
         if (in_array($options['originalformat'], explode(',', get_config('filter_emoticon', 'formats')))) {
@@ -65,10 +56,6 @@ class text_filter extends \core_filters\text_filter {
         }
         return $text;
     }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // internal implementation starts here
-    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * Replace emoticons found in the text with their images
@@ -82,12 +69,12 @@ class text_filter extends \core_filters\text_filter {
         $lang = current_language();
         $theme = $PAGE->theme->name;
 
-        if (!isset(self::$emoticontexts[$lang][$theme]) or !isset(self::$emoticonimgs[$lang][$theme])) {
-            // prepare internal caches
+        if (!isset(self::$emoticontexts[$lang][$theme]) || !isset(self::$emoticonimgs[$lang][$theme])) {
+            // Prepare internal caches.
             $manager = get_emoticon_manager();
             $emoticons = $manager->get_emoticons();
-            self::$emoticontexts[$lang][$theme] = array();
-            self::$emoticonimgs[$lang][$theme] = array();
+            self::$emoticontexts[$lang][$theme] = [];
+            self::$emoticonimgs[$lang][$theme] = [];
             foreach ($emoticons as $emoticon) {
                 self::$emoticontexts[$lang][$theme][] = $emoticon->text;
                 self::$emoticonimgs[$lang][$theme][] = $OUTPUT->render($manager->prepare_renderable_emoticon($emoticon));
@@ -107,7 +94,7 @@ class text_filter extends \core_filters\text_filter {
         $exclude = 0;
 
         // Define the patterns that mark the start of the forbidden zones.
-        $excludepattern = array('/^<script/is', '/^<span[^>]+class="nolink[^"]*"/is', '/^<pre/is');
+        $excludepattern = ['/^<script/is', '/^<span[^>]+class="nolink[^"]*"/is', '/^<pre/is'];
 
         // Loop through the fragments.
         foreach ($processing as $fragment) {
@@ -122,20 +109,26 @@ class text_filter extends \core_filters\text_filter {
             }
             if ($exclude > 0) {
                 // If we are ignoring the fragment, then we must check if we may have reached the end of the zone.
-                if (strpos($fragment, '</span') !== false || strpos($fragment, '</script') !== false
-                    || strpos($fragment, '</pre') !== false) {
+                if (
+                    strpos($fragment, '</span') !== false || strpos($fragment, '</script') !== false
+                    || strpos($fragment, '</pre') !== false
+                ) {
                     $exclude -= 1;
                     // This is needed because of a double increment at the first element.
                     if ($exclude == 1) {
                         $exclude -= 1;
                     }
-                } else if (strpos($fragment, '<span') !== false || strpos($fragment, '<script') !== false
-                    || strpos($fragment, '<pre') !== false) {
+                } else if (
+                    strpos($fragment, '<span') !== false || strpos($fragment, '<script') !== false
+                    || strpos($fragment, '<pre') !== false
+                ) {
                     // If we find a nested tag we increase the exclusion level.
                     $exclude = $exclude + 1;
                 }
-            } else if (strpos($fragment, '<span') === false ||
-                       strpos($fragment, '</span') === false) {
+            } else if (
+                strpos($fragment, '<span') === false ||
+                       strpos($fragment, '</span') === false
+            ) {
                 // This is the meat of the code - this is run every time.
                 // This code only runs for fragments that are not ignored (including the tags themselves).
                 $fragment = str_replace(self::$emoticontexts[$lang][$theme], self::$emoticonimgs[$lang][$theme], $fragment);

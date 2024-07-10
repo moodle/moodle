@@ -26,36 +26,32 @@ use core_filters\filter_object;
  */
 class text_filter extends \core_filters\text_filter {
     #[\Override]
-    public function filter($text, array $options = array()) {
+    public function filter($text, array $options = []) {
         global $CFG, $DB, $USER;
 
         // Trivial-cache - keyed on $cachedcourseid + $cacheduserid.
         static $cachedcourseid = null;
         static $cacheduserid = null;
-        static $coursecontentlist = array();
-        static $sitecontentlist = array();
+        static $coursecontentlist = [];
+        static $sitecontentlist = [];
 
         static $nothingtodo;
 
         // Try to get current course.
         $coursectx = $this->context->get_course_context(false);
-        if (!$coursectx) {
-            // We could be in a course category so no entries for courseid == 0 will be found.
-            $courseid = 0;
-        } else {
-            $courseid = $coursectx->instanceid;
-        }
+        // We could be in a course category so no entries for courseid == 0 will be found.
+        $courseid = $coursectx?->instanceid ?: 0;
 
         if ($cacheduserid !== $USER->id) {
             // Invalidate all caches if the user changed.
-            $coursecontentlist = array();
-            $sitecontentlist = array();
+            $coursecontentlist = [];
+            $sitecontentlist = [];
             $cacheduserid = $USER->id;
             $cachedcourseid = $courseid;
             $nothingtodo = false;
         } else if ($courseid != get_site()->id && $courseid != 0 && $cachedcourseid != $courseid) {
             // Invalidate course-level caches if the course id changed.
-            $coursecontentlist = array();
+            $coursecontentlist = [];
             $cachedcourseid = $courseid;
             $nothingtodo = false;
         }
@@ -65,6 +61,7 @@ class text_filter extends \core_filters\text_filter {
         }
 
         // If courseid == 0 only site entries will be returned.
+        $site = get_site();
         if ($courseid == get_site()->id || $courseid == 0) {
             $contentlist = & $sitecontentlist;
         } else {
@@ -73,12 +70,12 @@ class text_filter extends \core_filters\text_filter {
 
         // Create a list of all the resources to search for. It may be cached already.
         if (empty($contentlist)) {
-            $coursestosearch = $courseid ? array($courseid) : array(); // Add courseid if found
-            if (get_site()->id != $courseid) { // Add siteid if was not courseid
+            $coursestosearch = $courseid ? [$courseid] : []; // Add courseid if found.
+            if (get_site()->id != $courseid) { // Add siteid if was not courseid.
                 $coursestosearch[] = get_site()->id;
             }
-            // We look for text field contents only if have autolink enabled (param1)
-            list ($coursesql, $params) = $DB->get_in_or_equal($coursestosearch);
+            // We look for text field contents only if have autolink enabled (param1).
+            [$coursesql, $params] = $DB->get_in_or_equal($coursestosearch);
             $sql = 'SELECT dc.id AS contentid, dr.id AS recordid, dc.content AS content, d.id AS dataid
                       FROM {data} d
                       JOIN {data_fields} df ON df.dataid = d.id
@@ -94,7 +91,7 @@ class text_filter extends \core_filters\text_filter {
             }
 
             foreach ($contents as $key => $content) {
-                // Trim empty or unlinkable concepts
+                // Trim empty or unlinkable concepts.
                 $currentcontent = trim(strip_tags($content->content));
                 if (empty($currentcontent)) {
                     unset($contents[$key]);
@@ -103,7 +100,7 @@ class text_filter extends \core_filters\text_filter {
                     $contents[$key]->content = $currentcontent;
                 }
 
-                // Rule out any small integers.  See bug 1446
+                // Rule out any small integers.  See bug 1446.
                 $currentint = intval($currentcontent);
                 if ($currentint && (strval($currentint) == $currentcontent) && $currentint < 1000) {
                     unset($contents[$key]);
@@ -118,17 +115,24 @@ class text_filter extends \core_filters\text_filter {
             usort($contents, [self::class, 'sort_entries_by_length']);
 
             foreach ($contents as $content) {
-                $href_tag_begin = '<a class="data autolink dataid'.$content->dataid.'" title="'.s($content->content).'" '.
-                                  'href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$content->dataid.
-                                  '&amp;rid='.$content->recordid.'">';
-                $contentlist[] = new filter_object($content->content, $href_tag_begin, '</a>', false, true);
+                $hrefopen = '<a class="data autolink dataid' . $content->dataid . '" title="' . s($content->content) . '" ' .
+                                  'href="' . $CFG->wwwroot . '/mod/data/view.php?d=' . $content->dataid .
+                                  '&amp;rid=' . $content->recordid . '">';
+                $contentlist[] = new filter_object($content->content, $hrefopen, '</a>', false, true);
             }
 
-            $contentlist = filter_remove_duplicates($contentlist); // Clean dupes
+            $contentlist = filter_remove_duplicates($contentlist); // Clean dupes.
         }
-        return filter_phrases($text, $contentlist);  // Look for all these links in the text
+        return filter_phrases($text, $contentlist);  // Look for all these links in the text.
     }
 
+    /**
+     * Helper to sort array values by content length.
+     *
+     * @param mixed $content0
+     * @param mixed $content1
+     * @return int
+     */
     private static function sort_entries_by_length($content0, $content1) {
         $len0 = strlen($content0->content);
         $len1 = strlen($content1->content);

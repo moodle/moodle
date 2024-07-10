@@ -23,6 +23,9 @@ use core\url;
 use core_filters\filter_object;
 use stdClass;
 
+// phpcs:disable moodle.NamingConventions.ValidVariableName.VariableNameLowerCase -- GLOSSARY_EXCLUDEENTRY
+// phpcs:disable moodle.NamingConventions.ValidVariableName.VariableNameUnderscore -- GLOSSARY_EXCLUDEENTRY
+
 /**
  * This filter provides automatic linking to glossary entries, aliases and categories when found inside every Moodle text.
  *
@@ -36,6 +39,7 @@ class text_filter extends \core_filters\text_filter {
     /** @var null|cache_store cache used to store the terms for this course. */
     protected $cache = null;
 
+    #[\Override]
     public function setup($page, $context) {
         if ($page->requires->should_create_one_time_item_now('filter_glossary_autolinker')) {
             $page->requires->js_call_amd('filter_glossary/autolinker', 'init', []);
@@ -72,7 +76,7 @@ class text_filter extends \core_filters\text_filter {
             return $cached->cacheconceptlist;
         }
 
-        list($glossaries, $allconcepts) = \mod_glossary\local\concept_cache::get_concepts($courseid);
+        [$glossaries, $allconcepts] = \mod_glossary\local\concept_cache::get_concepts($courseid);
 
         if (!$allconcepts) {
             $tocache = new stdClass();
@@ -83,13 +87,20 @@ class text_filter extends \core_filters\text_filter {
             return [];
         }
 
-        $conceptlist = array();
+        $conceptlist = [];
 
         foreach ($allconcepts as $concepts) {
             foreach ($concepts as $concept) {
-                $conceptlist[] = new filter_object($concept->concept, null, null,
-                        $concept->casesensitive, $concept->fullmatch, null,
-                        [$this, 'filterobject_prepare_replacement_callback'], [$concept, $glossaries]);
+                $conceptlist[] = new filter_object(
+                    $concept->concept,
+                    null,
+                    null,
+                    $concept->casesensitive,
+                    $concept->fullmatch,
+                    null,
+                    [$this, 'filterobject_prepare_replacement_callback'],
+                    [$concept, $glossaries]
+                );
             }
         }
 
@@ -120,30 +131,39 @@ class text_filter extends \core_filters\text_filter {
         global $CFG;
 
         if ($concept->category) { // Link to a category.
-            $title = get_string('glossarycategory', 'filter_glossary',
-                    ['glossary' => $glossaries[$concept->glossaryid], 'category' => $concept->concept]);
-            $link = new url('/mod/glossary/view.php',
-                    ['g' => $concept->glossaryid, 'mode' => 'cat', 'hook' => $concept->id]);
-            $attributes = array(
+            $title = get_string(
+                'glossarycategory',
+                'filter_glossary',
+                ['glossary' => $glossaries[$concept->glossaryid], 'category' => $concept->concept]
+            );
+            $link = new url(
+                '/mod/glossary/view.php',
+                ['g' => $concept->glossaryid, 'mode' => 'cat', 'hook' => $concept->id]
+            );
+            $attributes = [
                     'href'  => $link,
                     'title' => $title,
-                    'class' => 'glossary autolink category glossaryid' . $concept->glossaryid);
-
+                    'class' => 'glossary autolink category glossaryid' . $concept->glossaryid, ];
         } else { // Link to entry or alias.
-            $title = get_string('glossaryconcept', 'filter_glossary',
-                    ['glossary' => $glossaries[$concept->glossaryid], 'concept' => $concept->concept]);
+            $title = get_string(
+                'glossaryconcept',
+                'filter_glossary',
+                ['glossary' => $glossaries[$concept->glossaryid], 'concept' => $concept->concept]
+            );
             // Hardcoding dictionary format in the URL rather than defaulting
             // to the current glossary format which may not work in a popup.
             // for example "entry list" means the popup would only contain
             // a link that opens another popup.
-            $link = new url('/mod/glossary/showentry.php',
-                    ['eid' => $concept->id, 'displayformat' => 'dictionary']);
-            $attributes = array(
+            $link = new url(
+                '/mod/glossary/showentry.php',
+                ['eid' => $concept->id, 'displayformat' => 'dictionary']
+            );
+            $attributes = [
                     'href'  => $link,
                     'title' => str_replace('&amp;', '&', $title), // Undo the s() mangling.
                     'class' => 'glossary autolink concept glossaryid' . $concept->glossaryid,
                     'data-entryid' => $concept->id,
-                );
+                ];
         }
 
         // This flag is optionally set by resource_pluginfile()
@@ -156,7 +176,7 @@ class text_filter extends \core_filters\text_filter {
     }
 
     #[\Override]
-    public function filter($text, array $options = array()) {
+    public function filter($text, array $options = []) {
         global $GLOSSARY_EXCLUDEENTRY;
 
         $conceptlist = $this->get_all_concepts();

@@ -77,15 +77,18 @@ class filter_object {
      * list($linkobject->hreftagbegin, $linkobject->hreftagend, $linkobject->replacementphrase) =
      *         call_user_func_array($linkobject->replacementcallback, $linkobject->replacementcallbackdata);
      * so the return should be an array [$hreftagbegin, $hreftagend, $replacementphrase], the last of which may be null.
-     * @param array $replacementcallbackdata data to be passed to $replacementcallback (optional).
+     * @param null|array $replacementcallbackdata data to be passed to $replacementcallback (optional).
      */
-    public function __construct($phrase, $hreftagbegin = '<span class="highlight">',
-            $hreftagend = '</span>',
-            $casesensitive = false,
-            $fullmatch = false,
-            $replacementphrase = null,
-            $replacementcallback = null,
-            array $replacementcallbackdata = null) {
+    public function __construct(
+        $phrase,
+        $hreftagbegin = '<span class="highlight">',
+        $hreftagend = '</span>',
+        $casesensitive = false,
+        $fullmatch = false,
+        $replacementphrase = null,
+        $replacementcallback = null,
+        ?array $replacementcallbackdata = null
+    ) {
 
         $this->phrase                  = $phrase;
         $this->hreftagbegin            = $hreftagbegin;

@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace filter_tidy;
+
 /**
  * HTML tidy text filter.
  *
@@ -36,8 +38,8 @@
 class text_filter extends \core_filters\text_filter {
     #[\Override]
     public function filter($text, array $options = []) {
-        // Configuration for tidy. Feel free to tune for your needs, e.g. to allow
-        // proprietary markup.
+        // Configuration for tidy.
+        // See https://api.html-tidy.org/tidy/quickref_5.0.0.html for details.
         $tidyoptions = [
             'output-xhtml' => true,
             'show-body-only' => true,
@@ -53,12 +55,11 @@ class text_filter extends \core_filters\text_filter {
             return $text;
         }
 
-
         // If enabled: run tidy over the entire string.
-        if (function_exists('tidy_repair_string')) {
+        if (extension_loaded('tidy')) {
             $currentlocale = \core\locale::get_locale();
             try {
-                $text = tidy_repair_string($text, $tidyoptions, 'utf8');
+                $text = (new \tidy())->repairString($text, $tidyoptions, 'utf8');
             } finally {
                 \core\locale::set_locale(LC_ALL, $currentlocale);
             }

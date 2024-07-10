@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,19 +25,19 @@ namespace filter_urltolink;
  */
 class text_filter extends \core_filters\text_filter {
     /**
-     * @var array global configuration for this filter
-     *
      * This might be eventually moved into parent class if we found it
      * useful for other filters, too.
+     *
+     * @var array global configuration for this filter
      */
     protected static $globalconfig;
 
     #[\Override]
-    public function filter($text, array $options = array()) {
+    public function filter($text, array $options = []) {
         if (!isset($options['originalformat'])) {
-            // if the format is not specified, we are probably called by {@see format_string()}
+            // If the format is not specified, we are probably called by {@see format_string()}
             // in that case, it would be dangerous to replace URL with the link because it could
-            // be stripped. therefore, we do nothing
+            // be stripped. therefore, we do nothing.
             return $text;
         }
         if (in_array($options['originalformat'], explode(',', get_config('filter_urltolink', 'formats')))) {
@@ -47,26 +46,22 @@ class text_filter extends \core_filters\text_filter {
         return $text;
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    // internal implementation starts here
-    ////////////////////////////////////////////////////////////////////////////
-
     /**
      * Given some text this function converts any URLs it finds into HTML links
      *
      * @param string $text Passed in by reference. The string to be searched for urls.
      */
     protected function convert_urls_into_links(&$text) {
-        //I've added img tags to this list of tags to ignore.
-        //See MDL-21168 for more info. A better way to ignore tags whether or not
-        //they are escaped partially or completely would be desirable. For example:
-        //<a href="blah">
-        //&lt;a href="blah"&gt;
-        //&lt;a href="blah">
-        $filterignoretagsopen  = array('<a\s[^>]+?>', '<span[^>]+?class="nolink"[^>]*?>');
-        $filterignoretagsclose = array('</a>', '</span>');
+        // I've added img tags to this list of tags to ignore.
+        // See MDL-21168 for more info. A better way to ignore tags whether or not
+        // they are escaped partially or completely would be desirable. For example:
+        // <a href="blah">
+        // &lt;a href="blah"&gt;
+        // &lt;a href="blah">.
+        $filterignoretagsopen  = ['<a\s[^>]+?>', '<span[^>]+?class="nolink"[^>]*?>'];
+        $filterignoretagsclose = ['</a>', '</span>'];
         $ignoretags = [];
-        filter_save_ignore_tags($text,$filterignoretagsopen,$filterignoretagsclose,$ignoretags);
+        filter_save_ignore_tags($text, $filterignoretagsopen, $filterignoretagsclose, $ignoretags);
 
         // Check if we support unicode modifiers in regular expressions. Cache it.
         // TODO: this check should be a environment requirement in Moodle 2.0, as far as unicode
@@ -76,10 +71,10 @@ class text_filter extends \core_filters\text_filter {
         // Unicode check, negative assertion and other bits from Moodle.
         static $unicoderegexp;
         if (!isset($unicoderegexp)) {
-            $unicoderegexp = @preg_match('/\pL/u', 'a'); // This will fail silently, returning false,
+            $unicoderegexp = @preg_match('/\pL/u', 'a'); // This will fail silently, returning false.
         }
 
-        // TODO MDL-21296 - use of unicode modifiers may cause a timeout
+        // TODO MDL-21296 - use of unicode modifiers may cause a timeout.
         $urlstart = '(?:http(s)?://|(?<!://)(www\.))';
         $domainsegment = '(?:[\pLl0-9][\pLl0-9-]*[\pLl0-9]|[\pLl0-9])';
         $numericip = '(?:(?:[0-9]{1,3}\.){3}[0-9]{1,3})';
@@ -98,7 +93,7 @@ class text_filter extends \core_filters\text_filter {
         if ($unicoderegexp) {
             $regex = '#' . $regex . '#ui';
         } else {
-            $regex = '#' . preg_replace(array('\pLl', '\PL'), 'a-z', $regex) . '#i';
+            $regex = '#' . preg_replace(['\pLl', '\PL'], 'a-z', $regex) . '#i';
         }
 
         // Locate any HTML tags.
@@ -135,14 +130,14 @@ class text_filter extends \core_filters\text_filter {
         $text = implode('', $matches);
 
         if (!empty($ignoretags)) {
-            $ignoretags = array_reverse($ignoretags); /// Reversed so "progressive" str_replace() will solve some nesting problems.
-            $text = str_replace(array_keys($ignoretags),$ignoretags,$text);
+            $ignoretags = array_reverse($ignoretags); // Reversed so "progressive" str_replace() will solve some nesting problems.
+            $text = str_replace(array_keys($ignoretags), $ignoretags, $text);
         }
 
         if (get_config('filter_urltolink', 'embedimages')) {
-            // now try to inject the images, this code was originally in the mediapluing filter
+            // Now try to inject the images, this code was originally in the mediapluing filter
             // this may be useful only if somebody relies on the fact the links in FORMAT_MOODLE get converted
-            // to URLs which in turn change to real images
+            // to URLs which in turn change to real images.
             $search = '/<a href="([^"]+\.(jpg|png|gif))" class="_blanktarget">([^>]*)<\/a>/is';
             $text = preg_replace_callback($search, [self::class, 'get_image_markup'], $text);
         }
@@ -153,14 +148,14 @@ class text_filter extends \core_filters\text_filter {
      *
      * This plugin is intended for automatic conversion of image URLs when FORMAT_MOODLE used.
      *
-     * @param  $link
+     * @param array $link
      * @return string
      */
     private function get_image_markup($link) {
         if ($link[1] !== $link[3]) {
-            // this is not a link created by this filter, because the url does not match the text
+            // This is not a link created by this filter, because the url does not match the text.
             return $link[0];
         }
-        return '<img class="filter_urltolink_image" alt="" src="'.$link[1].'" />';
+        return '<img class="filter_urltolink_image" alt="" src="' . $link[1] . '" />';
     }
 }
