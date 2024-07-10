@@ -139,6 +139,13 @@ class filter_manager {
 
         $filterclassname = 'filter_' . $filtername;
         if (class_exists($filterclassname)) {
+            debugging(
+                "Inclusion of filters from 'filter/{$filtername}/filter.php' " .
+                    "using the '{$filterclassname}' class naming has been deprecated. " .
+                    "Please rename your class to {$filterclass} and move it to 'filter/{$filtername}/classes/text_filter.php'. " .
+                    "See MDL-82427 for more information.",
+                DEBUG_DEVELOPER,
+            );
             return new $filterclassname($context, $localconfig);
         }
 
