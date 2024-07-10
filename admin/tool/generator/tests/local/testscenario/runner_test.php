@@ -104,4 +104,42 @@ class runner_test extends \advanced_testcase {
         $this->assertFalse($result);
         $this->assertEquals(0, $DB->count_records('course', ['shortname' => 'C1']));
     }
+
+    /**
+     * Test for parse_feature.
+     * @covers ::parse_feature
+     * @covers ::execute
+     */
+    public function test_parse_and_execute_outline_feature(): void {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Call the init method to include all behat libraries and attributes.
+        $runner = new runner();
+        $runner->init();
+
+        $featurefile = $CFG->dirroot . '/admin/tool/generator/tests/fixtures/testscenario/scenario_outline.feature';
+        $contents = file_get_contents($featurefile);
+        $feature = $runner->parse_feature($contents);
+
+        $this->assertEquals(3, count($feature->get_scenarios()));
+        $this->assertEquals(3, count($feature->get_all_steps()));
+        $this->assertTrue($feature->is_valid());
+
+        $result = $runner->execute($feature);
+        $this->assertTrue($result);
+
+        // Validate everything is created.
+        $course = $DB->get_record('course', ['shortname' => 'C1']);
+        $this->assertEquals('C1', $course->shortname);
+        $this->assertEquals('Course 1', $course->fullname);
+        $course = $DB->get_record('course', ['shortname' => 'C2']);
+        $this->assertEquals('C2', $course->shortname);
+        $this->assertEquals('Course 2', $course->fullname);
+        $course = $DB->get_record('course', ['shortname' => 'C3']);
+        $this->assertEquals('C3', $course->shortname);
+        $this->assertEquals('Course 3', $course->fullname);
+    }
 }
