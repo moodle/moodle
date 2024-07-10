@@ -2832,8 +2832,7 @@ $functions = array(
 
     // Filters functions.
     'core_filters_get_available_in_context' => array(
-        'classname'   => 'core_filters\external',
-        'methodname'  => 'get_available_in_context',
+        'classname'   => 'core_filters\external\get_available_in_context',
         'description' => 'Returns the filters available in the given contexts.',
         'type'        => 'read',
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),

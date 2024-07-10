@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_filters;
+namespace core_filters\external;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/filterlib.php');
@@ -41,15 +41,14 @@ use Exception;
  * @copyright  2017 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external extends external_api {
-
+class get_available_in_context extends external_api {
     /**
-     * Returns description of get_available_in_context() parameters.
+     * Returns description of get_available_in_context parameters.
      *
      * @return external_function_parameters
      * @since  Moodle 3.4
      */
-    public static function get_available_in_context_parameters() {
+    public static function execute_parameters() {
         return new external_function_parameters (
             array(
                 'contexts' => new external_multiple_structure(
@@ -72,7 +71,7 @@ class external extends external_api {
      * @return array with the filters information and warnings
      * @since Moodle 3.4
      */
-    public static function get_available_in_context($contexts) {
+    public static function execute($contexts) {
         $params = self::validate_parameters(self::get_available_in_context_parameters(), array('contexts' => $contexts));
         $filters = $warnings = array();
 
@@ -104,12 +103,12 @@ class external extends external_api {
     }
 
     /**
-     * Returns description of get_available_in_context() result value.
+     * Returns description of get_available_in_context result value.
      *
      * @return external_single_structure
      * @since  Moodle 3.4
      */
-    public static function get_available_in_context_returns() {
+    public static function execute_returns() {
         return new external_single_structure(
             array(
                 'filters' => new external_multiple_structure(
