@@ -27,7 +27,7 @@ use mod_h5pactivity\local\manager;
  * @copyright  2021 Ilya Tregubov <ilya@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends advanced_testcase {
+final class lib_test extends advanced_testcase {
 
     /**
      * Load required test libraries
@@ -79,7 +79,6 @@ class lib_test extends advanced_testcase {
             'component' => 'mod_h5pactivity',
             'filearea' => 'package',
             'itemid' => 0,
-            'filepath' => '/',
             'filepath' => '/',
             'filename' => 'dummy.h5p',
             'addxapistate' => true,
@@ -373,7 +372,6 @@ class lib_test extends advanced_testcase {
             'component' => 'mod_h5pactivity',
             'filearea' => 'package',
             'itemid' => 0,
-            'filepath' => '/',
             'filepath' => '/',
             'filename' => 'dummy.h5p',
             'addxapistate' => true,
