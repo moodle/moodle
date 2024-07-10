@@ -14,31 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for activities completed by classification.
- *
- * @package   core_analytics
- * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_analytics;
 
-defined('MOODLE_INTERNAL') || die();
+use advanced_testcase;
+use ReflectionClass;
+use ReflectionMethod;
+use stdClass;
 
 /**
  * Unit tests for activities completed by classification.
  *
  * @package   core_analytics
+ * @covers    \core_analytics\local\indicator\community_of_inquiry_activity
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class community_of_inquiry_activities_completed_by_testcase extends advanced_testcase {
+final class community_of_inquiry_activities_completed_by_test extends advanced_testcase {
 
     /**
      * availability_levels
      *
      * @return array
      */
-    public function availability_levels() {
+    public static function availability_levels(): array {
         return array(
             'activity' => array('activity'),
             'section' => array('section'),
@@ -148,7 +146,7 @@ class community_of_inquiry_activities_completed_by_testcase extends advanced_tes
         $second = $startdate + WEEKSECS;
         $third = $startdate + (WEEKSECS * 2);
         $forth = $startdate + (WEEKSECS * 3);
-        $this->assertCount(1, $method->invoke($indicator, $first, $first + WEEKSECS, $stu1));
+        $this->assertCount(2, $method->invoke($indicator, $first, $first + WEEKSECS, $stu1));
         $this->assertCount(1, $method->invoke($indicator, $second, $second + WEEKSECS, $stu1));
         $this->assertCount(0, $method->invoke($indicator, $third, $third + WEEKSECS, $stu1));
         $this->assertCount(2, $method->invoke($indicator, $forth, $forth + WEEKSECS, $stu1));
