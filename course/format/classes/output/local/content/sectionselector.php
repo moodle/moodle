@@ -85,7 +85,7 @@ class sectionselector implements named_templatable, renderable {
         $numsections = $format->get_last_section_number();
         while ($section <= $numsections) {
             $thissection = $modinfo->get_section_info($section);
-            $url = course_get_url($course, $section);
+            $url = course_get_url($course, $section, ['navigation' => true]);
             if ($thissection->uservisible && $url && $section != $data->currentsection) {
                 $sectionmenu[$url->out(false)] = get_section_name($course, $section);
             }
