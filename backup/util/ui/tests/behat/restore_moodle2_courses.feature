@@ -255,3 +255,46 @@ Feature: Restore Moodle 2 course backups
       | Settings | Include permission overrides | 0 |
     Then I am on the "Course 1 copy 1" "permissions" page
     And I should see "Non-editing teacher (0)"
+
+  @javascript @core_badges
+  Scenario Outline: Restore course badges
+    Given the following "core_badges > Badges" exist:
+      | name                                      | course | description       | image                        | status | type |
+      | Published course badge                    | C1     | Badge description | badges/tests/behat/badge.png | active | 2    |
+      | Unpublished course badge                  | C1     | Badge description | badges/tests/behat/badge.png | 0      | 2    |
+      | Unpublished without criteria course badge | C1     | Badge description | badges/tests/behat/badge.png | 0      | 2    |
+    And the following "core_badges > Criterias" exist:
+      | badge                    | role           |
+      | Published course badge   | editingteacher |
+      | Unpublished course badge | editingteacher |
+    And I backup "Course 1" course using this options:
+      | Initial      | Include badges                   | 1                   |
+      | Initial      | Include activities and resources | <includeactivities> |
+      | Initial      | Include enrolled users           | 0                   |
+      | Initial      | Include blocks                   | 0                   |
+      | Initial      | Include files                    | 0                   |
+      | Initial      | Include filters                  | 0                   |
+      | Initial      | Include calendar events          | 0                   |
+      | Initial      | Include question bank            | 0                   |
+      | Initial      | Include groups and groupings     | 0                   |
+      | Initial      | Include competencies             | 0                   |
+      | Initial      | Include custom fields            | 0                   |
+      | Initial      | Include calendar events          | 0                   |
+      | Initial      | Include content bank content     | 0                   |
+      | Initial      | Include legacy course files      | 0                   |
+      | Confirmation | Filename                         | test_backup.mbz     |
+    When I restore "test_backup.mbz" backup into a new course using this options:
+      | Settings | Include badges | 1 |
+    And I navigate to "Badges > Manage badges" in current page administration
+    Then I should see "Published course badge"
+    And I should see "Unpublished course badge"
+    And I should see "Unpublished without criteria course badge"
+    # If activities were included, the criteria have been restored too; otherwise no criteria have been set up for badges.
+    And I <shouldornotsee> "Criteria for this badge have not been set up yet" in the "Published course badge" "table_row"
+    And I <shouldornotsee> "Criteria for this badge have not been set up yet" in the "Unpublished course badge" "table_row"
+    And I should see "Criteria for this badge have not been set up yet" in the "Unpublished without criteria course badge" "table_row"
+
+    Examples:
+      | includeactivities | shouldornotsee |
+      | 0                 | should see     |
+      | 1                 | should not see |

@@ -55,3 +55,25 @@ Feature: Import course's contents into another course
       | Initial | Include permission overrides | 0 |
     And I am on the "Course 2" "permissions" page
     Then I should see "Non-editing teacher (0)"
+
+  Scenario: Import course badges to another course
+    Given I log in as "teacher1"
+    And the following "core_badges > Badges" exist:
+      | name                                      | course | description       | image                        | status | type |
+      | Published course badge                    | C1     | Badge description | badges/tests/behat/badge.png | active | 2    |
+      | Unpublished course badge                  | C1     | Badge description | badges/tests/behat/badge.png | 0      | 2    |
+      | Unpublished without criteria course badge | C1     | Badge description | badges/tests/behat/badge.png | 0      | 2    |
+    And the following "core_badges > Criterias" exist:
+      | badge                    | role           |
+      | Published course badge   | editingteacher |
+      | Unpublished course badge | editingteacher |
+    When I import "Course 1" course into "Course 2" course using this options:
+      | Settings | Include badges | 1 |
+    And I navigate to "Badges > Manage badges" in current page administration
+    Then I should see "Published course badge"
+    And I should see "Unpublished course badge"
+    And I should see "Unpublished without criteria course badge"
+    # Badges exist and the criteria have been restored too.
+    And I should not see "Criteria for this badge have not been set up yet" in the "Published course badge" "table_row"
+    And I should not see "Criteria for this badge have not been set up yet" in the "Unpublished course badge" "table_row"
+    And I should see "Criteria for this badge have not been set up yet" in the "Unpublished without criteria course badge" "table_row"
