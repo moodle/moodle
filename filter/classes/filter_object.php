@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_filters;
+
 /**
  * This is just a little object to define a phrase and some instructions
  * for how to process it.  Filters can create an array of these to pass
@@ -27,7 +29,7 @@
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filterobject {
+class filter_object {
     /** @var string this is the phrase that should be matched. */
     public $phrase;
 
@@ -95,3 +97,8 @@ class filterobject {
         $this->replacementcallbackdata = $replacementcallbackdata;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(filter_object::class, \filterobject::class);

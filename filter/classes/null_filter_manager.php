@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_filters;
+
+use core\context;
+use core\exception\coding_exception;
+
 /**
  * Filter manager subclass that does nothing. Having this simplifies the logic
  * of format_text, etc.
@@ -57,3 +62,8 @@ class null_filter_manager {
         throw new coding_exception('filter_manager::text_filtering_hash() can not be used any more');
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(null_filter_manager::class, \null_filter_manager::class);

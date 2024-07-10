@@ -180,4 +180,8 @@ $legacyclasses = [
         'core_filters',
         'performance_measuring_filter_manager.php',
     ],
+    \filter_local_settings_form::class => [
+        'core_filters',
+        'local_settings_form.php',
+    ],
 ];

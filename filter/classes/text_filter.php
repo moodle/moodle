@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_filters;
+
+use core\context;
+use core\exception\coding_exception;
+use moodle_page;
+
 /**
  * Base class for text filters. You just need to override this class and
  * implement the filter method.
@@ -22,7 +28,7 @@
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class moodle_text_filter {
+abstract class text_filter {
     /** @var context The context we are in. */
     protected $context;
 
@@ -132,3 +138,8 @@ abstract class moodle_text_filter {
         return $this->filter($text, $options);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(text_filter::class, \moodle_text_filter::class);

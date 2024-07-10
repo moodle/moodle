@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_filters;
+
+use core\context;
+use core\context\system as context_system;
+use core\exception\coding_exception;
+use moodle_page;
+
 /**
  * Class to manage the filtering of strings. It is intended that this class is
  * only used by weblib.php. Client code should probably be using the
@@ -27,13 +34,13 @@
  */
 class filter_manager {
     /**
-     * @var moodle_text_filter[][] This list of active filters, by context, for filtering content.
+     * @var text_filter[][] This list of active filters, by context, for filtering content.
      * An array contextid => ordered array of filter name => filter objects.
      */
     protected $textfilters = array();
 
     /**
-     * @var moodle_text_filter[][] This list of active filters, by context, for filtering strings.
+     * @var text_filter[][] This list of active filters, by context, for filtering strings.
      * An array contextid => ordered array of filter name => filter objects.
      */
     protected $stringfilters = array();
@@ -114,7 +121,7 @@ class filter_manager {
      * @param string $filtername The filter name, for example 'tex'.
      * @param context $context context object.
      * @param array $localconfig array of local configuration variables for this filter.
-     * @return ?moodle_text_filter The filter, or null, if this type of filter is
+     * @return ?text_filter The filter, or null, if this type of filter is
      *      not recognised or could not be created.
      */
     protected function make_filter_object($filtername, $context, $localconfig) {
@@ -281,3 +288,8 @@ class filter_manager {
         }
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(filter_manager::class, \filter_manager::class);

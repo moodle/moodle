@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_filters;
+
 /**
  * Filter manager subclass that tracks how much work it does.
  *
@@ -74,3 +76,8 @@ class performance_measuring_filter_manager extends filter_manager {
         ));
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(performance_measuring_filter_manager::class, \performance_measuring_filter_manager::class);
