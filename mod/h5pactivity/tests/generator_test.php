@@ -26,7 +26,7 @@ use mod_h5pactivity\local\manager;
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_test extends \advanced_testcase {
+final class generator_test extends \advanced_testcase {
 
     /**
      * Test on H5P activity creation.
@@ -158,7 +158,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function create_attempt_data(): array {
+    public static function create_attempt_data(): array {
         return [
             'Compound statement' => [
                 [
@@ -212,14 +212,6 @@ class generator_test extends \advanced_testcase {
                 [
                     [
                         'interactiontype' => 'sequencing', 'attempt' => 1, 'rawscore' => 2,
-                        'maxscore' => 2, 'duration' => 1, 'completion' => 1, 'success' => 0
-                    ],
-                ], 1, 1, false,
-            ],
-            'Other statement' => [
-                [
-                    [
-                        'interactiontype' => 'other', 'attempt' => 1, 'rawscore' => 2,
                         'maxscore' => 2, 'duration' => 1, 'completion' => 1, 'success' => 0
                     ],
                 ], 1, 1, false,
@@ -351,7 +343,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function create_attempt_exceptions_data(): array {
+    public static function create_attempt_exceptions_data(): array {
         return [
             'Invalid user'                  => [true, false],
             'Invalid activity'              => [false, true],

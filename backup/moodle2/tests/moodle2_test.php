@@ -36,7 +36,7 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle2_test extends \advanced_testcase {
+final class moodle2_test extends \advanced_testcase {
 
     /**
      * Tests the availability field on modules and sections is correctly
@@ -1145,7 +1145,6 @@ class moodle2_test extends \advanced_testcase {
             'component' => 'mod_h5pactivity',
             'filearea' => 'package',
             'itemid' => 0,
-            'filepath' => '/',
             'filepath' => '/',
             'filename' => 'dummy.h5p',
             'addxapistate' => true,

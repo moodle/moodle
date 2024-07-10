@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit test for the filter_urltolink
- *
- * @package    filter_urltolink
- * @category   phpunit
- * @copyright  2010 David Mudrak <david@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
 namespace filter_urltolink;
 
@@ -32,10 +24,22 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/filter/urltolink/filter.php'); // Include the code to test
 
+/**
+ * Unit test for the filter_urltolink
+ *
+ * @package    filter_urltolink
+ * @category   test
+ * @copyright  2010 David Mudrak <david@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+final class filter_test extends \basic_testcase {
 
-class filter_test extends \basic_testcase {
-
-    function get_convert_urls_into_links_test_cases() {
+    /**
+     * Data provider for {@see test_convert_urls_into_links}
+     *
+     * @return array
+     */
+    public static function get_convert_urls_into_links_test_cases(): array {
         // Create a 4095 and 4096 long URLs.
         $superlong4095 = str_pad('http://www.superlong4095.com?this=something', 4095, 'a');
         $superlong4096 = str_pad('http://www.superlong4096.com?this=something', 4096, 'a');
@@ -165,7 +169,6 @@ class filter_test extends \basic_testcase {
             'URL: <span style="kasd"> my link to http://google.com </span>' => 'URL: <span style="kasd"> my link to <a href="http://google.com" class="_blanktarget">http://google.com</a> </span>',
             // Nested tags test.
             '<b><i>www.google.com</i></b>' => '<b><i><a href="http://www.google.com" class="_blanktarget">www.google.com</a></i></b>',
-            '<input type="submit" value="Go to http://moodle.org">' => '<input type="submit" value="Go to http://moodle.org">',
             // Test realistic content.
             '<p><span style="color: rgb(37, 37, 37); font-family: sans-serif; line-height: 22.3999996185303px;">Lorem ipsum amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut http://google.com aliquip ex ea <a href="http://google.com">commodo consequat</a>. Duis aute irure in reprehenderit in excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia https://docs.google.com/document/d/BrokenLinkPleaseAyacDHc_Ov8aoskoSVQsfmLHP_jYAkRMk/edit?usp=sharing https://docs.google.com/document/d/BrokenLinkPleaseAyacDHc_Ov8aoskoSVQsfmLHP_jYAkRMk/edit?usp=sharing mollit anim id est laborum.</span><br></p>'
             =>
