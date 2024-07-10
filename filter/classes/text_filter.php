@@ -47,13 +47,6 @@ abstract class text_filter {
     }
 
     /**
-     * @deprecated Since Moodle 3.0 MDL-50491. This was used by the old text filtering system, but no more.
-     */
-    public function hash() {
-        throw new coding_exception('moodle_text_filter::hash() can not be used any more');
-    }
-
-    /**
      * Setup page with filter requirements and other prepare stuff.
      *
      * Override this method if the filter needs to setup page

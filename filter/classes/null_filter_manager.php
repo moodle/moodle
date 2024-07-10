@@ -17,7 +17,6 @@
 namespace core_filters;
 
 use core\context;
-use core\exception\coding_exception;
 
 /**
  * Filter manager subclass that does nothing. Having this simplifies the logic
@@ -51,15 +50,6 @@ class null_filter_manager {
      */
     public function filter_string($string, $context) {
         return $string;
-    }
-
-    /**
-     * As for the equivalent {@link filter_manager} method.
-     *
-     * @deprecated Since Moodle 3.0 MDL-50491.
-     */
-    public function text_filtering_hash() {
-        throw new coding_exception('filter_manager::text_filtering_hash() can not be used any more');
     }
 }
 

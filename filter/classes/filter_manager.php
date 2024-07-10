@@ -18,7 +18,6 @@ namespace core_filters;
 
 use core\context;
 use core\context\system as context_system;
-use core\exception\coding_exception;
 use moodle_page;
 
 /**
@@ -231,13 +230,6 @@ class filter_manager {
      */
     public function filter_string($string, $context) {
         return $this->apply_filter_chain($string, $this->get_string_filters($context), ['stage' => 'string']);
-    }
-
-    /**
-     * @deprecated Since Moodle 3.0 MDL-50491. This was used by the old text filtering system, but no more.
-     */
-    public function text_filtering_hash() {
-        throw new coding_exception('filter_manager::text_filtering_hash() can not be used any more');
     }
 
     /**
