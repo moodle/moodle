@@ -37,8 +37,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2012 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class externallib_test extends externallib_advanced_testcase {
-    //core_course_externallib_testcase
+final class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Tests set up
@@ -598,7 +597,7 @@ class externallib_test extends externallib_advanced_testcase {
      *
      * @return array
      */
-    public function course_empty_field_provider(): array {
+    public static function course_empty_field_provider(): array {
         return [
             [[
                 'fullname' => '',
@@ -3092,7 +3091,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test cases for the get_enrolled_courses_by_timeline_classification test.
      */
-    public function get_get_enrolled_courses_by_timeline_classification_test_cases():array {
+    public static function get_get_enrolled_courses_by_timeline_classification_test_cases(): array {
         $now = time();
         $day = 86400;
 
@@ -3354,16 +3353,6 @@ class externallib_test extends externallib_advanced_testcase {
                 'classification' => 'all',
                 'limit' => 5,
                 'offset' => 5,
-                'sort' => "ul.timeaccess abcdasc",
-                'expectedcourses' => [],
-                'expectednextoffset' => 0,
-                'expectedexception' => 'Invalid sort direction in $sort parameter in enrol_get_my_courses()',
-            ],
-            'all limit and offset with wrong sort direction' => [
-                'coursedata' => $coursedata,
-                'classification' => 'all',
-                'limit' => 5,
-                'offset' => 5,
                 'sort' => "ul.timeaccess.foo ascd",
                 'expectedcourses' => [],
                 'expectednextoffset' => 0,
@@ -3375,16 +3364,6 @@ class externallib_test extends externallib_advanced_testcase {
                 'limit' => 5,
                 'offset' => 5,
                 'sort' => "foobar",
-                'expectedcourses' => [],
-                'expectednextoffset' => 0,
-                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()',
-            ],
-            'all limit and offset with wrong field name' => [
-                'coursedata' => $coursedata,
-                'classification' => 'all',
-                'limit' => 5,
-                'offset' => 5,
-                'sort' => "ul.foobar",
                 'expectedcourses' => [],
                 'expectednextoffset' => 0,
                 'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()',

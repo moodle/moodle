@@ -26,7 +26,6 @@ global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
 
-
 /**
  * Unit tests for the drag-and-drop markers question definition class.
  *
@@ -34,7 +33,7 @@ require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_test extends \basic_testcase {
+final class question_test extends \basic_testcase {
 
     public function test_get_question_summary() {
         $dd = \test_question_maker::make_question('ddmarker');
@@ -242,7 +241,7 @@ class question_test extends \basic_testcase {
 
         $this->assertFalse($dd->is_gradable_response(array()));
         $this->assertFalse($dd->is_gradable_response(
-                array('c1' => '', 'c2' => '', 'c3' => '', 'c3' => '')));
+                array('c1' => '', 'c2' => '', 'c3' => '')));
         $this->assertTrue($dd->is_gradable_response(
                 array('c1' => '300,300', 'c2' => '300,300', 'c3' => '')));
         $this->assertTrue($dd->is_gradable_response(array('c1' => '300,300')));

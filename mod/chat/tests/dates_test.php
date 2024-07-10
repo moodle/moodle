@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains unit tests for mod_chat\dates.
- *
- * @package   mod_chat
- * @category  test
- * @copyright 2021 Dongsheng Cai
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 declare(strict_types=1);
 
 namespace mod_chat;
@@ -33,14 +24,19 @@ use core\activity_dates;
 
 /**
  * Class for unit testing mod_chat\dates.
+ *
+ * @package   mod_chat
+ * @category  test
+ * @copyright 2021 Dongsheng Cai
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class dates_test extends advanced_testcase {
+final class dates_test extends advanced_testcase {
 
     /**
      * Data provider for get_dates_for_module().
      * @return array[]
      */
-    public function get_dates_for_module_provider(): array {
+    public static function get_dates_for_module_provider(): array {
         global $CFG;
         require_once($CFG->dirroot . '/mod/chat/lib.php');
 
@@ -52,10 +48,10 @@ class dates_test extends advanced_testcase {
         $weeklynextchattime = $past + 7 * DAYSECS;
         $label = get_string('nextchattime', 'mod_chat');
         return [
-            'chattime in the past' => [
+            'chattime in the past (no schedule)' => [
                 $past, CHAT_SCHEDULE_NONE, []
             ],
-            'chattime in the past' => [
+            'chattime in the past (single schedule)' => [
                 $past, CHAT_SCHEDULE_SINGLE, []
             ],
             'chattime in the future' => [

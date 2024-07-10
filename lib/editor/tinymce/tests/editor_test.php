@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * TinyMCE tests.
- *
- * @package   editor_tinymce
- * @category  test
- * @copyright 2012 Petr Skoda {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace editor_tinymce;
 
 use editor_tinymce_plugin;
@@ -38,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2012 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class editor_test extends \advanced_testcase {
+final class editor_test extends \advanced_testcase {
 
     public function test_autoloading() {
         // Note: This test core_frankestyle calssloader.
@@ -79,7 +70,6 @@ class editor_test extends \advanced_testcase {
             'gecko_spellcheck' => true,
             'theme_advanced_font_sizes' => "1,2,3,4,5,6,7",
             'moodle_plugin_base' => "$CFG->wwwroot/lib/editor/tinymce/plugins/",
-            'theme_advanced_font_sizes' => "1,2,3,4,5,6,7",
             'theme_advanced_layout_manager' => "SimpleLayout",
             'theme_advanced_buttons1' => 'one,two,|,three,four',
             'theme_advanced_buttons2' => 'five,six',
