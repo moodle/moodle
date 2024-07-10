@@ -517,7 +517,7 @@ function badges_add_course_navigation(navigation_node $coursenode, stdClass $cou
             navigation_node::TYPE_SETTING, null, 'coursebadges');
 
         if (has_capability('moodle/badges:createbadge', $coursecontext)) {
-            $url = new moodle_url('/badges/newbadge.php', array('type' => BADGE_TYPE_COURSE, 'id' => $course->id));
+            $url = new moodle_url('/badges/edit.php', ['action' => 'new', 'courseid' => $course->id]);
 
             $coursenode->get('coursebadges')->add(get_string('newbadge', 'badges'), $url,
                     navigation_node::TYPE_SETTING, null, 'newbadge');

@@ -1,0 +1,7 @@
+issueNumber: MDL-43938
+notes:
+  core_badges:
+    - message: >-
+        The badges/newbadge.php page has been deprecated and merged with
+        badges/edit.php. Please, use badges/edit.php instead.
+      type: deprecated

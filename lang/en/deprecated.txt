@@ -120,3 +120,4 @@ siteregistrationcontact,core_hub
 siteregistrationcontact_help,core_hub
 registrationcontactno,core
 registrationcontactyes,core
+error:duplicatename,core_badges
