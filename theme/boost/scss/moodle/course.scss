@@ -257,6 +257,17 @@
         border-top: 1px solid $dropzone-border;
         margin-top: -1px;
     }
+
+    [data-for="sectioninfo"] {
+        // When a section is empty, the activity dropzone indicator is below
+        // the section info. This ensures the dropzone will not displace the content
+        // even if the section has no restrictions or info to display.
+        min-height: 1px;
+    }
+
+    [data-for="sectioninfo"].drop-down {
+        margin-top: -1px;
+    }
 }
 
 .section .activity .activityinstance .groupinglabel {

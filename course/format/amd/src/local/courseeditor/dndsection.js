@@ -84,6 +84,17 @@ export default class extends BaseComponent {
         return null;
     }
 
+    /**
+     * Get a fallback element when there is no CM in the section.
+     *
+     * This is used to show the correct dropzone position.
+     *
+     * @returns {element|null} the las course module element of the section.
+     */
+    getLastCmFallback() {
+        return null;
+    }
+
     // Drag and drop methods.
 
     /**
@@ -154,7 +165,11 @@ export default class extends BaseComponent {
             });
         }
         if (dropdata.type == 'cm') {
-            this.getLastCm()?.classList.add(this.classes.DROPDOWN);
+            const lastCm = this.getLastCm();
+            lastCm?.classList.add(this.classes.DROPDOWN);
+            if (!lastCm) {
+                this.getLastCmFallback()?.classList.add(this.classes.DROPDOWN);
+            }
         }
         if (dropdata.type == 'section') {
             this.element.classList.remove(this.classes.DROPUP);
@@ -167,6 +182,7 @@ export default class extends BaseComponent {
      */
     hideDropZone() {
         this.getLastCm()?.classList.remove(this.classes.DROPDOWN);
+        this.getLastCmFallback()?.classList.remove(this.classes.DROPDOWN);
         this.element.classList.remove(this.classes.DROPUP);
         this.element.classList.remove(this.classes.DROPDOWN);
         this.removeOverlay();
