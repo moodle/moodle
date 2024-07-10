@@ -14,16 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External function test for prepare_entry.
- *
- * @package    mod_glossary
- * @category   external
- * @since      Moodle 3.10
- * @copyright  2020 Juan Leyva <juan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_glossary\external;
 
 defined('MOODLE_INTERNAL') || die();
@@ -42,10 +32,13 @@ use external_util;
  * External function test for prepare_entry.
  *
  * @package    mod_glossary
+ * @category   external
+ * @covers     \mod_glossary\external\prepare_entry
+ * @since      Moodle 3.10
  * @copyright  2020 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class prepare_entry_testcase extends externallib_advanced_testcase {
+final class prepare_entry_test extends externallib_advanced_testcase {
 
     /**
      * test_prepare_entry

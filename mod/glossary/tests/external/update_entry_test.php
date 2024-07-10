@@ -14,16 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External function test for update_entry.
- *
- * @package    mod_glossary
- * @category   external
- * @since      Moodle 3.10
- * @copyright  2020 Juan Leyva <juan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_glossary\external;
 
 defined('MOODLE_INTERNAL') || die();
@@ -42,10 +32,13 @@ use external_util;
  * External function test for update_entry.
  *
  * @package    mod_glossary
+ * @category   external
+ * @covers     \mod_glossary\external\update_entry
+ * @since      Moodle 3.10
  * @copyright  2020 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class update_entry_testcase extends externallib_advanced_testcase {
+final class update_entry_test extends externallib_advanced_testcase {
 
     /**
      * test_update_entry_without_optional_settings
@@ -152,7 +145,7 @@ class update_entry_testcase extends externallib_advanced_testcase {
         $aliases = $DB->get_records('glossary_alias', ['entryid' => $entryid]);
         $this->assertCount(2, $aliases);
         foreach ($aliases as $alias) {
-            $this->assertContains($alias->alias, $newaliases);
+            $this->assertStringContainsString($alias->alias, $newaliases);
         }
     }
 
@@ -193,7 +186,7 @@ class update_entry_testcase extends externallib_advanced_testcase {
         $categories = $DB->get_records('glossary_entries_categories', ['entryid' => $entryid]);
         $this->assertCount(2, $categories);
         foreach ($categories as $category) {
-            $this->assertContains($category->categoryid, $newcategories);
+            $this->assertStringContainsString($category->categoryid, $newcategories);
         }
     }
 
