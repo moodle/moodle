@@ -32,12 +32,12 @@ Feature: Teachers can rename subsections
     And I should see "New name" in the "page" "region"
     And I should see "Subactivity" in the "region-main" "region"
 
-  Scenario: Renaming the activity using the settings form rename the subsection name
+  Scenario: Renaming the subsection using the settings form renames the module
     Given I should see "Subsection activity" in the "page-content" "region"
     When I click on "Edit settings" "link" in the "Subsection activity" "activity"
     And I set the following fields to these values:
-      | Name        | New name |
-    And I press "Save and display"
+      | Section name        | New name |
+    And I press "Save changes"
     Then I should see "New name" in the "page" "region"
     And I should see "Subactivity" in the "region-main" "region"
     And I am on "Course 1" course homepage

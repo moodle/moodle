@@ -14,27 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains the default section controls output class.
- *
- * @package   core_courseformat
- * @copyright 2020 Ferran Recio <ferran@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_courseformat\output\local\content\section;
 
 use action_menu;
-use action_menu_link_secondary;
 use context_course;
-use core\output\named_templatable;
 use core_courseformat\base as course_format;
-use core_courseformat\output\local\courseformat_named_templatable;
+use core_courseformat\output\local\content\basecontrolmenu;
 use moodle_url;
-use pix_icon;
-use renderable;
 use section_info;
-use stdClass;
 
 /**
  * Base class to render section controls.
@@ -43,15 +30,7 @@ use stdClass;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class controlmenu implements named_templatable, renderable {
-
-    use courseformat_named_templatable;
-
-    /** @var course_format the course format class */
-    protected $format;
-
-    /** @var section_info the course section class */
-    protected $section;
+class controlmenu extends basecontrolmenu {
 
     /**
      * Constructor.
@@ -60,40 +39,23 @@ class controlmenu implements named_templatable, renderable {
      * @param section_info $section the section info
      */
     public function __construct(course_format $format, section_info $section) {
-        $this->format = $format;
-        $this->section = $section;
-    }
-
-    /**
-     * Export this data so it can be used as the context for a mustache template.
-     *
-     * @param \renderer_base $output typically, the renderer that's calling this function
-     * @return array data context for a mustache template
-     */
-    public function export_for_template(\renderer_base $output): stdClass {
-        $menu = $this->get_action_menu($output);
-        if (empty($menu)) {
-            return new stdClass();
-        }
-
-        $data = (object)[
-            'menu' => $output->render($menu),
-            'hasmenu' => true,
-            'id' => $this->section->id,
-        ];
-
-        return $data;
+        parent::__construct($format, $section, null, $section->id);
     }
 
     /**
      * Generate the action menu element depending on the section.
      *
-     * Sections controlled by a plugin will delegate the control menu to the plugin.
+     * Sections controlled by a plugin will delegate the control menu to the delegated section class.
      *
      * @param \renderer_base $output typically, the renderer that's calling this function
-     * @return action_menu|null the activity action menu or null if no action menu is available
+     * @return action_menu|null the section action menu or null if no action menu is available
      */
     public function get_action_menu(\renderer_base $output): ?action_menu {
+
+        if (!empty($this->menu)) {
+            return $this->menu;
+        }
+
         $sectiondelegate = $this->section->get_component_instance();
         if ($sectiondelegate) {
             return $sectiondelegate->get_section_action_menu($this->format, $this, $output);
@@ -107,34 +69,11 @@ class controlmenu implements named_templatable, renderable {
      * This method is public in case some block needs to modify the menu before output it.
      *
      * @param \renderer_base $output typically, the renderer that's calling this function
-     * @return action_menu|null the activity action menu
+     * @return action_menu|null the section action menu
      */
     public function get_default_action_menu(\renderer_base $output): ?action_menu {
         $controls = $this->section_control_items();
-        if (empty($controls)) {
-            return null;
-        }
-
-        // Convert control array into an action_menu.
-        $menu = new action_menu();
-        $menu->set_kebab_trigger(get_string('edit'));
-        $menu->attributes['class'] .= ' section-actions';
-        $menu->attributes['data-sectionid'] = $this->section->id;
-        foreach ($controls as $value) {
-            $url = empty($value['url']) ? '' : $value['url'];
-            $icon = empty($value['icon']) ? '' : $value['icon'];
-            $name = empty($value['name']) ? '' : $value['name'];
-            $attr = empty($value['attr']) ? [] : $value['attr'];
-            $class = empty($value['pixattr']['class']) ? '' : $value['pixattr']['class'];
-            $al = new action_menu_link_secondary(
-                new moodle_url($url),
-                new pix_icon($icon, '', null, ['class' => "smallicon " . $class]),
-                $name,
-                $attr
-            );
-            $menu->add($al);
-        }
-        return $menu;
+        return $this->format_controls($controls);
     }
 
     /**
