@@ -2068,10 +2068,10 @@ function workshop_reset_userdata(stdClass $data) {
  */
 function mod_workshop_get_fontawesome_icon_map() {
     return [
-        'mod_workshop:userplan/task-info' => 'fa-info text-info',
-        'mod_workshop:userplan/task-todo' => 'fa-square-o',
-        'mod_workshop:userplan/task-done' => 'fa-check text-success',
-        'mod_workshop:userplan/task-fail' => 'fa-remove text-danger',
+        'mod_workshop:userplan/task-done' => 'fa-clipboard-check text-success',
+        'mod_workshop:userplan/task-fail' => 'fa-xmark text-danger',
+        'mod_workshop:userplan/task-info' => 'fa-circle-info text-info',
+        'mod_workshop:userplan/task-todo' => 'fa-regular fa-clipboard',
     ];
 }
 
