@@ -14,16 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External function test for log_report_viewed.
- *
- * @package    mod_h5pactivity
- * @category   external
- * @since      Moodle 3.11
- * @copyright  2021 Ilya Tregubov <ilya@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_h5pactivity\external;
 
 defined('MOODLE_INTERNAL') || die();
@@ -39,10 +29,14 @@ use externallib_advanced_testcase;
  * External function test for log_report_viewed.
  *
  * @package    mod_h5pactivity
+ * @category   external
+ * @covers     \mod_h5pactivity\external\log_report_viewed
+ * @since      Moodle 3.11
  * @copyright  2021 Ilya Tregubov <ilya@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class log_report_viewed_testcase extends externallib_advanced_testcase {
+final class log_report_viewed_test extends externallib_advanced_testcase {
+
     /**
      * Test the behaviour of log_report_viewed.
      *
@@ -110,7 +104,7 @@ class log_report_viewed_testcase extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function execute_data(): array {
+    public static function execute_data(): array {
         return [
             'Student reviewing own attempt' => [
                 1, manager::REVIEWCOMPLETION, 'student', 'student'
