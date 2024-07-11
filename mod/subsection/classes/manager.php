@@ -19,8 +19,10 @@ namespace mod_subsection;
 use cm_info;
 use context_module;
 use completion_info;
+use core_courseformat\formatactions;
 use mod_subsection\event\course_module_viewed;
 use moodle_page;
+use section_info;
 use stdClass;
 
 /**
@@ -179,5 +181,24 @@ class manager {
         // Completion.
         $completion = new completion_info($course);
         $completion->set_module_viewed($this->cm);
+    }
+
+    /**
+     * Get the delegated section info.
+     *
+     * @return section_info the delegated section info
+     */
+    public function get_delegated_section_info(): section_info {
+        $delegatedsection = $this->cm->get_delegated_section_info();
+        if (!$delegatedsection) {
+            // Some restorations can produce a situation where the section is not found.
+            // In that case, we create a new one.
+            $delegatedsection = formatactions::section($this->cm->course)->create_delegated(
+                self::PLUGINNAME,
+                $this->cm->id,
+                (object) ['name' => $this->instance->name],
+            );
+        }
+        return $delegatedsection;
     }
 }
