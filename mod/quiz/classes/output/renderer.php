@@ -705,7 +705,7 @@ class renderer extends plugin_renderer_base {
             $delay = 0;
         }
         $this->page->requires->js_init_call('M.mod_quiz.secure_window.close',
-                [$url, $delay], false, quiz_get_js_module());
+            [$url->out(false), $delay], false, quiz_get_js_module());
 
         $output .= $this->box_end();
         $output .= $this->footer();
