@@ -14,24 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\event;
+
+use advanced_testcase;
+use context_course;
+use context_system;
+use Exception;
+use moodle_url;
+
+defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__.'/../fixtures/event_mod_fixtures.php');
+
 /**
  * Tests for base course module instance list viewed event.
  *
  * @package    core
  * @category   phpunit
+ * @covers     \core\event\course_module_instance_list_viewed
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-require_once(__DIR__.'/fixtures/event_mod_fixtures.php');
-
-/**
- * Class core_event_course_module_instance_list_viewed_testcase
- *
- * Tests for event \core\event\course_module_instance_list_viewed_testcase
- */
-class core_event_course_module_instance_list_viewed_testcase extends advanced_testcase {
+final class course_module_instance_list_viewed_test extends advanced_testcase {
 
     /**
      * Test event properties and methods.
