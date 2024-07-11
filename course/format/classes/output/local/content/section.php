@@ -152,7 +152,7 @@ class section implements named_templatable, renderable {
             'highlightedlabel' => $format->get_section_highlighted_name(),
             'sitehome' => $course->id == SITEID,
             'editing' => $PAGE->user_is_editing(),
-            'displayonesection' => ($course->id != SITEID && !is_null($format->get_sectionid())),
+            'displayonesection' => ($course->id != SITEID && $format->get_sectionid() == $section->id),
         ];
 
         $haspartials = [];
