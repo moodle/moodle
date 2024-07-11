@@ -200,6 +200,10 @@ class core_course_external extends external_api {
                 $sectionvalues = array();
                 $sectionvalues['id'] = $section->id;
                 $sectionvalues['name'] = get_section_name($course, $section);
+                // Temporary hack to be able to hide the subsections in certain app versions.
+                if (!empty($section->component) && \core_useragent::is_moodle_app()) {
+                    $sectionvalues['name'] = html_writer::span($sectionvalues['name'], 'course-' . $section->component);
+                }
                 $sectionvalues['visible'] = $section->visible;
 
                 $options = (object) array('noclean' => true);
