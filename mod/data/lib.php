@@ -4125,17 +4125,17 @@ function data_view($data, $course, $cm, $context) {
  */
 function mod_data_get_fontawesome_icon_map() {
     return [
-        'mod_data:field/checkbox' => 'fa-check-square-o',
-        'mod_data:field/date' => 'fa-calendar-o',
-        'mod_data:field/file' => 'fa-file',
-        'mod_data:field/latlong' => 'fa-globe',
+        'mod_data:field/checkbox' => 'fa-regular fa-square-check',
+        'mod_data:field/date' => 'fa-regular fa-calendar',
+        'mod_data:field/file' => 'fa-regular fa-file',
+        'mod_data:field/latlong' => 'fa-earth-americas',
         'mod_data:field/menu' => 'fa-bars',
         'mod_data:field/multimenu' => 'fa-bars',
         'mod_data:field/number' => 'fa-hashtag',
-        'mod_data:field/picture' => 'fa-picture-o',
-        'mod_data:field/radiobutton' => 'fa-circle-o',
-        'mod_data:field/textarea' => 'fa-font',
+        'mod_data:field/picture' => 'fa-regular fa-image',
+        'mod_data:field/radiobutton' => 'fa-regular fa-circle-dot',
         'mod_data:field/text' => 'fa-i-cursor',
+        'mod_data:field/textarea' => 'fa-font',
         'mod_data:field/url' => 'fa-link',
     ];
 }
