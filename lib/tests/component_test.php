@@ -33,10 +33,9 @@ use ReflectionProperty;
 final class component_test extends \advanced_testcase {
     #[\Override]
     public function tearDown(): void {
-        $plugintypes = new ReflectionProperty(component::class, 'plugintypes');
-        $plugintypes->setValue(null, null);
-
         parent::tearDown();
+
+        component::reset();
     }
 
     /**
@@ -963,7 +962,7 @@ final class component_test extends \advanced_testcase {
         // We have to override the dirroot and libdir, and then reset the plugintypes property.
         $CFG->dirroot = $vfileroot->url();
         $CFG->libdir = $vfileroot->url() . '/lib';
-        (new ReflectionProperty(component::class, 'plugintypes'))->setValue(null, null);
+        component::reset();
 
         // Existing classes do not break.
         $this->assertTrue(
