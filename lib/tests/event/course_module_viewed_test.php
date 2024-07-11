@@ -14,24 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\event;
+
+use advanced_testcase;
+use coding_exception;
+use context_module;
+use stdClass;
+use moodle_url;
+
+defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__.'/../fixtures/event_fixtures.php');
+
 /**
  * Tests for base course module viewed event.
  *
  * @package    core
  * @category   phpunit
+ * @covers     \core\event\course_module_viewed
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-require_once(__DIR__.'/fixtures/event_fixtures.php');
-
-/**
- * Class core_event_course_module_viewed_testcase
- *
- * Tests for event \core\event\course_module_viewed
- */
-class core_event_course_module_viewed_testcase extends advanced_testcase {
+final class course_module_viewed_test extends advanced_testcase {
 
     /**
      * Test event properties and methods.
@@ -83,6 +86,9 @@ class core_event_course_module_viewed_testcase extends advanced_testcase {
             $this->assertStringContainsString("course_module_viewed event must define objectid and object table.", $e->getMessage());
         }
 
+        $this->assertDebuggingCalled('Inconsistent courseid - context combination detected.');
+        $this->resetDebugging();
+
         try {
             \core_tests\event\course_module_viewed::create(array(
                 'contextid' => 1,
@@ -91,5 +97,7 @@ class core_event_course_module_viewed_testcase extends advanced_testcase {
         } catch (coding_exception $e) {
             $this->assertStringContainsString("course_module_viewed event must define objectid and object table.", $e->getMessage());
         }
+
+        $this->assertDebuggingCalled('Inconsistent courseid - context combination detected.');
     }
 }

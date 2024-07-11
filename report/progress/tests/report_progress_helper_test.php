@@ -14,23 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for the progress report sorting.
- *
- * @package   report_progress
- * @copyright 2021 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
- */
+namespace report_progress;
 
-defined('MOODLE_INTERNAL') || die();
+use advanced_testcase;
+use completion_info;
+use testing_data_generator;
 
 /**
  * Class for testing report progress helper.
  *
+ * @package   report_progress
+ * @covers    \report_progress\local\helper
  * @copyright 2021 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class report_progress_helper_testcase extends advanced_testcase {
+final class report_progress_helper_test extends advanced_testcase {
 
     /**
      * Set up testcase.
