@@ -13,7 +13,7 @@ Feature: Award badges with separate groups
       | student2 | Student | 2 | student2@example.com |
     And the following "courses" exist:
       | fullname | shortname | category | groupmode |
-      | Course 1 | C1 | 0 | 1 |
+      | Course 1 | C1        | 0        | 1         |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -30,16 +30,17 @@ Feature: Award badges with separate groups
       | teacher1 | CB |
       | student2 | CA |
       | teacher2 | CA |
-    And I am on the "Course 1" "course editing" page logged in as "teacher1"
-    And I expand all fieldsets
-    And I set the field "Group mode" to "Separate groups"
-    And I press "Save and display"
-    And I navigate to "Badges > Add a new badge" in current page administration
-    And I set the following fields to these values:
-      | Name | Course Badge |
-      | Description | Course badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    And the following "core_badges > Badge" exists:
+      | name        | Course Badge                 |
+      | course      | C1                           |
+      | description | Course badge description     |
+      | image       | badges/tests/behat/badge.png |
+      | status      | 0                            |
+      | type        | 2                            |
+    And I am on the "Course 1" "course" page logged in as "teacher1"
+    And I navigate to "Badges > Manage badges" in current page administration
+    And I follow "Course Badge"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Manual issue by role"
     And I expand all fieldsets
     And I set the field "Teacher" to "1"
@@ -48,8 +49,7 @@ Feature: Award badges with separate groups
     And I set the field "Any of the selected roles awards the badge" to "1"
     And I press "Save"
     And I press "Enable access"
-    And I press "Continue"
-    And I log out
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
 
   @javascript
   Scenario: Award course badge as non-editing teacher with only one group

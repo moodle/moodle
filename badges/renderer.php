@@ -242,6 +242,7 @@ class core_badges_renderer extends plugin_renderer_base {
             if ($badge->has_awards()) {
                 $url = new moodle_url('/badges/recipients.php', array('id' => $badge->id));
                 $a = new stdClass();
+                $a->badgename = $badge->name;
                 $a->link = $url->out();
                 $a->count = count($badge->get_awards());
                 $display .= get_string('numawards', 'badges', $a);
@@ -573,17 +574,34 @@ class core_badges_renderer extends plugin_renderer_base {
 
                 $message = $status . $action;
             } else {
+                $this->page->requires->js_call_amd('core_badges/actions', 'init');
+
                 $status = get_string('statusmessage_' . $badge->status, 'badges');
                 if ($badge->is_active()) {
-                    $action = $this->output->single_button(new moodle_url('/badges/action.php',
-                                array('id' => $badge->id, 'lock' => 1, 'sesskey' => sesskey(),
-                                      'return' => $this->page->url->out_as_local_url(false))),
-                            get_string('deactivate', 'badges'), 'POST', array('class' => 'activatebadge'));
+                    $action = $this->output->single_button(
+                        new moodle_url('#'),
+                        get_string('deactivate', 'badges'),
+                        'POST',
+                        [
+                            'class' => 'activatebadge',
+                            'data-action' => 'disablebadge',
+                            'data-badgeid' => $badge->id,
+                            'data-badgename' => $badge->name,
+                            'data-courseid' => $badge->courseid,
+                        ],
+                    );
                 } else {
-                    $action = $this->output->single_button(new moodle_url('/badges/action.php',
-                                array('id' => $badge->id, 'activate' => 1, 'sesskey' => sesskey(),
-                                      'return' => $this->page->url->out_as_local_url(false))),
-                            get_string('activate', 'badges'), 'POST', array('class' => 'activatebadge'));
+                    $action = $this->output->single_button(
+                        new moodle_url('#'),
+                        get_string('activate', 'badges'),
+                        'POST',
+                        [
+                            'class' => 'activatebadge',
+                            'data-action' => 'enablebadge',
+                            'data-badgeid' => $badge->id,
+                            'data-badgename' => $badge->name,
+                            'data-courseid' => $badge->courseid,
+                        ]);
                 }
 
                 $message = $status . $this->output->help_icon('status', 'badges') . $action;

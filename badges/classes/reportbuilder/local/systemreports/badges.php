@@ -158,21 +158,19 @@ class badges extends system_report {
     protected function add_actions(): void {
         // Activate badge.
         $this->add_action((new action(
-            new moodle_url('/badges/action.php', [
-                'id' => ':id',
-                'activate' => true,
-                'return' => ':return',
-            ]),
+            new moodle_url('#'),
             new pix_icon('t/show', '', 'core'),
-            [],
+            [
+                'data-action' => 'enablebadge',
+                'data-badgeid' => ':id',
+                'data-badgename' => ':badgename',
+                'data-courseid' => ':courseid',
+            ],
             false,
             new lang_string('activate', 'badges')
         ))->add_callback(static function(stdclass $row): bool {
             $badge = new \core_badges\badge($row->id);
-
-            // Populate the return URL.
-            $row->return = (new moodle_url('/badges/index.php',
-                ['type' => $badge->type, 'id' => (int) $badge->courseid]))->out_as_local_url(false);
+            $row->badgename = $badge->name;
 
             return has_capability('moodle/badges:configuredetails', $badge->get_context()) &&
                 $badge->has_criteria() &&
@@ -182,18 +180,19 @@ class badges extends system_report {
 
         // Deactivate badge.
         $this->add_action((new action(
-            new moodle_url('/badges/index.php', [
-                'lock' => ':id',
-                'sesskey' => sesskey(),
-                'type' => ':type',
-                'id' => ':courseid',
-            ]),
+            new moodle_url('#'),
             new pix_icon('t/hide', '', 'core'),
-            [],
+            [
+                'data-action' => 'disablebadge',
+                'data-badgeid' => ':id',
+                'data-badgename' => ':badgename',
+                'data-courseid' => ':courseid',
+            ],
             false,
             new lang_string('deactivate', 'badges')
         ))->add_callback(static function(stdclass $row): bool {
             $badge = new \core_badges\badge($row->id);
+            $row->badgename = $badge->name;
             return has_capability('moodle/badges:configuredetails', $badge->get_context()) &&
                 $badge->has_criteria() &&
                 $row->status != BADGE_STATUS_INACTIVE && $row->status != BADGE_STATUS_INACTIVE_LOCKED;

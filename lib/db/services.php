@@ -119,6 +119,18 @@ $functions = array(
         'ajax'          => true,
         'loginrequired' => true,
     ),
+    'core_badges_disable_badges' => [
+        'classname'     => 'core_badges\external\disable_badges',
+        'description'   => 'Disable badges',
+        'type'          => 'write',
+        'ajax'          => true,
+    ],
+    'core_badges_enable_badges' => [
+        'classname'     => 'core_badges\external\enable_badges',
+        'description'   => 'Enable badges',
+        'type'          => 'write',
+        'ajax'          => true,
+    ],
     'core_badges_get_user_badges' => array(
         'classname'     => 'core_badges_external',
         'methodname'    => 'get_user_badges',

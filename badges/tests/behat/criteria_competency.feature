@@ -59,7 +59,7 @@ Feature: Award badges based on competency completion
     And I wait until the page is ready
     # Enable the badge
     And I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     # Rate the competency in the course
     And I am on "Course 1" course homepage
     And I navigate to "Competencies" in current page administration
@@ -112,7 +112,7 @@ Feature: Award badges based on competency completion
     # Enable the badge
     And I wait until the page is ready
     And I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     # Rate the competency in the course
     And I am on "Course 1" course homepage
     And I navigate to "Competencies" in current page administration
@@ -167,7 +167,7 @@ Feature: Award badges based on competency completion
     # Enable the badge
     And I wait until the page is ready
     And I press "Enable access"
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     # Rate the competency in the course
     And I am on "Course 1" course homepage
     And I navigate to "Competencies" in current page administration

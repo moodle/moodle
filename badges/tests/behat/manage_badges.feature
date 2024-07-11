@@ -77,14 +77,14 @@ Feature: Manage badges
     And I press "Save"
     And I navigate to "Badges > Manage badges" in site administration
     And I press "Enable access" action in the "Badge #1" report row
-    And I should see "Changes in badge access"
-    And I press "Continue"
-    And I should see "Access to the badges was successfully enabled"
+    And I should see "This will make your badge visible to users and allow them to start earning it."
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
+    And I should see "Access to badge 'Badge #1' enabled"
     Then the following should exist in the "reportbuilder-table" table:
       | Name      | Badge status  |
       | Badge #1  | Available     |
     And I press "Disable access" action in the "Badge #1" report row
-    And I should see "Access to the badges was successfully disabled"
+    And I should see "Access to badge 'Badge #1' disabled"
     And the following should exist in the "reportbuilder-table" table:
       | Name      | Badge status  |
       | Badge #1  | Not available |
@@ -99,7 +99,7 @@ Feature: Manage badges
     And I press "Save"
     And I navigate to "Badges > Manage badges" in site administration
     And I press "Enable access" action in the "Badge #1" report row
-    And I press "Continue"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I press "Award badge" action in the "Badge #1" report row
     And I set the field "potentialrecipients[]" to "Admin User (moodle@example.com)"
     And I press "Award badge"

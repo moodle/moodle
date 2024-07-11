@@ -29,9 +29,6 @@ require_once($CFG->libdir . '/badgeslib.php');
 
 $badgeid = required_param('id', PARAM_INT);
 $copy = optional_param('copy', 0, PARAM_BOOL);
-$activate = optional_param('activate', 0, PARAM_BOOL);
-$deactivate = optional_param('lock', 0, PARAM_BOOL);
-$confirm   = optional_param('confirm', 0, PARAM_BOOL);
 $return = optional_param('return', 0, PARAM_LOCALURL);
 
 require_login();
@@ -73,65 +70,4 @@ if ($copy) {
         redirect(new moodle_url('/badges/edit.php', array('id' => $cloneid, 'action' => 'badge')));
     }
     redirect(new moodle_url('/badges/overview.php', array('id' => $cloneid)));
-}
-
-if ($activate) {
-    require_capability('moodle/badges:configurecriteria', $context);
-
-    $PAGE->url->param('activate', 1);
-    $status = ($badge->status == BADGE_STATUS_INACTIVE) ? BADGE_STATUS_ACTIVE : BADGE_STATUS_ACTIVE_LOCKED;
-    if ($confirm == 1) {
-        require_sesskey();
-        $badge->set_status($status);
-        $returnurl->param('msg', 'activatesuccess');
-
-        if ($badge->type == BADGE_TYPE_SITE) {
-            // Review on cron if there are more than 1000 users who can earn a site-level badge.
-            $sql = 'SELECT COUNT(u.id) as num
-                        FROM {user} u
-                        LEFT JOIN {badge_issued} bi
-                            ON u.id = bi.userid AND bi.badgeid = :badgeid
-                        WHERE bi.badgeid IS NULL AND u.id != :guestid AND u.deleted = 0';
-            $toearn = $DB->get_record_sql($sql, array('badgeid' => $badge->id, 'guestid' => $CFG->siteguest));
-
-            if ($toearn->num < 1000) {
-                $awards = $badge->review_all_criteria();
-                $returnurl->param('awards', $awards);
-            } else {
-                $returnurl->param('awards', 'cron');
-            }
-        } else {
-            $awards = $badge->review_all_criteria();
-            $returnurl->param('awards', $awards);
-        }
-        redirect($returnurl);
-    }
-
-    $strheading = get_string('reviewbadge', 'badges');
-    $PAGE->navbar->add($strheading);
-    $PAGE->set_title($strheading);
-    $PAGE->set_heading($heading);
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading($strheading);
-
-    $params = array('id' => $badge->id, 'activate' => 1, 'sesskey' => sesskey(), 'confirm' => 1, 'return' => $return);
-    $url = new moodle_url('/badges/action.php', $params);
-
-    if (!$badge->has_criteria()) {
-        redirect($returnurl, get_string('error:cannotact', 'badges') . get_string('nocriteria', 'badges'), null, \core\output\notification::NOTIFY_ERROR);
-    } else {
-        $message = get_string('reviewconfirm', 'badges', $badge->name);
-        echo $OUTPUT->confirm($message, $url, $returnurl);
-    }
-    echo $OUTPUT->footer();
-    die;
-}
-
-if ($deactivate) {
-    require_sesskey();
-    require_capability('moodle/badges:configurecriteria', $context);
-
-    $status = ($badge->status == BADGE_STATUS_ACTIVE) ? BADGE_STATUS_INACTIVE : BADGE_STATUS_INACTIVE_LOCKED;
-    $badge->set_status($status);
-    redirect($returnurl);
 }
