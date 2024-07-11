@@ -30336,11 +30336,6 @@ body.drawer-ease {
   min-height: 520px;
 }
 
-.file-picker .fp-navbar {
-  min-height: 40px;
-  padding: 4px;
-}
-
 .fp-navbar {
   border-color: #8f959e;
   border-bottom: 0;
