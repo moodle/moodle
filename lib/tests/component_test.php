@@ -36,8 +36,7 @@ final class component_test extends advanced_testcase {
     public function tearDown(): void {
         parent::tearDown();
 
-        $plugintypes = new ReflectionProperty(\core_component::class, 'plugintypes');
-        $plugintypes->setValue(null, null);
+        \core_component::reset();
     }
 
     public function test_get_core_subsystems() {
@@ -926,7 +925,7 @@ final class component_test extends advanced_testcase {
         // We have to override the dirroot and libdir, and then reset the plugintypes property.
         $CFG->dirroot = $vfileroot->url();
         $CFG->libdir = $vfileroot->url() . '/lib';
-        (new ReflectionProperty('core_component', 'plugintypes'))->setValue(null, null);
+        \core_component::reset();
 
         // Existing classes do not break.
         $this->assertTrue(
