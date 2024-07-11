@@ -1,0 +1,6 @@
+issueNumber: MDL-64148
+notes:
+  core:
+    - message: >-
+        Add \core_user::get_name_placeholders() to return an array of user name fields.
+      type: improved

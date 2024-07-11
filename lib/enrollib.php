@@ -3670,7 +3670,11 @@ abstract class enrol_plugin {
                 'course' => $instance->courseid,
             ],
         ))->out();
-        $a->fullname = fullname($user);
+
+        $placeholders = \core_user::get_name_placeholders($user);
+        foreach ($placeholders as $field => $value) {
+            $a->{$field} = $value;
+        }
 
         if ($message && trim($message) !== '') {
             $placeholders = [

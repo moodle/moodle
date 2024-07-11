@@ -77,7 +77,7 @@ $string['emailchangecancel'] = 'Cancel email change';
 $string['emailchangepending'] = 'Change pending. Open the link sent to you at {$a->preference_newemail}.';
 $string['emailnowexists'] = 'The email address you tried to assign to your profile has been assigned to someone else since your original request. Your request for change of email address is hereby cancelled, but you may try again with a different address.';
 $string['emailupdate'] = 'Email address update';
-$string['emailupdatemessage'] = 'Dear {$a->fullname},
+$string['emailupdatemessage'] = 'Hi {$a->firstname},
 
 You have requested a change of your email address for your account on {$a->site}. To confirm this change, please go to the following web address:
 

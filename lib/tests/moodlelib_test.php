@@ -5593,4 +5593,45 @@ EOT;
             ],
         ];
     }
+
+    /**
+     * Test case for checking the email greetings in various user notification emails.
+     *
+     * @dataProvider email_greetings_provider
+     * @param string $funcname The name of the function to call for sending the email.
+     * @param mixed $extra Any extra parameter required by the function.
+     * @covers ::send_password_change_info()
+     * @covers ::send_confirmation_email()
+     * @covers ::setnew_password_and_mail()
+     * @covers ::send_password_change_confirmation_email()
+     */
+    public function test_email_greetings($funcname, $extra): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $sink = $this->redirectEmails(); // Make sure we are redirecting emails.
+        $funcname($user, $extra);
+        $result = $sink->get_messages();
+        $sink->close();
+        // Test greetings.
+        $this->assertStringContainsString('Hi ' . $user->firstname, quoted_printable_decode($result[0]->body));
+    }
+
+    /**
+     * Data provider for test_email_greetings tests.
+     *
+     * @return array
+     */
+    public static function email_greetings_provider(): array {
+        $extrasendpasswordchangeconfirmationemail = new \stdClass();
+        $extrasendpasswordchangeconfirmationemail->token = '123';
+
+        return [
+            ['send_password_change_info', null],
+            ['send_confirmation_email', null],
+            ['setnew_password_and_mail', false],
+            ['send_password_change_confirmation_email', $extrasendpasswordchangeconfirmationemail],
+        ];
+    }
 }

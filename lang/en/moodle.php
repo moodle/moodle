@@ -643,7 +643,7 @@ $string['emailalreadysent'] = 'A password reset email has already been sent. Ple
 $string['emailactive'] = 'Email activated';
 $string['emailagain'] = 'Email (again)';
 $string['emailconfirm'] = 'Confirm your account';
-$string['emailconfirmation'] = 'Hi,
+$string['emailconfirmation'] = 'Hi {$a->firstname},
 
 A new account has been requested at \'{$a->sitename}\'
 using your email address.
@@ -2501,8 +2501,6 @@ $string['coursesearch_help'] = 'You can search for multiple words at once and ca
 // Deprecated since Moodle 4.5.
 $string['commentscount'] = 'Comments ({$a})';
 $string['datechanged'] = 'Date changed';
-$string['registrationcontactno'] = 'No, I do not want to be contacted by other people';
-$string['registrationcontactyes'] = 'Yes, provide a form for other Moodlers to contact me';
 $string['newpasswordtext'] = 'Hi {$a->firstname},
 
 Your account password at \'{$a->sitename}\' has been reset
@@ -2522,3 +2520,5 @@ line at the top of your web browser window.
 
 Cheers from the \'{$a->sitename}\' administrator,
 {$a->signoff}';
+$string['registrationcontactno'] = 'No, I do not want to be contacted by other people';
+$string['registrationcontactyes'] = 'Yes, provide a form for other Moodlers to contact me';

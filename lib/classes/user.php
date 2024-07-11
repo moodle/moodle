@@ -1589,4 +1589,20 @@ class core_user {
         ];
     }
 
+    /**
+     * Generates an array of name placeholders for a given user.
+     *
+     * @param stdClass $user The user object containing name fields.
+     * @return array An associative array of name placeholders.
+     */
+    public static function get_name_placeholders(stdClass $user): array {
+        $namefields = [
+            'fullname' => fullname($user),
+            'alternativefullname' => fullname($user, true),
+        ];
+        foreach (fields::get_name_fields() as $namefield) {
+            $namefields[$namefield] = $user->{$namefield};
+        }
+        return $namefields;
+    }
 }

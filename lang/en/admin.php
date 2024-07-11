@@ -815,7 +815,9 @@ $string['locationsettings'] = 'Location settings';
 $string['locked'] = 'Locked';
 $string['lockoutduration'] = 'Account lockout duration';
 $string['lockoutduration_desc'] = 'Locked out account is automatically unlocked after this duration.';
-$string['lockoutemailbody'] = 'Your account with username {$a->username} on server \'{$a->sitename}\'
+$string['lockoutemailbody'] = 'Hi {$a->firstname},
+
+Your account with username {$a->username} on server \'{$a->sitename}\'
 was locked out after multiple invalid login attempts.
 
 To unlock the account immediately go to the following address
