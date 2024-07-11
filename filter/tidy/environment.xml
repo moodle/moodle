@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<COMPATIBILITY_MATRIX>
+  <PLUGIN name="filter_tidy">
+    <PHP_EXTENSIONS>
+      <PHP_EXTENSION name="tidy" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="tidyextensionrequired" plugin="filter_tidy" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+    </PHP_EXTENSIONS>
+  </PLUGIN>
+</COMPATIBILITY_MATRIX>
