@@ -73,9 +73,9 @@ abstract class basecontrolmenu implements named_templatable, renderable {
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param \renderer_base $output typically, the renderer that's calling this function
-     * @return array data context for a mustache template
+     * @return null|array data context for a mustache template
      */
-    public function export_for_template(\renderer_base $output): stdClass {
+    public function export_for_template(\renderer_base $output): ?stdClass {
         $menu = $this->get_action_menu($output);
         if (empty($menu)) {
             return new stdClass();

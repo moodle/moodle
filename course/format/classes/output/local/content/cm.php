@@ -186,7 +186,7 @@ class cm implements named_templatable, renderable {
             $this->displayoptions
         );
         $modavailability = $availability->export_for_template($output);
-        $data->modavailability = $modavailability;
+        $data->modavailability = $modavailability ?? false;
         return $availability->has_availability($output);
     }
 
@@ -320,7 +320,8 @@ class cm implements named_templatable, renderable {
             $this->mod,
             $this->displayoptions
         );
-        $data->controlmenu = $controlmenu->export_for_template($output);
+        $data->controlmenu = $controlmenu->export_for_template($output) ?? false;
+
         if (!$this->format->supports_components()) {
             // Add the legacy YUI move link.
             $data->moveicon = course_get_cm_move($this->mod, $returnsection);
@@ -351,8 +352,8 @@ class cm implements named_templatable, renderable {
     protected function add_visibility_data(stdClass &$data, renderer_base $output): bool {
         $visibility = new $this->visibilityclass($this->format, $this->section, $this->mod);
         $templatedata = $visibility->export_for_template($output);
+        $data->visibility = $templatedata ?? false;
         if ($templatedata) {
-            $data->visibility = $templatedata;
             return true;
         }
         return false;
