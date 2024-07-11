@@ -398,8 +398,8 @@ class tool_task_renderer extends plugin_renderer_base {
                         get_string('runnow', 'tool_task')), 'task-runnow');
             }
 
-            $faildelaycell = new html_table_cell($task->get_fail_delay());
-            if ($task->get_fail_delay()) {
+            if ($faildelay = $task->get_fail_delay()) {
+                $faildelaycell = new html_table_cell(format_time($faildelay));
                 $faildelaycell->text .= html_writer::div(
                     $this->output->single_button(
                         new moodle_url('/admin/tool/task/clear_fail_delay.php',
@@ -409,6 +409,8 @@ class tool_task_renderer extends plugin_renderer_base {
                     'task-runnow'
                 );
                 $faildelaycell->attributes['class'] = 'table-danger';
+            } else {
+                $faildelaycell = new html_table_cell(0);
             }
 
             $row = new html_table_row([
