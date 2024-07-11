@@ -14,19 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit Tests for a the collection of userlists class
- *
- * @package     core_privacy
- * @category    test
- * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
+use advanced_testcase;
 use \core_privacy\local\request\userlist_collection;
 use \core_privacy\local\request\userlist;
 use \core_privacy\local\request\approved_userlist;
@@ -34,11 +24,13 @@ use \core_privacy\local\request\approved_userlist;
 /**
  * Tests for the \core_privacy API's userlist collection functionality.
  *
+ * @package     core_privacy
+ * @category    test
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\request\userlist_collection
  */
-class userlist_collection_test extends advanced_testcase {
+final class userlist_collection_test extends advanced_testcase {
 
     /**
      * A userlist_collection should support the userlist type.
