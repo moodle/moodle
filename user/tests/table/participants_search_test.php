@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Provides {@link core_user_table_participants_search_test} class.
- *
- * @package   core_user
- * @category  test
- * @copyright 2020 Andrew Nicols <andrew@nicols.co.uk>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 declare(strict_types=1);
 
 namespace core_user\table;
@@ -41,10 +32,12 @@ use stdClass;
 /**
  * Tests for the implementation of {@link core_user_table_participants_search} class.
  *
+ * @package   core_user
+ * @category  test
  * @copyright 2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class participants_search_test extends advanced_testcase {
+final class participants_search_test extends advanced_testcase {
 
     /**
      * Helper to convert a moodle_recordset to an array of records.
@@ -190,7 +183,7 @@ class participants_search_test extends advanced_testcase {
      *
      * @return array
      */
-    public function role_provider(): array {
+    public static function role_provider(): array {
         $tests = [
             // Users who only have one role each.
             'Users in each role' => (object) [
@@ -693,16 +686,15 @@ class participants_search_test extends advanced_testcase {
                     'NONE: Filter on student, teacher' => (object) [
                         'roles' => ['student', 'teacher'],
                         'jointype' => filter::JOINTYPE_NONE,
-                        'count' => 5,
+                        'count' => 4,
                         'expectedusers' => [
                             'c',
                             'd',
-                            'e',
                             'g',
                             'h',
                         ],
                     ],
-                    'NONE: Filter on student, teacher' => (object) [
+                    'NONE: Filter on teacher, editingteacher' => (object) [
                         'roles' => ['teacher', 'editingteacher'],
                         'jointype' => filter::JOINTYPE_NONE,
                         'count' => 3,
