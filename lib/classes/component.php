@@ -274,7 +274,6 @@ class core_component {
         return $file;
     }
 
-
     /**
      * Initialise caches, always call before accessing self:: caches.
      */
@@ -397,6 +396,17 @@ class core_component {
             @unlink($cachefile . '.tmp'); // Just in case anything fails (race condition).
             self::invalidate_opcode_php_cache($cachefile);
         }
+    }
+
+    /**
+     * Reset the initialisation of the component utility.
+     *
+     * Note: It should not be necessary to call this in regular code.
+     * Please only use it where strictly required.
+     */
+    public static function reset(): void {
+        // The autoloader will re-initialise if plugintypes is null.
+        self::$plugintypes = null;
     }
 
     /**
