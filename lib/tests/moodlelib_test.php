@@ -27,7 +27,7 @@ use lang_string;
  * @author     T.J.Hunt@open.ac.uk
  * @author     nicolas@moodle.com
  */
-class moodlelib_test extends \advanced_testcase {
+final class moodlelib_test extends \advanced_testcase {
 
     /**
      * Define a local decimal separator.
@@ -860,13 +860,15 @@ class moodlelib_test extends \advanced_testcase {
             '-13.5'                          => '',
             '0.2'                            => '',
             ''                               => '',
-            null                             => '',
         );
 
         foreach ($testvalues as $testvalue => $expectedvalue) {
             $actualvalue = clean_param($testvalue, PARAM_TIMEZONE);
             $this->assertEquals($expectedvalue, $actualvalue);
         }
+
+        // Test for null.
+        $this->assertEquals('', clean_param(null, PARAM_TIMEZONE));
     }
 
     public function test_clean_param_null_argument() {
@@ -3712,9 +3714,9 @@ EOF;
 
     /**
      * Data provider for test_generate_confirmation_link
-     * @return Array of confirmation urls and expected resultant confirmation links
+     * @return array Confirmation urls and expected resultant confirmation links
      */
-    public function generate_confirmation_link_provider() {
+    public static function generate_confirmation_link_provider(): array {
         global $CFG;
         return [
             "Simple name" => [
@@ -3782,7 +3784,7 @@ EOF;
                 "confirmationurl" => "http://moodle.org/ext.php?with=some&param=eters",
                 "expected" => "http://moodle.org/ext.php?with=some&param=eters&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
             ],
-            "Custom external confirmation url with parameters" => [
+            "Custom external confirmation url with parameters (again)" => [
                 "username" => "many_-.@characters@_@-..-..",
                 "confirmationurl" => "http://moodle.org/ext.php?with=some&data=test",
                 "expected" => "http://moodle.org/ext.php?with=some&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"

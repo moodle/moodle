@@ -14,16 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Feedback module external functions tests
- *
- * @package    mod_feedback
- * @category   external
- * @copyright  2017 Juan Leyva <juan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.3
- */
-
 namespace mod_feedback\external;
 
 use externallib_advanced_testcase;
@@ -48,7 +38,7 @@ require_once($CFG->dirroot . '/mod/feedback/lib.php');
  * @since      Moodle 3.3
  * @covers     \mod_feedback_external
  */
-class external_test extends externallib_advanced_testcase {
+final class external_test extends externallib_advanced_testcase {
 
     // TODO These should be removed.
     // Testcase classes should not have any properties or store state.
@@ -458,7 +448,7 @@ class external_test extends externallib_advanced_testcase {
      *
      * @return array
      */
-    public function items_provider(): array {
+    public static function items_provider(): array {
         return [
             'Valid feedback (as student)' => [
                 'role' => 'student',
@@ -474,11 +464,6 @@ class external_test extends externallib_advanced_testcase {
                 'role' => 'student',
                 'info' => ['empty' => true],
                 'warning' => get_string('no_items_available_yet', 'feedback'),
-            ],
-            'Closed feedback (as student)' => [
-                'role' => 'student',
-                'info' => ['closed' => true],
-                'warning' => get_string('feedback_is_not_open', 'feedback'),
             ],
             'Cannot complete feedback (as student)' => [
                 'role' => 'student',
@@ -498,11 +483,6 @@ class external_test extends externallib_advanced_testcase {
             'Empty feedback (as teacher)' => [
                 'role' => 'teacher',
                 'info' => ['empty' => true],
-                'warning' => null,
-            ],
-            'Closed feedback (as teacher)' => [
-                'role' => 'teacher',
-                'info' => ['closed' => true],
                 'warning' => null,
             ],
             'Cannot complete feedback (as teacher)' => [
