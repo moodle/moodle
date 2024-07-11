@@ -542,8 +542,18 @@ class stateactions {
         course_modinfo::purge_course_modules_cache($course->id, $ids);
         rebuild_course_cache($course->id, false, true);
 
+        $delegatedsections = [];
         foreach ($cms as $cm) {
             $updates->add_cm_put($cm->id);
+            if (!$delegatedsection = $cm->get_delegated_section_info()) {
+                continue;
+            }
+            if (!in_array($delegatedsection->id, $delegatedsections)) {
+                $delegatedsections[] = $delegatedsection->id;
+            }
+        }
+        foreach ($delegatedsections as $sectionid => $section) {
+            $updates->add_section_put($sectionid);
         }
     }
 
