@@ -39,30 +39,30 @@ Feature: Submission types
       | submissiontypefileavailable | 1 |
       | submissiontypefilerequired  | 1 |
     And I press "Save and display"
-    Then I should see "Setup phase" in the "h3#mod_workshop-userplanheading" "css_element"
+    Then "Setup phase" "heading" should exist
     When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | submissiontypetextrequired | 0 |
     And I press "Save and display"
-    Then I should see "Setup phase" in the "h3#mod_workshop-userplanheading" "css_element"
+    Then "Setup phase" "heading" should exist
     When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | submissiontypetextrequired | 1 |
       | submissiontypefilerequired | 0 |
     And I press "Save and display"
-    Then I should see "Setup phase" in the "h3#mod_workshop-userplanheading" "css_element"
+    Then "Setup phase" "heading" should exist
     When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | submissiontypefileavailable | 0 |
     And I press "Save and display"
-    Then I should see "Setup phase" in the "h3#mod_workshop-userplanheading" "css_element"
+    Then "Setup phase" "heading" should exist
     When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | submissiontypefileavailable | 1 |
       | submissiontypefilerequired  | 1 |
       | submissiontypetextavailable | 0 |
     And I press "Save and display"
-    Then I should see "Setup phase" in the "h3#mod_workshop-userplanheading" "css_element"
+    Then "Setup phase" "heading" should exist
 
   @javascript @_file_upload
   Scenario: All submission fields required
