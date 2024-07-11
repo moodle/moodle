@@ -87,8 +87,9 @@ abstract class advanced_testcase extends base_testcase {
             // Reset global state after test and test failure.
             $CFG = phpunit_util::get_global_backup('CFG');
             $DB = phpunit_util::get_global_backup('DB');
-            // This is _hacky_. We need to reset the autoloader, and this is the only way to do so right now.
-            (new ReflectionProperty(\core_component::class, 'plugintypes'))->setValue(null, null);
+
+            // We need to reset the autoloader.
+            \core_component::reset();
         }
 
         if (isset($e)) {
