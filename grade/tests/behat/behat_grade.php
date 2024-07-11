@@ -74,11 +74,16 @@ class behat_grade extends behat_base {
                 'link', '.modal-dialog', 'css_element']);
         }
 
+
         $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $data);
         if ($this->getSession()->getPage()->find('xpath', './/button[@data-action="save"]')) {
             $container = $this->get_selected_node("core_grades > gradeitem modal", "form");
-            $node = $this->find('xpath', './/button[@data-action="save"]', false, $container);
-            $node->press();
+            $this->execute('behat_general::i_click_on_in_the', [
+                './/button[@data-action="save"]',
+                'xpath',
+                $container,
+                'NodeElement',
+            ]);
         } else {
             $savechanges = get_string('savechanges', 'grades');
             $this->execute('behat_forms::press_button', $this->escape($savechanges));
