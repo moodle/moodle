@@ -1,0 +1,34 @@
+
+/* Hide subsections in course index, 'All sections' and the buttons for next/previous section */
+
+.ionic5 core-course-format section:has(.course-mod_subsection):not(:only-of-type),
+.ionic7 core-course-format section:has(.course-mod_subsection):not(:only-of-type) {
+    display: none;
+}
+
+.ionic5 core-course-course-index .section:has(.course-mod_subsection),
+.ionic5 core-course-course-index .section:has(.course-mod_subsection) + div[id^="core-course-index-section"],
+.ionic7 core-course-course-index .section:has(.course-mod_subsection),
+.ionic7 core-course-course-index .section:has(.course-mod_subsection) + div[id^="core-course-index-section"] {
+    display: none;
+}
+
+.ionic5 .core-course-section-nav-buttons ion-button:has(.course-mod_subsection),
+.ionic7 .core-course-section-nav-buttons ion-button:has(.course-mod_subsection) {
+    display: none;
+}
+
+/* Styles for devices not supporting :has() */
+
+.ionic5 .core-course-section-nav-buttons .course-mod_subsection,
+.ionic7 .core-course-section-nav-buttons .course-mod_subsection {
+    font-style: italic;
+    font-weight: normal;
+}
+
+.ionic5 core-course-course-index .course-mod_subsection,
+.ionic7 core-course-course-index .course-mod_subsection {
+    font-style: italic;
+    font-weight: normal;
+    padding-inline-start: 16px;
+}
