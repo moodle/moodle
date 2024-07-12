@@ -27,3 +27,6 @@
 - The constant `ASSIGN_ATTEMPT_REOPEN_METHOD_NONE` has been deprecated, and a new default value for `attemptreopenmethod` has been set to "Automatically until pass".
 
   For more information see [MDL-80741](https://tracker.moodle.org/browse/MDL-80741)
+- Method assign_grading_table::col_picture has been deprecated.
+
+  For more information see [MDL-82292](https://tracker.moodle.org/browse/MDL-82292)

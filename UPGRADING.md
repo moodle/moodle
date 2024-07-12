@@ -8,6 +8,20 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ## 4.5dev
 
+### core_badges
+
+#### Deprecated
+
+- The badges/newbadge.php page has been deprecated and merged with badges/edit.php. Please, use badges/edit.php instead.
+
+  For more information see [MDL-43938](https://tracker.moodle.org/browse/MDL-43938)
+
+#### Added
+
+- New webservices enable_badges and disable_badges have been added.
+
+  For more information see [MDL-82168](https://tracker.moodle.org/browse/MDL-82168)
+
 ### core
 
 #### Removed
@@ -255,6 +269,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The constant `ASSIGN_ATTEMPT_REOPEN_METHOD_NONE` has been deprecated, and a new default value for `attemptreopenmethod` has been set to "Automatically until pass".
 
   For more information see [MDL-80741](https://tracker.moodle.org/browse/MDL-80741)
+- Method assign_grading_table::col_picture has been deprecated.
+
+  For more information see [MDL-82292](https://tracker.moodle.org/browse/MDL-82292)
 
 ### report
 
@@ -279,6 +296,26 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   - `get_non_core_event_list()`
 
   For more information see [MDL-72786](https://tracker.moodle.org/browse/MDL-72786)
+
+### core_message
+
+#### Removed
+
+- Final deprecation MESSAGE_DEFAULT_LOGGEDOFF / MESSAGE_DEFAULT_LOGGEDIN.
+
+  For more information see [MDL-73284](https://tracker.moodle.org/browse/MDL-73284)
+
+#### Changed
+
+- The `\core_message\helper::togglecontact_link_params` now accepts a new optional param called `isrequested` to indicate the status of the contact request
+
+  For more information see [MDL-81428](https://tracker.moodle.org/browse/MDL-81428)
+
+#### Deprecated
+
+- The `core_message/remove_contact_button` template is deprecated and will be removed in the future version
+
+  For more information see [MDL-81428](https://tracker.moodle.org/browse/MDL-81428)
 
 ### theme
 
@@ -400,20 +437,6 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `mod_data_renderer::render_fields_footer` method has been deprecated as it's no longer used
 
   For more information see [MDL-81321](https://tracker.moodle.org/browse/MDL-81321)
-
-### core_message
-
-#### Changed
-
-- The `\core_message\helper::togglecontact_link_params` now accepts a new optional param called `isrequested` to indicate the status of the contact request
-
-  For more information see [MDL-81428](https://tracker.moodle.org/browse/MDL-81428)
-
-#### Deprecated
-
-- The `core_message/remove_contact_button` template is deprecated and will be removed in the future version
-
-  For more information see [MDL-81428](https://tracker.moodle.org/browse/MDL-81428)
 
 ### editor_tiny
 

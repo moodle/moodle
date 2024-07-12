@@ -8,4 +8,3 @@
   This property allows you to control whether the table is rendered as a responsive table.
 
   For more information see [MDL-80748](https://tracker.moodle.org/browse/MDL-80748)
-
