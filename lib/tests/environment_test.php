@@ -26,7 +26,7 @@ use environment_results;
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class environment_test extends \advanced_testcase {
+final class environment_test extends \advanced_testcase {
 
     /**
      * Test the environment check status.
@@ -47,7 +47,7 @@ class environment_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function environment_provider() {
+    public static function environment_provider(): array {
         global $CFG;
         require_once($CFG->libdir.'/environmentlib.php');
 
@@ -73,6 +73,13 @@ class environment_test extends \advanced_testcase {
                 && $result->getLevel() === 'optional'
                 && $result->getStatus() === false) {
             $this->markTestSkipped('OPCache extension is not necessary for unit testing.');
+        }
+
+        if ($result->part === 'php_extension'
+                && $result->getPluginName() !== ''
+                && $result->getLevel() === 'optional'
+                && $result->getStatus() === false) {
+            $this->markTestSkipped('Optional plugin extension is not necessary for unit testing.');
         }
 
         if ($result->part === 'custom_check'
