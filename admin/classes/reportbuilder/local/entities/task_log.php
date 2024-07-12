@@ -211,11 +211,8 @@ class task_log extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_INTEGER)
             ->add_field("{$tablealias}.pid")
-            ->set_is_sortable(true)
-            // Although this is an integer column, it doesn't make sense to perform numeric aggregation on it.
-            ->set_disabled_aggregation(['avg', 'count', 'countdistinct', 'max', 'min', 'sum']);
+            ->set_is_sortable(true);
 
         // Database column.
         $columns[] = (new column(
@@ -224,17 +221,14 @@ class task_log extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_INTEGER)
             ->add_fields("{$tablealias}.dbreads, {$tablealias}.dbwrites")
             ->set_is_sortable(true, ["{$tablealias}.dbreads", "{$tablealias}.dbwrites"])
-            ->add_callback(static function(int $value, stdClass $row): string {
+            ->add_callback(static function($value, stdClass $row): string {
                 $output = '';
                 $output .= \html_writer::div(get_string('task_stats:dbreads', 'admin', $row->dbreads));
                 $output .= \html_writer::div(get_string('task_stats:dbwrites', 'admin', $row->dbwrites));
                 return $output;
-            })
-            // Although this is an integer column, it doesn't make sense to perform numeric aggregation on it.
-            ->set_disabled_aggregation(['avg', 'count', 'countdistinct', 'max', 'min', 'sum']);
+            });
 
         // Database reads column.
         $columns[] = (new column(

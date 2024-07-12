@@ -282,11 +282,8 @@ class user extends base {
         ))
             ->add_joins($this->get_joins())
             ->add_fields($userpictureselect)
-            ->set_type(column::TYPE_INTEGER)
             ->set_is_sortable($this->is_sortable('picture'))
-            // It doesn't make sense to offer integer aggregation methods for this column.
-            ->set_disabled_aggregation(['avg', 'max', 'min', 'sum'])
-            ->add_callback(static function ($value, stdClass $row): string {
+            ->add_callback(static function($value, stdClass $row): string {
                 global $OUTPUT;
 
                 return !empty($row->id) ? $OUTPUT->user_picture($row, ['link' => false, 'alttext' => false]) : '';
