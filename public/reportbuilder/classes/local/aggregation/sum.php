@@ -89,13 +89,14 @@ class sum extends base {
      * @return mixed
      */
     public function format_value($value, array $values, array $callbacks, int $columntype) {
-        $firstvalue = reset($values);
-        if ($firstvalue === null) {
+        $sum = reset($values);
+        if ($sum === null) {
             return null;
         }
+
         if ($columntype === column::TYPE_BOOLEAN || empty($callbacks)) {
             $decimalpoints = (int) ($columntype === column::TYPE_FLOAT);
-            return format_float((float) $firstvalue, $decimalpoints);
+            return format_float((float) $sum, $decimalpoints);
         }
 
         return parent::format_value($value, $values, $callbacks, $columntype);

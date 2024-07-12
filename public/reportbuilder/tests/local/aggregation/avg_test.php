@@ -99,14 +99,8 @@ final class avg_test extends core_reportbuilder_testcase {
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
-            [
-                'c0_firstname' => 'Admin',
-                'c1_suspended' => '0.0 (avg)',
-            ],
-            [
-                'c0_firstname' => 'Bob',
-                'c1_suspended' => '0.5 (avg)',
-            ],
-        ], $content);
+            ['Admin', '0.0 (avg)'],
+            ['Bob', '0.5 (avg)'],
+        ], array_map('array_values', $content));
     }
 }
