@@ -29,11 +29,6 @@ use stdClass;
 class group_selector extends comboboxsearch {
 
     /**
-     * @var stdClass The course object.
-     */
-    protected $course;
-
-    /**
      * @var stdClass The context object.
      */
     private stdClass $context;
@@ -41,11 +36,16 @@ class group_selector extends comboboxsearch {
     /**
      * The class constructor.
      *
-     * @param stdClass $course The course object.
+     * @param null|stdClass $course This parameter has been deprecated since Moodle 4.5 and should not be used anymore.
      * @param stdClass $context The context object.
      */
-    public function __construct(stdClass $course, stdClass $context) {
-        $this->course = $course;
+    public function __construct(null|stdClass $course = null, stdClass $context) {
+        if ($course !== null) {
+            debugging(
+                'The course argument has been deprecated. Please remove it from your group_selector class instances.',
+                DEBUG_DEVELOPER,
+            );
+        }
         $this->context = $context;
         parent::__construct(false, $this->get_button_content(), $this->get_dropdown_content(), 'group-search',
             'groupsearchwidget', 'groupsearchdropdown overflow-auto', null, true, $this->get_label(), 'group',
@@ -69,7 +69,7 @@ class group_selector extends comboboxsearch {
         if ($activegroup) {
             $group = groups_get_group($activegroup);
             $buttondata['selectedgroup'] = format_string($group->name, true,
-                ['context' => \context_course::instance($this->course->id)]);
+                ['context' => $this->context->get_course_context()]);
         } else if ($activegroup === 0) {
             $buttondata['selectedgroup'] = get_string('allparticipants');
         }
@@ -86,7 +86,7 @@ class group_selector extends comboboxsearch {
         global $OUTPUT;
 
         return $OUTPUT->render_from_template('core_group/comboboxsearch/searchbody', [
-            'courseid' => $this->course->id,
+            'courseid' => $this->context->get_course_context()->instanceid,
             'currentvalue' => optional_param('groupsearchvalue', '', PARAM_NOTAGS),
             'instance' => rand(),
         ]);
@@ -112,6 +112,7 @@ class group_selector extends comboboxsearch {
 
         $canaccessallgroups = has_capability('moodle/site:accessallgroups', $this->context);
         $userid = $this->get_group_mode() == VISIBLEGROUPS || $canaccessallgroups ? 0 : $USER->id;
+        $course = get_course($this->context->get_course_context()->instanceid);
         // Based on the current context level, retrieve the correct grouping ID and specify whether only groups with the
         // participation field set to true should be returned.
         if ($this->context->contextlevel === CONTEXT_MODULE) {
@@ -120,12 +121,12 @@ class group_selector extends comboboxsearch {
             $participationonly = true;
         } else {
             $cm = null;
-            $groupingid = $this->course->defaultgroupingid;
+            $groupingid = $course->defaultgroupingid;
             $participationonly = false;
         }
 
         $allowedgroups = groups_get_all_groups(
-            courseid: $this->course->id,
+            courseid: $course->id,
             userid: $userid,
             groupingid: $groupingid,
             participationonly: $participationonly
@@ -134,7 +135,7 @@ class group_selector extends comboboxsearch {
         if ($cm) {
             return groups_get_activity_group($cm, true, $allowedgroups);
         }
-        return groups_get_course_group($this->course, true, $allowedgroups);
+        return groups_get_course_group($course, true, $allowedgroups);
     }
 
     /**
@@ -147,6 +148,7 @@ class group_selector extends comboboxsearch {
             $cm = get_coursemodule_from_id(false, $this->context->instanceid);
             return groups_get_activity_groupmode($cm);
         }
-        return $this->course->groupmode;
+        $course = get_course($this->context->instanceid);
+        return $course->groupmode;
     }
 }

@@ -1,0 +1,12 @@
+issueNumber: MDL-82393
+notes:
+  core_course:
+    - message: >-
+        The $course parameter in the constructor of the
+        core_course\output\actionbar\group_selector class has been deprecated
+        and is no longer used.
+      type: deprecated
+    - message: >-
+        The $course class property in the
+        core_course\output\actionbar\group_selector class has been removed.
+      type: removed
