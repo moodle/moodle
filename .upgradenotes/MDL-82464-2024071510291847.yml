@@ -1,0 +1,7 @@
+issueNumber: MDL-82464
+notes:
+  core_reportbuilder:
+    - message: >-
+        The `count[distinct]` aggregation types support optional `'callback'`
+        value to customise the formatted output when applied to columns
+      type: improved

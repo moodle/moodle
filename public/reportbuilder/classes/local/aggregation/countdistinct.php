@@ -24,11 +24,14 @@ use core_reportbuilder\local\report\column;
 /**
  * Column count distinct aggregation type
  *
+ * The formatted value applied to aggregated columns can be customised by passing a callable as the 'callback' option
+ * via {@see column::set_aggregation} or {@see column::set_aggregation_options} methods
+ *
  * @package     core_reportbuilder
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class countdistinct extends base {
+class countdistinct extends count {
 
     /**
      * Return aggregation name
@@ -37,16 +40,6 @@ class countdistinct extends base {
      */
     public static function get_name(): lang_string {
         return new lang_string('aggregationcountdistinct', 'core_reportbuilder');
-    }
-
-    /**
-     * This aggregation can be performed on all column types
-     *
-     * @param int $columntype
-     * @return bool
-     */
-    public static function compatible(int $columntype): bool {
-        return true;
     }
 
     /**
@@ -72,28 +65,5 @@ class countdistinct extends base {
      */
     public static function get_field_sql(string $field, int $columntype): string {
         return "COUNT(DISTINCT {$field})";
-    }
-
-    /**
-     * Returns aggregated column type
-     *
-     * @param int $columntype
-     * @return int
-     */
-    public static function get_column_type(int $columntype): int {
-        return column::TYPE_INTEGER;
-    }
-
-    /**
-     * Return formatted value for column when applying aggregation
-     *
-     * @param mixed $value
-     * @param array $values
-     * @param array $callbacks
-     * @param int $columntype
-     * @return int
-     */
-    public function format_value($value, array $values, array $callbacks, int $columntype): int {
-        return (int) reset($values);
     }
 }

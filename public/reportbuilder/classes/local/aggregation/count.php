@@ -24,6 +24,9 @@ use core_reportbuilder\local\report\column;
 /**
  * Column count aggregation type
  *
+ * The formatted value applied to aggregated columns can be customised by passing a callable as the 'callback' option
+ * via {@see column::set_aggregation} or {@see column::set_aggregation_options} methods
+ *
  * @package     core_reportbuilder
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -77,9 +80,16 @@ class count extends base {
      * @param array $values
      * @param array $callbacks
      * @param int $columntype
-     * @return int
+     * @return mixed
      */
-    public function format_value($value, array $values, array $callbacks, int $columntype): int {
-        return (int) reset($values);
+    public function format_value($value, array $values, array $callbacks, int $columntype) {
+        $count = (int) reset($values);
+
+        // Determine callback based on passed options.
+        if (array_key_exists('callback', $this->options) && is_callable($this->options['callback'])) {
+            return ($this->options['callback'])($count);
+        }
+
+        return $count;
     }
 }
