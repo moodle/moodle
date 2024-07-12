@@ -29837,6 +29837,10 @@ span.editinstructions .alert-link {
   position: absolute;
   left: -2rem;
 }
+.bulkenabled .activity-item:has(.delegated-section):hover {
+  outline: none !important;
+  box-shadow: none !important;
+}
 .bulkenabled .course-section-header .bulkselect {
   left: -2.75rem;
   position: relative;

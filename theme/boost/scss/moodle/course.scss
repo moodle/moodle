@@ -1650,6 +1650,11 @@ $divider-hover-color: $primary !default;
             position: absolute;
             left: -2rem;
         }
+        // Delegated sections are not available for bulk editing.
+        &:has(.delegated-section):hover {
+            outline: none !important; // stylelint-disable-line declaration-no-important
+            box-shadow: none !important; // stylelint-disable-line declaration-no-important
+        }
     }
     .course-section-header .bulkselect {
         left: -2.75rem;

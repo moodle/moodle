@@ -123,6 +123,7 @@ class cm implements named_templatable, renderable {
             'cmid' => $mod->id,
             'editing' => $PAGE->user_is_editing(),
             'sectionnum' => $this->section->section,
+            'cmbulk' => !$mod->get_delegated_section_info(),
         ];
 
         // Add partial data segments.
