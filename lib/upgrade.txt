@@ -5,6 +5,8 @@ information provided here is intended especially for developers.
 
 * The `\core\dataformat::get_format_instance` method is now public, and can be used to retrieve a writer instance for
   a given dataformat
+* Added the ability for unit tests to autoload classes in the `\[component]\tests\` namespace from the `[path/to/component]/tests/classes` directory.
+* Added the `advanced_testcase::load_fixture()` helper to load fixtures from a components `tests/fixtures/` folder.
 
 === 4.3.4 ===
 
