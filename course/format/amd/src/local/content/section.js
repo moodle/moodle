@@ -136,7 +136,14 @@ export default class extends DndSection {
         if (!cms || cms.length === 0) {
             return null;
         }
-        return cms[cms.length - 1];
+        const lastCm = cms[cms.length - 1];
+        // If it is a delegated section return the last item overall.
+        if (this.section.component !== null) {
+            return lastCm;
+        }
+        // If it is a regular section and the last item overall has a parent cm, return the parent instead.
+        const parentSection = lastCm.parentNode.closest(this.selectors.CM);
+        return parentSection ?? lastCm;
     }
 
     /**
