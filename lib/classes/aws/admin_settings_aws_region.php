@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Admin setting for AWS regions.
- *
- * @package    core
- * @author     Dmitrii Metelkin <dmitriim@catalyst-au.net>
- * @copyright  2020 Catalyst IT
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\aws;
 
 defined('MOODLE_INTERNAL') || die();
@@ -35,6 +26,8 @@ require_once($CFG->dirroot . '/lib/adminlib.php');
  * @package    core
  * @copyright  2020 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated Since Moodle 4.5
+ * @todo       MDL-82459 Final deprecation in Moodle 5.0.
  */
 class admin_settings_aws_region extends \admin_setting_configtext {
 
@@ -44,8 +37,15 @@ class admin_settings_aws_region extends \admin_setting_configtext {
      * @param mixed $data array or string depending on setting
      * @param string $query
      * @return string
+     * @deprecated Since Moodle 4.5
      */
+    #[\core\attribute\deprecated(
+        'admin_settings_aws_region::output_html()',
+        since: '4.5',
+        mdl: 'MDL-80962',
+    )]
     public function output_html($data, $query='') {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         global $CFG, $OUTPUT;
 
         $default = $this->get_defaultsetting();
