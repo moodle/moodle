@@ -26839,6 +26839,11 @@ img.icon {
   text-align: center;
 }
 
+#page-admin-index #page-content a {
+  font-weight: normal;
+  text-decoration: underline;
+}
+
 #page-admin-plugins #plugins-overview-panel .info {
   display: inline-block;
   margin-right: 1em;

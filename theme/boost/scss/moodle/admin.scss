@@ -427,6 +427,11 @@
     text-align: center;
 }
 
+#page-admin-index #page-content a {
+    font-weight: normal;
+    text-decoration: underline;
+}
+
 // Plugins overview page at admin/plugins.php
 #page-admin-plugins {
     #plugins-overview-panel {
