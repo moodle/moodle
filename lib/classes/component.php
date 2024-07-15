@@ -173,7 +173,7 @@ class core_component {
             return;
         }
 
-        if (PHPUNIT_TEST) {
+        if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
             // For unit tests we support classes in `\frankenstyle_component\tests\` to be loaded from
             // `path/to/frankenstyle/component/tests/classes` directory.
             // Note: We do *not* support the legacy `\frankenstyle_component_tests_style_classnames`.
