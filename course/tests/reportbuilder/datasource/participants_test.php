@@ -239,7 +239,7 @@ class participants_test extends core_reportbuilder_testcase {
 
 
     /**
-     * Test creating course report, with aggregated last access date (minimum and maximum)
+     * Test creating participants report, with aggregated last access date (minimum and maximum)
      */
     public function test_course_last_access_aggregation(): void {
         $this->resetAfterTest();
@@ -255,7 +255,7 @@ class participants_test extends core_reportbuilder_testcase {
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
 
-        $report = $generator->create_report(['name' => 'Courses', 'source' => participants::class, 'default' => 0]);
+        $report = $generator->create_report(['name' => 'Participants', 'source' => participants::class, 'default' => 0]);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:fullname']);
         $column = $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'access:timeaccess']);
 
@@ -271,6 +271,43 @@ class participants_test extends core_reportbuilder_testcase {
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
             [$course->fullname, userdate($usertwolastaccess->timeaccess)],
+        ], array_map('array_values', $content));
+    }
+
+    /**
+     * Test creating participants report, with aggregated days taking course column
+     */
+    public function test_completion_days_taking_course_aggregation(): void {
+        $this->resetAfterTest();
+
+        $courseone = $this->getDataGenerator()->create_course(['fullname' => 'Course 1', 'startdate' => 1622502000]);
+        $coursetwo = $this->getDataGenerator()->create_course(['fullname' => 'Course 2']);
+
+        // User one completed the course in two days.
+        $userone = $this->getDataGenerator()->create_and_enrol($courseone);
+        $completion = new completion_completion(['course' => $courseone->id, 'userid' => $userone->id]);
+        $completion->mark_complete(1622502000 + (2 * DAYSECS));
+
+        // User two completed the course in three days (lazy bum).
+        $usertwo = $this->getDataGenerator()->create_and_enrol($courseone);
+        $completion = new completion_completion(['course' => $courseone->id, 'userid' => $usertwo->id]);
+        $completion->mark_complete(1622502000 + (3 * DAYSECS));
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+
+        $report = $generator->create_report(['name' => 'Participants', 'source' => participants::class, 'default' => 0]);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:fullname', 'sortenabled' => 1]);
+        $generator->create_column([
+            'reportid' => $report->get('id'),
+            'uniqueidentifier' => 'completion:dayscourse',
+            'aggregation' => 'avg',
+        ]);
+
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertEquals([
+            [$courseone->fullname, '2.5'],
+            [$coursetwo->fullname, ''],
         ], array_map('array_values', $content));
     }
 
