@@ -66,8 +66,13 @@ class completion {
      * @param int|null $value
      * @param stdClass $row
      * @return int|null
+     *
+     * @deprecated since Moodle 4.5 - please do not use this function any more
      */
+    #[\core\attribute\deprecated(null, mdl: 'MDL-82467', since: '4.5')]
     public static function get_days(?int $value, stdClass $row): ?int {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+
         // Do not show anything if there is no userid.
         if (!$row->userid) {
             return null;
