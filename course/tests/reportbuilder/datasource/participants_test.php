@@ -235,8 +235,8 @@ final class participants_test extends core_reportbuilder_testcase {
             '', // Time started.
             userdate($timecompleted), // Time completed.
             '', // Reagreggate.
-            2, // Days taking course.
-            2, // Days until completion.
+            '2 days', // Days taking course.
+            '2 days', // Days until completion.
             '42.50', // Grade.
         ], array_values($content[0]));
     }
@@ -310,7 +310,7 @@ final class participants_test extends core_reportbuilder_testcase {
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
-            [$courseone->fullname, '2.5'],
+            [$courseone->fullname, '2 days 12 hours'],
             [$coursetwo->fullname, ''],
         ], array_map('array_values', $content));
     }
