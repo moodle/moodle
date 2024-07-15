@@ -76,4 +76,26 @@ class helper_test extends \advanced_testcase {
         $this->resetAfterTest();
         $this->assertEquals($expected, \core_sms\manager::format_number($phonenumber, $countrycode));
     }
+
+    /**
+     * Test the proxy strings.
+     */
+    public function test_get_proxy_string(): void {
+        global $CFG;
+        $this->resetAfterTest();
+        // Confirm with no config an empty string is returned.
+        $CFG->proxyhost = '';
+        $this->assertEquals('', helper::get_proxy_string());
+
+        // Now set some configs.
+        $CFG->proxyhost = '127.0.0.1';
+        $CFG->proxyuser = 'user';
+        $CFG->proxypassword = 'password';
+        $CFG->proxyport = '1337';
+        $this->assertEquals('user:password@127.0.0.1:1337', helper::get_proxy_string());
+
+        // Now change to SOCKS proxy.
+        $CFG->proxytype = 'SOCKS5';
+        $this->assertEquals('socks5://user:password@127.0.0.1:1337', helper::get_proxy_string());
+    }
 }

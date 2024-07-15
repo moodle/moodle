@@ -25,4 +25,33 @@ namespace smsgateway_aws;
  */
 class helper {
 
+    /**
+     * This creates a proxy string suitable for use with the AWS SDK.
+     *
+     * @return string the string to use for proxy settings.
+     */
+    public static function get_proxy_string(): string {
+        global $CFG;
+        $proxy = '';
+        if (empty($CFG->proxytype)) {
+            return $proxy;
+        }
+        if ($CFG->proxytype === 'SOCKS5') {
+            // If it is a SOCKS proxy, append the protocol info.
+            $protocol = 'socks5://';
+        } else {
+            $protocol = '';
+        }
+        if (!empty($CFG->proxyhost)) {
+            $proxy = $CFG->proxyhost;
+            if (!empty($CFG->proxyport)) {
+                $proxy .= ':'. $CFG->proxyport;
+            }
+            if (!empty($CFG->proxyuser) && !empty($CFG->proxypassword)) {
+                $proxy = $protocol . $CFG->proxyuser . ':' . $CFG->proxypassword . '@' . $proxy;
+            }
+        }
+        return $proxy;
+    }
+
 }
