@@ -22,6 +22,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core;
+
+use core\exception\coding_exception;
+use stdClass;
+use ArrayIterator;
+use DirectoryIterator;
+use Exception;
+use RegexIterator;
+
 // Constants used in version.php files, these must exist when core_component executes.
 
 // We make use of error_log as debugging is not always available.
@@ -43,7 +52,7 @@ define('ANY_VERSION', 'any');
 /**
  * Collection of components related methods.
  */
-class core_component {
+class component {
     /** @var array list of ignored directories in plugin type roots - watch out for auth/db exception */
     protected static $ignoreddirs = [
         'CVS' => true,
@@ -160,7 +169,7 @@ class core_component {
             $debugging = "Class '%s' has been renamed for the autoloader and is now deprecated. Please use '%s' instead.";
             debugging(sprintf($debugging, $classname, $newclassname), DEBUG_DEVELOPER);
             if (PHP_VERSION_ID >= 70000 && preg_match('#\\\null(\\\|$)#', $classname)) {
-                throw new \coding_exception("Cannot alias $classname to $newclassname");
+                throw new coding_exception("Cannot alias $classname to $newclassname");
             }
             class_alias($newclassname, $classname);
             return;
@@ -171,6 +180,38 @@ class core_component {
         if (!empty($file)) {
             require($file);
             return;
+        }
+
+        if (PHPUNIT_TEST) {
+            // For unit tests we support classes in `\frankenstyle_component\tests\` to be loaded from
+            // `path/to/frankenstyle/component/tests/classes` directory.
+            // Note: We do *not* support the legacy `\frankenstyle_component_tests_style_classnames`.
+            if ($component = self::get_component_from_classname($classname)) {
+                $pathoptions = [
+                    '/tests/classes' => "{$component}\\tests\\",
+                    '/tests/behat' => "{$component}\\behat\\",
+                ];
+                foreach ($pathoptions as $path => $testnamespace) {
+                    if (preg_match("#^" . preg_quote($testnamespace) . "#", $classname)) {
+                        $path = self::get_component_directory($component) . $path;
+                        $relativeclassname = str_replace(
+                            $testnamespace,
+                            '',
+                            $classname,
+                        );
+                        $file = sprintf(
+                            "%s/%s.php",
+                            $path,
+                            str_replace('\\', '/', $relativeclassname),
+                        );
+                        if (!empty($file) && file_exists($file)) {
+                            require($file);
+                            return;
+                        }
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -241,7 +282,6 @@ class core_component {
 
         return $file;
     }
-
 
     /**
      * Initialise caches, always call before accessing self:: caches.
@@ -355,6 +395,17 @@ class core_component {
             @unlink($cachefile . '.tmp'); // Just in case anything fails (race condition).
             self::invalidate_opcode_php_cache($cachefile);
         }
+    }
+
+    /**
+     * Reset the initialisation of the component utility.
+     *
+     * Note: It should not be necessary to call this in regular code.
+     * Please only use it where strictly required.
+     */
+    public static function reset(): void {
+        // The autoloader will re-initialise if plugintypes is null.
+        self::$plugintypes = null;
     }
 
     /**
@@ -696,7 +747,7 @@ $cache = ' . var_export($cache, true) . ';
             if (!is_dir($fulldir)) {
                 continue;
             }
-            $items = new \DirectoryIterator($fulldir);
+            $items = new DirectoryIterator($fulldir);
             foreach ($items as $item) {
                 if ($item->isDot() || !$item->isDir()) {
                     continue;
@@ -794,7 +845,7 @@ $cache = ' . var_export($cache, true) . ';
             return;
         }
 
-        $items = new \DirectoryIterator($fulldir);
+        $items = new DirectoryIterator($fulldir);
         foreach ($items as $item) {
             if ($item->isDot()) {
                 continue;
@@ -1468,13 +1519,13 @@ $cache = ' . var_export($cache, true) . ';
                 foreach ($legacyclasses as $classname => $path) {
                     if (is_array($path)) {
                         if (!$allowsubsystems) {
-                            throw new \Exception(
+                            throw new Exception(
                                 "Invalid legacy classes path entry for {$classname}. " .
                                     "Only files within the component can be specified.",
                             );
                         }
                         if (count($path) !== 2) {
-                            throw new \Exception(
+                            throw new Exception(
                                 "Invalid legacy classes path entry for {$classname}. " .
                                     "Entries must be in the format [subsystem, path].",
                             );
@@ -1482,7 +1533,7 @@ $cache = ' . var_export($cache, true) . ';
                         [$subsystem, $path] = $path;
                         $subsystem = substr($subsystem, 5);
                         if (!array_key_exists($subsystem, self::$subsystems)) {
-                            throw new \Exception(
+                            throw new Exception(
                                 "Unknown subsystem '{$subsystem}' for legacy classes entry of '{$classname}'",
                             );
                         }
@@ -1588,3 +1639,7 @@ $cache = ' . var_export($cache, true) . ';
         return file_exists("$plugindir/pix/monologo.svg") || file_exists("$plugindir/pix/monologo.png");
     }
 }
+
+// Alias this class to the old name.
+// This should be kept here because we use this class in external tooling.
+class_alias(component::class, \core_component::class);

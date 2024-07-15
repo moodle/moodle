@@ -1,0 +1,20 @@
+issueNumber: MDL-66903
+notes:
+  core:
+    - message: >
+        Added the ability for unit tests to autoload classes in the
+        `\[component]\tests\`
+
+        namespace from the `[path/to/component]/tests/classes` directory.
+      type: improved
+    - message: >
+        Added a helper to load fixtures from a components `tests/fixtures/`
+        folder:
+
+
+        ```php
+
+        advanced_testcase::load_fixture(string $component, string $fixture): void;
+
+        ```
+      type: improved
