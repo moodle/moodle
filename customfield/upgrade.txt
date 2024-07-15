@@ -1,6 +1,9 @@
 This files describes API changes in /customfield/*,
 Information provided here is intended especially for developers.
 
+=== 4.4.2 ===
+* The customfield_select field controller `get_options` method now returns each option pre-formatted
+
 === 4.4 ===
 * Enhance the handling of files embedded within textarea custom fields in the course backup and restore functionalities.
   These files are now properly backed up when a course is backed up, and restored when the course is restored.
