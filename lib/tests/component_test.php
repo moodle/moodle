@@ -34,6 +34,13 @@ final class component_test extends advanced_testcase {
      */
     const SUBSYSTEMCOUNT = 77;
 
+    #[\Override]
+    public function tearDown(): void {
+        parent::tearDown();
+
+        \core_component::reset();
+    }
+
     public function test_get_core_subsystems(): void {
         global $CFG;
 
@@ -730,54 +737,54 @@ final class component_test extends advanced_testcase {
           'overlap'   => 'lib/tests/fixtures/component/overlap',
         ];
         return [
-          'PSR-0 Classloading - Root' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr0_main',
-              'includedfiles' => "{$directory}psr0/main.php",
-          ],
-          'PSR-0 Classloading - Sub namespace - underscores' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr0_subnamespace_example',
-              'includedfiles' => "{$directory}psr0/subnamespace/example.php",
-          ],
-          'PSR-0 Classloading - Sub namespace - slashes' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr0\\subnamespace\\slashes',
-              'includedfiles' => "{$directory}psr0/subnamespace/slashes.php",
-          ],
-          'PSR-4 Classloading - Root' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr4\\main',
-              'includedfiles' => "{$directory}psr4/main.php",
-          ],
-          'PSR-4 Classloading - Sub namespace' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr4\\subnamespace\\example',
-              'includedfiles' => "{$directory}psr4/subnamespace/example.php",
-          ],
-          'PSR-4 Classloading - Ensure underscores are not converted to paths' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr4\\subnamespace\\underscore_example',
-              'includedfiles' => "{$directory}psr4/subnamespace/underscore_example.php",
-          ],
-          'Overlap - Ensure no unexpected problems with PSR-4 when overlapping namespaces.' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'overlap\\subnamespace\\example',
-              'includedfiles' => "{$directory}overlap/subnamespace/example.php",
-          ],
-          'Overlap - Ensure no unexpected problems with PSR-0 overlapping namespaces.' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'overlap_subnamespace_example2',
-              'includedfiles' => "{$directory}overlap/subnamespace/example2.php",
-          ],
+            'PSR-0 Classloading - Root' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr0_main',
+                'includedfiles' => "{$directory}psr0/main.php",
+            ],
+            'PSR-0 Classloading - Sub namespace - underscores' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr0_subnamespace_example',
+                'includedfiles' => "{$directory}psr0/subnamespace/example.php",
+            ],
+            'PSR-0 Classloading - Sub namespace - slashes' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr0\\subnamespace\\slashes',
+                'includedfiles' => "{$directory}psr0/subnamespace/slashes.php",
+            ],
+            'PSR-4 Classloading - Root' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr4\\main',
+                'includedfiles' => "{$directory}psr4/main.php",
+            ],
+            'PSR-4 Classloading - Sub namespace' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr4\\subnamespace\\example',
+                'includedfiles' => "{$directory}psr4/subnamespace/example.php",
+            ],
+            'PSR-4 Classloading - Ensure underscores are not converted to paths' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr4\\subnamespace\\underscore_example',
+                'includedfiles' => "{$directory}psr4/subnamespace/underscore_example.php",
+            ],
+            'Overlap - Ensure no unexpected problems with PSR-4 when overlapping namespaces.' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'overlap\\subnamespace\\example',
+                'includedfiles' => "{$directory}overlap/subnamespace/example.php",
+            ],
+            'Overlap - Ensure no unexpected problems with PSR-0 overlapping namespaces.' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'overlap_subnamespace_example2',
+                'includedfiles' => "{$directory}overlap/subnamespace/example2.php",
+            ],
         ];
     }
 
@@ -829,66 +836,66 @@ final class component_test extends advanced_testcase {
           'overlap'   => 'lib/tests/fixtures/component/overlap',
         ];
         return [
-          'PSR-0 Classloading - Root' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr0_main',
-              'file' => "{$directory}psr0/main.php",
-          ],
-          'PSR-0 Classloading - Sub namespace - underscores' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr0_subnamespace_example',
-              'file' => "{$directory}psr0/subnamespace/example.php",
-          ],
-          'PSR-0 Classloading - Sub namespace - slashes' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr0\\subnamespace\\slashes',
-              'file' => "{$directory}psr0/subnamespace/slashes.php",
-          ],
-          'PSR-0 Classloading - non-existent file' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr0_subnamespace_nonexistent_file',
-              'file' => false,
-          ],
-          'PSR-4 Classloading - Root' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr4\\main',
-              'file' => "{$directory}psr4/main.php",
-          ],
-          'PSR-4 Classloading - Sub namespace' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr4\\subnamespace\\example',
-              'file' => "{$directory}psr4/subnamespace/example.php",
-          ],
-          'PSR-4 Classloading - Ensure underscores are not converted to paths' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr4\\subnamespace\\underscore_example',
-              'file' => "{$directory}psr4/subnamespace/underscore_example.php",
-          ],
-          'PSR-4 Classloading - non-existent file' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr4\\subnamespace\\nonexistent',
-              'file' => false,
-          ],
-          'Overlap - Ensure no unexpected problems with PSR-4 when overlapping namespaces.' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'overlap\\subnamespace\\example',
-              'file' => "{$directory}overlap/subnamespace/example.php",
-          ],
-          'Overlap - Ensure no unexpected problems with PSR-0 overlapping namespaces.' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'overlap_subnamespace_example2',
-              'file' => "{$directory}overlap/subnamespace/example2.php",
-          ],
+            'PSR-0 Classloading - Root' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr0_main',
+                'file' => "{$directory}psr0/main.php",
+            ],
+            'PSR-0 Classloading - Sub namespace - underscores' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr0_subnamespace_example',
+                'file' => "{$directory}psr0/subnamespace/example.php",
+            ],
+            'PSR-0 Classloading - Sub namespace - slashes' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr0\\subnamespace\\slashes',
+                'file' => "{$directory}psr0/subnamespace/slashes.php",
+            ],
+            'PSR-0 Classloading - non-existent file' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr0_subnamespace_nonexistent_file',
+                'file' => false,
+            ],
+            'PSR-4 Classloading - Root' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr4\\main',
+                'file' => "{$directory}psr4/main.php",
+            ],
+            'PSR-4 Classloading - Sub namespace' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr4\\subnamespace\\example',
+                'file' => "{$directory}psr4/subnamespace/example.php",
+            ],
+            'PSR-4 Classloading - Ensure underscores are not converted to paths' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr4\\subnamespace\\underscore_example',
+                'file' => "{$directory}psr4/subnamespace/underscore_example.php",
+            ],
+            'PSR-4 Classloading - non-existent file' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr4\\subnamespace\\nonexistent',
+                'file' => false,
+            ],
+            'Overlap - Ensure no unexpected problems with PSR-4 when overlapping namespaces.' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'overlap\\subnamespace\\example',
+                'file' => "{$directory}overlap/subnamespace/example.php",
+            ],
+            'Overlap - Ensure no unexpected problems with PSR-0 overlapping namespaces.' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'overlap_subnamespace_example2',
+                'file' => "{$directory}overlap/subnamespace/example2.php",
+            ],
             'PSR-4 namespaces can come from multiple sources - first source' => [
                 'psr0' => $psr0,
                 'psr4' => [
@@ -912,6 +919,64 @@ final class component_test extends advanced_testcase {
                 'includedfiles' => "{$dirroot}/lib/psr/http-factory/src/ServerRequestFactoryInterface.php",
             ],
         ];
+    }
+
+    /**
+     * Test that the classloader can load from the test namespaces.
+     */
+    public function test_classloader_tests_namespace(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $getclassfilecontent = function (string $classname, ?string $namespace): string {
+            if ($namespace) {
+                $content = "<?php\nnamespace $namespace;\nclass $classname {}";
+            } else {
+                $content = "<?php\nclass $classname {}";
+            }
+            return $content;
+        };
+
+        $vfileroot = \org\bovigo\vfs\vfsStream::setup('root', null, [
+            'lib' => [
+                'classes' => [
+                    'example.php' => $getclassfilecontent('example', 'core'),
+                ],
+                'tests' => [
+                    'classes' => [
+                        'example_classname.php' => $getclassfilecontent('example_classname', \core\tests::class),
+                    ],
+                    'behat' => [
+                        'example_classname.php' => $getclassfilecontent('example_classname', \core\behat::class),
+                    ],
+                ],
+            ],
+        ]);
+
+        // Note: This is pretty hacky, but it's the only way to test the classloader.
+        // We have to override the dirroot and libdir, and then reset the plugintypes property.
+        $CFG->dirroot = $vfileroot->url();
+        $CFG->libdir = $vfileroot->url() . '/lib';
+        \core_component::reset();
+
+        // Existing classes do not break.
+        $this->assertTrue(
+            class_exists(\core\example::class),
+        );
+
+        // Test and behat classes work.
+        $this->assertTrue(
+            class_exists(\core\tests\example_classname::class),
+        );
+        $this->assertTrue(
+            class_exists(\core\behat\example_classname::class),
+        );
+
+        // Non-existent classes do not do anything.
+        $this->assertFalse(
+            class_exists(\core\tests\example_classname_not_found::class),
+        );
     }
 
     /**
