@@ -108,5 +108,4 @@ final class filter_tidy_test extends \advanced_testcase {
             ],
         ];
     }
-
 }
