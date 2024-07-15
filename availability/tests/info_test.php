@@ -559,4 +559,62 @@ class info_test extends \advanced_testcase {
         $CFG->enableavailability = 1;
         $this->assertFalse($info->is_available_for_all());
     }
+
+    /**
+     * Test update_display_mode function.
+     *
+     * @covers \core\plugininfo\availability::update_display_mode
+     * @dataProvider update_display_mode_provider
+     *
+     * @param string $plugin The plugin name.
+     * @param string $expected The expected data.
+     */
+    public function test_update_display_mode(string $plugin, string $expected): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Get default value for default display mode.
+        $availabilityvalue = $DB->get_field('config_plugins', 'value',
+            ['name' => 'defaultdisplaymode', 'plugin' => "availability_$plugin"]);
+        $updatedisplaymode = \core\plugininfo\availability::update_display_mode($plugin, true);
+
+        // The default value is not inserted into the table.
+        // Or the display is updated but the display mode is the same value as the default.
+        $this->assertFalse($availabilityvalue);
+        $this->assertFalse($updatedisplaymode);
+
+        // Update display mode for plugins.
+        $updatedisplaymode = \core\plugininfo\availability::update_display_mode($plugin, false);
+
+        // The function should return true because the display mode value has changed.
+        $this->assertTrue($updatedisplaymode);
+
+        // Get the updated value for the default display mode.
+        $availabilityvalue = $DB->get_field('config_plugins', 'value',
+            ['name' => 'defaultdisplaymode', 'plugin' => "availability_$plugin"]);
+        $this->assertEquals($expected, $availabilityvalue);
+    }
+
+    /**
+     * Data provider for test_update_display_mode().
+     *
+     * @return array
+     */
+    public static function update_display_mode_provider(): array {
+        return [
+            'Update display mode for completion' => [
+                'completion',
+                '1',
+            ],
+            'Update display mode for grade' => [
+                'grade',
+                '1',
+            ],
+            'Update display mode for group' => [
+                'group',
+                '1',
+            ],
+        ];
+    }
 }

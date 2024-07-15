@@ -124,9 +124,12 @@ abstract class frontend {
             $modules[] = 'moodle-' . $component . '-form';
 
             // Get parameters for this plugin.
-            $componentparams->{$plugin} = array($component,
-                    $frontend->allow_add($course, $cm, $section),
-                    $frontend->get_javascript_init_params($course, $cm, $section));
+            $componentparams->{$plugin} = [
+                $component,
+                $frontend->allow_add($course, $cm, $section),
+                $frontend->get_javascript_init_params($course, $cm, $section),
+                get_config('availability_' . $plugin, 'defaultdisplaymode'),
+            ];
 
             // Include strings for this plugin.
             $identifiers = $frontend->get_javascript_strings();
