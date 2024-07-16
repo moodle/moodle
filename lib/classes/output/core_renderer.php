@@ -2635,9 +2635,12 @@ EOD;
      * @param string $message The message to print out.
      * @param ?string $type   The type of notification. See constants on notification.
      * @param bool $closebutton Whether to show a close icon to remove the notification (default true).
+     * @param ?string $title  The title of the notification.
+     * @param ?string $titleicon if the title should have an icon you can give the icon name with the component
+     *  (e.g. 'i/circleinfo, core' or 'i/circleinfo' if the icon is from core)
      * @return string the HTML to output.
      */
-    public function notification($message, $type = null, $closebutton = true) {
+    public function notification($message, $type = null, $closebutton = true, ?string $title = null, ?string $titleicon = null) {
         $typemappings = [
             // Valid types.
             'success'           => notification::NOTIFY_SUCCESS,
@@ -2681,7 +2684,7 @@ EOD;
             }
         }
 
-        $notification = new notification($message, $type, $closebutton);
+        $notification = new notification($message, $type, $closebutton, $title, $titleicon);
         if (count($extraclasses)) {
             $notification->set_extra_classes($extraclasses);
         }
