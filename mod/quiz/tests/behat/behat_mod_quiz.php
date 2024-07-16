@@ -145,6 +145,9 @@ class behat_mod_quiz extends behat_question_base {
                 return new moodle_url('/mod/quiz/review.php', ['attempt' => $attempt->id]);
 
             case 'question bank':
+                // The question bank does not handle fields at the edge of the viewport well.
+                // Increase the size to avoid this.
+                $this->execute('behat_general::i_change_window_size_to', ['window', 'large']);
                 return new moodle_url('/question/edit.php', [
                     'cmid' => $this->get_cm_by_quiz_name($identifier)->id,
                 ]);
