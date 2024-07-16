@@ -164,18 +164,18 @@ if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
 
 $reportname = $report->screen->heading();
 
+$baseurl = new moodle_url('/grade/report/singleview/index.php', ['id' => $courseid, 'item' => $itemtype]);
 if ($itemtype == 'user' || $itemtype == 'user_select') {
-    $PAGE->requires->js_call_amd('gradereport_singleview/user', 'init');
+    $PAGE->requires->js_call_amd('gradereport_singleview/user', 'init', [$baseurl->out(false)]);
     $actionbar = new \gradereport_singleview\output\action_bar($context, $report, 'user');
 } else if ($itemtype == 'grade' || $itemtype == 'grade_select') {
-    $PAGE->requires->js_call_amd('gradereport_singleview/grade', 'init');
+    $PAGE->requires->js_call_amd('gradereport_singleview/grade', 'init', [$baseurl->out(false)]);
     $actionbar = new \gradereport_singleview\output\action_bar($context, $report, 'grade');
 } else {
     $actionbar = new \core_grades\output\general_action_bar($context, new moodle_url('/grade/report/singleview/index.php',
         ['id' => $courseid]), 'report', 'singleview');
 }
 if ($course->groupmode && $itemtype !== 'select') {
-    $baseurl = new moodle_url('/grade/report/singleview/index.php', ['id' => $courseid, 'item' => $itemtype]);
     $PAGE->requires->js_call_amd('core_course/actionbar/group', 'init', [$baseurl->out(false)]);
 }
 

@@ -124,6 +124,12 @@ class assign_grading_table extends table_sql implements renderable {
             $this->rownum = $rowoffset - 1;
         }
 
+        $userid = optional_param('userid', null, PARAM_INT);
+        $groupid = groups_get_course_group($assignment->get_course(), true);
+        // If the user ID is set, it indicates that a user has been selected. In this case, override the user search
+        // string with the full name of the selected user.
+        $usersearch = $userid ? fullname(\core_user::get_user($userid)) : optional_param('search', '', PARAM_NOTAGS);
+        $assignment->set_usersearch($userid, $groupid, $usersearch);
         $users = array_keys( $assignment->list_participants($currentgroup, true));
         if (count($users) == 0) {
             // Insert a record that will never match to the sql is still valid.

@@ -150,7 +150,7 @@ Feature: Within the grader report, test that we can open our generic filter drop
 
   Scenario: A teacher can search and then filter by first or last name
     Given I set the field "Search users" to "Student 1"
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     And I click on "Filter by name" "combobox"
     And I select "S" in the "First name" "core_grades > initials bar"
     When I press "Apply"

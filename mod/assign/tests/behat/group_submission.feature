@@ -97,11 +97,11 @@ Feature: Group assignment submissions
       | student1 | G1    |
     And I am on the "Test assignment name" "assign activity" page
     And I follow "View all submissions"
-    And I click on "Group 1" in the "group" search widget
+    And I click on "Group 1" in the "Search groups" search combo box
     And I should see "Group 1" in the "Student 0" "table_row"
     And I should see "Group 1" in the "Student 1" "table_row"
     And I should not see "Student 2"
-    And I click on "All participants" in the "group" search widget
+    And I click on "All participants" in the "Search groups" search combo box
     And I should see "Group 1" in the "Student 0" "table_row"
     And I should see "Group 1" in the "Student 1" "table_row"
     And I should see "Default group" in the "Student 2" "table_row"

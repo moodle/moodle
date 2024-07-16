@@ -20,7 +20,7 @@ Feature: Given we land on the index page, select what type of report we wish to 
     Given I am on the "Course 1" "grades > Single view > View" page logged in as "teacher1"
     And I click on "Grade items" "link" in the ".page-toggler" "css_element"
     And "Search users" "field" should not exist
-    And I confirm "Test assignment one" in "grade" search within the gradebook widget exists
+    And I confirm "Test assignment one" exists in the "Search items" search combo box
     When I click on "Users" "link" in the ".page-toggler" "css_element"
     Then "Search users" "field" should exist
     And "Select a grade item" "combobox" should not exist

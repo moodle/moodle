@@ -42,7 +42,7 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
     And I give the grade "75.00" to the user "Student 1" for the grade item "grade item 1"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1                        | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
@@ -70,7 +70,7 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
     And I give the grade "75.00" to the user "Student 1" for the grade item "grade item 1"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1                        | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
@@ -83,13 +83,13 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
     And I give the grade "65.00" to the user "Student 2" for the grade item "grade item 1"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    When I click on "Student 1" in the "user" search widget
+    When I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1                        | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
       | Calc cat total                      | 100.00 %          | 37.50  | 0–100 | 37.50 %    | -                            |
       | Course total                        | -                 | 37.50  | 0–100 | 37.50 %    | -                            |
-    And I click on "Student 2" in the "user" search widget
+    And I click on "Student 2" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1                        | -                 | 65.00  | 0–100 | 65.00 %    | -                            |
@@ -100,13 +100,13 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
       | Min and max grades used in calculation | Initial min and max grades |
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1                        | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
       | Calc cat total                      | 100.00 %          | 37.50  | 0–100 | 37.50 %    | -                            |
       | Course total                        | -                 | 37.50  | 0–100 | 37.50 %    | -                            |
-    And I click on "Student 2" in the "user" search widget
+    And I click on "Student 2" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1                        | -                 | 65.00  | 0–100 | 65.00 %    | -                            |
@@ -136,7 +136,7 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
     And I give the grade "75.00" to the user "Student 1" for the grade item "grade item 1"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    When I click on "Student 1" in the "user" search widget
+    When I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1 | 50.00 %           | 75.00  | 0–100 | 75.00 %    | 37.50 %                      |
@@ -150,13 +150,13 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
     And I give the grade "65.00" to the user "Student 2" for the grade item "grade item 1"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1 | 50.00 %           | 75.00  | 0–100 | 75.00 %    | 37.50 %                      |
       | calc item    | 50.00 %           | 37.50  | 0–100 | 37.50 %    | 18.75 %                      |
       | Course total | -                 | 112.50 | 0–200 | 56.25 %    | -                            |
-    And I click on "Student 2" in the "user" search widget
+    And I click on "Student 2" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1 | 50.00 %           | 65.00  | 0–100 | 65.00 %    | 32.50 %                      |

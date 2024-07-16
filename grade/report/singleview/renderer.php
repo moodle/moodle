@@ -45,36 +45,24 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
      * @return string The raw HTML to render.
      */
     public function users_selector(object $course, ?int $userid = null, ?int $groupid = null): string {
+        $actionbarrenderer = $this->page->get_renderer('core_course', 'actionbar');
         $resetlink = new moodle_url('/grade/report/singleview/index.php', ['id' => $course->id, 'group' => $groupid ?? 0]);
-        $submitteduserid = optional_param('userid', '', PARAM_INT);
+        $usersearch = '';
 
-        if ($submitteduserid) {
-            $user = core_user::get_user($submitteduserid);
-            $currentvalue = fullname($user);
-        } else {
-            $currentvalue = '';
+        if ($userid) {
+            $user = core_user::get_user($userid);
+            $usersearch = fullname($user);
         }
 
-        $data = [
-            'currentvalue' => $currentvalue,
-            'courseid' => $course->id,
-            'instance' => rand(),
-            'group' => $groupid ?? 0,
-            'resetlink' => $resetlink->out(false),
-            'name' => 'userid',
-            'value' => $submitteduserid ?? '',
-        ];
-        $dropdown = new comboboxsearch(
-            true,
-            $this->render_from_template('core_user/comboboxsearch/user_selector', $data),
-            null,
-            'user-search d-flex',
-            null,
-            'usersearchdropdown overflow-auto',
-            null,
-            false,
+        return $actionbarrenderer->render(
+            new \core_course\output\actionbar\user_selector(
+                course: $course,
+                resetlink: $resetlink,
+                userid: $userid,
+                groupid: $groupid,
+                usersearch: $usersearch
+            )
         );
-        return $this->render_from_template($dropdown->get_template(), $dropdown->export_for_template($this));
     }
 
     /**

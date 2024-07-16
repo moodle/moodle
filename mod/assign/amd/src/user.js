@@ -13,28 +13,32 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Allow the user to search for learners within the grader report.
- *
- * @module    gradereport_grader/user
- * @copyright 2023 Mathew May <mathew.solutions>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 import UserSearch from 'core_user/comboboxsearch/user';
-import * as Repository from 'gradereport_grader/local/user/repository';
+import * as Repository from 'mod_assign/repository';
 
 // Define our standard lookups.
 const selectors = {
     component: '.user-search',
-    courseid: '[data-region="courseid"]',
+    groupid: '[data-region="groupid"]',
+    instance: '[data-region="instance"]',
+    currentvalue: '[data-region="currentvalue"]',
 };
 const component = document.querySelector(selectors.component);
-const courseID = component.querySelector(selectors.courseid).dataset.courseid;
+const groupID = parseInt(component.querySelector(selectors.groupid).dataset.groupid, 10);
+const assignID = parseInt(component.querySelector(selectors.instance).dataset.instance, 10);
 
+/**
+ * Allow the user to search for users in the action bar.
+ *
+ * @module    mod_assign/user
+ * @copyright 2024 Ilya Tregubov <ilyatregubov@proton.me>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 export default class User extends UserSearch {
 
     /**
      * Construct the class.
+     *
      * @param {string} baseUrl The base URL for the page.
      */
     constructor(baseUrl) {
@@ -42,17 +46,14 @@ export default class User extends UserSearch {
         this.baseUrl = baseUrl;
     }
 
+    /**
+     * Allow the class to be invoked via PHP.
+     *
+     * @param {string} baseUrl The base URL for the page.
+     * @returns {User}
+     */
     static init(baseUrl) {
         return new User(baseUrl);
-    }
-
-    /**
-     * Get the data we will be searching against in this component.
-     *
-     * @returns {Promise<*>}
-     */
-    fetchDataset() {
-        return Repository.userFetch(courseID).then((r) => r.users);
     }
 
     /**
@@ -62,8 +63,18 @@ export default class User extends UserSearch {
      */
     selectAllResultsLink() {
         const url = new URL(this.baseUrl);
-        url.searchParams.set('gpr_search', this.getSearchTerm());
+        url.searchParams.set('search', this.getSearchTerm());
+
         return url.toString();
+    }
+
+    /**
+     * Get the data we will be searching against in this component.
+     *
+     * @returns {Promise<*>}
+     */
+    fetchDataset() {
+        return Repository.userFetch(assignID, groupID).then((r) => r);
     }
 
     /**
@@ -74,8 +85,9 @@ export default class User extends UserSearch {
      */
     selectOneLink(userID) {
         const url = new URL(this.baseUrl);
-        url.searchParams.set('gpr_search', this.getSearchTerm());
-        url.searchParams.set('gpr_userid', userID);
+        url.searchParams.set('search', this.getSearchTerm());
+        url.searchParams.set('userid', userID.toString());
+
         return url.toString();
     }
 }

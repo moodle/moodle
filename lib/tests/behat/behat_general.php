@@ -2490,4 +2490,93 @@ EOF;
             throw new \Behat\Mink\Exception\ExpectationException('Invalid state for switch: ' . $state, $this->getSession());
         }
     }
+
+    /**
+     * Helper that returns the dropdown node element within a particular search combo box.
+     *
+     * @param string $comboboxname The name (label) of the search combo box element. (e.g. "Search users", "Search groups").
+     * @param string $itemname The name of the combo box item we are searching for. This is only used if $fieldset is set
+     *                         to true.
+     * @param bool $fieldset Whether to set the search field of the combo box at the same time
+     * @return NodeElement
+     * @throws coding_exception
+     */
+    private function get_combobox_dropdown_node(string $comboboxname, string $itemname, bool $fieldset = true): NodeElement {
+        $this->execute("behat_general::wait_until_the_page_is_ready");
+
+        $comboboxxpath = "//div[contains(@class, 'comboboxsearch') and .//span[text()='{$comboboxname}']]";
+        $dropdowntriggerxpath = $comboboxxpath . "/descendant::div[contains(@class,'dropdown-toggle')]";
+        $dropdownxpath = $comboboxxpath . "/descendant::div[contains(@class,'dropdown-menu')]";
+        $dropdown = $this->find("xpath_element", $dropdownxpath);
+
+        // If the dropdown is not visible, open it. Also, ensure that a dropdown trigger element exists.
+        if ($this->getSession()->getPage()->find('xpath', $dropdowntriggerxpath) && !$dropdown->isVisible()) {
+            $this->execute("behat_general::i_click_on", [$dropdowntriggerxpath, "xpath_element"]);
+        }
+
+        if ($fieldset) {
+            $this->execute("behat_forms::set_field_value", [$comboboxname, $itemname]);
+            $this->execute("behat_general::wait_until_exists", [$itemname, "list_item"]);
+        }
+
+        return $dropdown;
+    }
+
+    /**
+     * Confirm if a value exists within the search combo box.
+     *
+     * Examples:
+     * - I confirm "User" exists in the "Search users" search combo box
+     * - I confirm "Group" exists in the "Search groups" search combo box
+     * - I confirm "Grade item" exists in the "Search grade items" search combo box
+     *
+     * @Given /^I confirm "(?P<itemname>(?:[^"]|\\")*)" exists in the "(?P<comboboxname>(?:[^"]|\\")*)" search combo box$/
+     * @param string $itemname The name of the combo box item we are searching for. This is only used if $fieldset is set
+     *                         to true.
+     * @param string $comboboxname The name (label) of the search combo box element. (e.g. "Search users", "Search groups").
+     */
+    public function i_confirm_in_search_combobox_exists(string $itemname, string $comboboxname): void {
+        $this->execute("behat_general::assert_element_contains_text",
+            [$itemname, $this->get_combobox_dropdown_node($comboboxname, $itemname, false), "NodeElement"]);
+    }
+
+    /**
+     * Confirm if a value does not exist within the search combo box.
+     *
+     * Examples:
+     * - I confirm "User" does not exist in the "Search users" search combo box
+     * - I confirm "Group" does not exist in the "Search groups" search combo box
+     * - I confirm "Grade item" does not exist in the "Search grade items" search combo box
+     *
+     * @Given /^I confirm "(?P<itemname>(?:[^"]|\\")*)" does not exist in the "(?P<comboboxname>(?:[^"]|\\")*)" search combo box$/
+     * @param string $itemname The name of the combo box item we are searching for. This is only used if $fieldset is set
+     *                         to true.
+     * @param string $comboboxname The name (label) of the search combo box element. (e.g. "Search users", "Search groups").
+     */
+    public function i_confirm_in_search_combobox_does_not_exist(string $itemname, string $comboboxname): void {
+        $this->execute("behat_general::assert_element_not_contains_text",
+            [$itemname, $this->get_combobox_dropdown_node($comboboxname, $itemname, false), "NodeElement"]);
+    }
+
+    /**
+     * Clicks on an option from the specified search widget.
+     *
+     * Examples:
+     * - I click on "Student" in the "Search users" search combo box
+     * - I click on "Group" in the "Search groups" search combo box
+     * - I click on "Grade item" in the "Search grade items" search combo box
+     *
+     * @Given /^I click on "(?P<itemname>(?:[^"]|\\")*)" in the "(?P<comboboxname>(?:[^"]|\\")*)" search combo box$/
+     * @param string $itemname The name of the combo box item we are searching for. This is only used if $fieldset is set
+     *                         to true.
+     * @param string $comboboxname The name (label) of the search combo box element. (e.g. "Search users", "Search groups").
+     */
+    public function i_click_on_in_search_combobox(string $itemname, string $comboboxname): void {
+        $node = $this->get_combobox_dropdown_node($comboboxname, $itemname);
+        $this->execute('behat_general::i_click_on_in_the', [
+            $itemname, "list_item",
+            $node, "NodeElement",
+        ]);
+        $this->execute("behat_general::i_wait_to_be_redirected");
+    }
 }

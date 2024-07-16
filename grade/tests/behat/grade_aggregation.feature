@@ -345,7 +345,7 @@ Feature: We can use calculated grade totals
     And I set the field "Show weightings" to "Show"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     And I set the field "View report as" to "Myself"
     And the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Contribution to course total |
@@ -542,7 +542,7 @@ Feature: We can use calculated grade totals
     And I navigate to "View > Grader report" in the course gradebook
     Then I should see "75.00 (16.85 %)" in the ".course" "css_element"
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     And I set the field "View report as" to "Myself"
     And the following should exist in the "user-grade" table:
       | Grade item            | Calculated weight | Grade           | Contribution to course total |

@@ -26,7 +26,7 @@ Feature: Teacher can navigate to the previous or next user report.
     And I am on the "Course" "grades > User report > View" page logged in as "teacher1"
 
   Scenario: A teacher can navigate to the next user report
-    Given I click on "Student 1" in the "user" search widget
+    Given I click on "Student 1" in the "Search users" search combo box
     And "Student 1" "heading" should exist
     And ".previous" "css_element" should not exist in the ".user-navigation" "css_element"
     And ".next" "css_element" should exist in the ".user-navigation" "css_element"
@@ -44,7 +44,7 @@ Feature: Teacher can navigate to the previous or next user report.
     And ".next" "css_element" should not exist in the ".user-navigation" "css_element"
 
   Scenario: A teacher can navigate to the previous user report
-    Given I click on "Student 3" in the "user" search widget
+    Given I click on "Student 3" in the "Search users" search combo box
     And "Student 3" "heading" should exist
     And ".previous" "css_element" should exist in the ".user-navigation" "css_element"
     And I should see "Student 2" in the ".previous" "css_element"

@@ -39,7 +39,7 @@ Feature: Hidden grade items should be hidden when grade category is locked, but 
 
   Scenario: Hidden grade items in locked category is hidden for teacher
     Given I am on the "Course 1" "grades > User report > View" page logged in as teacher1
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     When I set the field "View report as" to "Myself"
     Then the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Percentage | Contribution to course total |

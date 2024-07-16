@@ -46,7 +46,7 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
     And I set the following settings for grade item "Test assignment four" of type "gradeitem" on "grader" page:
       | Hidden | 1 |
     And I am on the "Course 1" "grades > User report > View" page
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     And I set the field "View report as" to "Myself"
     Then the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Percentage | Contribution to course total |
