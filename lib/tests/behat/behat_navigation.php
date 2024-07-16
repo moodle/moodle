@@ -725,6 +725,15 @@ class behat_navigation extends behat_base {
             case 'Admin notifications':
                 return new moodle_url('/admin/');
 
+            case 'Content bank':
+                return new moodle_url('/contentbank/');
+
+            case 'My private files':
+                return new moodle_url('/user/files.php');
+
+            case 'System logs report':
+                return new moodle_url('/report/log/index.php');
+
             default:
                 throw new Exception('Unrecognised core page type "' . $name . '."');
         }
