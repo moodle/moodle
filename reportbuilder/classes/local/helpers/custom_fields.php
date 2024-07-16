@@ -140,7 +140,7 @@ class custom_fields {
 
                 $columns[] = (new column(
                     'customfield_' . $field->get('shortname'),
-                    new lang_string('customfieldcolumn', 'core_reportbuilder', $field->get_formatted_name()),
+                    new lang_string('customfieldcolumn', 'core_reportbuilder', $field->get_formatted_name(false)),
                     $this->entityname
                 ))
                     ->add_joins($this->get_joins())
@@ -251,7 +251,7 @@ class custom_fields {
                 $filter = (new filter(
                     $this->get_filter_class_type($datacontroller),
                     'customfield_' . $field->get('shortname'),
-                    new lang_string('customfieldcolumn', 'core_reportbuilder', $field->get_formatted_name()),
+                    new lang_string('customfieldcolumn', 'core_reportbuilder', $field->get_formatted_name(false)),
                     $this->entityname,
                     $customdatasql,
                     $customdataparams,
