@@ -398,13 +398,26 @@ M.mod_quiz.secure_window = {
         e.halt();
     },
 
+    /**
+     * Initialize the event listener for the secure window close button
+     *
+     * @param {Object} Y YUI instance. When called from renderer, this parameter precedes the others
+     * @param {String} url
+     */
     init_close_button: function(Y, url) {
         Y.on('click', function(e) {
-            M.mod_quiz.secure_window.close(url, 0)
+            M.mod_quiz.secure_window.close(Y, url, 0);
         }, '#secureclosebutton');
     },
 
-    close: function(url, delay) {
+    /**
+     * Close the secure window, or redirect to URL if the opener is no longer present
+     *
+     * @param {Object} Y YUI instance. When called from renderer, this parameter precedes the others
+     * @param {String} url
+     * @param {Number} delay
+     */
+    close: function(Y, url, delay) {
         setTimeout(function() {
             if (window.opener) {
                 window.opener.document.location.reload();
