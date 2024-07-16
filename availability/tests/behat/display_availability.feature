@@ -164,3 +164,20 @@ Feature: Display availability for activities and sections
 
     # Section 2 should not be available at all
     And I should not see "Section 2" in the "region-main" "region"
+
+  @javascript
+  Scenario: Change default display for in manage restriction, then check eye icon by add restriction access to activity.
+    Given I log in as "admin"
+    When I navigate to "Plugins > Availability restrictions > Manage restrictions" in site administration
+    # Change value for display eye.
+    And I click on "Hide" "icon" in the ".display-mode-date" "css_element"
+    And I am on the "Page 1" "page activity editing" page logged in as "teacher1"
+    And I expand all fieldsets
+    And I press "Add restriction..."
+    And I click on "Date" "button" in the "Add restriction..." "dialogue"
+    Then the "alt" attribute of ".availability-item .availability-eye img" "css_element" should contain "Hidden entirely"
+    And I click on ".availability-item .availability-delete img" "css_element"
+    And I should not see "Date" in the "Restrict access" "fieldset"
+    And I press "Add restriction..."
+    And I click on "Grade" "button" in the "Add restriction..." "dialogue"
+    And the "alt" attribute of ".availability-item .availability-eye img" "css_element" should contain "Displayed if student"

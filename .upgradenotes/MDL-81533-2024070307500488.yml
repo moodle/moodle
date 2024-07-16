@@ -1,0 +1,15 @@
+issueNumber: MDL-81533
+notes:
+  core:
+    - message: >
+        The function update_display_mode will update the eye icon (enabled/disabled) in the availability.
+        The $pluginname is represented to the plugin need to update.
+        The $displaymode is represented to the eye icon. Whether it enabled or disabled.
+
+      type: improved
+  core_admin:
+    - message: >
+        Add availability_management_table is a table which extends from plugin_management_table.
+        Create the availability_management_table can reusable the toggle button for enabled column.
+
+      type: improved

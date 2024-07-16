@@ -83,6 +83,36 @@ class availability extends base {
     }
 
     /**
+     * Update the display mode for a specific plugin based on `$displaymode` parameter.
+     *
+     * @param string $pluginname The plugin name.
+     * @param bool $displaymode whether the eye icon of display mode is enabled or disabled.
+     * @return bool Returns true if the configuration has been changed, false otherwise.
+     */
+    public static function update_display_mode(string $pluginname, bool $displaymode): bool {
+        $haschanged = false;
+
+        $plugin = 'availability_' . $pluginname;
+        $oldvalue = get_config($plugin, 'defaultdisplaymode');
+        $disabled = !$displaymode;
+        // Only set value if there is no config setting or if the value is different from the previous one.
+        if ($oldvalue == false && $disabled) {
+            set_config('defaultdisplaymode', $disabled, $plugin);
+            $haschanged = true;
+        } else if ($oldvalue != false && !$disabled) {
+            unset_config('defaultdisplaymode', $plugin);
+            $haschanged = true;
+        }
+
+        if ($haschanged) {
+            add_to_config_log('defaultdisplaymode', $oldvalue, $disabled, $plugin);
+            \core_plugin_manager::reset_caches();
+        }
+
+        return $haschanged;
+    }
+
+    /**
      * Defines if there should be a way to uninstall the plugin via the administration UI.
      *
      * @return bool
