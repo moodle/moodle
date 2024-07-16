@@ -68,8 +68,12 @@ class behat_core_question extends behat_question_base {
     protected function resolve_page_instance_url(string $type, string $identifier): moodle_url {
         switch (strtolower($type)) {
             case 'course question bank':
-                return new moodle_url('/question/edit.php',
-                        ['courseid' => $this->get_course_id($identifier)]);
+                // The question bank does not handle fields at the edge of the viewport well.
+                // Increase the size to avoid this.
+                $this->execute('behat_general::i_change_window_size_to', ['window', 'large']);
+                return new moodle_url('/question/edit.php', [
+                    'courseid' => $this->get_course_id($identifier),
+                ]);
 
             case 'course question categories':
                 return new moodle_url('/question/bank/managecategories/category.php',
