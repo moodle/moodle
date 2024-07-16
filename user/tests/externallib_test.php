@@ -194,6 +194,8 @@ final class externallib_test extends externallib_advanced_testcase {
 
         // Create complex user profile field supporting multi-lang.
         filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+
         $name = '<span lang="en" class="multilang">Employment status</span>'.
             '<span lang="es" class="multilang">Estado de Empleo</span>';
         $statuses = 'UE\nSE\n<span lang="en" class="multilang">Other</span><span lang="es" class="multilang">Otro</span>';
@@ -359,6 +361,8 @@ final class externallib_test extends externallib_advanced_testcase {
 
         // Create complex user profile field supporting multi-lang.
         filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+
         $name = '<span lang="en" class="multilang">Employment status</span>' .
             '<span lang="es" class="multilang">Estado de Empleo</span>';
         $statuses = 'UE\nSE\n<span lang="en" class="multilang">Other</span><span lang="es" class="multilang">Otro</span>';
