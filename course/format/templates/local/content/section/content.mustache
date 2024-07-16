@@ -95,11 +95,13 @@
     {{> core_courseformat/local/content/section/header }}
 {{/ core_courseformat/local/content/section/header }}
 {{/header}}
-{{#restrictionlock}}
-    <div class="align-self-center ml-2">
-        {{#pix}}t/unlock, core{{/pix}}
-    </div>
-{{/restrictionlock}}
+{{^singleheader}}
+    {{#restrictionlock}}
+        <div class="align-self-center ml-2">
+            {{#pix}}t/unlock, core{{/pix}}
+        </div>
+    {{/restrictionlock}}
+{{/singleheader}}
 <div data-region="sectionbadges" class="sectionbadges d-flex align-items-center">
     {{$ core_courseformat/local/content/section/badges }}
         {{> core_courseformat/local/content/section/badges }}
