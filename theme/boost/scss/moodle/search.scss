@@ -39,6 +39,9 @@
     }
     .btn-close {
         right: 2.2rem;
+        opacity: inherit;
+        font-size: inherit;
+        line-height: inherit;
     }
     .btn-submit {
         background-color: $gray-100;

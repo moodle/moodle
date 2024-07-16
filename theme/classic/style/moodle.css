@@ -18092,7 +18092,7 @@ a.badge-dark:focus, a.badge-dark.focus {
 .alert-dismissible {
   padding-right: 3.90625rem;
 }
-.alert-dismissible .close {
+.alert-dismissible .close, .alert-dismissible .btn-close {
   position: absolute;
   top: 0;
   right: 0;
@@ -18554,7 +18554,7 @@ a.badge-dark:focus, a.badge-dark.focus {
   border-color: #1b1e21;
 }
 
-.close {
+.close, .btn-close {
   float: right;
   font-size: 1.40625rem;
   font-weight: 700;
@@ -18564,25 +18564,25 @@ a.badge-dark:focus, a.badge-dark.focus {
   opacity: 0.5;
 }
 @media (max-width: 1200px) {
-  .close {
+  .close, .btn-close {
     font-size: calc(0.950625rem + 0.6075vw);
   }
 }
-.close:hover {
+.close:hover, .btn-close:hover {
   color: #000;
   text-decoration: none;
 }
-.close:not(:disabled):not(.disabled):hover, .close:not(:disabled):not(.disabled):focus {
+.close:not(:disabled):not(.disabled):hover, .btn-close:not(:disabled):not(.disabled):hover, .close:not(:disabled):not(.disabled):focus, .btn-close:not(:disabled):not(.disabled):focus {
   opacity: 0.75;
 }
 
-button.close {
+button.close, button.btn-close {
   padding: 0;
   background-color: transparent;
   border: 0;
 }
 
-a.close.disabled {
+a.close.disabled, a.disabled.btn-close {
   pointer-events: none;
 }
 
@@ -18747,7 +18747,7 @@ a.close.disabled {
   border-top-left-radius: calc(0.3rem - 1px);
   border-top-right-radius: calc(0.3rem - 1px);
 }
-.modal-header .close {
+.modal-header .close, .modal-header .btn-close {
   padding: 1rem 1rem;
   margin: -1rem -1rem -1rem auto;
 }
@@ -23147,8 +23147,8 @@ a.dropdown-toggle.focus,
 a.dropdown-toggle:focus,
 .moodle-dialogue-base .closebutton.focus,
 .moodle-dialogue-base .closebutton:focus,
-button.close.focus,
-button.close:focus,
+button.btn-close.focus,
+button.btn-close:focus,
 .form-autocomplete-selection.focus,
 .form-autocomplete-selection:focus,
 [role=treeitem]:not([aria-expanded=true]).focus,
@@ -23170,7 +23170,7 @@ input[type=image]:focus:hover,
 .sr-only-focusable:focus:hover,
 a.dropdown-toggle:focus:hover,
 .moodle-dialogue-base .closebutton:focus:hover,
-button.close:focus:hover,
+button.btn-close:focus:hover,
 .form-autocomplete-selection:focus:hover,
 [role=treeitem]:not([aria-expanded=true]):focus:hover {
   text-decoration: none;
@@ -25581,7 +25581,7 @@ input[disabled] {
 .alert-primary a {
   color: #041d34;
 }
-.alert-primary .close {
+.alert-primary .btn-close {
   color: #000305;
   opacity: 0.6;
 }
@@ -25589,7 +25589,7 @@ input[disabled] {
 .alert-secondary a {
   color: #525557;
 }
-.alert-secondary .close {
+.alert-secondary .btn-close {
   color: #393b3d;
   opacity: 0.6;
 }
@@ -25597,7 +25597,7 @@ input[disabled] {
 .alert-success a, .environmenttable .ok a {
   color: #0c1b0b;
 }
-.alert-success .close, .environmenttable .ok .close {
+.alert-success .btn-close, .environmenttable .ok .btn-close {
   color: black;
   opacity: 0.6;
 }
@@ -25605,7 +25605,7 @@ input[disabled] {
 .alert-info a {
   color: #00171b;
 }
-.alert-info .close {
+.alert-info .btn-close {
   color: black;
   opacity: 0.6;
 }
@@ -25613,7 +25613,7 @@ input[disabled] {
 .alert-warning a, .environmenttable .warn a {
   color: #573e1c;
 }
-.alert-warning .close, .environmenttable .warn .close {
+.alert-warning .btn-close, .environmenttable .warn .btn-close {
   color: #302310;
   opacity: 0.6;
 }
@@ -25621,7 +25621,7 @@ input[disabled] {
 .alert-danger a, .environmenttable .error a {
   color: #3d0f0a;
 }
-.alert-danger .close, .environmenttable .error .close {
+.alert-danger .btn-close, .environmenttable .error .btn-close {
   color: #110403;
   opacity: 0.6;
 }
@@ -25629,7 +25629,7 @@ input[disabled] {
 .alert-light a {
   color: #686868;
 }
-.alert-light .close {
+.alert-light .btn-close {
   color: #4e4e4f;
   opacity: 0.6;
 }
@@ -25637,7 +25637,7 @@ input[disabled] {
 .alert-dark a {
   color: #040505;
 }
-.alert-dark .close {
+.alert-dark .btn-close {
   color: black;
   opacity: 0.6;
 }
@@ -32895,6 +32895,9 @@ body.path-question-type .mform fieldset.hidden {
 }
 .simplesearchform .btn-close {
   right: 2.2rem;
+  opacity: inherit;
+  font-size: inherit;
+  line-height: inherit;
 }
 .simplesearchform .btn-submit {
   background-color: #f8f9fa;
@@ -36943,10 +36946,10 @@ span[data-flexitour=container][x-placement=right] div[data-role=arrow]:after, sp
   left: 50%;
   transform: translate(-50%, -50%);
 }
-.modal .close {
+.modal .btn-close {
   margin: -0.8rem -0.8rem -0.8rem auto;
 }
-.modal .close:not(:disabled):not(.disabled):hover, .modal .close:not(:disabled):not(.disabled):focus {
+.modal .btn-close:not(:disabled):not(.disabled):hover, .modal .btn-close:not(:disabled):not(.disabled):focus {
   opacity: inherit;
 }
 
@@ -37697,7 +37700,7 @@ div.editor_atto_toolbar button .icon {
   margin: 2px 5px 0 0;
   content: "\f06a";
 }
-.toast .close {
+.toast .btn-close {
   color: inherit;
 }
 
