@@ -126,6 +126,20 @@ class client extends \oauth2_client {
             return [];
         }
         $result = [];
+
+        // Replace the language tag if it appears in the string.
+        $lang = current_language();
+        $tags = ["{lang}", "{LANG}", "{language}", "{LANGUAGE}", '{lan-guage}', '{LAN-GUAGE}'];
+        $langcode = [
+            strtolower(substr($lang, 0, 2)),
+            strtoupper(substr($lang, 0, 2)),
+            strtolower($lang),
+            strtoupper($lang),
+            str_replace('_', '-', strtolower($lang)),
+            str_replace('_', '-', strtoupper($lang)),
+        ];
+        $params = str_replace($tags, $langcode, $params);
+
         parse_str($params, $result);
         return $result;
     }
