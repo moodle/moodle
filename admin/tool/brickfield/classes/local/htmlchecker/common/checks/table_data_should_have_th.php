@@ -46,7 +46,7 @@ class table_data_should_have_th extends brickfield_accessibility_table_test {
                             foreach ($tr->childNodes as $th) {
                                 if ($this->property_is_equal($th, 'tagName', 'th')) {
                                     break 3;
-                                } else {
+                                } else if ($th->nodeName != '#text') {
                                     $this->add_report($table);
                                     break 3;
                                 }
@@ -57,7 +57,7 @@ class table_data_should_have_th extends brickfield_accessibility_table_test {
                     foreach ($child->childNodes as $th) {
                         if ($this->property_is_equal($th, 'tagName', 'th')) {
                             break 2;
-                        } else {
+                        } else if ($th->nodeName != '#text') {
                             $this->add_report($table);
                             break 2;
                         }
