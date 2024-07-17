@@ -1,5 +1,5 @@
-@editor @editor_atto @atto @atto_h5p @core_h5p @_file_upload @_switch_iframe
-Feature: Add h5ps to Atto
+@editor @editor_atto @atto @atto_h5p @core_h5p @_switch_iframe
+Feature: Use the Atto editor to upload an h5p package
   To write rich text - I need to add h5ps.
 
   Background:
@@ -18,9 +18,6 @@ Feature: Add h5ps to Atto
     And the "displayh5p" filter is "on"
     And the following config values are set as admin:
       | allowedsources | https://moodle.h5p.com/content/[id] | filter_displayh5p |
-    And the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
 
   @javascript @external
   Scenario: Insert an embedded h5p
@@ -38,11 +35,10 @@ Feature: Add h5ps to Atto
 
   @javascript
   Scenario: Insert an h5p file
-    Given I log in as "admin"
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/guess-the-answer.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
-    And I am on the PageName1 "page activity editing" page
+    Given the following "user private file" exists:
+      | user     | admin                                   |
+      | filepath | h5p/tests/fixtures/guess-the-answer.h5p |
+    And I am on the "PageName1" "page activity editing" page logged in as "admin"
     And I click on "Insert H5P" "button" in the "#fitem_id_page" "css_element"
     And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
@@ -97,11 +93,10 @@ Feature: Add h5ps to Atto
 
   @javascript @external
   Scenario: Edit H5P content
-    Given I log in as "admin"
-    And I follow "Manage private files..."
-    And I upload "lib/editor/atto/tests/fixtures/drag.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
-    And I am on the PageName1 "page activity editing" page
+    Given the following "user private file" exists:
+      | user     | admin                       |
+      | filepath | h5p/tests/fixtures/drag.h5p |
+    And I am on the "PageName1" "page activity editing" page logged in as "admin"
     And I click on "Insert H5P" "button" in the "#fitem_id_page" "css_element"
 #   H5P file content
     And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
@@ -131,11 +126,10 @@ Feature: Add h5ps to Atto
 
   @javascript
   Scenario: Enable/disable H5P options
-    Given I log in as "admin"
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/guess-the-answer.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
-    And I am on the PageName1 "page activity editing" page
+    Given the following "user private file" exists:
+      | user     | admin                                   |
+      | filepath | h5p/tests/fixtures/guess-the-answer.h5p |
+    And I am on the "PageName1" "page activity editing" page logged in as "admin"
     And I click on "Insert H5P" "button" in the "#fitem_id_page" "css_element"
     And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
@@ -214,11 +208,10 @@ Feature: Add h5ps to Atto
     And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |
-    And I log in as "admin"
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/guess-the-answer.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
-    And I am on the PageName1 "page activity editing" page
+    And the following "user private file" exists:
+      | user     | admin                                   |
+      | filepath | h5p/tests/fixtures/guess-the-answer.h5p |
+    And I am on the "PageName1" "page activity editing" page logged in as "admin"
     And I click on "Insert H5P" "button" in the "#fitem_id_page" "css_element"
     And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
