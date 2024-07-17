@@ -218,6 +218,14 @@ EOF;
                 'type' > 'tag',
                 'values' => array_merge($standardtags, $extratags),
             ],
+            'rules' => [
+                // Disable the target-size rule.
+                // This rule was added in Axe 4.7, but changed in 4.8 to allow for spacing around the element.
+                // See https://github.com/dequelabs/axe-core/pull/4117 for more information on this change.
+                'target-size' => [
+                    'enabled' => false,
+                ],
+            ]
         ]);
     }
 }
