@@ -34,17 +34,34 @@
                     {
                         "name": "Glossary of characters",
                         "id": "10",
-                        "url": "#"
+                        "url": "#",
+                        "sectioninfo": false
                     },
                     {
                         "name": "World Cinema forum",
                         "id": "11",
-                        "url": "#"
+                        "url": "#",
+                        "sectioninfo": {
+                            "title": "World Cinema forum",
+                            "id": "11",
+                            "number": "5",
+                            "sectionurl": "#",
+                            "hascms": true,
+                            "cms": [
+                                {
+                                    "name": "Announcements",
+                                    "id": "12",
+                                    "url": "#",
+                                    "sectioninfo": false
+                                }
+                            ]
+                        }
                     },
                     {
                         "name": "Announcements",
                         "id": "12",
-                        "url": "#"
+                        "url": "#",
+                        "sectioninfo": false
                     }
                 ]
             },
@@ -58,17 +75,20 @@
                     {
                         "name": "Resources",
                         "id": "13",
-                        "url": "#"
+                        "url": "#",
+                        "sectioninfo": false
                     },
                     {
                         "name": "Studying City of God by Stephen Smith Bergman-Messerschmidt",
                         "id": "14",
-                        "url": "#"
+                        "url": "#",
+                        "sectioninfo": false
                     },
                     {
                         "name": "Film education study guide",
                         "id": "15",
-                        "url": "#"
+                        "url": "#",
+                        "sectioninfo": false
                     }
                 ]
             }
@@ -77,61 +97,10 @@
 
 }}
 <p data-for="sectionname">{{information}}:</p>
-<nav class="collapse-list" id="destination-selector" role="tree">
+<nav class="collapse-list move-activity-tree" id="destination-selector" role="tree">
     {{#sections}}
-    <div data-for="sectionnode"
-        role="treeitem"
-    >
-        <div class="collapse-list-item d-flex"
-            id="movemodalsection{{number}}"
-            data-for="section_item"
-        >
-            <a data-toggle="collapse"
-                href="#movemodalcollapse{{number}}"
-                aria-expanded="false"
-                aria-controls="movemodalcollapse{{number}}"
-                class="collapse-list-link icons-collapse-expand collapsed"
-            >
-                <span class="collapsed-icon icon-no-margin mr-1"
-                    data-toggle="tooltip" title="{{#str}} expand, core {{/str}}">
-                    {{#pix}} t/collapsed, core {{/pix}}
-                    <span class="sr-only">{{#str}} expand, core {{/str}}</span>
-                </span>
-                <span class="expanded-icon icon-no-margin mr-1"
-                    data-toggle="tooltip" title="{{#str}} collapse, core {{/str}}">
-                    {{#pix}} t/expanded, core {{/pix}}
-                    <span class="sr-only">{{#str}} collapse, core {{/str}}</span>
-                </span>
-            </a>
-            <a href="#"
-                class="collapse-list-link text-truncate"
-                data-for="section"
-                data-id="{{id}}"
-                data-number="{{number}}"
-            >
-                {{{title}}}
-            </a>
-            <span class="dragicon ml-auto">{{#pix}}i/dragdrop{{/pix}}</span>
+        <div data-for="sectionnode" role="treeitem">
+            {{> core_courseformat/local/content/movecmsection}}
         </div>
-        <div id="movemodalcollapse{{number}}"
-            class="collapse-list-item-content collapse"
-            aria-labelledby="movemodalsection{{number}}"
-            role="group"
-        >
-            <ul class="unlist" data-for="cmlist" data-id="{{id}}">
-                {{#cms}}
-                <li class="collapse-list-item d-flex" role="treeitem">
-                    <a class="collapse-list-link text-truncate"
-                        href="#"
-                        data-for="cm"
-                        data-id="{{id}}"
-                    >
-                        {{{name}}}
-                    </a>
-                </li>
-                {{/cms}}
-            </ul>
-        </div>
-    </div>
     {{/sections}}
 </nav>

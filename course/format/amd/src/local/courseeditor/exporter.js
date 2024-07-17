@@ -111,6 +111,7 @@ export default class {
         const cm = {
             ...cminfo,
             isactive: false,
+            sectioninfo: false, // Init to false to prevent mustache recursion loops.
         };
         if (cminfo.hasdelegatedsection) {
             const sectioninfo = state.section.get(cminfo.delegatesectionid);
