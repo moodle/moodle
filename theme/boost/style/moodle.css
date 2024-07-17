@@ -27530,13 +27530,13 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
   width: 98%;
   margin: 10px auto;
 }
-.maincalendar .calendar_event_category:hover a,
-.maincalendar .calendar_event_course:hover a,
-.maincalendar .calendar_event_site:hover a,
-.maincalendar .calendar_event_group:hover a,
-.maincalendar .calendar_event_user:hover a {
-  color: #094478;
-  text-decoration: underline;
+.maincalendar .calendar_event_category a:has(> .icon):hover,
+.maincalendar .calendar_event_course a:has(> .icon):hover,
+.maincalendar .calendar_event_site a:has(> .icon):hover,
+.maincalendar .calendar_event_group a:has(> .icon):hover,
+.maincalendar .calendar_event_user a:has(> .icon):hover {
+  color: #07345a;
+  text-decoration: none;
 }
 .maincalendar .calendar_event_category {
   border-color: #e0cbe0;
