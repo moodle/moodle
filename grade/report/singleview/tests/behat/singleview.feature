@@ -55,6 +55,7 @@ Feature: We can use Single view
     And the following config values are set as admin:
       | fullnamedisplay | firstnamephonetic,lastnamephonetic |
       | alternativefullnameformat | middlename, alternatename, firstname, lastname |
+    And I change window size to "large"
     And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
 
   Scenario: I can update grades, add feedback and exclude grades.
