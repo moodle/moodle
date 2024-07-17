@@ -53,8 +53,8 @@ Feature: Grant an extension to an offline student
     And I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "Submissions" in current page administration
     And I set the field "selectall" to "1"
-    And I set the field "operation" to "Grant extension"
-    And I click on "Go" "button" confirming the dialogue
+    And I click on "Extend" "button" in the "sticky-footer" "region"
+    And I click on "Extend" "button" in the "Grant extension" "dialogue"
     And I should see "Student 1 (student1@example.com)"
     And I should see "Student 2 (student2@example.com)"
     And I should see "Student 3 (student3@example.com)"
@@ -102,8 +102,8 @@ Feature: Grant an extension to an offline student
     And I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "Submissions" in current page administration
     And I set the field "selectall" to "1"
-    And I set the field "operation" to "Grant extension"
-    And I click on "Go" "button" confirming the dialogue
+    And I click on "Extend" "button" in the "sticky-footer" "region"
+    And I click on "Extend" "button" in the "Grant extension" "dialogue"
     And I should see "Student 1 (student1@example.com)"
     And I should see "Student 2 (student2@example.com)"
     And I should see "Student 3 (student3@example.com)"

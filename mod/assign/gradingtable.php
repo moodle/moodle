@@ -60,8 +60,6 @@ class assign_grading_table extends table_sql implements renderable {
     private $groupsubmissions = array();
     /** @var array $submissiongroups - A static cache of submission groups */
     private $submissiongroups = array();
-    /** @var string $plugingradingbatchoperations - List of plugin supported batch operations */
-    public $plugingradingbatchoperations = array();
     /** @var array $plugincache - A cache of plugin lookups to match a column name to a plugin efficiently */
     private $plugincache = array();
     /** @var array $scale - A list of the keys and descriptions for the custom scale */
@@ -102,16 +100,6 @@ class assign_grading_table extends table_sql implements renderable {
         $this->hasviewblind = has_capability('mod/assign:viewblinddetails',
                 $this->assignment->get_context());
 
-        foreach ($assignment->get_feedback_plugins() as $plugin) {
-            if ($plugin->is_visible() && $plugin->is_enabled()) {
-                foreach ($plugin->get_grading_batch_operations() as $action => $description) {
-                    if (empty($this->plugingradingbatchoperations)) {
-                        $this->plugingradingbatchoperations[$plugin->get_type()] = array();
-                    }
-                    $this->plugingradingbatchoperations[$plugin->get_type()][$action] = $description;
-                }
-            }
-        }
         $this->perpage = $perpage;
         $this->quickgrading = $quickgrading && $this->hasgrade;
         $this->output = $PAGE->get_renderer('mod_assign');
@@ -931,6 +919,7 @@ class assign_grading_table extends table_sql implements renderable {
         $selectcol .= get_string('selectuser', 'assign', $this->assignment->fullname($row));
         $selectcol .= '</label>';
         $selectcol .= '<input type="checkbox"
+                              class="ignoredirty"
                               id="selectuser_' . $row->userid . '"
                               name="selectedusers"
                               value="' . $row->userid . '"/>';

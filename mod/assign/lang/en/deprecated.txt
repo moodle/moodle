@@ -5,3 +5,4 @@ choosegradingaction,mod_assign
 updategrade,mod_assign
 viewgrader,mod_assign
 downloadasfolders_help,mod_assign
+editaction,mod_assign

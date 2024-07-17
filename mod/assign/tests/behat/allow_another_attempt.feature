@@ -113,9 +113,8 @@ Feature: In an assignment, students start a new attempt based on their previous 
     And I should see "The grade changes were saved"
     And I press "Continue"
     And I click on "Student 1" "checkbox"
-    And I set the following fields to these values:
-      | operation | Allow another attempt |
-    And I click on "Go" "button" confirming the dialogue
+    And I click on "Grant attempt" "button" in the "sticky-footer" "region"
+    And I click on "Grant attempt" "button" in the "Allow another attempt" "dialogue"
     And I should not see "The grades were not saved because someone has modified one or more records more recently than when you loaded the page."
     And I log out
     And I am on the "Test assignment name" Activity page logged in as student3

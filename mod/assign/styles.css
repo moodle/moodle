@@ -135,14 +135,6 @@
     display: table-cell;
 }
 
-.path-mod-assign .gradingbatchoperationsform {
-    display: none;
-}
-
-.path-mod-assign.jsenabled .gradingbatchoperationsform {
-    display: block;
-}
-
 .path-mod-assign .gradingtable table {
     border-collapse: separate;
     border-spacing: 0;

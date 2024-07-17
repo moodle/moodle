@@ -80,7 +80,8 @@ Feature: Prevent or allow assignment submission changes
     And I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "Submissions" in current page administration
     And I set the field "selectall" to "1"
-    And I click on "Go" "button" confirming the dialogue
+    And I click on "Lock" "button" in the "sticky-footer" "region"
+    And I click on "Lock" "button" in the "Lock submissions" "dialogue"
     Then I should see "Submission changes not allowed" in the "Student 1" "table_row"
     And I should see "Submission changes not allowed" in the "Student 2" "table_row"
     And I log out
@@ -92,8 +93,8 @@ Feature: Prevent or allow assignment submission changes
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "Submissions" in current page administration
     And I set the field "selectall" to "1"
-    And I set the field "id_operation" to "Unlock submissions"
-    And I click on "Go" "button" confirming the dialogue
+    And I click on "Unlock" "button" in the "sticky-footer" "region"
+    And I click on "Unlock" "button" in the "Unlock submissions" "dialogue"
     And I should not see "Submission changes not allowed" in the "Student 1" "table_row"
     And I should not see "Submission changes not allowed" in the "Student 2" "table_row"
     And I log out
