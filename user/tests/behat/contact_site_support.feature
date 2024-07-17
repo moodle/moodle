@@ -52,7 +52,7 @@ Feature: Contact site support method and availability can be customised
   Scenario: Contact site support can be disabled
     Given the following config values are set as admin:
       | supportavailability | 0    |
-      | defaulthomepage     | home |
+      | defaulthomepage     | 0    |
     # Confirm unauthenticated visitor cannot see the option.
     When I am on site homepage
     Then I should not see "Contact site support" in the "page-footer" "region"
@@ -98,7 +98,7 @@ Feature: Contact site support method and availability can be customised
     Given the following config values are set as admin:
       | supportavailability | 0           |
       | supportpage         | profile.php |
-      | defaulthomepage     | home        |
+      | defaulthomepage     | 0           |
     When I log in as "user1"
     And I am on the "user > Contact Site Support" page
     Then I should see "Acceptance test site" in the "page-header" "region"
