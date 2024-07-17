@@ -263,7 +263,7 @@ Feature: Within the assignment submissions page, test that we can search for use
     And I set the field "Search users" to "User"
     And I press the up key
     And I press the enter key
-    And I wait to be redirected
+    And I wait "1" seconds
     And the following should exist in the "generaltable" table:
       | -1-                |
       | Dummy User         |
