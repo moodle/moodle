@@ -290,7 +290,7 @@ class behat_core_generator extends behat_generator_base {
             'user private files' => [
                 'singular' => 'user private file',
                 'datagenerator' => 'user_private_files',
-                'required' => ['user', 'filepath', 'filename'],
+                'required' => ['user', 'filepath'],
                 'switchids' => ['user' => 'userid']
             ],
             'badge external backpacks' => [
