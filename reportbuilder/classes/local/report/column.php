@@ -213,7 +213,8 @@ final class column {
      * Set the column type, if not called then the type will be assumed to be {@see TYPE_TEXT}
      *
      * The type of a column is used to cast the first column field passed to any callbacks {@see add_callback} as well as the
-     * aggregation options available for the column
+     * aggregation options available for the column. It should represent how the column content is returned from callbacks
+     *
      *
      * @param int $type
      * @return self
@@ -643,11 +644,11 @@ final class column {
      */
     public function format_value(array $row) {
         $values = $this->get_values($row);
-        $value = self::get_default_value($values, $this->type);
+        $value = self::get_default_value($values, $this->get_type());
 
         // If column is being aggregated then defer formatting to them, otherwise loop through all column callbacks.
         if (!empty($this->aggregation)) {
-            $value = $this->aggregation::format_value($value, $values, $this->callbacks, $this->type);
+            $value = $this->aggregation::format_value($value, $values, $this->callbacks, $this->get_type());
         } else {
             foreach ($this->callbacks as $callback) {
                 [$callable, $arguments] = $callback;

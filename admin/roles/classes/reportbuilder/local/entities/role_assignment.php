@@ -102,7 +102,6 @@ class role_assignment extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
             ->add_field("{$raalias}.component")
             ->set_is_sortable(true);
 
@@ -113,7 +112,6 @@ class role_assignment extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_INTEGER)
             ->add_field("{$raalias}.itemid")
             ->set_is_sortable(true);
 
