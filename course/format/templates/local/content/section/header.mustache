@@ -64,10 +64,12 @@
                     aria-label="{{name}}">
                 <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, core {{/str}}">
                     {{#pix}} t/expandedchevron, core {{/pix}}
+                    <span class="sr-only">{{#str}} collapse, core {{/str}}</span>
                 </span>
                 <span class="collapsed-icon icon-no-margin p-2" title="{{#str}} expand, core {{/str}}">
                     <span class="dir-rtl-hide">{{#pix}} t/collapsedchevron, core {{/pix}}</span>
                     <span class="dir-ltr-hide">{{#pix}} t/collapsedchevron_rtl, core {{/pix}}</span>
+                    <span class="sr-only">{{#str}} expand, core {{/str}}</span>
                 </span>
                 </a>
                 <h{{headinglevel}} class="h4 sectionname course-content-item d-flex align-self-stretch align-items-center mb-0"
