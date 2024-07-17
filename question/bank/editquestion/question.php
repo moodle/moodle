@@ -287,8 +287,8 @@ if ($mform->is_cancelled()) {
         }
     }
 
-    // If this is a new question, save defaults for user in user_preferences table.
-    if (empty($question->id)) {
+    // If this is a new question and question defaults save is enabled, save defaults for user in user_preferences table.
+    if (empty($question->id) && !empty($CFG->questiondefaultssave)) {
         $qtypeobj->save_defaults_for_new_questions($fromform);
     }
     $question = $qtypeobj->save_question($question, $fromform);
