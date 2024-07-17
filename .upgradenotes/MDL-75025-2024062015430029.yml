@@ -1,0 +1,6 @@
+issueNumber: MDL-75025
+notes:
+  core_backup:
+    - message: 'Final deprecation of base_controller::set_copy(). Please use a restore
+        controller for storing copy information instead.'
+      type: removed
