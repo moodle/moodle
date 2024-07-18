@@ -1879,4 +1879,68 @@ class assign_grading_table extends table_sql implements renderable {
 
         return '';
     }
+
+    /**
+     * Finish the HTML output.
+     * This function is essentially a copy of the parent function except the paging bar not being rendered.
+     *
+     * @return void
+     */
+    public function finish_html(): void {
+        if (!$this->started_output) {
+            // No data has been added to the table.
+            $this->print_nothing_to_display();
+        } else {
+            // Print empty rows to fill the table to the current pagesize.
+            // This is done so the header aria-controls attributes do not point to
+            // non-existent elements.
+            $emptyrow = array_fill(0, count($this->columns), '');
+            while ($this->currentrow < $this->pagesize) {
+                $this->print_row($emptyrow, 'emptyrow');
+            }
+
+            echo html_writer::end_tag('tbody');
+            echo html_writer::end_tag('table');
+            if ($this->responsive) {
+                echo html_writer::end_tag('div');
+            }
+            $this->wrap_html_finish();
+
+            if (in_array(TABLE_P_BOTTOM, $this->showdownloadbuttonsat)) {
+                echo $this->download_buttons();
+            }
+
+            // Render the dynamic table footer.
+            echo $this->get_dynamic_table_html_end();
+        }
+    }
+
+    /**
+     * Start the HTML output.
+     * This function is essentially a copy of the parent function except the paging bar not being rendered.
+     *
+     * @return void
+     */
+    public function start_html(): void {
+        // Render the dynamic table header.
+        echo $this->get_dynamic_table_html_start();
+
+        // Render button to allow user to reset table preferences.
+        echo $this->render_reset_button();
+
+        // Do we need to print initial bars?
+        $this->print_initials_bar();
+
+        if (in_array(TABLE_P_TOP, $this->showdownloadbuttonsat)) {
+            echo $this->download_buttons();
+        }
+
+        $this->wrap_html_start();
+        // Start of main data table.
+
+        if ($this->responsive) {
+            echo html_writer::start_tag('div', ['class' => 'no-overflow']);
+        }
+        echo html_writer::start_tag('table', $this->attributes) . $this->render_caption();
+    }
 }
