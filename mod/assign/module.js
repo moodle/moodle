@@ -127,10 +127,6 @@ M.mod_assign.init_grading_table = function(Y) {
 
 M.mod_assign.init_grading_options = function(Y) {
     Y.use('node', function(Y) {
-        var paginationelement = Y.one('#id_perpage');
-        paginationelement.on('change', function(e) {
-            Y.one('form.gradingoptionsform').submit();
-        });
         var markerfilterelement = Y.one('#id_markerfilter');
         if (markerfilterelement) {
             markerfilterelement.on('change', function(e) {

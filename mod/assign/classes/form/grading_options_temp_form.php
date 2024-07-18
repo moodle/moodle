@@ -51,18 +51,6 @@ class grading_options_temp_form extends \moodleform {
         $mform->disable_form_change_checker();
 
         $mform->addElement('header', 'general', get_string('gradingoptions', 'assign'));
-        // Visible elements.
-        $options = array(10 => '10', 20 => '20', 50 => '50', 100 => '100', -1 => get_string('all'));
-        $maxperpage = get_config('assign', 'maxperpage');
-        if (isset($maxperpage) && $maxperpage != -1) {
-            unset($options[-1]);
-            foreach ($options as $val) {
-                if ($val > $maxperpage) {
-                    unset($options[$val]);
-                }
-            }
-        }
-        $mform->addElement('select', 'perpage', get_string('assignmentsperpage', 'assign'), $options);
         if (!empty($instance['markingallocationopt'])) {
             $markingfilter = get_string('markerfilter', 'assign');
             $mform->addElement('select', 'markerfilter', $markingfilter, $instance['markingallocationopt']);

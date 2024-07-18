@@ -40,6 +40,8 @@ class assign_grading_table extends table_sql implements renderable {
     private $assignment = null;
     /** @var int $perpage */
     private $perpage = 10;
+    /** @var int[] $pagingoptions Available pagination options */
+    private $pagingoptions = [10, 20, 50, 100];
     /** @var int $rownum (global index of current row in table) */
     private $rownum = -1;
     /** @var renderer_base for getting output */
@@ -1823,5 +1825,58 @@ class assign_grading_table extends table_sql implements renderable {
             return;
         }
         parent::setup();
+    }
+
+    /**
+     * Returns the html for the paging bar.
+     *
+     * @return string
+     */
+    public function get_paging_bar(): string {
+        global $OUTPUT;
+
+        if ($this->use_pages) {
+            $pagingbar = new paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl);
+            $pagingbar->pagevar = $this->request[TABLE_VAR_PAGE];
+            return $OUTPUT->render($pagingbar);
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns the html for the paging selector.
+     *
+     * @return string
+     */
+    public function get_paging_selector(): string {
+        global $OUTPUT;
+
+        if ($this->use_pages) {
+            $pagingoptions = [...$this->pagingoptions, $this->perpage]; // To make sure the actual page size is within the options.
+            $pagingoptions = array_unique($pagingoptions);
+            sort($pagingoptions);
+            $pagingoptions = array_combine($pagingoptions, $pagingoptions);
+            $maxperpage = get_config('assign', 'maxperpage');
+            if (isset($maxperpage) && $maxperpage != -1) {
+                // Remove any options that are greater than the maxperpage.
+                $pagingoptions = array_filter($pagingoptions, fn($value) => $value <= $maxperpage);
+            } else {
+                $pagingoptions[-1] = get_string('all');
+            }
+
+            $data = [
+                'baseurl' => $this->baseurl->out(false),
+                'options' => array_map(fn($key, $name): array => [
+                    'name' => $name,
+                    'value' => $key,
+                    'selected' => $key == $this->perpage,
+                ], array_keys($pagingoptions), $pagingoptions),
+            ];
+
+            return $OUTPUT->render_from_template('mod_assign/grading_paging_selector', $data);
+        }
+
+        return '';
     }
 }

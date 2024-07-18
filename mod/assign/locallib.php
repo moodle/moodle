@@ -4478,7 +4478,7 @@ class assign {
      * @return string
      */
     protected function view_grading_table() {
-        global $USER, $CFG, $SESSION, $PAGE;
+        global $USER, $CFG, $SESSION, $PAGE, $OUTPUT;
 
         // Include grading options form.
         require_once($CFG->dirroot . '/mod/assign/gradingoptionsform.php');
@@ -4502,6 +4502,11 @@ class assign {
         $submitteddownloadasfolders = optional_param('downloadasfolders', null, PARAM_BOOL);
         if (isset($submitteddownloadasfolders)) {
             set_user_preference('assign_downloadasfolders', $submitteddownloadasfolders);
+        }
+
+        $submittedperpage = optional_param('perpage', null, PARAM_INT);
+        if (isset($submittedperpage)) {
+            set_user_preference('assign_perpage', $submittedperpage);
         }
 
         $o = '';
@@ -4586,7 +4591,6 @@ class assign {
                                                                                    $classoptions);
 
         $gradingoptionsdata = new stdClass();
-        $gradingoptionsdata->perpage = $perpage;
         $gradingoptionsdata->markerfilter = $markerfilter;
         $gradingoptionsform->set_data($gradingoptionsdata);
 
@@ -4619,10 +4623,18 @@ class assign {
         }
 
         // Load and print the table of submissions.
-        if ($showquickgrading && $quickgrading) {
-            $gradingtable = new assign_grading_table($this, $perpage, $filter, 0, true);
-            $gradingtable->responsive = false;
-            $table = $this->get_renderer()->render($gradingtable);
+        $usequickgrading = $showquickgrading && $quickgrading;
+        $gradingtable = new assign_grading_table($this, $perpage, $filter, 0, $usequickgrading);
+        $gradingtable->responsive = false;
+        $table = $this->get_renderer()->render($gradingtable);
+        $footerdata = [
+            'perpage' => $gradingtable->get_paging_selector(),
+            'pagingbar' => $gradingtable->get_paging_bar(),
+        ];
+        $footer = new core\output\sticky_footer($OUTPUT->render_from_template('mod_assign/grading_sticky_footer', $footerdata));
+        $table .= $this->get_renderer()->render($footer);
+
+        if ($usequickgrading) {
             $page = optional_param('page', null, PARAM_INT);
             $quickformparams = array('cm'=>$this->get_course_module()->id,
                                      'gradingtable'=>$table,
@@ -4632,14 +4644,13 @@ class assign {
 
             $o .= $this->get_renderer()->render(new assign_form('quickgradingform', $quickgradingform));
         } else {
-            $gradingtable = new assign_grading_table($this, $perpage, $filter, 0, false);
-            $gradingtable->responsive = false;
-            $o .= $this->get_renderer()->render($gradingtable);
+            $o .= $table;
         }
 
         if ($this->can_grade()) {
             // We need to store the order of uses in the table as the person may wish to grade them.
             // This is done based on the row number of the user.
+            // Pagination has be added before this because calling get_column_data will reset the pagination.
             $useridlist = $gradingtable->get_column_data('userid');
             $SESSION->mod_assign_useridlist[$this->get_useridlist_key()] = $useridlist;
         }
@@ -7426,7 +7437,6 @@ class assign {
         ];
         $mform = new mod_assign\form\grading_options_temp_form(null, $gradingoptionsparams);
         if ($formdata = $mform->get_data()) {
-            set_user_preference('assign_perpage', $formdata->perpage);
             if (isset($formdata->markerfilter)) {
                 set_user_preference('assign_markerfilter', $formdata->markerfilter);
             }
