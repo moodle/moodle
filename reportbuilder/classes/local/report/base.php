@@ -375,6 +375,41 @@ abstract class base {
     }
 
     /**
+     * Add columns from the given entity name to be available to use in a custom report
+     *
+     * Wildcard matching is supported with '*' in both $include and $exclude, e.g. ['customfield*']
+     *
+     * @param string $entityname
+     * @param string[] $include Include only these columns, if omitted then include all
+     * @param string[] $exclude Exclude these columns, if omitted then exclude none
+     * @throws coding_exception If both $include and $exclude are non-empty
+     */
+    final protected function add_columns_from_entity(string $entityname, array $include = [], array $exclude = []): void {
+        if (!empty($include) && !empty($exclude)) {
+            throw new coding_exception('Cannot specify columns to include and exclude simultaneously');
+        }
+
+        $entity = $this->get_entity($entityname);
+
+        // Retrieve filtered columns from entity, respecting given $include/$exclude parameters.
+        $columns = array_filter($entity->get_columns(), function(column $column) use ($include, $exclude): bool {
+            if (!empty($include)) {
+                return $this->report_element_search($column->get_name(), $include);
+            }
+
+            if (!empty($exclude)) {
+                return !$this->report_element_search($column->get_name(), $exclude);
+            }
+
+            return true;
+        });
+
+        foreach ($columns as $column) {
+            $this->add_column($column);
+        }
+    }
+
+    /**
      * Add given columns to the report from one or more entities
      *
      * Each entity must have already been added to the report before calling this method
@@ -637,6 +672,41 @@ abstract class base {
     }
 
     /**
+     * Add filters from the given entity name to be available to use in a custom report
+     *
+     * Wildcard matching is supported with '*' in both $include and $exclude, e.g. ['customfield*']
+     *
+     * @param string $entityname
+     * @param string[] $include Include only these filters, if omitted then include all
+     * @param string[] $exclude Exclude these filters, if omitted then exclude none
+     * @throws coding_exception If both $include and $exclude are non-empty
+     */
+    final protected function add_filters_from_entity(string $entityname, array $include = [], array $exclude = []): void {
+        if (!empty($include) && !empty($exclude)) {
+            throw new coding_exception('Cannot specify filters to include and exclude simultaneously');
+        }
+
+        $entity = $this->get_entity($entityname);
+
+        // Retrieve filtered filters from entity, respecting given $include/$exclude parameters.
+        $filters = array_filter($entity->get_filters(), function(filter $filter) use ($include, $exclude): bool {
+            if (!empty($include)) {
+                return $this->report_element_search($filter->get_name(), $include);
+            }
+
+            if (!empty($exclude)) {
+                return !$this->report_element_search($filter->get_name(), $exclude);
+            }
+
+            return true;
+        });
+
+        foreach ($filters as $filter) {
+            $this->add_filter($filter);
+        }
+    }
+
+    /**
      * Add given filters to the report from one or more entities
      *
      * Each entity must have already been added to the report before calling this method
@@ -828,5 +898,29 @@ abstract class base {
      */
     public function get_attributes(): array {
         return $this->attributes;
+    }
+
+    /**
+     * Search for given element within list of search items, supporting '*' wildcards
+     *
+     * @param string $element
+     * @param string[] $search
+     * @return bool
+     */
+    final protected function report_element_search(string $element, array $search): bool {
+        foreach ($search as $item) {
+            // Simple matching.
+            if ($element === $item) {
+                return true;
+            }
+
+            // Wildcard matching.
+            if (strpos($item, '*') !== false) {
+                $pattern = '/^' . str_replace('\*', '.*', preg_quote($item)) . '$/';
+                return (bool) preg_match($pattern, $element);
+            }
+        }
+
+        return false;
     }
 }
