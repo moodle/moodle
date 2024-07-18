@@ -60,10 +60,14 @@ class filter_tidy extends moodle_text_filter {
 
     /// If enabled: run tidy over the entire string
         if (function_exists('tidy_repair_string')){
-            $text = tidy_repair_string($text, $tidyoptions, 'utf8');
+            $currentlocale = \core\locale::get_locale();
+            try {
+                $text = tidy_repair_string($text, $tidyoptions, 'utf8');
+            } finally {
+                \core\locale::set_locale(LC_ALL, $currentlocale);
+            }
         }
 
         return $text;
     }
 }
-
