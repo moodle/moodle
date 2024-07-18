@@ -277,7 +277,7 @@ class formatting {
                 $text = $filtermanager->filter_text($text, $context, $filteroptions);
                 break;
             default:  // FORMAT_MOODLE or anything else.
-                throw new \coding_exception("Unkown format passed to format_text: {$format}");
+                throw new \coding_exception("Unknown format passed to format_text: {$format}");
         }
 
         if ($filter) {
