@@ -1342,7 +1342,7 @@ class block_manager {
 
             $controls[] = new action_menu_link_secondary(
                 $editactionurl,
-                new pix_icon('t/edit', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                new pix_icon('i/settings', $str, 'moodle', ['class' => 'iconsmall', 'title' => '']),
                 $str,
                 [
                     'class' => 'editing_edit',

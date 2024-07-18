@@ -24,8 +24,11 @@
 
 .block .block-controls {
     .dropdown-toggle {
-        /* So that the caret takes the colour of the icon. */
+        /* So that the icon takes the colour of the icon. */
         color: $body-color;
+    }
+    .dropdown-toggle::after {
+        display: none;
     }
 }
 

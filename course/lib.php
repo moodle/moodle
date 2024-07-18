@@ -1466,7 +1466,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     if ($hasmanageactivities) {
         $actions['update'] = new action_menu_link_secondary(
             new moodle_url($baseurl, array('update' => $mod->id)),
-            new pix_icon('t/edit', '', 'moodle', array('class' => 'iconsmall')),
+            new pix_icon('i/settings', '', 'moodle', ['class' => 'iconsmall']),
             $str->editsettings,
             array('class' => 'editing_update', 'data-action' => 'update')
         );
