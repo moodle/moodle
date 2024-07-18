@@ -1818,7 +1818,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             $str->groupmode,
             $groupmode->get_choice_list(),
             ['class' => 'editing_groupmode'],
-            new pix_icon('i/groupv', '', 'moodle', ['class' => 'iconsmall'])
+            new pix_icon('t/groupv', '', 'moodle', ['class' => 'iconsmall'])
         );
     }
 
