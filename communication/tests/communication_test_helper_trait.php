@@ -58,7 +58,7 @@ trait communication_test_helper_trait {
         $this->setup_communication_configs();
         $records = [
             'selectedcommunication' => $provider,
-            'communicationroomname' => $roomname,
+            $provider . 'roomname' => $roomname,
         ];
 
         return $this->getDataGenerator()->create_course($records);
