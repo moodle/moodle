@@ -344,7 +344,7 @@ final class component_test extends \advanced_testcase {
     public function test_normalize_component(array $expected, string $args): void {
         $this->assertSame(
             $expected,
-            core_component::normalize_component($args),
+            component::normalize_component($args),
         );
     }
 
