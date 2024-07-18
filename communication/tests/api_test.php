@@ -69,8 +69,10 @@ class api_test extends \advanced_testcase {
         // Set the data.
         $communication->set_data($course);
 
+        $roomnameidenfier = $communication->get_provider() . 'roomname';
+
         // Test the set data.
-        $this->assertEquals($roomname, $course->communicationroomname);
+        $this->assertEquals($roomname, $course->$roomnameidenfier);
         $this->assertEquals($provider, $course->selectedcommunication);
     }
 
