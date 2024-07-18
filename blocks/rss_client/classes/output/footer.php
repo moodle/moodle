@@ -100,7 +100,6 @@ class footer implements \renderable, \templatable {
      */
     public function export_for_template(\renderer_base $output) {
         $data = new \stdClass();
-        $data->channellink = clean_param($this->channelurl, PARAM_URL);
         if ($this->manageurl) {
             $data->hasfailedfeeds = true;
             $data->manageurl = clean_param($this->manageurl, PARAM_URL);

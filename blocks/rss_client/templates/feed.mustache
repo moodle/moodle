@@ -55,7 +55,8 @@
                 "permalink": "https://www.example.com/my-cat-story.html",
                 "datepublished": "12 January 2016, 9:12 pm"
             }
-        ]
+        ],
+        "channellink": "https://www.example.com"
     }
 }}
 {{$image}}
@@ -77,3 +78,9 @@
         {{/items}}
     </ul>
 {{/items}}
+
+{{#channellink}}
+    <div class="pb-3 text-right">
+        <a href="{{{channellink}}}" rel="noopener noreferrer" target="_blank">{{#str}} clientchannellink, block_rss_client {{/str}}</a>
+    </div>
+{{/channellink}}
