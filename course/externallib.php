@@ -3232,12 +3232,12 @@ class core_course_external extends external_api {
                     shortname: course short name
                     idnumber: course id number
                     category: category id the course belongs to
+                    sectionid: section id that belongs to a course
                 ', VALUE_DEFAULT, ''),
                 'value' => new external_value(PARAM_RAW, 'The value to match', VALUE_DEFAULT, '')
             )
         );
     }
-
 
     /**
      * Get courses matching a specific field (id/s, shortname, idnumber, category)
@@ -3267,6 +3267,7 @@ class core_course_external extends external_api {
             switch ($params['field']) {
                 case 'id':
                 case 'category':
+                case 'sectionid':
                     $value = clean_param($params['value'], PARAM_INT);
                     break;
                 case 'ids':
@@ -3297,6 +3298,9 @@ class core_course_external extends external_api {
                 // more efficiently.
                 list ($courses, $warnings) = util::validate_courses($courseids, [],
                         false, true);
+            } else if ($params['field'] === 'sectionid') {
+                $courseid = $DB->get_field('course_sections', 'course', ['id' => $value]);
+                $courses = $courseid ? [$DB->get_record('course', ['id' => $courseid])] : [];
             } else {
                 $courses = $DB->get_records('course', array($params['field'] => $value), 'id ASC');
             }
