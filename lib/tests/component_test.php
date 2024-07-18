@@ -110,11 +110,16 @@ final class component_test extends \advanced_testcase {
         $subsystems = component::get_core_subsystems();
 
         $this->assertSame($subsystems, get_core_subsystems(true));
+        $this->assertDebuggingCalled();
+        $this->resetDebugging();
 
         $realsubsystems = get_core_subsystems();
-        $this->assertDebuggingCalled();
+        $this->assertdebuggingcalledcount(2);
+        $this->resetDebugging();
+
         $this->assertSame($realsubsystems, get_core_subsystems(false));
-        $this->assertDebuggingCalled();
+        $this->assertdebuggingcalledcount(2);
+        $this->resetDebugging();
 
         $this->assertEquals(count($subsystems), count($realsubsystems));
 
@@ -149,10 +154,16 @@ final class component_test extends \advanced_testcase {
         $plugintypes = component::get_plugin_types();
 
         $this->assertSame($plugintypes, get_plugin_types());
+        $this->assertDebuggingCalled();
+        $this->resetDebugging();
+
         $this->assertSame($plugintypes, get_plugin_types(true));
+        $this->assertDebuggingCalled();
+        $this->resetDebugging();
 
         $realplugintypes = get_plugin_types(false);
-        $this->assertDebuggingCalled();
+        $this->assertdebuggingcalledcount(2);
+        $this->resetDebugging();
 
         foreach ($plugintypes as $plugintype => $fulldir) {
             $this->assertSame($fulldir, $CFG->dirroot . '/' . $realplugintypes[$plugintype]);
@@ -186,6 +197,8 @@ final class component_test extends \advanced_testcase {
         foreach ($plugintypes as $plugintype => $fulldir) {
             $plugins = component::get_plugin_list($plugintype);
             $this->assertSame($plugins, get_plugin_list($plugintype));
+            $this->assertDebuggingCalled();
+            $this->resetDebugging();
         }
     }
 
@@ -210,6 +223,8 @@ final class component_test extends \advanced_testcase {
                     component::get_plugin_directory($plugintype, $pluginname),
                     get_plugin_directory($plugintype, $pluginname),
                 );
+                $this->assertDebuggingCalled();
+                $this->resetDebugging();
             }
         }
     }
@@ -319,92 +334,83 @@ final class component_test extends \advanced_testcase {
         );
     }
 
-    public function test_normalize_component(): void {
-        // Moodle core.
-        $this->assertSame(['core', null], component::normalize_component('core'));
-        $this->assertSame(['core', null], component::normalize_component('moodle'));
-        $this->assertSame(['core', null], component::normalize_component(''));
-
-        // Moodle core subsystems.
-        $this->assertSame(['core', 'admin'], component::normalize_component('admin'));
-        $this->assertSame(['core', 'admin'], component::normalize_component('core_admin'));
-        $this->assertSame(['core', 'admin'], component::normalize_component('moodle_admin'));
-
-        // Activity modules and their subplugins.
-        $this->assertSame(['mod', 'workshop'], component::normalize_component('workshop'));
-        $this->assertSame(['mod', 'workshop'], component::normalize_component('mod_workshop'));
-        $this->assertSame(['workshopform', 'accumulative'], component::normalize_component('workshopform_accumulative'));
-        $this->assertSame(['mod', 'quiz'], component::normalize_component('quiz'));
-        $this->assertSame(['quiz', 'grading'], component::normalize_component('quiz_grading'));
-        $this->assertSame(['mod', 'data'], component::normalize_component('data'));
-        $this->assertSame(['datafield', 'checkbox'], component::normalize_component('datafield_checkbox'));
-
-        // Other plugin types.
-        $this->assertSame(['auth', 'mnet'], component::normalize_component('auth_mnet'));
-        $this->assertSame(['enrol', 'self'], component::normalize_component('enrol_self'));
-        $this->assertSame(['block', 'html'], component::normalize_component('block_html'));
-        $this->assertSame(['block', 'mnet_hosts'], component::normalize_component('block_mnet_hosts'));
-        $this->assertSame(['local', 'amos'], component::normalize_component('local_amos'));
-        $this->assertSame(['local', 'admin'], component::normalize_component('local_admin'));
-
-        // Unknown words without underscore are supposed to be activity modules.
+    /**
+     * Test \core_component::normalize_component function.
+     *
+     * @dataProvider normalise_component_provider
+     * @param array $expected
+     * @param string $args
+     */
+    public function test_normalize_component(array $expected, string $args): void {
         $this->assertSame(
-            ['mod', 'whoonearthwouldcomewithsuchastupidnameofcomponent'],
-            component::normalize_component('whoonearthwouldcomewithsuchastupidnameofcomponent')
-        );
-        // Module names can not contain underscores, this must be a subplugin.
-        $this->assertSame(
-            ['whoonearth', 'wouldcomewithsuchastupidnameofcomponent'],
-            component::normalize_component('whoonearth_wouldcomewithsuchastupidnameofcomponent')
-        );
-        $this->assertSame(
-            ['whoonearth', 'would_come_withsuchastupidnameofcomponent'],
-            component::normalize_component('whoonearth_would_come_withsuchastupidnameofcomponent')
+            $expected,
+            core_component::normalize_component($args),
         );
     }
 
-    public function test_deprecated_normalize_component(): void {
-        // Moodle core.
-        $this->assertSame(['core', null], normalize_component('core'));
-        $this->assertSame(['core', null], normalize_component(''));
-        $this->assertSame(['core', null], normalize_component('moodle'));
-
-        // Moodle core subsystems.
-        $this->assertSame(['core', 'admin'], normalize_component('admin'));
-        $this->assertSame(['core', 'admin'], normalize_component('core_admin'));
-        $this->assertSame(['core', 'admin'], normalize_component('moodle_admin'));
-
-        // Activity modules and their subplugins.
-        $this->assertSame(['mod', 'workshop'], normalize_component('workshop'));
-        $this->assertSame(['mod', 'workshop'], normalize_component('mod_workshop'));
-        $this->assertSame(['workshopform', 'accumulative'], normalize_component('workshopform_accumulative'));
-        $this->assertSame(['mod', 'quiz'], normalize_component('quiz'));
-        $this->assertSame(['quiz', 'grading'], normalize_component('quiz_grading'));
-        $this->assertSame(['mod', 'data'], normalize_component('data'));
-        $this->assertSame(['datafield', 'checkbox'], normalize_component('datafield_checkbox'));
-
-        // Other plugin types.
-        $this->assertSame(['auth', 'mnet'], normalize_component('auth_mnet'));
-        $this->assertSame(['enrol', 'self'], normalize_component('enrol_self'));
-        $this->assertSame(['block', 'html'], normalize_component('block_html'));
-        $this->assertSame(['block', 'mnet_hosts'], normalize_component('block_mnet_hosts'));
-        $this->assertSame(['local', 'amos'], normalize_component('local_amos'));
-        $this->assertSame(['local', 'admin'], normalize_component('local_admin'));
-
-        // Unknown words without underscore are supposed to be activity modules.
+    /**
+     * Test the deprecated normalize_component function.
+     *
+     * @dataProvider normalise_component_provider
+     * @param array $expected
+     * @param string $args
+     */
+    public function test_deprecated_normalize_component(array $expected, string $args): void {
         $this->assertSame(
-            ['mod', 'whoonearthwouldcomewithsuchastupidnameofcomponent'],
-            normalize_component('whoonearthwouldcomewithsuchastupidnameofcomponent')
+            $expected,
+            normalize_component($args),
         );
-        // Module names can not contain underscores, this must be a subplugin.
-        $this->assertSame(
-            ['whoonearth', 'wouldcomewithsuchastupidnameofcomponent'],
-            normalize_component('whoonearth_wouldcomewithsuchastupidnameofcomponent')
-        );
-        $this->assertSame(
-            ['whoonearth', 'would_come_withsuchastupidnameofcomponent'],
-            normalize_component('whoonearth_would_come_withsuchastupidnameofcomponent')
-        );
+
+        $this->assertDebuggingCalled();
+    }
+
+    /**
+     * Data provider for the normalize_component function.
+     */
+    public static function normalise_component_provider(): array {
+        return [
+            // Moodle core.
+            [['core', null], 'core'],
+            [['core', null], ''],
+            [['core', null], 'moodle'],
+
+            // Moodle core subsystems.
+            [['core', 'admin'], 'admin'],
+            [['core', 'admin'], 'core_admin'],
+            [['core', 'admin'], 'moodle_admin'],
+
+            // Activity modules and their subplugins.
+            [['mod', 'workshop'], 'workshop'],
+            [['mod', 'workshop'], 'mod_workshop'],
+            [['workshopform', 'accumulative'], 'workshopform_accumulative'],
+            [['mod', 'quiz'], 'quiz'],
+            [['quiz', 'grading'], 'quiz_grading'],
+            [['mod', 'data'], 'data'],
+            [['datafield', 'checkbox'], 'datafield_checkbox'],
+
+            // Other plugin types.
+            [['auth', 'mnet'], 'auth_mnet'],
+            [['enrol', 'self'], 'enrol_self'],
+            [['block', 'html'], 'block_html'],
+            [['block', 'mnet_hosts'], 'block_mnet_hosts'],
+            [['local', 'amos'], 'local_amos'],
+            [['local', 'admin'], 'local_admin'],
+
+            // Unknown words without underscore are supposed to be activity modules.
+            [
+                ['mod', 'whoonearthwouldcomewithsuchastupidnameofcomponent'],
+                'whoonearthwouldcomewithsuchastupidnameofcomponent',
+            ],
+            // Module names can not contain underscores, this must be a subplugin.
+            [
+                ['whoonearth', 'wouldcomewithsuchastupidnameofcomponent'],
+                'whoonearth_wouldcomewithsuchastupidnameofcomponent',
+            ],
+            [
+                ['whoonearth', 'would_come_withsuchastupidnameofcomponent'],
+                'whoonearth_would_come_withsuchastupidnameofcomponent',
+            ],
+        ];
     }
 
     public function test_get_component_directory(): void {
@@ -495,12 +501,16 @@ final class component_test extends \advanced_testcase {
             $plugins = component::get_plugin_list($plugintype);
             foreach ($plugins as $pluginname => $plugindir) {
                 $this->assertSame($plugindir, get_component_directory(($plugintype . '_' . $pluginname)));
+                $this->assertDebuggingCalled();
+                $this->resetDebugging();
             }
         }
 
         $subsystems = component::get_core_subsystems();
         foreach ($subsystems as $subsystem => $fulldir) {
             $this->assertSame($fulldir, get_component_directory(('core_' . $subsystem)));
+            $this->assertDebuggingCalled();
+            $this->resetDebugging();
         }
     }
 

@@ -1,0 +1,40 @@
+issueNumber: MDL-82287
+notes:
+  core:
+    - message: >
+        The following methods have been formally deprecated:
+
+
+        - `get_core_subsystems`
+
+        - `get_plugin_types`
+
+        - `get_plugin_list`
+
+        - `get_plugin_list_with_class`
+
+        - `get_plugin_directory`
+
+        - `normalize_component`
+
+        - `get_component_directory`
+
+        - `get_context_instance`
+
+
+        Note: These methods have been deprecated for a long time, but previously
+        did not emit any deprecation notice.
+      type: deprecated
+    - message: >
+        The following methods have been finally deprecated and will now throw an
+        exception if called:
+
+
+        - `get_context_instance`
+
+        - `can_use_rotated_text`
+
+        - `get_system_context`
+
+        - `print_arrow`
+      type: deprecated

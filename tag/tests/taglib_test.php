@@ -41,39 +41,6 @@ class taglib_test extends \advanced_testcase {
     }
 
     /**
-     * Test that the tag_set function throws an exception.
-     * This function was deprecated in 3.1
-     */
-    public function test_tag_set_get(): void {
-        $this->expectException('coding_exception');
-        $this->expectExceptionMessage('tag_set() can not be used anymore. Please use ' .
-            'core_tag_tag::set_item_tags().');
-        tag_set();
-    }
-
-    /**
-     * Test that tag_set_add function throws an exception.
-     * This function was deprecated in 3.1
-     */
-    public function test_tag_set_add(): void {
-        $this->expectException('coding_exception');
-        $this->expectExceptionMessage('tag_set_add() can not be used anymore. Please use ' .
-            'core_tag_tag::add_item_tag().');
-        tag_set_add();
-    }
-
-    /**
-     * Test that tag_set_delete function returns an exception.
-     * This function was deprecated in 3.1
-     */
-    public function test_tag_set_delete(): void {
-        $this->expectException('coding_exception');
-        $this->expectExceptionMessage('tag_set_delete() can not be used anymore. Please use ' .
-            'core_tag_tag::remove_item_tag().');
-        tag_set_delete();
-    }
-
-    /**
      * Test the core_tag_tag::add_item_tag() and core_tag_tag::remove_item_tag() functions.
      */
     public function test_add_remove_item_tag(): void {
@@ -141,17 +108,6 @@ class taglib_test extends \advanced_testcase {
         $ti5 = core_tag_tag::add_item_tag('mod_book', 'book_chapters', $chapter1id,
             \context_module::instance($book1->cmid), 'A random tag for a book chapter');
         $this->assertEquals(1, $DB->get_field('tag_instance', 'ordering', ['id' => $ti5]));
-    }
-
-    /**
-     * Test that tag_assign function throws an exception.
-     * This function was deprecated in 3.1
-     */
-    public function test_tag_assign(): void {
-        $this->expectException(\coding_exception::class);
-        $this->expectExceptionMessage('tag_assign() can not be used anymore. Please use core_tag_tag::set_item_tags() ' .
-            'or core_tag_tag::add_item_tag() instead.');
-        tag_assign();
     }
 
     /**
@@ -832,17 +788,6 @@ class taglib_test extends \advanced_testcase {
         $this->assertEquals('Tag1', $user2tags[2]->rawname);
         $this->assertEquals($collid2, $user1tags[0]->tagcollid);
         $this->assertEquals($collid2, $user2tags[2]->tagcollid);
-    }
-
-    /**
-     * Tests that tag_normalize function throws an exception.
-     * This function was deprecated in 3.1
-     */
-    public function test_normalize(): void {
-        $this->expectException(\coding_exception::class);
-        $this->expectExceptionMessage('tag_normalize() can not be used anymore. Please use ' .
-            'core_tag_tag::normalize().');
-        tag_normalize();
     }
 
     /**
