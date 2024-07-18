@@ -188,12 +188,7 @@ class cohorts extends system_report {
      * unique identifier
      */
     protected function add_filters(): void {
-        $filters = [
-            'cohort:name',
-            'cohort:idnumber',
-            'cohort:description',
-        ];
-        $this->add_filters_from_entities($filters);
+        $this->add_filters_from_entity('cohort', ['name', 'idnumber', 'description', 'customfield*']);
     }
 
     /**
