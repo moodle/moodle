@@ -205,16 +205,16 @@ Feature: Within the User report, a teacher can search for users.
       And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
       When I set the field "Search users" to "User"
       And "View all results (5)" "option_role" should exist
-      And I confirm "Dummy User" in "user" search within the gradebook widget exists
-      And I confirm "User Example" in "user" search within the gradebook widget exists
-      And I confirm "User Test" in "user" search within the gradebook widget exists
+      And I confirm "Dummy User" exists in the "Search users" search combo box
+      And I confirm "User Example" exists in the "Search users" search combo box
+      And I confirm "User Test" exists in the "Search users" search combo box
       # Email is not shown in results.
-      And I confirm "User" in "user" search within the gradebook widget exists
-      And I confirm "example.com" in "user" search within the gradebook widget does not exist
+      And I confirm "User" exists in the "Search users" search combo box
+      And I confirm "example.com" does not exist in the "Search users" search combo box
       # Email is not searchable.
       And I set the field "Search users" to "student5@example.com"
       And "View all results (5)" "option_role" should not exist
-      And I confirm "No results for \"student5@example.com\"" in "user" search within the gradebook widget exists
+      And I confirm "No results for \"student5@example.com\"" exists in the "Search users" search combo box
 
   @accessibility
   Scenario: A teacher can set focus and search using the input are with a keyboard
