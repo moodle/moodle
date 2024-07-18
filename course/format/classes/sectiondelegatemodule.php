@@ -168,4 +168,20 @@ abstract class sectiondelegatemodule extends sectiondelegate {
         $cm = get_coursemodule_from_instance($this->get_module_name(), $section->itemid);
         $updates->add_cm_put($cm->id);
     }
+
+    public function section_updated(stdClass $sectionrecord): void {
+        global $DB;
+
+        $cmrecord = [];
+        if (isset($sectionrecord->availability) && $sectionrecord->availability !== $this->cm->availability) {
+            $cmrecord['availability'] = $sectionrecord->availability;
+        }
+
+        if (empty($cmrecord)) {
+            return;
+        }
+
+        $cmrecord['id'] = $this->cm->id;
+        $DB->update_record('course_modules', (object)$cmrecord);
+    }
 }
