@@ -28,8 +28,8 @@ Feature: Communication custom link
     And I select "Custom link" from the "Provider" singleselect
     And I should see "Custom link URL"
     And I set the following fields to these values:
-      | communicationroomname | Test URL                                                                                   |
-      | customlinkurl         | #wwwroot#/communication/provider/customlink/tests/behat/fixtures/custom_link_test_page.php |
+      | communication_customlinkroomname | Test URL                                                                                   |
+      | customlinkurl                    | #wwwroot#/communication/provider/customlink/tests/behat/fixtures/custom_link_test_page.php |
     And I press "Save changes"
     Then "Chat to course participants" "button" should be visible
     And I click on "Chat to course participants" "button"
@@ -59,8 +59,8 @@ Feature: Communication custom link
     When I navigate to "Communication" in current page administration
     And I select "Custom link" from the "Provider" singleselect
     And I set the following fields to these values:
-      | communicationroomname | Test URL                                                                                   |
-      | customlinkurl         | #wwwroot#/communication/provider/customlink/tests/behat/fixtures/custom_link_test_page.php |
+      | communication_customlinkroomname | Test URL                                                                                   |
+      | customlinkurl                    | #wwwroot#/communication/provider/customlink/tests/behat/fixtures/custom_link_test_page.php |
     And I press "Save changes"
     And "Chat to course participants" "button" should be visible
     And I run all adhoc tasks
@@ -74,8 +74,8 @@ Feature: Communication custom link
     And I navigate to "Communication" in current page administration
     And I select "Custom link" from the "Provider" singleselect
     And I set the following fields to these values:
-      | communicationroomname | Test URL                                                                                   |
-      | customlinkurl         | #wwwroot#/communication/provider/customlink/tests/behat/fixtures/custom_link_test_page.php |
+      | communication_customlinkroomname | Test URL                                                                                   |
+      | customlinkurl                    | #wwwroot#/communication/provider/customlink/tests/behat/fixtures/custom_link_test_page.php |
     And I press "Save changes"
     And "Chat to course participants" "button" should be visible
     And I run all adhoc tasks
