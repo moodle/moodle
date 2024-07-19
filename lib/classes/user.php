@@ -14,17 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * User class
- *
- * @package    core
- * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
 
+use core\context\user as context_user;
+use core\context\course as context_course;
+use core\context\system as context_system;
 use core_user\fields;
-
-defined('MOODLE_INTERNAL') || die();
+use core\exception\invalid_parameter_exception;
+use core\exception\moodle_exception;
+use core\exception\coding_exception;
+use core\output\theme_config;
+use core\output\user_picture;
+use core_date;
+use dml_exception;
+use stdClass;
 
 /**
  * User class to access user details.
@@ -34,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_user {
+class user {
     /**
      * No reply user id.
      */
@@ -104,7 +107,7 @@ class core_user {
 
     /**
      * Return user object from db or create noreply or support user,
-     * if userid matches corse_user::NOREPLY_USER or corse_user::SUPPORT_USER
+     * if userid matches \core\user::NOREPLY_USER or \core\user::SUPPORT_USER
      * respectively. If userid is not found, then return false.
      *
      * @param int $userid user id
@@ -210,12 +213,12 @@ class core_user {
      * user identity fields.
      *
      * @param string $query Search query text
-     * @param \context_course|null $coursecontext Course context or null if system-wide
+     * @param context_course|null $coursecontext Course context or null if system-wide
      * @param int $max Max number of users to return, default 30 (zero = no limit)
      * @param int $querylimit Max number of database queries, default 5 (zero = no limit)
      * @return array Array of user objects with limited fields
      */
-    public static function search($query, \context_course $coursecontext = null,
+    public static function search($query, context_course $coursecontext = null,
             $max = 30, $querylimit = 5) {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/user/lib.php');
@@ -229,7 +232,7 @@ class core_user {
         }
 
         // Check permission to view profiles at each context.
-        $systemcontext = \context_system::instance();
+        $systemcontext = context_system::instance();
         $viewsystem = has_capability('moodle/user:viewdetails', $systemcontext);
         if ($viewsystem) {
             $userquery = 'SELECT id FROM {user}';
@@ -384,8 +387,8 @@ class core_user {
         $unionparams = [];
         foreach ($courses as $course) {
             // Get SQL to list user ids enrolled in this course.
-            \context_helper::preload_from_record($course);
-            list ($sql, $params) = get_enrolled_sql(\context_course::instance($course->id));
+            context_helper::preload_from_record($course);
+            list ($sql, $params) = get_enrolled_sql(context_course::instance($course->id));
 
             // Combine to a big union query.
             if ($unionsql) {
@@ -594,7 +597,7 @@ class core_user {
         require_once("$CFG->libdir/gdlib.php");
 
         $context = context_user::instance($usernew->id, MUST_EXIST);
-        $user = core_user::get_user($usernew->id, 'id, picture', MUST_EXIST);
+        $user = self::get_user($usernew->id, 'id, picture', MUST_EXIST);
 
         $newpicture = $user->picture;
         // Get file_storage to process files.
@@ -806,7 +809,7 @@ class core_user {
         foreach ($user as $field => $value) {
             // Get the property parameter type and do the cleaning.
             try {
-                $user->$field = core_user::clean_field($value, $field);
+                $user->$field = self::clean_field($value, $field);
             } catch (coding_exception $e) {
                 debugging("The property '$field' could not be cleaned.", DEBUG_DEVELOPER);
             }
@@ -828,7 +831,7 @@ class core_user {
         }
 
         try {
-            $type = core_user::get_property_type($field);
+            $type = self::get_property_type($field);
 
             if (isset(self::$propertiescache[$field]['choices'])) {
                 if (!array_key_exists($data, self::$propertiescache[$field]['choices'])) {
@@ -941,7 +944,7 @@ class core_user {
      *          'isregex' => false/true    // Whether the name of the preference is a regular expression (default false).
      *          'permissioncallback' => callable // Function accepting arguments ($user, $preferencename) that checks if current user
      *                                     // is allowed to modify this preference for given user.
-     *                                     // If not specified core_user::default_preference_permission_check() will be assumed.
+     *                                     // If not specified \core\user::default_preference_permission_check() will be assumed.
      *          'cleancallback' => callable // Custom callback for cleaning value if something more difficult than just type/choices is needed
      *                                     // accepts arguments ($value, $preferencename)
      *     )
@@ -970,7 +973,7 @@ class core_user {
             'choices' => array(0, 1));
         $preferences['htmleditor'] = array('type' => PARAM_NOTAGS, 'null' => NULL_ALLOWED,
             'cleancallback' => function($value, $preferencename) {
-                if (empty($value) || !array_key_exists($value, core_component::get_plugin_list('editor'))) {
+                if (empty($value) || !array_key_exists($value, component::get_plugin_list('editor'))) {
                     return null;
                 }
                 return $value;
@@ -1091,7 +1094,7 @@ class core_user {
      * @param string $preferencename
      * @return array
      */
-    protected static function get_preference_definition($preferencename) {
+    public static function get_preference_definition($preferencename) {
         self::fill_preferences_cache();
 
         foreach (self::$preferencescache as $key => $preference) {
@@ -1412,9 +1415,9 @@ class core_user {
      *
      * @param stdClass $user the person to get details of.
      * @param context|null $context The context will be used to determine the visibility of the user's profile url.
-     * @return moodle_url Profile url of the user
+     * @return url Profile url of the user
      */
-    public static function get_profile_url(stdClass $user, context $context = null): moodle_url {
+    public static function get_profile_url(stdClass $user, context $context = null): url {
         if (empty($user->id)) {
             throw new coding_exception('User id is required when displaying profile url.');
         }
@@ -1429,9 +1432,9 @@ class core_user {
 
         // If courseid is not set or is set to site id, then return profile page, otherwise return view page.
         if (!isset($params['courseid']) || $params['courseid'] == SITEID) {
-            return new moodle_url('/user/profile.php', $params);
+            return new url('/user/profile.php', $params);
         } else {
-            return new moodle_url('/user/view.php', $params);
+            return new url('/user/view.php', $params);
         }
     }
 
@@ -1606,3 +1609,8 @@ class core_user {
         return $namefields;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(user::class, \core_user::class);

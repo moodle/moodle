@@ -1,0 +1,13 @@
+issueNumber: MDL-81031
+notes:
+  core:
+    - message: |
+        The following classes have been renamed.
+        Existing classes are currently unaffected.
+
+        | Old class name | New class name |
+
+        | --- | --- |
+
+        | `\core_user` | `\core\user` |
+      type: improved
