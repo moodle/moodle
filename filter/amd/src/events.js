@@ -30,7 +30,6 @@
 
 import {dispatchEvent} from 'core/event_dispatcher';
 import {getList as normalistNodeList} from 'core/normalise';
-import jQuery from 'jquery';
 
 /**
  * Events for the `core_filters` subsystem.
@@ -90,23 +89,3 @@ export const notifyFilterContentUpdated = nodes => {
 export const notifyFilterContentRenderingComplete = nodes => {
     return dispatchEvent(eventTypes.filterContentRenderingComplete, {nodes});
 };
-
-let legacyEventsRegistered = false;
-if (!legacyEventsRegistered) {
-    // The following event triggers are legacy and will be removed in the future.
-    // The following approach provides a backwards-compatability layer for the new events.
-    // Code should be updated to make use of native events.
-
-    Y.use('event', 'moodle-core-event', () => {
-        // Provide a backwards-compatability layer for YUI Events.
-        document.addEventListener(eventTypes.filterContentUpdated, e => {
-            // Trigger the legacy jQuery event.
-            jQuery(document).trigger(M.core.event.FILTER_CONTENT_UPDATED, [jQuery(e.detail.nodes)]);
-
-            // Trigger the legacy YUI event.
-            Y.fire(M.core.event.FILTER_CONTENT_UPDATED, {nodes: new Y.NodeList(e.detail.nodes)});
-        });
-    });
-
-    legacyEventsRegistered = true;
-}
