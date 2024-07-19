@@ -393,6 +393,16 @@ class file extends base {
                 return $mimetypes;
             });
 
+        // Author.
+        $filters[] = (new filter(
+            text::class,
+            'author',
+            new lang_string('author', 'core_repository'),
+            $this->get_entity_name(),
+            "{$filesalias}.author"
+        ))
+            ->add_joins($this->get_joins());
+
         // License (consider null = 'unknown/license not specified' for filtering purposes).
         $filters[] = (new filter(
             select::class,

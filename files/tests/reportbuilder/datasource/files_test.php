@@ -231,6 +231,12 @@ final class files_test extends core_reportbuilder_testcase {
                 'file:type_operator' => select::EQUAL_TO,
                 'file:type_value' => 'image/png',
             ], 0],
+            'Filter author' => ['file:author', [
+                'file:author_operator' => text::IS_EMPTY,
+            ], 4],
+            'Filter author (non match)' => ['file:author', [
+                'file:author_operator' => text::IS_NOT_EMPTY,
+            ], 0],
             'Filter license' => ['file:license', [
                 'file:license_operator' => select::EQUAL_TO,
                 'file:license_value' => 'unknown',
