@@ -28,6 +28,10 @@ require_once($CFG->dirroot.'/user/renderer.php');
 require_once($CFG->dirroot.'/grade/lib.php');
 require_once($CFG->dirroot.'/grade/report/grader/lib.php');
 
+// This report may require a lot of memory and time on large courses.
+raise_memory_limit(MEMORY_HUGE);
+set_time_limit(120);
+
 $courseid      = required_param('id', PARAM_INT);        // course id
 $page          = optional_param('page', 0, PARAM_INT);   // active page
 $edit          = optional_param('edit', -1, PARAM_BOOL); // sticky editting mode
@@ -191,8 +195,9 @@ if ($studentsperpage) {
 $pagingoptions = array_unique($pagingoptions);
 sort($pagingoptions);
 $pagingoptions = array_combine($pagingoptions, $pagingoptions);
-if ($numusers > grade_report_grader::MAX_STUDENTS_PER_PAGE) {
-    $pagingoptions['0'] = grade_report_grader::MAX_STUDENTS_PER_PAGE;
+$maxusers = $report->get_max_students_per_page();
+if ($numusers > $maxusers) {
+    $pagingoptions['0'] = $maxusers;
 } else {
     $pagingoptions['0'] = get_string('all');
 }
@@ -215,7 +220,7 @@ $footercontent = html_writer::div(
 );
 
 // The number of students per page is always limited even if it is claimed to be unlimited.
-$studentsperpage = $studentsperpage ?: grade_report_grader::MAX_STUDENTS_PER_PAGE;
+$studentsperpage = $studentsperpage ?: $maxusers;
 $footercontent .= html_writer::div(
     $OUTPUT->paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl),
     'col'
