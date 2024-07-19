@@ -138,6 +138,10 @@ export default class {
 
             // Refocus on the link that as pressed in the first place.
             updatedRoot.querySelector(`[data-action="togglestate"][data-plugin="${stateToggle.dataset.plugin}"]`).focus();
+
+            // When clicking the toggle and it remains focused, a new tooltip will be generated.
+            // Therefore, the old tooltip should be removed.
+            this.removeTooltips();
             pendingPromise.resolve();
         }
     }
@@ -175,5 +179,17 @@ export default class {
         }
 
         pendingPromise.resolve();
+    }
+
+    /**
+     * Remove tooltips.
+     */
+    removeTooltips() {
+        const tooltips = document.querySelectorAll('[id*="tooltip"]');
+        if (tooltips.length > 0) {
+            tooltips.forEach(tooltip => {
+                tooltip.remove();
+            });
+        }
     }
 }
