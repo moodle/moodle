@@ -71,7 +71,7 @@ function get_whoops(): ?\Whoops\Run {
         return null;
     }
 
-    if (!$CFG->debugdisplay) {
+    if (empty($CFG->debugdisplay)) {
         return null;
     }
 
