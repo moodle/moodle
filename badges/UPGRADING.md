@@ -13,4 +13,3 @@
 - New webservices enable_badges and disable_badges have been added.
 
   For more information see [MDL-82168](https://tracker.moodle.org/browse/MDL-82168)
-

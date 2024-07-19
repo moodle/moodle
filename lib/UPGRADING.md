@@ -21,21 +21,31 @@
 
   For more information see [MDL-74843](https://tracker.moodle.org/browse/MDL-74843)
 
-### Changed
-
-- The class autoloader has been moved to an earlier point in the Moodle bootstrap.
-  Autoloaded classes are now available to scripts using the `ABORT_AFTER_CONFIG` constant.
-
-  For more information see [MDL-80275](https://tracker.moodle.org/browse/MDL-80275)
-- The `\core\dataformat::get_format_instance` method is now public, and can be used to retrieve a writer instance for a given dataformat
-
-  For more information see [MDL-81781](https://tracker.moodle.org/browse/MDL-81781)
-
 ### Added
 
+- The following classes have been renamed and now support autoloading.
+  Existing classes are currently unaffected.
+  | Old class name | New class name |
+  | --- | --- |
+  | `\core_component` | `\core\component` |
+
+  For more information see [MDL-66903](https://tracker.moodle.org/browse/MDL-66903)
+- Added the ability for unit tests to autoload classes in the `\[component]\tests\`
+  namespace from the `[path/to/component]/tests/classes` directory.
+
+  For more information see [MDL-66903](https://tracker.moodle.org/browse/MDL-66903)
+- Added a helper to load fixtures from a components `tests/fixtures/` folder:
+  ```php
+  advanced_testcase::load_fixture(string $component, string $fixture): void;
+  ```
+
+  For more information see [MDL-66903](https://tracker.moodle.org/browse/MDL-66903)
 - New DML constant `SQL_INT_MAX` to define the size of a large integer with cross database platform support
 
   For more information see [MDL-81282](https://tracker.moodle.org/browse/MDL-81282)
+- The function update_display_mode will update the eye icon (enabled/disabled) in the availability. The $pluginname is represented to the plugin need to update. The $displaymode is represented to the eye icon. Whether it enabled or disabled.
+
+  For more information see [MDL-81533](https://tracker.moodle.org/browse/MDL-81533)
 - Added an `exception` L2 Namespace to APIs
 
   For more information see [MDL-81903](https://tracker.moodle.org/browse/MDL-81903)
@@ -141,6 +151,20 @@
 
   For more information see [MDL-82183](https://tracker.moodle.org/browse/MDL-82183)
 
+### Changed
+
+- The class autoloader has been moved to an earlier point in the Moodle bootstrap.
+  Autoloaded classes are now available to scripts using the `ABORT_AFTER_CONFIG` constant.
+
+  For more information see [MDL-80275](https://tracker.moodle.org/browse/MDL-80275)
+- The `\core\dataformat::get_format_instance` method is now public, and can be used to retrieve a writer instance for a given dataformat
+
+  For more information see [MDL-81781](https://tracker.moodle.org/browse/MDL-81781)
+- The `get_home_page()` method can now return new constant `HOMEPAGE_URL`, applicable when a third-party hook has extended the default homepage options for the site
+  A new method, `get_default_home_page_url()` has been added which will return the correct URL when this constant is returned
+
+  For more information see [MDL-82066](https://tracker.moodle.org/browse/MDL-82066)
+
 ### Fixed
 
 - All the setup and tear down methods of `PHPUnit` now are required to, always, call to their parent counterparts. This is a good practice to avoid future problems, especially when updating to PHPUnit >= 10.
@@ -171,3 +195,22 @@
   - `lib/tokeniserlib.php`
 
   For more information see [MDL-82191](https://tracker.moodle.org/browse/MDL-82191)
+- The following methods have been formally deprecated:
+  - `get_core_subsystems`
+  - `get_plugin_types`
+  - `get_plugin_list`
+  - `get_plugin_list_with_class`
+  - `get_plugin_directory`
+  - `normalize_component`
+  - `get_component_directory`
+  - `get_context_instance`
+  Note: These methods have been deprecated for a long time, but previously did not emit any deprecation notice.
+
+  For more information see [MDL-82287](https://tracker.moodle.org/browse/MDL-82287)
+- The following methods have been finally deprecated and will now throw an exception if called:
+  - `get_context_instance`
+  - `can_use_rotated_text`
+  - `get_system_context`
+  - `print_arrow`
+
+  For more information see [MDL-82287](https://tracker.moodle.org/browse/MDL-82287)

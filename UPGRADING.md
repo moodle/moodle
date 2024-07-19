@@ -43,21 +43,31 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-74843](https://tracker.moodle.org/browse/MDL-74843)
 
-#### Changed
-
-- The class autoloader has been moved to an earlier point in the Moodle bootstrap.
-  Autoloaded classes are now available to scripts using the `ABORT_AFTER_CONFIG` constant.
-
-  For more information see [MDL-80275](https://tracker.moodle.org/browse/MDL-80275)
-- The `\core\dataformat::get_format_instance` method is now public, and can be used to retrieve a writer instance for a given dataformat
-
-  For more information see [MDL-81781](https://tracker.moodle.org/browse/MDL-81781)
-
 #### Added
 
+- The following classes have been renamed and now support autoloading.
+  Existing classes are currently unaffected.
+  | Old class name | New class name |
+  | --- | --- |
+  | `\core_component` | `\core\component` |
+
+  For more information see [MDL-66903](https://tracker.moodle.org/browse/MDL-66903)
+- Added the ability for unit tests to autoload classes in the `\[component]\tests\`
+  namespace from the `[path/to/component]/tests/classes` directory.
+
+  For more information see [MDL-66903](https://tracker.moodle.org/browse/MDL-66903)
+- Added a helper to load fixtures from a components `tests/fixtures/` folder:
+  ```php
+  advanced_testcase::load_fixture(string $component, string $fixture): void;
+  ```
+
+  For more information see [MDL-66903](https://tracker.moodle.org/browse/MDL-66903)
 - New DML constant `SQL_INT_MAX` to define the size of a large integer with cross database platform support
 
   For more information see [MDL-81282](https://tracker.moodle.org/browse/MDL-81282)
+- The function update_display_mode will update the eye icon (enabled/disabled) in the availability. The $pluginname is represented to the plugin need to update. The $displaymode is represented to the eye icon. Whether it enabled or disabled.
+
+  For more information see [MDL-81533](https://tracker.moodle.org/browse/MDL-81533)
 - Added an `exception` L2 Namespace to APIs
 
   For more information see [MDL-81903](https://tracker.moodle.org/browse/MDL-81903)
@@ -163,6 +173,20 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-82183](https://tracker.moodle.org/browse/MDL-82183)
 
+#### Changed
+
+- The class autoloader has been moved to an earlier point in the Moodle bootstrap.
+  Autoloaded classes are now available to scripts using the `ABORT_AFTER_CONFIG` constant.
+
+  For more information see [MDL-80275](https://tracker.moodle.org/browse/MDL-80275)
+- The `\core\dataformat::get_format_instance` method is now public, and can be used to retrieve a writer instance for a given dataformat
+
+  For more information see [MDL-81781](https://tracker.moodle.org/browse/MDL-81781)
+- The `get_home_page()` method can now return new constant `HOMEPAGE_URL`, applicable when a third-party hook has extended the default homepage options for the site
+  A new method, `get_default_home_page_url()` has been added which will return the correct URL when this constant is returned
+
+  For more information see [MDL-82066](https://tracker.moodle.org/browse/MDL-82066)
+
 #### Fixed
 
 - All the setup and tear down methods of `PHPUnit` now are required to, always, call to their parent counterparts. This is a good practice to avoid future problems, especially when updating to PHPUnit >= 10.
@@ -193,6 +217,25 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   - `lib/tokeniserlib.php`
 
   For more information see [MDL-82191](https://tracker.moodle.org/browse/MDL-82191)
+- The following methods have been formally deprecated:
+  - `get_core_subsystems`
+  - `get_plugin_types`
+  - `get_plugin_list`
+  - `get_plugin_list_with_class`
+  - `get_plugin_directory`
+  - `normalize_component`
+  - `get_component_directory`
+  - `get_context_instance`
+  Note: These methods have been deprecated for a long time, but previously did not emit any deprecation notice.
+
+  For more information see [MDL-82287](https://tracker.moodle.org/browse/MDL-82287)
+- The following methods have been finally deprecated and will now throw an exception if called:
+  - `get_context_instance`
+  - `can_use_rotated_text`
+  - `get_system_context`
+  - `print_arrow`
+
+  For more information see [MDL-82287](https://tracker.moodle.org/browse/MDL-82287)
 
 ### core_reportbuilder
 
@@ -273,6 +316,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-82292](https://tracker.moodle.org/browse/MDL-82292)
 
+### tool_oauth2
+
+#### Added
+
+- The `get_additional_login_parameters()` method now supports adding the language code to the authentication request so that the OAuth2 login page matches the language in Moodle.
+
+  For more information see [MDL-67554](https://tracker.moodle.org/browse/MDL-67554)
+
 ### report
 
 #### Removed
@@ -349,6 +400,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Deprecated
 
+- The behat step definition behat_grade::i_confirm_in_search_within_the_gradebook_widget_exists has been deprecated. Please use behat_general::i_confirm_in_search_combobox_exists instead.
+
+  For more information see [MDL-80744](https://tracker.moodle.org/browse/MDL-80744)
+- The behat step definition behat_grade::i_confirm_in_search_within_the_gradebook_widget_does_not_exist has been deprecated. Please use behat_general::i_confirm_in_search_combobox_does_not_exist instead.
+
+  For more information see [MDL-80744](https://tracker.moodle.org/browse/MDL-80744)
+- The behat step definition behat_grade::i_click_on_in_search_widget has been deprecated. Please use behat_general::i_click_on_in_search_combobox instead.
+
+  For more information see [MDL-80744](https://tracker.moodle.org/browse/MDL-80744)
 - The `core_grades_renderer::group_selector()` method has been deprecated. Please use `\core_course\output\actionbar\renderer` to render a `group_selector` renderable instead.
 
   For more information see [MDL-80745](https://tracker.moodle.org/browse/MDL-80745)
@@ -360,6 +420,26 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Final deprecation and removal of core_backup\copy\copy in backup/util/ui/classes/copy.php. Please use copy_helper from backup/util/helper/copy_helper.class.php instead.
 
   For more information see [MDL-75022](https://tracker.moodle.org/browse/MDL-75022)
+- Final deprecation of base_controller::get_copy(). Please use restore_controller::get_copy() instead.
+
+  For more information see [MDL-75025](https://tracker.moodle.org/browse/MDL-75025)
+- Final deprecation of base_controller::set_copy(). Please use a restore controller for storing copy information instead.
+
+  For more information see [MDL-75025](https://tracker.moodle.org/browse/MDL-75025)
+
+### core_user
+
+#### Changed
+
+- The visibility of the methods: check_access_for_dynamic_submission() and get_options() in core_user\form\private_files has been changed from protected to public.
+
+  For more information see [MDL-78293](https://tracker.moodle.org/browse/MDL-78293)
+
+#### Added
+
+- New `\core_user\hook\extend_default_homepage` hook added to allow third-party plugins to extend the default homepage options for the site
+
+  For more information see [MDL-82066](https://tracker.moodle.org/browse/MDL-82066)
 
 ### core_question
 
@@ -438,6 +518,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-81321](https://tracker.moodle.org/browse/MDL-81321)
 
+### core_admin
+
+#### Added
+
+- Add availability_management_table is a table which extends from plugin_management_table. Create the availability_management_table can reusable the toggle button for enabled column.
+
+  For more information see [MDL-81533](https://tracker.moodle.org/browse/MDL-81533)
+
 ### editor_tiny
 
 #### Changed
@@ -470,6 +558,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - - New optional sectionNum parameter has been added to activitychooser AMD module initializer. - New option sectionnum parameter has been added to get_course_content_items() external function. - New optional sectionnum parameter has been added to get_content_items_for_user_in_course() function.
 
   For more information see [MDL-81675](https://tracker.moodle.org/browse/MDL-81675)
+- Webservices `core_course_get_courses_by_field` now accepts a new parameter `sectionid` to be able to retrieve the course that has the indicated section
+
+  For more information see [MDL-81699](https://tracker.moodle.org/browse/MDL-81699)
 
 #### Deprecated
 
@@ -520,6 +611,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Bootstrap .no-gutters class is no longer used, use .g-0  instead.
 
   For more information see [MDL-81818](https://tracker.moodle.org/browse/MDL-81818)
+
+#### Added
+
+- Upon upgrading Font Awesome from version 4 to 6, the solid family was selected by default. However, FA6 includes additional families such as regular and brands. Support for these families has now been integrated, allowing icons defined with icon_system::FONTAWESOME to use them. Icons can add the FontAwesome family (fa-regular, fa-brands, fa-solid) near the icon name to display it using this styling.
+
+  For more information see [MDL-82210](https://tracker.moodle.org/browse/MDL-82210)
 
 ### availability
 

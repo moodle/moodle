@@ -7,6 +7,9 @@
 - - New optional sectionNum parameter has been added to activitychooser AMD module initializer. - New option sectionnum parameter has been added to get_course_content_items() external function. - New optional sectionnum parameter has been added to get_content_items_for_user_in_course() function.
 
   For more information see [MDL-81675](https://tracker.moodle.org/browse/MDL-81675)
+- Webservices `core_course_get_courses_by_field` now accepts a new parameter `sectionid` to be able to retrieve the course that has the indicated section
+
+  For more information see [MDL-81699](https://tracker.moodle.org/browse/MDL-81699)
 
 ### Deprecated
 
