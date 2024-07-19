@@ -117,7 +117,9 @@ class category_bin extends base_bin {
         // This hack will be removed once recycle bin switches to use its own backup mode, with
         // own preferences and 100% separate from MOODLE_AUTOMATED.
         // TODO: Remove this as part of MDL-65228.
-        $CFG->forced_plugin_settings['backup'] = ['backup_auto_storage' => 0, 'backup_auto_files' => 1];
+        $forcedbackupsettings = $CFG->forced_plugin_settings['backup'] ?? null;
+        $CFG->forced_plugin_settings['backup']['backup_auto_storage'] = 0;
+        $CFG->forced_plugin_settings['backup']['backup_auto_files'] = 1;
 
         // Backup the course.
         $user = get_admin();
@@ -131,9 +133,9 @@ class category_bin extends base_bin {
         );
         $controller->execute_plan();
 
-        // We don't need the forced setting anymore, hence unsetting it.
+        // We don't need the forced setting anymore, hence restore previous settings.
         // TODO: Remove this as part of MDL-65228.
-        unset($CFG->forced_plugin_settings['backup']);
+        $CFG->forced_plugin_settings['backup'] = $forcedbackupsettings;
 
         // Grab the result.
         $result = $controller->get_results();
@@ -251,7 +253,9 @@ class category_bin extends base_bin {
         // This hack will be removed once recycle bin switches to use its own backup mode, with
         // own preferences and 100% separate from MOODLE_AUTOMATED.
         // TODO: Remove this as part of MDL-65228.
-        $CFG->forced_plugin_settings['restore'] = ['restore_general_users' => 1, 'restore_general_groups' => 1];
+        $forcedrestoresettings = $CFG->forced_plugin_settings['restore'] ?? null;
+        $CFG->forced_plugin_settings['restore']['restore_general_users'] = 1;
+        $CFG->forced_plugin_settings['restore']['restore_general_groups'] = 1;
 
         // Define the import.
         $controller = new \restore_controller(
@@ -287,9 +291,9 @@ class category_bin extends base_bin {
         // Run the import.
         $controller->execute_plan();
 
-        // We don't need the forced setting anymore, hence unsetting it.
+        // We don't need the forced setting anymore, hence restore previous settings.
         // TODO: Remove this as part of MDL-65228.
-        unset($CFG->forced_plugin_settings['restore']);
+        $CFG->forced_plugin_settings['restore'] = $forcedrestoresettings;
 
         // Have finished with the controller, let's destroy it, freeing mem and resources.
         $controller->destroy();
