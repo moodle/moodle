@@ -102,7 +102,11 @@ class grade_report_grader extends grade_report {
      */
     public $canviewhidden;
 
-    /** @var int Maximum number of students that can be shown on one page */
+    /**
+     * @var int Maximum number of students that can be shown on one page
+     * @deprecated Since Moodle 4.5 MDL-84245. Use grade_report_grader::get_max_students_per_page() instead.
+     */
+    #[\core\attribute\deprecated('grade_report_grader::get_max_students_per_page()', since: '4.5', mdl: 'MDL-84245')]
     public const MAX_STUDENTS_PER_PAGE = 5000;
 
     /**
