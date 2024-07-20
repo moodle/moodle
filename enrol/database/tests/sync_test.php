@@ -151,6 +151,8 @@ class sync_test extends \advanced_testcase {
         $table->add_field('shortname', XMLDB_TYPE_CHAR, '255', null, null, null);
         $table->add_field('idnumber', XMLDB_TYPE_CHAR, '255', null, null, null);
         $table->add_field('category', XMLDB_TYPE_CHAR, '255', null, null, null);
+        $table->add_field('startdate', XMLDB_TYPE_CHAR, '255', null, null, null);
+        $table->add_field('enddate', XMLDB_TYPE_CHAR, '255', null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         if ($dbman->table_exists($table)) {
             $dbman->drop_table($table);
@@ -441,7 +443,6 @@ class sync_test extends \advanced_testcase {
 
         // Test basic enrol sync for one user after login.
 
-        $this->reset_enrol_database();
         $plugin->set_config('localcoursefield', 'idnumber');
         $plugin->set_config('localuserfield', 'idnumber');
         $plugin->set_config('localrolefield', 'shortname');
@@ -799,8 +800,148 @@ class sync_test extends \advanced_testcase {
         $this->assertEquals(1+2+1+4+1+count(self::$courses), $DB->count_records('course'));
         $this->assertTrue($DB->record_exists('course', array('idnumber' => 'ncid9')));
 
-
         // Final cleanup - remove extra tables, fixtures and caches.
+        $this->cleanup_enrol_database();
+    }
+
+    /**
+     * Test syncing courses with start and end dates.
+     *
+     * @covers \enrol_database_plugin::sync_courses
+     */
+    public function test_sync_courses_start_end_dates(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->preventResetByRollback();
+        $this->init_enrol_database();
+
+        $courseconfig = get_config('moodlecourse');
+        $nextyear = (int) date('Y') + 1;
+        $prev = (int) date('Y') - 1;
+
+        $midnightstartdate = usergetmidnight(time());
+        $midnightenddate = usergetmidnight(time()) + $courseconfig->courseduration;
+
+        $plugin = enrol_get_plugin('database');
+
+        $trace = new \null_progress_trace();
+
+        $course1 = ['fullname' => 'C1', 'shortname' => 'c1', 'idnumber' => '', 'startdate' => 0,
+            'enddate' => 0];
+        $course2 = ['fullname' => 'C2', 'shortname' => 'c2', 'idnumber' => '', 'startdate' => null,
+            'enddate' => null];
+        // This course won't be created. Broken start date.
+        $course3 = ['fullname' => 'C3', 'shortname' => 'c3', 'idnumber' => '', 'startdate' => 'not date',
+            'enddate' => 0];
+        // This course won't be created. Broken end date.
+        $course4 = ['fullname' => 'C4', 'shortname' => 'c4', 'idnumber' => '', 'startdate' => 0,
+            'enddate' => 'not date'];
+        // This course won't be created. Start date after end date.
+        $course5 = ['fullname' => 'C5', 'shortname' => 'c5', 'idnumber' => '', 'startdate' => '12.05.2024',
+            'enddate' => '12.05.2021'];
+        $course6 = ['fullname' => 'C6', 'shortname' => 'c6', 'idnumber' => '', 'startdate' => '2024-05-22',
+            'enddate' => '2027-05-12'];
+        $course7 = ['fullname' => 'C7', 'shortname' => 'c7', 'idnumber' => '', 'startdate' => null,
+            'enddate' => '12.05.' . $nextyear];
+        $course8 = ['fullname' => 'C8', 'shortname' => 'c8', 'idnumber' => '', 'startdate' => '12.05.2024',
+            'enddate' => null];
+        // This course won't be created. Start date is not set, but it should be set to date after end date.
+        $course9 = ['fullname' => 'C9', 'shortname' => 'c9', 'idnumber' => '', 'startdate' => null,
+            'enddate' => '12.05.' . $prev];
+
+        $DB->insert_record('enrol_database_test_courses', $course1);
+        $DB->insert_record('enrol_database_test_courses', $course2);
+        $DB->insert_record('enrol_database_test_courses', $course3);
+        $DB->insert_record('enrol_database_test_courses', $course4);
+        $DB->insert_record('enrol_database_test_courses', $course5);
+        $DB->insert_record('enrol_database_test_courses', $course6);
+        $DB->insert_record('enrol_database_test_courses', $course7);
+        $DB->insert_record('enrol_database_test_courses', $course8);
+        $DB->insert_record('enrol_database_test_courses', $course9);
+
+        // Mess with case as we need to check that fields are lower cased.
+        $plugin->set_config('newcoursestartdate', 'StartDaTE');
+        $plugin->set_config('newcourseenddate', 'ENDdATE');
+
+        $plugin->sync_courses($trace);
+
+        // Course 3, course 4, course 5 and course 9 should not be created.
+        $this->assertTrue($DB->record_exists('course', ['shortname' => $course1['shortname']]));
+        $this->assertTrue($DB->record_exists('course', ['shortname' => $course2['shortname']]));
+        $this->assertFalse($DB->record_exists('course', ['shortname' => $course3['shortname']]));
+        $this->assertFalse($DB->record_exists('course', ['shortname' => $course4['shortname']]));
+        $this->assertFalse($DB->record_exists('course', ['shortname' => $course5['shortname']]));
+        $this->assertTrue($DB->record_exists('course', ['shortname' => $course6['shortname']]));
+        $this->assertTrue($DB->record_exists('course', ['shortname' => $course7['shortname']]));
+        $this->assertTrue($DB->record_exists('course', ['shortname' => $course8['shortname']]));
+        $this->assertFalse($DB->record_exists('course', ['shortname' => $course9['shortname']]));
+
+        // Check dates for created courses.
+        $this->assertEquals($midnightstartdate, $DB->get_field('course', 'startdate', ['shortname' => $course1['shortname']]));
+        $this->assertEquals($midnightenddate, $DB->get_field('course', 'enddate', ['shortname' => $course1['shortname']]));
+
+        $this->assertEquals($midnightstartdate, $DB->get_field('course', 'startdate', ['shortname' => $course2['shortname']]));
+        $this->assertEquals($midnightenddate, $DB->get_field('course', 'enddate', ['shortname' => $course2['shortname']]));
+
+        $this->assertEquals(strtotime('22.05.2024'), $DB->get_field('course', 'startdate', ['shortname' => $course6['shortname']]));
+        $this->assertEquals(strtotime('12.05.2027'), $DB->get_field('course', 'enddate', ['shortname' => $course6['shortname']]));
+
+        $this->assertEquals($midnightstartdate, $DB->get_field('course', 'startdate', ['shortname' => $course7['shortname']]));
+        $expected = strtotime('12.05.' . $nextyear);
+        $this->assertEquals($expected, $DB->get_field('course', 'enddate', ['shortname' => $course7['shortname']]));
+
+        $this->assertEquals(strtotime('12.05.2024'), $DB->get_field('course', 'startdate', ['shortname' => $course8['shortname']]));
+        $expected = strtotime('12.05.2024') + $courseconfig->courseduration;
+        $this->assertEquals($expected, $DB->get_field('course', 'enddate', ['shortname' => $course8['shortname']]));
+
+        // Push course with dates as timestamp.
+        $course10 = ['fullname' => 'C10', 'shortname' => 'c10', 'idnumber' => '', 'startdate' => 1810051200,
+            'enddate' => 1810051211];
+        $DB->insert_record('enrol_database_test_courses', $course10);
+
+        $plugin->sync_courses($trace);
+
+        $this->assertTrue($DB->record_exists('course', ['shortname' => $course10['shortname']]));
+        $this->assertEquals(1810051200, $DB->get_field('course', 'startdate', ['shortname' => $course10['shortname']]));
+        $this->assertEquals(1810051211, $DB->get_field('course', 'enddate', ['shortname' => $course10['shortname']]));
+
+        // Push course with broken dates, but delete dates from plugin configuration before syncing.
+        $course11 = ['fullname' => 'C11', 'shortname' => 'c11', 'idnumber' => '', 'startdate' => 'not date',
+            'enddate' => 'not date'];
+        $DB->insert_record('enrol_database_test_courses', $course11);
+
+        $plugin->set_config('newcoursestartdate', '');
+        $plugin->set_config('newcourseenddate', '');
+        $plugin->sync_courses($trace);
+
+        $this->assertTrue($DB->record_exists('course', ['shortname' => $course11['shortname']]));
+        $this->assertEquals($midnightstartdate, $DB->get_field('course', 'startdate', ['shortname' => $course11['shortname']]));
+        $this->assertEquals($midnightenddate, $DB->get_field('course', 'enddate', ['shortname' => $course11['shortname']]));
+
+        // Push courses with correct dates, but set date configuration to not existing date fields.
+        $course12 = ['fullname' => 'C12', 'shortname' => 'c12', 'idnumber' => '', 'startdate' => '2024-05-22',
+            'enddate' => '2027-05-12'];
+        $DB->insert_record('enrol_database_test_courses', $course11);
+
+        $plugin->set_config('newcoursestartdate', 'startdate');
+        $plugin->set_config('newcourseenddate', 'ed');
+        $plugin->sync_courses($trace);
+
+        // Course should not be synced to prevent setting up incorrect dates.
+        $this->assertFalse($DB->record_exists('course', ['shortname' => $course12['shortname']]));
+
+        $course13 = ['fullname' => 'C13', 'shortname' => 'c13', 'idnumber' => '', 'startdate' => '2024-05-22',
+            'enddate' => '2027-05-12'];
+        $DB->insert_record('enrol_database_test_courses', $course11);
+
+        $plugin->set_config('newcoursestartdate', 'sd');
+        $plugin->set_config('newcourseenddate', 'enddate');
+        $plugin->sync_courses($trace);
+
+        // Course should not be synced to prevent setting up incorrect dates.
+        $this->assertFalse($DB->record_exists('course', ['shortname' => $course13['shortname']]));
+
         $this->cleanup_enrol_database();
     }
 }
