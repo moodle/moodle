@@ -26,7 +26,7 @@ Feature: Admin can set Recover grades default setting
     And I navigate to "Submissions" in current page administration
     And I click on "Quick grading" "checkbox"
     And I set the field "User grade" to "60.00"
-    And I press "Save all quick grading changes"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     # Confirm that assigned grade was saved
     And I am on the "Course 1" "grades > Grader report > View" page
     And I should see "60.00" in the "Student One" "table_row"

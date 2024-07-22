@@ -22,7 +22,8 @@
     Example context (json):
     {
         "perpage": "<label>Show<select name='perpage' class='custom-select'><option value='-1'>All</select></label>",
-        "pagingbar": "<nav class='pagination pagination-centered justify-content-center'><ul class='mt-1 pagination '><li class='page-item active'><a href='#' class='page-link'><span>1</span></a></li></ul></nav>"
+        "pagingbar": "<nav class='pagination pagination-centered justify-content-center'><ul class='mt-1 pagination '><li class='page-item active'><a href='#' class='page-link'><span>1</span></a></li></ul></nav>",
+        "hassubmit": true
     }
 }}
 <div class="col-auto">
@@ -34,4 +35,16 @@
     {{#pagingbar}}
         {{{.}}}
     {{/pagingbar}}
+</div>
+<div class="col-auto">
+    {{#hassubmit}}
+        <button type="submit" id="{{uniqid}}-submit" class="btn btn-primary">
+            {{#str}}save{{/str}}
+        </button>
+        {{#js}}
+            require(['core_form/submit'], function(Submit) {
+                Submit.init("{{uniqid}}-submit");
+            });
+        {{/js}}
+    {{/hassubmit}}
 </div>

@@ -4609,21 +4609,25 @@ class assign {
         $footerdata = [
             'perpage' => $gradingtable->get_paging_selector(),
             'pagingbar' => $gradingtable->get_paging_bar(),
+            'hassubmit' => $usequickgrading,
         ];
         $footer = new core\output\sticky_footer($OUTPUT->render_from_template('mod_assign/grading_sticky_footer', $footerdata));
-        $table .= $this->get_renderer()->render($footer);
 
         if ($usequickgrading) {
             $page = optional_param('page', null, PARAM_INT);
-            $quickformparams = array('cm'=>$this->get_course_module()->id,
-                                     'gradingtable'=>$table,
-                                     'sendstudentnotifications' => $this->get_instance()->sendstudentnotifications,
-                                     'page' => $page);
+            $quickformparams = [
+                'cm' => $this->get_course_module()->id,
+                'gradingtable' => $table,
+                'sendstudentnotifications' => $this->get_instance()->sendstudentnotifications,
+                'page' => $page,
+                'footer' => $this->get_renderer()->render($footer),
+            ];
             $quickgradingform = new mod_assign_quick_grading_form(null, $quickformparams);
 
             $o .= $this->get_renderer()->render(new assign_form('quickgradingform', $quickgradingform));
         } else {
             $o .= $table;
+            $o .= $this->get_renderer()->render($footer);
         }
 
         if ($this->can_grade()) {

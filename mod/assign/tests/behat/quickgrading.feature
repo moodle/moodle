@@ -95,7 +95,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I follow "View all submissions"
     Then I click on "Quick grading" "checkbox"
     And I set the field "User grade" to "60.0"
-    And I press "Save all quick grading changes"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     And I should see "The grade changes were saved"
     And I press "Continue"
     And I am on the "Test assignment name" "assign activity" page logged in as student1
@@ -123,7 +123,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I click on "Hide Feedback comments" "link"
     And I click on "Hide Final grade" "link"
     And I click on "Hide Outcomes" "link"
-    And I press "Save all quick grading changes"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     And I should see "The grade changes were saved"
     And I press "Continue"
     And I am on the "Test assignment name" "assign activity" page logged in as student1
