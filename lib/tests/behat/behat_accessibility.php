@@ -190,11 +190,11 @@ EOF;
     protected function get_axe_config_for_tags(?array $standardtags = null, ?array $extratags = null): string {
         if (empty($standardtags)) {
             $standardtags = [
-                // Meet WCAG 2.1 A requirements.
-                'wcag21a',
+                // Meet WCAG 2.2 Level A success criteria.
+                'wcag22a',
 
-                // Meet WCAG 2.1 AA requirements.
-                'wcag21aa',
+                // Meet WCAG 2.2 Level AA success criteria.
+                'wcag22aa',
 
                 // Meet Section 508 requirements.
                 // See https://www.epa.gov/accessibility/what-section-508 for detail.
