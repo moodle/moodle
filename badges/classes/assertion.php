@@ -14,22 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Badge assertion library.
- *
- * @package    core
- * @subpackage badges
- * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
- */
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Open Badges Assertions specification 1.0 {@link https://github.com/mozilla/openbadges-backpack/wiki/Assertions}
+ * Open Badges Assertions specification 2.0
+ * {@link https://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html#Assertion}
  *
- * Badge asserion is defined by three parts:
+ * Badge assertion is defined by three parts:
  * - Badge Assertion (information regarding a specific badge that was awarded to a badge earner)
  * - Badge Class (general information about a badge and what it is intended to represent)
  * - Issuer Class (general information of an issuing organisation)
@@ -40,6 +31,10 @@ require_once($CFG->dirroot . '/badges/renderer.php');
 /**
  * Class that represents badge assertion.
  *
+ * @package    core_badges
+ * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 class core_badges_assertion {
     /** @var object Issued badge information from database */
@@ -205,7 +200,7 @@ class core_badges_assertion {
             $badgeurl = new moodle_url('/badges/badgeclass.php', $params);
             $class['criteria'] = $badgeurl->out(false); // Currently badge URL.
             if ($issued) {
-                $params = ['id' => $this->get_badge_id(), 'obversion' => $this->_obversion];
+                $params = ['id' => $this->get_badge_id()];
                 $issuerurl = new moodle_url('/badges/issuer_json.php', $params);
                 $class['issuer'] = $issuerurl->out(false);
             }
@@ -227,24 +222,9 @@ class core_badges_assertion {
      * @return array Issuer information.
      */
     public function get_issuer() {
-        global $CFG;
-        $issuer = array();
-        if ($this->_data) {
-            // Required.
-            if ($this->_obversion == OPEN_BADGES_V1) {
-                $issuer['name'] = $this->_data->issuername;
-                $issuer['url'] = $this->_data->issuerurl;
-                // Optional.
-                if (!empty($this->_data->issuercontact)) {
-                    $issuer['email'] = $this->_data->issuercontact;
-                } else {
-                    $issuer['email'] = $CFG->badges_defaultissuercontact;
-                }
-            } else {
-                $badge = new badge($this->get_badge_id());
-                $issuer = $badge->get_badge_issuer();
-            }
-        }
+        $badge = new badge($this->get_badge_id());
+        $issuer = $badge->get_badge_issuer();
+
         $this->embed_data_badge_version2($issuer, OPEN_BADGES_V2_TYPE_ISSUER);
         return $issuer;
     }

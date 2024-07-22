@@ -102,16 +102,15 @@ define('BADGE_MESSAGE_MONTHLY', 4);
 define('BADGRIO_BACKPACKAPIURL', 'https://api.badgr.io/v2');
 define('BADGRIO_BACKPACKWEBURL', 'https://badgr.io');
 
-/*
- * @deprecated since 3.9 (MDL-66357).
+/**
+ * @deprecated since Moodle 4.5.
+ * @todo Final deprecation in Moodle 6.0. See MDL-82332.
  */
-define('BADGE_BACKPACKAPIURL', 'https://backpack.openbadges.org');
-define('BADGE_BACKPACKWEBURL', 'https://backpack.openbadges.org');
+define('OPEN_BADGES_V1', 1);
 
 /*
  * Open Badges specifications.
  */
-define('OPEN_BADGES_V1', 1);
 define('OPEN_BADGES_V2', 2);
 define('OPEN_BADGES_V2P1', 2.1);
 
@@ -1100,7 +1099,6 @@ function badges_change_sortorder_backpacks(int $backpackid, int $direction): voi
  */
 function badges_get_badge_api_versions() {
     return [
-        (string)OPEN_BADGES_V1 => get_string('openbadgesv1', 'badges'),
         (string)OPEN_BADGES_V2 => get_string('openbadgesv2', 'badges'),
         (string)OPEN_BADGES_V2P1 => get_string('openbadgesv2p1', 'badges')
     ];

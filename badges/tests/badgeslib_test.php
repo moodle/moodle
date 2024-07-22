@@ -14,16 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for badges
- *
- * @package    core
- * @subpackage badges
- * @copyright  2013 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
- */
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -33,6 +23,14 @@ require_once($CFG->dirroot . '/badges/lib.php');
 use core_badges\helper;
 use core\task\manager;
 
+/**
+ * Unit tests for badges
+ *
+ * @package    core_badges
+ * @copyright  2013 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
+ */
 class badgeslib_test extends advanced_testcase {
     protected $badgeid;
     protected $course;
@@ -907,10 +905,10 @@ class badgeslib_test extends advanced_testcase {
         $badge = new badge($this->coursebadge);
         $this->assertFalse($badge->is_issued($this->user->id));
 
-        $criteria_overall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id));
-        $criteria_overall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY));
-        $criteria_overall1 = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_PROFILE, 'badgeid' => $badge->id));
-        $criteria_overall1->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL, 'field_address' => 'address'));
+        $criteriaoverall = award_criteria::build(['criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id]);
+        $criteriaoverall->save(['agg' => BADGE_CRITERIA_AGGREGATION_ANY]);
+        $criteriaoverall1 = award_criteria::build(['criteriatype' => BADGE_CRITERIA_TYPE_PROFILE, 'badgeid' => $badge->id]);
+        $criteriaoverall1->save(['agg' => BADGE_CRITERIA_AGGREGATION_ALL, 'field_address' => 'address']);
 
         $this->user->address = 'Test address';
         $sink = $this->redirectEmails();
@@ -922,17 +920,7 @@ class badgeslib_test extends advanced_testcase {
         $awards = $badge->get_awards();
         $this->assertCount(1, $awards);
 
-        // Get assertion.
-        $award = reset($awards);
-        $assertion = new core_badges_assertion($award->uniquehash, OPEN_BADGES_V1);
-        $testassertion = $this->assertion;
-
-        // Make sure JSON strings have the same structure.
-        $this->assertStringMatchesFormat($testassertion->badge, json_encode($assertion->get_badge_assertion()));
-        $this->assertStringMatchesFormat($testassertion->class, json_encode($assertion->get_badge_class()));
-        $this->assertStringMatchesFormat($testassertion->issuer, json_encode($assertion->get_issuer()));
-
-        // Test Openbadge specification version 2.
+        // Test Openbadge specification version 2.0.
         // Get assertion version 2.
         $award = reset($awards);
         $assertion2 = new core_badges_assertion($award->uniquehash, OPEN_BADGES_V2);
