@@ -57,6 +57,12 @@
                 </div>
             </div>
         </div>
-        {{> core/welcome }}
+        {{#welcomemessage}}
+            <div class="card border-0 mt-3">
+                <div class="card-body py-0">
+                    {{> core/welcome }}
+                </div>
+            </div>
+        {{/welcomemessage}}
     </div>
 </header>
