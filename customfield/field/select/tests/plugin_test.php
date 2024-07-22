@@ -18,15 +18,18 @@ namespace customfield_select;
 
 use core_customfield_generator;
 use core_customfield_test_instance_form;
+use stdClass;
 
 /**
  * Functional test for customfield_select
  *
  * @package    customfield_select
+ * @covers     \customfield_select\data_controller
+ * @covers     \customfield_select\field_controller
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plugin_test extends \advanced_testcase {
+final class plugin_test extends \advanced_testcase {
 
     /** @var stdClass[]  */
     private $courses = [];
@@ -151,11 +154,39 @@ class plugin_test extends \advanced_testcase {
     }
 
     /**
+     * Test getting field options, formatted
+     */
+    public function test_get_options(): void {
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+
+        $field = $this->get_generator()->create_field([
+            'categoryid' => $this->cfcat->get('id'),
+            'type' => 'select',
+            'shortname' => 'myselect',
+            'configdata' => [
+                'options' => <<<EOF
+                    <span lang="en" class="multilang">Beginner</span><span lang="es" class="multilang">Novato</span>
+                    <span lang="en" class="multilang">Intermediate</span><span lang="es" class="multilang">Intermedio</span>
+                    <span lang="en" class="multilang">Advanced</span><span lang="es" class="multilang">Avanzado</span>
+                EOF,
+            ],
+        ]);
+
+        $this->assertEquals([
+            '',
+            'Beginner',
+            'Intermediate',
+            'Advanced',
+        ], $field->get_options());
+    }
+
+    /**
      * Data provider for {@see test_parse_value}
      *
      * @return array
      */
-    public function parse_value_provider() : array {
+    public static function parse_value_provider(): array {
         return [
             ['Red', 1],
             ['Blue', 2],
@@ -169,7 +200,6 @@ class plugin_test extends \advanced_testcase {
      *
      * @param string $value
      * @param int $expected
-     * @return void
      *
      * @dataProvider parse_value_provider
      */

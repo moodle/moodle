@@ -62,7 +62,11 @@ class field_controller extends \core_customfield\field_controller {
     public function get_options(): array {
         $optionconfig = $this->get_configdata_property('options');
         if ($optionconfig) {
-            $options = preg_split("/\s*\n\s*/", trim($optionconfig));
+            $context = $this->get_handler()->get_configuration_context();
+            $options = array_map(
+                fn(string $option) => format_string($option, true, ['context' => $context]),
+                preg_split("/\s*\n\s*/", trim($optionconfig), -1, PREG_SPLIT_NO_EMPTY),
+            );
         } else {
             $options = array();
         }
@@ -111,7 +115,7 @@ class field_controller extends \core_customfield\field_controller {
         $ret = [];
         foreach ($values as $value) {
             if (isset($options[$value])) {
-                $ret[$value] = format_string($options[$value]);
+                $ret[$value] = $options[$value];
             }
         }
         $ret[BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY] = get_string('nocustomvalue', 'block_myoverview',
