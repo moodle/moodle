@@ -1465,7 +1465,7 @@ function question_has_capability_on($questionorid, $cap, $notused = -1): bool {
                      WHERE q.id = :id';
 
             // Well, at least we tried. Seems that we really have to read from DB.
-            $question = $DB->get_record_sql($sql, ['id' => $questionid]);
+            $question = $DB->get_record_sql($sql, ['id' => $questionid], MUST_EXIST);
         }
     }
 
