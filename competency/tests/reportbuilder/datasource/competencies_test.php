@@ -90,6 +90,9 @@ final class competencies_test extends core_reportbuilder_testcase {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
+        $cohort = $this->getDataGenerator()->create_cohort(['name' => 'My cohort']);
+        cohort_add_member($cohort->id, $user->id);
+
         $scale = $this->getDataGenerator()->create_scale(['name' => 'My scale', 'scale' => 'A,B,C,D']);
 
         /** @var core_competency_generator $generator */
@@ -125,6 +128,9 @@ final class competencies_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'usercompetency:status']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'usercompetency:rating']);
 
+        // Cohort.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:name']);
+
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(1, $content);
 
@@ -140,6 +146,7 @@ final class competencies_test extends core_reportbuilder_testcase {
             $competencytimemodified,
             $usercompetencystatus,
             $usercompetencyrating,
+            $cohortname,
         ] = array_values($content[0]);
 
         $this->assertEquals('So cool', $frameworkdescription);
@@ -153,6 +160,7 @@ final class competencies_test extends core_reportbuilder_testcase {
         $this->assertNotEmpty($competencytimemodified);
         $this->assertEquals('Idle', $usercompetencystatus);
         $this->assertEquals('C', $usercompetencyrating);
+        $this->assertEquals('My cohort', $cohortname);
     }
 
     /**
@@ -269,6 +277,16 @@ final class competencies_test extends core_reportbuilder_testcase {
                 'user:username_operator' => text::IS_NOT_EQUAL_TO,
                 'user:username_value' => 'testuser',
             ], false],
+
+            // Cohort.
+            'Cohort name' => ['cohort:name', [
+                'cohort:name_operator' => text::IS_EQUAL_TO,
+                'cohort:name_value' => 'My cohort',
+            ], true],
+            'Cohort name (no match)' => ['cohort:name', [
+                'cohort:name_operator' => text::IS_EQUAL_TO,
+                'cohort:name_value' => 'Another cohort',
+            ], false],
         ];
     }
 
@@ -289,7 +307,10 @@ final class competencies_test extends core_reportbuilder_testcase {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user(['username' => 'testuser']);
-        $scale = $this->getDataGenerator()->create_scale(['name' => 'My scale', 'scale' => 'A,B,C,D']);
+        $cohort = $this->getDataGenerator()->create_cohort(['name' => 'My cohort']);
+        cohort_add_member($cohort->id, $user->id);
+
+        $scale = $this->getDataGenerator()->create_scale([]);
 
         /** @var core_competency_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_competency');

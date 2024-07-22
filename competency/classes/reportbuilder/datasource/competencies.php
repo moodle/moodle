@@ -19,10 +19,12 @@ declare(strict_types=1);
 namespace core_competency\reportbuilder\datasource;
 
 use core\reportbuilder\local\entities\context;
+use core_cohort\reportbuilder\local\entities\cohort;
 use core_competency\reportbuilder\local\entities\{competency, framework, usercompetency};
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\filters\boolean_select;
+use core_reportbuilder\local\helpers\database;
 
 /**
  * Competencies datasource
@@ -88,8 +90,33 @@ class competencies extends datasource {
             ->add_join("LEFT JOIN {user} {$useralias} ON {$useralias}.id = {$usercompetencyalias}.userid")
         );
 
+        // Join cohort entity.
+        $cohortentity = new cohort();
+        $cohortalias = $cohortentity->get_table_alias('cohort');
+        $cohortmemberalias = database::generate_alias();
+        $this->add_entity($cohortentity
+            ->add_joins($userentity->get_joins())
+            ->add_joins([
+                "LEFT JOIN {cohort_members} {$cohortmemberalias} ON {$cohortmemberalias}.userid = {$useralias}.id",
+                "LEFT JOIN {cohort} {$cohortalias} ON {$cohortalias}.id = {$cohortmemberalias}.cohortid",
+            ])
+        );
+
         // Add report elements from each of the entities we added to the report.
-        $this->add_all_from_entities();
+        $this->add_all_from_entities([
+            $contextentity->get_entity_name(),
+            $frameworkentity->get_entity_name(),
+            $competencyentity->get_entity_name(),
+            $usercompetencyentity->get_entity_name(),
+            $userentity->get_entity_name(),
+        ]);
+
+        $this->add_all_from_entity(
+            $cohortentity->get_entity_name(),
+            ['name', 'idnumber', 'description', 'customfield*'],
+            ['cohortselect', 'name', 'idnumber', 'customfield*'],
+            ['cohortselect', 'name', 'idnumber', 'customfield*'],
+        );
     }
 
     /**
