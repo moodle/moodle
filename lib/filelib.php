@@ -4747,8 +4747,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
                 $filename = 'f1';
             }
 
-            if ((!empty($CFG->forcelogin) and !isloggedin()) ||
-                    (!empty($CFG->forceloginforprofileimage) && (!isloggedin() || isguestuser()))) {
+            if (!\core\output\user_picture::allow_view($context->instanceid)) {
                 // protect images if login required and not logged in;
                 // also if login is required for profile images and is not logged in or guest
                 // do not use require_login() because it is expensive and not suitable here anyway

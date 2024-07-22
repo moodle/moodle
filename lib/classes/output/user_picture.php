@@ -213,6 +213,47 @@ class user_picture implements renderable {
     }
 
     /**
+     * Checks if the current user is permitted to view user profile images.
+     *
+     * This is based on the forcelogin and forceloginforprofileimage config settings, and the
+     * moodle/user:viewprofilepictures capability.
+     *
+     * Logged-in users are allowed to view their own profile image regardless of capability.
+     *
+     * @param int $imageuserid User id of profile image being viewed
+     * @return bool True if current user can view profile images
+     */
+    public static function allow_view(int $imageuserid): bool {
+        global $CFG, $USER;
+
+        // Not allowed to view profile images if forcelogin is enabled and not logged in (guest
+        // allowed), or forceloginforprofileimage is enabled and not logged in or guest.
+        if (
+            (!empty($CFG->forcelogin) && !isloggedin()) ||
+            (!empty($CFG->forceloginforprofileimage) && (!isloggedin() || isguestuser()))
+        ) {
+            return false;
+        }
+
+        // Unless one of the forcelogin options is enabled, users can download profile pics
+        // without login, so the capability should not be checked as it might lead to a
+        // false sense of security (i.e. you log in as a test user, the HTML page doesn't
+        // show the picture, but they can still access it if they just log out).
+        // When the capability is checked, use system context for performance (if we check at
+        // user level, pages that show a lot of user pictures will individually load a lot of
+        // user contexts).
+        if (
+            (!empty($CFG->forcelogin) || !empty($CFG->forceloginforprofileimage)) &&
+            $USER->id != $imageuserid &&
+            !has_capability('moodle/user:viewprofilepictures', \context_system::instance())
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Works out the URL for the users picture.
      *
      * This method is recommended as it avoids costly redirects of user pictures
@@ -253,13 +294,7 @@ class user_picture implements renderable {
 
         $defaulturl = $renderer->image_url('u/' . $filename); // Default image.
 
-        if (
-            (!empty($CFG->forcelogin) && !isloggedin()) ||
-            (!empty($CFG->forceloginforprofileimage) && (!isloggedin() || isguestuser()))
-        ) {
-            // Protect images if login required and not logged in;
-            // also if login is required for profile images and is not logged in or guest
-            // do not use require_login() because it is expensive and not suitable here anyway.
+        if (!self::allow_view($this->user->id)) {
             return $defaulturl;
         }
 
