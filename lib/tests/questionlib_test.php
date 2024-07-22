@@ -2010,6 +2010,21 @@ class questionlib_test extends \advanced_testcase {
     }
 
     /**
+     * Test question_has_capability_on with an invalid question ID
+     */
+    public function test_question_has_capability_on_invalid_question(): void {
+        try {
+            question_has_capability_on(42, 'tag');
+            $this->fail('Expected exception');
+        } catch (\moodle_exception $exception) {
+            $this->assertInstanceOf(\dml_missing_record_exception::class, $exception);
+
+            // We also get debugging from initial attempt to load question data.
+            $this->assertDebuggingCalled();
+        }
+    }
+
+    /**
      * Test of question_categorylist function.
      *
      * @covers ::question_categorylist()
