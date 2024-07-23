@@ -1,0 +1,5 @@
+issueNumber: MDL-77167
+notes:
+  core:
+    - message: Remove deprecation layer for YUI Events. The deprecation layer was introduced with MDL-70990 and MDL-72291.
+      type: removed
