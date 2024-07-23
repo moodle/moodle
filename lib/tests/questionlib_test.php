@@ -2009,6 +2009,35 @@ class questionlib_test extends \advanced_testcase {
     }
 
     /**
+     * Test that question_has_capability_on does not fail when passed an object with a null
+     * createdby property.
+     */
+    public function test_question_has_capability_on_object_with_null_createdby(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $category = $generator->create_category();
+        $context = \context_coursecat::instance($category->id);
+
+        $role = $generator->create_role();
+        role_assign($role, $user->id, $context->id);
+        assign_capability('moodle/question:editmine', CAP_ALLOW, $role, $context->id);
+
+        $this->setUser($user);
+
+        $fakequestion = (object) [
+            'contextid' => $context->id,
+            'createdby' => null,
+        ];
+
+        $this->assertFalse(question_has_capability_on($fakequestion, 'edit'));
+
+        $fakequestion->createdby = $user->id;
+
+        $this->assertTrue(question_has_capability_on($fakequestion, 'edit'));
+    }
+
+    /**
      * Test of question_categorylist function.
      *
      * @covers ::question_categorylist()

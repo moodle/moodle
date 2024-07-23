@@ -1434,7 +1434,7 @@ function question_has_capability_on($questionorid, $cap, $notused = -1): bool {
     } else if (is_object($questionorid)) {
         // All we really need in this function is the contextid and author of the question.
         // We won't bother fetching other details of the question if these 2 fields are provided.
-        if (isset($questionorid->contextid) && isset($questionorid->createdby)) {
+        if (isset($questionorid->contextid) && property_exists($questionorid, 'createdby')) {
             $question = $questionorid;
         } else if (!empty($questionorid->id)) {
             $questionid = $questionorid->id;
