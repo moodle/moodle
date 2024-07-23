@@ -16,6 +16,8 @@
 
 namespace core\external\output;
 
+use core\output\stored_progress_bar;
+use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_multiple_structure;
 use core_external\external_single_structure;
@@ -29,14 +31,14 @@ use core_external\external_value;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Conn Warwicker <conn.warwicker@catalyst-eu.net>
  */
-class poll_stored_progress extends \core_external\external_api {
+class poll_stored_progress extends external_api {
 
     /**
      * Returns description of method parameters
      *
      * @return external_function_parameters
      */
-    public static function execute_parameters() {
+    public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'ids' => new external_multiple_structure(
                 new external_value(PARAM_INT, 'The stored_progress ID', VALUE_REQUIRED)
@@ -49,7 +51,7 @@ class poll_stored_progress extends \core_external\external_api {
      *
      * @return external_multiple_structure
      */
-    public static function execute_returns() {
+    public static function execute_returns(): external_multiple_structure {
         return new external_multiple_structure(
             new external_single_structure([
                 'id' => new external_value(PARAM_INT, 'stored_progress record id'),
@@ -69,21 +71,17 @@ class poll_stored_progress extends \core_external\external_api {
      * @param array $ids
      * @return array
      */
-    public static function execute(array $ids) {
-        global $CFG, $DB;
-
+    public static function execute(array $ids): array {
         $params = self::validate_parameters(self::execute_parameters(), [
             'ids' => $ids,
         ]);
 
         $return = [];
-
+        $ids = $params['ids'];
         foreach ($ids as $id) {
-
             // Load the stored progress bar object.
-            $bar = \core\output\stored_progress_bar::get_by_id($id);
+            $bar = stored_progress_bar::get_by_id($id);
             if ($bar) {
-
                 // Return the updated bar data.
                 $return[$id] = [
                     'id' => $id,
@@ -91,12 +89,11 @@ class poll_stored_progress extends \core_external\external_api {
                     'progress' => $bar->get_percent(),
                     'estimated' => $bar->get_estimate_message($bar->get_percent()),
                     'message' => $bar->get_message(),
-                    'timeout' => \core\output\stored_progress_bar::get_timeout(),
+                    'timeout' => stored_progress_bar::get_timeout(),
                     'error' => $bar->get_haserrored(),
                 ];
 
             } else {
-
                 // If we could not find the record, we still need to return the right arguments in the array for the webservice.
                 $return[$id] = [
                     'id' => $id,
@@ -104,15 +101,12 @@ class poll_stored_progress extends \core_external\external_api {
                     'progress' => 0,
                     'estimated' => '',
                     'message' => get_string('invalidrecordunknown', 'error'),
-                    'timeout' => \core\output\stored_progress_bar::get_timeout(),
+                    'timeout' => stored_progress_bar::get_timeout(),
                     'error' => true,
                 ];
-
             }
-
         }
 
         return $return;
     }
-
 }

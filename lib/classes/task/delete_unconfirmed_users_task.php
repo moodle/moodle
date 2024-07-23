@@ -49,17 +49,18 @@ class delete_unconfirmed_users_task extends scheduled_task {
 
         // Delete users who haven't confirmed within required period.
         if (!empty($CFG->deleteunconfirmed)) {
-            $this->start_stored_progress();
             $cuttime = $timenow - ($CFG->deleteunconfirmed * 3600);
-            $selectcount = "SELECT COUNT(*)";
-            $select = "SELECT *";
-            $sql = "
-                  FROM {user}
-                 WHERE confirmed = 0 AND timecreated > 0
-                       AND timecreated < ? AND deleted = 0";
+            $select = "confirmed = 0 AND timecreated > 0 AND timecreated < ? AND deleted = 0";
             $params = [$cuttime];
-            $count = $DB->count_records_sql($selectcount . $sql, $params);
-            $rs = $DB->get_recordset_sql($select . $sql, $params);
+            $count = $DB->count_records_select('user', $select, $params);
+
+            // Exit early if there are no records to process.
+            if (!$count) {
+                return;
+            }
+
+            $this->start_stored_progress();
+            $rs = $DB->get_recordset_select('user', $select, $params);
             $processed = 0;
             foreach ($rs as $user) {
                 delete_user($user);
@@ -68,6 +69,7 @@ class delete_unconfirmed_users_task extends scheduled_task {
                 $this->progress->update($processed, $count, $message);
             }
             $rs->close();
+            $this->progress->update($processed, $count, "Deleted $processed out of $count unconfirmed users");
         }
     }
 

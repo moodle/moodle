@@ -161,8 +161,6 @@ class progress_bar implements renderable, templatable {
                 'argument to the constructor) before you try updating the progress bar.');
         }
 
-        $estimate = $this->estimate($percent);
-
         // No significant change, no need to update anything.
         if (round($this->percent, 2) === round($percent, 2)) {
             return;
