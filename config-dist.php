@@ -773,6 +773,15 @@ $CFG->admin = 'admin';
 // Defaults to 60 minutes.
 //
 //      $CFG->enrolments_sync_interval = 3600
+//
+// Stored progress polling interval
+//
+// Stored progress bars which can be polled for updates via AJAX can be controlled by the
+// `progresspollinterval` config setting, to determine the interval (in seconds) at which the
+// polling should be done and latest update retrieved.
+// If no value is set, then it will default to 5 seconds.
+//
+// $CFG->progresspollinterval = 5;
 
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!

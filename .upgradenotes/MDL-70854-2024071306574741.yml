@@ -1,0 +1,5 @@
+issueNumber: MDL-70854
+notes:
+  core:
+    - message: Added stored progress bars
+      type: improved

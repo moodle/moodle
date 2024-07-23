@@ -316,6 +316,11 @@ class behat_core_generator extends behat_generator_base {
                 'required' => ['subject', 'userfrom', 'userto'],
                 'switchids' => ['userfrom' => 'userfromid', 'userto' => 'usertoid'],
             ],
+            'stored progress bars' => [
+                'singular' => 'stored progress bar',
+                'datagenerator' => 'stored_progress_bar',
+                'required' => ['idnumber'],
+            ],
         ];
 
         return $entities;
