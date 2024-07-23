@@ -33,7 +33,7 @@
  * @copyright  2004 Hannes Gassert <hannes at mediagonal dot ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_tidy extends moodle_text_filter {
+class text_filter extends \core_filters\text_filter {
     #[\Override]
     public function filter($text, array $options = []) {
         // Configuration for tidy. Feel free to tune for your needs, e.g. to allow

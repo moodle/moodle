@@ -18,20 +18,13 @@
  * Unit test for the filter_algebra
  *
  * @package    filter_algebra
- * @category   phpunit
  * @copyright  2012 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace filter_algebra;
 
-use filter_algebra;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/filter/algebra/filter.php');
-
+use core\context\system as context_system;
 
 /**
  * Unit tests for filter_algebra.
@@ -41,35 +34,43 @@ require_once($CFG->dirroot . '/filter/algebra/filter.php');
  * test server, and if it does not work here, it probably does not also work
  * for other people. A failing test will be irritating noise.
  *
+ * @package filter_algebra
  * @copyright  2012 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \filter_algebra\text_filter
  */
-class filter_test extends \basic_testcase {
-
-    protected $filter;
+final class text_filter_test extends \basic_testcase {
+    /** @var text_filter The filter to test */
+    protected text_filter $filter;
 
     protected function setUp(): void {
         parent::setUp();
-        $this->filter = new filter_algebra(\context_system::instance(), array());
+        $this->filter = new text_filter(context_system::instance(), []);
     }
 
-    function test_algebra_filter_no_algebra(): void {
-        $this->assertEquals('<p>Look no algebra!</p>',
-                $this->filter->filter('<p>Look no algebra!</p>'));
+    public function test_algebra_filter_no_algebra(): void {
+        $this->assertEquals(
+            '<p>Look no algebra!</p>',
+            $this->filter->filter('<p>Look no algebra!</p>')
+        );
     }
 
 
-    function test_algebra_filter_pluginfile(): void {
-        $this->assertEquals('<img src="@@PLUGINFILE@@/photo.jpg">',
-                $this->filter->filter('<img src="@@PLUGINFILE@@/photo.jpg">'));
+    public function test_algebra_filter_pluginfile(): void {
+        $this->assertEquals(
+            '<img src="@@PLUGINFILE@@/photo.jpg">',
+            $this->filter->filter('<img src="@@PLUGINFILE@@/photo.jpg">')
+        );
     }
 
-    function test_algebra_filter_draftfile(): void {
-        $this->assertEquals('<img src="@@DRAFTFILE@@/photo.jpg">',
-                $this->filter->filter('<img src="@@DRAFTFILE@@/photo.jpg">'));
+    public function test_algebra_filter_draftfile(): void {
+        $this->assertEquals(
+            '<img src="@@DRAFTFILE@@/photo.jpg">',
+            $this->filter->filter('<img src="@@DRAFTFILE@@/photo.jpg">')
+        );
     }
 
-    function test_algebra_filter_unified_diff(): void {
+    public function test_algebra_filter_unified_diff(): void {
         $diff = '
 diff -u -r1.1 Worksheet.php
 --- Worksheet.php   26 Sep 2003 04:18:02 -0000  1.1
@@ -88,7 +89,9 @@ diff -u -r1.1 Worksheet.php
          }
          else {
 ';
-        $this->assertEquals('<pre>' . $diff . '</pre>',
-                $this->filter->filter('<pre>' . $diff . '</pre>'));
+        $this->assertEquals(
+            '<pre>' . $diff . '</pre>',
+            $this->filter->filter('<pre>' . $diff . '</pre>')
+        );
     }
 }

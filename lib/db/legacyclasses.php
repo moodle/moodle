@@ -182,6 +182,6 @@ $legacyclasses = [
     ],
     \filter_local_settings_form::class => [
         'core_filters',
-        'local_settings_form.php',
+        'form/local_settings_form.php',
     ],
 ];

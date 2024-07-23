@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace filter_tex;
+
+use core\context\system as context_system;
+use core\exception\coding_exception;
+use core\output\actions\popup_action;
+use core\url;
+use core_useragent;
+use stdClass;
+
 /**
  * Moodle - Filter for converting TeX expressions to cached gif images
  *
@@ -31,89 +40,9 @@
  *             Originally based on code provided by Bruno Vernier bruno@vsbeducation.ca
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die;
-
-require_once($CFG->libdir . '/classes/useragent.php');
-
-/**
- * Create TeX image link.
- *
- * @param string $imagefile name of file
- * @param string $tex TeX notation (html entities already decoded)
- * @param int $height O means automatic
- * @param int $width O means automatic
- * @param string $align
- * @param string $alt
- * @return string HTML markup
- */
-function filter_text_image($imagefile, $tex, $height, $width, $align, $alt) {
-    global $CFG, $OUTPUT;
-
-    if (!$imagefile) {
-        throw new coding_exception('image file argument empty in filter_text_image()');
-    }
-
-    // Work out any necessary inline style.
-    $rules = array();
-    if ($align !== 'middle') {
-        $rules[] = 'vertical-align:' . $align . ';';
-    }
-    if ($height) {
-        $rules[] = 'height:' . $height . 'px;';
-    }
-    if ($width) {
-        $rules[] = 'width:' . $width . 'px;';
-    }
-    if (!empty($rules)) {
-        $style = ' style="' . implode('', $rules) . '" ';
-    } else {
-        $style = '';
-    }
-
-    // Prepare the title attribute.
-    // Note that we retain the title tag as TeX format rather than using
-    // the alt text, even if supplied. The alt text is intended for blind
-    // users (to provide a text equivalent to the equation) while the title
-    // is there as a convenience for sighted users who want to see the TeX
-    // code.
-    $title = 'title="'.s($tex).'"';
-
-    if ($alt === '') {
-        $alt = s($tex);
-    } else {
-        $alt = s(html_entity_decode($tex, ENT_QUOTES, 'UTF-8'));
-    }
-
-    // Build the output.
-    $anchorcontents = "<img class=\"texrender\" $title alt=\"$alt\" src=\"";
-    if ($CFG->slasharguments) {        // Use this method if possible for better caching
-        $anchorcontents .= "$CFG->wwwroot/filter/tex/pix.php/$imagefile";
-    } else {
-        $anchorcontents .= "$CFG->wwwroot/filter/tex/pix.php?file=$imagefile";
-    }
-    $anchorcontents .= "\" $style/>";
-
-    if (!file_exists("$CFG->dataroot/filter/tex/$imagefile") && has_capability('moodle/site:config', context_system::instance())) {
-        $link = '/filter/tex/texdebug.php';
-        $action = null;
-    } else {
-        $link = new moodle_url('/filter/tex/displaytex.php', array('texexp'=>$tex));
-        $action = new popup_action('click', $link, 'popup', array('width'=>320,'height'=>240));
-    }
-    $output = $OUTPUT->action_link($link, $anchorcontents, $action, array('title'=>'TeX')); //TODO: the popups do not work when text caching is enabled!!
-    $output = "<span class=\"MathJax_Preview\">$output</span><script type=\"math/tex\">$tex</script>";
-
-    return $output;
-}
-
-
-/**
- * TeX filtering class.
- */
-class filter_tex extends moodle_text_filter {
-    function filter($text, array $options = array()) {
-
+class text_filter extends \core_filters\text_filter {
+    #[\Override]
+    public function filter($text, array $options = []) {
         global $CFG, $DB;
 
         /// Do a quick check using stripos to avoid unnecessary work
@@ -189,7 +118,7 @@ class filter_tex extends moodle_text_filter {
                 continue;
             }
 
-            // Sanitize the decoded string, because filter_text_image() injects the final string between script tags.
+            // Sanitize the decoded string, because $this->get_image_markup() injects the final string between script tags.
             $texexp = clean_param($texexp, PARAM_TEXT);
 
             $md5 = md5($texexp);
@@ -207,10 +136,86 @@ class filter_tex extends moodle_text_filter {
                 $convertformat = 'png';
             }
             $filename = $md5.".{$convertformat}";
-            $text = str_replace( $matches[0][$i], filter_text_image($filename, $texexp, 0, 0, $align, $alt), $text);
+            $text = str_replace( $matches[0][$i], self::get_image_markup($filename, $texexp, 0, 0, $align, $alt), $text);
         }
         return $text;
     }
+
+    /**
+     * Create image link.
+     *
+     * @param string $imagefile name of file
+     * @param string $tex TeX notation (html entities already decoded)
+     * @param int $height O means automatic
+     * @param int $width O means automatic
+     * @param string $align
+     * @param string $alt
+     * @return string HTML markup
+     */
+    protected function get_image_markup(
+        string $imagefile,
+        string $tex,
+        int $height,
+        int $width,
+        string $align,
+        string $alt,
+    ): string {
+        global $CFG, $OUTPUT;
+
+        if (!$imagefile) {
+            throw new coding_exception('image file argument empty in get_image_markup()');
+        }
+
+        // Work out any necessary inline style.
+        $rules = array();
+        if ($align !== 'middle') {
+            $rules[] = 'vertical-align:' . $align . ';';
+        }
+        if ($height) {
+            $rules[] = 'height:' . $height . 'px;';
+        }
+        if ($width) {
+            $rules[] = 'width:' . $width . 'px;';
+        }
+        if (!empty($rules)) {
+            $style = ' style="' . implode('', $rules) . '" ';
+        } else {
+            $style = '';
+        }
+
+        // Prepare the title attribute.
+        // Note that we retain the title tag as TeX format rather than using
+        // the alt text, even if supplied. The alt text is intended for blind
+        // users (to provide a text equivalent to the equation) while the title
+        // is there as a convenience for sighted users who want to see the TeX
+        // code.
+        $title = 'title="'.s($tex).'"';
+
+        if ($alt === '') {
+            $alt = s($tex);
+        } else {
+            $alt = s(html_entity_decode($tex, ENT_QUOTES, 'UTF-8'));
+        }
+
+        // Build the output.
+        $anchorcontents = "<img class=\"texrender\" $title alt=\"$alt\" src=\"";
+        if ($CFG->slasharguments) {        // Use this method if possible for better caching
+            $anchorcontents .= "$CFG->wwwroot/filter/tex/pix.php/$imagefile";
+        } else {
+            $anchorcontents .= "$CFG->wwwroot/filter/tex/pix.php?file=$imagefile";
+        }
+        $anchorcontents .= "\" $style/>";
+
+        if (!file_exists("$CFG->dataroot/filter/tex/$imagefile") && has_capability('moodle/site:config', context_system::instance())) {
+            $link = '/filter/tex/texdebug.php';
+            $action = null;
+        } else {
+            $link = new url('/filter/tex/displaytex.php', array('texexp'=>$tex));
+            $action = new popup_action('click', $link, 'popup', array('width'=>320,'height'=>240));
+        }
+        $output = $OUTPUT->action_link($link, $anchorcontents, $action, array('title'=>'TeX')); //TODO: the popups do not work when text caching is enabled!!
+        $output = "<span class=\"MathJax_Preview\">$output</span><script type=\"math/tex\">$tex</script>";
+
+        return $output;
+    }
 }
-
-

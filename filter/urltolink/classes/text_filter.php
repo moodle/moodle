@@ -15,19 +15,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace filter_urltolink;
+
 /**
  * Filter converting URLs in the text to HTML links
  *
- * @package    filter
- * @subpackage urltolink
+ * @package    filter_urltolink
  * @copyright  2010 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-class filter_urltolink extends moodle_text_filter {
-
+class text_filter extends \core_filters\text_filter {
     /**
      * @var array global configuration for this filter
      *
@@ -36,14 +33,7 @@ class filter_urltolink extends moodle_text_filter {
      */
     protected static $globalconfig;
 
-    /**
-     * Apply the filter to the text
-     *
-     * @see filter_manager::apply_filter_chain()
-     * @param string $text to be processed by the text
-     * @param array $options filter options
-     * @return string text after processing
-     */
+    #[\Override]
     public function filter($text, array $options = array()) {
         if (!isset($options['originalformat'])) {
             // if the format is not specified, we are probably called by {@see format_string()}
@@ -154,24 +144,23 @@ class filter_urltolink extends moodle_text_filter {
             // this may be useful only if somebody relies on the fact the links in FORMAT_MOODLE get converted
             // to URLs which in turn change to real images
             $search = '/<a href="([^"]+\.(jpg|png|gif))" class="_blanktarget">([^>]*)<\/a>/is';
-            $text = preg_replace_callback($search, 'filter_urltolink_img_callback', $text);
+            $text = preg_replace_callback($search, [self::class, 'get_image_markup'], $text);
         }
     }
-}
 
-
-/**
- * Change links to images into embedded images.
- *
- * This plugin is intended for automatic conversion of image URLs when FORMAT_MOODLE used.
- *
- * @param  $link
- * @return string
- */
-function filter_urltolink_img_callback($link) {
-    if ($link[1] !== $link[3]) {
-        // this is not a link created by this filter, because the url does not match the text
-        return $link[0];
+    /**
+     * Change links to images into embedded images.
+     *
+     * This plugin is intended for automatic conversion of image URLs when FORMAT_MOODLE used.
+     *
+     * @param  $link
+     * @return string
+     */
+    private function get_image_markup($link) {
+        if ($link[1] !== $link[3]) {
+            // this is not a link created by this filter, because the url does not match the text
+            return $link[0];
+        }
+        return '<img class="filter_urltolink_image" alt="" src="'.$link[1].'" />';
     }
-    return '<img class="filter_urltolink_image" alt="" src="'.$link[1].'" />';
 }

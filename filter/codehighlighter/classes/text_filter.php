@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace filter_codehighlighter;
+
 /**
  * Code highlighter filter.
  *
@@ -23,14 +25,8 @@
  * @copyright  2023 Meirza <meirza.arson@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_codehighlighter extends moodle_text_filter {
-    /**
-     * Apply the filter to the text
-     *
-     * @param string $text to be processed by the text
-     * @param array $options filter options
-     * @return string text after processing
-     */
+class text_filter extends \core_filters\text_filter {
+    #[\Override]
     public function filter($text, array $options = []): string {
         global $PAGE;
 

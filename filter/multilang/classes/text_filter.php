@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,39 +14,33 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace filter_multilang;
+
 /**
+ * Implementation of the Moodle filter API for the Multi-lang filter.
+ *
+ * Given XML multilinguage text, return relevant text according to
+ * current language:
+ *   - look for multilang blocks in the text.
+ *   - if there exists texts in the currently active language, print them.
+ *   - else, if there exists texts in the current parent language, print them.
+ *   - else, print the first language in the text.
+ * Please note that English texts are not used as default anymore!
+ *
+ * This version is based on original multilang filter by Gaetan Frenoy,
+ * rewritten by Eloy and skodak.
+ *
+ * Following new syntax is not compatible with old one:
+ *   <span lang="XX" class="multilang">one lang</span><span lang="YY" class="multilang">another language</span>
+ *
  * @package    filter_multilang
  * @copyright  Gaetan Frenoy <gaetan@frenoy.net>
  * @copyright  2004 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-// Given XML multilinguage text, return relevant text according to
-// current language:
-//   - look for multilang blocks in the text.
-//   - if there exists texts in the currently active language, print them.
-//   - else, if there exists texts in the current parent language, print them.
-//   - else, print the first language in the text.
-// Please note that English texts are not used as default anymore!
-//
-// This version is based on original multilang filter by Gaetan Frenoy,
-// rewritten by Eloy and skodak.
-//
-// Following new syntax is not compatible with old one:
-//   <span lang="XX" class="multilang">one lang</span><span lang="YY" class="multilang">another language</span>
-
-
-/**
- * Implementation of the Moodle filter API for the Multi-lang filter.
- *
- * @copyright  Gaetan Frenoy <gaetan@frenoy.net>
- * @copyright  2004 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class filter_multilang extends moodle_text_filter {
-    function filter($text, array $options = array()) {
+class text_filter extends \core_filters\text_filter {
+    #[\Override]
+    public function filter($text, array $options = array()) {
         global $CFG;
 
         // [pj] I don't know about you but I find this new implementation funny :P

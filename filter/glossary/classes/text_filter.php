@@ -14,25 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace filter_glossary;
+
+use cache;
+use cache_store;
+use core\output\html_writer;
+use core\url;
+use core_filters\filter_object;
+use stdClass;
+
 /**
- * This filter provides automatic linking to
- * glossary entries, aliases and categories when
- * found inside every Moodle text.
+ * This filter provides automatic linking to glossary entries, aliases and categories when found inside every Moodle text.
  *
- * @package    filter
- * @subpackage glossary
+ * NOTE: multilang glossary entries are not compatible with this filter.
+ *
+ * @package    filter_glossary
  * @copyright  2004 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Glossary linking filter class.
- *
- * NOTE: multilang glossary entries are not compatible with this filter.
- */
-class filter_glossary extends moodle_text_filter {
+class text_filter extends \core_filters\text_filter {
     /** @var null|cache_store cache used to store the terms for this course. */
     protected $cache = null;
 
@@ -44,7 +44,7 @@ class filter_glossary extends moodle_text_filter {
 
     /**
      * Get all the concepts for this context.
-     * @return filterobject[] the concepts, and filterobjects.
+     * @return filter_object[] the concepts, and filterobjects.
      */
     protected function get_all_concepts() {
         global $USER;
@@ -87,7 +87,7 @@ class filter_glossary extends moodle_text_filter {
 
         foreach ($allconcepts as $concepts) {
             foreach ($concepts as $concept) {
-                $conceptlist[] = new filterobject($concept->concept, null, null,
+                $conceptlist[] = new filter_object($concept->concept, null, null,
                         $concept->casesensitive, $concept->fullmatch, null,
                         [$this, 'filterobject_prepare_replacement_callback'], [$concept, $glossaries]);
             }
@@ -122,7 +122,7 @@ class filter_glossary extends moodle_text_filter {
         if ($concept->category) { // Link to a category.
             $title = get_string('glossarycategory', 'filter_glossary',
                     ['glossary' => $glossaries[$concept->glossaryid], 'category' => $concept->concept]);
-            $link = new moodle_url('/mod/glossary/view.php',
+            $link = new url('/mod/glossary/view.php',
                     ['g' => $concept->glossaryid, 'mode' => 'cat', 'hook' => $concept->id]);
             $attributes = array(
                     'href'  => $link,
@@ -136,7 +136,7 @@ class filter_glossary extends moodle_text_filter {
             // to the current glossary format which may not work in a popup.
             // for example "entry list" means the popup would only contain
             // a link that opens another popup.
-            $link = new moodle_url('/mod/glossary/showentry.php',
+            $link = new url('/mod/glossary/showentry.php',
                     ['eid' => $concept->id, 'displayformat' => 'dictionary']);
             $attributes = array(
                     'href'  => $link,
@@ -155,6 +155,7 @@ class filter_glossary extends moodle_text_filter {
         return [html_writer::start_tag('a', $attributes), '</a>', null];
     }
 
+    #[\Override]
     public function filter($text, array $options = array()) {
         global $GLOSSARY_EXCLUDEENTRY;
 
@@ -184,8 +185,8 @@ class filter_glossary extends moodle_text_filter {
 
     /**
      * usort helper used in get_all_concepts above.
-     * @param filterobject $filterobject0 first item to compare.
-     * @param filterobject $filterobject1 second item to compare.
+     * @param filter_object $filterobject0 first item to compare.
+     * @param filter_object $filterobject1 second item to compare.
      * @return int -1, 0 or 1.
      */
     private function sort_entries_by_length($filterobject0, $filterobject1) {

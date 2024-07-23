@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,9 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace filter_algebra;
+
+use core\context\system as context_system;
+use core\output\actions\popup_action;
+use core\url;
+use stdClass;
+
 /**
- * Moodle - Filter for converting simple calculator-type algebraic
- * expressions to cached gif images
+ * Moodle - Filter for converting simple calculator-type algebraic expressions to cached gif images
+ *
+ * NOTE: This Moodle text filter converts algebraic expressions delimited
+ * by either @@...@@ or by <algebra...>...</algebra> tags
+ * first converts it to TeX using WeBWorK algebra parser Perl library
+ * AlgParser.pm, part of the WeBWorK distribution obtained from
+ * http://webhost.math.rochester.edu/downloadwebwork/
+ * then converts the TeX to gif images using
+ * mimetex.cgi obtained from http://www.forkosh.com/mimetex.html authored by
+ * John Forkosh john@forkosh.com. The mimetex.cgi ELF binary compiled for Linux i386
+ * as well as AlgParser.pm are included with this distribution.
+ * Note that there may be patent restrictions on the production of gif images
+ * in Canada and some parts of Western Europe and Japan until July 2004.
+ * -------------------------------------------------------------------------
+ * You will then need to edit your moodle/config.php to invoke mathml_filter.php
+ * -------------------------------------------------------------------------
  *
  * @package    filter
  * @subpackage algebra
@@ -25,71 +45,9 @@
  *             Originally based on code provided by Bruno Vernier bruno@vsbeducation.ca
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-//-------------------------------------------------------------------------
-// NOTE: This Moodle text filter converts algebraic expressions delimited
-// by either @@...@@ or by <algebra...>...</algebra> tags
-// first converts it to TeX using WeBWorK algebra parser Perl library
-// AlgParser.pm, part of the WeBWorK distribution obtained from
-// http://webhost.math.rochester.edu/downloadwebwork/
-// then converts the TeX to gif images using
-// mimetex.cgi obtained from http://www.forkosh.com/mimetex.html authored by
-// John Forkosh john@forkosh.com. The mimetex.cgi ELF binary compiled for Linux i386
-// as well as AlgParser.pm are included with this distribution.
-// Note that there may be patent restrictions on the production of gif images
-// in Canada and some parts of Western Europe and Japan until July 2004.
-//-------------------------------------------------------------------------
-// You will then need to edit your moodle/config.php to invoke mathml_filter.php
-//-------------------------------------------------------------------------
-
-function filter_algebra_image($imagefile, $tex= "", $height="", $width="", $align="middle") {
-  // Given the path to a picture file in a course, or a URL,
-  // this function includes the picture in the page.
-  global $CFG, $OUTPUT;
-
-  $output = "";
-  $style = 'style="border:0px; vertical-align:'.$align.';';
-  $title = '';
-  if ($tex) {
-    $tex = html_entity_decode($tex, ENT_QUOTES, 'UTF-8');
-    $title = 'title="'.s($tex).'"';
-  }
-  if ($height) {
-    $style .= " height:{$height}px;";
-  }
-  if ($width) {
-    $style .= " width:{$width}px;";
-  }
-  $style .= '"';
-  $anchorcontents = '';
-  if ($imagefile) {
-    $anchorcontents .= "<img $title alt=\"".s($tex)."\" src=\"";
-    if ($CFG->slasharguments) {        // Use this method if possible for better caching
-      $anchorcontents .= "$CFG->wwwroot/filter/algebra/pix.php/$imagefile";
-    } else {
-      $anchorcontents .= "$CFG->wwwroot/filter/algebra/pix.php?file=$imagefile";
-    }
-    $anchorcontents .= "\" $style />";
-
-    if (!file_exists("$CFG->dataroot/filter/algebra/$imagefile") && has_capability('moodle/site:config', context_system::instance())) {
-        $link = '/filter/algebra/algebradebug.php';
-        $action = null;
-    } else {
-        $link = new moodle_url('/filter/tex/displaytex.php', array('texexp'=>$tex));
-        $action = new popup_action('click', $link, 'popup', array('width'=>320,'height'=>240)); //TODO: the popups do not work when text caching is enabled!!
-    }
-    $output .= $OUTPUT->action_link($link, $anchorcontents, $action, array('title'=>'TeX'));
-
-  } else {
-    $output .= "Error: must pass URL or course";
-  }
-  return $output;
-}
-
-class filter_algebra extends moodle_text_filter {
-    public function filter($text, array $options = array()){
+class text_filter extends \core_filters\text_filter {
+    #[\Override]
+    public function filter($text, array $options = []) {
         global $CFG, $DB;
 
         /// Do a quick check using stripos to avoid unnecessary wor
@@ -236,16 +194,75 @@ class filter_algebra extends moodle_text_filter {
                   $texcache->rawtext = $texexp;
                   $texcache->timemodified = time();
                   $DB->insert_record("cache_filters", $texcache, false);
-                  $text = str_replace( $matches[0][$i], filter_algebra_image($filename, $texexp, '', '', $align), $text);
+                  $text = str_replace( $matches[0][$i], self::get_image_markup($filename, $texexp, '', '', $align), $text);
                } else {
                   $text = str_replace( $matches[0][$i],"<b>Undetermined error:</b> " . $matches[0][$i], $text);
                }
             } else {
-               $text = str_replace( $matches[0][$i], filter_algebra_image($filename, $texcache->rawtext), $text);
+                $text = str_replace($matches[0][$i], self::get_image_markup($filename, $texcache->rawtext), $text);
             }
         }
         return $text;
     }
+
+    /**
+     * Create image link.
+     *
+     * @param string $imagefile name of file
+     * @param string $tex TeX notation (html entities already decoded)
+     * @param int $height O means automatic
+     * @param int $width O means automatic
+     * @param string $align
+     * @return string HTML markup
+     */
+    protected function get_image_markup(
+        string $imagefile,
+        string $tex = "",
+        int $height = 0,
+        int $width = 0,
+        string $align = 'middle',
+    ): string {
+        // Given the path to a picture file in a course, or a URL,
+        // this function includes the picture in the page.
+        global $CFG, $OUTPUT;
+
+        $output = "";
+        $style = 'style="border:0px; vertical-align:' . $align . ';';
+        $title = '';
+        if ($tex) {
+            $tex = html_entity_decode($tex, ENT_QUOTES, 'UTF-8');
+            $title = 'title="' . s($tex) . '"';
+        }
+        if ($height) {
+            $style .= " height:{$height}px;";
+        }
+        if ($width) {
+            $style .= " width:{$width}px;";
+        }
+        $style .= '"';
+        $anchorcontents = '';
+        if ($imagefile) {
+            $anchorcontents .= "<img $title alt=\"" . s($tex) . "\" src=\"";
+            if ($CFG->slasharguments) {
+                // Use this method if possible for better caching.
+                $anchorcontents .= "$CFG->wwwroot/filter/algebra/pix.php/$imagefile";
+            } else {
+                $anchorcontents .= "$CFG->wwwroot/filter/algebra/pix.php?file=$imagefile";
+            }
+            $anchorcontents .= "\" $style />";
+
+            if (!file_exists("$CFG->dataroot/filter/algebra/$imagefile") && has_capability('moodle/site:config', context_system::instance())) {
+                $link = '/filter/algebra/algebradebug.php';
+                $action = null;
+            } else {
+                $link = new url('/filter/tex/displaytex.php', ['texexp' => $tex]);
+                // TODO: the popups do not work when text caching is enabled.
+                $action = new popup_action('click', $link, 'popup', ['width' => 320, 'height' => 240]);
+            }
+            $output .= $OUTPUT->action_link($link, $anchorcontents, $action, ['title' => 'TeX']);
+        } else {
+            $output .= "Error: must pass URL or course";
+        }
+        return $output;
+    }
 }
-
-

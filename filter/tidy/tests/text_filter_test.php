@@ -23,17 +23,11 @@ namespace filter_tidy;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \filter_tidy
+ * @covers \filter_tidy\text_filter
  */
-final class filter_tidy_test extends \advanced_testcase {
+final class text_filter_test extends \advanced_testcase {
     /** @var string Locale */
     protected string $locale;
-
-    #[\Override]
-    public static function setUpBeforeClass(): void {
-        parent::setUpBeforeClass();
-        require_once(__DIR__ . '/../filter.php');
-    }
 
     #[\Override]
     public function setUp(): void {
@@ -59,7 +53,7 @@ final class filter_tidy_test extends \advanced_testcase {
         string $text,
         string $expected,
     ): void {
-        $filter = new \filter_tidy(\core\context\system::instance(), []);
+        $filter = new text_filter(\core\context\system::instance(), []);
         $this->assertEquals($expected, $filter->filter($text));
         $this->assertEquals(
             \core\locale::standardise_locale($this->locale),

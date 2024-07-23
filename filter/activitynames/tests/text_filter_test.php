@@ -14,25 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests.
- *
- * @package filter_activitynames
- * @category test
- * @copyright 2018 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace filter_activitynames;
 
 /**
  * Test case for the activity names auto-linking filter.
  *
+ * @package filter_activitynames
  * @copyright 2018 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \filter_activitynames\text_filter
  */
-class filter_test extends \advanced_testcase {
-
+final class text_filter_test extends \advanced_testcase {
     public function test_links(): void {
         $this->resetAfterTest(true);
 
@@ -41,19 +33,26 @@ class filter_test extends \advanced_testcase {
         $context = \context_course::instance($course->id);
 
         // Create two pages that will be linked to.
-        $page1 = $this->getDataGenerator()->create_module('page',
-                ['course' => $course->id, 'name' => 'Test 1']);
-        $page2 = $this->getDataGenerator()->create_module('page',
-                ['course' => $course->id, 'name' => 'Test (2)']);
+        $page1 = $this->getDataGenerator()->create_module(
+            'page',
+            ['course' => $course->id, 'name' => 'Test 1']
+        );
+        $page2 = $this->getDataGenerator()->create_module(
+            'page',
+            ['course' => $course->id, 'name' => 'Test (2)']
+        );
 
         // Format text with all three entries in HTML.
         $html = '<p>Please read the two pages Test 1 and <i>Test (2)</i>.</p>';
-        $filtered = format_text($html, FORMAT_HTML, array('context' => $context));
+        $filtered = format_text($html, FORMAT_HTML, ['context' => $context]);
 
         // Find all the glossary links in the result.
         $matches = [];
-        preg_match_all('~<a class="autolink" title="([^"]*)" href="[^"]*/mod/page/view.php\?id=([0-9]+)">([^<]*)</a>~',
-                $filtered, $matches);
+        preg_match_all(
+            '~<a class="autolink" title="([^"]*)" href="[^"]*/mod/page/view.php\?id=([0-9]+)">([^<]*)</a>~',
+            $filtered,
+            $matches
+        );
 
         // There should be 2 links links.
         $this->assertCount(2, $matches[1]);
@@ -86,11 +85,14 @@ class filter_test extends \advanced_testcase {
         $page = $this->getDataGenerator()->create_module('page', ['course' => $course->id, 'name' => '-']);
 
         $html = '<p>Please read the - page.</p>';
-        $filtered = format_text($html, FORMAT_HTML, array('context' => $context));
+        $filtered = format_text($html, FORMAT_HTML, ['context' => $context]);
 
         // Find the page link in the filtered html.
-        preg_match_all('~<a class="autolink" title="([^"]*)" href="[^"]*/mod/page/view.php\?id=([0-9]+)">([^<]*)</a>~',
-            $filtered, $matches);
+        preg_match_all(
+            '~<a class="autolink" title="([^"]*)" href="[^"]*/mod/page/view.php\?id=([0-9]+)">([^<]*)</a>~',
+            $filtered,
+            $matches
+        );
 
         // We should have exactly one match.
         $this->assertCount(1, $matches[1]);
@@ -110,42 +112,55 @@ class filter_test extends \advanced_testcase {
         $context2 = \context_course::instance($course2->id);
 
         // Create page 1.
-        $page1 = $this->getDataGenerator()->create_module('page',
-            ['course' => $course1->id, 'name' => 'Test 1']);
+        $page1 = $this->getDataGenerator()->create_module(
+            'page',
+            ['course' => $course1->id, 'name' => 'Test 1']
+        );
         // Format text with page 1 in HTML.
         $html = '<p>Please read the two pages Test 1 and Test 2.</p>';
-        $filtered1 = format_text($html, FORMAT_HTML, array('context' => $context1));
+        $filtered1 = format_text($html, FORMAT_HTML, ['context' => $context1]);
         // Find all the activity links in the result.
         $matches = [];
-        preg_match_all('~<a class="autolink" title="([^"]*)" href="[^"]*/mod/page/view.php\?id=([0-9]+)">([^<]*)</a>~',
-            $filtered1, $matches);
+        preg_match_all(
+            '~<a class="autolink" title="([^"]*)" href="[^"]*/mod/page/view.php\?id=([0-9]+)">([^<]*)</a>~',
+            $filtered1,
+            $matches
+        );
         // There should be 1 link.
         $this->assertCount(1, $matches[1]);
         $this->assertEquals($page1->name, $matches[1][0]);
 
         // Create page 2.
-        $page2 = $this->getDataGenerator()->create_module('page',
-        ['course' => $course1->id, 'name' => 'Test 2']);
+        $page2 = $this->getDataGenerator()->create_module(
+            'page',
+            ['course' => $course1->id, 'name' => 'Test 2']
+        );
         // Filter the text again.
-        $filtered2 = format_text($html, FORMAT_HTML, array('context' => $context1));
+        $filtered2 = format_text($html, FORMAT_HTML, ['context' => $context1]);
         // The filter result does not change due to caching.
         $this->assertEquals($filtered1, $filtered2);
 
         // Change context, so that cache for course 1 is cleared.
-        $filtered3 = format_text($html, FORMAT_HTML, array('context' => $context2));
+        $filtered3 = format_text($html, FORMAT_HTML, ['context' => $context2]);
         $this->assertNotEquals($filtered1, $filtered3);
         $matches = [];
-        preg_match_all('~<a class="autolink" title="([^"]*)" href="[^"]*/mod/page/view.php\?id=([0-9]+)">([^<]*)</a>~',
-            $filtered3, $matches);
+        preg_match_all(
+            '~<a class="autolink" title="([^"]*)" href="[^"]*/mod/page/view.php\?id=([0-9]+)">([^<]*)</a>~',
+            $filtered3,
+            $matches
+        );
         // There should be no links.
         $this->assertCount(0, $matches[1]);
 
         // Filter the text for course 1.
-        $filtered4 = format_text($html, FORMAT_HTML, array('context' => $context1));
+        $filtered4 = format_text($html, FORMAT_HTML, ['context' => $context1]);
         // Find all the activity links in the result.
         $matches = [];
-        preg_match_all('~<a class="autolink" title="([^"]*)" href="[^"]*/mod/page/view.php\?id=([0-9]+)">([^<]*)</a>~',
-            $filtered4, $matches);
+        preg_match_all(
+            '~<a class="autolink" title="([^"]*)" href="[^"]*/mod/page/view.php\?id=([0-9]+)">([^<]*)</a>~',
+            $filtered4,
+            $matches
+        );
         // There should be 2 links.
         $this->assertCount(2, $matches[1]);
         $this->assertEquals($page1->name, $matches[1][0]);

@@ -14,36 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace filter_multilang;
+
 /**
- * Unit tests.
+ * Tests for filter_multilang.
  *
  * @package filter_multilang
  * @category test
  * @copyright 2019 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \filter_multilang\text_filter
  */
-
-namespace filter_multilang;
-
-use filter_multilang;
-
-/**
- * Tests for filter_multilang.
- *
- * @copyright 2019 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class filter_test extends \advanced_testcase {
-
-    public function setUp(): void {
-        parent::setUp();
-
-        $this->resetAfterTest(true);
-
-        // Enable glossary filter at top level.
-        filter_set_global_state('multilang', TEXTFILTER_ON);
-    }
-
+final class text_filter_test extends \advanced_testcase {
     /**
      * Setup parent language relationship.
      *
@@ -62,7 +44,7 @@ class filter_test extends \advanced_testcase {
     /**
      * Data provider for multi-language filtering tests.
      */
-    public function multilang_testcases() {
+    public static function multilang_testcases(): array {
         return [
             'Basic case EN' => [
                 'English',
@@ -79,7 +61,7 @@ class filter_test extends \advanced_testcase {
                 '<span lang="fr" class="multilang">Français</span><span class="multilang" lang="en">English</span>',
                 'en',
             ],
-            'Reversed input order EN' => [
+            'Reversed input order FR' => [
                 'Français',
                 '<span lang="fr" class="multilang">Français</span><span class="multilang" lang="en">English</span>',
                 'fr',
@@ -87,7 +69,7 @@ class filter_test extends \advanced_testcase {
             'Fallback to parent when child not present' => [
                 'Français',
                 '<span lang="en" class="multilang">English</span><span lang="fr" class="multilang">Français</span>',
-                'fr_ca', ['fr_ca' => 'fr']
+                'fr_ca', ['fr_ca' => 'fr'],
             ],
             'Both parent and child language present, using child' => [
                 'Québécois',
@@ -129,13 +111,17 @@ class filter_test extends \advanced_testcase {
      * Tests the filtering of multi-language strings.
      *
      * @dataProvider multilang_testcases
-     *
      * @param string $expectedoutput The expected filter output.
      * @param string $input the input that is filtererd.
      * @param string $targetlang the laguage to set as the current languge .
      * @param array $parentlangs Array child lang => parent lang. E.g. ['es_co' => 'es', 'es_mx' => 'es'].
      */
     public function test_filtering($expectedoutput, $input, $targetlang, $parentlangs = []): void {
+        $this->resetAfterTest(true);
+
+        // Enable glossary filter at top level.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+
         global $SESSION;
         $SESSION->forcelang = $targetlang;
 
@@ -143,7 +129,7 @@ class filter_test extends \advanced_testcase {
             $this->setup_parent_language($child, $parent);
         }
 
-        $filtered = format_text($input, FORMAT_HTML, array('context' => \context_system::instance()));
+        $filtered = format_text($input, FORMAT_HTML, ['context' => \context_system::instance()]);
         $this->assertEquals($expectedoutput, $filtered);
     }
 }

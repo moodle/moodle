@@ -13,16 +13,12 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-/**
- * Display H5P filter
- *
- * @package    filter_displayh5p
- * @copyright  2019 Victor Deniz <victor@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
-defined('MOODLE_INTERNAL') || die;
+namespace filter_displayh5p;
 
+use core\output\html_writer;
+use core\url;
+use core_filters\filter_object;
 use core_h5p\local\library\autoloader;
 
 /**
@@ -34,8 +30,7 @@ use core_h5p\local\library\autoloader;
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_displayh5p extends moodle_text_filter {
-
+class text_filter extends \core_filters\text_filter {
     /**
      * @var boolean $loadresizerjs This is whether to request the resize.js script.
      */
@@ -105,7 +100,7 @@ class filter_displayh5p extends moodle_text_filter {
                 continue;
             }
 
-            $h5pcontenturl = new filterobject($source, null, null, false,
+            $h5pcontenturl = new filter_object($source, null, null, false,
                 false, null, [$this, 'filterobject_prepare_replacement_callback'], $params + ['ish5plink' => false]);
 
             $h5pcontenturl->workregexp = '#'.$ultimatepattern.'#';
@@ -114,7 +109,7 @@ class filter_displayh5p extends moodle_text_filter {
             // Regex to find h5p extensions in an <a> tag.
             $linkregexp = '~<a [^>]*href=["\']('.$escapechars.'[^"\']*)["\'][^>]*>([^<]*)</a>~is';
 
-            $h5plinkurl = new filterobject($linkregexp, null, null, false,
+            $h5plinkurl = new filter_object($linkregexp, null, null, false,
                 false, null, [$this, 'filterobject_prepare_replacement_callback'], $params + ['ish5plink' => true]);
             $h5plinkurl->workregexp = $linkregexp;
             $h5plinks[] = $h5plinkurl;
@@ -152,7 +147,7 @@ class filter_displayh5p extends moodle_text_filter {
                     // The Edit button placeholder has been added only if the file can be edited.
                     if ($h5pcontent->replacementcallbackdata['canbeedited']) {
                         // If the content was originally a link, ignore it (it won't have the placeholder).
-                        $matchurl = new \moodle_url($matches[0]);
+                        $matchurl = new url($matches[0]);
                         if (strpos($matchurl->get_path(), 'h5p/embed.php') !== false) {
                             return $matches[0];
                         }

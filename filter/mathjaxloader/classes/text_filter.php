@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace filter_mathjaxloader;
+
+use core\url;
+
 /**
  * This filter provides automatic support for MathJax
  *
@@ -21,14 +25,7 @@
  * @copyright  2013 Damyon Wiese (damyon@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Mathjax filtering
- */
-class filter_mathjaxloader extends moodle_text_filter {
-
+class text_filter extends \core_filters\text_filter {
     /*
      * Perform a mapping of the moodle language code to the equivalent for MathJax.
      *
@@ -83,12 +80,12 @@ class filter_mathjaxloader extends moodle_text_filter {
         if ($page->requires->should_create_one_time_item_now('filter_mathjaxloader-scripts')) {
             $url = get_config('filter_mathjaxloader', 'httpsurl');
             $lang = $this->map_language_code(current_language());
-            $url = new moodle_url($url, array('delayStartupUntil' => 'configured'));
+            $url = new url($url, array('delayStartupUntil' => 'configured'));
 
             $page->requires->js($url);
 
             $config = get_config('filter_mathjaxloader', 'mathjaxconfig');
-            $wwwroot = new moodle_url('/');
+            $wwwroot = new url('/');
 
             $config = str_replace('{wwwroot}', $wwwroot->out(true), $config);
 

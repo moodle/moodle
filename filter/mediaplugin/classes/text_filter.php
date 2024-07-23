@@ -14,19 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- *  Media plugin filtering
- *
- *  This filter will replace any links to a media file with
- *  a media plugin that plays that media inline
- *
- * @package    filter
- * @subpackage mediaplugin
- * @copyright  2004 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace filter_mediaplugin;
 
-defined('MOODLE_INTERNAL') || die();
+use core\context;
+use core\url;
+use core_media_manager;
+use core_media_player_native;
+use moodle_page;
 
 /**
  * Automatic media embedding filter class.
@@ -39,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2004 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_mediaplugin extends moodle_text_filter {
+class text_filter extends \core_filters\text_filter {
     /** @var bool True if currently filtering trusted text */
     private $trusted;
 
@@ -61,6 +55,7 @@ class filter_mediaplugin extends moodle_text_filter {
         $mediamanager = core_media_manager::instance($page);
     }
 
+    #[\Override]
     public function filter($text, array $options = array()) {
         global $CFG, $PAGE;
 
@@ -215,11 +210,11 @@ class filter_mediaplugin extends moodle_text_filter {
         // Find all sources both as <video src=""> and as embedded <source> tags.
         $urls = [];
         if (preg_match('/^<[^>]*\bsrc="(.*?)"/im', $fulltext, $matches)) {
-            $urls[] = new moodle_url($matches[1]);
+            $urls[] = new url($matches[1]);
         }
         if (preg_match_all('/<source\b[^>]*\bsrc="(.*?)"/im', $fulltext, $matches)) {
             foreach ($matches[1] as $url) {
-                $urls[] = new moodle_url($url);
+                $urls[] = new url($url);
             }
         }
         // Extract width/height/title attributes and call embed_alternatives to find a suitable media player.

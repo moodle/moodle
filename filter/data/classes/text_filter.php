@@ -14,23 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace filter_data;
+use core_filters\filter_object;
+
 /**
- * This filter provides automatic linking to database activity entries
- * when found inside every Moodle text.
+ * Filter providing automatic linking to database activity entries when found inside every Moodle text.
  *
- * @package    filter
- * @subpackage data
+ * @package    filter_data
  * @copyright  2006 Vy-Shane Sin Fat
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Database activity filtering
- */
-class filter_data extends moodle_text_filter {
-
+class text_filter extends \core_filters\text_filter {
+    #[\Override]
     public function filter($text, array $options = array()) {
         global $CFG, $DB, $USER;
 
@@ -120,13 +115,13 @@ class filter_data extends moodle_text_filter {
                 return $text;
             }
 
-            usort($contents, 'filter_data::sort_entries_by_length');
+            usort($contents, [self::class, 'sort_entries_by_length']);
 
             foreach ($contents as $content) {
                 $href_tag_begin = '<a class="data autolink dataid'.$content->dataid.'" title="'.s($content->content).'" '.
                                   'href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$content->dataid.
                                   '&amp;rid='.$content->recordid.'">';
-                $contentlist[] = new filterobject($content->content, $href_tag_begin, '</a>', false, true);
+                $contentlist[] = new filter_object($content->content, $href_tag_begin, '</a>', false, true);
             }
 
             $contentlist = filter_remove_duplicates($contentlist); // Clean dupes

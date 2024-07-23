@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,24 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace filter_activitynames;
+
+use cache;
+use cache_store;
+use core\output\html_writer;
+use core_collator;
+use filterobject;
+
 /**
  * This filter provides automatic linking to
  * activities when its name (title) is found inside every Moodle text
  *
- * @package    filter
+ * @package    filter_activitynames
  * @subpackage activitynames
  * @copyright  2004 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Activity name filtering
- */
-class filter_activitynames extends moodle_text_filter {
-
-    function filter($text, array $options = array()) {
+class text_filter extends \core_filters\text_filter {
+    #[\Override]
+    public function filter($text, array $options = []) {
         $coursectx = $this->context->get_course_context(false);
         if (!$coursectx) {
             return $text;
@@ -41,12 +42,12 @@ class filter_activitynames extends moodle_text_filter {
 
         $activitylist = $this->get_cached_activity_list($courseid);
 
-        $filterslist = array();
+        $filterslist = [];
         if (!empty($activitylist)) {
             $cmid = $this->context->instanceid;
             if ($this->context->contextlevel == CONTEXT_MODULE && isset($activitylist[$cmid])) {
-                // remove filterobjects for the current module
-                $filterslist = array_values(array_diff_key($activitylist, array($cmid => 1, $cmid.'-e' => 1)));
+                // Remove filterobjects for the current module.
+                $filterslist = array_values(array_diff_key($activitylist, [$cmid => 1, $cmid . '-e' => 1]));
             } else {
                 $filterslist = array_values($activitylist);
             }
@@ -89,23 +90,23 @@ class filter_activitynames extends moodle_text_filter {
      * @return filterobject[] the activities
      */
     protected function get_activity_list($courseid) {
-        $activitylist = array();
+        $activitylist = [];
 
         $modinfo = get_fast_modinfo($courseid);
         if (!empty($modinfo->cms)) {
-            $activitylist = array(); // We will store all the created filters here.
+            $activitylist = []; // We will store all the created filters here.
 
             // Create array of visible activities sorted by the name length (we are only interested in properties name and url).
-            $sortedactivities = array();
+            $sortedactivities = [];
             foreach ($modinfo->cms as $cm) {
                 // Use normal access control and visibility, but exclude labels and hidden activities.
-                if ($cm->visible and $cm->has_view() and $cm->uservisible) {
-                    $sortedactivities[] = (object)array(
+                if ($cm->visible && $cm->has_view() && $cm->uservisible) {
+                    $sortedactivities[] = (object)[
                         'name' => $cm->name,
                         'url' => $cm->url,
                         'id' => $cm->id,
                         'namelen' => -strlen($cm->name), // Negative value for reverse sorting.
-                    );
+                    ];
                 }
             }
             // Sort activities by the length of the activity name in reverse order.
@@ -117,13 +118,15 @@ class filter_activitynames extends moodle_text_filter {
                 $entitisedname  = s($currentname);
                 // Avoid empty or unlinkable activity names.
                 if (!empty($title)) {
-                    $hreftagbegin = html_writer::start_tag('a',
-                        array('class' => 'autolink', 'title' => $title,
-                            'href' => $cm->url));
+                    $hreftagbegin = html_writer::start_tag(
+                        'a',
+                        ['class' => 'autolink', 'title' => $title,
+                        'href' => $cm->url, ]
+                    );
                     $activitylist[$cm->id] = new filterobject($currentname, $hreftagbegin, '</a>', false, true);
                     if ($currentname != $entitisedname) {
                         // If name has some entity (&amp; &quot; &lt; &gt;) add that filter too. MDL-17545.
-                        $activitylist[$cm->id.'-e'] = new filterobject($entitisedname, $hreftagbegin, '</a>', false, true);
+                        $activitylist[$cm->id . '-e'] = new filterobject($entitisedname, $hreftagbegin, '</a>', false, true);
                     }
                 }
             }

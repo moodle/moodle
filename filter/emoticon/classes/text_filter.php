@@ -15,23 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace filter_emoticon;
+
 /**
  * Filter converting emoticon texts into images
  *
  * This filter uses the emoticon settings in Site admin > Appearance > HTML settings
  * and replaces emoticon texts with images.
  *
- * @package    filter
- * @subpackage emoticon
- * @see        emoticon_manager
+ * @package    filter_emoticon
  * @copyright  2010 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-class filter_emoticon extends moodle_text_filter {
-
+class text_filter extends \core_filters\text_filter {
     /**
      * Internal cache used for replacing. Multidimensional array;
      * - dimension 1: language,
@@ -51,7 +47,7 @@ class filter_emoticon extends moodle_text_filter {
     /**
      * Apply the filter to the text
      *
-     * @see filter_manager::apply_filter_chain()
+     * @see \core_filters\filter_manager::apply_filter_chain()
      * @param string $text to be processed by the text
      * @param array $options filter options
      * @return string text after processing
