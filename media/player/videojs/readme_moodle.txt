@@ -1,4 +1,4 @@
-VideoJS 8.10.0
+VideoJS 8.17.3
 --------------
 https://github.com/videojs/video.js
 
