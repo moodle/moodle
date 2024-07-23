@@ -37,6 +37,7 @@ export default class extends DndSection {
         this.name = 'content_section';
         // Default query selectors.
         this.selectors = {
+            ACTIONMENU: '.section-actions',
             SECTION_ITEM: `[data-for='section_title']`,
             CM: `[data-for="cmitem"]`,
             SECTIONINFO: `[data-for="sectioninfo"]`,
@@ -239,10 +240,6 @@ export default class extends DndSection {
      * @returns The action menu element.
      */
     _getActionMenu(selector) {
-        if (this.getElement('.section_action_menu')) {
-            return this.getElement(selector);
-        }
-
-        return document.querySelector(selector);
+        return document.querySelector(`${this.selectors.ACTIONMENU}[data-sectionid='${this.id}'] ${selector}`);
     }
 }
