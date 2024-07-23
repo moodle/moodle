@@ -521,7 +521,7 @@ class stateactions {
             $course,
             $ids,
             __FUNCTION__,
-            ['moodle/course:manageactivities', 'moodle/course:activityvisibility']
+            ['moodle/course:activityvisibility']
         );
 
         $format = course_get_format($course->id);
@@ -567,7 +567,8 @@ class stateactions {
             $course,
             $ids,
             __FUNCTION__,
-            ['moodle/course:manageactivities', 'moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport']
+            ['moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport'],
+            false
         );
 
         $modinfo = get_fast_modinfo($course);
@@ -1107,10 +1108,17 @@ class stateactions {
      * @param stdClass $course The course where given $cmids belong.
      * @param array $cmids List of course module ids to validate.
      * @param string $info additional information in case of error.
-     * @param array $capabilities optional capabilities checks per each cm context.
+     * @param array $capabilities optional capabilities checks to require.
+     * @param bool $usemodcontext whether to use each module context, or the course context
      * @throws moodle_exception if any id is not valid
      */
-    protected function validate_cms(stdClass $course, array $cmids, ?string $info = null, array $capabilities = []): void {
+    protected function validate_cms(
+        stdClass $course,
+        array $cmids,
+        ?string $info = null,
+        array $capabilities = [],
+        bool $usemodcontext = true,
+    ): void {
 
         if (empty($cmids)) {
             throw new moodle_exception('emptycmids', 'core', null, $info);
@@ -1121,10 +1129,16 @@ class stateactions {
         if (count($cmids) != count($intersect)) {
             throw new moodle_exception('unexistingcmid', 'core', null, $info);
         }
+
         if (!empty($capabilities)) {
-            foreach ($cmids as $cmid) {
-                $modcontext = context_module::instance($cmid);
-                require_all_capabilities($capabilities, $modcontext);
+            if ($usemodcontext) {
+                foreach ($cmids as $cmid) {
+                    $modcontext = context_module::instance($cmid);
+                    require_all_capabilities($capabilities, $modcontext);
+                }
+            } else {
+                $coursecontext = context_course::instance($course->id);
+                require_all_capabilities($capabilities, $coursecontext);
             }
         }
     }
