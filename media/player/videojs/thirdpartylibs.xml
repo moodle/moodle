@@ -43,9 +43,9 @@
         <description>Javascript media decoder and player for Ogg Vorbis/Opus/Theora and WebM VP8/VP9/AV1 video.</description>
         <version>1.8.9</version>
         <license>MIT</license>
-        <repository>https://github.com/brion/ogv.js/</repository>
+        <repository>https://github.com/bvibber/ogv.js</repository>
         <copyrights>
-            <copyright>Brion Vibber</copyright>
+            <copyright>Brooke Vibber</copyright>
         </copyrights>
     </library>
     <library>
@@ -54,9 +54,9 @@
         <description>JavaScript media decoder and player for Ogg Vorbis/Opus/Theora and WebM VP8/VP9/AV1 video.</description>
         <license>MIT</license>
         <version>1.8.9</version>
-        <repository>https://github.com/brion/ogv.js/</repository>
+        <repository>https://github.com/bvibber/ogv.js</repository>
         <copyrights>
-            <copyright>Brion Vibber</copyright>
+            <copyright>Brooke Vibber</copyright>
         </copyrights>
     </library>
     <library>
