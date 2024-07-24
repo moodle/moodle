@@ -163,13 +163,15 @@ class progress_bar implements renderable, templatable {
 
         $estimate = $this->estimate($percent);
 
-        if ($estimate === null) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
-            // Always do the first and last updates.
-        } else if ($estimate == 0) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
-            // Always do the last updates.
-        } else if ($this->lastupdate + 20 < time()) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
-            // We must update otherwise browser would time out.
-        } else if (round($this->percent, 2) === round($percent, 2)) {
+        // Always do the first and last updates. Estimate would be null in the beginning and 0 at the end.
+        $isfirstorlastupdate = empty($estimate);
+        // We need to update every 20 seconds since last update to prevent browser timeout.
+        $timetoupdate = $this->lastupdate + 20 < time();
+        // Whether the progress has moved.
+        $issameprogress = round($this->percent, 2) === round($percent, 2);
+
+        // No need to update if it's not yet time to update and there's no progress.
+        if (!$isfirstorlastupdate && !$timetoupdate && $issameprogress) {
             return;
         }
 
