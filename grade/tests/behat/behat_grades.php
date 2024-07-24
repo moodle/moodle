@@ -146,6 +146,24 @@ class behat_grades extends behat_base {
     }
 
     /**
+     * Gets the grade id from its grade item name and userid.
+     *
+     * @param int $itemid Item ID
+     * @param int $userid User ID
+     * @return int
+     * @throws Exception
+     */
+    protected function get_grade_id(int $itemid, int $userid): int {
+        global $DB;
+
+        if ($id = $DB->get_field('grade_grades', 'id', ['itemid' => $itemid, 'userid' => $userid])) {
+            return $id;
+        }
+
+        throw new Exception('The specified grade with id "' . $itemid . ' and userid' . $userid . '" does not exist');
+    }
+
+    /**
      * Gets the grade item id from its name.
      *
      * @throws Exception
@@ -269,4 +287,27 @@ class behat_grades extends behat_base {
         $this->execute_js_on_node($node, '{{ELEMENT}}.scrollIntoView({ block: "center", inline: "center" })');
         $this->execute("behat_general::i_click_on", [$this->escape($xpath), "xpath_element"]);
     }
+
+    /**
+     * Clicks on given grade menu.
+     *
+     * @Given /^I click on grade menu "([^"]*)" for user "([^"]*)"$/
+     * @param string $itemname Item name
+     * @param string $username User name
+     * @throws Exception
+     */
+    public function i_click_on_grade_menu(string $itemname, string $username) {
+        $this->execute("behat_navigation::i_close_block_drawer_if_open");
+
+        $userid = $this->get_user_id_by_identifier($username);
+        $itemid = $this->get_grade_item_id($itemname);
+        $gradeid = $this->get_grade_id($itemid, $userid);
+
+        $xpath = "//table[@id='user-grades']";
+        $xpath .= "//*[@data-type='grade'][@data-id='" . $gradeid . "']";
+        $node = $this->get_selected_node("xpath_element", $this->escape($xpath));
+        $this->execute_js_on_node($node, '{{ELEMENT}}.scrollIntoView({ block: "center", inline: "center" })');
+        $this->execute("behat_general::i_click_on", [$this->escape($xpath), "xpath_element"]);
+    }
+
 }
