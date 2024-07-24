@@ -16,6 +16,8 @@
 
 namespace core\task;
 
+use core\url;
+
 /**
  * Test class for adhoc tasks.
  *
@@ -985,6 +987,11 @@ final class adhoc_task_test extends \advanced_testcase {
         $this->assertEquals('failedtaskmaxdelay', $messages[0]->eventtype);
         $this->assertEquals('-10', $messages[0]->useridfrom);
         $this->assertEquals('2', $messages[0]->useridto);
+        $this->assertEquals('Task logs', $messages[0]->contexturlname);
+        $this->assertEquals(
+            (new url('/admin/tasklogs.php', ['filter' => get_class($task)]))->out(false),
+            $messages[0]->contexturl,
+        );
 
         // Close sink.
         $messagesink->close();
