@@ -183,15 +183,7 @@ class task_log extends base {
             ->set_type(column::TYPE_FLOAT)
             ->add_field("{$tablealias}.timeend - {$tablealias}.timestart", 'duration')
             ->set_is_sortable(true)
-            ->add_callback(static function(float $value): string {
-                $duration = round($value, 2);
-                if (empty($duration)) {
-                    // The format_time function returns 'now' when the difference is exactly 0.
-                    // Note: format_time performs concatenation in exactly this fashion so we should do this for consistency.
-                    return '0 ' . get_string('secs', 'moodle');
-                }
-                return format_time($duration);
-            });
+            ->add_callback([format::class, 'format_time'], 2);
 
         // Hostname column.
         $columns[] = (new column(

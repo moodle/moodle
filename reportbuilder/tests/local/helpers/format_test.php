@@ -29,7 +29,7 @@ use stdClass;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_test extends advanced_testcase {
+final class format_test extends advanced_testcase {
 
     /**
      * Test userdate method
@@ -42,11 +42,38 @@ class format_test extends advanced_testcase {
     }
 
     /**
+     * Data provider for {@see test_format_time}
+     *
+     * @return array[]
+     */
+    public static function format_time_provider(): array {
+        return [
+            [null, 0, ''],
+            [0, 0, '0 secs'],
+            [2.456, 1, '2.5 secs'],
+            [3.2, null, '3 secs'],
+        ];
+    }
+
+    /**
+     * Test format time
+     *
+     * @param float|null $value
+     * @param int|null $precision
+     * @param string $expected
+     *
+     * @dataProvider format_time_provider
+     */
+    public function test_format_time(?float $value, ?int $precision, string $expected): void {
+        $this->assertEquals($expected, format::format_time($value, (object) [], $precision));
+    }
+
+    /**
      * Data provider for {@see test_boolean_as_text}
      *
-     * @return array
+     * @return array[]
      */
-    public function boolean_as_text_provider(): array {
+    public static function boolean_as_text_provider(): array {
         return [
             [false, get_string('no')],
             [true, get_string('yes')],

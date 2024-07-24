@@ -145,12 +145,11 @@ class enrol extends base {
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$enrolalias}.enrolperiod")
             ->set_is_sortable(true)
-            ->set_callback(static function(?int $enrolperiod): string {
-                if (!$enrolperiod) {
+            ->set_callback(static function(?int $enrolperiod, stdClass $row): string {
+                if ($enrolperiod === 0) {
                     return '';
                 }
-
-                return format_time($enrolperiod);
+                return format::format_time($enrolperiod, $row);
             });
 
         // Start date column.

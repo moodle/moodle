@@ -116,6 +116,7 @@ coursecalendar,core_calendar
 importcalendarexternal,core_calendar
 nocalendarsubscriptions,core_calendar
 datechanged,core
+daystakingcourse,core_course
 siteregistrationcontact,core_hub
 siteregistrationcontact_help,core_hub
 registrationcontactno,core

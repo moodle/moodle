@@ -42,6 +42,25 @@ class format {
     }
 
     /**
+     * Returns formatted time duration (e.g. "3 days 4 hours")
+     *
+     * @param float|null $value
+     * @param stdClass $row
+     * @param int|null $precision
+     * @return string
+     */
+    public static function format_time(?float $value, stdClass $row, ?int $precision = 0): string {
+        if ($value === null) {
+            return '';
+        }
+        $value = round($value, (int) $precision);
+        if ($value === 0.0) {
+            return '0 ' . get_string('secs', 'moodle');
+        }
+        return format_time($value);
+    }
+
+    /**
      * Returns yes/no string depending on the given value
      *
      * @param bool|null $value
