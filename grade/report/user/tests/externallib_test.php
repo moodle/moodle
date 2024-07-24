@@ -72,7 +72,7 @@ class externallib_test extends externallib_advanced_testcase {
         groups_add_member($group1->id, $teacher->id);
         groups_add_member($group2->id, $student2->id);
 
-        $assignment = $this->getDataGenerator()->create_module('assign', ['name' => "Test assign", 'course' => $course->id]);
+        $assignment = $this->getDataGenerator()->create_module('assign', ['name' => "Test assign & grade items", 'course' => $course->id]);
         $modcontext = get_coursemodule_from_instance('assign', $assignment->id, $course->id);
         $assignment->cmidnumber = $modcontext->id;
 
