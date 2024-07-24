@@ -39,12 +39,13 @@ class mod_label_mod_form extends moodleform_mod {
         $mform->addElement('header', 'generalhdr', get_string('general'));
 
         // Add element for name.
-        $mform->addElement('text', 'name', get_string('labelname', 'label'), array('size' => '64'));
+        $mform->addElement('text', 'name', get_string('labelname', 'label'), ['size' => '64', 'maxlength' => 255]);
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
             $mform->setType('name', PARAM_CLEANHTML);
         }
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'labelname', 'label');
 
         $this->standard_intro_elements(get_string('labeltext', 'label'));
