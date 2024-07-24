@@ -1,0 +1,7 @@
+issueNumber: MDL-82146
+notes:
+  report_log:
+    - message: >-
+        get_activities_list() function returns also an array of disabled
+        elements, apart from the array of activities.
+      type: improved

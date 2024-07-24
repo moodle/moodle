@@ -161,10 +161,10 @@ class report_log_renderer extends plugin_renderer_base {
             ['class' => 'mr-2 mb-2']);
 
         // Add activity selector.
-        $activities = $reportlog->get_activities_list();
+        [$activities, $disabled] = $reportlog->get_activities_list();
         echo html_writer::label(get_string('activities'), 'menumodid', false, array('class' => 'accesshide'));
         echo html_writer::select($activities, "modid", $reportlog->modid, get_string("allactivities"),
-            ['class' => 'mr-2 mb-2']);
+            ['class' => 'mr-2 mb-2'], $disabled);
 
         // Add actions selector.
         echo html_writer::label(get_string('actions'), 'menumodaction', false, array('class' => 'accesshide'));

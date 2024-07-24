@@ -257,6 +257,7 @@ class html_writer {
      * @param string|array $selected value or array of values depending on multiple attribute
      * @param array|bool|null $nothing add nothing selected option, or false of not added
      * @param null|array $attributes html select element attributes
+     * @param array $disabled An array of disabled options.
      * @return string HTML fragment
      */
     public static function select(
@@ -265,7 +266,8 @@ class html_writer {
         $selected = '',
         $nothing = ['' => 'choosedots'],
         ?array $attributes = null,
-    ) {
+        array $disabled = [],
+    ): string {
         $attributes = (array)$attributes;
         if (is_array($nothing)) {
             foreach ($nothing as $k => $v) {
@@ -314,9 +316,9 @@ class html_writer {
         foreach ($options as $value => $label) {
             if (is_array($label)) {
                 // Ignore key, it just has to be unique.
-                $output .= self::select_optgroup(key($label), current($label), $selected);
+                $output .= self::select_optgroup(key($label), current($label), $selected, $disabled);
             } else {
-                $output .= self::select_option($label, $value, $selected);
+                $output .= self::select_option($label, $value, $selected, $disabled);
             }
         }
         return self::tag('select', $output, $attributes);
@@ -328,13 +330,17 @@ class html_writer {
      * @param string $label The label to display as the option.
      * @param string|int $value The value the option represents
      * @param array $selected An array of selected options
+     * @param array $disabled An array of disabled options.
      * @return string HTML fragment
      */
-    private static function select_option($label, $value, array $selected) {
+    private static function select_option($label, $value, array $selected, array $disabled = []): string {
         $attributes = [];
         $value = (string)$value;
         if (in_array($value, $selected, true)) {
             $attributes['selected'] = 'selected';
+        }
+        if (in_array($value, $disabled, true)) {
+            $attributes['disabled'] = 'disabled';
         }
         $attributes['value'] = $value;
         return self::tag('option', $label, $attributes);
@@ -346,16 +352,17 @@ class html_writer {
      * @param string $groupname The label to use for the group
      * @param array $options The options in the group
      * @param array $selected An array of selected values.
+     * @param array $disabled An array of disabled options.
      * @return string HTML fragment.
      */
-    private static function select_optgroup($groupname, $options, array $selected) {
+    private static function select_optgroup($groupname, $options, array $selected, array $disabled = []): string {
         if (empty($options)) {
             return '';
         }
         $attributes = ['label' => $groupname];
         $output = '';
         foreach ($options as $value => $label) {
-            $output .= self::select_option($label, $value, $selected);
+            $output .= self::select_option($label, $value, $selected, $disabled);
         }
         return self::tag('optgroup', $output, $attributes);
     }
