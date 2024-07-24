@@ -36,6 +36,11 @@ class new_table_from_mysql extends XMLDBAction {
     function init() {
         parent::init();
 
+        global $DB;
+        if ($DB->get_dbfamily() !== 'mysql') {
+            throw new moodle_exception('DB family not supported');
+        }
+
         // Set own custom attributes
 
         // Get needed strings
@@ -54,8 +59,6 @@ class new_table_from_mysql extends XMLDBAction {
      */
     function invoke() {
         parent::invoke();
-
-        $result = true;
 
         // Set own core attributes
         $this->does_generate = ACTION_GENERATE_HTML;
@@ -125,11 +128,15 @@ class new_table_from_mysql extends XMLDBAction {
         // If table, retrofit information and, if everything works,
         // go to the table edit action
         } else {
-            // Get some params (table is mandatory here)
-            $tableparam = required_param('table', PARAM_CLEAN);
-            $afterparam = required_param('after', PARAM_CLEAN);
+            // Get some params (table is mandatory here).
+            $tableparam = required_param('table', PARAM_ALPHAEXT);
+            $afterparam = required_param('after', PARAM_ALPHAEXT);
 
-            // Create one new xmldb_table
+            if (empty($tableparam) || empty($afterparam)) {
+                throw new moodle_exception('Invalid param value detected.');
+            }
+
+            // Create one new xmldb_table.
             $table = new xmldb_table(strtolower(trim($tableparam)));
             $table->setComment($table->getName() . ' table retrofitted from MySQL');
             // Get fields info from ADODb
@@ -147,7 +154,6 @@ class new_table_from_mysql extends XMLDBAction {
             // Get PK, UK and indexes info from ADODb
             $dbindexes = $DB->get_indexes($tableparam);
             if ($dbindexes) {
-                $lastkey = NULL; //To temp store the last key processed
                 foreach ($dbindexes as $indexname => $dbindex) {
                     // Add the indexname to the array
                     $dbindex['name'] = $indexname;
@@ -156,9 +162,6 @@ class new_table_from_mysql extends XMLDBAction {
                         $key = new xmldb_key(strtolower($dbindex['name']));
                         // Set key with info retrofitted
                         $key->setFromADOKey($dbindex);
-                        // Set default comment to PKs
-                        if ($key->getType() == XMLDB_KEY_PRIMARY) {
-                        }
                         // Add key to the table
                         $table->addKey($key);
 
@@ -172,18 +175,17 @@ class new_table_from_mysql extends XMLDBAction {
                     }
                 }
             }
-            // Finally, add the whole retroffited table to the structure
-            // in the place specified
+            // Finally, add the whole retrofitted table to the structure in the place specified.
             $structure->addTable($table, $afterparam);
         }
 
         // Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) {
+        if ($this->getPostAction()) {
             return $this->launch($this->getPostAction());
         }
 
         // Return ok if arrived here
-        return $result;
+        return true;
     }
 }
 
