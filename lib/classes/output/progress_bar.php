@@ -161,8 +161,15 @@ class progress_bar implements renderable, templatable {
                 'argument to the constructor) before you try updating the progress bar.');
         }
 
-        // No significant change, no need to update anything.
-        if (round($this->percent, 2) === round($percent, 2)) {
+        $estimate = $this->estimate($percent);
+
+        if ($estimate === null) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
+            // Always do the first and last updates.
+        } else if ($estimate == 0) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
+            // Always do the last updates.
+        } else if ($this->lastupdate + 20 < time()) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
+            // We must update otherwise browser would time out.
+        } else if (round($this->percent, 2) === round($percent, 2)) {
             return;
         }
 
