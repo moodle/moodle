@@ -410,7 +410,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/grades' => 'fa-table',
             'core:t/groupn' => 'fa-user',
             'core:t/groups' => 'fa-user-circle',
-            'core:t/groupv' => 'fa-user-circle-o',
+            'core:t/groupv' => 'fa-user-group',
             'core:t/hide' => 'fa-eye',
             'core:t/index_drawer' => 'fa-list',
             'core:t/left' => 'fa-arrow-left',
