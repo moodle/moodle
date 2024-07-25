@@ -27,7 +27,8 @@
         "url": "#",
         "headerdisplaymultipage": true,
         "sectionbulk": true,
-        "editing": 0
+        "editing": 0,
+        "headinglevel": 3
     }
 }}
 {{#sectionbulk}}
@@ -50,7 +51,7 @@
     {{/sitehome}}
     {{^sitehome}}
         {{^displayonesection}}
-            <div class="d-flex align-items-start position-relative">
+            <div class="d-flex align-items-center position-relative">
                 <a role="button"
                     data-toggle="collapse"
                     data-for="sectiontoggler"
@@ -63,16 +64,18 @@
                     aria-label="{{name}}">
                 <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, core {{/str}}">
                     {{#pix}} t/expandedchevron, core {{/pix}}
+                    <span class="sr-only">{{#str}} collapse, core {{/str}}</span>
                 </span>
                 <span class="collapsed-icon icon-no-margin p-2" title="{{#str}} expand, core {{/str}}">
                     <span class="dir-rtl-hide">{{#pix}} t/collapsedchevron, core {{/pix}}</span>
                     <span class="dir-ltr-hide">{{#pix}} t/collapsedchevron_rtl, core {{/pix}}</span>
+                    <span class="sr-only">{{#str}} expand, core {{/str}}</span>
                 </span>
                 </a>
-                <h3 class="h4 sectionname course-content-item d-flex align-self-stretch align-items-center mb-0"
+                <h{{headinglevel}} class="h4 sectionname course-content-item d-flex align-self-stretch align-items-center mb-0"
                     id="sectionid-{{id}}-title" data-for="section_title" data-id="{{id}}" data-number="{{num}}">
                     {{{title}}}
-                </h3>
+                </h{{headinglevel}}>
             </div>
         {{/displayonesection}}
     {{/sitehome}}

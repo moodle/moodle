@@ -2121,4 +2121,17 @@ abstract class base {
     public function can_sections_be_removed_from_navigation(): bool {
         return false;
     }
+
+    /**
+     * Determines whether the course module should display the activity editor options.
+     *
+     * @param cm_info $cm The activity module.
+     * @return bool True if the activity editor options are displayed, false otherwise.
+     */
+    public function show_activity_editor_options(cm_info $cm): bool {
+        if ($cm->get_delegated_section_info() && component_callback_exists('mod_' . $cm->modname, 'cm_info_view')) {
+            return false;
+        }
+        return true;
+    }
 }

@@ -1004,7 +1004,7 @@ define(
                         }
                     }
                 });
-                $('body').on('updated', `${SELECTOR.ACTIVITYLI} [data-inplaceeditable]`, function(e) {
+                $('body').on('updated', `${SELECTOR.ACTIVITYLI} [data-itemtype="activityname"][data-inplaceeditable]`, function(e) {
                     if (e.ajaxreturn && e.ajaxreturn.itemid) {
                         courseeditor.dispatch('cmState', [e.ajaxreturn.itemid]);
                     }

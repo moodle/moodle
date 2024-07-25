@@ -37,6 +37,7 @@ export default class extends DndSection {
         this.name = 'content_section';
         // Default query selectors.
         this.selectors = {
+            ACTIONMENU: '.section-actions',
             SECTION_ITEM: `[data-for='section_title']`,
             CM: `[data-for="cmitem"]`,
             SECTIONINFO: `[data-for="sectioninfo"]`,
@@ -136,7 +137,14 @@ export default class extends DndSection {
         if (!cms || cms.length === 0) {
             return null;
         }
-        return cms[cms.length - 1];
+        const lastCm = cms[cms.length - 1];
+        // If it is a delegated section return the last item overall.
+        if (this.section.component !== null) {
+            return lastCm;
+        }
+        // If it is a regular section and the last item overall has a parent cm, return the parent instead.
+        const parentSection = lastCm.parentNode.closest(this.selectors.CM);
+        return parentSection ?? lastCm;
     }
 
     /**
@@ -234,10 +242,6 @@ export default class extends DndSection {
      * @returns The action menu element.
      */
     _getActionMenu(selector) {
-        if (this.getElement('.section_action_menu')) {
-            return this.getElement(selector);
-        }
-
-        return document.querySelector(selector);
+        return document.querySelector(`${this.selectors.ACTIONMENU}[data-sectionid='${this.id}'] ${selector}`);
     }
 }

@@ -76,6 +76,19 @@ class availability extends section_avalability {
     }
 
     /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return stdClass|null data context for a mustache template
+     */
+    public function export_for_template(\renderer_base $output): ?stdClass {
+        if (!$this->format->show_activity_editor_options($this->mod)) {
+            return null;
+        }
+        return parent::export_for_template($output);
+    }
+
+    /**
      * Get the availability data to be used as the context for a mustache template.
      *
      * @param \renderer_base $output typically, the renderer that's calling this function

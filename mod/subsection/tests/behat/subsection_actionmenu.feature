@@ -101,7 +101,7 @@ Feature: The module menu replaces the delegated section menu
     When I choose "Edit settings" in the open action menu
     And the field "Section name" matches value "Subsection1"
     And I click on "Cancel" "button"
-    And I am on the "Subsection1" "subsection activity" page
+    And I am on the "C1 > Subsection1" "course > section" page
     # Subsection page. Open the section header action menu.
     And I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
     And I choose "Edit settings" in the open action menu
@@ -120,7 +120,7 @@ Feature: The module menu replaces the delegated section menu
     When I choose "Permalink" in the open action menu
     Then I click on "Copy to clipboard" "link"
     And I should see "Text copied to clipboard"
-    And I am on the "Subsection1" "subsection activity" page
+    And I am on the "C1 > Subsection1" "course > section" page
     # Subsection page. Open the section header action menu.
     And I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
     And I choose "Permalink" in the open action menu
@@ -153,7 +153,7 @@ Feature: The module menu replaces the delegated section menu
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete activity?" "dialogue"
     And "Subsection2" "link" should not exist in the "#region-main-box" "css_element"
-    And I am on the "Subsection3" "subsection activity" page
+    And I am on the "C1 > Subsection3" "course > section" page
     # Subsection page. Open the section header action menu.
     And I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
     And "Delete" "link" should not exist in the "[data-region='header-actions-container']" "css_element"

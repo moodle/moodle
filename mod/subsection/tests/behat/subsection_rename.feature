@@ -25,10 +25,11 @@ Feature: Teachers can rename subsections
   @javascript
   Scenario: Renaming the subsection activity changes the subsection name
     Given I should see "Subsection activity" in the "page-content" "region"
-    When I set the field "Edit title" in the "Subsection activity" "activity" to "New name"
+    When I set the field "Edit section name" in the "Subsection activity" "activity" to "New name"
     And I should not see "Subsection activity" in the "region-main" "region"
     And I should see "New name" in the "page-content" "region"
-    Then I click on "New name" "link" in the "page-content" "region"
+    Then I open "New name" actions menu
+    And I choose "View" in the open action menu
     And I should see "New name" in the "page" "region"
     And I should see "Subactivity" in the "region-main" "region"
 

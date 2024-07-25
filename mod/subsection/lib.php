@@ -207,3 +207,39 @@ function subsection_extend_navigation($subsectionnode, $course, $module, $cm) {
  */
 function subsection_extend_settings_navigation($settingsnav, $subsectionnode = null) {
 }
+
+/**
+ * Sets dynamic information about a course module
+ *
+ * This function is called from cm_info when displaying the module
+ * mod_subsection can be displayed inline on course page and therefore have no course link
+ *
+ * @param cm_info $cm
+ */
+function subsection_cm_info_dynamic(cm_info $cm) {
+    $cm->set_no_view_link();
+}
+
+/**
+ * Sets the special subsection display on course page.
+ *
+ * @param cm_info $cm Course-module object
+ */
+function subsection_cm_info_view(cm_info $cm) {
+    global $DB, $PAGE;
+
+    $cm->set_custom_cmlist_item(true);
+    $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+
+    // Get the section info.
+    $delegatedsection = manager::create_from_coursemodule($cm)->get_delegated_section_info();
+
+    // Render the delegated section.
+    $format = course_get_format($course);
+    $renderer = $PAGE->get_renderer('format_' . $course->format);
+    $outputclass = $format->get_output_classname('content\\delegatedsection');
+    /** @var \core_courseformat\output\local\content\delegatedsection $delegatedsectionoutput */
+    $delegatedsectionoutput = new $outputclass($format, $delegatedsection);
+
+    $cm->set_content($renderer->render($delegatedsectionoutput), true);
+}

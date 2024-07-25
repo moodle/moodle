@@ -52,12 +52,11 @@ let initialized = false;
  * @method init
  * @param {Number} courseId Course ID to use later on in fetchModules()
  * @param {Object} chooserConfig Any PHP config settings that we may need to reference
- * @param {Number} sectionNum Section number to use later on in fetchModules()
  */
-export const init = (courseId, chooserConfig, sectionNum) => {
+export const init = (courseId, chooserConfig) => {
     const pendingPromise = new Pending();
 
-    registerListenerEvents(courseId, chooserConfig, sectionNum);
+    registerListenerEvents(courseId, chooserConfig);
 
     pendingPromise.resolve();
 };
@@ -68,9 +67,8 @@ export const init = (courseId, chooserConfig, sectionNum) => {
  * @method registerListenerEvents
  * @param {Number} courseId
  * @param {Object} chooserConfig Any PHP config settings that we may need to reference
- * @param {Number} sectionNum Section number to use later on in fetchModules()
  */
-const registerListenerEvents = (courseId, chooserConfig, sectionNum) => {
+const registerListenerEvents = (courseId, chooserConfig) => {
 
     // Ensure we only add our listeners once.
     if (initialized) {
@@ -84,26 +82,30 @@ const registerListenerEvents = (courseId, chooserConfig, sectionNum) => {
     ];
 
     const fetchModuleData = (() => {
-        let innerPromise = null;
+        let innerPromises = new Map();
 
-        return () => {
-            if (!innerPromise) {
-                innerPromise = new Promise((resolve) => {
-                    resolve(Repository.activityModules(courseId, sectionNum));
-                });
+        return (sectionNum) => {
+            if (innerPromises.has(sectionNum)) {
+                return innerPromises.get(sectionNum);
             }
 
-            return innerPromise;
+            innerPromises.set(
+                sectionNum,
+                new Promise((resolve) => {
+                    resolve(Repository.activityModules(courseId, sectionNum));
+                })
+            );
+            return innerPromises.get(sectionNum);
         };
     })();
 
     const fetchFooterData = (() => {
         let footerInnerPromise = null;
 
-        return (sectionnum) => {
+        return (sectionNum) => {
             if (!footerInnerPromise) {
                 footerInnerPromise = new Promise((resolve) => {
-                    resolve(Repository.fetchFooterData(courseId, sectionnum));
+                    resolve(Repository.fetchFooterData(courseId, sectionNum));
                 });
             }
 
@@ -157,7 +159,7 @@ const registerListenerEvents = (courseId, chooserConfig, sectionNum) => {
 
                 // Now we have a modal we should start fetching data.
                 // If an error occurs while fetching the data, display the error within the modal.
-                const data = await fetchModuleData().catch(async(e) => {
+                const data = await fetchModuleData(sectionnum).catch(async(e) => {
                     const errorTemplateData = {
                         'errormessage': e.message
                     };

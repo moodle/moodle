@@ -39,19 +39,6 @@ require_login($course, true, $cm);
 
 $modulecontext = $manager->get_context();
 $manager->set_module_viewed($course);
+$delegatesection = $manager->get_delegated_section_info();
 
-$modinfo = get_fast_modinfo($course);
-
-$delegatesection = $modinfo->get_section_info_by_component(manager::PLUGINNAME, $moduleinstance->id);
-if (!$delegatesection) {
-    // Some restorations can produce a situation where the section is not found.
-    // In that case, we create a new one.
-    formatactions::section($course)->create_delegated(
-        manager::PLUGINNAME,
-        $id,
-        (object) [
-            'name' => $moduleinstance->name,
-        ]
-    );
-}
 redirect(new moodle_url('/course/section.php', ['id' => $delegatesection->id]));

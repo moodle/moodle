@@ -40,7 +40,7 @@ export default class extends DndCmItem {
             BULKCHECKBOX: `[data-bulkcheckbox]`,
             CARD: `[data-region='activity-card']`,
             DRAGICON: `.editing_move`,
-            INPLACEEDITABLE: `[data-inplaceeditablelink]`,
+            INPLACEEDITABLE: `[data-itemtype="activityname"] > [data-inplaceeditablelink]`,
         };
         // Most classes will be loaded later by DndCmItem.
         this.classes = {
