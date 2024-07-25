@@ -64,8 +64,8 @@ class data_field_multimenu extends data_field_base {
                 $content = array();
             }
         } else if ($recordid) {
-            $content = $DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
-            $content = explode('##', $content);
+            $contentfield = $DB->get_field('data_content', 'content', ['fieldid' => $this->field->id, 'recordid' => $recordid]);
+            $content = explode('##', $contentfield ?? '');
         } else {
             $content = array();
         }
