@@ -18,15 +18,11 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\helpers;
 
-use context_system;
+use core\context\system;
+use core\lang_string;
 use core_text;
-use core_reportbuilder\local\filters\boolean_select;
-use core_reportbuilder\local\filters\date;
-use core_reportbuilder\local\filters\select;
-use core_reportbuilder\local\filters\text;
-use core_reportbuilder\local\report\column;
-use core_reportbuilder\local\report\filter;
-use lang_string;
+use core_reportbuilder\local\filters\{boolean_select, date, select, text};
+use core_reportbuilder\local\report\{column, filter};
 use profile_field_base;
 use stdClass;
 
@@ -111,37 +107,53 @@ class user_profile_fields {
         global $DB;
 
         $columns = [];
-        foreach ($this->userprofilefields as $profilefield) {
-            $columntype = $this->get_user_field_type($profilefield->field->datatype);
-            $columnfieldsql = $this->get_table_alias($profilefield) . '.data';
 
-            // Numeric (checkbox/time) fields should be cast, as should all fields for Oracle, for aggregation support.
-            if ($columntype === column::TYPE_BOOLEAN || $columntype === column::TYPE_TIMESTAMP) {
-                $columnfieldsql = "CASE WHEN {$columnfieldsql} IS NULL THEN NULL ELSE " .
-                    $DB->sql_cast_char2int($columnfieldsql, true) . " END";
-            } else if ($DB->get_dbfamily() === 'oracle') {
-                $columnfieldsql = $DB->sql_order_by_text($columnfieldsql, 1024);
+        foreach ($this->userprofilefields as $profilefield) {
+            $userinfotablealias = $this->get_table_alias($profilefield);
+            $userinfosql = "{$userinfotablealias}.data";
+
+            if ($DB->get_dbfamily() === 'oracle') {
+                $userinfosql = $DB->sql_order_by_text($userinfosql, 1024);
+            }
+
+            // Numeric column (non-text) should cast/coalesce with default, as should all fields for Oracle, for aggregation.
+            $columntype = $this->get_user_field_type($profilefield->field->datatype);
+            if (!in_array($columntype, [column::TYPE_TEXT, column::TYPE_LONGTEXT])) {
+
+                // See MDL-78783 regarding no bound parameters, and Oracle limitations of GROUP BY.
+                $userinfosql = "
+                    CASE WHEN {$this->usertablefieldalias} IS NOT NULL
+                         THEN " .
+                            $DB->sql_cast_char2int("COALESCE({$userinfosql}, '" . (float) $profilefield->field->defaultdata . "')")
+                            . "
+                         ELSE NULL
+                    END";
             }
 
             $columns[] = (new column(
                 'profilefield_' . core_text::strtolower($profilefield->field->shortname),
                 new lang_string('customfieldcolumn', 'core_reportbuilder',
-                    format_string($profilefield->field->name, true,
-                        ['escape' => false, 'context' => context_system::instance()])),
+                    format_string($profilefield->field->name, true, ['escape' => false, 'context' => system::instance()])),
                 $this->entityname
             ))
                 ->add_joins($this->get_joins())
                 ->add_join($this->get_table_join($profilefield))
-                ->add_field($columnfieldsql, 'data')
+                ->add_field($userinfosql, 'data')
+                ->add_field("{$userinfotablealias}.dataformat")
+                ->add_field($this->usertablefieldalias, 'userid')
                 ->set_type($columntype)
                 ->set_is_sortable($columntype !== column::TYPE_LONGTEXT)
                 ->add_callback(static function($value, stdClass $row, profile_field_base $field): string {
-                    if ($value === null) {
+                    if ($row->userid === null && $value === null) {
                         return '';
                     }
 
-                    $field->data = $value;
-                    return (string) $field->display_data();
+                    $field->set_user_data(
+                        $row->data ?? $field->field->defaultdata,
+                        $row->dataformat ?? $field->field->defaultdataformat,
+                    );
+
+                    return $field->display_data();
                 }, $profilefield);
         }
 
@@ -157,48 +169,60 @@ class user_profile_fields {
         global $DB;
 
         $filters = [];
-        foreach ($this->userprofilefields as $profilefield) {
-            $field = $this->get_table_alias($profilefield) . '.data';
-            $params = [];
 
+        foreach ($this->userprofilefields as $profilefield) {
+            $userinfotablealias = $this->get_table_alias($profilefield);
+            $userinfosql = "{$userinfotablealias}.data";
+            $userinfoparams = [];
+
+            // Perform casts where necessary, as this is a text DB field.
             switch ($profilefield->field->datatype) {
                 case 'checkbox':
                     $classname = boolean_select::class;
-                    $fieldsql = "COALESCE(" . $DB->sql_cast_char2int($field, true) . ", 0)";
+                    $userinfosql = $DB->sql_cast_char2int($userinfosql, true);
                     break;
                 case 'datetime':
                     $classname = date::class;
-                    $fieldsql = $DB->sql_cast_char2int($field, true);
+                    $userinfosql = $DB->sql_cast_char2int($userinfosql, true);
                     break;
                 case 'menu':
                     $classname = select::class;
-
-                    $emptyparam = database::generate_param_name();
-                    $fieldsql = "COALESCE(" . $DB->sql_compare_text($field, 255) . ", :{$emptyparam})";
-                    $params[$emptyparam] = '';
-
+                    $userinfosql = $DB->sql_cast_to_char($userinfosql);
                     break;
                 case 'text':
                 case 'textarea':
                 default:
                     $classname = text::class;
-
-                    $emptyparam = database::generate_param_name();
-                    $fieldsql = "COALESCE(" . $DB->sql_compare_text($field, 255) . ", :{$emptyparam})";
-                    $params[$emptyparam] = '';
-
+                    $userinfosql = $DB->sql_cast_to_char($userinfosql);
                     break;
+            }
+
+            // Account for field default value, when joined to the user table.
+            if (($fielddefault = $profilefield->field->defaultdata) !== null) {
+                $paramdefault = database::generate_param_name();
+
+                // Oracle be crazy.
+                $paramdefaultsql = ":{$paramdefault}";
+                if ($DB->get_dbfamily() === 'oracle' && in_array($profilefield->field->datatype, ['checkbox', 'datetime'])) {
+                    $paramdefaultsql = $DB->sql_cast_char2int($paramdefaultsql);
+                }
+
+                $userinfosql = "
+                        CASE WHEN {$this->usertablefieldalias} IS NOT NULL
+                             THEN COALESCE({$userinfosql}, {$paramdefaultsql})
+                             ELSE NULL
+                        END";
+                $userinfoparams[$paramdefault] = $fielddefault;
             }
 
             $filter = (new filter(
                 $classname,
                 'profilefield_' . core_text::strtolower($profilefield->field->shortname),
                 new lang_string('customfieldcolumn', 'core_reportbuilder',
-                    format_string($profilefield->field->name, true,
-                        ['escape' => false, 'context' => context_system::instance()])),
+                    format_string($profilefield->field->name, true, ['escape' => false, 'context' => system::instance()])),
                 $this->entityname,
-                $fieldsql,
-                $params
+                $userinfosql,
+                $userinfoparams,
             ))
                 ->add_joins($this->get_joins())
                 ->add_join($this->get_table_join($profilefield));

@@ -18,18 +18,13 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\helpers;
 
-use core_reportbuilder\local\filters\boolean_select;
-use core_reportbuilder\local\filters\date;
-use core_reportbuilder\local\filters\number;
-use core_reportbuilder\local\filters\select;
-use core_reportbuilder\local\filters\text;
-use core_reportbuilder\local\report\column;
-use core_reportbuilder\local\report\filter;
-use lang_string;
-use stdClass;
+use core\lang_string;
 use core_customfield\data_controller;
 use core_customfield\field_controller;
 use core_customfield\handler;
+use core_reportbuilder\local\filters\{boolean_select, date, number, select, text};
+use core_reportbuilder\local\report\{column, filter};
+use stdClass;
 
 /**
  * Helper class for course custom fields.
@@ -116,24 +111,31 @@ class custom_fields {
         foreach ($categorieswithfields as $fieldcategory) {
             $categoryfields = $fieldcategory->get_fields();
             foreach ($categoryfields as $field) {
-                $customdatatablealias = $this->get_table_alias($field);
-
                 $datacontroller = data_controller::create(0, null, $field);
-
                 $datafield = $datacontroller->datafield();
-                $datafieldsql = "{$customdatatablealias}.{$datafield}";
 
-                // Long text fields should be cast for Oracle, for aggregation support.
+                $customdatatablealias = $this->get_table_alias($field);
+                $customdatasql = "{$customdatatablealias}.{$datafield}";
+
+                // Numeric column (non-text) should coalesce with default, as should text fields for Oracle, for aggregation.
                 $columntype = $this->get_column_type($field, $datafield);
-                if ($columntype === column::TYPE_LONGTEXT && $DB->get_dbfamily() === 'oracle') {
-                    $datafieldsql = $DB->sql_order_by_text($datafieldsql, 1024);
+                if (!in_array($columntype, [column::TYPE_TEXT, column::TYPE_LONGTEXT])) {
+
+                    // See MDL-78783 regarding no bound parameters, and Oracle limitations of GROUP BY.
+                    $customdatasql = "
+                        CASE WHEN {$this->tablefieldalias} IS NOT NULL
+                             THEN COALESCE({$customdatasql}, " . (float) $datacontroller->get_default_value() . ")
+                             ELSE NULL
+                        END";
+                } else if ($columntype === column::TYPE_LONGTEXT && $DB->get_dbfamily() === 'oracle') {
+                    $customdatasql = $DB->sql_order_by_text($customdatasql, 1024);
                 }
 
                 // Select enough fields to re-create and format each custom field instance value.
-                $selectfields = "{$customdatatablealias}.id, {$customdatatablealias}.contextid";
+                $customdatasqlextra = "{$customdatatablealias}.id, {$customdatatablealias}.contextid";
                 if ($datafield === 'value') {
                     // We will take the format into account when displaying the individual values.
-                    $selectfields .= ", {$customdatatablealias}.valueformat, {$customdatatablealias}.valuetrust";
+                    $customdatasqlextra .= ", {$customdatatablealias}.valueformat, {$customdatatablealias}.valuetrust";
                 }
 
                 $columns[] = (new column(
@@ -143,14 +145,18 @@ class custom_fields {
                 ))
                     ->add_joins($this->get_joins())
                     ->add_join($this->get_table_join($field))
-                    ->add_field($datafieldsql, $datafield)
-                    ->add_fields($selectfields)
+                    ->add_field($customdatasql, $datafield)
+                    ->add_fields($customdatasqlextra)
                     ->add_field($this->tablefieldalias, 'tablefieldalias')
                     ->set_type($columntype)
                     ->set_is_sortable($columntype !== column::TYPE_LONGTEXT)
-                    ->add_callback(static function($value, stdClass $row, field_controller $field): string {
-                        if ($row->tablefieldalias === null) {
+                    ->add_callback(static function($value, stdClass $row, field_controller $field, ?string $aggregation): string {
+                        if ($row->tablefieldalias === null && $value === null) {
                             return '';
+                        }
+                        // If aggregating numeric column, populate row ID to ensure the controller is created correctly.
+                        if (in_array((string) $aggregation, ['avg', 'max', 'min', 'sum'])) {
+                            $row->id ??= -1;
                         }
                         return (string) data_controller::create(0, $row, $field)->export_value();
                     }, $field)
@@ -213,23 +219,42 @@ class custom_fields {
         foreach ($categorieswithfields as $fieldcategory) {
             $categoryfields = $fieldcategory->get_fields();
             foreach ($categoryfields as $field) {
-                $customdatatablealias = $this->get_table_alias($field);
-
                 $datacontroller = data_controller::create(0, null, $field);
-
                 $datafield = $datacontroller->datafield();
-                $datafieldsql = "{$customdatatablealias}.{$datafield}";
+
+                $customdatatablealias = $this->get_table_alias($field);
+                $customdatasql = "{$customdatatablealias}.{$datafield}";
+                $customdataparams = [];
+
                 if ($datafield === 'value') {
-                    $datafieldsql = $DB->sql_cast_to_char($datafieldsql);
+                    $customdatasql = $DB->sql_cast_to_char($customdatasql);
                 }
 
-                $typeclass = $this->get_filter_class_type($datacontroller);
+                // Account for field default value, when joined to the instance table related to the custom fields.
+                if (($fielddefault = $datacontroller->get_default_value()) !== null) {
+                    $paramdefault = database::generate_param_name();
+
+                    // Oracle be crazy.
+                    $paramdefaultsql = ":{$paramdefault}";
+                    if ($DB->get_dbfamily() === 'oracle' && in_array($datafield, ['intvalue', 'decvalue'])) {
+                        $paramdefaultsql = $DB->sql_cast_char2int($paramdefaultsql);
+                    }
+
+                    $customdatasql = "
+                        CASE WHEN {$this->tablefieldalias} IS NOT NULL
+                             THEN COALESCE({$customdatasql}, {$paramdefaultsql})
+                             ELSE NULL
+                        END";
+                    $customdataparams[$paramdefault] = $fielddefault;
+                }
+
                 $filter = (new filter(
-                    $typeclass,
+                    $this->get_filter_class_type($datacontroller),
                     'customfield_' . $field->get('shortname'),
                     new lang_string('customfieldcolumn', 'core_reportbuilder', $field->get_formatted_name()),
                     $this->entityname,
-                    $datafieldsql
+                    $customdatasql,
+                    $customdataparams,
                 ))
                     ->add_joins($this->get_joins())
                     ->add_join($this->get_table_join($field));
