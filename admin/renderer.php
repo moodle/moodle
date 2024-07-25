@@ -891,8 +891,8 @@ class core_admin_renderer extends plugin_renderer_base {
     protected function mobile_configuration_warning($mobileconfigured) {
         $output = '';
         if (!$mobileconfigured) {
-            $settingslink = new moodle_url('/admin/settings.php', ['section' => 'mobilesettings']);
-            $configurebutton = $this->single_button($settingslink, get_string('enablemobilewebservice', 'admin'));
+            $settingslink = new moodle_url('/admin/search.php', ['query' => 'enablemobilewebservice']);
+            $configurebutton = $this->single_button($settingslink, get_string('enablemobilewebservice', 'admin'), 'get');
             $output .= $this->warning(get_string('mobilenotconfiguredwarning', 'admin') . '&nbsp;' . $configurebutton);
         }
 
