@@ -645,7 +645,6 @@ trait behat_session_trait {
      * @return void Throws an exception if it times out without the element being visible
      */
     protected function ensure_node_is_visible($node) {
-
         if (!$this->running_javascript()) {
             return;
         }
@@ -715,7 +714,6 @@ trait behat_session_trait {
      * @return NodeElement Throws an exception if it times out without being visible
      */
     protected function ensure_element_is_visible($element, $selectortype) {
-
         if (!$this->running_javascript()) {
             return;
         }
