@@ -218,6 +218,8 @@ export default class extends DndSection {
         const icon = affectedAction.querySelector(this.selectors.ICON);
         if (affectedAction.dataset?.swapicon && icon) {
             const newIcon = affectedAction.dataset.swapicon;
+            affectedAction.dataset.swapicon = affectedAction.dataset.icon;
+            affectedAction.dataset.icon = newIcon;
             if (newIcon) {
                 const pixHtml = await Templates.renderPix(newIcon, 'core');
                 Templates.replaceNode(icon, pixHtml, '');
