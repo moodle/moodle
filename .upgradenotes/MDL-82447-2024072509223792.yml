@@ -1,0 +1,6 @@
+issueNumber: MDL-82447
+notes:
+  mod_bigbluebuttonbn:
+    - message: >
+        Mobile support via plugin has been removed.
+      type: removed
