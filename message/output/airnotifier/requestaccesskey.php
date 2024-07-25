@@ -91,7 +91,7 @@ if ($key = $manager->request_accesskey()) {
         $warnings[] = [
             'msg' => get_string('mobilenotconfiguredwarning', 'admin'),
             'linkmsg' => get_string('enablemobilewebservice', 'admin'),
-            'linkurl' => new moodle_url('/admin/settings.php', ['section' => 'mobilesettings']),
+            'linkurl' => new moodle_url('/admin/search.php', ['query' => 'enablemobilewebservice']),
         ];
     }
 } else {
