@@ -26,21 +26,21 @@ import Ajax from 'core/ajax';
 /**
  * Delete single cohort.
  *
- * @param {Number} cohort Cohort ID
+ * @param {Number} cohortid
  * @return {Promise}
  */
-export const deleteCohort = cohort => deleteCohorts([cohort]);
+export const deleteCohort = cohortid => deleteCohorts([cohortid]);
 
 /**
  * Delete multiple cohorts.
  *
- * @param {Number[]} cohorts Cohort IDs
+ * @param {Number[]} cohortids
  * @return {Promise}
  */
-export const deleteCohorts = cohorts => {
+export const deleteCohorts = cohortids => {
     const request = {
         methodname: 'core_cohort_delete_cohorts',
-        args: {cohortids: cohorts}
+        args: {cohortids},
     };
 
     return Ajax.call([request])[0];
