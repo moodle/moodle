@@ -1998,6 +1998,7 @@ final class accesslib_test extends advanced_testcase {
 
         // For now we have deprecated fake/access:fakecapability.
         $capinfo = get_deprecated_capability_info('fake/access:fakecapability');
+        $this->assertNotNull(get_capability_info('fake/access:existingcapability'));
         $this->assertNotEmpty($capinfo);
         $this->assertEquals("The capability 'fake/access:fakecapability' is"
             . " deprecated.This capability should not be used anymore.", $capinfo['fullmessage']);
@@ -5290,6 +5291,30 @@ final class accesslib_test extends advanced_testcase {
         $this->assertInstanceOf('\context_system', $filtercontext);
         $filtercontext = context_helper::get_navigation_filter_context($coursecontext);
         $this->assertInstanceOf('\context_system', $filtercontext);
+    }
+
+    /**
+     * Test access APIs when dealing with deprecated plugin types.
+     *
+     * Note: this injects a mocked plugin type into core_component and is a slow test that must be run in isolation.
+     *
+     * @covers ::has_capability
+     * @runInSeparateProcess
+     */
+    public function test_capabilities_deprecated_plugintype(): void {
+        $this->resetAfterTest();
+
+        global $CFG;
+        $this->add_mocked_plugintype('fake', "{$CFG->dirroot}/lib/tests/fixtures/fakeplugins/fake", true);
+        $this->add_mocked_plugin('fake', 'fullfeatured', "{$CFG->dirroot}/lib/tests/fixtures/fakeplugins/fake/fullfeatured");
+        update_capabilities('fake_fullfeatured');
+
+        $this->assertTrue(\core_component::is_deprecated_plugin_type('fake'));
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->assertNotEmpty(get_capability_info('fake/fullfeatured:fakecapability'));
+        $this->assertTrue(has_capability('fake/fullfeatured:fakecapability', \core\context\system::instance(), $user));
+        $this->assertEquals('Fullfeatured capability description', get_capability_string('fake/fullfeatured:fakecapability'));
     }
 }
 
