@@ -1399,6 +1399,9 @@ class category_test extends \advanced_testcase {
         filter_set_global_state('multilang', TEXTFILTER_ON);
         filter_set_applies_to_strings('multilang', true);
 
+        // First test with the performance setting off.
+        set_config('filternavigationwithsystemcontext', 0);
+
         $perf = $filtermanager->get_performance_summary();
         $this->assertEquals(0, $perf[0]['contextswithfilters']);
 
