@@ -10,17 +10,14 @@ Feature: Teachers can embed images into instructions and conclusion fields
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | One      | teacher1@example.com |
     And the following "user private files" exist:
-      | user     | filepath                                   | filename       |
-      | teacher1 | mod/workshop/tests/fixtures/moodlelogo.png | moodlelogo.png |
+      | user     | filepath                                   |
+      | teacher1 | mod/workshop/tests/fixtures/moodlelogo.png |
     And the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1        |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
-    And the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
     And the following "activities" exist:
       | activity | course | name                          |
       | workshop | C1     | Workshop with embedded images |
