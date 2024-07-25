@@ -27,7 +27,7 @@ use core\tests\fake_plugins_test_trait;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core\event\manager
  */
-class manager_test extends \advanced_testcase {
+final class manager_test extends \advanced_testcase {
 
     use fake_plugins_test_trait;
 
