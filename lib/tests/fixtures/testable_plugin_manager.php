@@ -121,4 +121,37 @@ class testable_core_plugin_manager extends core_plugin_manager {
 
         $this->presentplugins[$record->type][$record->name] = $record;
     }
+
+    /**
+     * Test-specific override allowing mock plugin types to provide their plugininfo at PATH/TYPE_plugininfo.php instead of the
+     * usual core location lib/classes/plugininfo.
+     *
+     * This is required to:
+     * a) prevent debugging calls during tests using deep mocked plugintypes, as their plugininfo can't be located without this
+     * override.
+     * b) ensure plugin_manager returns an instance of the fixture plugininfo class, during tests using deep mocked plugintypes.
+     * If no fixture plugininfo is found, plugin_manager will default to \core\pluginfo\general.
+     *
+     * @param string $type the plugintype.
+     * @return string the name of the plugininfo class.
+     */
+    public static function resolve_plugininfo_class($type): string {
+        $allplugintypes = array_merge(
+            \core_component::get_plugin_types(),
+            \core_component::get_deprecated_plugin_types(),
+            \core_component::get_deleted_plugin_types()
+        );
+
+        // This is not a problem for mock plugins supporting subtypes, since subtype plugininfo class can be loaded, as expected,
+        // from the subtype root directory.
+        $issubtype = !is_null(\core_component::get_subtype_parent($type));
+
+        $path = $allplugintypes[$type];
+        if (!$issubtype && preg_match('/lib\/tests\/fixtures/', $path)) {
+            require_once("$path/{$type}_plugininfo.php");
+            return "{$type}_plugininfo";
+        }
+
+        return parent::resolve_plugininfo_class($type);
+    }
 }

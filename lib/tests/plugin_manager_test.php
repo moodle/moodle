@@ -16,6 +16,8 @@
 
 namespace core;
 
+use core\plugininfo\base;
+use core\tests\fake_plugins_test_trait;
 use core_plugin_manager;
 use testable_core_plugin_manager;
 use testable_plugininfo_base;
@@ -30,6 +32,9 @@ use testable_plugininfo_base;
  * @covers \core_plugin_manager
  */
 final class plugin_manager_test extends \advanced_testcase {
+
+    use fake_plugins_test_trait;
+
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->dirroot . '/lib/tests/fixtures/testable_plugin_manager.php');
@@ -785,5 +790,273 @@ final class plugin_manager_test extends \advanced_testcase {
         $this->assertContains('mod_forum', $plugins);
         $this->assertContains('block_badges', $plugins);
         $this->assertNotContains('marmelade_paddington', $plugins);
+    }
+
+    /**
+     * Test core_plugin_manager when dealing with deprecated plugin (not subplugin) types.
+     *
+     * @runInSeparateProcess
+     * @return void
+     */
+    public function test_plugin_manager_deprecated_plugintype(): void {
+        $this->resetAfterTest();
+
+        // Inject the mock plugin 'fake_fullfeatured' and deprecate it.
+        $this->add_full_mocked_plugintype(
+            plugintype: 'fake',
+            path: 'lib/tests/fixtures/fakeplugins/fake',
+        );
+        $this->deprecate_full_mocked_plugintype('fake');
+
+        // Use testable_plugin_manager, as this properly loads the mocked fake_plugininfo class, meaning the fake plugins are
+        // recognised by the plugin manager. See testable_plugin_manager::resolve_plugininfo_class().
+        $pluginman = testable_core_plugin_manager::instance();
+
+        // Deprecated plugin type are excluded from the following for B/C.
+        $this->assertArrayNotHasKey('fake', $pluginman->get_plugin_types());
+        $this->assertNull($pluginman->get_enabled_plugins('fake'));
+
+        // Deprecated plugins excluded by default for B/C, but can be included by request.
+        $this->assertArrayNotHasKey('fake', $pluginman->get_plugins());
+        $plugins = $pluginman->get_plugins(true);
+        $this->assertArrayHasKey('fake', $plugins);
+
+        /** @var base $plugininfo */
+        $plugininfo = $plugins['fake']['fullfeatured'];
+        $this->assertNull($plugininfo->is_enabled());
+        $this->assertTrue($plugininfo->is_deprecated());
+        $this->assertFalse($plugininfo->is_deleted());
+        $this->assertTrue($plugininfo->is_uninstall_allowed());
+        $this->assertIsString($plugininfo->full_path('version.php'));
+        $this->assertEquals(\core_plugin_manager::PLUGIN_STATUS_UPTODATE, $plugininfo->get_status());
+        $this->assertFalse($plugininfo->get_parent_plugin());
+        $this->assertNotEmpty($plugininfo->versiondisk);
+        $this->assertStringContainsString('/fake/', $plugininfo->get_dir());
+
+        $this->assertArrayNotHasKey('fullfeatured', $pluginman->get_plugins_of_type('fake'));
+        $this->assertArrayHasKey('fullfeatured', $pluginman->get_plugins_of_type('fake', true));
+
+        // Deprecated plugins included in the following.
+        $this->assertArrayHasKey('fullfeatured', $pluginman->get_present_plugins('fake')); // Plugins on disk.
+        $this->assertArrayHasKey('fullfeatured', $pluginman->get_installed_plugins('fake')); // Plugins with DB config.
+        $this->assertInstanceOf(\fake_plugininfo::class, $pluginman->get_plugin_info('fake_fullfeatured'));
+        $this->assertIsString($pluginman->get_plugintype_root('fake'));
+        $this->assertTrue($pluginman->can_uninstall_plugin('fake_fullfeatured'));
+        $uninstallurl = $pluginman->get_uninstall_url('fake_fullfeatured');
+        $this->assertInstanceOf(\moodle_url::class, $uninstallurl);
+        $this->assertEquals('fake_fullfeatured', $uninstallurl->param('uninstall'));
+
+        // Strings are supported for deprecated plugins.
+        $this->assertEquals('Fake full featured plugin', $pluginman->plugin_name('fake_fullfeatured'));
+        $this->assertEquals('fake', $pluginman->plugintype_name('fake'));
+        $this->assertEquals('fake', $pluginman->plugintype_name_plural('fake'));
+    }
+
+    /**
+     * Test core_plugin_manager when dealing with deprecated subplugin types.
+     *
+     * @runInSeparateProcess
+     * @return void
+     */
+    public function test_plugin_manager_deprecated_subplugintype(): void {
+        $this->resetAfterTest();
+
+        // Inject the 'fake' plugin type. This includes three mock subplugins:
+        // 1. fullsubtype_example: a regular plugin type, not deprecated, nor deleted.
+        // 2. fulldeprecatedsubtype_test: a deprecated subplugin type.
+        // 3. fulldeletedsubtype_demo: a deleted subplugin type.
+        $this->add_full_mocked_plugintype(
+            plugintype: 'fake',
+            path: 'lib/tests/fixtures/fakeplugins/fake',
+            subpluginsupport: true
+        );
+
+        // Use testable_plugin_manager, as this properly loads the mocked fake_plugininfo class, meaning the fake plugins are
+        // recognised by the plugin manager. See testable_plugin_manager::resolve_plugininfo_class().
+        $pluginman = testable_core_plugin_manager::instance();
+
+        // Deprecated plugin type are excluded from the following for B/C.
+        $this->assertArrayNotHasKey('fulldeprecatedsubtype', $pluginman->get_plugin_types());
+        $this->assertNull($pluginman->get_enabled_plugins('fulldeprecatedsubtype'));
+        $subplugins = $pluginman->get_subplugins();
+        $this->assertArrayHasKey('fake_fullfeatured', $subplugins);
+        $fullfeaturedplug = $subplugins['fake_fullfeatured'];
+        $this->assertArrayHasKey('fullsubtype', $fullfeaturedplug);
+        $this->assertArrayNotHasKey('fulldeprecatedsubtype', $fullfeaturedplug);
+        $this->assertArrayHasKey('fullsubtype_example', $pluginman->get_subplugins_of_plugin('fake_fullfeatured'));
+        $this->assertArrayNotHasKey('fulldeprecatedsubtype_test', $pluginman->get_subplugins_of_plugin('fake_fullfeatured'));
+
+        // Deprecated plugins excluded by default for B/C, but can be included by request.
+        $this->assertArrayNotHasKey('fulldeprecatedsubtype', $pluginman->get_plugins());
+        $plugins = $pluginman->get_plugins(true);
+        $this->assertArrayHasKey('fulldeprecatedsubtype', $plugins);
+
+        /** @var base $plugininfo */
+        $plugininfo = $plugins['fulldeprecatedsubtype']['test'];
+        $this->assertNull($plugininfo->is_enabled());
+        $this->assertTrue($plugininfo->is_deprecated());
+        $this->assertFalse($plugininfo->is_deleted());
+        $this->assertTrue($plugininfo->is_uninstall_allowed());
+        $this->assertIsString($plugininfo->full_path('version.php'));
+        $this->assertEquals(\core_plugin_manager::PLUGIN_STATUS_UPTODATE, $plugininfo->get_status());
+        $this->assertEquals('fake_fullfeatured', $plugininfo->get_parent_plugin());
+        $this->assertNotEmpty($plugininfo->versiondisk);
+        $this->assertStringContainsString('/fulldeprecatedsubtype/', $plugininfo->get_dir());
+
+        $this->assertArrayNotHasKey('test', $pluginman->get_plugins_of_type('fulldeprecatedsubtype'));
+        $this->assertArrayHasKey('test', $pluginman->get_plugins_of_type('fulldeprecatedsubtype', true));
+
+        $this->assertFalse($pluginman->get_parent_of_subplugin('fulldeprecatedsubtype'));
+        $this->assertEquals('fake_fullfeatured', $pluginman->get_parent_of_subplugin('fulldeprecatedsubtype', true));
+
+        // Deprecated plugins included in the following.
+        $this->assertArrayHasKey('test', $pluginman->get_present_plugins('fulldeprecatedsubtype')); // Plugins on disk.
+        $this->assertArrayHasKey('test', $pluginman->get_installed_plugins('fulldeprecatedsubtype')); // Plugins with DB config.
+        $this->assertInstanceOf(\fake_fullfeatured\plugininfo\fulldeprecatedsubtype::class,
+            $pluginman->get_plugin_info('fulldeprecatedsubtype_test'));
+        $this->assertEquals('Full deprecated subtype test', $pluginman->plugin_name('fulldeprecatedsubtype_test'));
+        $this->assertIsString($pluginman->get_plugintype_root('fulldeprecatedsubtype'));
+        $this->assertTrue($pluginman->can_uninstall_plugin('fulldeprecatedsubtype_test'));
+        $uninstallurl = $pluginman->get_uninstall_url('fulldeprecatedsubtype_test');
+        $this->assertInstanceOf(\moodle_url::class, $uninstallurl);
+        $this->assertEquals('fulldeprecatedsubtype_test', $uninstallurl->param('uninstall'));
+    }
+
+    /**
+     * Test core_plugin_manager when dealing with deleted plugin (not subplugin) types.
+     *
+     * @runInSeparateProcess
+     * @return void
+     */
+    public function test_plugin_manager_deleted_plugintype(): void {
+        $this->resetAfterTest();
+
+        // Inject the mock plugin 'fake_fullfeatured', and deprecate it.
+        $this->add_full_mocked_plugintype(
+            plugintype: 'fake',
+            path: 'lib/tests/fixtures/fakeplugins/fake',
+        );
+        $this->delete_full_mocked_plugintype('fake');
+
+        // Use testable_plugin_manager, as this properly loads the mocked fake_plugininfo class, meaning the fake plugins are
+        // recognised by the plugin manager. See testable_plugin_manager::resolve_plugininfo_class().
+        $pluginman = testable_core_plugin_manager::instance();
+
+        // Deleted plugins are excluded from the following for B/C.
+        $this->assertArrayNotHasKey('fake', $pluginman->get_plugin_types());
+        $this->assertNull($pluginman->get_enabled_plugins('fake'));
+
+        // Deleted plugins excluded by default for B/C, but can be included by request.
+        $this->assertArrayNotHasKey('fake', $pluginman->get_plugins());
+        $plugins = $pluginman->get_plugins(true);
+        $this->assertArrayHasKey('fake', $plugins);
+
+        /** @var base $plugininfo */
+        $plugininfo = $plugins['fake']['fullfeatured'];
+        $this->assertNull($plugininfo->is_enabled());
+        $this->assertFalse($plugininfo->is_deprecated());
+        $this->assertTrue($plugininfo->is_deleted());
+        $this->assertTrue($plugininfo->is_uninstall_allowed());
+        $this->assertIsString($plugininfo->full_path('version.php'));
+        $this->assertEquals(\core_plugin_manager::PLUGIN_STATUS_UPTODATE, $plugininfo->get_status());
+        $this->assertFalse($plugininfo->get_parent_plugin());
+        $this->assertNotEmpty($plugininfo->versiondisk);
+        $this->assertStringContainsString('/fake/', $plugininfo->get_dir());
+
+        $this->assertArrayNotHasKey('fullfeatured', $pluginman->get_plugins_of_type('fake'));
+        $this->assertArrayHasKey('fullfeatured', $pluginman->get_plugins_of_type('fake', true));
+
+        // Deleted plugins included in the following.
+        $this->assertArrayHasKey('fullfeatured', $pluginman->get_present_plugins('fake')); // Plugins on disk.
+        $this->assertArrayHasKey('fullfeatured', $pluginman->get_installed_plugins('fake')); // Plugins with DB config.
+        $this->assertInstanceOf(\fake_plugininfo::class, $pluginman->get_plugin_info('fake_fullfeatured'));
+        $this->assertIsString($pluginman->get_plugintype_root('fake'));
+        $this->assertTrue($pluginman->can_uninstall_plugin('fake_fullfeatured'));
+        $uninstallurl = $pluginman->get_uninstall_url('fake_fullfeatured');
+        $this->assertInstanceOf(\moodle_url::class, $uninstallurl);
+        $this->assertEquals('fake_fullfeatured', $uninstallurl->param('uninstall'));
+
+        // Included, but there is no string support for deleted plugin types.
+        // Without string support, the type name defaults to the plugin type,
+        // while plugin name is set in \core\plugininfo\base::init_is_deprecated().
+        $this->assertEquals('fullfeatured', $pluginman->plugin_name('fake_fullfeatured'));
+        $this->assertEquals('fake', $pluginman->plugintype_name('fake'));
+        $this->assertEquals('fake', $pluginman->plugintype_name_plural('fake'));
+    }
+
+    /**
+     * Test core_plugin_manager when dealing with deleted subplugin types.
+     *
+     * @runInSeparateProcess
+     * @return void
+     */
+    public function test_plugin_manager_deleted_subplugintype(): void {
+        $this->resetAfterTest();
+
+        // Inject the 'fake' plugin type. This includes three mock subplugins:
+        // 1. fullsubtype_example: a regular plugin type, not deprecated, nor deleted.
+        // 2. fulldeprecatedsubtype_test: a deprecated subplugin type.
+        // 3. fulldeletedsubtype_demo: a deleted subplugin type.
+        $this->add_full_mocked_plugintype(
+            plugintype: 'fake',
+            path: 'lib/tests/fixtures/fakeplugins/fake',
+            subpluginsupport: true
+        );
+
+        // Use testable_plugin_manager, as this properly loads the mocked fake_plugininfo class, meaning the fake plugins are
+        // recognised by the plugin manager. See testable_plugin_manager::resolve_plugininfo_class().
+        $pluginman = testable_core_plugin_manager::instance();
+
+        // Deleted plugin type are excluded from the following for B/C.
+        $this->assertArrayNotHasKey('fulldeletedsubtype', $pluginman->get_plugin_types());
+        $this->assertNull($pluginman->get_enabled_plugins('fulldeletedsubtype'));
+        $subplugins = $pluginman->get_subplugins();
+        $this->assertArrayHasKey('fake_fullfeatured', $subplugins);
+        $fullfeaturedplug = $subplugins['fake_fullfeatured'];
+        $this->assertArrayHasKey('fullsubtype', $fullfeaturedplug);
+        $this->assertArrayNotHasKey('fulldeletedsubtype', $fullfeaturedplug);
+        $this->assertArrayHasKey('fullsubtype_example', $pluginman->get_subplugins_of_plugin('fake_fullfeatured'));
+        $this->assertArrayNotHasKey('fulldeletedsubtype_demo', $pluginman->get_subplugins_of_plugin('fake_fullfeatured'));
+
+        // Deleted plugins excluded by default for B/C, but can be included by request.
+        $this->assertArrayNotHasKey('fulldeletedsubtype', $pluginman->get_plugins());
+        $plugins = $pluginman->get_plugins(true);
+        $this->assertArrayHasKey('fulldeletedsubtype', $plugins);
+
+        /** @var base $plugininfo */
+        $plugininfo = $plugins['fulldeletedsubtype']['demo'];
+        $this->assertNull($plugininfo->is_enabled());
+        $this->assertFalse($plugininfo->is_deprecated());
+        $this->assertTrue($plugininfo->is_deleted());
+        $this->assertTrue($plugininfo->is_uninstall_allowed());
+        $this->assertIsString($plugininfo->full_path('version.php'));
+        $this->assertEquals(\core_plugin_manager::PLUGIN_STATUS_UPTODATE, $plugininfo->get_status());
+        $this->assertEquals('fake_fullfeatured', $plugininfo->get_parent_plugin());
+        $this->assertNotEmpty($plugininfo->versiondisk);
+        $this->assertStringContainsString('/fulldeletedsubtype/', $plugininfo->get_dir());
+
+        $this->assertArrayNotHasKey('demo', $pluginman->get_plugins_of_type('fulldeletedsubtype'));
+        $this->assertArrayHasKey('demo', $pluginman->get_plugins_of_type('fulldeletedsubtype', true));
+
+        $this->assertFalse($pluginman->get_parent_of_subplugin('fulldeletedsubtype'));
+        $this->assertEquals('fake_fullfeatured', $pluginman->get_parent_of_subplugin('fulldeletedsubtype', true));
+
+        // Deprecated plugins included in the following.
+        $this->assertArrayHasKey('demo', $pluginman->get_present_plugins('fulldeletedsubtype')); // Plugins on disk.
+        $this->assertArrayHasKey('demo', $pluginman->get_installed_plugins('fulldeletedsubtype')); // Plugins with DB config.
+        $this->assertInstanceOf(\fake_fullfeatured\plugininfo\fulldeletedsubtype::class,
+            $pluginman->get_plugin_info('fulldeletedsubtype_demo'));
+        $this->assertIsString($pluginman->get_plugintype_root('fulldeletedsubtype'));
+        $this->assertTrue($pluginman->can_uninstall_plugin('fulldeletedsubtype_demo'));
+        $uninstallurl = $pluginman->get_uninstall_url('fulldeletedsubtype_demo');
+        $this->assertInstanceOf(\moodle_url::class, $uninstallurl);
+        $this->assertEquals('fulldeletedsubtype_demo', $uninstallurl->param('uninstall'));
+
+        // Included, but there is no string support for deleted plugin types.
+        // Without string support, the type name defaults to the plugin type,
+        // while plugin name is set in \core\plugininfo\base::init_is_deprecated().
+        $this->assertEquals('demo', $pluginman->plugin_name('fulldeletedsubtype_demo'));
+        $this->assertEquals('fulldeletedsubtype', $pluginman->plugintype_name('fulldeletedsubtype'));
+        $this->assertEquals('fulldeletedsubtype', $pluginman->plugintype_name_plural('fulldeletedsubtype'));
     }
 }
