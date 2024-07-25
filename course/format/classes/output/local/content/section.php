@@ -153,6 +153,8 @@ class section implements named_templatable, renderable {
             'sitehome' => $course->id == SITEID,
             'editing' => $PAGE->user_is_editing(),
             'displayonesection' => ($course->id != SITEID && $format->get_sectionid() == $section->id),
+            // Section name is used as data attribute is to facilitate behat locators.
+            'sectionname' => $format->get_section_name($section),
         ];
 
         $haspartials = [];
