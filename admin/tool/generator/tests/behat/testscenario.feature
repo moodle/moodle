@@ -74,3 +74,25 @@ Feature: Create testing scenarios using generators
     And I should see "Course 2" in the "page-header" "region"
     And I am on the "C3" "Course" page
     And I should see "Course 3" in the "page-header" "region"
+
+  @javascript
+  Scenario: Run cleanup steps after creating a testing scenario
+    Given I log in as "admin"
+    And I navigate to "Development > Create testing scenarios" in site administration
+    And I upload "admin/tool/generator/tests/fixtures/testscenario/scenario_cleanup.feature" file to "Feature file" filemanager
+    And I press "Import"
+    And I should see "Scenario: Create course content to cleanup later"
+    And I navigate to "Courses > Manage courses and categories" in site administration
+    And I should see "Course cleanup" in the "course-listing" "region"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I should see "Teacher Test1"
+    And I navigate to "Development > Create testing scenarios" in site administration
+    When I upload "admin/tool/generator/tests/fixtures/testscenario/scenario_cleanup.feature" file to "Feature file" filemanager
+    And I set the field "Execute" to "Cleanup scenarios"
+    And I press "Import"
+    And I should see "the course \"Course cleanup\" is deleted"
+    And I should see "the user \"cleanteacher\" is deleted"
+    Then I navigate to "Courses > Manage courses and categories" in site administration
+    And I should not see "Course cleanup" in the "course-listing" "region"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I should not see "Teacher Test1"

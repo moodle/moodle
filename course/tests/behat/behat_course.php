@@ -1139,6 +1139,17 @@ class behat_course extends behat_base {
     }
 
     /**
+     * Deletes a course.
+     *
+     * @Given the course :coursefullname is deleted
+     * @param string $coursefullname
+     */
+    public function the_course_is_deleted($coursefullname) {
+        delete_course($this->get_course_id($coursefullname), false);
+        fix_course_sortorder();
+    }
+
+    /**
      * Duplicates the activity or resource specified by it's name. You should be in the course page with editing mode on.
      *
      * @Given /^I duplicate "(?P<activity_name_string>(?:[^"]|\\")*)" activity$/

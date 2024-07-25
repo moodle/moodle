@@ -43,6 +43,13 @@ class featureimport extends moodleform {
             ['accepted_types' => ['.feature']]
         );
         $mform->addRule('featurefile', null, 'required');
+
+        $options = [
+            0 => get_string('execute_scenarios', 'tool_generator'),
+            1 => get_string('execute_cleanup', 'tool_generator'),
+        ];
+        $mform->addElement('select', 'executecleanup', get_string('execute', 'tool_generator'), $options);
+
         $this->add_action_buttons(false, get_string('import'));
     }
 

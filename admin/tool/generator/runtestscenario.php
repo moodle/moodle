@@ -79,7 +79,11 @@ if (empty($content)) {
 }
 
 try {
-    $parsedfeature = $runner->parse_feature($content);
+    if ($data->executecleanup) {
+        $parsedfeature = $runner->parse_cleanup($content);
+    } else {
+        $parsedfeature = $runner->parse_feature($content);
+    }
 } catch (\Throwable $th) {
     echo $output->notification(get_string('testscenario_errorparsing', 'tool_generator', $th->getMessage()));
     echo $output->continue_button($currenturl);

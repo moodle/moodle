@@ -27,7 +27,7 @@
         "scenarios": [
             {
                 "type": "Scenario",
-                "title": "Scenario title",
+                "name": "Scenario title",
                 "hassteps": true,
                 "steps": [
                     {
@@ -53,7 +53,7 @@
     <p>{{#str}} testscenario_steps, tool_generator {{/str}}</p>
 {{/haslines}}
 {{#scenarios}}
-<h3>{{type}}: {{name}}</h3>
+<h3>{{type}}{{#name}}: {{name}} {{/name}}</h3>
 <div>
     {{#scenarioerror}}
     <div class="alert alert-danger mb-3" role="alert">
