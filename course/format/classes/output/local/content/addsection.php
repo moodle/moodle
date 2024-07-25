@@ -153,11 +153,11 @@ class addsection implements named_templatable, renderable {
         if ($singlesection) {
             $params['sectionreturn'] = $singlesection;
         }
-
         $data->addsections = (object) [
             'url' => new moodle_url('/course/changenumsections.php', $params),
             'title' => $addstring,
             'newsection' => $maxsections - $lastsection,
+            'canaddsection' => $lastsection < $maxsections,
         ];
         return $data;
     }

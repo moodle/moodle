@@ -33,21 +33,21 @@
     }
 }}
 {{#showaddsection}}
-<div class="changenumsections bulk-hidden" data-region="section-addsection">
+<div class="changenumsections bulk-hidden {{^canaddsection}}disabled{{/canaddsection}}" data-region="section-addsection">
     {{#addsections}}
     {{< core_courseformat/local/content/divider}}
         {{$extraclasses}}always-hidden mt-2{{/extraclasses}}
         {{$content}}
             <a href="{{{url}}}"
-                class="btn add-content section-modchooser section-modchooser-link activitychooser-button d-flex justify-content-center align-items-center p-1 icon-no-margin"
+               class="btn add-content section-modchooser section-modchooser-link activitychooser-button d-flex justify-content-center align-items-center p-1 icon-no-margin
+                    {{^canaddsection}}disabled{{/canaddsection}}"
                 data-add-sections="{{title}}"
                 data-new-sections="{{newsection}}"
                 data-action="addSection"
                 {{#insertafter}} data-id="{{id}}" {{/insertafter}}
-                title="{{title}}"
+                title="{{#canaddsection}}{{title}}{{/canaddsection}}{{^canaddsection}}{{#str}}sectionaddmax, core_courseformat{{/str}}{{/canaddsection}}"
             >
                 {{#pix}} t/add, core {{/pix}}
-                <span class="sr-only">{{title}}</span>
             </a>
         {{/content}}
     {{/ core_courseformat/local/content/divider}}

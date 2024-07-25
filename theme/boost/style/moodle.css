@@ -29098,6 +29098,13 @@ span.editinstructions .alert-link {
   color: #0f6cbf;
 }
 
+.max-section-alert {
+  border-top: 2px dashed #dee2e6;
+  font-size: 0.8203125rem;
+  font-weight: normal;
+  color: #8f959e;
+}
+
 /* Single section page specific styles */
 .single-section > ul > .course-section.hidden .section-item {
   background-color: inherit;
@@ -29757,6 +29764,9 @@ span.editinstructions .alert-link {
   margin: 0.5rem 0.25rem;
   border-top: 2px dashed #dee2e6;
 }
+.changenumsections.disabled .divider hr {
+  border-top: 2px dashed #dee2e6;
+}
 .divider .divider-content {
   opacity: 0;
   visibility: hidden;
@@ -29785,6 +29795,9 @@ span.editinstructions .alert-link {
 }
 .divider:has(.btn.add-content:hover) hr {
   border-color: #0f6cbf;
+}
+.changenumsections.disabled .divider:has(.btn.add-content:hover) hr {
+  border-color: #e9ecef;
 }
 
 .activity:focus-within + .activity .divider .divider-content,
@@ -29815,6 +29828,19 @@ span.editinstructions .alert-link {
   width: 14px;
   height: 14px;
   font-size: 14px;
+}
+.changenumsections.disabled .btn.add-content {
+  color: #8f959e;
+  background-color: #e9ecef;
+  outline: none;
+  box-shadow: none;
+  pointer-events: auto;
+}
+.changenumsections.disabled .btn.add-content:hover, .changenumsections.disabled .btn.add-content:focus {
+  color: #8f959e;
+  background-color: #e9ecef;
+  outline: none;
+  box-shadow: none;
 }
 
 /* Bulk editing */
