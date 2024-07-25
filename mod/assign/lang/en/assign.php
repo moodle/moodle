@@ -357,6 +357,7 @@ $string['markingallocation'] = 'Use marking allocation';
 $string['markingallocation_help'] = 'If enabled together with marking workflow, markers can be allocated to particular students.';
 $string['markinganonymous'] = 'Allow partial release of grades while marking anonymously';
 $string['markinganonymous_help'] = 'If enabled together with anonymous submissions and marking workflow, it allows partial release of grades while marking anonymously.';
+$string['markingstate'] = 'Marking state';
 $string['markingworkflow'] = 'Use marking workflow';
 $string['markingworkflow_help'] = 'If enabled, marks will go through a series of workflow stages before being released to students. This allows for multiple rounds of marking and allows marks to be released to all students at the same time.';
 $string['markingworkflowstate'] = 'Marking workflow state';

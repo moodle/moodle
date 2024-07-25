@@ -29,6 +29,7 @@ Feature: Check that the assignment grade can be updated correctly
       | submissiondrafts | 0                           |
     And I am on the "Test assignment name" Activity page logged in as teacher1
     Then I follow "View all submissions"
+    And I change window size to "large"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50"
     And I set the field "Notify student" to "0"

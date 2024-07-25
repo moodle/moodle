@@ -88,6 +88,7 @@ class assign_grading_table extends table_sql implements renderable {
         parent::__construct('mod_assign_grading-' . $assignment->get_context()->id);
 
         $this->is_persistent(true);
+        $this->set_attribute('id', 'submissions');
         $this->assignment = $assignment;
 
         // Check permissions up front.

@@ -71,10 +71,6 @@ class mod_assign_grading_options_form extends moodleform {
             $markingfilter = get_string('markerfilter', 'assign');
             $mform->addElement('select', 'markerfilter', $markingfilter, $instance['markingallocationopt']);
         }
-        if (!empty($instance['markingworkflowopt'])) {
-            $workflowfilter = get_string('workflowfilter', 'assign');
-            $mform->addElement('select', 'workflowfilter', $workflowfilter, $instance['markingworkflowopt']);
-        }
         // Quickgrading.
         if ($instance['showquickgrading']) {
             $mform->addElement('checkbox', 'quickgrading', get_string('quickgrading', 'assign'));
