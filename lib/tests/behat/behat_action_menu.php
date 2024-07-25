@@ -62,7 +62,6 @@ class behat_action_menu extends behat_base {
             return;
         }
 
-        $this->ensure_node_is_visible($node);
         $node->click();
     }
 
@@ -80,7 +79,6 @@ class behat_action_menu extends behat_base {
         // Gets the node based on the requested selector type and locator.
         $menuselector = ".moodle-actionmenu .dropdown.show .dropdown-menu";
         $node = $this->get_node_in_container("link", $menuitemstring, "css_element", $menuselector);
-        $this->ensure_node_is_visible($node);
         $node->click();
     }
 

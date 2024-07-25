@@ -738,7 +738,6 @@ class behat_forms extends behat_base {
     public function i_expand_the_autocomplete($field) {
         $csstarget = '.form-autocomplete-downarrow';
         $node = $this->get_node_in_container('css_element', $csstarget, 'form_row', $field);
-        $this->ensure_node_is_visible($node);
         $node->click();
     }
 
