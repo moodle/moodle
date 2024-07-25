@@ -521,6 +521,8 @@ class edit_renderer extends \plugin_renderer_base {
         foreach ($structure->get_slots_in_section($section->id) as $slot) {
             $output .= $this->question_row($structure, $slot, $contexts, $pagevars, $pageurl);
         }
+
+        $this->page->requires->js_call_amd('mod_quiz/question_slot', 'init');
         return html_writer::tag('ul', $output, ['class' => 'section img-text']);
     }
 
@@ -776,7 +778,6 @@ class edit_renderer extends \plugin_renderer_base {
         if ($structure->get_slot_by_number($slot)->qtype !== 'random') {
             $data['versionselection'] = true;
             $data['versionoption'] = $structure->get_version_choices_for_slot($slot);
-            $this->page->requires->js_call_amd('mod_quiz/question_slot', 'init', [$slotid]);
         }
 
         // Render the question slot template.

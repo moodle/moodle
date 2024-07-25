@@ -390,6 +390,7 @@ $string['eventslotdeleted'] = 'Slot deleted';
 $string['eventslotdisplayedquestionnumberupdated'] = 'Slot displayed question number updated';
 $string['eventslotgradeitemupdated'] = 'Slot grade item updated';
 $string['eventslotmarkupdated'] = 'Slot mark updated';
+$string['eventslotversionupdated'] = 'Slot version updated';
 $string['eventslotmoved'] = 'Slot moved';
 $string['eventslotrequirepreviousupdated'] = 'Slot require previous updated';
 $string['everynquestions'] = 'Every {$a} questions';
