@@ -3345,7 +3345,8 @@ function include_course_editor(course_format $format) {
  */
 function get_sorted_course_formats($enabledonly = false) {
     global $CFG;
-    $formats = core_component::get_plugin_list('format');
+
+    $formats = core_plugin_manager::instance()->get_installed_plugins('format');
 
     if (!empty($CFG->format_plugins_sortorder)) {
         $order = explode(',', $CFG->format_plugins_sortorder);
@@ -3359,7 +3360,9 @@ function get_sorted_course_formats($enabledonly = false) {
     }
     $sortedformats = array();
     foreach ($order as $formatname) {
-        if (!get_config('format_'.$formatname, 'disabled')) {
+        $component = "format_{$formatname}";
+        $componentdir = core_component::get_component_directory($component);
+        if ($componentdir !== null && !get_config($component, 'disabled')) {
             $sortedformats[] = $formatname;
         }
     }
