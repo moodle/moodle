@@ -86,6 +86,12 @@ abstract class base {
     /** @var string Name of the plugin */
     public $component = '';
 
+    /** @var bool whether the plugin is that of a phase 1 deprecated type or subplugin type. */
+    public $deprecatedtype = false;
+
+    /** @var bool whether the plugin is that of a phase 2 deprecated (deleted) type or subplugin type. */
+    public $deletedtype = false;
+
     /**
      * Whether this plugintype supports its plugins being disabled.
      *
@@ -143,15 +149,18 @@ abstract class base {
      * @return array of plugintype classes, indexed by the plugin name
      */
     public static function get_plugins($type, $typerootdir, $typeclass, $pluginman) {
-        // Get the information about plugins at the disk.
-        $plugins = core_component::get_plugin_list($type);
+        // Get the information about plugins at the disk, including deprecated plugins.
+        $plugins = core_component::get_all_plugins_list($type);
+
+        // Also included deleted plugins.
+
         $return = array();
         foreach ($plugins as $pluginname => $pluginrootdir) {
             $return[$pluginname] = self::make_plugin_instance($type, $typerootdir,
                 $pluginname, $pluginrootdir, $typeclass, $pluginman);
         }
 
-        // Fetch missing incorrectly uninstalled plugins.
+        // Fetch missing incorrectly uninstalled plugins, including deprecated plugins which are not included above.
         $plugins = $pluginman->get_installed_plugins($type);
 
         foreach ($plugins as $name => $version) {
@@ -168,6 +177,7 @@ abstract class base {
             $plugin->versiondb   = $version;
             $plugin->pluginman   = $pluginman;
             $plugin->init_is_standard();
+            $plugin->init_is_deprecated();
 
             $return[$name] = $plugin;
         }
@@ -199,6 +209,7 @@ abstract class base {
         $plugin->load_disk_version();
         $plugin->load_db_version();
         $plugin->init_is_standard();
+        $plugin->init_is_deprecated();
 
         return $plugin;
     }
@@ -270,6 +281,7 @@ abstract class base {
      * data) or is missing from disk.
      */
     public function load_disk_version() {
+        // Note: this includes deprecated plugins.
         $versions = $this->pluginman->get_present_plugins($this->type);
 
         $this->versiondisk = null;
@@ -349,7 +361,7 @@ abstract class base {
      * @return string|bool false if not a subplugin, name of the parent otherwise
      */
     public function get_parent_plugin() {
-        return $this->pluginman->get_parent_of_subplugin($this->type);
+        return $this->pluginman->get_parent_of_subplugin($this->type, true);
     }
 
     /**
@@ -394,6 +406,21 @@ abstract class base {
                 $this->source = core_plugin_manager::PLUGIN_SOURCE_EXTENSION;
             }
         }
+    }
+
+    /**
+     * Init some instance props denoting the deprecation state of the plugin.
+     *
+     * Sets {@see $deprecatedtype} property, indicating whether the plugintype is phase 1 deprecated.
+     * Sets {@see $deletedtype} property, indicating whether the plugintype is phase 2 deprecated.
+     * Sets {@see $displayname} property to the plugin name phase 2 deprecated plugins since lang string support has then ended.
+     *
+     * @return void
+     */
+    final public function init_is_deprecated(): void {
+        $this->deprecatedtype = \core_component::is_deprecated_plugin_type($this->type);
+        $this->deletedtype = \core_component::is_deleted_plugin_type($this->type);
+        $this->displayname = $this->deletedtype ? $this->name : $this->displayname;
     }
 
     /**
@@ -498,6 +525,24 @@ abstract class base {
         }
 
         return isset($enabled[$this->name]);
+    }
+
+    /**
+     * Return whether this plugin is deprecated (i.e. the plugin type to which it belongs is deprecated).
+     *
+     * @return bool
+     */
+    public function is_deprecated(): bool {
+        return $this->deprecatedtype;
+    }
+
+    /**
+     * Return whether this plugin is deleted (i.e. the plugin type to which it belongs is deleted).
+     *
+     * @return bool
+     */
+    public function is_deleted(): bool {
+        return $this->deletedtype;
     }
 
     /**
