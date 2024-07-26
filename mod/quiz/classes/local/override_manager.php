@@ -448,6 +448,22 @@ class override_manager {
     }
 
     /**
+     * Determine whether user can view a given override record
+     *
+     * @param \stdClass $override
+     * @param \stdClass $course
+     * @param \cm_info $cm
+     * @return bool
+     */
+    public function can_view_override(\stdClass $override, \stdClass $course, \cm_info $cm): bool {
+        if ($override->groupid) {
+            return groups_group_visible($override->groupid, $course, $cm);
+        } else {
+            return groups_user_groups_visible($course, $override->userid, $cm);
+        }
+    }
+
+    /**
      * Builds common event data
      *
      * @param int $id override id
