@@ -46,12 +46,14 @@ Feature: Test if the login form provides the correct feedback
     And I follow "Log in"
     Then I should see "Lorem ipsum dolor sit amet"
 
+  @javascript @accessibility
   Scenario: Show the maintenance mode message
     Given the following config values are set as admin:
-      | maintenance_enabled | Disabled |
-      | maintenance_message | Back online tomorrow |
+      | maintenance_enabled | 1                     |
+      | maintenance_message | Back online tomorrow  |
     And I follow "Log in"
     Then I should see "Back online tomorrow"
+    And the page should meet accessibility standards with "best-practice" extra tests
 
   Scenario: User self registration
     Given the following config values are set as admin:
