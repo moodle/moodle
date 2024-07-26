@@ -46,5 +46,5 @@ $string['phpversionhelp'] = '<p>Moodle erwartet PHP mindestens in der Version 4.
 (Im Falle von 5.0.x könntest du auch zu einer Version 4.3.x/4.4.x downgraden)</p>';
 $string['welcomep20'] = 'Du hast das Paket <strong>{$a->packname} {$a->packversion}</strong> erfolgreich auf deinem Computer installiert.';
 $string['welcomep30'] = 'Diese Version von <strong>{$a->installername}</strong> enthält folgende Anwendungen, mit denen du <strong>Moodle</strong> ausführen kannst:';
-$string['welcomep60'] = 'Die folgenden Seiten führen dich in einfachen Schritten durch die Konfiguration und Installation von <strong>Moodle</strong> auf deinem Computer. Du kannst die vorgeschlagenen Einstellungen übernehmen oder an deine Bedürfnisse anpassen.';
-$string['welcomep70'] = 'Klicke auf den "Weiter"-Button, um mit dem Setup von <string>Moodle</string> fortzufahren.';
+$string['welcomep60'] = 'Die folgenden Webseiten führen dich in einfachen Schritten durch die Installation von <strong>Moodle</strong> auf deinem Computer. Du können die vorgeschlagenen Einstellungen übernehmen oder an eigene Bedürfnisse anpassen.';
+$string['welcomep70'] = 'Klicke auf die Taste "Weiter", um mit der Installation von <strong>Moodle</strong> fortzufahren.';
