@@ -20,6 +20,9 @@
 - Final deprecation of \core\task\manager::ensure_adhoc_task_qos()
 
   For more information see [MDL-74843](https://tracker.moodle.org/browse/MDL-74843)
+- Remove deprecation layer for YUI Events. The deprecation layer was introduced with MDL-70990 and MDL-72291.
+
+  For more information see [MDL-77167](https://tracker.moodle.org/browse/MDL-77167)
 
 ### Added
 
@@ -40,6 +43,9 @@
   ```
 
   For more information see [MDL-66903](https://tracker.moodle.org/browse/MDL-66903)
+- Added stored progress bars
+
+  For more information see [MDL-70854](https://tracker.moodle.org/browse/MDL-70854)
 - New DML constant `SQL_INT_MAX` to define the size of a large integer with cross database platform support
 
   For more information see [MDL-81282](https://tracker.moodle.org/browse/MDL-81282)

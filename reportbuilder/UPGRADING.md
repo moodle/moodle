@@ -18,6 +18,12 @@
 - Added a new database helper method `sql_replace_parameters` to help ensure uniqueness of parameters within a SQL expression
 
   For more information see [MDL-81434](https://tracker.moodle.org/browse/MDL-81434)
+- New format helper `format_time` method, for use in column callbacks that represent a duration of time (e.g. "3 days 4 hours")
+
+  For more information see [MDL-82466](https://tracker.moodle.org/browse/MDL-82466)
+- Methods add_columns_from_entity(), add_filters_from_entity() and report_element_search() have been moved from \core_reportbuilder\datasource class to \core_reportbuilder\base class in order to be available also for system reports
+
+  For more information see [MDL-82529](https://tracker.moodle.org/browse/MDL-82529)
 
 ### Removed
 

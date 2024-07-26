@@ -13,4 +13,3 @@
 - New `\core_user\hook\extend_default_homepage` hook added to allow third-party plugins to extend the default homepage options for the site
 
   For more information see [MDL-82066](https://tracker.moodle.org/browse/MDL-82066)
-

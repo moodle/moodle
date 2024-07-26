@@ -15,6 +15,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The badges/newbadge.php page has been deprecated and merged with badges/edit.php. Please, use badges/edit.php instead.
 
   For more information see [MDL-43938](https://tracker.moodle.org/browse/MDL-43938)
+- OPEN_BADGES_V1 is deprecated and should not be used anymore.
+
+  For more information see [MDL-70983](https://tracker.moodle.org/browse/MDL-70983)
+
+#### Removed
+
+- Final removal of BADGE_BACKPACKAPIURL and BADGE_BACKPACKWEBURL.
+
+  For more information see [MDL-70983](https://tracker.moodle.org/browse/MDL-70983)
 
 #### Added
 
@@ -42,6 +51,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Final deprecation of \core\task\manager::ensure_adhoc_task_qos()
 
   For more information see [MDL-74843](https://tracker.moodle.org/browse/MDL-74843)
+- Remove deprecation layer for YUI Events. The deprecation layer was introduced with MDL-70990 and MDL-72291.
+
+  For more information see [MDL-77167](https://tracker.moodle.org/browse/MDL-77167)
 
 #### Added
 
@@ -62,6 +74,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   ```
 
   For more information see [MDL-66903](https://tracker.moodle.org/browse/MDL-66903)
+- Added stored progress bars
+
+  For more information see [MDL-70854](https://tracker.moodle.org/browse/MDL-70854)
 - New DML constant `SQL_INT_MAX` to define the size of a large integer with cross database platform support
 
   For more information see [MDL-81282](https://tracker.moodle.org/browse/MDL-81282)
@@ -255,6 +270,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Added a new database helper method `sql_replace_parameters` to help ensure uniqueness of parameters within a SQL expression
 
   For more information see [MDL-81434](https://tracker.moodle.org/browse/MDL-81434)
+- New format helper `format_time` method, for use in column callbacks that represent a duration of time (e.g. "3 days 4 hours")
+
+  For more information see [MDL-82466](https://tracker.moodle.org/browse/MDL-82466)
+- Methods add_columns_from_entity(), add_filters_from_entity() and report_element_search() have been moved from \core_reportbuilder\datasource class to \core_reportbuilder\base class in order to be available also for system reports
+
+  For more information see [MDL-82529](https://tracker.moodle.org/browse/MDL-82529)
 
 #### Removed
 
@@ -337,6 +358,17 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `report_helper::print_report_selector` method accepts an additional argument for adding content to the tertiary navigation to align with the report selector
 
   For more information see [MDL-78773](https://tracker.moodle.org/browse/MDL-78773)
+
+### mod_feedback
+
+#### Deprecated
+
+- The `feedback_check_is_switchrole` method has been deprecated as it didn't work
+
+  For more information see [MDL-72424](https://tracker.moodle.org/browse/MDL-72424)
+- The method `mod_feedback\output\renderer::create_template_form()` has been deprecated. It is not used anymore.
+
+  For more information see [MDL-81742](https://tracker.moodle.org/browse/MDL-81742)
 
 ### report_eventlist
 
@@ -550,6 +582,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   If `istrackeduser` is pre-computed for the course module's course, it can be provided here to avoid an additional function call.
 
   For more information see [MDL-81610](https://tracker.moodle.org/browse/MDL-81610)
+- New $disabled parameter has been added to select, select_optgroup and select_option html_writers to create disabled option elements.
+
+  For more information see [MDL-82146](https://tracker.moodle.org/browse/MDL-82146)
+- New \core_courseformat\output\local\content\basecontrolmenu class has been created. Existing \core_courseformat\output\local\content\cm\controlmenu and \core_courseformat\output\local\content\section\controlmenu classes extend the new \core_courseformat\output\local\content\basecontrolmenu class.
+
+  For more information see [MDL-82510](https://tracker.moodle.org/browse/MDL-82510)
+- New \core_courseformat\output\local\content\cm\delegatedcontrolmenu class has been created extending \core_courseformat\output\local\content\basecontrolmenu class to render delegated section action menu combining section and module action menu.
+
+  For more information see [MDL-82510](https://tracker.moodle.org/browse/MDL-82510)
 
 ### core_course
 
@@ -576,14 +617,6 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   - Review all the strings used in the reset page to remove the "Delete" or "Remove" words from them.
 
   For more information see [MDL-81872](https://tracker.moodle.org/browse/MDL-81872)
-
-### mod_feedback
-
-#### Deprecated
-
-- The method `mod_feedback\output\renderer::create_template_form()` has been deprecated. It is not used anymore.
-
-  For more information see [MDL-81742](https://tracker.moodle.org/browse/MDL-81742)
 
 ### core_completion
 
@@ -625,3 +658,19 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The base class `info::get_groups` method has a `$userid` parameter to specify for which user you want to retrieve course groups (defaults to current user)
 
   For more information see [MDL-81850](https://tracker.moodle.org/browse/MDL-81850)
+
+### report_log
+
+#### Added
+
+- get_activities_list() function returns also an array of disabled elements, apart from the array of activities.
+
+  For more information see [MDL-82146](https://tracker.moodle.org/browse/MDL-82146)
+
+### customfield_select
+
+#### Changed
+
+- The field controller `get_options` method now returns each option pre-formatted
+
+  For more information see [MDL-82481](https://tracker.moodle.org/browse/MDL-82481)
