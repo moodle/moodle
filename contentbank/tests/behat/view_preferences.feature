@@ -1,18 +1,15 @@
-@core @core_contentbank @core_h5p @contentbank_h5p @_file_upload @javascript
+@core @core_contentbank @core_h5p @contentbank_h5p @javascript
 Feature: Store the content bank view preference
   In order to consistantly view the content bank in icons or details view
   As an admin
   I need to be able to store my view preference
 
   Background:
-    Given the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
+    Given the following "user private files" exist:
+      | user  | filepath                             |
+      | admin | h5p/tests/fixtures/filltheblanks.h5p |
+      | admin | h5p/tests/fixtures/greeting-card.h5p |
     And I log in as "admin"
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
-    And I upload "h5p/tests/fixtures/greeting-card.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
     And I am on site homepage
     And I turn editing mode on
     And the following config values are set as admin:
@@ -55,8 +52,7 @@ Feature: Store the content bank view preference
     And I should not see "Last modified"
 
   Scenario: Display the number of times a content is used in file details view
-    Given I follow "Dashboard"
-    And I follow "Manage private files..."
+    Given I am on the "My private files" page
     And I click on "Add..." "button"
     And I select "Content bank" repository in file picker
     And I click on "fib.h5p" "file" in repository content area

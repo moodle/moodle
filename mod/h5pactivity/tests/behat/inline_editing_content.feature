@@ -1,4 +1,4 @@
-@mod @mod_h5pactivity @core_h5p @_file_upload @_switch_iframe
+@mod @mod_h5pactivity @core_h5p @_switch_iframe
 Feature: Inline editing H5P content
   In order to edit an existing H5P activity file
   As a teacher
@@ -21,9 +21,6 @@ Feature: Inline editing H5P content
     And the following "permission overrides" exist:
       | capability                 | permission | role           | contextlevel | reference |
       | moodle/h5p:updatelibraries | Allow      | editingteacher | System       |           |
-    And the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
 
   @javascript
   Scenario: Add H5P activity using link to content bank file
@@ -151,12 +148,11 @@ Feature: Inline editing H5P content
 
   @javascript
   Scenario: Add H5P activity using private user file
-    Given I log in as "teacher1"
-    # Upload the H5P to private user files.
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/greeting-card.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
+    Given the following "user private file" exists:
+      | user     | teacher1                             |
+      | filepath | h5p/tests/fixtures/greeting-card.h5p |
     # Create an H5P activity with a private user file.
+    When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "H5P" to section "1"
     And I set the following fields to these values:
