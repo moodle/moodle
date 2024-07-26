@@ -31,13 +31,15 @@ define(
     'core/str',
     'core_message/message_drawer_events',
     'core/aria',
+    'core/pending',
 ],
 function(
     $,
     PubSub,
     Str,
     MessageDrawerEvents,
-    Aria
+    Aria,
+    PendingPromise,
 ) {
 
     /* @var {object} routes Message drawer route elements and callbacks. */
@@ -82,6 +84,7 @@ function(
      */
     var changeRoute = function(namespace, newRoute) {
         var newConfig;
+        var pendingPromise = new PendingPromise(`message-drawer-router-${namespace}-${newRoute}`);
 
         // Check if the Route change call is made from an element in the app panel.
         var fromPanel = [].slice.call(arguments).some(function(arg) {
@@ -170,6 +173,7 @@ function(
 
         PubSub.publish(MessageDrawerEvents.ROUTE_CHANGED, record);
 
+        renderPromise.then(() => pendingPromise.resolve());
         return record;
     };
 
