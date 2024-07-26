@@ -1,4 +1,4 @@
-@editor @editor_atto @atto @atto_h5p @filter @filter_displayh5p @core_h5p @_file_upload @_switch_iframe
+@editor @editor_atto @atto @atto_h5p @filter @filter_displayh5p @core_h5p @_switch_iframe
 Feature: Inline editing H5P content anywhere
   In order to edit an existing H5P content
   As a user
@@ -30,23 +30,17 @@ Feature: Inline editing H5P content anywhere
       | capability                 | permission | role           | contextlevel | reference |
       | moodle/course:update       | Allow      | teacher        | System       |           |
       | moodle/course:update       | Allow      | student        | System       |           |
-    And the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
 
   @javascript @mod @mod_page
   Scenario: Edit H5P content from a page using link to private file
     Given the following "permission overrides" exist:
       | capability                 | permission | role           | contextlevel | reference |
       | moodle/h5p:updatelibraries | Allow      | editingteacher | System       |           |
-    And I log in as "teacher1"
-    # Upload the H5P to private user files.
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/greeting-card.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
+    And the following "user private file" exists:
+      | user     | teacher1                             |
+      | filepath | h5p/tests/fixtures/greeting-card.h5p |
     # Add H5P content to the page.
-    And I am on "Course 1" course homepage
-    And I am on the "PageName1" "page activity" page
+    And I am on the "PageName1" "page activity" page logged in as "teacher1"
     And I navigate to "Settings" in current page administration
     And I click on "Insert H5P" "button" in the "#fitem_id_page" "css_element"
     And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
