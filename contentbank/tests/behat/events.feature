@@ -1,30 +1,23 @@
-@core @core_contentbank @core_h5p @contentbank_h5p @_file_upload @_switch_iframe @javascript
+@core @core_contentbank @core_h5p @contentbank_h5p @_switch_iframe @javascript
 Feature: Confirm content bank events are triggered
   In order to log content bank actions
   As an admin
   I need to be able to check triggered events
 
   Background:
-    Given the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
-    And I log in as "admin"
-    And I navigate to "H5P > Manage H5P content types" in site administration
-    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "H5P content type" filemanager
-    And I click on "Upload H5P content types" "button" in the "#fitem_id_uploadlibraries" "css_element"
-    And the following "courses" exist:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
     And the following "contentbank content" exist:
       | contextlevel | reference | contenttype     | user  | contentname | filepath                                   |
       | Course       | C1        | contenttype_h5p | admin | Existing    | /h5p/tests/fixtures/filltheblanks.h5p      |
-    And I follow "Dashboard"
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
-    And I am on "Course 1" course homepage with editing mode on
+    And the following "user private file" exists:
+      | user     | admin                                |
+      | filepath | h5p/tests/fixtures/filltheblanks.h5p |
     And the following config values are set as admin:
       | unaddableblocks | | theme_boost|
+    And I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Navigation" block if not present
 
   Scenario: Content created and uploaded events when uploading a content file
