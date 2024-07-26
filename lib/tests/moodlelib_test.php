@@ -2922,18 +2922,41 @@ EOF;
     /**
      * Testing that if the password is not cached, that it does not update
      * the user table and fire event.
+     *
+     * @dataProvider update_internal_user_password_no_cache_provider
+     * @covers ::update_internal_user_password
+     *
+     * @param string $authmethod The authentication method to set for the user.
+     * @param string|null $password The new password to set for the user.
      */
-    public function test_update_internal_user_password_no_cache(): void {
+    public function test_update_internal_user_password_no_cache(
+        string $authmethod,
+        ?string $password,
+    ): void {
         global $DB;
         $this->resetAfterTest();
 
-        $user = $this->getDataGenerator()->create_user(array('auth' => 'cas'));
+        $user = $this->getDataGenerator()->create_user(['auth' => $authmethod]);
         $DB->update_record('user', ['id' => $user->id, 'password' => AUTH_PASSWORD_NOT_CACHED]);
         $user->password = AUTH_PASSWORD_NOT_CACHED;
 
         $sink = $this->redirectEvents();
-        update_internal_user_password($user, 'wonkawonka');
+        update_internal_user_password($user, $password);
         $this->assertEquals(0, $sink->count(), 'User updated event should not fire');
+    }
+
+    /**
+     * The data provider will test the {@see test_update_internal_user_password_no_cache}
+     * for accounts using the authentication method with prevent_local_passwords set to true (no cache).
+     *
+     * @return array
+     */
+    public static function update_internal_user_password_no_cache_provider(): array {
+        return [
+            'Password is not empty' => ['cas', 'wonkawonka'],
+            'Password is an empty string' => ['oauth2', ''],
+            'Password is null' => ['oauth2', null],
+        ];
     }
 
     /**

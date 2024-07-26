@@ -4356,7 +4356,7 @@ function hash_internal_user_password(#[\SensitiveParameter] string $password, $f
  * It will remove Web Services user tokens too.
  *
  * @param stdClass $user User object (password property may be updated).
- * @param string $password Plain text password.
+ * @param string|null $password Plain text password.
  * @param bool $fasthash If true, use a low cost factor when generating the hash
  *                       This is much faster to generate but makes the hash
  *                       less secure. It is used when lots of hashes need to
@@ -4365,7 +4365,7 @@ function hash_internal_user_password(#[\SensitiveParameter] string $password, $f
  */
 function update_internal_user_password(
         stdClass $user,
-        #[\SensitiveParameter] string $password,
+        #[\SensitiveParameter] ?string $password,
         bool $fasthash = false
 ): bool {
     global $CFG, $DB;
