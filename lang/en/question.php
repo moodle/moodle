@@ -121,13 +121,6 @@ $string['donothing'] = 'Don\'t copy or move files or change links.';
 $string['editcategories'] = 'Edit categories';
 $string['editcategories_help'] = 'Rather than keeping everything in one big list, questions may be arranged into categories and subcategories.
 
-Each category has a context which determines where the questions in the category can be used:
-
-* Activity context - Questions only available in the activity module
-* Course context - Questions available in all activity modules in the course
-* Course category context - Questions available in all activity modules and courses in the course category
-* System context - Questions available in all courses and activities on the site
-
 Categories are also used for random questions, as questions are selected from a particular category.';
 $string['editcategories_link'] = 'question/category';
 $string['editcategory'] = 'Edit category';

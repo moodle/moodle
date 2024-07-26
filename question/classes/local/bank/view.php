@@ -251,6 +251,7 @@ class view {
         // Create the url of the new question page to forward to.
         $this->returnurl = $pageurl->out_as_local_url(false);
         $this->editquestionurl = new \moodle_url('/question/bank/editquestion/question.php', ['returnurl' => $this->returnurl]);
+        // MDL-71378 TODO: refactor this. Must require cm.
         if ($this->cm !== null) {
             $this->editquestionurl->param('cmid', $this->cm->id);
         } else {

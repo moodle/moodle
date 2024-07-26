@@ -57,7 +57,9 @@ class category_condition extends condition {
             return;
         }
         $this->cat = $qbank->get_pagevars('cat');
-        $this->contexts = $qbank->contexts->having_one_edit_tab_cap($qbank->get_pagevars('tabname'));
+        $this->contexts = array_filter($qbank->contexts->having_one_edit_tab_cap($qbank->get_pagevars('tabname')),
+            static fn($context) => $context->contextlevel === CONTEXT_MODULE
+        );
         $this->course = $qbank->course;
 
         [$categoryid, $contextid] = self::validate_category_param($this->cat);
@@ -72,6 +74,7 @@ class category_condition extends condition {
     }
 
     /**
+     * MDL-71378 TODO: Not used and to be deprecated anyway
      * Return default category
      *
      * @return \stdClass default category
