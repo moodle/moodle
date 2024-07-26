@@ -36,3 +36,9 @@ Feature: Page displaying with secure layout
     And I am on "Course 1" course homepage
     When I follow "Fixture link"
     Then I should not see "This is a custom item" in the "nav" "css_element"
+
+  @javascript @accessibility
+  Scenario: A page on the secure layout meets the accessibility standards
+    Given I am on the "C1" "Course" page logged in as "admin"
+    When I follow "Fixture link"
+    Then the page should meet accessibility standards with "best-practice" extra tests
