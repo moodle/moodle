@@ -88,17 +88,16 @@ final class manager_test extends \advanced_testcase {
         $this->assertEquals($actions, array_keys($providers));
 
         // Assert that there is only one provider for each action.
-        $this->assertCount(1, $providers[generate_text::class]);
-        $this->assertCount(1, $providers[summarise_text::class]);
+        $this->assertCount(2, $providers[generate_text::class]);
+        $this->assertCount(2, $providers[summarise_text::class]);
 
-        // Disable the generate text action for the open ai provider.
+        // Disable the generate text action for the Open AI provider.
         set_config(generate_text::class, 0, 'aiprovider_openai');
         $providers = $manager->get_providers_for_actions($actions, true);
 
         // Assert that there is no provider for the generate text action.
         $this->assertCount(0, $providers[generate_text::class]);
         $this->assertCount(1, $providers[summarise_text::class]);
-
     }
 
     /**
