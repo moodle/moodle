@@ -1,5 +1,8 @@
 {
     "standard": {
+        "aiprovider": [
+            "openai"
+        ],
         "antivirus": [
             "clamav"
         ],
