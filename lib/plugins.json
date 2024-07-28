@@ -1,5 +1,8 @@
 {
     "standard": {
+        "aiplacement": [
+            "tinymce"
+        ],
         "aiprovider": [
             "openai"
         ],

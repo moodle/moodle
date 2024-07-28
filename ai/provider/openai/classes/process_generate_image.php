@@ -16,8 +16,10 @@
 
 namespace aiprovider_openai;
 
+use core_ai\ai_image;
 use core_ai\aiactions\responses\response_base;
 use core_ai\aiactions\responses\response_generate_image;
+use curl;
 use Psr\Http\Message\ResponseInterface;
 
 defined('MOODLE_INTERNAL') || die();
@@ -182,8 +184,21 @@ class process_generate_image extends process_generate_text {
      * @return \stored_file The file object.
      */
     private function url_to_file(int $userid, string $url): \stored_file {
+        global $CFG;
         $parsedurl = parse_url($url, PHP_URL_PATH); // Parse the URL to get the path.
         $filename = basename($parsedurl); // Get the basename of the path.
+
+        // Download the image and add the watermark.
+        $downloadtmpdir = make_request_directory();
+        $tempdst = $downloadtmpdir . $filename;
+        $c = new curl;
+        $result = $c->download_one(
+            $url,
+            null,
+            ['filepath' => $tempdst, 'timeout' => $CFG->repositorygetfiletimeout],
+        );
+        $image = new ai_image($tempdst);
+        $image->add_watermark()->save();
 
         // We put the file in the user draft area initially.
         // Placements (on behalf of the user) can then move it to the correct location.
@@ -196,6 +211,6 @@ class process_generate_image extends process_generate_text {
         $fileinfo->filename = $filename;
 
         $fs = get_file_storage();
-        return $fs->create_file_from_url($fileinfo, $url);
+        return $fs->create_file_from_string($fileinfo, file_get_contents($tempdst));
     }
 }
