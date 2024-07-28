@@ -14,6 +14,11 @@
         "allowedlevel2": true,
         "allowedspread": false
     },
+    "aiactions": {
+        "component": "core_ai",
+        "allowedlevel2": true,
+        "allowedspread": false
+    },
     "analytics": {
         "component": "core_analytics",
         "allowedlevel2": true,

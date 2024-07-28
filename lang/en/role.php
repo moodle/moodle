@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['ai:getpolicy'] = 'Get a users AI policy acceptance';
+$string['ai:setpolicy'] = 'Set a users AI policy acceptance';
 $string['addinganewrole'] = 'Adding a new role';
 $string['addrole'] = 'Add a new role';
 $string['advancedoverride'] = 'Advanced role override';

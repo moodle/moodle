@@ -2785,4 +2785,21 @@ $capabilities = array(
             'manager' => CAP_ALLOW,
         ],
     ],
+
+    // Set a users acceptance of the AI policy.
+    'moodle/ai:setpolicy' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+    // Get a users acceptance of the AI policy.
+    'moodle/ai:getpolicy' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
 );

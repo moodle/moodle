@@ -11819,3 +11819,53 @@ class admin_setting_check extends admin_setting {
     }
 }
 
+
+/**
+ * Show the save changes button.
+ */
+class admin_setting_savebutton extends admin_setting {
+    /**
+     * Constructor.
+     *
+     * @param string $name unique ascii name.
+     * @param string $visiblename localised name
+     * @param string $description localised long description
+     * @param mixed $defaultsetting string or array depending on implementation
+     */
+    public function __construct(string $name, string $visiblename = "", string $description = "", $defaultsetting = "") {
+        $this->nosave = true;
+        parent::__construct($name, $visiblename, $description, $defaultsetting);
+    }
+
+    /**
+     * Always returns true, does nothing
+     *
+     * @return bool Always return true.
+     */
+    public function get_setting(): bool {
+        return true;
+    }
+
+    /**
+     * Always returns '', does not write anything.
+     *
+     * @param mixed $data string or array, must not be NULL
+     * @return string Always returns ''.
+     */
+    public function write_setting($data): string {
+        return '';
+    }
+
+    /**
+     * Return part of form with setting
+     * This function should always be overwritten
+     *
+     * @param mixed $data array or string depending on setting
+     * @param string $query
+     * @return string
+     */
+    public function output_html($data, $query = ''): string {
+        global $OUTPUT;
+        return $OUTPUT->render_from_template('core_admin/setting_savebutton', []);
+    }
+}
