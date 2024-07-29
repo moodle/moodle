@@ -18,6 +18,9 @@ namespace qbank_managecategories;
 
 /**
  * QUESTION_PAGE_LENGTH - Number of categories to display on page.
+ *
+ * @deprecated Since Moodle 4.5 MDL-72397. This was only used in moodle_list::display_page_numbers which is now deprecated.
+ * @todo Final removal in Moodle 6.0 MDL-80804.
  */
 define('QUESTION_PAGE_LENGTH', 25);
 
@@ -79,11 +82,11 @@ class question_category_object {
      * @param int|null $defaultcategory id of the current category. null if none.
      * @param int $todelete id of the category to delete. 0 if none.
      * @param context[] $addcontexts contexts where the current user can add questions.
-     * @deprecated Since Moodle 4.5 MDL-72397. Use \qbank_managecategories\question_categories instead.
+     * @deprecated Since Moodle 4.5 MDL-72397. Use \qbank_managecategories\question_categories or \core_question\category_manager.
      * @todo Final removal in Moodle 6.0 MDL-80804
      */
     #[\core\attribute\deprecated(
-        '\qbank_managecategories\question_categories',
+        '\qbank_managecategories\question_categories or \core_question\category_manager',
         since: 4.5,
         reason: 'API properly divided between qbank_managecategories and core_question',
         mdl: 'MDL-72397',
@@ -115,8 +118,6 @@ class question_category_object {
         $this->str->page           = get_string('page');
 
         $this->pageurl = $pageurl;
-
-        $this->initialize($page, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts);
     }
 
     /**
