@@ -26,6 +26,7 @@ use external_function_parameters;
 use external_single_structure;
 use external_value;
 use external_api;
+use core_question\category_manager;
 use mod_quiz\question\bank\filter\custom_category_condition;
 use mod_quiz\quiz_settings;
 use mod_quiz\structure;
@@ -119,18 +120,8 @@ class add_random_questions extends external_api {
 
         // Create new category.
         if (!empty($newcategory)) {
-            $contexts = new \core_question\local\bank\question_edit_contexts($thiscontext);
-            $defaultcategoryobj = question_make_default_categories($contexts->all());
-            $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
-            $qcobject = new \qbank_managecategories\question_category_object(
-                null,
-                new \moodle_url('/'),
-                $contexts->having_one_edit_tab_cap('categories'),
-                $defaultcategoryobj->id,
-                $defaultcategory,
-                null,
-                $contexts->having_cap('moodle/question:add'));
-            $categoryid = $qcobject->add_category($parentcategory, $newcategory, '', true);
+            $categorymanager = new category_manager();
+            $categoryid = $categorymanager->add_category($parentcategory, $newcategory, '');
             $filter = [
                 'category' => [
                     'jointype' => custom_category_condition::JOINTYPE_DEFAULT,
