@@ -17,12 +17,11 @@
 namespace qbank_managecategories\form;
 
 use moodleform;
-use qbank_managecategories\helper;
+use core_question\category_manager;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/formslib.php');
-
 
 /**
  * Defines the form for editing question categories.
@@ -34,6 +33,23 @@ require_once($CFG->libdir.'/formslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_category_edit_form extends moodleform {
+    /** @var ?category_manager $manager */
+    protected ?category_manager $manager = null;
+
+    /**
+     * Return the category manager.
+     *
+     * Since we cannot override the constructor, using this method ensures the manager has always been initialised
+     * before access.
+     *
+     * @return category_manager
+     */
+    protected function get_manager(): category_manager {
+        if (is_null($this->manager)) {
+            $this->manager = new category_manager();
+        }
+        return $this->manager;
+    }
 
     /**
      * Build the form definition.
@@ -52,7 +68,7 @@ class question_category_edit_form extends moodleform {
         $mform->addElement('questioncategory', 'parent', get_string('parentcategory', 'question'),
                 ['contexts' => $contexts, 'top' => true, 'currentcat' => $currentcat, 'nochildrenof' => $currentcat]);
         $mform->setType('parent', PARAM_SEQUENCE);
-        if (helper::question_is_only_child_of_top_category_in_context($currentcat)) {
+        if ($this->get_manager()->is_only_child_of_top_category_in_context($currentcat)) {
             $mform->hardFreeze('parent');
         }
         $mform->addHelpButton('parent', 'parentcategory', 'question');

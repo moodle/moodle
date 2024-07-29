@@ -62,8 +62,7 @@ class core_question_generator extends component_generator_base {
             'info'       => '',
             'infoformat' => FORMAT_HTML,
             'stamp'      => make_unique_id_code(),
-            'sortorder'  => 999,
-            'idnumber'   => null
+            'idnumber'   => null,
         ];
 
         $record = $this->datagenerator->combine_defaults_and_record($defaults, $record);
@@ -77,6 +76,10 @@ class core_question_generator extends component_generator_base {
         }
         if (!isset($record['parent'])) {
             $record['parent'] = question_get_top_category($record['contextid'], true)->id;
+        }
+        if (!isset($record['sortorder'])) {
+            $manager = new \core_question\category_manager();
+            $record['sortorder'] = $manager->get_max_sortorder($record['parent']) + 1;
         }
         $record['id'] = $DB->insert_record('question_categories', $record);
         return (object) $record;

@@ -17,6 +17,7 @@
 namespace qbank_managecategories;
 
 use context;
+use core_question\category_manager;
 use core_question\local\bank\question_version_status;
 use moodle_exception;
 use html_writer;
@@ -82,15 +83,19 @@ class helper {
      * @param int $categoryid a category id.
      * @return bool
      * @throws \dml_exception
+     * @deprecated Since Moodle 4.5. Use core_question\category_manager::is_only_child_of_top_category_in_context instead.
+     * @todo Final removal in Moodle 6.0 MDL-80804
      */
+    #[\core\attribute\deprecated(
+        'core_question\category_manager::is_only_child_of_top_category_in_context',
+        since: 4.5,
+        reason: 'Moved to core namespace',
+        mdl: 'MDL-72397'
+    )]
     public static function question_is_only_child_of_top_category_in_context(int $categoryid): bool {
-        global $DB;
-        return 1 == $DB->count_records_sql("
-            SELECT count(*)
-              FROM {question_categories} c
-              JOIN {question_categories} p ON c.parent = p.id
-              JOIN {question_categories} s ON s.parent = c.parent
-             WHERE c.id = ? AND p.parent = 0", [$categoryid]);
+        \core\deprecation::emit_deprecation_if_present([__CLASS__, __FUNCTION__]);
+        $manager = new category_manager();
+        return $manager->is_only_child_of_top_category_in_context($categoryid);
     }
 
     /**
@@ -99,10 +104,19 @@ class helper {
      * @param int $categoryid a category id.
      * @return bool
      * @throws \dml_exception
+     * @deprecated Since Moodle 4.5. Use core_question\category_manager::is_top_category instead.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
+    #[\core\attribute\deprecated(
+        'core_question\category_manager::is_top_category',
+        since: 4.5,
+        reason: 'Moved to core namespace',
+        mdl: 'MDL-72397'
+    )]
     public static function question_is_top_category(int $categoryid): bool {
-        global $DB;
-        return 0 == $DB->get_field('question_categories', 'parent', ['id' => $categoryid]);
+        \core\deprecation::emit_deprecation_if_present([__CLASS__, __FUNCTION__]);
+        $manager = new category_manager();
+        return $manager->is_top_category($categoryid);
     }
 
     /**
@@ -111,17 +125,19 @@ class helper {
      * @param int $todelete a category id.
      * @throws \required_capability_exception
      * @throws \dml_exception|moodle_exception
+     * @deprecated Since Moodle 4.5. Use core_question\category_manager::can_delete_category instead.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
+    #[\core\attribute\deprecated(
+        'core_question\category_manager::can_delete_category',
+        since: 4.5,
+        reason: 'Moved to core namespace',
+        mdl: 'MDL-72397'
+    )]
     public static function question_can_delete_cat(int $todelete): void {
-        global $DB;
-        if (self::question_is_top_category($todelete)) {
-            throw new moodle_exception('cannotdeletetopcat', 'question');
-        } else if (self::question_is_only_child_of_top_category_in_context($todelete)) {
-            throw new moodle_exception('cannotdeletecate', 'question');
-        } else {
-            $contextid = $DB->get_field('question_categories', 'contextid', ['id' => $todelete]);
-            require_capability('moodle/question:managecategory', context::instance_by_id($contextid));
-        }
+        \core\deprecation::emit_deprecation_if_present([__CLASS__, __FUNCTION__]);
+        $manager = new category_manager();
+        $manager->require_can_delete_category($todelete);
     }
 
     /**
