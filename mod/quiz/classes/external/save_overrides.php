@@ -71,8 +71,18 @@ class save_overrides extends external_api {
         self::validate_context($manager->context);
         $manager->require_manage_capability();
 
+        // Filter for those overrides user can access.
+        $overrides = array_filter(
+            $params['overrides'],
+            fn(array $override) => $manager->can_view_override(
+                (object) $override,
+                $quizsettings->get_course(),
+                $quizsettings->get_cm(),
+            ),
+        );
+
         // Iterate over and save all overrides.
-        $ids = array_map(fn($override) => $manager->save_override($override), $params['overrides']);
+        $ids = array_map(fn($override) => $manager->save_override($override), $overrides);
 
         return ['ids' => $ids];
     }
