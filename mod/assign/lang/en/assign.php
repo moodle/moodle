@@ -130,6 +130,7 @@ $string['blindmarkingenabledwarning'] = 'Anonymous submissions are enabled for t
 $string['blindmarking_help'] = 'Anonymous submissions hide the identity of students from markers. Anonymous submission settings will be locked once a submission or grade has been made in relation to this assignment.';
 $string['cachedef_overrides'] = 'User and group override information';
 $string['calendardue'] = '{$a} is due';
+$string['calendarextension'] = '{$a} is due (extension)';
 $string['calendargradingdue'] = '{$a} is due to be graded';
 $string['caneditsubmission'] = 'You can edit your submission and submit it after the time limit has expired, but it will be marked as late.';
 $string['changeuser'] = 'Change user';

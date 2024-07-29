@@ -265,7 +265,15 @@ class events_test extends \advanced_testcase {
         $sink->close();
     }
 
+    /**
+     * Test event creation for save_user_extension().
+     *
+     * @covers \assign::save_user_extension
+     */
     public function test_extension_granted(): void {
+        global $DB, $CFG;
+        require_once($CFG->dirroot.'/calendar/lib.php');
+
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -287,12 +295,30 @@ class events_test extends \advanced_testcase {
         $assign->testable_save_user_extension($student->id, $tomorrow);
 
         $events = $sink->get_events();
-        $this->assertCount(1, $events);
-        $event = reset($events);
-        $this->assertInstanceOf('\mod_assign\event\extension_granted', $event);
-        $this->assertEquals($assign->get_context(), $event->get_context());
-        $this->assertEquals($assign->get_instance()->id, $event->objectid);
-        $this->assertEquals($student->id, $event->relateduserid);
+
+        // Event for extension granted and extension due date.
+        $this->assertCount(2, $events);
+
+        $grantedevent = $events[0];
+        $this->assertInstanceOf('\mod_assign\event\extension_granted', $grantedevent);
+        $this->assertEquals($assign->get_context(), $grantedevent->get_context());
+        $this->assertEquals($assign->get_instance()->id, $grantedevent->objectid);
+        $this->assertEquals($student->id, $grantedevent->relateduserid);
+
+        $calendarevent = $events[1];
+        $this->assertInstanceOf('\core\event\calendar_event_created', $calendarevent);
+
+        // Check that the calendar event is deleted if extension is revoked.
+        $assign->testable_save_user_extension($student->id, '');
+
+        $isexist = $DB->record_exists('event', [
+            'userid' => $student->id,
+            'eventtype' => ASSIGN_EVENT_TYPE_EXTENSION,
+            'modulename' => 'assign',
+            'instance' => $assign->get_course_module()->id,
+        ]);
+        $this->assertFalse($isexist);
+
         $sink->close();
     }
 
