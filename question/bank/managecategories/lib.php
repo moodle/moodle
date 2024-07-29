@@ -12,20 +12,29 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Callbacks for qbank_manageacategories
  *
  * @package   qbank_managecategories
- * @copyright 2021 Catalyst IT Australia Pty Ltd
- * @author    Guillermo Gomez Arias <guillermogomez@catalyst-au.net>
+ * @copyright 2024 Catalyst IT Europe Ltd
+ * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'qbank_managecategories';
-$plugin->version = 2024070400;
-$plugin->requires = 2024041600;
-$plugin->maturity = MATURITY_STABLE;
+/**
+ * Allow update of user preferences via AJAX.
+ *
+ * @return array[]
+ */
+function qbank_managecategories_user_preferences(): array {
+    return [
+        'qbank_managecategories_showdescriptions' => [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => false,
+            'permissioncallback' => [core_user::class, 'is_current_user'],
+        ],
+    ];
+}

@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace qbank_managecategories;
 
 defined('MOODLE_INTERNAL') || die();
@@ -29,7 +30,7 @@ require_once($CFG->dirroot . '/question/bank/managecategories/tests/manage_categ
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \qbank_managecategories\question_categories
  */
-class question_categories_test extends manage_category_test_base {
+final class question_categories_test extends manage_category_test_base {
     /**
      * Test creation of an ordered tree of categories in the constructor.
      */

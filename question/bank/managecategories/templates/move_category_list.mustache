@@ -1,0 +1,117 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template qbank_managecategories/move_category_list
+
+    Partial to render a list of categories that the current category can be moved next to.
+
+    This partial is included recursively to render nested lists. Take care to pass categories = null for bottom-level
+    categories, to avoid infinite recursion.
+
+    Context variables required for this template:
+    * categories - Array of category objects.
+        * categoryname - The name of the category to move to.
+        * categoryid - The ID of the category.
+        * firstchild - Is this the first child of its parent? If so, a "before" option will be rendered as well as "after".
+        * current - Is this the category being moved? If so, skip rendering it as a target.
+        * categories - Array containing child categories of this category.
+            If there are none, this must be set null or [] to avoid infinite recursion.
+
+    Example context (json):
+    {
+        "categories": [
+            {
+                "categoryname": "Default category for course 1",
+                "categoryid": 3,
+                "firstchild": true,
+                "current": false,
+                "hascategories": false,
+                "categories": []
+            },
+            {
+                "categoryname": "Test category 1",
+                "categoryid": 4,
+                "firstchild": false,
+                "current": false,
+                "hascategories": false,
+                "categories": []
+            },
+            {
+                "categoryname": "Test category 2",
+                "categoryid": 5,
+                "firstchild": false,
+                "current": true,
+                "hascategories": false,
+                "categories": []
+            },
+            {
+                "categoryname": "Test category 3 x < 1 && y > 2 ",
+                "categoryid": 6,
+                "firstchild": false,
+                "current": false,
+                "hascategories": true,
+                "categories": [
+                    {
+                        "categoryname": "Test category 4",
+                        "categoryid": 7,
+                        "firstchild": true,
+                        "current": false,
+                        "hascategories": false,
+                        "categories": []
+                    }
+                ]
+            }
+        ]
+    }
+}}
+
+<ul data-for="categorylist" data-contextid="{{contextid}}" role="group">
+    {{#categories}}
+        {{^lastchild}}
+            <li class="list_item d-flex" role="treeitem">
+                <a class="modal_category_item text-truncate" {{!
+                       }}href="#" {{!
+                       }}data-for="category" {{!
+                       }}data-movingcategoryid="{{movingcategoryid}}" {{!
+                       }}data-precedingsiblingid="{{precedingsiblingid}}" {{!
+                       }}data-parent="{{parent}}">
+                    {{#newchild}}
+                        {{#str}} newchild, qbank_managecategories, {{{categoryname}}} {{/str}}
+                    {{/newchild}}
+                    {{^newchild}}
+                        {{#str}} before, qbank_managecategories, {{{categoryname}}} {{/str}}
+                    {{/newchild}}
+                </a>
+            </li>
+            <li class="list_item d-flex" role="treeitem">
+                {{>qbank_managecategories/move_category_list}}
+            </li>
+        {{/lastchild}}
+        {{#lastchild}}
+            <li class="list_item d-flex" role="treeitem">
+                <a class="modal_category_item text-truncate" {{!
+                   }}href="#" {{!
+                   }}data-for="category" {{!
+                   }}data-movingcategoryid="{{movingcategoryid}}" {{!
+                   }}data-precedingsiblingid="{{precedingsiblingid}}" {{!
+                   }}data-parent="{{parent}}">
+                    {{#str}} after, qbank_managecategories, {{{categoryname}}} {{/str}}
+                </a>
+            </li>
+        {{/lastchild}}
+    {{/categories}}
+</ul>

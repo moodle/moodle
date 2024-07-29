@@ -16,13 +16,6 @@
 
 namespace qbank_managecategories;
 
-/**
- * QUESTION_PAGE_LENGTH - Number of categories to display on page.
- */
-if (!defined('QUESTION_PAGE_LENGTH')) {
-    define('QUESTION_PAGE_LENGTH', 25);
-}
-
 use context;
 use moodle_url;
 

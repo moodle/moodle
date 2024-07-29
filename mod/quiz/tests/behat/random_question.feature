@@ -62,11 +62,13 @@ Feature: Moving a question to another category should not affect random question
     And I press "Add random question"
     And I should see "Random question based on filter condition" on quiz page "1"
     And I am on the "Course 1" "core_question > course question categories" page
-    And I click on "Edit this category" "link" in the "Used category" "list_item"
+    And I open the action menu in "Used category" "list_item"
+    And I choose "Edit" in the open action menu
     And I set the following fields to these values:
       | Name            | Used category new |
       | Category info   | I was edited      |
     And I press "Save changes"
+    And I set the field "Show descriptions" to "1"
     Then I should see "Used category new"
     And I should see "I was edited" in the "Used category new" "list_item"
     And I am on the "Quiz 1" "mod_quiz > Edit" page
