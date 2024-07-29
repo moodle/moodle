@@ -4080,7 +4080,7 @@ EOD;
                             'buttontype' => 'message',
                             'title' => get_string('message', 'message'),
                             'url' => new moodle_url('/message/index.php', ['id' => $user->id]),
-                            'image' => 'message',
+                            'image' => 't/message',
                             'linkattributes' => \core_message\helper::messageuser_link_params($user->id),
                             'page' => $this->page,
                         ],
@@ -4117,12 +4117,12 @@ EOD;
                                 $contacttitle = 'addtoyourcontacts';
                                 $contacturlaction = 'addcontact';
                             }
-                            $contactimage = 'addcontact';
+                            $contactimage = 't/addcontact';
                         } else {
                             // If the user is a contact.
                             $contacttitle = 'removefromyourcontacts';
                             $contacturlaction = 'removecontact';
-                            $contactimage = 'removecontact';
+                            $contactimage = 't/removecontact';
                         }
                         $userbuttons['togglecontact'] = [
                                 'buttontype' => 'togglecontact',
