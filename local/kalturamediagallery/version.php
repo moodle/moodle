@@ -29,7 +29,7 @@ if (!defined('MOODLE_INTERNAL')) {
 $plugin->version = 2023100901;
 $plugin->component = 'local_kalturamediagallery';
 $plugin->release = 'Kaltura release 4.4.8';
-$plugin->requires = 2023100901;
+$plugin->requires = 2023100900;
 $plugin->maturity = MATURITY_STABLE;
 $plugin->dependencies = array(
     'local_kaltura' => 2023100901
