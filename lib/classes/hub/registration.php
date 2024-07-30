@@ -44,7 +44,8 @@ class registration {
      * IMPORTANT: any new fields with non-empty defaults have to be added to CONFIRM_NEW_FIELDS */
     const FORM_FIELDS = ['policyagreed', 'language', 'countrycode', 'privacy',
         'contactemail', 'emailalert', 'emailalertemail', 'commnews', 'commnewsemail',
-        'contactname', 'name', 'description', 'imageurl', 'contactphone', 'regioncode', 'geolocation', 'street'];
+        'contactname', 'name', 'description', 'imageurl', 'contactphone', 'regioncode',
+        'geolocation', 'street', 'organisationtype'];
 
     /** @var array List of new FORM_FIELDS or siteinfo fields added indexed by the version when they were added.
      * If site was already registered, admin will be promted to confirm new registration data manually. Until registration is manually confirmed,
@@ -394,6 +395,36 @@ class registration {
             self::HUB_SITENOTPUBLISHED => get_string('siteprivacynotpublished', 'hub'),
             self::HUB_SITENAMEPUBLISHED => get_string('siteprivacypublished', 'hub'),
             self::HUB_SITELINKPUBLISHED => get_string('siteprivacylinked', 'hub')
+        ];
+    }
+
+    /**
+     * Get the options for organisation type form element to use in registration form.
+     *
+     * Indexes reference Moodle internal ids and should not be changed.
+     *
+     * @return array
+     */
+    public static function get_site_organisation_type_options(): array {
+        return [
+            1 => get_string('siteorganisationtype:wholeuniversity', 'hub'),
+            2 => get_string('siteorganisationtype:universitydepartment', 'hub'),
+            3 => get_string('siteorganisationtype:college', 'hub'),
+            4 => get_string('siteorganisationtype:collegedepartment', 'hub'),
+            5 => get_string('siteorganisationtype:highschool', 'hub'),
+            6 => get_string('siteorganisationtype:highschooldepartment', 'hub'),
+            7 => get_string('siteorganisationtype:primaryschool', 'hub'),
+            8 => get_string('siteorganisationtype:independentteacher', 'hub'),
+            9 => get_string('siteorganisationtype:companyinternal', 'hub'),
+            10 => get_string('siteorganisationtype:companydepartment', 'hub'),
+            11 => get_string('siteorganisationtype:commercialcourseprovider', 'hub'),
+            12 => get_string('siteorganisationtype:other', 'hub'),
+            13 => get_string('siteorganisationtype:highschooldistrict', 'hub'),
+            14 => get_string('siteorganisationtype:government', 'hub'),
+            16 => get_string('siteorganisationtype:charityornotforprofit', 'hub'),
+            17 => get_string('siteorganisationtype:charterschool', 'hub'),
+            18 => get_string('siteorganisationtype:schooldistrict', 'hub'),
+            19 => get_string('siteorganisationtype:hospital', 'hub'),
         ];
     }
 
