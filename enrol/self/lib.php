@@ -1037,9 +1037,8 @@ class enrol_self_plugin extends enrol_plugin {
             }
         }
 
-        if (array_key_exists('expirynotify', $data)
-                && ($data['expirynotify'] > 0 || $data['customint2'])
-                && $data['expirythreshold'] < 86400) {
+        // If expirynotify is selected, then ensure the threshold is at least one day.
+        if (isset($data['expirynotify']) && $data['expirynotify'] > 0 && $data['expirythreshold'] < DAYSECS) {
             $errors['expirythreshold'] = get_string('errorthresholdlow', 'core_enrol');
         }
 
