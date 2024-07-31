@@ -122,6 +122,8 @@ class bankcontent implements renderable, templatable {
             $method = 'export_tool_'.$tool['action'];
             if (method_exists($this, $method)) {
                 $this->$method($tool);
+            } else {
+                $this->export_tool_default($tool);
             }
             $data->tools[] = $tool;
         }
@@ -206,5 +208,18 @@ class bankcontent implements renderable, templatable {
         }
 
         $tool['contenttypes'] = $addoptions;
+    }
+
+    /**
+     * This is the default output of a tool.
+     * It will be displayed as a button by default.
+     *
+     * @param array $tool Data for rendering the Add dropdown, including the editable content types.
+     * @return void
+     */
+    private function export_tool_default(array &$tool): void {
+        if (empty($tool['checkbox']) && empty($tool['dropdown'])) {
+            $tool['button'] = true;
+        }
     }
 }

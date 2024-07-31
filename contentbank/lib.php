@@ -44,6 +44,13 @@ function core_contentbank_user_preferences(): array {
             'choices' => [content::VISIBILITY_UNLISTED, content::VISIBILITY_PUBLIC],
             'type' => PARAM_INT,
             'null' => NULL_NOT_ALLOWED
-        ]
+        ],
+        'core_contentbank_displayunlisted' => [
+            'choices' => [0, 1],
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => 0,
+            'permissioncallback' => [core_user::class, 'is_current_user'],
+        ],
     ];
 }
