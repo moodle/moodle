@@ -2925,4 +2925,97 @@ abstract class moodle_database {
         // No support unless specified.
         return false;
     }
+
+    /**
+     * Whether the database is able to support the COUNT() window function and provides a performance improvement.
+     *
+     * @return bool
+     */
+    public function is_count_window_function_supported(): bool {
+        // No support unless specified.
+        return false;
+    }
+
+    /**
+     * Retrieve records with a select query and count the total number of records.
+     *
+     * @param string $sql The query string.
+     * @param string $fullcountcolumn The column name used for counting total records.
+     * @param string $sort (Optional) Sorting criteria for the records.
+     *                      The reason to separate $sort from $sql are:
+     *                      1. The $sort needs to be placed outside the full count subquery
+     *                         in order to function properly in MariaDB.
+     *                      2. For unsupported databases, it is not allowed to run a query to get the total with the $sort.
+     *                         Please refer to the {@see ::generate_fullcount_sql()} for details.
+     * @param array|null $params (Optional) Parameters to bind with the query.
+     * @param int $limitfrom (Optional) Offset for pagination.
+     * @param int $limitnum (Optional) Limit for pagination.
+     * @return array Fetched records.
+     */
+    public function get_counted_records_sql(
+        string $sql,
+        string $fullcountcolumn,
+        string $sort = '',
+        ?array $params = null,
+        int $limitfrom = 0,
+        int $limitnum = 0,
+    ): array {
+        $fullcountsql = $this->generate_fullcount_sql($sql, $params, $fullcountcolumn);
+        if ($sort) {
+            $fullcountsql .= " ORDER BY " . $sort;
+        }
+        return $this->get_records_sql($fullcountsql, $params, $limitfrom, $limitnum);
+    }
+
+    /**
+     * Retrieve a recordset with a select query and count the total number of records.
+     *
+     * @param string $sql The query string.
+     * @param string $fullcountcolumn The column name used for counting total records.
+     * @param string $sort (Optional) Sorting criteria for the records.
+     *                      The reason to separate $sort from $sql are:
+     *                      1. The $sort needs to be placed outside the full count subquery
+     *                         in order to function properly in MariaDB.
+     *                      2. For unsupported databases, it is not allowed to run a query to get the total with the $sort.
+     *                         Please refer to the {@see ::generate_fullcount_sql()} for details.
+     * @param array|null $params (Optional) Parameters to bind with the query.
+     * @param int $limitfrom (Optional) Offset for pagination.
+     * @param int $limitnum (Optional) Limit for pagination.
+     * @return moodle_recordset A moodle_recordset instance..
+     */
+    public function get_counted_recordset_sql(
+        string $sql,
+        string $fullcountcolumn,
+        string $sort = '',
+        ?array $params = null,
+        int $limitfrom = 0,
+        int $limitnum = 0,
+    ): moodle_recordset {
+        $fullcountsql = $this->generate_fullcount_sql($sql, $params, $fullcountcolumn);
+        if ($sort) {
+            $fullcountsql .= " ORDER BY " . $sort;
+        }
+        return $this->get_recordset_sql($fullcountsql, $params, $limitfrom, $limitnum);
+    }
+
+    /**
+     * Helper function to generate window COUNT() aggregate function to the SQL query.
+     *
+     * @param string $sql The SQL select query to execute.
+     * @param array|null $params array of sql parameters
+     * @param string $fullcountcolumn An alias column name for the window function results.
+     * @return string The generated query.
+     */
+    private function generate_fullcount_sql(
+        string $sql,
+        ?array $params,
+        string $fullcountcolumn,
+    ): string {
+        $fullcountvalue = "COUNT(1) OVER()";
+        if (!$this->is_count_window_function_supported()) {
+            $sqlcount = "SELECT COUNT(1) FROM ($sql) results";
+            $fullcountvalue = $this->count_records_sql($sqlcount, $params);
+        }
+        return "SELECT results.*, $fullcountvalue AS $fullcountcolumn FROM ($sql) results";
+    }
 }

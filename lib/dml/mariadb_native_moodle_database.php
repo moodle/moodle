@@ -113,4 +113,13 @@ class mariadb_native_moodle_database extends mysqli_native_moodle_database {
         }
         return false;
     }
+
+    /**
+     * MariaDB supports the COUNT() window function and provides a performance improvement.
+     *
+     * @return bool
+     */
+    public function is_count_window_function_supported(): bool {
+        return true;
+    }
 }
