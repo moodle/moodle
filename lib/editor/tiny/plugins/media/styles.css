@@ -48,12 +48,17 @@ iframe.mm_iframe {
     height: 200px;
 }
 
-.tiny_image_form  .tiny_image_preview_box {
+.tiny_image_form  .tiny_image_preview_box,
+.tiny_media_form  .tiny_media_preview_box {
     height: 300px;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
+}
+
+.tiny_media_form .tiny_media_preview_box {
+    position: relative;
 }
 
 .tiny_image_form .tiny_image_deleteicon {
@@ -75,7 +80,12 @@ iframe.mm_iframe {
 
 
 @media (max-width: 767px) {
-    .tiny_image_form .tiny_image_properties_col {
+    .tiny_image_form .tiny_image_properties_col,
+    .tiny_media_form .tiny_media_properties_col {
         padding: 0;
     }
+}
+
+.tiny_media_properties_col .size-container {
+    margin-left: 23px;
 }
