@@ -34,11 +34,13 @@ iframe.mm_iframe {
     color: red;
 }
 
-.tiny_image_form .tiny_image_dropzone_container {
+.tiny_image_form .tiny_image_dropzone_container,
+.tiny_media_form .tiny_media_dropzone_container {
     height: 200px;
 }
 
-.tiny_image_form .tiny_image_dropzone_container .dropzone-label {
+.tiny_image_form .tiny_image_dropzone_container .dropzone-label,
+.tiny_media_form .tiny_media_dropzone_container .dropzone-label {
     font-size: 1.25rem;
 }
 
