@@ -132,6 +132,7 @@ class component {
         \Psr\Clock::class => 'lib/psr/clock/src',
         \Psr\Container::class => 'lib/psr/container/src',
         \Psr\Log::class => "lib/psr/log/src",
+        \Psr\SimpleCache::class => 'lib/psr/simple-cache/src',
         \GuzzleHttp\Psr7::class => 'lib/guzzlehttp/psr7/src',
         \GuzzleHttp\Promise::class => 'lib/guzzlehttp/promises/src',
         \GuzzleHttp::class => 'lib/guzzlehttp/guzzle/src',

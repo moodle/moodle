@@ -51,7 +51,7 @@
     <customised/>
   </library>
   <library>
-    <location>phpspreadsheet</location>
+    <location>phpspreadsheet/phpspreadsheet</location>
     <name>PhpSpreadsheet</name>
     <description>Library to read, write and create spreadsheet documents in PHP.</description>
     <version>1.29.0</version>
@@ -675,6 +675,14 @@ All rights reserved.</copyright>
     <version>3.0.0</version>
     <license>MIT</license>
     <repository>https://github.com/php-fig/log</repository>
+  </library>
+  <library>
+    <location>psr/simple-cache</location>
+    <name>simple-cache</name>
+    <description>Common interface for logging libraries</description>
+    <version>3.0.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/php-fig/simple-cache</repository>
   </library>
   <library>
     <location>phpxmlrpc</location>
