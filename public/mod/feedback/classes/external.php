@@ -729,7 +729,7 @@ class mod_feedback_external extends external_api {
      * @since Moodle 3.3
      */
     public static function process_page($feedbackid, $page, $responses = [], $goprevious = false, $courseid = 0) {
-        global $USER, $SESSION;
+        global $USER;
 
         $params = array('feedbackid' => $feedbackid, 'page' => $page, 'responses' => $responses, 'goprevious' => $goprevious,
             'courseid' => $courseid);
@@ -768,8 +768,6 @@ class mod_feedback_external extends external_api {
 
         // Ignore sesskey (deep in some APIs), the request is already validated.
         $USER->ignoresesskey = true;
-        feedback_init_feedback_session();
-        $SESSION->feedback->is_started = true;
 
         $feedbackcompletion->process_page($params['page'], $params['goprevious']);
         $completed = $feedbackcompletion->just_completed();
