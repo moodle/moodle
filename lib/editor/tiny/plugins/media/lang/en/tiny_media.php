@@ -66,6 +66,7 @@ $string['label'] = 'Label';
 $string['languagesavailable'] = 'Languages available';
 $string['languagesinstalled'] = 'Languages installed';
 $string['loading'] = 'Preparing the image';
+$string['loadingmedia'] = 'Preparing the media';
 $string['loop'] = 'Loop';
 $string['managefiles'] = 'Manage files';
 $string['media:use'] = 'Use TinyMCE insert media';
