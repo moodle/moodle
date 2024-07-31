@@ -38,9 +38,6 @@ class mod_kalvidres_mod_form extends moodleform_mod {
     public function definition() {
         global $CFG, $COURSE, $PAGE;
 
-        $pageclass = 'kaltura-kalvidres-body';
-        $PAGE->add_body_class($pageclass);
-
         $params = array(
             'withblocks' => 0,
             'courseid' => $COURSE->id,
@@ -62,14 +59,6 @@ class mod_kalvidres_mod_form extends moodleform_mod {
         // Make replace media language string available to the YUI modules
         $PAGE->requires->string_for_js('replace_video', 'kalvidres');
         $PAGE->requires->string_for_js('browse_and_embed', 'local_kaltura');
-
-        // Require a YUI module to make the object tag be as large as possible.
-        $params = array(
-            'bodyclass' => $pageclass,
-            'lastheight' => null,
-            'padding' => 15
-        );
-        $PAGE->requires->yui_module('moodle-local_kaltura-lticontainer', 'M.local_kaltura.init', array($params), null, true);
 
         $mform =& $this->_form;
 
