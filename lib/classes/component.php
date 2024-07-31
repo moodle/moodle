@@ -141,6 +141,9 @@ class component {
         \JmesPath::class => 'lib/jmespath/src',
         \Laravel\SerializableClosure::class => 'lib/laravel/serializable-closure/src',
         \DI::class => 'lib/php-di/php-di/src',
+        \Complex::class => 'lib/phpspreadsheet/markbaker/classes/src',
+        \Matrix::class => 'lib/phpspreadsheet/markbaker/classes/src',
+        \PhpOffice\PhpSpreadsheet::class => 'lib/phpspreadsheet/phpspreadsheet/src/PhpSpreadsheet',
         \Invoker::class => 'lib/php-di/invoker/src',
     ];
 
