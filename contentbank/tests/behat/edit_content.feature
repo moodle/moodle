@@ -5,10 +5,7 @@ Feature: Content bank use editor feature
   I need to be able to access the edition options
 
   Background:
-    Given the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
-    And I log in as "admin"
+    Given I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
     And the following config values are set as admin:
@@ -25,10 +22,9 @@ Feature: Content bank use editor feature
     Then the "[data-action=Add-content]" "css_element" should be disabled
 
   Scenario: Users can see the Add button if there is content type available for creation
-    Given I follow "Dashboard"
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
+    Given the following "user private file" exists:
+      | user     | admin                                |
+      | filepath | h5p/tests/fixtures/filltheblanks.h5p |
     And I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Content bank" "link" in the "Navigation" "block"
     And I click on "Upload" "link"
@@ -44,10 +40,9 @@ Feature: Content bank use editor feature
     And I should see "Fill in the Blanks"
 
   Scenario: Users can edit content if they have the required permission
-    Given I follow "Dashboard"
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
+    Given the following "user private file" exists:
+      | user     | admin                                |
+      | filepath | h5p/tests/fixtures/filltheblanks.h5p |
     And I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Content bank" "link" in the "Navigation" "block"
     And I click on "Upload" "link"
