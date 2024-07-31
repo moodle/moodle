@@ -1,4 +1,4 @@
-@editor @editor_atto @atto @_file_upload
+@editor @editor_atto @atto
 Feature: Atto Autosave
   To reduce frustration, atto should save drafts of my work.
 
@@ -14,9 +14,6 @@ Feature: Atto Autosave
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | teacher2 | C1 | editingteacher |
-    And the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
     And I log in as "admin"
     And I navigate to "Plugins > Text editors > Atto HTML editor > Atto toolbar settings" in site administration
     And I set the field "Autosave frequency" to "3"
@@ -46,18 +43,16 @@ Feature: Atto Autosave
 
   @javascript
   Scenario: Do not restore a draft if files have been modified
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    Given the following "user private file" exists:
+      | user     | teacher2                                       |
+      | filepath | lib/editor/atto/tests/fixtures/moodle-logo.png |
+    And I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Settings" in current page administration
     And I set the field "Course summary" to "This is my draft"
     # Wait for the autosave
     And I wait "5" seconds
     And I log out
-    And I log in as "teacher2"
-    And I follow "Manage private files..."
-    And I upload "lib/editor/atto/tests/fixtures/moodle-logo.png" file to "Files" filemanager
-    And I click on "Save changes" "button"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher2
     And I navigate to "Settings" in current page administration
     And I set the field "Course summary" to "<p>Image test</p>"
     And I select the text in the "Course summary" Atto editor

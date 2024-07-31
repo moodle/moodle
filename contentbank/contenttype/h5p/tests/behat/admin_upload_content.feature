@@ -1,17 +1,14 @@
-@core @core_contentbank @core_h5p @contenttype_h5p @_file_upload @_switch_iframe @javascript
+@core @core_contentbank @core_h5p @contenttype_h5p @_switch_iframe @javascript
 Feature: H5P file upload to content bank for admins
   In order import new H5P content to content bank
   As an admin
   I need to be able to upload a new .h5p file to content bank
 
   Background:
-    Given the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
+    Given the following "user private file" exists:
+      | user     | admin                                |
+      | filepath | h5p/tests/fixtures/filltheblanks.h5p |
     And I log in as "admin"
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
     And I turn editing mode on
     And the following config values are set as admin:
       | unaddableblocks | | theme_boost|
@@ -99,13 +96,11 @@ Feature: H5P file upload to content bank for admins
     And I should see "Fill in the Blanks"
 
   Scenario: Uploading invalid packages throws error
-    Given I follow "Dashboard"
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/no-json-file.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/unzippable.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
+    Given the following "user private files" exist:
+      | user  | filepath                            |
+      | admin | h5p/tests/fixtures/no-json-file.h5p |
+      | admin | h5p/tests/fixtures/unzippable.h5p   |
+    And I follow "Dashboard"
     And I expand "Site pages" node
     And I click on "Content bank" "link"
     When I click on "Upload" "link"
