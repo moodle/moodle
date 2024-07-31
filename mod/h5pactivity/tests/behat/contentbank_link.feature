@@ -1,4 +1,4 @@
-@mod @mod_h5pactivity @core_h5p @_file_upload @_switch_iframe
+@mod @mod_h5pactivity @core_h5p @_switch_iframe
 Feature: Content bank link in the activity settings form
   In order to have direct access to the Content bank
   As a teacher
@@ -17,9 +17,6 @@ Feature: Content bank link in the activity settings form
     And the following "contentbank content" exist:
       | contextlevel | reference | contenttype     | user     | contentname         | filepath                                  |
       | Course       | C1        | contenttype_h5p | admin    | filltheblanks.h5p   | /h5p/tests/fixtures/filltheblanks.h5p     |
-    And the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
 
   @javascript
   Scenario: The content bank link should go to the course Content bank
@@ -89,10 +86,10 @@ Feature: Content bank link in the activity settings form
 
   @javascript
   Scenario: The content bank link should go to the course Content bank if the file is referenced but to another repository
-    Given I log in as "admin"
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/guess-the-answer.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
+    Given the following "user private file" exists:
+      | user     | admin                                   |
+      | filepath | h5p/tests/fixtures/guess-the-answer.h5p |
+    When I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "H5P" to section "1"
     And I set the following fields to these values:
@@ -108,5 +105,5 @@ Feature: Content bank link in the activity settings form
     And I switch to "h5p-iframe" class iframe
     And I should see "Which fruit is this?"
     And I switch to the main frame
-    When I navigate to "Settings" in current page administration
+    And I navigate to "Settings" in current page administration
     Then I should see "Use the content bank (opens in new window) to manage your H5P files"

@@ -28,12 +28,9 @@ Feature: Teachers can override the grade for any question
     And quiz "Quiz 1" contains the following questions:
       | question | page |
       | TF1      | 1    |
-    And the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
     And the following "user private files" exist:
-      | user     | filepath                                | filename        |
-      | teacher1 | mod/quiz/tests/fixtures/moodle_logo.jpg | moodle_logo.jpg |
+      | user     | filepath                                |
+      | teacher1 | mod/quiz/tests/fixtures/moodle_logo.jpg |
     And I am on the "Quiz 1" "mod_quiz > View" page logged in as "student1"
     And I press "Attempt quiz"
     And I follow "Finish attempt ..."
