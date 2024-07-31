@@ -1206,5 +1206,16 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024071900.01);
     }
 
+    if ($oldversion < 2024072600.01) {
+        // If tool_innodb is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/admin/tool/innodb/version.php')) {
+            // Delete tool_innodb.
+            uninstall_plugin('tool', 'innodb');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024072600.01);
+    }
+
     return true;
 }
