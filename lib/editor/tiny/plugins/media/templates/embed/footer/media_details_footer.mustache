@@ -38,3 +38,14 @@
         <button class="tiny_media_submit btn btn-primary" data-action="save">{{#str}} saveimage, tiny_media {{/str}}</button>
     </div>
 </div>
+
+{{^isLink}}
+    <div class="row d-none" id="media-subtitle-caption-footer">
+        <div class="col-md-6 d-flex align-items-center p-0">
+            <span class="tiny_media_filename text-truncate mr-1"></span>
+        </div>
+        <div class="col-md-6 text-right mt-2 md-0 p-0">
+            <button type="button" class="btn btn-secondary" data-action="back-to-media-details">{{#str}} back, tiny_media {{/str}}</button>
+        </div>
+    </div>
+{{/isLink}}

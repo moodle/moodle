@@ -91,3 +91,10 @@ iframe.mm_iframe {
 .tiny_media_properties_col .size-container {
     margin-left: 23px;
 }
+
+.subtitle-caption {
+    color: #0f6cbf;
+    text-decoration: underline;
+    font-size: inherit;
+    cursor: pointer;
+}
