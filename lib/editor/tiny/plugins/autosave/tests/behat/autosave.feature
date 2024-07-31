@@ -1,4 +1,4 @@
-@editor @editor_tiny @_file_upload
+@editor @editor_tiny @tiny_autosave
 Feature: Tiny editor autosave
     In order to prevent data loss
     As a content creator
@@ -16,9 +16,6 @@ Feature: Tiny editor autosave
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | teacher2 | C1     | editingteacher |
-    And the following "blocks" exist:
-      | blockname      | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files  | System       | 1         | my-index        | side-post     |
 
   @javascript
   Scenario: Restore a draft on user profile page
@@ -32,15 +29,14 @@ Feature: Tiny editor autosave
 
   @javascript
   Scenario: Do not restore a draft if files have been modified
-    Given I am on the "Course 1" course page logged in as teacher1
+    Given the following "user private file" exists:
+      | user     | teacher2                                                |
+      | filepath | lib/editor/tiny/tests/behat/fixtures/tinyscreenshot.png |
+    And I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Settings" in current page administration
     And I set the field "Course summary" to "This is my draft"
     And I log out
-    And I log in as "teacher2"
-    And I follow "Manage private files..."
-    And I upload "/lib/editor/tiny/tests/behat/fixtures/tinyscreenshot.png" file to "Files" filemanager
-    And I click on "Save changes" "button"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher2
     And I navigate to "Settings" in current page administration
     And I set the field "Course summary" to "<p>Image test</p>"
     And I select the "p" element in position "1" of the "Course summary" TinyMCE editor
