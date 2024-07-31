@@ -265,3 +265,28 @@ function subsection_cm_info_view(cm_info $cm) {
 
     $cm->set_content($renderer->render($delegatedsectionoutput), true);
 }
+
+/**
+ * Add a get_coursemodule_info function to add 'extra' information for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info|bool An object on information that the courses will know about. False if not found.
+ */
+function subsection_get_coursemodule_info(stdClass $coursemodule): cached_cm_info|bool {
+    global $DB;
+
+    $dbparams = ['component' => 'mod_subsection', 'itemid' => $coursemodule->instance];
+    if (! $delegatedsection = $DB->get_record('course_sections', $dbparams, 'id, name')) {
+        return false;
+    }
+
+    $result = new cached_cm_info();
+    $result->name = $delegatedsection->name;
+
+    $result->customdata['sectionid'] = $delegatedsection->id;
+
+    return $result;
+}
