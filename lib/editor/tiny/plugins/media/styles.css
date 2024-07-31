@@ -98,3 +98,7 @@ iframe.mm_iframe {
     font-size: inherit;
     cursor: pointer;
 }
+
+.upload-custom-thumbnail {
+    width: 100%;
+}
