@@ -66,7 +66,7 @@ final class sectiondelegate_test extends \advanced_testcase {
 
         // Highlight is only present in section menu (not module), so they shouldn't be found in the result.
         // Duplicate is not implemented yet, so they shouldn't be found in the result.
-        // The possible options are: View, Edit, Delete and Permalink.
+        // The possible options are: View, Edit, Show, Hide, Delete and Permalink.
         if (get_string_manager()->string_exists('editsection', 'format_'.$format->get_format())) {
             $streditsection = get_string('editsection', 'format_'.$format->get_format());
         } else {
@@ -75,9 +75,12 @@ final class sectiondelegate_test extends \advanced_testcase {
         $allowedoptions = [
             get_string('view'),
             $streditsection,
+            get_string('hidefromothers', 'format_' . $course->format),
+            get_string('showfromothers', 'format_' . $course->format),
             get_string('delete'),
             get_string('sectionlink', 'course'),
         ];
+
         // The default section menu should be different for the delegated section menu.
         $result = $delegated->get_section_action_menu($format, $controlmenu, $renderer);
         foreach ($result->get_secondary_actions() as $secondaryaction) {

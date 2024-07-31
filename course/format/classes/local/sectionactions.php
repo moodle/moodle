@@ -404,6 +404,18 @@ class sectionactions extends baseactions {
 
         $modules = explode(',', $sectioninfo->sequence);
         $cmids = [];
+
+        // In case the section is delegated by a module, we change also the visibility for the source module.
+        if ($sectioninfo->is_delegated()) {
+            $delegateinstance = $sectioninfo->get_component_instance();
+            // We only return sections delegated by course modules. Sections delegated to other
+            // types of components must implement their own methods to get the section.
+            if ($delegateinstance && ($delegateinstance instanceof \core_courseformat\sectiondelegatemodule)) {
+                $delegator = $delegateinstance->get_cm();
+                $modules[] = $delegator->id;
+            }
+        }
+
         foreach ($modules as $moduleid) {
             $cm = get_coursemodule_from_id(null, $moduleid, $this->course->id);
             if (!$cm) {

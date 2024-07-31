@@ -305,26 +305,26 @@ class behat_course extends behat_base {
     /**
      * Opens a section edit menu if it is not already opened.
      *
-     * @Given /^I open section "(?P<section_number>\d+)" edit menu$/
+     * @Given /^I open section "(?P<section>(?:[^"]|\\")*)" edit menu$/
      * @throws DriverException The step is not available when Javascript is disabled
-     * @param string $sectionnumber
+     * @param string|int $section
      */
-    public function i_open_section_edit_menu($sectionnumber) {
+    public function i_open_section_edit_menu($section) {
         if (!$this->running_javascript()) {
             throw new DriverException('Section edit menu not available when Javascript is disabled');
         }
 
         // Wait for section to be available, before clicking on the menu.
-        $this->i_wait_until_section_is_available($sectionnumber);
+        $this->i_wait_until_section_is_available($section);
 
         // If it is already opened we do nothing.
-        $xpath = $this->section_exists($sectionnumber);
-        $xpath .= "/descendant::div[contains(@class, 'section-actions')]/descendant::a[contains(@data-toggle, 'dropdown')]";
+        $xpath = $this->section_exists($section);
+        $xpath .= "/descendant::div[contains(@class, 'section-actions')]/descendant::a[@data-toggle='dropdown']";
 
-        $exception = new ExpectationException('Section "' . $sectionnumber . '" was not found', $this->getSession());
+        $exception = new ExpectationException('Section "' . $section . '" was not found', $this->getSession());
         $menu = $this->find('xpath', $xpath, $exception);
         $menu->click();
-        $this->i_wait_until_section_is_available($sectionnumber);
+        $this->i_wait_until_section_is_available($section);
     }
 
     /**
@@ -404,34 +404,45 @@ class behat_course extends behat_base {
     /**
      * Shows the specified hidden section. You need to be in the course page and on editing mode.
      *
-     * @Given /^I show section "(?P<section_number>\d+)"$/
-     * @param int $sectionnumber
+     * @Given /^I show section "(?P<section>(?:[^"]|\\")*)"$/
+     * @param int|string $section
      */
-    public function i_show_section($sectionnumber) {
-        $showlink = $this->show_section_link_exists($sectionnumber);
+    public function i_show_section($section) {
+        // Ensures the section exists.
+        $xpath = $this->section_exists($section);
+        // We need to know the course format as the text strings depends on them.
+        $courseformat = $this->get_course_format();
+        $strshow = get_string('showfromothers', $courseformat);
 
-        // Ensure section edit menu is open before interacting with it.
+
+        // If javascript is on, link is inside a menu.
         if ($this->running_javascript()) {
-            $this->i_open_section_edit_menu($sectionnumber);
+            $this->i_open_section_edit_menu($section);
         }
-        $showlink->click();
+
+        // Ensure the click is using the action menu and not the visibility badge.
+        $xpath .= "//*[@role='menu']";
+
+        // Click on hide link.
+        $this->execute('behat_general::i_click_on_in_the',
+                [$strshow, "link", $this->escape($xpath), "xpath_element"]
+        );
 
         if ($this->running_javascript()) {
             $this->getSession()->wait(self::get_timeout() * 1000, self::PAGE_READY_JS);
-            $this->i_wait_until_section_is_available($sectionnumber);
+            $this->i_wait_until_section_is_available($section);
         }
     }
 
     /**
      * Hides the specified visible section. You need to be in the course page and on editing mode.
      *
-     * @Given /^I hide section "(?P<section_number>\d+)"$/
-     * @param int $sectionnumber
+     * @Given /^I hide section "(?P<section>(?:[^"]|\\")*)"$/
+     * @param int|string $section
      */
-    public function i_hide_section($sectionnumber) {
+    public function i_hide_section($section) {
         // Ensures the section exists.
-        $xpath = $this->section_exists($sectionnumber);
-
+        $xpath = $this->section_exists($section);
         // We need to know the course format as the text strings depends on them.
         $courseformat = $this->get_course_format();
         if (get_string_manager()->string_exists('hidefromothers', $courseformat)) {
@@ -442,17 +453,17 @@ class behat_course extends behat_base {
 
         // If javascript is on, link is inside a menu.
         if ($this->running_javascript()) {
-            $this->i_open_section_edit_menu($sectionnumber);
+            $this->i_open_section_edit_menu($section);
         }
 
-        // Click on delete link.
+        // Click on hide link.
         $this->execute('behat_general::i_click_on_in_the',
               array($strhide, "link", $this->escape($xpath), "xpath_element")
         );
 
         if ($this->running_javascript()) {
             $this->getSession()->wait(self::get_timeout() * 1000, self::PAGE_READY_JS);
-            $this->i_wait_until_section_is_available($sectionnumber);
+            $this->i_wait_until_section_is_available($section);
         }
     }
 
@@ -1234,14 +1245,14 @@ class behat_course extends behat_base {
      * Hopefully we would not require test writers to use this step
      * and we will manage it from other step definitions.
      *
-     * @Given /^I wait until section "(?P<section_number>\d+)" is available$/
-     * @param int $sectionnumber
+     * @Given /^I wait until section "(?P<section>(?:[^"]|\\")*)" is available$/
+     * @param int|string $section
      * @return void
      */
-    public function i_wait_until_section_is_available($sectionnumber) {
+    public function i_wait_until_section_is_available($section) {
 
         // Looks for a hidden lightbox or a non-existent lightbox in that section.
-        $sectionxpath = $this->section_exists($sectionnumber);
+        $sectionxpath = $this->section_exists($section);
         $hiddenlightboxxpath = $sectionxpath . "/descendant::div[contains(concat(' ', @class, ' '), ' lightbox ')][contains(@style, 'display: none')]" .
             " | " .
             $sectionxpath . "[count(child::div[contains(@class, 'lightbox')]) = 0]";
@@ -1282,10 +1293,26 @@ class behat_course extends behat_base {
      * Checks if the course section exists.
      *
      * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param int|string $section Section number or name to look for.
+     * @return string The xpath of the section.
+     */
+    protected function section_exists($section) {
+
+        if (is_numeric($section)) {
+            return $this->section_number_exists($section);
+        }
+
+        return $this->section_name_exists($section);
+    }
+
+    /**
+     * Checks if the course section number exists.
+     *
+     * @throws ElementNotFoundException Thrown by behat_base::find
      * @param int $sectionnumber
      * @return string The xpath of the section.
      */
-    protected function section_exists($sectionnumber) {
+    protected function section_number_exists(int $sectionnumber): string {
 
         // Just to give more info in case it does not exist.
         $xpath = "//li[@id='section-" . $sectionnumber . "']";
@@ -1296,16 +1323,38 @@ class behat_course extends behat_base {
     }
 
     /**
+     * Checks if the section name exists.
+     *
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $sectionname
+     * @return string The xpath of the section.
+     */
+    protected function section_name_exists(string $sectionname): string {
+        // Let's try to find section or subsection in course page.
+        $xpath = "//li[@data-for='section']//*[@data-for='section_title' and contains(normalize-space(.), '" . $sectionname ."')]";
+        $exception = new ElementNotFoundException($this->getSession(), "Section $sectionname ");
+        try {
+            $this->find('xpath', $xpath, $exception);
+        } catch (ElementNotFoundException $e) {
+            // Let's try to find section in section page.
+            $xpath = "//header[@id='page-header' and contains(normalize-space(.), '" . $sectionname ."')]";
+            $this->find('xpath', $xpath, $exception);
+        }
+
+        return $xpath;
+    }
+
+    /**
      * Returns the show section icon or throws an exception.
      *
      * @throws ElementNotFoundException Thrown by behat_base::find
-     * @param int $sectionnumber
+     * @param int|string $section Section number or name to look for.
      * @return NodeElement
      */
-    protected function show_section_link_exists($sectionnumber) {
+    protected function show_section_link_exists($section) {
 
         // Gets the section xpath and ensure it exists.
-        $xpath = $this->section_exists($sectionnumber);
+        $xpath = $this->section_exists($section);
 
         // We need to know the course format as the text strings depends on them.
         $courseformat = $this->get_course_format();
@@ -1324,13 +1373,13 @@ class behat_course extends behat_base {
      * Returns the hide section icon link if it exists or throws exception.
      *
      * @throws ElementNotFoundException Thrown by behat_base::find
-     * @param int $sectionnumber
+     * @param int|string $section Section number or name to look for.
      * @return NodeElement
      */
-    protected function hide_section_link_exists($sectionnumber) {
+    protected function hide_section_link_exists($section) {
 
         // Gets the section xpath and ensure it exists.
-        $xpath = $this->section_exists($sectionnumber);
+        $xpath = $this->section_exists($section);
 
         // We need to know the course format as the text strings depends on them.
         $courseformat = $this->get_course_format();
@@ -1368,6 +1417,10 @@ class behat_course extends behat_base {
 
         if (strstr($bodyid, 'page-course-view-') === false) {
             throw $exception;
+        }
+
+        if (strstr($bodyid, 'page-course-view-section-') !== false) {
+            return 'format_' . str_replace('page-course-view-section-', '', $bodyid);
         }
 
         return 'format_' . str_replace('page-course-view-', '', $bodyid);

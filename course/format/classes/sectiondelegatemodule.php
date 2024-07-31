@@ -149,7 +149,7 @@ abstract class sectiondelegatemodule extends sectiondelegate {
         controlmenu $controlmenu,
         renderer_base $output,
     ): ?action_menu {
-        $controlmenuclass = $format->get_output_classname('content\\cm\\controlmenu');
+        $controlmenuclass = $format->get_output_classname('content\\cm\\delegatedcontrolmenu');
         $controlmenu = new $controlmenuclass(
             $format,
             $this->sectioninfo,

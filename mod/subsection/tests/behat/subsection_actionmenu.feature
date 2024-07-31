@@ -33,10 +33,10 @@ Feature: The module menu replaces the delegated section menu
     And I should not see "Assign roles"
     And I should not see "Highlight"
     And I should see "Edit settings"
-    # Duplicate, Move and Show/Hide are not implemented yet.
+    # Duplicate and Move are not implemented yet.
     And I should not see "Move"
     And I should not see "Duplicate"
-    And I should not see "Hide"
+    And I should see "Hide"
     # Delete option for subsection page is not implemented yet.
     And I should not see "Delete"
     And I should see "Permalink"
@@ -50,12 +50,11 @@ Feature: The module menu replaces the delegated section menu
     And I should not see "Highlight"
     And I should see "View"
     And I should see "Edit settings"
-    # Duplicate, Move and Show/Hide are not implemented yet.
+    # Duplicate and Move are not implemented yet.
     And I should not see "Move"
     And I should not see "Duplicate"
-    And I should not see "Hide"
+    And I should see "Hide"
     And I should see "Delete"
-    And I should see "Permalink"
 
   @javascript
   Scenario: The action menu for subsection module in section page has less options than a regular activity
@@ -67,10 +66,10 @@ Feature: The module menu replaces the delegated section menu
     And I should not see "Highlight"
     And I should see "View"
     And I should see "Edit settings"
-    # Duplicate, Move and Show/Hide are not implemented yet.
+    # Duplicate and Move are not implemented yet.
     And I should not see "Move"
     And I should not see "Duplicate"
-    And I should not see "Hide"
+    And I should see "Hide"
     And I should see "Delete"
     And I should see "Permalink"
 
@@ -157,3 +156,54 @@ Feature: The module menu replaces the delegated section menu
     # Subsection page. Open the section header action menu.
     And I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
     And "Delete" "link" should not exist in the "[data-region='header-actions-container']" "css_element"
+
+  @javascript
+  Scenario: Hide/Show option in subsection action menu
+    Given I turn editing mode on
+    And I should not see "Hidden from students"
+    And I open "Subsection1" actions menu
+    When I choose "Hide" in the open action menu
+    Then I should see "Hidden from students"
+    Given I am on the "C1 > Subsection1" "course > section" page
+    And I should see "Hidden from students"
+    # Subsection page. Open the section header action menu.
+    And I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
+    And I choose "Show" in the open action menu
+    And I should not see "Hidden from students"
+    And I click on "Section 1" "link" in the ".breadcrumb" "css_element"
+    And I should not see "Hidden from students"
+    # Section page. Open Subsection1 module action menu.
+    And I open "Subsection1" actions menu
+    And I choose "Hide" in the open action menu
+    And I should see "Hidden from students"
+
+  @javascript
+  Scenario: Hide/Show option in course page action menu for subsections
+    Given I am on the "C1" "Course" page
+    And I turn editing mode on
+    When I hide section "Subsection1"
+    Then I should see "Hidden from students"
+    And I show section "Subsection1"
+    And I should not see "Hidden from students"
+
+  @javascript
+  Scenario: Hide/Show option in subsection page action menu for subsections
+    Given I am on the "C1 > Subsection1" "course > section" page
+    And I turn editing mode on
+    When I hide section "Subsection1"
+    Then I should see "Hidden from students"
+    And I show section "Subsection1"
+    And I should not see "Hidden from students"
+
+  @javascript
+  Scenario: Subsections can't change visibility in hidden sections.
+    Given I am on the "C1" "Course" page
+    And I turn editing mode on
+    And I hide section "Section 1"
+    When I open section "Subsection1" edit menu
+    Then I should not see "Hide"
+    And I should not see "Show"
+    And I am on the "C1 > Section 1" "course > section" page
+    And I open section "Subsection1" edit menu
+    And I should not see "Hide"
+    And I should not see "Show"
