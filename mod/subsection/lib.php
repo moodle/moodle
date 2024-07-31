@@ -65,12 +65,22 @@ function subsection_add_instance($moduleinstance, $mform = null) {
 
     $id = $DB->insert_record('subsection', $moduleinstance);
 
+    // Due to name collision, when the object came from the form, the availability conditions are called
+    // availabilityconditionsjson instead of availability.
+    $cmavailability = $moduleinstance->availabilityconditionsjson ?? $moduleinstance->availability ?? null;
+    // Availability could be an empty string but we need to force null.
+    if (empty($cmavailability)) {
+        $cmavailability = null;
+    }
+
     formatactions::section($moduleinstance->course)->create_delegated(
         manager::PLUGINNAME,
         $id,
         (object)[
             'name' => $moduleinstance->name,
-        ]);
+            'availability' => $cmavailability,
+        ]
+    );
 
     return $id;
 }
@@ -90,6 +100,18 @@ function subsection_update_instance($moduleinstance, $mform = null) {
 
     $moduleinstance->timemodified = time();
     $moduleinstance->id = $moduleinstance->instance;
+
+    // Due to name collision, when the object came from the form, the availability conditions are called
+    // availabilityconditionsjson instead of availability.
+    $cmavailability = $moduleinstance->availabilityconditionsjson ?? $moduleinstance->availability ?? null;
+    if (!empty($cmavailability)) {
+        $DB->set_field(
+            'course_sections',
+            'availability',
+            $cmavailability,
+            ['component' => manager::PLUGINNAME, 'itemid' => $moduleinstance->id]
+        );
+    }
 
     return $DB->update_record('subsection', $moduleinstance);
 }

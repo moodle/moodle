@@ -178,7 +178,11 @@ class behat_course extends behat_base {
      */
     protected function resolve_page_instance_url(string $type, string $identifier): moodle_url {
         $type = strtolower($type);
+
+        $sectionpage = 'section.php';
         switch ($type) {
+            case 'section settings':
+                $sectionpage = 'editsection.php';
             case 'section':
                 $identifiers = explode('>', $identifier);
                 $identifiers = array_map('trim', $identifiers);
@@ -196,7 +200,7 @@ class behat_course extends behat_base {
                 if (!$section) {
                     throw new Exception("The specified section $identifier does not exist.");
                 }
-                return new moodle_url('/course/section.php', ['id' => $section->id]);
+                return new moodle_url('/course/' . $sectionpage, ['id' => $section->id]);
         }
         throw new Exception('Unrecognised core page type "' . $type . '."');
     }

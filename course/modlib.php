@@ -620,14 +620,18 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         // This code is used both when submitting the form, which uses a long
         // name to avoid clashes, and by unit test code which uses the real
         // name in the table.
+        $newavailability = $cm->availability;
         if (property_exists($moduleinfo, 'availabilityconditionsjson')) {
             if ($moduleinfo->availabilityconditionsjson !== '') {
-                $cm->availability = $moduleinfo->availabilityconditionsjson;
+                $newavailability = $moduleinfo->availabilityconditionsjson;
             } else {
-                $cm->availability = null;
+                $newavailability = null;
             }
         } else if (property_exists($moduleinfo, 'availability')) {
-            $cm->availability = $moduleinfo->availability;
+            $newavailability = $moduleinfo->availability;
+        }
+        if ($cm->availability != $newavailability) {
+            $cm->availability = $newavailability;
         }
         // If there is any availability data, verify it.
         if ($cm->availability) {

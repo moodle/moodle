@@ -47,6 +47,9 @@ class editsection_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
+        $mform->addElement('hidden', 'course', 0);
+        $mform->setType('course', PARAM_INT);
+
         // additional fields that course format has defined
         $courseformat = course_get_format($course);
         $formatoptions = $courseformat->section_format_options(true);

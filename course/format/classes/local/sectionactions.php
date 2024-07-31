@@ -54,7 +54,7 @@ class sectionactions extends baseactions {
             'sequence' => '',
             'name' => $fields->name ?? null,
             'visible' => $fields->visible ?? 1,
-            'availability' => null,
+            'availability' => $fields->availability ?? null,
             'component' => $fields->component ?? null,
             'itemid' => $fields->itemid ?? null,
             'timemodified' => time(),
@@ -366,6 +366,8 @@ class sectionactions extends baseactions {
         $fields['id'] = $sectioninfo->id;
         $fields['timemodified'] = time();
         $DB->update_record('course_sections', $fields);
+
+        $sectioninfo->get_component_instance()?->section_updated((object) $fields);
 
         // We need to update the section cache before the format options are updated.
         \course_modinfo::purge_course_section_cache_by_id($courseid, $sectioninfo->id);
