@@ -15,27 +15,25 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template tiny_media/embed_media_audio
+    @template tiny_media/embed/body/media_thumbnail_body
 
-    Embed media audio template.
+    Insert thumbnail preview body template.
 
     Example context (json):
     {
 
     }
+
 }}
-&nbsp;<audio{{!
-    }}{{#showControls}} controls="true" {{/showControls}}{{!
-    }}{{#loop}} loop="true"{{/loop}}{{!
-    }}{{#muted}} muted="true"{{/muted}}{{!
-    }}{{#autoplay}} autoplay="true"{{/autoplay}}{{!
-    }}{{#title}} title="{{.}}"{{/title}}{{!
-}}>
-    {{#sources}}<source src="{{.}}"/>{{/sources}}
-    {{#tracks}}
-    <track src="{{track}}" kind="{{kind}}" srclang="{{srclang}}" label="{{label}}"{{!
-        }}{{#defaultTrack}} default="true"{{/defaultTrack}}{{!
-    }}>
-    {{/tracks}}
-    {{#description}}{{.}}{{/description}}
-</audio>&nbsp;
+<div class="container tiny_media_insert_media d-none" id="tiny-media-thumbnail-preview">
+    <div class="row">
+        <div class="tiny_media_preview_col col-lg-12 p-0">
+            <div class="tiny_media_preview_box border rounded">
+                <button class="btn rounded-circle tiny_media_delete_icon delete_tiny_thumbnail" tabindex="0" title="{{#str}} deletemediathumbnail, tiny_media {{/str}}">
+                    <i class="fa fa-trash-o"></i>
+                </button>
+                <img class="tiny_media_thumbnail_preview img-fluid" alt="media thumbnail image" src="data:,">
+            </div>
+        </div>
+    </div>
+</div>
