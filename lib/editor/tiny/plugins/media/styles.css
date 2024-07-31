@@ -61,7 +61,8 @@ iframe.mm_iframe {
     position: relative;
 }
 
-.tiny_image_form .tiny_image_deleteicon {
+.tiny_image_form .tiny_image_deleteicon,
+.tiny_media_form .tiny_media_delete_icon {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -74,7 +75,8 @@ iframe.mm_iframe {
     padding: 4px 5px 5px 9px;
 }
 
-.tiny_image_form .tiny_image_deleteicon .fa-trash {
+.tiny_image_form .tiny_image_deleteicon .fa-trash,
+.tiny_media_form .tiny_media_delete_icon .fa-trash {
     color: #1d2125;
 }
 
