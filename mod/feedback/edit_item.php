@@ -57,9 +57,13 @@ $PAGE->set_url($url);
 // If the typ is pagebreak so the item will be saved directly.
 if (!$item->id && $typ === 'pagebreak') {
     require_sesskey();
-    feedback_create_pagebreak($feedback->id);
-    redirect($editurl->out(false));
-    exit;
+
+    $redirectmessage = '';
+    if (!feedback_create_pagebreak($feedback->id)) {
+        $redirectmessage = get_string('cannotcreatepagebreak', 'mod_feedback');
+    }
+
+    redirect($editurl, $redirectmessage, null, \core\output\notification::NOTIFY_WARNING);
 }
 
 //get the existing item or create it
