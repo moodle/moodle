@@ -263,7 +263,12 @@ if ($userform->is_cancelled()) {
         $a = new stdClass();
         $a->url = $CFG->wwwroot . '/user/emailupdate.php?key=' . $emailchangedkey . '&id=' . $user->id;
         $a->site = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
-        $a->fullname = fullname($tempuser, true);
+
+        $placeholders = \core_user::get_name_placeholders($user);
+        foreach ($placeholders as $field => $value) {
+            $a->{$field} = $value;
+        }
+
         $a->supportemail = $OUTPUT->supportemail();
 
         $emailupdatemessage = get_string('emailupdatemessage', 'auth', $a);

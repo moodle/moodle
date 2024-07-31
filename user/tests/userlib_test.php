@@ -1048,4 +1048,39 @@ class userlib_test extends \advanced_testcase {
         $this->assertCount(1, $result['groups']);
         $this->assertEquals($group2->id, $result['groups'][0]['id']);
     }
+
+    /**
+     * Verifies that the get_name_placeholders function correctly generates
+     * an array of name placeholders for a given user object.
+     *
+     * @covers ::get_name_placeholders()
+     */
+    public function test_get_name_placeholders(): void {
+        $this->resetAfterTest();
+
+        // Set format for fullname and alternativefullname.
+        set_config('fullnamedisplay', 'firstname, lastname');
+        set_config('alternativefullnameformat', 'firstnamephonetic lastnamephonetic');
+
+        // Create the target user.
+        $user = $this->getDataGenerator()->create_user([
+                'firstname' => 'FN',
+                'lastname' => 'LN',
+                'firstnamephonetic' => 'FNP',
+                'lastnamephonetic' => 'LNP',
+                'middlename' => 'MN',
+                'alternatename' => 'AN',
+                ]);
+
+        // Add user name fields to $a as an object based on $user.
+        $a = new \stdClass();
+        $placeholders = \core_user::get_name_placeholders($user);
+        foreach ($placeholders as $field => $value) {
+            $a->{$field} = $value;
+        }
+        $this->assertEquals("Hello $a->firstname", "Hello FN");
+        $this->assertEquals("Bonjour $a->fullname", "Bonjour FN, LN");
+        $this->assertEquals("Privyet $a->alternativefullname", "Privyet FNP LNP");
+        $this->assertEquals("Hola $a->alternatename '$a->middlename' $a->lastname", "Hola AN 'MN' LN");
+    }
 }

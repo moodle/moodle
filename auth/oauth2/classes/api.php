@@ -176,7 +176,10 @@ class api {
         $user = get_complete_user_data('id', $userid);
 
         $data = new stdClass();
-        $data->fullname = fullname($user);
+        $placeholders = \core_user::get_name_placeholders($user);
+        foreach ($placeholders as $field => $value) {
+            $data->{$field} = $value;
+        }
         $data->sitename  = format_string($site->fullname);
         $data->admin     = generate_email_signoff();
         $data->issuername = format_string($issuer->get('name'));
@@ -319,7 +322,10 @@ class api {
         $user = get_complete_user_data('id', $user->id);
 
         $data = new stdClass();
-        $data->fullname = fullname($user);
+        $placeholders = \core_user::get_name_placeholders($user);
+        foreach ($placeholders as $field => $value) {
+            $data->{$field} = $value;
+        }
         $data->sitename  = format_string($site->fullname);
         $data->admin     = generate_email_signoff();
 

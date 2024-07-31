@@ -6039,7 +6039,10 @@ function setnew_password_and_mail($user, $fasthash = false) {
     update_internal_user_password($user, $newpassword, $fasthash);
 
     $a = new stdClass();
-    $a->firstname   = fullname($user, true);
+    $placeholders = \core_user::get_name_placeholders($user);
+    foreach ($placeholders as $field => $value) {
+        $a->{$field} = $value;
+    }
     $a->sitename    = format_string($site->fullname);
     $a->username    = $user->username;
     $a->newpassword = $newpassword;
@@ -6053,49 +6056,6 @@ function setnew_password_and_mail($user, $fasthash = false) {
     // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
     return email_to_user($user, $supportuser, $subject, $message);
 
-}
-
-/**
- * Resets specified user's password and send the new password to the user via email.
- *
- * @param stdClass $user A {@link $USER} object
- * @return bool Returns true if mail was sent OK and false if there was an error.
- */
-function reset_password_and_mail($user) {
-    global $CFG;
-
-    $site  = get_site();
-    $supportuser = core_user::get_support_user();
-
-    $userauth = get_auth_plugin($user->auth);
-    if (!$userauth->can_reset_password() or !is_enabled_auth($user->auth)) {
-        trigger_error("Attempt to reset user password for user $user->username with Auth $user->auth.");
-        return false;
-    }
-
-    $newpassword = generate_password();
-
-    if (!$userauth->user_update_password($user, $newpassword)) {
-        throw new \moodle_exception("cannotsetpassword");
-    }
-
-    $a = new stdClass();
-    $a->firstname   = $user->firstname;
-    $a->lastname    = $user->lastname;
-    $a->sitename    = format_string($site->fullname);
-    $a->username    = $user->username;
-    $a->newpassword = $newpassword;
-    $a->link        = $CFG->wwwroot .'/login/change_password.php';
-    $a->signoff     = generate_email_signoff();
-
-    $message = get_string('newpasswordtext', '', $a);
-
-    $subject  = format_string($site->fullname) .': '. get_string('changedpassword');
-
-    unset_user_preference('create_password', $user); // Prevent cron from generating the password.
-
-    // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
-    return email_to_user($user, $supportuser, $subject, $message);
 }
 
 /**
@@ -6114,6 +6074,11 @@ function send_confirmation_email($user, $confirmationurl = null) {
     $data = new stdClass();
     $data->sitename  = format_string($site->fullname);
     $data->admin     = generate_email_signoff();
+    // Add user name fields to $data based on $user.
+    $placeholders = \core_user::get_name_placeholders($user);
+    foreach ($placeholders as $field => $value) {
+        $data->{$field} = $value;
+    }
 
     $subject = get_string('emailconfirmationsubject', '', format_string($site->fullname));
 
@@ -6159,8 +6124,10 @@ function send_password_change_confirmation_email($user, $resetrecord) {
     $pwresetmins = isset($CFG->pwresettime) ? floor($CFG->pwresettime / MINSECS) : 30;
 
     $data = new stdClass();
-    $data->firstname = $user->firstname;
-    $data->lastname  = $user->lastname;
+    $placeholders = \core_user::get_name_placeholders($user);
+    foreach ($placeholders as $field => $value) {
+        $data->{$field} = $value;
+    }
     $data->username  = $user->username;
     $data->sitename  = format_string($site->fullname);
     $data->link      = $CFG->wwwroot .'/login/forgot_password.php?token='. $resetrecord->token;
@@ -6186,8 +6153,10 @@ function send_password_change_info($user) {
     $supportuser = core_user::get_support_user();
 
     $data = new stdClass();
-    $data->firstname = $user->firstname;
-    $data->lastname  = $user->lastname;
+    $placeholders = \core_user::get_name_placeholders($user);
+    foreach ($placeholders as $field => $value) {
+        $data->{$field} = $value;
+    }
     $data->username  = $user->username;
     $data->sitename  = format_string($site->fullname);
     $data->admin     = generate_email_signoff();

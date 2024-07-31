@@ -1,0 +1,8 @@
+issueNumber: MDL-64148
+notes:
+  core:
+    - message: >-
+        The following method has been deprecated and should no longer be used:
+        `reset_password_and_mail`. Please consider using `setnew_password_and_mail` as
+        a replacement.
+      type: deprecated

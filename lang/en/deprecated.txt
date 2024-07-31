@@ -125,3 +125,5 @@ error:duplicatename,core_badges
 error:cannotact,core_badges
 reviewbadge,core_badges
 myisamproblem,core_error
+newpasswordtext,core
+cannotsetpassword,core_error

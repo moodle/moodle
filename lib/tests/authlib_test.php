@@ -549,4 +549,22 @@ class authlib_test extends \advanced_testcase {
         $this->assertEquals(count($plugins), 3);
     }
 
+    /**
+     * Test case for checking the email greetings in account lockout notification emails.
+     *
+     * @covers ::login_lock_account()
+     */
+    public function test_email_greetings(): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $sink = $this->redirectEmails(); // Make sure we are redirecting emails.
+        login_lock_account($user);
+        $result = $sink->get_messages();
+        $sink->close();
+        // Test greetings.
+        $this->assertStringContainsString('Hi ' . $user->firstname, quoted_printable_decode($result[0]->body));
+    }
+
 }
