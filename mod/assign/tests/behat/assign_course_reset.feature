@@ -115,7 +115,7 @@ Feature: Assign reset
     And I press "Save"
     When I am on the "Test assignment name" Activity page
     And I follow "View all submissions"
-    And I select "Reveal student identities" from the "Grading action" singleselect
+    And I choose the "Reveal student identities" item in the "Actions" action menu
     And I press "Continue"
     And I should see "Sam1 Student1"
     When I am on the "Course 1" "reset" page
