@@ -121,7 +121,7 @@ class core_renderer extends \core_renderer {
                             'buttontype' => 'message',
                             'title' => get_string('message', 'message'),
                             'url' => new moodle_url('/message/index.php', array('id' => $user->id)),
-                            'image' => 'message',
+                            'image' => 't/message',
                             'linkattributes' => \core_message\helper::messageuser_link_params($user->id),
                             'page' => $this->page
                         )
@@ -158,12 +158,12 @@ class core_renderer extends \core_renderer {
                                 $contacttitle = 'addtoyourcontacts';
                                 $contacturlaction = 'addcontact';
                             }
-                            $contactimage = 'addcontact';
+                            $contactimage = 't/addcontact';
                         } else {
                             // If the user is a contact.
                             $contacttitle = 'removefromyourcontacts';
                             $contacturlaction = 'removecontact';
-                            $contactimage = 'removecontact';
+                            $contactimage = 't/removecontact';
                         }
                         $userbuttons['togglecontact'] = array(
                                 'buttontype' => 'togglecontact',
