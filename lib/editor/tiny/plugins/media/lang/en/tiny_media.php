@@ -90,6 +90,7 @@ $string['metadata'] = 'Metadata';
 $string['metadatasourcelabel'] = 'Metadata track URL';
 $string['missingfiles'] = 'Missing files';
 $string['mute'] = 'Muted';
+$string['next'] = 'Next';
 $string['onlymediafiles'] = 'Accepts only media files';
 $string['onlymediafilesdesc'] = 'You can only upload media files like video or audio';
 $string['pluginname'] = 'Insert media';
