@@ -1,0 +1,6 @@
+issueNumber: MDL-82427
+notes:
+  core_filters:
+    - message: >-
+        Added support for autoloading of filters from `\filter_[filtername]\filter`. Existing classes should be renamed to use the new namespace.
+      type: improved

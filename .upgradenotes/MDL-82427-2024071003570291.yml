@@ -1,0 +1,7 @@
+issueNumber: MDL-82427
+notes:
+  core_filters:
+    - message: >-
+        The `filter_manager::text_filtering_hash` method has been finally
+        deprecated and removed.
+      type: deprecated

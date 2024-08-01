@@ -33,7 +33,6 @@ use context;
  * @since      Moodle 4.4
  */
 class get_all_states extends external_api {
-
     /**
      * Webservice parameters.
      *
@@ -85,24 +84,22 @@ class get_all_states extends external_api {
      * @return external_single_structure
      */
     public static function execute_returns(): external_single_structure {
-        return new external_single_structure(
-            [
-                'filters' => new external_multiple_structure(
-                    new external_single_structure(
-                        [
-                            'contextlevel' => new external_value(PARAM_ALPHA, 'The context level where the filters are:
-                                (coursecat, course, module).'),
-                            'instanceid' => new external_value(PARAM_INT, 'The instance id of item associated with the context.'),
-                            'contextid' => new external_value(PARAM_INT, 'The context id.'),
-                            'filter'  => new external_value(PARAM_PLUGIN, 'Filter plugin name.'),
-                            'state' => new external_value(PARAM_INT, 'Filter state: 1 for on, -1 for off, -9999 if disabled.'),
-                            'sortorder' => new external_value(PARAM_INT, 'Execution order.'),
-                        ]
+        return new external_single_structure([
+            'filters' => new external_multiple_structure(
+                new external_single_structure([
+                    'contextlevel' => new external_value(
+                        PARAM_ALPHA,
+                        'The context level where the filters are: (coursecat, course, module).',
                     ),
-                    'All filters states'
-                ),
-                'warnings' => new external_warnings(),
-            ]
-        );
+                    'instanceid' => new external_value(PARAM_INT, 'The instance id of item associated with the context.'),
+                    'contextid' => new external_value(PARAM_INT, 'The context id.'),
+                    'filter'  => new external_value(PARAM_PLUGIN, 'Filter plugin name.'),
+                    'state' => new external_value(PARAM_INT, 'Filter state: 1 for on, -1 for off, -9999 if disabled.'),
+                    'sortorder' => new external_value(PARAM_INT, 'Execution order.'),
+                ]),
+                'All filters states'
+            ),
+            'warnings' => new external_warnings(),
+        ]);
     }
 }

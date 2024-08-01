@@ -158,4 +158,30 @@ $legacyclasses = [
     \progress_trace::class => 'output/progress_trace.php',
     \progress_trace_buffer::class => 'output/progress_trace/progress_trace_buffer.php',
     \text_progress_trace::class => 'output/progress_trace/text_progress_trace.php',
+
+    // Filters subsystem.
+    \filter_manager::class => [
+        'core_filters',
+        'filter_manager.php',
+    ],
+    \filterobject::class => [
+        'core_filters',
+        'filter_object.php',
+    ],
+    \moodle_text_filter::class => [
+        'core_filters',
+        'text_filter.php',
+    ],
+    \null_filter_manager::class => [
+        'core_filters',
+        'null_filter_manager.php',
+    ],
+    \performance_measuring_filter_manager::class => [
+        'core_filters',
+        'performance_measuring_filter_manager.php',
+    ],
+    \filter_local_settings_form::class => [
+        'core_filters',
+        'form/local_settings_form.php',
+    ],
 ];

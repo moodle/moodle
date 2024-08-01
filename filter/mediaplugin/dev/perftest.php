@@ -26,7 +26,6 @@
  */
 
 require(__DIR__ . '/../../../config.php');
-require_once($CFG->dirroot . '/filter/mediaplugin/filter.php');
 
 // Only available to site admins.
 require_login();
@@ -45,7 +44,7 @@ $enabledmediaplugins = \core\plugininfo\media::get_enabled_plugins();
 \core\plugininfo\media::set_enabled_plugins('vimeo,youtube,videojs,html5audio,html5video');
 
 // Create plugin.
-$filterplugin = new filter_mediaplugin(null, array());
+$filterplugin = new \filter_mediaplugin\text_filter(null, []);
 
 // Note: As this is a developer test page, language strings are not used: all
 // text is English-only.

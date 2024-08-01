@@ -14,23 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core_filters\privacy;
+namespace filter_codehighlighter;
 
 /**
- * Privacy Subsystem for core_filters implementing null_provider.
+ * Code highlighter filter.
  *
- * @package    core_filters
- * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
+ * Filter converting text code into a well-styled block of code.
+ *
+ * @package    filter_codehighlighter
+ * @copyright  2023 Meirza <meirza.arson@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\null_provider {
-    /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
-     *
-     * @return  string
-     */
-    public static function get_reason(): string {
-        return 'privacy:reason';
+class text_filter extends \core_filters\text_filter {
+    #[\Override]
+    public function filter($text, array $options = []): string {
+        global $PAGE;
+
+        if (!isset($options['originalformat'])) {
+            return $text;
+        }
+
+        // The pattern.
+        $re = '/<pre.+?class=".*?language-.*?"><code>/i';
+
+        // Stops looking after the first match.
+        preg_match($re, $text, $matches);
+        if ($matches) {
+            $PAGE->requires->js_call_amd('filter_codehighlighter/prism-init');
+        }
+
+        return $text;
     }
 }
