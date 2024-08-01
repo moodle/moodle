@@ -66,7 +66,7 @@ Feature: Manage contacts
     Then I should see "Contact request sent"
     And I log out
     And I am on the "student3" "user > profile" page logged in as student4
-    And I should see "Waiting for your approval"
+    And I should see "Waiting to be added as contact"
     And I open messaging
     And I click on "Contacts" "link"
     And I click on "Requests" "link_or_button"

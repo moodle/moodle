@@ -17,9 +17,9 @@ Feature: Enable RSS client block menu on the frontpage
     Given I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And "Remote news feed" "block" should exist
-    And I configure the "Remote news feed" block
-    And I should see "There are no existing RSS feeds configured for this site. You can add one choosing 'Add new RSS feed'."
+    And "RSS feed" "block" should exist
+    And I configure the "RSS feed" block
+    And I should see "There are not yet any RSS feeds. Choose 'Add new RSS feed'."
 
     # Test filling in an empty URL in the input.
     And I click on "Add new RSS feed" "radio"
@@ -40,9 +40,9 @@ Feature: Enable RSS client block menu on the frontpage
 
     # Test the existence of the available feeds.
     When I configure the "NASA" block
-    Then I should see "NASA" in the "Select the feeds to display in this block" "select"
+    Then I should see "NASA" in the "Select feeds to display" "select"
     And I click on "Cancel" "button" in the "Configure NASA block" "dialogue"
 
-    # Test the Manage all my feeds page.
-    And I click on "Manage all my feeds" "link"
+    # Test the Manage RSS feeds page.
+    And I click on "Manage RSS feeds" "link"
     And I should see "NASA"

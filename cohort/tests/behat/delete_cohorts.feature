@@ -21,7 +21,7 @@ Feature: Delete cohorts
       | Cohort 2 | cohort2   |
       | Cohort 3 | cohort3   |
     When I press "Delete" action in the "Cohort 1" report row
-    Then I should see "Do you really want to delete cohort 'Cohort 1'?" in the "Delete selected" "dialogue"
+    Then I should see "This will delete cohort 'Cohort 1' and all associated data." in the "Delete selected" "dialogue"
     And I click on "Delete" "button" in the "Delete selected" "dialogue"
     And I should see "Deleted cohort"
     And I should not see "Cohort 1" in the "Cohorts" "table"
@@ -40,7 +40,7 @@ Feature: Delete cohorts
     When I click on "Select 'Cohort 1'" "checkbox"
     And I click on "Select 'Cohort 2'" "checkbox"
     And I click on "Delete selected" "button"
-    Then I should see "Do you really want to delete the selected cohorts?" in the "Delete selected" "dialogue"
+    Then I should see "This will delete the cohorts and all associated data." in the "Delete selected" "dialogue"
     And I click on "Delete" "button" in the "Delete selected" "dialogue"
     And I should see "Deleted selected cohorts"
     And I should not see "Cohort 1" in the "Cohorts" "table"
