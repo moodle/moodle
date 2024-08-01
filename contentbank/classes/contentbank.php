@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Content bank class
- *
- * @package    core_contentbank
- * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_contentbank;
 
 use core_plugin_manager;
@@ -246,8 +238,11 @@ class contentbank {
         $courses = $coursescache->get($userid);
 
         if ($categories === false || $courses === false) {
+            // Required fields for preloading the context record.
+            $contextfields = 'ctxid, ctxpath, ctxdepth, ctxlevel, ctxinstance, ctxlocked';
+
             list($categories, $courses) = get_user_capability_contexts($capability, true, $userid, true,
-                'fullname, ctxlevel, ctxinstance, ctxid', 'name, ctxlevel, ctxinstance, ctxid', 'fullname', 'name');
+                "fullname, {$contextfields}", "name, {$contextfields}", 'fullname', 'name');
             $categoriescache->set($userid, $categories);
             $coursescache->set($userid, $courses);
         }
