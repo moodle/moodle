@@ -23,6 +23,7 @@ namespace quizaccess_seb;
  * @author    Andrew Madden <andrewmadden@catalyst-au.net>
  * @copyright 2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \quizaccess_seb\config_key
  */
 class config_key_test extends \advanced_testcase {
 
@@ -41,6 +42,20 @@ class config_key_test extends \advanced_testcase {
     public function test_config_key_hash_generated_with_empty_string() {
         $hash = config_key::generate('')->get_hash();
         $this->assertEquals('4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945', $hash);
+    }
+
+    /**
+     * Test config key hash is derived correctly by Moodle.
+     *
+     * @param string $config The SEB config file name.
+     * @param string $hash The correct config key hash for this file.
+     *
+     * @dataProvider real_ck_hash_provider
+     */
+    public function test_config_key_hash_is_derived_correctly($config, $hash): void {
+        $xml = file_get_contents(__DIR__ . '/fixtures/' . $config);
+        $derivedhash = config_key::generate($xml)->get_hash();
+        $this->assertEquals($hash, $derivedhash);
     }
 
     /**
@@ -64,7 +79,7 @@ class config_key_test extends \advanced_testcase {
             'unencrypted_mac2.1.4' => ['unencrypted_mac_001.seb',
                     '4fa9af8ec8759eb7c680752ef4ee5eaf1a860628608fccae2715d519849f9292', ''],
             'unencrypted_win2.2.3' => ['unencrypted_win_223.seb',
-                    'fc6f4ea5922717760f4d6d536c23b8d19bf20b52aa97940f5427a76e20f49026', ''],
+                    '2534e4e9f3188f9f9133bf7cf7b4c5d898292bbd7e8d0230f39d1176636a1431', ''],
         ];
     }
 }

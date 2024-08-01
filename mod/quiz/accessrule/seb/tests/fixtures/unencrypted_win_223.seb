@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
+    <key>batteryChargeThresholdCritical</key>
+    <real>0.1</real>
+    <key>batteryChargeThresholdLow</key>
+    <real>0.2</real>
     <key>originatorVersion</key>
     <string>SEB_Win_2.1.1</string>
     <key>startURL</key>
