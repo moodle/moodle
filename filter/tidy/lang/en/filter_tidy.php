@@ -25,4 +25,4 @@
 
 $string['filtername'] = 'HTML tidy';
 $string['privacy:metadata'] = 'The HTML tidy plugin does not store any personal data.';
-$string['tidyextensionrequired'] = 'In order to use this filter, the \'tidy\' PHP extension must be installed';
+$string['tidyextensionrequired'] = 'To use this filter, the \'tidy\' PHP extension must be installed.';
