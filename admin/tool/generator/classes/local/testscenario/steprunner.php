@@ -103,6 +103,10 @@ class steprunner {
             if (isset($matches[$paramname])) {
                 $params[] = $matches[$paramname];
                 unset($matches[$paramname]);
+            } else if (isset($matches["{$paramname}_string"])) {
+                // If the param uses a regular expression with a name.
+                $params[] = $matches["{$paramname}_string"];
+                unset($matches["{$paramname}_string"]);
             } else if (count($matches) > 0) {
                 // If the param is not present means the regular expressions does not use
                 // proper names. So we will try to find the param by position.

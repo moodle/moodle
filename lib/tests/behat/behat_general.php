@@ -2372,6 +2372,18 @@ EOF;
     }
 
     /**
+     * Disable an specific plugin.
+     *
+     * @When /^I disable "(?P<plugin_string>(?:[^"]|\\")*)" "(?P<plugintype_string>[^"]*)" plugin$/
+     * @param string $plugin Plugin we look for
+     * @param string $plugintype The type of the plugin
+     */
+    public function i_disable_plugin($plugin, $plugintype) {
+        $class = core_plugin_manager::resolve_plugininfo_class($plugintype);
+        $class::enable_plugin($plugin, false);
+    }
+
+    /**
      * Set the default text editor to the named text editor.
      *
      * @Given the default editor is set to :editor
