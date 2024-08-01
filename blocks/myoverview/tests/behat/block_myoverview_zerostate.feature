@@ -1,4 +1,4 @@
-@block @block_myoverview @javascript
+@block @block_myoverview
 Feature: Zero state on my overview block
   In order to know what should be the next step
   As a user
@@ -31,15 +31,29 @@ Feature: Zero state on my overview block
     And "Request a course" "button" should exist
     And I click on "Request a course" "button"
     And I should see "Details of the course"
+    # Quickstart guide link should not be displayed when $CFG->coursecreationguide is empty.
+    But the following config values are set as admin:
+      | coursecreationguide | |
+    And I am on the "My courses" page
+    And "Moodle documentation" "link" should exist
+    And "Quickstart guide" "link" should not exist
 
   Scenario: Users with permissions to create a course when there is no course created
     Given I am on the "My courses" page logged in as "manager"
     When I should see "Create your first course"
     Then "Moodle documentation" "link" should exist
-    And "View Quickstart guide" "button" should exist
+    And "Quickstart guide" "link" should exist
+    And "Manage courses" "button" should not exist
+    And "Manage course categories" "button" should exist
     And "Create course" "button" should exist
     And I click on "Create course" "button"
     And I should see "Add a new course"
+    # Quickstart guide link should not be displayed when $CFG->coursecreationguide is empty.
+    But the following config values are set as admin:
+      | coursecreationguide | |
+    And I am on the "My courses" page
+    And "Moodle documentation" "link" should exist
+    And "Quickstart guide" "link" should not exist
 
   Scenario: Users with permissions to create a course but is not enrolled in any existing course
     Given the following "course" exists:
@@ -71,7 +85,7 @@ Feature: Zero state on my overview block
     And I click on "Create course" "button"
     And I should see "Add a new course"
 
-  @accessibility
+  @javascript @accessibility
   Scenario: Evaluate the accessibility of the My courses (zero state)
     When I am on the "My courses" page logged in as "manager"
     Then the page should meet accessibility standards
