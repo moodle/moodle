@@ -107,6 +107,7 @@ define([
         if (existingmarkertext.length) {
             if (dropZone.markertext !== '') {
                 existingmarkertext.html(dropZone.markertext);
+                filterEvent.notifyFilterContentUpdated(existingmarkertext);
             } else {
                 existingmarkertext.remove();
             }
@@ -127,6 +128,7 @@ define([
                     .data('originY', markerspan.position().top / bgRatio);
                 this.handleElementScale(markerspan, 'center');
             }
+            filterEvent.notifyFilterContentUpdated(markerspan);
         }
 
         var shapeSVG = shape.makeSvg(svg[0]);

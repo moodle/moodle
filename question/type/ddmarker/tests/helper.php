@@ -225,6 +225,7 @@ class qtype_ddmarker_test_helper extends question_test_helper {
 
         $fromform->defaultmark = 1;
         $fromform->generalfeedback = ['text' => 'The right answer is: "y = x^2"', 'format' => FORMAT_HTML];
+        $fromform->showmisplaced = 1;
         $fromform->bgimage = $bgdraftitemid;
         $fromform->shuffleanswers = 0;
         $fromform->drags = [
