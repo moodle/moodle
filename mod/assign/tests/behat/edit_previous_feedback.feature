@@ -4,9 +4,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
   As a teacher
   I need to be able to edit the feedback for a students previous submission attempt.
 
-  # Atto is necessary to use in this test to circumvent an error in Firefox when using Tiny.
-  # See issue MDL-77740 for more context, although that implementation does not fix it here.
-  @javascript @editor_atto
+  @javascript
   Scenario: Edit feedback for a students previous attempt.
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
