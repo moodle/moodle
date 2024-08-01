@@ -10,6 +10,7 @@ addsource_help,tiny_media
 advancedsettings,tiny_media
 audio,tiny_media
 audiosourcelabel,tiny_media
+browserepositoriesimage,tiny_media
 createmedia,tiny_media
 displayoptions,tiny_media
 entername,tiny_media
