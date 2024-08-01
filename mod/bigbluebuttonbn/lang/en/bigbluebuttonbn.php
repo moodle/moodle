@@ -626,9 +626,6 @@ $string['view_room'] = 'View room';
 $string['index_error_noinstances'] = 'There are no instances of BigBlueButton rooms';
 $string['index_error_bbtn'] = 'BigBlueButton ID {$a} is incorrect';
 
-$string['view_mobile_message_reload_page_creation_time_meeting'] = 'You exceeded 45 seconds on this page. Please refresh the page to join the session.';
-$string['view_mobile_message_groups_not_supported'] = 'This instance is enabled to work with groups but the mobile app doesn\'t yet support it. Please use the web version.';
-
 $string['end_session_confirm_title'] = 'Really end session?';
 $string['end_session_confirm'] = 'Are you sure you want to end the session?';
 $string['end_session_notification'] = 'The session has ended.';
@@ -667,3 +664,6 @@ $string['view_warning_default_server'] = 'This site is using a <a href="https://
 <li>Recordings expire after seven (7) days and are not downloadable</li>
 <li>Student webcams are only visible to the moderator.</li>
 </ol>';
+// Deprecated since Moodle 4.5.
+$string['view_mobile_message_reload_page_creation_time_meeting'] = 'You exceeded 45 seconds on this page. Please refresh the page to join the session.';
+$string['view_mobile_message_groups_not_supported'] = 'This instance is enabled to work with groups but the mobile app doesn\'t yet support it. Please use the web version.';
