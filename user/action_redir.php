@@ -231,7 +231,7 @@ if ($formaction == 'bulkchange.php') {
         $filteredusers = array_filter($users, $matchesplugin);
 
         // If the bulk operation is deleting enrolments, we exclude in any case the current user as it was probably a mistake.
-        if ($operationname === 'deleteselectedusers' && (!in_array($USER->id, $removed))) {
+        if ($operationname === 'deleteselectedusers' && array_key_exists($USER->id, $filteredusers)) {
             \core\notification::warning(get_string('userremovedfromselectiona', 'enrol', fullname($USER)));
             unset($filteredusers[$USER->id]);
         }
