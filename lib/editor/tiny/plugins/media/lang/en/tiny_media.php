@@ -107,6 +107,7 @@ $string['subtitles_help'] = 'Subtitles may be used to provide a transcription or
 $string['subtitles'] = 'Subtitles';
 $string['subtitlesandcaptions'] = 'Subtitles and Captions';
 $string['subtitlessourcelabel'] = 'Subtitle track URL';
+$string['thumbnail'] = 'Media thumbnail';
 $string['tracks_help'] = 'Subtitles, captions, chapters and descriptions can be added via a WebVTT (Web Video Text Tracks) format file. Track labels will be shown in the selection drop-down menu. For each type of track, any track set as default will be pre-selected at the start of the video.';
 $string['tracks'] = 'Subtitles and captions';
 $string['unusedfilesdesc'] = 'The following embedded files are not used in the text area:';
