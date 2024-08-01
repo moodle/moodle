@@ -1,0 +1,35 @@
+issueNumber: MDL-78428
+notes:
+  core_media:
+    - message: >-
+        Added new method "get_controls_from_url" in
+        media/player/youtube/classes/plugin.php to handle/get controls from the
+        YouTube link
+      type: improved
+  core_editor:
+    - message: >-
+        Deprecated all methods in
+        editor/tiny/plugins/media/amd/src/imagehelpers.js due to being moved to
+        editor/tiny/plugins/media/amd/src/helpers.js
+      type: deprecated
+    - message: >-
+        The following unused lang strings in `lib/editor/tiny/plugins/media/` have
+        been deprecated:
+
+        - `addsource,tiny_media`
+        - `addsource_help,tiny_media`
+        - `advancedsettings,tiny_media`
+        - `audio,tiny_media`
+        - `audiosourcelabel,tiny_media`
+        - `browserepositoriesimage,tiny_media`
+        - `createmedia,tiny_media`
+        - `displayoptions,tiny_media`
+        - `entername,tiny_media`
+        - `entersource,tiny_media`
+        - `link,tiny_media`
+        - `updatemedia,tiny_media`
+        - `video,tiny_media`
+        - `videoheight,tiny_media`
+        - `videosourcelabel,tiny_media`
+        - `videowidth,tiny_media`
+      type: deprecated
