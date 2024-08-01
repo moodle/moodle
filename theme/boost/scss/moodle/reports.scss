@@ -35,6 +35,15 @@
     }
 }
 
+#page-report-outline-user .section {
+    border: $border-width solid $border-color;
+    @include border-radius($activity-border-radius);
+}
+
+#page-report-outline-user .font-lg {
+    font-size: $font-size-base * 1.1;
+}
+
 #page-report-log-index #menumodid option:disabled {
     // Browsers do not consider the color of a disabled option
     // if it is the same as the non-disabled options.
