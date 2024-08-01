@@ -342,8 +342,8 @@ $string['country'] = 'Country';
 $string['course'] = 'Course';
 $string['courseheader'] = 'Course menu';
 $string['courseadministration'] = 'Course administration';
-$string['courseapprovedemail'] = 'Your requested course, {$a->name}, has been approved and you have been made a {$a->teacher}.  To access your new course, go to {$a->url}';
-$string['courseapprovedemail2'] = 'Your requested course, {$a->name}, has been approved.  To access your new course, go to {$a->url}';
+$string['courseapprovedemail'] = 'Your requested course is approved, <a href="{$a->url}">{$a->name}</a>, and you are a {$a->teacher}.';
+$string['courseapprovedemail2'] = 'Your requested course is approved: <a href="{$a->url}">{$a->name}</a>.';
 $string['courseapprovedfailed'] = 'Failed to save the course as approved!';
 $string['courseapprovedsubject'] = 'Your course has been approved!';
 $string['courseavailable'] = 'This course is available to students';
@@ -699,7 +699,7 @@ $string['emailcharset'] = 'Email charset';
 $string['emailmustbereal'] = 'Note: your email address must be a real one';
 $string['emailnotallowed'] = 'Email addresses in these domains are not allowed ({$a})';
 $string['emailnotfound'] = 'The email address was not found in the database';
-$string['emailonlyallowed'] = 'This email is not one of those that are allowed ({$a})';
+$string['emailonlyallowed'] = 'This email cannot be used. Allowed email domains are: {$a}.';
 $string['emailpasswordconfirmation'] = 'Hi {$a->firstname},
 
 Someone (probably you) has requested a new password for your
@@ -1845,7 +1845,7 @@ $string['resetcourseconfirm'] = 'Reset course?';
 $string['resetcoursewarning'] = 'Are you sure you want to reset the course \'{$a}\'?
 <br/><br/>
 This will delete the selected data and reset the course back to its original state. You can\'t undo this action.';
-$string['resetinfo'] = 'This feature allows you to clear all user data and reset the course to its original state. Course activities and settings will remain untouched.';
+$string['resetinfo'] = 'This feature allows you to clear all user data and reset the course to its original state. Course activities and settings remain unchanged.';
 $string['resetinfoselect'] = 'Select the data you want to delete or reset from the categories below:';
 $string['resetnotimplemented'] = 'Reset not supported';
 $string['resetnotimplementedinfo'] = 'These activities can\'t be reset:';
@@ -2390,7 +2390,7 @@ $string['welcometocoursetext'] = 'Welcome to {$a->coursename}!
 
 If you have not done so already, you should edit your profile page so that we can learn more about you:
 
-<a href="{$a->profileurl}">{$a->profileurl}<a>';
+<a href="{$a->profileurl}">{$a->profileurl}</a>';
 $string['whatforlink'] = 'What do you want to do with the link?';
 $string['whatforpage'] = 'What do you want to do with the text?';
 $string['whatisyourage'] = 'What is your age?';
