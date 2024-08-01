@@ -1,0 +1,9 @@
+issueNumber: MDL-80017
+notes:
+  core_grades:
+    - message: >
+        The grade `itemname` property contained in the return structure of
+        the following external methods is now PARAM_RAW:
+          - `core_grades_get_gradeitems`
+          - `gradereport_user_get_grade_items`
+      type: changed

@@ -41,7 +41,7 @@ class get_gradeitems_test extends \externallib_advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
         $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course->id]);
-        $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
+        $this->getDataGenerator()->create_module('assign', ['course' => $course->id, 'name' => 'Assignment & grade items']);
 
         $result = get_gradeitems::execute($course->id);
         $result = external_api::clean_returnvalue(get_gradeitems::execute_returns(), $result);
