@@ -1,6 +1,11 @@
 This file describes API changes in /grade/* ;
 Information provided here is intended especially for developers.
 
+=== 4.4.2 ===
+* The grade `itemname` property contained in the return structure of the following external methods is now PARAM_RAW:
+  - `core_grades_get_gradeitems`
+  - `gradereport_user_get_grade_items`
+
 === 4.4 ===
 * The grade_structure::get_element_icon() function has been deprecated. Please use grade_helper::get_element_icon() instead.
 * The grade_structure::get_element_type_string() function has been deprecated. Please use grade_helper::get_element_type_string() instead.
