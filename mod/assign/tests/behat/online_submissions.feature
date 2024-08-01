@@ -60,8 +60,6 @@ Feature: In an assignment, students can add and edit text online
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And the following config values are set as admin:
-      | autosavefrequency | 1 | editor_atto |
     And the following "activity" exists:
       | activity                                      | assign                  |
       | course                                        | C1                      |
