@@ -22,19 +22,20 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace PHPSTORM_META;
+namespace PHPSTORM_META {
 
-// Assume that anything returned by \core\di::get('...') is an instance of the first argument.
-override(\core\di::get(0), map([
-    '' => '@',
-]));
+    // Assume that anything returned by \core\di::get('...') is an instance of the first argument.
+    override(\core\di::get(0), map([
+        '' => '@',
+    ]));
 
-// Assume that anything returned by \Psr\Container\ContainerInterface::get('...') is an instance of the first argument.
-override(\Psr\Container\ContainerInterface::get(0), map([
-    '' => '@',
-]));
+    // Assume that anything returned by \Psr\Container\ContainerInterface::get('...') is an instance of the first argument.
+    override(\Psr\Container\ContainerInterface::get(0), map([
+        '' => '@',
+    ]));
 
-// Assume that anything returned by \DI\Container::get('...') is an instance of the first argument.
-override(\DI\Container::get(0), map([
-    '' => '@',
-]));
+    // Assume that anything returned by \DI\Container::get('...') is an instance of the first argument.
+    override(\DI\Container::get(0), map([
+        '' => '@',
+    ]));
+}
