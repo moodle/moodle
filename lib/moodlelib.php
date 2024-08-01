@@ -1185,6 +1185,7 @@ function purge_all_caches() {
  *
  * @param bool[] $options Specific parts of the cache to purge. Valid options are:
  *        'muc'    Purge MUC caches?
+ *        'courses' Purge all course caches, or specific course caches (CLI only)
  *        'theme'  Purge theme cache?
  *        'lang'   Purge language string cache?
  *        'js'     Purge javascript cache?
@@ -1200,8 +1201,7 @@ function purge_caches($options = []) {
     }
     if ($options['muc']) {
         cache_helper::purge_all();
-    }
-    if ($options['courses']) {
+    } else if ($options['courses']) {
         if ($options['courses'] === true) {
             $courseids = [];
         } else {
