@@ -39,9 +39,9 @@ require_once($CFG->dirroot . '/question/type/numerical/question.php');
  */
 class qtype_calculated extends question_type {
     /**
-     * @const string a placeholder is a letter, followed by almost any characters. (This should probably be restricted more.)
+     * @const string a placeholder is a letter, followed by zero or more alphanum chars (as well as space, - and _ for readability).
      */
-    const PLACEHOLDER_REGEX_PART = '[[:alpha:]][^>} <`{"\']*';
+    const PLACEHOLDER_REGEX_PART = '[[:alpha:]][[:alpha:][:digit:]\-_\s]*';
 
     /**
      * @const string REGEXP for a placeholder, wrapped in its {...} delimiters, with capturing brackets around the name.
@@ -1937,15 +1937,18 @@ function qtype_calculated_find_formula_errors($formula) {
     // Validates the formula submitted from the question edit page.
     // Returns false if everything is alright
     // otherwise it constructs an error message.
-    // Strip away dataset names. Use 1.0 to catch illegal concatenation like {a}{b}.
+    // Strip away dataset names. Use 1.0 to remove valid names, so illegal names can be identified later.
     $formula = preg_replace(qtype_calculated::PLACEHODLER_REGEX, '1.0', $formula);
 
     // Strip away empty space and lowercase it.
     $formula = strtolower(str_replace(' ', '', $formula));
 
-    $safeoperatorchar = '-+/*%>:^\~<?=&|!'; /* */
+    // Only mathematical operators are supported. Bitwise operators are not safe.
+    // Note: In this context, ^ is a bitwise operator (exponents are represented by **).
+    $safeoperatorchar = '-+/*%>:\~<?=!';
     $operatorornumber = "[{$safeoperatorchar}.0-9eE]";
 
+    // Validate mathematical functions in formula.
     while (preg_match("~(^|[{$safeoperatorchar},(])([a-z0-9_]*)" .
             "\\(({$operatorornumber}+(,{$operatorornumber}+((,{$operatorornumber}+)+)?)?)?\\)~",
             $formula, $regs)) {
