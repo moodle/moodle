@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace filter_data;
+
 use core_filters\filter_object;
 
 /**
@@ -38,9 +39,11 @@ class text_filter extends \core_filters\text_filter {
         static $nothingtodo;
 
         // Try to get current course.
-        $coursectx = $this->context->get_course_context(false);
         // We could be in a course category so no entries for courseid == 0 will be found.
-        $courseid = $coursectx?->instanceid ?: 0;
+        $courseid = 0;
+        if ($coursectx = $this->context->get_course_context(false)) {
+            $courseid = $coursectx->instanceid;
+        }
 
         if ($cacheduserid !== $USER->id) {
             // Invalidate all caches if the user changed.
