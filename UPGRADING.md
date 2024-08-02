@@ -55,8 +55,50 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-77167](https://tracker.moodle.org/browse/MDL-77167)
 
+#### Deprecated
+
+- The following method has been deprecated and should no longer be used: `reset_password_and_mail`. Please consider using `setnew_password_and_mail` as a replacement.
+
+  For more information see [MDL-64148](https://tracker.moodle.org/browse/MDL-64148)
+- The following methods have been deprecated, existing usage should switch to secure `\core\encryption` library:
+  - `rc4encrypt`
+  - `rc4decrypt`
+  - `endecrypt`
+
+  For more information see [MDL-81940](https://tracker.moodle.org/browse/MDL-81940)
+- The following method has been deprecated and should not be used any longer: `print_grade_menu`.
+
+  For more information see [MDL-82157](https://tracker.moodle.org/browse/MDL-82157)
+- The following files and their contents have been deprecated:
+  - `lib/soaplib.php`
+  - `lib/tokeniserlib.php`
+
+  For more information see [MDL-82191](https://tracker.moodle.org/browse/MDL-82191)
+- The following methods have been formally deprecated:
+  - `get_core_subsystems`
+  - `get_plugin_types`
+  - `get_plugin_list`
+  - `get_plugin_list_with_class`
+  - `get_plugin_directory`
+  - `normalize_component`
+  - `get_component_directory`
+  - `get_context_instance`
+  Note: These methods have been deprecated for a long time, but previously did not emit any deprecation notice.
+
+  For more information see [MDL-82287](https://tracker.moodle.org/browse/MDL-82287)
+- The following methods have been finally deprecated and will now throw an exception if called:
+  - `get_context_instance`
+  - `can_use_rotated_text`
+  - `get_system_context`
+  - `print_arrow`
+
+  For more information see [MDL-82287](https://tracker.moodle.org/browse/MDL-82287)
+
 #### Added
 
+- Add \core_user::get_name_placeholders() to return an array of user name fields.
+
+  For more information see [MDL-64148](https://tracker.moodle.org/browse/MDL-64148)
 - The following classes have been renamed and now support autoloading.
   Existing classes are currently unaffected.
   | Old class name | New class name |
@@ -77,6 +119,20 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Added stored progress bars
 
   For more information see [MDL-70854](https://tracker.moodle.org/browse/MDL-70854)
+- Two new functions have been introduced in the \moodle_database class:
+  - `get_counted_records_sql()`
+  - `get_counted_recordset_sql()`
+  These methods are compatible with all databases.
+  They will check the current running database engine and apply the COUNT window function if it is supported,
+  otherwise, they will use the usual COUNT function.
+  The COUNT window function optimization is applied to the following databases:
+  - PostgreSQL
+  - MariaDB
+  - Oracle
+  MySQL and SQL Server do not use this optimization due to insignificant performance differences before and
+  after the improvement.
+
+  For more information see [MDL-78030](https://tracker.moodle.org/browse/MDL-78030)
 - New DML constant `SQL_INT_MAX` to define the size of a large integer with cross database platform support
 
   For more information see [MDL-81282](https://tracker.moodle.org/browse/MDL-81282)
@@ -216,42 +272,6 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-81894](https://tracker.moodle.org/browse/MDL-81894)
 
-#### Deprecated
-
-- The following methods have been deprecated, existing usage should switch to secure `\core\encryption` library:
-  - `rc4encrypt`
-  - `rc4decrypt`
-  - `endecrypt`
-
-  For more information see [MDL-81940](https://tracker.moodle.org/browse/MDL-81940)
-- The following method has been deprecated and should not be used any longer: `print_grade_menu`.
-
-  For more information see [MDL-82157](https://tracker.moodle.org/browse/MDL-82157)
-- The following files and their contents have been deprecated:
-  - `lib/soaplib.php`
-  - `lib/tokeniserlib.php`
-
-  For more information see [MDL-82191](https://tracker.moodle.org/browse/MDL-82191)
-- The following methods have been formally deprecated:
-  - `get_core_subsystems`
-  - `get_plugin_types`
-  - `get_plugin_list`
-  - `get_plugin_list_with_class`
-  - `get_plugin_directory`
-  - `normalize_component`
-  - `get_component_directory`
-  - `get_context_instance`
-  Note: These methods have been deprecated for a long time, but previously did not emit any deprecation notice.
-
-  For more information see [MDL-82287](https://tracker.moodle.org/browse/MDL-82287)
-- The following methods have been finally deprecated and will now throw an exception if called:
-  - `get_context_instance`
-  - `can_use_rotated_text`
-  - `get_system_context`
-  - `print_arrow`
-
-  For more information see [MDL-82287](https://tracker.moodle.org/browse/MDL-82287)
-
 ### core_reportbuilder
 
 #### Added
@@ -333,6 +353,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The constant `ASSIGN_ATTEMPT_REOPEN_METHOD_NONE` has been deprecated, and a new default value for `attemptreopenmethod` has been set to "Automatically until pass".
 
   For more information see [MDL-80741](https://tracker.moodle.org/browse/MDL-80741)
+- The `$submissionpluginenabled` and `$submissioncount` parameters from the constructor of the `mod_assign\output::grading_actionmenu` class have been deprecated.
+
+  For more information see [MDL-80752](https://tracker.moodle.org/browse/MDL-80752)
 - Method assign_grading_table::col_picture has been deprecated.
 
   For more information see [MDL-82292](https://tracker.moodle.org/browse/MDL-82292)
@@ -430,6 +453,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-74581](https://tracker.moodle.org/browse/MDL-74581)
 
+#### Changed
+
+- The grade `itemname` property contained in the return structure of the following external methods is now PARAM_RAW:
+    - `core_grades_get_gradeitems`
+    - `gradereport_user_get_grade_items`
+
+  For more information see [MDL-80017](https://tracker.moodle.org/browse/MDL-80017)
+
 #### Deprecated
 
 - The behat step definition behat_grade::i_confirm_in_search_within_the_gradebook_widget_exists has been deprecated. Please use behat_general::i_confirm_in_search_combobox_exists instead.
@@ -461,6 +492,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### core_user
 
+#### Deprecated
+
+- The participants_search::get_total_participants_count() is no longer used since the total count can be obtained from ::get_participants()
+
+  For more information see [MDL-78030](https://tracker.moodle.org/browse/MDL-78030)
+
 #### Changed
 
 - The visibility of the methods: check_access_for_dynamic_submission() and get_options() in core_user\form\private_files has been changed from protected to public.
@@ -486,6 +523,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - column_base::from_column_name now has an ignoremissing field, which can be used to ignore if the class does not exist, instead of throwing an exception.
 
   For more information see [MDL-81125](https://tracker.moodle.org/browse/MDL-81125)
+
+### tool
+
+#### Removed
+
+- The Convert to InnoDB plugin (tool_innodb) has been completely removed.
+
+  For more information see [MDL-78776](https://tracker.moodle.org/browse/MDL-78776)
 
 ### core_webservice
 
@@ -602,6 +647,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Webservices `core_course_get_courses_by_field` now accepts a new parameter `sectionid` to be able to retrieve the course that has the indicated section
 
   For more information see [MDL-81699](https://tracker.moodle.org/browse/MDL-81699)
+- i_open_section_edit_menu(), i_show_section(), i_hide_section(), i_wait_until_section_is_available(), show_section_link_exists(), hide_section_link_exists() and section_exists() functions have been improved to accept not only section number but also section name.
+
+  For more information see [MDL-82259](https://tracker.moodle.org/browse/MDL-82259)
 
 #### Deprecated
 
@@ -666,6 +714,28 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - get_activities_list() function returns also an array of disabled elements, apart from the array of activities.
 
   For more information see [MDL-82146](https://tracker.moodle.org/browse/MDL-82146)
+
+### core_filters
+
+#### Added
+
+- Added support for autoloading of filters from `\filter_[filtername]\filter`. Existing classes should be renamed to use the new namespace.
+
+  For more information see [MDL-82427](https://tracker.moodle.org/browse/MDL-82427)
+
+#### Deprecated
+
+- The `filter_manager::text_filtering_hash` method has been finally deprecated and removed.
+
+  For more information see [MDL-82427](https://tracker.moodle.org/browse/MDL-82427)
+
+### mod_bigbluebuttonbn
+
+#### Removed
+
+- Mobile support via plugin has been removed.
+
+  For more information see [MDL-82447](https://tracker.moodle.org/browse/MDL-82447)
 
 ### customfield_select
 

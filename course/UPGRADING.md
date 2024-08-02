@@ -10,6 +10,9 @@
 - Webservices `core_course_get_courses_by_field` now accepts a new parameter `sectionid` to be able to retrieve the course that has the indicated section
 
   For more information see [MDL-81699](https://tracker.moodle.org/browse/MDL-81699)
+- i_open_section_edit_menu(), i_show_section(), i_hide_section(), i_wait_until_section_is_available(), show_section_link_exists(), hide_section_link_exists() and section_exists() functions have been improved to accept not only section number but also section name.
+
+  For more information see [MDL-82259](https://tracker.moodle.org/browse/MDL-82259)
 
 ### Deprecated
 

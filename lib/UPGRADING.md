@@ -24,8 +24,50 @@
 
   For more information see [MDL-77167](https://tracker.moodle.org/browse/MDL-77167)
 
+### Deprecated
+
+- The following method has been deprecated and should no longer be used: `reset_password_and_mail`. Please consider using `setnew_password_and_mail` as a replacement.
+
+  For more information see [MDL-64148](https://tracker.moodle.org/browse/MDL-64148)
+- The following methods have been deprecated, existing usage should switch to secure `\core\encryption` library:
+  - `rc4encrypt`
+  - `rc4decrypt`
+  - `endecrypt`
+
+  For more information see [MDL-81940](https://tracker.moodle.org/browse/MDL-81940)
+- The following method has been deprecated and should not be used any longer: `print_grade_menu`.
+
+  For more information see [MDL-82157](https://tracker.moodle.org/browse/MDL-82157)
+- The following files and their contents have been deprecated:
+  - `lib/soaplib.php`
+  - `lib/tokeniserlib.php`
+
+  For more information see [MDL-82191](https://tracker.moodle.org/browse/MDL-82191)
+- The following methods have been formally deprecated:
+  - `get_core_subsystems`
+  - `get_plugin_types`
+  - `get_plugin_list`
+  - `get_plugin_list_with_class`
+  - `get_plugin_directory`
+  - `normalize_component`
+  - `get_component_directory`
+  - `get_context_instance`
+  Note: These methods have been deprecated for a long time, but previously did not emit any deprecation notice.
+
+  For more information see [MDL-82287](https://tracker.moodle.org/browse/MDL-82287)
+- The following methods have been finally deprecated and will now throw an exception if called:
+  - `get_context_instance`
+  - `can_use_rotated_text`
+  - `get_system_context`
+  - `print_arrow`
+
+  For more information see [MDL-82287](https://tracker.moodle.org/browse/MDL-82287)
+
 ### Added
 
+- Add \core_user::get_name_placeholders() to return an array of user name fields.
+
+  For more information see [MDL-64148](https://tracker.moodle.org/browse/MDL-64148)
 - The following classes have been renamed and now support autoloading.
   Existing classes are currently unaffected.
   | Old class name | New class name |
@@ -46,6 +88,20 @@
 - Added stored progress bars
 
   For more information see [MDL-70854](https://tracker.moodle.org/browse/MDL-70854)
+- Two new functions have been introduced in the \moodle_database class:
+  - `get_counted_records_sql()`
+  - `get_counted_recordset_sql()`
+  These methods are compatible with all databases.
+  They will check the current running database engine and apply the COUNT window function if it is supported,
+  otherwise, they will use the usual COUNT function.
+  The COUNT window function optimization is applied to the following databases:
+  - PostgreSQL
+  - MariaDB
+  - Oracle
+  MySQL and SQL Server do not use this optimization due to insignificant performance differences before and
+  after the improvement.
+
+  For more information see [MDL-78030](https://tracker.moodle.org/browse/MDL-78030)
 - New DML constant `SQL_INT_MAX` to define the size of a large integer with cross database platform support
 
   For more information see [MDL-81282](https://tracker.moodle.org/browse/MDL-81282)
@@ -184,39 +240,3 @@
 - Use server timezone when constructing `\DateTimeImmutable` for the system `\core\clock` implementation.
 
   For more information see [MDL-81894](https://tracker.moodle.org/browse/MDL-81894)
-
-### Deprecated
-
-- The following methods have been deprecated, existing usage should switch to secure `\core\encryption` library:
-  - `rc4encrypt`
-  - `rc4decrypt`
-  - `endecrypt`
-
-  For more information see [MDL-81940](https://tracker.moodle.org/browse/MDL-81940)
-- The following method has been deprecated and should not be used any longer: `print_grade_menu`.
-
-  For more information see [MDL-82157](https://tracker.moodle.org/browse/MDL-82157)
-- The following files and their contents have been deprecated:
-  - `lib/soaplib.php`
-  - `lib/tokeniserlib.php`
-
-  For more information see [MDL-82191](https://tracker.moodle.org/browse/MDL-82191)
-- The following methods have been formally deprecated:
-  - `get_core_subsystems`
-  - `get_plugin_types`
-  - `get_plugin_list`
-  - `get_plugin_list_with_class`
-  - `get_plugin_directory`
-  - `normalize_component`
-  - `get_component_directory`
-  - `get_context_instance`
-  Note: These methods have been deprecated for a long time, but previously did not emit any deprecation notice.
-
-  For more information see [MDL-82287](https://tracker.moodle.org/browse/MDL-82287)
-- The following methods have been finally deprecated and will now throw an exception if called:
-  - `get_context_instance`
-  - `can_use_rotated_text`
-  - `get_system_context`
-  - `print_arrow`
-
-  For more information see [MDL-82287](https://tracker.moodle.org/browse/MDL-82287)

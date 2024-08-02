@@ -10,6 +10,14 @@
 
   For more information see [MDL-74581](https://tracker.moodle.org/browse/MDL-74581)
 
+### Changed
+
+- The grade `itemname` property contained in the return structure of the following external methods is now PARAM_RAW:
+    - `core_grades_get_gradeitems`
+    - `gradereport_user_get_grade_items`
+
+  For more information see [MDL-80017](https://tracker.moodle.org/browse/MDL-80017)
+
 ### Deprecated
 
 - The behat step definition behat_grade::i_confirm_in_search_within_the_gradebook_widget_exists has been deprecated. Please use behat_general::i_confirm_in_search_combobox_exists instead.
