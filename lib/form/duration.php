@@ -36,6 +36,9 @@ require_once($CFG->libdir . '/form/text.php');
  * HTML class for a length of time. For example, 30 minutes of 4 days. The
  * values returned to PHP is the duration in seconds (an int rounded to the nearest second).
  *
+ * By default, only durations >= 0 can be input. If you want to allow negative
+ * durations set the option allownegative.
+ *
  * @package   core_form
  * @category  form
  * @copyright 2009 Tim Hunt
@@ -46,9 +49,10 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
      * Control the field names for form elements
      * optional => if true, show a checkbox beside the element to turn it on (or off)
      * defaultunit => which unit is default when the form is blank (default Minutes).
+     * allownegative => are durations < 0 allowed? (default false)
      * @var array
      */
-    protected $_options = ['optional' => false, 'defaultunit' => MINSECS];
+    protected $_options = ['optional' => false, 'defaultunit' => MINSECS, 'allownegative' => false];
 
     /** @var array associative array of time units (days, hours, minutes, seconds) */
     private $_units = null;
@@ -64,6 +68,7 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
     *              the time is blank. If not specified, minutes is used.
     *      'units' => array containing some or all of 1, MINSECS, HOURSECS, DAYSECS and WEEKSECS
     *              which unit choices to offer.
+    *      'allownegative' => true/false - are durations < 0 allowed? (default false)
     * @param mixed $attributes Either a typical HTML attribute string or an associative array
     */
     public function __construct($elementName = null, $elementLabel = null,
@@ -78,6 +83,7 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
             $options = [];
         }
         $this->_options['optional'] = !empty($options['optional']);
+        $this->_options['allownegative'] = !empty($options['allownegative']);
         if (isset($options['defaultunit'])) {
             if (!array_key_exists($options['defaultunit'], $this->get_units())) {
                 throw new coding_exception($options['defaultunit'] .
@@ -246,6 +252,14 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
             default:
                 return parent::onQuickFormEvent($event, $arg, $caller);
         }
+    }
+
+    #[\Override]
+    public function validateSubmitValue($values) {
+        if ($this->exportValue($values) < 0 && !$this->_options['allownegative']) {
+            return get_string('err_positiveduration', 'core_form');
+        }
+        return null;
     }
 
     /**
