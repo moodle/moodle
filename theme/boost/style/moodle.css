@@ -26025,6 +26025,10 @@ blockquote {
   border-left: 5px solid #ced4da;
 }
 
+.page-header-headings {
+  background-color: #fff;
+}
+
 /* Prevent long strings exceeding page width */
 .page-header-headings:not(.text-truncate),
 .coursename:not(.text-truncate),
