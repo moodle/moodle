@@ -15,23 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Generator for mod_qbank.
- * Required by the module generator but intentionally blank until we need to extend
+ * mod_qbank install operations to transfer question categories to new contexts.
  *
  * @package    mod_qbank
  * @copyright  2024 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author     Simon Adams <simon.adams@catalyst-eu.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_qbank_generator extends testing_module_generator {
-
-    #[\Override]
-    public function create_instance($record = null, ?array $options = null) {
-        $record = (object)(array)$record;
-
-        if (empty($record->type)) {
-            $record->type = core_question\local\bank\question_bank_helper::TYPE_STANDARD;
-        }
-        return parent::create_instance($record, $options);
-    }
+function xmldb_qbank_install(): void {
+    $task = new \mod_qbank\task\transfer_question_categories();
+    \core\task\manager::queue_adhoc_task($task);
 }
