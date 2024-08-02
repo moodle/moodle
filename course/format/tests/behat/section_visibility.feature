@@ -1,5 +1,5 @@
 @core @core_courseformat
-Feature: Varify section visibility interface
+Feature: Verify section visibility interface
   In order to edit the course sections visibility
   As a teacher
   I need to be able to see the updated visibility information

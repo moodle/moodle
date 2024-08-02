@@ -177,6 +177,11 @@ abstract class sectiondelegatemodule extends sectiondelegate {
             $cmrecord['availability'] = $sectionrecord->availability;
         }
 
+        if (isset($sectionrecord->visible) && $sectionrecord->visible !== $this->cm->visible) {
+            $cmrecord['visible'] = $sectionrecord->visible;
+            $cmrecord['visibleold'] = $sectionrecord->visible;
+        }
+
         if (empty($cmrecord)) {
             return;
         }
