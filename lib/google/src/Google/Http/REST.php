@@ -71,7 +71,7 @@ class Google_Http_REST
    * @param Google_Client $client
    * @return mixed|null
    */
-  public static function decodeHttpResponse($response, Google_Client $client = null)
+  public static function decodeHttpResponse($response, ?Google_Client $client = null)
   {
     $code = $response->getResponseHttpCode();
     $body = $response->getResponseBody();
