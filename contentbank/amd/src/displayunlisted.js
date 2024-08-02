@@ -14,36 +14,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Module to handle AJAX interactions with content bank upload files.
+ * Module to handle toggling "Display unlisted" preference
  *
  * @module     core_contentbank/displayunlisted
  * @copyright  2023 Daniel Neis Araujo
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import {call as fetchMany} from 'core/ajax';
+
+import Notification from 'core/notification';
+import Pending from 'core/pending';
+import {setUserPreference} from 'core_user/repository';
 
 /**
- * Initialize upload files to the content bank form as Modal form.
+ * Initialize module, add event listeners
  *
  * @param {String} elementSelector
  */
-export const update = (elementSelector) => {
-    const element = document.querySelector(elementSelector);
-    element.addEventListener('click', function() {
-        const args = {
-            userid: this.userId,
-            preferences: [
-                {
-                    type: 'core_contentbank_displayunlisted',
-                    value: !!element.checked,
-                }
-            ],
-        };
-        fetchMany([{
-            methodname: 'core_user_update_user_preferences',
-            args: args,
-        }])[0].done(function() {
-            document.location.reload();
-        });
+export const init = elementSelector => {
+    document.addEventListener('click', event => {
+        const element = event.target.closest(elementSelector);
+        if (element) {
+            const pendingPromise = new Pending('core_contentbank/displayunlisted');
+
+            setUserPreference('core_contentbank_displayunlisted', !!element.checked)
+                .then(() => {
+                    pendingPromise.resolve();
+                    return document.location.reload();
+                })
+                .catch(Notification.exception);
+        }
     });
 };
