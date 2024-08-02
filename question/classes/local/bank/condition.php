@@ -61,7 +61,7 @@ abstract class condition {
      *
      * @param view|null $qbank
      */
-    public function __construct(view $qbank = null) {
+    public function __construct(?view $qbank = null) {
         if (is_null($qbank)) {
             return;
         }

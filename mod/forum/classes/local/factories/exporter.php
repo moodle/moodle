@@ -236,7 +236,7 @@ class exporter {
         array $authorcontextids = [],
         array $attachmentsbypostid = [],
         array $groupsbyauthorid = [],
-        post_read_receipt_collection_entity $readreceiptcollection = null,
+        ?post_read_receipt_collection_entity $readreceiptcollection = null,
         array $tagsbypostid = [],
         array $ratingbypostid = [],
         bool $includehtml = false,

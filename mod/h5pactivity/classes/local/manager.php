@@ -177,7 +177,7 @@ class manager {
      * @param stdClass|null $user user record (default $USER)
      * @return bool if the user has permission to submit in this activity
      */
-    public function can_submit(stdClass $user = null): bool {
+    public function can_submit(?stdClass $user = null): bool {
         global $USER;
 
         if (empty($user)) {
@@ -192,7 +192,7 @@ class manager {
      * @param stdClass|null $user user record (default $USER)
      * @return bool if the user can see the attempts link
      */
-    public function can_view_all_attempts(stdClass $user = null): bool {
+    public function can_view_all_attempts(?stdClass $user = null): bool {
         global $USER;
         if (!$this->instance->enabletracking) {
             return false;
@@ -209,7 +209,7 @@ class manager {
      * @param stdClass|null $user user record (default $USER)
      * @return bool if the user can see the own attempts link
      */
-    public function can_view_own_attempts(stdClass $user = null): bool {
+    public function can_view_own_attempts(?stdClass $user = null): bool {
         global $USER;
         if (!$this->instance->enabletracking) {
             return false;
@@ -302,7 +302,7 @@ class manager {
      * @param int|null $userid optional user id (default null)
      * @return int the total amount of attempts
      */
-    public function count_attempts(int $userid = null): int {
+    public function count_attempts(?int $userid = null): int {
         global $DB;
 
         // Counting records is enough for one user.
@@ -460,7 +460,7 @@ class manager {
      * @param int|bool $currentgroup False if groups not used, 0 for all groups, group id (int) to filter by specific group
      * @return report|null available report (or null if no report available)
      */
-    public function get_report(int $userid = null, int $attemptid = null, $currentgroup = false): ?report {
+    public function get_report(?int $userid = null, ?int $attemptid = null, $currentgroup = false): ?report {
         global $USER, $CFG;
 
         require_once("{$CFG->dirroot}/user/lib.php");

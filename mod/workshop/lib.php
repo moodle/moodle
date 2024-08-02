@@ -1627,7 +1627,7 @@ function workshop_extend_navigation(navigation_node $navref, stdclass $course, s
  * @param settings_navigation $settingsnav {@link settings_navigation}
  * @param navigation_node $workshopnode {@link navigation_node}
  */
-function workshop_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $workshopnode=null) {
+function workshop_extend_settings_navigation(settings_navigation $settingsnav, ?navigation_node $workshopnode=null) {
     if (has_capability('mod/workshop:editdimensions', $settingsnav->get_page()->cm->context)) {
         $url = new moodle_url('/mod/workshop/editform.php', array('cmid' => $settingsnav->get_page()->cm->id));
         $workshopnode->add(get_string('assessmentform', 'workshop'), $url,

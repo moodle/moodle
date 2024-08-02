@@ -66,7 +66,7 @@ class issuer extends persistent {
      * @param array $ajaxformdata
      */
     public function __construct($action = null, $customdata = null, $method = 'post', $target = '', $attributes = null,
-                                $editable = true, array $ajaxformdata = null) {
+                                $editable = true, ?array $ajaxformdata = null) {
         // The type variable defines, if we are in the creation process of a standard issuer.
         if (array_key_exists('type', $customdata)) {
             $this->type = $customdata['type'];

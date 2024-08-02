@@ -1436,7 +1436,7 @@ class enrol_user_button extends single_button {
      * @param string $galleryversion Deprecated: The gallery version to use
      * @param bool $ondomready If true the call is postponed until the DOM is finished loading
      */
-    public function require_yui_module($modules, $function, array $arguments = null, $galleryversion = null, $ondomready = false) {
+    public function require_yui_module($modules, $function, ?array $arguments = null, $galleryversion = null, $ondomready = false) {
         if ($galleryversion != null) {
             debugging('The galleryversion parameter to yui_module has been deprecated since Moodle 2.3.', DEBUG_DEVELOPER);
         }
@@ -1457,7 +1457,7 @@ class enrol_user_button extends single_button {
      * @param bool $ondomready If true the call is postponed until the DOM is finished loading
      * @param array $module A module definition
      */
-    public function require_js_init_call($function, array $extraarguments = null, $ondomready = false, array $module = null) {
+    public function require_js_init_call($function, ?array $extraarguments = null, $ondomready = false, ?array $module = null) {
         $js = new stdClass;
         $js->function = $function;
         $js->extraarguments = $extraarguments;
@@ -1541,7 +1541,7 @@ class user_enrolment_action implements renderable {
      * @param moodle_url $url
      * @param array $attributes
      */
-    public function __construct(pix_icon $icon, $title, $url, array $attributes = null) {
+    public function __construct(pix_icon $icon, $title, $url, ?array $attributes = null) {
         $this->icon = $icon;
         $this->title = $title;
         $this->url = new moodle_url($url);
@@ -1623,7 +1623,7 @@ abstract class enrol_bulk_enrolment_operation {
      * @param course_enrolment_manager $manager
      * @param stdClass $plugin
      */
-    public function __construct(course_enrolment_manager $manager, enrol_plugin $plugin = null) {
+    public function __construct(course_enrolment_manager $manager, ?enrol_plugin $plugin = null) {
         $this->manager = $manager;
         $this->plugin = $plugin;
     }

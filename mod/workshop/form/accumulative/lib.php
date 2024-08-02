@@ -204,7 +204,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
      * @param bool $editable
      * @param array $options
      */
-    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdclass $assessment=null, $editable=true, $options=array()) {
+    public function get_assessment_form(?moodle_url $actionurl=null, $mode='preview', ?stdclass $assessment=null, $editable=true, $options=array()) {
         global $CFG;    // needed because the included files use it
         global $PAGE;
         global $DB;

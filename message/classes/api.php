@@ -469,8 +469,8 @@ class api {
      * @return array the array of conversations
      * @throws \moodle_exception
      */
-    public static function get_conversations($userid, $limitfrom = 0, $limitnum = 20, int $type = null,
-            bool $favourites = null, bool $mergeself = false) {
+    public static function get_conversations($userid, $limitfrom = 0, $limitnum = 20, ?int $type = null,
+            ?bool $favourites = null, bool $mergeself = false) {
         global $DB;
 
         if (!is_null($type) && !in_array($type, [self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
@@ -1168,7 +1168,7 @@ class api {
      * @param int $conversationid The id of the conversation
      * @return bool Returns true if a user can delete the conversation, false otherwise.
      */
-    public static function can_delete_conversation(int $userid, int $conversationid = null): bool {
+    public static function can_delete_conversation(int $userid, ?int $conversationid = null): bool {
         global $USER;
 
         if (is_null($conversationid)) {
@@ -2089,9 +2089,9 @@ class api {
      * @param int|null $contextid The id of the context
      * @return \stdClass
      */
-    public static function create_conversation(int $type, array $userids, string $name = null,
-            int $enabled = self::MESSAGE_CONVERSATION_ENABLED, string $component = null,
-            string $itemtype = null, int $itemid = null, int $contextid = null) {
+    public static function create_conversation(int $type, array $userids, ?string $name = null,
+            int $enabled = self::MESSAGE_CONVERSATION_ENABLED, ?string $component = null,
+            ?string $itemtype = null, ?int $itemid = null, ?int $contextid = null) {
 
         global $DB;
 

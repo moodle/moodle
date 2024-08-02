@@ -821,7 +821,7 @@ class api {
      * @param int|null $userid
      * @return bool
      */
-    public static function can_create_data_download_request_for_self(int $userid = null): bool {
+    public static function can_create_data_download_request_for_self(?int $userid = null): bool {
         global $USER;
         $userid = $userid ?: $USER->id;
         return has_capability('tool/dataprivacy:downloadownrequest', \context_user::instance($userid), $userid);
@@ -834,7 +834,7 @@ class api {
      * @return bool
      * @throws coding_exception
      */
-    public static function can_create_data_deletion_request_for_self(int $userid = null): bool {
+    public static function can_create_data_deletion_request_for_self(?int $userid = null): bool {
         global $USER;
         $userid = $userid ?: $USER->id;
         return has_capability('tool/dataprivacy:requestdelete', \context_user::instance($userid), $userid)
@@ -849,7 +849,7 @@ class api {
      * @throws coding_exception
      * @throws dml_exception
      */
-    public static function can_create_data_deletion_request_for_other(int $userid = null): bool {
+    public static function can_create_data_deletion_request_for_other(?int $userid = null): bool {
         global $USER;
         $userid = $userid ?: $USER->id;
         return has_capability('tool/dataprivacy:requestdeleteforotheruser', context_system::instance(), $userid);
@@ -863,7 +863,7 @@ class api {
      * @return bool
      * @throws coding_exception
      */
-    public static function can_create_data_deletion_request_for_children(int $userid, int $requesterid = null): bool {
+    public static function can_create_data_deletion_request_for_children(int $userid, ?int $requesterid = null): bool {
         global $USER;
         $requesterid = $requesterid ?: $USER->id;
         return has_capability('tool/dataprivacy:makedatadeletionrequestsforchildren', \context_user::instance($userid),
@@ -1363,7 +1363,7 @@ class api {
      * @param int $requestid The data request ID.
      * @param int $userid Optional. The user ID to run the task as, if necessary.
      */
-    public static function queue_data_request_task(int $requestid, int $userid = null): void {
+    public static function queue_data_request_task(int $requestid, ?int $userid = null): void {
         $task = new process_data_request_task();
         $task->set_custom_data(['requestid' => $requestid]);
         if ($userid) {

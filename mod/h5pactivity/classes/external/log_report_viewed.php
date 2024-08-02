@@ -64,7 +64,7 @@ class log_report_viewed extends external_api {
      * @param  int|null $attemptid The attempt id
      * @return array of warnings and status result
      */
-    public static function execute(int $h5pactivityid, int $userid = null, int $attemptid = null): stdClass {
+    public static function execute(int $h5pactivityid, ?int $userid = null, ?int $attemptid = null): stdClass {
         $params = external_api::validate_parameters(self::execute_parameters(), [
             'h5pactivityid' => $h5pactivityid,
             'userid' => $userid,

@@ -59,7 +59,7 @@ class pgsql_native_moodle_recordset extends moodle_recordset {
      * @param pgsql_native_moodle_database $db Database object (only required when using cursors)
      * @param string $cursorname Name of cursor or '' if none
      */
-    public function __construct($result, pgsql_native_moodle_database $db = null, $cursorname = '') {
+    public function __construct($result, ?pgsql_native_moodle_database $db = null, $cursorname = '') {
         if ($cursorname && !$db) {
             throw new coding_exception('When specifying a cursor, $db is required');
         }

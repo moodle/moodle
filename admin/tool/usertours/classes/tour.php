@@ -819,7 +819,7 @@ class tour {
      * @param   array|null   $filters    Optional array of filters.
      * @return  bool
      */
-    public function matches_all_filters(\context $context, array $filters = null): bool {
+    public function matches_all_filters(\context $context, ?array $filters = null): bool {
         if (!$filters) {
             $filters = helper::get_all_filters();
         }

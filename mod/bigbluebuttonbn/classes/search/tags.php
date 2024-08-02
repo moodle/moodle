@@ -45,7 +45,7 @@ class tags extends \core_search\base_activity {
      * @param \context|null $context
      * @return \moodle_recordset|null
      */
-    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
+    public function get_document_recordset($modifiedfrom = 0, ?\context $context = null) {
         global $DB;
         [$contextjoin, $contextparams] = $this->get_context_restriction_sql($context, $this->get_module_name(), 'modtable');
         if ($contextjoin === null) {

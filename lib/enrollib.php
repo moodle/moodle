@@ -849,7 +849,7 @@ function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $coursei
  * @param array $instances enrol instances of this course, improves performance
  * @return array of pix_icon
  */
-function enrol_get_course_info_icons($course, array $instances = NULL) {
+function enrol_get_course_info_icons($course, ?array $instances = NULL) {
     $icons = array();
     if (is_null($instances)) {
         $instances = enrol_get_instances($course->id, true);
@@ -2594,7 +2594,7 @@ abstract class enrol_plugin {
      * @param array instance fields
      * @return int id of new instance, null if can not be created
      */
-    public function add_instance($course, array $fields = NULL) {
+    public function add_instance($course, ?array $fields = NULL) {
         global $DB;
 
         if ($course->id == SITEID) {

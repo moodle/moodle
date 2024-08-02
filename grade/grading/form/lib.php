@@ -205,7 +205,7 @@ abstract class gradingform_controller {
      * @param moodle_url $returnurl optional URL of a page where the user should be sent once they are finished with editing
      * @return moodle_url
      */
-    public function get_editor_url(moodle_url $returnurl = null) {
+    public function get_editor_url(?moodle_url $returnurl = null) {
 
         $params = array('areaid' => $this->areaid);
 
@@ -226,7 +226,7 @@ abstract class gradingform_controller {
      * @param settings_navigation $settingsnav {@link settings_navigation}
      * @param navigation_node $node {@link navigation_node}
      */
-    public function extend_settings_navigation(settings_navigation $settingsnav, navigation_node $node=null) {
+    public function extend_settings_navigation(settings_navigation $settingsnav, ?navigation_node $node=null) {
         // do not extend by default
     }
 
@@ -239,7 +239,7 @@ abstract class gradingform_controller {
      * @param global_navigation $navigation {@link global_navigation}
      * @param navigation_node $node {@link navigation_node}
      */
-    public function extend_navigation(global_navigation $navigation, navigation_node $node=null) {
+    public function extend_navigation(global_navigation $navigation, ?navigation_node $node=null) {
         // do not extend by default
     }
 

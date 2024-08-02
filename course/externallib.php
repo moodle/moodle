@@ -3926,10 +3926,10 @@ class core_course_external extends external_api {
         string $classification,
         int $limit = 0,
         int $offset = 0,
-        string $sort = null,
-        string $customfieldname = null,
-        string $customfieldvalue = null,
-        string $searchvalue = null,
+        ?string $sort = null,
+        ?string $customfieldname = null,
+        ?string $customfieldvalue = null,
+        ?string $searchvalue = null,
         array $requiredfields = []
     ) {
         global $CFG, $PAGE, $USER;
@@ -4231,7 +4231,7 @@ class core_course_external extends external_api {
      * @return array List of courses
      * @throws  invalid_parameter_exception
      */
-    public static function get_recent_courses(int $userid = 0, int $limit = 0, int $offset = 0, string $sort = null) {
+    public static function get_recent_courses(int $userid = 0, int $limit = 0, int $offset = 0, ?string $sort = null) {
         global $USER, $PAGE;
 
         if (empty($userid)) {

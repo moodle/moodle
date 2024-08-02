@@ -260,7 +260,7 @@ class provider implements
      * @param int $courseid The course ID to delete the stats for.
      * @param int $userid Optionally a user id to delete records with.
      */
-    protected static function delete_stats(int $courseid, int $userid = null) {
+    protected static function delete_stats(int $courseid, ?int $userid = null) {
         global $DB;
         $params = (isset($userid)) ? ['courseid' => $courseid, 'userid' => $userid] : ['courseid' => $courseid];
         $DB->delete_records('stats_user_daily', $params);

@@ -30,7 +30,7 @@ use grade_grade;
 class grade_grade_with_history extends grade_grade {
     public int $historyid;
 
-    public function __construct(\stdClass $params = null, $fetch = true) {
+    public function __construct(?\stdClass $params = null, $fetch = true) {
         // The grade history is not a real grade_grade so we remove the ID.
         $this->historyid = $params->id;
         unset($params->id);

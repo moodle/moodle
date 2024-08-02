@@ -448,7 +448,7 @@ abstract class testing_util {
      * @param array $empties tables that are known to be unmodified and empty
      * @return void
      */
-    public static function reset_all_database_sequences(array $empties = null) {
+    public static function reset_all_database_sequences(?array $empties = null) {
         global $DB;
 
         if (!$data = self::get_tabledata()) {

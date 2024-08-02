@@ -48,7 +48,7 @@ class recording_data {
      * @param int $courseid
      * @return array
      */
-    public static function get_recording_table(array $recordings, array $tools, instance $instance = null,
+    public static function get_recording_table(array $recordings, array $tools, ?instance $instance = null,
         int $courseid = 0): array {
         $typeprofiles = bigbluebutton_proxy::get_instance_type_profiles();
         $typeprofile = empty($instance) ? $typeprofiles[0] : $typeprofiles[$instance->get_type()];

@@ -202,7 +202,7 @@ class question_attempt {
      * passed, $question->defaultmark is used.
      */
     public function __construct(question_definition $question, $usageid,
-            question_usage_observer $observer = null, $maxmark = null) {
+            ?question_usage_observer $observer = null, $maxmark = null) {
         $this->question = $question;
         $this->questioninitialised = self::QUESTION_STATE_NOT_APPLIED;
         $this->usageid = $usageid;

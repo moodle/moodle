@@ -43,7 +43,7 @@ class timing_wrapper_lock_factory implements lock_factory {
      * @param string $type Type (should be same as passed to real lock factory)
      * @param lock_factory $factory Real lock factory
      */
-    public function __construct($type, lock_factory $factory = null) {
+    public function __construct($type, ?lock_factory $factory = null) {
         $this->type = $type;
         if (!$factory) {
             // This parameter has to be optional because of the interface, but it is actually

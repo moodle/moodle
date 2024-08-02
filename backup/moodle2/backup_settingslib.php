@@ -52,7 +52,7 @@ class backup_filename_setting extends backup_generic_setting {
         parent::__construct($name, $vtype, $value, $visibility, $status);
     }
 
-    public function set_ui_filename($label, $value, array $options = null) {
+    public function set_ui_filename($label, $value, ?array $options = null) {
         $this->make_ui(self::UI_HTML_TEXTFIELD, $label, null, $options);
         $this->set_value($value);
     }

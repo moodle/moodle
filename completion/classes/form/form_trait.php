@@ -93,7 +93,7 @@ trait form_trait {
      * @throws \coding_exception If the form is not moodleform_mod and $modname is null.
      */
     protected function add_completion_elements(
-        string $modname = null,
+        ?string $modname = null,
         bool $supportviews = false,
         bool $supportgrades = false,
         bool $rating = false,

@@ -131,7 +131,7 @@ class oci_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_connection_exception if error
      */
-    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, ?array $dboptions=null) {
         if ($prefix == '' and !$this->external) {
             //Enforce prefixes for everybody but mysql
             throw new dml_exception('prefixcannotbeempty', $this->get_dbfamily());
@@ -875,7 +875,7 @@ class oci_native_moodle_database extends moodle_database {
         return true;
     }
 
-    protected function bind_params($stmt, array &$params=null, $tablename=null, array &$descriptors = null) {
+    protected function bind_params($stmt, ?array &$params=null, $tablename=null, ?array &$descriptors = null) {
         if ($params) {
             $columns = array();
             if ($tablename) {
@@ -1006,7 +1006,7 @@ class oci_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function execute($sql, array $params=null) {
+    public function execute($sql, ?array $params=null) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
         if (strpos($sql, ';') !== false) {
@@ -1040,7 +1040,7 @@ class oci_native_moodle_database extends moodle_database {
      * @return mixed a fieldset object containing the first matching record, false or exception if error not found depending on mode
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function get_record_sql($sql, array $params=null, $strictness=IGNORE_MISSING) {
+    public function get_record_sql($sql, ?array $params=null, $strictness=IGNORE_MISSING) {
         $strictness = (int)$strictness;
         if ($strictness == IGNORE_MULTIPLE) {
             // do not limit here - ORA does not like that
@@ -1073,7 +1073,7 @@ class oci_native_moodle_database extends moodle_database {
      * @return moodle_recordset instance
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
+    public function get_recordset_sql($sql, ?array $params=null, $limitfrom=0, $limitnum=0) {
 
         list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
 
@@ -1117,7 +1117,7 @@ class oci_native_moodle_database extends moodle_database {
      * @return array of objects, or empty array if no records were found
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
+    public function get_records_sql($sql, ?array $params=null, $limitfrom=0, $limitnum=0) {
 
         list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
 
@@ -1168,7 +1168,7 @@ class oci_native_moodle_database extends moodle_database {
      * @return array of values
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function get_fieldset_sql($sql, array $params=null) {
+    public function get_fieldset_sql($sql, ?array $params=null) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
         list($sql, $params) = $this->tweak_param_names($sql, $params);
@@ -1412,7 +1412,7 @@ class oci_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function set_field_select($table, $newfield, $newvalue, $select, array $params=null) {
+    public function set_field_select($table, $newfield, $newvalue, $select, ?array $params=null) {
 
         if ($select) {
             $select = "WHERE $select";
@@ -1469,7 +1469,7 @@ class oci_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function delete_records_select($table, $select, array $params=null) {
+    public function delete_records_select($table, $select, ?array $params=null) {
 
         if ($select) {
             $select = "WHERE $select";

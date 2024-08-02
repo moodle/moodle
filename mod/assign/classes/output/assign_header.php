@@ -71,7 +71,7 @@ class assign_header implements \renderable {
         $subpage = '',
         $preface = '',
         $postfix = '',
-        \moodle_url $subpageurl = null,
+        ?\moodle_url $subpageurl = null,
         bool $activity = false
     ) {
         $this->assign = $assign;

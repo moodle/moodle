@@ -58,7 +58,7 @@ class attempt implements renderable, templatable {
      * @param stdClass $user a user record (default null).
      * @param int $courseid optional course id (default null).
      */
-    public function __construct(activity_attempt $attempt, stdClass $user = null, int $courseid = null) {
+    public function __construct(activity_attempt $attempt, ?stdClass $user = null, ?int $courseid = null) {
         $this->attempt = $attempt;
         $this->user = $user;
         $this->courseid = $courseid;
@@ -123,7 +123,7 @@ class attempt implements renderable, templatable {
      * @param bool $showtext if the icon must have a text or only icon
      * @return string icon HTML
      */
-    private function completion_icon(renderer_base $output, int $completion = null, bool $showtext = false): string {
+    private function completion_icon(renderer_base $output, ?int $completion = null, bool $showtext = false): string {
         if ($completion === null) {
             return '';
         }
@@ -149,7 +149,7 @@ class attempt implements renderable, templatable {
      * @param bool $showtext if the icon must have a text or only icon
      * @return string icon HTML
      */
-    private function success_icon(renderer_base $output, int $success = null, bool $showtext = false): string {
+    private function success_icon(renderer_base $output, ?int $success = null, bool $showtext = false): string {
         if ($success === null) {
             $alt = get_string('attempt_success_unknown', 'mod_h5pactivity');
             if ($showtext) {

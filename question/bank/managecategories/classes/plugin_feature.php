@@ -37,7 +37,7 @@ class plugin_feature extends plugin_features_base {
         return new navigation();
     }
 
-    public function get_question_filters(view $qbank = null): array {
+    public function get_question_filters(?view $qbank = null): array {
         return [
             new category_condition($qbank),
         ];

@@ -68,7 +68,7 @@ class repository_dropbox extends repository {
      *
      * @inheritDocs
      */
-    public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
+    public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, ?array $options = null) {
         $reference = $this->unpack_reference($storedfile->get_reference());
 
         $maxcachesize = $this->max_cache_bytes();

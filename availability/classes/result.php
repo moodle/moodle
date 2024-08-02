@@ -50,7 +50,7 @@ class result {
      * @param tree_node $node Node if failed & should be displayed
      * @param result[] $failedchildren Array of children who failed too
      */
-    public function __construct($available, tree_node $node = null,
+    public function __construct($available, ?tree_node $node = null,
             array $failedchildren = array()) {
         $this->available = $available;
         if (!$available) {

@@ -319,7 +319,7 @@ class renderable_test extends \advanced_testcase {
      * @return void
      */
     public function test_get_user_list(int $courseindex, string $username, array $expectedusers,
-        string $groupname = null): void {
+        ?string $groupname = null): void {
         global $PAGE, $CFG;
         $currentcourse = $this->courses[$courseindex];
         $PAGE->set_url('/report/log/index.php?id=' . $currentcourse->id);

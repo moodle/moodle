@@ -50,7 +50,7 @@ class select_menu implements renderable, templatable {
      *                       Supports grouped options as well.
      * @param string|null $selected The value of the preselected option.
      */
-    public function __construct(string $name, array $options, string $selected = null) {
+    public function __construct(string $name, array $options, ?string $selected = null) {
         $this->name = $name;
         $this->options = $options;
         $this->selected = $selected;

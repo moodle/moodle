@@ -82,7 +82,7 @@ function h5pactivity_supports(string $feature) {
  * @param mod_h5pactivity_mod_form $mform The form.
  * @return int The id of the newly inserted record.
  */
-function h5pactivity_add_instance(stdClass $data, mod_h5pactivity_mod_form $mform = null): int {
+function h5pactivity_add_instance(stdClass $data, ?mod_h5pactivity_mod_form $mform = null): int {
     global $DB;
 
     $data->timecreated = time();
@@ -111,7 +111,7 @@ function h5pactivity_add_instance(stdClass $data, mod_h5pactivity_mod_form $mfor
  * @param mod_h5pactivity_mod_form $mform The form.
  * @return bool True if successful, false otherwise.
  */
-function h5pactivity_update_instance(stdClass $data, mod_h5pactivity_mod_form $mform = null): bool {
+function h5pactivity_update_instance(stdClass $data, ?mod_h5pactivity_mod_form $mform = null): bool {
     global $DB;
 
     $data->timemodified = time();
@@ -854,7 +854,7 @@ function h5pactivity_fetch_recent_activity(array $submissions, int $courseid): a
  * @param navigation_node $h5pactivitynode The node to add module settings to
  */
 function h5pactivity_extend_settings_navigation(settings_navigation $settingsnav,
-        navigation_node $h5pactivitynode = null) {
+        ?navigation_node $h5pactivitynode = null) {
     global $USER;
 
     $manager = manager::create_from_coursemodule($settingsnav->get_page()->cm);

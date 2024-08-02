@@ -50,7 +50,7 @@ class editquestion_helper {
      * @param bool $enablejs
      * @return bool|string
      */
-    public static function print_choose_qtype_to_add_form(array $hiddenparams, array $allowedqtypes = null, $enablejs = true) {
+    public static function print_choose_qtype_to_add_form(array $hiddenparams, ?array $allowedqtypes = null, $enablejs = true) {
         global $PAGE;
 
         $chooser = \qbank_editquestion\qbank_chooser::get($PAGE->course, $hiddenparams, $allowedqtypes);

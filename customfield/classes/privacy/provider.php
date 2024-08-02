@@ -163,7 +163,7 @@ class provider implements
      */
     public static function export_customfields_data(approved_contextlist $contextlist, string $component, string $area,
                 string $itemidstest = 'IS NOT NULL', string $instanceidstest = 'IS NOT NULL', array $params = [],
-                array $subcontext = null) {
+                ?array $subcontext = null) {
         global $DB;
 
         // This query is very similar to api::get_instances_fields_data() but also works for multiple itemids

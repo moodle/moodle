@@ -402,7 +402,7 @@ class message_airnotifier_manager {
      * @param  int $userid the user to check the devices for (empty for current user)
      * @return bool true when the user has enabled devices, false otherwise
      */
-    public function has_enabled_devices(string $appname, int $userid = null): bool {
+    public function has_enabled_devices(string $appname, ?int $userid = null): bool {
         $enableddevices = false;
         $devices = $this->get_user_devices($appname, $userid);
 

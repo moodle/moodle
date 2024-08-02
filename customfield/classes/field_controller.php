@@ -61,7 +61,7 @@ abstract class field_controller {
      * @param int $id
      * @param \stdClass|null $record
      */
-    public function __construct(int $id = 0, \stdClass $record = null) {
+    public function __construct(int $id = 0, ?\stdClass $record = null) {
         $this->field = new field($id, $record);
     }
 
@@ -81,7 +81,7 @@ abstract class field_controller {
      * @throws \coding_exception
      * @throws \moodle_exception
      */
-    public static function create(int $id, \stdClass $record = null, category_controller $category = null): field_controller {
+    public static function create(int $id, ?\stdClass $record = null, ?category_controller $category = null): field_controller {
         global $DB;
         if ($id && $record) {
             // This warning really should be in persistent as well.

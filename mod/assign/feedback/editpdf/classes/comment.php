@@ -62,7 +62,7 @@ class comment {
      * Convert a compatible stdClass into an instance of a comment.
      * @param \stdClass $record
      */
-    public function __construct(\stdClass $record = null) {
+    public function __construct(?\stdClass $record = null) {
         if ($record) {
             $intcols = array('width', 'x', 'y');
             foreach ($this as $key => $value) {

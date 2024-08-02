@@ -154,7 +154,7 @@ class database {
      * @param string|null $sort A valid SQL ORDER BY to sort the concatenated fields, if omitted then $field will be used
      * @return string
      */
-    public static function sql_group_concat_sort(string $field, string $sort = null): string {
+    public static function sql_group_concat_sort(string $field, ?string $sort = null): string {
         global $DB;
 
         // Fallback to sorting by the specified field, unless it contains parameters which would be duplicated.

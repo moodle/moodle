@@ -49,7 +49,7 @@ class webservice_soap_client {
      * @param string $token the token used to do the web service call
      * @param array $options PHP SOAP client options - see php.net
      */
-    public function __construct($serverurl, $token = null, array $options = null) {
+    public function __construct($serverurl, $token = null, ?array $options = null) {
         $this->serverurl = new moodle_url($serverurl);
         $this->token = $token ?: $this->serverurl->get_param('wstoken');
         $this->options = $options ?: array();

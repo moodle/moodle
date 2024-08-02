@@ -51,7 +51,7 @@ abstract class workshop_evaluation {
      *
      * @return workshop_evaluation_settings_form
      */
-    public function get_settings_form(moodle_url $actionurl=null) {
+    public function get_settings_form(?moodle_url $actionurl=null) {
 
         $customdata = array('workshop' => $this->workshop);
         $attributes = array('class' => 'evalsettingsform');

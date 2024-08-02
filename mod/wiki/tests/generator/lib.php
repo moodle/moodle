@@ -50,7 +50,7 @@ class mod_wiki_generator extends testing_module_generator {
         parent::reset();
     }
 
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         // Add default values for wiki.
         $record = (array)$record + array(
             'wikimode' => 'collaborative',

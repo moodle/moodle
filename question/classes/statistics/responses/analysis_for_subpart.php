@@ -57,7 +57,7 @@ class analysis_for_subpart {
      *
      * @param \question_possible_response[] $responseclasses as returned from {@link \question_type::get_possible_responses()}.
      */
-    public function __construct(array $responseclasses = null) {
+    public function __construct(?array $responseclasses = null) {
         if (is_array($responseclasses)) {
             foreach ($responseclasses as $responseclassid => $responseclass) {
                 $this->responseclasses[$responseclassid] = new analysis_for_class($responseclass, $responseclassid);

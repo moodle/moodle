@@ -8718,7 +8718,7 @@ class admin_setting_managecontentbankcontenttypes extends admin_setting {
  *      pagelayout - This option can be used to set a specific pagelyaout, admin is default.
  *      nosearch - Do not display search bar
  */
-function admin_externalpage_setup($section, $extrabutton = '', array $extraurlparams = null, $actualurl = '', array $options = array()) {
+function admin_externalpage_setup($section, $extrabutton = '', ?array $extraurlparams = null, $actualurl = '', array $options = array()) {
     global $CFG, $PAGE, $USER, $SITE, $OUTPUT;
 
     $PAGE->set_context(null); // hack - set context to something, by default to system context
@@ -10451,7 +10451,7 @@ class admin_setting_configcolourpicker extends admin_setting {
      * @param string $defaultsetting
      * @param array $previewconfig Array('selector'=>'.some .css .selector','style'=>'backgroundColor');
      */
-    public function __construct($name, $visiblename, $description, $defaultsetting, array $previewconfig = null,
+    public function __construct($name, $visiblename, $description, $defaultsetting, ?array $previewconfig = null,
             $usedefaultwhenempty = true) {
         $this->previewconfig = $previewconfig;
         $this->usedefaultwhenempty = $usedefaultwhenempty;
@@ -10618,7 +10618,7 @@ class admin_setting_configstoredfile extends admin_setting {
      * @param int $itemid itemid for file storage
      * @param array $options file area options
      */
-    public function __construct($name, $visiblename, $description, $filearea, $itemid = 0, array $options = null) {
+    public function __construct($name, $visiblename, $description, $filearea, $itemid = 0, ?array $options = null) {
         parent::__construct($name, $visiblename, $description, '');
         $this->filearea = $filearea;
         $this->itemid   = $itemid;

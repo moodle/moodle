@@ -1491,7 +1491,7 @@ class moodle_page {
      * @param array $params parameters to add to the URL
      * @throws coding_exception
      */
-    public function set_url($url, array $params = null) {
+    public function set_url($url, ?array $params = null) {
         global $CFG;
 
         if (is_string($url) && strpos($url, 'http') !== 0) {

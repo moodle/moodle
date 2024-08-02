@@ -234,7 +234,7 @@ abstract class texteditor {
      * @param obejct $fpoptions file picker options
      * @return void
      */
-    abstract public function use_editor($elementid, array $options=null, $fpoptions = null);
+    abstract public function use_editor($elementid, ?array $options=null, $fpoptions = null);
 
     /**
      * Setup all JS and CSS needed for editor.

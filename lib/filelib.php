@@ -405,7 +405,7 @@ function file_get_unused_draft_itemid() {
  * @param string $text some html content that needs to have embedded links rewritten to point to the draft area.
  * @return string|null returns string if $text was passed in, the rewritten $text is returned. Otherwise NULL.
  */
-function file_prepare_draft_area(&$draftitemid, $contextid, $component, $filearea, $itemid, array $options=null, $text=null) {
+function file_prepare_draft_area(&$draftitemid, $contextid, $component, $filearea, $itemid, ?array $options=null, $text=null) {
     global $CFG, $USER;
 
     $options = (array)$options;
@@ -489,7 +489,7 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $component, $fileare
  *          mixed   $options.includetoken Use a token for authentication. True for current user, int value for other user id.
  *          string  The processed text.
  */
-function file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $filearea, $itemid, array $options=null) {
+function file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $filearea, $itemid, ?array $options=null) {
     global $CFG, $USER;
 
     $options = (array)$options;
@@ -1104,7 +1104,7 @@ function file_copy_file_to_file_area($file, $filename, $itemid) {
  * @param bool $forcehttps force https urls.
  * @return string|null if $text was passed in, the rewritten $text is returned. Otherwise NULL.
  */
-function file_save_draft_area_files($draftitemid, $contextid, $component, $filearea, $itemid, array $options=null, $text=null, $forcehttps=false) {
+function file_save_draft_area_files($draftitemid, $contextid, $component, $filearea, $itemid, ?array $options=null, $text=null, $forcehttps=false) {
     global $USER;
 
     // Do not merge files, leave it as it was.
@@ -2971,7 +2971,7 @@ function file_overwrite_existing_draftfile(stored_file $newfile, stored_file $ex
  * @since Moodle 3.2
  */
 function file_merge_files_from_draft_area_into_filearea($draftitemid, $contextid, $component, $filearea, $itemid,
-                                                        array $options = null) {
+                                                        ?array $options = null) {
     // We use 0 here so file_prepare_draft_area creates a new one, finaldraftid will be updated with the new draft id.
     $finaldraftid = 0;
     file_prepare_draft_area($finaldraftid, $contextid, $component, $filearea, $itemid, $options);

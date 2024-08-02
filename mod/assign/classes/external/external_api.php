@@ -102,7 +102,7 @@ class external_api extends \core_external\external_api {
      * @param int $attemptnumber Attempt number. Use -1 for last attempt.
      * @return bool|\stdClass
      */
-    protected static function get_user_or_group_submission(\assign $assignment, int $userid = null,
+    protected static function get_user_or_group_submission(\assign $assignment, ?int $userid = null,
             int $groupid = 0, bool $create = false, int $attemptnumber = -1) {
         if ($assignment->get_instance($userid)->teamsubmission) {
             $submission = $assignment->get_group_submission($userid, $groupid, $create, $attemptnumber);

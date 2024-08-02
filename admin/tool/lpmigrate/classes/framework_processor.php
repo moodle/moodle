@@ -101,7 +101,7 @@ class framework_processor {
      * @param framework_mapper $mapper The mapper.
      * @param \core\progress\base $progress The progress object.
      */
-    public function __construct(framework_mapper $mapper, \core\progress\base $progress = null) {
+    public function __construct(framework_mapper $mapper, ?\core\progress\base $progress = null) {
         $this->mapper = $mapper;
 
         if ($progress == null) {

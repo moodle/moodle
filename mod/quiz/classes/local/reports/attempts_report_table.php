@@ -452,7 +452,7 @@ abstract class attempts_report_table extends \table_sql {
      *      in the query. See {@see qubaid_condition}.
      * @return array of records. See the SQL in this function to see the fields available.
      */
-    protected function load_question_latest_steps(qubaid_condition $qubaids = null) {
+    protected function load_question_latest_steps(?qubaid_condition $qubaids = null) {
         if ($qubaids === null) {
             $qubaids = $this->get_qubaids_condition();
         }

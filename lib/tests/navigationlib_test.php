@@ -721,7 +721,7 @@ class navigationlib_test extends \advanced_testcase {
  */
 class exposed_global_navigation extends global_navigation {
     protected $exposedkey = 'exposed_';
-    public function __construct(\moodle_page $page=null) {
+    public function __construct(?\moodle_page $page=null) {
         global $PAGE;
         if ($page === null) {
             $page = $PAGE;

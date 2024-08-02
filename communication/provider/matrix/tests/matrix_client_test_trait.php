@@ -98,8 +98,8 @@ trait matrix_client_test_trait {
      * @return Response
      */
     protected function get_mocked_version_response(
-        array $versions = null,
-        array $unstablefeatures = null,
+        ?array $versions = null,
+        ?array $unstablefeatures = null,
     ): Response {
         $data = (object) [
             "versions" => array_values(self::get_current_versions()),

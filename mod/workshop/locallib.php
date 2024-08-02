@@ -208,7 +208,7 @@ class workshop {
      * @param stdClass $course Course record from {course} table
      * @param stdClass $context The context of the workshop instance
      */
-    public function __construct(stdclass $dbrecord, $cm, $course, stdclass $context=null) {
+    public function __construct(stdclass $dbrecord, $cm, $course, ?stdclass $context=null) {
         $this->dbrecord = $dbrecord;
         foreach ($this->dbrecord as $field => $value) {
             if (property_exists('workshop', $field)) {
@@ -1800,7 +1800,7 @@ class workshop {
      * @param bool $return true to return the arguments for add_to_log.
      * @return void|array array of arguments for add_to_log if $return is true
      */
-    public function log($action, moodle_url $url = null, $info = null, $return = false) {
+    public function log($action, ?moodle_url $url = null, $info = null, $return = false) {
         debugging('The log method is now deprecated, please use event classes instead', DEBUG_DEVELOPER);
 
         if (is_null($url)) {

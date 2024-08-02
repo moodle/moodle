@@ -338,7 +338,7 @@ class navigation_node implements renderable {
      * @return navigation_node
      */
     public static function create($text, $action=null, $type=self::TYPE_CUSTOM,
-            $shorttext=null, $key=null, pix_icon $icon=null) {
+            $shorttext=null, $key=null, ?pix_icon $icon=null) {
         if ($action && !($action instanceof moodle_url || $action instanceof action_link)) {
             debugging(
                 "It is required that the action provided be either an action_url|moodle_url." .
@@ -378,7 +378,7 @@ class navigation_node implements renderable {
      * @param pix_icon $icon
      * @return navigation_node
      */
-    public function add($text, $action=null, $type=self::TYPE_CUSTOM, $shorttext=null, $key=null, pix_icon $icon=null) {
+    public function add($text, $action=null, $type=self::TYPE_CUSTOM, $shorttext=null, $key=null, ?pix_icon $icon=null) {
         if ($action && is_string($action)) {
             $action = new moodle_url($action);
         }
@@ -884,7 +884,7 @@ class navigation_node implements renderable {
      *      If an array is given then nodes will only be hidden if their type mtatches an element in the array.
      *          e.g. array(navigation_node::TYPE_COURSE) would hide only course nodes.
      */
-    public function hide(array $typestohide = null) {
+    public function hide(?array $typestohide = null) {
         if ($typestohide === null || in_array($this->type, $typestohide)) {
             $this->display = false;
             if ($this->has_children()) {
@@ -3900,7 +3900,7 @@ class navbar extends navigation_node {
      * @param pix_icon $icon An optional icon to use for this node.
      * @return navigation_node
      */
-    public function add($text, $action=null, $type=self::TYPE_CUSTOM, $shorttext=null, $key=null, pix_icon $icon=null) {
+    public function add($text, $action=null, $type=self::TYPE_CUSTOM, $shorttext=null, $key=null, ?pix_icon $icon=null) {
         if ($this->content !== null) {
             debugging('Nav bar items must be printed before $OUTPUT->header() has been called', DEBUG_DEVELOPER);
         }
@@ -3946,7 +3946,7 @@ class navbar extends navigation_node {
      * @param pix_icon $icon An optional icon to use for this node.
      * @return navigation_node
      */
-    public function prepend($text, $action=null, $type=self::TYPE_CUSTOM, $shorttext=null, $key=null, pix_icon $icon=null) {
+    public function prepend($text, $action=null, $type=self::TYPE_CUSTOM, $shorttext=null, $key=null, ?pix_icon $icon=null) {
         if ($this->content !== null) {
             debugging('Nav bar items must be printed before $OUTPUT->header() has been called', DEBUG_DEVELOPER);
         }
@@ -4478,7 +4478,7 @@ class settings_navigation extends navigation_node {
      * @param pix_icon $icon An icon that appears next to the node.
      * @return navigation_node with the new node added to it.
      */
-    public function add($text, $url=null, $type=null, $shorttext=null, $key=null, pix_icon $icon=null) {
+    public function add($text, $url=null, $type=null, $shorttext=null, $key=null, ?pix_icon $icon=null) {
         $node = parent::add($text, $url, $type, $shorttext, $key, $icon);
         $node->add_class('root_node');
         return $node;
@@ -4496,7 +4496,7 @@ class settings_navigation extends navigation_node {
      * @param pix_icon $icon An icon that appears next to the node.
      * @return navigation_node $node with the new node added to it.
      */
-    public function prepend($text, $url=null, $type=null, $shorttext=null, $key=null, pix_icon $icon=null) {
+    public function prepend($text, $url=null, $type=null, $shorttext=null, $key=null, ?pix_icon $icon=null) {
         $children = $this->children;
         $childrenclass = get_class($children);
         $this->children = new $childrenclass;
@@ -4541,7 +4541,7 @@ class settings_navigation extends navigation_node {
      *      tree and start at the beginning
      * @return mixed A key to access the admin tree by
      */
-    protected function load_administration_settings(navigation_node $referencebranch=null, part_of_admin_tree $adminbranch=null) {
+    protected function load_administration_settings(?navigation_node $referencebranch=null, ?part_of_admin_tree $adminbranch=null) {
         global $CFG;
 
         // Check if we are just starting to generate this navigation.

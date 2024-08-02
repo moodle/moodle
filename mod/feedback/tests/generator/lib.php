@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_feedback_generator extends testing_module_generator {
 
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         global $CFG;
         require_once($CFG->dirroot.'/mod/feedback/lib.php');
         $record = (object)(array)$record;

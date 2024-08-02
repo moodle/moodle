@@ -260,7 +260,7 @@ abstract class backup_general_helper extends backup_helper {
      * @return stdClass containing information.
      * @since Moodle 2.4
      */
-    public static function get_backup_information_from_mbz($filepath, file_progress $progress = null) {
+    public static function get_backup_information_from_mbz($filepath, ?file_progress $progress = null) {
         global $CFG;
         if (!is_readable($filepath)) {
             throw new backup_helper_exception('missing_moodle_backup_file', $filepath);

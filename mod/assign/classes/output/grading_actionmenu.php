@@ -60,7 +60,7 @@ class grading_actionmenu implements templatable, renderable {
         int $cmid,
         ?bool $submissionpluginenabled = null,
         ?int $submissioncount = null,
-        assign $assign = null
+        ?assign $assign = null
     ) {
         $this->cmid = $cmid;
         if (!$assign) {

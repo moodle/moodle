@@ -61,7 +61,7 @@ class mod_forum_generator extends testing_module_generator {
         parent::reset();
     }
 
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         global $CFG;
         require_once($CFG->dirroot.'/mod/forum/lib.php');
         $record = (object)(array)$record;

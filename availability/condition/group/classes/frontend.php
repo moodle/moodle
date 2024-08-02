@@ -43,8 +43,8 @@ class frontend extends \core_availability\frontend {
         return array('anygroup');
     }
 
-    protected function get_javascript_init_params($course, \cm_info $cm = null,
-            \section_info $section = null) {
+    protected function get_javascript_init_params($course, ?\cm_info $cm = null,
+            ?\section_info $section = null) {
         // Get all groups for course.
         $groups = $this->get_all_groups($course->id);
 
@@ -78,8 +78,8 @@ class frontend extends \core_availability\frontend {
         return $this->allgroups;
     }
 
-    protected function allow_add($course, \cm_info $cm = null,
-            \section_info $section = null) {
+    protected function allow_add($course, ?\cm_info $cm = null,
+            ?\section_info $section = null) {
         global $CFG;
 
         // Only show this option if there are some groups.

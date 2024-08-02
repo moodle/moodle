@@ -109,7 +109,7 @@ class restore_ui extends base_ui {
      * @param array $params
      * @return restore_ui_stage_initial|restore_ui_stage_schema|restore_ui_stage_confirmation|restore_ui_stage_final
      */
-    protected function initialise_stage($stage = null, array $params = null) {
+    protected function initialise_stage($stage = null, ?array $params = null) {
         if ($stage == null) {
             $stage = optional_param('stage', self::STAGE_CONFIRM, PARAM_INT);
         }

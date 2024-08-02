@@ -62,7 +62,7 @@ class question_engine_data_mapper {
     /**
      * @param moodle_database $db a database connectoin. Defaults to global $DB.
      */
-    public function __construct(moodle_database $db = null) {
+    public function __construct(?moodle_database $db = null) {
         if (is_null($db)) {
             global $DB;
             $this->db = $DB;

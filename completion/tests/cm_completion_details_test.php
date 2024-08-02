@@ -58,7 +58,7 @@ class cm_completion_details_test extends advanced_testcase {
      * @return cm_completion_details
      */
     protected function setup_data(?int $completion, array $completionoptions = [],
-            object $mockcompletiondata = null, $modname = 'somenonexistentmod'): cm_completion_details {
+            ?object $mockcompletiondata = null, $modname = 'somenonexistentmod'): cm_completion_details {
         if (is_null($completion)) {
             $completion = COMPLETION_TRACKING_AUTOMATIC;
         }

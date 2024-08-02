@@ -139,7 +139,7 @@ class completion_criteria_unenrol extends completion_criteria {
      * @param array $attributes html attributes
      * @return pix_icon
      */
-    public function get_icon($alt, array $attributes = null) {
+    public function get_icon($alt, ?array $attributes = null) {
         return new pix_icon('i/user', $alt, 'moodle', $attributes);
     }
 }

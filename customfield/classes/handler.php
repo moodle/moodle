@@ -199,7 +199,7 @@ abstract class handler {
      * @param string $name name of the category, null to generate automatically
      * @return int id of the new category
      */
-    public function create_category(string $name = null): int {
+    public function create_category(?string $name = null): int {
         global $DB;
         $params = ['component' => $this->get_component(), 'area' => $this->get_area(), 'itemid' => $this->get_itemid()];
 

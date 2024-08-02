@@ -72,7 +72,7 @@ class MoodleQuickForm_choicedropdown extends HTML_QuickForm_select implements te
     public function __construct(
         $elementname = null,
         $elementlabel = null,
-        choicelist $options = null,
+        ?choicelist $options = null,
         $attributes = null
     ) {
         parent::__construct($elementname, $elementlabel, $options, $attributes);

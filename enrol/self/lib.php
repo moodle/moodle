@@ -1123,7 +1123,7 @@ class enrol_self_plugin extends enrol_plugin {
      * @param array $fields instance fields
      * @return int id of new instance, null if can not be created
      */
-    public function add_instance($course, array $fields = null) {
+    public function add_instance($course, ?array $fields = null) {
         // In the form we are representing 2 db columns with one field.
         if (!empty($fields) && !empty($fields['expirynotify'])) {
             if ($fields['expirynotify'] == 2) {

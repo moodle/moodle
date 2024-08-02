@@ -1194,7 +1194,7 @@ function groups_group_visible($groupid, $course, $cm = null, $userid = null) {
  * @return array($sql, $params)
  * @throws coding_exception if empty or invalid context submitted when $groupid = USERSWITHOUTGROUP
  */
-function groups_get_members_ids_sql($groupids, context $context = null, $groupsjointype = GROUPS_JOIN_ANY) {
+function groups_get_members_ids_sql($groupids, ?context $context = null, $groupsjointype = GROUPS_JOIN_ANY) {
     if (!is_array($groupids)) {
         $groupids = [$groupids];
     }
@@ -1254,7 +1254,7 @@ function groups_get_names_concat_sql(int $courseid, string $separator = ', '): a
  * @return \core\dml\sql_join Contains joins, wheres, params
  * @throws coding_exception if empty or invalid context submitted when $groupid = USERSWITHOUTGROUP
  */
-function groups_get_members_join($groupids, $useridcolumn, context $context = null, int $jointype = GROUPS_JOIN_ANY) {
+function groups_get_members_join($groupids, $useridcolumn, ?context $context = null, int $jointype = GROUPS_JOIN_ANY) {
     global $DB;
 
     // Use unique prefix just in case somebody makes some SQL magic with the result.
@@ -1474,7 +1474,7 @@ function _group_verify_activegroup($courseid, $groupmode, $groupingid, array $al
  * @param cache $cache The cache if it has already been initialised. If not a new one will be created.
  * @return stdClass A data object containing groups, groupings, and mappings.
  */
-function groups_cache_groupdata($courseid, cache $cache = null) {
+function groups_cache_groupdata($courseid, ?cache $cache = null) {
     global $DB;
 
     if ($cache === null) {
@@ -1531,7 +1531,7 @@ function groups_cache_groupdata($courseid, cache $cache = null) {
  * @param cache $cache The cache if it has already been initialised. If not a new one will be created.
  * @return stdClass
  */
-function groups_get_course_data($courseid, cache $cache = null) {
+function groups_get_course_data($courseid, ?cache $cache = null) {
     if ($cache === null) {
         // Initialise a cache if we wern't given one.
         $cache = cache::make('core', 'groupdata');

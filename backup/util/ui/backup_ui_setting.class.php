@@ -245,7 +245,7 @@ abstract class backup_setting_ui extends base_setting_ui {
      * @param array $attributes Array of HTML attributes to apply to the element
      * @param array $options Array of options to apply to the setting ui object
      */
-    public function __construct(backup_setting $setting, $label = null, array $attributes = null, array $options = null) {
+    public function __construct(backup_setting $setting, $label = null, ?array $attributes = null, ?array $options = null) {
         parent::__construct($setting);
         // Improve the inputs name by appending the level to the name.
         switch ($setting->get_level()) {
@@ -284,7 +284,7 @@ abstract class backup_setting_ui extends base_setting_ui {
      * @param array $options Array of options to apply to the setting ui object
      * @return backup_setting_ui_text|backup_setting_ui_checkbox|backup_setting_ui_select|backup_setting_ui_radio
      */
-    final public static function make(backup_setting $setting, $type, $label, array $attributes = null, array $options = null) {
+    final public static function make(backup_setting $setting, $type, $label, ?array $attributes = null, ?array $options = null) {
         // Base the decision we make on the type that was sent.
         switch ($type) {
             case backup_setting::UI_HTML_CHECKBOX :
@@ -307,7 +307,7 @@ abstract class backup_setting_ui extends base_setting_ui {
      * @param renderer_base $output
      * @return array
      */
-    abstract public function get_element_properties(base_task $task = null, renderer_base $output = null);
+    abstract public function get_element_properties(?base_task $task = null, ?renderer_base $output = null);
 
     /**
      * Applies config options to a given properties array and then returns it
@@ -327,7 +327,7 @@ abstract class backup_setting_ui extends base_setting_ui {
      *          $task is used to set the setting label
      * @return string
      */
-    public function get_label(base_task $task = null) {
+    public function get_label(?base_task $task = null) {
         // If a task has been provided and the label is not already set meaningfully
         // we will attempt to improve it.
         if (!is_null($task) && $this->label == $this->setting->get_name() && strpos($this->setting->get_name(), '_include') !== false) {
@@ -401,7 +401,7 @@ class backup_setting_ui_text extends backup_setting_ui {
      * @param renderer_base $output
      * @return array (element, name, label, attributes)
      */
-    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
+    public function get_element_properties(?base_task $task = null, ?renderer_base $output = null) {
         $icon = $this->get_icon();
         $context = context_course::instance($task->get_courseid());
         $label = format_string($this->get_label($task), true, array('context' => $context));
@@ -464,7 +464,7 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
      * @param renderer_base $output
      * @return array (element, name, label, text, attributes);
      */
-    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
+    public function get_element_properties(?base_task $task = null, ?renderer_base $output = null) {
         // Name, label, text, attributes.
         $icon = $this->get_icon();
         $context = context_course::instance($task->get_courseid());
@@ -580,7 +580,7 @@ class backup_setting_ui_radio extends backup_setting_ui {
      * @param renderer_base $output
      * @return array (element, name, label, text, value, attributes)
      */
-    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
+    public function get_element_properties(?base_task $task = null, ?renderer_base $output = null) {
         $icon = $this->get_icon();
         $context = context_course::instance($task->get_courseid());
         $label = format_string($this->get_label($task), true, array('context' => $context));
@@ -658,7 +658,7 @@ class backup_setting_ui_select extends backup_setting_ui {
      * @param renderer_base $output
      * @return array (element, name, label, options, attributes)
      */
-    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
+    public function get_element_properties(?base_task $task = null, ?renderer_base $output = null) {
         $icon = $this->get_icon();
         $context = context_course::instance($task->get_courseid());
         $label = format_string($this->get_label($task), true, array('context' => $context));
@@ -731,7 +731,7 @@ class backup_setting_ui_dateselector extends backup_setting_ui_text {
      * @param renderer_base $output
      * @return array (element, name, label, options, attributes)
      */
-    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
+    public function get_element_properties(?base_task $task = null, ?renderer_base $output = null) {
         if (!array_key_exists('optional', $this->attributes)) {
             $this->attributes['optional'] = false;
         }
@@ -770,7 +770,7 @@ class backup_setting_ui_defaultcustom extends backup_setting_ui_text {
      * @param array $attributes Array of HTML attributes to apply to the element
      * @param array $options Array of options to apply to the setting ui object
      */
-    public function __construct(backup_setting $setting, $label = null, array $attributes = null, array $options = null) {
+    public function __construct(backup_setting $setting, $label = null, ?array $attributes = null, ?array $options = null) {
         if (!is_array($attributes)) {
             $attributes = [];
         }
@@ -785,7 +785,7 @@ class backup_setting_ui_defaultcustom extends backup_setting_ui_text {
      * @param renderer_base $output
      * @return array (element, name, label, options, attributes)
      */
-    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
+    public function get_element_properties(?base_task $task = null, ?renderer_base $output = null) {
         return ['element' => 'defaultcustom'] + parent::get_element_properties($task, $output);
     }
 

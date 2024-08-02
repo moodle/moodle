@@ -975,7 +975,7 @@ class renderer extends plugin_renderer_base {
      * @return string HTML fragment.
      */
     public function start_attempt_button($buttontext, moodle_url $url,
-            preflight_check_form $preflightcheckform = null,
+            ?preflight_check_form $preflightcheckform = null,
             $popuprequired = false, $popupoptions = null) {
 
         $button = new single_button($url, $buttontext, 'post', single_button::BUTTON_PRIMARY);

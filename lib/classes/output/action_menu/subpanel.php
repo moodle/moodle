@@ -51,8 +51,8 @@ class subpanel extends action_link implements renderable {
     public function __construct(
         $text,
         renderable $subpanel,
-        array $attributes = null,
-        pix_icon $icon = null
+        ?array $attributes = null,
+        ?pix_icon $icon = null
     ) {
         $this->text = $text;
         $this->subpanel = $subpanel;

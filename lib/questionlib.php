@@ -939,7 +939,7 @@ function question_load_questions($questionids, $extrafields = '', $join = '') {
  * @param \core_tag_tag[]|null $tagobjects The tags for the given $question.
  * @param stdClass[]|null $filtercourses The courses to filter the course tags by.
  */
-function _tidy_question($question, $category, array $tagobjects = null, array $filtercourses = null): void {
+function _tidy_question($question, $category, ?array $tagobjects = null, ?array $filtercourses = null): void {
     // Convert numeric fields to float. This prevents these being displayed as 1.0000000.
     $question->defaultmark += 0;
     $question->penalty += 0;
@@ -1692,7 +1692,7 @@ function question_get_all_capabilities(): array {
  * @return string
  */
 function question_rewrite_question_urls($text, $file, $contextid, $component, $filearea,
-                                        array $ids, $itemid, array $options=null): string {
+                                        array $ids, $itemid, ?array $options=null): string {
 
     $idsstr = '';
     if (!empty($ids)) {

@@ -198,7 +198,7 @@ class brickfieldconnect extends curl {
      * @param   null|string $secretkey The secret key to use
      * @return  null|string The registration ID if registration was successful, or null if not
      */
-    protected function get_registration_id_for_credentials(string $apikey = null, string $secretkey = null): string {
+    protected function get_registration_id_for_credentials(?string $apikey = null, ?string $secretkey = null): string {
         $headers = $this->get_common_headers();
         if ($apikey || $secretkey) {
             $headers['secret'] = $apikey;

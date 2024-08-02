@@ -253,7 +253,7 @@ class question_category_object {
      * @param string $sort - [[sortfield [,sortfield]] {ASC|DESC}].
      * @return array categories.
      */
-    public function get_question_categories(int $parent = null, string $sort = "sortorder ASC"): array {
+    public function get_question_categories(?int $parent = null, string $sort = "sortorder ASC"): array {
         global $COURSE, $DB;
         if (is_null($parent)) {
             $categories = $DB->get_records('question_categories', ['course' => $COURSE->id], $sort);

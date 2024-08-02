@@ -165,7 +165,7 @@ class forum_gradeitem extends component_gradeitem {
      * @return stdClass The grade value
      * @throws \dml_exception
      */
-    public function get_grade_for_user(stdClass $gradeduser, stdClass $grader = null): ?stdClass {
+    public function get_grade_for_user(stdClass $gradeduser, ?stdClass $grader = null): ?stdClass {
         global $DB;
 
         $params = [

@@ -594,7 +594,7 @@ class question_usage_by_activity {
      * @param int $timestamp optional, the timstamp to record for this action. Defaults to now.
      * @param int $userid optional, the user to attribute this action to. Defaults to the current user.
      */
-    public function start_all_questions(question_variant_selection_strategy $variantstrategy = null,
+    public function start_all_questions(?question_variant_selection_strategy $variantstrategy = null,
             $timestamp = null, $userid = null) {
         if (is_null($variantstrategy)) {
             $variantstrategy = new question_variant_random_strategy();
@@ -920,7 +920,7 @@ class question_usage_by_activity {
      *      in the regrade. (By default, the regrode will use exactly the same question version.)
      */
     public function regrade_question($slot, $finished = false, $newmaxmark = null,
-            question_definition $otherversion = null) {
+            ?question_definition $otherversion = null) {
         $oldqa = $this->get_question_attempt($slot);
         if ($otherversion &&
                 $otherversion->questionbankentryid !== $oldqa->get_question(false)->questionbankentryid) {

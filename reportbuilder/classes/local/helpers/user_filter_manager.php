@@ -56,7 +56,7 @@ class user_filter_manager {
      * @param int|null $userid
      * @return bool
      */
-    public static function set(int $reportid, array $values, int $userid = null): bool {
+    public static function set(int $reportid, array $values, ?int $userid = null): bool {
         $jsonvalues = json_encode($values);
 
         $jsonchunks = str_split($jsonvalues, static::PREFERENCE_CHUNK_SIZE);
@@ -78,7 +78,7 @@ class user_filter_manager {
      * @param int|null $userid
      * @return array
      */
-    public static function get(int $reportid, int $userid = null): array {
+    public static function get(int $reportid, ?int $userid = null): array {
         $jsonvalues = '';
         $index = 0;
 
@@ -100,7 +100,7 @@ class user_filter_manager {
      * @param int|null $userid
      * @return bool
      */
-    public static function merge(int $reportid, array $values, int $userid = null): bool {
+    public static function merge(int $reportid, array $values, ?int $userid = null): bool {
         $existing = static::get($reportid, $userid);
 
         return static::set($reportid, array_merge($existing, $values), $userid);
@@ -114,7 +114,7 @@ class user_filter_manager {
      * @param int $index If specified, then preferences will be reset starting from this index
      * @return bool
      */
-    public static function reset_all(int $reportid, int $userid = null, int $index = 0): bool {
+    public static function reset_all(int $reportid, ?int $userid = null, int $index = 0): bool {
         // We'll repeatedly retrieve and reset preferences, until we hit one that is below the maximum length.
         do {
             $userpreference = static::user_preference_name($reportid, $index++);
@@ -133,7 +133,7 @@ class user_filter_manager {
      * @param int|null $userid
      * @return bool
      */
-    public static function reset_single(int $reportid, string $uniqueidentifier, int $userid = null): bool {
+    public static function reset_single(int $reportid, string $uniqueidentifier, ?int $userid = null): bool {
         $originalvalues = static::get($reportid, $userid);
 
         // Remove any filters whose name is prefixed by given identifier.

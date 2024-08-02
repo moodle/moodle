@@ -69,7 +69,7 @@ class user_favourite_service {
      * @throws \moodle_exception if the component name is invalid, or if the repository encounters any errors.
      */
     public function create_favourite(string $component, string $itemtype, int $itemid, \context $context,
-            int $ordering = null): favourite {
+            ?int $ordering = null): favourite {
         // Access: Any component can ask to favourite something, we can't verify access to that 'something' here though.
 
         // Validate the component name.
@@ -265,7 +265,7 @@ class user_favourite_service {
      * @param \context|null $context the context of the item which was favourited.
      * @return int
      */
-    public function count_favourites_by_type(string $component, string $itemtype, \context $context = null) {
+    public function count_favourites_by_type(string $component, string $itemtype, ?\context $context = null) {
         $criteria = [
             'userid' => $this->userid,
             'component' => $component,

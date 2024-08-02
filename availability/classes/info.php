@@ -173,7 +173,7 @@ abstract class info {
      * @return bool True if this item is available to the user, false otherwise
      */
     public function is_available(&$information, $grabthelot = false, $userid = 0,
-            \course_modinfo $modinfo = null) {
+            ?\course_modinfo $modinfo = null) {
         global $USER;
 
         // Default to no information.
@@ -262,7 +262,7 @@ abstract class info {
      * @return string Information string (for admin) about all restrictions on
      *   this item
      */
-    public function get_full_information(\course_modinfo $modinfo = null) {
+    public function get_full_information(?\course_modinfo $modinfo = null) {
         // Do nothing if there are no availability restrictions.
         if (is_null($this->availability)) {
             return '';

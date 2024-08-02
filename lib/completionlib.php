@@ -1395,7 +1395,7 @@ class completion_info {
      * @return array Array of user objects with user fields (including all identity fields)
      */
     public function get_tracked_users($where = '', $whereparams = array(), $groupid = 0,
-             $sort = '', $limitfrom = '', $limitnum = '', context $extracontext = null) {
+             $sort = '', $limitfrom = '', $limitnum = '', ?context $extracontext = null) {
 
         global $DB;
 
@@ -1447,7 +1447,7 @@ class completion_info {
      *   containing an additional ->progress array of coursemoduleid => completionstate
      */
     public function get_progress_all($where = '', $where_params = array(), $groupid = 0,
-            $sort = '', $pagesize = '', $start = '', context $extracontext = null) {
+            $sort = '', $pagesize = '', $start = '', ?context $extracontext = null) {
         global $CFG, $DB;
 
         // Get list of applicable users

@@ -29,7 +29,7 @@ trait tool_usertours_helper_trait {
      * @param   bool        $persist        Whether to persist the data
      * @return  \tool_usertours\tour
      */
-    public function helper_create_tour(\stdClass $tourconfig = null, $persist = true) {
+    public function helper_create_tour(?\stdClass $tourconfig = null, $persist = true) {
         $minvalues = [
             'id' => null,
             'pathmatch' => '/my/%',
@@ -65,7 +65,7 @@ trait tool_usertours_helper_trait {
      * @param   bool        $persist        Whether to persist the data
      * @return  \tool_usertours\step
      */
-    public function helper_create_step(\stdClass $stepconfig = null, $persist = true) {
+    public function helper_create_step(?\stdClass $stepconfig = null, $persist = true) {
         $minvalues = [
             'id' => null,
             'title' => '',

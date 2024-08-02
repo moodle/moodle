@@ -1288,7 +1288,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param null|moodle_url $cancel URL for the cancel link, defaults to the current page
      * @return string HTML
      */
-    public function plugins_management_confirm_buttons(moodle_url $continue=null, moodle_url $cancel=null) {
+    public function plugins_management_confirm_buttons(?moodle_url $continue=null, ?moodle_url $cancel=null) {
 
         $out = html_writer::start_div('plugins-management-confirm-buttons');
 

@@ -284,7 +284,7 @@ abstract class file_system {
      * @param file_progress $progress progress indicator callback or null if not required
      * @return array|bool List of processed files; false if error
      */
-    public function extract_to_pathname(stored_file $file, file_packer $packer, $pathname, file_progress $progress = null) {
+    public function extract_to_pathname(stored_file $file, file_packer $packer, $pathname, ?file_progress $progress = null) {
         $archivefile = $this->get_local_path_from_storedfile($file, true);
         return $packer->extract_to_pathname($archivefile, $pathname, null, $progress);
     }
@@ -304,7 +304,7 @@ abstract class file_system {
      * @return array|bool list of processed files; false if error
      */
     public function extract_to_storage(stored_file $file, file_packer $packer, $contextid,
-            $component, $filearea, $itemid, $pathbase, $userid = null, file_progress $progress = null) {
+            $component, $filearea, $itemid, $pathbase, $userid = null, ?file_progress $progress = null) {
 
         // Since we do not know which extractor we have, and whether it supports remote paths, use a local path here.
         $archivefile = $this->get_local_path_from_storedfile($file, true);

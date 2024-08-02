@@ -38,8 +38,8 @@ class frontend extends \core_availability\frontend {
         return array('option_min', 'option_max', 'label_min', 'label_max');
     }
 
-    protected function get_javascript_init_params($course, \cm_info $cm = null,
-            \section_info $section = null) {
+    protected function get_javascript_init_params($course, ?\cm_info $cm = null,
+            ?\section_info $section = null) {
         global $DB, $CFG;
         require_once($CFG->libdir . '/gradelib.php');
         require_once($CFG->dirroot . '/course/lib.php');

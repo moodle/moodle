@@ -170,7 +170,7 @@ abstract class base implements \IteratorAggregate {
      *
      * @throws \coding_exception
      */
-    final public static function create(array $data = null) {
+    final public static function create(?array $data = null) {
         global $USER, $CFG;
 
         $data = (array)$data;

@@ -382,7 +382,7 @@ function grade_needs_regrade_progress_bar($courseid) {
  * @param callable $callback A function to call if regrading took place
  * @return moodle_url|false The URL to redirect to if redirecting
  */
-function grade_regrade_final_grades_if_required($course, callable $callback = null) {
+function grade_regrade_final_grades_if_required($course, ?callable $callback = null) {
     global $PAGE, $OUTPUT;
 
     if (!grade_needs_regrade_final_grades($course->id)) {

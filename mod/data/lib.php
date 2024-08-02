@@ -1552,7 +1552,7 @@ function data_grade_item_delete($data) {
  * @param moodle_url|null $jumpurl a moodle_url by which to jump back to the record list (can be null)
  * @return mixed string with all parsed entries or nothing if $return is false
  */
-function data_print_template($templatename, $records, $data, $search='', $page=0, $return=false, moodle_url $jumpurl=null) {
+function data_print_template($templatename, $records, $data, $search='', $page=0, $return=false, ?moodle_url $jumpurl=null) {
     debugging(
         'data_print_template is deprecated. Use mod_data\\manager::get_template and mod_data\\template::parse_entries instead',
         DEBUG_DEVELOPER

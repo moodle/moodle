@@ -35,8 +35,8 @@ class application_registration_repository_test extends \advanced_testcase {
      * @param string|null $clientid the clientid of the platform's tool registration, or null to use a default.
      * @return application_registration the application_registration instance.
      */
-    protected function generate_application_registration(string $issuer = null, string $uniqueid = null,
-            string $clientid = null): application_registration {
+    protected function generate_application_registration(?string $issuer = null, ?string $uniqueid = null,
+            ?string $clientid = null): application_registration {
 
         $issuer = $issuer ?? 'https://lms.example.org';
         $uniqueid = $uniqueid ?? 'a2c94a2c94';

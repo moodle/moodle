@@ -649,7 +649,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * @return array|string array if $type is not specified and single string if $type is specified
      * @codeCoverageIgnore
      */
-    public static function get_select_types(int $type = null): array|string {
+    public static function get_select_types(?int $type = null): array|string {
         $plugin = 'qtype_ordering';
         $types = [
             self::SELECT_ALL => get_string('selectall', $plugin),
@@ -666,7 +666,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * @return array|string array if $type is not specified and single string if $type is specified
      * @codeCoverageIgnore
      */
-    public static function get_layout_types(int $type = null): array|string {
+    public static function get_layout_types(?int $type = null): array|string {
         $plugin = 'qtype_ordering';
         $types = [
             self::LAYOUT_VERTICAL   => get_string('vertical',   $plugin),
@@ -682,7 +682,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * @return array|string array if $type is not specified and single string if $type is specified
      * @codeCoverageIgnore
      */
-    public static function get_grading_types(int $type = null): array|string {
+    public static function get_grading_types(?int $type = null): array|string {
         $plugin = 'qtype_ordering';
         $types = [
             self::GRADING_ALL_OR_NOTHING => get_string('allornothing', $plugin),
@@ -709,7 +709,7 @@ class qtype_ordering_question extends question_graded_automatically {
      *                      The keys are style identifiers, and the values are the corresponding language strings.
      * @codeCoverageIgnore
      */
-    public static function get_numbering_styles(string $style = null): array|string {
+    public static function get_numbering_styles(?string $style = null): array|string {
         $plugin = 'qtype_ordering';
         $styles = [
             'none' => get_string('numberingstylenone', $plugin),

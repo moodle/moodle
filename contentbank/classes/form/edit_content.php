@@ -55,7 +55,7 @@ abstract class edit_content extends moodleform {
      * @param array $customdata Data to set during instance creation.
      * @param string $method Form method.
      */
-    public function __construct(string $action = null, array $customdata = null, string $method = 'post') {
+    public function __construct(?string $action = null, ?array $customdata = null, string $method = 'post') {
         parent::__construct($action, $customdata, $method);
         $this->contextid = $customdata['contextid'];
         $this->plugin = $customdata['plugin'];

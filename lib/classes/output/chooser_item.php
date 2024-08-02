@@ -52,7 +52,7 @@ class chooser_item implements renderable, templatable {
     /**
      * Constructor.
      */
-    public function __construct($id, $label, $value, pix_icon $icon, $description = null, context $context = null) {
+    public function __construct($id, $label, $value, pix_icon $icon, $description = null, ?context $context = null) {
         $this->id = $id;
         $this->label = $label;
         $this->value = $value;

@@ -74,7 +74,7 @@ class provider implements
      * @param int $instance The instance ID.
      */
     public static function get_user_contexts_with_script(userlist $userlist, \context $context, string $script,
-                                                         int $instance = null) {
+                                                         ?int $instance = null) {
         if (!$context instanceof \context_user) {
             return;
         }

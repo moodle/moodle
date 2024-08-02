@@ -113,7 +113,7 @@ class quiz_settings {
      * @param int|null $userid the the userid (optional). If passed, relevant overrides are applied.
      * @return quiz_settings the new quiz settings object.
      */
-    public static function create(int $quizid, int $userid = null): self {
+    public static function create(int $quizid, ?int $userid = null): self {
         $quiz = access_manager::load_quiz_and_settings($quizid);
         [$course, $cm] = get_course_and_cm_from_instance($quiz, 'quiz');
 
@@ -127,7 +127,7 @@ class quiz_settings {
      * @param int|null $userid the the userid (optional). If passed, relevant overrides are applied.
      * @return quiz_settings the new quiz settings object.
      */
-    public static function create_for_cmid(int $cmid, int $userid = null): self {
+    public static function create_for_cmid(int $cmid, ?int $userid = null): self {
         [$course, $cm] = get_course_and_cm_from_cmid($cmid, 'quiz');
         $quiz = access_manager::load_quiz_and_settings($cm->instance);
 
@@ -507,7 +507,7 @@ class quiz_settings {
      * @param int|null $attemptsubmittime time this attempt was submitted. (Optional, but should be given.)
      * @return string an appropraite message.
      */
-    public function cannot_review_message($when, $short = false, int $attemptsubmittime = null) {
+    public function cannot_review_message($when, $short = false, ?int $attemptsubmittime = null) {
 
         if ($attemptsubmittime === null) {
             debugging('It is recommended that you pass $attemptsubmittime to cannot_review_message', DEBUG_DEVELOPER);

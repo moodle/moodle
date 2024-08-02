@@ -493,7 +493,7 @@ class portfolio_format_leap2a extends portfolio_format_rich {
      * @param stdclass $user user information object
      * @return portfolio_format_leap2a_writer
      */
-    public static function leap2a_writer(stdclass $user=null) {
+    public static function leap2a_writer(?stdclass $user=null) {
         global $CFG;
         if (empty($user)) {
             global $USER;

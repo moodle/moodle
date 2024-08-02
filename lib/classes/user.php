@@ -215,7 +215,7 @@ class core_user {
      * @param int $querylimit Max number of database queries, default 5 (zero = no limit)
      * @return array Array of user objects with limited fields
      */
-    public static function search($query, \context_course $coursecontext = null,
+    public static function search($query, ?\context_course $coursecontext = null,
             $max = 30, $querylimit = 5) {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/user/lib.php');
@@ -1229,7 +1229,7 @@ class core_user {
      * @param stdClass $user User object, defaults to the current user.
      * @return bool
      */
-    public static function awaiting_action(stdClass $user = null): bool {
+    public static function awaiting_action(?stdClass $user = null): bool {
         global $USER;
 
         if ($user === null) {
@@ -1300,7 +1300,7 @@ class core_user {
      * @param array $options can include: override - if true, will not use forced firstname/lastname settings
      * @return string Full name of the user
      */
-    public static function get_fullname(stdClass $user, context $context = null, array $options = []): string {
+    public static function get_fullname(stdClass $user, ?context $context = null, array $options = []): string {
         global $CFG, $SESSION;
 
         // Clone the user so that it does not mess up the original object.
@@ -1414,7 +1414,7 @@ class core_user {
      * @param context|null $context The context will be used to determine the visibility of the user's profile url.
      * @return moodle_url Profile url of the user
      */
-    public static function get_profile_url(stdClass $user, context $context = null): moodle_url {
+    public static function get_profile_url(stdClass $user, ?context $context = null): moodle_url {
         if (empty($user->id)) {
             throw new coding_exception('User id is required when displaying profile url.');
         }
@@ -1453,7 +1453,7 @@ class core_user {
      *     - includetoken = false (whether to use a token for authentication. True for current user, int value for other user id)
      * @return user_picture User picture object
      */
-    public static function get_profile_picture(stdClass $user, context $context = null, array $options = []): user_picture {
+    public static function get_profile_picture(stdClass $user, ?context $context = null, array $options = []): user_picture {
         // Create a new user picture object.
         $userpicture = new user_picture($user);
 

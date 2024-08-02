@@ -107,7 +107,7 @@ class field_controller extends \core_customfield\field_controller {
      * @param \context|null $context context if known, otherwise configuration context will be used
      * @return array
      */
-    public function value_editor_options(\context $context = null) {
+    public function value_editor_options(?\context $context = null) {
         global $CFG;
         require_once($CFG->libdir.'/formslib.php');
 

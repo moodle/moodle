@@ -662,7 +662,7 @@ class enrol_ldap_plugin extends enrol_plugin {
      * @param progress_trace $trace
      * @return bool success
      */
-    protected function ldap_connect(progress_trace $trace = null) {
+    protected function ldap_connect(?progress_trace $trace = null) {
         global $CFG;
         require_once($CFG->libdir.'/ldaplib.php');
 

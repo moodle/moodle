@@ -57,7 +57,7 @@ abstract class contenttype {
      *
      * @param \context $context Optional context to check (default null)
      */
-    public function __construct(\context $context = null) {
+    public function __construct(?\context $context = null) {
         if (empty($context)) {
             $context = \context_system::instance();
         }
@@ -71,7 +71,7 @@ abstract class contenttype {
      * @param \stdClass $record An optional content record compatible object (default null)
      * @return content  Object with content bank information.
      */
-    public function create_content(\stdClass $record = null): content {
+    public function create_content(?\stdClass $record = null): content {
         global $USER, $DB, $CFG;
 
         $entry = new \stdClass();
@@ -109,7 +109,7 @@ abstract class contenttype {
      * @param \stdClass|null $record an optional content record
      * @return content  Object with content bank information.
      */
-    public function upload_content(stored_file $file, \stdClass $record = null): content {
+    public function upload_content(stored_file $file, ?\stdClass $record = null): content {
         if (empty($record)) {
             $record = new \stdClass();
             $record->name = $file->get_filename();

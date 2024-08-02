@@ -31,7 +31,7 @@ use mod_quiz\question\bank\filter\custom_category_condition;
  */
 class quiz_managecategories_feature extends \qbank_managecategories\plugin_feature {
 
-    public function get_question_filters(view $qbank = null): array {
+    public function get_question_filters(?view $qbank = null): array {
         return [
             new custom_category_condition($qbank),
         ];

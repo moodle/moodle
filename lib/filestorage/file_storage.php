@@ -915,7 +915,7 @@ class file_storage {
      * @param array $params any query params used by $itemidstest.
      */
     public function delete_area_files_select($contextid, $component,
-            $filearea, $itemidstest, array $params = null) {
+            $filearea, $itemidstest, ?array $params = null) {
         global $DB;
 
         $where = "contextid = :contextid
@@ -1221,7 +1221,7 @@ class file_storage {
      * @param bool $usetempfile use temporary file for download, may prevent out of memory problems
      * @return stored_file
      */
-    public function create_file_from_url($filerecord, $url, array $options = null, $usetempfile = false) {
+    public function create_file_from_url($filerecord, $url, ?array $options = null, $usetempfile = false) {
 
         $filerecord = (array)$filerecord;  // Do not modify the submitted record, this cast unlinks objects.
         $filerecord = (object)$filerecord; // We support arrays too.

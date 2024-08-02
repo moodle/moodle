@@ -91,7 +91,7 @@ class recording extends persistent {
      * @param stdClass|null $record If set will be passed to from_record
      * @param null|array $metadata
      */
-    public function __construct($id = 0, stdClass $record = null, ?array $metadata = null) {
+    public function __construct($id = 0, ?stdClass $record = null, ?array $metadata = null) {
         if ($record) {
             $record->headless = $record->headless ?? false;
             $record->imported = $record->imported ?? false;

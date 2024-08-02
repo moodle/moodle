@@ -75,7 +75,7 @@ abstract class db_table_vault {
      * @param object|null $user The user object
      * @return string
      */
-    abstract protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null,
+    abstract protected function generate_get_records_sql(?string $wheresql = null, ?string $sortsql = null,
         ?int $userid = null): string;
 
     /**

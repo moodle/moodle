@@ -192,8 +192,8 @@ class provider implements
      * @param  string $ratingarea Rating area to delete.
      * @param  int $itemid The item ID for use with deletion.
      */
-    public static function delete_ratings(\context $context, string $component = null,
-            string $ratingarea = null, int $itemid = null) {
+    public static function delete_ratings(\context $context, ?string $component = null,
+            ?string $ratingarea = null, ?int $itemid = null) {
         global $DB;
 
         $options = ['contextid' => $context->id];

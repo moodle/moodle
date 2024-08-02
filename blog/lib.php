@@ -338,7 +338,7 @@ function blog_is_enabled_for_user() {
  * @param stdClass $userid Load for a specific user
  * @return array An array of options organised by type.
  */
-function blog_get_all_options(moodle_page $page, stdClass $userid = null) {
+function blog_get_all_options(moodle_page $page, ?stdClass $userid = null) {
     global $CFG, $DB, $USER;
 
     $options = array();
@@ -400,7 +400,7 @@ function blog_get_all_options(moodle_page $page, stdClass $userid = null) {
  * @param stdClass $user
  * @return array The array of options for the requested user
  */
-function blog_get_options_for_user(stdClass $user=null) {
+function blog_get_options_for_user(?stdClass $user=null) {
     global $CFG, $USER;
     // Cache.
     static $useroptions = array();
@@ -471,7 +471,7 @@ function blog_get_options_for_user(stdClass $user=null) {
  * @param stdClass $user The user to load options for null == current user
  * @return array The array of options
  */
-function blog_get_options_for_course(stdClass $course, stdClass $user=null) {
+function blog_get_options_for_course(stdClass $course, ?stdClass $user=null) {
     global $CFG, $USER;
     // Cache.
     static $courseoptions = array();

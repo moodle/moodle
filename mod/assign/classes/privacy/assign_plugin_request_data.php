@@ -69,8 +69,8 @@ class assign_plugin_request_data {
      * @param \stdClass $user The user object.
      * @param \assign $assign The assign object.
      */
-    public function __construct(\context $context, \assign $assign, \stdClass $pluginobject = null, array $subcontext = [],
-            \stdClass $user = null) {
+    public function __construct(\context $context, \assign $assign, ?\stdClass $pluginobject = null, array $subcontext = [],
+            ?\stdClass $user = null) {
         $this->context = $context;
         $this->pluginobject = $pluginobject;
         $this->subcontext = $subcontext;

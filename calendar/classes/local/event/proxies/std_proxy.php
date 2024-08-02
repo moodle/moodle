@@ -71,7 +71,7 @@ class std_proxy implements proxy_interface {
      * @param callable  $callback Callback to load the class.
      * @param \stdClass $base     Class containing base values.
      */
-    public function __construct($id, callable $callback, \stdClass $base = null) {
+    public function __construct($id, callable $callback, ?\stdClass $base = null) {
         $this->id = $id;
         $this->callbackargs = [$id];
         $this->callback = $callback;

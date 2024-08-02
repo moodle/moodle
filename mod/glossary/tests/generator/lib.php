@@ -56,7 +56,7 @@ class mod_glossary_generator extends testing_module_generator {
         parent::reset();
     }
 
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         global $CFG;
 
         // Add default values for glossary.

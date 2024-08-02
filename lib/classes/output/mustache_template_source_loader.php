@@ -37,7 +37,7 @@ class mustache_template_source_loader {
      *
      * @param callable|null $gettemplatesource Callback to load template source by template name
      */
-    public function __construct(callable $gettemplatesource = null) {
+    public function __construct(?callable $gettemplatesource = null) {
         if ($gettemplatesource) {
             // The calling code has specified a function for retrieving the template source
             // code by name and theme.
@@ -140,7 +140,7 @@ class mustache_template_source_loader {
         bool $includecomments = false,
         array $seentemplates = [],
         array $seenstrings = [],
-        string $lang = null
+        ?string $lang = null
     ): array {
         // Initialise the return values.
         $templates = [];

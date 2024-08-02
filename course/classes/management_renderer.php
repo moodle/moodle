@@ -103,7 +103,7 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param core_course_category $category The currently selected category. Also the category to highlight in the listing.
      * @return string
      */
-    public function category_listing(core_course_category $category = null) {
+    public function category_listing(?core_course_category $category = null) {
 
         if ($category === null) {
             $selectedparents = array();
@@ -309,7 +309,7 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param core_course_category $category
      * @return string
      */
-    public function category_listing_actions(core_course_category $category = null) {
+    public function category_listing_actions(?core_course_category $category = null) {
         $actions = array();
 
         $cancreatecategory = $category && $category->can_create_subcategory();
@@ -338,7 +338,7 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param array $actions
      * @return string
      */
-    public function category_listitem_actions(core_course_category $category, array $actions = null) {
+    public function category_listitem_actions(core_course_category $category, ?array $actions = null) {
         if ($actions === null) {
             $actions = \core_course\management\helper::get_category_listitem_actions($category);
         }
@@ -375,7 +375,7 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param core_course_category $category The currently selected category if there is one.
      * @return string
      */
-    public function category_bulk_actions(core_course_category $category = null) {
+    public function category_bulk_actions(?core_course_category $category = null) {
         // Resort courses.
         // Change parent.
         if (!core_course_category::can_resort_any() && !core_course_category::can_change_parent_any()) {
@@ -481,7 +481,7 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param string|null $viewmode The view mode the page is in, one out of 'default', 'combined', 'courses' or 'categories'.
      * @return string
      */
-    public function course_listing(core_course_category $category = null, core_course_list_element $course = null,
+    public function course_listing(?core_course_category $category = null, ?core_course_list_element $course = null,
             $page = 0, $perpage = 20, $viewmode = 'default') {
 
         if ($category === null) {
@@ -656,7 +656,7 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param int $perpage
      * @return string
      */
-    public function course_listing_actions(core_course_category $category, core_course_list_element $course = null, $perpage = 20) {
+    public function course_listing_actions(core_course_category $category, ?core_course_list_element $course = null, $perpage = 20) {
         $actions = array();
         if ($category->can_create_course()) {
             $url = new moodle_url('/course/edit.php', array('category' => $category->id, 'returnto' => 'catmanage'));
@@ -984,8 +984,8 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param bool $linktext show title next to image in link
      * @return string HTML fragment
      */
-    public function action_icon($url, pix_icon $pixicon, component_action $action = null,
-                                array $attributes = null, $linktext = false) {
+    public function action_icon($url, pix_icon $pixicon, ?component_action $action = null,
+                                ?array $attributes = null, $linktext = false) {
         if (!($url instanceof moodle_url)) {
             $url = new moodle_url($url);
         }
@@ -1016,7 +1016,7 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param string $param The param name.
      * @return string
      */
-    public function view_mode_selector(array $modes, $currentmode, moodle_url $url = null, $param = 'view') {
+    public function view_mode_selector(array $modes, $currentmode, ?moodle_url $url = null, $param = 'view') {
         if ($url === null) {
             $url = $this->page->url;
         }
@@ -1064,7 +1064,7 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param string $search The string we are searching for.
      * @return string
      */
-    public function search_listing(array $courses, $totalcourses, core_course_list_element $course = null, $page = 0, $perpage = 20,
+    public function search_listing(array $courses, $totalcourses, ?core_course_list_element $course = null, $page = 0, $perpage = 20,
             $search = '') {
         $page = max($page, 0);
         $perpage = max($perpage, 2);

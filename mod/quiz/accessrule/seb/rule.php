@@ -478,7 +478,7 @@ class quizaccess_seb extends access_rule_base {
      *
      * @return string HTML code of the provided buttons.
      */
-    private function display_buttons(string $buttonshtml, $class = '', array $attributes = null): string {
+    private function display_buttons(string $buttonshtml, $class = '', ?array $attributes = null): string {
         $html = '';
 
         if (!empty($buttonshtml)) {

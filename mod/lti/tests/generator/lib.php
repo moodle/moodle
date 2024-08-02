@@ -40,7 +40,7 @@ require_once($CFG->dirroot . '/mod/lti/locallib.php');
  */
 class mod_lti_generator extends testing_module_generator {
 
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         $record  = (object) (array) $record;
 
         if (!isset($record->toolurl)) {

@@ -94,7 +94,7 @@ class bigbluebutton_proxy extends proxy_base {
     private static function internal_get_join_url(
         instance $instance,
         ?string $jointime,
-        string $userfullname = null,
+        ?string $userfullname = null,
         bool $isguestjoin = false
     ): string {
         $data = [

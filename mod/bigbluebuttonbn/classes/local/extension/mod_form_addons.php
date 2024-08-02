@@ -48,7 +48,7 @@ abstract class mod_form_addons {
      * @param stdClass|null $bigbluebuttonbndata
      * @param string|null $suffix
      */
-    public function __construct(\MoodleQuickForm &$mform, ?stdClass $bigbluebuttonbndata = null, string $suffix = null) {
+    public function __construct(\MoodleQuickForm &$mform, ?stdClass $bigbluebuttonbndata = null, ?string $suffix = null) {
         $this->mform = $mform;
         $this->bigbluebuttonbndata = $bigbluebuttonbndata;
         $this->suffix = $suffix;

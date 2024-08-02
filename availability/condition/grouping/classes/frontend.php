@@ -39,8 +39,8 @@ class frontend extends \core_availability\frontend {
     /** @var int Course id that $allgroupings is for */
     protected $allgroupingscourseid;
 
-    protected function get_javascript_init_params($course, \cm_info $cm = null,
-            \section_info $section = null) {
+    protected function get_javascript_init_params($course, ?\cm_info $cm = null,
+            ?\section_info $section = null) {
         // Get all groups for course.
         $groupings = $this->get_all_groupings($course->id);
 
@@ -70,8 +70,8 @@ class frontend extends \core_availability\frontend {
         return $this->allgroupings;
     }
 
-    protected function allow_add($course, \cm_info $cm = null,
-            \section_info $section = null) {
+    protected function allow_add($course, ?\cm_info $cm = null,
+            ?\section_info $section = null) {
         global $CFG, $DB;
 
         // Check if groupings are in use for the course. (Unlike the 'group'

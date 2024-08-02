@@ -100,7 +100,7 @@ class tgz_packer extends file_packer {
      */
     public function archive_to_storage(array $files, $contextid,
             $component, $filearea, $itemid, $filepath, $filename,
-            $userid = null, $ignoreinvalidfiles = true, file_progress $progress = null) {
+            $userid = null, $ignoreinvalidfiles = true, ?file_progress $progress = null) {
         global $CFG;
 
         // Set up a temporary location for the file.
@@ -167,7 +167,7 @@ class tgz_packer extends file_packer {
      * @throws coding_exception If any archive paths do not meet the restrictions
      */
     public function archive_to_pathname(array $files, $archivefile,
-            $ignoreinvalidfiles=true, file_progress $progress = null) {
+            $ignoreinvalidfiles=true, ?file_progress $progress = null) {
         // Open .gz file.
         if (!($gz = gzopen($archivefile, 'wb'))) {
             return false;
@@ -327,7 +327,7 @@ class tgz_packer extends file_packer {
      * @throws coding_exception If names aren't valid
      */
     protected function write_tar_entry($gz, $archivepath, $file, $size, $mtime, $content = null,
-            file_progress $progress = null, $done = 0) {
+            ?file_progress $progress = null, $done = 0) {
         // Header based on documentation of POSIX ustar format from:
         // http://www.freebsd.org/cgi/man.cgi?query=tar&sektion=5&manpath=FreeBSD+8-current .
 
@@ -641,7 +641,7 @@ class tgz_packer extends file_packer {
      * @throws moodle_exception If error
      */
     public function extract_to_pathname($archivefile, $pathname,
-            array $onlyfiles = null, file_progress $progress = null, $returnbool = false) {
+            ?array $onlyfiles = null, ?file_progress $progress = null, $returnbool = false) {
         $extractor = new tgz_extractor($archivefile);
         try {
             $result = $extractor->extract(
@@ -684,7 +684,7 @@ class tgz_packer extends file_packer {
      */
     public function extract_to_storage($archivefile, $contextid,
             $component, $filearea, $itemid, $pathbase, $userid = null,
-            file_progress $progress = null) {
+            ?file_progress $progress = null) {
         $extractor = new tgz_extractor($archivefile);
         return $extractor->extract(
                 new tgz_packer_extract_to_storage($contextid, $component,
@@ -752,7 +752,7 @@ class tgz_packer_extract_to_pathname implements tgz_extractor_handler {
      * @param string $pathname target directory
      * @param array $onlyfiles only extract files present in the array
      */
-    public function __construct($pathname, array $onlyfiles = null) {
+    public function __construct($pathname, ?array $onlyfiles = null) {
         $this->pathname = $pathname;
         $this->onlyfiles = $onlyfiles;
     }

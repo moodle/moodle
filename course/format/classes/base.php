@@ -1267,7 +1267,7 @@ abstract class base {
      * @param int|null $sectionid null if it is course format option
      * @return array array of options that have valid values
      */
-    protected function validate_format_options(array $rawdata, int $sectionid = null): array {
+    protected function validate_format_options(array $rawdata, ?int $sectionid = null): array {
         if (!$sectionid) {
             $allformatoptions = $this->course_format_options(true);
         } else {

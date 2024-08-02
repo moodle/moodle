@@ -110,7 +110,7 @@ class workshop_best_evaluation extends workshop_evaluation {
      *
      * @return workshop_best_evaluation_settings_form
      */
-    public function get_settings_form(moodle_url $actionurl=null) {
+    public function get_settings_form(?moodle_url $actionurl=null) {
 
         $customdata['workshop'] = $this->workshop;
         $customdata['current'] = $this->settings;

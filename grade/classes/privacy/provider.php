@@ -1281,7 +1281,7 @@ class provider implements
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    protected static function delete_files(array $itemids, bool $ishistory, array $userids = null) {
+    protected static function delete_files(array $itemids, bool $ishistory, ?array $userids = null) {
         global $DB;
 
         list($iteminnsql, $params) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED);

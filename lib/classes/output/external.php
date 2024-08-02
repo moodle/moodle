@@ -118,7 +118,7 @@ class external extends external_api {
         string $template,
         string $themename,
         bool $includecomments = false,
-        string $lang = null
+        ?string $lang = null
     ) {
         global $DB, $CFG, $PAGE;
 

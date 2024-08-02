@@ -246,7 +246,7 @@ class comment {
      * @param moodle_page $page The page object to initialise comments within
      *                          If not provided the global $PAGE is used
      */
-    public static function init(moodle_page $page = null) {
+    public static function init(?moodle_page $page = null) {
         global $PAGE;
 
         if (empty($page)) {
@@ -329,7 +329,7 @@ class comment {
      * @param moodle_page $page
      * @return moodle_url
      */
-    public function get_nojslink(moodle_page $page = null) {
+    public function get_nojslink(?moodle_page $page = null) {
         if ($page === null) {
             global $PAGE;
             $page = $PAGE;

@@ -50,8 +50,8 @@ abstract class frontend {
      * @param \cm_info $cm Course-module currently being edited (null if none)
      * @param \section_info $section Section currently being edited (null if none)
      */
-    protected function allow_add($course, \cm_info $cm = null,
-            \section_info $section = null) {
+    protected function allow_add($course, ?\cm_info $cm = null,
+            ?\section_info $section = null) {
         return true;
     }
 
@@ -78,8 +78,8 @@ abstract class frontend {
      * @param \section_info $section Section currently being edited (null if none)
      * @return array Array of parameters for the JavaScript function
      */
-    protected function get_javascript_init_params($course, \cm_info $cm = null,
-            \section_info $section = null) {
+    protected function get_javascript_init_params($course, ?\cm_info $cm = null,
+            ?\section_info $section = null) {
         return array();
     }
 
@@ -99,8 +99,8 @@ abstract class frontend {
      * @param \cm_info $cm Course-module currently being edited (null if none)
      * @param \section_info $section Section currently being edited (null if none)
      */
-    public static function include_all_javascript($course, \cm_info $cm = null,
-            \section_info $section = null) {
+    public static function include_all_javascript($course, ?\cm_info $cm = null,
+            ?\section_info $section = null) {
         global $PAGE;
 
         // Prepare array of required YUI modules. It is bad for performance to

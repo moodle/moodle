@@ -1629,7 +1629,7 @@ function course_format_name ($course,$max=100) {
  * @param \stdClass $user the user to check, defaults to the global user if not provided.
  * @return bool whether the current user is allowed to add this type of module to this course.
  */
-function course_allowed_module($course, $modname, \stdClass $user = null) {
+function course_allowed_module($course, $modname, ?\stdClass $user = null) {
     global $USER;
     $user = $user ?? $USER;
     if (is_numeric($modname)) {
@@ -2222,7 +2222,7 @@ function update_course($data, $editoroptions = NULL) {
  * @param int $lastloginsince If specified, count only users who logged in after this timestamp.
  * @return float
  */
-function average_number_of_participants(bool $onlyactive = false, int $lastloginsince = null): float {
+function average_number_of_participants(bool $onlyactive = false, ?int $lastloginsince = null): float {
     global $DB;
 
     $params = [];
@@ -3091,7 +3091,7 @@ function mod_duplicate_activity($course, $cm, $sr = null) {
  *
  * @return cm_info|null cminfo object if we sucessfully duplicated the mod and found the new cm.
  */
-function duplicate_module($course, $cm, int $sectionid = null, bool $changename = true): ?cm_info {
+function duplicate_module($course, $cm, ?int $sectionid = null, bool $changename = true): ?cm_info {
     global $CFG, $DB, $USER;
     require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
     require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
@@ -4002,8 +4002,8 @@ function course_classify_courses_for_timeline(array $courses) {
 function course_get_enrolled_courses_for_logged_in_user(
     int $limit = 0,
     int $offset = 0,
-    string $sort = null,
-    string $fields = null,
+    ?string $sort = null,
+    ?string $fields = null,
     int $dbquerylimit = COURSE_DB_QUERY_LIMIT,
     array $includecourses = [],
     array $hiddencourses = []
@@ -4048,8 +4048,8 @@ function course_get_enrolled_courses_for_logged_in_user(
 function course_get_enrolled_courses_for_logged_in_user_from_search(
     int $limit = 0,
     int $offset = 0,
-    string $sort = null,
-    string $fields = null,
+    ?string $sort = null,
+    ?string $fields = null,
     int $dbquerylimit = COURSE_DB_QUERY_LIMIT,
     array $searchcriteria = [],
     array $options = []
@@ -4437,7 +4437,7 @@ function course_require_view_participants($context) {
  * @param stdClass $user the user object. If not provided, the current user will be checked.
  * @return bool true if the user is allowed to download in the context, false otherwise.
  */
-function can_download_from_backup_filearea($filearea, \context $context, stdClass $user = null) {
+function can_download_from_backup_filearea($filearea, \context $context, ?stdClass $user = null) {
     $candownload = false;
     switch ($filearea) {
         case 'course':
@@ -4493,7 +4493,7 @@ function get_hidden_courses_on_timeline($user = null) {
  * @param string|null $sort SQL string for sorting
  * @return array
  */
-function course_get_recent_courses(int $userid = null, int $limit = 0, int $offset = 0, string $sort = null) {
+function course_get_recent_courses(?int $userid = null, int $limit = 0, int $offset = 0, ?string $sort = null) {
 
     global $CFG, $USER, $DB;
 

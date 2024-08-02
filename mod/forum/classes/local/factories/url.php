@@ -415,7 +415,7 @@ class url {
      */
     public function get_author_profile_image_url(
         author_entity $author,
-        int $authorcontextid = null,
+        ?int $authorcontextid = null,
         int $size = 100
     ): moodle_url {
         global $PAGE;

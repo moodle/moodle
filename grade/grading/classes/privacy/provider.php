@@ -200,7 +200,7 @@ class provider implements
      * @param  \context $context The context to delete on.
      * @param  int|null $itemid  An optional item ID to refine the deletion.
      */
-    public static function delete_instance_data(\context $context, int $itemid = null) {
+    public static function delete_instance_data(\context $context, ?int $itemid = null) {
         if (is_null($itemid)) {
             self::delete_data_for_instances($context);
         } else {

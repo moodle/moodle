@@ -72,7 +72,7 @@ class events_related_objects_cache {
      * @param array $events Array of event_interface events
      * @param array $courses Array of courses to populate the cache with
      */
-    public function __construct(array $events, array $courses = null) {
+    public function __construct(array $events, ?array $courses = null) {
         $this->events = $events;
 
         if (!is_null($courses)) {

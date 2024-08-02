@@ -247,7 +247,7 @@ abstract class completion_criteria extends data_object {
      * @param array $attributes html attributes
      * @return pix_icon
      */
-    public function get_icon($alt, array $attributes = null) {
+    public function get_icon($alt, ?array $attributes = null) {
         global $COMPLETION_CRITERIA_TYPES;
 
         $criteriatype = $COMPLETION_CRITERIA_TYPES[$this->criteriatype];

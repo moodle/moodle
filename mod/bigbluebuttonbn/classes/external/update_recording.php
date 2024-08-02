@@ -48,7 +48,7 @@ class update_recording extends external_api {
         int $bigbluebuttonbnid,
         int $recordingid,
         string $action,
-        string $additionaloptions = null
+        ?string $additionaloptions = null
     ): array {
         // Validate the bigbluebuttonbnid ID.
         [

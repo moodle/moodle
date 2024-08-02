@@ -70,7 +70,7 @@ class annotation {
      * Convert a compatible stdClass into an instance of this class.
      * @param \stdClass $record
      */
-    public function __construct(\stdClass $record = null) {
+    public function __construct(?\stdClass $record = null) {
         if ($record) {
             $intcols = array('endx', 'endy', 'x', 'y');
             foreach ($this as $key => $value) {

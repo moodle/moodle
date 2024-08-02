@@ -1221,7 +1221,7 @@ abstract class repository implements cacheable_object {
      * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
      * @param array $options additional options affecting the file serving
      */
-    public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
+    public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, ?array $options = null) {
         if ($this->has_moodle_files()) {
             $fs = get_file_storage();
             $params = file_storage::unpack_reference($storedfile->get_reference(), true);

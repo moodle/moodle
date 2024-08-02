@@ -551,7 +551,7 @@ class cache_helper {
      * @param cache_config $config
      * @return bool
      */
-    public static function purge_store($storename, cache_config $config = null) {
+    public static function purge_store($storename, ?cache_config $config = null) {
         if ($config === null) {
             $config = cache_config::instance();
         }
@@ -856,7 +856,7 @@ class cache_helper {
      * @param array|null $stores An array of stores to get warnings for, or null for all.
      * @return string[]
      */
-    public static function warnings(array $stores = null) {
+    public static function warnings(?array $stores = null) {
         global $CFG;
         if ($stores === null) {
             require_once($CFG->dirroot.'/cache/locallib.php');

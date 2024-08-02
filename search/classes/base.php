@@ -314,7 +314,7 @@ abstract class base {
      * @return \moodle_recordset|null|false Recordset / null if no results / false if not supported
      * @since Moodle 3.4
      */
-    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
+    public function get_document_recordset($modifiedfrom = 0, ?\context $context = null) {
         return false;
     }
 

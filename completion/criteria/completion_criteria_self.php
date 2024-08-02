@@ -157,7 +157,7 @@ class completion_criteria_self extends completion_criteria {
      * @param array $attributes html attributes
      * @return pix_icon
      */
-    public function get_icon($alt, array $attributes = null) {
+    public function get_icon($alt, ?array $attributes = null) {
         return new pix_icon('i/completion_self', $alt, 'moodle', $attributes);
     }
 }

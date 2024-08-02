@@ -760,7 +760,7 @@ class xmldb_field extends xmldb_object {
      * @param xmldb_table $xmldb_table optional when object is table
      * @return string null if ok, error message if problem found
      */
-    public function validateDefinition(xmldb_table $xmldb_table=null) {
+    public function validateDefinition(?xmldb_table $xmldb_table=null) {
         if (!$xmldb_table) {
             return 'Invalid xmldb_field->validateDefinition() call, $xmldb_table is required.';
         }

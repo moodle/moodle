@@ -121,7 +121,7 @@ class core_shutdown_manager {
      * @param array $params
      * @return void
      */
-    public static function register_signal_handler($callback, array $params = null): void {
+    public static function register_signal_handler($callback, ?array $params = null): void {
         if (!is_callable($callback)) {
             error_log('Invalid custom signal function detected ' . var_export($callback, true)); // phpcs:ignore
         }
@@ -135,7 +135,7 @@ class core_shutdown_manager {
      * @param array $params
      * @return void
      */
-    public static function register_function($callback, array $params = null): void {
+    public static function register_function($callback, ?array $params = null): void {
         if (!is_callable($callback)) {
             error_log('Invalid custom shutdown function detected '.var_export($callback, true)); // phpcs:ignore
         }
