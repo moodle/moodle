@@ -39,12 +39,10 @@ class text_filter extends \core_filters\text_filter {
 
         // Pattern to find a mailto link with the linked text.
         $pattern = '|(<a\s+href\s*=\s*[\'"]?mailto:)' . $emailregex . '([\'"]?\s*>)' . '(.*)' . '(</a>)|iU';
-        $text = preg_replace_callback($pattern, 'filter_emailprotect_alter_mailto', $text);
         $text = preg_replace_callback($pattern, [self::class, 'alter_mailto'], $text);
 
         // Pattern to find any other email address in the text.
         $pattern = '/(^|\s+|>)' . $emailregex . '($|\s+|\.\s+|\.$|<)/i';
-        $text = preg_replace_callback($pattern, 'filter_emailprotect_alter_email', $text);
         $text = preg_replace_callback($pattern, [self::class, 'alter_email'], $text);
 
         return $text;
