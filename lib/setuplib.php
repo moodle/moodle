@@ -584,9 +584,17 @@ function initialise_cfg() {
 function initialise_local_config_cache() {
     global $CFG;
 
-    $bootstrapcachefile = $CFG->localcachedir . '/bootstrap.php';
+    $bootstraplocalfile = $CFG->localcachedir . '/bootstrap.php';
+    $bootstrapsharedfile = $CFG->cachedir . '/bootstrap.php';
 
-    if (!empty($CFG->siteidentifier) && !file_exists($bootstrapcachefile)) {
+    if (!is_readable($bootstraplocalfile) && is_readable($bootstrapsharedfile)) {
+        // If we don't have a local cache but do have a shared cache then clone it,
+        // for example when scaling up new front ends.
+        make_localcache_directory('', true);
+        copy($bootstrapsharedfile, $bootstraplocalfile);
+    }
+
+    if (!empty($CFG->siteidentifier) && !file_exists($bootstrapsharedfile) && defined('SYSCONTEXTID')) {
         $contents = "<?php
 // ********** This file is generated DO NOT EDIT **********
 \$CFG->siteidentifier = " . var_export($CFG->siteidentifier, true) . ";
@@ -597,10 +605,15 @@ if (\$CFG->bootstraphash === hash_local_config_cache() && !defined('SYSCONTEXTID
 }
 ";
 
-        $temp = $bootstrapcachefile . '.tmp' . uniqid();
+        // Create the central bootstrap first.
+        $temp = $bootstrapsharedfile . '.tmp' . uniqid();
         file_put_contents($temp, $contents);
         @chmod($temp, $CFG->filepermissions);
-        rename($temp, $bootstrapcachefile);
+        rename($temp, $bootstrapsharedfile);
+
+        // Then prewarm the local cache as well.
+        make_localcache_directory('', true);
+        copy($bootstrapsharedfile, $bootstraplocalfile);
     }
 }
 
@@ -1593,6 +1606,9 @@ function make_localcache_directory($directory, $exceptiononerror = true) {
         touch($timestampfile);
         @chmod($timestampfile, $CFG->filepermissions);
         clearstatcache();
+
+        // Then prewarm the local boostrap.php file as well.
+        initialise_local_config_cache();
     }
 
     if ($directory === '') {
