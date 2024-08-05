@@ -327,7 +327,11 @@ export default class extends BaseComponent {
             data.cmid = cmInfo.id;
             data.cmname = cmInfo.name;
             data.information = await this.reactive.getFormatString('cmmove_info', data.cmname);
-            titleText = this.reactive.getFormatString('cmmove_title');
+            if (cmInfo.hasdelegatedsection) {
+                titleText = this.reactive.getFormatString('cmmove_subsectiontitle');
+            } else {
+                titleText = this.reactive.getFormatString('cmmove_title');
+            }
         } else {
             data.information = await this.reactive.getFormatString('cmsmove_info', cmIds.length);
             titleText = this.reactive.getFormatString('cmsmove_title');

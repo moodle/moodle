@@ -77,6 +77,7 @@ final class sectiondelegate_test extends \advanced_testcase {
             $streditsection,
             get_string('hidefromothers', 'format_' . $course->format),
             get_string('showfromothers', 'format_' . $course->format),
+            get_string('move'),
             get_string('delete'),
             get_string('sectionlink', 'course'),
         ];

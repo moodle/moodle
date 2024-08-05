@@ -167,8 +167,24 @@ class delegatedcontrolmenu extends basecontrolmenu {
             }
         }
 
+        // Only show the move link if we are not already in the section view page.
+        // Move (only for component compatible formats).
+        if (!$isheadersection && $hasmanageactivities && $usecomponents) {
+            $controls['move'] = [
+                'url'   => new moodle_url('/course/mod.php', ['copy' => $cm->id]),
+                'icon' => 'i/dragdrop',
+                'name' => get_string('move'),
+                'pixattr' => ['class' => ''],
+                'attr' => [
+                        'class' => 'editing_movecm ',
+                        'data-action' => 'moveCm',
+                        'data-id' => $cm->id,
+                ],
+            ];
+        }
+
         // Delete deletes the module.
-        // Only show the view link if we are not already in the section view page.
+        // Only show the delete link if we are not already in the section view page.
         if (!$isheadersection && $hasmanageactivities) {
             $url = clone($cmbaseurl);
             $url->param('delete', $cm->id);

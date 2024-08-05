@@ -33,8 +33,8 @@ Feature: The module menu replaces the delegated section menu
     And I should not see "Assign roles"
     And I should not see "Highlight"
     And I should see "Edit settings"
-    # Duplicate and Move are not implemented yet.
     And I should not see "Move"
+    # Duplicate is not implemented yet.
     And I should not see "Duplicate"
     And I should see "Hide"
     # Delete option for subsection page is not implemented yet.
@@ -50,8 +50,8 @@ Feature: The module menu replaces the delegated section menu
     And I should not see "Highlight"
     And I should see "View"
     And I should see "Edit settings"
-    # Duplicate and Move are not implemented yet.
-    And I should not see "Move"
+    And I should see "Move"
+    # Duplicate is not implemented yet.
     And I should not see "Duplicate"
     And I should see "Hide"
     And I should see "Delete"
@@ -66,8 +66,8 @@ Feature: The module menu replaces the delegated section menu
     And I should not see "Highlight"
     And I should see "View"
     And I should see "Edit settings"
-    # Duplicate and Move are not implemented yet.
-    And I should not see "Move"
+    And I should see "Move"
+    # Duplicate is not implemented yet.
     And I should not see "Duplicate"
     And I should see "Hide"
     And I should see "Delete"
@@ -207,3 +207,32 @@ Feature: The module menu replaces the delegated section menu
     And I open section "Subsection1" edit menu
     And I should not see "Hide"
     And I should not see "Show"
+
+  @javascript
+  Scenario: Move option in subsection action menu
+    Given the following "activities" exist:
+      | activity   | course | idnumber    | name        | intro            | section |
+      | subsection | C1     | subsection2 | Subsection2 | Test Subsection2 | 1       |
+    And I turn editing mode on
+    And I open "Subsection1" actions menu
+    When I choose "Move" in the open action menu
+    And I should see "Move Subsection1 after" in the "Move subsection" "dialogue"
+    # Can't be moved inside same subsection.
+    And I click on "Subsection1" "link" in the "Move subsection" "dialogue"
+    And I should see "Move Subsection1 after" in the "Move subsection" "dialogue"
+    # Can't be moved inside other subsection.
+    And I click on "Subsection2" "link" in the "Move subsection" "dialogue"
+    And I should see "Move Subsection1 after" in the "Move subsection" "dialogue"
+    # Can be moved to other position.
+    And I click on "General" "link" in the "Move subsection" "dialogue"
+    Then I should not see "Move Subsection1 after"
+    And I should see "Subsection1" in the "General" "section"
+    And I should not see "Subsection1" in the "Section 1" "section"
+    # Section page. Subsection is still content, so Move option should exist.
+    And I am on the "C1 > Section 1" "course > section" page
+    And I open "Subsection2" actions menu
+    And I should see "Move"
+    # Subsection page. Move option should not exist.
+    And I am on the "C1 > Subsection1" "course > section" page
+    And I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
+    And "Move" "link" should not exist in the "[data-region='header-actions-container']" "css_element"
