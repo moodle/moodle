@@ -592,17 +592,31 @@ export default class extends BaseComponent {
 
         let bodyText = null;
         let titleText = null;
+        let delegatedsection = null;
         if (cmIds.length == 1) {
             const cmInfo = this.reactive.get('cm', cmIds[0]);
-            titleText = getString('cmdelete_title', 'core_courseformat');
-            bodyText = getString(
-                'cmdelete_info',
-                'core_courseformat',
-                {
-                    type: cmInfo.modname,
-                    name: cmInfo.name,
-                }
-            );
+            if (cmInfo.hasdelegatedsection) {
+                delegatedsection = cmInfo.delegatesectionid;
+                titleText = this.reactive.getFormatString('cmdelete_subsectiontitle');
+                bodyText = getString(
+                    'sectiondelete_info',
+                    'core_courseformat',
+                    {
+                        type: cmInfo.modname,
+                        name: cmInfo.name,
+                    }
+                );
+            } else {
+                titleText = this.reactive.getFormatString('cmdelete_title');
+                bodyText = getString(
+                    'cmdelete_info',
+                    'core_courseformat',
+                    {
+                        type: cmInfo.modname,
+                        name: cmInfo.name,
+                    }
+                );
+            }
         } else {
             titleText = getString('cmsdelete_title', 'core_courseformat');
             bodyText = getString(
@@ -624,6 +638,13 @@ export default class extends BaseComponent {
                 e.preventDefault();
                 modal.destroy();
                 this.reactive.dispatch('cmDelete', cmIds);
+                if (cmIds.length == 1 && delegatedsection && target.baseURI.includes('section.php')) {
+                    // Redirect to the course main page if the subsection is the current page.
+                    let parameters = new URLSearchParams(window.location.search);
+                    if (parameters.has('id') && parameters.get('id') == delegatedsection) {
+                        this._dispatchSectionDelete([delegatedsection], target);
+                    }
+                }
             }
         );
     }

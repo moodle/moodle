@@ -51,6 +51,7 @@ $string['cm_stealth_feedback_batch'] = 'The selected {$a->count} activities are 
 $string['cm_visiblegroups_feedback'] = '{$a->name} group mode changed to Visible groups.';
 $string['cmavailability'] = 'Activity availability';
 $string['cmdelete_info'] = 'This will delete {$a->name} and any user data it contains.';
+$string['cmdelete_subsectiontitle'] = 'Delete subsection?';
 $string['cmdelete_title'] = 'Delete activity?';
 $string['cmsdelete'] = 'Delete activities';
 $string['cmsdelete_info'] = 'This will delete {$a->count} activities and any user data they contain.';

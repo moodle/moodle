@@ -37,8 +37,7 @@ Feature: The module menu replaces the delegated section menu
     And I should not see "Move"
     And I should not see "Duplicate"
     And I should see "Hide"
-    # Delete option for subsection page is not implemented yet.
-    And I should not see "Delete"
+    And I should see "Delete"
     And I should see "Permalink"
 
   @javascript
@@ -144,18 +143,21 @@ Feature: The module menu replaces the delegated section menu
     And "Subsection3" "link" should exist
     And I open "Subsection1" actions menu
     When I choose "Delete" in the open action menu
-    And I click on "Delete" "button" in the "Delete activity?" "dialogue"
+    And I click on "Delete" "button" in the "Delete subsection?" "dialogue"
     And "Subsection1" "link" should not exist in the "#region-main-box" "css_element"
     And I am on the "C1 > Section 1" "course > section" page
     # Section page. Open Subsection2 module action menu.
     And I open "Subsection2" actions menu
     And I choose "Delete" in the open action menu
-    And I click on "Delete" "button" in the "Delete activity?" "dialogue"
+    And I click on "Delete" "button" in the "Delete subsection?" "dialogue"
     And "Subsection2" "link" should not exist in the "#region-main-box" "css_element"
     And I am on the "C1 > Subsection3" "course > section" page
     # Subsection page. Open the section header action menu.
     And I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
-    And "Delete" "link" should not exist in the "[data-region='header-actions-container']" "css_element"
+    And I choose "Delete" in the open action menu
+    And I click on "Delete" "button" in the "Delete subsection?" "dialogue"
+    And I should not see "Subsection3"
+    And I should see "Course 1" in the "h1" "css_element"
 
   @javascript
   Scenario: Hide/Show option in subsection action menu
