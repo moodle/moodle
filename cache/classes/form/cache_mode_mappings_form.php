@@ -14,10 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache\form;
+
+use cache_store as store;
+use moodleform;
+
 /**
  * Form to set the mappings for a mode.
  *
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,18 +35,18 @@ class cache_mode_mappings_form extends moodleform {
         $form = $this->_form;
         $stores = $this->_customdata;
 
-        $options = array(
-            store::MODE_APPLICATION => array(),
-            store::MODE_SESSION => array(),
-            store::MODE_REQUEST => array()
-        );
+        $options = [
+            store::MODE_APPLICATION => [],
+            store::MODE_SESSION => [],
+            store::MODE_REQUEST => [],
+        ];
         foreach ($stores as $storename => $store) {
             foreach ($store['modes'] as $mode => $enabled) {
                 if ($enabled && ($mode !== store::MODE_SESSION || $store['supports']['searchable'])) {
                     if (empty($store['default'])) {
                         $options[$mode][$storename] = $store['name'];
                     } else {
-                        $options[$mode][$storename] = get_string('store_'.$store['name'], 'cache');
+                        $options[$mode][$storename] = get_string('store_' . $store['name'], 'cache');
                     }
                 }
             }
@@ -50,9 +55,14 @@ class cache_mode_mappings_form extends moodleform {
         $form->addElement('hidden', 'action', 'editmodemappings');
         $form->setType('action', PARAM_ALPHA);
         foreach ($options as $mode => $optionset) {
-            $form->addElement('select', 'mode_'.$mode, get_string('mode_'.$mode, 'cache'), $optionset);
+            $form->addElement('select', 'mode_' . $mode, get_string('mode_' . $mode, 'cache'), $optionset);
         }
 
         $this->add_action_buttons();
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(cache_mode_mappings_form::class, \cache_mode_mappings_form::class);

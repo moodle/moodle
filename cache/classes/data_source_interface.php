@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
 /**
  * Cache Data Source.
  *
@@ -26,13 +28,12 @@
  *
  * Can be implemented by any class.
  *
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface cache_data_source {
-
+interface data_source_interface {
     /**
      * Returns an instance of the data source class that the cache can use for loading data using the other methods
      * specified by this interface.
@@ -58,3 +59,8 @@ interface cache_data_source {
      */
     public function load_many_for_cache(array $keys);
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(data_source_interface::class, \cache_data_source::class);

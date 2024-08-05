@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
+use core\exception\coding_exception;
+use cache_helper as helper;
+use cache_store as store;
+use lang_string;
+
 /**
  * The cache definition class.
  *
@@ -22,7 +29,7 @@
  *
  * Required settings:
  *     + mode
- *          [int] Sets the mode for the definition. Must be one of cache_store::MODE_*
+ *          [int] Sets the mode for the definition. Must be one of store::MODE_*
  *
  * Optional settings:
  *     + simplekeys
@@ -89,13 +96,12 @@
  *
  * For examples take a look at lib/db/caches.php
  *
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_definition {
-
+class definition {
     /** The cache can be shared with everyone */
     const SHARING_ALL = 1;
     /** The cache can be shared with other sites using the same siteid. */
@@ -123,7 +129,7 @@ class cache_definition {
     protected $id;
 
     /**
-     * The mode for the defintion. One of cache_store::MODE_*
+     * The mode for the defintion. One of store::MODE_*
      * @var int
      */
     protected $mode;
@@ -156,7 +162,7 @@ class cache_definition {
      * An array of identifiers that must be provided when the definition is used to create a cache.
      * @var array
      */
-    protected $requireidentifiers = array();
+    protected $requireidentifiers = [];
 
     /**
      * If set to true then only stores that guarantee data may be used with this definition.
@@ -249,7 +255,7 @@ class cache_definition {
      * An array of events that should cause this cache to invalidate.
      * @var array
      */
-    protected $invalidationevents = array();
+    protected $invalidationevents = [];
 
     /**
      * An array of identifiers provided to this cache when it was initialised.
@@ -305,7 +311,7 @@ class cache_definition {
      * @param string $id
      * @param array $definition
      * @param string $unused Used to be datasourceaggregate but that was removed and this is now unused.
-     * @return cache_definition
+     * @return definition
      * @throws coding_exception
      */
     public static function load($id, array $definition, $unused = null) {
@@ -327,11 +333,11 @@ class cache_definition {
         // Set the defaults.
         $simplekeys = false;
         $simpledata = false;
-        $requireidentifiers = array();
+        $requireidentifiers = [];
         $requiredataguarantee = false;
         $requiremultipleidentifiers = false;
         $requirelockingbeforewrite = false;
-        $requiresearchable = ($mode === cache_store::MODE_SESSION) ? true : false;
+        $requiresearchable = ($mode === store::MODE_SESSION) ? true : false;
         $maxsize = null;
         $overrideclass = null;
         $overrideclassfile = null;
@@ -341,7 +347,7 @@ class cache_definition {
         $staticaccelerationsize = false;
         $ttl = 0;
         $mappingsonly = false;
-        $invalidationevents = array();
+        $invalidationevents = [];
         $sharingoptions = self::SHARING_DEFAULT;
         $selectedsharingoption = self::SHARING_DEFAULT;
         $userinputsharingkey = '';
@@ -364,13 +370,17 @@ class cache_definition {
         }
 
         if (array_key_exists('requirelockingread', $definition)) {
-            debugging('The cache option requirelockingread is deprecated and now has no effect.',
-                    DEBUG_DEVELOPER);
+            debugging(
+                'The cache option requirelockingread is deprecated and now has no effect.',
+                DEBUG_DEVELOPER
+            );
         }
         if (array_key_exists('requirelockingwrite', $definition)) {
-            debugging('The cache option requirelockingwrite is deprecated and now has no effect. ' .
+            debugging(
+                'The cache option requirelockingwrite is deprecated and now has no effect. ' .
                     "Consider removing the option, or using requirelockingbeforewrite for the $component:$area definition",
-                    DEBUG_DEVELOPER);
+                DEBUG_DEVELOPER
+            );
         }
         if (array_key_exists('requirelockingbeforewrite', $definition)) {
             $requirelockingbeforewrite = (bool)$definition['requirelockingbeforewrite'];
@@ -451,7 +461,7 @@ class cache_definition {
         if (!is_null($overrideclass)) {
             if (!is_null($overrideclassfile)) {
                 if (strpos($overrideclassfile, $CFG->dirroot) !== 0) {
-                    $overrideclassfile = $CFG->dirroot.'/'.$overrideclassfile;
+                    $overrideclassfile = $CFG->dirroot . '/' . $overrideclassfile;
                 }
                 if (strpos($overrideclassfile, '../') !== false) {
                     throw new coding_exception('No path craziness allowed within override class file path.');
@@ -466,7 +476,7 @@ class cache_definition {
             }
 
             // Make sure that the provided class extends the default class for the mode.
-            if (get_parent_class($overrideclass) !== cache_helper::get_class_for_mode($mode)) {
+            if (get_parent_class($overrideclass) !== helper::get_class_for_mode($mode)) {
                 throw new coding_exception('The override class does not immediately extend the relevant cache class.');
             }
         }
@@ -474,7 +484,7 @@ class cache_definition {
         if (!is_null($datasource)) {
             if (!is_null($datasourcefile)) {
                 if (strpos($datasourcefile, $CFG->dirroot) !== 0) {
-                    $datasourcefile = $CFG->dirroot.'/'.$datasourcefile;
+                    $datasourcefile = $CFG->dirroot . '/' . $datasourcefile;
                 }
                 if (strpos($datasourcefile, '../') !== false) {
                     throw new coding_exception('No path craziness allowed within data source file path.');
@@ -492,7 +502,7 @@ class cache_definition {
             }
         }
 
-        $cachedefinition = new cache_definition();
+        $cachedefinition = new self();
         $cachedefinition->id = $id;
         $cachedefinition->mode = $mode;
         $cachedefinition->component = $component;
@@ -529,7 +539,7 @@ class cache_definition {
      * Please note that when using an adhoc definition you cannot set any of the optional params.
      * This is because we cannot guarantee consistent access and we don't want to mislead people into thinking that.
      *
-     * @param int $mode One of cache_store::MODE_*
+     * @param int $mode One of store::MODE_*
      * @param string $component The component this definition relates to.
      * @param string $area The area this definition relates to.
      * @param array $options An array of options, available options are:
@@ -538,15 +548,15 @@ class cache_definition {
      *   - overrideclass : The class to use as the loader.
      *   - staticacceleration : If set to true the cache will hold onto data passing through it.
      *   - staticaccelerationsize : Set it to an int to limit the size of the staticacceleration cache.
-     * @return cache_application|cache_session|cache_request
+     * @return self
      */
-    public static function load_adhoc($mode, $component, $area, array $options = array()) {
-        $id = 'adhoc/'.$component.'_'.$area;
-        $definition = array(
+    public static function load_adhoc($mode, $component, $area, array $options = []) {
+        $id = 'adhoc/' . $component . '_' . $area;
+        $definition = [
             'mode' => $mode,
             'component' => $component,
             'area' => $area,
-        );
+        ];
         if (!empty($options['simplekeys'])) {
             $definition['simplekeys'] = $options['simplekeys'];
         }
@@ -580,7 +590,7 @@ class cache_definition {
         if (!is_null($this->overrideclass)) {
             return $this->overrideclass;
         }
-        return cache_helper::get_class_for_mode($this->mode);
+        return helper::get_class_for_mode($this->mode);
     }
 
     /**
@@ -596,7 +606,7 @@ class cache_definition {
      * @return string
      */
     public function get_name() {
-        $identifier = 'cachedef_'.clean_param($this->area, PARAM_STRINGID);
+        $identifier = 'cachedef_' . clean_param($this->area, PARAM_STRINGID);
         $component = $this->component;
         if ($component === 'core') {
             $component = 'cache';
@@ -606,7 +616,7 @@ class cache_definition {
 
     /**
      * Returns the mode of this definition
-     * @return int One more cache_store::MODE_
+     * @return int One more store::MODE_
      */
     public function get_mode() {
         return $this->mode;
@@ -645,7 +655,7 @@ class cache_definition {
      */
     public function get_identifiers() {
         if (!isset($this->identifiers)) {
-            return array();
+            return [];
         }
         return $this->identifiers;
     }
@@ -743,14 +753,14 @@ class cache_definition {
     /**
      * Returns an instance of the data source class used for this definition.
      *
-     * @return cache_data_source
+     * @return data_source_interface
      * @throws coding_exception
      */
     public function get_data_source() {
         if (!$this->has_data_source()) {
             throw new coding_exception('This cache does not use a data source.');
         }
-        return forward_static_call(array($this->datasource, 'get_instance_for_cache'), $this);
+        return forward_static_call([$this->datasource, 'get_instance_for_cache'], $this);
     }
 
     /**
@@ -760,7 +770,7 @@ class cache_definition {
      * @return bool false if no identifiers where changed, true otherwise.
      * @throws coding_exception
      */
-    public function set_identifiers(array $identifiers = array()) {
+    public function set_identifiers(array $identifiers = []) {
         if ($this->identifiers !== null) {
             throw new coding_exception("You can only set identifiers on initial definition creation." .
                 " Define a new cache to set different identifiers.");
@@ -771,11 +781,11 @@ class cache_definition {
 
         foreach ($this->requireidentifiers as $identifier) {
             if (!isset($identifiers[$identifier])) {
-                throw new coding_exception('Identifier required for cache has not been provided: '.$identifier);
+                throw new coding_exception('Identifier required for cache has not been provided: ' . $identifier);
             }
         }
 
-        $this->identifiers = array();
+        $this->identifiers = [];
 
         foreach ($identifiers as $name => $value) {
             $this->identifiers[$name] = (string)$value;
@@ -794,13 +804,13 @@ class cache_definition {
     public function get_requirements_bin() {
         $requires = 0;
         if ($this->require_data_guarantee()) {
-            $requires += cache_store::SUPPORTS_DATA_GUARANTEE;
+            $requires += store::SUPPORTS_DATA_GUARANTEE;
         }
         if ($this->require_multiple_identifiers()) {
-            $requires += cache_store::SUPPORTS_MULTIPLE_IDENTIFIERS;
+            $requires += store::SUPPORTS_MULTIPLE_IDENTIFIERS;
         }
         if ($this->require_searchable()) {
-            $requires += cache_store::IS_SEARCHABLE;
+            $requires += store::IS_SEARCHABLE;
         }
         return $requires;
     }
@@ -808,11 +818,11 @@ class cache_definition {
     /**
      * Please call {@link cache_definition::use_static_acceleration()} instead.
      *
-     * @see cache_definition::use_static_acceleration()
+     * @see definition::use_static_acceleration()
      * @deprecated since 2.6
      */
     public function should_be_persistent() {
-        throw new coding_exception('cache_definition::should_be_persistent() can not be used anymore.' .
+        throw new coding_exception('definition::should_be_persistent() can not be used anymore.' .
             ' Please use cache_definition::use_static_acceleration() instead.');
     }
 
@@ -825,7 +835,7 @@ class cache_definition {
      * @return bool
      */
     public function use_static_acceleration() {
-        if ($this->mode === cache_store::MODE_REQUEST) {
+        if ($this->mode === store::MODE_REQUEST) {
             // Request caches should never use static acceleration - it just doesn't make sense.
             return false;
         }
@@ -869,12 +879,12 @@ class cache_definition {
      */
     public function generate_single_key_prefix() {
         if ($this->keyprefixsingle === null) {
-            $this->keyprefixsingle = $this->mode.'/'.$this->component.'/'.$this->area;
-            $this->keyprefixsingle .= '/'.$this->get_cache_identifier();
+            $this->keyprefixsingle = $this->mode . '/' . $this->component . '/' . $this->area;
+            $this->keyprefixsingle .= '/' . $this->get_cache_identifier();
             $identifiers = $this->get_identifiers();
             if ($identifiers) {
                 foreach ($identifiers as $key => $value) {
-                    $this->keyprefixsingle .= '/'.$key.'='.$value;
+                    $this->keyprefixsingle .= '/' . $key . '=' . $value;
                 }
             }
             $this->keyprefixsingle = md5($this->keyprefixsingle);
@@ -889,16 +899,16 @@ class cache_definition {
      */
     public function generate_multi_key_parts() {
         if ($this->keyprefixmulti === null) {
-            $this->keyprefixmulti = array(
+            $this->keyprefixmulti = [
                 'mode' => $this->mode,
                 'component' => $this->component,
                 'area' => $this->area,
-                'siteidentifier' => $this->get_cache_identifier()
-            );
+                'siteidentifier' => $this->get_cache_identifier(),
+            ];
             if (isset($this->identifiers) && !empty($this->identifiers)) {
-                $identifiers = array();
+                $identifiers = [];
                 foreach ($this->identifiers as $key => $value) {
-                    $identifiers[] = htmlentities($key, ENT_QUOTES, 'UTF-8').'='.htmlentities($value, ENT_QUOTES, 'UTF-8');
+                    $identifiers[] = htmlentities($key, ENT_QUOTES, 'UTF-8') . '=' . htmlentities($value, ENT_QUOTES, 'UTF-8');
                 }
                 $this->keyprefixmulti['identifiers'] = join('&', $identifiers);
             }
@@ -940,15 +950,15 @@ class cache_definition {
      * @return string A string to be used as part of keys.
      */
     protected function get_cache_identifier() {
-        $identifiers = array();
+        $identifiers = [];
         if ($this->selectedsharingoption & self::SHARING_ALL) {
             // Nothing to do here.
         } else {
             if ($this->selectedsharingoption & self::SHARING_SITEID) {
-                $identifiers[] = cache_helper::get_site_identifier();
+                $identifiers[] = helper::get_site_identifier();
             }
             if ($this->selectedsharingoption & self::SHARING_VERSION) {
-                $identifiers[] = cache_helper::get_site_version();
+                $identifiers[] = helper::get_site_version();
             }
             if ($this->selectedsharingoption & self::SHARING_INPUT && !empty($this->userinputsharingkey)) {
                 $identifiers[] = $this->userinputsharingkey;
@@ -993,3 +1003,8 @@ class cache_definition {
         return $this->selectedsharingoption;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(definition::class, \cache_definition::class);

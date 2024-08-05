@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
+use core\exception\coding_exception;
+use ArrayObject;
+
 /**
  * An array of cacheable objects.
  *
@@ -41,28 +46,28 @@
  *
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package core_cache
  */
-class cacheable_object_array extends ArrayObject implements cacheable_object {
-
+class cacheable_object_array extends ArrayObject implements cacheable_object_interface {
     /**
      * Constructs a new array object instance.
      * @param array $items
      */
-    final public function __construct(array $items = array()) {
+    final public function __construct(array $items = []) {
         parent::__construct($items, ArrayObject::STD_PROP_LIST);
     }
 
     /**
      * Returns the data to cache for this object.
      *
-     * @return array An array of cache_cached_object instances.
+     * @return cached_object[] An array of cached_object instances.
      * @throws coding_exception
      */
     final public function prepare_to_cache() {
-        $result = array();
+        $result = [];
         foreach ($this as $key => $value) {
-            if ($value instanceof cacheable_object) {
-                $value = new cache_cached_object($value);
+            if ($value instanceof cacheable_object_interface) {
+                $value = new cached_object($value);
             } else {
                 throw new coding_exception('Only cacheable_object instances can be added to a cacheable_array');
             }
@@ -75,14 +80,14 @@ class cacheable_object_array extends ArrayObject implements cacheable_object {
      * Returns the cacheable_object_array that was originally sent to the cache.
      *
      * @param array $data
-     * @return cacheable_object_array
+     * @return self
      * @throws coding_exception
      */
     final public static function wake_from_cache($data) {
         if (!is_array($data)) {
             throw new coding_exception('Invalid data type when reviving cacheable_array data');
         }
-        $result = array();
+        $result = [];
         foreach ($data as $key => $value) {
             $result[$key] = $value->restore_object();
         }
@@ -90,3 +95,8 @@ class cacheable_object_array extends ArrayObject implements cacheable_object {
         return new $class($result);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(cacheable_object_array::class, \cacheable_object_array::class);

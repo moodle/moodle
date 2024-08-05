@@ -14,18 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
 /**
  * Cache store interface.
  *
  * This interface defines the static methods that must be implemented by every cache store plugin.
  * To ensure plugins implement this class the abstract cache_store class implements this interface.
  *
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface cache_store_interface {
+interface store_interface {
     /**
      * Static method to check if the store requirements are met.
      *
@@ -46,7 +48,7 @@ interface cache_store_interface {
      * @param array $configuration The configuration of a store to consider specifically.
      * @return int The supported features.
      */
-    public static function get_supported_features(array $configuration = array());
+    public static function get_supported_features(array $configuration = []);
 
     /**
      * Returns the supported modes as a binary flag.
@@ -54,17 +56,17 @@ interface cache_store_interface {
      * @param array $configuration The configuration of a store to consider specifically.
      * @return int The supported modes.
      */
-    public static function get_supported_modes(array $configuration = array());
+    public static function get_supported_modes(array $configuration = []);
 
     /**
      * Generates an instance of the cache store that can be used for testing.
      *
      * Returns an instance of the cache store, or false if one cannot be created.
      *
-     * @param cache_definition $definition
-     * @return cache_store|false
+     * @param definition $definition
+     * @return store_interface|false
      */
-    public static function initialise_test_instance(cache_definition $definition);
+    public static function initialise_test_instance(definition $definition);
 
     /**
      * Generates the appropriate configuration required for unit testing.
@@ -73,3 +75,8 @@ interface cache_store_interface {
      */
     public static function unit_test_configuration();
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(store_interface::class, \cache_store_interface::class);

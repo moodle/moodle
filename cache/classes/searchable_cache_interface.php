@@ -14,15 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
 /**
  * Cache store feature: keys are searchable.
  *
  * Cache stores can choose to implement this interface.
  * In order for a store to be usable as a session cache it must implement this interface.
  *
- * @since Moodle 2.4.4
+ * @package core_cache
+ * @copyright Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface cache_is_searchable {
+interface searchable_cache_interface {
     /**
      * Finds all of the keys being used by the cache store.
      *
@@ -37,3 +41,8 @@ interface cache_is_searchable {
      */
     public function find_by_prefix($prefix);
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(searchable_cache_interface::class, \cache_is_searchable::class);

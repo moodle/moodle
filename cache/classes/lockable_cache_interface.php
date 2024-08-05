@@ -14,16 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
 /**
- * Cache store feature: locking
+ * Cache store feature: locking.
  *
  * This is a feature that cache stores can implement if they wish to support locking themselves rather
  * than having the cache loader handle it for them.
  *
  * Can be implemented by classes already implementing cache_store.
+ * @package core_cache
+ * @copyright Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface cache_is_lockable {
-
+interface lockable_cache_interface {
     /**
      * Acquires a lock on the given key for the given identifier.
      *
@@ -54,3 +58,8 @@ interface cache_is_lockable {
      */
     public function release_lock($key, $ownerid);
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(lockable_cache_interface::class, \cache_is_lockable::class);

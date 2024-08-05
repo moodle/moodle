@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
 /**
  * Cache Loader.
  *
@@ -21,9 +23,11 @@
  * means of accessing and interacting with a cache.
  *
  * Can be implemented by any class wishing to be a cache loader.
+ * @package core_cache
+ * @copyright Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface cache_loader {
-
+interface loader_interface {
     /**
      * Retrieves the value for the given key from the cache.
      *
@@ -215,3 +219,8 @@ interface cache_loader {
      */
     public function delete_many(array $keys, $recurse = true);
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(loader_interface::class, \cache_loader::class);

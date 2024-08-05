@@ -14,18 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
 /**
  * A wrapper class used to handle ttl when the cache store doesn't natively support it.
  *
  * This class is exactly why you should use event driving invalidation of cache data rather than relying on ttl.
  *
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_ttl_wrapper {
-
+class ttl_wrapper {
     /**
      * The data being stored.
      * @var mixed
@@ -57,3 +58,8 @@ class cache_ttl_wrapper {
         return ($this->expires < cache::now());
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(ttl_wrapper::class, \cache_ttl_wrapper::class);

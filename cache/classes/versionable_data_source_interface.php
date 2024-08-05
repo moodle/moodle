@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
 /**
  * Versionable cache data source.
  *
@@ -21,8 +23,10 @@
  * the data source is to be used for a versioned cache.
  *
  * @package core_cache
+ * @copyright Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface cache_data_source_versionable extends cache_data_source {
+interface versionable_data_source_interface extends cache_data_source {
     /**
      * Loads the data for the key provided ready formatted for caching.
      *
@@ -39,3 +43,8 @@ interface cache_data_source_versionable extends cache_data_source {
      */
     public function load_for_cache_versioned($key, int $requiredversion, &$actualversion);
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(versionable_data_source_interface::class, \cache_data_source_versionable::class);

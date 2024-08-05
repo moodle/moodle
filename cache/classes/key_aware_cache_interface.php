@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
 /**
  * Cache store feature: key awareness.
  *
@@ -26,9 +28,12 @@
  * means of performing these tests than the handling that would otherwise take place in the cache_loader.
  *
  * Can be implemented by classes already implementing cache_store.
+ *
+ * @package core_cache
+ * @copyright Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface cache_is_key_aware {
-
+interface key_aware_cache_interface {
     /**
      * Test is a cache has a key.
      *
@@ -80,3 +85,8 @@ interface cache_is_key_aware {
      */
     public function has_all(array $keys);
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(key_aware_cache_interface::class, \cache_is_key_aware::class);

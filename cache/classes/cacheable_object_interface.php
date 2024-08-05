@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
 /**
  * Cacheable object.
  *
@@ -22,9 +24,12 @@
  * Think of it like serialisation and the __sleep and __wakeup methods.
  * This is used because cache stores are responsible for how they interact with data and what they do when storing it. This
  * interface ensures there is always a guaranteed action.
+ *
+ * @package core_cache
+ * @copyright Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface cacheable_object {
-
+interface cacheable_object_interface {
     /**
      * Prepares the object for caching. Works like the __sleep method.
      *
@@ -41,3 +46,8 @@ interface cacheable_object {
      */
     public static function wake_from_cache($data);
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(cacheable_object_interface::class, \cacheable_object::class);

@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
+use core\exception\coding_exception;
+
 /**
  * The cache loader class used when the Cache has been disabled.
  *
@@ -21,17 +25,16 @@
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_disabled extends cache implements cache_loader_with_locking {
-
+class disabled_cache extends cache implements loader_with_locking_interface {
     /**
      * Constructs the cache.
      *
-     * @param cache_definition $definition
-     * @param cache_store $store
+     * @param definition $definition
+     * @param store $store
      * @param null $loader Unused.
      */
-    public function __construct(cache_definition $definition, cache_store $store, $loader = null) {
-        if ($loader instanceof cache_data_source) {
+    public function __construct(definition $definition, store $store, $loader = null) {
+        if ($loader instanceof data_source_interface) {
             // Set the data source to allow data sources to work when caching is entirely disabled.
             $this->set_data_source($loader);
         }
@@ -54,12 +57,12 @@ class cache_disabled extends cache implements cache_loader_with_locking {
             if ($requiredversion === cache::VERSION_NONE) {
                 return $datasource->load_for_cache($key);
             } else {
-                if (!$datasource instanceof cache_data_source_versionable) {
-                    throw new \coding_exception('Data source is not versionable');
+                if (!$datasource instanceof versionable_data_source_interface) {
+                    throw new coding_exception('Data source is not versionable');
                 }
                 $result = $datasource->load_for_cache_versioned($key, $requiredversion, $actualversion);
                 if ($result && $actualversion < $requiredversion) {
-                    throw new \coding_exception('Data source returned outdated version');
+                    throw new coding_exception('Data source returned outdated version');
                 }
                 return $result;
             }
@@ -213,3 +216,8 @@ class cache_disabled extends cache implements cache_loader_with_locking {
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(disabled_cache::class, \cache_disabled::class);

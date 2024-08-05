@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
+use core\exception\coding_exception;
+use core\exception\moodle_exception;
+
 /**
  * An application cache.
  *
@@ -26,13 +31,12 @@
  *
  * @internal don't use me directly.
  *
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_application extends cache implements cache_loader_with_locking {
-
+class application_cache extends cache implements loader_with_locking_interface {
     /**
      * Lock identifier.
      * This is used to ensure the lock belongs to the cache instance + definition + user.
@@ -43,7 +47,7 @@ class cache_application extends cache implements cache_loader_with_locking {
     /**
      * Gets set to true if the cache's primary store natively supports locking.
      * If it does then we use that, otherwise we need to instantiate a second store to use for locking.
-     * @var cache_store
+     * @var store
      */
     protected $nativelocking = null;
 
@@ -62,7 +66,7 @@ class cache_application extends cache implements cache_loader_with_locking {
     protected $requirelockingbeforewrite = false;
 
     /**
-     * Gets set to a cache_store to use for locking if the caches primary store doesn't support locking natively.
+     * Gets set to a store to use for locking if the caches primary store doesn't support locking natively.
      * @var cache_lock_interface
      */
     protected $cachelockinstance;
@@ -78,11 +82,11 @@ class cache_application extends cache implements cache_loader_with_locking {
      *
      * You should not call this method from your code, instead you should use the cache::make methods.
      *
-     * @param cache_definition $definition
-     * @param cache_store $store
-     * @param cache_loader|cache_data_source $loader
+     * @param definition $definition
+     * @param store $store
+     * @param loader_interface|data_source_interface $loader
      */
-    public function __construct(cache_definition $definition, cache_store $store, $loader = null) {
+    public function __construct(definition $definition, store $store, $loader = null) {
         parent::__construct($definition, $store, $loader);
         $this->nativelocking = $this->store_supports_native_locking();
         if ($definition->require_locking()) {
@@ -141,7 +145,7 @@ class cache_application extends cache implements cache_loader_with_locking {
                 // We need to release this lock later if the lock is not successful.
                 $releaseparent = true;
             }
-            $hashedkey = cache_helper::hash_key($key, $this->get_definition());
+            $hashedkey = helper::hash_key($key, $this->get_definition());
             $before = microtime(true);
             if ($this->nativelocking) {
                 $lock = $this->get_store()->acquire_lock($hashedkey, $this->get_identifier());
@@ -153,14 +157,25 @@ class cache_application extends cache implements cache_loader_with_locking {
             if ($lock) {
                 $this->locks[$hashedkey] = $lock;
                 if (MDL_PERF || $this->perfdebug) {
-                    \core\lock\timing_wrapper_lock_factory::record_lock_data($after, $before,
-                        $this->get_definition()->get_id(), $hashedkey, $lock, $this->get_identifier() . $hashedkey);
+                    \core\lock\timing_wrapper_lock_factory::record_lock_data(
+                        $after,
+                        $before,
+                        $this->get_definition()->get_id(),
+                        $hashedkey,
+                        $lock,
+                        $this->get_identifier() . $hashedkey
+                    );
                 }
                 $releaseparent = false;
                 return true;
             } else {
-                throw new moodle_exception('ex_unabletolock', 'cache', '', null,
-                    'store: ' . get_class($this->get_store()) . ', lock: ' . $hashedkey);
+                throw new moodle_exception(
+                    'ex_unabletolock',
+                    'cache',
+                    '',
+                    null,
+                    'store: ' . get_class($this->get_store()) . ', lock: ' . $hashedkey
+                );
             }
         } finally {
             // Release the parent lock if we acquired it, then threw an exception.
@@ -178,7 +193,7 @@ class cache_application extends cache implements cache_loader_with_locking {
      *      someone else has the lock.
      */
     public function check_lock_state($key) {
-        $key = cache_helper::hash_key($key, $this->get_definition());
+        $key = helper::hash_key($key, $this->get_definition());
         if (!empty($this->locks[$key])) {
             return true; // Shortcut to save having to make a call to the cache store if the lock is held by this process.
         }
@@ -198,7 +213,7 @@ class cache_application extends cache implements cache_loader_with_locking {
      */
     public function release_lock($key) {
         $loaderkey = $key;
-        $key = cache_helper::hash_key($key, $this->get_definition());
+        $key = helper::hash_key($key, $this->get_definition());
         if ($this->nativelocking) {
             $released = $this->get_store()->release_lock($key, $this->get_identifier());
         } else {
@@ -224,7 +239,7 @@ class cache_application extends cache implements cache_loader_with_locking {
      */
     protected function ensure_cachelock_available() {
         if ($this->cachelockinstance === null) {
-            $this->cachelockinstance = cache_helper::get_cachelock_for_store($this->get_store());
+            $this->cachelockinstance = helper::get_cachelock_for_store($this->get_store());
         }
     }
 
@@ -328,3 +343,8 @@ class cache_application extends cache implements cache_loader_with_locking {
         return parent::delete_many($keys, $recurse);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(application_cache::class, \cache_application::class);

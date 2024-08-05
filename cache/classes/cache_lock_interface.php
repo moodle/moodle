@@ -14,10 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
 /**
- * Cache lock interface
+ * Cache lock interface.
  *
  * This interface needs to be inherited by all cache lock plugins.
+ *
+ * @package core_cache
+ * @copyright Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 interface cache_lock_interface {
     /**
@@ -26,7 +32,7 @@ interface cache_lock_interface {
      * @param string $name The unique name of the lock instance
      * @param array $configuration
      */
-    public function __construct($name, array $configuration = array());
+    public function __construct($name, array $configuration = []);
 
     /**
      * Acquires a lock on a given key.
@@ -72,3 +78,8 @@ interface cache_lock_interface {
      */
     public function __destruct();
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(cache_lock_interface::class, \cache_lock_interface::class);

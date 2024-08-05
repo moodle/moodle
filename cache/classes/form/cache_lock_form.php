@@ -14,19 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache\form;
+
+use cache_config;
+use moodleform;
+
 /**
  * Form to add a cache lock instance.
  *
  * All cache lock plugins that wish to have custom configuration should override
  * this form, and more explicitly the plugin_definition and plugin_validation methods.
  *
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2013 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cache_lock_form extends moodleform {
-
     /**
      * Defines this form.
      */
@@ -85,3 +89,8 @@ class cache_lock_form extends moodleform {
         return $errors;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(cache_lock_form::class, \cache_lock_form::class);

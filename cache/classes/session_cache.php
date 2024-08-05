@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
+use core\exception\coding_exception;
+
 /**
  * A session cache.
  *
@@ -27,7 +31,7 @@
  *       Along with this we embed a lastaccessed time with the data. This way we can
  *       check sessions for a last access time.
  *    3. Session stores are required to support key searching and must
- *       implement cache_is_searchable. This ensures stores used for the cache can be
+ *       implement searchable_cache_interface. This ensures stores used for the cache can be
  *       targetted for garbage collection of session data.
  *
  * This cache class should never be interacted with directly. Instead you should always use the cache::make methods.
@@ -37,14 +41,15 @@
  * @todo we should support locking in the session as well. Should be pretty simple to set up.
  *
  * @internal don't use me directly.
- * @method cache_store|cache_is_searchable get_store() Returns the cache store which must implement both cache_is_searchable.
+ * @method store|searchable_cache_interface get_store() Returns the cache store which must implement
+ *                                                      both searchable_cache_interface.
  *
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_session extends cache {
+class session_cache extends cache {
     /**
      * The user the session has been established for.
      * @var int
@@ -89,11 +94,11 @@ class cache_session extends cache {
      *
      * You should not call this method from your code, instead you should use the cache::make methods.
      *
-     * @param cache_definition $definition
-     * @param cache_store $store
-     * @param cache_loader|cache_data_source $loader
+     * @param definition $definition
+     * @param store $store
+     * @param loader_interface|data_source_interface $loader
      */
-    public function __construct(cache_definition $definition, cache_store $store, $loader = null) {
+    public function __construct(definition $definition, store $store, $loader = null) {
         // First up copy the loadeduserid to the current user id.
         $this->currentuserid = self::$loadeduserid;
         $this->set_session_id();
@@ -117,7 +122,7 @@ class cache_session extends cache {
      * @return string
      */
     protected function get_key_prefix() {
-        return 'u'.$this->currentuserid.'_'.$this->sessionid;
+        return 'u' . $this->currentuserid . '_' . $this->sessionid;
     }
 
     /**
@@ -134,9 +139,9 @@ class cache_session extends cache {
     protected function parse_key($key) {
         $prefix = $this->get_key_prefix();
         if ($key === self::LASTACCESS) {
-            return $key.$prefix;
+            return $key . $prefix;
         }
-        return $prefix.'_'.parent::parse_key($key);
+        return $prefix . '_' . parent::parse_key($key);
     }
 
     /**
@@ -219,8 +224,8 @@ class cache_session extends cache {
             // We have to let the loader do its own parsing of data as it may be unique.
             $loader->set($key, $data);
         }
-        if (is_object($data) && $data instanceof cacheable_object) {
-            $data = new cache_cached_object($data);
+        if (is_object($data) && $data instanceof cacheable_object_interface) {
+            $data = new cached_object($data);
         } else if (!$this->get_store()->supports_dereferencing_objects() && !is_scalar($data)) {
             // If data is an object it will be a reference.
             // If data is an array if may contain references.
@@ -230,12 +235,16 @@ class cache_session extends cache {
         }
         // We dont' support native TTL here as we consolidate data for sessions.
         if ($this->has_a_ttl() && !$this->store_supports_native_ttl()) {
-            $data = new cache_ttl_wrapper($data, $this->get_definition()->get_ttl());
+            $data = new ttl_wrapper($data, $this->get_definition()->get_ttl());
         }
         $success = $this->get_store()->set($this->parse_key($key), $data);
         if ($this->perfdebug) {
-            cache_helper::record_cache_set($this->get_store(), $this->get_definition(), 1,
-                    $this->get_store()->get_last_io_bytes());
+            helper::record_cache_set(
+                $this->get_store(),
+                $this->get_definition(),
+                1,
+                $this->get_store()->get_last_io_bytes()
+            );
         }
         return $success;
     }
@@ -277,8 +286,8 @@ class cache_session extends cache {
      */
     public function get_many(array $keys, $strictness = IGNORE_MISSING) {
         $this->check_tracked_user();
-        $parsedkeys = array();
-        $keymap = array();
+        $parsedkeys = [];
+        $keymap = [];
         foreach ($keys as $key) {
             $parsedkey = $this->parse_key($key);
             $parsedkeys[$key] = $parsedkey;
@@ -288,13 +297,13 @@ class cache_session extends cache {
         if ($this->perfdebug) {
             $readbytes = $this->get_store()->get_last_io_bytes();
         }
-        $return = array();
-        $missingkeys = array();
+        $return = [];
+        $missingkeys = [];
         $hasmissingkeys = false;
         foreach ($result as $parsedkey => $value) {
             $key = $keymap[$parsedkey];
-            if ($value instanceof cache_ttl_wrapper) {
-                /* @var cache_ttl_wrapper $value */
+            if ($value instanceof ttl_wrapper) {
+                /* @var ttl_wrapper $value */
                 if ($value->has_expired()) {
                     $this->delete($keymap[$parsedkey]);
                     $value = false;
@@ -302,8 +311,8 @@ class cache_session extends cache {
                     $value = $value->data;
                 }
             }
-            if ($value instanceof cache_cached_object) {
-                /* @var cache_cached_object $value */
+            if ($value instanceof cached_object) {
+                /* @var cached_object $value */
                 $value = $value->restore_object();
             } else if (!$this->get_store()->supports_dereferencing_objects() && !is_scalar($value)) {
                 // If data is an object it will be a reference.
@@ -355,11 +364,10 @@ class cache_session extends cache {
                     $hits++;
                 }
             }
-            cache_helper::record_cache_hit($this->get_store(), $this->get_definition(), $hits, $readbytes);
-            cache_helper::record_cache_miss($this->get_store(), $this->get_definition(), $misses);
+            helper::record_cache_hit($this->get_store(), $this->get_definition(), $hits, $readbytes);
+            helper::record_cache_miss($this->get_store(), $this->get_definition(), $misses);
         }
         return $return;
-
     }
 
     /**
@@ -371,7 +379,7 @@ class cache_session extends cache {
      * @return int The number of items successfully deleted.
      */
     public function delete_many(array $keys, $recurse = true) {
-        $parsedkeys = array_map(array($this, 'parse_key'), $keys);
+        $parsedkeys = array_map([$this, 'parse_key'], $keys);
         if ($recurse && $this->get_loader() !== false) {
             // Delete from the bottom of the stack first.
             $this->get_loader()->delete_many($keys, $recurse);
@@ -410,12 +418,12 @@ class cache_session extends cache {
             // We have to let the loader do its own parsing of data as it may be unique.
             $loader->set_many($keyvaluearray);
         }
-        $data = array();
+        $data = [];
         $definitionid = $this->get_definition()->get_ttl();
         $simulatettl = $this->has_a_ttl() && !$this->store_supports_native_ttl();
         foreach ($keyvaluearray as $key => $value) {
-            if (is_object($value) && $value instanceof cacheable_object) {
-                $value = new cache_cached_object($value);
+            if (is_object($value) && $value instanceof cacheable_object_interface) {
+                $value = new cached_object($value);
             } else if (!$this->get_store()->supports_dereferencing_objects() && !is_scalar($value)) {
                 // If data is an object it will be a reference.
                 // If data is an array if may contain references.
@@ -424,17 +432,21 @@ class cache_session extends cache {
                 $value = $this->unref($value);
             }
             if ($simulatettl) {
-                $value = new cache_ttl_wrapper($value, $definitionid);
+                $value = new ttl_wrapper($value, $definitionid);
             }
-            $data[$key] = array(
+            $data[$key] = [
                 'key' => $this->parse_key($key),
-                'value' => $value
-            );
+                'value' => $value,
+            ];
         }
         $successfullyset = $this->get_store()->set_many($data);
         if ($this->perfdebug && $successfullyset) {
-            cache_helper::record_cache_set($this->get_store(), $this->get_definition(), $successfullyset,
-                    $this->get_store()->get_last_io_bytes());
+            helper::record_cache_set(
+                $this->get_store(),
+                $this->get_definition(),
+                $successfullyset,
+                $this->get_store()->get_last_io_bytes()
+            );
         }
         return $successfullyset;
     }
@@ -481,7 +493,7 @@ class cache_session extends cache {
             // The data has a TTL and the store doesn't support it natively.
             // We must fetch the data and expect a ttl wrapper.
             $data = $store->get($parsedkey);
-            $has = ($data instanceof cache_ttl_wrapper && !$data->has_expired());
+            $has = ($data instanceof ttl_wrapper && !$data->has_expired());
         } else if (!$this->store_supports_key_awareness()) {
             // The store doesn't support key awareness, get the data and check it manually... puke.
             // Either no TTL is set of the store supports its handling natively.
@@ -490,7 +502,7 @@ class cache_session extends cache {
         } else {
             // The store supports key awareness, this is easy!
             // Either no TTL is set of the store supports its handling natively.
-            /* @var cache_store|cache_is_key_aware $store */
+            /* @var store|key_aware_cache_interface $store */
             $has = $store->has($parsedkey);
         }
         if (!$has && $tryloadifpossible) {
@@ -532,9 +544,9 @@ class cache_session extends cache {
             return true;
         }
         // The cache must be key aware and if support native ttl if it a ttl is set.
-        /* @var cache_store|cache_is_key_aware $store */
+        /* @var store|key_aware_cache_interface $store */
         $store = $this->get_store();
-        return $store->has_all(array_map(array($this, 'parse_key'), $keys));
+        return $store->has_all(array_map([$this, 'parse_key'], $keys));
     }
 
     /**
@@ -559,9 +571,9 @@ class cache_session extends cache {
             }
             return false;
         }
-        /* @var cache_store|cache_is_key_aware $store */
+        /* @var store|key_aware_cache_interface $store */
         $store = $this->get_store();
-        return $store->has_any(array_map(array($this, 'parse_key'), $keys));
+        return $store->has_any(array_map([$this, 'parse_key'], $keys));
     }
 
     /**
@@ -574,3 +586,8 @@ class cache_session extends cache {
         return false;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(session_cache::class, \cache_session::class);

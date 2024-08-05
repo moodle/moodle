@@ -14,10 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache\exception;
+
+use core\exception\moodle_exception;
+
 /**
  * A cache exception class. Just allows people to catch cache exceptions.
  *
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -37,3 +41,8 @@ class cache_exception extends moodle_exception {
         parent::__construct($errorcode, $module, $link, $a, $debuginfo);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(cache_exception::class, \cache_exception::class);

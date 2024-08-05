@@ -14,6 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
+use cache_factory as factory;
+use cache_store as store;
+use core_cache\definition;
+use cache_application as application_cache;
+use cache_session as session_cache;
+use cachestore_static;
+use core\exception\coding_exception;
+
 /**
  * The cache factory class used when the Cache has been disabled.
  *
@@ -21,7 +31,7 @@
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_factory_disabled extends cache_factory {
+class disabled_factory extends factory {
     /** @var array Array of temporary caches in use. */
     protected static $tempcaches = [];
 
@@ -29,7 +39,7 @@ class cache_factory_disabled extends cache_factory {
      * Returns an instance of the cache_factor method.
      *
      * @param bool $forcereload Unused.
-     * @return cache_factory
+     * @return factory
      * @throws coding_exception
      */
     public static function instance($forcereload = false) {
@@ -42,7 +52,7 @@ class cache_factory_disabled extends cache_factory {
      * @param string $component
      * @param string $area
      * @param string $unused Used to be datasourceaggregate but that was removed and this is now unused.
-     * @return cache_definition
+     * @return definition
      */
     public function create_definition($component, $area, $unused = null) {
         $definition = parent::create_definition($component, $area);
@@ -50,22 +60,22 @@ class cache_factory_disabled extends cache_factory {
             return $definition;
         }
 
-        return cache_definition::load_adhoc(cache_store::MODE_REQUEST, $component, $area);
+        return definition::load_adhoc(store::MODE_REQUEST, $component, $area);
     }
 
     /**
      * Common public method to create a cache instance given a definition.
      *
-     * @param cache_definition $definition
-     * @return cache_application|cache_session|cache_store
+     * @param definition $definition
+     * @return application_cache|session_cache|store
      * @throws coding_exception
      */
-    public function create_cache(cache_definition $definition) {
+    public function create_cache(definition $definition) {
         $loader = null;
         if ($definition->has_data_source()) {
             $loader = $definition->get_data_source();
         }
-        return new cache_disabled($definition, $this->create_dummy_store($definition), $loader);
+        return new disabled_cache($definition, $this->create_dummy_store($definition), $loader);
     }
 
     /**
@@ -75,9 +85,9 @@ class cache_factory_disabled extends cache_factory {
      * @param string $area
      * @param array $identifiers
      * @param string $unused Used to be datasourceaggregate but that was removed and this is now unused.
-     * @return cache_application|cache_session|request_cache
+     * @return application_cache|session_cache|request_cache
      */
-    public function create_cache_from_definition($component, $area, array $identifiers = array(), $unused = null) {
+    public function create_cache_from_definition($component, $area, array $identifiers = [], $unused = null) {
         // Temporary in-memory caches are sometimes allowed when caching is disabled.
         if (\core_cache\allow_temporary_caches::is_allowed() && !$identifiers) {
             $key = $component . '/' . $area;
@@ -93,7 +103,7 @@ class cache_factory_disabled extends cache_factory {
                 // or it wouldn't have support for versioning. The cache_application class is used
                 // (rather than cache_request which might make more sense logically) because it
                 // includes support for locking, which might be necessary for some caches.
-                $cache = new cache_application($definition, $store);
+                $cache = new application_cache($definition, $store);
                 self::$tempcaches[$key] = $cache;
             }
             return $cache;
@@ -129,13 +139,13 @@ class cache_factory_disabled extends cache_factory {
      *   - simpledata : Set to true if the type of the data you are going to store is scalar, or an array of scalar vars
      *   - staticacceleration : If set to true the cache will hold onto all data passing through it.
      *   - staticaccelerationsize : Sets the max size of the static acceleration array.
-     * @return cache_application|cache_session|request_cache
+     * @return application_cache|session_cache|request_cache
      */
-    public function create_cache_from_params($mode, $component, $area, array $identifiers = array(), array $options = array()) {
+    public function create_cache_from_params($mode, $component, $area, array $identifiers = [], array $options = []) {
         // Regular cache definitions are cached inside create_definition().  This is not the case for disabledlib.php
         // definitions as they use load_adhoc().  They are built as a new object on each call.
         // We do not need to clone the definition because we know it's new.
-        $definition = cache_definition::load_adhoc($mode, $component, $area, $options);
+        $definition = definition::load_adhoc($mode, $component, $area, $options);
         $definition->set_identifiers($identifiers);
         $cache = $this->create_cache($definition);
         return $cache;
@@ -146,10 +156,10 @@ class cache_factory_disabled extends cache_factory {
      *
      * @param string $name Unused.
      * @param array $details Unused.
-     * @param cache_definition $definition
-     * @return boolean|cache_store
+     * @param definition $definition
+     * @return boolean|store
      */
-    public function create_store_from_config($name, array $details, cache_definition $definition) {
+    public function create_store_from_config($name, array $details, definition $definition) {
         return $this->create_dummy_store($definition);
     }
 
@@ -157,7 +167,7 @@ class cache_factory_disabled extends cache_factory {
      * Creates a cache config instance with the ability to write if required.
      *
      * @param bool $writer Unused.
-     * @return cache_config_disabled|config_writer
+     * @return disabled_config|config_writer
      */
     public function create_config_instance($writer = false) {
         // We are always going to use the cache_config_disabled class for all regular request.
@@ -170,10 +180,10 @@ class cache_factory_disabled extends cache_factory {
             $class = 'cache_config_writer';
         }
         if (!array_key_exists($class, $this->configs)) {
-            self::set_state(self::STATE_INITIALISING);
+            self::set_state(factory::STATE_INITIALISING);
             if ($class === 'cache_config_disabled') {
                 $configuration = $class::create_default_configuration();
-                $this->configs[$class] = new $class;
+                $this->configs[$class] = new $class();
             } else {
                 $configuration = false;
                 // If we need a writer, we should get the classname from the generic factory.
@@ -182,7 +192,7 @@ class cache_factory_disabled extends cache_factory {
             }
             $this->configs[$class]->load($configuration);
         }
-        self::set_state(self::STATE_READY);
+        self::set_state(factory::STATE_READY);
 
         // Return the instance.
         return $this->configs[$class];
@@ -197,3 +207,7 @@ class cache_factory_disabled extends cache_factory {
         return true;
     }
 }
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(disabled_factory::class, \cache_factory_disabled::class);

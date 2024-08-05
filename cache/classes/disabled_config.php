@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
+use core\exception\coding_exception;
+use core_cache\exception\cache_exception;
+use cachestore_static;
+use cachestore_session;
+use cachestore_file;
+
 /**
  * The cache config class used when the Cache has been disabled.
  *
@@ -21,15 +29,14 @@
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_config_disabled extends config_writer {
-
+class disabled_config extends config_writer {
     /**
      * Returns an instance of the configuration writer.
      *
-     * @return cache_config_disabled
+     * @return disabled_config
      */
     public static function instance() {
-        $factory = cache_factory::instance();
+        $factory = factory::instance();
         return $factory->create_config_instance(true);
     }
 
@@ -46,7 +53,7 @@ class cache_config_disabled extends config_writer {
      * @return array
      */
     protected function generate_configuration_array() {
-        $configuration = array();
+        $configuration = [];
         $configuration['stores'] = $this->configstores;
         $configuration['modemappings'] = $this->configmodemappings;
         $configuration['definitions'] = $this->configdefinitions;
@@ -64,7 +71,7 @@ class cache_config_disabled extends config_writer {
      * @return bool
      * @throws cache_exception
      */
-    public function add_store_instance($name, $plugin, array $configuration = array()) {
+    public function add_store_instance($name, $plugin, array $configuration = []) {
         return false;
     }
 
@@ -115,63 +122,63 @@ class cache_config_disabled extends config_writer {
         // HACK ALERT.
         // We probably need to come up with a better way to create the default stores, or at least ensure 100% that the
         // default store plugins are protected from deletion.
-        require_once($CFG->dirroot.'/cache/stores/file/lib.php');
-        require_once($CFG->dirroot.'/cache/stores/session/lib.php');
-        require_once($CFG->dirroot.'/cache/stores/static/lib.php');
+        require_once($CFG->dirroot . '/cache/stores/file/lib.php');
+        require_once($CFG->dirroot . '/cache/stores/session/lib.php');
+        require_once($CFG->dirroot . '/cache/stores/static/lib.php');
 
-        $writer = new self;
-        $writer->configstores = array(
-            'default_application' => array(
+        $writer = new self();
+        $writer->configstores = [
+            'default_application' => [
                 'name' => 'default_application',
                 'plugin' => 'file',
-                'configuration' => array(),
+                'configuration' => [],
                 'features' => cachestore_file::get_supported_features(),
-                'modes' => cache_store::MODE_APPLICATION,
+                'modes' => store::MODE_APPLICATION,
                 'default' => true,
-            ),
-            'default_session' => array(
+            ],
+            'default_session' => [
                 'name' => 'default_session',
                 'plugin' => 'session',
-                'configuration' => array(),
+                'configuration' => [],
                 'features' => cachestore_session::get_supported_features(),
-                'modes' => cache_store::MODE_SESSION,
+                'modes' => store::MODE_SESSION,
                 'default' => true,
-            ),
-            'default_request' => array(
+            ],
+            'default_request' => [
                 'name' => 'default_request',
                 'plugin' => 'static',
-                'configuration' => array(),
+                'configuration' => [],
                 'features' => cachestore_static::get_supported_features(),
-                'modes' => cache_store::MODE_REQUEST,
+                'modes' => store::MODE_REQUEST,
                 'default' => true,
-            )
-        );
-        $writer->configdefinitions = array();
-        $writer->configmodemappings = array(
-            array(
-                'mode' => cache_store::MODE_APPLICATION,
+            ],
+        ];
+        $writer->configdefinitions = [];
+        $writer->configmodemappings = [
+            [
+                'mode' => store::MODE_APPLICATION,
                 'store' => 'default_application',
-                'sort' => -1
-            ),
-            array(
-                'mode' => cache_store::MODE_SESSION,
+                'sort' => -1,
+            ],
+            [
+                'mode' => store::MODE_SESSION,
                 'store' => 'default_session',
-                'sort' => -1
-            ),
-            array(
-                'mode' => cache_store::MODE_REQUEST,
+                'sort' => -1,
+            ],
+            [
+                'mode' => store::MODE_REQUEST,
                 'store' => 'default_request',
-                'sort' => -1
-            )
-        );
-        $writer->configlocks = array(
-            'default_file_lock' => array(
+                'sort' => -1,
+            ],
+        ];
+        $writer->configlocks = [
+            'default_file_lock' => [
                 'name' => 'cachelock_file_default',
                 'type' => 'cachelock_file',
                 'dir' => 'filelocks',
-                'default' => true
-            )
-        );
+                'default' => true,
+            ],
+        ];
 
         return $writer->generate_configuration_array();
     }
@@ -192,7 +199,7 @@ class cache_config_disabled extends config_writer {
      * @return array
      */
     protected static function locate_definitions($coreonly = false) {
-        return array();
+        return [];
     }
 
     /**
@@ -206,3 +213,8 @@ class cache_config_disabled extends config_writer {
         // Nothing to do here.
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(disabled_config::class, \cache_config_disabled::class);

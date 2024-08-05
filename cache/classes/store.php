@@ -14,17 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Cache store - base class
- *
- * This file is part of Moodle's cache API, affectionately called MUC.
- * It contains the components that are required in order to use caching.
- *
- * @package    core
- * @category   cache
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_cache;
+
+use core\exception\coding_exception;
+use stdClass;
 
 /**
  * Abstract cache store class.
@@ -33,13 +26,12 @@
  * It lays down the foundation for what is required of a cache store plugin.
  *
  * @since Moodle 2.4
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class cache_store implements cache_store_interface {
-
+abstract class store implements store_interface {
     // Constants for features a cache store can support
 
     /**
@@ -109,7 +101,7 @@ abstract class cache_store implements cache_store_interface {
      * @param string $name The name of the cache store
      * @param array $configuration The configuration for this store instance.
      */
-    abstract public function __construct($name, array $configuration = array());
+    abstract public function __construct($name, array $configuration = []);
 
     /**
      * Returns the name of this store instance.
@@ -127,9 +119,9 @@ abstract class cache_store implements cache_store_interface {
      * If there are setup tasks that may fail they should be done within the __construct method
      * and should they fail is_ready should return false.
      *
-     * @param cache_definition $definition
+     * @param definition $definition
      */
-    abstract public function initialise(cache_definition $definition);
+    abstract public function initialise(definition $definition);
 
     /**
      * Returns true if this cache store instance has been initialised.
@@ -142,7 +134,7 @@ abstract class cache_store implements cache_store_interface {
      * @return bool
      */
     public function is_ready() {
-        return forward_static_call(array($this, 'are_requirements_met'));
+        return forward_static_call([$this, 'are_requirements_met']);
     }
 
     /**
@@ -208,11 +200,11 @@ abstract class cache_store implements cache_store_interface {
 
     /**
      * @deprecated since 2.5
-     * @see \cache_store::instance_deleted()
+     * @see store::instance_deleted()
      */
     public function cleanup() {
-        throw new coding_exception('cache_store::cleanup() can not be used anymore.' .
-            ' Please use cache_store::instance_deleted() instead.');
+        throw new coding_exception('store::cleanup() can not be used anymore.' .
+            ' Please use store::instance_deleted() instead.');
     }
 
     /**
@@ -282,7 +274,7 @@ abstract class cache_store implements cache_store_interface {
      * @return bool
      */
     public function is_searchable() {
-        return in_array('cache_is_searchable', class_implements($this));
+        return in_array(searchable_cache_interface::class, class_implements($this));
     }
 
     /**
@@ -304,9 +296,9 @@ abstract class cache_store implements cache_store_interface {
      * you can override this method to handle any situations you want before cloning.
      *
      * @param array $details An array containing the details of the store from the cache config.
-     * @return cache_store
+     * @return store
      */
-    public function create_clone(array $details = array()) {
+    public function create_clone(array $details = []) {
         // By default we just run clone.
         // Any stores that have an issue with this will need to override the create_clone method.
         return clone($this);
@@ -321,7 +313,7 @@ abstract class cache_store implements cache_store_interface {
      * @return string[] An array of warning strings from the store instance.
      */
     public function get_warnings() {
-        return array();
+        return [];
     }
 
     /**
@@ -384,7 +376,7 @@ abstract class cache_store implements cache_store_interface {
             'items' => 0,
             'mean' => 0,
             'sd' => 0,
-            'margin' => 0
+            'margin' => 0,
         ];
 
         // If this cache isn't searchable, we don't know the answer.
@@ -472,3 +464,8 @@ abstract class cache_store implements cache_store_interface {
         return self::IO_BYTES_NOT_SUPPORTED;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(store::class, \cache_store::class);

@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
+use moodleform;
+
 /**
  * Cache store feature: configurable.
  *
@@ -23,9 +27,11 @@
  * data for the edit form.
  *
  * Can be implemented by classes already implementing cache_store.
+ * @package core_cache
+ * @copyright Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface cache_is_configurable {
-
+interface configurable_cache_interface {
     /**
      * Given the data from the add instance form this function creates a configuration array.
      *
@@ -42,3 +48,8 @@ interface cache_is_configurable {
      */
     public static function config_set_edit_form_data(moodleform $editform, array $config);
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configurable_cache_interface::class, \cache_is_configurable::class);

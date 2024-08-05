@@ -14,10 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache\form;
+
+use core_cache\administration_helper;
+use core_cache\definition;
+use moodleform;
+
 /**
  * Form to set definition sharing option
  *
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2013 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -38,7 +44,7 @@ class cache_definition_sharing_form extends moodleform {
 
         // We use a group here for validation.
         $count = 0;
-        $group = array();
+        $group = [];
         foreach ($sharingoptions as $value => $text) {
             $count++;
             $group[] = $form->createElement('checkbox', $value, null, $text);
@@ -48,16 +54,16 @@ class cache_definition_sharing_form extends moodleform {
 
         $form->addElement('text', 'userinputsharingkey', get_string('userinputsharingkey', 'cache'));
         $form->addHelpButton('userinputsharingkey', 'userinputsharingkey', 'cache');
-        $form->disabledIf('userinputsharingkey', 'sharing['.\core_cache\definition::SHARING_INPUT.']', 'notchecked');
+        $form->disabledIf('userinputsharingkey', 'sharing[' . definition::SHARING_INPUT . ']', 'notchecked');
         $form->setType('userinputsharingkey', PARAM_ALPHANUMEXT);
 
         $values = array_keys($sharingoptions);
-        if (in_array(\core_cache\definition::SHARING_ALL, $values)) {
+        if (in_array(definition::SHARING_ALL, $values)) {
             // If you share with all thenthe other options don't really make sense.
             foreach ($values as $value) {
-                $form->disabledIf('sharing['.$value.']', 'sharing['.\core_cache\definition::SHARING_ALL.']', 'checked');
+                $form->disabledIf('sharing[' . $value . ']', 'sharing[' . definition::SHARING_ALL . ']', 'checked');
             }
-            $form->disabledIf('userinputsharingkey', 'sharing['.\core_cache\definition::SHARING_ALL.']', 'checked');
+            $form->disabledIf('userinputsharingkey', 'sharing[' . definition::SHARING_ALL . ']', 'checked');
         }
 
         $this->add_action_buttons();
@@ -71,7 +77,7 @@ class cache_definition_sharing_form extends moodleform {
     public function set_data($data) {
         if (!isset($data['sharing'])) {
             // Set the default value here. mforms doesn't handle defaults very nicely.
-            $data['sharing'] = core_cache\administration_helper::get_definition_sharing_options(\core_cache\definition::SHARING_DEFAULT);
+            $data['sharing'] = administration_helper::get_definition_sharing_options(definition::SHARING_DEFAULT);
         }
         parent::set_data($data);
     }
@@ -92,3 +98,8 @@ class cache_definition_sharing_form extends moodleform {
         return $errors;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(cache_definition_sharing_form::class, \cache_definition_sharing_form::class);
