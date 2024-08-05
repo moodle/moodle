@@ -46,6 +46,7 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
     And I give the grade "50.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "50.00" to the user "Student 1" for the grade item "Test assignment three"
     And I press "Save changes"
+    And I change window size to "large"
     And I set the following settings for grade item "Test assignment four":
       | Hidden | 1 |
     And I press "Save changes"

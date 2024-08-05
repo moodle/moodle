@@ -1,4 +1,4 @@
-@core @core_grades @javascript
+@core @core_grades
 Feature: Changing the aggregation of an item affects its weight and extra credit definition
   In order to switch to another aggregation method
   As an teacher
@@ -31,7 +31,8 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
       | Item b3   | C1     | Cat natural & | 1               | 0.10             | 1              |
       | Item b4   | C1     | Cat natural & | 1               | 0                | 0              |
     And I log in as "admin"
-    And I change window size to "large"
+    # Change window size to ultra-wide to avoid 'out-of-bounds' random failures.
+    And I change window size to "5120x2160"
     And I set the following administration settings values:
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
     And I am on the "Course 1" "grades > Grader report > View" page
@@ -54,8 +55,12 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
       | Weight              | 0  |
       | Extra credit        | 1  |
     And I press "Save changes"
-    And I follow "Edit   Item a1"
-    And the field "Weight adjusted" matches value "0"
+
+  Scenario: Verify grade item values
+    Given I am on the "Course 1" "grades > Grader report > View" page logged in as "admin"
+    And I turn editing mode on
+    When I follow "Edit   Item a1"
+    Then the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
     And I press "Cancel"
     And I follow "Edit   Item a2"
@@ -331,6 +336,7 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And the field "Extra credit" matches value "0"
     And I press "Cancel"
 
+  @javascript
   Scenario: Switching grade items between categories
     # Move to same aggregation (Natural).
     Given I navigate to "Setup > Gradebook setup" in the course gradebook
