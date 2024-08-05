@@ -1753,6 +1753,9 @@ function purge_other_caches() {
     remove_dir($CFG->localcachedir, true);
     set_config('localcachedirpurged', time());
     make_localcache_directory('', true);
+
+    // Rewarm the bootstrap.php files so the siteid is always present after a purge.
+    initialise_local_config_cache();
     \core\task\manager::clear_static_caches();
 }
 
