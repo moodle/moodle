@@ -36,9 +36,18 @@ final class text_filter_test extends \advanced_testcase {
     public function test_filter(
         string $expression,
         string $text,
+        bool $exactmatch,
     ): void {
         $filter = new text_filter(\core\context\system::instance(), []);
-        $this->assertMatchesRegularExpression($expression, $text);
+        $result = $filter->filter($text);
+
+        $this->assertMatchesRegularExpression($expression, $result);
+
+        if ($exactmatch) {
+            $this->assertEquals($text, $result);
+        } else {
+            $this->assertNotEquals($text, $result);
+        }
     }
 
     /**
@@ -50,11 +59,23 @@ final class text_filter_test extends \advanced_testcase {
         $email = 'chaise@example.com';
         return [
             // No email address found.
-            ['/Hello, world!/', 'Hello, world!'],
+            [
+                '/Hello, world!/',
+                'Hello, world!',
+                true,
+            ],
             // Email addresses present.
             // Note: The obfuscation randomly choose which chars to obfuscate.
-            ['/.*@.*/', $email],
-            ["~<a href='mailto:.*@.*'>.*@.*</a>~", "<a href='mailto:$email'>$email</a>"],
+            [
+                '/.*(@|&#64;).*/',
+                $email,
+                false,
+            ],
+            [
+                "~<a href=\".*:.*(@|&#64;).*\">.*(@|&#64;).*</a>~",
+                "<a href='mailto:$email'>$email</a>",
+                false,
+            ],
         ];
     }
 }

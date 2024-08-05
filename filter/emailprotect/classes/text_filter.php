@@ -55,7 +55,7 @@ class text_filter extends \core_filters\text_filter {
      * @return string
      */
     private function alter_email($matches) {
-        return $matches[1].obfuscate_text($matches[2]).$matches[3];
+        return $matches[1] . obfuscate_text($matches[2]) . $matches[3];
     }
 
     /**
