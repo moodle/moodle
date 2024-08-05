@@ -1628,4 +1628,49 @@ class behat_navigation extends behat_base {
         set_user_preference('behat_keep_drawer_closed', 1);
         $this->i_close_block_drawer_if_open();
     }
+
+    /**
+     * Checks if a navigation menu item is active.
+     *
+     * @Given menu item :navigationmenuitem should be active
+     * @param string $navigationmenuitem The navigation menu item name.
+     */
+    public function menu_item_should_be_active(string $navigationmenuitem): void {
+        $elementselector = "//*//a/following-sibling::*//a[contains(text(), '$navigationmenuitem') and @aria-current='true']";
+        $params = [$elementselector, "xpath_element"];
+        $this->execute("behat_general::should_exist", $params);
+    }
+
+    /**
+     * Checks if a navigation menu item is not active
+     *
+     * @Given menu item :navigationmenuitem should not be active
+     * @param string $navigationmenuitem The navigation menu item name.
+     */
+    public function menu_item_should_not_be_active(string $navigationmenuitem): void {
+        $elementselector = "//*//a/following-sibling::*//a[contains(text(), '$navigationmenuitem') and @aria-current='true']";
+        $params = [$elementselector, "xpath_element"];
+        $this->execute("behat_general::should_not_exist", $params);
+    }
+
+    /**
+     * Sets a link to no longer navigate when selected.
+     *
+     * @When I update the link with selector :selector to go nowhere
+     * @param string $selector selector for link to go nowhere
+     */
+    public function i_update_the_link_to_go_nowhere(string $selector) {
+        $script = <<<JS
+            var result = document.evaluate("$selector", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+            var link = result.singleNodeValue;
+
+            if (link) {
+                link.setAttribute('href', '#');
+            } else {
+                throw new Error('No element found with the XPath: ' + "$selector");
+            }
+        JS;
+
+        $this->getSession()->executeScript($script);
+    }
 }
