@@ -14,27 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * User class
- *
- * @package    core
- * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
 
+use core\context\user as context_user;
+use core\context\course as context_course;
+use core\context\system as context_system;
 use core_user\fields;
-
-defined('MOODLE_INTERNAL') || die();
+use core\exception\invalid_parameter_exception;
+use core\exception\moodle_exception;
+use core\exception\coding_exception;
+use core\output\theme_config;
+use core\output\user_picture;
+use core_date;
+use dml_exception;
+use stdClass;
 
 /**
  * User class to access user details.
  *
- * @todo       move api's from user/lib.php and deprecate old ones.
+ * @todo       MDL-82650 Move api's from user/lib.php and deprecate old ones.
  * @package    core
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_user {
+class user {
     /**
      * No reply user id.
      */
@@ -80,7 +83,7 @@ class core_user {
         'firstnamephonetic',
         'lastnamephonetic',
         'middlename',
-        'alternatename'
+        'alternatename',
     ];
 
     /** @var int Indicates that user profile view should be prevented */
@@ -104,7 +107,7 @@ class core_user {
 
     /**
      * Return user object from db or create noreply or support user,
-     * if userid matches corse_user::NOREPLY_USER or corse_user::SUPPORT_USER
+     * if userid matches \core\user::NOREPLY_USER or \core\user::SUPPORT_USER
      * respectively. If userid is not found, then return false.
      *
      * @param int $userid user id
@@ -128,7 +131,7 @@ class core_user {
                 return self::get_support_user();
                 break;
             default:
-                return $DB->get_record('user', array('id' => $userid), $fields, $strictness);
+                return $DB->get_record('user', ['id' => $userid], $fields, $strictness);
         }
     }
 
@@ -153,7 +156,7 @@ class core_user {
             $mnethostid = $CFG->mnet_localhost_id;
         }
 
-        return $DB->get_record('user', array('email' => $email, 'mnethostid' => $mnethostid), $fields, $strictness);
+        return $DB->get_record('user', ['email' => $email, 'mnethostid' => $mnethostid], $fields, $strictness);
     }
 
     /**
@@ -177,7 +180,38 @@ class core_user {
             $mnethostid = $CFG->mnet_localhost_id;
         }
 
-        return $DB->get_record('user', array('username' => $username, 'mnethostid' => $mnethostid), $fields, $strictness);
+        return $DB->get_record('user', ['username' => $username, 'mnethostid' => $mnethostid], $fields, $strictness);
+    }
+
+    /**
+     * Return User object based on their idnumber.
+     *
+     * @param string $idnumber The idnumber of the user searched.
+     * @param string $fields A comma separated list of user fields to be returned, support and noreply user.
+     * @param null|int $mnethostid The id of the remote host.
+     * @param int $strictness IGNORE_MISSING means compatible mode, false returned if user not found, debug message if more found;
+     *                        IGNORE_MULTIPLE means return first user, ignore multiple user records found(not recommended);
+     *                        MUST_EXIST means throw an exception if no user record or multiple records found.
+     * @return stdClass|bool user record if found, else false.
+     */
+    public static function get_user_by_idnumber(
+        string $idnumber,
+        string $fields = '*',
+        ?int $mnethostid = null,
+        int $strictness = IGNORE_MISSING,
+    ): stdClass|bool {
+        global $DB, $CFG;
+
+        // Because we use the username as the search criteria, we must also restrict our search based on mnet host.
+        if (empty($mnethostid)) {
+            // If empty, we restrict to local users.
+            $mnethostid = $CFG->mnet_localhost_id;
+        }
+
+        return $DB->get_record('user', [
+            'idnumber' => $idnumber,
+            'mnethostid' => $mnethostid,
+        ], $fields, $strictness);
     }
 
     /**
@@ -210,13 +244,17 @@ class core_user {
      * user identity fields.
      *
      * @param string $query Search query text
-     * @param \context_course|null $coursecontext Course context or null if system-wide
+     * @param context_course|null $coursecontext Course context or null if system-wide
      * @param int $max Max number of users to return, default 30 (zero = no limit)
      * @param int $querylimit Max number of database queries, default 5 (zero = no limit)
      * @return array Array of user objects with limited fields
      */
-    public static function search($query, \context_course $coursecontext = null,
-            $max = 30, $querylimit = 5) {
+    public static function search(
+        $query,
+        ?context_course $coursecontext = null,
+        $max = 30,
+        $querylimit = 5
+    ) {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/user/lib.php');
 
@@ -229,15 +267,16 @@ class core_user {
         }
 
         // Check permission to view profiles at each context.
-        $systemcontext = \context_system::instance();
+        $systemcontext = context_system::instance();
         $viewsystem = has_capability('moodle/user:viewdetails', $systemcontext);
         if ($viewsystem) {
             $userquery = 'SELECT id FROM {user}';
             $userparams = [];
         }
         if (!$viewsystem) {
-            list($userquery, $userparams) = self::get_enrolled_sql_on_courses_with_capability(
-                    'moodle/user:viewdetails');
+            [$userquery, $userparams] = self::get_enrolled_sql_on_courses_with_capability(
+                'moodle/user:viewdetails'
+            );
             if (!$userquery) {
                 // No permissions anywhere, return nothing.
                 return [];
@@ -245,7 +284,7 @@ class core_user {
         }
 
         // Start building the WHERE clause based on name.
-        list ($where, $whereparams) = users_search_sql($query, 'u');
+         [$where, $whereparams] = users_search_sql($query, 'u');
 
         // We allow users to search with extra identity fields (as well as name) but only if they
         // have the permission to display those identity fields.
@@ -278,8 +317,9 @@ class core_user {
                 $whereparams = array_merge($whereparams, $extraparams);
             } else {
                 // Get all courses where user can view full user identity.
-                list($sql, $params) = self::get_enrolled_sql_on_courses_with_capability(
-                    'moodle/site:viewuseridentity');
+                [$sql, $params] = self::get_enrolled_sql_on_courses_with_capability(
+                    'moodle/site:viewuseridentity'
+                );
                 if ($sql) {
                     // Join that with the user query to get an extra field indicating if we can.
                     $userquery = "
@@ -299,9 +339,9 @@ class core_user {
 
         // Default order is just name order. But if searching within a course then we show users
         // within the course first.
-        list ($order, $orderparams) = users_order_by_sql('u', $query, $systemcontext);
+         [$order, $orderparams] = users_order_by_sql('u', $query, $systemcontext);
         if ($coursecontext) {
-            list ($sql, $params) = get_enrolled_sql($coursecontext);
+             [$sql, $params] = get_enrolled_sql($coursecontext);
             $mainfield = 'innerusers2.id';
             if ($usingshowidentity) {
                 $mainfield .= ', innerusers2.showidentity';
@@ -323,13 +363,17 @@ class core_user {
         $pos = 0;
         $readcount = $max + 2;
         for ($i = 0; $i < $querylimit; $i++) {
-            $rawresult = $DB->get_records_sql("
+            $rawresult = $DB->get_records_sql(
+                "
                     SELECT $selectfields
                       FROM ($userquery) users
                       JOIN {user} u ON u.id = users.id
                      WHERE $where
-                  ORDER BY $order", array_merge($userparams, $whereparams, $orderparams),
-                    $pos, $readcount);
+                  ORDER BY $order",
+                array_merge($userparams, $whereparams, $orderparams),
+                $pos,
+                $readcount
+            );
             foreach ($rawresult as $user) {
                 // Skip guest.
                 if ($user->username === 'guest') {
@@ -371,8 +415,12 @@ class core_user {
      */
     protected static function get_enrolled_sql_on_courses_with_capability($capability) {
         // Get all courses where user have the capability.
-        $courses = get_user_capability_course($capability, null, true,
-                implode(',', array_values(context_helper::get_preload_record_columns('ctx'))));
+        $courses = get_user_capability_course(
+            $capability,
+            null,
+            true,
+            implode(',', array_values(context_helper::get_preload_record_columns('ctx')))
+        );
         if (!$courses) {
             return [null, null];
         }
@@ -384,8 +432,8 @@ class core_user {
         $unionparams = [];
         foreach ($courses as $course) {
             // Get SQL to list user ids enrolled in this course.
-            \context_helper::preload_from_record($course);
-            list ($sql, $params) = get_enrolled_sql(\context_course::instance($course->id));
+            context_helper::preload_from_record($course);
+             [$sql, $params] = get_enrolled_sql(context_course::instance($course->id));
 
             // Combine to a big union query.
             if ($unionsql) {
@@ -528,7 +576,7 @@ class core_user {
             return false;
         }
         if ($checkdb) {
-            return $DB->record_exists('user', array('id' => $userid));
+            return $DB->record_exists('user', ['id' => $userid]);
         } else {
             return true;
         }
@@ -573,11 +621,11 @@ class core_user {
             throw new moodle_exception('guestsarenotallowed', 'error');
         }
 
-        if ($checksuspended and $user->suspended) {
+        if ($checksuspended && $user->suspended) {
             throw new moodle_exception('suspended', 'auth');
         }
 
-        if ($checknologin and $user->auth == 'nologin') {
+        if ($checknologin && $user->auth == 'nologin') {
             throw new moodle_exception('suspended', 'auth');
         }
     }
@@ -589,12 +637,12 @@ class core_user {
      * @param array $filemanageroptions
      * @return bool True if the user was updated, false if it stayed the same.
      */
-    public static function update_picture(stdClass $usernew, $filemanageroptions = array()) {
+    public static function update_picture(stdClass $usernew, $filemanageroptions = []) {
         global $CFG, $DB;
         require_once("$CFG->libdir/gdlib.php");
 
         $context = context_user::instance($usernew->id, MUST_EXIST);
-        $user = core_user::get_user($usernew->id, 'id, picture', MUST_EXIST);
+        $user = self::get_user($usernew->id, 'id, picture', MUST_EXIST);
 
         $newpicture = $user->picture;
         // Get file_storage to process files.
@@ -636,7 +684,7 @@ class core_user {
         }
 
         if ($newpicture != $user->picture) {
-            $DB->set_field('user', 'picture', $newpicture, array('id' => $user->id));
+            $DB->set_field('user', 'picture', $newpicture, ['id' => $user->id]);
             return true;
         } else {
             return false;
@@ -669,66 +717,112 @@ class core_user {
 
         // Array of user fields properties and expected parameters.
         // Every new field on the user table should be added here otherwise it won't be validated.
-        $fields = array();
-        $fields['id'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
-        $fields['auth'] = array('type' => PARAM_AUTH, 'null' => NULL_NOT_ALLOWED);
-        $fields['confirmed'] = array('type' => PARAM_BOOL, 'null' => NULL_NOT_ALLOWED);
-        $fields['policyagreed'] = array('type' => PARAM_BOOL, 'null' => NULL_NOT_ALLOWED);
-        $fields['deleted'] = array('type' => PARAM_BOOL, 'null' => NULL_NOT_ALLOWED);
-        $fields['suspended'] = array('type' => PARAM_BOOL, 'null' => NULL_NOT_ALLOWED);
-        $fields['mnethostid'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
-        $fields['username'] = array('type' => PARAM_USERNAME, 'null' => NULL_NOT_ALLOWED);
-        $fields['password'] = array('type' => PARAM_RAW, 'null' => NULL_NOT_ALLOWED);
-        $fields['idnumber'] = array('type' => PARAM_RAW, 'null' => NULL_NOT_ALLOWED);
-        $fields['firstname'] = array('type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED);
-        $fields['lastname'] = array('type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED);
-        $fields['surname'] = array('type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED);
-        $fields['email'] = array('type' => PARAM_RAW_TRIMMED, 'null' => NULL_NOT_ALLOWED);
-        $fields['emailstop'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 0);
-        $fields['phone1'] = array('type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED);
-        $fields['phone2'] = array('type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED);
-        $fields['institution'] = array('type' => PARAM_TEXT, 'null' => NULL_NOT_ALLOWED);
-        $fields['department'] = array('type' => PARAM_TEXT, 'null' => NULL_NOT_ALLOWED);
-        $fields['address'] = array('type' => PARAM_TEXT, 'null' => NULL_NOT_ALLOWED);
-        $fields['city'] = array('type' => PARAM_TEXT, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->defaultcity);
-        $fields['country'] = array('type' => PARAM_ALPHA, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->country,
-                'choices' => array_merge(array('' => ''), get_string_manager()->get_list_of_countries(true, true)));
-        $fields['lang'] = array('type' => PARAM_LANG, 'null' => NULL_NOT_ALLOWED,
-                'default' => (!empty($CFG->autolangusercreation) && !empty($SESSION->lang)) ? $SESSION->lang : $CFG->lang,
-                'choices' => array_merge(array('' => ''), get_string_manager()->get_list_of_translations(false)));
-        $fields['calendartype'] = array('type' => PARAM_PLUGIN, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->calendartype,
-                'choices' => array_merge(array('' => ''), \core_calendar\type_factory::get_list_of_calendar_types()));
-        $fields['theme'] = array('type' => PARAM_THEME, 'null' => NULL_NOT_ALLOWED,
-                'default' => theme_config::DEFAULT_THEME, 'choices' => array_merge(array('' => ''), get_list_of_themes()));
-        $fields['timezone'] = array('type' => PARAM_TIMEZONE, 'null' => NULL_NOT_ALLOWED,
-                'default' => core_date::get_server_timezone()); // Must not use choices here: timezones can come and go.
-        $fields['firstaccess'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
-        $fields['lastaccess'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
-        $fields['lastlogin'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
-        $fields['currentlogin'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
-        $fields['lastip'] = array('type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED);
-        $fields['secret'] = array('type' => PARAM_ALPHANUM, 'null' => NULL_NOT_ALLOWED);
-        $fields['picture'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
-        $fields['description'] = array('type' => PARAM_RAW, 'null' => NULL_ALLOWED);
-        $fields['descriptionformat'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
-        $fields['mailformat'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED,
-                'default' => $CFG->defaultpreference_mailformat);
-        $fields['maildigest'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED,
-                'default' => $CFG->defaultpreference_maildigest);
-        $fields['maildisplay'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED,
-                'default' => $CFG->defaultpreference_maildisplay);
-        $fields['autosubscribe'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED,
-                'default' => $CFG->defaultpreference_autosubscribe);
-        $fields['trackforums'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED,
-                'default' => $CFG->defaultpreference_trackforums);
-        $fields['timecreated'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
-        $fields['timemodified'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
-        $fields['trustbitmask'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
-        $fields['imagealt'] = array('type' => PARAM_TEXT, 'null' => NULL_ALLOWED);
-        $fields['lastnamephonetic'] = array('type' => PARAM_NOTAGS, 'null' => NULL_ALLOWED);
-        $fields['firstnamephonetic'] = array('type' => PARAM_NOTAGS, 'null' => NULL_ALLOWED);
-        $fields['middlename'] = array('type' => PARAM_NOTAGS, 'null' => NULL_ALLOWED);
-        $fields['alternatename'] = array('type' => PARAM_NOTAGS, 'null' => NULL_ALLOWED);
+        $fields = [];
+        $fields['id'] = ['type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED];
+        $fields['auth'] = ['type' => PARAM_AUTH, 'null' => NULL_NOT_ALLOWED];
+        $fields['confirmed'] = ['type' => PARAM_BOOL, 'null' => NULL_NOT_ALLOWED];
+        $fields['policyagreed'] = ['type' => PARAM_BOOL, 'null' => NULL_NOT_ALLOWED];
+        $fields['deleted'] = ['type' => PARAM_BOOL, 'null' => NULL_NOT_ALLOWED];
+        $fields['suspended'] = ['type' => PARAM_BOOL, 'null' => NULL_NOT_ALLOWED];
+        $fields['mnethostid'] = ['type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED];
+        $fields['username'] = ['type' => PARAM_USERNAME, 'null' => NULL_NOT_ALLOWED];
+        $fields['password'] = ['type' => PARAM_RAW, 'null' => NULL_NOT_ALLOWED];
+        $fields['idnumber'] = ['type' => PARAM_RAW, 'null' => NULL_NOT_ALLOWED];
+        $fields['firstname'] = ['type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED];
+        $fields['lastname'] = ['type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED];
+        $fields['surname'] = ['type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED];
+        $fields['email'] = ['type' => PARAM_RAW_TRIMMED, 'null' => NULL_NOT_ALLOWED];
+        $fields['emailstop'] = ['type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 0];
+        $fields['phone1'] = ['type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED];
+        $fields['phone2'] = ['type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED];
+        $fields['institution'] = ['type' => PARAM_TEXT, 'null' => NULL_NOT_ALLOWED];
+        $fields['department'] = ['type' => PARAM_TEXT, 'null' => NULL_NOT_ALLOWED];
+        $fields['address'] = ['type' => PARAM_TEXT, 'null' => NULL_NOT_ALLOWED];
+        $fields['city'] = ['type' => PARAM_TEXT, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->defaultcity];
+        $fields['country'] = [
+            'type' => PARAM_ALPHA,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => $CFG->country,
+            'choices' => array_merge(
+                ['' => ''],
+                get_string_manager()->get_list_of_countries(true, true)
+            ),
+        ];
+        $fields['lang'] = [
+            'type' => PARAM_LANG,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => (!empty($CFG->autolangusercreation) && !empty($SESSION->lang)) ? $SESSION->lang : $CFG->lang,
+            'choices' => array_merge(
+                ['' => ''],
+                get_string_manager()->get_list_of_translations(false)
+            ),
+        ];
+        $fields['calendartype'] = [
+            'type' => PARAM_PLUGIN,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => $CFG->calendartype,
+            'choices' => array_merge(
+                ['' => ''],
+                \core_calendar\type_factory::get_list_of_calendar_types()
+            ),
+        ];
+        $fields['theme'] = [
+            'type' => PARAM_THEME,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => theme_config::DEFAULT_THEME,
+            'choices' => array_merge(
+                ['' => ''],
+                get_list_of_themes()
+            ),
+        ];
+        $fields['timezone'] = [
+            // Must not use choices here: timezones can come and go.
+            'type' => PARAM_TIMEZONE,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => core_date::get_server_timezone(),
+        ];
+        $fields['firstaccess'] = ['type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED];
+        $fields['lastaccess'] = ['type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED];
+        $fields['lastlogin'] = ['type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED];
+        $fields['currentlogin'] = ['type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED];
+        $fields['lastip'] = ['type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED];
+        $fields['secret'] = ['type' => PARAM_ALPHANUM, 'null' => NULL_NOT_ALLOWED];
+        $fields['picture'] = ['type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED];
+        $fields['description'] = ['type' => PARAM_RAW, 'null' => NULL_ALLOWED];
+        $fields['descriptionformat'] = ['type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED];
+        $fields['mailformat'] = [
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => $CFG->defaultpreference_mailformat,
+        ];
+        $fields['maildigest'] = [
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => $CFG->defaultpreference_maildigest,
+        ];
+        $fields['maildisplay'] = [
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => $CFG->defaultpreference_maildisplay,
+        ];
+        $fields['autosubscribe'] = [
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => $CFG->defaultpreference_autosubscribe,
+        ];
+        $fields['trackforums'] = [
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => $CFG->defaultpreference_trackforums,
+        ];
+        $fields['timecreated'] = ['type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED];
+        $fields['timemodified'] = ['type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED];
+        $fields['trustbitmask'] = ['type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED];
+        $fields['imagealt'] = ['type' => PARAM_TEXT, 'null' => NULL_ALLOWED];
+        $fields['lastnamephonetic'] = ['type' => PARAM_NOTAGS, 'null' => NULL_ALLOWED];
+        $fields['firstnamephonetic'] = ['type' => PARAM_NOTAGS, 'null' => NULL_ALLOWED];
+        $fields['middlename'] = ['type' => PARAM_NOTAGS, 'null' => NULL_ALLOWED];
+        $fields['alternatename'] = ['type' => PARAM_NOTAGS, 'null' => NULL_ALLOWED];
 
         self::$propertiescache = $fields;
     }
@@ -770,8 +864,10 @@ class core_user {
                     validate_param($value, self::$propertiescache[$property]['type'], self::$propertiescache[$property]['null']);
                 }
                 // Check that the value is part of a list of allowed values.
-                if (!empty(self::$propertiescache[$property]['choices']) &&
-                        !isset(self::$propertiescache[$property]['choices'][$value])) {
+                if (
+                    !empty(self::$propertiescache[$property]['choices']) &&
+                    !isset(self::$propertiescache[$property]['choices'][$value])
+                ) {
                     throw new invalid_parameter_exception($value);
                 }
             } catch (invalid_parameter_exception $e) {
@@ -806,7 +902,7 @@ class core_user {
         foreach ($user as $field => $value) {
             // Get the property parameter type and do the cleaning.
             try {
-                $user->$field = core_user::clean_field($value, $field);
+                $user->$field = self::clean_field($value, $field);
             } catch (coding_exception $e) {
                 debugging("The property '$field' could not be cleaned.", DEBUG_DEVELOPER);
             }
@@ -828,7 +924,7 @@ class core_user {
         }
 
         try {
-            $type = core_user::get_property_type($field);
+            $type = self::get_property_type($field);
 
             if (isset(self::$propertiescache[$field]['choices'])) {
                 if (!array_key_exists($data, self::$propertiescache[$field]['choices'])) {
@@ -900,9 +996,10 @@ class core_user {
 
         self::fill_properties_cache();
 
-        if (!array_key_exists($property, self::$propertiescache) && !array_key_exists('choices',
-                self::$propertiescache[$property])) {
-
+        if (
+            !array_key_exists($property, self::$propertiescache) &&
+            !array_key_exists('choices', self::$propertiescache[$property])
+        ) {
             throw new coding_exception('Invalid property requested, or the property does not has a list of choices.');
         }
 
@@ -939,11 +1036,12 @@ class core_user {
      *          'choices' => array(1, 2..) // An array of accepted values of the user field - optional
      *          'default' => $CFG->setting // An default value for the field - optional
      *          'isregex' => false/true    // Whether the name of the preference is a regular expression (default false).
-     *          'permissioncallback' => callable // Function accepting arguments ($user, $preferencename) that checks if current user
+     *          'permissioncallback' => callable // Function accepting arguments ($user, $preferencename) that checks if current
+     *                                     // user
      *                                     // is allowed to modify this preference for given user.
-     *                                     // If not specified core_user::default_preference_permission_check() will be assumed.
-     *          'cleancallback' => callable // Custom callback for cleaning value if something more difficult than just type/choices is needed
-     *                                     // accepts arguments ($value, $preferencename)
+     *                                     // If not specified \core\user::default_preference_permission_check() will be assumed.
+     *          'cleancallback' => callable // Custom callback for cleaning value if something more difficult than just type/choices
+     *                                      // is needed accepts arguments ($value, $preferencename)
      *     )
      * )
      *
@@ -958,32 +1056,44 @@ class core_user {
 
         // Array of user preferences and expected types/values.
         // Every preference that can be updated directly by user should be added here.
-        $preferences = array();
-        $preferences['auth_forcepasswordchange'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'choices' => array(0, 1),
-            'permissioncallback' => function($user, $preferencename) {
+        $preferences = [];
+        $preferences['auth_forcepasswordchange'] = [
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'choices' => [0, 1],
+            'permissioncallback' => function ($user, $preferencename) {
                 global $USER;
                 $systemcontext = context_system::instance();
                 return ($USER->id != $user->id && (has_capability('moodle/user:update', $systemcontext) ||
                         ($user->timecreated > time() - 10 && has_capability('moodle/user:create', $systemcontext))));
-            });
-        $preferences['forum_markasreadonnotification'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 1,
-            'choices' => array(0, 1));
-        $preferences['htmleditor'] = array('type' => PARAM_NOTAGS, 'null' => NULL_ALLOWED,
-            'cleancallback' => function($value, $preferencename) {
-                if (empty($value) || !array_key_exists($value, core_component::get_plugin_list('editor'))) {
+            },
+        ];
+        $preferences['forum_markasreadonnotification'] = [
+            'type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 1,
+            'choices' => [0, 1],
+        ];
+        $preferences['htmleditor'] = [
+            'type' => PARAM_NOTAGS, 'null' => NULL_ALLOWED,
+            'cleancallback' => function ($value, $preferencename) {
+                if (empty($value) || !array_key_exists($value, component::get_plugin_list('editor'))) {
                     return null;
                 }
                 return $value;
-            });
-        $preferences['badgeprivacysetting'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 1,
-            'choices' => array(0, 1), 'permissioncallback' => function($user, $preferencename) {
+            },
+        ];
+        $preferences['badgeprivacysetting'] = [
+            'type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 1,
+            'choices' => [0, 1], 'permissioncallback' => function ($user, $preferencename) {
                 global $CFG;
                 return !empty($CFG->enablebadges) && self::is_current_user($user);
-            });
-        $preferences['blogpagesize'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 10,
-            'permissioncallback' => function($user, $preferencename) {
+            },
+        ];
+        $preferences['blogpagesize'] = [
+            'type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 10,
+            'permissioncallback' => function ($user, $preferencename) {
                 return self::is_current_user($user) && has_capability('moodle/blog:view', context_system::instance());
-            });
+            },
+        ];
         $preferences['filemanager_recentviewmode'] = [
             'type' => PARAM_INT,
             'null' => NULL_NOT_ALLOWED,
@@ -1058,7 +1168,7 @@ class core_user {
                 global $CFG;
                 return self::is_current_user($user) &&
                     (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER));
-            }
+            },
         ];
 
         // Core components that may want to define their preferences.
@@ -1091,7 +1201,7 @@ class core_user {
      * @param string $preferencename
      * @return array
      */
-    protected static function get_preference_definition($preferencename) {
+    public static function get_preference_definition($preferencename) {
         self::fill_preferences_cache();
 
         foreach (self::$preferencescache as $key => $preference) {
@@ -1127,13 +1237,13 @@ class core_user {
             // Editing own profile.
             $systemcontext = context_system::instance();
             return has_capability('moodle/user:editownprofile', $systemcontext);
-        } else  {
+        } else {
             // Teachers, parents, etc.
             $personalcontext = context_user::instance($user->id);
             if (!has_capability('moodle/user:editprofile', $personalcontext)) {
                 return false;
             }
-            if (is_siteadmin($user->id) and !is_siteadmin($USER)) {
+            if (is_siteadmin($user->id) && !is_siteadmin($USER)) {
                 // Only admins may edit other admins.
                 return false;
             }
@@ -1361,7 +1471,7 @@ class core_user {
             }
         }
 
-        $requirednames = array();
+        $requirednames = [];
         // With each name, see if it is in the display name template, and add it to the required names array if it is.
         foreach ($allnames as $allname) {
             if (strpos($template, $allname) !== false) {
@@ -1386,7 +1496,7 @@ class core_user {
         // Tidy up any misc. characters (Not perfect, but gets most characters).
         // Don't remove the "u" at the end of the first expression unless you want garbled characters when combining hiragana or
         // katakana and parenthesis.
-        $patterns = array();
+        $patterns = [];
         // This regular expression replacement is to fix problems such as 'James () Kirk' Where 'Tiberius' (middlename) has not been
         // filled in by a user.
         // The special characters are Japanese brackets that are common enough to make allowances for them (not covered by :punct:).
@@ -1412,9 +1522,9 @@ class core_user {
      *
      * @param stdClass $user the person to get details of.
      * @param context|null $context The context will be used to determine the visibility of the user's profile url.
-     * @return moodle_url Profile url of the user
+     * @return url Profile url of the user
      */
-    public static function get_profile_url(stdClass $user, context $context = null): moodle_url {
+    public static function get_profile_url(stdClass $user, ?context $context = null): url {
         if (empty($user->id)) {
             throw new coding_exception('User id is required when displaying profile url.');
         }
@@ -1429,9 +1539,9 @@ class core_user {
 
         // If courseid is not set or is set to site id, then return profile page, otherwise return view page.
         if (!isset($params['courseid']) || $params['courseid'] == SITEID) {
-            return new moodle_url('/user/profile.php', $params);
+            return new url('/user/profile.php', $params);
         } else {
-            return new moodle_url('/user/view.php', $params);
+            return new url('/user/view.php', $params);
         }
     }
 
@@ -1606,3 +1716,8 @@ class core_user {
         return $namefields;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(user::class, \core_user::class);

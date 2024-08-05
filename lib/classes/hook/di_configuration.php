@@ -17,6 +17,7 @@
 namespace core\hook;
 
 use DI\ContainerBuilder;
+use DI\Definition;
 use core\attribute\label;
 
 /**
@@ -67,13 +68,14 @@ class di_configuration {
      * </code>
      *
      * @param string $id The identifier of the container entry
-     * @param callable $definition The definition of the container entry
+     * @param callable|Definition\Definition|Definition\SelfResolvingDefinition|Definition\Helper\DefinitionHelper $definition
+     *     The definition of the container entry
      * @return self
      * @example
      */
     public function add_definition(
         string $id,
-        callable $definition,
+        callable|Definition\Definition|Definition\SelfResolvingDefinition|Definition\Helper\DefinitionHelper $definition,
     ): self {
         $this->builder->addDefinitions([
             $id => $definition,

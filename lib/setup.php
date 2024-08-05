@@ -196,6 +196,9 @@ if (!isset($CFG->wwwroot) or $CFG->wwwroot === 'http://example.com/moodle') {
     exit(1);
 }
 
+// The router configuration is mandatory.
+$CFG->routerconfigured = !empty($CFG->routerconfigured);
+
 // Make sure there is some database table prefix.
 if (!isset($CFG->prefix)) {
     $CFG->prefix = '';

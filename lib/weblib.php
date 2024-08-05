@@ -2081,7 +2081,7 @@ function notice ($message, $link='', $course=null) {
  * @param string $messagetype The type of notification to show the message in. See constants on \core\output\notification.
  * @throws moodle_exception
  */
-function redirect($url, $message='', $delay=null, $messagetype = \core\output\notification::NOTIFY_INFO) {
+function redirect($url, $message='', $delay=null, $messagetype = \core\output\notification::NOTIFY_INFO): Never {
     global $OUTPUT, $PAGE, $CFG;
 
     if (CLI_SCRIPT or AJAX_SCRIPT) {

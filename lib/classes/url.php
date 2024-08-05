@@ -623,6 +623,28 @@ class url {
     }
 
     /**
+     * Create a new moodle_url instance from routed path.
+     *
+     * @param string $path The routed path
+     * @param null|array $params The path parameters
+     * @param null|string $anchor The anchor
+     * @return self
+     */
+    public static function routed_path(
+        string $path,
+        ?array $params = null,
+        ?string $anchor = null,
+    ): self {
+        global $CFG;
+
+        if (!$CFG->routerconfigured) {
+            $path = '/r.php/' . ltrim($path, '/');
+        }
+        $url = new self($path, $params, $anchor);
+        return $url;
+    }
+
+    /**
      * General moodle file url.
      *
      * @param string $urlbase the script serving the file

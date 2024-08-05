@@ -109,7 +109,16 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // Add the 'profiling' page to admin block.
     $ADMIN->add('development', $temp);
 
-     // Web service test clients DO NOT COMMIT : THE EXTERNAL WEB PAGE IS NOT AN ADMIN PAGE !!!!!
+    $ADMIN->add(
+        parentname: 'development',
+        something: new admin_externalpage(
+            name: 'swaggerui',
+            visiblename: new lang_string('swaggerui', 'admin'),
+            url: "$CFG->wwwroot/admin/swaggerui.php",
+        ),
+    );
+
+    // Web service test clients DO NOT COMMIT : THE EXTERNAL WEB PAGE IS NOT AN ADMIN PAGE !!!!!
     $ADMIN->add('development', new admin_externalpage('testclient', new lang_string('testclient', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/testclient.php"));
 
 

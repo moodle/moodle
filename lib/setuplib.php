@@ -130,10 +130,10 @@ function get_whoops(): ?\Whoops\Run {
 /**
  * Default exception handler.
  *
- * @param Exception $ex
+ * @param Throwable $ex
  * @return void -does not return. Terminates execution!
  */
-function default_exception_handler($ex) {
+function default_exception_handler(Throwable $ex): void {
     global $CFG, $DB, $OUTPUT, $USER, $FULLME, $SESSION, $PAGE;
 
     // detect active db transactions, rollback and log as error
