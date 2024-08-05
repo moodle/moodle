@@ -745,6 +745,38 @@ EOF;
     }
 
     /**
+     * Test for checking the template context data for the url_select element.
+     * @covers \url_select::disable_option
+     * @covers \url_select::enable_option
+     */
+    public function test_url_select_disabled_options(): void {
+        global $PAGE;
+        $url1 = new \moodle_url("/#a");
+        $url2 = new \moodle_url("/#b");
+        $url3 = new \moodle_url("/#c");
+
+        $urls = [
+            $url1->out() => 'A',
+            $url2->out() => 'B',
+            $url3->out() => 'C',
+        ];
+        $urlselect = new url_select($urls,
+            null,
+            null,
+            'someformid',
+            null);
+        $renderer = $PAGE->get_renderer('core');
+        $urlselect->set_option_disabled($url2->out(), true);
+        $data = $urlselect->export_for_template($renderer);
+        $this->assertFalse($data->options[0]['disabled']);
+        $this->assertTrue($data->options[1]['disabled']);
+        $urlselect->set_option_disabled($url2->out(), false);
+        $data = $urlselect->export_for_template($renderer);
+        $this->assertFalse($data->options[0]['disabled']);
+        $this->assertFalse($data->options[1]['disabled']);
+    }
+
+    /**
      * Data provider for test_block_contents_is_fake().
      *
      * @return array
