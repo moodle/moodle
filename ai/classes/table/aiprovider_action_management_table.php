@@ -175,7 +175,14 @@ class aiprovider_action_management_table extends flexible_table implements dynam
      * @return string
      */
     protected function col_settings(stdClass $row): string {
-        // TODO: MDL-82609 - Add settings link.
+        global $CFG;
+        require_once($CFG->libdir . '/adminlib.php'); // Needed for the AJAX calls.
+        $tree = \admin_get_root();
+        $sectionname = $this->pluginname . '_' . $row->action::get_basename();
+        $section = $tree->locate($sectionname);
+        if ($section) {
+            return \html_writer::link($section->get_settings_page_url(), get_string('settings'));
+        }
         return '';
     }
 

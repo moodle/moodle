@@ -22,6 +22,22 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['action:generate_image:endpoint'] = 'API endpoint';
+$string['action:generate_image:endpoint_desc'] = 'The API endpoint the provider uses for this action.';
+$string['action:generate_image:model'] = 'Image generation model';
+$string['action:generate_image:model_desc'] = 'The model used to generate images from user prompts.';
+$string['action:generate_text:endpoint'] = 'API endpoint';
+$string['action:generate_text:endpoint_desc'] = 'The API endpoint for the provider uses for this action.';
+$string['action:generate_text:model'] = 'Text generation model';
+$string['action:generate_text:model_desc'] = 'The model used to generate the text response.';
+$string['action:generate_text:systeminstruction'] = 'System instruction';
+$string['action:generate_text:systeminstruction_desc'] = 'This instruction is provided together with the user prompt for this action. It provides information to the AI model on how to generate the response.';
+$string['action:summarise_text:endpoint'] = 'API endpoint';
+$string['action:summarise_text:endpoint_desc'] = 'The API endpoint the provider uses for this action.';
+$string['action:summarise_text:model'] = 'Text summarisation model';
+$string['action:summarise_text:model_desc'] = 'The model used to summarise the provided text.';
+$string['action:summarise_text:systeminstruction'] = 'System instruction';
+$string['action:summarise_text:systeminstruction_desc'] = 'This instruction is provided together with the user prompt for this action. It provides information to the AI model on how to generate the response.';
 $string['apikey'] = 'OpenAI API key';
 $string['apikey_desc'] = 'Enter your OpenAI API key. You can get one from <a href="https://platform.openai.com/account/api-keys" target="_blank">here</a>';
 $string['enableglobalratelimit'] = 'Enable global rate limiting';
