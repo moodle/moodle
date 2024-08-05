@@ -25,6 +25,7 @@ Feature: Apply content type to a tour
     Then "Content type" "select" should exist
     And the "Content type" select box should contain "Language string ID"
     And the "Content type" select box should contain "Manual"
+    And I change window size to "large"
     And I select "Language string ID" from the "Content type" singleselect
     And I should see " Language string ID"
     And "#fgroup_id_contenthtmlgrp" "css_element" should not be visible
@@ -38,6 +39,7 @@ Feature: Apply content type to a tour
     And I click on "View" "link" in the "My first tour" "table_row"
     And I click on "New step" "link"
     And I set the field "Title" to "tour_activityinfo_course_teacher_title,tool_usertours"
+    And I change window size to "large"
     And I select "Language string ID" from the "Content type" singleselect
     And I set the field "Language string ID" to "tour_activityinfo_course_teacher_content_abc,tool_usertours"
     When I press "Save changes"
