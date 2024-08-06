@@ -161,7 +161,7 @@ $matrix = new Matrix\Matrix($grid);
 
 echo $matrix->trace();
 ```
-or you can call the static method, passing the Matrix object or array as an argument 
+or you can call the static method, passing the Matrix object or array as an argument
 ```php
 $grid = [
     [16,  3,  2, 13],
