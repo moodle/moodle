@@ -16,6 +16,7 @@
 
 namespace core\router;
 
+use core_cache\cache;
 use core\route\oauth2;
 use core\route\shortlink;
 use Slim\App;
@@ -39,6 +40,7 @@ class route_loader extends abstract_route_loader implements route_loader_interfa
             route_loader_interface::ROUTE_GROUP_PAGE => $this->configure_standard_routes($app),
             route_loader_interface::ROUTE_GROUP_SHIM => $this->configure_shim_routes($app),
             route_loader_interface::ROUTE_GROUP_SHORTLINK => $this->configure_shortlink_routes($app),
+            route_loader_interface::ROUTE_BATCH_API => $this->configure_batch_api_route($app),
         ];
     }
 
@@ -136,7 +138,7 @@ class route_loader extends abstract_route_loader implements route_loader_interfa
      * @return array[]
      */
     protected function get_all_api_routes(): array {
-        $cache = \cache::make('core', 'routes');
+        $cache = cache::make('core', 'routes');
 
         if (!($routes = $cache->get('api_routes'))) {
             $routes = $this->get_all_routes_in_namespace(
@@ -158,7 +160,7 @@ class route_loader extends abstract_route_loader implements route_loader_interfa
      * @return array[]
      */
     protected function get_all_oauth2_authentication_routes(): array {
-        $cache = \cache::make('core', 'routes');
+        $cache = cache::make('core', 'routes');
 
         if (!($cachedata = $cache->get('oauth2_auth_routes'))) {
             $cachedata = $this->get_all_routes_in_class(
@@ -183,7 +185,7 @@ class route_loader extends abstract_route_loader implements route_loader_interfa
      * @return array|bool|mixed
      */
     protected function get_all_shimmed_routes(): array {
-        $cache = \cache::make('core', 'routes');
+        $cache = cache::make('core', 'routes');
 
         if (!($cachedata = $cache->get('shimmed_routes'))) {
             $cachedata = $this->get_all_routes_in_namespace(
@@ -218,7 +220,7 @@ class route_loader extends abstract_route_loader implements route_loader_interfa
      * @return array[]
      */
     protected function get_all_standard_routes(): array {
-        $cache = \cache::make('core', 'routes');
+        $cache = cache::make('core', 'routes');
 
         if (!($cachedata = $cache->get('standard_routes'))) {
             $cachedata = $this->get_all_routes_in_namespace(
@@ -241,7 +243,7 @@ class route_loader extends abstract_route_loader implements route_loader_interfa
      * @return array[]
      */
     protected function get_all_shortlink_routes(): array {
-        $cache = \cache::make('core', 'routes');
+        $cache = cache::make('core', 'routes');
 
         if (!($cachedata = $cache->get('shortlink_routes'))) {
             $cachedata = $this->get_all_routes_in_class(

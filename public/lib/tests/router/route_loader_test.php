@@ -17,6 +17,8 @@
 namespace core\router;
 
 use core\tests\router\route_testcase;
+use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Constraint\IsInstanceOf;
 use Slim\Routing\RoutingResults;
 
 /**
@@ -55,7 +57,13 @@ final class route_loader_test extends route_testcase {
                     $this->assertInstanceOf(\Slim\Interfaces\RouteInterface::class, $thisgroup);
                 }
             } else {
-                $this->assertInstanceOf(\Slim\Interfaces\RouteGroupInterface::class, $group);
+                Assert::assertThat(
+                    $group,
+                    Assert::logicalOr(
+                        new IsInstanceOf(\Slim\Interfaces\RouteGroupInterface::class),
+                        new IsInstanceOf(\Slim\Interfaces\RouteInterface::class),
+                    ),
+                );
             }
         }
 

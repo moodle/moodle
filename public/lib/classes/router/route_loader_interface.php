@@ -43,6 +43,9 @@ interface route_loader_interface {
     /** @var string The route path prefix to use for shortlinks */
     public const ROUTE_GROUP_SHORTLINK = '/s/';
 
+    /** @var string The route path prefix to use for batched API calls */
+    public const ROUTE_BATCH_API = '/api/$batch';
+
     /**
      * Configure all routes for the application.
      *

@@ -50,6 +50,9 @@ class mocking_route_loader extends abstract_route_loader implements route_loader
             });
         }
 
+        // Ensure that the batch API route is configured.
+        $this->configure_batch_api_route($app);
+
         return $routegroups;
     }
 

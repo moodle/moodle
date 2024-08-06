@@ -340,6 +340,7 @@ class page_requirements_manager {
                 'currentlogin'          => !empty($USER->currentlogin) ? (int) $USER->currentlogin : null,
                 'deprecationignorelist'       => !empty($CFG->jsdeprecationignorelist) ? $CFG->jsdeprecationignorelist : [],
                 'traceId'               => \core\telemetry::get_trace_parent_id(),
+                'batchFetchRequests'    => $CFG->batch_fetch_requests ?? true,
             ];
             if ($CFG->debugdeveloper) {
                 $this->M_cfg['developerdebug'] = true;

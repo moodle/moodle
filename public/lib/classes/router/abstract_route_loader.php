@@ -27,6 +27,16 @@ use Slim\Interfaces\RouteInterface;
  */
 abstract class abstract_route_loader {
     /**
+     * Configure Batch API Routes.
+     *
+     * @param App $app
+     * @return RouteInterface
+     */
+    protected function configure_batch_api_route(\Slim\App $app): RouteInterface {
+        return $app->post(route_loader_interface::ROUTE_BATCH_API, [bulk_route::class, 'handle']);
+    }
+
+    /**
      * Get all routes in the namespace.
      *
      * @param string $namespace The namespace to get the routes for

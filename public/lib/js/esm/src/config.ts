@@ -91,6 +91,9 @@ export type MoodleConfig = {
     developerdebug?: boolean;
     /** Whether a Behat test is running. Present only when true. */
     behatsiterunning?: boolean;
+
+    /** Whether requests made via a Fetch batcher should be sent as a single ODATA $batch request. */
+    batchFetchRequests: boolean;
 };
 
 /**

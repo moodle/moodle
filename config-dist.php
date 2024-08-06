@@ -821,6 +821,14 @@ $CFG->admin = 'admin';
 // Maximum character length for a user profile description.
 //      define('USER_DESCRIPTION_MAX_LENGTH', 50000);
 //
+// Batching API Requests
+//
+//      $CFG->batch_fetch_requests = true;
+//
+// By default most API requests are batched in production environments to improve performance.
+// This allows multiple API requests to be combined into a single batch, reducing the number of HTTP requests made by the client.
+// If this is set to false, API requests will not be batched and will be sent individually.//
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
