@@ -175,6 +175,9 @@ $courseindex-item-current: $primary !default;
                 padding-left: $courseindex-item-padding-x;
             }
         }
+        &.delegated-section {
+            width: 100%;
+        }
     }
 
     // General icons size.

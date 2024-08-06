@@ -38564,6 +38564,9 @@ div.editor_atto_toolbar button .icon {
 .courseindex .courseindex-section .courseindex-sectioncontent .courseindex-item {
   padding-left: 0.5rem;
 }
+.courseindex .courseindex-section.delegated-section {
+  width: 100%;
+}
 .courseindex .icon {
   font-size: 12px;
 }
