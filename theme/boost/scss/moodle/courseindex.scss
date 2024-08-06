@@ -30,6 +30,9 @@ $courseindex-item-current: $primary !default;
                 color: $courseindex-link-hover-color;
             }
         }
+        &.draggable {
+            cursor: move;
+        }
     }
 }
 
