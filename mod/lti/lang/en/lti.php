@@ -477,7 +477,6 @@ $string['secure_launch_url_help'] = 'Similar to the tool URL, but used instead o
 
 The tool URL may also be set to an https address to force launching through SSL, and this field may be left blank.';
 $string['selectcontent'] = 'Select content';
-$string['selectcontentvalidationerror'] = 'You need to select content for this activity.';
 $string['send'] = 'Send';
 $string['services'] = 'Services';
 $string['services_help'] = 'Select those services which you wish to offer to the tool provider.  More than one service can be selected.';
@@ -624,3 +623,6 @@ $string['tooltypedeleted'] = 'Preconfigured tool deleted';
 $string['tooltypenotdeleted'] = 'Could not delete preconfigured tool';
 $string['tooltypeupdated'] = 'Preconfigured tool updated';
 $string['forced_help'] = 'This setting has been forced in a course or site level tool configuration. You may not change it from this interface.';
+
+// Deprecated since Moodle 4.5.
+$string['selectcontentvalidationerror'] = 'You need to select content for this activity.';
