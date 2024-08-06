@@ -373,16 +373,12 @@ class mod_lti_mod_form extends moodleform_mod {
                 . get_string('contentselected', 'mod_lti') : '';
             $selectcontentindicator = html_writer::div($selectcontentindicatorinner, '',
                 ['aria-role' => 'status', 'id' => 'id_selectcontentindicator']);
-            $selectcontentstatus = $iscontentitem ? 'true' : 'false';
             $selectcontentgrp = [
                 $mform->createElement('button', 'selectcontent', get_string('selectcontent', 'mod_lti'), $contentbuttonattributes,
-                    ['customclassoverride' => 'btn-primary']),
+                    ['customclassoverride' => 'btn-secondary']),
                 $mform->createElement('html', $selectcontentindicator),
-                $mform->createElement('hidden', 'selectcontentstatus', $selectcontentstatus),
             ];
-            $mform->setType('selectcontentstatus', PARAM_TEXT);
             $mform->addGroup($selectcontentgrp, 'selectcontentgroup', get_string('content'), ' ', false);
-            $mform->addRule('selectcontentgroup', get_string('selectcontentvalidationerror', 'mod_lti'), 'required');
         }
 
         // Adding the standard "name" field.
@@ -538,15 +534,5 @@ class mod_lti_mod_form extends moodleform_mod {
             }
         }
         parent::set_data($defaultvalues);
-    }
-
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-
-        if (isset($data['selectcontentstatus']) && $data['selectcontentstatus'] === 'false') {
-            $errors['selectcontentgroup'] = get_string('selectcontentvalidationerror', 'mod_lti');
-        }
-
-        return $errors;
     }
 }
