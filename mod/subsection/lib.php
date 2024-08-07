@@ -22,8 +22,8 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- use core_courseformat\formatactions;
- use mod_subsection\manager;
+use core_courseformat\formatactions;
+use mod_subsection\manager;
 
 /**
  * Return if the plugin supports $feature.
@@ -43,6 +43,7 @@ function subsection_supports($feature) {
         FEATURE_BACKUP_MOODLE2 => true,
         FEATURE_SHOW_DESCRIPTION => false,
         FEATURE_MOD_PURPOSE => MOD_PURPOSE_CONTENT,
+        FEATURE_QUICKCREATE => true,
         default => null,
     };
 }
@@ -290,4 +291,13 @@ function subsection_get_coursemodule_info(stdClass $coursemodule): cached_cm_inf
     $result->customdata['sectionid'] = $delegatedsection->id;
 
     return $result;
+}
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function mod_subsection_get_fontawesome_icon_map() {
+    return [
+        'mod_subsection:subsection' => 'fa-rectangle-list',
+    ];
 }
