@@ -219,22 +219,9 @@ Feature: Teachers can toggle the visibility of the grade categories in the Grade
   Scenario: Grade categories are shown as collapsed only to the teacher that collapsed them
     # Collapse the grade category 'Category 1'.
     Given I click on "Collapse" "link" in the "Category 1" "table_row"
-    # Log in as teacher2 and confirm that the category 'Category 1' is not collapsed.
-    When I am on the "Course" "grades > gradebook setup" page logged in as "teacher2"
+    When I reload the page
+    # Reload the page and confirm that the category 'Category 1' is still collapsed.
     Then the following should exist in the "setup-grades" table:
-      | Name                |
-      | Course              |
-      | Test assignment one |
-      | Category 1          |
-      | Test assignment two |
-      | Manual grade        |
-      | Category 1 total    |
-      | Course total        |
-    And "Collapse" "link" should exist in the "Course" "table_row"
-    And "Collapse" "link" should exist in the "Category 1" "table_row"
-    # Log in as teacher1 and confirm that the category 'Category 1' is still collapsed.
-    And I am on the "Course" "grades > gradebook setup" page logged in as "teacher1"
-    And the following should exist in the "setup-grades" table:
       | Name                |
       | Course              |
       | Test assignment one |
@@ -245,3 +232,16 @@ Feature: Teachers can toggle the visibility of the grade categories in the Grade
     And I should not see "Test assignment two" in the "setup-grades" "table"
     And I should not see "Manual grade" in the "setup-grades" "table"
     And I should not see "Category 1 total" in the "setup-grades" "table"
+    # Log in as teacher2 and confirm that the category 'Category 1' is not collapsed.
+    And I am on the "Course" "grades > gradebook setup" page logged in as "teacher2"
+    And the following should exist in the "setup-grades" table:
+      | Name                |
+      | Course              |
+      | Test assignment one |
+      | Category 1          |
+      | Test assignment two |
+      | Manual grade        |
+      | Category 1 total    |
+      | Course total        |
+    And "Collapse" "link" should exist in the "Course" "table_row"
+    And "Collapse" "link" should exist in the "Category 1" "table_row"
