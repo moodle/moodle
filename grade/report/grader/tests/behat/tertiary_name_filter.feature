@@ -27,6 +27,8 @@ Feature: Within the grader report, test that we can open our generic filter drop
       | activity | course | idnumber | name                |
       | assign   | C1     | a1       | Test assignment one |
     And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
+    # This is required for now to prevent the overflow region affecting the report.
+    And I change window size to "large"
 
   Scenario: A teacher can open the filter component
     Given I should see "Filter by name"
