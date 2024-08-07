@@ -23,7 +23,7 @@
 
 import Config from 'core/config';
 import {call as fetchMany} from 'core/ajax';
-import {performGet, performPost} from 'core/fetch';
+import Fetch from 'core/fetch';
 
 const checkUserId = (userid) => {
     if (Number(userid) === 0) {
@@ -95,7 +95,7 @@ export const getUserPreferences = (name = null, userid = 0) => {
         endpoint.push(name);
     }
 
-    return performGet('core_user', endpoint.join('/'));
+    return Fetch.performGet('core_user', endpoint.join('/')).then((response) => response.json());
 };
 
 /**
@@ -108,7 +108,7 @@ export const getUserPreferences = (name = null, userid = 0) => {
  */
 export const setUserPreference = (name, value = null, userid = 0) => {
     checkUserId(userid);
-    return performPost(
+    return Fetch.performPost(
         'core_user',
         `current/preferences/${name}`,
         {
@@ -116,6 +116,7 @@ export const setUserPreference = (name, value = null, userid = 0) => {
         },
     )
     // Return the result of the fetch call, and also add in the legacy saved property.
+    .then((response) => response.json())
     .then((response) => addLegacySavedProperty(response, [{name}]));
 };
 
@@ -127,7 +128,7 @@ export const setUserPreference = (name, value = null, userid = 0) => {
  */
 export const setUserPreferences = (preferences) => {
     preferences.forEach((preference) => checkUserId(preference.userid));
-    return performPost(
+    return Fetch.performPost(
         'core_user',
         'current/preferences',
         {
@@ -137,6 +138,7 @@ export const setUserPreferences = (preferences) => {
         },
     )
     // Return the result of the fetch call, and also add in the legacy saved property.
+    .then((response) => response.json())
     .then((response) => addLegacySavedProperty(response, preferences));
 };
 
