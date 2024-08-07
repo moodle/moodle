@@ -107,7 +107,7 @@ const dropdownFix = () => {
     // Search for menu items by finding the first item that has
     // text starting with the typed character (case insensitive).
     document.addEventListener('keypress', e => {
-        if (e.target.matches('.dropdown [role="menu"] [role="menuitem"]')) {
+        if (e.target.matches('[role="menu"] [role="menuitem"]')) {
             const menu = e.target.closest('[role="menu"]');
             if (!menu) {
                 return;
@@ -139,7 +139,7 @@ const dropdownFix = () => {
             handleMenuButton(e);
         }
 
-        if (e.target.matches('.dropdown [role="menu"] [role="menuitem"]')) {
+        if (e.target.matches('[role="menu"] [role="menuitem"]')) {
             const trigger = e.key;
             let next = false;
             const menu = e.target.closest('[role="menu"]');
@@ -193,8 +193,9 @@ const dropdownFix = () => {
         }
     });
 
-    $('.dropdown').on('shown.bs.dropdown', e => {
-        const dialog = e.target.querySelector(`#${e.relatedTarget.getAttribute('aria-controls')}[role="dialog"]`);
+    // Trap focus if the dropdown is a dialog.
+    $(document).on('shown.bs.dropdown', e => {
+        const dialog = e.target.querySelector('.dropdown-menu[role="dialog"]');
         if (dialog) {
             // Use setTimeout to make sure the dialog is positioned correctly to prevent random scrolling.
             setTimeout(() => {
@@ -203,8 +204,9 @@ const dropdownFix = () => {
         }
     });
 
-    $('.dropdown').on('hidden.bs.dropdown', e => {
-        const dialog = e.target.querySelector(`#${e.relatedTarget.getAttribute('aria-controls')}[role="dialog"]`);
+    // Untrap focus when the dialog dropdown is closed.
+    $(document).on('hidden.bs.dropdown', e => {
+        const dialog = e.target.querySelector('.dropdown-menu[role="dialog"]');
         if (dialog) {
             FocusLockManager.untrapFocus();
         }
