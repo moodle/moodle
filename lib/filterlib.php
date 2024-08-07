@@ -1105,32 +1105,49 @@ function filter_get_active_in_context($context) {
 
     $contextids = str_replace('/', ',', trim($context->path, '/'));
 
-    // The following SQL is tricky. It is explained on
-    // http://docs.moodle.org/dev/Filter_enable/disable_by_context.
-    $sql = "SELECT active.filter, fc.name, fc.value
-         FROM (SELECT f.filter, MAX(f.sortorder) AS sortorder
-             FROM {filter_active} f
-             JOIN {context} ctx ON f.contextid = ctx.id
-             WHERE ctx.id IN ($contextids)
-             GROUP BY filter
-             HAVING MAX(f.active * ctx.depth) > -MIN(f.active * ctx.depth)
-         ) active
-         LEFT JOIN {filter_config} fc ON fc.filter = active.filter AND fc.contextid = $context->id
-         ORDER BY active.sortorder";
-    $rs = $DB->get_recordset_sql($sql);
+    // Postgres recordset performance is much better with a limit.
+    // This should be much larger than anything needed in practice. The code below checks we don't hit this limit.
+    $maxpossiblerows = 10000;
+    // The key line in the following query is the HAVING clause.
+    // If a filter is disabled at system context, then there is a row with active -9999 and depth 1,
+    // so the -MIN is always large, and the MAX will be smaller than that and this filter won't be returned.
+    // Otherwise, there will be a bunch of +/-1s at various depths,
+    // and this clause verifies there is a +1 that deeper than any -1.
+    $rows = $DB->get_recordset_sql("
+            SELECT active.filter, fc.name, fc.value
+
+              FROM (
+                    SELECT fa.filter, MAX(fa.sortorder) AS sortorder
+                      FROM {filter_active} fa
+                      JOIN {context} ctx ON fa.contextid = ctx.id
+                     WHERE ctx.id IN ($contextids)
+                  GROUP BY fa.filter
+                    HAVING MAX(fa.active * ctx.depth) > -MIN(fa.active * ctx.depth)
+                   ) active
+         LEFT JOIN {filter_config} fc ON fc.filter = active.filter AND fc.contextid = ?
+
+          ORDER BY active.sortorder
+        ", [$context->id], 0, $maxpossiblerows);
 
     // Massage the data into the specified format to return.
-    $filters = array();
-    foreach ($rs as $row) {
+    $filters = [];
+    $rowcount = 0;
+    foreach ($rows as $row) {
+        $rowcount += 1;
         if (!isset($filters[$row->filter])) {
-            $filters[$row->filter] = array();
+            $filters[$row->filter] = [];
         }
         if (!is_null($row->name)) {
             $filters[$row->filter][$row->name] = $row->value;
         }
     }
+    $rows->close();
 
-    $rs->close();
+    if ($rowcount >= $maxpossiblerows) {
+        // If this ever did happen, which seems essentially impossible, then it would lead to very subtle and
+        // hard to understand bugs, so ensure it leads to an unmissable error.
+        throw new coding_exception('Hit the row limit that should never be hit in filter_get_active_in_context.');
+    }
 
     return $filters;
 }
