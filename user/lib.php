@@ -217,7 +217,7 @@ function user_update_user($user, $updatepassword = true, $triggerevent = true) {
         if (!property_exists($currentrecord, $attributekey) || $attributekey === 'timemodified') {
             continue;
         }
-        if ($currentrecord->{$attributekey} != $attributevalue) {
+        if ($currentrecord->{$attributekey} !== $attributevalue) {
             $changedattributes[$attributekey] = $attributevalue;
         }
     }
