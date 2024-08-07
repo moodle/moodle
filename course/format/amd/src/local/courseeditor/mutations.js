@@ -67,6 +67,31 @@ export default class {
     }
 
     /**
+     * Private method to call core_courseformat_create_module webservice.
+     *
+     * @method _callEditWebservice
+     * @param {number} courseId
+     * @param {string} modName module name
+     * @param {number} targetSectionNum target section number
+     * @param {number} targetCmId optional target cm id
+     */
+        async _callAddModuleWebservice(courseId, modName, targetSectionNum, targetCmId) {
+            const args = {
+                courseid: courseId,
+                modname: modName,
+                targetsectionnum: targetSectionNum,
+            };
+            if (targetCmId) {
+                args.targetcmid = targetCmId;
+            }
+            let ajaxresult = await ajax.call([{
+                methodname: 'core_courseformat_create_module',
+                args,
+            }])[0];
+            return JSON.parse(ajaxresult);
+        }
+
+    /**
      * Execute a basic section state action.
      * @param {StateManager} stateManager the current state manager
      * @param {string} action the action name
@@ -388,6 +413,29 @@ export default class {
         const updates = await this._callEditWebservice('cm_delete', course.id, cmIds);
         this.bulkReset(stateManager);
         this.cmLock(stateManager, cmIds, false);
+        stateManager.processUpdates(updates);
+    }
+
+    /**
+     * Add a new module to a specific course section.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {string} modName the modulename to add
+     * @param {number} targetSectionNum the target section number
+     * @param {number} targetCmId optional the target cm id
+     */
+    async addModule(stateManager, modName, targetSectionNum, targetCmId) {
+        if (!modName) {
+            throw new Error(`Mutation addModule requires moduleName`);
+        }
+        if (!targetSectionNum) {
+            throw new Error(`Mutation addModule requires targetSectionNum`);
+        }
+        if (!targetCmId) {
+            targetCmId = 0;
+        }
+        const course = stateManager.get('course');
+        const updates = await this._callAddModuleWebservice(course.id, modName, targetSectionNum, targetCmId);
         stateManager.processUpdates(updates);
     }
 
