@@ -40,4 +40,13 @@ $tasks = array(
         'month' => '*',
         'dayofweek' => '*',
     ],
+    [
+        'classname' => '\mod_assign\task\queue_all_assignment_overdue_notification_tasks',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => '*/1',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+    ],
 );
