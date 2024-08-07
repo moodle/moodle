@@ -45,7 +45,7 @@ export default class extends BulkAction {
     }
 
     getBulkActionTriggerSelector() {
-        return 'button[data-action="grantextension"]';
+        return '[data-type="bulkactions"] [data-action="grantextension"]';
     }
 
     async triggerBulkAction() {
@@ -67,7 +67,9 @@ export default class extends BulkAction {
         });
     }
 
-    async renderBulkActionTrigger() {
-        return Templates.render('mod_assign/bulkactions/grading/bulk_extend_trigger', {});
+    async renderBulkActionTrigger(showInDropdown) {
+        return Templates.render('mod_assign/bulkactions/grading/bulk_extend_trigger', {
+            showindropdown: showInDropdown,
+        });
     }
 }

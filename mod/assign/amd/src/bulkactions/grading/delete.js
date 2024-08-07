@@ -50,7 +50,7 @@ export default class extends BulkAction {
     }
 
     getBulkActionTriggerSelector() {
-        return 'button[data-action="removesubmission"]';
+        return '[data-type="bulkactions"] [data-action="removesubmission"]';
     }
 
     async triggerBulkAction() {
@@ -94,7 +94,9 @@ export default class extends BulkAction {
         });
     }
 
-    async renderBulkActionTrigger() {
-        return Templates.render('mod_assign/bulkactions/grading/bulk_delete_trigger', {});
+    async renderBulkActionTrigger(showInDropdown) {
+        return Templates.render('mod_assign/bulkactions/grading/bulk_delete_trigger', {
+            showindropdown: showInDropdown,
+        });
     }
 }

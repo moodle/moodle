@@ -23,12 +23,14 @@
     * action: The action to be performed.
     * title: The title of the action button.
     * icon: The icon of the action button.
+    * showindropdown - Whether the action is displayed under a 'More' dropdown or as a separate button.
 
     Example context (json):
     {
         "action": "lock",
         "title": "Lock",
-        "icon": "<i class=\"icon fa fa-lock fa-fw\"></i>"
+        "icon": "<i class=\"icon fa fa-lock fa-fw\"></i>",
+        "showindropdown": false
     }
 }}
 {{< core/bulkactions/bulk_action_trigger }}

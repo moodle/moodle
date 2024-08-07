@@ -22,12 +22,21 @@
     Context variables required for this template:
     * actions - Array of objects with the following properties:
         * actiontrigger - The HTML for the action trigger.
+    * hasmoreactions - Whether there are more actions than the ones displayed.
+    * moreactions - Array of objects with the following properties:
+        * actiontrigger - The HTML for the action trigger.
 
     Example context (json):
     {
         "actions": [
             {
                 "actiontrigger": "<button>Move</button>"
+            }
+        ],
+        "hasmoreactions": true,
+        "moreactions": [
+            {
+                "actiontrigger": "<button>Delete</button>"
             }
         ]
     }
@@ -36,13 +45,33 @@
     <div class="d-flex">
     </div>
     <div data-for="bulktools">
-        <ul class="actions nav" data-for="bulkactions">
+        <div class="btn-toolbar" role="toolbar" aria-label="{{#str}} bulkactions, core {{/str}}" data-for="bulkactions">
             {{#actions}}
-                <li class="nav-item">
-                    {{{actiontrigger}}}
-                </li>
+                {{{actiontrigger}}}
             {{/actions}}
-        </ul>
+            {{#hasmoreactions}}
+                <div class="dropup">
+                    <button
+                        class="btn py-0 d-flex flex-column"
+                        type="button"
+                        id="more-actions-toggle-{{uniqid}}"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
+                        <span class="w-100 pl-2">
+                            {{#pix}} i/menu, core {{/pix}}
+                        </span>
+                        <span>{{#str}} moremenu, core {{/str}}</span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="more-actions-toggle-{{uniqid}}" role="menu">
+                        {{#moreactions}}
+                            {{{actiontrigger}}}
+                        {{/moreactions}}
+                    </div>
+                </div>
+            {{/hasmoreactions}}
+        </div>
     </div>
     <div class="d-flex flex-column">
         <div class="ms-auto">

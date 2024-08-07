@@ -80,7 +80,7 @@ export default class extends BulkAction {
     }
 
     getBulkActionTriggerSelector() {
-        return `button[data-action="${this.actionKey}"]`;
+        return `[data-type="bulkactions"] [data-action="${this.actionKey}"]`;
     }
 
     async triggerBulkAction() {
@@ -124,11 +124,12 @@ export default class extends BulkAction {
         });
     }
 
-    async renderBulkActionTrigger() {
+    async renderBulkActionTrigger(showInDropdown) {
         return Templates.render('mod_assign/bulkactions/grading/bulk_general_action_trigger', {
             action: this.actionKey,
             title: await this.#buttonLabel,
             icon: await this.#buttonIcon,
+            showindropdown: showInDropdown,
         });
     }
 }

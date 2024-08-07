@@ -31,7 +31,7 @@ const Selectors = {
 
 export default class extends BulkAction {
     getBulkActionTriggerSelector() {
-        return 'button[data-action="message"]';
+        return '[data-type="bulkactions"] [data-action="message"]';
     }
 
      triggerBulkAction() {
@@ -39,7 +39,9 @@ export default class extends BulkAction {
          showMessageModal(selectedUsers);
     }
 
-    async renderBulkActionTrigger() {
-        return Templates.render('mod_assign/bulkactions/grading/bulk_message_trigger', {});
+    async renderBulkActionTrigger(showInDropdown) {
+        return Templates.render('mod_assign/bulkactions/grading/bulk_message_trigger', {
+            showindropdown: showInDropdown,
+        });
     }
 }

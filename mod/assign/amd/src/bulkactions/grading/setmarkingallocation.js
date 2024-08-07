@@ -45,7 +45,7 @@ export default class extends BulkAction {
     }
 
     getBulkActionTriggerSelector() {
-        return 'button[data-action="setmarkingallocation"]';
+        return '[data-type="bulkactions"] [data-action="setmarkingallocation"]';
     }
 
     async triggerBulkAction() {
@@ -67,7 +67,9 @@ export default class extends BulkAction {
         });
     }
 
-    async renderBulkActionTrigger() {
-        return Templates.render('mod_assign/bulkactions/grading/bulk_setmarkingallocation_trigger', {});
+    async renderBulkActionTrigger(showInDropdown) {
+        return Templates.render('mod_assign/bulkactions/grading/bulk_setmarkingallocation_trigger', {
+            showindropdown: showInDropdown,
+        });
     }
 }

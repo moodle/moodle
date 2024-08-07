@@ -45,7 +45,7 @@ export default class extends BulkAction {
     }
 
     getBulkActionTriggerSelector() {
-        return 'button[data-action="setmarkingworkflowstate"]';
+        return '[data-type="bulkactions"] [data-action="setmarkingworkflowstate"]';
     }
 
     async triggerBulkAction() {
@@ -67,7 +67,9 @@ export default class extends BulkAction {
         });
     }
 
-    async renderBulkActionTrigger() {
-        return Templates.render('mod_assign/bulkactions/grading/bulk_setmarkingworkflowstate_trigger', {});
+    async renderBulkActionTrigger(showInDropdown) {
+        return Templates.render('mod_assign/bulkactions/grading/bulk_setmarkingworkflowstate_trigger', {
+            showindropdown: showInDropdown,
+        });
     }
 }
