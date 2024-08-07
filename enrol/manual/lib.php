@@ -702,7 +702,7 @@ class enrol_manual_plugin extends enrol_plugin {
 
         // This method is used when configuring the enrolment method, and when only updating the welcome message.
         // The 'expirynotify' key won't be set when updating the welcome message.
-        if (isset($data['expirynotify']) && $data['expirynotify'] > 0 && $data['expirythreshold'] < 86400) {
+        if (isset($data['expirynotify']) && $data['expirynotify'] > 0 && $data['expirythreshold'] < DAYSECS) {
             $errors['expirythreshold'] = get_string('errorthresholdlow', 'core_enrol');
         }
 
