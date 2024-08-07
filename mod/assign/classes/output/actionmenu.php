@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Output the actionbar for this activity.
- *
- * @package   mod_assign
- * @copyright 2021 Adrian Greeve <adrian@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_assign\output;
 
 use templatable;
@@ -56,10 +48,14 @@ class actionmenu implements templatable, renderable {
      * @return array Data to be used for a template.
      */
     public function export_for_template(\renderer_base $output): array {
-        return [
-            'submissionlink' => (new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'grading']))->out(false),
-            'gradelink' => (new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'grader']))->out(false)
-        ];
-    }
+        $submissionlink = new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'grading']);
+        $return = ['submissionlink' => $submissionlink->out(false)];
 
+        if (has_capability('mod/assign:grade', \context_module::instance($this->cmid))) {
+            $gradelink = new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'grader']);
+            $return['gradelink'] = $gradelink->out(false);
+        }
+
+        return $return;
+    }
 }
