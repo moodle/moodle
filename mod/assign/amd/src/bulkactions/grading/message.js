@@ -39,9 +39,10 @@ export default class extends BulkAction {
          showMessageModal(selectedUsers);
     }
 
-    async renderBulkActionTrigger(showInDropdown) {
+    async renderBulkActionTrigger(showInDropdown, index) {
         return Templates.render('mod_assign/bulkactions/grading/bulk_message_trigger', {
             showindropdown: showInDropdown,
+            isfirst: index === 0,
         });
     }
 }

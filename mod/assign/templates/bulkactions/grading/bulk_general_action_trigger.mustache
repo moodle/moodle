@@ -24,13 +24,15 @@
     * title: The title of the action button.
     * icon: The icon of the action button.
     * showindropdown - Whether the action is displayed under a 'More' dropdown or as a separate button.
+    * isfirst - Whether the action is the first one in the list.
 
     Example context (json):
     {
         "action": "lock",
         "title": "Lock",
         "icon": "<i class=\"icon fa fa-lock fa-fw\"></i>",
-        "showindropdown": false
+        "showindropdown": false,
+        "isfirst": true
     }
 }}
 {{< core/bulkactions/bulk_action_trigger }}

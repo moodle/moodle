@@ -21,10 +21,12 @@
 
     Context variables required for this template:
     * showindropdown - Whether the action is displayed under a 'More' dropdown or as a separate button.
+    * isfirst - Whether the action is the first one in the list.
 
     Example context (json):
     {
-        "showindropdown": false
+        "showindropdown": false,
+        "isfirst": true
     }
 }}
 {{< core/bulkactions/bulk_action_trigger }}

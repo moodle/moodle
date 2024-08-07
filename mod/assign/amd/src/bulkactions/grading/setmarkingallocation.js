@@ -67,9 +67,10 @@ export default class extends BulkAction {
         });
     }
 
-    async renderBulkActionTrigger(showInDropdown) {
+    async renderBulkActionTrigger(showInDropdown, index) {
         return Templates.render('mod_assign/bulkactions/grading/bulk_setmarkingallocation_trigger', {
             showindropdown: showInDropdown,
+            isfirst: index === 0,
         });
     }
 }

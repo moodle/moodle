@@ -83,11 +83,13 @@ export default class GradebookEditTreeBulkMove extends BulkAction {
      *
      * @method renderBulkActionTrigger
      * @param {boolean} showInDropdown Whether the action is displayed under a 'More' dropdown or as a separate button.
+     * @param {number} index The index of the action.
      * @returns {Promise} The bulk move action trigger promise
      */
-    async renderBulkActionTrigger(showInDropdown) {
+    async renderBulkActionTrigger(showInDropdown, index) {
         return Templates.render('core_grades/bulkactions/edit/tree/bulk_move_trigger', {
             showindropdown: showInDropdown,
+            isfirst: index === 0,
         });
     }
 
