@@ -451,6 +451,15 @@ define('FEATURE_RATE', 'rate');
 /** True if module supports backup/restore of moodle2 format */
 define('FEATURE_BACKUP_MOODLE2', 'backup_moodle2');
 
+/** True if module shares questions with other modules. */
+define('FEATURE_PUBLISHES_QUESTIONS', 'publishesquestions');
+
+/** Used to determine if a plugin should render to display */
+define('FEATURE_CAN_DISPLAY', 'candisplay');
+
+/** Can this module type be uninstalled */
+define('FEATURE_CAN_UNINSTALL', 'canuninstall');
+
 /** True if module can show description on course main page */
 define('FEATURE_SHOW_DESCRIPTION', 'showdescription');
 
