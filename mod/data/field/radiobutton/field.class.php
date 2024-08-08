@@ -63,7 +63,8 @@ class data_field_radiobutton extends data_field_base {
                 $content = '';
             }
         } else if ($recordid) {
-            $content = trim($DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid)));
+            $contentfield = $DB->get_field('data_content', 'content', ['fieldid' => $this->field->id, 'recordid' => $recordid]);
+            $content = trim($contentfield ?? '');
         } else {
             $content = '';
         }
