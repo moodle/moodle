@@ -55,11 +55,13 @@ final class field_controller_test extends advanced_testcase {
      */
     public static function form_definition_provider(): array {
         return [
-            'Defaults' => ['', '', '', true],
-            'Minimum greater than maximum' => ['', 12, 10, false],
-            'Default value less than minimum' => [1, 10, 12, false],
-            'Default value greater than maximum' => [13, 10, 12, false],
-            'Valid' => [11, 10, 12, true],
+            'Defaults' => ['', '', '', '{value}', true],
+            'Minimum greater than maximum' => ['', 12, 10, '{value}', false],
+            'Default value less than minimum' => [1, 10, 12, '{value}', false],
+            'Default value greater than maximum' => [13, 10, 12, '{value}', false],
+            'Valid' => [11, 10, 12, '{value}', true],
+            'Display valid single placeholder' => ['', '', '', '{value}', true],
+            'Display invalid single placeholder' => ['', '', '', '111', false],
         ];
     }
 
@@ -69,6 +71,7 @@ final class field_controller_test extends advanced_testcase {
      * @param float|string $defaultvalue
      * @param float|string $minimumvalue
      * @param float|string $maximumvalue
+     * @param string $display
      * @param bool $expected
      *
      * @dataProvider form_definition_provider
@@ -77,6 +80,7 @@ final class field_controller_test extends advanced_testcase {
         float|string $defaultvalue,
         float|string $minimumvalue,
         float|string $maximumvalue,
+        string $display,
         bool $expected,
     ): void {
         $this->resetAfterTest();
@@ -93,6 +97,7 @@ final class field_controller_test extends advanced_testcase {
             'defaultvalue' => $defaultvalue,
             'minimumvalue' => $minimumvalue,
             'maximumvalue' => $maximumvalue,
+            'display' => $display,
         ]);
 
         $formdata = field_config_form::mock_ajax_submit($submitdata);

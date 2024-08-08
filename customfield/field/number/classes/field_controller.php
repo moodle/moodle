@@ -18,6 +18,9 @@ declare(strict_types=1);
 
 namespace customfield_number;
 
+use core\context\system;
+use core\context;
+use html_writer;
 use MoodleQuickForm;
 
 /**
@@ -62,6 +65,29 @@ class field_controller  extends \core_customfield\field_controller {
             $mform->setDefault('configdata[decimalplaces]', 0);
         }
         $mform->setType('configdata[decimalplaces]', PARAM_INT);
+
+        // Display format settings.
+        // TODO: Change this after MDL-82996 fixed.
+        $randelname = 'str_' . random_string();
+        $mform->addGroup([], $randelname, html_writer::tag('h4', get_string('headerdisplaysettings', 'customfield_number')));
+
+        // Display template.
+        $mform->addElement('text', 'configdata[display]', get_string('display', 'customfield_number'),
+            ['size' => 50]);
+        $mform->setType('configdata[display]', PARAM_TEXT);
+        $mform->addHelpButton('configdata[display]', 'display', 'customfield_number');
+        if ($this->get_configdata_property('display') === null) {
+            $mform->setDefault('configdata[display]', '{value}');
+        }
+
+        // Display when zero.
+        $mform->addElement('text', 'configdata[displaywhenzero]', get_string('displaywhenzero', 'customfield_number'),
+            ['size' => 50]);
+        $mform->setType('configdata[displaywhenzero]', PARAM_TEXT);
+        $mform->addHelpButton('configdata[displaywhenzero]', 'displaywhenzero', 'customfield_number');
+        if ($this->get_configdata_property('displaywhenzero') === null) {
+            $mform->setDefault('configdata[displaywhenzero]', 0);
+        }
     }
 
     /**
@@ -73,6 +99,11 @@ class field_controller  extends \core_customfield\field_controller {
      */
     public function config_form_validation(array $data, $files = []): array {
         $errors = parent::config_form_validation($data, $files);
+
+        $display = $data['configdata']['display'];
+        if (!preg_match('/\{value}/', $display)) {
+            $errors['configdata[display]'] = get_string('displayvalueconfigerror', 'customfield_number');
+        }
 
         // Each of these configuration fields are optional.
         $defaultvalue = $data['configdata']['defaultvalue'] ?? '';
@@ -102,5 +133,30 @@ class field_controller  extends \core_customfield\field_controller {
         }
 
         return $errors;
+    }
+
+    /**
+     * Prepares a value for export
+     *
+     * @param mixed $value
+     * @param context|null $context
+     * @return string|null
+     */
+    public function prepare_field_for_display(mixed $value, ?context $context = null): ?string {
+        if ((float)$value == 0) {
+            $value = $this->get_configdata_property('displaywhenzero');
+            if ((string) $value === '') {
+                return null;
+            }
+        } else {
+            // Let's format the value.
+            $decimalplaces = (int) $this->get_configdata_property('decimalplaces');
+            $value = format_float((float) $value, $decimalplaces);
+
+            // Apply the display format.
+            $format = $this->get_configdata_property('display');
+            $value = str_replace('{value}', $value, $format);
+        }
+        return format_string($value, true, ['context' => $context ?? system::instance()]);
     }
 }

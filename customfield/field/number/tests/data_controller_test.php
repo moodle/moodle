@@ -121,11 +121,51 @@ final class data_controller_test extends advanced_testcase {
     }
 
     /**
-     * Test exporting instance
+     * Data provider for {@see test_export_value}
+     *
+     * @return array[]
      */
-    public function test_export_value(): void {
+    public static function export_value_provider(): array {
+        $template = '<span class="multilang" lang="en">$ {value}</span><span class="multilang" lang="es">€ {value}</span>';
+        $whenzero = '<span class="multilang" lang="en">Unknown</span><span class="multilang" lang="es">Desconocido</span>';
+        return [
+            'Export float value' => [42, 42.0, [
+                'decimalplaces' => 2,
+                'display' => '{value}',
+                'displaywhenzero' => 0],
+            ],
+            'Export value with a prefix' => [10, '$ 10.00', [
+                'decimalplaces' => 2,
+                'display' => $template,
+                'displaywhenzero' => 0],
+            ],
+            'Export value when zero' => [0, 'Unknown', [
+                'display' => '{value}',
+                'displaywhenzero' => $whenzero],
+            ],
+        ];
+    }
+
+    /**
+     * Test exporting instance
+     *
+     * @param float|string $datavalue
+     * @param float|string $expectedvalue
+     * @param array $configdata
+     *
+     * @dataProvider export_value_provider
+     */
+    public function test_export_value(
+        float|string $datavalue,
+        float|string $expectedvalue,
+        array $configdata,
+    ): void {
         $this->resetAfterTest();
         $this->setAdminUser();
+
+        // Enable multilang filter.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
 
         $course = $this->getDataGenerator()->create_course();
 
@@ -133,10 +173,14 @@ final class data_controller_test extends advanced_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_customfield');
 
         $category = $generator->create_category();
-        $field = $generator->create_field(['categoryid' => $category->get('id'), 'type' => 'number']);
-        $data = $generator->add_instance_data($field, (int) $course->id, 42);
+        $field = $generator->create_field([
+            'categoryid' => $category->get('id'),
+            'type' => 'number',
+            'configdata' => $configdata,
+        ]);
+        $data = $generator->add_instance_data($field, (int) $course->id, $datavalue);
 
         $result = \core_customfield\data_controller::create($data->get('id'))->export_value();
-        $this->assertEquals(42.0, $result);
+        $this->assertEquals($expectedvalue, $result);
     }
 }
