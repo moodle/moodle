@@ -39,7 +39,7 @@ class group_selector extends comboboxsearch {
      * @param null|stdClass $course This parameter has been deprecated since Moodle 4.5 and should not be used anymore.
      * @param stdClass $context The context object.
      */
-    public function __construct(null|stdClass $course = null, stdClass $context) {
+    public function __construct(?stdClass $course, stdClass $context) {
         if ($course !== null) {
             debugging(
                 'The course argument has been deprecated. Please remove it from your group_selector class instances.',
