@@ -64,16 +64,16 @@ Feature: Users can add entries to database activities
     And I should see "Student second entry"
     And I should see "Student third entry"
 
-  @javascript @editor @editor_atto @atto @atto_h5p
-  Scenario: If a new text area entry is added, the filepicker is displayed in the H5P Atto button
+  @javascript
+  Scenario: If a new text area entry is added, the filepicker is displayed in the H5P editor dialogue
     Given I am on the "Course 1" course page logged in as teacher1
     And I add a "Text area" field to "Test database name" database and I fill the form with:
       | Field name | Textarea field name |
     And I am on "Course 1" course homepage
     When I add an entry to "Test database name" database with:
       | Textarea field name | This is the content |
-    And I click on "Insert H5P" "button"
-    Then I should see "Browse repositories..."
+    And I click on "Configure H5P content" "button"
+    Then I should see "Browse repositories..." in the "Insert H5P content" "dialogue"
 
   @javascript
   Scenario: If maximum number of entries is set other than None then add entries should be seen only if number of entries is less than it
