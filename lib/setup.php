@@ -620,12 +620,8 @@ if (!empty($_SERVER['HTTP_X_moz']) && $_SERVER['HTTP_X_moz'] === 'prefetch'){
 //the problem is that we need specific version of quickforms and hacked excel files :-(
 ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
 
-// Register our classloader, in theory somebody might want to replace it to load other hacked core classes.
-if (defined('COMPONENT_CLASSLOADER')) {
-    spl_autoload_register(COMPONENT_CLASSLOADER);
-} else {
-    spl_autoload_register('core_component::classloader');
-}
+// Register our classloader.
+\core_component::register_autoloader();
 
 // Remember the default PHP timezone, we will need it later.
 core_date::store_default_php_timezone();
