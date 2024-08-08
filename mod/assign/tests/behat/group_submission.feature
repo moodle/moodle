@@ -99,8 +99,8 @@ Feature: Group assignment submissions
     And I follow "View all submissions"
     And ".groupsearchwidget" "css_element" should exist
     And I should see "Select visible groups" in the ".groupsearchwidget" "css_element"
-    And I confirm "All participants" in "group" search within the gradebook widget exists
-    And I confirm "Group 1" in "group" search within the gradebook widget exists
+    And I confirm "All participants" exists in the "Search groups" search combo box
+    And I confirm "Group 1" exists in the "Search groups" search combo box
     # The course enforces its group mode on modules.
     And I am on the "C1" "course editing" page
     And I set the following fields to these values:
@@ -110,8 +110,8 @@ Feature: Group assignment submissions
     And I follow "View all submissions"
     And ".groupsearchwidget" "css_element" should exist
     And I should see "Select separate groups" in the ".groupsearchwidget" "css_element"
-    And I confirm "All participants" in "group" search within the gradebook widget exists
-    And I confirm "Group 1" in "group" search within the gradebook widget exists
+    And I confirm "All participants" exists in the "Search groups" search combo box
+    And I confirm "Group 1" exists in the "Search groups" search combo box
 
   @javascript
   Scenario: Switch between group modes
