@@ -939,6 +939,20 @@ class structure_test extends \advanced_testcase {
         $this->assertFalse($structure->update_slot_grade_item($slot, null));
     }
 
+    public function test_cannot_set_nonnull_slot_grade_item_for_description(): void {
+        $quizobj = $this->create_test_quiz([
+                ['Info', 1, 'description'],
+        ]);
+        /** @var \mod_quiz_generator $quizgenerator */
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $gradeitem = $quizgenerator->create_grade_item(
+            ['quizid' => $quizobj->get_quizid(), 'name' => 'Awesomeness!']);
+        $structure = structure::create_for_quiz($quizobj);
+
+        $this->expectException(\coding_exception::class);
+        $structure->update_slot_grade_item($structure->get_slot_by_number(1), $gradeitem->id);
+    }
+
     /**
      * Test for can_add_random_questions.
      */

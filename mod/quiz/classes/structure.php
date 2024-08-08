@@ -1185,6 +1185,10 @@ class structure {
             $gradeitemid = null;
         }
 
+        if ($gradeitemid !== null && !$this->is_real_question($slot->slot)) {
+            throw new coding_exception('Cannot set a grade item for a question that is ungraded.');
+        }
+
         if ($slot->quizgradeitemid !== null) {
             // Object $slot likely comes from the database, which means int may be
             // represented as a string, which breaks the next test, so fix up.

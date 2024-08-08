@@ -249,6 +249,52 @@ final class grade_items_test extends externallib_advanced_testcase {
         $this->assertEquals($gradeitems[1]->id, $structure->get_slot_by_number(3)->quizgradeitemid);
     }
 
+    public function test_create_grade_item_per_section_with_descriptions(): void {
+        global $SITE;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a quiz with no grade items yet, but two sections.
+        /** @var \mod_quiz_generator $quizgenerator */
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $SITE->id]);
+
+        // Create three questions.
+        /** @var core_question_generator $questiongenerator */
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category();
+        $desc1 = $questiongenerator->create_question('description', null, ['category' => $cat->id]);
+        $desc2 = $questiongenerator->create_question('description', null, ['category' => $cat->id]);
+        $saq1 = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+
+        // Add them to the quiz.
+        quiz_add_quiz_question($desc1->id, $quiz, 1);
+        quiz_add_quiz_question($desc2->id, $quiz, 2);
+        quiz_add_quiz_question($saq1->id, $quiz, 2, 7);
+
+        // Create two sections.
+        $quizobj = quiz_settings::create($quiz->id);
+        $structure = $quizobj->get_structure();
+        $defaultsection = array_values($structure->get_sections())[0];
+        $structure->set_section_heading($defaultsection->id, 'Introduction');
+        $structure->add_section_heading(2, 'The question');
+
+        // Call the method we are testing.
+        create_grade_item_per_section::execute($quizobj->get_quizid());
+
+        // Verify.
+        $structure = $quizobj->get_structure();
+
+        $gradeitems = array_values($structure->get_grade_items());
+        $this->assertCount(1, $gradeitems);
+        $this->assertEquals('The question', $gradeitems[0]->name);
+        $this->assertEquals(1, $gradeitems[0]->sortorder);
+
+        $this->assertNull($structure->get_slot_by_number(1)->quizgradeitemid);
+        $this->assertNull($structure->get_slot_by_number(2)->quizgradeitemid);
+        $this->assertEquals($gradeitems[0]->id, $structure->get_slot_by_number(3)->quizgradeitemid);
+    }
+
     public function test_create_grade_item_per_section_service_checks_permissions(): void {
         global $SITE;
         $this->resetAfterTest();
