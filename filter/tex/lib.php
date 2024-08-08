@@ -102,7 +102,6 @@ function filter_tex_sanitize_formula(string $texexp): string {
     // First, mangle all denied words.
     $texexp = preg_replace_callback($denylist,
         function($matches) {
-            error_log("FORBIDDEN: " . $matches[0]);
             return 'forbiddenkeyword_' . $matches[0];
         },
         $texexp
