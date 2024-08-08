@@ -17,10 +17,7 @@
 namespace core_course\output\actionbar;
 
 use core\output\comboboxsearch;
-use renderable;
-use renderer_base;
 use stdClass;
-use templatable;
 
 /**
  * Renderable class for the group selector element in the action bar.
@@ -29,85 +26,129 @@ use templatable;
  * @copyright  2024 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class group_selector implements renderable, templatable {
+class group_selector extends comboboxsearch {
 
     /**
-     * @var stdClass The course object.
+     * @var stdClass The context object.
      */
-    protected $course;
+    private stdClass $context;
 
     /**
      * The class constructor.
      *
-     * @param stdClass $course The course object.
+     * @param null|stdClass $course This parameter has been deprecated since Moodle 4.5 and should not be used anymore.
+     * @param stdClass $context The context object.
      */
-    public function __construct(stdClass $course) {
-        $this->course = $course;
+    public function __construct(null|stdClass $course = null, stdClass $context) {
+        if ($course !== null) {
+            debugging(
+                'The course argument has been deprecated. Please remove it from your group_selector class instances.',
+                DEBUG_DEVELOPER,
+            );
+        }
+        $this->context = $context;
+        parent::__construct(false, $this->get_button_content(), $this->get_dropdown_content(), 'group-search',
+            'groupsearchwidget', 'groupsearchdropdown overflow-auto', null, true, $this->get_label(), 'group',
+            $this->get_active_group());
     }
 
     /**
-     * Export the data for the mustache template.
+     * Returns the output for the button (trigger) element of the group selector.
      *
-     * @param renderer_base $output The renderer that will be used to render the output.
-     * @return array
+     * @return string HTML fragment
      */
-    public function export_for_template(renderer_base $output) {
-        global $USER, $OUTPUT;
+    private function get_button_content(): string {
+        global $OUTPUT;
 
-        $course = $this->course;
-        $groupmode = $course->groupmode;
-
-        $sbody = $OUTPUT->render_from_template('core_group/comboboxsearch/searchbody', [
-            'courseid' => $course->id,
-            'currentvalue' => optional_param('groupsearchvalue', '', PARAM_NOTAGS),
-            'instance' => rand(),
-        ]);
-
-        $label = $groupmode == VISIBLEGROUPS ? get_string('selectgroupsvisible') : get_string('selectgroupsseparate');
-
-        $buttondata = ['label' => $label];
-
-        $context = \context_course::instance($course->id);
-
-        if ($groupmode == VISIBLEGROUPS || has_capability('moodle/site:accessallgroups', $context)) {
-            $allowedgroups = groups_get_all_groups($course->id, 0, $course->defaultgroupingid);
-        } else {
-            $allowedgroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
-        }
-
-        $activegroup = groups_get_course_group($course, true, $allowedgroups);
-        $buttondata['group'] = $activegroup;
+        $activegroup = $this->get_active_group();
+        $buttondata = [
+            'label' => $this->get_label(),
+            'group' => $activegroup,
+        ];
 
         if ($activegroup) {
             $group = groups_get_group($activegroup);
-            $buttondata['selectedgroup'] = format_string($group->name, true, ['context' => $context]);
+            $buttondata['selectedgroup'] = format_string($group->name, true,
+                ['context' => $this->context->get_course_context()]);
         } else if ($activegroup === 0) {
             $buttondata['selectedgroup'] = get_string('allparticipants');
         }
 
-        $groupdropdown = new comboboxsearch(
-            false,
-            $OUTPUT->render_from_template('core_group/comboboxsearch/group_selector', $buttondata),
-            $sbody,
-            'group-search',
-            'groupsearchwidget',
-            'groupsearchdropdown overflow-auto',
-            null,
-            true,
-            $label,
-            'group',
-            $activegroup
-        );
-
-        return $groupdropdown->export_for_template($OUTPUT);
+        return $OUTPUT->render_from_template('core_group/comboboxsearch/group_selector', $buttondata);
     }
 
     /**
-     * Returns the template for the group selector.
+     * Returns the output of the content rendered within the dropdown (search body area) of the group selector.
+     *
+     * @return string HTML fragment
+     */
+    private function get_dropdown_content(): string {
+        global $OUTPUT;
+
+        return $OUTPUT->render_from_template('core_group/comboboxsearch/searchbody', [
+            'courseid' => $this->context->get_course_context()->instanceid,
+            'currentvalue' => optional_param('groupsearchvalue', '', PARAM_NOTAGS),
+            'instance' => rand(),
+        ]);
+    }
+
+    /**
+     * Returns the label text for the group selector based on specified group mode.
      *
      * @return string
      */
-    public function get_template(): string {
-        return 'core/comboboxsearch';
+    private function get_label(): string {
+        return $this->get_group_mode() === VISIBLEGROUPS ? get_string('selectgroupsvisible') :
+            get_string('selectgroupsseparate');
+    }
+
+    /**
+     * Returns the active group based on the context level.
+     *
+     * @return int|bool The active group (false if groups not used, int if groups used)
+     */
+    private function get_active_group(): int|bool {
+        global $USER;
+
+        $canaccessallgroups = has_capability('moodle/site:accessallgroups', $this->context);
+        $userid = $this->get_group_mode() == VISIBLEGROUPS || $canaccessallgroups ? 0 : $USER->id;
+        $course = get_course($this->context->get_course_context()->instanceid);
+        // Based on the current context level, retrieve the correct grouping ID and specify whether only groups with the
+        // participation field set to true should be returned.
+        if ($this->context->contextlevel === CONTEXT_MODULE) {
+            $cm = get_coursemodule_from_id(false, $this->context->instanceid);
+            $groupingid = $cm->groupingid;
+            $participationonly = true;
+        } else {
+            $cm = null;
+            $groupingid = $course->defaultgroupingid;
+            $participationonly = false;
+        }
+
+        $allowedgroups = groups_get_all_groups(
+            courseid: $course->id,
+            userid: $userid,
+            groupingid: $groupingid,
+            participationonly: $participationonly
+        );
+
+        if ($cm) {
+            return groups_get_activity_group($cm, true, $allowedgroups);
+        }
+        return groups_get_course_group($course, true, $allowedgroups);
+    }
+
+    /**
+     * Returns the group mode based on the context level.
+     *
+     * @return int The group mode
+     */
+    private function get_group_mode(): int {
+        if ($this->context->contextlevel == CONTEXT_MODULE) {
+            $cm = get_coursemodule_from_id(false, $this->context->instanceid);
+            return groups_get_activity_groupmode($cm);
+        }
+        $course = get_course($this->context->instanceid);
+        return $course->groupmode;
     }
 }

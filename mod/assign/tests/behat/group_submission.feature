@@ -70,6 +70,50 @@ Feature: Group assignment submissions
     And I should not see "Test assignment name" in the "Timeline" "block"
 
   @javascript
+  Scenario: Confirm that the group switching option is available only when the group settings are correctly configured
+    Given the following "activity" exists:
+      | activity | assign          |
+      | course   | C1              |
+      | name     | Test assignment |
+    And I am on the "Test assignment" "assign activity editing" page logged in as teacher1
+    # The assignment does not have a specified group mode.
+    When I set the following fields to these values:
+      | Group mode | No groups |
+    And I press "Save and display"
+    And I follow "View all submissions"
+    Then ".groupsearchwidget" "css_element" should not exist
+    # The course has a specified group mode, but not enforced on modules.
+    And I am on the "C1" "course editing" page
+    And I set the following fields to these values:
+      | Group mode       | Separate groups |
+      | Force group mode | No              |
+    And I press "Save and display"
+    And I am on the "Test assignment" Activity page
+    And I follow "View all submissions"
+    And ".groupsearchwidget" "css_element" should not exist
+    # The assignment has a specified group mode.
+    And I am on the "Test assignment" "assign activity editing" page
+    And I set the following fields to these values:
+      | Group mode | Visible groups |
+    And I press "Save and display"
+    And I follow "View all submissions"
+    And ".groupsearchwidget" "css_element" should exist
+    And I should see "Select visible groups" in the ".groupsearchwidget" "css_element"
+    And I confirm "All participants" in "group" search within the gradebook widget exists
+    And I confirm "Group 1" in "group" search within the gradebook widget exists
+    # The course enforces its group mode on modules.
+    And I am on the "C1" "course editing" page
+    And I set the following fields to these values:
+      | Force group mode | Yes |
+    And I press "Save and display"
+    And I am on the "Test assignment" Activity page
+    And I follow "View all submissions"
+    And ".groupsearchwidget" "css_element" should exist
+    And I should see "Select separate groups" in the ".groupsearchwidget" "css_element"
+    And I confirm "All participants" in "group" search within the gradebook widget exists
+    And I confirm "Group 1" in "group" search within the gradebook widget exists
+
+  @javascript
   Scenario: Switch between group modes
     Given the following "activity" exists:
       | activity         | assign                      |

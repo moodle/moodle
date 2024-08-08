@@ -28,10 +28,12 @@ export default class Group extends GroupSearch {
 
     /**
      * Construct the class.
+     *
      * @param {string} baseUrl The base URL for the page.
+     * @param {int|null} cmid ID of the course module initiating the group search (optional).
      */
-    constructor(baseUrl) {
-        super();
+    constructor(baseUrl, cmid = null) {
+        super(cmid);
         this.baseUrl = baseUrl;
     }
 
@@ -39,10 +41,11 @@ export default class Group extends GroupSearch {
      * Allow the class to be invoked via PHP.
      *
      * @param {string} baseUrl The base URL for the page.
+     * @param {int|null} cmid ID of the course module initiating the group search (optional).
      * @returns {Group}
      */
-    static init(baseUrl) {
-        return new Group(baseUrl);
+    static init(baseUrl, cmid = null) {
+        return new Group(baseUrl, cmid);
     }
 
     /**

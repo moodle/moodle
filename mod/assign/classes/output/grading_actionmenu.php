@@ -81,7 +81,9 @@ class grading_actionmenu implements templatable, renderable {
         global $PAGE, $OUTPUT;
 
         $course = $this->assign->get_course();
+        $cm = get_coursemodule_from_id('assign', $this->cmid);
         $actionbarrenderer = $PAGE->get_renderer('core_course', 'actionbar');
+
         $data = [];
 
         $userid = optional_param('userid', null, PARAM_INT);
@@ -101,8 +103,9 @@ class grading_actionmenu implements templatable, renderable {
         );
         $data['userselector'] = $actionbarrenderer->render($userselector);
 
-        if ($course->groupmode) {
-            $data['groupselector'] = $actionbarrenderer->render(new \core_course\output\actionbar\group_selector($course));
+        if (groups_get_activity_groupmode($cm, $course)) {
+            $data['groupselector'] = $actionbarrenderer->render(
+                new \core_course\output\actionbar\group_selector(null, $PAGE->context));
         }
 
         if ($extrafiltersdropdown = $this->get_extra_filters_dropdown()) {
@@ -110,7 +113,7 @@ class grading_actionmenu implements templatable, renderable {
             $data['extrafiltersdropdown'] = $OUTPUT->render($extrafiltersdropdown);
         }
 
-        if (groups_get_course_group($course) || $this->get_applied_extra_filters_count() > 0) {
+        if (groups_get_activity_group($cm) || $this->get_applied_extra_filters_count() > 0) {
             $url = new moodle_url('/mod/assign/view.php', [
                 'id' => $this->cmid,
                 'action' => 'grading',
