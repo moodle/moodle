@@ -37,8 +37,8 @@ Feature: Delete custom licenses
       | Licence version | ##1 March 2019##                    |
     And I press "Save changes"
     And I follow "Private files" in the user menu
-    And I upload "lib/editor/atto/tests/fixtures/moodle-logo.png" file to "Files" filemanager
-    And I click on "moodle-logo.png" "link"
+    And I upload "lib/tests/fixtures/gd-logo.png" file to "Files" filemanager
+    And I click on "gd-logo.png" "link"
     And I set the field "Choose licence" to "Test licence"
     And I press "Update"
     And I press "Save changes"
