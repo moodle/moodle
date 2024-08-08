@@ -29832,7 +29832,7 @@ span.editinstructions .alert-link {
 .btn.add-content {
   position: relative;
   z-index: 1;
-  border-radius: 50rem;
+  border-radius: 0.5rem;
   font-size: 0.8203125rem;
   font-weight: bold;
   color: #083863;
@@ -29970,6 +29970,7 @@ span.editinstructions .alert-link {
 .activity.subsection > .activity-item {
   border: 1px solid #dee2e6;
   padding: 0;
+  margin: 0.5rem 0;
 }
 .activity.subsection > .activity-item .activity-altcontent {
   margin-top: 0;

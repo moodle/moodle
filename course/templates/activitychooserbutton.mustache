@@ -19,26 +19,41 @@
 
     Displays a add activity or resource button.
 
-    Context variables required for this template:
-    * sectionid - Relative section number (field course_sections.section).
-    * sectionreturn - The section to link back to.
-
     Example context (json):
     {
-        "sectionid": 1,
+        "hasactionlinks": false,
+        "sectionnum": 0,
+        "modid": 1,
+        "activityname": "Activity example",
         "sectionreturn": 0
     }
 }}
-{{< core_courseformat/local/content/divider}}
-    {{$extraclasses}}always-visible my-3{{/extraclasses}}
-    {{$content}}
-        <button class="btn add-content section-modchooser section-modchooser-link d-flex justify-content-center align-items-center py-1 px-2"
-            data-action="open-chooser"
-            data-sectionnum="{{sectionnum}}"
-            {{#sectionreturn}}data-sectionreturnnum="{{.}}"{{/sectionreturn}}
-        >
-            {{#pix}} t/add, core {{/pix}}
-            <span class="activity-add-text pe-1">{{#str}}addresourceoractivity, core{{/str}}</span>
-        </button>
-    {{/content}}
-{{/ core_courseformat/local/content/divider}}
+
+{{! Single button to add a new activity or resource. }}
+{{^hasactionlinks}}
+    {{> core_course/addresourceoractivitybutton }}
+{{/hasactionlinks}}
+
+{{! Dropdown with "add a new activity or resource" item and any other action links. }}
+{{#hasactionlinks}}
+<div class="dropdown">
+    <button class="btn add-content d-flex justify-content-center align-items-center p-1 icon-no-margin"
+            type="button"
+            id="dropdownMenuButton"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="{{#str}}insertcontentbefore, core, { "activityname": {{#quote}} {{activityname}} {{/quote}} } {{/str}}"
+            tabindex="0"
+            title="{{#str}}addcontent, core{{/str}}"
+    >
+        {{#pix}} t/add, core {{/pix}}
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        {{> core_course/addresourceoractivitybutton }}
+        {{#actionlinks}}
+            {{> core/action_link}}
+        {{/actionlinks}}
+    </div>
+</div>
+{{/hasactionlinks}}
