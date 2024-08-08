@@ -29,6 +29,7 @@ use context_module;
 use templatable;
 use renderable;
 use moodle_url;
+use core\output\local\dropdown\dialog;
 
 /**
  * Output the grading actionbar for this activity.
@@ -77,7 +78,7 @@ class grading_actionmenu implements templatable, renderable {
      * @return array Data to render.
      */
     public function export_for_template(\renderer_base $output): array {
-        global $PAGE;
+        global $PAGE, $OUTPUT;
 
         $course = $this->assign->get_course();
         $actionbarrenderer = $PAGE->get_renderer('core_course', 'actionbar');
@@ -104,11 +105,17 @@ class grading_actionmenu implements templatable, renderable {
             $data['groupselector'] = $actionbarrenderer->render(new \core_course\output\actionbar\group_selector($course));
         }
 
-        if (groups_get_course_group($course)) {
+        if ($extrafiltersdropdown = $this->get_extra_filters_dropdown()) {
+            $PAGE->requires->js_call_amd('mod_assign/actionbar/grading/extra_filters_dropdown', 'init', []);
+            $data['extrafiltersdropdown'] = $OUTPUT->render($extrafiltersdropdown);
+        }
+
+        if (groups_get_course_group($course) || $this->get_applied_extra_filters_count() > 0) {
             $url = new moodle_url('/mod/assign/view.php', [
                 'id' => $this->cmid,
                 'action' => 'grading',
                 'group' => 0,
+                'workflowfilter' => '',
             ]);
             $data['pagereset'] = $url->out(false);
         }
@@ -187,5 +194,72 @@ class grading_actionmenu implements templatable, renderable {
         }
 
         return $actions;
+    }
+
+    /**
+     * The renderable for the extra filters dropdown, if available.
+     *
+     * @return dialog|null The renderable for the extra filters dropdown, if available.
+     */
+    private function get_extra_filters_dropdown(): ?dialog {
+        global $OUTPUT;
+
+        $dropdowncontentdata = [
+            'actionurl' => (new moodle_url('/mod/assign/view.php'))->out(false),
+            'id' => $this->assign->get_course_module()->id,
+            'action' => 'grading',
+            'filters' => [],
+        ];
+
+        // If marking workflow is enabled.
+        if ($this->assign->get_instance()->markingworkflow) {
+            $dropdowncontentdata['filters']['markingworkflow'] = [
+                'workflowfilteroptions' => $this->assign->get_marking_workflow_filters(true),
+            ];
+        }
+
+        // If there are no available filters, return null.
+        if (empty($dropdowncontentdata['filters'])) {
+            return null;
+        }
+
+        // Define the content output for the extra filters dropdown menu.
+        $dropdowncontent = $OUTPUT->render_from_template(
+            'mod_assign/actionbar/grading/extra_filters_dropdown_body',
+            $dropdowncontentdata
+        );
+
+        // Define the output for the extra filters dropdown trigger.
+        $buttoncontent = $OUTPUT->render_from_template(
+            'mod_assign/actionbar/grading/extra_filters_dropdown_trigger',
+            ['appliedfilterscount' => $this->get_applied_extra_filters_count()]
+        );
+
+        return new dialog(
+            $buttoncontent,
+            $dropdowncontent,
+            [
+                'classes' => 'extrafilters d-flex',
+                'buttonclasses' => 'btn d-flex border-none align-items-center dropdown-toggle p-0',
+            ]
+        );
+    }
+
+    /**
+     * Returns the number of applied extra filters.
+     *
+     * @return int The number of applied extra filters.
+     */
+    private function get_applied_extra_filters_count(): int {
+        $appliedextrafilterscount = 0;
+
+        // If marking workflow is enabled.
+        if ($this->assign->get_instance()->markingworkflow) {
+            if (get_user_preferences('assign_workflowfilter')) {
+                $appliedextrafilterscount++;
+            }
+        }
+
+        return $appliedextrafilterscount;
     }
 }

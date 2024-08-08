@@ -123,6 +123,10 @@
     background-color: #efcfcf;
 }
 
+.path-mod-assign div.dropdown.extrafilters .dropdown-menu {
+    width: 300px;
+}
+
 .path-mod-assign .gradingtable .c0 {
     display: none;
 }

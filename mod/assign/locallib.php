@@ -4492,7 +4492,15 @@ class assign {
         $perpage = $this->get_assign_perpage();
         $filter = get_user_preferences('assign_filter', '');
         $markerfilter = get_user_preferences('assign_markerfilter', '');
-        $workflowfilter = get_user_preferences('assign_workflowfilter', '');
+
+        // Retrieve the 'workflowfilter' parameter, or set it to null if not provided.
+        $workflowfilter = optional_param('workflowfilter', null, PARAM_ALPHA);
+        // Check if the parameter is not null and if it exists in the list of valid workflow filters.
+        if ($workflowfilter !== null && array_key_exists($workflowfilter, $this->get_marking_workflow_filters())) {
+            // Save the valid 'workflowfilter' value as a user preference.
+            set_user_preference('assign_workflowfilter', $workflowfilter);
+        }
+
         $controller = $gradingmanager->get_active_controller();
         $showquickgrading = empty($controller) && $this->can_grade();
         $quickgrading = get_user_preferences('assign_quickgrading', false);
@@ -4564,7 +4572,6 @@ class assign {
         $gradingoptionsdata->perpage = $perpage;
         $gradingoptionsdata->filter = $filter;
         $gradingoptionsdata->markerfilter = $markerfilter;
-        $gradingoptionsdata->workflowfilter = $workflowfilter;
         $gradingoptionsform->set_data($gradingoptionsdata);
 
         $buttons = new \mod_assign\output\grading_actionmenu(cmid: $this->get_course_module()->id, assign: $this);
@@ -7417,9 +7424,6 @@ class assign {
             }
             if (isset($formdata->markerfilter)) {
                 set_user_preference('assign_markerfilter', $formdata->markerfilter);
-            }
-            if (isset($formdata->workflowfilter)) {
-                set_user_preference('assign_workflowfilter', $formdata->workflowfilter);
             }
             if ($showquickgrading) {
                 set_user_preference('assign_quickgrading', isset($formdata->quickgrading));

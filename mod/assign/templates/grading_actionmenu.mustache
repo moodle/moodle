@@ -25,12 +25,14 @@
     Context variables required for this template:
     * userselector - HTML that outputs the user selector
     * groupselector - (optional) HTML that outputs the group selector
+    * extrafiltersdropdown - HTML that outputs the extra filters dropdown
     * actions - (optional) HTML that outputs the bulk action menu
 
     Example context (json):
     {
         "userselector": "<div class='user-search'></div>",
         "groupselector": "<div class='group-selector'></div>",
+        "extrafiltersdropdown": "<div class='dropdown extrafilters'></div>",
         "pagereset": "http://moodle.local/mod/assign/view.php?id=2&action=grading&group=0",
         "actions": "<div class='action-menu'></div>"
     }
@@ -54,6 +56,12 @@
             </div>
             <div class="navitem-divider d-none d-sm-flex"></div>
         {{/groupselector}}
+        {{#extrafiltersdropdown}}
+            <div class="navitem">
+                {{{.}}}
+            </div>
+            <div class="navitem-divider d-none d-sm-flex"></div>
+        {{/extrafiltersdropdown}}
         {{#pagereset}}
             <div class="navitem align-self-center">
                 <a href="{{{.}}}" class="btn btn-link">{{#str}}clearall, core{{/str}}</a>
