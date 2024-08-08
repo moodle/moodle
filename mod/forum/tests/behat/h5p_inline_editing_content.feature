@@ -1,4 +1,4 @@
-@mod @mod_forum @editor @editor_atto @atto @atto_h5p @filter @filter_displayh5p @core_h5p @_file_upload @_switch_iframe
+@mod @mod_forum @filter @filter_displayh5p @core_h5p @_file_upload @_switch_iframe
 Feature: Inline editing H5P content in mod_forum
   In order to edit an existing H5P content
   As a user
@@ -35,13 +35,13 @@ Feature: Inline editing H5P content in mod_forum
   Scenario: Edit H5P content from a forum intro using copy to content bank file
     Given I am on the "ForumName1" "forum activity editing" page logged in as admin
     # Add H5P content to the forum description.
-    And I click on "Insert H5P" "button" in the "#fitem_id_introeditor" "css_element"
-    And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
+    And I click on "Configure H5P content" "button" in the "#fitem_id_introeditor" "css_element"
+    And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
     And I select "Content bank" repository in file picker
     And I click on "Greeting card" "file" in repository content area
     And I click on "Make a copy of the file" "radio"
     And I click on "Select this file" "button"
-    And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
+    And I click on "Insert H5P" "button" in the "Insert H5P content" "dialogue"
     And I click on "Save and display" "button"
     And I switch to "h5p-iframe" class iframe
     And I switch to "h5p-iframe" class iframe
@@ -82,12 +82,12 @@ Feature: Inline editing H5P content in mod_forum
     # Add H5P content to a forum post as admin.
     And I set the following fields to these values:
       | Subject | Forum post by admin |
-    And I click on "Insert H5P" "button" in the "#fitem_id_message" "css_element"
-    And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
+    And I click on "Configure H5P content" "button" in the "#fitem_id_message" "css_element"
+    And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
     And I select "Content bank" repository in file picker
     And I click on "Greeting card" "file" in repository content area
     And I click on "Select this file" "button"
-    And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
+    And I click on "Insert H5P" "button" in the "Insert H5P content" "dialogue"
     And I press "Save changes"
     And I switch to "h5p-iframe" class iframe
     And I switch to "h5p-iframe" class iframe
