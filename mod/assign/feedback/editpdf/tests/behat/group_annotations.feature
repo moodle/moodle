@@ -43,7 +43,8 @@ Feature: In a group assignment, teacher can annotate PDF files for all users
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "Submissions" in current page administration
-    And I click on "Grade" "link" in the "Submitted for grading" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "Submitted for grading" "table_row"
+    And I choose "Grade" in the open action menu
     And I wait for the complete PDF to load
     And I click on ".navigate-next-button" "css_element"
     And I wait until the page is ready

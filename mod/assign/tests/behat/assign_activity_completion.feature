@@ -122,7 +122,8 @@ Feature: View activity completion in the assignment activity
     And I log out
     And I am on the "Music history" "assign activity" page logged in as teacher1
     And I navigate to "Submissions" in current page administration
-    And I click on "Grade" "link" in the "Vinnie Student1" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "Vinnie Student1" "table_row"
+    And I choose "Grade" in the open action menu
     And I set the field "Grade out of 100" to "33"
     And I set the field "Notify student" to "0"
     And I press "Save changes"
@@ -146,7 +147,8 @@ Feature: View activity completion in the assignment activity
     And I log out
     And I am on the "Music history 2" "assign activity" page logged in as teacher1
     And I navigate to "Submissions" in current page administration
-    And I click on "Grade" "link" in the "Vinnie Student1" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "Vinnie Student1" "table_row"
+    And I choose "Grade" in the open action menu
     And I set the field "Grade out of 100" to "33"
     And I set the field "Notify student" to "0"
     And I set the field "Allow another attempt" to "Yes"

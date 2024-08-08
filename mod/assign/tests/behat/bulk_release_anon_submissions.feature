@@ -40,7 +40,8 @@ Feature: Bulk released grades should not be sent to gradebook while submissions 
     And I am on the "Test assignment name" "assign activity" page logged in as "teacher1"
     And I navigate to "Submissions" in current page administration
     Then I should see "Not marked" in the "I'm student1's submission" "table_row"
-    And I click on "Grade" "link" in the "I'm student1's submission" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "I'm student1's submission" "table_row"
+    And I choose "Grade" in the open action menu
     And I set the field "Grade out of 100" to "50"
     And I set the field "Marking workflow state" to "In review"
     And I set the field "Feedback comments" to "Great job!"
@@ -50,7 +51,8 @@ Feature: Bulk released grades should not be sent to gradebook while submissions 
     And I navigate to "Submissions" in current page administration
     Then I should see "Not marked" in the "I'm student2's submission" "table_row"
     And I change window size to "large"
-    And I click on "Grade" "link" in the "I'm student2's submission" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "I'm student2's submission" "table_row"
+    And I choose "Grade" in the open action menu
     And I change window size to "medium"
     And I set the field "Grade out of 100" to "50"
     And I set the field "Marking workflow state" to "In review"

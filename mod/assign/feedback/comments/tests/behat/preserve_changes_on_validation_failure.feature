@@ -24,7 +24,8 @@ Feature: Check that any changes to assignment feedback comments are not lost
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "Submissions" in current page administration
     And I change window size to "large"
-    And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "Student 1" "table_row"
+    And I choose "Grade" in the open action menu
     When I set the following fields to these values:
       | Grade out of 100  | 101                    |
       | Feedback comments | Feedback from teacher. |

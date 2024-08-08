@@ -69,7 +69,8 @@ Feature: Restrict sections availability through completion or grade conditions
     And I am on the "Grade assignment" "assign activity" page logged in as teacher1
     And I navigate to "Submissions" in current page administration
     And I change window size to "large"
-    And I click on "Grade" "link" in the "Student First" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "Student First" "table_row"
+    And I choose "Grade" in the open action menu
     And I change window size to "medium"
     And I set the following fields to these values:
       | Grade | 21 |

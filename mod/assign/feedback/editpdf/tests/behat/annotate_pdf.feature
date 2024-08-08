@@ -37,7 +37,8 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     When I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "Submissions" in current page administration
     And I change window size to "large"
-    And I click on "Grade" "link" in the "Submitted for grading" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "Submitted for grading" "table_row"
+    And I choose "Grade" in the open action menu
     And I change window size to "medium"
     Then I should see "Page 1 of 1"
     And I wait for the complete PDF to load
@@ -57,7 +58,8 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "Submissions" in current page administration
     And I change window size to "large"
-    And I click on "Grade" "link" in the "Submitted for grading" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "Submitted for grading" "table_row"
+    And I choose "Grade" in the open action menu
     And I change window size to "medium"
     Then I should see "Page 1 of 3"
     And I wait for the complete PDF to load
@@ -113,7 +115,8 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     When I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "Submissions" in current page administration
     And I change window size to "large"
-    And I click on "Grade" "link" in the "Submitted for grading" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "Submitted for grading" "table_row"
+    And I choose "Grade" in the open action menu
     And I change window size to "medium"
     Then I should see "Page 1 of 3"
     And I click on ".navigate-next-button" "css_element"
@@ -185,7 +188,8 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "Submissions" in current page administration
     And I open the action menu in "Student 2" "table_row"
-    And I click on "Grade" "link" in the "Student 2" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "Student 2" "table_row"
+    And I choose "Grade" in the open action menu
     And I wait for the complete PDF to load
     And I click on ".linebutton" "css_element"
     And I draw on the pdf

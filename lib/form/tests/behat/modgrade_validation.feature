@@ -89,7 +89,8 @@ Feature: Using the activity grade form element
     And I press "Save and display"
     And I am on the "Test assignment name" "assign activity" page
     And I navigate to "Submissions" in current page administration
-    And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "Student 1" "table_row"
+    And I choose "Grade" in the open action menu
     And I set the field "Grade" to "C"
     And I press "Save changes"
     And I follow "Edit settings"
@@ -121,7 +122,8 @@ Feature: Using the activity grade form element
   Scenario: Attempting to change the maximum grade when no rescaling option has been chosen
     Given I am on the "Test assignment name" "assign activity" page logged in as teacher1
     And I navigate to "Submissions" in current page administration
-    And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "Student 1" "table_row"
+    And I choose "Grade" in the open action menu
     And I set the field "Grade out of 100" to "50"
     And I press "Save changes"
     And I follow "Edit settings"

@@ -53,7 +53,8 @@ Feature: Allow to mark course as completed without cron for activity completion 
   Scenario: Update course completion when teacher grades a single assignment
     Given I am on the "Test assignment name" "assign activity" page logged in as teacher1
     And I navigate to "Submissions" in current page administration
-    And I click on "Grade" "link" in the "student1@example.com" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "student1@example.com" "table_row"
+    And I choose "Grade" in the open action menu
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
     And I am on "Completion course" course homepage
@@ -80,14 +81,16 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I press "Save changes"
     And I am on the "Test assignment name" "assign activity" page
     And I navigate to "Submissions" in current page administration
-    And I click on "Grade" "link" in the "student1@example.com" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "student1@example.com" "table_row"
+    And I choose "Grade" in the open action menu
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
     And I am on the "Completion course" course page logged in as student1
     And I should see "Status: In progress"
     And I am on the "Test assignment name2" "assign activity" page logged in as teacher1
     And I navigate to "Submissions" in current page administration
-    And I click on "Grade" "link" in the "student1@example.com" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "student1@example.com" "table_row"
+    And I choose "Grade" in the open action menu
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
     When I am on the "Completion course" course page logged in as student1

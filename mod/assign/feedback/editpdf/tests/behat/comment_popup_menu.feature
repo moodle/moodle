@@ -34,7 +34,8 @@ Feature: Ensure that a comment remains visible if its popup menu is open
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "Submissions" in current page administration
     And I change window size to "large"
-    And I click on "Grade" "link" in the "Submitted for grading" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "Submitted for grading" "table_row"
+    And I choose "Grade" in the open action menu
     And I change window size to "medium"
     And I wait for the complete PDF to load
 
