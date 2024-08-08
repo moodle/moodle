@@ -1534,11 +1534,11 @@ class user {
 
         // Get courseid from context if provided.
         if ($context && $coursecontext = $context->get_course_context(false)) {
-            $params['courseid'] = $coursecontext->instanceid;
+            $params['course'] = $coursecontext->instanceid;
         }
 
         // If courseid is not set or is set to site id, then return profile page, otherwise return view page.
-        if (!isset($params['courseid']) || $params['courseid'] == SITEID) {
+        if (!isset($params['course']) || $params['course'] == SITEID) {
             return new url('/user/profile.php', $params);
         } else {
             return new url('/user/view.php', $params);
