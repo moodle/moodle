@@ -85,6 +85,16 @@ class create_grade_item_per_section extends external_api {
 
         $gradeitemsids = [];
         foreach ($structure->get_sections() as $section) {
+            // Only create a grade item for sections that contain at least one real question (not description).
+            $hasrealquestion = false;
+            foreach ($structure->get_slots_in_section($section->id) as $slot) {
+                $hasrealquestion = $hasrealquestion || $structure->is_real_question($slot);
+            }
+            if (!$hasrealquestion) {
+                continue;
+            }
+
+            // Grade item required. Create it.
             $gradeitem = new stdClass();
             $gradeitem->quizid = $quizid;
             $gradeitem->name = $section->heading;
@@ -93,7 +103,9 @@ class create_grade_item_per_section extends external_api {
         }
 
         foreach ($structure->get_slots() as $slot) {
-            $structure->update_slot_grade_item($slot, $gradeitemsids[$slot->section->id]);
+            if ($structure->is_real_question($slot->slot)) {
+                $structure->update_slot_grade_item($slot, $gradeitemsids[$slot->section->id]);
+            }
         }
 
         $transaction->allow_commit();
