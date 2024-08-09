@@ -519,11 +519,13 @@ class behat_util extends testing_util {
 
         $accessibility = empty(behat_config_manager::get_behat_run_config_value('axe')) ? 'No' : 'Yes';
         $scssdeprecations = empty(behat_config_manager::get_behat_run_config_value('scss-deprecations')) ? 'No' : 'Yes';
+        $icondeprecations = empty(behat_config_manager::get_behat_run_config_value('no-icon-deprecations')) ? 'Yes' : 'No';
 
         $siteinfo .= <<<EOF
 Run optional tests:
 - Accessibility: {$accessibility}
 - SCSS deprecations: {$scssdeprecations}
+- Icon deprecations: {$icondeprecations}
 
 EOF;
 

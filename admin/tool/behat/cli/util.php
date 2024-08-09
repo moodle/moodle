@@ -59,6 +59,7 @@ list($options, $unrecognized) = cli_get_params(
         'add-core-features-to-theme' => false,
         'axe'         => true,
         'scss-deprecations' => false,
+        'no-icon-deprecations' => false,
     ),
     array(
         'h' => 'help',
@@ -74,18 +75,20 @@ $help = "
 Behat utilities to manage the test environment
 
 Usage:
-  php util.php  [--install|--drop|--enable|--disable|--diag|--updatesteps|--no-axe|--scss-deprecations|--help]
+  php util.php  [--install|--drop|--enable|--disable|--diag|--updatesteps]
+                [--no-axe|--scss-deprecations|--no-icon-deprecations|--help]
                 [--parallel=value [--maxruns=value]]
 
 Options:
---install           Installs the test environment for acceptance tests
---drop              Drops the database tables and the dataroot contents
---enable            Enables test environment and updates tests list
---disable           Disables test environment
---diag              Get behat test environment status code
---updatesteps       Update feature step file.
---no-axe            Disable axe accessibility tests.
---scss-deprecations Enable SCSS deprecation checks.
+--install              Installs the test environment for acceptance tests
+--drop                 Drops the database tables and the dataroot contents
+--enable               Enables test environment and updates tests list
+--disable              Disables test environment
+--diag                 Get behat test environment status code
+--updatesteps          Update feature step file.
+--no-axe               Disable axe accessibility tests.
+--scss-deprecations    Enable SCSS deprecation checks.
+--no-icon-deprecations Disable icon deprecation checks.
 
 -j, --parallel Number of parallel behat run operation
 -m, --maxruns Max parallel processes to be executed at one time.
