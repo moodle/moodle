@@ -222,6 +222,12 @@ class grade_grade extends grade_object {
     public float $deductedmark = 0;
 
     /**
+     * Date when this grade was last graded.
+     * @var int $dategraded
+     */
+    public $dategraded = null;
+
+    /**
      * Returns array of grades for given grade_item+users
      *
      * @param grade_item $grade_item
