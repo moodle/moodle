@@ -203,6 +203,21 @@ class flexible_table {
             TABLE_VAR_RESET  => 'treset',
             TABLE_VAR_DIR    => 'tdir',
         );
+
+        static $notified = [];
+        if (!(defined('AJAX_SCRIPT') && AJAX_SCRIPT) &&
+                $this instanceof \core_table\dynamic &&
+                !method_exists($this, 'has_capability') &&
+                empty($notified[get_class($this)])) {
+            // Classes implementing \core_table\dynamic must have a method has_capability():bool .
+            // This will be enforced in Moodle 4.5.
+            \core\notification::add(
+                get_string('codingerror', 'debug',
+                'Error in class '.get_class($this).'. Some functionality may be available to admins only.'),
+                \core\notification::WARNING
+            );
+            $notified[get_class($this)] = true;
+        }
     }
 
     /**

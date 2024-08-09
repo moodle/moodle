@@ -228,6 +228,13 @@ class get extends external_api {
         $instance = new $tableclass($uniqueid);
         $instance->set_filterset($filterset);
         self::validate_context($instance->get_context());
+        if (!method_exists($instance, 'has_capability')) {
+            // Method \core_table\dynamic::has_capability() will be added in Moodle 4.5. Until then if it is not
+            // implemented, we will require the admin capability.
+            require_capability('moodle/site:config', \context_system::instance());
+        } else if (!$instance->has_capability()) {
+            throw new \moodle_exception('nopermissiontoaccesspage');
+        }
 
         $instance->set_sortdata($sortdata);
         $alphabet = get_string('alphabet', 'langconfig');
