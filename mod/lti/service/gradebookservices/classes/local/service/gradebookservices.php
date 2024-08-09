@@ -541,6 +541,7 @@ class gradebookservices extends service_base {
             $grade->feedbackformat = $feedbackformat;
             $grade->feedback = $feedback;
             $grade->rawgrade = $finalgrade;
+            $grade->dategraded = $timemodified;
             $status = grade_update($source, $gradeitem->courseid,
                 $gradeitem->itemtype, $gradeitem->itemmodule,
                 $gradeitem->iteminstance, $gradeitem->itemnumber, $grade);
