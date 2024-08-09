@@ -1097,6 +1097,18 @@ class moodle_page {
         if ($this->subpage) {
             $summary .= 'Sub-page ' . $this->subpage .  '. ';
         }
+
+        // Display deprecated icons in the console (if any).
+        $summary .= <<< EOF
+            <script type="text/javascript">
+            //<![CDATA[
+            document.querySelectorAll('.icon.deprecated').forEach((icon) => {
+                window.console.warn("Deprecated icon found: " + icon.className);
+            });
+            //]]>
+            </script>
+        EOF;
+
         return $summary;
     }
 

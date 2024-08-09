@@ -147,4 +147,26 @@ abstract class icon_system {
     public static function reset_caches() {
         self::$instance = null;
     }
+
+    /**
+     * Overridable function to get the list of deprecated icons.
+     *
+     * @return array with the deprecated key icons (for instance, core:a/download_all).
+     */
+    public function get_deprecated_icons(): array {
+        $deprecated = [];
+        // Include deprecated icons in plugins too.
+        $callback = 'get_deprecated_icons';
+
+        if ($pluginsfunction = get_plugins_with_function($callback)) {
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                foreach ($plugins as $pluginfunction) {
+                    $plugindeprecated = $pluginfunction();
+                    $deprecated += $plugindeprecated;
+                }
+            }
+        }
+
+        return $deprecated;
+    }
 }
