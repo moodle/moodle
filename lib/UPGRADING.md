@@ -102,6 +102,13 @@
   after the improvement.
 
   For more information see [MDL-78030](https://tracker.moodle.org/browse/MDL-78030)
+- The following classes have been renamed.
+  Existing classes are currently unaffected.
+  | Old class name | New class name |
+  | --- | --- |
+  | `\core_user` | `\core\user` |
+
+  For more information see [MDL-81031](https://tracker.moodle.org/browse/MDL-81031)
 - New DML constant `SQL_INT_MAX` to define the size of a large integer with cross database platform support
 
   For more information see [MDL-81282](https://tracker.moodle.org/browse/MDL-81282)

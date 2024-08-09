@@ -19,6 +19,9 @@
 - The data-sectionid attribute in the activity chooser has been deprecated. Please update your code to use data-sectionnum instead.
 
   For more information see [MDL-81676](https://tracker.moodle.org/browse/MDL-81676)
+- The $course parameter in the constructor of the core_course\output\actionbar\group_selector class has been deprecated and is no longer used.
+
+  For more information see [MDL-82393](https://tracker.moodle.org/browse/MDL-82393)
 
 ### Changed
 
@@ -28,3 +31,9 @@
   - Review all the strings used in the reset page to remove the "Delete" or "Remove" words from them.
 
   For more information see [MDL-81872](https://tracker.moodle.org/browse/MDL-81872)
+
+### Removed
+
+- The $course class property in the core_course\output\actionbar\group_selector class has been removed.
+
+  For more information see [MDL-82393](https://tracker.moodle.org/browse/MDL-82393)

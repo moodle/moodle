@@ -133,6 +133,13 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   after the improvement.
 
   For more information see [MDL-78030](https://tracker.moodle.org/browse/MDL-78030)
+- The following classes have been renamed.
+  Existing classes are currently unaffected.
+  | Old class name | New class name |
+  | --- | --- |
+  | `\core_user` | `\core\user` |
+
+  For more information see [MDL-81031](https://tracker.moodle.org/browse/MDL-81031)
 - New DML constant `SQL_INT_MAX` to define the size of a large integer with cross database platform support
 
   For more information see [MDL-81282](https://tracker.moodle.org/browse/MDL-81282)
@@ -656,6 +663,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The data-sectionid attribute in the activity chooser has been deprecated. Please update your code to use data-sectionnum instead.
 
   For more information see [MDL-81676](https://tracker.moodle.org/browse/MDL-81676)
+- The $course parameter in the constructor of the core_course\output\actionbar\group_selector class has been deprecated and is no longer used.
+
+  For more information see [MDL-82393](https://tracker.moodle.org/browse/MDL-82393)
 
 #### Changed
 
@@ -665,6 +675,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   - Review all the strings used in the reset page to remove the "Delete" or "Remove" words from them.
 
   For more information see [MDL-81872](https://tracker.moodle.org/browse/MDL-81872)
+
+#### Removed
+
+- The $course class property in the core_course\output\actionbar\group_selector class has been removed.
+
+  For more information see [MDL-82393](https://tracker.moodle.org/browse/MDL-82393)
 
 ### core_completion
 
@@ -706,6 +722,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The base class `info::get_groups` method has a `$userid` parameter to specify for which user you want to retrieve course groups (defaults to current user)
 
   For more information see [MDL-81850](https://tracker.moodle.org/browse/MDL-81850)
+
+### core_communication
+
+#### Changed
+
+- The get_enrolled_users_for_course() method now accepts an additional argument that can filter only active enrolments.
+
+  For more information see [MDL-81951](https://tracker.moodle.org/browse/MDL-81951)
 
 ### report_log
 

@@ -13,4 +13,3 @@
 - The `filter_manager::text_filtering_hash` method has been finally deprecated and removed.
 
   For more information see [MDL-82427](https://tracker.moodle.org/browse/MDL-82427)
-
