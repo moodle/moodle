@@ -386,4 +386,13 @@ class custom_report_table extends base_report_table {
 
         return !empty($CFG->customreportsliveediting);
     }
+
+    /**
+     * Check if the user has the capability to access this table.
+     *
+     * @return bool Return true if capability check passed.
+     */
+    public function has_capability(): bool {
+        return \core_reportbuilder\permission::can_edit_report($this->persistent);
+    }
 }
