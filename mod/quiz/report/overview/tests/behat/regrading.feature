@@ -182,7 +182,7 @@ Feature: Regrading quiz attempts using the Grades report
     # At this point, it is showing what would change.
     And "Student TwoReview attempt" row "Q. 2/50.00Sort by Q. 2/50.00 Ascending" column of "attempts" table should contain "40.00/25.00"
     And "Student TwoReview attempt" row "Grade/100.00Sort by Grade/100.00 Ascending" column of "attempts" table should contain "90.00/75.00"
-    Then I should see "The last dry-run of a regrade found that the re-grade would change the marks for 1 questions in 1 attempts."
+    Then I should see "The last dry run of a regrade found that the regrade would change the marks for 1 questions in 1 attempts."
     And I press "Commit regrade"
     And I should see "Quiz for testing regrading"
     And I should see "Finished regrading (1/1)"
@@ -195,7 +195,7 @@ Feature: Regrading quiz attempts using the Grades report
     # Now, both old-score strike-through and new score plain, are still shown, but now it indicates what did change.
     And "Student TwoReview attempt" row "Q. 2/50.00Sort by Q. 2/50.00 Ascending" column of "attempts" table should contain "40.00/25.00"
     And "Student TwoReview attempt" row "Grade/100.00Sort by Grade/100.00 Ascending" column of "attempts" table should contain "90.00/75.00"
-    And I should not see "The last dry-run of a regrade found that the re-grade would change the marks for 1 questions in 1 attempts."
+    And I should not see "The last dry run of a regrade found that the regrade would change the marks for 1 questions in 1 attempts."
 
   Scenario: Regrade all attempts works against quiz selected question version
     Given I am on the "Quiz for testing regrading" "quiz activity" page logged in as teacher
