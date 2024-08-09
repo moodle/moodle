@@ -181,6 +181,14 @@ class user_badge_exporter extends exporter {
                 'optional' => true,
                 'default' => 0,
             ],
+            'recipientid' => [
+                'type' => PARAM_INT,
+                'description' => 'Id of the awarded user',
+            ],
+            'recipientfullname' => [
+                'type' => PARAM_NOTAGS,
+                'description' => 'Full name of the awarded user',
+            ],
             'email' => [
                 'type' => PARAM_TEXT,
                 'description' => 'User email',

@@ -1,0 +1,9 @@
+issueNumber: MDL-82742
+notes:
+  core_badges:
+    - message: >-
+        Added fields `recipientid` and `recipientfullname` to
+        `user_badge_exporter`, which is used in the return structure of
+        external functions `core_badges_get_user_badge_by_hash` and
+        `core_badges_get_user_badges`.
+      type: changed

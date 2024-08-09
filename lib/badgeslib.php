@@ -421,7 +421,7 @@ function badges_get_badge_by_hash(string $hash): object|bool {
  * @return object
  */
 function badges_prepare_badge_for_external(stdClass $badge, stdClass $user): object {
-    global $PAGE, $USER;
+    global $PAGE, $SITE, $USER;
     if ($badge->type == BADGE_TYPE_SITE) {
         $context = context_system::instance();
     } else {
@@ -448,6 +448,17 @@ function badges_prepare_badge_for_external(stdClass $badge, stdClass $user): obj
             'imageauthorurl'   => $badge->imageauthorurl,
             'imagecaption'     => $badge->imagecaption,
         ];
+    }
+
+    // Recipient (the badge was awarded to this person).
+    $badge->recipientid = $user->id;
+    if ($user->deleted) {
+        $strdata = new stdClass();
+        $strdata->user = fullname($user);
+        $strdata->site = format_string($SITE->fullname, true, ['context' => context_system::instance()]);
+        $badge->recipientfullname = get_string('error:userdeleted', 'badges', $strdata);
+    } else {
+        $badge->recipientfullname = fullname($user);
     }
 
     // Create a badge instance to be able to get the endorsement and other info.
