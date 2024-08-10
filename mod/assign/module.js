@@ -137,12 +137,6 @@ M.mod_assign.init_grading_options = function(Y) {
                 Y.one('form.gradingoptionsform').submit();
             });
         }
-        var quickgradingelement = Y.one('#id_quickgrading');
-        if (quickgradingelement) {
-            quickgradingelement.on('change', function(e) {
-                Y.one('form.gradingoptionsform').submit();
-            });
-        }
         var showonlyactiveenrolelement = Y.one('#id_showonlyactiveenrol');
         if (showonlyactiveenrolelement) {
             showonlyactiveenrolelement.on('change', function(e) {

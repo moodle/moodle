@@ -4490,6 +4490,11 @@ class assign {
             set_user_preference('assign_filter', $submittedfilter);
         }
 
+        $submittedquickgrading = optional_param('quickgrading', null, PARAM_BOOL);
+        if (isset($submittedquickgrading)) {
+            set_user_preference('assign_quickgrading', $submittedquickgrading);
+        }
+
         $o = '';
         $cmid = $this->get_course_module()->id;
 
@@ -4535,17 +4540,17 @@ class assign {
         $markingworkflowoptions = $this->get_marking_workflow_filters();
 
         // Print options for changing the filter and changing the number of results per page.
-        $gradingoptionsformparams = array('cm'=>$cmid,
-                                          'contextid'=>$this->context->id,
-                                          'userid'=>$USER->id,
-                                          'submissionsenabled'=>$this->is_any_submission_plugin_enabled(),
-                                          'showquickgrading'=>$showquickgrading,
-                                          'quickgrading'=>$quickgrading,
-                                          'markingworkflowopt'=>$markingworkflowoptions,
-                                          'markingallocationopt'=>$markingallocationoptions,
-                                          'showonlyactiveenrolopt'=>$showonlyactiveenrolopt,
-                                          'showonlyactiveenrol' => $this->show_only_active_users(),
-                                          'downloadasfolders' => $downloadasfolders);
+        $gradingoptionsformparams = [
+            'cm' => $cmid,
+            'contextid' => $this->context->id,
+            'userid' => $USER->id,
+            'submissionsenabled' => $this->is_any_submission_plugin_enabled(),
+            'markingworkflowopt' => $markingworkflowoptions,
+            'markingallocationopt' => $markingallocationoptions,
+            'showonlyactiveenrolopt' => $showonlyactiveenrolopt,
+            'showonlyactiveenrol' => $this->show_only_active_users(),
+            'downloadasfolders' => $downloadasfolders,
+        ];
 
         $classoptions = array('class'=>'gradingoptionsform');
         $gradingoptionsform = new \mod_assign\form\grading_options_temp_form(null,
@@ -7378,10 +7383,6 @@ class assign {
         $this->require_view_grades();
         require_sesskey();
 
-        // Is advanced grading enabled?
-        $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
-        $controller = $gradingmanager->get_active_controller();
-        $showquickgrading = empty($controller);
         if (!is_null($this->context)) {
             $showonlyactiveenrolopt = has_capability('moodle/course:viewsuspendedusers', $this->context);
         } else {
@@ -7407,25 +7408,22 @@ class assign {
         // Get marking states to show in form.
         $markingworkflowoptions = $this->get_marking_workflow_filters();
 
-        $gradingoptionsparams = array('cm'=>$this->get_course_module()->id,
-                                      'contextid'=>$this->context->id,
-                                      'userid'=>$USER->id,
-                                      'submissionsenabled'=>$this->is_any_submission_plugin_enabled(),
-                                      'showquickgrading'=>$showquickgrading,
-                                      'quickgrading'=>false,
-                                      'markingworkflowopt' => $markingworkflowoptions,
-                                      'markingallocationopt' => $markingallocationoptions,
-                                      'showonlyactiveenrolopt'=>$showonlyactiveenrolopt,
-                                      'showonlyactiveenrol' => $this->show_only_active_users(),
-                                      'downloadasfolders' => get_user_preferences('assign_downloadasfolders', 1));
+        $gradingoptionsparams = [
+            'cm' => $this->get_course_module()->id,
+            'contextid' => $this->context->id,
+            'userid' => $USER->id,
+            'submissionsenabled' => $this->is_any_submission_plugin_enabled(),
+            'markingworkflowopt' => $markingworkflowoptions,
+            'markingallocationopt' => $markingallocationoptions,
+            'showonlyactiveenrolopt' => $showonlyactiveenrolopt,
+            'showonlyactiveenrol' => $this->show_only_active_users(),
+            'downloadasfolders' => get_user_preferences('assign_downloadasfolders', 1),
+        ];
         $mform = new mod_assign\form\grading_options_temp_form(null, $gradingoptionsparams);
         if ($formdata = $mform->get_data()) {
             set_user_preference('assign_perpage', $formdata->perpage);
             if (isset($formdata->markerfilter)) {
                 set_user_preference('assign_markerfilter', $formdata->markerfilter);
-            }
-            if ($showquickgrading) {
-                set_user_preference('assign_quickgrading', isset($formdata->quickgrading));
             }
             if (isset($formdata->downloadasfolders)) {
                 set_user_preference('assign_downloadasfolders', 1); // Enabled.
