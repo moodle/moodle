@@ -3740,7 +3740,7 @@ class assign {
     /**
      * Download a zip file of all assignment submissions.
      *
-     * @param array|null $userids Array of user ids to download assignment submissions in a zip file
+     * @param int[]|null $userids Array of user ids to download assignment submissions in a zip file
      * @return string - If an error occurs, this will contain the error page.
      */
     protected function download_submissions($userids = null) {
@@ -4499,6 +4499,11 @@ class assign {
             set_user_preference('assign_quickgrading', $submittedquickgrading);
         }
 
+        $submitteddownloadasfolders = optional_param('downloadasfolders', null, PARAM_BOOL);
+        if (isset($submitteddownloadasfolders)) {
+            set_user_preference('assign_downloadasfolders', $submitteddownloadasfolders);
+        }
+
         $o = '';
         $cmid = $this->get_course_module()->id;
 
@@ -4520,7 +4525,6 @@ class assign {
         $showquickgrading = empty($controller) && $this->can_grade();
         $quickgrading = get_user_preferences('assign_quickgrading', false);
         $showonlyactiveenrolopt = has_capability('moodle/course:viewsuspendedusers', $this->context);
-        $downloadasfolders = get_user_preferences('assign_downloadasfolders', 1);
 
         $markingallocation = $this->get_instance()->markingworkflow &&
             $this->get_instance()->markingallocation &&
@@ -4548,12 +4552,10 @@ class assign {
             'cm' => $cmid,
             'contextid' => $this->context->id,
             'userid' => $USER->id,
-            'submissionsenabled' => $this->is_any_submission_plugin_enabled(),
             'markingworkflowopt' => $markingworkflowoptions,
             'markingallocationopt' => $markingallocationoptions,
             'showonlyactiveenrolopt' => $showonlyactiveenrolopt,
             'showonlyactiveenrol' => $this->show_only_active_users(),
-            'downloadasfolders' => $downloadasfolders,
         ];
 
         $classoptions = array('class'=>'gradingoptionsform');
@@ -7416,23 +7418,16 @@ class assign {
             'cm' => $this->get_course_module()->id,
             'contextid' => $this->context->id,
             'userid' => $USER->id,
-            'submissionsenabled' => $this->is_any_submission_plugin_enabled(),
             'markingworkflowopt' => $markingworkflowoptions,
             'markingallocationopt' => $markingallocationoptions,
             'showonlyactiveenrolopt' => $showonlyactiveenrolopt,
             'showonlyactiveenrol' => $this->show_only_active_users(),
-            'downloadasfolders' => get_user_preferences('assign_downloadasfolders', 1),
         ];
         $mform = new mod_assign\form\grading_options_temp_form(null, $gradingoptionsparams);
         if ($formdata = $mform->get_data()) {
             set_user_preference('assign_perpage', $formdata->perpage);
             if (isset($formdata->markerfilter)) {
                 set_user_preference('assign_markerfilter', $formdata->markerfilter);
-            }
-            if (isset($formdata->downloadasfolders)) {
-                set_user_preference('assign_downloadasfolders', 1); // Enabled.
-            } else {
-                set_user_preference('assign_downloadasfolders', 0); // Disabled.
             }
             if (!empty($showonlyactiveenrolopt)) {
                 $showonlyactiveenrol = isset($formdata->showonlyactiveenrol);

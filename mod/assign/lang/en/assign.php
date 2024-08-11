@@ -190,7 +190,6 @@ $string['disabled'] = 'Disabled';
 $string['downloadall'] = 'Download all submissions';
 $string['download all submissions'] = 'Download all submissions in a zip file.';
 $string['downloadasfolders'] = 'Download submissions in folders';
-$string['downloadasfolders_help'] = 'Assignment submissions may be downloaded in folders. Each submission is then put in a separate folder, with the folder structure kept for any subfolders, and files are not renamed.';
 $string['downloadselectedsubmissions'] = 'Download selected submissions';
 $string['duedate'] = 'Due date';
 $string['duedatecolon'] = 'Due date: {$a}';
@@ -703,6 +702,7 @@ $string['xofy'] = '{$a->x} of {$a->y}';
 // Deprecated since Moodle 4.5.
 $string['attemptreopenmethod_none'] = 'Never';
 $string['choosegradingaction'] = 'Grading action';
+$string['downloadasfolders_help'] = 'Assignment submissions may be downloaded in folders. Each submission is then put in a separate folder, with the folder structure kept for any subfolders, and files are not renamed.';
 $string['groupoverridesdeleted'] = 'Group overrides deleted';
 $string['updategrade'] = 'Update grade';
 $string['useroverridesdeleted'] = 'User overrides deleted';
