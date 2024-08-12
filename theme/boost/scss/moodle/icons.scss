@@ -55,6 +55,11 @@ $iconsizes: map-merge((
         max-height: $icon-big-height;
         font-size: $icon-big-height;
     }
+
+    &.emoticon {
+        max-width: map-get($iconsizes, 3);
+        max-height: map-get($iconsizes, 3);
+    }
 }
 
 // Force size for the SVG icons.
