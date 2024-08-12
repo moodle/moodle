@@ -70,7 +70,7 @@ $systemcontext = context_system::instance();
 // Set the companyid
 $companyid = iomad::get_my_companyid($systemcontext);
 $companycontext = \core\context\company::instance($companyid);
-$company = new company($companyid);
+$mycompany = new company($companyid);
 
 iomad::require_capability('block/iomad_company_admin:managetemplates', $companycontext);
 
