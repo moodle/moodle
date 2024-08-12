@@ -484,9 +484,20 @@ trait form_trait {
                     $mform->freeze($completionpassgradeel);
 
                     // Has the completion pass grade completion criteria been set? If it has, then we shouldn't change
-                    // the gradepass field.
+                    // any of the modules "gradepass" type fields.
                     if ($mform->exportValue($completionpassgradeel)) {
-                        $mform->freeze('gradepass');
+
+                        // Some modules define separate "gradepass" fields for each of their grade items.
+                        $gradepassfieldels = array_merge(['gradepass'], array_map(
+                            fn(string $gradeitem) => "{$gradeitem}gradepass",
+                            component_gradeitems::get_itemname_mapping_for_component("mod_{$this->_modname}"),
+                        ));
+
+                        foreach ($gradepassfieldels as $gradepassfieldel) {
+                            if ($mform->elementExists($gradepassfieldel)) {
+                                $mform->freeze($gradepassfieldel);
+                            }
+                        }
                     }
                 }
                 $completiongradeitemnumberel = 'completiongradeitemnumber' . $suffix;

@@ -2084,6 +2084,10 @@ a.disabled {
     color: $text-muted;
 }
 
+a.btn.disabled {
+    opacity: 1;
+}
+
 body.lockscroll {
     height: 100%;
     overflow: hidden;

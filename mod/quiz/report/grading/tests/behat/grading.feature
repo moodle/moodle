@@ -55,8 +55,8 @@ Feature: Basic use of the Manual grading report
       | quiz     | Quiz 1 | C1     | quiz1    | 1         | tging    |
       | quiz     | Quiz 2 | C1     | quiz2    | 1         | tging    |
     And quiz "Quiz 1" contains the following questions:
-      | question         | page |
-      | Short answer 001 | 1    |
+      | question         | page | displaynumber |
+      | Short answer 001 | 1    | 1a            |
 
   Scenario: Manual grading report without attempts
     When I am on the "Quiz 1" "mod_quiz > Manual grading report" page logged in as "teacher1"
@@ -98,6 +98,7 @@ Feature: Basic use of the Manual grading report
     And I set the field "Mark" to "0.6"
     And I press "Save and show next"
     And I should see "All selected attempts have been graded. Returning to the list of questions."
+    And "Short answer 001" row "Q #" column of "questionstograde" table should contain "1a"
     And "Short answer 001" row "To grade" column of "questionstograde" table should contain "0"
     And "Short answer 001" row "Already graded" column of "questionstograde" table should contain "1"
 
@@ -166,7 +167,7 @@ Feature: Basic use of the Manual grading report
     And I should see "Separate groups: All participants"
     Then I should see "Sorry, but you need to be part of a group to see this page."
 
-  @javascript @editor_atto
+  @javascript
   Scenario: Manual grading report with attempts to be graded
     Given the following "questions" exist:
       | questioncategory | qtype | name     | user  | questiontext    |
@@ -174,27 +175,24 @@ Feature: Basic use of the Manual grading report
     And quiz "Quiz 2" contains the following questions:
       | question | page |
       | Essay Q1 | 1    |
-    And I log out
     When I am on the "Quiz 2" "mod_quiz > View" page logged in as "student1"
     And I press "Attempt quiz"
-    And I set the field with xpath "//*[contains(concat(' ', @class, ' '), ' editor_atto_content ')]" to "This is my attempt 1"
+    And I set the field "Answer text Question 1" to "This is my attempt 1"
     And I follow "Finish attempt ..."
     And I press "Submit all and finish"
     And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
     And I click on "Finish review" "link"
     And I press "Re-attempt quiz"
-    And I set the field with xpath "//*[contains(concat(' ', @class, ' '), ' editor_atto_content ')]" to "This is my attempt 2"
+    And I set the field "Answer text Question 1" to "This is my attempt 2"
     And I follow "Finish attempt ..."
     And I press "Submit all and finish"
     And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
     And I click on "Finish review" "link"
     And I press "Re-attempt quiz"
-    And I set the field with xpath "//*[contains(concat(' ', @class, ' '), ' editor_atto_content ')]" to "This is my attempt 3"
+    And I set the field "Answer text Question 1" to "This is my attempt 3"
     And I follow "Finish attempt ..."
     And I press "Submit all and finish"
     And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
-    And I log out
-
     And I am on the "Quiz 2" "mod_quiz > Manual grading report" page logged in as "teacher1"
     And I follow "Also show questions that have been graded automatically"
     And I should see "Essay Q1"

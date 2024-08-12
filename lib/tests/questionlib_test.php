@@ -2009,6 +2009,50 @@ class questionlib_test extends \advanced_testcase {
     }
 
     /**
+     * Test question_has_capability_on with an invalid question ID
+     */
+    public function test_question_has_capability_on_invalid_question(): void {
+        try {
+            question_has_capability_on(42, 'tag');
+            $this->fail('Expected exception');
+        } catch (\moodle_exception $exception) {
+            $this->assertInstanceOf(\dml_missing_record_exception::class, $exception);
+
+            // We also get debugging from initial attempt to load question data.
+            $this->assertDebuggingCalled();
+        }
+    }
+
+    /**
+     * Test that question_has_capability_on does not fail when passed an object with a null
+     * createdby property.
+     */
+    public function test_question_has_capability_on_object_with_null_createdby(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $category = $generator->create_category();
+        $context = \context_coursecat::instance($category->id);
+
+        $role = $generator->create_role();
+        role_assign($role, $user->id, $context->id);
+        assign_capability('moodle/question:editmine', CAP_ALLOW, $role, $context->id);
+
+        $this->setUser($user);
+
+        $fakequestion = (object) [
+            'contextid' => $context->id,
+            'createdby' => null,
+        ];
+
+        $this->assertFalse(question_has_capability_on($fakequestion, 'edit'));
+
+        $fakequestion->createdby = $user->id;
+
+        $this->assertTrue(question_has_capability_on($fakequestion, 'edit'));
+    }
+
+    /**
      * Test of question_categorylist function.
      *
      * @covers ::question_categorylist()

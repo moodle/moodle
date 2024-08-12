@@ -196,6 +196,26 @@ Feature: Within the User report, a teacher can search for users.
     And "Turtle Manatee" "heading" should exist
     And "Teacher 1" "heading" should not exist
 
+  Scenario: A teacher can only search for fields that he allowed to see
+    Given the following "permission overrides" exist:
+      | capability                         | permission | role             | contextlevel | reference |
+      | moodle/course:viewhiddenuserfields | Prohibit   | editingteacher   | System       |           |
+    And the following config values are set as admin:
+      | hiddenuserfields | email |
+    And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
+    When I set the field "Search users" to "User"
+    And "View all results (5)" "option_role" should exist
+    And I confirm "Dummy User" in "user" search within the gradebook widget exists
+    And I confirm "User Example" in "user" search within the gradebook widget exists
+    And I confirm "User Test" in "user" search within the gradebook widget exists
+    # Email is not shown in results.
+    And I confirm "User" in "user" search within the gradebook widget exists
+    And I confirm "example.com" in "user" search within the gradebook widget does not exist
+    # Email is not searchable.
+    And I set the field "Search users" to "student5@example.com"
+    And "View all results (5)" "option_role" should not exist
+    And I confirm "No results for \"student5@example.com\"" in "user" search within the gradebook widget exists
+
   @accessibility
   Scenario: A teacher can set focus and search using the input are with a keyboard
     Given I set the field "Search users" to "ABC"

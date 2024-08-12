@@ -298,10 +298,10 @@ $calendarCurrentDateBackground: $primary;
     .calendar_event_site,
     .calendar_event_group,
     .calendar_event_user {
-        &:hover {
-            a {
-                color: $link-hover-color;
-                text-decoration: $link-hover-decoration;
+        a:has(> .icon) {
+            &:hover {
+                color: darken($calendarEventColor, 15%);
+                text-decoration: $link-decoration;
             }
         }
     }
@@ -628,7 +628,10 @@ table.calendartable caption {
                         .previous,
                         .next {
                             width: 30%;
-                            font-size: 0.8em;
+
+                            .arrow_text {
+                                display: none;
+                            }
                         }
                     }
 

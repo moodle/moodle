@@ -983,6 +983,15 @@ function get_user_accessdata($userid, $preloadonly=false) {
         $ACCESSLIB_PRIVATE->accessdatabyuser[$USER->id] = $USER->access;
     }
 
+    // Unfortunately, we can't use the $ACCESSLIB_PRIVATE->dirtyusers array because it is not available in CLI.
+    // So we need to check if the user has been marked as dirty or not in the cache directly.
+    // This will add additional queries to the database, but it is the best we can do.
+    if (CLI_SCRIPT && !empty($ACCESSLIB_PRIVATE->accessdatabyuser[$userid])) {
+        if (get_cache_flag('accesslib/dirtyusers', $userid, $ACCESSLIB_PRIVATE->accessdatabyuser[$userid]['time'])) {
+            unset($ACCESSLIB_PRIVATE->accessdatabyuser[$userid]);
+        }
+    }
+
     if (!isset($ACCESSLIB_PRIVATE->accessdatabyuser[$userid])) {
         if (empty($userid)) {
             if (!empty($CFG->notloggedinroleid)) {

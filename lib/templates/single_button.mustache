@@ -58,7 +58,7 @@
         {{#params}}
             <input type="hidden" name="{{name}}" value="{{value}}">
         {{/params}}
-        <button type="submit" class="btn btn-{{type}}"
+        <button type="submit" class="btn btn-{{type}}{{^type}}secondary{{/type}}"
             id="{{id}}"
             {{#tooltip}}title="{{tooltip}}"{{/tooltip}}
             {{#disabled}}disabled{{/disabled}}

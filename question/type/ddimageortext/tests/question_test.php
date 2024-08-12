@@ -26,7 +26,6 @@ global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 require_once($CFG->dirroot . '/question/type/ddimageortext/tests/helper.php');
 
-
 /**
  * Unit tests for the matching question definition class.
  *
@@ -35,7 +34,7 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/tests/helper.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers qtype_ddimageortext_question
  */
-class question_test extends \basic_testcase {
+final class question_test extends \basic_testcase {
 
     public function test_get_question_summary() {
         $dd = \test_question_maker::make_question('ddimageortext');
@@ -224,7 +223,7 @@ class question_test extends \basic_testcase {
 
         $this->assertFalse($dd->is_gradable_response(array()));
         $this->assertFalse($dd->is_gradable_response(
-            array('p1' => '', 'p2' => '', 'p3' => '', 'p3' => '')));
+            array('p1' => '', 'p2' => '', 'p3' => '')));
         $this->assertTrue($dd->is_gradable_response(
             array('p1' => '1', 'p2' => '1', 'p3' => '')));
         $this->assertTrue($dd->is_gradable_response(array('p1' => '1')));

@@ -164,6 +164,38 @@ class core_component {
             require($file);
             return;
         }
+
+        if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
+            // For unit tests we support classes in `\frankenstyle_component\tests\` to be loaded from
+            // `path/to/frankenstyle/component/tests/classes` directory.
+            // Note: We do *not* support the legacy `\frankenstyle_component_tests_style_classnames`.
+            if ($component = self::get_component_from_classname($classname)) {
+                $pathoptions = [
+                    '/tests/classes' => "{$component}\\tests\\",
+                    '/tests/behat' => "{$component}\\behat\\",
+                ];
+                foreach ($pathoptions as $path => $testnamespace) {
+                    if (preg_match("#^" . preg_quote($testnamespace) . "#", $classname)) {
+                        $path = self::get_component_directory($component) . $path;
+                        $relativeclassname = str_replace(
+                            $testnamespace,
+                            '',
+                            $classname,
+                        );
+                        $file = sprintf(
+                            "%s/%s.php",
+                            $path,
+                            str_replace('\\', '/', $relativeclassname),
+                        );
+                        if (!empty($file) && file_exists($file)) {
+                            require($file);
+                            return;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -233,7 +265,6 @@ class core_component {
 
         return $file;
     }
-
 
     /**
      * Initialise caches, always call before accessing self:: caches.
@@ -354,6 +385,17 @@ class core_component {
             @unlink($cachefile.'.tmp'); // Just in case anything fails (race condition).
             self::invalidate_opcode_php_cache($cachefile);
         }
+    }
+
+    /**
+     * Reset the initialisation of the component utility.
+     *
+     * Note: It should not be necessary to call this in regular code.
+     * Please only use it where strictly required.
+     */
+    public static function reset(): void {
+        // The autoloader will re-initialise if plugintypes is null.
+        self::$plugintypes = null;
     }
 
     /**
@@ -1083,6 +1125,35 @@ $cache = '.var_export($cache, true).';
     }
 
     /**
+     * Fetch the component name from a Moodle PSR-like namespace.
+     *
+     * Note: Classnames in the flat underscore_class_name_format are not supported.
+     *
+     * @param string $classname
+     * @return null|string The component name, or null if a matching component was not found
+     */
+    public static function get_component_from_classname(string $classname): ?string {
+        $components = static::get_component_names(true);
+
+        $classname = ltrim($classname, '\\');
+
+        // Prefer PSR-4 classnames.
+        $parts = explode('\\', $classname);
+        if ($parts) {
+            $component = array_shift($parts);
+            if (array_search($component, $components) !== false) {
+                return $component;
+            }
+        }
+
+        // Note: Frankenstyle classnames are not supported as they lead to false positives, for example:
+        // \core_typo\example => \core instead of \core_typo because it does not exist
+        // Please *do not* add support for Frankenstyle classnames. They will break other things.
+
+        return null;
+    }
+
+    /**
      * Return exact absolute path to a plugin directory.
      *
      * @param string $component name such as 'moodle', 'mod_forum'
@@ -1399,18 +1470,16 @@ $cache = '.var_export($cache, true).';
     }
 
     /**
-     * Returns a list of frankenstyle component names.
+     * Returns a list of frankenstyle component names, including all plugins, subplugins, and subsystems.
      *
-     * E.g.
-     *  [
-     *      'core_course',
-     *      'core_message',
-     *      'mod_assign',
-     *      ...
-     *  ]
-     * @return array the list of frankenstyle component names.
+     * Note: By default the 'core' subsystem is not included.
+     *
+     * @param bool $includecore Whether to include the 'core' subsystem
+     * @return string[] the list of frankenstyle component names.
      */
-    public static function get_component_names() : array {
+    public static function get_component_names(
+        bool $includecore = false,
+    ): array {
         $componentnames = [];
         // Get all plugins.
         foreach (self::get_plugin_types() as $plugintype => $typedir) {
@@ -1422,6 +1491,11 @@ $cache = '.var_export($cache, true).';
         foreach (self::get_core_subsystems() as $subsystemname => $subsystempath) {
             $componentnames[] = 'core_' . $subsystemname;
         }
+
+        if ($includecore) {
+            $componentnames[] = 'core';
+        }
+
         return $componentnames;
     }
 

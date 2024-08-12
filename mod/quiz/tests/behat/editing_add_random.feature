@@ -84,6 +84,18 @@ Feature: Adding random questions to a quiz based on category and tags
     And I should see "question 1 name"
     And I should see "\"listen\" & \"answer\""
 
+  Scenario: After closing and reopening the modal, it still works
+    When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as teacher1
+    And I open the "last" add to quiz menu
+    And I follow "a random question"
+    And I click on "Close" "button" in the "Add a random question at the end" "dialogue"
+    And I open the "last" add to quiz menu
+    And I follow "a random question"
+    And I should not see "question 3 name"
+    And I set the field "Category" to "Subcategory"
+    And I press "Apply filters"
+    Then I should see "question 3 name"
+
   Scenario: Teacher without moodle/question:useall should not see the add a random question menu item
     Given the following "permission overrides" exist:
       | capability             | permission | role           | contextlevel | reference |

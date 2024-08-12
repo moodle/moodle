@@ -198,6 +198,13 @@ class MoodleQuickForm_select extends HTML_QuickForm_select implements templatabl
     }
 
     public function export_for_template(renderer_base $output) {
+        // For multi-selects, if there is not already a size set, then set a sensible default.
+        if ($this->getMultiple()) {
+            if (!isset($this->_attributes['size'])) {
+                $this->_attributes['size'] = min(count($this->_options), 10);
+            }
+        }
+
         $context = $this->export_for_template_base($output);
 
         $options = [];

@@ -1261,7 +1261,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $output = '';
 
         $output .= $this->render_action_buttons($workshop, $userplan);
-        $output .= $this->heading(format_string($currentphasetitle), 3, null, 'mod_workshop-userplanheading');
+        $output .= $this->heading(format_string($currentphasetitle), 2, null, 'mod_workshop-userplanheading');
         $output .= $this->render($userplan);
         $output .= $this->view_submissions_report($workshop, $userplan, $page, $sortby, $sorthow);
 

@@ -247,7 +247,7 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
             'sequence' => 1,
             'meta' => [
                 'bn-presenter-name' => $data['presentername'] ?? 'Fake presenter',
-                'bn-recording-ready-url' => new moodle_url('/mod/bigbluebuttonbn/bbb_broker.php', [
+                'bbb-recording-ready-url' => new moodle_url('/mod/bigbluebuttonbn/bbb_broker.php', [
                     'action' => 'recording_ready',
                     'bigbluebuttonbn' => $instance->get_instance_id()
                 ]),
@@ -353,7 +353,7 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
             ],
         ]);
         if ((boolean) config::get('recordingready_enabled')) {
-            $roomconfig['meta']['bn-recording-ready-url'] = $instance->get_record_ready_url()->out(false);
+            $roomconfig['meta']['bbb-recording-ready-url'] = $instance->get_record_ready_url()->out(false);
         }
         if ((boolean) config::get('meetingevents_enabled')) {
             $roomconfig['meta']['analytics-callback-url'] = $instance->get_meeting_event_notification_url()->out(false);

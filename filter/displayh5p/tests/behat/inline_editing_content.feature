@@ -1,4 +1,4 @@
-@editor @editor_atto @atto @atto_h5p @filter @filter_displayh5p @core_h5p @_file_upload @_switch_iframe
+@editor @filter @filter_displayh5p @core_h5p @_switch_iframe
 Feature: Inline editing H5P content anywhere
   In order to edit an existing H5P content
   As a user
@@ -30,31 +30,25 @@ Feature: Inline editing H5P content anywhere
       | capability                 | permission | role           | contextlevel | reference |
       | moodle/course:update       | Allow      | teacher        | System       |           |
       | moodle/course:update       | Allow      | student        | System       |           |
-    And the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
 
   @javascript @mod @mod_page
   Scenario: Edit H5P content from a page using link to private file
     Given the following "permission overrides" exist:
       | capability                 | permission | role           | contextlevel | reference |
       | moodle/h5p:updatelibraries | Allow      | editingteacher | System       |           |
-    And I log in as "teacher1"
-    # Upload the H5P to private user files.
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/greeting-card.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
+    And the following "user private file" exists:
+      | user     | teacher1                             |
+      | filepath | h5p/tests/fixtures/greeting-card.h5p |
     # Add H5P content to the page.
-    And I am on "Course 1" course homepage
-    And I am on the "PageName1" "page activity" page
+    And I am on the "PageName1" "page activity" page logged in as "teacher1"
     And I navigate to "Settings" in current page administration
-    And I click on "Insert H5P" "button" in the "#fitem_id_page" "css_element"
-    And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
+    And I click on "Configure H5P content" "button" in the "#fitem_id_page" "css_element"
+    And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
     And I select "Private files" repository in file picker
     And I click on "greeting-card.h5p" "file" in repository content area
     And I click on "Link to the file" "radio"
     And I click on "Select this file" "button"
-    And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
+    And I click on "Insert H5P" "button" in the "Insert H5P content" "dialogue"
     And I click on "Save and display" "button"
     And I switch to "h5p-iframe" class iframe
     And I switch to "h5p-iframe" class iframe
@@ -92,13 +86,13 @@ Feature: Inline editing H5P content anywhere
     # Add H5P content to the page.
     And I am on the "PageName1" "page activity" page
     And I navigate to "Settings" in current page administration
-    And I click on "Insert H5P" "button" in the "#fitem_id_page" "css_element"
-    And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
+    And I click on "Configure H5P content" "button" in the "#fitem_id_page" "css_element"
+    And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
     And I select "Content bank" repository in file picker
     And I click on "Greeting card" "file" in repository content area
     And I click on "Link to the file" "radio"
     And I click on "Select this file" "button"
-    And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
+    And I click on "Insert H5P" "button" in the "Insert H5P content" "dialogue"
     And I click on "Save and display" "button"
     And I switch to "h5p-iframe" class iframe
     And I switch to "h5p-iframe" class iframe
@@ -136,13 +130,13 @@ Feature: Inline editing H5P content anywhere
     # Add H5P content to the page.
     And I am on the "PageName1" "page activity" page
     And I navigate to "Settings" in current page administration
-    And I click on "Insert H5P" "button" in the "#fitem_id_page" "css_element"
-    And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
+    And I click on "Configure H5P content" "button" in the "#fitem_id_page" "css_element"
+    And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
     And I select "Content bank" repository in file picker
     And I click on "Greeting card" "file" in repository content area
     And I click on "Make a copy of the file" "radio"
     And I click on "Select this file" "button"
-    And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
+    And I click on "Insert H5P" "button" in the "Insert H5P content" "dialogue"
     And I click on "Save and display" "button"
     And I switch to "h5p-iframe" class iframe
     And I switch to "h5p-iframe" class iframe
@@ -182,9 +176,9 @@ Feature: Inline editing H5P content anywhere
     # Add H5P content to the page.
     And I am on the "PageName1" "page activity" page
     And I navigate to "Settings" in current page administration
-    And I click on "Insert H5P" "button" in the "#fitem_id_page" "css_element"
-    And I set the field with xpath "//input[@data-region='h5pfile']" to "https://moodle.h5p.com/content/1290772960722742119"
-    And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
+    And I click on "Configure H5P content" "button" in the "#fitem_id_page" "css_element"
+    And I set the field "H5P URL or file upload" to "https://moodle.h5p.com/content/1290772960722742119"
+    And I click on "Insert H5P" "button" in the "Insert H5P content" "dialogue"
     And I click on "Save and display" "button"
     And ".h5p-placeholder" "css_element" should exist
     And I switch to "h5pcontent" iframe
@@ -225,13 +219,13 @@ Feature: Inline editing H5P content anywhere
       | Text block title | H5PTest     |
       | Content          | -           |
     And I configure the "H5PTest" block
-    And I click on "Insert H5P" "button" in the "//div[contains(@id,'fitem_id_config_text')]" "xpath_element"
-    And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
+    And I click on "Configure H5P content" "button" in the "//div[contains(@id,'fitem_id_config_text')]" "xpath_element"
+    And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
     And I select "Content bank" repository in file picker
     And I click on "Greeting card" "file" in repository content area
     And I click on "Make a copy of the file" "radio"
     And I click on "Select this file" "button"
-    And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
+    And I click on "Insert H5P" "button" in the "Insert H5P content" "dialogue"
     And I click on "Save changes" "button" in the "Configure H5PTest block" "dialogue"
     And I switch to "h5p-iframe" class iframe
     And I switch to "h5p-iframe" class iframe

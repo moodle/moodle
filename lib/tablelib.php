@@ -51,6 +51,7 @@ define('TABLE_P_BOTTOM', 2);
  */
 define('TABLE_SHOW_ALL_PAGE_SIZE', 5000);
 
+use core\dataformat;
 use core_table\local\filter\filterset;
 
 /**
@@ -2318,11 +2319,7 @@ class table_dataformat_export_format extends table_default_export_format_parent 
             throw new coding_exception("Output can not be buffered before instantiating table_dataformat_export_format");
         }
 
-        $classname = 'dataformat_' . $dataformat . '\writer';
-        if (!class_exists($classname)) {
-            throw new coding_exception("Unable to locate dataformat/$dataformat/classes/writer.php");
-        }
-        $this->dataformat = new $classname;
+        $this->dataformat = dataformat::get_format_instance($dataformat);
 
         // The dataformat export time to first byte could take a while to generate...
         set_time_limit(0);

@@ -29,4 +29,4 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thislanguage'] = 'English for Workplace';
+$string['thislanguage'] = 'English';

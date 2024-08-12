@@ -153,16 +153,18 @@ class controlmenu implements named_templatable, renderable {
                 'attr' => ['class' => 'icon edit'],
             ];
 
-            $duplicatesectionurl = clone($baseurl);
-            $duplicatesectionurl->param('section', $section->section);
-            $duplicatesectionurl->param('duplicatesection', $section->section);
-            $controls['duplicate'] = [
-                'url' => $duplicatesectionurl,
-                'icon' => 't/copy',
-                'name' => get_string('duplicate'),
-                'pixattr' => ['class' => ''],
-                'attr' => ['class' => 'icon duplicate'],
-            ];
+            if ($section->section) {
+                $duplicatesectionurl = clone($baseurl);
+                $duplicatesectionurl->param('sectionid', $section->id);
+                $duplicatesectionurl->param('duplicatesection', 1);
+                $controls['duplicate'] = [
+                    'url' => $duplicatesectionurl,
+                    'icon' => 't/copy',
+                    'name' => get_string('duplicate'),
+                    'pixattr' => ['class' => ''],
+                    'attr' => ['class' => 'icon duplicate'],
+                ];
+            }
         }
 
         if ($section->section) {
@@ -173,9 +175,9 @@ class controlmenu implements named_templatable, renderable {
                     $strshowfromothers = get_string('showfromothers', 'format_' . $course->format);
                     if ($section->visible) { // Show the hide/show eye.
                         $url->param('hide', $section->section);
-                        $controls['visiblity'] = [
+                        $controls['visibility'] = [
                             'url' => $url,
-                            'icon' => 'i/hide',
+                            'icon' => 'i/show',
                             'name' => $strhidefromothers,
                             'pixattr' => ['class' => ''],
                             'attr' => [
@@ -183,15 +185,16 @@ class controlmenu implements named_templatable, renderable {
                                 'data-sectionreturn' => $sectionreturn,
                                 'data-action' => ($usecomponents) ? 'sectionHide' : 'hide',
                                 'data-id' => $section->id,
+                                'data-icon' => 'i/show',
                                 'data-swapname' => $strshowfromothers,
-                                'data-swapicon' => 'i/show',
+                                'data-swapicon' => 'i/hide',
                             ],
                         ];
                     } else {
                         $url->param('show',  $section->section);
-                        $controls['visiblity'] = [
+                        $controls['visibility'] = [
                             'url' => $url,
-                            'icon' => 'i/show',
+                            'icon' => 'i/hide',
                             'name' => $strshowfromothers,
                             'pixattr' => ['class' => ''],
                             'attr' => [
@@ -199,8 +202,9 @@ class controlmenu implements named_templatable, renderable {
                                 'data-sectionreturn' => $sectionreturn,
                                 'data-action' => ($usecomponents) ? 'sectionShow' : 'show',
                                 'data-id' => $section->id,
+                                'data-icon' => 'i/hide',
                                 'data-swapname' => $strhidefromothers,
-                                'data-swapicon' => 'i/hide',
+                                'data-swapicon' => 'i/show',
                             ],
                         ];
                     }

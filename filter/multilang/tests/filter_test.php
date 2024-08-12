@@ -14,26 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace filter_multilang;
+
 /**
- * Unit tests.
+ * Tests for filter_multilang.
  *
  * @package filter_multilang
  * @category test
  * @copyright 2019 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace filter_multilang;
-
-use filter_multilang;
-
-/**
- * Tests for filter_multilang.
- *
- * @copyright 2019 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class filter_test extends \advanced_testcase {
+final class filter_test extends \advanced_testcase {
 
     public function setUp(): void {
         parent::setUp();
@@ -62,7 +53,7 @@ class filter_test extends \advanced_testcase {
     /**
      * Data provider for multi-language filtering tests.
      */
-    public function multilang_testcases() {
+    public static function multilang_testcases(): array {
         return [
             'Basic case EN' => [
                 'English',
@@ -79,7 +70,7 @@ class filter_test extends \advanced_testcase {
                 '<span lang="fr" class="multilang">Français</span><span class="multilang" lang="en">English</span>',
                 'en',
             ],
-            'Reversed input order EN' => [
+            'Reversed input order FR' => [
                 'Français',
                 '<span lang="fr" class="multilang">Français</span><span class="multilang" lang="en">English</span>',
                 'fr',

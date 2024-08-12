@@ -263,7 +263,6 @@ class comment {
         $page->requires->strings_for_js(array(
                 'addcomment',
                 'comments',
-                'commentscount',
                 'commentsrequirelogin',
                 'deletecommentbyon'
             ),
@@ -454,7 +453,7 @@ class comment {
                 // comments open and closed
                 $countstring = '';
                 if ($this->displaytotalcount) {
-                    $countstring = '('.$this->count().')';
+                    $countstring = '(' . html_writer::span($this->count(), 'comment-link-count') . ')';
                 }
                 $collapsedimage= 't/collapsed';
                 if (right_to_left()) {

@@ -181,7 +181,13 @@ if (!empty($command)) {
                         }
                         echo 'Lesson_Mode='.$userdata->mode."\r\n";
                         if (isset($userdata->{'cmi.suspend_data'})) {
-                            echo "[Core_Lesson]\r\n".rawurldecode($userdata->{'cmi.suspend_data'})."\r\n";
+                            $decoded = rawurldecode($userdata->{'cmi.suspend_data'});
+                            $header = "[Core_Lesson]\r\n";
+                            if (stripos($decoded, $header) === 0) {
+                                // The header may have been stored with the content. If it was, trim it off the front.
+                                $decoded = core_text::substr($decoded, core_text::strlen($header));
+                            }
+                            echo "[Core_Lesson]\r\n".$decoded."\r\n";
                         } else {
                             echo "[Core_Lesson]\r\n";
                         }
@@ -229,8 +235,9 @@ if (!empty($command)) {
                                         // An element was passed by the external AICC package is not one we care about.
                                         continue;
                                     }
+                                } else {
+                                    $multirowvalue .= $datarow . "\r\n";
                                 }
-                                $multirowvalue .= $datarow."\r\n";
                                 if (isset($datarows[$did + 1]) && substr($datarows[$did + 1], 0, 1) != '[') {
                                     // This is a multiline row, we haven't found the end yet.
                                     continue;
@@ -413,10 +420,10 @@ if (!empty($command)) {
                         } else {
                             $track = new stdClass();
                             $track->scoid = $sco->id;
-                            $track->element = scorm_get_elementid('cmi.core.total_time');
+                            $track->elementid = scorm_get_elementid('cmi.core.total_time');
                             $track->value = $scormsession->sessiontime;
                             $atobject = scorm_get_attempt($aiccuser->id, $scormsession->scormid, $attempt);
-                            $track->attempt = $atobject->id;
+                            $track->attemptid = $atobject->id;
                             $track->timemodified = time();
                             $id = $DB->insert_record('scorm_scoes_value', $track);
                         }

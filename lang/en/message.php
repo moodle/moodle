@@ -269,6 +269,7 @@ $string['viewfullnotification'] = 'View full notification';
 $string['viewmessageswith'] = 'View messages with {$a}';
 $string['viewnotificationresource'] = 'Go to: {$a}';
 $string['viewunreadmessageswith'] = 'View unread messages with {$a}';
+$string['waitingforcontactaccept'] = 'Waiting to be added as contact';
 $string['writeamessage'] = 'Write a message...';
 $string['wouldliketocontactyou'] = 'Would like to contact you';
 $string['you'] = 'You:';

@@ -224,7 +224,7 @@ function user_update_user($user, $updatepassword = true, $triggerevent = true) {
         if (!property_exists($currentrecord, $attributekey) || $attributekey === 'timemodified') {
             continue;
         }
-        if ($currentrecord->{$attributekey} != $attributevalue) {
+        if ($currentrecord->{$attributekey} !== $attributevalue) {
             $changedattributes[$attributekey] = $attributevalue;
         }
     }
@@ -437,9 +437,7 @@ function user_get_user_details($user, $course = null, array $userfields = array(
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
     }
 
-
-    if (!empty($user->address) && (in_array('address', $userfields)
-            && in_array('address', $showuseridentityfields) || $isadmin)) {
+    if (!empty($user->address) && (in_array('address', $userfields) || $isadmin)) {
         $userdetails['address'] = $user->address;
     }
     if (!empty($user->phone1) && (in_array('phone1', $userfields)

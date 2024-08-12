@@ -300,4 +300,51 @@ final class manager_test extends \advanced_testcase {
         $scheduledtask1 = manager::get_scheduled_task(scheduled_test_task::class);
         self::assertGreaterThan($next1->get_fail_delay(), $scheduledtask1->get_fail_delay());
     }
+
+    public function test_get_next_adhoc_task_will_respect_failed_tasks(): void {
+        // Create three tasks, one is burned on the first get_next_adhoc_task() call to build up the cache,
+        // the second will be set to failed and the third is required to make the "uniquetasksinqueue" query
+        // within the get_next_adhoc_task() function not returning a different count of remaining unique tasks.
+        manager::queue_adhoc_task(new adhoc_test_task());
+        manager::queue_adhoc_task(new adhoc_test_task());
+        manager::queue_adhoc_task(new adhoc_test_task());
+        $timestart = time();
+
+        $candidates = manager::get_candidate_adhoc_tasks($timestart, 4, null);
+        $this->assertEquals(count($candidates), 3);
+        $task1 = manager::adhoc_task_from_record(array_shift($candidates));
+        $task2 = manager::adhoc_task_from_record(array_shift($candidates));
+        $task3 = manager::adhoc_task_from_record(array_shift($candidates));
+
+        // Build up the cache by getting the first task.
+        $task = manager::get_next_adhoc_task($timestart);
+        // Release the lock by completing the task to avoid "A lock was created but not released" error if the assertion fails.
+        manager::adhoc_task_complete($task);
+        $this->assertEquals($task->get_id(), $task1->get_id());
+
+        // Make $task2 failed...
+        try {
+            // Expecting "Error: Call to a member function release() on null" as the task was not locked before.
+            manager::adhoc_task_failed($task2);
+        } catch (\Throwable $t) {
+            // Ignoring "Call to a member function release() on null" and throw anything else.
+            if ($t->getMessage() != "Call to a member function release() on null") {
+                throw $t;
+            }
+        }
+        $task = manager::get_next_adhoc_task($timestart);
+        // Release the lock by completing the task to avoid "A lock was created but not released" error if the assertion fails.
+        manager::adhoc_task_complete($task);
+        // Task $task2 should not be returned because it has failed meanwhile and
+        // therefore has its nextruntime in the future...
+        $this->assertNotEquals($task->get_id(), $task2->get_id());
+
+        // Just to make sure check that the complete queue is as expected.
+        $this->assertEquals($task->get_id(), $task3->get_id());
+        // Now the queue should be empty...
+        $task = manager::get_next_adhoc_task($timestart);
+        $this->assertNull($task);
+
+        $this->resetAfterTest();
+    }
 }

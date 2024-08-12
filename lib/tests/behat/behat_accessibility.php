@@ -190,11 +190,11 @@ EOF;
     protected function get_axe_config_for_tags(?array $standardtags = null, ?array $extratags = null): string {
         if (empty($standardtags)) {
             $standardtags = [
-                // Meet WCAG 2.1 A requirements.
-                'wcag21a',
+                // Meet WCAG 2.2 Level A success criteria.
+                'wcag22a',
 
-                // Meet WCAG 2.1 AA requirements.
-                'wcag21aa',
+                // Meet WCAG 2.2 Level AA success criteria.
+                'wcag22aa',
 
                 // Meet Section 508 requirements.
                 // See https://www.epa.gov/accessibility/what-section-508 for detail.
@@ -218,6 +218,14 @@ EOF;
                 'type' > 'tag',
                 'values' => array_merge($standardtags, $extratags),
             ],
+            'rules' => [
+                // Disable the target-size rule.
+                // This rule was added in Axe 4.7, but changed in 4.8 to allow for spacing around the element.
+                // See https://github.com/dequelabs/axe-core/pull/4117 for more information on this change.
+                'target-size' => [
+                    'enabled' => false,
+                ],
+            ]
         ]);
     }
 }

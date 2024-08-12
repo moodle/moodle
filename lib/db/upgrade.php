@@ -3740,5 +3740,27 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023100903.05);
     }
 
+    if ($oldversion < 2023100905.09) {
+
+        // Fix missing default admin presets "sensible settings" (those that should be treated as sensitive).
+        $newsensiblesettings = [
+            'bigbluebuttonbn_shared_secret@@none',
+            'apikey@@tiny_premium',
+            'matrixaccesstoken@@communication_matrix',
+        ];
+
+        $sensiblesettings = get_config('adminpresets', 'sensiblesettings');
+        foreach ($newsensiblesettings as $newsensiblesetting) {
+            if (strpos($sensiblesettings, $newsensiblesetting) === false) {
+                $sensiblesettings .= ", {$newsensiblesetting}";
+            }
+        }
+
+        set_config('sensiblesettings', $sensiblesettings, 'adminpresets');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023100905.09);
+    }
+
     return true;
 }

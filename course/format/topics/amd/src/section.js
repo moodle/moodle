@@ -98,6 +98,8 @@ class HighlightSection extends BaseComponent {
             if (newIcon) {
                 const pixHtml = await Templates.renderPix(newIcon, 'core');
                 Templates.replaceNode(icon, pixHtml, '');
+                affectedAction.dataset.swapicon = affectedAction.dataset.icon;
+                affectedAction.dataset.icon = newIcon;
             }
         }
     }

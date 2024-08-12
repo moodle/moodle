@@ -82,5 +82,5 @@ $string['welcomep30'] = 'Diese Version von <strong>{$a->installername}</strong> 
 $string['welcomep40'] = 'Das Paket enthält: <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'Die Verwendung aller Anwendungen in diesem Paket unterliegt den jeweiligen Lizenzen. Das vollständige Paket <strong>{$a->installername}</strong> ist <a href="https://www.opensource.org/docs/definition_plain.html">Open Source</a> und wird unter mit der Lizenz <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a> angeboten.';
 $string['welcomep60'] = 'Die folgenden Webseiten führen Sie in einfachen Schritten durch die Installation von <strong>Moodle</strong> auf Ihrem Computer. Sie können die vorgeschlagenen Einstellungen übernehmen oder an eigene Bedürfnisse anpassen.';
-$string['welcomep70'] = 'Klicken Sie auf die Taste \'Weiter\', um mit der Installation von Moodle fortzufahren.';
+$string['welcomep70'] = 'Klicken Sie auf die Taste \'Weiter\', um mit der Installation von <strong>Moodle</strong> fortzufahren.';
 $string['wwwroot'] = 'Webadresse';

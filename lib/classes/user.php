@@ -1415,21 +1415,13 @@ class core_user {
         // Params to be passed to the user view page.
         $params = ['id' => $user->id];
 
-        // Get courseid if provided.
-        if (isset($options['courseid'])) {
-            $params['courseid'] = $options['courseid'];
-        }
-
         // Get courseid from context if provided.
-        if ($context) {
-            $coursecontext = $context->get_course_context(false);
-            if ($coursecontext) {
-                $params['courseid'] = $coursecontext->instanceid;
-            }
+        if ($context && $coursecontext = $context->get_course_context(false)) {
+            $params['course'] = $coursecontext->instanceid;
         }
 
         // If courseid is not set or is set to site id, then return profile page, otherwise return view page.
-        if (!isset($params['courseid']) || $params['courseid'] == SITEID) {
+        if (!isset($params['course']) || $params['course'] == SITEID) {
             return new moodle_url('/user/profile.php', $params);
         } else {
             return new moodle_url('/user/view.php', $params);

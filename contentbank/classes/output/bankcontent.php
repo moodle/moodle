@@ -16,8 +16,8 @@
 
 namespace core_contentbank\output;
 
-use context_course;
-use context_coursecat;
+use core\context\{course, coursecat};
+use core\context_helper;
 use core_contentbank\content;
 use core_contentbank\contentbank;
 use renderable;
@@ -133,8 +133,9 @@ class bankcontent implements renderable, templatable {
         }
         $options = [];
         foreach ($this->allowedcategories as $allowedcategory) {
+            context_helper::preload_from_record(clone $allowedcategory);
             $options[$allowedcategory->ctxid] = format_string($allowedcategory->name, true, [
-                'context' => context_coursecat::instance($allowedcategory->ctxinstance),
+                'context' => coursecat::instance($allowedcategory->ctxinstance),
             ]);
         }
         if (!empty($options)) {
@@ -144,8 +145,9 @@ class bankcontent implements renderable, templatable {
         foreach ($this->allowedcourses as $allowedcourse) {
             // Don't add the frontpage course to the list.
             if ($allowedcourse->id != $SITE->id) {
+                context_helper::preload_from_record(clone $allowedcourse);
                 $options[$allowedcourse->ctxid] = format_string($allowedcourse->fullname, true, [
-                    'context' => context_course::instance($allowedcourse->ctxinstance),
+                    'context' => course::instance($allowedcourse->ctxinstance),
                 ]);
             }
         }

@@ -3047,6 +3047,81 @@ class courselib_test extends advanced_testcase {
     }
 
     /**
+     * Test that permissions are duplicated correctly after duplicate_module().
+     * @covers ::duplicate_module
+     * @return void
+     */
+    public function test_duplicate_module_permissions(): void {
+        global $DB;
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        // Create course and course module.
+        $course = self::getDataGenerator()->create_course();
+        $res = self::getDataGenerator()->create_module('assign', ['course' => $course]);
+        $cm = get_coursemodule_from_id('assign', $res->cmid, 0, false, MUST_EXIST);
+        $cmcontext = \context_module::instance($cm->id);
+
+        // Enrol student user.
+        $user = self::getDataGenerator()->create_user();
+        $roleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
+        self::getDataGenerator()->enrol_user($user->id, $course->id, $roleid);
+
+        // Add capability to original course module.
+        assign_capability('gradereport/grader:view', CAP_ALLOW, $roleid, $cmcontext->id);
+
+        // Duplicate module.
+        $newcm = duplicate_module($course, $cm);
+        $newcmcontext = \context_module::instance($newcm->id);
+
+        // Assert that user still has capability.
+        $this->assertTrue(has_capability('gradereport/grader:view', $newcmcontext, $user));
+
+        // Assert that both modules contain the same count of overrides.
+        $overrides = $DB->get_records('role_capabilities', ['contextid' => $cmcontext->id]);
+        $newoverrides = $DB->get_records('role_capabilities', ['contextid' => $newcmcontext->id]);
+        $this->assertEquals(count($overrides), count($newoverrides));
+    }
+
+    /**
+     * Test that locally assigned roles are duplicated correctly after duplicate_module().
+     * @covers ::duplicate_module
+     * @return void
+     */
+    public function test_duplicate_module_role_assignments(): void {
+        global $DB;
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        // Create course and course module.
+        $course = self::getDataGenerator()->create_course();
+        $res = self::getDataGenerator()->create_module('assign', ['course' => $course]);
+        $cm = get_coursemodule_from_id('assign', $res->cmid, 0, false, MUST_EXIST);
+        $cmcontext = \context_module::instance($cm->id);
+
+        // Enrol student user.
+        $user = self::getDataGenerator()->create_user();
+        $roleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
+        self::getDataGenerator()->enrol_user($user->id, $course->id, $roleid);
+
+        // Assign user a new local role.
+        $newroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher'], MUST_EXIST);
+        role_assign($newroleid, $user->id, $cmcontext->id);
+
+        // Duplicate module.
+        $newcm = duplicate_module($course, $cm);
+        $newcmcontext = \context_module::instance($newcm->id);
+
+        // Assert that user still has role assigned.
+        $this->assertTrue(user_has_role_assignment($user->id, $newroleid, $newcmcontext->id));
+
+        // Assert that both modules contain the same count of overrides.
+        $overrides = $DB->get_records('role_assignments', ['contextid' => $cmcontext->id]);
+        $newoverrides = $DB->get_records('role_assignments', ['contextid' => $newcmcontext->id]);
+        $this->assertEquals(count($overrides), count($newoverrides));
+    }
+
+    /**
      * Tests that when creating or updating a module, if the availability settings
      * are present but set to an empty tree, availability is set to null in
      * database.

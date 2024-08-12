@@ -897,6 +897,182 @@ class lib_test extends \advanced_testcase {
     }
 
     /**
+     * This function tests calendar_set_filters for courses with separate group mode.
+     */
+    public function test_calendar_set_filters_with_separate_group_mode(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        // Create users.
+        $student1 = $generator->create_user();
+        $student2 = $generator->create_user();
+        $teacher1 = $generator->create_user();
+        $teacher2 = $generator->create_user();
+
+        // Create courses.
+        $course1 = $generator->create_course([
+            'shortname' => 'C1',
+            'groupmode' => 1,
+            'groupmodeforce' => 1,
+        ]);
+        $course2 = $generator->create_course([
+            'shortname' => 'C2',
+            'groupmode' => 1,
+            'groupmodeforce' => 1,
+        ]);
+        $course1context = \context_course::instance($course1->id);
+        $course2context = \context_course::instance($course2->id);
+
+        // Create groups.
+        $group1 = $generator->create_group([
+            'name' => 'G1-C1',
+            'courseid' => $course1->id,
+        ]);
+        $group2 = $generator->create_group([
+            'name' => 'G1-C2',
+            'courseid' => $course2->id,
+        ]);
+        $group3 = $generator->create_group([
+            'name' => 'G2-C2',
+            'courseid' => $course2->id,
+        ]);
+
+        // Modify the capabilities.
+        $editingteacherroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
+        assign_capability(
+            'moodle/site:accessallgroups',
+            CAP_PREVENT,
+            $editingteacherroleid,
+            $course1context->id,
+            true
+        );
+        assign_capability(
+            'moodle/site:accessallgroups',
+            CAP_PREVENT,
+            $editingteacherroleid,
+            $course2context->id,
+            true
+        );
+
+        // Enrol users.
+        $generator->enrol_user($student1->id, $course1->id, 'student');
+        $generator->enrol_user($teacher1->id, $course1->id, 'editingteacher');
+        $generator->enrol_user($student1->id, $course2->id, 'student');
+        $generator->enrol_user($student2->id, $course2->id, 'student');
+        $generator->enrol_user($teacher1->id, $course2->id, 'editingteacher');
+        $generator->enrol_user($teacher2->id, $course2->id, 'editingteacher');
+
+        // Group memberships.
+        $generator->create_group_member([
+            'groupid' => $group1->id,
+            'userid' => $student1->id,
+        ]);
+        $generator->create_group_member([
+            'groupid' => $group1->id,
+            'userid' => $teacher1->id,
+        ]);
+        $generator->create_group_member([
+            'groupid' => $group2->id,
+            'userid' => $student1->id,
+        ]);
+        $generator->create_group_member([
+            'groupid' => $group2->id,
+            'userid' => $teacher1->id,
+        ]);
+        $generator->create_group_member([
+            'groupid' => $group3->id,
+            'userid' => $student2->id,
+        ]);
+        $generator->create_group_member([
+            'groupid' => $group3->id,
+            'userid' => $teacher2->id,
+        ]);
+
+        // Test teacher1.
+        $this->setUser($teacher1);
+        $defaultcourses = calendar_get_default_courses(
+            null,
+            '*',
+            false,
+            $teacher1->id
+        );
+        [$courseids, $groupids] = calendar_set_filters(
+            $defaultcourses,
+            false,
+            $teacher1
+        );
+        // Teacher1 can see SITE, C1, G1-C1, C2, G1-C2.
+        $this->assertCount(3, $courseids); // SITE, C1, C2.
+        $this->assertCount(2, $groupids); // G1-C1, G1-C2.
+
+        $courseidskey = array_fill_keys($courseids, null);
+        $this->assertArrayHasKey(SITEID, $courseidskey);
+        $this->assertArrayHasKey($course1->id, $courseidskey);
+        $this->assertArrayHasKey($course2->id, $courseidskey);
+
+        $groupidskey = array_fill_keys($groupids, null);
+        $this->assertArrayHasKey($group1->id, $groupidskey);
+        $this->assertArrayHasKey($group2->id, $groupidskey);
+        $this->assertArrayNotHasKey($group3->id, $groupidskey);
+
+        // Test teacher2.
+        $this->setUser($teacher2);
+        $defaultcourses = calendar_get_default_courses(
+            null,
+            '*',
+            false,
+            $teacher2->id
+        );
+        [$courseids, $groupids] = calendar_set_filters(
+            $defaultcourses,
+            false,
+            $teacher2
+        );
+        // Teacher2 can see SITE, C2, G2-C2.
+        $this->assertCount(2, $courseids); // SITE, C2.
+        $this->assertCount(1, $groupids); // G2-C2.
+
+        $courseidskey = array_fill_keys($courseids, null);
+        $this->assertArrayHasKey(SITEID, $courseidskey);
+        $this->assertArrayHasKey($course2->id, $courseidskey);
+
+        $groupidskey = array_fill_keys($groupids, null);
+        $this->assertArrayHasKey($group3->id, $groupidskey);
+        $this->assertArrayNotHasKey($group1->id, $groupidskey);
+        $this->assertArrayNotHasKey($group2->id, $groupidskey);
+
+        // Modify the capabilities.
+        assign_capability(
+            'moodle/site:accessallgroups',
+            CAP_ALLOW,
+            $editingteacherroleid,
+            $course2context->id,
+            true
+        );
+
+        $defaultcourses = calendar_get_default_courses(
+            null,
+            '*',
+            false,
+            $teacher2->id
+        );
+        [$courseids, $groupids] = calendar_set_filters(
+            $defaultcourses,
+            false,
+            $teacher2
+        );
+        // Teacher2 can see SITE, C2, G1-C2, G2-C2.
+        $this->assertCount(2, $courseids); // SITE, C2.
+        $this->assertCount(2, $groupids); // G1-C2, G2-C2.
+
+        $groupidskey = array_fill_keys($groupids, null);
+        $this->assertArrayHasKey($group2->id, $groupidskey);
+        $this->assertArrayHasKey($group3->id, $groupidskey);
+        $this->assertArrayNotHasKey($group1->id, $groupidskey);
+    }
+
+    /**
      *  Test for calendar_view_event_allowed for course event types.
      */
     public function test_calendar_view_event_allowed_course_event() {

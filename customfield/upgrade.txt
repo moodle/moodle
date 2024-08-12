@@ -1,6 +1,9 @@
 This files describes API changes in /customfield/*,
 Information provided here is intended especially for developers.
 
+=== 4.4.6 ===
+* The customfield_select field controller `get_options` method now returns each option pre-formatted
+
 === 4.3 ===
 * Field categories are now consistently of type `PARAM_TEXT`, ensure instance `get_formatted_name()` helper is used
   during output

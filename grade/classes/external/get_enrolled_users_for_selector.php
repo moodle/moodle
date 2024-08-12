@@ -95,16 +95,26 @@ class get_enrolled_users_for_selector extends external_api {
 
         $users = [];
 
-        while ($userdata = $gui->next_user()) {
-            $user = $userdata->user;
-            $user->fullname = fullname($user);
-            $userpicture = new user_picture($user);
-            $userpicture->size = 1;
-            $user->profileimageurl = $userpicture->get_url($PAGE)->out(false);
-            $userpicture->size = 0; // Size f2.
-            $user->profileimageurlsmall = $userpicture->get_url($PAGE)->out(false);
+        $userfieldsapi = \core_user\fields::for_identity($coursecontext, false)->with_userpic();
+        $extrauserfields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
 
-            $users[] = $user;
+        while ($userdata = $gui->next_user()) {
+            $userforselector = new \stdClass();
+            $userforselector->id = $userdata->user->id;
+            $userforselector->fullname = fullname($userdata->user);
+            foreach (\core_user\fields::get_name_fields() as $field) {
+                $userforselector->$field = $userdata->user->$field ?? null;
+            }
+            $userpicture = new user_picture($userdata->user);
+            $userpicture->size = 1;
+            $userforselector->profileimageurl = $userpicture->get_url($PAGE)->out(false);
+            $userpicture->size = 0; // Size f2.
+            $userforselector->profileimageurlsmall = $userpicture->get_url($PAGE)->out(false);
+            foreach ($extrauserfields as $field) {
+                $userforselector->$field = $userdata->user->$field ?? null;
+            }
+
+            $users[] = $userforselector;
         }
         $gui->close();
 

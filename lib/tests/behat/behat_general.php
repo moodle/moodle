@@ -32,8 +32,11 @@ use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Exception\ExpectationException;
+use Facebook\WebDriver\Exception\NoSuchAlertException;
 use Facebook\WebDriver\Exception\NoSuchElementException;
 use Facebook\WebDriver\Exception\StaleElementReferenceException;
+use Facebook\WebDriver\WebDriverAlert;
+use Facebook\WebDriver\WebDriverExpectedCondition;
 
 /**
  * Cross component steps definitions.
@@ -263,11 +266,24 @@ class behat_general extends behat_base {
     }
 
     /**
+     * Wait for an alert to be displayed.
+     *
+     * @return WebDriverAlert
+     */
+    public function wait_for_alert(): WebDriverAlert {
+        $webdriver = $this->getSession()->getDriver()->getWebdriver();
+        $webdriver->wait()->until(WebDriverExpectedCondition::alertIsPresent());
+
+        return $webdriver->switchTo()->alert();
+    }
+
+    /**
      * Accepts the currently displayed alert dialog. This step does not work in all the browsers, consider it experimental.
      * @Given /^I accept the currently displayed dialog$/
      */
     public function accept_currently_displayed_alert_dialog() {
-        $this->getSession()->getDriver()->getWebDriver()->switchTo()->alert()->accept();
+        $alert = $this->wait_for_alert();
+        $alert->accept();
     }
 
     /**
@@ -275,7 +291,8 @@ class behat_general extends behat_base {
      * @Given /^I dismiss the currently displayed dialog$/
      */
     public function dismiss_currently_displayed_alert_dialog() {
-        $this->getSession()->getDriver()->getWebDriver()->switchTo()->alert()->dismiss();
+        $alert = $this->wait_for_alert();
+        $alert->dismiss();
     }
 
     /**
@@ -286,9 +303,7 @@ class behat_general extends behat_base {
      * @param string $link
      */
     public function click_link($link) {
-
         $linknode = $this->find_link($link);
-        $this->ensure_node_is_visible($linknode);
         $linknode->click();
     }
 
@@ -393,11 +408,8 @@ class behat_general extends behat_base {
      * @param string $selectortype The type of what we look for
      */
     public function i_click_on($element, $selectortype) {
-
         // Gets the node based on the requested selector type and locator.
-        $node = $this->get_selected_node($selectortype, $element);
-        $this->ensure_node_is_visible($node);
-        $node->click();
+        $this->get_selected_node($selectortype, $element)->click();
     }
 
     /**
@@ -458,9 +470,7 @@ class behat_general extends behat_base {
      * @param string $nodeselectortype The type of selector where we look in
      */
     public function i_click_on_in_the($element, $selectortype, $nodeelement, $nodeselectortype) {
-
         $node = $this->get_node_in_container($selectortype, $element, $nodeselectortype, $nodeelement);
-        $this->ensure_node_is_visible($node);
         $node->click();
     }
 
@@ -502,7 +512,6 @@ class behat_general extends behat_base {
         }
 
         $node = $this->get_node_in_container($selectortype, $element, $nodeselectortype, $nodeelement);
-        $this->ensure_node_is_visible($node);
 
         // KeyUP and KeyDown require the element to be displayed in the current window.
         $this->execute_js_on_node($node, '{{ELEMENT}}.scrollIntoView();');
@@ -1427,31 +1436,8 @@ EOF;
 
         $rowliteral = behat_context_helper::escape($row);
         $valueliteral = behat_context_helper::escape($value);
-        $columnliteral = behat_context_helper::escape($column);
 
-        if (preg_match('/^-?(\d+)-?$/', $column, $columnasnumber)) {
-            // Column indicated as a number, just use it as position of the column.
-            $columnpositionxpath = "/child::*[position() = {$columnasnumber[1]}]";
-        } else {
-            // Header can be in thead or tbody (first row), following xpath should work.
-            $theadheaderxpath = "thead/tr[1]/th[(normalize-space(.)=" . $columnliteral . " or a[normalize-space(text())=" .
-                    $columnliteral . "] or div[normalize-space(text())=" . $columnliteral . "])]";
-            $tbodyheaderxpath = "tbody/tr[1]/td[(normalize-space(.)=" . $columnliteral . " or a[normalize-space(text())=" .
-                    $columnliteral . "] or div[normalize-space(text())=" . $columnliteral . "])]";
-
-            // Check if column exists.
-            $columnheaderxpath = $tablexpath . "[" . $theadheaderxpath . " | " . $tbodyheaderxpath . "]";
-            $columnheader = $this->getSession()->getDriver()->find($columnheaderxpath);
-            if (empty($columnheader)) {
-                $columnexceptionmsg = $column . '" in table "' . $table . '"';
-                throw new ElementNotFoundException($this->getSession(), "\n$columnheaderxpath\n\n".'Column', null, $columnexceptionmsg);
-            }
-            // Following conditions were considered before finding column count.
-            // 1. Table header can be in thead/tr/th or tbody/tr/td[1].
-            // 2. First column can have th (Gradebook -> user report), so having lenient sibling check.
-            $columnpositionxpath = "/child::*[position() = count(" . $tablexpath . "/" . $theadheaderxpath .
-                "/preceding-sibling::*) + 1]";
-        }
+        $columnpositionxpath = $this->get_table_column_xpath($table, $column);
 
         // Check if value exists in specific row/column.
         // Get row xpath.
@@ -1494,6 +1480,99 @@ EOF;
     }
 
     /**
+     * Get xpath for a row child that corresponds to the specified column header
+     *
+     * @param string $table table identifier that can be used with 'table' node selector (i.e. table title or CSS class)
+     * @param string $column either text in the column header or the column number, such as -1-, -2-, etc
+     *      When matching the column header it has to be either exact match of the whole header or an exact
+     *      match of a text inside a link in the header.
+     *      For example, to match "<a>First name</a> / <a>Last name</a>" you need to specify either "First name" or "Last name"
+     * @return string
+     */
+    protected function get_table_column_xpath(string $table, string $column): string {
+        $tablenode = $this->get_selected_node('table', $table);
+        $tablexpath = $tablenode->getXpath();
+        $columnliteral = behat_context_helper::escape($column);
+        if (preg_match('/^-?(\d+)-?$/', $column, $columnasnumber)) {
+            // Column indicated as a number, just use it as position of the column.
+            $columnpositionxpath = "/child::*[position() = {$columnasnumber[1]}]";
+        } else {
+            // Header can be in thead or tbody (first row), following xpath should work.
+            $theadheaderxpath = "thead/tr[1]/th[(normalize-space(.)={$columnliteral} or a[normalize-space(text())=" .
+                    $columnliteral . "] or div[normalize-space(text())={$columnliteral}])]";
+            $tbodyheaderxpath = "tbody/tr[1]/td[(normalize-space(.)={$columnliteral} or a[normalize-space(text())=" .
+                    $columnliteral . "] or div[normalize-space(text())={$columnliteral}])]";
+
+            // Check if column exists.
+            $columnheaderxpath = "{$tablexpath}[{$theadheaderxpath} | {$tbodyheaderxpath}]";
+            $columnheader = $this->getSession()->getDriver()->find($columnheaderxpath);
+            if (empty($columnheader)) {
+                if (strpos($column, '/') !== false) {
+                    // We are not able to match headers consisting of several links, such as "First name / Last name".
+                    // Instead we can match "First name" or "Last name" or "-1-" (column number).
+                    throw new Exception("Column matching locator \"$column\" not found. ".
+                        "If the column header contains multiple links, specify only one of the link texts. ".
+                        "Otherwise, use the column number as the locator");
+                }
+                $columnexceptionmsg = $column . '" in table "' . $table . '"';
+                throw new ElementNotFoundException($this->getSession(), "\n$columnheaderxpath\n\n".'Column',
+                    null, $columnexceptionmsg);
+            }
+            // Following conditions were considered before finding column count.
+            // 1. Table header can be in thead/tr/th or tbody/tr/td[1].
+            // 2. First column can have th (Gradebook -> user report), so having lenient sibling check.
+            $columnpositionxpath = "/child::*[position() = count({$tablexpath}/{$theadheaderxpath}" .
+                "/preceding-sibling::*) + 1]";
+        }
+        return $columnpositionxpath;
+    }
+
+    /**
+     * Find a table row where each of the specified columns matches and throw exception if not found
+     *
+     * @param string $table table locator
+     * @param array $cells key is the column locator (name or index such as '-1-') and value is the text contents of the table cell
+     */
+    protected function ensure_table_row_exists(string $table, array $cells): void {
+        $tablenode = $this->get_selected_node('table', $table);
+        $tablexpath = $tablenode->getXpath();
+
+        $columnconditions = [];
+        foreach ($cells as $columnname => $value) {
+            $valueliteral = behat_context_helper::escape($value);
+            $columnpositionxpath = $this->get_table_column_xpath($table, $columnname);
+            $columnconditions[] = '.' . $columnpositionxpath . "[contains(normalize-space(.)," . $valueliteral . ")]";
+        }
+        $rowxpath = $tablexpath . "/tbody/tr[" . join(' and ', $columnconditions) . ']';
+
+        $rownode = $this->getSession()->getDriver()->find($rowxpath);
+        if (empty($rownode)) {
+            $rowlocator = array_map(fn($k) => "{$k} => {$cells[$k]}", array_keys($cells));
+            throw new ElementNotFoundException($this->getSession(), "\n$rowxpath\n\n".'Table row', null, join(', ', $rowlocator));
+        }
+    }
+
+    /**
+     * Find a table row where each of the specified columns matches and throw exception if found
+     *
+     * @param string $table table locator
+     * @param array $cells key is the column locator (name or index such as '-1-') and value is the text contents of the table cell
+     */
+    protected function ensure_table_row_does_not_exist(string $table, array $cells): void {
+        try {
+            $this->ensure_table_row_exists($table, $cells);
+            // Throw exception if found.
+        } catch (ElementNotFoundException $e) {
+            // Table row/column doesn't contain this value. Nothing to do.
+            return;
+        }
+        $rowlocator = array_map(fn($k) => "{$k} => {$cells[$k]}", array_keys($cells));
+        throw new ExpectationException('Table row "' . join(', ', $rowlocator) .
+            '" is present in the table "' . $table . '"', $this->getSession()
+        );
+    }
+
+    /**
      * Checks that the provided value exist in table.
      *
      * First row may contain column headers or numeric indexes of the columns
@@ -1509,28 +1588,21 @@ EOF;
      */
     public function following_should_exist_in_the_table($table, TableNode $data) {
         $datahash = $data->getHash();
+        if ($datahash && count($data->getRow(0)) != count($datahash[0])) {
+            // Check that the number of columns in the hash is the same as the number of the columns in the first row.
+            throw new coding_exception('Table contains duplicate column headers');
+        }
 
         foreach ($datahash as $row) {
-
-            // Row contains only a single column, just assert it's present in the table.
-            if (count($row) === 1) {
-                $this->execute('behat_general::assert_element_contains_text', [reset($row), $table, 'table']);
-            } else {
-                // Iterate over all columns.
-                $firstcell = null;
-                foreach ($row as $column => $value) {
-                    if ($firstcell === null) {
-                        $firstcell = $value;
-                    } else {
-                        $this->row_column_of_table_should_contain($firstcell, $column, $table, $value);
-                    }
-                }
-            }
+            $this->ensure_table_row_exists($table, $row);
         }
     }
 
     /**
      * Checks that the provided values do not exist in a table.
+     *
+     * If there are more than two columns, we check that NEITHER of the columns 2..n match
+     * in the row where the first column matches
      *
      * @Then /^the following should not exist in the "(?P<table_string>[^"]*)" table:$/
      * @throws ExpectationException
@@ -1541,27 +1613,24 @@ EOF;
      */
     public function following_should_not_exist_in_the_table($table, TableNode $data) {
         $datahash = $data->getHash();
+        if ($datahash && count($data->getRow(0)) != count($datahash[0])) {
+            // Check that the number of columns in the hash is the same as the number of the columns in the first row.
+            throw new coding_exception('Table contains duplicate column headers');
+        }
 
         foreach ($datahash as $value) {
-
-            // Row contains only a single column, just assert it's not present in the table.
-            if (count($value) === 1) {
-                $this->execute('behat_general::assert_element_not_contains_text', [reset($value), $table, 'table']);
-            } else {
-                // Iterate over all columns.
-                $row = array_shift($value);
-                foreach ($value as $column => $value) {
-                    try {
-                        $this->row_column_of_table_should_contain($row, $column, $table, $value);
-                        // Throw exception if found.
-                    } catch (ElementNotFoundException $e) {
-                        // Table row/column doesn't contain this value. Nothing to do.
-                        continue;
-                    }
-                    throw new ExpectationException('"' . $column . '" with value "' . $value . '" is present in "' .
-                        $row . '"  row for table "' . $table . '"', $this->getSession()
-                    );
+            if (count($value) > 2) {
+                // When there are more than two columns, what we really want to check is that for the rows
+                // where the first column matches, NEITHER of the other columns match.
+                $columns = array_keys($value);
+                for ($i = 1; $i < count($columns); $i++) {
+                    $this->ensure_table_row_does_not_exist($table, [
+                        $columns[0] => $value[$columns[0]],
+                        $columns[$i] => $value[$columns[$i]],
+                    ]);
                 }
+            } else {
+                $this->ensure_table_row_does_not_exist($table, $value);
             }
         }
     }

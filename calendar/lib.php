@@ -2177,29 +2177,27 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false, s
     }
 
     if (!empty($courseeventsfrom) && (calendar_show_event_type(CALENDAR_EVENT_GROUP, $user) || $ignorefilters)) {
-
-        if (count($courseeventsfrom) == 1) {
-            $course = reset($courseeventsfrom);
-            if (has_any_capability($allgroupscaps, \context_course::instance($course->id))) {
-                $coursegroups = groups_get_all_groups($course->id, 0, 0, 'g.id');
-                $group = array_keys($coursegroups);
-            }
-        }
-        if ($group === false) {
-            if (!empty($CFG->calendar_adminseesall) && has_any_capability($allgroupscaps, \context_system::instance())) {
-                $group = true;
-            } else if ($isvaliduser) {
-                $groupids = array();
-                foreach ($courseeventsfrom as $courseid => $course) {
-                    if ($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
-                        // If this course has groups, show events from all of those related to the current user.
+        if (!empty($CFG->calendar_adminseesall) && has_any_capability($allgroupscaps, \context_system::instance())) {
+            $group = true;
+        } else if ($isvaliduser) {
+            $groupids = [];
+            foreach ($courseeventsfrom as $courseid => $course) {
+                if ($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
+                    if (has_all_capabilities($allgroupscaps, \context_course::instance($courseid))) {
+                        // User can access all groups in this course.
+                        // Get all the groups in this course.
+                        $coursegroups = groups_get_all_groups($course->id, 0, 0, 'g.id');
+                        $groupids = array_merge($groupids, array_keys($coursegroups));
+                    } else {
+                        // User can only access their own groups.
+                        // Get the groups the user is in.
                         $coursegroups = groups_get_user_groups($course->id, $user->id);
                         $groupids = array_merge($groupids, $coursegroups['0']);
                     }
                 }
-                if (!empty($groupids)) {
-                    $group = $groupids;
-                }
+            }
+            if (!empty($groupids)) {
+                $group = $groupids;
             }
         }
     }

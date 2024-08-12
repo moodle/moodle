@@ -1,7 +1,15 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.3.6 ===
+
+* The `\core\dataformat::get_format_instance` method is now public, and can be used to retrieve a writer instance for
+  a given dataformat
+* Added the ability for unit tests to autoload classes in the `\[component]\tests\` namespace from the `[path/to/component]/tests/classes` directory.
+* Added the `advanced_testcase::load_fixture()` helper to load fixtures from a components `tests/fixtures/` folder.
+
 === 4.3.4 ===
+
 * groups_get_user_groups() in grouplib has a new $includehidden paramater, which will return groups for user even if they have
   GROUP_VISIBILITY_NONE. This is false by default, and should be used with care. The calling code must ensure that these groups
   are not exposed to the user as this may be a privacy issue.

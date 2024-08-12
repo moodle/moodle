@@ -788,7 +788,7 @@ class recording extends persistent {
         if ($dismissedonly) {
             mtrace("=> Looking for any recording that has been 'dismissed' in the past " . self::RECORDING_TIME_LIMIT_DAYS
                 . " days.");
-            $select = 'status = :status_dismissed AND timecreated > :withindays';
+            $select = 'status = :status_dismissed AND timemodified > :withindays';
             $params['status_dismissed'] = self::RECORDING_STATUS_DISMISSED;
         } else {
             mtrace("=> Looking for any recording awaiting processing from the past " . self::RECORDING_TIME_LIMIT_DAYS . " days.");

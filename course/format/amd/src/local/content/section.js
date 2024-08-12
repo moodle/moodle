@@ -25,6 +25,7 @@
 import Header from 'core_courseformat/local/content/section/header';
 import DndSection from 'core_courseformat/local/courseeditor/dndsection';
 import Templates from 'core/templates';
+import Pending from "core/pending";
 
 export default class extends DndSection {
 
@@ -79,6 +80,24 @@ export default class extends DndSection {
                 this.configDragDrop(headerComponent);
             }
         }
+        this._openSectionIfNecessary();
+    }
+
+    /**
+     * Open the section if the anchored activity is inside.
+     */
+    async _openSectionIfNecessary() {
+        const pageCmInfo = this.reactive.getPageAnchorCmInfo();
+        if (!pageCmInfo || pageCmInfo.sectionid !== this.id) {
+            return;
+        }
+        await this.reactive.dispatch('sectionContentCollapsed', [this.id], false);
+        const pendingOpen = new Pending(`courseformat/section:openSectionIfNecessary`);
+        this.element.scrollIntoView({block: "center"});
+        setTimeout(() => {
+            this.reactive.dispatch('setPageItem', 'cm', pageCmInfo.id);
+            pendingOpen.resolve();
+        }, 250);
     }
 
     /**
@@ -189,6 +208,8 @@ export default class extends DndSection {
         const icon = affectedAction.querySelector(this.selectors.ICON);
         if (affectedAction.dataset?.swapicon && icon) {
             const newIcon = affectedAction.dataset.swapicon;
+            affectedAction.dataset.swapicon = affectedAction.dataset.icon;
+            affectedAction.dataset.icon = newIcon;
             if (newIcon) {
                 const pixHtml = await Templates.renderPix(newIcon, 'core');
                 Templates.replaceNode(icon, pixHtml, '');

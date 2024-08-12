@@ -27,7 +27,7 @@ use lang_string;
  * @author     T.J.Hunt@open.ac.uk
  * @author     nicolas@moodle.com
  */
-class moodlelib_test extends \advanced_testcase {
+final class moodlelib_test extends \advanced_testcase {
 
     /**
      * Define a local decimal separator.
@@ -892,13 +892,15 @@ class moodlelib_test extends \advanced_testcase {
             '-13.5'                          => '',
             '0.2'                            => '',
             ''                               => '',
-            null                             => '',
         );
 
         foreach ($testvalues as $testvalue => $expectedvalue) {
             $actualvalue = clean_param($testvalue, PARAM_TIMEZONE);
             $this->assertEquals($expectedvalue, $actualvalue);
         }
+
+        // Test for null.
+        $this->assertEquals('', clean_param(null, PARAM_TIMEZONE));
     }
 
     public function test_clean_param_null_argument() {
@@ -2952,18 +2954,41 @@ EOF;
     /**
      * Testing that if the password is not cached, that it does not update
      * the user table and fire event.
+     *
+     * @dataProvider update_internal_user_password_no_cache_provider
+     * @covers ::update_internal_user_password
+     *
+     * @param string $authmethod The authentication method to set for the user.
+     * @param string|null $password The new password to set for the user.
      */
-    public function test_update_internal_user_password_no_cache() {
+    public function test_update_internal_user_password_no_cache(
+        string $authmethod,
+        ?string $password,
+    ): void {
         global $DB;
         $this->resetAfterTest();
 
-        $user = $this->getDataGenerator()->create_user(array('auth' => 'cas'));
+        $user = $this->getDataGenerator()->create_user(['auth' => $authmethod]);
         $DB->update_record('user', ['id' => $user->id, 'password' => AUTH_PASSWORD_NOT_CACHED]);
         $user->password = AUTH_PASSWORD_NOT_CACHED;
 
         $sink = $this->redirectEvents();
-        update_internal_user_password($user, 'wonkawonka');
+        update_internal_user_password($user, $password);
         $this->assertEquals(0, $sink->count(), 'User updated event should not fire');
+    }
+
+    /**
+     * The data provider will test the {@see test_update_internal_user_password_no_cache}
+     * for accounts using the authentication method with prevent_local_passwords set to true (no cache).
+     *
+     * @return array
+     */
+    public static function update_internal_user_password_no_cache_provider(): array {
+        return [
+            'Password is not empty' => ['cas', 'wonkawonka'],
+            'Password is an empty string' => ['oauth2', ''],
+            'Password is null' => ['oauth2', null],
+        ];
     }
 
     /**
@@ -3609,9 +3634,9 @@ EOF;
 
     /**
      * Data provider for test_generate_confirmation_link
-     * @return Array of confirmation urls and expected resultant confirmation links
+     * @return array Confirmation urls and expected resultant confirmation links
      */
-    public function generate_confirmation_link_provider() {
+    public static function generate_confirmation_link_provider(): array {
         global $CFG;
         return [
             "Simple name" => [
@@ -3679,7 +3704,7 @@ EOF;
                 "confirmationurl" => "http://moodle.org/ext.php?with=some&param=eters",
                 "expected" => "http://moodle.org/ext.php?with=some&param=eters&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
             ],
-            "Custom external confirmation url with parameters" => [
+            "Custom external confirmation url with parameters (again)" => [
                 "username" => "many_-.@characters@_@-..-..",
                 "confirmationurl" => "http://moodle.org/ext.php?with=some&data=test",
                 "expected" => "http://moodle.org/ext.php?with=some&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"

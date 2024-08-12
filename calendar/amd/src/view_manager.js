@@ -143,8 +143,9 @@ export const registerEventListenersForMonthDetailed = (pendingId) => {
  * Register event listeners for the module.
  *
  * @param {object} root The root element.
+ * @param {boolean} isCalendarBlock - A flag indicating whether this is a calendar block.
  */
-const registerEventListeners = (root) => {
+const registerEventListeners = (root, isCalendarBlock) => {
     root = $(root);
 
     // Bind click events to event links.
@@ -190,10 +191,12 @@ const registerEventListeners = (root) => {
         const link = e.currentTarget;
 
         if (view === 'month' || view === 'monthblock') {
-            changeMonth(root, link.href, link.dataset.year, link.dataset.month, courseId, categoryId, link.dataset.day);
+            changeMonth(root, link.href, link.dataset.year, link.dataset.month,
+                courseId, categoryId, link.dataset.day, isCalendarBlock);
             e.preventDefault();
         } else if (view === 'day') {
-            changeDay(root, link.href, link.dataset.year, link.dataset.month, link.dataset.day, courseId, categoryId);
+            changeDay(root, link.href, link.dataset.year, link.dataset.month, link.dataset.day,
+                courseId, categoryId, isCalendarBlock);
             e.preventDefault();
         }
     });
@@ -287,18 +290,19 @@ export const refreshMonthContent = (root, year, month, courseId, categoryId, tar
  * @param {number} courseId The id of the course whose events are shown
  * @param {number} categoryId The id of the category whose events are shown
  * @param {number} day Day (optional)
+ * @param {boolean} [isCalendarBlock=false] - A flag indicating whether this is a calendar block.
  * @return {promise}
  */
-export const changeMonth = (root, url, year, month, courseId, categoryId, day = 1) => {
+export const changeMonth = (root, url, year, month, courseId, categoryId, day = 1, isCalendarBlock = false) => {
     return refreshMonthContent(root, year, month, courseId, categoryId, null, '', day)
         .then((...args) => {
-            if (url.length && url !== '#') {
+            if (url.length && url !== '#' && !isCalendarBlock) {
                 updateUrl(url);
             }
             return args;
         })
         .then((...args) => {
-            $('body').trigger(CalendarEvents.monthChanged, [year, month, courseId, categoryId]);
+            $('body').trigger(CalendarEvents.monthChanged, [year, month, courseId, categoryId, day, isCalendarBlock]);
             return args;
         });
 };
@@ -338,10 +342,12 @@ export const reloadCurrentMonth = (root, courseId = 0, categoryId = 0) => {
  * @param {number} categoryId The id of the category whose events are shown
  * @param {object} target The element being replaced. If not specified, the calendarwrapper is used.
  * @param {string} template The template to be rendered.
+ * @param {boolean} isCalendarBlock - A flag indicating whether this is a calendar block.
  *
  * @return {promise}
  */
-export const refreshDayContent = (root, year, month, day, courseId, categoryId, target = null, template = '') => {
+export const refreshDayContent = (root, year, month, day, courseId, categoryId,
+    target = null, template = '', isCalendarBlock = false) => {
     startLoading(root);
 
     if (!target || target.length == 0){
@@ -354,6 +360,7 @@ export const refreshDayContent = (root, year, month, day, courseId, categoryId, 
         .then((context) => {
             context.viewingday = true;
             context.showviewselector = true;
+            context.iscalendarblock = isCalendarBlock;
             return Templates.render(template, context);
         })
         .then((html, js) => {
@@ -400,18 +407,19 @@ export const reloadCurrentDay = (root, courseId = 0, categoryId = 0) => {
  * @param {Number} day Day
  * @param {Number} courseId The id of the course whose events are shown
  * @param {Number} categoryId The id of the category whose events are shown
+ * @param {boolean} [isCalendarBlock=false] - A flag indicating whether this is a calendar block.
  * @return {promise}
  */
-export const changeDay = (root, url, year, month, day, courseId, categoryId) => {
-    return refreshDayContent(root, year, month, day, courseId, categoryId)
+export const changeDay = (root, url, year, month, day, courseId, categoryId, isCalendarBlock = false) => {
+    return refreshDayContent(root, year, month, day, courseId, categoryId, null, '', isCalendarBlock)
         .then((...args) => {
-            if (url.length && url !== '#') {
+            if (url.length && url !== '#' && !isCalendarBlock) {
                 updateUrl(url);
             }
             return args;
         })
         .then((...args) => {
-            $('body').trigger(CalendarEvents.dayChanged, [year, month, courseId, categoryId]);
+            $('body').trigger(CalendarEvents.dayChanged, [year, month, courseId, categoryId, isCalendarBlock]);
             return args;
         });
 };
@@ -557,10 +565,18 @@ const renderEventSummaryModal = (eventId) => {
     .catch(Notification.exception);
 };
 
-export const init = (root, view) => {
+/**
+ * Initializes the calendar component by prefetching strings, folding day events,
+ * and registering event listeners.
+ *
+ * @param {HTMLElement} root - The root element where the calendar view manager and event listeners will be attached.
+ * @param {string} view - A flag indicating whether this is a calendar block.
+ * @param {boolean} isCalendarBlock - A flag indicating whether this is a calendar block.
+ */
+export const init = (root, view, isCalendarBlock) => {
     prefetchStrings('calendar', ['moreevents']);
     foldDayEvents();
-    registerEventListeners(root, view);
+    registerEventListeners(root, isCalendarBlock);
     const calendarTable = root.find(CalendarSelectors.elements.monthDetailed);
     if (calendarTable.length) {
         const pendingId = `month-detailed-${calendarTable.id}-filterChanged`;

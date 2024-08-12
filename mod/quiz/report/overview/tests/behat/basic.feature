@@ -46,10 +46,10 @@ Feature: Basic use of the Grades report
       | Test questions   | truefalse   | TF1   | First question       |
       | Test questions   | truefalse   | TF2   | Second question      |
     And quiz "Quiz 1" contains the following questions:
-      | question | page | maxmark |
-      | Intro    | 1    |         |
-      | TF1      | 1    |         |
-      | TF2      | 1    | 3.0     |
+      | question | page | maxmark | displaynumber |
+      | Intro    | 1    |         |               |
+      | TF1      | 1    |         |               |
+      | TF2      | 1    | 3.0     | 2a            |
     And user "student1" has attempted "Quiz 1" with responses:
       | slot | response |
       |   2  | True     |
@@ -68,7 +68,7 @@ Feature: Basic use of the Grades report
 
     # Verify that the right columns are visible
     And I should see "Q. 1"
-    And I should see "Q. 2"
+    And I should see "Q. 2a"
     And I should not see "Q. 3"
 
     # Check student1's grade

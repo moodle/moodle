@@ -75,6 +75,9 @@ $string['alternativefullnameformat_desc'] = 'This defines how names are shown to
 $string['always'] = 'Always';
 $string['appearance'] = 'Appearance';
 $string['aspellpath'] = 'Path to aspell';
+$string['asyncbackupdisabled'] = 'Your site is currently configured to use synchronous backups. Asynchronous backups provide a better user experience.
+Asynchronous backups will be enabled for all sites from Moodle LMS 4.5 LTS.
+Synchronous backups will be removed from Moodle LMS the version after 4.5 LTS';
 $string['authentication'] = 'Authentication';
 $string['authpreventaccountcreation'] = 'Prevent account creation when authenticating';
 $string['authpreventaccountcreation_help'] = 'When a user authenticates, an account on the site is automatically created if it doesn\'t yet exist. If an external database, such as LDAP, is used for authentication, but you wish to restrict access to the site to users with an existing account only, then this option should be enabled. New accounts will need to be created manually or via the upload users feature. Note that this setting doesn\'t apply to MNet authentication.';
@@ -445,7 +448,7 @@ $string['courselistshortnames_desc'] = 'If enabled, course short names will be d
 $string['coursemgmt'] = 'Manage courses and categories';
 $string['courseoverview'] = 'Course overview';
 $string['courserequestnotify'] = 'Course request notification';
-$string['courserequestnotifyemail'] = '{$a->user} requested a new course <a href="{$a->link}">{$a->link}</a>';
+$string['courserequestnotifyemail'] = 'User {$a->user} requested a new course at <a href="{$a->link}">{$a->link}</a>.';
 $string['courserequests'] = 'Course requests';
 $string['courserequestspending'] = 'Pending course requests';
 $string['courses'] = 'Courses';
@@ -631,6 +634,7 @@ $string['environmentrequirecustomcheck'] = 'this test must pass';
 $string['environmentrequireinstall'] = 'must be installed and enabled';
 $string['environmentrequireversion'] = 'version {$a->needed} is required and you are running {$a->current}';
 $string['environmentsettingok'] = 'recommended setting detected';
+$string['environmentshouldfixcustomcheck'] = 'should be enabled for best results';
 $string['environmentshouldfixsetting'] = 'PHP setting should be changed.';
 $string['environmentxmlerror'] = 'Error reading environment data ({$a->error_code})';
 $string['environmentmariadbwrongdbtype'] = 'Wrong $CFG->dbtype. You need to change it in your config.php file from \'mysqli\' to \'mariadb\'.';

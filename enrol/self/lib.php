@@ -400,7 +400,7 @@ class enrol_self_plugin extends enrol_plugin {
         $context = context_course::instance($course->id);
 
         $a = new stdClass();
-        $a->coursename = format_string($course->fullname, true, array('context'=>$context));
+        $a->coursename = format_string($course->fullname, true, ['context' => $context, 'escape' => false]);
         $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
 
         if (!is_null($instance->customtext1) && trim($instance->customtext1) !== '') {
@@ -422,7 +422,7 @@ class enrol_self_plugin extends enrol_plugin {
             $messagehtml = text_to_html($messagetext, null, false, true);
         }
 
-        $subject = get_string('welcometocourse', 'enrol_self', format_string($course->fullname, true, array('context'=>$context)));
+        $subject = get_string('welcometocourse', 'enrol_self', $a->coursename);
 
         $sendoption = $instance->customint4;
         $contact = $this->get_welcome_email_contact($sendoption, $context);

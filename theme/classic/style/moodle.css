@@ -24964,6 +24964,10 @@ a.disabled {
   color: #6a737b;
 }
 
+a.btn.disabled {
+  opacity: 1;
+}
+
 body.lockscroll {
   height: 100%;
   overflow: hidden;
@@ -27483,13 +27487,13 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .dashboard-card-deck 
   width: 98%;
   margin: 10px auto;
 }
-.maincalendar .calendar_event_category:hover a,
-.maincalendar .calendar_event_course:hover a,
-.maincalendar .calendar_event_site:hover a,
-.maincalendar .calendar_event_group:hover a,
-.maincalendar .calendar_event_user:hover a {
-  color: #094478;
-  text-decoration: underline;
+.maincalendar .calendar_event_category a:has(> .icon):hover,
+.maincalendar .calendar_event_course a:has(> .icon):hover,
+.maincalendar .calendar_event_site a:has(> .icon):hover,
+.maincalendar .calendar_event_group a:has(> .icon):hover,
+.maincalendar .calendar_event_user a:has(> .icon):hover {
+  color: #07345a;
+  text-decoration: none;
 }
 .maincalendar .calendar_event_category {
   border-color: #e0cbe0;
@@ -27708,7 +27712,10 @@ table.calendartable caption {
   section:not(#region-main) .block.block_calendar_month .maincalendar .calendarwrapper .previous,
   section:not(#region-main) .block.block_calendar_month .maincalendar .calendarwrapper .next {
     width: 30%;
-    font-size: 0.8em;
+  }
+  section:not(#region-main) .block.block_calendar_month .maincalendar .calendarwrapper .previous .arrow_text,
+  section:not(#region-main) .block.block_calendar_month .maincalendar .calendarwrapper .next .arrow_text {
+    display: none;
   }
   section:not(#region-main) .block.block_calendar_month .maincalendar .calendartable.calendarmonth th,
   section:not(#region-main) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td {
@@ -28533,6 +28540,7 @@ span.editinstructions {
   text-decoration: none;
   z-index: 9999;
   border: 0 solid transparent;
+  width: fit-content;
   color: #00434e;
   background-color: #cce6ea;
   border-color: #b8dce2;
@@ -36876,6 +36884,25 @@ span[data-flexitour=container][x-placement=right] div[data-role=arrow]:after, sp
 }
 .modal .close:not(:disabled):not(.disabled):hover, .modal .close:not(:disabled):not(.disabled):focus {
   opacity: inherit;
+}
+
+/* Bug fix for TinyMCE menu when in fullscreen mode. */
+body.tox-fullscreen .modal-dialog {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+}
+body.tox-fullscreen .modal-dialog .modal-header {
+  height: 0;
+  padding: 0;
+}
+body.tox-fullscreen .modal-dialog .tox-tinymce-aux {
+  position: relative;
+}
+
+/* Bug fix TinyMCE menu width dropdowns when in fullscreen mode. */
+body.tox-fullscreen .tox.tox-tinymce-aux {
+  position: relative !important;
 }
 
 .layout.fullscreen {

@@ -70,3 +70,31 @@ Feature: Display marking guide information to students
       | criteria         | description                      | remark          | maxscore | criteriascore |
       | Grade Criteria 1 | Grade 1 description for students | Excellent work! | 70       | 50 / 70       |
       | Grade Criteria 2 | Grade 2 description for students | Try harder      | 30       | 20 / 30       |
+
+  Scenario: Confirm that marking guide definition is retained when grading method is changed
+    Given I am on the "Assign 1" "assign activity" page
+    And I go to "Student 1" "Assign 1" activity advanced grading page
+    And I grade by filling the marking guide with:
+      | Grade Criteria 1 | 70 | Well done! |
+      | Grade Criteria 2 | 20 | Great work |
+    And I press "Save changes"
+    And I am on the "Assign 1" "assign activity editing" page
+    And I set the following fields to these values:
+      | Grading method | Simple direct grading |
+    And I press "Save and return to course"
+    When I go to "Assign 1" advanced grading page
+    Then I should not see "Assign 1 marking guide Ready for use"
+    And I should not see "Grade Critera 1"
+    And I should not see "Grade Critera 2"
+    And I am on the "Course 1" "grades > Grader report > View" page
+    And the following should exist in the "user-grades" table:
+      | -1-       | -2-                  | -3- |
+      | Student 1 | student1@example.com | 90  |
+    And I am on the "Assign 1" "assign activity editing" page
+    And I set the following fields to these values:
+      | Grading method | Marking guide |
+    And I press "Save and return to course"
+    And I go to "Assign 1" advanced grading page
+    And I should see "Assign 1 marking guide Ready for use"
+    And I should see "Grade Criteria 1"
+    And I should see "Grade Criteria 2"

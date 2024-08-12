@@ -892,7 +892,7 @@ class user_test extends \advanced_testcase {
         // Display profile url at course context.
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = \context_course::instance($course->id);
-        $this->assertEquals("https://www.example.com/moodle/user/view.php?id={$user->id}&amp;courseid={$course->id}",
+        $this->assertEquals("https://www.example.com/moodle/user/view.php?id={$user->id}&amp;course={$course->id}",
             \core_user::get_profile_url($user, $coursecontext));
 
         // Throw error if userid is invalid.

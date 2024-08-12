@@ -73,7 +73,7 @@ Feature: View gradebook when scales are used
   Scenario: Test displaying scales in gradebook in aggregation method Natural
     When I turn editing mode off
     Then the following should exist in the "user-grades" table:
-      | -1-                | -1-                  | -3-      | -4-            | -5-          |
+      | -1-                | -2-                  | -3-      | -4-            | -5-          |
       | Student 1          | student1@example.com | A        | 5.00           | 5.00         |
       | Student 2          | student2@example.com | B        | 4.00           | 4.00         |
       | Student 3          | student3@example.com | C        | 3.00           | 3.00         |
@@ -116,7 +116,7 @@ Feature: View gradebook when scales are used
       | Minimum grade | 1                            |
     And I turn editing mode off
     Then the following should exist in the "user-grades" table:
-      | -1-                | -1-                  | -3-      | -4-            | -5-            |
+      | -1-                | -2-                  | -3-      | -4-            | -5-            |
       | Student 1          | student1@example.com | A        | 5.00           | <coursetotal1> |
       | Student 2          | student2@example.com | B        | 4.00           | <coursetotal2> |
       | Student 3          | student3@example.com | C        | 3.00           | <coursetotal3> |
