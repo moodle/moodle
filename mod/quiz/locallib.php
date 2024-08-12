@@ -346,6 +346,10 @@ function quiz_start_attempt_built_on_last($quba, $attempt, $lastattempt) {
 /**
  * Create or update the quiz attempt record, and the question usage.
  *
+ * If the attempt already exists in the database with the NOT_STARTED state, it will be transitioned
+ * to IN_PROGRESS and the timestart updated. If it does not already exist, a new record will be created
+ * already in the IN_PROGRESS state.
+ *
  * @param quiz_settings $quizobj
  * @param question_usage_by_activity $quba
  * @param stdClass                     $attempt
@@ -415,6 +419,9 @@ function quiz_attempt_save_started(
 
 /**
  * Create the quiz attempt record, and the question usage.
+ *
+ * This saves an attempt in the NOT_STARTED state, and is designed for use when pre-creating attempts
+ * ahead of the quiz start time to spread out the processing load.
  *
  * @param question_usage_by_activity $quba
  * @param stdClass $attempt
