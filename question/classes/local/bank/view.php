@@ -179,7 +179,7 @@ class view {
     public $returnurl;
 
     /**
-     * @var array $bulkactions to identify the bulk actions for the api.
+     * @var bulk_action_base[] $bulkactions bulk actions for the api.
      */
     public $bulkactions = [];
 
@@ -237,20 +237,7 @@ class view {
 
         // Default filter condition.
         if (!isset($params['filter']) && isset($params['cat'])) {
-            $params['filter']  = [];
-            [$categoryid, $contextid] = category_condition::validate_category_param($params['cat']);
-            if (!is_null($categoryid)) {
-                $category = category_condition::get_category_record($categoryid, $contextid);
-                $params['filter']['category'] = [
-                    'jointype' => category_condition::JOINTYPE_DEFAULT,
-                    'values' => [$category->id],
-                    'filteroptions' => ['includesubcategories' => false],
-                ];
-            }
-            $params['filter']['hidden'] = [
-                'jointype' => hidden_condition::JOINTYPE_DEFAULT,
-                'values' => [0],
-            ];
+            $params['filter']  = filter_condition_manager::get_default_filter($params['cat']);
             $params['jointype'] = datafilter::JOINTYPE_ALL;
         }
         if (!empty($params['filter'])) {
@@ -321,7 +308,7 @@ class view {
      */
     protected function init_bulk_actions(): void {
         foreach ($this->plugins as $componentname => $plugin) {
-            $bulkactions = $plugin->get_bulk_actions();
+            $bulkactions = $plugin->get_bulk_actions($this);
             if (!is_array($bulkactions)) {
                 debugging("The method {$componentname}::get_bulk_actions() must return an " .
                     "array of bulk actions instead of a single bulk action. " .
@@ -331,11 +318,7 @@ class view {
             }
 
             foreach ($bulkactions as $bulkactionobject) {
-                $this->bulkactions[$bulkactionobject->get_key()] = [
-                    'title' => $bulkactionobject->get_bulk_action_title(),
-                    'url' => $bulkactionobject->get_bulk_action_url(),
-                    'capabilities' => $bulkactionobject->get_bulk_action_capabilities()
-                ];
+                $this->bulkactions[$bulkactionobject->get_key()] = $bulkactionobject;
             }
         }
     }
@@ -1328,7 +1311,7 @@ class view {
             foreach ($this->bulkactions as $key => $action) {
                 // Check capabilities.
                 $capcount = 0;
-                foreach ($action['capabilities'] as $capability) {
+                foreach ($action->get_bulk_action_capabilities() as $capability) {
                     if (has_capability($capability, $catcontext)) {
                         $capcount ++;
                     }
@@ -1339,9 +1322,9 @@ class view {
                     continue;
                 }
                 $actiondata = new \stdClass();
-                $actiondata->actionname = $action['title'];
+                $actiondata->actionname = $action->get_bulk_action_title();
                 $actiondata->actionkey = $key;
-                $actiondata->actionurl = new \moodle_url($action['url'], $params);
+                $actiondata->actionurl = new \moodle_url($action->get_bulk_action_url(), $params);
                 $bulkactiondata[] = $actiondata;
 
                 $bulkactiondatas ['bulkactionitems'] = $bulkactiondata;
@@ -1350,6 +1333,16 @@ class view {
             if (!empty($bulkactiondatas)) {
                 echo $PAGE->get_renderer('core_question', 'bank')->render_bulk_actions_ui($bulkactiondatas);
             }
+        }
+    }
+
+    /**
+     * Give each bulk action a chance to load its own javascript module.
+     * @return void
+     */
+    public function init_bulk_actions_js(): void {
+        foreach ($this->bulkactions as $action) {
+            $action->initialise_javascript();
         }
     }
 

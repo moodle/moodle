@@ -25,6 +25,10 @@
 
 namespace core_question\local\bank;
 
+use core\output\datafilter;
+use qbank_deletequestion\hidden_condition;
+use qbank_managecategories\category_condition;
+
 /**
  * Static methods for parsing and formatting data related to filter conditions.
  */
@@ -116,5 +120,30 @@ class filter_condition_manager {
             }
         }
         return $filters;
+    }
+
+    /**
+     * Provide a category-context string to get a default filter array for the category.
+     *
+     * @param string $catstring in format '1,2' or 'categoryid,contextid'
+     * @return array
+     */
+    public static function get_default_filter(string $catstring): array {
+        $filter  = [];
+        [$validcatid, $contextid] = category_condition::validate_category_param($catstring);
+        if (!is_null($validcatid)) {
+            $category = category_condition::get_category_record($validcatid, $contextid);
+            $filter['category'] = [
+                'jointype' => condition::JOINTYPE_DEFAULT,
+                'values' => [$category->id],
+                'filteroptions' => ['includesubcategories' => false],
+            ];
+        }
+        $filter['hidden'] = [
+            'jointype' => condition::JOINTYPE_DEFAULT,
+            'values' => [0],
+        ];
+
+        return $filter;
     }
 }

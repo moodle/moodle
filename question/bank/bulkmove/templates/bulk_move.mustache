@@ -17,27 +17,124 @@
 {{!
     @template qbank_bulkmove/bulk_move
 
-    The move form to move selested questions.
-
-    Context variables required for this template:
-    * categorydropdown - dropdown html from the managecategories plugin for the list of categories
-    * moveurl - the url to post the selected category
-    * returnurl - the base page to return to
+    Template for qbank_bulkmove/modal_question_bank_bulkmove
 
     Example context (json):
-    {
-        "categorydropdown": "<select class='select custom-select custom-select'><optgroup label='Course: tes'><option value='2,13'>Default for test (5)</option></optgroup></select>",
-        "moveurl": "/question/bank/bulkmove/move.php?courseid=2",
-        "returnurl": "/question/edit.php?courseid=2"
+{
+    "allsharedbanks": [
+        {
+            "name": "Quiz 1",
+            "contextid": 1,
+            "coursenamebankname": "c1 - Quiz 1"
+        },
+        {
+            "name": "Question bank 1",
+            "modid": "2",
+            "contextid": 2,
+            "coursenamebankname": "c1 - Question bank 1",
+            "cminfo": {},
+            "questioncategories": [
+                {
+                    "id": "22",
+                    "name": "Default for Question bank 1",
+                    "contextid": "22",
+                    "enabled": "disabled"
+                }
+            ]
+        },
+        {
+            "name": "Question bank 2",
+            "modid": "3",
+            "contextid": 33,
+            "coursenamebankname": "c2 - Question bank 2",
+            "cminfo": {},
+            "questioncategories": [
+                {
+                    "id": "23",
+                    "name": "Default for Question bank 2",
+                    "contextid": "23",
+                    "enabled": "disabled"
+                }
+            ]
+        }
+    ],
+    "allcategories": [
+        {
+            "id": "22",
+            "name": "Default for Question bank 1",
+            "contextid": "22"
+        },
+        {
+            "id": "23",
+            "name": "Default for Question bank 2",
+            "contextid": "23",
+            "enabled": "disabled"
+        },
+        {
+            "id": "24",
+            "name": "Default for Question bank 3",
+            "contextid": "24",
+            "enabled": "disabled"
+        },
+        {
+            "id": "25",
+            "name": "Default for Question bank 4",
+            "contextid": "25",
+            "enabled": "disabled"
+        }
+    ],
+    "save": {
+        "id": "single_button669e368d496707",
+        "formid": null,
+        "method": "post",
+        "url": "#",
+        "label": "Move questions",
+        "classes": "singlebutton",
+        "disabled": false,
+        "tooltip": null,
+        "type": "primary",
+        "attributes": [
+            {
+                "name": "data-action",
+                "value": "bulkmovesave"
+            },
+            {
+                "name": "disabled",
+                "value": "disabled"
+            }
+        ],
+        "params": [
+            {
+                "name": "sesskey",
+                "value": "abcde12345"
+            }
+        ],
+        "actions": [],
+        "hasactions": false
     }
+}
 }}
 
-<div class="bulkmovequestion-header">
-    <h3>{{#str}} bulkmoveheader, qbank_bulkmove {{/str}}</h3>
+<div class="search-banks">
+    <h5>{{#str}}questionbank, question{{/str}}</h5>
+    <select class="custom-select bulk-move d-none" id="searchbanks">
+        {{#allsharedbanks}}
+            <option value="{{contextid}}">{{{coursenamebankname}}}</option>
+        {{/allsharedbanks}}
+    </select>
 </div>
-<form action="{{{moveurl}}}" method="post" id="bulkmovequestion">
-    {{{categorydropdown}}}
-    <input type="submit" value="{{#str}} moveto, question {{/str}}" class="btn btn-primary" name="move" data-action="toggle" data-togglegroup="qbank"
-           data-toggle="action" form="bulkmovequestion">
-    <a href="{{{returnurl}}}" class="btn btn-secondary">{{#str}} close, qbank_bulkmove {{/str}}</a>
-</form>
+<div class="search-categories mt-3">
+    <h5>{{#str}}questioncategories, question{{/str}}</h5>
+    <select class="custom-select bulk-move d-none" id="searchcategories">
+        {{#allcategories}}
+            <option value="{{id}}" data-bank-contextid="{{contextid}}" data-enabled="{{enabled}}">{{{name}}}</option>
+        {{/allcategories}}
+    </select>
+    <div id="searchcatwarning" class="d-none">{{#str}}warning, qbank_bulkmove{{/str}}</div>
+</div>
+
+{{#save}}
+    <div class="move-questions mt-3">
+        {{>core/single_button}}
+    </div>
+{{/save}}

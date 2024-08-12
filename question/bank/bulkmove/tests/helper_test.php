@@ -216,6 +216,7 @@ class helper_test extends \advanced_testcase {
         $addcontexts = $contexts->having_cap('moodle/question:add');
         $url = new \moodle_url('/question/bank/bulkmove/move.php');
         $displaydata = \qbank_bulkmove\helper::get_displaydata($addcontexts, $url, $url);
+        $this->assertDebuggingCalled();
         $this->assertStringContainsString('Test question category 1', $displaydata['categorydropdown']);
         $this->assertStringContainsString('Default for QBANK 1', $displaydata['categorydropdown']);
         $this->assertEquals($url, $displaydata ['moveurl']);

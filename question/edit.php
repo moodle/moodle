@@ -82,8 +82,10 @@ echo $renderer->render($qbankaction);
 // Print the question area.
 $questionbank->display();
 
+[$categoryid, $contextid] = explode(',', $pagevars['cat']);
+$questionbank->init_bulk_actions_js();
+
 // Log the view of this category.
-list($categoryid, $contextid) = explode(',', $pagevars['cat']);
 $category = new stdClass();
 $category->id = $categoryid;
 $catcontext = context::instance_by_id($contextid);
