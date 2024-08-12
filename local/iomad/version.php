@@ -21,7 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->release  = '4.3.5 (Build: 20240610)'; // Human-friendly version name
+$plugin->release  = '4.3.6 (Build: 20240812)'; // Human-friendly version name
 $plugin->component  = 'local_iomad';
 $plugin->requires = 2019052000;   // Requires this Moodle version.
 $plugin->version  = 2024022500;   // The (date) version of this plugin.
