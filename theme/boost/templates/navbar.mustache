@@ -62,10 +62,10 @@
             <span class="sr-only">{{#str}}sidepanel, core{{/str}}</span>
         </button>
 
-        <a href="{{{ config.homeurl }}}" class="navbar-brand d-none d-md-flex align-items-center m-0 mr-4 p-0 aabtn">
+        <a href="{{{ config.homeurl }}}" class="navbar-brand d-none d-md-flex align-items-center m-0 me-4 p-0 aabtn">
 
             {{# output.should_display_navbar_logo }}
-                <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
+                <img src="{{output.get_compact_logo_url}}" class="logo me-1" alt="{{sitename}}">
             {{/ output.should_display_navbar_logo }}
             {{^ output.should_display_navbar_logo }}
                 {{{ sitename }}}
@@ -82,14 +82,14 @@
             {{{ output.page_heading_menu }}}
         </ul>
 
-        <div id="usernavigation" class="navbar-nav ml-auto">
+        <div id="usernavigation" class="navbar-nav ms-auto">
             {{# output.search_box }}
                 {{{ output.search_box }}}
-                <div class="divider border-left h-75 align-self-center mx-1"></div>
+                <div class="divider border-start h-75 align-self-center mx-1"></div>
             {{/output.search_box}}
             {{#langmenu}}
                 {{> theme_boost/language_menu }}
-                <div class="divider border-left h-75 align-self-center mx-1"></div>
+                <div class="divider border-start h-75 align-self-center mx-1"></div>
             {{/langmenu}}
             {{{ output.navbar_plugin_output }}}
             <div class="d-flex align-items-stretch usermenu-container" data-region="usermenu">

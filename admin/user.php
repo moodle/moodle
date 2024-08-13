@@ -163,7 +163,7 @@
         echo html_writer::start_div('d-flex mb-2');
         $url = new moodle_url('/user/editadvanced.php', ['id' => -1]);
         echo html_writer::link($url, get_string('addnewuser', 'moodle'), [
-            'class' => 'btn btn-primary ml-auto',
+            'class' => 'btn btn-primary ms-auto',
             'data-action' => 'add-user',
         ]);
         echo html_writer::end_div();

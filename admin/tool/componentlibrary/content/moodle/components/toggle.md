@@ -49,7 +49,7 @@ Disabled toggle with extra classes.
     {
         "id": "example-toggle-2",
         "disabled": true,
-        "extraclasses": "mt-2 ml-2",
+        "extraclasses": "mt-2 ms-2",
         "dataattributes": [{
             "name": "action",
             "value": "toggle-status"

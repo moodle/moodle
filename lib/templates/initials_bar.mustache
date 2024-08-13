@@ -74,7 +74,7 @@
     }
 }}
 <div class="initialbar {{class}} d-flex flex-wrap justify-content-center justify-content-md-start">
-    <span class="initialbarlabel mr-2">{{title}}</span>
+    <span class="initialbarlabel me-2">{{title}}</span>
 
     <nav class="initialbargroups d-flex flex-wrap justify-content-center justify-content-md-start">
         <ul class="pagination pagination-sm">
@@ -83,7 +83,7 @@
                     <a data-initial="" class="page-link" href="{{url}}"{{^current}} aria-current="true"{{/current}}>{{all}}</a>
                 {{/url}}
                 {{#input}}
-                    <input class="page-link mr-1 rounded" {{^current}} aria-current="true"{{/current}} value="{{all}}" type="button">
+                    <input class="page-link me-1 rounded" {{^current}} aria-current="true"{{/current}} value="{{all}}" type="button">
                 {{/input}}
             </li>
         </ul>
@@ -95,7 +95,7 @@
                             <a class="page-link" href="{{url}}"{{#selected}} aria-current="true"{{/selected}}>{{name}}</a>
                         {{/url}}
                         {{#input}}
-                            <input class="page-link mr-1 rounded" {{#selected}} aria-current="true"{{/selected}} value="{{name}}" type="button">
+                            <input class="page-link me-1 rounded" {{#selected}} aria-current="true"{{/selected}} value="{{name}}" type="button">
                         {{/input}}
                     </li>
                 {{/letter}}

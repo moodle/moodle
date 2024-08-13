@@ -217,7 +217,7 @@ class quiz_overview_table extends attempts_report_table {
             echo html_writer::empty_tag('input', [
                 'type' => 'button',
                 'id' => 'regradeattempts',
-                'class' => 'btn btn-secondary mr-1',
+                'class' => 'btn btn-secondary me-1',
                 'name' => 'regradeattempts',
                 'value' => get_string('regrade_attempts', 'quiz_overview'),
                 'data-slots' => json_encode($questionslots),

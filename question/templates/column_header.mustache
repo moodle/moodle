@@ -20,7 +20,7 @@
     Displays the <th> header cell for a column in the question bank.
 
     Context variables required for this template:
-        * extraclasses: CSS classes to add to the th. E.g. "questionstatus pr-3".
+        * extraclasses: CSS classes to add to the th. E.g. "questionstatus pe-3".
         * help: (optional, may be omitted) help icon. The structure here needs to be as from help_icon::export_for_template().
 
         Other fields vary, depending on whether the column is sortable.
@@ -43,7 +43,7 @@
     Example context (json):
     {
         "sortable": false,
-        "extraclasses": "checkbox pr-1",
+        "extraclasses": "checkbox pe-1",
         "tiptitle": "<input id=\"qbheadercheckbox\" name=\"qbheadercheckbox\" type=\"checkbox\"  value=\"1\" data-action=\"toggle\" data-toggle=\"master\" data-togglegroup=\"qbank\" data-toggle-selectall=\"Select all\" data-toggle-deselectall=\"Deselect all\"><label for=\"qbheadercheckbox\" class=\"accesshide\">Select all<\/label>",
         "sorttip": true,
         "tip": "Select questions for bulk actions",
@@ -60,14 +60,14 @@
     <div class="header-container">
         <div class="header-text">
         {{#title}}
-            <div class="title mr-1">{{title}}</div>
+            <div class="title me-1">{{title}}</div>
         {{/title}}
         {{^sortable}}
             {{^sorttip}}
-                <span class="mr-1">{{tiptitle}}</span>
+                <span class="me-1">{{tiptitle}}</span>
             {{/sorttip}}
             {{#sorttip}}
-                <span class="mr-1" title="{{tip}}">{{{tiptitle}}}</span>
+                <span class="me-1" title="{{tip}}">{{{tiptitle}}}</span>
             {{/sorttip}}
         {{/sortable}}
         {{#help}}

@@ -2432,15 +2432,6 @@ body.h5p-embed {
     z-index: 1 !important; /* stylelint-disable-line declaration-no-important */
 }
 
-// These floats are deprecated in Bootstrap 4.3.1. It is still okay to use them in Moodle.
-.float-left {
-    float: left !important; /* stylelint-disable-line declaration-no-important */
-}
-
-.float-right {
-    float: right !important; /* stylelint-disable-line declaration-no-important */
-}
-
 .img-responsive {
     @include img-fluid();
 }

@@ -105,7 +105,7 @@
                             <th scope="col">
                                 <span class="accesshide">{{#str}}status{{/str}}</span>
                             </th>
-                            <th scope="col" class="pl-0">
+                            <th scope="col" class="ps-0">
                                 {{#state.sortorder.isdiscussiondesc}}
                                     <a href="{{{forum.urls.sortdiscussionasc}}}" aria-label="{{#str}}discussionlistsortbydiscussionasc, mod_forum{{/str}}">{{#str}}discussion, mod_forum{{/str}}</a> <span class="text-primary">{{#pix}}t/downlong, core, {{#str}}desc, core{{/str}}{{/pix}}</span>
                                 {{/state.sortorder.isdiscussiondesc}}
@@ -205,7 +205,7 @@
                                     {{/discussion}}
                                 </td>
                                 <th scope="row" class="topic p-0 align-middle">
-                                    <div class="p-3 pl-0">
+                                    <div class="p-3 ps-0">
                                         <div class="d-flex">
                                             {{#discussion.pinned}}
                                                 {{#pix}}i/pinned, mod_forum, {{#str}}discussionpinned, mod_forum{{/str}}{{/pix}}
@@ -271,7 +271,7 @@
                                         </div>
                                     {{/firstpostauthor}}
                                 </td>
-                                <td class="text-left align-middle fit-content limit-width px-3">
+                                <td class="text-start align-middle fit-content limit-width px-3">
                                     {{! TODO Check q&a, eachuser }}
                                     {{#latestpostauthor}}
                                         <div class="d-flex">

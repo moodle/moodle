@@ -102,7 +102,7 @@ class tool_types extends base {
                 $img = \html_writer::img($iconurl, get_string('courseexternaltooliconalt', 'mod_lti', $name),
                     ['class' => 'activityicon' . $iconclass]);
                 $name = \html_writer::span($name, 'align-self-center');
-                return \html_writer::div(\html_writer::div($img, 'mr-2 '.$iconcontainerclass) . $name, 'd-flex');
+                return \html_writer::div(\html_writer::div($img, 'me-2 '.$iconcontainerclass) . $name, 'd-flex');
             });
 
         // Description column.

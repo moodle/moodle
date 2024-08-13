@@ -263,7 +263,7 @@ class custom_report_table extends base_report_table {
             ]);
 
             echo html_writer::tag('th', $headercell, [
-                'class' => 'border-right border-left',
+                'class' => 'border-end border-start',
                 'scope' => 'col',
                 'data-region' => 'column-header',
                 'data-column-id' => $column->get_persistent()->get('id'),

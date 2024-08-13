@@ -807,11 +807,11 @@ span.editinstructions {
 
     .listitem {
         > div {
-            > .float-left {
+            > .float-start {
                 float: left;
             }
 
-            > .float-right {
+            > .float-end {
                 float: right;
                 text-align: right;
             }

@@ -457,7 +457,7 @@ $PAGE->set_title("$course->shortname: $strforums");
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-echo html_writer::start_div('input-group mr-5');
+echo html_writer::start_div('input-group me-5');
 echo $searchform;
 echo html_writer::end_div();
 

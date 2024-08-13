@@ -9,3 +9,74 @@
 .btn-close {
     @extend .close;
 }
+
+// Generate all spacer classes for all breakpoints for directions start and end.
+// ps-1 > pl-1, pe-1 > pr-1, me-sm-1 > ml-sm-1, ...
+@each $breakpoint in map-keys($grid-breakpoints) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+    @each $prop, $abbrev in (margin: m, padding: p) {
+        @each $size, $length in $spacers {
+            .#{$abbrev}s#{$infix}-#{$size} {
+                @extend .#{$abbrev}l#{$infix}-#{$size};
+            }
+            .#{$abbrev}e#{$infix}-#{$size} {
+                @extend .#{$abbrev}r#{$infix}-#{$size};
+            }
+        }
+    }
+}
+
+// Generate all margin auto classes for all breakpoints for directions start and end.
+// ps-auto > pl-auto, pe-auto > pr-auto, me-sm-auto > ml-sm-auto, ...
+@each $breakpoint in map-keys($grid-breakpoints) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+    .ms#{$infix}-auto {
+        @extend .ml#{$infix}-auto;
+    }
+    .me#{$infix}-auto {
+        @extend .mr#{$infix}-auto;
+    }
+}
+
+// Generate all float classes for all breakpoints for directions start and end.
+// float-start > float-left, float-sm-end > float-sm-right, ...
+@each $breakpoint in map-keys($grid-breakpoints) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+    .float#{$infix}-start {
+        @extend .float#{$infix}-left;
+    }
+    .float#{$infix}-end {
+        @extend .float#{$infix}-right;
+    }
+}
+
+// Generate all text classes for all breakpoints for directions start and end.
+// text-start > text-left, text-sm-end > text-sm-right, ...
+@each $breakpoint in map-keys($grid-breakpoints) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+    .text#{$infix}-start {
+        @extend .text#{$infix}-left;
+    }
+    .text#{$infix}-end {
+        @extend .text#{$infix}-right;
+    }
+}
+
+.border-start {
+    @extend .border-left;
+}
+.border-end {
+    @extend .border-right;
+}
+.border-start-0 {
+    @extend .border-left-0;
+}
+.border-end-0 {
+    @extend .border-right-0;
+}
+.rounded-start {
+    @extend .rounded-left;
+}
+.rounded-end {
+    @extend .rounded-right;
+}

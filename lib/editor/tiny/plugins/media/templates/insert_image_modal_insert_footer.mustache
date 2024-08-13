@@ -33,18 +33,18 @@
     <div class="col-md-6 d-flex align-items-center p-0">
         <!-- Row 1: URL related label -->
         {{#showdropzone}}
-        <label for="{{elementid}}_tiny_image_urlentry" class="tiny_image_url_label mr-1">{{#str}} enterurlor, tiny_media {{/str}}</label>
+        <label for="{{elementid}}_tiny_image_urlentry" class="tiny_image_url_label me-1">{{#str}} enterurlor, tiny_media {{/str}}</label>
         {{/showdropzone}}
         {{^showdropzone}}
-        <label for="{{elementid}}_tiny_image_urlentry" class="tiny_image_url_label mr-1">{{#str}} enterurl, tiny_media {{/str}}</label>
+        <label for="{{elementid}}_tiny_image_urlentry" class="tiny_image_url_label me-1">{{#str}} enterurl, tiny_media {{/str}}</label>
         {{/showdropzone}}
         <!-- Row 2: URL entry input. Needed by the insert image step and image details step if the image URL source from external -->
-        <input name="urlentry" class="tiny_image_urlentry form-control w-50 mr-1" type="url" id="{{elementid}}_tiny_image_urlentry" size="32" value="{{src}}">
+        <input name="urlentry" class="tiny_image_urlentry form-control w-50 me-1" type="url" id="{{elementid}}_tiny_image_urlentry" size="32" value="{{src}}">
         <!-- Row 3: Add button. Needed by the insert image step -->
-        <button disabled class="tiny_image_addurl btn btn-secondary mr-1" type="button">{{#str}} addurl, tiny_media {{/str}}</button>
+        <button disabled class="tiny_image_addurl btn btn-secondary me-1" type="button">{{#str}} addurl, tiny_media {{/str}}</button>
     </div>
     <!-- Column 2: Saving, canceling, browsing repositories buttons -->
-    <div class="col-md-6 text-right mt-2 md-0 p-0">
+    <div class="col-md-6 text-end mt-2 md-0 p-0">
         <!-- Row 1: Cancel button -->
         <button type="button" class="btn btn-secondary" data-action="cancel">{{#str}} cancel, moodle {{/str}}</button>
         {{#showfilepicker}}

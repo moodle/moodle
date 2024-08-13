@@ -655,7 +655,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
             echo "</label>\n";
         }
         if ($helpicon) {
-            echo '<span class="float-sm-right text-nowrap">'.$helpicon.'</span>';
+            echo '<span class="float-sm-end text-nowrap">'.$helpicon.'</span>';
         }
         echo '</div>';
         if (isset($this->errors[$name])) {

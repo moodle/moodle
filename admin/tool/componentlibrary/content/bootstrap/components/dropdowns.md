@@ -744,7 +744,7 @@ Use `data-offset` or `data-reference` to change the location of the dropdown.
 
 {{< example >}}
 <div class="d-flex">
-  <div class="dropdown mr-1">
+  <div class="dropdown me-1">
     <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" data-offset="10,20">
       Offset
     </button>

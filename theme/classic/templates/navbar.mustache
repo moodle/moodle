@@ -41,7 +41,7 @@
     <div class="container-fluid">
         <a href="{{{ config.homeurl }}}" class="navbar-brand d-flex align-items-center m-1 p-0 aabtn">
             {{# output.should_display_navbar_logo }}
-                <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
+                <img src="{{output.get_compact_logo_url}}" class="logo me-1" alt="{{sitename}}">
             {{/ output.should_display_navbar_logo }}
             {{^ output.should_display_navbar_logo }}
                 <span class="sitename">{{{ sitename }}}</span>
@@ -54,8 +54,8 @@
             <!-- page_heading_menu -->
             {{{ output.page_heading_menu }}}
         </ul>
-        <div id="usernavigation" class="navbar-nav my-1 ml-auto">
-            <div class="divider border-left h-50 align-self-center mx-1"></div>
+        <div id="usernavigation" class="navbar-nav my-1 ms-auto">
+            <div class="divider border-start h-50 align-self-center mx-1"></div>
             {{{ output.search_box }}}
             {{{ output.navbar_plugin_output }}}
             <div class="d-flex align-items-stretch usermenu-container" data-region="usermenu">

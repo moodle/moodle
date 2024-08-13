@@ -62,16 +62,16 @@
     }
 }}
 <div class="book p-4">
-    <div class="text-right">{{{ printdialoglink }}}</div>
+    <div class="text-end">{{{ printdialoglink }}}</div>
     <div class="text-center pb-3 book_title">{{{ booktitle }}}</div>
     <div class="book_info w-100 pt-6 d-inline-block">
-        <div class="w-50 float-left">
+        <div class="w-50 float-start">
             <table>
                 <tr>
                     <td>
                         {{# str }} site {{/ str }}:
                     </td>
-                    <td class="pl-3">
+                    <td class="ps-3">
                         {{{ sitelink }}}
                     </td>
                 </tr>
@@ -79,7 +79,7 @@
                     <td>
                         {{# str }} course {{/ str }}:
                     </td>
-                    <td class="pl-3">
+                    <td class="ps-3">
                         {{{ coursename }}}
                     </td>
                 </tr>
@@ -87,19 +87,19 @@
                     <td>
                         {{# str }} modulename, mod_book {{/ str }}:
                     </td>
-                    <td class="pl-3">
+                    <td class="ps-3">
                         {{{ modulename }}}
                     </td>
                 </tr>
             </table>
         </div>
-        <div class="w-50 float-left">
-            <table class="float-right">
+        <div class="w-50 float-start">
+            <table class="float-end">
                 <tr>
                     <td>
                         {{# str }} printedby, booktool_print {{/ str }}:
                     </td>
-                    <td class="pl-3">
+                    <td class="ps-3">
                         {{{ username }}}
                     </td>
                 </tr>
@@ -107,7 +107,7 @@
                     <td>
                         {{# str }} printdate, booktool_print {{/ str }}:
                     </td>
-                    <td class="pl-3">
+                    <td class="ps-3">
                         {{{ printdate }}}
                     </td>
                 </tr>

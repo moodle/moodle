@@ -54,10 +54,10 @@
 }}
 <div class="usermenu">
     {{#unauthenticateduser}}
-        <span class="login pl-2">
+        <span class="login ps-2">
             {{#guest}}
                 {{#str}} loggedinasguest, core {{/str}}
-                <div class="divider border-left h-75 align-self-center mx-2"></div>
+                <div class="divider border-start h-75 align-self-center mx-2"></div>
             {{/guest}}
             {{#url}}
                 <a href="{{url}}">{{#str}} login, core {{/str}}</a>
@@ -86,7 +86,7 @@
                                             <span class="dir-rtl-hide">{{#pix}}i/arrow-left{{/pix}}</span>
                                             <span class="dir-ltr-hide">{{#pix}}i/arrow-right{{/pix}}</span>
                                         </button>
-                                        <span class="pl-2" id="carousel-item-title-{{id}}">{{title}}</span>
+                                        <span class="ps-2" id="carousel-item-title-{{id}}">{{title}}</span>
                                     </div>
                                     <div class="dropdown-divider"></div>
                                     <div class="items h-100 overflow-auto" role="menu" aria-labelledby="carousel-item-title-{{id}}">

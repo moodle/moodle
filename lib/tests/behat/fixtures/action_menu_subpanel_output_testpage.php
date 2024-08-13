@@ -125,7 +125,7 @@ $menu->add(
 );
 echo '<div class="border p-2 d-flex flex-row"><div>';
 echo $OUTPUT->render($menu);
-echo '</div><div class="flex-fill ml-2">Menu left example</div></div>';
+echo '</div><div class="flex-fill ms-2">Menu left example</div></div>';
 
 echo '</div>';
 
@@ -184,7 +184,7 @@ $menu->add(
 );
 echo '<div class="border p-2 d-flex flex-row"><div>';
 echo $OUTPUT->render($menu);
-echo '</div><div class="flex-fill ml-2">Menu left example</div></div>';
+echo '</div><div class="flex-fill ms-2">Menu left example</div></div>';
 
 echo '</div>';
 

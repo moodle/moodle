@@ -34,12 +34,12 @@
     data-value="{{id}}"
 >
     {{#name}}
-        <span class="pull-left result-cell text-truncate mr-2">
+        <span class="pull-left result-cell text-truncate me-2">
             {{name}}
         </span>
     {{/name}}
     {{^name}}
-        <div class="d-block pr-2 w-25">
+        <div class="d-block pe-2 w-25">
             {{#profileimage}}
                 <img class="userpicture w-75 mx-auto d-block" src="{{profileimage}}" alt="" />
             {{/profileimage}}
@@ -47,7 +47,7 @@
                 <span class="userinitials"></span>
             {{/profileimage}}
         </div>
-        <div class="d-block pr-3 w-75">
+        <div class="d-block pe-3 w-75">
             <span class="w-100 p-0 font-weight-bold">
                 {{fullname}}
             </span>

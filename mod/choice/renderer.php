@@ -47,7 +47,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $choicecount = 0;
         foreach ($options['options'] as $option) {
             $choicecount++;
-            $html .= html_writer::start_tag('li', array('class' => 'option mr-3'));
+            $html .= html_writer::start_tag('li', array('class' => 'option me-3'));
             if ($multiple) {
                 $option->attributes->name = 'answer[]';
                 $option->attributes->type = 'checkbox';
@@ -97,7 +97,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                 if (!empty($options['allowupdate']) && ($options['allowupdate'])) {
                     $url = new moodle_url('view.php',
                             array('id' => $coursemoduleid, 'action' => 'delchoice', 'sesskey' => sesskey()));
-                    $html .= html_writer::link($url, get_string('removemychoice', 'choice'), array('class' => 'ml-1'));
+                    $html .= html_writer::link($url, get_string('removemychoice', 'choice'), array('class' => 'ms-1'));
                 }
             } else {
                 $html .= html_writer::tag('label', get_string('havetologin', 'choice'));
@@ -274,7 +274,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                             $slavecheckbox = new \core\output\checkbox_toggleall($togglegroup, false, [
                                 'id' => $checkboxid,
                                 'name' => $checkboxname,
-                                'classes' => 'mr-1',
+                                'classes' => 'me-1',
                                 'value' => $checkboxvalue,
                                 'label' => $userfullname . ' ' . $options->text,
                                 'labelclasses' => 'accesshide',
@@ -309,7 +309,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                 'name' => $selectallid,
                 'value' => 1,
                 'label' => get_string('selectall'),
-                'classes' => 'btn-secondary mr-1'
+                'classes' => 'btn-secondary me-1'
             ], true);
             $actiondata .= $this->output->render($selectallcheckbox);
 

@@ -2307,7 +2307,7 @@ class lesson extends lesson_base {
                             'lesson',
                             format_string($instancename, true, ['context' => $this->get_context()]),
                         ),
-                        ['class' => 'centerpadded lessonbutton standardbutton pr-3'],
+                        ['class' => 'centerpadded lessonbutton standardbutton pe-3'],
                     );
                 }
             }

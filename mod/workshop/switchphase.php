@@ -70,7 +70,7 @@ $continuebtn = new single_button(
     'post',
     single_button::BUTTON_PRIMARY
 );
-$continuebtn->class .= ' mr-3';
+$continuebtn->class .= ' me-3';
 echo $OUTPUT->confirm(get_string('switchphase' . $phase . 'info', 'workshop'),
                         $continuebtn, $workshop->view_url());
 echo $OUTPUT->footer();

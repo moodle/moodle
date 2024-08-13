@@ -125,7 +125,7 @@ class share_progress_table extends table_sql {
             if (!$deleted) {
                 $class = 'font-weight-bold';
             }
-            $icon = $OUTPUT->pix_icon('i/externallink', get_string('opensinnewwindow'), 'moodle', ['class' => 'ml-1']);
+            $icon = $OUTPUT->pix_icon('i/externallink', get_string('opensinnewwindow'), 'moodle', ['class' => 'ms-1']);
             $text = $name . $icon;
             $attributes = [
                 'target' => '_blank',

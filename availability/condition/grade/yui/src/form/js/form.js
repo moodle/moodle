@@ -35,7 +35,7 @@ M.availability_grade.form.getNode = function(json) {
     this.nodesSoFar++;
 
     // Create HTML structure.
-    var html = '<label class="mb-3"><span class="pr-3">' + M.util.get_string('title', 'availability_grade') + '</span> ' +
+    var html = '<label class="mb-3"><span class="pe-3">' + M.util.get_string('title', 'availability_grade') + '</span> ' +
             '<span class="availability-group">' +
             '<select name="id" class="custom-select"><option value="0">' + M.util.get_string('choosedots', 'moodle') + '</option>';
     for (var i = 0; i < this.grades.length; i++) {

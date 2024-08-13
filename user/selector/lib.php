@@ -670,7 +670,7 @@ abstract class user_selector_base {
         $name = 'userselector_' . $name;
         // For the benefit of brain-dead IE, the id must be different from the name of the hidden form field above.
         // It seems that document.getElementById('frog') in IE will return and element with name="frog".
-        $output = '<div class="form-check justify-content-start ml-1"><input type="hidden" name="' . $name . '" value="0" />' .
+        $output = '<div class="form-check justify-content-start ms-1"><input type="hidden" name="' . $name . '" value="0" />' .
                     '<label class="form-check-label" for="' . $name . 'id">' .
                         '<input class="form-check-input" type="checkbox" id="' . $name . 'id" name="' . $name .
                             '" value="1"' . $checked . ' /> ' . $label .
@@ -713,11 +713,11 @@ abstract class user_selector_base {
     private function output_searchtype_radios(): string {
         global $OUTPUT;
         $fields[] = $this->get_radio_searchtype_data('searchexactmatchesonly', $this->searchtype === USER_SEARCH_EXACT_MATCH,
-            get_string('userselectorsearchexactmatchonly'), USER_SEARCH_EXACT_MATCH, 'mr-1');
+            get_string('userselectorsearchexactmatchonly'), USER_SEARCH_EXACT_MATCH, 'me-1');
         $fields[] = $this->get_radio_searchtype_data('searchfromstart', $this->searchtype === USER_SEARCH_STARTS_WITH,
-            get_string('userselectorsearchfromstart'), USER_SEARCH_STARTS_WITH, 'mr-1');
+            get_string('userselectorsearchfromstart'), USER_SEARCH_STARTS_WITH, 'me-1');
         $fields[] = $this->get_radio_searchtype_data('searchanywhere', $this->searchtype === USER_SEARCH_CONTAINS,
-            get_string('userselectorsearchanywhere'), USER_SEARCH_CONTAINS, 'mr-1');
+            get_string('userselectorsearchanywhere'), USER_SEARCH_CONTAINS, 'me-1');
         return $OUTPUT->render_from_template('core_user/form_user_selector_searchtype', (object) ['fields' => $fields]);
     }
 

@@ -209,7 +209,7 @@ class feedback_item_multichoice extends feedback_item_base {
         if ($analysed_item) {
             $itemname = $analysed_item[1];
             echo "<table class=\"analysis itemtype_{$item->typ}\">";
-            echo '<tr><th class="text-left">';
+            echo '<tr><th class="text-start">';
             echo $itemnr . ' ';
             if (strval($item->label) !== '') {
                 echo '('. format_string($item->label).') ';

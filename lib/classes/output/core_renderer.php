@@ -440,7 +440,7 @@ class core_renderer extends renderer_base {
                 html_writer::link($nuurl, get_string('validatehtml')),
                 html_writer::link($waveurl, get_string('wcagcheck')),
             ];
-            $validatorlinkslist = html_writer::alist($validatorlinks, ['class' => 'list-unstyled ml-1']);
+            $validatorlinkslist = html_writer::alist($validatorlinks, ['class' => 'list-unstyled ms-1']);
             $output .= html_writer::div($validatorlinkslist, 'validators');
         }
         return $output;
@@ -3161,7 +3161,7 @@ EOD;
         }
 
         $returnstr .= html_writer::span(
-            html_writer::span($usertextcontents, 'usertext mr-1') .
+            html_writer::span($usertextcontents, 'usertext me-1') .
             html_writer::span($avatarcontents, $avatarclasses),
             'userbutton'
         );
@@ -3869,7 +3869,7 @@ EOD;
 
         if (!empty($CFG->supportpage)) {
             $attributes = ['href' => $CFG->supportpage, 'target' => 'blank'];
-            $content .= $this->pix_icon('i/externallink', '', 'moodle', ['class' => 'ml-1']);
+            $content .= $this->pix_icon('i/externallink', '', 'moodle', ['class' => 'ms-1']);
         } else {
             $attributes = ['href' => $CFG->wwwroot . '/user/contactsitesupport.php'];
         }
@@ -3896,7 +3896,7 @@ EOD;
         }
 
         $liferingicon = $this->pix_icon('t/life-ring', '', 'moodle', ['class' => 'fa fa-life-ring']);
-        $newwindowicon = $this->pix_icon('i/externallink', get_string('opensinnewwindow'), 'moodle', ['class' => 'ml-1']);
+        $newwindowicon = $this->pix_icon('i/externallink', get_string('opensinnewwindow'), 'moodle', ['class' => 'ms-1']);
         $link = !empty($CFG->servicespage)
             ? $CFG->servicespage
             : 'https://moodle.com/help/?utm_source=CTA-banner&utm_medium=platform&utm_campaign=name~Moodle4+cat~lms+mp~no';
@@ -3934,7 +3934,7 @@ EOD;
     public function communication_link(): string {
         $link = $this->communication_url() ?? '';
         $commicon = $this->pix_icon('t/messages-o', '', 'moodle', ['class' => 'fa fa-comments']);
-        $newwindowicon = $this->pix_icon('i/externallink', get_string('opensinnewwindow'), 'moodle', ['class' => 'ml-1']);
+        $newwindowicon = $this->pix_icon('i/externallink', get_string('opensinnewwindow'), 'moodle', ['class' => 'ms-1']);
         $content = $commicon . get_string('communicationroomlink', 'course') . $newwindowicon;
         $html = html_writer::tag('a', $content, ['target' => '_blank', 'href' => $link]);
 
@@ -4375,7 +4375,7 @@ EOD;
                     $link = new action_link(new moodle_url('#'), $menuitem->text, null, ['disabled' => true], $menuitem->icon);
                 }
                 if ($indent) {
-                    $link->add_class('ml-4');
+                    $link->add_class('ms-4');
                 }
                 if (!empty($menuitem->classes)) {
                     $link->add_class(implode(" ", $menuitem->classes));

@@ -149,7 +149,7 @@ class filter extends dynamic_form {
         $buttons = [];
         $buttons[] = $mform->createElement('submit', 'submitbutton', get_string('apply', 'core_reportbuilder'));
         $buttons[] = $mform->createElement('submit', 'resetfilters',  get_string('resetall', 'core_reportbuilder'),
-            null, null, ['customclassoverride' => 'btn-link ml-1']);
+            null, null, ['customclassoverride' => 'btn-link ms-1']);
 
         $mform->addGroup($buttons, 'buttonar', get_string('formactions', 'core_form'), '', false)
             ->setHiddenLabel(true);

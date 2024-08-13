@@ -204,9 +204,9 @@ class renderer extends \plugin_renderer_base {
             $headers->remove,
         ];
         $table->colclasses = [
-            'text-left',
-            'text-left',
-            'text-left',
+            'text-start',
+            'text-start',
+            'text-start',
             'text-center',
             'text-center',
         ];

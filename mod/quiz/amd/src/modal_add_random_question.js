@@ -226,7 +226,7 @@ export default class ModalAddRandomQuestion extends Modal {
      * @param  {jquey} form The form element.
      */
     moveCancelButtonToTabs(form) {
-        const cancelButton = form.find(SELECTORS.CANCEL_BUTTON_ELEMENT).addClass('ml-1');
+        const cancelButton = form.find(SELECTORS.CANCEL_BUTTON_ELEMENT).addClass('ms-1');
         const tabFooters = form.find('[data-region="footer"]');
         // Remove the buttons container element.
         cancelButton.closest(SELECTORS.BUTTON_CONTAINER).remove();

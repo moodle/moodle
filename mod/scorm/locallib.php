@@ -1004,7 +1004,7 @@ function scorm_print_launch($user, $scorm, $action, $cm) {
                                                         'action' => $CFG->wwwroot.'/mod/scorm/player.php'));
         if ($scorm->hidebrowse == 0) {
             echo html_writer::tag('button', get_string('browse', 'scorm'),
-                    ['class' => 'btn btn-secondary mr-1', 'name' => 'mode',
+                    ['class' => 'btn btn-secondary me-1', 'name' => 'mode',
                         'type' => 'submit', 'id' => 'b', 'value' => 'browse'])
                 . html_writer::end_tag('button');
         } else {
@@ -1022,7 +1022,7 @@ function scorm_print_launch($user, $scorm, $action, $cm) {
         } else if (!empty($attemptcount) && ($incomplete === false) && (($result->attemptleft > 0)||($scorm->maxattempt == 0))) {
             echo html_writer::start_div('pt-1');
             echo html_writer::checkbox('newattempt', 'on', false, '', array('id' => 'a'));
-            echo html_writer::label(get_string('newattempt', 'scorm'), 'a', true, ['class' => 'pl-1']);
+            echo html_writer::label(get_string('newattempt', 'scorm'), 'a', true, ['class' => 'ps-1']);
             echo html_writer::end_div();
         }
         if (!empty($scorm->popup)) {

@@ -721,7 +721,7 @@ class renderer extends plugin_renderer_base {
     public function access_messages($messages) {
         $output = '';
         foreach ($messages as $message) {
-            $output .= html_writer::tag('p', $message, ['class' => 'text-left']);
+            $output .= html_writer::tag('p', $message, ['class' => 'text-start']);
         }
         return $output;
     }
@@ -951,7 +951,7 @@ class renderer extends plugin_renderer_base {
         if (!$viewobj->quizhasquestions) {
             $output .= html_writer::div(
                     $this->notification(get_string('noquestions', 'quiz'), 'warning', false),
-                    'text-left mb-3');
+                    'text-start mb-3');
         }
         $output .= $this->access_messages($viewobj->preventmessages);
 

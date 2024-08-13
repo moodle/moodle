@@ -865,7 +865,7 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
             throw new Exception('Array key (name, level or element) missing from 2nd param of grade_edit_tree_column_name::get_item_cell($item, $params)');
         }
 
-        $itemicon = \html_writer::div($params['icon'], 'mr-1');
+        $itemicon = \html_writer::div($params['icon'], 'me-1');
         $itemtype = \html_writer::span($params['type'], 'd-block text-uppercase small dimmed_text');
         $itemtitle = html_writer::div($params['name'], 'rowtitle');
         $content = \html_writer::div($itemtype . $itemtitle);

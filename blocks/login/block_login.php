@@ -116,7 +116,7 @@ class block_login extends block_base {
                     $this->content->text .= '<a class="btn btn-secondary btn-block" ';
                     $this->content->text .= 'href="' . $idp['url']->out() . '" title="' . s($idp['name']) . '">';
                     if (!empty($idp['iconurl'])) {
-                        $this->content->text .= '<img src="' . s($idp['iconurl']) . '" width="24" height="24" class="mr-1"/>';
+                        $this->content->text .= '<img src="' . s($idp['iconurl']) . '" width="24" height="24" class="me-1"/>';
                     }
                     $this->content->text .= s($idp['name']) . '</a></div>';
                 }
