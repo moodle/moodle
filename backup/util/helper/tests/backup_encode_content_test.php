@@ -54,7 +54,7 @@ class backup_encode_content_test extends \basic_testcase {
             $httpsroot . '/course/view.php?id=123, ' .
             $httpsroot . '/grade/index.php?id=123, ' .
             $httpsroot . '/grade/report/index.php?id=123, ' .
-            $httpsroot . '/badges/view.php?type=2&id=123, ' .
+            $httpsroot . '/badges/index.php?type=2&id=123, ' .
             $httpsroot . '/user/index.php?id=123, ' .
             $httpsroot . '/pluginfile.php/123 and ' .
             urlencode($httpsroot . '/pluginfile.php/123') . '.'
@@ -70,7 +70,7 @@ class backup_encode_content_test extends \basic_testcase {
             $httpsroot . '/course/view.php?id=123, ' .
             $httproot . '/grade/index.php?id=123, ' .
             $httproot . '/grade/report/index.php?id=123, ' .
-            $httproot . '/badges/view.php?type=2&id=123, ' .
+            $httproot . '/badges/index.php?type=2&id=123, ' .
             $httproot . '/user/index.php?id=123, ' .
             $httproot . '/pluginfile.php/123 and ' .
             urlencode($httproot . '/pluginfile.php/123') . '.'

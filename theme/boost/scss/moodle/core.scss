@@ -1854,6 +1854,28 @@ ul.badges {
     color: map-get($theme-colors, 'warning');
 }
 
+#page-badges-index #page {
+    .badges-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    h2 {
+        margin: 0; /* Removes default margins */
+    }
+
+    #action_bar {
+        margin: 0; /* Removes any default margin that might affect alignment */
+    }
+
+    .tertiary-navigation.container-fluid {
+        width: auto;
+        height: 50px;
+        padding-top: 0;
+    }
+}
+
 #page-badges-award .recipienttable tr td {
     vertical-align: top;
 }

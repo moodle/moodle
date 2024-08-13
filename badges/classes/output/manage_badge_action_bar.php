@@ -67,7 +67,10 @@ class manage_badge_action_bar extends base_action_bar {
             $params['id'] = $this->page->context->instanceid;
         }
         $elements['button'] = new single_button(new moodle_url('/badges/index.php', $params), get_string('back'), 'get');
-        $elements['urlselect'] = new url_select($this->generate_badge_navigation(), $this->page->url->out(false), null);
+        $badgenav = $this->generate_badge_navigation();
+        if ($badgenav) {
+            $elements['urlselect'] = new url_select($badgenav, $this->page->url->out(false), null);
+        }
         foreach ($elements as $key => $element) {
             $elements[$key] = $element->export_for_template($output);
         }
@@ -132,6 +135,7 @@ class manage_badge_action_bar extends base_action_bar {
      */
     protected function generate_badge_navigation(): array {
         global $DB;
+
         $params = ['id' => $this->badge->id];
         $options = [];
         $construct = $this->get_badge_administration_mapping_construct();
@@ -168,6 +172,10 @@ class manage_badge_action_bar extends base_action_bar {
             $url = new moodle_url($checks['url'], $params + ($checks['additionalparams'] ?? []));
             $options[get_string($stringidentifier, 'core_badges', $content)] = $url->out(false);
         }
+        if (count($options) <= 1) {
+            return [];
+        }
+
         return array_flip($options);
     }
 }
