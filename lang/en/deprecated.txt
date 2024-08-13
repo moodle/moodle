@@ -127,3 +127,4 @@ reviewbadge,core_badges
 myisamproblem,core_error
 newpasswordtext,core
 cannotsetpassword,core_error
+registerwithmoodleorginfoapp,core_hub
