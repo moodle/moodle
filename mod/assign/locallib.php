@@ -4534,6 +4534,14 @@ class assign {
             set_user_preference('assign_markerfilter', $markingallocationfilter);
         }
 
+        // Retrieve the 'suspendedparticipantsfilter' parameter, or set it to null if not provided.
+        $suspendedparticipantsfilter = optional_param('suspendedparticipantsfilter', null, PARAM_BOOL);
+        if ($suspendedparticipantsfilter !== null &&
+                has_capability('moodle/course:viewsuspendedusers', $this->get_context())) {
+            // Save the 'suspendedparticipantsfilter' value as a user preference.
+            set_user_preference('grade_report_showonlyactiveenrol', !$suspendedparticipantsfilter);
+        }
+
         $controller = $gradingmanager->get_active_controller();
         $showquickgrading = empty($controller) && $this->can_grade();
         $quickgrading = get_user_preferences('assign_quickgrading', false);

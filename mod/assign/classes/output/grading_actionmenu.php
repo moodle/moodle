@@ -318,6 +318,12 @@ class grading_actionmenu implements templatable, renderable {
             }
         }
 
+        if (has_capability('moodle/course:viewsuspendedusers', $this->assign->get_context())) {
+            $dropdowncontentdata['filters']['suspendedparticipants'] = [
+                'active' => !$this->assign->show_only_active_users(),
+            ];
+        }
+
         // If there are no available filters, return null.
         if (empty($dropdowncontentdata['filters'])) {
             return null;
@@ -365,7 +371,11 @@ class grading_actionmenu implements templatable, renderable {
             if ($canallocatemarker && get_user_preferences('assign_markerfilter')) {
                 $appliedextrafilterscount++;
             }
+        }
 
+        // If suspended participants are included.
+        if (!$this->assign->show_only_active_users()) {
+            $appliedextrafilterscount++;
         }
 
         return $appliedextrafilterscount;
