@@ -30,20 +30,20 @@ defined('MOODLE_INTERNAL') || die();
  */
 function block_accessreview_get_fontawesome_icon_map() {
     return [
-        'block_accessreview:smile' => 'fa-smile-o',
-        'block_accessreview:frown' => 'fa-frown-o',
+        'block_accessreview:smile' => 'fa-regular fa-smile',
+        'block_accessreview:frown' => 'fa-regular fa-face-frown',
         'block_accessreview:errorsfound' => 'fa-ban',
-        'block_accessreview:f/pdf' => 'fa-file-pdf-o',
-        'block_accessreview:f/video' => 'fa-file-video-o',
-        'block_accessreview:f/find' => 'fa-bar-chart',
-        'block_accessreview:f/form' => 'fa-pencil-square-o',
+        'block_accessreview:f/find' => 'fa-magnifying-glass',
+        'block_accessreview:f/form' => 'fa-list-check',
         'block_accessreview:f/image' => 'fa-image',
-        'block_accessreview:f/layout' => 'fa-th-large',
+        'block_accessreview:f/layout' => 'fa-table-cells-large',
         'block_accessreview:f/link' => 'fa-link',
-        'block_accessreview:f/media' => 'fa-play-circle-o',
+        'block_accessreview:f/media' => 'fa-photo-film',
+        'block_accessreview:f/pdf' => 'fa-regular fa-file-pdf',
         'block_accessreview:f/table' => 'fa-table',
         'block_accessreview:f/text' => 'fa-font',
-        'block_accessreview:t/fail' => 'fa-ban',
+        'block_accessreview:f/video' => 'fa-regular fa-file-video',
+        'block_accessreview:t/fail' => 'fa-xmark',
         'block_accessreview:t/pass' => 'fa-check',
     ];
 }

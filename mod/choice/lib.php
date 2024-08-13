@@ -1277,16 +1277,6 @@ function mod_choice_core_calendar_event_timestart_updated(\calendar_event $event
 }
 
 /**
- * Get icon mapping for font-awesome.
- */
-function mod_choice_get_fontawesome_icon_map() {
-    return [
-        'mod_choice:row' => 'fa-info',
-        'mod_choice:column' => 'fa-columns',
-    ];
-}
-
-/**
  * Add a get_coursemodule_info function in case any choice type wants to add 'extra' information
  * for the course (see resource).
  *

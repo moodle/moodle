@@ -573,7 +573,7 @@ class enrol_guest_plugin extends enrol_plugin {
  */
 function enrol_guest_get_fontawesome_icon_map() {
     return [
-        'enrol_guest:withpassword' => 'fa-key',
-        'enrol_guest:withoutpassword' => 'fa-unlock-alt',
+        'enrol_guest:withoutpassword' => 'fa-lock-open',
+        'enrol_guest:withpassword' => 'fa-lock',
     ];
 }

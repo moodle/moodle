@@ -4234,8 +4234,10 @@ function glossary_check_updates_since(cm_info $cm, $from, $filter = array()) {
  */
 function mod_glossary_get_fontawesome_icon_map() {
     return [
-        'mod_glossary:export' => 'fa-download',
-        'mod_glossary:minus' => 'fa-minus'
+        'mod_glossary:asc' => 'fa-sort-down',
+        'mod_glossary:desc' => 'fa-sort-up',
+        'mod_glossary:export' => 'fa-arrow-turn-up',
+        'mod_glossary:minus' => 'fa-minus',
     ];
 }
 

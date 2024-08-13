@@ -699,12 +699,8 @@ function book_check_updates_since(cm_info $cm, $from, $filter = array()) {
  */
 function mod_book_get_fontawesome_icon_map() {
     return [
-        'mod_book:chapter' => 'fa-bookmark-o',
-        'mod_book:nav_prev' => 'fa-arrow-left',
-        'mod_book:nav_sep' => 'fa-minus',
         'mod_book:add' => 'fa-plus',
-        'mod_book:nav_next' => 'fa-arrow-right',
-        'mod_book:nav_exit' => 'fa-arrow-up',
+        'mod_book:chapter' => 'fa-book-bookmark',
     ];
 }
 

@@ -22,6 +22,34 @@
     For a full list of the context for this template see the course_competencies_page renderable.
 
     This template includes ajax functionality, so it cannot be shown in the template library.
+
+    Example context (json):
+    {
+        "canmanagecoursecompetencies": true,
+        "cangradecompetencies": true,
+        "settings": {
+            "pushratingstouserplans": true
+        },
+        "canconfigurecoursecompetencies": true,
+        "competencies": [{
+            "competency": {
+                "id": 2,
+                "shortname": "Competency1",
+                "idnumber": "COMP1",
+                "description": "Competency1 description"
+            },
+            "coursecompetency": {
+                "id": 1
+            },
+            "ruleoutcomeoptions": [{
+                "value": "1",
+                "text": "Mark as complete"
+            }, {
+                "value": "2",
+                "text": "Mark as complete and request review"
+            }]
+        }]
+    }
 }}
 <div data-region="coursecompetenciespage">
     <div data-region="actions" class="clearfix">
@@ -45,7 +73,7 @@
                data-action="configure-course-competency-settings"
                data-courseid="{{courseid}}"
                data-pushratingstouserplans="{{settings.pushratingstouserplans}}">
-                {{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}
+                {{#pix}}i/settings, core, {{#str}}edit{{/str}}{{/pix}}
             </a>
         {{/canconfigurecoursecompetencies}}
         </p>

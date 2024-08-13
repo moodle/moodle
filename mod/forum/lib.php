@@ -6397,11 +6397,11 @@ function forum_can_create_attachment($forum, $context) {
  */
 function mod_forum_get_fontawesome_icon_map() {
     return [
-        'mod_forum:i/pinned' => 'fa-map-pin',
+        'mod_forum:i/pinned' => 'fa-thumbtack',
         'mod_forum:t/selected' => 'fa-check',
-        'mod_forum:t/subscribed' => 'fa-envelope-o',
-        'mod_forum:t/unsubscribed' => 'fa-envelope-open-o',
         'mod_forum:t/star' => 'fa-star',
+        'mod_forum:t/subscribed' => 'fa-regular fa-envelope',
+        'mod_forum:t/unsubscribed' => 'fa-regular fa-envelope-open',
     ];
 }
 
