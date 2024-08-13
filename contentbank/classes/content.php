@@ -403,4 +403,14 @@ abstract class content {
             $this->get_visibility() == self::VISIBILITY_PUBLIC ||
             has_capability('moodle/contentbank:viewunlistedcontent', $context);
     }
+
+    /**
+     * Checks if there are any custom field related to this content.
+     *
+     * @return bool     True if there is at least one populated field.
+     */
+    public function has_custom_fields(): bool {
+        $handler = \core_contentbank\customfield\content_handler::create();
+        return !empty($handler->get_instance_data($this->get_id()));
+    }
 }

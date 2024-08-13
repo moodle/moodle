@@ -2629,6 +2629,24 @@ $capabilities = array(
         ]
     ],
 
+    'moodle/contentbank:configurecustomfields' => [
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+
+    'moodle/contentbank:changelockedcustomfields' => [
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+
     // Allow users to download course content.
     'moodle/course:downloadcoursecontent' => [
         'captype' => 'read',
