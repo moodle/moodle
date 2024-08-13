@@ -35,7 +35,7 @@
     }
 }}
 <div class="form-multicheckbox">
-    <input type="hidden" name="{{name}}[xxxxx]" value="1">
+    {{^readonly}}<input type="hidden" name="{{name}}[xxxxx]" value="1">{{/readonly}}
     {{#hasoptions}}
         <ul>
             {{#options}}
