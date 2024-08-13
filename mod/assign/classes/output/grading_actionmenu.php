@@ -308,6 +308,14 @@ class grading_actionmenu implements templatable, renderable {
             $dropdowncontentdata['filters']['markingworkflow'] = [
                 'workflowfilteroptions' => $this->assign->get_marking_workflow_filters(true),
             ];
+
+            // If marking allocation is enabled and the user has the capability to manage marker allocations.
+            if ($this->assign->get_instance()->markingallocation &&
+                    has_capability('mod/assign:manageallocations', $this->assign->get_context())) {
+                $dropdowncontentdata['filters']['markingallocation'] = [
+                    'markingallocationoptions' => $this->assign->get_marking_allocation_filters(true),
+                ];
+            }
         }
 
         // If there are no available filters, return null.
@@ -350,6 +358,14 @@ class grading_actionmenu implements templatable, renderable {
             if (get_user_preferences('assign_workflowfilter')) {
                 $appliedextrafilterscount++;
             }
+
+            $canallocatemarker = $this->assign->get_instance()->markingallocation &&
+                has_capability('mod/assign:manageallocations', $this->assign->get_context());
+
+            if ($canallocatemarker && get_user_preferences('assign_markerfilter')) {
+                $appliedextrafilterscount++;
+            }
+
         }
 
         return $appliedextrafilterscount;

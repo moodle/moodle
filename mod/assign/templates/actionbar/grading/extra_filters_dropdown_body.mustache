@@ -25,6 +25,11 @@
                 * key - The key of the workflow filter option
                 * name - The name of the workflow filter option
                 * active - Whether the workflow filter option is currently active
+        * markingallocation
+            * markingallocationoptions - Array of marking allocation filter options
+                * key - The key of the marking allocation filter option
+                * name - The name of the marking allocation filter option
+                * active - Whether the marking allocation filter option is currently active
 
     Example context (json):
     {
@@ -38,6 +43,15 @@
                         {
                             "key": "notmarked",
                             "name": "Not marked",
+                            "active": true
+                        }
+                    ]
+                },
+                "markingallocation": {
+                    "markingallocationoptions": [
+                        {
+                            "key": "-1",
+                            "name": "No marker",
                             "active": true
                         }
                     ]
@@ -63,6 +77,18 @@
                     </select>
                 </div>
             {{/markingworkflow}}
+            {{#markingallocation}}
+                <div class="row m-0 pb-3">
+                    <label class="w-100" for="filter-marking-allocation-{{uniqid}}">
+                        {{#str}}marker, mod_assign{{/str}}
+                    </label>
+                    <select name="markingallocationfilter" id="filter-marking-allocation-{{uniqid}}" class="custom-select w-100">
+                    {{#markingallocationoptions}}
+                        <option value="{{key}}" {{#active}}selected="selected"{{/active}}>{{name}}</option>
+                    {{/markingallocationoptions}}
+                    </select>
+                </div>
+            {{/markingallocation}}
         {{/filters}}
         <div class="d-flex flex-row justify-content-end align-items-center pt-2">
             <a href="#" class="pull-right mx-3 text-decoration-none text-dark" data-action="close">{{#str}}closebuttontitle{{/str}}</a>

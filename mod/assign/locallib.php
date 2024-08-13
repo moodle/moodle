@@ -4525,6 +4525,15 @@ class assign {
             set_user_preference('assign_workflowfilter', $workflowfilter);
         }
 
+        // Retrieve the 'markingallocationfilter' parameter, or set it to null if not provided.
+        $markingallocationfilter = optional_param('markingallocationfilter', null, PARAM_ALPHANUMEXT);
+        // Check if the parameter is not null and if it exists in the list of valid marking allocation filters.
+        if ($markingallocationfilter !== null &&
+                array_key_exists($markingallocationfilter, $this->get_marking_allocation_filters())) {
+            // Save the valid 'markingallocationfilter' value as a user preference.
+            set_user_preference('assign_markerfilter', $markingallocationfilter);
+        }
+
         $controller = $gradingmanager->get_active_controller();
         $showquickgrading = empty($controller) && $this->can_grade();
         $quickgrading = get_user_preferences('assign_quickgrading', false);
@@ -9612,7 +9621,7 @@ class assign {
             }
             return $result;
         }
-        return $markingworkflowoptions;
+        return $markingallocationoptions;
     }
 
     /**

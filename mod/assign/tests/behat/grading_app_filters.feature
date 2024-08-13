@@ -47,8 +47,8 @@ Feature: In an assignment, teachers can change filters in the grading app
     And I am on the "Test assignment name &" Activity page
     And I navigate to "Submissions" in current page administration
     And I set the field "Status" to "Not submitted"
-    And I set the field "markerfilter" to "Marker 1"
     And I click on "Advanced" "button" in the ".tertiary-navigation" "css_element"
+    And I set the field "Marker" in the ".extrafilters .dropdown-menu" "css_element" to "Marker 1"
     And I set the field "Marking state" in the ".extrafilters .dropdown-menu" "css_element" to "In marking"
     And I click on "Apply" "button" in the ".extrafilters .dropdown-menu" "css_element"
     And I change window size to "large"
@@ -76,6 +76,6 @@ Feature: In an assignment, teachers can change filters in the grading app
     And I set the field "workflowfilter" to "In marking"
     And I click on "View all submissions" "link"
     Then the field "Status" matches value "Not submitted"
-    And the field "markerfilter" matches value "Marker 1"
     And I click on "Advanced" "button" in the ".tertiary-navigation" "css_element"
+    And the field "Marker" matches value "Marker 1"
     And the field "Marking state" matches value "In marking"

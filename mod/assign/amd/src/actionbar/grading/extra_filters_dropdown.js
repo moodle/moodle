@@ -29,7 +29,8 @@ import $ from 'jquery';
 const Selectors = {
     extraFiltersDropdown: '.dropdown.extrafilters',
     extraFiltersClose: 'a[data-action="close"]',
-    workflowFilterElement: 'select[name="workflowfilter"]'
+    workflowFilterElement: 'select[name="workflowfilter"]',
+    markerFilterElement: 'select[name="markingallocationfilter"]'
 };
 
 /**
@@ -50,6 +51,7 @@ const registerEventListeners = (extraFiltersDropdown) => {
     $(extraFiltersDropdown.getElement()).on('hide.bs.dropdown', () => {
         // Restore the filters to their stored preference values once the dropdown is closed.
         restoreAppliedWorkflowFilter(extraFiltersDropdown);
+        restoreAppliedMarkerFilter(extraFiltersDropdown);
     });
 };
 
@@ -62,6 +64,19 @@ const restoreAppliedWorkflowFilter = async(extraFiltersDropdown) => {
     const appliedWorkflowFilter = await getUserPreference('assign_workflowfilter');
     const workflowFilterSelect = extraFiltersDropdown.getElement().querySelector(Selectors.workflowFilterElement);
     workflowFilterSelect.value = appliedWorkflowFilter;
+};
+
+/**
+ * Restores the currently applied marker filter to its stored preference value.
+ *
+ * @param {DropdownDialog} extraFiltersDropdown The dropdown dialog instance.
+ */
+const restoreAppliedMarkerFilter = async(extraFiltersDropdown) => {
+    const markerFilterSelect = extraFiltersDropdown.getElement().querySelector(Selectors.markerFilterElement);
+    if (markerFilterSelect) {
+        const appliedMarkerFilter = await getUserPreference('assign_markerfilter');
+        markerFilterSelect.value = appliedMarkerFilter;
+    }
 };
 
 /**
