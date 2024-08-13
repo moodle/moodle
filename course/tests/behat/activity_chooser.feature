@@ -302,7 +302,7 @@ Feature: Display and choose from the available activities in course
     # Confirm more help link exists
     Then "More help" "link" should exist
     # Confirm that corresponding help icon exist
-    And ".fa-info-circle" "css_element" should exist
+    And ".fa-book" "css_element" should exist
     # Confirm that link opens in new window
     And "Opens in new window" "link" should be visible
     # Confirm the same behaviour for weekly format course
@@ -313,6 +313,6 @@ Feature: Display and choose from the available activities in course
     # Confirm more help link exists
     And "More help" "link" should exist
     # Confirm that corresponding help icon exist
-    And ".fa-info-circle" "css_element" should exist
+    And ".fa-book" "css_element" should exist
     # Confirm that link opens in new window
     And "Opens in new window" "link" should be visible

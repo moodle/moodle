@@ -282,7 +282,7 @@ class reports_list extends system_report {
         // Edit details action.
         $this->add_action((new action(
             new moodle_url('#'),
-            new pix_icon('t/edit', ''),
+            new pix_icon('i/settings', ''),
             ['data-action' => 'report-edit', 'data-report-id' => ':id'],
             false,
             new lang_string('editreportdetails', 'core_reportbuilder')

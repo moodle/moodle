@@ -53,6 +53,12 @@ $iconsizes: map-merge((
     }
 }
 
+// Force size for the SVG icons.
+img.icon {
+    width: 16px;
+    height: 16px;
+}
+
 .navbar-dark a .icon {
     color: $navbar-dark-color !important; /* stylelint-disable-line declaration-no-important */
 }

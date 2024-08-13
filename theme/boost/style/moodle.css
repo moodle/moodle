@@ -26209,6 +26209,11 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
   font-size: 64px;
 }
 
+img.icon {
+  width: 16px;
+  height: 16px;
+}
+
 .navbar-dark a .icon {
   color: rgba(255, 255, 255, 0.5) !important; /* stylelint-disable-line declaration-no-important */
 }
@@ -27038,8 +27043,11 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
 }
 
 .block .block-controls .dropdown-toggle {
-  /* So that the caret takes the colour of the icon. */
+  /* So that the icon takes the colour of the icon. */
   color: #1d2125;
+}
+.block .block-controls .dropdown-toggle::after {
+  display: none;
 }
 
 [data-region=blocks-column] {
@@ -32900,6 +32908,10 @@ body.path-question-type .mform fieldset.hidden {
 #userselector_options .collapsibleregioncaption {
   font-weight: bold;
 }
+#userselector_options .collapsibleregioncaption img {
+  width: 16px;
+  height: 16px;
+}
 
 #userselector_options p {
   margin: 0.2em 0;
@@ -33245,6 +33257,11 @@ div#dateselector-calendar-panel {
 #id_availabilityconditionsjson[aria-hidden=true],
 .availability-field [aria-hidden=true] {
   display: none;
+}
+
+.availability-field img {
+  width: 16px;
+  height: 16px;
 }
 
 .availability-eye {
@@ -36733,9 +36750,6 @@ body {
 .navbar-nav .popover-region .icon {
   font-weight: bolder;
 }
-.navbar-nav .popover-region .notification-image .icon {
-  font-weight: 400;
-}
 
 .navbar .popover-region.collapsed .popover-region-container {
   opacity: 0;
@@ -38340,7 +38354,6 @@ div.editor_atto_toolbar button .icon {
 }
 .reportbuilder-toggle-card .toggle-card-button i.toggle-card-icon {
   color: #6a737b;
-  font-size: 1.5em;
   font-weight: 700;
 }
 .reportbuilder-toggle-card .toggle-card-button .collapsed-icon-container {
