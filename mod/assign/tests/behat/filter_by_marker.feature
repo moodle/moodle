@@ -118,3 +118,42 @@ Feature: In an assignment, teachers can filter displayed submissions by assigned
       | -2-       |
       | Student 1 |
       | Student 2 |
+
+  @javascript
+  Scenario: The applied marker filter can be reset using the 'Clear all' option
+    Given I am on the "Test assignment name" "assign activity editing" page logged in as teacher1
+    And I expand all fieldsets
+    And I set the field "Use marking workflow" to "Yes"
+    And I set the field "Use marking allocation" to "Yes"
+    And I press "Save and display"
+    And I am on the "Test assignment name" "assign activity" page
+    And I change window size to "large"
+    And I go to "Student 1" "Test assignment name" activity advanced grading page
+    # Allocate Marker 1 as the marker of Student 1.
+    And I set the field "allocatedmarker" to "Marker 1"
+    And I set the field "Notify student" to "0"
+    And I press "Save changes"
+    And I follow "View all submissions"
+    # Ensure the 'Clear all' option is not available until the marker filter has been applied.
+    And "Clear all" "link" should not exist in the ".tertiary-navigation" "css_element"
+    # Set the Marker filter to 'Marker 1'.
+    And I click on "Advanced" "button" in the ".tertiary-navigation" "css_element"
+    And I set the field "Marker" in the ".extrafilters .dropdown-menu" "css_element" to "Marker 1"
+    And I click on "Apply" "button" in the ".extrafilters .dropdown-menu" "css_element"
+    # Ensure only Student 1 is now displayed in the submissions table.
+    And the following should exist in the "submissions" table:
+      | -2-       |
+      | Student 1 |
+    And the following should not exist in the "submissions" table:
+      | -2-       |
+      | Student 2 |
+    # Ensure the 'Clear all' option is now available.
+    And "Clear all" "link" should exist in the ".tertiary-navigation" "css_element"
+    # Ensure the marker filter is reset when the 'Clear All' option is triggered.
+    When I click on "Clear all" "link" in the ".tertiary-navigation" "css_element"
+    Then the following should exist in the "submissions" table:
+      | -2-       |
+      | Student 1 |
+      | Student 2 |
+    And I click on "Advanced" "button" in the ".tertiary-navigation" "css_element"
+    And the field "Marker" matches value "No filter"

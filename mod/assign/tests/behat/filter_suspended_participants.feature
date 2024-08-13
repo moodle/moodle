@@ -96,3 +96,33 @@ Feature: In an assignment, teachers can include or exclude submissions from susp
     And the following should not exist in the "submissions" table:
       | -2-       |
       | Student 2 |
+
+  @javascript
+  Scenario: The applied suspended participants filter can be reset using the 'Clear all' option
+    Given I am on the "Test assignment name" Activity page logged in as teacher1
+    And I navigate to "Submissions" in current page administration
+    And I change window size to "large"
+    # Ensure the 'Clear all' option is not available until the suspended participants filter has been applied.
+    And "Clear all" "link" should not exist in the ".tertiary-navigation" "css_element"
+    # Set to include submissions from suspended participants.
+    And I click on "Advanced" "button" in the ".tertiary-navigation" "css_element"
+    And I click on "Include suspended participants" "checkbox" in the ".extrafilters .dropdown-menu" "css_element"
+    And the field "Include suspended participants" matches value "1"
+    And I click on "Apply" "button" in the ".extrafilters .dropdown-menu" "css_element"
+    # Ensure that the suspended Student 2 is now also displayed in the submissions table.
+    And the following should exist in the "submissions" table:
+      | -2-       |
+      | Student 1 |
+      | Student 2 |
+    # Ensure the 'Clear all' option is now available.
+    And "Clear all" "link" should exist in the ".tertiary-navigation" "css_element"
+    # Ensure the marker filter is reset when the 'Clear All' option is triggered.
+    When I click on "Clear all" "link" in the ".tertiary-navigation" "css_element"
+    Then the following should exist in the "submissions" table:
+      | -2-       |
+      | Student 1 |
+    And the following should not exist in the "submissions" table:
+      | -2-       |
+      | Student 2 |
+    And I click on "Advanced" "button" in the ".tertiary-navigation" "css_element"
+    And the field "Include suspended participants" matches value ""

@@ -126,6 +126,8 @@ class grading_actionmenu implements templatable, renderable {
                 'group' => 0,
                 'status' => '',
                 'workflowfilter' => '',
+                'markingallocationfilter' => '',
+                'suspendedparticipantsfilter' => 0,
             ]);
             $data['pagereset'] = $url->out(false);
         }

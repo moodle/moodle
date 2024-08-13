@@ -138,7 +138,7 @@ Feature: In an assignment, teachers can filter displayed submissions by marking 
     And I set the field "Marking state" in the ".extrafilters .dropdown-menu" "css_element" to "In marking"
     And I click on "Apply" "button" in the ".extrafilters .dropdown-menu" "css_element"
     # Ensure only Student 2 is now displayed in the submissions table.
-    Then the following should exist in the "submissions" table:
+    And the following should exist in the "submissions" table:
       | -2-       |
       | Student 2 |
     And the following should not exist in the "submissions" table:
