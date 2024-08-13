@@ -68,7 +68,7 @@ class selector extends base {
      * @return  $this
      */
     public static function add_config_to_form(\MoodleQuickForm $mform) {
-        $mform->addElement('text', 'targetvalue_selector', get_string('cssselector', 'tool_usertours'));
+        $mform->addElement('text', 'targetvalue_selector', get_string('cssselector', 'tool_usertours'), ['size' => '80']);
         $mform->setType('targetvalue_selector', PARAM_RAW);
         $mform->addHelpButton('targetvalue_selector', 'target_selector_targetvalue', 'tool_usertours');
     }

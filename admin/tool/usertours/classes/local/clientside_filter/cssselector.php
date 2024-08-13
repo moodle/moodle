@@ -45,7 +45,7 @@ class cssselector extends clientside_filter {
         $filtername = self::get_filter_name();
         $key = "filter_{$filtername}";
 
-        $mform->addElement('text', $key, get_string($key, 'tool_usertours'));
+        $mform->addElement('text', $key, get_string($key, 'tool_usertours'), ['size' => '80']);
         $mform->setType($key, PARAM_RAW);
         $mform->addHelpButton($key, $key, 'tool_usertours');
     }
