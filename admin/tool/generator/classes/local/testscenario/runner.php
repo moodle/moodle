@@ -22,6 +22,7 @@ use behat_base;
 use behat_course;
 use behat_general;
 use behat_user;
+use core\attribute_helper;
 use Behat\Gherkin\Parser;
 use Behat\Gherkin\Lexer;
 use Behat\Gherkin\Keywords\ArrayKeywords;
@@ -136,6 +137,14 @@ class runner {
     }
 
     /**
+     * Get all valid steps.
+     * @return array the valid steps.
+     */
+    public function get_valid_steps(): array {
+        return array_values($this->validsteps);
+    }
+
+    /**
      * Scan a generator to get all valid steps.
      * @param behat_data_generators $generator the generator to scan.
      * @return array the valid steps.
@@ -164,11 +173,17 @@ class runner {
         if (!$given) {
             return null;
         }
-        return (object)[
+        $result = (object)[
             'given' => $given,
             'name' => $method->getName(),
             'generator' => $behatclass,
+            'example' => null,
         ];
+        $reference = $method->getDeclaringClass()->getName() . '::' . $method->getName();
+        if ($attribute = attribute_helper::instance($reference, \core\attribute\example::class)) {
+            $result->example = (string) $attribute->example;
+        }
+        return $result;
     }
 
     /**
