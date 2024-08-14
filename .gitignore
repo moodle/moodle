@@ -28,7 +28,7 @@
 .phpstorm.*
 !/.phpstorm.meta.php/
 /.phpstorm.meta.php/*
-!/.phpstorm.meta.php/moodle.php
+!/.phpstorm.meta.php/di.php
 /nbproject/
 CVS
 .DS_Store
