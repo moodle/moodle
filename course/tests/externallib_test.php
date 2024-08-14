@@ -1172,6 +1172,9 @@ final class externallib_test extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $sections = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $sections);
 
+        $this->assertEmpty($sections[0]['component']);
+        $this->assertEmpty($sections[0]['itemid']);
+
         $modinfo = get_fast_modinfo($course);
         $testexecuted = 0;
         foreach ($sections[0]['modules'] as $module) {
@@ -1847,6 +1850,54 @@ final class externallib_test extends externallib_advanced_testcase {
         $result = core_course_external::get_course_contents($course->id);
         $this->assertDebuggingCalled();
         $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
+    }
+
+    /**
+     * Test get_course_contents for courses with sub-sections.
+     *
+     * @covers ::get_course_contents
+     */
+    public function test_get_course_contents_subsections(): void {
+        global $DB, $PAGE;
+        $this->resetAfterTest();
+
+        list($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm) = $this->prepare_get_course_contents_test();
+
+        // Add subsection.
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('subsection', 1);
+        $modsubsection = $this->getDataGenerator()->create_module('subsection', ['course' => $course->id, 'section' => 2]);
+
+        // This is needed until MDL-76728 is resolved.
+        $PAGE->set_url('/course/view.php', ['id' => $course->id]);
+
+        $result = core_course_external::get_course_contents($course->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
+
+        $this->assertCount(5, $result); // We have 4 original sections plus the one created by mod_subsection.
+
+        foreach ($result as $section) {
+
+            if ($section['section'] == 5) { // This is the new section created by modsubsection.
+                $this->assertEquals('mod_subsection', $section['component']);
+                $this->assertEquals($modsubsection->id, $section['itemid']);
+            } else {
+                $this->assertEmpty($section['component']);
+                $this->assertEmpty($section['itemid']);
+            }
+
+            if ($section['section'] == 2) { // This is the section where mod_subsection is.
+                foreach ($section['modules'] as $module) {
+                    if ($module['modname'] == 'subsection') {
+                        $this->assertNotEmpty($module['customdata']);
+                        $customdata = json_decode($module['customdata']);
+                        $lastsection = end($result);
+                        // Customdata contains the section id of the section created by the module.
+                        $this->assertEquals($lastsection['id'], $customdata->sectionid);
+                    }
+                }
+            }
+        }
     }
 
     /**
