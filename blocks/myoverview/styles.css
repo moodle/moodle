@@ -9,3 +9,6 @@
     color: var(--primary);
 }
 
+.page-mycourses .block_myoverview .block-controls {
+    display: none;
+}
