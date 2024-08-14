@@ -7,6 +7,11 @@
     font-size: 120%;
 }
 
+.path-mod-workshop .collapsibleregioncaption img {
+    max-width: 16px;
+    max-height: 16px;
+}
+
 .path-mod-workshop div.singlebutton {
     text-align: center;
     margin: 0.75em auto;
@@ -367,8 +372,9 @@
     background-position: top left;
     background-repeat: no-repeat;
     list-style-type: none;
-    min-height: 16px;
-    margin: .3em 0;
+    min-height: 20px;
+    margin: .2em 0;
+    background-size: 15px;
 }
 
 .dir-rtl.path-mod-workshop .userplan dd.phasetasks li {
