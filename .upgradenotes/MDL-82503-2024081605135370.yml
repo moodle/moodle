@@ -1,0 +1,7 @@
+issueNumber: MDL-82503
+notes:
+  core_badges:
+    - message: >-
+        The course_badges systemreport has been deprecated and merged with the
+        badges systemreport. Please, use the badges systemreport instead.
+      type: deprecated
