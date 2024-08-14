@@ -1978,7 +1978,7 @@ delete Prism.languages.c['boolean'];
     Prism.languages.css = {
         'comment': /\/\*[\s\S]*?\*\//,
         'atrule': {
-            pattern: /@[\w-](?:[^;{\s]|\s+(?![\s{]))*(?:;|(?=\s*\{))/,
+            pattern: RegExp('@[\\w-](?:' + /[^;{\s"']|\s+(?!\s)/.source + '|' + string.source + ')*?' + /(?:;|(?=\s*\{))/.source),
             inside: {
                 'rule': /^@[\w-]+/,
                 'selector-function-argument': {
@@ -2093,7 +2093,8 @@ delete Prism.languages.c['boolean'];
         'operator': {
             pattern: /(^|[^.])(?:<<=?|>>>?=?|->|--|\+\+|&&|\|\||::|[?:~]|[-+*/%&|^!=<>]=?)/m,
             lookbehind: true
-        }
+        },
+        'constant': /\b[A-Z][A-Z_\d]+\b/
     });
 
     Prism.languages.insertBefore('java', 'string', {
@@ -2386,7 +2387,10 @@ Prism.languages.markup = {
                             pattern: /^=/,
                             alias: 'attr-equals'
                         },
-                        /"|'/
+                        {
+                            pattern: /^(\s*)["']|["']$/,
+                            lookbehind: true
+                        }
                     ]
                 }
             },
