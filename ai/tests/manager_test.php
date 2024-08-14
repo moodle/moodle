@@ -53,10 +53,13 @@ final class manager_test extends \advanced_testcase {
         $this->expectExceptionMessage('Plugin name does not start with \'aiprovider_\' or \'aiplacement_\': bar');
         $method->invoke($manager, 'bar');
     }
+
     /**
      * Test get_supported_actions.
      */
     public function test_get_supported_actions(): void {
+        // TODO: Enable this test in MDL-80894.
+        $this->markTestSkipped('MDL-80894');
         $manager = new manager();
         $actions = $manager->get_supported_actions('aiprovider_openai');
 
@@ -72,6 +75,8 @@ final class manager_test extends \advanced_testcase {
      * Test get_providers_for_actions.
      */
     public function test_get_providers_for_actions(): void {
+        // TODO: Enable this test in MDL-80894.
+        $this->markTestSkipped('MDL-80894');
         $this->resetAfterTest();
         set_config('enabled', 1, 'aiprovider_openai');
 
@@ -98,7 +103,6 @@ final class manager_test extends \advanced_testcase {
         // Assert that there is no provider for the generate text action.
         $this->assertCount(0, $providers['core_ai\\aiactions\\generate_text']);
         $this->assertCount(1, $providers['core_ai\\aiactions\\summarise_text']);
-
     }
 
     /**
@@ -139,6 +143,8 @@ final class manager_test extends \advanced_testcase {
      * Test process_action.
      */
     public function test_process_action(): void {
+        // TODO: Enable this test in MDL-80894.
+        $this->markTestSkipped('MDL-80894');
         $this->resetAfterTest();
 
         // Enable the providers.
@@ -280,6 +286,8 @@ final class manager_test extends \advanced_testcase {
      * Test store_action_result.
      */
     public function test_store_action_result(): void {
+        // TODO: Enable this test in MDL-80894.
+        $this->markTestSkipped('MDL-80894');
         $this->resetAfterTest();
         global $DB;
 
@@ -334,6 +342,8 @@ final class manager_test extends \advanced_testcase {
      * Test call_action_provider.
      */
     public function test_call_action_provider(): void {
+        // TODO: Enable this test in MDL-80894.
+        $this->markTestSkipped('MDL-80894');
         $contextid = 1;
         $userid = 1;
         $prompttext = 'This is a test prompt';

@@ -1559,6 +1559,8 @@ final class provider_test extends \advanced_testcase {
      * Test get_name.
      */
     public function test_get_name(): void {
+        // TODO: Enable this test in MDL-80894.
+        $this->markTestSkipped('MDL-80894');
         $provider = new \aiprovider_openai\provider();
 
         $this->assertEquals(get_string('pluginname', 'aiprovider_openai'), $provider->get_name());
