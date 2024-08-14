@@ -5,7 +5,7 @@ Feature: Edit activities in main menu block
   I need to add and edit activities there
 
   @javascript
-  Scenario: Edit name of acitivity in-place in site main menu block
+  Scenario: Edit name of activity in-place in site main menu block
     Given the following "activity" exists:
       | activity | forum                |
       | course   | Acceptance test site |
@@ -36,6 +36,7 @@ Feature: Edit activities in main menu block
       | forum    | Acceptance test site | 0       | Visible forum |
       | forum    | Acceptance test site | 0       | My forum name |
     And I log in as "admin"
+    And I change window size to "large"
     And I am on site homepage
     And I turn editing mode on
     And "My forum name" activity in site main menu block should have "Hide" editing icon

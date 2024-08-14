@@ -50,14 +50,14 @@ Feature: We can use calculated grade totals
       | Test assignment nine  | student1 | 5.00  |
     And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
-    And I change window size to "large"
+    # Change window size to ultra-wide to avoid 'out-of-bounds' random failures.
+    And I change window size to "5120x2160"
     And I set the following settings for grade item "Test assignment two":
       | Hidden | 1 |
     And I set the following settings for grade item "Test assignment five":
       | Hidden | 1 |
     And I set the following settings for grade item "Test assignment eight":
       | Hidden | 1 |
-    And I change window size to "medium"
     And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the field "Grade display type" to "Real (percentage)"
     And I press "Save changes"
@@ -421,8 +421,6 @@ Feature: We can use calculated grade totals
       | Rescale existing grades | No |
       | Maximum grade | 200 |
       | Extra credit  | 0   |
-    # Change window size to ultra-wide to avoid 'out-of-bounds' random failures.
-    And I change window size to "5120x2160"
     And I give the grade "21.00" to the user "Student 1" for the grade item "Manual item 2"
     And I press "Save changes"
     And I give the grade "20.00" to the user "Student 1" for the grade item "Manual item 2"
@@ -434,8 +432,6 @@ Feature: We can use calculated grade totals
       | Rescale existing grades | No |
       | Maximum grade | 100 |
       | Extra credit  | 0   |
-    # Change window size to ultra-wide to avoid 'out-of-bounds' random failures.
-    And I change window size to "5120x2160"
     And I give the grade "21.00" to the user "Student 1" for the grade item "Manual item 2"
     And I press "Save changes"
     And I give the grade "20.00" to the user "Student 1" for the grade item "Manual item 2"
