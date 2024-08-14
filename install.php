@@ -202,12 +202,8 @@ if (!empty($memlimit) and $memlimit != -1) {
 // the problem is that we need specific version of quickforms and hacked excel files :-(.
 ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
 
-// Register our classloader, in theory somebody might want to replace it to load other hacked core classes.
-if (defined('COMPONENT_CLASSLOADER')) {
-    spl_autoload_register(COMPONENT_CLASSLOADER);
-} else {
-    spl_autoload_register('core_component::classloader');
-}
+// Register our classloader.
+\core\component::register_autoloader();
 
 // Continue with lib loading.
 require_once($CFG->libdir.'/classes/text.php');

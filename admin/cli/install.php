@@ -179,13 +179,8 @@ ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include
 // The core_component class can be used in any scripts, it does not need anything else.
 require_once($CFG->libdir.'/classes/component.php');
 
-// Register our classloader, in theory somebody might want to replace it to load other hacked core classes.
-// Required because the database checks below lead to session interaction which is going to lead us to requiring autoloaded classes.
-if (defined('COMPONENT_CLASSLOADER')) {
-    spl_autoload_register(COMPONENT_CLASSLOADER);
-} else {
-    spl_autoload_register('core_component::classloader');
-}
+// Register our classloader.
+\core\component::register_autoloader();
 
 require_once($CFG->libdir.'/classes/text.php');
 require_once($CFG->libdir.'/classes/string_manager.php');
