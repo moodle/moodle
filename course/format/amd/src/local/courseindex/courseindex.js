@@ -338,7 +338,7 @@ export default class Component extends BaseComponent {
             const item = allitems[itemid];
             // Get the current element at that position.
             const currentitem = container.children[index];
-            if (currentitem === undefined) {
+            if (currentitem === undefined && item != undefined) {
                 container.append(item);
                 return;
             }
