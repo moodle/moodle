@@ -543,6 +543,7 @@ class graph {
       );
       ImageLine($this->image, $this->calculated['boundary_box']['left'], $this->calculated['zero_axis'], $this->calculated['boundary_box']['right'], $this->calculated['zero_axis'], $this->colour[$colour]);
     }
+
     function draw_zero_axis_right() {
       $colour = $this->parameter['zero_axis'];
       if ($colour == 'none') return;
