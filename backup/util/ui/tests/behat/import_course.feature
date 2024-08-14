@@ -69,7 +69,7 @@ Feature: Import course's contents into another course
       | Unpublished course badge | editingteacher |
     When I import "Course 1" course into "Course 2" course using this options:
       | Settings | Include badges | 1 |
-    And I navigate to "Badges > Manage badges" in current page administration
+    And I navigate to "Badges" in current page administration
     Then I should see "Published course badge"
     And I should see "Unpublished course badge"
     And I should see "Unpublished without criteria course badge"
