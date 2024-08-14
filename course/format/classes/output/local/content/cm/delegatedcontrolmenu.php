@@ -176,9 +176,9 @@ class delegatedcontrolmenu extends basecontrolmenu {
                 'name' => get_string('move'),
                 'pixattr' => ['class' => ''],
                 'attr' => [
-                        'class' => 'editing_movecm ',
-                        'data-action' => 'moveCm',
-                        'data-id' => $cm->id,
+                    'class' => 'editing_movecm ',
+                    'data-action' => 'moveCm',
+                    'data-id' => $cm->id,
                 ],
             ];
         }
