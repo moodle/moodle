@@ -129,8 +129,8 @@ class new_table_from_mysql extends XMLDBAction {
         // go to the table edit action
         } else {
             // Get some params (table is mandatory here).
-            $tableparam = required_param('table', PARAM_ALPHAEXT);
-            $afterparam = required_param('after', PARAM_ALPHAEXT);
+            $tableparam = required_param('table', PARAM_ALPHANUMEXT);
+            $afterparam = required_param('after', PARAM_ALPHANUMEXT);
 
             if (empty($tableparam) || empty($afterparam)) {
                 throw new moodle_exception('Invalid param value detected.');
