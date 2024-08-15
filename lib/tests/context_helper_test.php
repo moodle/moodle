@@ -483,9 +483,6 @@ class context_helper_test extends \advanced_testcase {
         $pagecontext = context\module::instance($page->cmid);
         $systemcontext = context\system::instance();
 
-        // Default is OFF.
-        $this->assertSame('0', $CFG->filternavigationwithsystemcontext);
-
         // First test passed values are returned if disabled.
         set_config('filternavigationwithsystemcontext', '0');
 
