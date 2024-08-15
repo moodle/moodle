@@ -131,7 +131,6 @@ class core_component {
      * @var array<string>
      */
     protected static $composerautoloadfiles = [
-        'lib/aws-sdk/src/functions.php',
         'lib/guzzlehttp/guzzle/src/functions_include.php',
         'lib/guzzlehttp/promises/src/functions_include.php',
         'lib/jmespath/src/JmesPath.php',
