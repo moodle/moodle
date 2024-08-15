@@ -23,6 +23,7 @@ use core_badges\reportbuilder\local\entities\badge;
 use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\report\{action, column};
 use core_reportbuilder\system_report;
+use html_writer;
 use lang_string;
 use moodle_url;
 use pix_icon;
@@ -41,6 +42,9 @@ require_once("{$CFG->libdir}/badgeslib.php");
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class badges extends system_report {
+
+    /** @var int $badgeid The ID of the current badge row */
+    private int $badgeid;
 
     /**
      * Initialise report, we need to set the main table, load our entities and set columns/filters
@@ -116,7 +120,6 @@ class badges extends system_report {
         $this->add_columns_from_entities($columns);
 
         // Issued badges column.
-        // TODO: Move this column to the entity when MDL-76392 is integrated.
         $tempbadgealias = database::generate_alias();
         $badgeentityalias = $badgeentity->get_table_alias('badge');
         $this->add_column((new column(
@@ -131,7 +134,14 @@ class badges extends system_report {
                       INNER JOIN {user} u
                               ON {$tempbadgealias}.userid = u.id
                            WHERE {$tempbadgealias}.badgeid = {$badgeentityalias}.id AND u.deleted = 0)", 'issued')
-            ->set_is_sortable(true));
+            ->set_is_sortable(true)
+            ->set_callback(function(int $count): string {
+                if (!has_capability('moodle/badges:viewawarded', $this->get_context())) {
+                    return (string) $count;
+                }
+
+                return html_writer::link(new moodle_url('/badges/recipients.php', ['id' => $this->badgeid]), $count);
+            }));
 
         // Remove title from image column.
         $this->get_column('badge:image')->set_title(null);
@@ -287,6 +297,15 @@ class badges extends system_report {
             default:
                 throw new \coding_exception('Wrong context');
         }
+    }
+
+    /**
+     * Store the ID of the badge within each row
+     *
+     * @param stdClass $row
+     */
+    public function row_callback(stdClass $row): void {
+        $this->badgeid = (int) $row->id;
     }
 
     /**
