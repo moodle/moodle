@@ -20,10 +20,10 @@ namespace core_badges\reportbuilder\local\systemreports;
 
 use core\context\{course, system};
 use core_badges\reportbuilder\local\entities\badge;
-use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\report\{action, column};
 use core_reportbuilder\system_report;
+use html_writer;
 use lang_string;
 use moodle_url;
 use pix_icon;
@@ -43,6 +43,9 @@ require_once("{$CFG->libdir}/badgeslib.php");
  */
 class badges extends system_report {
 
+    /** @var int $badgeid The ID of the current badge row */
+    private int $badgeid;
+
     /**
      * Initialise report, we need to set the main table, load our entities and set columns/filters
      */
@@ -53,15 +56,6 @@ class badges extends system_report {
 
         $this->set_main_table('badge', $entityalias);
         $this->add_entity($badgeentity);
-
-        // Join user entity.
-        $userentity = new user();
-        $useralias = $userentity->get_table_alias('user');
-        $badgeissuedalias = database::generate_alias();
-        $this->add_entity($userentity->add_joins([
-            "LEFT JOIN {badge_issued} {$badgeissuedalias} ON {$badgeissuedalias}.badgeid = {$entityalias}.id",
-            "LEFT JOIN {user} {$useralias} ON {$useralias}.id = {$badgeissuedalias}.userid AND {$useralias}.deleted = 0",
-        ]));
 
         $paramtype = database::generate_param_name();
         $context = $this->get_context();
@@ -113,19 +107,39 @@ class badges extends system_report {
      * unique identifier. If custom columns are needed just for this report, they can be defined here.
      */
     protected function add_columns(): void {
+        $badgeentity = $this->get_entity('badge');
+
         $this->add_columns_from_entities([
             'badge:image',
             'badge:namewithlink',
             'badge:version',
             'badge:status',
             'badge:criteria',
-            'user:username',
         ]);
 
         // Issued badges column.
-        $this->get_column('user:username')
-            ->set_title(new lang_string('awards', 'core_badges'))
-            ->set_aggregation('count');
+        $tempbadgealias = database::generate_alias();
+        $badgeentityalias = $badgeentity->get_table_alias('badge');
+        $this->add_column((new column(
+            'issued',
+            new lang_string('awards', 'core_badges'),
+            $badgeentity->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_INTEGER)
+            ->add_field("(SELECT COUNT({$tempbadgealias}.userid)
+                            FROM {badge_issued} {$tempbadgealias}
+                      INNER JOIN {user} u
+                              ON {$tempbadgealias}.userid = u.id
+                           WHERE {$tempbadgealias}.badgeid = {$badgeentityalias}.id AND u.deleted = 0)", 'issued')
+            ->set_is_sortable(true)
+            ->set_callback(function(int $count): string {
+                if (!has_capability('moodle/badges:viewawarded', $this->get_context())) {
+                    return (string) $count;
+                }
+
+                return html_writer::link(new moodle_url('/badges/recipients.php', ['id' => $this->badgeid]), $count);
+            }));
 
         // Remove title from image column.
         $this->get_column('badge:image')->set_title(null);
@@ -280,6 +294,15 @@ class badges extends system_report {
             default:
                 throw new \coding_exception('Wrong context');
         }
+    }
+
+    /**
+     * Store the ID of the badge within each row
+     *
+     * @param stdClass $row
+     */
+    public function row_callback(stdClass $row): void {
+        $this->badgeid = (int) $row->id;
     }
 
     /**
