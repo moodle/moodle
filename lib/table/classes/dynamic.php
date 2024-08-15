@@ -41,4 +41,11 @@ namespace core_table;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 interface dynamic {
+
+    /**
+     * Check capability for users accessing the dynamic table.
+     *
+     * @return bool
+     */
+    public function has_capability(): bool;
 }

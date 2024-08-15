@@ -224,9 +224,13 @@ class get extends external_api {
             );
         }
 
+        /** @var \core_table\dynamic $instance */
         $instance = new $tableclass($uniqueid);
         $instance->set_filterset($filterset);
         self::validate_context($instance->get_context());
+        if (!$instance->has_capability()) {
+            throw new \moodle_exception('nopermissiontoaccesspage');
+        }
 
         $instance->set_sortdata($sortdata);
         $alphabet = get_string('alphabet', 'langconfig');
