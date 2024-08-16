@@ -46,13 +46,6 @@ function qbank_tagquestion_output_fragment_tags_form($args) {
         // Load the question and some related information.
         $question = $DB->get_record('question', ['id' => $id]);
 
-        if ($coursecontext = $editingcontext->get_course_context(false)) {
-            $course = $DB->get_record('course', ['id' => $coursecontext->instanceid]);
-            $filtercourses = [$course];
-        } else {
-            $filtercourses = null;
-        }
-
         $sql = "SELECT qc.*
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
@@ -68,8 +61,7 @@ function qbank_tagquestion_output_fragment_tags_form($args) {
             $tagobjectsbyquestion = core_tag_tag::get_items_tags('core_question', 'question', [$question->id]);
             if (!empty($tagobjectsbyquestion[$question->id])) {
                 $tagobjects = $tagobjectsbyquestion[$question->id];
-                $sortedtagobjects = question_sort_tags($tagobjects,
-                        context::instance_by_id($category->contextid), $filtercourses);
+                $sortedtagobjects = question_sort_tags($tagobjects, context::instance_by_id($category->contextid));
             }
         }
         $formoptions = [

@@ -63,25 +63,6 @@ class tags_form extends \moodleform {
                 'noselectionstring' => get_string('anytags', 'quiz'),
             ];
             $mform->addElement('autocomplete', 'tags',  get_string('tags'), $tagstrings, $options);
-
-            // Is the question category in a course context?
-            $qcontext = $customdata['questioncontext'];
-            $qcoursecontext = $qcontext->get_course_context(false);
-            $iscourseoractivityquestion = !empty($qcoursecontext);
-            // Is the current context we're editing in a course context?
-            $editingcontext = $customdata['editingcontext'];
-            $editingcoursecontext = $editingcontext->get_course_context(false);
-            $iseditingcontextcourseoractivity = !empty($editingcoursecontext);
-
-            if ($iseditingcontextcourseoractivity && !$iscourseoractivityquestion) {
-                // If the question is being edited in a course or activity context
-                // and the question isn't a course or activity level question then
-                // allow course tags to be added to the course.
-                $coursetagheader = get_string('questionformtagheader', 'core_question',
-                    $editingcoursecontext->get_context_name(true));
-                $mform->addElement('autocomplete', 'coursetags',  $coursetagheader, $tagstrings, $options);
-
-            }
         }
     }
 

@@ -64,12 +64,8 @@ class delete_action extends question_action_base {
         $this->strdelete = get_string('delete');
         $this->strrestore = get_string('restore');
         $this->deletequestionurl = new \moodle_url('/question/bank/deletequestion/delete.php');
-        if (!empty($this->qbank->cm->id)) {
-            $this->returnparams['cmid'] = $this->qbank->cm->id;
-        }
-        if (!empty($this->qbank->course->id)) {
-            $this->returnparams['courseid'] = $this->qbank->course->id;
-        }
+        $this->returnparams['cmid'] = $this->qbank->cm->id;
+
         if (!empty($this->qbank->returnurl)) {
             $this->returnparams['returnurl'] = $this->qbank->returnurl;
         }

@@ -86,6 +86,10 @@ class question_categories {
             fields: 'contextid, id'
         );
         foreach ($contexts as $context) {
+            // We can only have categories in module context.
+            if ($context->contextlevel !== CONTEXT_MODULE) {
+                continue;
+            }
             $items = helper::get_categories_for_contexts($context->id);
             // Create an ordered tree with children correctly nested under parents.
             foreach ($items as $item) {

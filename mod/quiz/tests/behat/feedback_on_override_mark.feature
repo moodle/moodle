@@ -16,15 +16,15 @@ Feature: Teachers see correct answers when overriding marks
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
+    And the following "activities" exist:
+      | activity   | name    | course | idnumber |
+      | quiz       | Quiz 1  | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype       | name   | questiontext                   | generalfeedback |
       | Test questions   | shortanswer | Kermit | What kind of animal is Kermit? |                 |
-    And the following "activities" exist:
-      | activity   | name   | course | idnumber |
-      | quiz       | Quiz 1 | C1     | quiz1    |
     And quiz "Quiz 1" contains the following questions:
       | question  | page |
       | Kermit    | 1    |

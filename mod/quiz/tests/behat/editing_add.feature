@@ -17,7 +17,9 @@ Feature: Edit quiz page - adding things
     And the following "activities" exist:
       | activity   | name    | intro                                     | course | idnumber  |
       | quiz       | Quiz 1  | Quiz 1 for testing the Add menu           | C1     | quiz1     |
-      | qbank      | Qbank 1 | Question bank 1 for testing the Add menu  | C1     | qbank1    |
+    And the following "question categories" exist:
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
     And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
 
   @javascript
@@ -100,21 +102,11 @@ Feature: Edit quiz page - adding things
       in various categories and add them to the question bank.
 
     # Create a couple of sub categories.
-    When I am on the "Course 1" "core_question > course question categories" page
-    Then I should see "Add category"
-    And I follow "Add category"
-    Then I set the field "Parent category" to "Default for Bank 1"
-    And I set the field "Name" to "Subcat 1"
-    And I set the field "Category info" to "This is sub category 1"
-    And I press "id_submitbutton"
-    And I should see "Subcat 1"
-
-    And I follow "Add category"
-    Then I set the field "Parent category" to "Default for C1"
-    And I set the field "Name" to "Subcat 2"
-    And I set the field "Category info" to "This is sub category 2"
-    And I press "id_submitbutton"
-    And I should see "Subcat 2"
+    Given the following "question categories" exist:
+      | contextlevel    | reference | questioncategory | name           |
+      | Activity module | quiz1     | Test questions   | Subcat 1       |
+      | Activity module | quiz1     | Test questions   | Subcat 2       |
+    When I am on the "Quiz 1" "mod_quiz > question categories" page
 
     And I select "Questions" from the "Question bank tertiary navigation" singleselect
     And I should see "Question bank"
@@ -240,10 +232,7 @@ Feature: Edit quiz page - adding things
 
   @accessibility @javascript
   Scenario: Check the accessibility of the quiz questions page
-    Given the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
-    And the following "questions" exist:
+    Given the following "questions" exist:
       | questioncategory | qtype     | name           | questiontext              |
       | Test questions   | truefalse | First question | Answer the first question |
       | Test questions   | truefalse | Other question | Answer the first question |

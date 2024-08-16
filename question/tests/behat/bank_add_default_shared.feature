@@ -14,7 +14,6 @@ Feature: Add a default question bank
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
-      | student1 | C1     | student        |
 
   Scenario: Add a default question bank to a course
     Given I am on the "C1" "Course" page logged in as "teacher1"

@@ -16,8 +16,6 @@
 
 namespace qbank_managecategories;
 
-use core_question\local\bank\question_edit_contexts;
-use moodle_url;
 /**
  * Test base for category tests
  *
@@ -40,17 +38,6 @@ abstract class manage_category_test_base extends \advanced_testcase {
     }
 
     /**
-     * Create a question category for the system.
-     *
-     * @param array $categorydetails details of the category
-     * @return \stdClass question category record
-     */
-    protected function create_question_category_for_the_system(array $categorydetails = []): \stdClass {
-        $context = \context_system::instance();
-        return $this->create_new_question_category_for_a_context($context->id, $categorydetails);
-    }
-
-    /**
      * Create a course category
      *
      * @return \core_course_category new course category
@@ -58,21 +45,6 @@ abstract class manage_category_test_base extends \advanced_testcase {
     protected function create_course_category(): \core_course_category {
         // Course category.
         return $this->getDataGenerator()->create_category();
-    }
-
-    /**
-     * Create a question category for a course category.
-     *
-     * @param \core_course_category $coursecategory the course category that new question category will be created for
-     * @param array $categorydetails details of the category
-     * @return \stdClass question category record
-     */
-    protected function create_question_category_for_a_course_category(
-        \core_course_category $coursecategory,
-        array $categorydetails = [],
-    ): \stdClass {
-        $context = \context_coursecat::instance($coursecategory->id);
-        return $this->create_new_question_category_for_a_context($context->id, $categorydetails);
     }
 
     /**
@@ -86,14 +58,24 @@ abstract class manage_category_test_base extends \advanced_testcase {
     }
 
     /**
-     * Create a question category for a course.
+     * Create a mod_qbank instance.
      *
-     * @param \stdClass $course the course that new question category will be created for
+     * @param \stdClass $course to add the mod_qbank instance to.
+     * @return \stdClass new qbank module
+     */
+    protected function create_qbank(\stdClass $course): \stdClass {
+        return self::getDataGenerator()->create_module('qbank', ['course' => $course->id]);
+    }
+
+    /**
+     * Create a question category for a qbank module.
+     *
+     * @param \stdClass $qbank the qbank module that new question category will be created for
      * @param array $categorydetails details of the category
      * @return \stdClass category record
      */
-    protected function create_question_category_for_a_course(\stdClass $course, array $categorydetails = []): \stdClass {
-        $context = \context_course::instance($course->id);
+    protected function create_question_category_for_a_qbank(\stdClass $qbank, array $categorydetails = []): \stdClass {
+        $context = \context_module::instance($qbank->cmid);
         return $this->create_new_question_category_for_a_context($context->id, $categorydetails);
     }
 

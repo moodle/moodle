@@ -16,13 +16,6 @@ Feature: Activity completion in the quiz activity with unlocked and re-grading.
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
-    And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
-    And the following "questions" exist:
-      | questioncategory | qtype     | name            | questiontext               | defaultmark |
-      | Test questions   | truefalse | First question  | Answer the first question  | 8           |
-      | Test questions   | truefalse | Second question | Answer the second question | 2           |
     And the following "activity" exists:
       | activity            | quiz           |
       | course              | C1             |
@@ -35,6 +28,13 @@ Feature: Activity completion in the quiz activity with unlocked and re-grading.
       | completion          | 2              |
       | completionusegrade  | 1              |
       | completionpassgrade | 1              |
+    And the following "question categories" exist:
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
+    And the following "questions" exist:
+      | questioncategory | qtype     | name            | questiontext               | defaultmark |
+      | Test questions   | truefalse | First question  | Answer the first question  | 8           |
+      | Test questions   | truefalse | Second question | Answer the second question | 2           |
     And quiz "Test quiz name" contains the following questions:
       | question        | page |
       | First question  | 1    |

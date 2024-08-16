@@ -31,13 +31,6 @@ Feature: Switching question bank when adding questions to a quiz
       | Activity module | qbank3     | Test questions 3 |
       | Activity module | qbank4     | Test questions 4 |
       | Activity module | quiz1      | Test questions 5 |
-    And the following "questions" exist:
-      | questioncategory  | qtype     | name             | user     | questiontext     | idnumber |
-      | Test questions 1  | essay     | question 01 name | admin    | Question 01 text | qidnum1  |
-      | Test questions 2  | essay     | question 02 name | teacher1 | Question 02 text | qidnum2  |
-      | Test questions 3  | essay     | question 03 name | teacher1 | Question 03 text | qidnum3  |
-      | Test questions 4  | essay     | question 04 name | admin    | Question 04 text | qidnum4  |
-      | Test questions 5  | essay     | question 05 name | teacher1 | Question 05 text | qidnum5  |
     And I log in as "teacher1"
     And I am on the "Quiz 1" "mod_quiz > Edit" page
 

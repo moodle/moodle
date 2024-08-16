@@ -962,7 +962,7 @@ class secondary_test extends \advanced_testcase {
             ],
             "Question bank should return nothing" => [
                 '/question/edit.php',
-                'courseid',
+                'cmid',
                 false
             ],
             "Reports should return nothing" => [

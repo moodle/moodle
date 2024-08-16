@@ -16,14 +16,6 @@ Feature: Flag quiz questions
       | user     | course | role    |
       | student1 | C1     | student |
       | teacher1 | C1     | teacher |
-    And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
-    And the following "questions" exist:
-      | questioncategory | qtype       | name  | questiontext    |
-      | Test questions   | truefalse   | TF1   | First question  |
-      | Test questions   | truefalse   | TF2   | Second question |
-      | Test questions   | truefalse   | TF3   | Third question  |
     And the following "activity" exists:
       | activity                    | quiz   |
       | name                        | Quiz 1 |
@@ -36,6 +28,15 @@ Feature: Flag quiz questions
       | generalfeedbackimmediately  | 1      |
       | rightanswerimmediately      | 1      |
       | overallfeedbackimmediately  | 1      |
+      | idnumber                    | quiz1  |
+    And the following "question categories" exist:
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
+    And the following "questions" exist:
+      | questioncategory | qtype       | name  | questiontext    |
+      | Test questions   | truefalse   | TF1   | First question  |
+      | Test questions   | truefalse   | TF2   | Second question |
+      | Test questions   | truefalse   | TF3   | Third question  |
     And quiz "Quiz 1" contains the following questions:
       | question | page |
       | TF1      | 1    |

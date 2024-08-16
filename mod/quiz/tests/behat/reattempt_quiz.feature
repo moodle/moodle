@@ -18,16 +18,16 @@ Feature: Several attempts in a quiz
       | student1 | C1     | student |
       | student2 | C1     | student |
       | teacher  | C1     | teacher |
+    And the following "activities" exist:
+      | activity | name   | intro              | course | idnumber | preferredbehaviour | navmethod  |
+      | quiz     | Quiz 1 | Quiz 1 description | C1     | quiz1    | immediatefeedback  | free       |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name | questiontext    |
       | Test questions   | truefalse | TF1  | First question  |
       | Test questions   | truefalse | TF2  | Second question |
-    And the following "activities" exist:
-      | activity | name   | intro              | course | idnumber | preferredbehaviour | navmethod  |
-      | quiz     | Quiz 1 | Quiz 1 description | C1     | quiz1    | immediatefeedback  | free       |
     And quiz "Quiz 1" contains the following questions:
       | question | page | requireprevious |
       | TF1      | 1    | 1               |

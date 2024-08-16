@@ -3,7 +3,7 @@
 <!-- question: 0  -->
   <question type="category">
     <category>
-        <text>$course$/Default for testhead/Multichoice</text>
+        <text>$module$/Default for testhead/Multichoice</text>
 
     </category>
   </question>

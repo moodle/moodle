@@ -48,10 +48,12 @@ class column_manager_test extends advanced_testcase {
     protected static function get_question_bank(): view {
         $course = self::getDataGenerator()->create_course();
         $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $course->id]);
+        $cm = get_coursemodule_from_id('qbank', $qbank->cmid);
         $questionbank = new view(
             new question_edit_contexts(\context_module::instance($qbank->cmid)),
             new moodle_url('/'),
-            $course
+            $course,
+            $cm
         );
         return $questionbank;
     }

@@ -4889,12 +4889,6 @@ function remove_course_contents($courseid, $showfeedback = true, ?array $options
         echo $OUTPUT->notification($strdeleted.get_string('type_mod_plural', 'plugin'), 'notifysuccess');
     }
 
-    // Delete questions and question categories.
-    question_delete_course($course);
-    if ($showfeedback) {
-        echo $OUTPUT->notification($strdeleted.get_string('questions', 'question'), 'notifysuccess');
-    }
-
     // Delete content bank contents.
     $cb = new \core_contentbank\contentbank();
     $cbdeleted = $cb->delete_contents($coursecontext);

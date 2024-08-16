@@ -101,7 +101,7 @@ class helper {
      * @param int $questionid the question being previewed
      * @param int $qubaid the id of the question usage for this preview
      * @param question_preview_options $options the options in use
-     * @param context $context context for the question preview
+     * @param context $context module context for the question preview
      * @param moodle_url $returnurl url of the page to return to
      * @param int|null $restartversion version of the question to use when next restarting the preview.
      * @return moodle_url
@@ -112,11 +112,13 @@ class helper {
                 'id' => $questionid,
                 'previewid' => $qubaid,
         ];
-        if ($context->contextlevel == CONTEXT_MODULE) {
-            $params['cmid'] = $context->instanceid;
-        } else if ($context->contextlevel == CONTEXT_COURSE) {
-            $params['courseid'] = $context->instanceid;
+
+        if ($context->contextlevel !== CONTEXT_MODULE) {
+            debugging("Invalid contextlevel: {$context->contextlevel} must be CONTEXT_MODULE");
         }
+
+        $params['cmid'] = $context->instanceid;
+
         if ($returnurl !== null) {
             $params['returnurl'] = $returnurl;
         }
@@ -131,7 +133,7 @@ class helper {
      * The the URL to use for actions relating to this preview.
      *
      * @param int $questionid the question being previewed
-     * @param context $context the current moodle context
+     * @param context $context the current moodle module context
      * @param int $previewid optional previewid to sign post saved previewed answers
      * @param moodle_url $returnurl url of the page to return to
      * @return moodle_url
@@ -140,11 +142,13 @@ class helper {
         $params = [
                 'id' => $questionid,
         ];
-        if ($context->contextlevel == CONTEXT_MODULE) {
-            $params['cmid'] = $context->instanceid;
-        } else if ($context->contextlevel == CONTEXT_COURSE) {
-            $params['courseid'] = $context->instanceid;
+
+        if ($context->contextlevel !== CONTEXT_MODULE) {
+            debugging("Invalid contextlevel: {$context->contextlevel} must be CONTEXT_MODULE");
         }
+
+        $params['cmid'] = $context->instanceid;
+
         if ($previewid) {
             $params['previewid'] = $previewid;
         }

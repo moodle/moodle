@@ -289,17 +289,18 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $otheruser = $this->getDataGenerator()->create_user();
 
         $course = $this->getDataGenerator()->create_course();
-        $context = \context_course::instance($course->id);
-        $othercourse = $this->getDataGenerator()->create_course();
-        $othercontext = \context_course::instance($othercourse->id);
+        $qbank1 = self::getDataGenerator()->create_module('qbank', ['course' => $course->id]);
+        $qbank1context = \context_module::instance($qbank1->cmid);
+        $qbank2 = self::getDataGenerator()->create_module('qbank', ['course' => $course->id]);
+        $qbank2context = \context_module::instance($qbank2->cmid);
 
         // Create a couple of questions.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category([
-            'contextid' => $context->id,
+            'contextid' => $qbank1context->id,
         ]);
         $othercat = $questiongenerator->create_question_category([
-            'contextid' => $othercontext->id,
+            'contextid' => $qbank2context->id,
         ]);
 
         // Create questions:
@@ -326,7 +327,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist(
             $user,
             'core_question',
-            [$context->id]
+            [$qbank1context->id]
         );
 
         // Find out how many questions are in the question bank to start with.
@@ -370,17 +371,18 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $otheruser = $this->getDataGenerator()->create_user();
 
         $course = $this->getDataGenerator()->create_course();
-        $context = \context_course::instance($course->id);
-        $othercourse = $this->getDataGenerator()->create_course();
-        $othercontext = \context_course::instance($othercourse->id);
+        $qbank1 = self::getDataGenerator()->create_module('qbank', ['course' => $course->id]);
+        $qbank1context = \context_module::instance($qbank1->cmid);
+        $qbank2 = self::getDataGenerator()->create_module('qbank', ['course' => $course->id]);
+        $qbank2context = \context_module::instance($qbank2->cmid);
 
         // Create a couple of questions.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category([
-            'contextid' => $context->id,
+            'contextid' => $qbank1context->id,
         ]);
         $othercat = $questiongenerator->create_question_category([
-            'contextid' => $othercontext->id,
+            'contextid' => $qbank2context->id,
         ]);
 
         // Create questions:
@@ -407,7 +409,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
 
         // Delete the data and check it is removed.
         $this->setUser();
-        provider::delete_data_for_all_users_in_context($context);
+        provider::delete_data_for_all_users_in_context($qbank1context);
 
         $this->assertEquals($questioncount, $DB->count_records('question'));
 

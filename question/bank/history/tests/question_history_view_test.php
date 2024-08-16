@@ -46,6 +46,7 @@ class question_history_view_test extends \advanced_testcase {
         // Create a course.
         $course = $generator->create_course();
         $qbank = $generator->create_module('qbank', ['course' => $course->id]);
+        $cm = get_coursemodule_from_id('qbank', $qbank->cmid);
         $context = \context_module::instance($qbank->cmid);
 
         // Create a question in the default category.
@@ -73,7 +74,7 @@ class question_history_view_test extends \advanced_testcase {
             'entryid' => $entry->id,
             'returnurl' => "/",
         ];
-        $view = new $viewclass($contexts, new \moodle_url('/'), $course, null, $pagevars, $extraparams);
+        $view = new $viewclass($contexts, new \moodle_url('/'), $course, $cm, $pagevars, $extraparams);
         ob_start();
         $view->display();
         $html = ob_get_clean();
@@ -98,6 +99,8 @@ class question_history_view_test extends \advanced_testcase {
 
         // Create a course.
         $course = $generator->create_course();
+        $qbank = $generator->create_module('qbank', ['course' => $course->id]);
+        $cm = get_coursemodule_from_id('qbank', $qbank->cmid);
         $context = \context_course::instance($course->id);
 
         // Create a question in the default category.
@@ -120,7 +123,7 @@ class question_history_view_test extends \advanced_testcase {
             'entryid' => $entry->id,
             'returnurl' => "/",
         ];
-        $view = new $viewclass($contexts, new \moodle_url('/'), $course,  null, $pagevars, $extraparams);
+        $view = new $viewclass($contexts, new \moodle_url('/'), $course, $cm, $pagevars, $extraparams);
         ob_start();
         $view->display_question_bank_header();
         $headerhtml = ob_get_clean();
@@ -129,7 +132,7 @@ class question_history_view_test extends \advanced_testcase {
 
         $questiondata2 = $questiongenerator->update_question($questiondata1, null,
             ['name' => 'Second version']);
-        $view = new $viewclass($contexts, new \moodle_url('/'), $course,  null, $pagevars, $extraparams);
+        $view = new $viewclass($contexts, new \moodle_url('/'), $course, $cm, $pagevars, $extraparams);
         ob_start();
         $view->display_question_bank_header();
         $headerhtml = ob_get_clean();

@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <quiz>
-<!-- question: 0  -->
+  <!-- question: 0  -->
   <question type="category">
     <category>
-        <text>$module$/Alpha</text>
+      <text>$course$/Alpha</text>
     </category>
     <info format="moodle_auto_format">
-        <text>This is Alpha category for test</text>
+      <text>This is Alpha category for test</text>
     </info>
     <idnumber>alpha-idnumber</idnumber>
   </question>
-
-<!-- question: 91  -->
+  <!-- question: 1  -->
   <question type="truefalse">
     <name>
       <text>Alpha Question</text>

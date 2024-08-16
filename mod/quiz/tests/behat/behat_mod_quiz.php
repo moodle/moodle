@@ -155,7 +155,10 @@ class behat_mod_quiz extends behat_question_base {
                 return new moodle_url('/question/edit.php', [
                     'cmid' => $this->get_cm_by_quiz_name($identifier)->id,
                 ]);
-
+            case 'question categories':
+                return new moodle_url('/question/bank/managecategories/category.php', [
+                    'cmid' => $this->get_cm_by_quiz_name($identifier)->id,
+                ]);
 
             default:
                 throw new Exception('Unrecognised quiz page type "' . $type . '."');

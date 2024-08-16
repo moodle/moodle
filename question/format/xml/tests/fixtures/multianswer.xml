@@ -3,7 +3,7 @@
 <!-- question: 0  -->
   <question type="category">
     <category>
-        <text>$course$/Default for Test images in backup</text>
+        <text>$module$/Default for Test images in backup</text>
 
     </category>
   </question>

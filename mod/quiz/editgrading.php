@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
-        question_edit_setup('editq', '/mod/quiz/editgrading.php', true);
+        question_edit_setup('editq', '/mod/quiz/editgrading.php');
 
 $PAGE->set_url($thispageurl);
 $PAGE->set_secondary_active_tab('mod_quiz_edit');

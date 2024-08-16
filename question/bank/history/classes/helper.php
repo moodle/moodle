@@ -34,12 +34,39 @@ class helper {
      * @param int $courseid id of the course
      * @param ?string $filter filter param to pass to the History view
      * @return \moodle_url
+     * @deprecated since Moodle 5.0.
+     * @todo MDL-82413 Final deprecation in Moodle 6.0.
      */
+    #[\core\attribute\deprecated(replacement: 'qbank_history\helper::get_question_history_url', since: '5.0', mdl: 'MDL-71378')]
     public static function question_history_url(int $entryid, string $returnrul, int $courseid, ?string $filter): \moodle_url {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
         $params = [
             'entryid' => $entryid,
             'returnurl' => $returnrul,
             'courseid' => $courseid
+        ];
+        if (!is_null($filter)) {
+            $params['filter'] = $filter;
+        }
+
+        return new \moodle_url('/question/bank/history/history.php', $params);
+    }
+
+    /**
+     * Get the question history url.
+     *
+     * @param int $entryid id of the question entry
+     * @param string $returnrul url of the page to return to
+     * @param int $cmid id of the coursemodule holding the question bank.
+     * @param ?string $filter filter param to pass to the History view
+     * @return \moodle_url
+     */
+    public static function get_question_history_url(int $entryid, string $returnrul, int $cmid, ?string $filter) {
+
+        $params = [
+            'entryid' => $entryid,
+            'returnurl' => $returnrul,
+            'cmid' => $cmid,
         ];
         if (!is_null($filter)) {
             $params['filter'] = $filter;

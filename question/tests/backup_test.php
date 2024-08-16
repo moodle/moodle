@@ -431,6 +431,7 @@ class backup_test extends \advanced_testcase {
 
         // Create a course and a category.
         $course = $this->getDataGenerator()->create_course();
+        $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $course->id]);
         $category = $this->getDataGenerator()->create_category();
 
         // Create a question with links in all the places that should be recoded.
@@ -438,7 +439,7 @@ class backup_test extends \advanced_testcase {
         $testcontent = 'Look at <a href="' . $testlink . '">the course</a>.';
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $questioncategory = $questiongenerator->create_question_category(
-            ['contextid' => context_course::instance($course->id)->id]);
+            ['contextid' => \context_module::instance($qbank->cmid)->id]);
         $question = $questiongenerator->create_question('multichoice', null, [
             'name' => 'Test question',
             'category' => $questioncategory->id,
@@ -461,7 +462,11 @@ class backup_test extends \advanced_testcase {
 
         // Backup and restore the course.
         $backupid = $this->backup_course($course);
-        $newcourseid = $this->restore_course($backupid, 'New course', 'C2', $category->id);
+        $newcourse = $this->getDataGenerator()->create_course();
+        $this->restore_to_course($backupid, $newcourse->id);
+        $modinfo = get_fast_modinfo($newcourse);
+        $qbanks = $modinfo->get_instances_of('qbank');
+        $qbank = reset($qbanks);
 
         // Get the question from the restored course - we are expecting just one, but that is not the real test here.
         $restoredquestions = $DB->get_records_sql("
@@ -471,14 +476,14 @@ class backup_test extends \advanced_testcase {
                   JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                   JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
                  WHERE qc.contextid = ?
-            ", [context_course::instance($newcourseid)->id]);
+            ", [\context_module::instance($qbank->id)->id]);
         $this->assertCount(1, $restoredquestions);
         $questionid = array_key_first($restoredquestions);
         $this->assertEquals('Test question', $restoredquestions[$questionid]->name);
 
         // Verify the links have been recoded.
         $restoredquestion = question_bank::load_question_data($questionid);
-        $recodedlink = new moodle_url('/course/view.php', ['id' => $newcourseid]);
+        $recodedlink = new moodle_url('/course/view.php', ['id' => $newcourse->id]);
         $recodedcontent = 'Look at <a href="' . $recodedlink . '">the course</a>.';
         $firstanswerid = array_key_first($restoredquestion->options->answers);
         $firsthintid = array_key_first($restoredquestion->hints);

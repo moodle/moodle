@@ -14,15 +14,18 @@ Feature: The questions in the question bank can be selected in various ways
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name    | intro              | course | idnumber |
+      | qbank      | Qbank 1 | Question bank 1    | C1     | qbank1   |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | qbank1    | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name              | user     | questiontext    |
       | Test questions   | essay     | A question 1 name | admin    | Question 1 text |
       | Test questions   | essay     | B question 2 name | teacher1 | Question 2 text |
       | Test questions   | numerical | C question 3 name | teacher1 | Question 3 text |
-    And I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
+    And I am on the "Qbank 1" "core_question > question bank" page logged in as "teacher1"
 
   @javascript
   Scenario: The question text can be chosen all in the list of questions

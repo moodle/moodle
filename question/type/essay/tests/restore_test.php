@@ -63,7 +63,7 @@ class restore_test extends \restore_date_testcase {
         $newqbank = reset($newqbanks);
 
         // Verify that the restored question has options.
-        $newcategory = question_make_default_category(\context_module::instance($newqbank->id));
+        $newcategory = question_get_default_category(\context_module::instance($newqbank->id)->id, true);
         $newessay = $DB->get_record_sql('SELECT q.*
                                               FROM {question} q
                                               JOIN {question_versions} qv ON qv.questionid = q.id

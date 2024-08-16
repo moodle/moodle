@@ -14,7 +14,10 @@ Feature: Test importing questions from GIFT format.
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
-    And I am on the "Course 1" "core_question > course question import" page logged in as "teacher"
+    And the following "activities" exist:
+      | activity   | name    | course | idnumber |
+      | qbank      | Qbank 1 | C1     | qbank1   |
+    And I am on the "Qbank 1" "core_question > question import" page logged in as "teacher"
 
   @javascript @_file_upload
   Scenario: import some GIFT questions
@@ -28,7 +31,7 @@ Feature: Test importing questions from GIFT format.
     Then I should see "colours"
 
     # Now export again.
-    And I am on the "Course 1" "core_question > course question export" page
+    And I am on the "Qbank 1" "core_question > question export" page
     And I set the field "id_format_gift" to "1"
     And I press "Export questions to file"
     And following "click here" should download a file that:

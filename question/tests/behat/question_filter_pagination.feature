@@ -14,9 +14,12 @@ Feature: A teacher can pagimate through question bank questions
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "activities" exist:
+      | activity   | name    | intro              | course | idnumber |
+      | qbank      | Qbank 1 | Question bank 1    | C1     | qbank1   |
     And the following "question categories" exist:
-      | contextlevel | reference | questioncategory | name           |
-      | Course       | C1        | Top              | Used category  |
+      | contextlevel    | reference | questioncategory | name           |
+      | Activity module | qbank1    | Top              | Used category  |
     Given 100 "questions" exist with the following data:
       | questioncategory | Used category                 |
       | qtype            | essay                         |
@@ -27,8 +30,8 @@ Feature: A teacher can pagimate through question bank questions
       | Used category    | essay | Not on first page     | Write about whatever you want |
 
   Scenario: Questions can be paginated
-    When I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
-    When I apply question bank filter "Category" with value "Course 1"
+    Given I am on the "Qbank 1" "core_question > question bank" page logged in as "teacher1"
+    When I apply question bank filter "Category" with value "Top for Qbank 1"
     And I follow "Sort by Question name ascending"
     And I follow "Sort by Question name descending"
     And I should see "Tests question 1"

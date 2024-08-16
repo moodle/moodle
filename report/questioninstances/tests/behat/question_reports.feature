@@ -11,12 +11,12 @@ Feature: A Teacher can generate question instance reports
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1        | weeks  |
-    And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
     And the following "activities" exist:
       | activity | course | name           |
       | quiz     | C1     | Test quiz Q001 |
+    And the following "question categories" exist:
+      | contextlevel    | reference      | name           |
+      | Activity module | Test quiz Q001 | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype       | name |
       | Test questions   | truefalse   | TF   |
@@ -36,9 +36,9 @@ Feature: A Teacher can generate question instance reports
     Given I am on the "C1" "Course" page logged in as "admin"
     And I navigate to "Reports > Question instances" in site administration
     When I press "Get the report"
-    Then "Course: Course 1" row "Total" column of "generaltable" table should contain "2"
-    And "Course: Course 1" row "Visible" column of "generaltable" table should contain "2"
-    And "Course: Course 1" row "Hidden" column of "generaltable" table should contain "0"
+    Then "Quiz: Test quiz Q001" row "Total" column of "generaltable" table should contain "2"
+    And "Quiz: Test quiz Q001" row "Visible" column of "generaltable" table should contain "2"
+    And "Quiz: Test quiz Q001" row "Hidden" column of "generaltable" table should contain "0"
 
   Scenario: Generate report displaying hidden questions
     Given I am on the "Test quiz Q001" "mod_quiz > question bank" page logged in as "admin"
@@ -46,11 +46,11 @@ Feature: A Teacher can generate question instance reports
     And I press "Delete"
     And I navigate to "Reports > Question instances" in site administration
     When I press "Get the report"
-    Then "Course: Course 1" row "Total" column of "generaltable" table should contain "2"
-    And "Course: Course 1" row "Visible" column of "generaltable" table should contain "1"
-    And "Course: Course 1" row "Hidden" column of "generaltable" table should contain "1"
+    Then "Quiz: Test quiz Q001" row "Total" column of "generaltable" table should contain "2"
+    And "Quiz: Test quiz Q001" row "Visible" column of "generaltable" table should contain "1"
+    And "Quiz: Test quiz Q001" row "Hidden" column of "generaltable" table should contain "1"
     And I set the field "menuqtype" to "True/False"
     And I press "Get the report"
-    And "Course: Course 1" row "Total" column of "generaltable" table should contain "1"
-    And "Course: Course 1" row "Visible" column of "generaltable" table should contain "0"
-    And "Course: Course 1" row "Hidden" column of "generaltable" table should contain "1"
+    And "Quiz: Test quiz Q001" row "Total" column of "generaltable" table should contain "1"
+    And "Quiz: Test quiz Q001" row "Visible" column of "generaltable" table should contain "0"
+    And "Quiz: Test quiz Q001" row "Hidden" column of "generaltable" table should contain "1"

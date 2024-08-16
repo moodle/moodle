@@ -151,19 +151,20 @@ class quiz_question_restore_test extends \advanced_testcase {
     }
 
     /**
-     * Test if a duplicate does not duplicate questions in course question bank.
+     * Test if a duplicate does not duplicate questions from a shared question bank.
      *
      * @covers ::duplicate_module
      */
-    public function test_quiz_duplicate_does_not_duplicate_course_question_bank_questions(): void {
+    public function test_quiz_duplicate_does_not_duplicate_questions_from_shared_banks(): void {
         $this->resetAfterTest();
         $quiz = $this->create_test_quiz($this->course);
-        // Test for questions from a different context.
-        $context = \context_course::instance($this->course->id);
+        $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $this->course->id]);
+        // Test for questions from a qbank context.
+        $context = \context_module::instance($qbank->cmid);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $this->add_two_regular_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
         $this->add_one_random_question($questiongenerator, $quiz, ['contextid' => $context->id]);
-        // Count the questions in course context.
+        // Count the questions in qbank context.
         $this->assertEquals(7, $this->question_count($context->id));
         $newquiz = $this->duplicate_quiz($this->course, $quiz);
         $this->assertEquals(7, $this->question_count($context->id));

@@ -50,11 +50,7 @@ class copy_action extends question_action_base {
         $this->strcopy = get_string('duplicate');
         $this->duplicatequestionurl = new \moodle_url('/question/bank/editquestion/question.php',
                 array('returnurl' => $this->qbank->returnurl));
-        if ($this->qbank->cm !== null) {
-            $this->duplicatequestionurl->param('cmid', $this->qbank->cm->id);
-        } else {
-            $this->duplicatequestionurl->param('courseid', $this->qbank->course->id);
-        }
+        $this->duplicatequestionurl->param('cmid', $this->qbank->cm->id);
     }
 
     public function get_menu_position(): int {

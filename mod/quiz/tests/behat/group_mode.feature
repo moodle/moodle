@@ -42,9 +42,10 @@ Feature: Viewing results by group
       | activity | name          | intro                     | course | idnumber | groupmode |
       | quiz     | Separate quiz | quiz with separate groups | C1     | quiz1    | 1         |
       | quiz     | Visible quiz  | quiz with visible groups  | C1     | quiz2    | 2         |
+      | qbank    | Qbank 1       |                           | C1     | qbank1   |           |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | qbank1    | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype       | name  | questiontext    |
       | Test questions   | truefalse   | TF1   | First question  |

@@ -184,7 +184,7 @@ class column_manager extends column_manager_base {
             $contexts,
             new moodle_url('/question/bank/columnsortorder/sortcolumns.php'),
             $course,
-            null,
+            $cm,
             $params
         );
         return $questionbank;

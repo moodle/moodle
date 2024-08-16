@@ -14,10 +14,13 @@ Feature: The questions in the question bank can be filtered by combine various c
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "activities" exist:
+      | activity   | name    | intro              | course | idnumber |
+      | qbank      | Qbank 1 | Question bank 1    | C1     | qbank1   |
     And the following "question categories" exist:
-      | contextlevel | reference | name            |
-      | Course       | C1        | Test questions 1|
-      | Course       | C1        | Test questions 2|
+      | contextlevel    | reference | name             |
+      | Activity module | qbank1    | Test questions 1 |
+      | Activity module | qbank1    | Test questions 2 |
     And the following "questions" exist:
       | questioncategory | qtype     | name            | user     | questiontext    |
       | Test questions 1 | essay     | question 1 name | teacher1 | Question 1 text |
@@ -28,11 +31,12 @@ Feature: The questions in the question bank can be filtered by combine various c
       | question        | tag |
       | question 1 name | foo |
       | question 3 name | foo |
-    And I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
+    And I am on the "Qbank 1" "core_question > question bank" page logged in as "teacher1"
 
   @javascript
   Scenario: The questions can be filtered by matching all conditions
     When I apply question bank filter "Category" with value "Test questions 1"
+    And I change window size to "large"
     And I apply question bank filter "Tag" with value "foo"
     Then I should see "question 1 name" in the "categoryquestions" "table"
     And I should not see "question 2 name" in the "categoryquestions" "table"

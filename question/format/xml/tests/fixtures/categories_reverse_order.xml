@@ -3,7 +3,7 @@
 <!-- question: 0  -->
   <question type="category">
     <category>
-        <text>$course$/Sigma/Tau</text>
+        <text>$module$/Sigma/Tau</text>
     </category>
     <info format="html">
         <text>This is Tau category for test</text>
@@ -40,7 +40,7 @@
 <!-- question: 0  -->
   <question type="category">
     <category>
-        <text>$course$/Sigma</text>
+        <text>$module$/Sigma</text>
     </category>
     <info format="html">
         <text>This is Sigma category for test</text>

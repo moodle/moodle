@@ -844,8 +844,7 @@ $string['quiztimer'] = 'Quiz Timer';
 $string['quizwillopen'] = 'This quiz will open {$a}';
 $string['random'] = 'Random question';
 $string['randomcatwithsubcat'] = '{$a} and subcategories';
-$string['randomcoursecatwithsubcat'] = 'Any category inside course category {$a}';
-$string['randomcoursewithsubcat'] = 'Any category in this course';
+
 $string['randomcreate'] = 'Create random questions';
 $string['randomediting'] = 'Editing a random question';
 $string['randomfaultynosubcat'] = 'Faulty question';
@@ -867,7 +866,6 @@ $string['randomquestiontags_help'] = 'You can restrict the selection criteria fu
 
 The "random" questions will be selected from the questions that have all these tags.';
 $string['randomquestionusinganewcategory'] = 'Random question using a new category';
-$string['randomsystemwithsubcat'] = 'Any system-level category';
 $string['randomwithsubcat'] = 'Questions from this category and its subcategories.';
 $string['readytosend'] = 'You are about to send your whole quiz to be graded.  Are you sure you want to continue?';
 $string['reattemptquiz'] = 'Re-attempt quiz';
@@ -1141,3 +1139,8 @@ $string['attemptsdeleted'] = 'Quiz attempts deleted';
 $string['gradesdeleted'] = 'Quiz grades deleted';
 $string['useroverridesdeleted'] = 'User overrides deleted';
 $string['groupoverridesdeleted'] = 'Group overrides deleted';
+
+// Deprecated since Moodle 5.0.
+$string['randomcoursecatwithsubcat'] = 'Any category inside course category {$a}';
+$string['randomcoursewithsubcat'] = 'Any category in this course';
+$string['randomsystemwithsubcat'] = 'Any system-level category';

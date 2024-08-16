@@ -74,7 +74,26 @@ class core_question_generator extends component_generator_base {
                 $qbank = $this->datagenerator->create_module('qbank', ['course' => SITEID]);
                 $record['contextid'] = context_module::instance($qbank->cmid)->id;
             }
+        } else {
+            // Any requests for a question category in a contextlevel that is no longer supported
+            // will have a qbank instance created on the associated context and then the category
+            // will be made for that context instead.
+            $context = context::instance_by_id($record['contextid']);
+            if ($context->contextlevel !== CONTEXT_MODULE) {
+                $course = match ($context->contextlevel) {
+                    CONTEXT_COURSE => get_course($context->instanceid),
+                    CONTEXT_SYSTEM => get_site(),
+                    CONTEXT_COURSECAT => $this->datagenerator->create_course(['category' => $context->instanceid]),
+                    default => throw new \Exception('Invalid context to infer a question bank from.'),
+                };
+                $qbank = \core_question\local\bank\question_bank_helper::get_default_open_instance_system_type($course, true);
+                $bankcontext = context_module::instance($qbank->id);
+            } else {
+                $bankcontext = $context;
+            }
+            $record['contextid'] = $bankcontext->id;
         }
+
         if (!isset($record['parent'])) {
             $record['parent'] = question_get_top_category($record['contextid'], true)->id;
         }

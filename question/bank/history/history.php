@@ -42,7 +42,7 @@ $PAGE->set_url($url);
 // Additional param to differentiate with other question bank view.
 $extraparams['entryid'] = $entryid;
 $extraparams['returnurl'] = $returnurl;
-$questionbank = new \qbank_history\question_history_view($contexts, $url, $COURSE, null, $pagevars, $extraparams);
+$questionbank = new \qbank_history\question_history_view($contexts, $url, $COURSE, $cm, $pagevars, $extraparams);
 
 $streditingquestions = get_string('history_header', 'qbank_history');
 $PAGE->set_title($streditingquestions);

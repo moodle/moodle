@@ -141,8 +141,12 @@ class qformat_default {
         if (count($this->questions)) {
             debugging('You shouldn\'t call setCategory after setQuestions');
         }
+        $context = context::instance_by_id($category->contextid);
+        if ($context->contextlevel !== CONTEXT_MODULE) {
+            throw new \core\exception\moodle_exception('Invalid contextlevel for target category, must be CONTEXT_MODULE');
+        }
         $this->category = $category;
-        $this->importcontext = context::instance_by_id($this->category->contextid);
+        $this->importcontext = $context;
     }
 
     /**
@@ -508,30 +512,14 @@ class qformat_default {
             $event->trigger();
 
             if (core_tag_tag::is_enabled('core_question', 'question')) {
-                // Is the current context we're importing in a course context?
-                $importingcontext = $this->importcontext;
-                $importingcoursecontext = $importingcontext->get_course_context(false);
-                $isimportingcontextcourseoractivity = !empty($importingcoursecontext);
-
-                if (!empty($question->coursetags)) {
-                    if ($isimportingcontextcourseoractivity) {
-                        $mergedtags = array_merge($question->coursetags, $question->tags);
-
-                        core_tag_tag::set_item_tags('core_question', 'question', $question->id,
-                            $question->context, $mergedtags);
-                    } else {
-                        core_tag_tag::set_item_tags('core_question', 'question', $question->id,
-                            context_course::instance($this->course->id), $question->coursetags);
-
-                        if (!empty($question->tags)) {
-                            core_tag_tag::set_item_tags('core_question', 'question', $question->id,
-                                $importingcontext, $question->tags);
-                        }
-                    }
-                } else if (!empty($question->tags)) {
-                    core_tag_tag::set_item_tags('core_question', 'question', $question->id,
-                        $question->context, $question->tags);
-                }
+                // Course tags on question now deprecated so merge them into the question tags.
+                $mergedtags = array_merge($question->coursetags ?? [], $question->tags ?? []);
+                core_tag_tag::set_item_tags('core_question',
+                    'question',
+                    $question->id,
+                    $question->context,
+                    $mergedtags
+                );
             }
 
             if (!empty($result->error)) {
@@ -613,6 +601,14 @@ class qformat_default {
         } else {
             $context = context::instance_by_id($this->category->contextid);
         }
+
+        // If the file had categories in a deprecated context then the categories need to be applied to a default system type
+        // mod_qbank instance on the course instead.
+        if ($context->contextlevel !== CONTEXT_MODULE) {
+            $qbank = \core_question\local\bank\question_bank_helper::get_default_open_instance_system_type($this->course, true);
+            $context = context_module::instance($qbank->id);
+        }
+
         $this->importcontext = $context;
 
         // Now create any categories that need to be created.
@@ -1026,12 +1022,10 @@ class qformat_default {
             }
         }
 
-        // continue path for following error checks
-        $course = $this->course;
-        $continuepath = "{$CFG->wwwroot}/question/bank/exportquestions/export.php?courseid={$course->id}";
-
-        // did we actually process anything
+        // Did we actually process anything? Then continue path for following error checks.
         if ($count==0) {
+            $context = context::instance_by_id($contextid);
+            $continuepath = "{$CFG->wwwroot}/question/bank/exportquestions/export.php?cmid={$context->instanceid}";
             throw new \moodle_exception('noquestions', 'question', $continuepath);
         }
 

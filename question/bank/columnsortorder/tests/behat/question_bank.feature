@@ -137,7 +137,7 @@ Feature: Set question bank column order and size
     And I click on "Disable" "link" in the "Question statistics" "table_row"
     And I click on "Enable" "link" in the "Question statistics" "table_row"
     And I click on "Disable" "link" in the "Question statistics" "table_row"
-    And I am on the "Course 1" "core_question > course question bank" page
+    And I am on the "Test quiz Q001" "mod_quiz > question bank" page
     Then I should see "Question bank"
     And "Create a new question" "button" should exist
     # Really, we are just checking the question bank displayed without errors.

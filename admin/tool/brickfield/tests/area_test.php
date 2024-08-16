@@ -93,51 +93,30 @@ class area_test extends area_test_base {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $component = 'core_question';
 
-        list($category1, $course1, $qcat1, $questions1) = $generator->setup_course_and_questions('course');
-        list($category2, $course2, $qcat2, $questions2) = $generator->setup_course_and_questions('category');
-        list($category3, $course3, $qcat3, $questions3) = $generator->setup_course_and_questions('system');
+        [$category, $course, $qcat, $questions, $qbank] = $generator->setup_course_and_questions();
 
         $c = new \tool_brickfield\local\areas\core_question\questiontext();
         // Set up results arrays from the recordset for easier testing.
-        $course1areas = $this->array_from_recordset($c->find_course_areas($course1->id));
-        $course2areas = $c->find_course_areas($course2->id);
-        $course3areas = $c->find_course_areas($course3->id);
-        $sysareas = $this->array_from_recordset($c->find_system_areas());
+        $course1areas = $this->array_from_recordset($c->find_course_areas($course->id));
 
-        // Assert the core_question area exists for the individual question's context, courseid and categoryid.
+         // Assert the core_question area exists for the individual question's context, courseid and categoryid.
         $this->assert_area_in_array(
             $course1areas,
             $component,
-            \context_course::instance($course1->id)->id,
-            $questions1[0]->id,
-            $course1->id,
-            null
-        );
-        $this->assert_area_in_array(
-            $sysareas,
-            $component,
-            \context_coursecat::instance($category2->id)->id,
-            $questions2[0]->id,
-            SITEID,
-            $category2->id
-        );
-        $this->assert_area_in_array(
-            $sysareas,
-            $component,
-            \context_system::instance()->id,
-            $questions3[0]->id,
-            SITEID,
+            \context_module::instance($qbank->cmid)->id,
+            $questions[0]->id,
+            $course->id,
             null
         );
 
         // Emulate the question_created event.
-        $event = \core\event\question_created::create_from_question_instance($questions1[1],
-            \context_course::instance($course1->id));
+        $event = \core\event\question_created::create_from_question_instance($questions[1],
+            \context_module::instance($qbank->cmid));
         $relevantresults = $this->array_from_recordset($c->find_relevant_areas($event));
         $this->assert_area_in_array(
-            $course1areas,
+                $relevantresults,
             $component,
-            \context_course::instance($relevantresults[0]->courseid)->id,
+            $relevantresults[0]->contextid,
             $relevantresults[0]->itemid,
             $relevantresults[0]->courseid,
             $relevantresults[0]->categoryid
@@ -154,7 +133,8 @@ class area_test extends area_test_base {
         /** @var \core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $course = $this->getDataGenerator()->create_course();
-        $cat = $generator->create_question_category(['contextid' => \context_course::instance($course->id)->id]);
+        $qbank = $this->getDataGenerator()->create_module('qbank', ['course' => $course->id]);
+        $cat = $generator->create_question_category(['contextid' => \context_module::instance($qbank->cmid)->id]);
         $question1 = $generator->create_question('multichoice', null,
             ['name' => 'Example multichoice question', 'category' => $cat->id]);
         $question2 = $generator->create_question('numerical', null,

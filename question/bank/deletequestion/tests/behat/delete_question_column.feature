@@ -10,8 +10,8 @@ Feature: Use the qbank plugin manager page for deletequestion
       | activity   | name      | course | idnumber |
       | quiz       | Test quiz | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1    | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name                  | questiontext              |
       | Test questions   | truefalse | First question        | Answer the first question |
@@ -58,6 +58,7 @@ Feature: Use the qbank plugin manager page for deletequestion
   @javascript
   Scenario: I should be able to delete a question when filtered using tags
     Given I am on the "First question" "core_question > edit" page logged in as "admin"
+    And I change window size to "large"
     And I set the following fields to these values:
       | Tags | foo |
     And I click on "Save changes" "button"

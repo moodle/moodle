@@ -10,8 +10,8 @@ Feature: Use the qbank plugin manager page for viewquestiontext
       | activity   | name      | course | idnumber |
       | quiz       | Test quiz | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name           | questiontext                                                         |
       | Test questions   | truefalse | First question | Answer the <span class="totestforhtml">first</span> &lt;question&gt; |

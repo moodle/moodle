@@ -14,15 +14,18 @@ Feature: The questions in the question bank can be sorted in various ways
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name    | intro              | course | idnumber |
+      | qbank      | Qbank 1 | Question bank 1    | C1     | qbank1   |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | qbank1    | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name              | user     | questiontext    | idnumber    |
       | Test questions   | essay     | A question 1 name | admin    | Question 1 text | numidnum</a |
       | Test questions   | essay     | B question 2 name | teacher1 | Question 2 text |             |
       | Test questions   | numerical | C question 3 name | teacher1 | Question 3 text | numidnum</c |
-    And I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
+    And I am on the "Qbank 1" "core_question > question bank" page logged in as "teacher1"
 
   Scenario: The questions are sorted by type by default
     Then "A question 1 name" "checkbox" should appear before "C question 3 name" "checkbox"
@@ -61,6 +64,7 @@ Feature: The questions in the question bank can be sorted in various ways
 
   @javascript
   Scenario: The question text can be shown in the list of questions
+    Given I change window size to "large"
     When I set the field "Show question text in the question list?" to "Yes"
     Then I should see "Question 1 text"
     And I should see "Question 2 text"

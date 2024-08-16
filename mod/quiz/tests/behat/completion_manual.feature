@@ -16,15 +16,15 @@ Feature: Manually complete a quiz
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
-    And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
-    And the following "questions" exist:
-      | questioncategory | qtype     | name           | questiontext              |
-      | Test questions   | truefalse | First question | Answer the first question |
     And the following "activities" exist:
       | activity | name           | course | idnumber | completion |
       | quiz     | Test quiz name | C1     | quiz1    | 1          |
+    And the following "question categories" exist:
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions  |
+    And the following "questions" exist:
+      | questioncategory | qtype     | name           | questiontext              |
+      | Test questions   | truefalse | First question | Answer the first question |
     And quiz "Test quiz name" contains the following questions:
       | question       | page |
       | First question | 1    |

@@ -3,7 +3,7 @@
 <!-- question: 0  -->
   <question type="category">
     <category>
-      <text>$course$/Iota</text>
+      <text>$module$/Iota</text>
     </category>
     <info format="plain_text">
       <text>This is Iota category for test</text>
@@ -43,7 +43,7 @@
 <!-- question: 0  -->
   <question type="category">
     <category>
-      <text>$course$/Iota/Kappa</text>
+      <text>$module$/Iota/Kappa</text>
     </category>
     <info format="markdown">
       <text>This is Kappa category for test</text>
@@ -115,7 +115,7 @@
 <!-- question: 0  -->
   <question type="category">
     <category>
-      <text>$course$/Iota/Kappa/Lambda</text>
+      <text>$module$/Iota/Kappa/Lambda</text>
     </category>
     <info format="moodle_auto_format">
       <text>This is Lambda category for test</text>
@@ -155,7 +155,7 @@
 <!-- question: 0  -->
   <question type="category">
     <category>
-      <text>$course$/Iota/Mu</text>
+      <text>$module$/Iota/Mu</text>
     </category>
     <info format="moodle_auto_format">
       <text>This is Mu category for test</text>
