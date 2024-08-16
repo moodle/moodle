@@ -30,6 +30,8 @@ require_once('all_checks.php');
 
 /**
  * Class i_is_not_used_testcase
+ *
+ * @covers \tool_brickfield\local\htmlchecker\common\checks\i_is_not_used
  */
 class i_is_not_used_test extends all_checks {
     /** @var string Check type */
@@ -70,5 +72,14 @@ EOD;
 
         $results = $this->get_checker_results($this->htmlpass);
         $this->assertEmpty($results);
+    }
+
+    /**
+     * Test for font awesome icon.
+     */
+    public function test_fa_icon(): void {
+        $html = '<div><i class="fa fa-user"></i><i>Hello there</i><i class="fa fa-address-book" aria-hidden="true"></i></div>';
+        $results = $this->get_checker_results($html);
+        $this->assertCount(2, $results);
     }
 }
