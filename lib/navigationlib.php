@@ -6006,8 +6006,6 @@ class navigation_json {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class navigation_cache {
-    /** @var int represents the time created */
-    protected $creation;
     /** @var cache_session The session cache instance */
     protected $cache;
     /** @var array The current cache area data */
@@ -6018,13 +6016,11 @@ class navigation_cache {
      * It can either be unique to start a fresh cache or shared to use an existing cache.
      */
     protected $area;
-    /** @var int a time that the information will time out */
-    protected $timeout;
-    /** @var stdClass The current context */
-    protected $currentcontext;
     /** @var int cache time information */
+    #[\core\attribute\deprecated(null, since: '4.5', reason: 'This constant is no longer needed.', mdl: 'MDL-79628')]
     const CACHETIME = 0;
     /** @var int cache user id */
+    #[\core\attribute\deprecated(null, since: '4.5', reason: 'This constant is no longer needed.', mdl: 'MDL-79628')]
     const CACHEUSERID = 1;
     /** @var int cache value */
     const CACHEVALUE = 2;
@@ -6037,11 +6033,15 @@ class navigation_cache {
      * @param string $area The unique string to segregate this particular cache.
      * @param int $timeout The number of seconds to time the information out after
      */
-    public function __construct($area, $timeout=1800) {
+    public function __construct($area, $timeout = null) {
+        if ($timeout !== null) {
+            debugging(
+                'The timeout argument has been deprecated. Please remove it from your method calls.',
+                DEBUG_DEVELOPER,
+            );
+        }
         global $USER;
-        $this->creation = time();
         $this->area = "user_{$USER->id}_{$area}";
-        $this->timeout = time() - $timeout;
         $this->cache = cache::make('core', 'navigation_cache');
     }
     /**
@@ -6087,10 +6087,9 @@ class navigation_cache {
      * @param mixed $information
      */
     public function set($key, $information) {
-        global $USER;
         $this->ensure_navigation_cache_initialised();
         $information = serialize($information);
-        $this->session[$key] = [self::CACHETIME => time(), self::CACHEUSERID => $USER->id, self::CACHEVALUE => $information];
+        $this->session[$key] = [self::CACHEVALUE => $information];
         $this->cache->set($this->area, $this->session);
     }
     /**

@@ -1,0 +1,7 @@
+issueNumber: MDL-79628
+notes:
+  core:
+    - message: >-
+        Deprecate timeout in navigation_cache constructor and clean up unused
+        properties
+      type: deprecated
