@@ -6,7 +6,7 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
-## 4.5dev
+## 4.5dev+
 
 ### core_badges
 
@@ -250,6 +250,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   | `\YUI_config` | `\core\output\requirements\yui` |
 
   For more information see [MDL-82183](https://tracker.moodle.org/browse/MDL-82183)
+- The Moodle autoloader should now be registered using `\core\component::register_autoloader` rather than manually doing so in any exceptional location which requires it. It is not normally necessary to include the autoloader manually, as it is registered automatically when the Moodle environment is bootstrapped.
+
+  For more information see [MDL-82747](https://tracker.moodle.org/browse/MDL-82747)
 
 #### Changed
 
@@ -675,6 +678,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   - Review all the strings used in the reset page to remove the "Delete" or "Remove" words from them.
 
   For more information see [MDL-81872](https://tracker.moodle.org/browse/MDL-81872)
+- The external function core_course::get_course_contents now returns the component and itemid of sections.
+
+  For more information see [MDL-82385](https://tracker.moodle.org/browse/MDL-82385)
 
 #### Removed
 
@@ -768,3 +774,11 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The field controller `get_options` method now returns each option pre-formatted
 
   For more information see [MDL-82481](https://tracker.moodle.org/browse/MDL-82481)
+
+### core_form
+
+#### Added
+
+- Previously, the 'duration' form field type would allow users to input positive or negative durations. However looking at all the uses, everyone was expecting this input type to only accept times >= 0 seconds, and almost no-one was bothering to write manual form validation, leading to subtle bugs. So now, by default this field type will validate the input value is not negative. If you need the previous behaviour, there is a new option 'allownegative' which you can set to true. (The default is false.)
+
+  For more information see [MDL-82687](https://tracker.moodle.org/browse/MDL-82687)

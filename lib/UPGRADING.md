@@ -1,6 +1,6 @@
 # core (subsystem) Upgrade notes
 
-## 4.5dev
+## 4.5dev+
 
 ### Removed
 
@@ -219,6 +219,9 @@
   | `\YUI_config` | `\core\output\requirements\yui` |
 
   For more information see [MDL-82183](https://tracker.moodle.org/browse/MDL-82183)
+- The Moodle autoloader should now be registered using `\core\component::register_autoloader` rather than manually doing so in any exceptional location which requires it. It is not normally necessary to include the autoloader manually, as it is registered automatically when the Moodle environment is bootstrapped.
+
+  For more information see [MDL-82747](https://tracker.moodle.org/browse/MDL-82747)
 
 ### Changed
 

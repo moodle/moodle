@@ -1,6 +1,6 @@
 # theme_boost Upgrade notes
 
-## 4.5dev
+## 4.5dev+
 
 ### Changed
 

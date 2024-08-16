@@ -1,6 +1,6 @@
 # core_course (subsystem) Upgrade notes
 
-## 4.5dev
+## 4.5dev+
 
 ### Added
 
@@ -31,6 +31,9 @@
   - Review all the strings used in the reset page to remove the "Delete" or "Remove" words from them.
 
   For more information see [MDL-81872](https://tracker.moodle.org/browse/MDL-81872)
+- The external function core_course::get_course_contents now returns the component and itemid of sections.
+
+  For more information see [MDL-82385](https://tracker.moodle.org/browse/MDL-82385)
 
 ### Removed
 
