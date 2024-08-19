@@ -184,8 +184,7 @@ class delegatedcontrolmenu extends basecontrolmenu {
         }
 
         // Delete deletes the module.
-        // Only show the delete link if we are not already in the section view page.
-        if (!$isheadersection && $hasmanageactivities) {
+        if ($hasmanageactivities) {
             $url = clone($cmbaseurl);
             $url->param('delete', $cm->id);
             $url->param('sr', $cm->sectionnum);
