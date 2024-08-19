@@ -28,6 +28,7 @@ require_once($CFG->libdir.'/adminlib.php');
 admin_externalpage_setup('adhoctasks');
 
 $failedonly = optional_param('failedonly', false, PARAM_BOOL);
+$dueonly = optional_param('dueonly', false, PARAM_BOOL);
 $classname = optional_param('classname', null, PARAM_RAW);
 
 $renderer = $PAGE->get_renderer('tool_task');
@@ -37,7 +38,7 @@ if ($classname) {
     $PAGE->navbar->add(get_string('adhoctasks', 'tool_task'), $pageurl);
     $PAGE->navbar->add(s($classname), $PAGE->url);
 
-    $tasks = core\task\manager::get_adhoc_tasks($classname, $failedonly);
+    $tasks = core\task\manager::get_adhoc_tasks($classname, $failedonly, dueonly: $dueonly);
 
     echo $OUTPUT->header();
 
@@ -45,7 +46,7 @@ if ($classname) {
         echo $renderer->cron_disabled();
     }
 
-    echo $renderer->adhoc_tasks_class_table($classname, $tasks, ['failedonly' => $failedonly]);
+    echo $renderer->adhoc_tasks_class_table($classname, $tasks, ['failedonly' => $failedonly , 'dueonly' => $dueonly ]);
 } else {
     $summary = core\task\manager::get_adhoc_tasks_summary();
 
