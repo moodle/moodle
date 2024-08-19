@@ -30,6 +30,9 @@ $courseindex-item-current: $primary !default;
                 color: $courseindex-link-hover-color;
             }
         }
+        &.draggable {
+            cursor: move;
+        }
     }
 }
 
@@ -174,6 +177,9 @@ $courseindex-item-current: $primary !default;
             .courseindex-item {
                 padding-left: $courseindex-item-padding-x;
             }
+        }
+        &.delegated-section {
+            width: 100%;
         }
     }
 
