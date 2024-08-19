@@ -118,7 +118,6 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I click on "Hide Email address" "link"
     And I click on "Hide Status" "link"
     And I click on "Hide Grade" "link"
-    And I click on "Hide Edit" "link"
     And I click on "Hide Last modified (submission)" "link"
     And I click on "Hide Online text" "link"
     And I click on "Hide Submission comments" "link"
