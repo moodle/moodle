@@ -1267,4 +1267,119 @@ final class component_test extends \advanced_testcase {
         $finalhash = component::get_all_component_hash([$hashes]);
         $this->assertEquals($onefiledirhash, $finalhash);
     }
+
+    /**
+     * Data provider fetching all third-party lib directories.
+     *
+     * @return array
+     */
+    public static function core_thirdparty_libs_provider(): array {
+        global $CFG;
+
+        $libs = [];
+
+        $xmlpath = $CFG->libdir . '/thirdpartylibs.xml';
+        $xml = simplexml_load_file($xmlpath);
+        foreach ($xml as $lib) {
+            $base = realpath(dirname($xmlpath));
+            $fullpath = "{$base}/{$lib->location}";
+            $relativepath = substr($fullpath, strlen($CFG->dirroot));
+
+            $libs[$relativepath] = [
+                'name' => (string) $lib->name,
+                'fullpath' => $fullpath,
+                'relativepath' => $relativepath,
+            ];
+        }
+
+        return $libs;
+    }
+
+    /**
+     * Data provider fetching all third-party lib directories with a composer.json file.
+     *
+     * @return array
+     */
+    public static function core_thirdparty_libs_with_composer_provider(): array {
+        return array_filter(self::core_thirdparty_libs_provider(), function ($lib) {
+            return file_exists("{$lib['fullpath']}/composer.json");
+        });
+    }
+
+    /**
+     * Summary of test_composer_files
+     *
+     * @dataProvider core_thirdparty_libs_with_composer_provider
+     * @param string $name
+     * @param string $fullpath
+     * @param string $relativepath
+     */
+    public function test_composer_files(
+        string $name,
+        string $fullpath,
+        string $relativepath,
+    ): void {
+        $this->assertFileExists("{$fullpath}/composer.json");
+
+        $composer = json_decode(file_get_contents("{$fullpath}/composer.json"), true);
+
+        $rc = new ReflectionClass(\core\component::class);
+
+        if (array_key_exists('autoload', $composer)) {
+            // Check that the PSR-4 namespaces are present and correct.
+            if (array_key_exists('psr-4', $composer['autoload'])) {
+                $autoloadnamespaces = $rc->getProperty('psr4namespaces')->getValue(null);
+                foreach ($composer['autoload']['psr-4'] as $namespace => $path) {
+                    // Composer PSR-4 namespace autoloads may optionally have a trailing slash. Standardise the value.
+                    $namespace = rtrim($namespace, '\\');
+
+                    // If it exists in the composer.json the namespace must exist in our autoloader.
+                    $this->assertArrayHasKey($namespace, $autoloadnamespaces);
+
+                    // Ours should be standardised to not have a trailing slash.
+                    $this->assertEquals(
+                        rtrim($relativepath, '/'),
+                        $relativepath,
+                        "Moodle PSR-4 namespaces must have no trailing /",
+                    );
+
+                    // The composer.json can specify an array of possible values.
+                    // Standardise the format to the array format.
+                    $paths = is_array($path) ? $path : [$path];
+
+                    foreach ($paths as $path) {
+                        // The composer.json can specify any arbitrary directory within the folder.
+                        // It always contains a leading slash (/).
+                        // It may also have an optional trailing slash (/).
+                        // Concatenate the parts and removes the slashes.
+                        $relativenamespacepath = trim("{$relativepath}/{$path}", '/');
+
+                        // The Moodle PSR-4 autoloader data has two formats:
+                        // - a string, for a single source; or
+                        // - an array, for multiple sources.
+                        // Standardise the format to the latter format.
+                        if (!is_array($autoloadnamespaces[$namespace])) {
+                            $autoloadnamespaces[$namespace] = [$autoloadnamespaces[$namespace]];
+                        }
+
+                        // Ensure that the autoloader contains the normalised path.
+                        $this->assertContains(
+                            $relativenamespacepath,
+                            $autoloadnamespaces[$namespace],
+                            "Moodle PSR-4 namespace missing entry for library {$name}: {$namespace} => {$relativenamespacepath}",
+                        );
+                    }
+                }
+            }
+
+            // Check that the composer autoload files are present.
+            if (array_key_exists('files', $composer['autoload'])) {
+                // The Moodle composer file autoloads are a simple string[].
+                $autoloadnamefiles = $rc->getProperty('composerautoloadfiles')->getValue(null);
+                foreach ($composer['autoload']['files'] as $file) {
+                    $this->assertContains(trim($relativepath, '/') . "/{$file}", $autoloadnamefiles);
+                }
+            }
+        }
+    }
 }
