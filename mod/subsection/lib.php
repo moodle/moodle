@@ -78,6 +78,7 @@ function subsection_add_instance($moduleinstance, $mform = null) {
         $id,
         (object)[
             'name' => $moduleinstance->name,
+            'visible' => $moduleinstance->visible,
             'availability' => $cmavailability,
         ]
     );

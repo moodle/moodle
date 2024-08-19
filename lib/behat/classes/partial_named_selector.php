@@ -265,6 +265,9 @@ XPATH
 .//li[contains(concat(' ', normalize-space(@class), ' '), ' section ')][./descendant::*[self::h3]
     [normalize-space(.) = %locator%][contains(concat(' ', normalize-space(@class), ' '), ' sectionname ') or
     contains(concat(' ', normalize-space(@class), ' '), ' section-title ')]] |
+.//li[contains(concat(' ', normalize-space(@class), ' '), ' section ')][./descendant::*[self::h4]
+    [normalize-space(.) = %locator%][contains(concat(' ', normalize-space(@class), ' '), ' sectionname ') or
+    contains(concat(' ', normalize-space(@class), ' '), ' section-title ')]] |
 .//div[contains(concat(' ', normalize-space(@class), ' '), ' sitetopic ')]
     [./descendant::*[self::h2][normalize-space(.) = %locator%] or %locator% = 'frontpage']
 XPATH
