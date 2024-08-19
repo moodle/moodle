@@ -175,13 +175,9 @@ abstract class route_testcase extends \advanced_testcase {
      * @return App
      */
     protected function get_simple_app(): App {
-        global $CFG;
-        require_once("{$CFG->libdir}/nikic/fast-route/src/functions.php");
-        $app = bridge::create(
+        return bridge::create(
             container: \core\di::get_container(),
         );
-
-        return $app;
     }
 
     /**

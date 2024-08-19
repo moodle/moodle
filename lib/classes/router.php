@@ -145,11 +145,6 @@ class router {
     protected function create_app(
         string $basepath = '',
     ): void {
-        global $CFG;
-
-        // PHP Does not support autoloading functions.
-        require_once("{$CFG->libdir}/nikic/fast-route/src/functions.php");
-
         // Create an App using the DI Bridge.
         $this->app = router\bridge::create();
 

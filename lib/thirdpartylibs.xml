@@ -794,7 +794,7 @@ All rights reserved.</copyright>
       <repository>https://github.com/php-di/invoker</repository>
   </library>
   <library>
-      <location>slim</location>
+      <location>slim/slim</location>
       <name>Slim Framework</name>
       <version>4.13.0</version>
       <license>MIT</license>
