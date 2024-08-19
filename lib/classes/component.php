@@ -166,8 +166,9 @@ class component {
         'lib/aws-sdk/src/functions.php',
         'lib/guzzlehttp/guzzle/src/functions_include.php',
         'lib/jmespath/src/JmesPath.php',
+        'lib/nikic/fast-route/src/functions.php',
         'lib/php-di/php-di/src/functions.php',
-        'lib/ralouphi/getallheaders/src/getallheaders.php',
+        'lib/ralouphie/getallheaders/src/getallheaders.php',
         'lib/symfony/deprecation-contracts/function.php',
     ];
 
