@@ -24,8 +24,9 @@ unzip vX.Y.Z.zip
 unzip vX.Y.Z.zip
 
 3) Move the source code directories into place
+rm -rf lib/maxmind/GeoIp2/src lib/maxmind/MaxMind/src
 mv GeoIP2-php-X.Y.Z/src/ /path/to/moodle/lib/maxmind/GeoIp2/
-mv MaxMind-DB-Reader-php-X.Y.Z/src/MaxMind/ /path/to/moodle/lib/maxmind/MaxMind/
+mv MaxMind-DB-Reader-php-X.Y.Z/src/ /path/to/moodle/lib/maxmind/MaxMind/
 
 4) Update other MaxMind related files:
 mv GeoIP2-php-X.Y.Z/CHANGELOG.md /path/to/moodle/lib/maxmind/GeoIp2/
@@ -37,7 +38,6 @@ mv MaxMind-DB-Reader-php-X.Y.Z/LICENSE /path/to/moodle/lib/maxmind/MaxMind/
 mv MaxMind-DB-Reader-php-X.Y.Z/CHANGELOG.md /path/to/moodle/lib/maxmind/MaxMind/
 mv MaxMind-DB-Reader-php-X.Y.Z/README.md /path/to/moodle/lib/maxmind/MaxMind/
 mv MaxMind-DB-Reader-php-X.Y.Z/composer.json /path/to/moodle/lib/maxmind/MaxMind/
-mv MaxMind-DB-Reader-php-X.Y.Z/autoload.php /path/to/moodle/lib/maxmind/MaxMind/
 
 5) Run unit tests on iplookup/tests/geoip_test.php.
 
