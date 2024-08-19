@@ -1,0 +1,53 @@
+{
+    "name": "packbackbooks/lti-1p3-tool",
+    "type": "library",
+    "description": "A library used for building IMS-certified LTI 1.3 tool providers in PHP.",
+    "license": "Apache-2.0",
+    "keywords": [
+        "lti"
+    ],
+    "authors": [
+        {
+            "name": "Davo Hynds",
+            "email": "davo@packback.co"
+        },
+        {
+            "name": "Eric Tendian",
+            "email": "eric@packback.co"
+        },
+        {
+            "name": "Martin Lenord",
+            "email": "ims.m@rtin.dev"
+        }
+    ],
+    "require": {
+        "firebase/php-jwt": "^6.6",
+        "guzzlehttp/guzzle": "^7.0",
+        "phpseclib/phpseclib": "^3.0"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.4",
+        "nesbot/carbon": "^2.43",
+        "laravel/pint": "^1.0",
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^9.0|^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Packback\\Lti1p3\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "lint": [
+            "pint --test",
+            "phpstan analyse"
+        ],
+        "lint-fix": "pint -v"
+    }
+}

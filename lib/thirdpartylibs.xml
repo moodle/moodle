@@ -746,7 +746,7 @@ All rights reserved.</copyright>
     <repository>https://github.com/Kevinrob/guzzle-cache-middleware</repository>
   </library>
   <library>
-      <location>webauthn/src</location>
+      <location>webauthn</location>
       <name>WebAuthn</name>
       <version>2.1.1</version>
       <license>MIT</license>

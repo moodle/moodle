@@ -16,10 +16,6 @@
 
 namespace factor_webauthn;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir . '/webauthn/src/WebAuthn.php');
-
 use lbuchs\WebAuthn\Binary\ByteBuffer;
 use lbuchs\WebAuthn\WebAuthn;
 use lbuchs\WebAuthn\WebAuthnException;

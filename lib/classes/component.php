@@ -99,16 +99,17 @@ class component {
     /** @var array associative array of PSR-0 namespaces and corresponding paths. */
     protected static $psr0namespaces = [
         'Mustache' => 'lib/mustache/src/Mustache',
-        'CFPropertyList' => 'lib/plist/classes/CFPropertyList',
     ];
     /** @var array<string|array<string>> associative array of PRS-4 namespaces and corresponding paths. */
     protected static $psr4namespaces = [
         \Html2Text::class => 'lib/html2text/src',
         \MaxMind\Db::class => 'lib/maxmind/MaxMind/src/MaxMind/Db',
         \GeoIp2::class => 'lib/maxmind/GeoIp2/src',
-        \Sabberworm\CSS::class => 'lib/php-css-parser',
-        \MoodleHQ\RTLCSS::class => 'lib/rtlcss',
-        \ScssPhp\ScssPhp::class => 'lib/scssphp',
+        \Sabberworm\CSS::class => 'lib/php-css-parser/src',
+        \MoodleHQ::class => [
+            'lib/rtlcss/src/MoodleHQ',
+        ],
+        \ScssPhp\ScssPhp::class => 'lib/scssphp/src',
         \OpenSpout::class => 'lib/openspout/src',
         \MatthiasMullie\Minify::class => 'lib/minify/matthiasmullie-minify/src',
         \MatthiasMullie\PathConverter::class => 'lib/minify/matthiasmullie-pathconverter/src',
@@ -116,11 +117,11 @@ class component {
         \Packback\Lti1p3::class => 'lib/lti1p3/src',
         \Phpml::class => 'lib/mlbackend/php/phpml/src/Phpml',
         \PHPMailer\PHPMailer::class => 'lib/phpmailer/src',
-        \RedeyeVentures\GeoPattern::class => 'lib/geopattern-php/GeoPattern',
+        \RedeyeVentures::class => 'lib/geopattern-php/src',
         \Firebase\JWT::class => 'lib/php-jwt/src',
         \ZipStream::class => 'lib/zipstream/src',
         \MyCLabs\Enum::class => 'lib/php-enum/src',
-        \PhpXmlRpc::class => 'lib/phpxmlrpc',
+        \PhpXmlRpc::class => 'lib/phpxmlrpc/src',
         \Psr\Http\Client::class => 'lib/psr/http-client/src',
         \Psr\Http\Message::class => [
             'lib/psr/http-message/src',
@@ -151,6 +152,10 @@ class component {
         \Slim::class => 'lib/slim/slim/Slim',
         \libphonenumber::class => 'lib/giggsey/libphonenumber-for-php-lite/src',
         \Spatie\Cloneable::class => 'lib/spatie/php-cloneable/src',
+        \SimplePie::class => 'lib/simplepie/src',
+        \Michelf::class => 'lib/markdown/Michelf',
+        \CFPropertyList::class => 'lib/plist/src/CFPropertyList',
+        \lbuchs\WebAuthn::class => 'lib/webauthn/src',
     ];
 
     /**

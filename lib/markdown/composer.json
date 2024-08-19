@@ -1,0 +1,54 @@
+{
+	"name": "michelf/php-markdown",
+	"type": "library",
+	"description": "PHP Markdown",
+	"homepage": "https://michelf.ca/projects/php-markdown/",
+	"keywords": ["markdown"],
+	"license": "BSD-3-Clause",
+	"authors": [
+		{
+			"name": "Michel Fortin",
+			"email": "michel.fortin@michelf.ca",
+			"homepage": "https://michelf.ca/",
+			"role": "Developer"
+		},
+		{
+			"name": "John Gruber",
+			"homepage": "https://daringfireball.net/"
+		}
+	],
+	"require": {
+		"php": ">=7.4"
+	},
+	"autoload": {
+ 		"psr-4": { "Michelf\\": "Michelf/" }
+	},
+	"require-dev": {
+		"friendsofphp/php-cs-fixer": "^3.0",
+		"phpunit/phpunit": "^9.5",
+		"phpstan/phpstan": ">=1.0",
+		"phpstan/phpstan-phpunit": ">=1.0"
+	},
+
+	"scripts": {
+		"tests": "vendor/bin/phpunit test/",
+		"phpstan": [
+			"vendor/bin/phpstan analyse Michelf/ --level=5",
+			"vendor/bin/phpstan analyse -c test/phpstan.neon test/ --level=5"
+		],
+		"codestyle": "vendor/bin/php-cs-fixer fix Michelf --dry-run --verbose --show-progress=none",
+		"codestyle-fix": "vendor/bin/php-cs-fixer fix Michelf"
+	},
+
+	"archive": {
+		"exclude": [
+			"/.github/",
+			"/test/",
+			"/.editorconfig",
+			"/.gitignore",
+			"/.scrutinizer.yml",
+			"/.travis.yml",
+			"/phpunit.xml.dist"
+		]
+	}
+}
