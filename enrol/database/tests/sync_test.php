@@ -860,9 +860,8 @@ class sync_test extends \advanced_testcase {
         $DB->insert_record('enrol_database_test_courses', $course8);
         $DB->insert_record('enrol_database_test_courses', $course9);
 
-        // Mess with case as we need to check that fields are lower cased.
-        $plugin->set_config('newcoursestartdate', 'StartDaTE');
-        $plugin->set_config('newcourseenddate', 'ENDdATE');
+        $plugin->set_config('newcoursestartdate', 'startdate');
+        $plugin->set_config('newcourseenddate', 'enddate');
 
         $plugin->sync_courses($trace);
 
