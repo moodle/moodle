@@ -440,14 +440,6 @@ class manager {
                     'tabledeleterow' => 'table',
                 ],
             ],
-            'template' => [
-                'buttons' => [
-                    'template',
-                ],
-                'menuitems' => [
-                    'template' => 'insert',
-                ],
-            ],
             'visualblocks' => [
                 'buttons' => [
                     'visualblocks',
@@ -491,9 +483,6 @@ class manager {
 
             // Use the Moodle autosave plugin instead.
             'autosave',
-
-            // Disable the Template plugin for now.
-            'template',
 
             // Disable the preview plugin as it does not support Moodle filters.
             'preview',
