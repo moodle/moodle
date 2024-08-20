@@ -24,7 +24,6 @@
  */
 
 $string['modulename'] = 'Subsection';
-$string['modulename_help'] = 'Delegated subsections';
 $string['modulenameplural'] = 'Subsections';
 $string['pluginadministration'] = 'Subsection administration';
 $string['pluginname'] = 'Subsection';
