@@ -827,27 +827,27 @@ class sync_test extends \advanced_testcase {
 
         $trace = new \null_progress_trace();
 
-        $course1 = ['fullname' => 'C1', 'shortname' => 'c1', 'idnumber' => '', 'startdate' => 0,
+        $course1 = ['fullname' => 'C1', 'shortname' => 'c1', 'idnumber' => 'c1', 'startdate' => 0,
             'enddate' => 0];
-        $course2 = ['fullname' => 'C2', 'shortname' => 'c2', 'idnumber' => '', 'startdate' => null,
+        $course2 = ['fullname' => 'C2', 'shortname' => 'c2', 'idnumber' => 'c2', 'startdate' => null,
             'enddate' => null];
         // This course won't be created. Broken start date.
-        $course3 = ['fullname' => 'C3', 'shortname' => 'c3', 'idnumber' => '', 'startdate' => 'not date',
+        $course3 = ['fullname' => 'C3', 'shortname' => 'c3', 'idnumber' => 'c3', 'startdate' => 'not date',
             'enddate' => 0];
         // This course won't be created. Broken end date.
-        $course4 = ['fullname' => 'C4', 'shortname' => 'c4', 'idnumber' => '', 'startdate' => 0,
+        $course4 = ['fullname' => 'C4', 'shortname' => 'c4', 'idnumber' => 'c4', 'startdate' => 0,
             'enddate' => 'not date'];
         // This course won't be created. Start date after end date.
-        $course5 = ['fullname' => 'C5', 'shortname' => 'c5', 'idnumber' => '', 'startdate' => '12.05.2024',
+        $course5 = ['fullname' => 'C5', 'shortname' => 'c5', 'idnumber' => 'c5', 'startdate' => '12.05.2024',
             'enddate' => '12.05.2021'];
-        $course6 = ['fullname' => 'C6', 'shortname' => 'c6', 'idnumber' => '', 'startdate' => '2024-05-22',
+        $course6 = ['fullname' => 'C6', 'shortname' => 'c6', 'idnumber' => 'c6', 'startdate' => '2024-05-22',
             'enddate' => '2027-05-12'];
-        $course7 = ['fullname' => 'C7', 'shortname' => 'c7', 'idnumber' => '', 'startdate' => null,
+        $course7 = ['fullname' => 'C7', 'shortname' => 'c7', 'idnumber' => 'c7', 'startdate' => null,
             'enddate' => '12.05.' . $nextyear];
-        $course8 = ['fullname' => 'C8', 'shortname' => 'c8', 'idnumber' => '', 'startdate' => '12.05.2024',
+        $course8 = ['fullname' => 'C8', 'shortname' => 'c8', 'idnumber' => 'c8', 'startdate' => '12.05.2024',
             'enddate' => null];
         // This course won't be created. Start date is not set, but it should be set to date after end date.
-        $course9 = ['fullname' => 'C9', 'shortname' => 'c9', 'idnumber' => '', 'startdate' => null,
+        $course9 = ['fullname' => 'C9', 'shortname' => 'c9', 'idnumber' => 'c9', 'startdate' => null,
             'enddate' => '12.05.' . $prev];
 
         $DB->insert_record('enrol_database_test_courses', $course1);
@@ -895,7 +895,7 @@ class sync_test extends \advanced_testcase {
         $this->assertEquals($expected, $DB->get_field('course', 'enddate', ['shortname' => $course8['shortname']]));
 
         // Push course with dates as timestamp.
-        $course10 = ['fullname' => 'C10', 'shortname' => 'c10', 'idnumber' => '', 'startdate' => 1810051200,
+        $course10 = ['fullname' => 'C10', 'shortname' => 'c10', 'idnumber' => 'c10', 'startdate' => 1810051200,
             'enddate' => 1810051211];
         $DB->insert_record('enrol_database_test_courses', $course10);
 
@@ -906,7 +906,7 @@ class sync_test extends \advanced_testcase {
         $this->assertEquals(1810051211, $DB->get_field('course', 'enddate', ['shortname' => $course10['shortname']]));
 
         // Push course with broken dates, but delete dates from plugin configuration before syncing.
-        $course11 = ['fullname' => 'C11', 'shortname' => 'c11', 'idnumber' => '', 'startdate' => 'not date',
+        $course11 = ['fullname' => 'C11', 'shortname' => 'c11', 'idnumber' => 'c11', 'startdate' => 'not date',
             'enddate' => 'not date'];
         $DB->insert_record('enrol_database_test_courses', $course11);
 
@@ -919,7 +919,7 @@ class sync_test extends \advanced_testcase {
         $this->assertEquals($midnightenddate, $DB->get_field('course', 'enddate', ['shortname' => $course11['shortname']]));
 
         // Push courses with correct dates, but set date configuration to not existing date fields.
-        $course12 = ['fullname' => 'C12', 'shortname' => 'c12', 'idnumber' => '', 'startdate' => '2024-05-22',
+        $course12 = ['fullname' => 'C12', 'shortname' => 'c12', 'idnumber' => 'c12', 'startdate' => '2024-05-22',
             'enddate' => '2027-05-12'];
         $DB->insert_record('enrol_database_test_courses', $course11);
 
@@ -930,7 +930,7 @@ class sync_test extends \advanced_testcase {
         // Course should not be synced to prevent setting up incorrect dates.
         $this->assertFalse($DB->record_exists('course', ['shortname' => $course12['shortname']]));
 
-        $course13 = ['fullname' => 'C13', 'shortname' => 'c13', 'idnumber' => '', 'startdate' => '2024-05-22',
+        $course13 = ['fullname' => 'C13', 'shortname' => 'c13', 'idnumber' => 'c13', 'startdate' => '2024-05-22',
             'enddate' => '2027-05-12'];
         $DB->insert_record('enrol_database_test_courses', $course11);
 
