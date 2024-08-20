@@ -360,13 +360,13 @@ class page_requirements_manager {
 
         if (!empty($CFG->router_configured)) {
             return sprintf(
-                "%s/api/",
+                "%s/api",
                 $CFG->wwwroot,
             );
         }
 
         return sprintf(
-            "%s/r.php/api/",
+            "%s/r.php/api",
             $CFG->wwwroot,
         );
     }
