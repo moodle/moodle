@@ -35,7 +35,7 @@ require_once(__DIR__ . '/deprecatedlib.php');
  * @param mod_assign_mod_form $form
  * @return int The instance id of the new assignment
  */
-function assign_add_instance(stdClass $data, mod_assign_mod_form $form = null) {
+function assign_add_instance(stdClass $data, ?mod_assign_mod_form $form = null) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
 

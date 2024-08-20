@@ -540,7 +540,7 @@ class stored_file {
      * @return array|bool list of processed files; false if error
      */
     public function extract_to_pathname(file_packer $packer, $pathname,
-            file_progress $progress = null) {
+            ?file_progress $progress = null) {
         return $this->filesystem->extract_to_pathname($this, $packer, $pathname, $progress);
     }
 
@@ -558,7 +558,7 @@ class stored_file {
      * @return array|bool list of processed files; false if error
      */
     public function extract_to_storage(file_packer $packer, $contextid,
-            $component, $filearea, $itemid, $pathbase, $userid = null, file_progress $progress = null) {
+            $component, $filearea, $itemid, $pathbase, $userid = null, ?file_progress $progress = null) {
 
         return $this->filesystem->extract_to_storage($this, $packer, $contextid, $component, $filearea,
                 $itemid, $pathbase, $userid, $progress);

@@ -215,7 +215,7 @@ class provider implements
      * @param context $context A context.
      * @param int $userid The user ID.
      */
-    protected static function delete_data(\context $context, int $userid = null) {
+    protected static function delete_data(\context $context, ?int $userid = null) {
         global $DB;
 
         $cohortids = $DB->get_fieldset_select('cohort', 'id', 'contextid = :contextid', ['contextid' => $context->id]);

@@ -111,7 +111,7 @@ class discussion_list extends db_table_vault {
      *
      * @return string
      */
-    protected function generate_get_records_sql(string $wheresql = null, ?string $sortsql = null, ?int $userid = null): string {
+    protected function generate_get_records_sql(?string $wheresql = null, ?string $sortsql = null, ?int $userid = null): string {
         $alias = $this->get_table_alias();
 
         $includefavourites = $userid ? true : false;
@@ -192,7 +192,7 @@ class discussion_list extends db_table_vault {
      * @param string|null $wheresql Where conditions for the SQL
      * @return string
      */
-    protected function generate_count_records_sql(string $wheresql = null): string {
+    protected function generate_count_records_sql(?string $wheresql = null): string {
         $alias = $this->get_table_alias();
         $db = $this->get_db();
 

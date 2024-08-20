@@ -59,7 +59,7 @@ class category_controller {
      * @param int $id
      * @param \stdClass|null $record
      */
-    protected function __construct(int $id = 0, \stdClass $record = null) {
+    protected function __construct(int $id = 0, ?\stdClass $record = null) {
         $this->category = new category($id, $record);
     }
 
@@ -77,7 +77,7 @@ class category_controller {
      * @throws \moodle_exception
      * @throws \coding_exception
      */
-    public static function create(int $id, \stdClass $record = null, handler $handler = null): category_controller {
+    public static function create(int $id, ?\stdClass $record = null, ?handler $handler = null): category_controller {
         global $DB;
         if ($id && $record) {
             // This warning really should be in persistent as well.

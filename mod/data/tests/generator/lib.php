@@ -68,7 +68,7 @@ class mod_data_generator extends testing_module_generator {
      * @param array $options
      * @return StdClass
      */
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         // Note, the parent class does not type $record to cast to array and then to object.
         $record = (object) (array) $record;
 
@@ -89,7 +89,7 @@ class mod_data_generator extends testing_module_generator {
      * @param stdClass|null $data
      * @return data_field_base
      */
-    public function create_field(stdClass $record = null, $data = null) {
+    public function create_field(?stdClass $record = null, $data = null) {
         $record = (array) $record;
 
         $this->databasefieldcount++;
@@ -214,7 +214,7 @@ class mod_data_generator extends testing_module_generator {
      * @param int $userid if defined, it will be the author of the entry
      * @return int id of the generated record in table {data_records}
      */
-    public function create_entry($data, array $contents, $groupid = 0, $tags = [], array $options = null, int $userid = 0) {
+    public function create_entry($data, array $contents, $groupid = 0, $tags = [], ?array $options = null, int $userid = 0) {
         global $DB, $USER, $CFG;
 
         // Set current user if defined.
@@ -387,7 +387,7 @@ class mod_data_generator extends testing_module_generator {
      * @param stdClass|null $record The preset information, like 'name'.
      * @return preset The preset that has been created.
      */
-    public function create_preset(stdClass $instance, stdClass $record = null): preset {
+    public function create_preset(stdClass $instance, ?stdClass $record = null): preset {
         global $USER;
 
         if (is_null($record)) {

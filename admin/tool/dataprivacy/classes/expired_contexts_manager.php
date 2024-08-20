@@ -55,7 +55,7 @@ class expired_contexts_manager {
      *
      * @param   \progress_trace $trace
      */
-    public function __construct(\progress_trace $trace = null) {
+    public function __construct(?\progress_trace $trace = null) {
         if (null === $trace) {
             $trace = new \null_progress_trace();
         }

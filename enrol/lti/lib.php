@@ -96,7 +96,7 @@ class enrol_lti_plugin extends enrol_plugin {
      * @param array $fields instance fields
      * @return int id of new instance, null if can not be created
      */
-    public function add_instance($course, array $fields = null) {
+    public function add_instance($course, ?array $fields = null) {
         global $DB;
 
         $instanceid = parent::add_instance($course, $fields);

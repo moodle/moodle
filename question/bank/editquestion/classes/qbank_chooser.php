@@ -84,7 +84,7 @@ class qbank_chooser extends \core\output\chooser {
      * @param array|null $allowedqtypes Allowed question types.
      * @return qbank_chooser
      */
-    public static function get($course, $hiddenparams, array $allowedqtypes = null): qbank_chooser {
+    public static function get($course, $hiddenparams, ?array $allowedqtypes = null): qbank_chooser {
         $realqtypes = array();
         $fakeqtypes = array();
 

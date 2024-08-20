@@ -364,7 +364,7 @@ class competency extends persistent {
      * @param competency $parent The parent competency object.
      * @return void
      */
-    protected function set_new_path(competency $parent = null) {
+    protected function set_new_path(?competency $parent = null) {
         $path = '/0/';
         if ($this->get('parentid')) {
             $parent = $parent !== null ? $parent : $this->get_parent();

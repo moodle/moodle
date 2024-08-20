@@ -48,7 +48,7 @@ class iri {
      * @param string|null $type if none passed $type will be 'element'
      * @return string a valid IRI value
      */
-    public static function generate(string $value, string $type = null): string {
+    public static function generate(string $value, ?string $type = null): string {
         if (self::check($value)) {
             return $value;
         }
@@ -69,7 +69,7 @@ class iri {
      * @param string|null $type if $value is a fake IRI, the $type must be provided.
      * @return string the original value used in iri::generate.
      */
-    public static function extract(string $value, string $type = null): string {
+    public static function extract(string $value, ?string $type = null): string {
         if (empty($type)) {
             $type = 'element';
         }

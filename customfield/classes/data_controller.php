@@ -83,7 +83,7 @@ abstract class data_controller {
      * @throws \coding_exception
      * @throws \moodle_exception
      */
-    public static function create(int $id, \stdClass $record = null, field_controller $field = null): data_controller {
+    public static function create(int $id, ?\stdClass $record = null, ?field_controller $field = null): data_controller {
         global $DB;
         if ($id && $record) {
             // This warning really should be in persistent as well.

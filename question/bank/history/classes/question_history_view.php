@@ -59,7 +59,7 @@ class question_history_view extends view {
         question_edit_contexts $contexts,
         moodle_url $pageurl,
         stdClass $course,
-        stdClass $cm = null,
+        ?stdClass $cm = null,
         array $params = [],
         array $extraparams = [],
     ) {

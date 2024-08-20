@@ -71,7 +71,7 @@ class gradingform_rubric_controller extends gradingform_controller {
      * @param settings_navigation $settingsnav {@link settings_navigation}
      * @param navigation_node $node {@link navigation_node}
      */
-    public function extend_settings_navigation(settings_navigation $settingsnav, navigation_node $node=null) {
+    public function extend_settings_navigation(settings_navigation $settingsnav, ?navigation_node $node=null) {
         $node->add(get_string('definerubric', 'gradingform_rubric'),
             $this->get_editor_url(), settings_navigation::TYPE_CUSTOM,
             null, null, new pix_icon('icon', '', 'gradingform_rubric'));
@@ -86,7 +86,7 @@ class gradingform_rubric_controller extends gradingform_controller {
      * @param global_navigation $navigation {@link global_navigation}
      * @param navigation_node $node {@link navigation_node}
      */
-    public function extend_navigation(global_navigation $navigation, navigation_node $node=null) {
+    public function extend_navigation(global_navigation $navigation, ?navigation_node $node=null) {
         if (has_capability('moodle/grade:managegradingforms', $this->get_context())) {
             // no need for preview if user can manage forms, he will have link to manage.php in settings instead
             return;

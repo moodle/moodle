@@ -253,7 +253,7 @@ class cc_version1 extends cc_version_base {
      * @param DOMDocument $doc
      * @param DOMElement $xmlnode
      */
-    protected function create_item_folder(cc_i_organization &$org, DOMDocument &$doc, DOMElement &$xmlnode = null) {
+    protected function create_item_folder(cc_i_organization &$org, DOMDocument &$doc, ?DOMElement &$xmlnode = null) {
 
         $itemfoldernode = $doc->createElementNS($this->ccnamespaces['imscc'], 'item');
         $this->update_attribute($doc, 'identifier', "root", $itemfoldernode);

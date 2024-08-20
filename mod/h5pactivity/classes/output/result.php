@@ -276,7 +276,7 @@ class result implements renderable, templatable {
      * @param string $answer the extra text to display (default null)
      * @return stdClass with "answer" text and the state attribute to be displayed
      */
-    protected function get_answer(int $state, string $answer = null): stdClass {
+    protected function get_answer(int $state, ?string $answer = null): stdClass {
         $states = [
             self::CORRECT => 'correct',
             self::INCORRECT => 'incorrect',

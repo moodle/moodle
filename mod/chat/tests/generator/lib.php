@@ -50,7 +50,7 @@ class mod_chat_generator extends testing_module_generator {
         parent::reset();
     }
 
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         $record = (object)(array)$record;
 
         if (!isset($record->keepdays)) {

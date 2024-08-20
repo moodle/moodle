@@ -218,7 +218,7 @@ class component_gradeitem_test extends advanced_testcase {
      * @param int|null $displaytype The display type of the grade.
      * @return \stdClass|null
      */
-    protected function initialise_test_and_get_grade_item(int $gradeforum, int $gradegiven, int $displaytype = null): \stdClass {
+    protected function initialise_test_and_get_grade_item(int $gradeforum, int $gradegiven, ?int $displaytype = null): \stdClass {
         $this->resetAfterTest();
 
         $forum = $this->get_forum_instance([

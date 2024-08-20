@@ -230,7 +230,7 @@ class user_filtering {
      * @param array $params named params (recommended prefix ex)
      * @return array sql string and $params
      */
-    public function get_sql_filter($extra='', array $params=null) {
+    public function get_sql_filter($extra='', ?array $params=null) {
         global $SESSION;
 
         $sqls = array();

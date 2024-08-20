@@ -34,7 +34,7 @@ class plugin_feature extends plugin_features_base{
         ];
     }
 
-    public function get_question_filters(view $qbank = null): array {
+    public function get_question_filters(?view $qbank = null): array {
         global $CFG;
         if ($CFG->usetags) {
             return [

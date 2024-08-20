@@ -61,7 +61,7 @@ abstract class file_packer {
      */
     abstract public function archive_to_storage(array $files, $contextid,
             $component, $filearea, $itemid, $filepath, $filename,
-            $userid = NULL, $ignoreinvalidfiles=true, file_progress $progress = null);
+            $userid = NULL, $ignoreinvalidfiles=true, ?file_progress $progress = null);
 
     /**
      * Archive files and store the result in os file.
@@ -85,7 +85,7 @@ abstract class file_packer {
      * @return bool true if file created, false if not
      */
     abstract public function archive_to_pathname(array $files, $archivefile,
-            $ignoreinvalidfiles=true, file_progress $progress = null);
+            $ignoreinvalidfiles=true, ?file_progress $progress = null);
 
     /**
      * Extract file to given file path (real OS filesystem), existing files are overwritten.
@@ -99,7 +99,7 @@ abstract class file_packer {
      * @return array|bool list of processed files; false if error
      */
     abstract public function extract_to_pathname($archivefile, $pathname,
-            array $onlyfiles = NULL, file_progress $progress = null, $returnbool = false);
+            ?array $onlyfiles = NULL, ?file_progress $progress = null, $returnbool = false);
 
     /**
      * Extract file to given file path (real OS filesystem), existing files are overwritten.
@@ -116,7 +116,7 @@ abstract class file_packer {
      */
     abstract public function extract_to_storage($archivefile, $contextid,
             $component, $filearea, $itemid, $pathbase, $userid = NULL,
-            file_progress $progress = null);
+            ?file_progress $progress = null);
 
     /**
      * Returns array of info about all files in archive.

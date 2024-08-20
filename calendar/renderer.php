@@ -198,7 +198,7 @@ class core_calendar_renderer extends plugin_renderer_base {
      * @param int|null $calendarinstanceid The instance ID of the calendar we're generating this course filter for.
      * @return string
      */
-    public function course_filter_selector(moodle_url $returnurl, $label = null, $courseid = null, int $calendarinstanceid = null) {
+    public function course_filter_selector(moodle_url $returnurl, $label = null, $courseid = null, ?int $calendarinstanceid = null) {
         global $CFG, $DB;
 
         if (!isloggedin() or isguestuser()) {

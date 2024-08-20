@@ -116,7 +116,7 @@ class attempt {
      * @param stdClass $cm a course_module record
      * @param stdClass $user a user record
      */
-    public static function delete_all_attempts(stdClass $cm, stdClass $user = null): void {
+    public static function delete_all_attempts(stdClass $cm, ?stdClass $user = null): void {
         global $DB;
 
         $where = 'a.h5pactivityid = :h5pactivityid';

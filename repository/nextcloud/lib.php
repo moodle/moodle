@@ -431,7 +431,7 @@ class repository_nextcloud extends repository {
      * @throws coding_exception
      * @throws moodle_exception
      */
-    public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
+    public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, ?array $options = null) {
         $repositoryname = $this->get_name();
         $reference = json_decode($storedfile->get_reference());
 

@@ -65,7 +65,7 @@ class channel_image implements \renderable, \templatable {
      * @param string $title The title of the image
      * @param \moodle_url $link The URL of the image link
      */
-    public function __construct(\moodle_url $url, $title, \moodle_url $link = null) {
+    public function __construct(\moodle_url $url, $title, ?\moodle_url $link = null) {
         $this->url      = $url;
         $this->title    = $title;
         $this->link     = $link;

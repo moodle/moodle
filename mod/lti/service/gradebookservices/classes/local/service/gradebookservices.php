@@ -446,7 +446,7 @@ class gradebookservices extends service_base {
      */
     public function add_standalone_lineitem(string $courseid, string $label, float $maximumscore,
             string $baseurl, ?int $ltilinkid, ?string $resourceid, ?string $tag, int $typeid,
-            int $toolproxyid = null): int {
+            ?int $toolproxyid = null): int {
         global $DB;
         $params = array();
         $params['itemname'] = $label;

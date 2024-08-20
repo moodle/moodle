@@ -2833,7 +2833,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * @return int The id of the message
      * @throws dml_exception
      */
-    private function create_message(int $useridfrom, int $useridto, int $timecreated = null, bool $read = false) {
+    private function create_message(int $useridfrom, int $useridto, ?int $timecreated = null, bool $read = false) {
         global $DB;
 
         static $i = 1;
@@ -2884,7 +2884,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * @return int The id of the notification
      * @throws dml_exception
      */
-    private function create_notification(int $useridfrom, int $useridto, int $timecreated = null, int $timeread = null) {
+    private function create_notification(int $useridfrom, int $useridto, ?int $timecreated = null, ?int $timeread = null) {
         global $DB;
 
         static $i = 1;

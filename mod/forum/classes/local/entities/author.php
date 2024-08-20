@@ -81,11 +81,11 @@ class author {
         string $fullname,
         string $email,
         bool $deleted,
-        string $middlename = null,
-        string $firstnamephonetic = null,
-        string $lastnamephonetic = null,
-        string $alternatename = null,
-        string $imagealt = null
+        ?string $middlename = null,
+        ?string $firstnamephonetic = null,
+        ?string $lastnamephonetic = null,
+        ?string $alternatename = null,
+        ?string $imagealt = null
     ) {
         $this->id = $id;
         $this->pictureitemid = $pictureitemid;

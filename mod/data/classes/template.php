@@ -93,7 +93,7 @@ class template {
      * @param array $options an array of extra diplay options
      * @param array $fields alternative array of fields (for preview presets)
      */
-    public function __construct(manager $manager, string $templatecontent, array $options = [], array $fields = null) {
+    public function __construct(manager $manager, string $templatecontent, array $options = [], ?array $fields = null) {
         $this->manager = $manager;
         $this->instance = $manager->get_instance();
         $this->templatecontent = $templatecontent;

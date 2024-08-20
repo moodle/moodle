@@ -233,7 +233,7 @@ class manager {
     /**
      * View the license manager.
      */
-    private function view_license_manager(string $message = null): void {
+    private function view_license_manager(?string $message = null): void {
         global $PAGE, $OUTPUT;
 
         $renderer = $PAGE->get_renderer('tool_licensemanager');

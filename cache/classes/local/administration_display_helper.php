@@ -318,7 +318,7 @@ class administration_display_helper extends \core_cache\administration_helper {
      * @return cache_lock_form
      * @throws coding_exception
      */
-    public function get_add_lock_form(string $plugin, array $lockplugin = null): \cache_lock_form {
+    public function get_add_lock_form(string $plugin, ?array $lockplugin = null): \cache_lock_form {
         global $CFG; // Needed for includes.
         $plugins = \core_component::get_plugin_list('cachelock');
         if (!array_key_exists($plugin, $plugins)) {

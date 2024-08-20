@@ -146,7 +146,7 @@ class extension {
      * @return array of custom completion addon classes instances
      */
     public static function mod_form_addons_instances(\MoodleQuickForm $mform, ?stdClass $bigbluebuttondata = null,
-        string $suffix = null): array {
+        ?string $suffix = null): array {
         return self::get_instances_implementing(mod_form_addons::class, [$mform, $bigbluebuttondata, $suffix]);
     }
 

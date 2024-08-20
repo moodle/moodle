@@ -69,7 +69,7 @@ class component_favourite_service {
      * @param int $itemid the id of the item to which the favourites relate
      * @param \context $context the context of the items which were favourited.
      */
-    public function delete_favourites_by_type_and_item(string $itemtype, int $itemid, \context $context = null) {
+    public function delete_favourites_by_type_and_item(string $itemtype, int $itemid, ?\context $context = null) {
         $criteria = ['component' => $this->component, 'itemtype' => $itemtype, 'itemid' => $itemid] +
             ($context ? ['contextid' => $context->id] : []);
         $this->repo->delete_by($criteria);

@@ -339,7 +339,7 @@ class api {
      * @param array $extrafields Extra fields to be included in result
      * @return array of objects
      */
-    public static function get_user_minors($userid, array $extrafields = null) {
+    public static function get_user_minors($userid, ?array $extrafields = null) {
         global $DB;
 
         $ctxfields = context_helper::get_preload_record_columns_sql('c');

@@ -64,8 +64,8 @@ class langstring {
      * @param int $deleted
      * @param stdclass $extra
      */
-    public function __construct(string $id, string $text = '', int $timemodified = null,
-            int $deleted = 0, stdclass $extra = null) {
+    public function __construct(string $id, string $text = '', ?int $timemodified = null,
+            int $deleted = 0, ?stdclass $extra = null) {
 
         if (is_null($timemodified)) {
             $timemodified = time();

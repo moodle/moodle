@@ -180,7 +180,7 @@ abstract class base_moodleform extends moodleform {
      * @param base_task $task
      * @return bool
      */
-    public function add_setting(backup_setting $setting, base_task $task = null) {
+    public function add_setting(backup_setting $setting, ?base_task $task = null) {
         return $this->add_settings(array(array($setting, $task)));
     }
 

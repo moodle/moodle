@@ -1339,7 +1339,7 @@ class user {
      * @param stdClass $user User object, defaults to the current user.
      * @return bool
      */
-    public static function awaiting_action(stdClass $user = null): bool {
+    public static function awaiting_action(?stdClass $user = null): bool {
         global $USER;
 
         if ($user === null) {
@@ -1410,7 +1410,7 @@ class user {
      * @param array $options can include: override - if true, will not use forced firstname/lastname settings
      * @return string Full name of the user
      */
-    public static function get_fullname(stdClass $user, context $context = null, array $options = []): string {
+    public static function get_fullname(stdClass $user, ?context $context = null, array $options = []): string {
         global $CFG, $SESSION;
 
         // Clone the user so that it does not mess up the original object.
@@ -1563,7 +1563,7 @@ class user {
      *     - includetoken = false (whether to use a token for authentication. True for current user, int value for other user id)
      * @return user_picture User picture object
      */
-    public static function get_profile_picture(stdClass $user, context $context = null, array $options = []): user_picture {
+    public static function get_profile_picture(stdClass $user, ?context $context = null, array $options = []): user_picture {
         // Create a new user picture object.
         $userpicture = new user_picture($user);
 

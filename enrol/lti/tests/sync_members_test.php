@@ -306,7 +306,7 @@ class dummy_sync_members_task extends sync_members {
      * @param string $membershipsurltemplate The memberships endpoint URL template.
      * @return bool|User[] Array of User objects upon successful membership service request. False, otherwise.
      */
-    public function do_context_membership_request(Context $context, ResourceLink $resourcelink = null,
+    public function do_context_membership_request(Context $context, ?ResourceLink $resourcelink = null,
                                                   $membershipsurltemplate = '') {
         $members = parent::do_context_membership_request($context, $resourcelink, $membershipsurltemplate);
         return $members;

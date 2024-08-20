@@ -152,7 +152,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @param single_button $button
      * @return string
      */
-    public function message($message, single_button $button = null) {
+    public function message($message, ?single_button $button = null) {
         $output  = $this->output->box_start('generalbox boxaligncenter');
         $output .= $message;
         if ($button !== null) {

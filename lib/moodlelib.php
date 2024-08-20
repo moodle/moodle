@@ -4736,7 +4736,7 @@ function delete_course($courseorid, $showfeedback = true) {
  *             method returns false, some of the removals will probably have succeeded, and others
  *             failed, but you have no way of knowing which.
  */
-function remove_course_contents($courseid, $showfeedback = true, array $options = null) {
+function remove_course_contents($courseid, $showfeedback = true, ?array $options = null) {
     global $CFG, $DB, $OUTPUT;
 
     require_once($CFG->libdir.'/badgeslib.php');

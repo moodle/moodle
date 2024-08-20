@@ -261,7 +261,7 @@ class enrol_guest_plugin extends enrol_plugin {
      * @param array instance fields
      * @return int id of new instance, null if can not be created
      */
-    public function add_instance($course, array $fields = NULL) {
+    public function add_instance($course, ?array $fields = NULL) {
         $fields = (array)$fields;
 
         if (!isset($fields['password'])) {

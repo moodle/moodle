@@ -879,11 +879,11 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
         $this->quba->manual_grade($this->slot, $comment, $mark, $commentformat);
     }
 
-    protected function save_quba(moodle_database $db = null) {
+    protected function save_quba(?moodle_database $db = null) {
         question_engine::save_questions_usage_by_activity($this->quba, $db);
     }
 
-    protected function load_quba(moodle_database $db = null) {
+    protected function load_quba(?moodle_database $db = null) {
         $this->quba = question_engine::load_questions_usage_by_activity($this->quba->get_id(), $db);
     }
 

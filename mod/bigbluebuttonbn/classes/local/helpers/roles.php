@@ -161,7 +161,7 @@ class roles {
      *
      * @return array $users
      */
-    protected static function get_roles_select(context $context = null, bool $onlyviewableroles = true) {
+    protected static function get_roles_select(?context $context = null, bool $onlyviewableroles = true) {
         global $CFG;
 
         if ($onlyviewableroles == true && $CFG->branch >= 35) {

@@ -44,7 +44,7 @@ class user extends \core_search\base {
      * @param \context|null $context Optional context to restrict scope of returned results
      * @return \moodle_recordset|null Recordset (or null if no results)
      */
-    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
+    public function get_document_recordset($modifiedfrom = 0, ?\context $context = null) {
         global $DB;
 
         // Prepare query conditions.

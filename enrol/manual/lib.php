@@ -155,7 +155,7 @@ class enrol_manual_plugin extends enrol_plugin {
      * @param array instance fields
      * @return int id of new instance, null if can not be created
      */
-    public function add_instance($course, array $fields = NULL) {
+    public function add_instance($course, ?array $fields = NULL) {
         global $DB;
 
         if ($DB->record_exists('enrol', array('courseid'=>$course->id, 'enrol'=>'manual'))) {

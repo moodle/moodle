@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_scorm_generator extends testing_module_generator {
 
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         global $CFG, $USER;
         require_once($CFG->dirroot.'/mod/scorm/lib.php');
         require_once($CFG->dirroot.'/mod/scorm/locallib.php');

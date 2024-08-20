@@ -36,7 +36,7 @@ class calculator {
      */
     protected $progress;
 
-    public function __construct(\core\progress\base $progress = null) {
+    public function __construct(?\core\progress\base $progress = null) {
         if ($progress === null) {
             $progress = new \core\progress\none();
         }

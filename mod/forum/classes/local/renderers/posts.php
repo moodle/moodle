@@ -58,7 +58,7 @@ class posts {
         renderer_base $renderer,
         exported_posts_builder $exportedpostsbuilder,
         string $template,
-        callable $postprocessfortemplate = null
+        ?callable $postprocessfortemplate = null
     ) {
         $this->renderer = $renderer;
         $this->exportedpostsbuilder = $exportedpostsbuilder;

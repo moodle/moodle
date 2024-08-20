@@ -50,7 +50,7 @@ class mod_book_generator extends testing_module_generator {
         parent::reset();
     }
 
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         global $CFG;
         require_once("$CFG->dirroot/mod/book/locallib.php");
 
@@ -66,7 +66,7 @@ class mod_book_generator extends testing_module_generator {
         return parent::create_instance($record, (array)$options);
     }
 
-    public function create_chapter($record = null, array $options = null) {
+    public function create_chapter($record = null, ?array $options = null) {
         global $DB;
 
         $record = (object) (array) $record;

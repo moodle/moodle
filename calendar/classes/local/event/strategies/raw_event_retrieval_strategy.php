@@ -37,12 +37,12 @@ defined('MOODLE_INTERNAL') || die();
 class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_interface {
 
     public function get_raw_events(
-        array $usersfilter = null,
-        array $groupsfilter = null,
-        array $coursesfilter = null,
-        array $categoriesfilter = null,
-        array $whereconditions = null,
-        array $whereparams = null,
+        ?array $usersfilter = null,
+        ?array $groupsfilter = null,
+        ?array $coursesfilter = null,
+        ?array $categoriesfilter = null,
+        ?array $whereconditions = null,
+        ?array $whereparams = null,
         $ordersql = null,
         $offset = null,
         $limitnum = null,

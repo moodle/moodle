@@ -414,7 +414,7 @@ class provider implements
      * @param   int|null    $contextid  An optional context id, in case the $sql query is not already filtered by that.
      */
     public static function get_users_in_context_from_sql(userlist $userlist, string $prefix, string $insql, $params,
-            int $contextid = null) {
+            ?int $contextid = null) {
 
         $sql = "SELECT {$prefix}_qas.userid
                   FROM {question_attempt_steps} {$prefix}_qas

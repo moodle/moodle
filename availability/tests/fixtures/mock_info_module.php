@@ -46,7 +46,7 @@ class mock_info_module extends info_module {
      * @param int $userid Userid for modinfo (if used)
      * @param \cm_info $cm Course-module object
      */
-    public function __construct($userid = 0, \cm_info $cm = null) {
+    public function __construct($userid = 0, ?\cm_info $cm = null) {
         parent::__construct($cm);
         $this->userid = $userid;
         $this->cm = $cm;

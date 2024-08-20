@@ -208,7 +208,7 @@ class contentbank_test extends advanced_testcase {
      * @param  array $contexts List of contexts where to create content.
      */
     public function test_search_contents(?string $search, string $where, int $expectedresult, array $contexts = [],
-            array $contenttypes = null): void {
+            ?array $contenttypes = null): void {
         global $DB, $CFG;
 
         $this->resetAfterTest();

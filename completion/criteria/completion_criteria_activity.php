@@ -260,7 +260,7 @@ class completion_criteria_activity extends completion_criteria {
      * @param array $attributes html attributes
      * @return pix_icon
      */
-    public function get_icon($alt, array $attributes = null) {
+    public function get_icon($alt, ?array $attributes = null) {
         return new pix_icon('monologo', $alt, "mod_{$this->module}", $attributes);
     }
 }

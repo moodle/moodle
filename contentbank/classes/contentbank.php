@@ -95,7 +95,7 @@ class contentbank {
      * @param context $context Optional context to check (default null)
      * @return array The array with all the extensions supported and the supporting plugin names.
      */
-    public function load_context_supported_extensions(context $context = null): array {
+    public function load_context_supported_extensions(?context $context = null): array {
         $extensionscache = \cache::make('core', 'contentbank_context_extensions');
 
         $contextextensions = $extensionscache->get($context->id);
@@ -124,7 +124,7 @@ class contentbank {
      * @param context $context   Optional context to check (default null)
      * @return string A string with all the extensions supported.
      */
-    public function get_supported_extensions_as_string(context $context = null) {
+    public function get_supported_extensions_as_string(?context $context = null) {
         $supported = $this->load_context_supported_extensions($context);
         $extensions = array_keys($supported);
         return implode(',', $extensions);
@@ -151,7 +151,7 @@ class contentbank {
      * @param context $context $context     Optional context to check (default null)
      * @return string contenttype name supports the file extension or null if the extension is not supported by any allowed plugin.
      */
-    public function get_extension_supporter(string $extension, context $context = null): ?string {
+    public function get_extension_supporter(string $extension, ?context $context = null): ?string {
         $supporters = $this->load_context_supported_extensions($context);
         if (array_key_exists($extension, $supporters)) {
             return $supporters[$extension];
@@ -330,7 +330,7 @@ class contentbank {
      *
      * @return string[] List of content types where the user has permission to access the feature.
      */
-    public function get_contenttypes_with_capability_feature(string $feature, \context $context = null, bool $enabled = true): array {
+    public function get_contenttypes_with_capability_feature(string $feature, ?\context $context = null, bool $enabled = true): array {
         $contenttypes = [];
         // Check enabled content types or all of them.
         if ($enabled) {

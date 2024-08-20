@@ -62,7 +62,7 @@ class discussion extends db_table_vault {
      * @param int|null $userid The user ID
      * @return string
      */
-    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null, ?int $userid = null): string {
+    protected function generate_get_records_sql(?string $wheresql = null, ?string $sortsql = null, ?int $userid = null): string {
         $selectsql = 'SELECT * FROM {' . self::TABLE . '} ' . $this->get_table_alias();
         $selectsql .= $wheresql ? ' WHERE ' . $wheresql : '';
         $selectsql .= $sortsql ? ' ORDER BY ' . $sortsql : '';
@@ -93,7 +93,7 @@ class discussion extends db_table_vault {
      * @param   forum_entity $forum
      * @return  array
      */
-    public function get_all_discussions_in_forum(forum_entity $forum, string $sort = null): ?array {
+    public function get_all_discussions_in_forum(forum_entity $forum, ?string $sort = null): ?array {
         global $USER;
         $options = ['forum' => $forum->get_id()];
 

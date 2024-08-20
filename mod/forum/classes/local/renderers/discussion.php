@@ -139,7 +139,7 @@ class discussion {
         sorter_entity $exportedpostsorter,
         moodle_url $baseurl,
         array $notifications = [],
-        callable $postprocessfortemplate = null
+        ?callable $postprocessfortemplate = null
     ) {
         $this->forum = $forum;
         $this->discussion = $discussion;

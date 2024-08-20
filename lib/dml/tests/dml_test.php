@@ -6508,7 +6508,7 @@ class moodle_database_for_testing extends moodle_database {
     protected function get_dblibrary() {}
     public function get_name() {}
     public function get_configuration_help() {}
-    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {}
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, ?array $dboptions=null) {}
     public function get_server_info() {}
     protected function allowed_param_types() {}
     public function get_last_error() {}
@@ -6521,17 +6521,17 @@ class moodle_database_for_testing extends moodle_database {
     public function set_debug($state) {}
     public function get_debug() {}
     public function change_database_structure($sql, $tablenames = null) {}
-    public function execute($sql, array $params=null) {}
-    public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {}
-    public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {}
-    public function get_fieldset_sql($sql, array $params=null) {}
+    public function execute($sql, ?array $params=null) {}
+    public function get_recordset_sql($sql, ?array $params=null, $limitfrom=0, $limitnum=0) {}
+    public function get_records_sql($sql, ?array $params=null, $limitfrom=0, $limitnum=0) {}
+    public function get_fieldset_sql($sql, ?array $params=null) {}
     public function insert_record_raw($table, $params, $returnid=true, $bulk=false, $customsequence=false) {}
     public function insert_record($table, $dataobject, $returnid=true, $bulk=false) {}
     public function import_record($table, $dataobject) {}
     public function update_record_raw($table, $params, $bulk=false) {}
     public function update_record($table, $dataobject, $bulk=false) {}
-    public function set_field_select($table, $newfield, $newvalue, $select, array $params=null) {}
-    public function delete_records_select($table, $select, array $params=null) {}
+    public function set_field_select($table, $newfield, $newvalue, $select, ?array $params=null) {}
+    public function delete_records_select($table, $select, ?array $params=null) {}
     public function sql_concat(...$arr) {}
     public function sql_concat_join($separator="' '", $elements=array()) {}
     public function sql_group_concat(string $field, string $separator = ', ', string $sort = ''): string {

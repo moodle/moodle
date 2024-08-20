@@ -144,7 +144,7 @@ class profile_manager {
      * @param  int $categoryid The category id to check against.
      * @return bool True is the category checks out, otherwise false.
      */
-    private static function check_profile_category(int $categoryid = null): bool {
+    private static function check_profile_category(?int $categoryid = null): bool {
         global $DB;
         $categoryname = self::get_category_name();
         $categorydata = $DB->get_record('user_info_category', ['name' => $categoryname]);

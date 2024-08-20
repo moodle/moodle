@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_label_generator extends testing_module_generator {
 
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         $record = (array)$record;
         $record['showdescription'] = 1;
         return parent::create_instance($record, $options);

@@ -64,7 +64,7 @@ class analysis_for_question {
      *                    This is the return value from {@link \question_type::get_possible_responses()}
      *                    see that method for fuller documentation.
      */
-    public function __construct(array $possiblereponses = null) {
+    public function __construct(?array $possiblereponses = null) {
         if ($possiblereponses !== null) {
             $this->possibleresponses = $possiblereponses;
         }

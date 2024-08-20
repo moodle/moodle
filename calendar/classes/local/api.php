@@ -68,13 +68,13 @@ class api {
         $timesortaftereventid = null,
         $limitnum = 20,
         $type = null,
-        array $usersfilter = null,
-        array $groupsfilter = null,
-        array $coursesfilter = null,
-        array $categoriesfilter = null,
+        ?array $usersfilter = null,
+        ?array $groupsfilter = null,
+        ?array $coursesfilter = null,
+        ?array $categoriesfilter = null,
         $withduration = true,
         $ignorehidden = true,
-        callable $filter = null
+        ?callable $filter = null
     ) {
         global $USER;
 

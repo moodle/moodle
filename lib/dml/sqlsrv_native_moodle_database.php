@@ -187,7 +187,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_connection_exception if error
      */
-    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, ?array $dboptions=null) {
         if ($prefix == '' and !$this->external) {
             // Enforce prefixes for everybody but mysql.
             throw new dml_exception('prefixcannotbeempty', $this->get_dbfamily());
@@ -772,7 +772,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
     /**
      * Prepare the array of params for native binding
      */
-    protected function build_native_bound_params(array $params = null) {
+    protected function build_native_bound_params(?array $params = null) {
 
         return null;
     }
@@ -781,7 +781,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * Workaround for SQL*Server Native driver similar to MSSQL driver for
      * consistent behavior.
      */
-    protected function emulate_bound_params($sql, array $params = null) {
+    protected function emulate_bound_params($sql, ?array $params = null) {
 
         if (empty($params)) {
             return $sql;
@@ -822,7 +822,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function execute($sql, array $params = null) {
+    public function execute($sql, ?array $params = null) {
         if (strpos($sql, ';') !== false) {
             throw new coding_exception('moodle_database::execute() Multiple sql statements found or bound parameters not used properly in query!');
         }
@@ -871,7 +871,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return moodle_recordset instance
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function get_recordset_sql($sql, array $params = null, $limitfrom = 0, $limitnum = 0) {
+    public function get_recordset_sql($sql, ?array $params = null, $limitfrom = 0, $limitnum = 0) {
 
         list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
         $needscrollable = (bool)$limitfrom; // To determine if we'll need to perform scroll to $limitfrom.
@@ -980,7 +980,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return array of objects, or empty array if no records were found
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function get_records_sql($sql, array $params = null, $limitfrom = 0, $limitnum = 0) {
+    public function get_records_sql($sql, ?array $params = null, $limitfrom = 0, $limitnum = 0) {
 
         $rs = $this->get_recordset_sql($sql, $params, $limitfrom, $limitnum);
 
@@ -1009,7 +1009,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return array of values
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function get_fieldset_sql($sql, array $params = null) {
+    public function get_fieldset_sql($sql, ?array $params = null) {
 
         $rs = $this->get_recordset_sql($sql, $params);
 
@@ -1267,7 +1267,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function set_field_select($table, $newfield, $newvalue, $select, array $params = null) {
+    public function set_field_select($table, $newfield, $newvalue, $select, ?array $params = null) {
         if ($select) {
             $select = "WHERE $select";
         }
@@ -1307,7 +1307,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function delete_records_select($table, $select, array $params = null) {
+    public function delete_records_select($table, $select, ?array $params = null) {
         if ($select) {
             $select = "WHERE $select";
         }

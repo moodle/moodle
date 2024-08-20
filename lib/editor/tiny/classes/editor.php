@@ -142,7 +142,7 @@ class editor extends \texteditor {
      * @param array $options
      * @param null $fpoptions
      */
-    public function use_editor($elementid, array $options = null, $fpoptions = null) {
+    public function use_editor($elementid, ?array $options = null, $fpoptions = null) {
         global $PAGE;
 
         // Ensure that the default configuration is set.

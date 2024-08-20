@@ -552,9 +552,9 @@ class helper {
      */
     public static function render_messaging_widget(
         bool $isdrawer,
-        int $sendtouser = null,
-        int $conversationid = null,
-        string $view = null
+        ?int $sendtouser = null,
+        ?int $conversationid = null,
+        ?string $view = null
     ) {
         global $USER, $CFG, $PAGE;
 

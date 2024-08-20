@@ -48,7 +48,7 @@ abstract class helper_for_get_mods_by_courses {
      * @return array with the containing all the values declared in {@see standard_coursemodule_elements_returns()}.
      */
     public static function standard_coursemodule_element_values(\stdClass $modinstance, string $component,
-            string $capabilityforgroups = 'moodle/course:manageactivities', string $capabilityforintro = null): array {
+            string $capabilityforgroups = 'moodle/course:manageactivities', ?string $capabilityforintro = null): array {
         self::format_name_and_intro($modinstance, $component);
         $context = context_module::instance($modinstance->coursemodule);
 

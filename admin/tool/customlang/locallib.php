@@ -88,7 +88,7 @@ class tool_customlang_utils {
      * @param string $lang language code to checkout
      * @param progress_bar $progressbar optionally, the given progress bar can be updated
      */
-    public static function checkout($lang, progress_bar $progressbar = null) {
+    public static function checkout($lang, ?progress_bar $progressbar = null) {
         global $DB, $CFG;
 
         require_once("{$CFG->libdir}/adminlib.php");

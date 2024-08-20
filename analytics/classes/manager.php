@@ -533,7 +533,7 @@ class manager {
      * @param  int|null $newmodelid A new model to add to the list of models with insights in the provided context.
      * @return int[]
      */
-    public static function cached_models_with_insights(\context $context, int $newmodelid = null) {
+    public static function cached_models_with_insights(\context $context, ?int $newmodelid = null) {
 
         $cache = \cache::make('core', 'contextwithinsights');
         $modelids = $cache->get($context->id);
@@ -941,7 +941,7 @@ class manager {
      * @param  string|null $query
      * @return array Associative array with contextid as key and the short version of the context name as value.
      */
-    public static function get_potential_context_restrictions(?array $contextlevels = null, string $query = null) {
+    public static function get_potential_context_restrictions(?array $contextlevels = null, ?string $query = null) {
         global $DB;
 
         if (empty($contextlevels) && !is_null($contextlevels)) {

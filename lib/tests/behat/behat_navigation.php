@@ -1535,8 +1535,8 @@ class behat_navigation extends behat_base {
         string $item,
         bool $not,
         string $dropdown,
-        string $container = null,
-        string $containertype = null,
+        ?string $container = null,
+        ?string $containertype = null,
     ): void {
         $containernode = null;
         if ($container && $containertype) {

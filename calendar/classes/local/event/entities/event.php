@@ -144,7 +144,7 @@ class event implements event_interface {
         $type,
         times_interface $times,
         $visible,
-        proxy_interface $subscription = null,
+        ?proxy_interface $subscription = null,
         $location = null,
         $component = null
     ) {

@@ -33,7 +33,7 @@ class expired_contexts_test extends \advanced_testcase {
      * @param   string  $course Retention policy for courses.
      * @param   string  $activity Retention policy for activities.
      */
-    protected function setup_basics(string $system, string $user, string $course = null, string $activity = null): \stdClass {
+    protected function setup_basics(string $system, string $user, ?string $course = null, ?string $activity = null): \stdClass {
         $this->resetAfterTest();
 
         $purposes = (object) [

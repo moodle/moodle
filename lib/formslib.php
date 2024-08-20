@@ -1428,7 +1428,7 @@ abstract class moodleform {
      * @param array $strings strings for javascript
      * @deprecated since Moodle 3.3 MDL-57471
      */
-    function init_javascript_enhancement($element, $enhancement, array $options=array(), array $strings=null) {
+    function init_javascript_enhancement($element, $enhancement, array $options=array(), ?array $strings=null) {
         debugging('$mform->init_javascript_enhancement() is deprecated and no longer does anything. '.
             'smartselect uses should be converted to the searchableselector form element.', DEBUG_DEVELOPER);
     }

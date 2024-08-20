@@ -114,7 +114,7 @@ class enrol_meta_plugin extends enrol_plugin {
      * @param array $fields instance fields
      * @return int id of last instance, null if can not be created
      */
-    public function add_instance($course, array $fields = null) {
+    public function add_instance($course, ?array $fields = null) {
         global $CFG;
 
         require_once("$CFG->dirroot/enrol/meta/locallib.php");

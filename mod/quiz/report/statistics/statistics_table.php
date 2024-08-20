@@ -516,7 +516,7 @@ class quiz_statistics_table extends flexible_table {
      * @param string|null $max The maximum value in the range
      * @return string
      */
-    protected function format_range(string $min = null, string $max = null) {
+    protected function format_range(?string $min = null, ?string $max = null) {
         if (is_null($min) && is_null($max)) {
             return '';
         } else {
@@ -552,7 +552,7 @@ class quiz_statistics_table extends flexible_table {
      * @param int $decimals Sets the number of decimal points
      * @return string A formatted string that represents a range between $min to $max.
      */
-    protected function format_percentage_range(float $min = null, float $max = null, bool $fraction = true, int $decimals = 2) {
+    protected function format_percentage_range(?float $min = null, ?float $max = null, bool $fraction = true, int $decimals = 2) {
         if (is_null($min) && is_null($max)) {
             return '';
         } else {

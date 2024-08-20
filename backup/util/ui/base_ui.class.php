@@ -86,7 +86,7 @@ abstract class base_ui {
      * @param backup_controller $controller
      * @param array $params
      */
-    public function __construct($controller, array $params = null) {
+    public function __construct($controller, ?array $params = null) {
         $this->controller = $controller;
         $this->progress = self::PROGRESS_INTIAL;
         $this->stage = $this->initialise_stage(null, $params);
@@ -116,7 +116,7 @@ abstract class base_ui {
      * @param array $params
      * @return base_ui_stage
      */
-    abstract protected function initialise_stage($stage = null, array $params = null);
+    abstract protected function initialise_stage($stage = null, ?array $params = null);
 
     /**
      * This processes the current stage of the backup

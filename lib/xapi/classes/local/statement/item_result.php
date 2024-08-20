@@ -50,7 +50,7 @@ class item_result extends item {
      * @param int $duration duration in seconds
      * @param item_score $score the provided score
      */
-    protected function __construct(stdClass $data, int $duration = null, item_score $score = null) {
+    protected function __construct(stdClass $data, ?int $duration = null, ?item_score $score = null) {
         parent::__construct($data);
         $this->duration = $duration;
         $this->score = $score;

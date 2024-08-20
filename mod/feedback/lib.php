@@ -1062,7 +1062,7 @@ function feedback_count_complete_users($cm, $group = false) {
 function feedback_get_complete_users($cm,
                                      $group = false,
                                      $where = '',
-                                     array $params = null,
+                                     ?array $params = null,
                                      $sort = '',
                                      $startpage = false,
                                      $pagecount = false) {

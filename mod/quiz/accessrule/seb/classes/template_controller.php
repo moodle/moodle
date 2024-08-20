@@ -132,7 +132,7 @@ class template_controller {
      *
      * @return \quizaccess_seb\template
      */
-    protected function get_instance($id = 0, \stdClass $data = null) {
+    protected function get_instance($id = 0, ?\stdClass $data = null) {
         return new template($id, $data);
     }
 

@@ -163,7 +163,7 @@ abstract class screen {
      * @param bool|null $display Should we wrap this in an anchor ?
      * @return string The link
      */
-    public function format_link(string $screen, int $itemid, bool $display = null): string {
+    public function format_link(string $screen, int $itemid, ?bool $display = null): string {
         $url = new moodle_url('/grade/report/singleview/index.php', [
             'id' => $this->courseid,
             'item' => $screen,

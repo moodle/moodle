@@ -128,7 +128,7 @@ class provider implements
      * @param string $interface The interface to use. By default uses the logstore_provider.
      * @return void
      */
-    protected static function call_subplugins_method_with_args($method, array $args = [], string $interface = null) {
+    protected static function call_subplugins_method_with_args($method, array $args = [], ?string $interface = null) {
         if (!isset($interface)) {
             $interface = \tool_log\local\privacy\logstore_provider::class;
         }

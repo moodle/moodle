@@ -52,7 +52,7 @@ class item_activity extends item_object {
      * @param stdClass $data from the specific xAPI element
      * @param item_definition $definition option definition item
      */
-    protected function __construct(stdClass $data, item_definition $definition = null) {
+    protected function __construct(stdClass $data, ?item_definition $definition = null) {
         parent::__construct($data);
         $this->id = iri::extract($data->id, 'activity');
         $this->definition = $definition;
@@ -93,7 +93,7 @@ class item_activity extends item_object {
      * @param item_definition|null $definition optional item_definition
      * @return item_activity
      */
-    public static function create_from_id(string $id, item_definition $definition = null): item_activity {
+    public static function create_from_id(string $id, ?item_definition $definition = null): item_activity {
         $data = (object) [
             'objectType' => 'Activity',
             'id' => iri::generate($id, 'activity'),

@@ -599,7 +599,7 @@ class assign_grading_summary implements renderable {
                                 $coursestartdate,
                                 $cangrade = true,
                                 $isvisible = true,
-                                cm_info $cm = null) {
+                                ?cm_info $cm = null) {
         $this->participantcount = $participantcount;
         $this->submissiondraftsenabled = $submissiondraftsenabled;
         $this->submissiondraftscount = $submissiondraftscount;

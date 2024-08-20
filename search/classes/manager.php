@@ -1193,7 +1193,7 @@ class manager {
      * @throws \moodle_exception
      * @return bool Whether there was any updated document or not.
      */
-    public function index($fullindex = false, $timelimit = 0, \progress_trace $progress = null) {
+    public function index($fullindex = false, $timelimit = 0, ?\progress_trace $progress = null) {
         global $DB;
 
         // Cannot combine time limit with reindex.
@@ -1365,7 +1365,7 @@ class manager {
      * @return \stdClass Object indicating success
      */
     public function index_context($context, $singleareaid = '', $timelimit = 0,
-            \progress_trace $progress = null, $startfromarea = '', $startfromtime = 0) {
+            ?\progress_trace $progress = null, $startfromarea = '', $startfromtime = 0) {
         if (!$progress) {
             $progress = new \null_progress_trace();
         }
@@ -1689,7 +1689,7 @@ class manager {
      * @param float $timelimit Time limit (0 = none)
      * @param \progress_trace|null $progress Optional progress indicator
      */
-    public function process_index_requests($timelimit = 0.0, \progress_trace $progress = null) {
+    public function process_index_requests($timelimit = 0.0, ?\progress_trace $progress = null) {
         global $DB;
 
         if (!$progress) {

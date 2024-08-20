@@ -63,8 +63,8 @@ class user_submission_actionmenu implements templatable, renderable {
      * @param stdClass|null $teamsubmission A team submission for this activity.
      * @param int $timelimit The time limit for completing this activity.
      */
-    public function __construct(int $cmid, bool $showsubmit, bool $showedit, stdClass $submission = null,
-            stdClass $teamsubmission = null, int $timelimit = 0) {
+    public function __construct(int $cmid, bool $showsubmit, bool $showedit, ?stdClass $submission = null,
+            ?stdClass $teamsubmission = null, int $timelimit = 0) {
 
         $this->cmid = $cmid;
         $this->showsubmit = $showsubmit;

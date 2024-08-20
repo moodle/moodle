@@ -48,7 +48,7 @@ class backup_structure_processor extends base_processor {
      * @param xml_writer $writer XML writer to save data
      * @param c\core\progress\base$progress Progress tracker (optional)
      */
-    public function __construct(xml_writer $writer, \core\progress\base $progress = null) {
+    public function __construct(xml_writer $writer, ?\core\progress\base $progress = null) {
         $this->writer = $writer;
         $this->progress = $progress;
         $this->vars = array();

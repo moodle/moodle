@@ -56,7 +56,7 @@ class get_result_admintree extends external_api {
      * @return array returned data
      */
     public static function execute(string $admintreeid, string $settingname, bool $includedetails,
-        admin_root $admintree = null): array {
+        ?admin_root $admintree = null): array {
         global $OUTPUT, $CFG;
 
         // Validate parameters.
@@ -105,7 +105,7 @@ class get_result_admintree extends external_api {
      * @param string $settingname Name of the admin_setting
      * @param admin_root|null $tree Admin tree to use (for unit testing). Null will default to the admin_get_root()
      */
-    private static function get_check_from_setting(string $settingid, string $settingname, admin_root $tree = null) {
+    private static function get_check_from_setting(string $settingid, string $settingname, ?admin_root $tree = null) {
         // Since settings do not know exactly who their parents are in the tree, we must search for the setting.
         if (empty($tree)) {
             $tree = \admin_get_root();

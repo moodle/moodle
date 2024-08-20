@@ -73,7 +73,7 @@ class zipwriter {
      * @param \ZipStream\ZipStream $archive
      * @param stdClass|null $options
      */
-    public function __construct(\ZipStream\ZipStream $archive, stdClass $options = null) {
+    public function __construct(\ZipStream\ZipStream $archive, ?stdClass $options = null) {
         $this->archive = $archive;
         if ($options) {
             $this->parse_options($options);
@@ -140,7 +140,7 @@ class zipwriter {
      * @param stdClass|null $exportoptions
      * @return static
      */
-    public static function get_stream_writer(string $filename, stdClass $exportoptions = null) {
+    public static function get_stream_writer(string $filename, ?stdClass $exportoptions = null) {
         $archive = new \ZipStream\ZipStream(
             outputName: $filename,
         );
@@ -158,7 +158,7 @@ class zipwriter {
      * @param stdClass|null $exportoptions
      * @return static
      */
-    public static function get_file_writer(string $filename, stdClass $exportoptions = null) {
+    public static function get_file_writer(string $filename, ?stdClass $exportoptions = null) {
         $dir = make_request_directory();
         $filepath = $dir . "/$filename";
         $fh = fopen($filepath, 'w');

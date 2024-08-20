@@ -93,7 +93,7 @@ class helper {
      * @param int|null $expiretime  Unix timestamp
      * @return array
      */
-    public static function get_seb_file_headers(int $expiretime = null): array {
+    public static function get_seb_file_headers(?int $expiretime = null): array {
         if (is_null($expiretime)) {
             $expiretime = time();
         }

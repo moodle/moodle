@@ -79,7 +79,7 @@ class mod_lesson_generator extends testing_module_generator {
      * @param null|array $options general options for course module.
      * @return stdClass record from module-defined table with additional field cmid (corresponding id in course_modules table)
      */
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         global $CFG;
 
         // Add default values for lesson.
@@ -127,7 +127,7 @@ class mod_lesson_generator extends testing_module_generator {
      * @param null|array|stdClass $record data for page being generated.
      * @param null|array $options general options.
      */
-    public function create_page($record = null, array $options = null) {
+    public function create_page($record = null, ?array $options = null) {
         $record = (array) $record;
 
         // Pages require answers to work. Add it as a candidate page to be created once answers have been added.
@@ -655,7 +655,7 @@ class mod_lesson_generator extends testing_module_generator {
      * @param null|array $options general options.
      * @throws coding_exception
      */
-    public function create_answer($record = null, array $options = null) {
+    public function create_answer($record = null, ?array $options = null) {
         $record = (array) $record;
 
         $candidatepage = null;

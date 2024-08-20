@@ -111,7 +111,7 @@ class plugin_features_base {
      * @param view|null $qbank
      * @return condition[]
      */
-    public function get_question_filters(view $qbank = null): array {
+    public function get_question_filters(?view $qbank = null): array {
         return [];
     }
 }

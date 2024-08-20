@@ -90,7 +90,7 @@ class restore_controller extends base_controller {
      * @param bool $releasesession Should release the session? backup::RELEASESESSION_YES or backup::RELEASESESSION_NO
      */
     public function __construct($tempdir, $courseid, $interactive, $mode, $userid, $target,
-            \core\progress\base $progress = null, $releasesession = backup::RELEASESESSION_NO, ?\stdClass $copydata = null) {
+            ?\core\progress\base $progress = null, $releasesession = backup::RELEASESESSION_NO, ?\stdClass $copydata = null) {
 
         if ($mode == backup::MODE_COPY && is_null($copydata)) {
             throw new restore_controller_exception('cannot_instantiate_missing_copydata');

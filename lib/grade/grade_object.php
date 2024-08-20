@@ -429,7 +429,7 @@ abstract class grade_object {
      *
      * @param int|null $historyid
      */
-    protected function add_feedback_files(int $historyid = null) {
+    protected function add_feedback_files(?int $historyid = null) {
     }
 
     /**
@@ -437,7 +437,7 @@ abstract class grade_object {
      *
      * @param int|null $historyid
      */
-    protected function update_feedback_files(int $historyid = null) {
+    protected function update_feedback_files(?int $historyid = null) {
     }
 
     /**

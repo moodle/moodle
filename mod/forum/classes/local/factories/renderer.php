@@ -173,7 +173,7 @@ class renderer {
      * @param bool $readonly Should the posts include the actions to reply, delete, etc?
      * @return posts_renderer
      */
-    public function get_single_discussion_posts_renderer(int $displaymode = null, bool $readonly = false): posts_renderer {
+    public function get_single_discussion_posts_renderer(?int $displaymode = null, bool $readonly = false): posts_renderer {
         $exportedpostssorter = $this->entityfactory->get_exported_posts_sorter();
 
         switch ($displaymode) {

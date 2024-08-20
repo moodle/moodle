@@ -2037,7 +2037,7 @@ abstract class moodle1_resource_successor_handler extends moodle1_mod_handler {
      * @param array $data pre-cooked legacy resource data
      * @param array $raw raw legacy resource data
      */
-    public function process_legacy_resource(array $data, array $raw = null) {
+    public function process_legacy_resource(array $data, ?array $raw = null) {
     }
 
     /**

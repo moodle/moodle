@@ -143,7 +143,7 @@ EOD;
      * @param array $options
      * @return stdClass user record
      */
-    public function create_user($record=null, array $options=null) {
+    public function create_user($record=null, ?array $options=null) {
         global $DB, $CFG;
         require_once($CFG->dirroot.'/user/lib.php');
 
@@ -277,7 +277,7 @@ EOD;
      * @param array $options
      * @return core_course_category course category record
      */
-    public function create_category($record=null, array $options=null) {
+    public function create_category($record=null, ?array $options=null) {
         $this->categorycount++;
         $i = $this->categorycount;
 
@@ -304,7 +304,7 @@ EOD;
      * @param array $options
      * @return stdClass cohort record
      */
-    public function create_cohort($record=null, array $options=null) {
+    public function create_cohort($record=null, ?array $options=null) {
         global $DB, $CFG;
         require_once("$CFG->dirroot/cohort/lib.php");
 
@@ -354,7 +354,7 @@ EOD;
      *      'createsections' => bool precreate all sections
      * @return stdClass course record
      */
-    public function create_course($record=null, array $options=null) {
+    public function create_course($record=null, ?array $options=null) {
         global $DB, $CFG;
         require_once("$CFG->dirroot/course/lib.php");
 
@@ -461,7 +461,7 @@ EOD;
      * @return section_info
      * @throws coding_exception
      */
-    public function create_course_section($record = null, array $options = null) {
+    public function create_course_section($record = null, ?array $options = null) {
         global $DB;
 
         $record = (array)$record;
@@ -519,7 +519,7 @@ EOD;
      * @return stdClass activity record new new record that was just inserted in the table
      *      like 'forum' or 'quiz', with a ->cmid field added.
      */
-    public function create_module($modulename, $record=null, array $options=null) {
+    public function create_module($modulename, $record=null, ?array $options=null) {
         $generator = $this->get_plugin_generator('mod_'.$modulename);
         return $generator->create_instance($record, $options);
     }
@@ -694,7 +694,7 @@ EOD;
      * @return stdClass repository instance record
      * @since Moodle 2.5.1
      */
-    public function create_repository($type, $record=null, array $options = null) {
+    public function create_repository($type, $record=null, ?array $options = null) {
         $generator = $this->get_plugin_generator('repository_'.$type);
         return $generator->create_instance($record, $options);
     }
@@ -708,7 +708,7 @@ EOD;
      * @return repository_type object
      * @since Moodle 2.5.1
      */
-    public function create_repository_type($type, $record=null, array $options = null) {
+    public function create_repository_type($type, $record=null, ?array $options = null) {
         $generator = $this->get_plugin_generator('repository_'.$type);
         return $generator->create_type($record, $options);
     }
@@ -720,7 +720,7 @@ EOD;
      * @param array $options
      * @return stdClass block instance record
      */
-    public function create_scale($record=null, array $options=null) {
+    public function create_scale($record=null, ?array $options=null) {
         global $DB;
 
         $this->scalecount++;
@@ -896,7 +896,7 @@ EOD;
      * @param array $rolecapabilities The list of capability =>permission to set for this role
      * @param null|context $context The context to apply this capability to
      */
-    public function create_role_capability(int $roleid, array $rolecapabilities, context $context = null): void {
+    public function create_role_capability(int $roleid, array $rolecapabilities, ?context $context = null): void {
         // Map the capabilities into human-readable names.
         $allpermissions = [
             'inherit' => CAP_INHERIT,

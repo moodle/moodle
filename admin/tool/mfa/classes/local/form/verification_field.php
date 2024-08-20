@@ -41,7 +41,7 @@ class verification_field extends \MoodleQuickForm_text {
      * @param boolean $auth is this constructed in auth.php loginform_* definitions. Set to false to prevent autosubmission of form.
      * @param string|null $elementlabel Provide a different element label.
      */
-    public function __construct($attributes = null, $auth = true, string $elementlabel = null) {
+    public function __construct($attributes = null, $auth = true, ?string $elementlabel = null) {
         global $PAGE;
 
         // Force attributes.

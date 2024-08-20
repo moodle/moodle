@@ -52,7 +52,7 @@ class category_condition extends condition {
      *
      * @param view $qbank qbank view
      */
-    public function __construct(view $qbank = null) {
+    public function __construct(?view $qbank = null) {
         if (is_null($qbank)) {
             return;
         }

@@ -197,7 +197,7 @@ class core_course_renderer extends plugin_renderer_base {
     /**
      * @deprecated since 4.0 - please do not use this function any more.
      */
-    public function course_section_cm_edit_actions($actions, cm_info $mod = null, $displayoptions = array()) {
+    public function course_section_cm_edit_actions($actions, ?cm_info $mod = null, $displayoptions = array()) {
 
         throw new coding_exception(
             'course_section_cm_edit_actions can not be used any more. Please, use ' .

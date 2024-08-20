@@ -35,7 +35,7 @@ class deployment_repository_test extends \advanced_testcase {
      * @return deployment the deployment.
      */
     protected function create_test_deployment(string $deploymentid = 'DeployID123',
-            int $appregistrationid = null): deployment {
+            ?int $appregistrationid = null): deployment {
 
         if (is_null($appregistrationid)) {
             $registration = application_registration::create(

@@ -157,7 +157,7 @@ class filter {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public function can_access(\context $context = null, string $capability = ''): bool {
+    public function can_access(?\context $context = null, string $capability = ''): bool {
         if ($capability == '') {
             if ($this->has_course_filters()) {
                 $capability = accessibility::get_capability_name('viewcoursetools');
@@ -176,7 +176,7 @@ class filter {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public function has_capability_in_context(string $capability, \context $context = null): bool {
+    public function has_capability_in_context(string $capability, ?\context $context = null): bool {
         $coursefiltersvalid = $this->has_course_filters();
         if ($context === null) {
             // If the filter is using a list of courses ($this->>courseids), use the system context.

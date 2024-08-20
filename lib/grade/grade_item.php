@@ -778,7 +778,7 @@ class grade_item extends grade_object {
      * @param string $groupwheresql Where conditions for $groupsql
      * @return int The number of hidden grades
      */
-    public function has_hidden_grades($groupsql="", array $params=null, $groupwheresql="") {
+    public function has_hidden_grades($groupsql="", ?array $params=null, $groupwheresql="") {
         global $DB;
         $params = (array)$params;
         $params['itemid'] = $this->id;

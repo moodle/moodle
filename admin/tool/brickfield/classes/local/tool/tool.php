@@ -236,7 +236,7 @@ abstract class tool {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public function can_access(filter $filter, \context $context = null): bool {
+    public function can_access(filter $filter, ?\context $context = null): bool {
         return $filter->can_access($context);
     }
 
@@ -309,7 +309,7 @@ abstract class tool {
      * @param filter|null $filter
      * @return array
      */
-    public static function toplevel_arguments(filter $filter = null): array {
+    public static function toplevel_arguments(?filter $filter = null): array {
         if ($filter !== null) {
             return ['courseid' => $filter->courseid, 'categoryid' => $filter->categoryid];
         } else {

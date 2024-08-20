@@ -85,12 +85,12 @@ class get_enrolled_courses_with_action_events_by_timeline_classification extends
         string $classification,
         int $limit = 0,
         int $offset = 0,
-        string $sort = null,
-        string $customfieldname = null,
-        string $customfieldvalue = null,
-        string $searchvalue = null,
-        int $eventsfrom = null,
-        int $eventsto = null
+        ?string $sort = null,
+        ?string $customfieldname = null,
+        ?string $customfieldvalue = null,
+        ?string $searchvalue = null,
+        ?int $eventsfrom = null,
+        ?int $eventsto = null
     ): array {
         global $USER;
 

@@ -1333,7 +1333,7 @@ class core_message_external extends external_api {
      * @throws \moodle_exception if the messaging feature is disabled on the site.
      * @since 3.2
      */
-    public static function get_conversations($userid, $limitfrom = 0, $limitnum = 0, int $type = null, bool $favourites = null,
+    public static function get_conversations($userid, $limitfrom = 0, $limitnum = 0, ?int $type = null, ?bool $favourites = null,
             bool $mergeself = false) {
         global $CFG, $USER;
 

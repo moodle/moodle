@@ -88,17 +88,17 @@ class event_vault implements event_vault_interface {
         $timestartto = null,
         $timesortfrom = null,
         $timesortto = null,
-        event_interface $timestartafterevent = null,
-        event_interface $timesortafterevent = null,
+        ?event_interface $timestartafterevent = null,
+        ?event_interface $timesortafterevent = null,
         $limitnum = 20,
         $type = null,
-        array $usersfilter = null,
-        array $groupsfilter = null,
-        array $coursesfilter = null,
-        array $categoriesfilter = null,
+        ?array $usersfilter = null,
+        ?array $groupsfilter = null,
+        ?array $coursesfilter = null,
+        ?array $categoriesfilter = null,
         $withduration = true,
         $ignorehidden = true,
-        callable $filter = null,
+        ?callable $filter = null,
         ?string $searchvalue = null
     ) {
 
@@ -202,7 +202,7 @@ class event_vault implements event_vault_interface {
         \stdClass $user,
         $timesortfrom = null,
         $timesortto = null,
-        event_interface $afterevent = null,
+        ?event_interface $afterevent = null,
         $limitnum = 20,
         $limittononsuspendedevents = false,
         ?string $searchvalue = null
@@ -247,7 +247,7 @@ class event_vault implements event_vault_interface {
         \stdClass $course,
         $timesortfrom = null,
         $timesortto = null,
-        event_interface $afterevent = null,
+        ?event_interface $afterevent = null,
         $limitnum = 20,
         ?string $searchvalue = null
     ) {

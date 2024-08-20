@@ -47,7 +47,7 @@ class utils {
      * @return void
      */
     public static function data_exportdata(int $dataid, array $fields, array $selectedfields, entries_exporter $exporter,
-        int $currentgroup = 0, context $context = null, bool $userdetails = false, bool $time = false, bool $approval = false,
+        int $currentgroup = 0, ?context $context = null, bool $userdetails = false, bool $time = false, bool $approval = false,
         bool $tags = false, bool $includefiles = true): void {
         global $DB;
 
