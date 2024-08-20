@@ -33,3 +33,6 @@
 - Method assign_grading_table::col_picture has been deprecated.
 
   For more information see [MDL-82292](https://tracker.moodle.org/browse/MDL-82292)
+- Method assign_grading_table::col_userid has been deprecated.
+
+  For more information see [MDL-82295](https://tracker.moodle.org/browse/MDL-82295)

@@ -20,6 +20,9 @@
 - Final deprecation of \core\task\manager::ensure_adhoc_task_qos()
 
   For more information see [MDL-74843](https://tracker.moodle.org/browse/MDL-74843)
+- Support for deprecated `<component>\local\views\secondary` block/activity namespace, for overriding secondary navigation, is now entirely removed
+
+  For more information see [MDL-74939](https://tracker.moodle.org/browse/MDL-74939)
 - Remove deprecation layer for YUI Events. The deprecation layer was introduced with MDL-70990 and MDL-72291.
 
   For more information see [MDL-77167](https://tracker.moodle.org/browse/MDL-77167)
@@ -222,6 +225,10 @@
 - The Moodle autoloader should now be registered using `\core\component::register_autoloader` rather than manually doing so in any exceptional location which requires it. It is not normally necessary to include the autoloader manually, as it is registered automatically when the Moodle environment is bootstrapped.
 
   For more information see [MDL-82747](https://tracker.moodle.org/browse/MDL-82747)
+- A new JS module for interacting with the Routed REST API has been introduced.
+  For more information see the documentation in the `core/fetch` module.
+
+  For more information see [MDL-82778](https://tracker.moodle.org/browse/MDL-82778)
 
 ### Changed
 
