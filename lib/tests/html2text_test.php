@@ -156,6 +156,16 @@ final class html2text_test extends \basic_testcase {
                 [],
                 'Interesting <script type="text/javascript">var what_a_mess = "Yuck!";</script> text',
             ],
+            'Trailing spaces before newline or tab' => [
+                "Some text with trailing space\n\nAnd some more text\n",
+                [],
+                '<p>Some text with trailing space </p> <p>And some more text</p>',
+            ],
+            'Trailing spaces before newline or tab (list)' => [
+                "\t* Some text with trailing space\n\t* And some more text\n\n",
+                [],
+                '<ul><li>Some text with trailing space </li> <li> And some more text </li> </ul>',
+            ],
         ];
     }
 
