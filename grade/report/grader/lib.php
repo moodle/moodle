@@ -1283,6 +1283,8 @@ class grade_report_grader extends grade_report {
         foreach ($leftrows as $key => $row) {
             $row->cells = array_merge($row->cells, $rightrows[$key]->cells);
             $fulltable->data[] = $row;
+            unset($leftrows[$key]);
+            unset($rightrows[$key]);
         }
         $html .= html_writer::table($fulltable);
         return $OUTPUT->container($html, 'gradeparent');
