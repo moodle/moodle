@@ -497,6 +497,7 @@ $string['user:viewalldetails'] = 'View user full information';
 $string['user:viewdetails'] = 'View user profiles';
 $string['user:viewhiddendetails'] = 'View hidden details of users';
 $string['user:viewlastip'] = 'View user last ip address';
+$string['user:viewprofilepictures'] = 'View user profile pictures (if force login enabled)';
 $string['user:viewuseractivitiesreport'] = 'See user activity reports';
 $string['user:viewusergrades'] = 'View user grades';
 $string['roleresetdefaults'] = 'Defaults';
