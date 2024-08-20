@@ -26,7 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/html2text/Html2Text.php');
 require_once(__DIR__ . '/override.php');
 
 /**

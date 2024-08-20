@@ -235,7 +235,7 @@
     <location>html2text</location>
     <name>HTML2Text</name>
     <description>PHP script to convert HTML into an approximate text equivalent.</description>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
     <license>GPL</license>
     <licenseversion>2.0+</licenseversion>
     <repository>https://github.com/mtibben/html2text</repository>
