@@ -209,6 +209,10 @@ class external_test extends externallib_advanced_testcase {
                 }
             }
 
+            // Add recipient.
+            $badge->recipientid = $this->student->id;
+            $badge->recipientfullname = fullname($this->student);
+
             $expectedbadges[] = (array) $badge;
             if (isset($badge->courseid)) {
                 // Save the course badge to be able to compare it in our tests.

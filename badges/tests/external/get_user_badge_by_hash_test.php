@@ -102,6 +102,10 @@ class get_user_badge_by_hash_test extends externallib_advanced_testcase {
                                                                             'f3')->out(false);
         $badge->status = BADGE_STATUS_ACTIVE_LOCKED;
 
+        // Add recipient.
+        $badge->recipientid = $student1->id;
+        $badge->recipientfullname = fullname($student1);
+
         // Add an endorsement for the badge.
         $endorsement              = new \stdClass();
         $endorsement->badgeid     = $badgeid;
@@ -184,13 +188,13 @@ class get_user_badge_by_hash_test extends externallib_advanced_testcase {
         // Site badge.
         $result = get_user_badge_by_hash::execute($data['sitebadge'][0]['uniquehash']);
         $result = \core_external\external_api::clean_returnvalue(get_user_badge_by_hash::execute_returns(), $result);
-        $this->assertEquals($data['sitebadge'][0]['uniquehash'], $result['badge'][0]['uniquehash']);
+        $this->assertEquals($data['sitebadge'][0], $result['badge'][0]);
         $this->assertEmpty($result['warnings']);
 
         // Course badge.
         $result = get_user_badge_by_hash::execute($data['coursebadge'][0]['uniquehash']);
         $result = \core_external\external_api::clean_returnvalue(get_user_badge_by_hash::execute_returns(), $result);
-        $this->assertEquals($data['coursebadge'][0]['uniquehash'], $result['badge'][0]['uniquehash']);
+        $this->assertEquals($data['coursebadge'][0], $result['badge'][0]);
         $this->assertEmpty($result['warnings']);
 
         // Wrong hash.
