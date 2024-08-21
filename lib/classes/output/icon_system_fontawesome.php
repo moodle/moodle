@@ -488,9 +488,14 @@ class icon_system_fontawesome extends icon_system_font {
                     }
                 }
 
-                // Add the solid class by default to all icons that have not specific family.
+                $deprecated = $this->get_deprecated_icons();
                 foreach ($this->map as $from => $to) {
+                    // Add the solid class by default to all icons that have not specific family.
                     $this->map[$from] = $this->add_family($to);
+                    // Add the deprecated class to all deprecated icons.
+                    if (in_array($from, $deprecated)) {
+                        $this->map[$from] .= ' deprecated deprecated-'.$from;
+                    }
                 }
 
                 $cache->set($mapkey, $this->map);
@@ -528,6 +533,15 @@ class icon_system_fontawesome extends icon_system_font {
 
         if (!$subpix->is_mapped()) {
             $data['unmappedIcon'] = $icon->export_for_template($output);
+            // If the icon is not mapped, we need to check if it is deprecated.
+            $component = $icon->component;
+            if (empty($component) || $component === 'moodle' || $component === 'core') {
+                $component = 'core';
+            }
+            $iconname = $component . ':' . $icon->pix;
+            if (in_array($iconname, $this->get_deprecated_icons())) {
+                $data['unmappedIcon']['extraclasses'] .= ' deprecated deprecated-'.$iconname;
+            }
         }
         if (isset($icon->attributes['aria-hidden'])) {
             $data['aria-hidden'] = $icon->attributes['aria-hidden'];
