@@ -194,6 +194,9 @@ class core_webservice_external extends \core_external\external_api {
 
         // User home page.
         $siteinfo['userhomepage'] = get_home_page();
+        if ($siteinfo['userhomepage'] === HOMEPAGE_URL) {
+            $siteinfo['userhomepageurl'] = (string) get_default_home_page_url();
+        }
 
         // Calendar.
         $siteinfo['sitecalendartype'] = $CFG->calendartype;
@@ -280,6 +283,8 @@ class core_webservice_external extends \core_external\external_api {
                 'userhomepage' => new external_value(PARAM_INT,
                                                         'the default home page for the user: 0 for the site home, 1 for dashboard',
                                                         VALUE_OPTIONAL),
+                'userhomepageurl' => new external_value(PARAM_LOCALURL,
+                    'The URL of default home page when userhomepage is 4 (HOMEPAGE_URL).', VALUE_OPTIONAL),
                 'userprivateaccesskey'  => new external_value(PARAM_ALPHANUM, 'Private user access key for fetching files.',
                     VALUE_OPTIONAL),
                 'siteid'  => new external_value(PARAM_INT, 'Site course ID', VALUE_OPTIONAL),
