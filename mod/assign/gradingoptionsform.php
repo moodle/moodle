@@ -31,15 +31,31 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
 /**
  * Assignment grading options form
  *
+ * @deprecated since 4.5
  * @package   mod_assign
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\core\attribute\deprecated(
+    replacement: null,
+    since: '4.5',
+    reason: 'It is no longer used.',
+    mdl: 'MDL-82857',
+)]
 class mod_assign_grading_options_form extends moodleform {
     /**
      * Define this form - called from the parent constructor.
+     *
+     * @deprecated since 4.5
      */
+    #[\core\attribute\deprecated(
+        replacement: null,
+        since: '4.5',
+        reason: 'It is no longer used.',
+        mdl: 'MDL-82857',
+    )]
     public function definition() {
+        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
         $mform = $this->_form;
         $instance = $this->_customdata;
 
