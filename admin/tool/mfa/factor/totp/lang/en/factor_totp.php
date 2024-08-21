@@ -54,8 +54,11 @@ $string['revokefactorconfirmation'] = 'Remove \'{$a}\' authenticator app?';
 $string['settings:totplink'] = 'Show mobile app setup link';
 $string['settings:totplink_help'] = 'If enabled the user will see a 3rd setup option with a direct otpauth:// link';
 $string['settings:window'] = 'TOTP verification window';
-$string['settings:window_help'] = 'How long each code is valid for. You can set this to a higher value as a workaround if your users device clocks are often slightly wrong.
-Rounded down to the nearest 30 seconds, which is the time between new generated codes.';
+$string['settings:window_help'] = 'The window of TOTP acts as time drift and specifies how long each code is valid for.
+    The period, which is the time between newly generated codes, is 30 seconds.
+    If the window is 15 (the default) and the current timestamp is 147682209, the OTP tested are within 147682194 (147682209 - 15), 147682209 and 147682224 (147682209 + 15).
+    The window shall be lower than 30. Therefore, this test includes the previous OTP but not the next one.
+    You can set this to a higher value (up to 29) as a workaround if your user\'s device clocks are often slightly wrong.';
 $string['setupfactor'] = 'Set up authenticator app';
 $string['setupfactorbutton'] = 'Set up';
 $string['setupfactor:account'] = 'Account:';

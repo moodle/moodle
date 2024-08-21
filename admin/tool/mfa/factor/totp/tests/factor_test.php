@@ -21,12 +21,10 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__.'/../extlib/OTPHP/OTPInterface.php');
 require_once(__DIR__.'/../extlib/OTPHP/TOTPInterface.php');
 require_once(__DIR__.'/../extlib/OTPHP/ParameterTrait.php');
+require_once(__DIR__.'/../extlib/OTPHP/InternalClock.php');
 require_once(__DIR__.'/../extlib/OTPHP/OTP.php');
 require_once(__DIR__.'/../extlib/OTPHP/TOTP.php');
 
-require_once(__DIR__.'/../extlib/Assert/Assertion.php');
-require_once(__DIR__.'/../extlib/Assert/AssertionFailedException.php');
-require_once(__DIR__.'/../extlib/Assert/InvalidArgumentException.php');
 require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/EncoderInterface.php');
 require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Binary.php');
 require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Base32.php');
@@ -40,7 +38,7 @@ require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Base32.php');
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class factor_test extends \advanced_testcase {
+final class factor_test extends \advanced_testcase {
 
     /**
      * Test code validation of the TOTP factor
@@ -48,12 +46,14 @@ class factor_test extends \advanced_testcase {
     public function test_validate_code(): void {
         global $DB;
 
+        $clock = $this->mock_clock_with_frozen(10000000);
+
         $this->resetAfterTest(true);
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
         // Setup test staples.
-        $totp = \OTPHP\TOTP::create('fakekey');
-        $window = 10;
+        $totp = \OTPHP\TOTP::create('fakekey', clock: $clock);
+        $window = 29;
 
         set_config('enabled', 1, 'factor_totp');
         $totpfactor = \tool_mfa\plugininfo\factor::get_factor('totp');
@@ -64,50 +64,44 @@ class factor_test extends \advanced_testcase {
         $factorinstance = $totpfactor->setup_user_factor((object) $totpdata);
 
         // First check that a valid code is actually valid.
-        $code = $totp->at(time());
+        $code = $totp->at($clock->time());
         // Manually set timeverified of factor.
-        $DB->set_field('tool_mfa', 'lastverified', time() - WEEKSECS, ['id' => $factorinstance->id]);
+        $DB->set_field('tool_mfa', 'lastverified', $clock->time() - WEEKSECS, ['id' => $factorinstance->id]);
         $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
         $this->assertEquals($totpfactor::TOTP_VALID, $result);
 
-        // Now update timeverified to 2 mins ago, and check codes within window are blocked.
-        $code = $totp->at(time() - (2 * MINSECS));
-        $DB->set_field('tool_mfa', 'lastverified', time() - (2 * MINSECS), ['id' => $factorinstance->id]);
+        // Now update timeverified to 20 seconds ago, and check codes within window is blocked.
+        $code = $totp->at($clock->time() - (20));
+        $DB->set_field('tool_mfa', 'lastverified', $clock->time() - (20), ['id' => $factorinstance->id]);
         $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
         $this->assertEquals($totpfactor::TOTP_USED, $result);
 
-        // Now update timeverified to 2 mins ago, and check codes within window are blocked.
-        $code = $totp->at(time());
-        $DB->set_field('tool_mfa', 'lastverified', time() - (2 * MINSECS), ['id' => $factorinstance->id]);
-        $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
-        $this->assertEquals($totpfactor::TOTP_USED, $result);
-
-        // Now update timeverified to 2 mins ago, and check codes within window are blocked.
-        $code = $totp->at(time() - (4 * MINSECS));
-        $DB->set_field('tool_mfa', 'lastverified', time() - (2 * MINSECS), ['id' => $factorinstance->id]);
+        // Now update timeverified to 20 seconds ago, and check code from current increment within window is blocked.
+        $code = $totp->at($clock->time());
+        $DB->set_field('tool_mfa', 'lastverified', $clock->time() - (20), ['id' => $factorinstance->id]);
         $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
         $this->assertEquals($totpfactor::TOTP_USED, $result);
 
         // Now check future codes.
         $window = 1;
-        $code = $totp->at(time() + (2 * MINSECS));
-        $DB->set_field('tool_mfa', 'lastverified', time() - WEEKSECS, ['id' => $factorinstance->id]);
+        $code = $totp->at($clock->time() + (2 * MINSECS));
+        $DB->set_field('tool_mfa', 'lastverified', $clock->time() - WEEKSECS, ['id' => $factorinstance->id]);
         $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
         $this->assertEquals($totpfactor::TOTP_FUTURE, $result);
 
         // Codes in far future are invalid.
-        $code = $totp->at(time() + (20 * MINSECS));
+        $code = $totp->at($clock->time() + (20 * MINSECS));
         $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
         $this->assertEquals($totpfactor::TOTP_INVALID, $result);
 
         // Do the same for past codes.
         $window = 1;
-        $code = $totp->at(time() - (2 * MINSECS));
+        $code = $totp->at($clock->time() - (2 * MINSECS));
         $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
         $this->assertEquals($totpfactor::TOTP_OLD, $result);
 
         // Codes in far future are invalid.
-        $code = $totp->at(time() - (20 * MINSECS));
+        $code = $totp->at($clock->time() - (20 * MINSECS));
         $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
         $this->assertEquals($totpfactor::TOTP_INVALID, $result);
 

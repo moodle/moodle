@@ -1,18 +1,18 @@
-OTPHP 9.1.1
+OTPHP
 --------------
-https://github.com/Spomky-Labs/otphp/releases/tag/v9.1.1
 
-Instructions to import WebAuthn into Moodle:
+Instructions to import OTPHP into Moodle:
 
 1. Download the latest release from https://github.com/Spomky-Labs/otphp/releases/tag/vx.x.x
    (choose "Source code")
 2. Unzip the source code
-3. Copy the following files from otphp-x.x/lib/OTPHP into admin/tool/mfa/factor/totp/extlib/OTPHP:
-   1. OTP.php
-   2. OTPInterface.php
-   3. ParameterTrait.php
-   4. TOTP.php
-   5. TOTPInterface.php
+3. Copy the following files from otphp-x.x/src into admin/tool/mfa/factor/totp/extlib/OTPHP:
+   1. InternalClock.php
+   2. OTP.php
+   3. OTPInterface.php
+   4. ParameterTrait.php
+   5. TOTP.php
+   6. TOTPInterface.php
 
 4. Copy the following files from otphp-x.x into admin/tool/mfa/factor/totp/extlib/OTPHP:
    1. LICENSE
