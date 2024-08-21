@@ -4,8 +4,11 @@ namespace Aws;
 use Aws\Api\ApiProvider;
 use Aws\Api\DocModel;
 use Aws\Api\Service;
+use Aws\Auth\AuthSelectionMiddleware;
+use Aws\Auth\AuthSchemeResolverInterface;
 use Aws\EndpointDiscovery\EndpointDiscoveryMiddleware;
 use Aws\EndpointV2\EndpointProviderV2;
+use Aws\EndpointV2\EndpointV2Middleware;
 use Aws\Exception\AwsException;
 use Aws\Signature\SignatureProvider;
 use GuzzleHttp\Psr7\Uri;
@@ -27,6 +30,9 @@ class AwsClient implements AwsClientInterface
     private $region;
 
     /** @var string */
+    private $signingRegionSet;
+
+    /** @var string */
     private $endpoint;
 
     /** @var Service */
@@ -34,6 +40,9 @@ class AwsClient implements AwsClientInterface
 
     /** @var callable */
     private $signatureProvider;
+
+    /** @var AuthSchemeResolverInterface */
+    private $authSchemeResolver;
 
     /** @var callable */
     private $credentialProvider;
@@ -202,6 +211,23 @@ class AwsClient implements AwsClientInterface
      *   client-side parameter validation.
      * - version: (string, required) The version of the webservice to
      *   utilize (e.g., 2006-03-01).
+     * - account_id_endpoint_mode: (string, default(preferred)) this option
+     *   decides whether credentials should resolve an accountId value,
+     *   which is going to be used as part of the endpoint resolution.
+     *   The valid values for this option are:
+     *   - preferred: when this value is set then, a warning is logged when
+     *     accountId is empty in the resolved identity.
+     *   - required: when this value is set then, an exception is thrown when
+     *     accountId is empty in the resolved identity.
+     *   - disabled: when this value is set then, the validation for if accountId
+     *     was resolved or not, is ignored.
+     * - ua_append: (string, array) To pass custom user agent parameters.
+     * - app_id: (string) an optional application specific identifier that can be set.
+     *   When set it will be appended to the User-Agent header of every request
+     *   in the form of App/{AppId}. This variable is sourced from environment
+     *   variable AWS_SDK_UA_APP_ID or the shared config profile attribute sdk_ua_app_id.
+     *   See https://docs.aws.amazon.com/sdkref/latest/guide/settings-reference.html for
+     *   more information on environment variables and shared config settings.
      *
      * @param array $args Client configuration arguments.
      *
@@ -222,17 +248,19 @@ class AwsClient implements AwsClientInterface
         $config = $resolver->resolve($args, $this->handlerList);
         $this->api = $config['api'];
         $this->signatureProvider = $config['signature_provider'];
+        $this->authSchemeResolver = $config['auth_scheme_resolver'];
         $this->endpoint = new Uri($config['endpoint']);
         $this->credentialProvider = $config['credentials'];
         $this->tokenProvider = $config['token'];
-        $this->region = isset($config['region']) ? $config['region'] : null;
+        $this->region = $config['region'] ?? null;
+        $this->signingRegionSet = $config['sigv4a_signing_region_set'] ?? null;
         $this->config = $config['config'];
-        $this->setClientBuiltIns($args);
+        $this->setClientBuiltIns($args, $config);
         $this->clientContextParams = $this->setClientContextParams($args);
         $this->defaultRequestOptions = $config['http'];
         $this->endpointProvider = $config['endpoint_provider'];
         $this->serializer = $config['serializer'];
-        $this->addSignatureMiddleware();
+        $this->addSignatureMiddleware($args);
         $this->addInvocationId();
         $this->addEndpointParameterMiddleware($args);
         $this->addEndpointDiscoveryMiddleware($config, $args);
@@ -240,10 +268,13 @@ class AwsClient implements AwsClientInterface
         $this->loadAliases();
         $this->addStreamRequestPayload();
         $this->addRecursionDetection();
-        $this->addRequestBuilder();
+        if ($this->isUseEndpointV2()) {
+            $this->addEndpointV2Middleware();
+        }
+        $this->addAuthSelectionMiddleware();
 
-        if (!$config['suppress_php_deprecation_warning']) {
-            $this->emitDeprecationWarning();
+        if (!is_null($this->api->getMetadata('awsQueryCompatible'))) {
+            $this->addQueryCompatibleInputMiddleware($this->api);
         }
 
         if (isset($args['with_resolved'])) {
@@ -260,9 +291,7 @@ class AwsClient implements AwsClientInterface
     {
         return $option === null
             ? $this->config
-            : (isset($this->config[$option])
-                ? $this->config[$option]
-                : null);
+            : $this->config[$option] ?? null;
     }
 
     public function getCredentials()
@@ -400,52 +429,77 @@ class AwsClient implements AwsClientInterface
         }
     }
 
-    private function addSignatureMiddleware()
+    private function addSignatureMiddleware(array $args)
     {
         $api = $this->getApi();
         $provider = $this->signatureProvider;
-        $version = $this->config['signature_version'];
+        $signatureVersion = $this->config['signature_version'];
         $name = $this->config['signing_name'];
         $region = $this->config['signing_region'];
+        $signingRegionSet = $this->signingRegionSet;
+
+        if (isset($args['signature_version'])
+         || isset($this->config['configured_signature_version'])
+        ) {
+            $configuredSignatureVersion = true;
+        } else {
+            $configuredSignatureVersion = false;
+        }
 
         $resolver = static function (
             CommandInterface $c
-        ) use ($api, $provider, $name, $region, $version) {
-            if (!empty($c['@context']['signing_region'])) {
-                $region = $c['@context']['signing_region'];
-            }
-            if (!empty($c['@context']['signing_service'])) {
-                $name = $c['@context']['signing_service'];
-            }
+        ) use (
+                $api,
+                $provider,
+                $name,
+                $region,
+                $signatureVersion,
+                $configuredSignatureVersion,
+                $signingRegionSet
+        ) {
+            if (!$configuredSignatureVersion) {
+                if (!empty($c['@context']['signing_region'])) {
+                    $region = $c['@context']['signing_region'];
+                }
+                if (!empty($c['@context']['signing_service'])) {
+                    $name = $c['@context']['signing_service'];
+                }
+                if (!empty($c['@context']['signature_version'])) {
+                    $signatureVersion = $c['@context']['signature_version'];
+                }
 
-            $authType = $api->getOperation($c->getName())['authtype'];
-            switch ($authType){
-                case 'none':
-                    $version = 'anonymous';
-                    break;
-                case 'v4-unsigned-body':
-                    $version = 'v4-unsigned-body';
-                    break;
-                case 'bearer':
-                    $version = 'bearer';
-                    break;
-            }
-            if (isset($c['@context']['signature_version'])) {
-                if ($c['@context']['signature_version'] == 'v4a') {
-                    $version = 'v4a';
+                $authType = $api->getOperation($c->getName())['authtype'];
+                switch ($authType){
+                    case 'none':
+                        $signatureVersion = 'anonymous';
+                        break;
+                    case 'v4-unsigned-body':
+                        $signatureVersion = 'v4-unsigned-body';
+                        break;
+                    case 'bearer':
+                        $signatureVersion = 'bearer';
+                        break;
                 }
             }
-            if (!empty($endpointAuthSchemes = $c->getAuthSchemes())) {
-                $version = $endpointAuthSchemes['version'];
-                $name = isset($endpointAuthSchemes['name']) ?
-                    $endpointAuthSchemes['name'] : $name;
-                $region = isset($endpointAuthSchemes['region']) ?
-                    $endpointAuthSchemes['region'] : $region;
+
+            if ($signatureVersion === 'v4a') {
+                $commandSigningRegionSet = !empty($c['@context']['signing_region_set'])
+                    ? implode(', ', $c['@context']['signing_region_set'])
+                    : null;
+
+                $region = $signingRegionSet
+                    ?? $commandSigningRegionSet
+                    ?? $region;
             }
-            return SignatureProvider::resolve($provider, $version, $name, $region);
+
+            return SignatureProvider::resolve($provider, $signatureVersion, $name, $region);
         };
         $this->handlerList->appendSign(
-            Middleware::signer($this->credentialProvider, $resolver, $this->tokenProvider),
+            Middleware::signer($this->credentialProvider,
+                $resolver,
+                $this->tokenProvider,
+                $this->getConfig()
+            ),
             'signer'
         );
     }
@@ -459,6 +513,15 @@ class AwsClient implements AwsClientInterface
                 'request-compression'
             );
         }
+    }
+
+    private function addQueryCompatibleInputMiddleware(Service $api)
+    {
+            $list = $this->getHandlerList();
+            $list->appendValidate(
+                QueryCompatibleInputMiddleware::wrap($api),
+                'query-compatible-input'
+            );
     }
 
     private function addInvocationId()
@@ -503,24 +566,32 @@ class AwsClient implements AwsClientInterface
         );
     }
 
-    /**
-     * Adds the `builder` middleware such that a client's endpoint
-     * provider and endpoint resolution arguments can be passed.
-     */
-    private function addRequestBuilder()
+    private function addAuthSelectionMiddleware()
     {
-        $handlerList = $this->getHandlerList();
-        $serializer = $this->serializer;
-        $endpointProvider = $this->endpointProvider;
+        $list = $this->getHandlerList();
+
+        $list->prependBuild(
+            AuthSelectionMiddleware::wrap(
+                $this->authSchemeResolver,
+                $this->getApi()
+            ),
+            'auth-selection'
+        );
+    }
+
+    private function addEndpointV2Middleware()
+    {
+        $list = $this->getHandlerList();
         $endpointArgs = $this->getEndpointProviderArgs();
 
-        $handlerList->prependBuild(
-            Middleware::requestBuilder(
-                $serializer,
-                $endpointProvider,
-                $endpointArgs
+        $list->prependBuild(
+            EndpointV2Middleware::wrap(
+                $this->endpointProvider,
+                $this->getApi(),
+                $endpointArgs,
+                $this->credentialProvider
             ),
-            'builderV2'
+            'endpoint-resolution'
         );
     }
 
@@ -538,7 +609,7 @@ class AwsClient implements AwsClientInterface
         if (!empty($paramDefinitions = $api->getClientContextParams())) {
             foreach($paramDefinitions as $paramName => $paramValue) {
                 if (isset($args[$paramName])) {
-                   $result[$paramName] = $args[$paramName];
+                   $resolvedParams[$paramName] = $args[$paramName];
                }
             }
         }
@@ -548,13 +619,18 @@ class AwsClient implements AwsClientInterface
     /**
      * Retrieves and sets default values used for endpoint resolution.
      */
-    private function setClientBuiltIns($args)
+    private function setClientBuiltIns($args, $resolvedConfig)
     {
         $builtIns = [];
-        $config = $this->getConfig();
+        $config = $resolvedConfig['config'];
         $service = $args['service'];
 
-        $builtIns['SDK::Endpoint'] = isset($args['endpoint']) ? $args['endpoint'] : null;
+        $builtIns['SDK::Endpoint'] = null;
+        if (!empty($args['endpoint'])) {
+            $builtIns['SDK::Endpoint'] = $args['endpoint'];
+        } elseif (isset($config['configured_endpoint_url'])) {
+            $builtIns['SDK::Endpoint'] = (string) $this->getEndpoint();
+        }
         $builtIns['AWS::Region'] = $this->getRegion();
         $builtIns['AWS::UseFIPS'] = $config['use_fips_endpoint']->isUseFipsEndpoint();
         $builtIns['AWS::UseDualStack'] = $config['use_dual_stack_endpoint']->isUseDualstackEndpoint();
@@ -567,6 +643,8 @@ class AwsClient implements AwsClientInterface
             $builtIns['AWS::S3::ForcePathStyle'] = $config['use_path_style_endpoint'];
             $builtIns['AWS::S3::DisableMultiRegionAccessPoints'] = $config['disable_multiregion_access_points'];
         }
+        $builtIns['AWS::Auth::AccountIdEndpointMode'] = $resolvedConfig['account_id_endpoint_mode'];
+
         $this->clientBuiltIns += $builtIns;
     }
 
@@ -639,7 +717,7 @@ class AwsClient implements AwsClientInterface
     public static function applyDocFilters(array $api, array $docs)
     {
         $aliases = \Aws\load_compiled_json(__DIR__ . '/data/aliases.json');
-        $serviceId = $api['metadata']['serviceId'];
+        $serviceId = $api['metadata']['serviceId'] ?? '';
         $version = $api['metadata']['apiVersion'];
 
         // Replace names for any operations with SDK aliases

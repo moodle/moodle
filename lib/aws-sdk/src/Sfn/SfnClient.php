@@ -51,6 +51,8 @@ use Aws\AwsClient;
  * @method \GuzzleHttp\Promise\Promise listTagsForResourceAsync(array $args = [])
  * @method \Aws\Result publishStateMachineVersion(array $args = [])
  * @method \GuzzleHttp\Promise\Promise publishStateMachineVersionAsync(array $args = [])
+ * @method \Aws\Result redriveExecution(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise redriveExecutionAsync(array $args = [])
  * @method \Aws\Result sendTaskFailure(array $args = [])
  * @method \GuzzleHttp\Promise\Promise sendTaskFailureAsync(array $args = [])
  * @method \Aws\Result sendTaskHeartbeat(array $args = [])
@@ -65,6 +67,8 @@ use Aws\AwsClient;
  * @method \GuzzleHttp\Promise\Promise stopExecutionAsync(array $args = [])
  * @method \Aws\Result tagResource(array $args = [])
  * @method \GuzzleHttp\Promise\Promise tagResourceAsync(array $args = [])
+ * @method \Aws\Result testState(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise testStateAsync(array $args = [])
  * @method \Aws\Result untagResource(array $args = [])
  * @method \GuzzleHttp\Promise\Promise untagResourceAsync(array $args = [])
  * @method \Aws\Result updateMapRun(array $args = [])
@@ -73,5 +77,7 @@ use Aws\AwsClient;
  * @method \GuzzleHttp\Promise\Promise updateStateMachineAsync(array $args = [])
  * @method \Aws\Result updateStateMachineAlias(array $args = [])
  * @method \GuzzleHttp\Promise\Promise updateStateMachineAliasAsync(array $args = [])
+ * @method \Aws\Result validateStateMachineDefinition(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise validateStateMachineDefinitionAsync(array $args = [])
  */
 class SfnClient extends AwsClient {}
