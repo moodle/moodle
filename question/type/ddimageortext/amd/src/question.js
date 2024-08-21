@@ -248,7 +248,11 @@ define([
 
         // Set each drag home to that size.
         dragHomes.each(function(i, drag) {
-            $(drag).width(maxWidth).height(maxHeight).css('lineHeight', maxHeight + 'px');
+            const top = Math.floor((maxHeight - drag.offsetHeight) / 2);
+            // Set top padding so the item is centred.
+            $(drag).width(maxWidth).height(maxHeight).css({
+                'padding-top': top + 'px',
+            });
         });
 
         // Create the drops and make them the right size.
