@@ -367,6 +367,8 @@ class question_test extends \advanced_testcase {
 
         $this->assertEquals(1, $question->get_max_fraction());
         $this->assertEquals(0, $question->get_min_fraction());
+        $this->assertNull($question->compute_final_grade([['sub1_answer' => 'Something']], 1));
+        $this->assertNull($question->grade_response([['sub1_answer' => 'Something']])[0]);
     }
 
 }
