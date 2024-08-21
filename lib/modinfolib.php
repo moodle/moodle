@@ -34,6 +34,7 @@ if (!defined('MAX_MODINFO_CACHE_SIZE')) {
 
 use core_courseformat\output\activitybadge;
 use core_courseformat\sectiondelegate;
+use core_courseformat\sectiondelegatemodule;
 
 /**
  * Information about a course that is cached in the course table 'modinfo' field (and then in
@@ -432,7 +433,7 @@ class course_modinfo {
                 $delegateinstance = $section->get_component_instance();
                 // We only return sections delegated by course modules. Sections delegated to other
                 // types of components must implement their own methods to get the section.
-                if (!$delegateinstance || !($delegateinstance instanceof \core_courseformat\sectiondelegatemodule)) {
+                if (!$delegateinstance || !($delegateinstance instanceof sectiondelegatemodule)) {
                     continue;
                 }
                 if (!$cm = $delegateinstance->get_cm()) {
@@ -3471,6 +3472,10 @@ class section_info implements IteratorAggregate {
             $this->_available = $ci->is_available($this->_availableinfo, true,
                     $userid, $this->modinfo);
         }
+
+        if ($this->_available) {
+            $this->_available = $this->check_delegated_available();
+        }
         // Execute the hook from the course format that may override the available/availableinfo properties.
         $currentavailable = $this->_available;
         course_get_format($this->modinfo->get_course())->
@@ -3480,6 +3485,29 @@ class section_info implements IteratorAggregate {
             $this->_available = $currentavailable;
         }
         return $this->_available;
+    }
+
+    /**
+     * Check if the delegated component is available.
+     *
+     * @return bool
+     */
+    private function check_delegated_available(): bool {
+        /** @var sectiondelegatemodule $sectiondelegate */
+        $sectiondelegate = $this->get_component_instance();
+        if (!$sectiondelegate) {
+            return true;
+        }
+
+        if ($sectiondelegate instanceof sectiondelegatemodule) {
+            $parentcm = $sectiondelegate->get_cm();
+            if (!$parentcm->available) {
+                return false;
+            }
+            return $parentcm->get_section_info()->available;
+        }
+
+        return true;
     }
 
     /**
@@ -3529,6 +3557,12 @@ class section_info implements IteratorAggregate {
             // Has already been calculated or does not need calculation.
             return $this->_uservisible;
         }
+
+        if (!$this->check_delegated_uservisible()) {
+            $this->_uservisible = false;
+            return $this->_uservisible;
+        }
+
         $this->_uservisible = true;
         if (!$this->_visible || !$this->get_available()) {
             $coursecontext = context_course::instance($this->get_course());
@@ -3540,6 +3574,30 @@ class section_info implements IteratorAggregate {
             }
         }
         return $this->_uservisible;
+    }
+
+    /**
+     * Check if the delegated component is user visible.
+     *
+     * @return bool
+     */
+    private function check_delegated_uservisible(): bool {
+        /** @var sectiondelegatemodule $sectiondelegate */
+        $sectiondelegate = $this->get_component_instance();
+        if (!$sectiondelegate) {
+            return true;
+        }
+
+        if ($sectiondelegate instanceof sectiondelegatemodule) {
+            $parentcm = $sectiondelegate->get_cm();
+            if (!$parentcm->uservisible) {
+                return false;
+            }
+            $result = $parentcm->get_section_info()->uservisible;
+            return $result;
+        }
+
+        return true;
     }
 
     /**
