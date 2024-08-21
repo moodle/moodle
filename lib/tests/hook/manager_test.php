@@ -348,9 +348,18 @@ final class manager_test extends \advanced_testcase {
             'Called deprecated callback',
             component_callback('fake_hooktest', 'old_callback', [], null, true)
         );
+        $this->assertDebuggingNotCalled();
+
+        // Forcefully modify the PHPUnit flag on the manager to ensure the debugging message is output.
+        $manager = di::get(manager::class);
+        $rp = new \ReflectionProperty($manager, 'phpunit');
+        $rp->setValue($manager, false);
+
+        component_callback('fake_hooktest', 'old_callback', [], null, true);
+
         $this->assertDebuggingCalled(
             'Callback old_callback in fake_hooktest component should be migrated to new hook ' .
-                'callback for fake_hooktest\hook\hook_replacing_callback'
+                'callback for fake_hooktest\hook\hook_replacing_callback',
         );
     }
 
@@ -421,9 +430,17 @@ final class manager_test extends \advanced_testcase {
             'Called deprecated class callback',
             component_class_callback('fake_hooktest\callbacks', 'old_class_callback', [], null, true)
         );
+        $this->assertDebuggingNotCalled();
+
+        // Forcefully modify the PHPUnit flag on the manager to ensure the debugging message is output.
+        $manager = di::get(manager::class);
+        $rp = new \ReflectionProperty($manager, 'phpunit');
+        $rp->setValue($manager, false);
+
+        component_class_callback('fake_hooktest\callbacks', 'old_class_callback', [], null, true);
         $this->assertDebuggingCalled(
             'Callback callbacks::old_class_callback in fake_hooktest component should be migrated to new hook ' .
-                'callback for fake_hooktest\hook\hook_replacing_class_callback'
+                'callback for fake_hooktest\hook\hook_replacing_class_callback',
         );
     }
 
