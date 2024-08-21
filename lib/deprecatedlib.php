@@ -751,3 +751,29 @@ function reset_password_and_mail($user) {
     // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
     return email_to_user($user, $supportuser, $subject, $message);
 }
+
+/**
+ * @deprecated Since Moodle 4.0 MDL-71175. Please use plagiarism_get_links() or plugin specific functions..
+ */
+#[\core\attribute\deprecated(
+    replacement: 'plagiarism_get_links',
+    since: '4.0',
+    mdl: 'MDL-71175',
+    final: true,
+)]
+function plagiarism_get_file_results(): void {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
+
+/**
+ * @deprecated Since Moodle 4.0 - Please use {plugin name}_before_standard_top_of_body_html instead.
+ */
+#[\core\attribute\deprecated(
+    replacement: '{plugin name}_before_standard_top_of_body_html',
+    since: '4.0',
+    mdl: 'MDL-71175',
+    final: true,
+)]
+function plagiarism_update_status(): void {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}

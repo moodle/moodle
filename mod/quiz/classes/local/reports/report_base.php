@@ -68,10 +68,6 @@ abstract class report_base {
         if (!$PAGE->has_secondary_navigation()) {
             echo $OUTPUT->heading(format_string($quiz->name, true, ['context' => $context]));
         }
-        if (!empty($CFG->enableplagiarism)) {
-            require_once($CFG->libdir . '/plagiarismlib.php');
-            echo plagiarism_update_status($course, $cm);
-        }
     }
 
     /**
