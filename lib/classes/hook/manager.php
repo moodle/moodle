@@ -59,8 +59,13 @@ final class manager implements
 
     /**
      * Constructor can be used only from factory methods.
+     *
+     * @param bool $phpunit Whether this is a PHPUnit instantiated instance
      */
-    private function __construct() {
+    private function __construct(
+        /** @var bool Whether this is a PHPUnit instantiated instance */
+        private bool $phpunit = false,
+    ) {
     }
 
     /**
@@ -89,9 +94,26 @@ final class manager implements
         if (!PHPUNIT_TEST) {
             throw new \coding_exception('Invalid call of manager::phpunit_get_instance() outside of tests');
         }
-        $instance = new self();
+        $instance = new self(
+            phpunit: true,
+        );
         $instance->load_callbacks($componentfiles);
         return $instance;
+    }
+
+    /**
+     * Whether to warn when an unmigrated legacy hook is found.
+     *
+     * @return bool
+     */
+    public function warn_on_unmigrated_legacy_hooks(): bool {
+        if ($this->phpunit) {
+            // This is an empty instance used in PHPUnit tests.
+            // It does not know of any migrated hooks.
+            return false;
+        }
+
+        return true;
     }
 
     /**
