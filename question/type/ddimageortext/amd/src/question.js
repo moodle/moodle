@@ -133,8 +133,12 @@ define([
             // Now resize all the items in the same group if we have new maximum width or height.
             this.resizeAllDragsAndDropsInGroup(group);
         } else {
-            currentFilteredItem.height(currentHeight);
-            currentFilteredItem.width(currentWidth);
+            // Calculate the top padding.
+            const top = Math.floor((this.questionDragDropWidthHeight[group].maxHeight - filteredElement.offsetHeight) / 2);
+            // Set top padding so the content of filtered item is center again.
+            currentFilteredItem.width(currentWidth).height(currentHeight).css({
+                'padding-top': top + 'px',
+            });
         }
         // Remove the d-block class after resize.
         filteredElement.classList.remove('d-block');
