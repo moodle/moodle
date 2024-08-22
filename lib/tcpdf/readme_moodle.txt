@@ -12,6 +12,21 @@ Important
 A new version of the libray is being developed @ https://github.com/tecnickcom/tc-lib-pdf . Check periodically when it's ready
 and if it's a drop-in replacement for the legacy tcpdf one.
 
+2024/06/16
+----------
+Upgrade to tcpdf TCPDF 6.7.5 (MDL-81658)
+by Daniel Ziegenbergg <daniel.ziegenberg@tuwien.ac.at>
+
+2023/10/23
+----------
+Upgrade to tcpdf TCPDF 6.6.5 (MDL-79665)
+by Paul Holden <paulh@moodle.com>
+
+2023/03/02
+----------
+Upgrade to tcpdf TCPDF 6.6.2 (MDL-76910)
+by Paul Holden <paulh@moodle.com>
+
 2022/09/27
 ----------
 Upgrade to tcpdf TCPDF 6.5.0 (MDL-75468)
