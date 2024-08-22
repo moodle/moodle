@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core_ai;
+namespace core_ai\aiactions\responses;
 
 use core_ai\aiactions\responses\response_generate_image;
 
@@ -48,15 +48,15 @@ final class response_generate_image_test extends \advanced_testcase {
         $this->expectException(\coding_exception::class);
         $this->expectExceptionMessage('Error code and message must exist in an error response.');
         new response_generate_image(
-                success: false,
-                actionname: 'generate_image'
+            success: false,
+            actionname: 'generate_image'
         );
     }
 
     /**
-     * Test set_response.
+     * Test set_response_data.
      */
-    public function test_set_response(): void {
+    public function test_set_response_data(): void {
         $this->resetAfterTest();
 
         // Create a file to store.
@@ -70,18 +70,18 @@ final class response_generate_image_test extends \advanced_testcase {
         $filerecord->filename = 'test.txt';
         $file = $fs->create_file_from_string($filerecord, 'This is a test file');
         $body = [
-                'draftfile' => $file,
-                'revisedprompt' => 'This is a revised prompt',
-                'sourceurl' => 'https://example.com/image.png',
+            'draftfile' => $file,
+            'revisedprompt' => 'This is a revised prompt',
+            'sourceurl' => 'https://example.com/image.png',
         ];
         $actionresponse = new response_generate_image(
-                success: true,
-                actionname: 'generate_image',
+            success: true,
+            actionname: 'generate_image',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
-        $this->assertEquals($file, $actionresponse->get_response()['draftfile']);
-        $this->assertEquals('This is a revised prompt', $actionresponse->get_response()['revisedprompt']);
-        $this->assertEquals('https://example.com/image.png', $actionresponse->get_response()['sourceurl']);
+        $this->assertEquals($file, $actionresponse->get_response_data()['draftfile']);
+        $this->assertEquals('This is a revised prompt', $actionresponse->get_response_data()['revisedprompt']);
+        $this->assertEquals('https://example.com/image.png', $actionresponse->get_response_data()['sourceurl']);
     }
 }

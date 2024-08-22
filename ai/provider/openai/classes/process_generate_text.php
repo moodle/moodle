@@ -103,12 +103,12 @@ class process_generate_text extends process_base {
 
     /**
      * Create the request object to send to the OpenAI API.
+     *
      * This object contains all the required parameters for the request.
      *
      * @param \core_ai\aiactions\base $action The action to process.
      * @param string $userid The user id.
      * @return \stdClass The request object to send to the OpenAI API.
-     * @throws \coding_exception
      */
     private function create_request_object(\core_ai\aiactions\base $action, string $userid): \stdClass {
         // Create the user object.
@@ -187,7 +187,6 @@ class process_generate_text extends process_base {
      *
      * @param array $response The response object.
      * @return response_generate_text The action response object.
-     * @throws \coding_exception
      */
     private function prepare_response(array $response): response_generate_text {
         if ($response['success']) {
@@ -195,7 +194,7 @@ class process_generate_text extends process_base {
                 success: true,
                 actionname: 'generate_text',
             );
-            $generatedtext->set_response($response);
+            $generatedtext->set_response_data($response);
             return $generatedtext;
         } else {
             return new response_generate_text(

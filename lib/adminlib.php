@@ -11828,9 +11828,9 @@ class admin_setting_savebutton extends admin_setting {
      * Constructor.
      *
      * @param string $name unique ascii name.
-     * @param string $visiblename localised name
-     * @param string $description localised long description
-     * @param mixed $defaultsetting string or array depending on implementation
+     * @param string $visiblename localised name.
+     * @param string $description localised long description.
+     * @param mixed $defaultsetting string or array depending on implementation.
      */
     public function __construct(string $name, string $visiblename = "", string $description = "", $defaultsetting = "") {
         $this->nosave = true;
@@ -11838,7 +11838,7 @@ class admin_setting_savebutton extends admin_setting {
     }
 
     /**
-     * Always returns true, does nothing
+     * Always returns true, does nothing.
      *
      * @return bool Always return true.
      */
@@ -11849,7 +11849,7 @@ class admin_setting_savebutton extends admin_setting {
     /**
      * Always returns '', does not write anything.
      *
-     * @param mixed $data string or array, must not be NULL
+     * @param mixed $data string or array, must not be NULL.
      * @return string Always returns ''.
      */
     public function write_setting($data): string {
@@ -11857,10 +11857,11 @@ class admin_setting_savebutton extends admin_setting {
     }
 
     /**
-     * Return part of form with setting
-     * This function should always be overwritten
+     * Return part of form with setting.
      *
-     * @param mixed $data array or string depending on setting
+     * This function should always be overwritten.
+     *
+     * @param mixed $data array or string depending on setting.
      * @param string $query
      * @return string
      */

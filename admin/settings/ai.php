@@ -16,6 +16,7 @@
 
 /**
  * Adds settings links to admin tree.
+ *
  * AI gets top billing in general because it's the future.
  *
  * @package   core_admin

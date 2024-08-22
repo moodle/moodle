@@ -50,34 +50,18 @@ class admin_setting_action_manager extends admin_setting {
         parent::__construct($name, $visiblename, $description, $defaultsetting);
     }
 
-    /**
-     * Always returns true, does nothing
-     *
-     * @return bool Always return true.
-     */
+    #[\Override]
     public function get_setting(): bool {
         return true;
     }
 
-    /**
-     * Always returns '', does not write anything.
-     *
-     * @param mixed $data string or array, must not be NULL
-     * @return string Always returns ''.
-     */
+    #[\Override]
     public function write_setting($data): string {
         // Do not write any setting.
         return '';
     }
 
-    /**
-     * Builds the XHTML to display the control.
-     *
-     * @param string $data Unused
-     * @param string $query
-     * @throws \coding_exception
-     * @return string
-     */
+    #[\Override]
     public function output_html($data, $query = ''): string {
         $table = new $this->tableclass($this->pluginname);
         if (!($table instanceof \core_ai\table\aiprovider_action_management_table)
@@ -89,5 +73,4 @@ class admin_setting_action_manager extends admin_setting {
         }
         return highlight($query, $table->get_content());
     }
-
 }

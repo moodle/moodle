@@ -36,19 +36,19 @@ class get_policy_status extends external_api {
      * @since  Moodle 4.5
      * @return external_function_parameters
      */
-    public static function get_policy_status_parameters(): external_function_parameters {
-        return new external_function_parameters(
-            [
-                'userid' => new external_value(
-                    PARAM_INT,
-                    'The user ID',
-                    VALUE_REQUIRED),
-                'contextid' => new external_value(
-                    PARAM_INT,
-                    'The context ID',
-                    VALUE_REQUIRED),
-            ]
-        );
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters([
+            'userid' => new external_value(
+                PARAM_INT,
+                'The user ID',
+                VALUE_REQUIRED,
+            ),
+            'contextid' => new external_value(
+                PARAM_INT,
+                'The context ID',
+                VALUE_REQUIRED,
+            ),
+        ]);
     }
 
     /**
@@ -59,7 +59,7 @@ class get_policy_status extends external_api {
      * @param int $contextid The context ID.
      * @return array The generated content.
      */
-    public static function get_policy_status(
+    public static function execute(
         int $userid,
         int $contextid,
     ): array {
@@ -68,7 +68,7 @@ class get_policy_status extends external_api {
         [
             'userid' => $userid,
             'contextid' => $contextid,
-        ] = self::validate_parameters(self::get_policy_status_parameters(), [
+        ] = self::validate_parameters(self::execute_parameters(), [
             'userid' => $userid,
             'contextid' => $contextid,
         ]);
@@ -79,7 +79,7 @@ class get_policy_status extends external_api {
 
         // Check the user has permission to use the AI service.
         self::validate_context($context);
-        require_capability('moodle/ai:getpolicy', $context);
+        require_capability('moodle/ai:fetchpolicy', $context);
 
         // If the context level is that of a user, check the user is the same as the one passed in.
         if ($context->contextlevel == CONTEXT_USER && ((int) $USER->id !== $userid)) {
@@ -97,12 +97,13 @@ class get_policy_status extends external_api {
      * @since  Moodle 4.5
      * @return external_function_parameters
      */
-    public static function get_policy_status_returns(): external_function_parameters {
+    public static function execute_returns(): external_function_parameters {
         return new external_function_parameters([
             'status' => new external_value(
                 PARAM_BOOL,
                 'True if the policy was accepted, false otherwise.',
-                VALUE_REQUIRED),
+                VALUE_REQUIRED,
+            ),
         ]);
     }
 }

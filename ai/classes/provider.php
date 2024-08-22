@@ -26,6 +26,7 @@ namespace core_ai;
 abstract class provider {
     /**
      * Get the actions that this provider supports.
+     *
      * Returns an array of action class names.
      *
      * @return array An array of action class names.
@@ -46,7 +47,6 @@ abstract class provider {
     /**
      * Get the name of the provider.
      *
-     * @throws \coding_exception
      * @return string The name of the provider.
      */
     public function get_name(): string {

@@ -18,7 +18,6 @@ namespace aiplacement_tinymce\external;
 
 use core_external\external_api;
 use core_external\external_function_parameters;
-use core_external\external_single_structure;
 use core_external\external_value;
 
 /**
@@ -33,46 +32,49 @@ class generate_image extends external_api {
     /**
      * Generate image parameters.
      *
-     * @since  Moodle 4.5
      * @return external_function_parameters
+     * @since  Moodle 4.5
      */
-    public static function generate_image_parameters(): external_function_parameters {
-        return new external_function_parameters(
-            [
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters([
             'contextid' => new external_value(
                 PARAM_INT,
                 'The context ID',
-                VALUE_REQUIRED),
+                VALUE_REQUIRED,
+            ),
             'prompttext' => new external_value(
                 PARAM_RAW,
                 'The prompt text for the AI service',
-                VALUE_REQUIRED),
+                VALUE_REQUIRED,
+            ),
             'aspectratio' => new external_value(
                 PARAM_ALPHA,
                 'The aspect ratio of the image',
-                VALUE_REQUIRED),
+                VALUE_REQUIRED,
+            ),
             'quality' => new external_value(
                 PARAM_ALPHA,
                 'The quality of the image',
-                VALUE_REQUIRED),
+                VALUE_REQUIRED,
+            ),
             'numimages' => new external_value(
                 PARAM_INT,
                 'The number of images to generate',
                 VALUE_DEFAULT,
-                1),
+                1,
+            ),
             'style' => new external_value(
                 PARAM_ALPHA,
                 'The style of the image',
                 VALUE_DEFAULT,
-                'natural'),
-            ]
-        );
+                'natural',
+            ),
+        ]);
     }
 
     /**
      * Generate image from the AI placement.
      *
-     * @since  Moodle 4.5
      * @param int $contextid The context ID.
      * @param string $prompttext The data encoded as a json array.
      * @param string $aspectratio The aspect ratio of the image.
@@ -80,15 +82,16 @@ class generate_image extends external_api {
      * @param string $numimages The number of images to generate.
      * @param string $style The style of the image.
      * @return array The generated content.
+     * @since  Moodle 4.5
      */
-    public static function generate_image(
-            int $contextid,
-            string $prompttext,
-            string $aspectratio,
-            string $quality,
-            string $numimages,
-            string $style = ''
-        ): array {
+    public static function execute(
+        int $contextid,
+        string $prompttext,
+        string $aspectratio,
+        string $quality,
+        string $numimages,
+        string $style = '',
+    ): array {
         global $USER;
         // Parameter validation.
         [
@@ -97,8 +100,8 @@ class generate_image extends external_api {
             'aspectratio' => $aspectratio,
             'quality' => $quality,
             'numimages' => $numimages,
-            'style' => $style
-        ] = self::validate_parameters(self::generate_image_parameters(), [
+            'style' => $style,
+        ] = self::validate_parameters(self::execute_parameters(), [
             'contextid' => $contextid,
             'prompttext' => $prompttext,
             'aspectratio' => $aspectratio,
@@ -131,12 +134,12 @@ class generate_image extends external_api {
 
         // If we have a successful response, generate the URL for the draft file.
         if ($response->get_success()) {
-            $draftfile = $response->get_response()['draftfile'];
+            $draftfile = $response->get_response_data()['draftfile'];
             $drafturl = \moodle_url::make_draftfile_url(
                 $draftfile->get_itemid(),
                 $draftfile->get_filepath(),
                 $draftfile->get_filename(),
-                false
+                false,
             )->out(false);
 
         } else {
@@ -146,7 +149,7 @@ class generate_image extends external_api {
         // Return the response.
         return [
             'success' => $response->get_success(),
-            'revisedprompt' => $response->get_response()['revisedprompt'] ?? '',
+            'revisedprompt' => $response->get_response_data()['revisedprompt'] ?? '',
             'drafturl' => $drafturl,
             'errorcode' => $response->get_errorcode(),
             'error' => $response->get_errormessage(),
@@ -156,35 +159,40 @@ class generate_image extends external_api {
     /**
      * Generate content return value.
      *
-     * @since  Moodle 4.5
      * @return external_function_parameters
+     * @since  Moodle 4.5
      */
-    public static function generate_image_returns(): external_function_parameters {
+    public static function execute_returns(): external_function_parameters {
         return new external_function_parameters([
-                'success' => new external_value(
-                        PARAM_BOOL,
-                        'Was the request successful',
-                        VALUE_REQUIRED),
-                'revisedprompt' => new external_value(
-                        PARAM_TEXT,
-                        'Revised prompt generated by the AI',
-                        VALUE_DEFAULT,
-                        ''),
-                'drafturl' => new external_value(
-                        PARAM_URL,
-                        'Draft file URL for the image',
-                        VALUE_DEFAULT,
-                        ''),
-                'errorcode' => new external_value(
-                        PARAM_INT,
-                        'Error code if any',
-                        VALUE_DEFAULT,
-                        0),
-                'error' => new external_value(
-                        PARAM_TEXT,
-                        'Error message if any',
-                        VALUE_DEFAULT,
-                        ''),
+            'success' => new external_value(
+                PARAM_BOOL,
+                'Was the request successful',
+                VALUE_REQUIRED,
+            ),
+            'revisedprompt' => new external_value(
+                PARAM_TEXT,
+                'Revised prompt generated by the AI',
+                VALUE_DEFAULT,
+                '',
+            ),
+            'drafturl' => new external_value(
+                PARAM_URL,
+                'Draft file URL for the image',
+                VALUE_DEFAULT,
+                '',
+            ),
+            'errorcode' => new external_value(
+                PARAM_INT,
+                'Error code if any',
+                VALUE_DEFAULT,
+                0,
+            ),
+            'error' => new external_value(
+                PARAM_TEXT,
+                'Error message if any',
+                VALUE_DEFAULT,
+                '',
+            ),
         ]);
     }
 }

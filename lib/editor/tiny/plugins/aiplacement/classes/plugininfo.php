@@ -71,8 +71,8 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
      */
     public static function get_available_menuitems(): array {
         return [
-                'tiny_aiplacement/generate_text',
-                'tiny_aiplacement/generate_image',
+            'tiny_aiplacement/generate_text',
+            'tiny_aiplacement/generate_image',
         ];
     }
 

@@ -35,6 +35,15 @@ class ai_image {
     /** @var int Image's height. */
     private int $height;
 
+    /**
+     * Constructor for the image processing class.
+     *
+     * Initializes the class with the provided image path, setting up the image object and its properties.
+     * The constructor checks if the GD library functions for PNG and JPEG are available, ensures the image file
+     * exists and is readable, and then creates an image resource object based on the file type (JPEG, PNG, or GIF).
+     *
+     * @param string $imagepath The path to the image file.
+     */
     public function __construct(
         /** @var string Image path. */
         private string $imagepath,

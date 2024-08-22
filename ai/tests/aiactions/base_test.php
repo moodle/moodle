@@ -17,7 +17,7 @@
 namespace core_ai\aiactions;
 
 use core_ai\aiactions\responses\response_base;
-use \core_ai\aiactions;
+use core_ai\aiactions;
 use ReflectionClass;
 
 /**
@@ -43,8 +43,8 @@ final class base_test extends \advanced_testcase {
      */
     public function test_get_name(): void {
         $this->assertEquals(
-                get_string('action_generate_text', 'core_ai'),
-                aiactions\generate_text::get_name()
+            get_string('action_generate_text', 'core_ai'),
+            aiactions\generate_text::get_name()
         );
     }
 
@@ -53,18 +53,25 @@ final class base_test extends \advanced_testcase {
      */
     public function test_get_description(): void {
         $this->assertEquals(
-                get_string('action_generate_text_desc', 'core_ai'),
-                aiactions\generate_text::get_description()
+            get_string('action_generate_text_desc', 'core_ai'),
+            aiactions\generate_text::get_description()
         );
     }
+
     /**
      * Test that every action class implements a constructor.
      */
     public function test_constructor(): void {
         $classes = [];
 
+        $contextid = 1;
         // Create an anonymous class that extends the base class.
-        $base = new class extends \core_ai\aiactions\base {
+        $base = new class($contextid) extends \core_ai\aiactions\base {
+            /**
+             * Store the response.
+             * @param response_base $response
+             * @return int
+             */
             public function store(response_base $response): int {
                 return 0;
             }
@@ -73,14 +80,20 @@ final class base_test extends \advanced_testcase {
         $reflection = new ReflectionClass($base); // Create a ReflectionClass for the anonymous class.
 
         // Use the location of the base class to get the AI action classes.
-        $filePath = $reflection->getParentClass()->getFileName();
-        $directory = dirname($filePath);
+        $filepath = $reflection->getParentClass()->getFileName();
+        $directory = dirname($filepath);
         $files = scandir($directory);
+
         foreach ($files as $file) {
-            if (str_ends_with($file, '.php') &! str_starts_with($file, 'base')) {
-                $classes[] = 'core_ai\\aiactions\\' . str_replace('.php', '', $file);
+            // Match files that are PHP files and not specifically just 'base.*.php'.
+            if (str_ends_with($file, '.php')) {
+                $classname = str_replace('.php', '', $file);
+                $classes[] = 'core_ai\\aiactions\\' . $classname;
             }
         }
+
+        // Ensure that some classes were found.
+        $this->assertNotEmpty($classes, 'No classes were found for testing.');
 
         // For each action class, check that they have a constructor.
         foreach ($classes as $class) {

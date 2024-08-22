@@ -37,7 +37,6 @@ abstract class response_base {
      * @param string $actionname The name of the action that was processed.
      * @param int $errorcode Error code. Must exist if success is false.
      * @param string $errormessage Error message. Must exist if success is false
-     * @throws coding_exception
      */
     public function __construct(
         /** @var bool The success status of the action. */
@@ -60,16 +59,15 @@ abstract class response_base {
      * Set the response data returned by the AI provider.
      *
      * @param array $response The response data returned by the AI provider.
-     * @return void
      */
-    abstract public function set_response(array $response): void;
+    abstract public function set_response_data(array $response): void;
 
     /**
      * Get the response data returned by the AI provider.
      *
      * @return array
      */
-    abstract public function get_response(): array;
+    abstract public function get_response_data(): array;
 
     /**
      * Get the success status of the action.

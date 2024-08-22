@@ -47,7 +47,7 @@ final class policy_test extends \advanced_testcase {
 
         $result = \core_external\external_api::call_external_function(
             'core_ai_get_policy_status',
-            $params
+            $params,
         );
 
         $this->assertFalse($result['data']['status']);
@@ -77,13 +77,13 @@ final class policy_test extends \advanced_testcase {
 
         $_POST['sesskey'] = sesskey();
         $params = [
-                'userid' => $user->id,
-                'contextid' => $context->id,
+            'userid' => $user->id,
+            'contextid' => $context->id,
         ];
 
         $result = \core_external\external_api::call_external_function(
-                'core_ai_get_policy_status',
-                $params
+            'core_ai_get_policy_status',
+            $params
         );
 
         $this->assertTrue($result['data']['status']);
@@ -104,8 +104,8 @@ final class policy_test extends \advanced_testcase {
 
         $_POST['sesskey'] = sesskey();
         $params = [
-                'userid' => $user->id,
-                'contextid' => $context->id,
+            'userid' => $user->id,
+            'contextid' => $context->id,
         ];
 
         $result = \core_external\external_api::call_external_function(

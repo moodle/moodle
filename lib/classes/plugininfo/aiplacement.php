@@ -30,6 +30,7 @@ class aiplacement extends base {
 
     /**
      * Should there be a way to uninstall the plugin via the administration UI.
+     *
      * By default, uninstallation is allowed.
      *
      * @return bool
@@ -88,14 +89,13 @@ class aiplacement extends base {
             name: $section,
             visiblename: $this->displayname,
             req_capability: 'moodle/site:config',
-            hidden: $this->is_enabled() === false,
+            hidden: true,
         );
         if (file_exists($this->full_path('settings.php'))) {
             include($this->full_path('settings.php')); // This may also set $settings to null.
+            // Show the save changes button between the specific settings and the actions table.
+            $settings->add(new \admin_setting_savebutton("{$section}/savebutton"));
         }
-
-        // Show the save changes button between the specific settings and the actions table.
-        $settings->add(new \admin_setting_savebutton("{$section}/savebutton"));
 
         // Load the actions table.
         if (file_exists($this->full_path('setting_actions.php'))) {
@@ -120,6 +120,7 @@ class aiplacement extends base {
 
     /**
      * Return URL used for management of plugins of this type.
+     *
      * @return moodle_url
      */
     public static function get_manage_url(): moodle_url {
@@ -134,7 +135,6 @@ class aiplacement extends base {
      *
      * @param string $pluginname The plugin name to enable/disable.
      * @param int $enabled Whether the pluginname should be enabled (1) or not (0).
-     *
      * @return bool Whether $pluginname has been updated or not.
      */
     public static function enable_plugin(string $pluginname, int $enabled): bool {

@@ -26,6 +26,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $definitions = array(
 
     // Used to store processed lang files.
@@ -631,7 +633,7 @@ $definitions = array(
         'simplekeys' => true, // Cache must use simple keys (a-zA-Z0-9_).
         'simpledata' => true, // Cache stores integer values which are simple data.
         'staticacceleration' => true,
-        'datasource' => '\core_ai\cache\policy',
+        'datasource' => \core_ai\cache\policy::class,
         'canuselocalstore' => true,
     ],
     // Cache to store AI rate limits.

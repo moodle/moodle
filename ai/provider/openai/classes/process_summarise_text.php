@@ -31,7 +31,6 @@ class process_summarise_text extends process_generate_text {
      *
      * @param array $response The response object.
      * @return response_summarise_text The action response object.
-     * @throws \coding_exception
      */
     private function prepare_response(array $response): response_summarise_text {
         if ($response['success']) {
@@ -39,7 +38,7 @@ class process_summarise_text extends process_generate_text {
                 success: true,
                 actionname: 'summarise_text',
             );
-            $generatedtext->set_response($response);
+            $generatedtext->set_response_data($response);
             return $generatedtext;
         } else {
             return new response_summarise_text(

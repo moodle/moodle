@@ -27,31 +27,17 @@ use moodle_url;
  */
 class aiplacement_management_table extends \core_admin\table\plugin_management_table {
 
-    /**
-     * Get the name of the plugin type this table manages.
-     *
-     * @return string The name of the plugin type this table manages.
-     */
+    #[\Override]
     protected function get_plugintype(): string {
         return 'aiplacement';
     }
 
-    /**
-     * Get the URL to the action page.
-     *
-     * @param array $params The parameters to pass to the action page.
-     * @return moodle_url The URL to the action page.
-     * @throws \core\exception\moodle_exception
-     */
+    #[\Override]
     protected function get_action_url(array $params = []): moodle_url {
         return new moodle_url('/admin/ai.php', $params);
     }
 
-    /**
-     * Get the list of columns for this table.
-     *
-     * @return array The list of columns for this table.
-     */
+    #[\Override]
     protected function get_column_list(): array {
         $columns = [
             'name' => get_string('name', 'core'),

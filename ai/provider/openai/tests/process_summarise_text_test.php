@@ -102,13 +102,12 @@ final class process_summarise_text_test extends \advanced_testcase {
 
     /**
      * Test the API success response handler method.
-     *
      */
     public function test_handle_api_success(): void {
         $response = new Response(
             200,
             ['Content-Type' => 'application/json'],
-            $this->responsebodyjson
+            $this->responsebodyjson,
         );
 
         // We're testing a private method, so we need to set up reflector magic.
@@ -189,7 +188,7 @@ final class process_summarise_text_test extends \advanced_testcase {
         $this->assertTrue($result->get_success());
         $this->assertEquals('summarise_text', $result->get_actionname());
         $this->assertEquals($response['success'], $result->get_success());
-        $this->assertEquals($response['generatedcontent'], $result->get_response()['generatedcontent']);
+        $this->assertEquals($response['generatedcontent'], $result->get_response_data()['generatedcontent']);
     }
 
     /**

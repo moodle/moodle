@@ -16,10 +16,9 @@
 
 namespace core_ai\aiactions\responses;
 
-use core_ai\aiactions\responses\response_base;
-
 /**
  * Generate text action response class.
+ *
  * Any method that processes an action must return an instance of this class.
  *
  * @package    core_ai
@@ -46,13 +45,8 @@ class response_generate_text extends response_base {
     /** @var string|null Number of tokens in the generated completion. */
     private ?string $completiontokens = null;
 
-    /**
-     * Set the response data returned by the AI provider.
-     *
-     * @param array $response The response data returned by the AI provider.
-     * @return void
-     */
-    public function set_response(array $response): void {
+    #[\Override]
+    public function set_response_data(array $response): void {
         $this->id = $response['id'] ?? null;
         $this->fingerprint = $response['fingerprint'] ?? null;
         $this->generatedcontent = $response['generatedcontent'] ?? null;
@@ -61,12 +55,8 @@ class response_generate_text extends response_base {
         $this->completiontokens = $response['completiontokens'] ?? null;
     }
 
-    /**
-     * Get the response data returned by the AI provider.
-     *
-     * @return array
-     */
-    public function get_response(): array {
+    #[\Override]
+    public function get_response_data(): array {
         return [
             'id' => $this->id,
             'fingerprint' => $this->fingerprint,

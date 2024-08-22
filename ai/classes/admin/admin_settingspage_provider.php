@@ -29,11 +29,7 @@ use admin_settingpage;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_settingspage_provider extends admin_settingpage {
-    /**
-     * Disable the "Save Changes" button on the admin provider settings page.
-     *
-     * @return bool
-     */
+    #[\Override]
     public function show_save(): bool {
         return false;
     }

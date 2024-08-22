@@ -25,49 +25,26 @@ use Psr\Clock\ClockInterface;
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ratelimiter {
+class rate_limiter {
     /** @var int TIME_WINDOW Time window in seconds (1 hour). */
-    public const TIME_WINDOW = 3600;
+    public const TIME_WINDOW = HOURSECS;
 
-    /** @var null|ratelimiter Singleton instance of the rate limiter. */
-    private static ?ratelimiter $instance = null;
+    /** @var null|rate_limiter Singleton instance of the rate limiter. */
+    private static ?rate_limiter $instance = null;
 
     /** @var \cache_application Cache instance for rate limiter. */
     private \cache_application $cache;
-
-    /** @var ClockInterface Clock instance for time management. */
-    private ClockInterface $clock;
-
-    /**
-     * Get the singleton instance of the rate limiter.
-     *
-     * @param ClockInterface|null $clock Clock instance for time management.
-     * @return ratelimiter Singleton instance of the rate limiter.
-     */
-    public static function get_instance(?ClockInterface $clock = null): ratelimiter {
-        if (self::$instance === null) {
-            self::$instance = new self($clock ?? new \core\system_clock);
-        }
-        return self::$instance;
-    }
 
     /**
      * Constructor.
      *
      * @param ClockInterface $clock Clock instance for time management.
      */
-    private function __construct(ClockInterface $clock) {
+    public function __construct(
+        /** @var ClockInterface Clock instance for time management. */
+        private ClockInterface $clock,
+    ) {
         $this->cache = \cache::make('core', 'ai_ratelimit');
-        $this->clock = $clock;
-    }
-
-    /**
-     * Reset the singleton instance.
-     *
-     * @return void
-     */
-    public static function reset_instance(): void {
-        self::$instance = null;
     }
 
     /**

@@ -91,7 +91,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -124,7 +124,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_image',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -164,7 +164,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'summarise_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -238,7 +238,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -265,7 +265,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
         $method->invoke($manager, $provider, $action, $actionresponse);
 
         // Retrieve the user's context ids.
@@ -344,7 +344,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_image',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -371,7 +371,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_image',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
         $method->invoke($manager, $provider, $action, $actionresponse);
 
         // Retrieve the user's context ids.
@@ -454,7 +454,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -481,7 +481,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
         $method->invoke($manager, $provider, $action, $actionresponse);
 
         // Retrieve the user's context ids.
@@ -589,7 +589,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -615,7 +615,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
         $storeresult2 = $method->invoke($manager, $provider, $action, $actionresponse);
 
@@ -667,7 +667,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_image',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -693,7 +693,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_image',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
         $storeresult2 = $method->invoke($manager, $provider, $action, $actionresponse);
 
@@ -743,7 +743,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'summarise_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -769,7 +769,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'summarise_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
         $storeresult2 = $method->invoke($manager, $provider, $action, $actionresponse);
 
@@ -820,7 +820,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -846,7 +846,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
         $storeresult2 = $method->invoke($manager, $provider, $action, $actionresponse);
 
@@ -899,7 +899,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_image',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -925,7 +925,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_image',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
         $storeresult2 = $method->invoke($manager, $provider, $action, $actionresponse);
 
@@ -976,7 +976,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'summarise_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -1002,7 +1002,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'summarise_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
         $storeresult2 = $method->invoke($manager, $provider, $action, $actionresponse);
 
@@ -1085,7 +1085,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -1111,7 +1111,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
         $method->invoke($manager, $provider, $action, $actionresponse);
 
@@ -1160,7 +1160,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_image',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -1186,7 +1186,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_image',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
         $method->invoke($manager, $provider, $action, $actionresponse);
 
@@ -1236,7 +1236,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'summarise_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -1262,7 +1262,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'summarise_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
         $method->invoke($manager, $provider, $action, $actionresponse);
 
@@ -1343,7 +1343,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -1369,7 +1369,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
         $storeresult2 = $method->invoke($manager, $provider, $action, $actionresponse);
 
@@ -1425,7 +1425,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_image',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -1451,7 +1451,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'generate_image',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
         $storeresult2 = $method->invoke($manager, $provider, $action, $actionresponse);
 
@@ -1504,7 +1504,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'summarise_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
         $manager = new manager();
@@ -1530,7 +1530,7 @@ final class provider_test extends \advanced_testcase {
             success: true,
             actionname: 'summarise_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
         $storeresult2 = $method->invoke($manager, $provider, $action, $actionresponse);
 
@@ -1559,8 +1559,6 @@ final class provider_test extends \advanced_testcase {
      * Test get_name.
      */
     public function test_get_name(): void {
-        // TODO: Enable this test in MDL-80894.
-        $this->markTestSkipped('MDL-80894');
         $provider = new \aiprovider_openai\provider();
 
         $this->assertEquals(get_string('pluginname', 'aiprovider_openai'), $provider->get_name());

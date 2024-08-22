@@ -27,16 +27,10 @@ use cache_definition;
  */
 class policy implements \cache_data_source {
 
-    /** @var policy the singleton instance of this class. */
-    protected static $instance = null;
+    /** @var policy|null the singleton instance of this class. */
+    protected static ?policy $instance = null;
 
-    /**
-     * Returns an instance of the data source class that the cache can use for loading data using the other methods
-     * specified by this interface.
-     *
-     * @param cache_definition $definition
-     * @return object
-     */
+    #[\Override]
     public static function get_instance_for_cache(cache_definition $definition): policy {
         if (is_null(self::$instance)) {
             self::$instance = new policy();
@@ -44,25 +38,14 @@ class policy implements \cache_data_source {
         return self::$instance;
     }
 
-    /**
-     * Loads the data for the key provided ready formatted for caching.
-     *
-     * @param string|int $key The key to load.
-     * @return mixed What ever data should be returned, or false if it can't be loaded.
-     * @throws \coding_exception
-     */
+    #[\Override]
     public function load_for_cache($key) {
         global $DB;
 
         return $DB->record_exists('ai_policy_register', ['userid' => $key]);
     }
 
-    /**
-     * Loads several keys for the cache.
-     *
-     * @param array $keys An array of keys each of which will be string|int.
-     * @return array An array of matching data items.
-     */
+    #[\Override]
     public function load_many_for_cache(array $keys): array {
         global $DB;
         $return = [];

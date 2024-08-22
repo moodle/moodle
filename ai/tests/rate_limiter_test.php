@@ -27,27 +27,22 @@ require_once($CFG->libdir . '/testing/classes/incrementing_clock.php');
  * @package    core_ai
  * @copyright  2024 Matt Porritt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_ai\ratelimiter
+ * @covers     \core_ai\rate_limiter
  */
-final class ratelimiter_test extends \advanced_testcase {
-
-    /** @var \cache_application Cache instance for rate limiter. */
-    private \cache_application $cache;
-
+final class rate_limiter_test extends \advanced_testcase {
     /**
      * Set up before tests.
      */
     protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest(true);
-        ratelimiter::reset_instance(); // Reset the singleton instance.
     }
 
     /**
      * Test global rate limit is enforced correctly.
      */
     public function test_global_rate_limit(): void {
-        $ratelimiter = ratelimiter::get_instance();
+        $ratelimiter = \core\di::get(rate_limiter::class);
         $component = 'testcomponent';
         $ratelimit = 5;
 
@@ -64,7 +59,7 @@ final class ratelimiter_test extends \advanced_testcase {
      * Test user rate limit is enforced correctly.
      */
     public function test_user_rate_limit(): void {
-        $ratelimiter = ratelimiter::get_instance();
+        $ratelimiter = \core\di::get(rate_limiter::class);
         $component = 'testcomponent';
         $ratelimit = 3;
         $userid = 12345;
@@ -82,8 +77,8 @@ final class ratelimiter_test extends \advanced_testcase {
      * Test global rate limit resets after time window.
      */
     public function test_global_rate_limit_reset(): void {
-        $clock = new \incrementing_clock(0);
-        $ratelimiter = ratelimiter::get_instance($clock);
+        $clock = $this->mock_clock_with_incrementing(0);
+        $ratelimiter = \core\di::get(rate_limiter::class);
         $component = 'testcomponent';
         $ratelimit = 3;
 
@@ -93,7 +88,7 @@ final class ratelimiter_test extends \advanced_testcase {
         }
 
         // Simulate moving time forward by TIME_WINDOW to reset the rate limit.
-        $clock->set_to(ratelimiter::TIME_WINDOW + 1);
+        $clock->set_to(rate_limiter::TIME_WINDOW + 1);
 
         // The next request should be allowed again.
         $this->assertTrue($ratelimiter->check_global_rate_limit($component, $ratelimit));
@@ -103,8 +98,8 @@ final class ratelimiter_test extends \advanced_testcase {
      * Test user rate limit resets after time window.
      */
     public function test_user_rate_limit_reset(): void {
-        $clock = new \incrementing_clock(0);
-        $ratelimiter = ratelimiter::get_instance($clock);
+        $clock = $this->mock_clock_with_incrementing(0);
+        $ratelimiter = \core\di::get(rate_limiter::class);
         $component = 'testcomponent';
         $ratelimit = 3;
         $userid = 12345;
@@ -115,7 +110,7 @@ final class ratelimiter_test extends \advanced_testcase {
         }
 
         // Simulate moving time forward by TIME_WINDOW to reset the rate limit.
-        $clock->set_to(ratelimiter::TIME_WINDOW + 1);
+        $clock->set_to(rate_limiter::TIME_WINDOW + 1);
 
         // The next user request should be allowed again.
         $this->assertTrue($ratelimiter->check_user_rate_limit($component, $ratelimit, $userid));

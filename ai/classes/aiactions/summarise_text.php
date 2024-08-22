@@ -26,44 +26,31 @@ use core_ai\aiactions\responses\response_base;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class summarise_text extends base {
-    /** @var int The user id requesting the action. */
-    protected int $userid;
-
-    /** @var string The prompt text used to generate the summary text */
-    protected string $prompttext;
-
     /**
-     * Constructor for the class.
+     * Create a new instance of the summarise_text action.
+     *
      * It’s responsible for performing any setup tasks,
      * such as getting additional data from the database etc.
      *
      * @param int $contextid The context id the action was created in.
      * @param int $userid The user id making the request.
      * @param string $prompttext The prompt text used to generate the image.
-     * @return void.
      */
     public function __construct(
-            int $contextid,
-            int $userid,
-            string $prompttext
+        int $contextid,
+        /** @var int The user id requesting the action. */
+        protected int $userid,
+        /** @var string The prompt text used to generate the summary text */
+        protected string $prompttext,
     ) {
-        $this->timecreated = \core\di::get(\core\clock::class)->time();
-        $this->contextid = $contextid;
-        $this->userid = $userid;
-        $this->prompttext = $prompttext;
+        parent::__construct($contextid);
     }
 
-    /**
-     * Store the action in the database.
-     *
-     * @param response_base $response The result of the action.
-     * @return int The id of the stored action.
-     * @throws \dml_exception
-     */
+    #[\Override]
     public function store(response_base $response): int {
         global $DB;
 
-        $responsearr = $response->get_response();
+        $responsearr = $response->get_response_data();
 
         $tablename = $this->get_tablename();
         $record = new \stdClass();

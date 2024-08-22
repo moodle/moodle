@@ -92,7 +92,6 @@ class process_generate_image extends process_generate_text {
      *
      * @param string $ratio The aspect ratio of the image.
      * @return string The size of the image.
-     * @throws \coding_exception
      */
     private function calculate_size(string $ratio): string {
         if ($ratio === 'square') {
@@ -109,12 +108,12 @@ class process_generate_image extends process_generate_text {
 
     /**
      * Create the request object to send to the OpenAI API.
+     *
      * This object contains all the required parameters for the request.
      *
      * @param \core_ai\aiactions\base $action The action to process.
      * @param string $userid The user id.
      * @return \stdClass The request object to send to the OpenAI API.
-     * @throws \coding_exception
      */
     private function create_request_object(\core_ai\aiactions\base $action, string $userid): \stdClass {
         $requestobj = new \stdClass();
@@ -152,7 +151,6 @@ class process_generate_image extends process_generate_text {
      *
      * @param array $response The response object.
      * @return response_generate_image The action response object.
-     * @throws \coding_exception
      */
     private function prepare_response(array $response): response_generate_image {
         if ($response['success']) {
@@ -160,7 +158,7 @@ class process_generate_image extends process_generate_text {
                 success: true,
                 actionname: 'generate_image',
             );
-            $generatedimage->set_response($response);
+            $generatedimage->set_response_data($response);
             return $generatedimage;
         } else {
             return new response_generate_image(

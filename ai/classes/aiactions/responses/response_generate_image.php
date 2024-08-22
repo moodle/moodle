@@ -16,10 +16,9 @@
 
 namespace core_ai\aiactions\responses;
 
-use core_ai\aiactions\responses\response_base;
-
 /**
  * Generate image action response class.
+ *
  * Any method that processes an action must return an instance of this class.
  *
  * @package    core_ai
@@ -36,24 +35,15 @@ class response_generate_image extends response_base {
     /** @var string|null The URL of the source image used to generate the image. */
     private ?string $sourceurl = null;
 
-    /**
-     * Set the response data returned by the AI provider.
-     *
-     * @param array $response The response data returned by the AI provider.
-     * @return void
-     */
-    public function set_response(array $response): void {
+    #[\Override]
+    public function set_response_data(array $response): void {
         $this->draftfile = $response['draftfile'] ?? null;
         $this->revisedprompt = $response['revisedprompt'] ?? null;
         $this->sourceurl = $response['sourceurl'] ?? null;
     }
 
-    /**
-     * Get the response data returned by the AI provider.
-     *
-     * @return array
-     */
-    public function get_response(): array {
+    #[\Override]
+    public function get_response_data(): array {
         return [
             'draftfile' => $this->draftfile,
             'revisedprompt' => $this->revisedprompt,

@@ -102,13 +102,12 @@ final class process_generate_text_test extends \advanced_testcase {
 
     /**
      * Test the API success response handler method.
-     *
      */
     public function test_handle_api_success(): void {
         $response = new Response(
             200,
             ['Content-Type' => 'application/json'],
-            $this->responsebodyjson
+            $this->responsebodyjson,
         );
 
         // We're testing a private method, so we need to setup reflector magic.
@@ -135,7 +134,7 @@ final class process_generate_text_test extends \advanced_testcase {
         $response = new Response(
             200,
             ['Content-Type' => 'application/json'],
-            $this->responsebodyjson
+            $this->responsebodyjson,
         );
         $client = $this->createMock(\core\http_client::class);
         $client->method('request')->willReturn($response);
@@ -189,7 +188,7 @@ final class process_generate_text_test extends \advanced_testcase {
         $this->assertTrue($result->get_success());
         $this->assertEquals('generate_text', $result->get_actionname());
         $this->assertEquals($response['success'], $result->get_success());
-        $this->assertEquals($response['generatedcontent'], $result->get_response()['generatedcontent']);
+        $this->assertEquals($response['generatedcontent'], $result->get_response_data()['generatedcontent']);
     }
 
     /**

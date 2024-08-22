@@ -16,8 +16,7 @@
 
 namespace aiprovider_openai;
 
-use core_ai\ratelimiter;
-use GuzzleHttp\Psr7\Response;
+use core_ai\rate_limiter;
 
 /**
  * Test OpenAI provider methods.
@@ -70,7 +69,6 @@ final class provider_test extends \advanced_testcase {
      */
     public function test_is_request_allowed(): void {
         $this->resetAfterTest();
-        ratelimiter::reset_instance(); // Reset the singleton instance.
 
         // Set plugin config rate limiter settings.
         set_config('enableglobalratelimit', 1, 'aiprovider_openai');

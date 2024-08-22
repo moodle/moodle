@@ -26,35 +26,20 @@ use moodle_url;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class aiprovider_management_table extends \core_admin\table\plugin_management_table {
-
-    /**
-     * Get the type of plugin this table manages.
-     *
-     * @return string The type of plugin this table manages.
-     */
+    #[\Override]
     protected function get_plugintype(): string {
         return 'aiprovider';
     }
 
-    /**
-     * Get the URL to the action.
-     *
-     * @param array $params The parameters to pass to the URL.
-     * @return moodle_url The URL to the action.
-     * @throws \core\exception\moodle_exception
-     */
+    #[\Override]
     protected function get_action_url(array $params = []): moodle_url {
         return new moodle_url('/admin/ai.php', $params);
     }
 
-    /**
-     * Get the column list for this table.
-     *
-     * @return array The column list for this table.
-     */
+    #[\Override]
     protected function get_column_list(): array {
         $columns = [
-                'name' => get_string('name', 'core'),
+            'name' => get_string('name', 'core'),
         ];
 
         if ($this->supports_disabling()) {

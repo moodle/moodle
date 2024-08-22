@@ -1,7 +1,7 @@
 {
     "plugintypes": {
-        "aiplacement": "ai\/placement",
-        "aiprovider": "ai\/provider",
+        "aiplacement": "ai/placement",
+        "aiprovider": "ai/provider",
         "antivirus": "lib\/antivirus",
         "availability": "availability\/condition",
         "qtype": "question\/type",

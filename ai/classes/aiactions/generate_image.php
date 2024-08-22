@@ -26,26 +26,9 @@ use core_ai\aiactions\responses\response_base;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class generate_image extends base {
-    /** @var int The user id requesting the action. */
-    protected int $userid;
-
-    /** @var string The prompt text used to generate the image */
-    protected string $prompttext;
-
-    /** @var string The aspect ratio of the generated image */
-    protected string $aspectratio;
-
-    /** @var string The quality of the generated image */
-    protected string $quality;
-
-    /** @var int The number of images to generate */
-    protected int $numimages;
-
-    /** @var string The visual style of the generated image */
-    protected string $style;
-
     /**
-     * Constructor for the class.
+     * Create a new instance of the generate_image action.
+     *
      * It’s responsible for performing any setup tasks,
      * such as getting additional data from the database etc.
      *
@@ -56,38 +39,30 @@ class generate_image extends base {
      * @param string $aspectratio The aspect ratio of the generated image.
      * @param int $numimages The number of images to generate.
      * @param string $style The visual style of the generated image.
-     * @return void.
      */
     public function __construct(
         int $contextid,
-        int $userid,
-        string $prompttext,
-        string $quality,
-        string $aspectratio,
-        int $numimages,
-        string $style
+        /** @var int The user id requesting the action. */
+        protected int $userid,
+        /** @var string The prompt text used to generate the image */
+        protected string $prompttext,
+        /** @var string The quality of the generated image */
+        protected string $quality,
+        /** @var string The aspect ratio of the generated image */
+        protected string $aspectratio,
+        /** @var int The number of images to generate */
+        protected int $numimages,
+        /** @var string The visual style of the generated image */
+        protected string $style,
     ) {
-        $this->timecreated = \core\di::get(\core\clock::class)->time();
-        $this->contextid = $contextid;
-        $this->userid = $userid;
-        $this->prompttext = $prompttext;
-        $this->quality = $quality;
-        $this->aspectratio = $aspectratio;
-        $this->numimages = $numimages;
-        $this->style = $style;
+        parent::__construct($contextid);
     }
 
-    /**
-     * Store the action in the database.
-     *
-     * @param response_base $response The result of the action.
-     * @return int The id of the stored action.
-     * @throws \dml_exception
-     */
+    #[\Override]
     public function store(response_base $response): int {
         global $DB;
 
-        $responsearr = $response->get_response();
+        $responsearr = $response->get_response_data();
 
         $tablename = $this->get_tablename();
         $record = new \stdClass();

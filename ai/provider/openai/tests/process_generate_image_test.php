@@ -99,7 +99,6 @@ final class process_generate_image_test extends \advanced_testcase {
 
     /**
      * Test the API error response handler method.
-     *
      */
     public function test_handle_api_error(): void {
         $responses = [
@@ -131,13 +130,12 @@ final class process_generate_image_test extends \advanced_testcase {
 
     /**
      * Test the API success response handler method.
-     *
      */
     public function test_handle_api_success(): void {
         $response = new Response(
             200,
             ['Content-Type' => 'application/json'],
-            $this->responsebodyjson
+            $this->responsebodyjson,
         );
 
         // We're testing a private method, so we need to setup reflector magic.
@@ -158,7 +156,7 @@ final class process_generate_image_test extends \advanced_testcase {
         $response = new Response(
             200,
             ['Content-Type' => 'application/json'],
-            $this->responsebodyjson
+            $this->responsebodyjson,
         );
         $client = $this->createMock(\core\http_client::class);
         $client->method('request')->willReturn($response);
@@ -203,7 +201,7 @@ final class process_generate_image_test extends \advanced_testcase {
         $this->assertTrue($result->get_success());
         $this->assertEquals('generate_image', $result->get_actionname());
         $this->assertEquals($response['success'], $result->get_success());
-        $this->assertEquals($response['revisedprompt'], $result->get_response()['revisedprompt']);
+        $this->assertEquals($response['revisedprompt'], $result->get_response_data()['revisedprompt']);
     }
 
     /**
@@ -301,7 +299,7 @@ final class process_generate_image_test extends \advanced_testcase {
             quality: $quality,
             aspectratio: $aspectratio,
             numimages: $numimages,
-            style: $style
+            style: $style,
         );
 
         $processor = new process_generate_image($mockprovider, $this->action);
@@ -310,7 +308,7 @@ final class process_generate_image_test extends \advanced_testcase {
         $this->assertInstanceOf(\core_ai\aiactions\responses\response_base::class, $result);
         $this->assertTrue($result->get_success());
         $this->assertEquals('generate_image', $result->get_actionname());
-        $this->assertEquals('An image that represents the concept of a \'test\'.', $result->get_response()['revisedprompt']);
-        $this->assertEquals($url, $result->get_response()['sourceurl']);
+        $this->assertEquals('An image that represents the concept of a \'test\'.', $result->get_response_data()['revisedprompt']);
+        $this->assertEquals($url, $result->get_response_data()['sourceurl']);
     }
 }

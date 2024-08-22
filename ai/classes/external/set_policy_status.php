@@ -36,20 +36,19 @@ class set_policy_status extends external_api {
      * @since  Moodle 4.5
      * @return external_function_parameters
      */
-    public static function set_policy_status_parameters(): external_function_parameters {
-        return new external_function_parameters(
-            [
-                'userid' => new external_value(
-                    PARAM_INT,
-                    'The user ID',
-                    VALUE_REQUIRED),
-                'contextid' => new external_value(
-                    PARAM_INT,
-                    'The context ID',
-                    VALUE_REQUIRED),
-
-            ]
-        );
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters([
+            'userid' => new external_value(
+                PARAM_INT,
+                'The user ID',
+                VALUE_REQUIRED,
+            ),
+            'contextid' => new external_value(
+                PARAM_INT,
+                'The context ID',
+                VALUE_REQUIRED,
+            ),
+        ]);
     }
 
     /**
@@ -60,7 +59,7 @@ class set_policy_status extends external_api {
      * @param int $contextid The context ID.
      * @return array The generated content.
      */
-    public static function set_policy_status(
+    public static function execute(
         int $userid,
         int $contextid,
     ): array {
@@ -69,7 +68,7 @@ class set_policy_status extends external_api {
         [
             'userid' => $userid,
             'contextid' => $contextid,
-        ] = self::validate_parameters(self::set_policy_status_parameters(), [
+        ] = self::validate_parameters(self::execute_parameters(), [
             'userid' => $userid,
             'contextid' => $contextid,
         ]);
@@ -92,12 +91,13 @@ class set_policy_status extends external_api {
      * @since  Moodle 4.5
      * @return external_function_parameters
      */
-    public static function set_policy_status_returns(): external_function_parameters {
+    public static function execute_returns(): external_function_parameters {
         return new external_function_parameters([
             'success' => new external_value(
                 PARAM_BOOL,
                 'Was the request successful',
-                VALUE_REQUIRED),
+                VALUE_REQUIRED,
+            ),
         ]);
     }
 }

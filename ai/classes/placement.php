@@ -27,6 +27,7 @@ abstract class placement {
 
     /**
      * Get the actions that this placement supports.
+     *
      * Returns an array of action class names.
      *
      * @return array An array of action class names.
@@ -34,8 +35,9 @@ abstract class placement {
     abstract public function get_action_list(): array;
 
     /**
-     * Given an action class name, return an array of sub actions
-     * that this placement supports.
+     * Given an action class name.
+     *
+     * Returns an array of sub actions that this placement supports.
      *
      * @param string $classname The action class name.
      * @return array An array of supported sub actions.

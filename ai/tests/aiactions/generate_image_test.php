@@ -19,7 +19,6 @@ namespace core_ai\aiactions;
 use core_ai\aiactions\responses\response_generate_image;
 use core_ai\aiactions\generate_image;
 
-
 /**
  * Test generate_image action methods.
  *
@@ -42,13 +41,13 @@ final class generate_image_test extends \advanced_testcase {
         $numimages = 1;
         $style = 'vivid';
         $action = new generate_image(
-                contextid: $contextid,
-                userid: $userid,
-                prompttext: $prompttext,
-                quality: $quality,
-                aspectratio: $aspectratio,
-                numimages: $numimages,
-                style: $style
+            contextid: $contextid,
+            userid: $userid,
+            prompttext: $prompttext,
+            quality: $quality,
+            aspectratio: $aspectratio,
+            numimages: $numimages,
+            style: $style
         );
 
         $this->assertEquals($userid, $action->get_configuration('userid'));
@@ -74,24 +73,24 @@ final class generate_image_test extends \advanced_testcase {
         $numimages = 1;
         $style = 'vivid';
         $action = new generate_image(
-                contextid: $contextid,
-                userid: $userid,
-                prompttext: $prompttext,
-                quality: $quality,
-                aspectratio: $aspectratio,
-                numimages: $numimages,
-                style: $style
+            contextid: $contextid,
+            userid: $userid,
+            prompttext: $prompttext,
+            quality: $quality,
+            aspectratio: $aspectratio,
+            numimages: $numimages,
+            style: $style
         );
 
         $body = [
-                'revisedprompt' => 'This is a revised prompt',
-                'sourceurl' => 'https://example.com/image.png',
+            'revisedprompt' => 'This is a revised prompt',
+            'sourceurl' => 'https://example.com/image.png',
         ];
         $actionresponse = new response_generate_image(
-                success: true,
-                actionname: 'generate_image',
+            success: true,
+            actionname: 'generate_image',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $storeid = $action->store($actionresponse);
 

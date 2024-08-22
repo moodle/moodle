@@ -58,16 +58,14 @@ final class manager_test extends \advanced_testcase {
      * Test get_supported_actions.
      */
     public function test_get_supported_actions(): void {
-        // TODO: Enable this test in MDL-80894.
-        $this->markTestSkipped('MDL-80894');
         $manager = new manager();
         $actions = $manager->get_supported_actions('aiprovider_openai');
 
         // Assert array keys match the expected actions.
         $this->assertEquals([
-                \core_ai\aiactions\generate_text::class,
-                \core_ai\aiactions\generate_image::class,
-                \core_ai\aiactions\summarise_text::class,
+            \core_ai\aiactions\generate_text::class,
+            \core_ai\aiactions\generate_image::class,
+            \core_ai\aiactions\summarise_text::class,
         ], $actions);
     }
 
@@ -75,8 +73,6 @@ final class manager_test extends \advanced_testcase {
      * Test get_providers_for_actions.
      */
     public function test_get_providers_for_actions(): void {
-        // TODO: Enable this test in MDL-80894.
-        $this->markTestSkipped('MDL-80894');
         $this->resetAfterTest();
         set_config('enabled', 1, 'aiprovider_openai');
 
@@ -103,6 +99,7 @@ final class manager_test extends \advanced_testcase {
         // Assert that there is no provider for the generate text action.
         $this->assertCount(0, $providers['core_ai\\aiactions\\generate_text']);
         $this->assertCount(1, $providers['core_ai\\aiactions\\summarise_text']);
+
     }
 
     /**
@@ -115,8 +112,8 @@ final class manager_test extends \advanced_testcase {
             ->getMock();
 
         $expectedresult = new aiactions\responses\response_generate_image(
-                success: true,
-                actionname: 'generate_image',
+            success: true,
+            actionname: 'generate_image',
         );
 
         // Set up the expectation for call_action_provider to return the defined result.
@@ -125,13 +122,13 @@ final class manager_test extends \advanced_testcase {
             ->willReturn($expectedresult);
 
         $action = new \core_ai\aiactions\generate_image(
-                contextid: 1,
-                userid: 1,
-                prompttext: 'This is a test prompt',
-                quality: 'hd',
-                aspectratio: 'square',
-                numimages: 1,
-                style: 'vivid',
+            contextid: 1,
+            userid: 1,
+            prompttext: 'This is a test prompt',
+            quality: 'hd',
+            aspectratio: 'square',
+            numimages: 1,
+            style: 'vivid',
         );
 
         // Success should be false as there are no enabled providers.
@@ -143,8 +140,6 @@ final class manager_test extends \advanced_testcase {
      * Test process_action.
      */
     public function test_process_action(): void {
-        // TODO: Enable this test in MDL-80894.
-        $this->markTestSkipped('MDL-80894');
         $this->resetAfterTest();
 
         // Enable the providers.
@@ -166,13 +161,13 @@ final class manager_test extends \advanced_testcase {
             ->willReturn($expectedresult);
 
         $action = new \core_ai\aiactions\generate_image(
-                contextid: 1,
-                userid: 1,
-                prompttext: 'This is a test prompt',
-                quality: 'hd',
-                aspectratio: 'square',
-                numimages: 1,
-                style: 'vivid',
+            contextid: 1,
+            userid: 1,
+            prompttext: 'This is a test prompt',
+            quality: 'hd',
+            aspectratio: 'square',
+            numimages: 1,
+            style: 'vivid',
         );
 
         // Should now return the expected result.
@@ -281,13 +276,10 @@ final class manager_test extends \advanced_testcase {
         $this->assertTrue($policycache->has($user2->id));
     }
 
-
     /**
      * Test store_action_result.
      */
     public function test_store_action_result(): void {
-        // TODO: Enable this test in MDL-80894.
-        $this->markTestSkipped('MDL-80894');
         $this->resetAfterTest();
         global $DB;
 
@@ -300,24 +292,24 @@ final class manager_test extends \advanced_testcase {
         $style = 'vivid';
 
         $action = new generate_image(
-                contextid: 1,
-                userid: $userid,
-                prompttext: $prompttext,
-                quality: $quality,
-                aspectratio: $aspectratio,
-                numimages: $numimages,
-                style: $style
+            contextid: 1,
+            userid: $userid,
+            prompttext: $prompttext,
+            quality: $quality,
+            aspectratio: $aspectratio,
+            numimages: $numimages,
+            style: $style
         );
 
         $body = [
-                'revisedprompt' => 'This is a revised prompt',
-                'imageurl' => 'https://example.com/image.png',
+            'revisedprompt' => 'This is a revised prompt',
+            'imageurl' => 'https://example.com/image.png',
         ];
         $actionresponse = new response_generate_image(
-                success: true,
-                actionname: 'generate_image',
+            success: true,
+            actionname: 'generate_image',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
 
@@ -342,8 +334,6 @@ final class manager_test extends \advanced_testcase {
      * Test call_action_provider.
      */
     public function test_call_action_provider(): void {
-        // TODO: Enable this test in MDL-80894.
-        $this->markTestSkipped('MDL-80894');
         $contextid = 1;
         $userid = 1;
         $prompttext = 'This is a test prompt';
@@ -353,13 +343,13 @@ final class manager_test extends \advanced_testcase {
         $style = 'vivid';
 
         $action = new generate_image(
-                contextid: $contextid,
-                userid: $userid,
-                prompttext: $prompttext,
-                quality: $quality,
-                aspectratio: $aspectratio,
-                numimages: $numimages,
-                style: $style
+            contextid: $contextid,
+            userid: $userid,
+            prompttext: $prompttext,
+            quality: $quality,
+            aspectratio: $aspectratio,
+            numimages: $numimages,
+            style: $style
         );
 
         $provider = new \aiprovider_openai\provider();
@@ -371,7 +361,7 @@ final class manager_test extends \advanced_testcase {
         $actionresult = $method->invoke($manager, $provider, $action);
 
         // Assert the result was of the correct type.
-        $this->assertInstanceOf(\core_ai\aiactions\responses\response_generate_image::class, $actionresult);
+        $this->assertInstanceOf(response_generate_image::class, $actionresult);
     }
 
     /**

@@ -16,17 +16,18 @@
 
 namespace core_ai\aiactions;
 
-use core_ai\aiactions\responses\response_summarise_text;
-use core_ai\aiactions\summarise_text;
+use core_ai\aiactions\responses\response_generate_text;
+use core_ai\aiactions\generate_text;
+
 /**
- * Test summarise_text action methods.
+ * Test generate_text action methods.
  *
  * @package    core_ai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \core_ai\aiactions\base
  */
-final class summarise_text_test extends \advanced_testcase {
+final class generate_text_test extends \advanced_testcase {
 
     /**
      * Test configure method.
@@ -36,10 +37,10 @@ final class summarise_text_test extends \advanced_testcase {
         $userid = 1;
         $prompttext = 'This is a test prompt';
 
-        $action = new summarise_text(
-                contextid: $contextid,
-                userid: $userid,
-                prompttext: $prompttext
+        $action = new generate_text(
+            contextid: $contextid,
+            userid: $userid,
+            prompttext: $prompttext
         );
         $this->assertEquals($userid, $action->get_configuration('userid'));
         $this->assertEquals($prompttext, $action->get_configuration('prompttext'));
@@ -56,30 +57,30 @@ final class summarise_text_test extends \advanced_testcase {
         $userid = 1;
         $prompttext = 'This is a test prompt';
 
-        $action = new summarise_text(
-                contextid: $contextid,
-                userid: $userid,
-                prompttext: $prompttext
+        $action = new generate_text(
+            contextid: $contextid,
+            userid: $userid,
+            prompttext: $prompttext
         );
 
         $body = [
-                'id' => 'chatcmpl-123',
-                'fingerprint' => 'fp_44709d6fcb',
-                'generatedcontent' => 'This is the generated content',
-                'finishreason' => 'stop',
-                'prompttokens' => 9,
-                'completiontokens' => 12,
+            'id' => 'chatcmpl-123',
+            'fingerprint' => 'fp_44709d6fcb',
+            'generatedcontent' => 'This is the generated content',
+            'finishreason' => 'stop',
+            'prompttokens' => 9,
+            'completiontokens' => 12,
         ];
-        $actionresponse = new response_summarise_text(
-                success: true,
-                actionname: 'summarise_text',
+        $actionresponse = new response_generate_text(
+            success: true,
+            actionname: 'generate_text',
         );
-        $actionresponse->set_response($body);
+        $actionresponse->set_response_data($body);
 
         $storeid = $action->store($actionresponse);
 
         // Check the stored record.
-        $record = $DB->get_record('ai_action_summarise_text', ['id' => $storeid]);
+        $record = $DB->get_record('ai_action_generate_text', ['id' => $storeid]);
         $this->assertEquals($prompttext, $record->prompt);
         $this->assertEquals($body['id'], $record->responseid);
         $this->assertEquals($body['fingerprint'], $record->fingerprint);

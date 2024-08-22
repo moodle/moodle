@@ -30,25 +30,31 @@ use core_external\external_value;
  */
 class set_action extends external_api {
     /**
-     * Returns description of method parameters
+     * Returns description of method parameters.
      *
      * @return external_function_parameters
      */
     public static function execute_parameters(): external_function_parameters {
-        return new external_function_parameters(
-            [
-                'plugin' => new external_value(PARAM_TEXT, 'The name of the plugin', VALUE_REQUIRED),
-                'state' => new external_value(PARAM_INT, 'The target state', VALUE_REQUIRED),
-            ]
-        );
+        return new external_function_parameters([
+            'plugin' => new external_value(
+                PARAM_TEXT,
+                'The name of the plugin',
+                VALUE_REQUIRED,
+            ),
+            'state' => new external_value(
+                PARAM_INT,
+                'The target state',
+                VALUE_REQUIRED,
+            ),
+        ]);
     }
 
     /**
      * Set the providers action state.
      *
-     * @param string $plugin The name of the plugin
-     * @param int $state The target state
-     * @return null
+     * @param string $plugin The name of the plugin.
+     * @param int $state The target state.
+     * @return array
      */
     public static function execute(
         string $plugin,

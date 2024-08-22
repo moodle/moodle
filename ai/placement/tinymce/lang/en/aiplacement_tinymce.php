@@ -22,7 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 $string['accept'] = 'Accept and continue';
 $string['cancelai'] = 'Decline';
 $string['generatecontent'] = 'Generate AI Content';

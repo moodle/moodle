@@ -21,6 +21,7 @@ use core_ai\aiactions\responses;
 
 /**
  * Base class for provider processors.
+ *
  * Each provider processor should extend this class.
  *
  * @package    core_ai
@@ -36,12 +37,10 @@ abstract class process_base {
      */
     public function __construct(
         /** @var provider The provider that will process the action. */
-        protected provider $provider,
+        protected readonly provider $provider,
         /** @var base The action to process. */
-        protected base $action
+        protected readonly base $action,
     ) {
-        $this->provider = $provider;
-        $this->action = $action;
     }
 
     /**

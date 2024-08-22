@@ -23,7 +23,7 @@
  */
 
 $string['apikey'] = 'OpenAI API key';
-$string['apikey_desc'] = 'Enter your OpenAI API key. You can get one from https://platform.openai.com/account/api-keys';
+$string['apikey_desc'] = 'Enter your OpenAI API key. You can get one from <a href="https://platform.openai.com/account/api-keys" target="_blank">here</a>';
 $string['enableglobalratelimit'] = 'Enable global rate limiting';
 $string['enableglobalratelimit_desc'] = 'Enable global rate limiting for the OpenAI API provider.';
 $string['enableuserratelimit'] = 'Enable user rate limiting';
@@ -31,7 +31,7 @@ $string['enableuserratelimit_desc'] = 'Enable user rate limiting for the OpenAI 
 $string['globalratelimit'] = 'Global rate limit';
 $string['globalratelimit_desc'] = 'Set the number of requests per hour allowed for the global rate limit.';
 $string['orgid'] = 'OpenAI organization ID';
-$string['orgid_desc'] = 'Enter your OpenAI organization ID. You can get one from https://platform.openai.com/account/org-settings';
+$string['orgid_desc'] = 'Enter your OpenAI organization ID. You can get one from <a href="https://platform.openai.com/account/org-settings" target="_blank">here</a>';
 $string['pluginname'] = 'OpenAI API Provider';
 $string['privacy:metadata'] = 'The OpenAI API provider plugin does not store any personal data.';
 $string['privacy:metadata:aiprovider_openai:externalpurpose'] = 'This information is sent to the OpenAI API in order for a response to be generated. Your OpenAI account settings may change how OpenAI stores and retains this data. No user data is explicitly sent to OpenAI or stored in Moodle LMS by this plugin.';
