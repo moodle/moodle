@@ -15,47 +15,36 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the forms to create and edit an instance of this module
+ * This file contains the temporary form used on the submissions page to apply assignment grading options.
  *
  * @package   mod_assign
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @copyright 2024 Mihail Geshoski <mihail@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
+namespace mod_assign\form;
 
+defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
 /**
- * Assignment grading options form
+ * Assignment grading options temporary form.
  *
- * @deprecated since 4.5
+ * This form class is a copy of mod_assign_grading_options_form. The only purpose of this form is to be temporarily used
+ * on the submission page until the gradual removal of the current form elements is completed. After that, this form
+ * class will be removed.
+ *
  * @package   mod_assign
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @copyright 2024 Mihail Geshoski <mihail@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[\core\attribute\deprecated(
-    replacement: null,
-    since: '4.5',
-    reason: 'It is no longer used.',
-    mdl: 'MDL-82857',
-)]
-class mod_assign_grading_options_form extends moodleform {
+class grading_options_temp_form extends \moodleform {
     /**
      * Define this form - called from the parent constructor.
-     *
-     * @deprecated since 4.5
      */
-    #[\core\attribute\deprecated(
-        replacement: null,
-        since: '4.5',
-        reason: 'It is no longer used.',
-        mdl: 'MDL-82857',
-    )]
     public function definition() {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
         $mform = $this->_form;
         $instance = $this->_customdata;
 
@@ -75,21 +64,17 @@ class mod_assign_grading_options_form extends moodleform {
         }
         $mform->addElement('select', 'perpage', get_string('assignmentsperpage', 'assign'), $options);
         $options = array('' => get_string('filternone', 'assign'),
-                         ASSIGN_FILTER_NOT_SUBMITTED => get_string('filternotsubmitted', 'assign'),
-                         ASSIGN_FILTER_DRAFT => get_string('filterdraft', 'assign'),
-                         ASSIGN_FILTER_SUBMITTED => get_string('filtersubmitted', 'assign'),
-                         ASSIGN_FILTER_REQUIRE_GRADING => get_string('filterrequiregrading', 'assign'),
-                         ASSIGN_FILTER_GRANTED_EXTENSION => get_string('filtergrantedextension', 'assign'));
+            ASSIGN_FILTER_NOT_SUBMITTED => get_string('filternotsubmitted', 'assign'),
+            ASSIGN_FILTER_DRAFT => get_string('filterdraft', 'assign'),
+            ASSIGN_FILTER_SUBMITTED => get_string('filtersubmitted', 'assign'),
+            ASSIGN_FILTER_REQUIRE_GRADING => get_string('filterrequiregrading', 'assign'),
+            ASSIGN_FILTER_GRANTED_EXTENSION => get_string('filtergrantedextension', 'assign'));
         if ($instance['submissionsenabled']) {
             $mform->addElement('select', 'filter', get_string('filter', 'assign'), $options);
         }
         if (!empty($instance['markingallocationopt'])) {
             $markingfilter = get_string('markerfilter', 'assign');
             $mform->addElement('select', 'markerfilter', $markingfilter, $instance['markingallocationopt']);
-        }
-        if (!empty($instance['markingworkflowopt'])) {
-            $workflowfilter = get_string('workflowfilter', 'assign');
-            $mform->addElement('select', 'workflowfilter', $workflowfilter, $instance['markingworkflowopt']);
         }
         // Quickgrading.
         if ($instance['showquickgrading']) {

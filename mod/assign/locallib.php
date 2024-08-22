@@ -4542,7 +4542,7 @@ class assign {
                                           'downloadasfolders' => $downloadasfolders);
 
         $classoptions = array('class'=>'gradingoptionsform');
-        $gradingoptionsform = new mod_assign_grading_options_form(null,
+        $gradingoptionsform = new \mod_assign\form\grading_options_temp_form(null,
                                                                   $gradingoptionsformparams,
                                                                   'post',
                                                                   '',
@@ -7416,7 +7416,7 @@ class assign {
                                       'showonlyactiveenrolopt'=>$showonlyactiveenrolopt,
                                       'showonlyactiveenrol' => $this->show_only_active_users(),
                                       'downloadasfolders' => get_user_preferences('assign_downloadasfolders', 1));
-        $mform = new mod_assign_grading_options_form(null, $gradingoptionsparams);
+        $mform = new mod_assign\form\grading_options_temp_form(null, $gradingoptionsparams);
         if ($formdata = $mform->get_data()) {
             set_user_preference('assign_perpage', $formdata->perpage);
             if (isset($formdata->filter)) {
