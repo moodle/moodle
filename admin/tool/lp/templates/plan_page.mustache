@@ -21,7 +21,9 @@
     <h2>
         {{{plan.name}}}
         {{#plan.canbeedited}}
-            <a href="{{pluginbaseurl}}/editplan.php?id={{plan.id}}&amp;userid={{plan.userid}}">{{#pix}}t/edit, core, {{#str}}editplan, tool_lp{{/str}}{{/pix}}</a>
+            <a href="{{pluginbaseurl}}/editplan.php?id={{plan.id}}&amp;userid={{plan.userid}}">
+                {{#pix}}i/settings, core, {{#str}}editplan, tool_lp{{/str}}{{/pix}}
+            </a>
         {{/plan.canbeedited}}
     </h2>
     {{#plan.canbeedited}}
@@ -201,4 +203,3 @@ require(['tool_lp/competencies', 'tool_lp/planactions', 'tool_lp/user_competency
     ucw.on('error-occured', planActions.refresh.bind(planActions, '[data-region="plan-summary"]'));
 });
 {{/js}}
-

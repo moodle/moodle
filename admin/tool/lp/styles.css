@@ -253,6 +253,12 @@ ul.competency-tree img {
     height: 16px;
 }
 
-[data-region="managecompetencies"] a .icon {
+[data-region="managecompetencies"] a .icon,
+[data-region="plan-page"] a .icon {
     color: initial;
+}
+
+[data-region="managecompetencies"] h2 a .icon,
+[data-region="plan-page"] h2 a .icon {
+    font-size: smaller;
 }
