@@ -1,5 +1,5 @@
 
-var OGVDecoderVideoVP9W = (() => {
+var OGVDecoderVideoVP9SIMDW = (() => {
   var _scriptDir = typeof document != 'undefined' ? document.currentScript?.src : undefined;
   if (typeof __filename != 'undefined') _scriptDir ||= __filename;
   return (
@@ -9,7 +9,7 @@ var b=moduleArg,aa,n,readyPromise=new Promise((a,c)=>{aa=a;n=c}),ba=Object.assig
 if(ha){var fs=require("fs"),z=require("path");u=p?z.dirname(u)+"/":__dirname+"/";v=(a,c)=>{a=A(a)?new URL(a):z.normalize(a);return fs.readFileSync(a,c?void 0:"utf8")};x=a=>{a=v(a,!0);a.buffer||(a=new Uint8Array(a));return a};w=(a,c,e,d=!0)=>{a=A(a)?new URL(a):z.normalize(a);fs.readFile(a,d?void 0:"utf8",(f,g)=>{f?e(f):c(d?g.buffer:g)})};process.argv.slice(2)}else if(fa||p)p?u=self.location.href:"undefined"!=typeof document&&document.currentScript&&(u=document.currentScript.src),_scriptDir&&(u=_scriptDir),
 u.startsWith("blob:")?u="":u=u.substr(0,u.replace(/[?#].*/,"").lastIndexOf("/")+1),v=a=>{var c=new XMLHttpRequest;c.open("GET",a,!1);c.send(null);return c.responseText},p&&(x=a=>{var c=new XMLHttpRequest;c.open("GET",a,!1);c.responseType="arraybuffer";c.send(null);return new Uint8Array(c.response)}),w=(a,c,e)=>{var d=new XMLHttpRequest;d.open("GET",a,!0);d.responseType="arraybuffer";d.onload=()=>{200==d.status||0==d.status&&d.response?c(d.response):e()};d.onerror=e;d.send(null)};b.print||console.log.bind(console);
 var D=b.printErr||console.error.bind(console);Object.assign(b,ba);ba=null;var G;b.wasmBinary&&(G=b.wasmBinary);var H,ia=!1,I;function ja(){var a=H.buffer;b.HEAP8=new Int8Array(a);b.HEAP16=new Int16Array(a);b.HEAPU8=I=new Uint8Array(a);b.HEAPU16=new Uint16Array(a);b.HEAP32=new Int32Array(a);b.HEAPU32=new Uint32Array(a);b.HEAPF32=new Float32Array(a);b.HEAPF64=new Float64Array(a)}var ka=[],la=[],ma=[];function na(){var a=b.preRun.shift();ka.unshift(a)}
-var J=0,oa=null,M=null,pa=a=>a.startsWith("data:application/octet-stream;base64,"),A=a=>a.startsWith("file://"),N;N="ogv-decoder-video-vp9-wasm.wasm";if(!pa(N)){var qa=N;N=b.locateFile?b.locateFile(qa,u):u+qa}function ra(a){if(a==N&&G)return new Uint8Array(G);if(x)return x(a);throw"both async and sync fetching of the wasm failed";}
+var J=0,oa=null,M=null,pa=a=>a.startsWith("data:application/octet-stream;base64,"),A=a=>a.startsWith("file://"),N;N="ogv-decoder-video-vp9-simd-wasm.wasm";if(!pa(N)){var qa=N;N=b.locateFile?b.locateFile(qa,u):u+qa}function ra(a){if(a==N&&G)return new Uint8Array(G);if(x)return x(a);throw"both async and sync fetching of the wasm failed";}
 function sa(a){if(!G&&(fa||p)){if("function"==typeof fetch&&!A(a))return fetch(a,{credentials:"same-origin"}).then(c=>{if(!c.ok)throw`failed to load wasm binary file at '${a}'`;return c.arrayBuffer()}).catch(()=>ra(a));if(w)return new Promise((c,e)=>{w(a,d=>c(new Uint8Array(d)),e)})}return Promise.resolve().then(()=>ra(a))}
 function ta(a,c,e){return sa(a).then(d=>WebAssembly.instantiate(d,c)).then(e,d=>{D(`failed to asynchronously prepare wasm: ${d}`);b.onAbort?.(d);d="Aborted("+d+")";D(d);ia=!0;d=new WebAssembly.RuntimeError(d+". Build with -sASSERTIONS for more info.");n(d);throw d;})}
 function ua(a,c){var e=N;return G||"function"!=typeof WebAssembly.instantiateStreaming||pa(e)||A(e)||ha||"function"!=typeof fetch?ta(e,a,c):fetch(e,{credentials:"same-origin"}).then(d=>WebAssembly.instantiateStreaming(d,a).then(c,function(f){D(`wasm streaming compile failed: ${f}`);D("falling back to ArrayBuffer instantiation");return ta(e,a,c)}))}
@@ -32,6 +32,6 @@ b.recycleFrame=function(a){var c=b.recycledFrames;c.push(a);16<c.length&&c.shift
 );
 })();
 if (typeof exports === 'object' && typeof module === 'object')
-  module.exports = OGVDecoderVideoVP9W;
+  module.exports = OGVDecoderVideoVP9SIMDW;
 else if (typeof define === 'function' && define['amd'])
-  define([], () => OGVDecoderVideoVP9W);
+  define([], () => OGVDecoderVideoVP9SIMDW);
