@@ -48,6 +48,7 @@ class stateactions {
      * @param int[] $ids the list of affected course module ids
      * @param int $targetsectionid optional target section id
      * @param int $targetcmid optional target cm id
+     * @throws moodle_exception
      */
     public function cm_move(
         stateupdates $updates,
@@ -85,6 +86,9 @@ class stateactions {
             $cm = $modinfo->get_cm($cmid);
             $currentsectionid = $cm->section;
             $targetsection = $modinfo->get_section_info_by_id($targetsectionid, MUST_EXIST);
+            if ($targetsection->is_delegated() && $cm->get_delegated_section_info()) {
+                throw new moodle_exception('subsectionmoveerror', 'core');
+            }
             $beforecm = (!empty($beforecmdid)) ? $modinfo->get_cm($beforecmdid) : null;
             if ($beforecm === null || $beforecm->id != $cmid) {
                 moveto_module($cm, $targetsection, $beforecm);

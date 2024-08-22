@@ -1960,6 +1960,7 @@ $string['secretalreadyused'] = 'Change password confirmation link was already us
 $string['secs'] = 'secs';
 $string['section'] = 'Section';
 $string['sectionactionnotsupported'] = 'Section action "{$a}" is not supported here';
+$string['subsectionmoveerror'] = 'Cannot move this subsection on another subsection';
 $string['sectionname'] = 'Section name';
 $string['sectionoutline'] = 'Section outline';
 $string['sections'] = 'Sections';

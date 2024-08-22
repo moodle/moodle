@@ -1390,6 +1390,170 @@ class stateactions_test extends \advanced_testcase {
     }
 
     /**
+     * Test course module move and subsection move.
+     *
+     * @covers ::cm_move
+     * @dataProvider cm_move_provider
+     * @param string[] $cmtomove the sections to move
+     * @param string $targetsection
+     * @param string[] $expectedcoursetree expected course tree
+     * @param string|null $expectedexception if it will expect an exception.
+     */
+    public function test_cm_move(
+        array $cmtomove,
+        string $targetsection,
+        array $expectedcoursetree,
+        ?string $expectedexception = null
+    ): void {
+        $this->resetAfterTest();
+        $course = $this->create_course('topics', 4, []);
+
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('subsection', 1);
+        $subsection1 = $this->getDataGenerator()->create_module(
+            'subsection', ['course' => $course, 'section' => 1, 'name' => 'subsection1']
+        );
+        $subsection2 = $this->getDataGenerator()->create_module(
+            'subsection', ['course' => $course, 'section' => 1, 'name' => 'subsection2']
+        );
+        $modinfo = get_fast_modinfo($course);
+        $subsection1info = $modinfo->get_section_info_by_component('mod_subsection', $subsection1->id);
+        $subsection2info = $modinfo->get_section_info_by_component('mod_subsection', $subsection2->id);
+
+        $references = $this->course_references($course);
+        // Add some activities to the course. One visible and one hidden in both sections 1 and 2.
+        $references["cm0"] = $this->create_activity($course->id, 'assign', 0);
+        $references["cm1"] = $this->create_activity($course->id, 'page', 2);
+        $references["cm2"] = $this->create_activity($course->id, 'forum', $subsection1info->sectionnum);
+        $references["subsection1"] = intval($subsection1->cmid);
+        $references["subsection2"] = intval($subsection2->cmid);
+        $references["subsection1sectionid"] = $subsection1info->id;
+        $references["subsection2sectionid"] = $subsection2info->id;
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'editingteacher');
+        $this->setUser($user);
+
+        // Initialise stateupdates.
+        $courseformat = course_get_format($course->id);
+        $updates = new stateupdates($courseformat);
+
+        if ($expectedexception) {
+            $this->expectExceptionMessage($expectedexception);
+        }
+        // Execute the method.
+        $actions = new stateactions();
+        // We do this to make sure we can reference subsection1 in the course tree (and not just section5 as subsection1 is
+        // both a module and a subsection).
+        if (str_starts_with($targetsection, 'subsection')) {
+            $targetsection = $targetsection . 'sectionid';
+        }
+        $actions->cm_move(
+            $updates,
+            $course,
+            $this->translate_references($references, $cmtomove),
+            $references[$targetsection]
+        );
+
+        $coursetree = $this->get_course_tree($course, $references);
+        $this->assertEquals($expectedcoursetree, $coursetree);
+    }
+
+    /**
+     * Get Course tree for later comparison.
+     *
+     * @param stdClass $course
+     * @param array $references
+     * @return array
+     */
+    private function get_course_tree(stdClass $course, array $references): array {
+        $coursetree = [];
+        $modinfo = get_fast_modinfo($course); // Get refreshed version.
+
+        $allsections = $modinfo->get_listed_section_info_all();
+        $cmidstoref = array_flip($references);
+        foreach ($allsections as $sectioninfo) {
+            $sectionkey = 'section' . $sectioninfo->sectionnum;
+            $coursetree[$sectionkey] = [];
+            if (empty(trim($sectioninfo->sequence))) {
+                continue;
+            }
+            $cmids = explode(",", $sectioninfo->sequence);
+            foreach ($cmids as $cmid) {
+                $cm = $modinfo->get_cm($cmid);
+                $delegatedsection = $cm->get_delegated_section_info();
+
+                // Course modules without a delegated section are included as activities.
+                if (!$delegatedsection) {
+                    $coursetree[$sectionkey][] = $cmidstoref[$cmid];
+                    continue;
+                }
+
+                // Course modules with a delegated are included as a section, not as an activity.
+                $delegatedsectionkey = $delegatedsection->name; // We gave it a name, so let's use it as key.
+                $coursetree[$sectionkey][$delegatedsectionkey] = [];
+
+                if (empty(trim($delegatedsection->sequence))) {
+                    continue;
+                }
+                $delegatedcmids = explode(",", $delegatedsection->sequence);
+                foreach ($delegatedcmids as $dcmid) {
+                    $coursetree[$sectionkey][$delegatedsectionkey][] = $cmidstoref[$dcmid];
+                }
+
+            }
+        }
+        return $coursetree;
+    }
+
+    /**
+     * Provider for test_section_move.
+     *
+     *
+     * The original coursetree looks like this:
+     * 'coursetree' => [
+     *    'section0' => ['cm0'],
+     *    'section1' => ['subsection1' => ['cm2'],'subsection2' => []],
+     *    'section2' => ['cm1'],
+     *    'section3' => [],
+     *    'section4' => [],
+     * ],
+     *
+     * @return array the testing scenarios
+     */
+    public static function cm_move_provider(): array {
+        return [
+            'Move module into section2' => [
+                'cmtomove' => ['cm0'],
+                'targetsection' => 'section2',
+                'expectedcoursetree' => [
+                    'section0' => [],
+                    'section1' => ['subsection1' => ['cm2'], 'subsection2' => []],
+                    'section2' => ['cm1', 'cm0'],
+                    'section3' => [],
+                    'section4' => [],
+                ],
+            ],
+            'Move subsection into another subsection' => [
+                'cmtomove' => ['subsection1'], // When moving a subsection we actually move the delegated module.
+                'targetsection' => 'subsection2',
+                'expectedcoursetree' => [],
+                'exception' => 'error/subsectionmoveerror',
+            ],
+            'Move module into subsection' => [
+                'cmtomove' => ['cm1'],
+                'targetsection' => 'subsection1',
+                'expectedcoursetree' => [
+                    'section0' => ['cm0'],
+                    'section1' => ['subsection1' => ['cm2', 'cm1'], 'subsection2' => []],
+                    'section2' => [],
+                    'section3' => [],
+                    'section4' => [],
+                ],
+            ],
+        ];
+    }
+
+    /**
      * Test for section_move_after capability checks.
      *
      * @covers ::section_move_after
