@@ -475,4 +475,180 @@ final class notification_helper_test extends \advanced_testcase {
         // No new notification should have been sent.
         $this->assertEmpty($sink->get_messages_by_component('mod_assign'));
     }
+
+    /**
+     * Run all the tasks related to the due digest notifications.
+     */
+    protected function run_due_digest_notification_helper_tasks(): void {
+        $task = \core\task\manager::get_scheduled_task(\mod_assign\task\queue_all_assignment_due_digest_notification_tasks::class);
+        $task->execute();
+        $clock = \core\di::get(\core\clock::class);
+
+        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
+        if ($adhoctask) {
+            $this->assertInstanceOf(\mod_assign\task\send_assignment_due_digest_notification_to_user::class, $adhoctask);
+            $adhoctask->execute();
+            \core\task\manager::adhoc_task_complete($adhoctask);
+        }
+    }
+
+    /**
+     * Test getting users for the due digest.
+     */
+    public function test_get_users_for_due_digest(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $helper = \core\di::get(notification_helper::class);
+        $clock = $this->mock_clock_with_frozen();
+
+        // Create a course and enrol some users.
+        $course = $generator->create_course();
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+        $user4 = $generator->create_user();
+        $user5 = $generator->create_user();
+        $user6 = $generator->create_user();
+        $generator->enrol_user($user1->id, $course->id, 'student');
+        $generator->enrol_user($user2->id, $course->id, 'student');
+        $generator->enrol_user($user3->id, $course->id, 'student');
+        $generator->enrol_user($user4->id, $course->id, 'student');
+        $generator->enrol_user($user5->id, $course->id, 'student');
+        $generator->enrol_user($user6->id, $course->id, 'teacher');
+
+        /** @var \mod_assign_generator $assignmentgenerator */
+        $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
+
+        // Create an assignment with a due date 7 days from now (the due digest range).
+        $duedate = $clock->time() + WEEKSECS;
+        $assignment = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'duedate' => $duedate,
+        ]);
+
+        // User1 will have a user override, giving them an extra 1 day for 'duedate', excluding them from the results.
+        $userduedate = $duedate + DAYSECS;
+        $assignmentgenerator->create_override([
+            'assignid' => $assignment->id,
+            'userid' => $user1->id,
+            'duedate' => $userduedate,
+        ]);
+
+        // User2 and user3 will have a group override, giving them an extra 2 days for 'duedate', excluding them from the results.
+        $groupduedate = $duedate + (DAYSECS * 2);
+        $group = $generator->create_group(['courseid' => $course->id]);
+        $generator->create_group_member(['groupid' => $group->id, 'userid' => $user2->id]);
+        $generator->create_group_member(['groupid' => $group->id, 'userid' => $user3->id]);
+        $assignmentgenerator->create_override([
+            'assignid' => $assignment->id,
+            'groupid' => $group->id,
+            'duedate' => $groupduedate,
+        ]);
+
+        // User4 will submit the assignment, excluding them from the results.
+        $assignmentgenerator->create_submission([
+            'userid' => $user4->id,
+            'assignid' => $assignment->cmid,
+            'status' => 'submitted',
+            'timemodified' => $clock->time(),
+        ]);
+
+        // There should be 1 user with the teacher excluded.
+        $users = $helper::get_users_within_assignment($assignment->id, $helper::TYPE_DUE_DIGEST);
+        $this->assertCount(1, $users);
+    }
+
+    /**
+     * Test sending the assignment due digest notification to a user.
+     */
+    public function test_send_due_digest_notification_to_user(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $clock = $this->mock_clock_with_frozen();
+        $sink = $this->redirectMessages();
+
+        // Create a course and enrol a user.
+        $course = $generator->create_course();
+        $user1 = $generator->create_user();
+        $generator->enrol_user($user1->id, $course->id, 'student');
+
+        /** @var \mod_assign_generator $assignmentgenerator */
+        $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
+
+        // Create a few assignments with different due dates.
+        $duedate1 = $clock->time() + WEEKSECS;
+        $assignment1 = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'duedate' => $duedate1,
+        ]);
+        $duedate2 = $clock->time() + WEEKSECS;
+        $assignment2 = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'duedate' => $duedate2,
+        ]);
+        $duedate3 = $clock->time() + WEEKSECS + DAYSECS;
+        $assignment3 = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'duedate' => $duedate3,
+        ]);
+        $clock->bump(5);
+
+        // Run the tasks.
+        $this->run_due_digest_notification_helper_tasks();
+
+        // Get the notifications that should have been created during the adhoc task.
+        $this->assertCount(1, $sink->get_messages_by_component('mod_assign'));
+
+        // Check the message for the expected assignments.
+        $messages = $sink->get_messages_by_component('mod_assign');
+        $message = reset($messages);
+        $this->assertStringContainsString($assignment1->name, $message->fullmessagehtml);
+        $this->assertStringContainsString($assignment2->name, $message->fullmessagehtml);
+        $this->assertStringNotContainsString($assignment3->name, $message->fullmessagehtml);
+
+        // Check the message contains the formatted due date.
+        $formatteddate = userdate($duedate1, get_string('strftimedaydate', 'langconfig'));
+        $this->assertStringContainsString($formatteddate, $message->fullmessagehtml);
+
+        // Clear sink.
+        $sink->clear();
+
+        // Let's modify the due date for one of the assignment.
+        $updatedata = new \stdClass();
+        $updatedata->id = $assignment1->id;
+        $updatedata->duedate = $duedate1 + DAYSECS;
+        $DB->update_record('assign', $updatedata);
+
+        // Run the tasks again.
+        $this->run_due_digest_notification_helper_tasks();
+
+        // Check the message for the expected assignments.
+        $messages = $sink->get_messages_by_component('mod_assign');
+        $message = reset($messages);
+        $this->assertStringNotContainsString($assignment1->name, $message->fullmessagehtml);
+        $this->assertStringContainsString($assignment2->name, $message->fullmessagehtml);
+        $this->assertStringNotContainsString($assignment3->name, $message->fullmessagehtml);
+
+        // Clear sink.
+        $sink->clear();
+
+        // This time, the user will submit an assignment.
+        $assignmentgenerator->create_submission([
+            'userid' => $user1->id,
+            'assignid' => $assignment2->cmid,
+            'status' => 'submitted',
+            'timemodified' => $clock->time(),
+        ]);
+        $clock->bump(5);
+
+        // Run the tasks again.
+        $this->run_due_digest_notification_helper_tasks();
+
+        // There are no assignments left to report, so no notification should have been sent.
+        $this->assertEmpty($sink->get_messages_by_component('mod_assign'));
+
+        // Clear sink.
+        $sink->clear();
+    }
 }

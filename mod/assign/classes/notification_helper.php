@@ -16,6 +16,8 @@
 
 namespace mod_assign;
 
+use DateTime;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
@@ -40,6 +42,11 @@ class notification_helper {
     private const INTERVAL_OVERDUE = (HOURSECS * 2);
 
     /**
+     * @var int Due digest time interval of 7 days.
+     */
+    private const INTERVAL_DUE_DIGEST = WEEKSECS;
+
+    /**
      * @var string Due soon notification type.
      */
     public const TYPE_DUE_SOON = 'assign_due_soon';
@@ -48,6 +55,11 @@ class notification_helper {
      * @var string Overdue notification type.
      */
     public const TYPE_OVERDUE = 'assign_overdue';
+
+    /**
+     * @var string Due digest notification type.
+     */
+    public const TYPE_DUE_DIGEST = 'assign_due_digest';
 
     /**
      * Get all assignments that have an approaching due date (includes users and groups with due date overrides).
@@ -121,6 +133,77 @@ class notification_helper {
     }
 
     /**
+     * Get all assignments that are due in 7 days (includes users and groups with due date overrides).
+     *
+     * @return \moodle_recordset Returns the matching assignment records.
+     */
+    public static function get_due_digest_assignments(): \moodle_recordset {
+        global $DB;
+
+        $futuretime = self::get_future_time(self::INTERVAL_DUE_DIGEST);
+        $day = self::get_day_start_and_end($futuretime);
+
+        $sql = "SELECT DISTINCT a.id
+                  FROM {assign} a
+                  JOIN {course_modules} cm ON a.id = cm.instance
+                  JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
+             LEFT JOIN {assign_overrides} ao ON a.id = ao.assignid
+                 WHERE (a.duedate <= :endofday OR ao.duedate <= :ao_endofday)
+                   AND (a.duedate >= :startofday OR ao.duedate >= :ao_startofday)";
+
+        $params = [
+            'startofday' => $day['start'],
+            'endofday' => $day['end'],
+            'ao_startofday' => $day['start'],
+            'ao_endofday' => $day['end'],
+            'modulename' => 'assign',
+        ];
+
+        return $DB->get_recordset_sql($sql, $params);
+    }
+
+    /**
+     * Get all assignments for a user that are due in 7 days (includes users and groups with due date overrides).
+     *
+     * @param int $userid The user id.
+     * @return \moodle_recordset Returns the matching assignment records.
+     */
+    public static function get_due_digest_assignments_for_user(int $userid): \moodle_recordset {
+        global $DB;
+
+        $futuretime = self::get_future_time(self::INTERVAL_DUE_DIGEST);
+        $day = self::get_day_start_and_end($futuretime);
+
+        $sql = "SELECT DISTINCT a.id,
+                       a.duedate,
+                       a.name AS assignmentname,
+                       c.fullname AS coursename,
+                       cm.id AS cmid
+                  FROM {assign} a
+                  JOIN {course} c ON a.course = c.id
+                  JOIN {course_modules} cm ON a.id = cm.instance
+                  JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
+                  JOIN {enrol} e ON c.id = e.courseid
+                  JOIN {user_enrolments} ue ON e.id = ue.enrolid
+             LEFT JOIN {assign_overrides} ao ON a.id = ao.assignid
+                 WHERE (a.duedate <= :endofday OR ao.duedate <= :ao_endofday)
+                   AND (a.duedate >= :startofday OR ao.duedate >= :ao_startofday)
+                   AND ue.userid = :userid
+              ORDER BY a.duedate ASC";
+
+        $params = [
+            'startofday' => $day['start'],
+            'endofday' => $day['end'],
+            'ao_startofday' => $day['start'],
+            'ao_endofday' => $day['end'],
+            'modulename' => 'assign',
+            'userid' => $userid,
+        ];
+
+        return $DB->get_recordset_sql($sql, $params);
+    }
+
+    /**
      * Get all assignment users that we should send the notification to.
      *
      * @param int $assignmentid The assignment id.
@@ -153,6 +236,7 @@ class notification_helper {
 
             // Perform some checks depending on the notification type.
             $match = [];
+            $checksent = true;
             switch ($type) {
                 case self::TYPE_DUE_SOON:
                     $range = [
@@ -186,12 +270,26 @@ class notification_helper {
                     ];
                     break;
 
+                case self::TYPE_DUE_DIGEST:
+                    $checksent = false;
+                    $futuretime = self::get_future_time(self::INTERVAL_DUE_DIGEST);
+                    $day = self::get_day_start_and_end($futuretime);
+                    $range = [
+                        'lower' => $day['start'],
+                        'upper' => $day['end'],
+                    ];
+                    if (!self::is_time_within_range($duedate, $range)) {
+                        unset($users[$key]);
+                        break;
+                    }
+                    break;
+
                 default:
                     break;
             }
 
             // Check if the user has already received this notification.
-            if (self::has_user_been_sent_a_notification_already($user->id, json_encode($match), $type)) {
+            if ($checksent && self::has_user_been_sent_a_notification_already($user->id, json_encode($match), $type)) {
                 unset($users[$key]);
             }
         }
@@ -359,6 +457,89 @@ class notification_helper {
     }
 
     /**
+     * Get all the assignments and send the due digest notification to the user.
+     *
+     * @param int $userid The user id.
+     */
+    public static function send_due_digest_notification_to_user(int $userid): void {
+        // Get all the user's assignments due in 7 days.
+        $assignments = self::get_due_digest_assignments_for_user($userid);
+        $assignmentsfordigest = [];
+
+        foreach ($assignments as $assignment) {
+            $assignmentobj = self::get_assignment_data($assignment->id);
+
+            // Check if the user has submitted already.
+            if ($assignmentobj->get_user_submission($userid, false)) {
+                continue;
+            }
+
+            // Check if the due date is still within range.
+            $assignmentobj->update_effective_access($userid);
+            $duedate = $assignmentobj->get_instance($userid)->duedate;
+            $futuretime = self::get_future_time(self::INTERVAL_DUE_DIGEST);
+            $day = self::get_day_start_and_end($futuretime);
+            $range = [
+                'lower' => $day['start'],
+                'upper' => $day['end'],
+            ];
+            if (!self::is_time_within_range($duedate, $range)) {
+                continue;
+            }
+
+            // Record the assignment data to help us build the digest.
+            $urlparams = [
+                'id' => $assignmentobj->get_course_module()->id,
+                'action' => 'view',
+            ];
+            $assignmentsfordigest[$assignment->id] = [
+                'assignmentname' => $assignmentobj->get_instance()->name,
+                'coursename' => $assignmentobj->get_course()->fullname,
+                'duetime' => userdate($duedate, get_string('strftimetime12', 'langconfig')),
+                'url' => new \moodle_url('/mod/assign/view.php', $urlparams),
+            ];
+        }
+        $assignments->close();
+
+        // If there are no assignments in the digest, don't send anything.
+        if (empty($assignmentsfordigest)) {
+            return;
+        }
+
+        // Build the digest.
+        $digest = '';
+        foreach ($assignmentsfordigest as $digestitem) {
+            $digest .= get_string('assignmentduedigestitem', 'mod_assign', $digestitem);
+        }
+
+        $stringparams = [
+            'firstname' => $assignmentobj->get_participant($userid)->firstname,
+            'duedate' => userdate(self::get_future_time(self::INTERVAL_DUE_DIGEST), get_string('strftimedaydate', 'langconfig')),
+            'digest' => $digest,
+        ];
+
+        $messagedata = [
+            'user' => \core_user::get_user($userid),
+            'subject' => get_string('assignmentduedigestsubject', 'mod_assign'),
+            'html' => get_string('assignmentduedigesthtml', 'mod_assign', $stringparams),
+        ];
+
+        $message = new \core\message\message();
+        $message->component = 'mod_assign';
+        $message->name = self::TYPE_DUE_DIGEST;
+        $message->userfrom = \core_user::get_noreply_user();
+        $message->userto = $messagedata['user'];
+        $message->subject = $messagedata['subject'];
+        $message->fullmessageformat = FORMAT_HTML;
+        $message->fullmessage = html_to_text($messagedata['html']);
+        $message->fullmessagehtml = $messagedata['html'];
+        $message->smallmessage = $messagedata['subject'];
+        $message->notification = 1;
+
+        message_send($message);
+    }
+
+    /**
      * Get the time now.
      *
      * @return int The time now as a timestamp.
@@ -378,14 +559,33 @@ class notification_helper {
     }
 
     /**
-     * Check if a time is within the current time now and the future time values.
+     * Get the timestamps for the start (00:00:00) and end (23:59:59) of the provided day.
+     *
+     * @param int $timestamp The timestamp to base the calculation on.
+     * @return array Day start and end timestamps.
+     */
+    protected static function get_day_start_and_end(int $timestamp): array {
+        $day = [];
+
+        $date = new DateTime();
+        $date->setTimestamp($timestamp);
+        $date->setTime(0, 0, 0);
+        $day['start'] = $date->getTimestamp();
+        $date->setTime(23, 59, 59);
+        $day['end'] = $date->getTimestamp();
+
+        return $day;
+    }
+
+    /**
+     * Check if a time is within the current time now and the future time values (inclusive).
      *
      * @param int $time The timestamp to check.
      * @param array $range Lower and upper times to check.
      * @return boolean
      */
     protected static function is_time_within_range(int $time, array $range): bool {
-        return ($time > $range['lower'] && $time < $range['upper']);
+        return ($time >= $range['lower'] && $time <= $range['upper']);
     }
 
     /**

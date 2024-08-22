@@ -14,16 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_assign\task;
+
+use core\task\adhoc_task;
+use mod_assign\notification_helper;
+
 /**
- * Version information
+ * Ad-hoc task to send a notification to a user about assignments that are due in 7 days.
  *
  * @package    mod_assign
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @copyright  2024 David Woloszyn <david.woloszyn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class send_assignment_due_digest_notification_to_user extends adhoc_task {
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'mod_assign'; // Full name of the plugin (used for diagnostics).
-$plugin->version  = 2024082100;    // The current module version (Date: YYYYMMDDXX).
-$plugin->requires = 2024041600;    // Requires this Moodle version.
+    /**
+     * Execute the task.
+     */
+    public function execute(): void {
+        $user = $this->get_custom_data();
+        notification_helper::send_due_digest_notification_to_user($user->id);
+    }
+}
