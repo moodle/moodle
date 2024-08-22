@@ -38604,6 +38604,30 @@ div.editor_atto_toolbar button .icon {
 .courseindex .courseindex-item:hover.draggable, .courseindex .courseindex-item:focus.draggable {
   cursor: move;
 }
+.courseindex .courseindex-item:hover.pageitem,
+.courseindex .courseindex-item:hover .pageitem, .courseindex .courseindex-item:focus.pageitem,
+.courseindex .courseindex-item:focus .pageitem {
+  background-color: #0c589c;
+  color: #e6e6e6;
+}
+.courseindex .courseindex-item:hover.pageitem .courseindex-link,
+.courseindex .courseindex-item:hover.pageitem .courseindex-chevron,
+.courseindex .courseindex-item:hover .pageitem .courseindex-link,
+.courseindex .courseindex-item:hover .pageitem .courseindex-chevron, .courseindex .courseindex-item:focus.pageitem .courseindex-link,
+.courseindex .courseindex-item:focus.pageitem .courseindex-chevron,
+.courseindex .courseindex-item:focus .pageitem .courseindex-link,
+.courseindex .courseindex-item:focus .pageitem .courseindex-chevron {
+  color: #e6e6e6;
+}
+.courseindex .courseindex-item:hover.pageitem .courseindex-link a,
+.courseindex .courseindex-item:hover.pageitem .courseindex-chevron a,
+.courseindex .courseindex-item:hover .pageitem .courseindex-link a,
+.courseindex .courseindex-item:hover .pageitem .courseindex-chevron a, .courseindex .courseindex-item:focus.pageitem .courseindex-link a,
+.courseindex .courseindex-item:focus.pageitem .courseindex-chevron a,
+.courseindex .courseindex-item:focus .pageitem .courseindex-link a,
+.courseindex .courseindex-item:focus .pageitem .courseindex-chevron a {
+  color: #e6e6e6;
+}
 .courseindex .courseindex-item.dragging {
   border: 1px solid #b8dce2;
   background-color: #e0f0f2;
@@ -38638,15 +38662,6 @@ div.editor_atto_toolbar button .icon {
 }
 .courseindex .courseindex-item.pageitem a {
   color: #fff;
-}
-.courseindex .courseindex-item.pageitem:hover, .courseindex .courseindex-item.pageitem:focus {
-  background-color: #0c589c;
-  color: #e6e6e6;
-}
-.courseindex .courseindex-item.pageitem:hover .courseindex-link,
-.courseindex .courseindex-item.pageitem:hover .courseindex-chevron, .courseindex .courseindex-item.pageitem:focus .courseindex-link,
-.courseindex .courseindex-item.pageitem:focus .courseindex-chevron {
-  color: #e6e6e6;
 }
 .courseindex .courseindex-item .completioninfo {
   min-width: 24px;

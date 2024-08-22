@@ -33,6 +33,18 @@ $courseindex-item-current: $primary !default;
         &.draggable {
             cursor: move;
         }
+        &.pageitem,
+        .pageitem {
+            background-color: darken($courseindex-item-page-bg, 7.5%);
+            color: darken($courseindex-link-color-selected, 10%);
+            .courseindex-link,
+            .courseindex-chevron {
+                color: darken($courseindex-link-color-selected, 10%);
+                a {
+                    color: darken($courseindex-link-color-selected, 10%);
+                }
+            }
+        }
     }
 }
 
@@ -113,15 +125,6 @@ $courseindex-item-current: $primary !default;
             scroll-margin: 6rem;
             a {
                 color: $courseindex-link-color-selected;
-            }
-            &:hover,
-            &:focus {
-                background-color: darken($courseindex-item-page-bg, 7.5%);
-                color: darken($courseindex-link-color-selected, 10%);
-                .courseindex-link,
-                .courseindex-chevron {
-                    color: darken($courseindex-link-color-selected, 10%);
-                }
             }
         }
 
