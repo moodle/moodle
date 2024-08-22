@@ -26208,6 +26208,10 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
   max-height: 64px;
   font-size: 64px;
 }
+.icon.emoticon {
+  max-width: 16px;
+  max-height: 16px;
+}
 
 img.icon {
   width: 16px;
