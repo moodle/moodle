@@ -67,6 +67,12 @@ class runner {
         if (!class_exists('Behat\Gherkin\Lexer')) {
             throw new \moodle_exception('Missing behat classes.');
         }
+
+        // Behat constant.
+        if (!defined('BEHAT_TEST')) {
+            define('BEHAT_TEST', 1);
+        }
+
         // Behat utilities.
         require_once($CFG->libdir . '/behat/classes/util.php');
         require_once($CFG->libdir . '/behat/classes/behat_command.php');
