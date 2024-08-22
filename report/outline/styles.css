@@ -1,21 +1,8 @@
-#page-report-outline-user .section .content {
-    margin-left: 30px;
-    margin-right: 30px;
+#page-report-outline-user table tr td {
+    padding: 10px 3px;
+    min-width: 20px;
 }
 
-#page-report-outline-user .section h2 {
-    margin-top: 0;
+#page-report-outline-user .subsection .icon {
+    padding-left: 10px;
 }
-
-#page-report-outline-user .section {
-    margin-left: 30px;
-    margin-right: 30px;
-    margin-bottom: 20px;
-}
-
-#page-report-outline-user .section {
-    border-width: 1px;
-    border-style: solid;
-    padding: 10px;
-}
-

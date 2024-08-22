@@ -113,6 +113,119 @@ class coursestructure implements \renderable, \templatable {
     }
 
     /**
+     * Exports course sections, sections delegated by modules and modules data in a hierarchical format.
+     *
+     * @param \renderer_base $output
+     * @return array|\stdClass
+     */
+    public function export_hierarchy(\renderer_base $output) {
+
+        $sections = [];
+
+        $allsections = $this->modinfo->get_sections();
+        foreach ($allsections as $sectionnum => $sectionmodules) {
+            // Add the section row.
+            $sectioninfo = $this->modinfo->get_section_info($sectionnum);
+
+            // Don't show subsections here. We are showing them in the corresponding module.
+            if ($sectioninfo->is_delegated()) {
+                continue;
+            }
+
+            if (!$sectioninfo->uservisible) {
+                continue;
+            }
+
+            $section = $this->export_section_data($output, $sectioninfo, false);
+            if (empty($sectioninfo) || empty($sectioninfo->sequence)) {
+                continue;
+            }
+
+            $activities = $this->export_hierarchy_section_activities_data($output, $sectioninfo, $allsections);
+            if (!empty($activities)) {
+                $section['activities'] = $activities;
+            }
+
+            $sections[] = $section;
+        }
+
+        return $sections;
+    }
+
+    /**
+     * Exports activities data for a section in a hierarchical format.
+     * @param \renderer_base $output
+     * @param \section_info $sectioninfo
+     * @param array $allsections
+     * @return array
+     */
+    private function export_hierarchy_section_activities_data(
+        \renderer_base $output,
+        \section_info $sectioninfo,
+        array $allsections
+    ): array {
+        $allsections = $this->modinfo->get_sections();
+
+        $sectionmodules = explode(",", $sectioninfo->sequence);
+        $activities = [];
+
+        // Add section modules and possibly subsections.
+        foreach ($sectionmodules as $cmid) {
+            $activity = $this->export_hierarchy_activity_data($output, $this->modinfo->cms[$cmid], $allsections);
+            if (!empty($activity)) {
+                $activities[] = $activity;
+            }
+        }
+        return $activities;
+    }
+
+    /**
+     * Exports activity data for a section in a hierarchical format.
+     * @param \renderer_base $output
+     * @param \cm_info $cm
+     * @param array $allsections
+     * @return array|null
+     */
+    private function export_hierarchy_activity_data(
+        \renderer_base $output,
+        \cm_info $cm,
+        array $allsections
+    ): ?array {
+        $delegatedsections = $this->modinfo->get_sections_delegated_by_cm();
+
+        // Subsections has a special export.
+        if (array_key_exists($cm->id, $delegatedsections)) {
+            $subsectioninfo = $delegatedsections[$cm->id];
+            // Only non-empty are listed in allsections. We don't show empty sections.
+            if (!array_key_exists($subsectioninfo->sectionnum, $allsections)) {
+                return null;
+            }
+
+            $subsection = $this->export_section_data($output, $subsectioninfo, true);
+            if (empty($subsection)) {
+                return null;
+            }
+
+            // Show activities inside the section.
+            $subsectionmodules = $allsections[$subsectioninfo->sectionnum];
+            $subactivities = [];
+            foreach ($subsectionmodules as $subsectioncmid) {
+                $cm = $this->modinfo->cms[$subsectioncmid];
+                $activity = $this->export_activity_data($output, $cm, true);
+                if (!empty($activity)) {
+                    $subactivities[] = $activity;
+                }
+            }
+            if (!empty($subactivities)) {
+                $subsection['activities'] = $subactivities;
+            }
+            return $subsection;
+        }
+
+        return $this->export_activity_data($output, $cm);
+    }
+
+    /**
      * Exports the headers for report table.
      *
      * @param \renderer_base $output
@@ -121,7 +234,6 @@ class coursestructure implements \renderable, \templatable {
     protected function export_headers(\renderer_base $output): array {
         return [get_string('activity')];
     }
-
 
     /**
      * Exports the data for a single section.

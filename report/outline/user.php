@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use report_outline\output\hierarchicalactivities;
+
 require('../../config.php');
 require_once($CFG->dirroot.'/report/outline/locallib.php');
 require_once($CFG->dirroot.'/report/outline/lib.php');
@@ -107,84 +109,78 @@ if ($courseid != SITEID) {
 }
 
 $modinfo = get_fast_modinfo($course, $user->id);
-$sections = $modinfo->get_section_info_all();
 $itemsprinted = false;
 
+$coursestructure = new hierarchicalactivities($modinfo);
+$sections = $coursestructure->export_hierarchy($OUTPUT);
+
 foreach ($sections as $i => $section) {
+    if (!$section['visible']) {
+        continue;
+    }
+    $section = (object) $section;
+    $itemsprinted = true;
+    echo '<div class="section p-3 my-4">';
+    echo '<h2 class="h4">';
+    echo $section->text;
+    echo "</h2>";
 
-        if ($section->uservisible) { // prevent hidden sections in user activity. Thanks to Geoff Wilbert!
-            // Check the section has modules/resources, if not there is nothing to display.
-            if (!empty($modinfo->sections[$i])) {
-                $itemsprinted = true;
-                echo '<div class="section">';
-                echo '<h2>';
-                echo get_section_name($course, $section);
-                echo "</h2>";
+    echo '<div class="content">';
 
-                echo '<div class="content">';
+    if ($mode == "outline") {
+        echo "<table>";
+    }
 
-                if ($mode == "outline") {
-                    echo "<table cellpadding=\"4\" cellspacing=\"0\">";
-                }
-
-                foreach ($modinfo->sections[$i] as $cmid) {
-                    $mod = $modinfo->cms[$cmid];
-
-                    if (empty($mod->uservisible)) {
-                        continue;
-                    }
-
-                    $instance = $DB->get_record("$mod->modname", array("id"=>$mod->instance));
-                    $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";
-
-                    if (file_exists($libfile)) {
-                        require_once($libfile);
-
-                        switch ($mode) {
-                            case "outline":
-                                $user_outline = $mod->modname."_user_outline";
-                                if (function_exists($user_outline)) {
-                                    $output = $user_outline($course, $user, $mod, $instance);
-                                } else {
-                                    $output = report_outline_user_outline($user->id, $cmid, $mod->modname, $instance->id);
-                                }
-                                report_outline_print_row($mod, $instance, $output);
-                                break;
-                            case "complete":
-                                $user_complete = $mod->modname."_user_complete";
-                                $image = $OUTPUT->pix_icon('monologo', $mod->modfullname, 'mod_'.$mod->modname, array('class'=>'icon'));
-                                echo "<h4>$image $mod->modfullname: ".
-                                     "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                     format_string($instance->name,true)."</a></h4>";
-
-                                ob_start();
-
-                                echo "<ul>";
-                                if (function_exists($user_complete)) {
-                                    $user_complete($course, $user, $mod, $instance);
-                                } else {
-                                    echo report_outline_user_complete($user->id, $cmid, $mod->modname, $instance->id);
-                                }
-                                echo "</ul>";
-
-                                $output = ob_get_contents();
-                                ob_end_clean();
-
-                                if (str_replace(' ', '', $output) != '<ul></ul>') {
-                                    echo $output;
-                                }
-                                break;
-                            }
-                        }
-                    }
-
-                if ($mode == "outline") {
-                    echo "</table>";
-                }
-                echo '</div>';  // content
-                echo '</div>';  // section
-            }
+    foreach ($section->activities as $cm) {
+        if (!$cm['visible']) {
+            continue;
         }
+        $cm = (object) $cm;
+        if ($cm->isdelegated) {
+            // Print subsection box.
+            if ($mode == "outline") {
+                echo "</table>";
+            }
+            echo '<div class="section subsection p-3 my-2">';
+            echo '<h3 class="font-lg">';
+            echo $cm->text;
+            echo "</h3>";
+
+            echo '<div class="content">';
+
+            if ($mode == "outline") {
+                echo "<table>";
+            }
+
+            foreach ($cm->activities as $subcm) {
+                if (!$subcm['visible']) {
+                    continue;
+                }
+                $subcm = (object) $subcm;
+                $mod = $modinfo->cms[$subcm->id];
+                $coursestructure->print_activity($OUTPUT, $mode, $mod, $user, $course);
+            }
+            if ($mode == "outline") {
+                echo "</table>";
+            }
+            echo "</div>"; // Content.
+            echo "</div>"; // Subsection.
+            if ($mode == "outline") {
+                echo "<table>";
+            }
+
+            continue;
+        }
+
+        $mod = $modinfo->cms[$cm->id];
+        $coursestructure->print_activity($OUTPUT, $mode, $mod, $user, $course);
+    }
+
+    if ($mode == "outline") {
+        echo "</table>";
+    }
+    echo '</div>';  // Content.
+    echo '</div>';  // Section.
 }
 
 if (!$itemsprinted) {

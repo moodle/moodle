@@ -6,8 +6,8 @@ Feature: View an outline report
 
   Background:
     Given the following "courses" exist:
-      | fullname | shortname | format |
-      | Course 1 | C1 | topics |
+      | fullname | shortname | format | numsections |
+      | Course 1 | C1        | topics | 1           |
     And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
@@ -88,3 +88,29 @@ Feature: View an outline report
     And I click on "Activity report" "link"
     Then I should see "-" in the "Forum name" "table_row"
     And I should see "-" in the "Book name" "table_row"
+
+  Scenario: The outline report can represent courses with subsections
+    Given I enable "subsection" "mod" plugin
+    And the following "activities" exist:
+      | activity | name      | course | section | visible | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
+      | assign   | Activity1 | C1     | 1       | 1       | 1                                   | 0                             |
+    And the following "activities" exist:
+      | activity   | name        | course | section | visible |
+      | subsection | Subsection1 | C1     | 1       | 1       |
+    And the following "activities" exist:
+      | activity | name           | course | section | visible | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
+      | assign   | Subactivity1.1 | C1     | 2       | 1       | 1                                   | 0                             |
+      | assign   | Subactivity1.2 | C1     | 2       | 0       | 1                                   | 0                             |
+      | assign   | Activity2      | C1     | 1       | 1       | 1                                   | 0                             |
+    When I am on the "Course 1" course page logged in as teacher1
+    And I navigate to "Reports" in current page administration
+    And I click on "Activity report" "link"
+    Then "Subactivity1.1" "table_row" should appear after "Activity1" "table_row"
+    And "Subactivity1.2" "table_row" should appear after "Subactivity1.1" "table_row"
+    And "Activity2" "table_row" should appear after "Subactivity1.2" "table_row"
+    And I navigate to "Participants" in current page administration
+    And I click on "Student 1" "link"
+    And I click on "Outline report" "link"
+    And "Subactivity1.1" "table_row" should appear after "Activity1" "table_row"
+    And I should not see "Subactivity1.2" in the "page-content" "region"
+    And "Activity2" "table_row" should appear after "Subactivity1.1" "table_row"

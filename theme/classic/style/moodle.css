@@ -35170,6 +35170,15 @@ img.userpicture {
   padding-left: 3.5rem;
 }
 
+#page-report-outline-user .section {
+  border: 1px solid #dee2e6;
+  border-radius: 1rem;
+}
+
+#page-report-outline-user .font-lg {
+  font-size: 1.03125rem;
+}
+
 #page-report-log-index #menumodid option:disabled {
   color: #4b535a;
   font-weight: bolder;
