@@ -24,6 +24,7 @@
  */
 $string['activeparticipantnumberaverage'] = 'Average number of recently active participants ({$a})';
 $string['activeusersnumber'] = 'Number of recently active users ({$a})';
+$string['aiusagestats'] = 'AI usage stats ({$a->timefrom} - {$a->timeto})';
 $string['analyticsactions'] = 'Number of actions taken on generated predictions ({$a})';
 $string['analyticsactionsnotuseful'] = 'Number of actions marking a prediction as not useful ({$a})';
 $string['analyticsenabledmodels'] = 'Number of enabled prediction models ({$a})';

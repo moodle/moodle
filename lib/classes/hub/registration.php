@@ -66,6 +66,8 @@ class registration {
         2023021700 => ['dbtype', 'coursesnodates', 'sitetheme', 'primaryauthtype'],
         // Plugin usage added in Moodle 4.5.
         2023072300 => ['pluginusage'],
+        // AI usage added in Moodle 4.5.
+        2023081200 => ['aiusage'],
     ];
 
     /** @var string Site privacy: not displayed */
@@ -191,6 +193,10 @@ class registration {
         $siteinfo['sitetheme'] = get_config('core', 'theme');
         $siteinfo['pluginusage'] = json_encode(self::get_plugin_usage_data());
 
+        // AI usage data.
+        $aiusagedata = self::get_ai_usage_data();
+        $siteinfo['aiusage'] = !empty($aiusagedata) ? json_encode($aiusagedata) : '';
+
         // Primary auth type.
         $primaryauthsql = 'SELECT auth, count(auth) as tc FROM {user} GROUP BY auth ORDER BY tc DESC';
         $siteinfo['primaryauthtype'] = $DB->get_field_sql($primaryauthsql, null, IGNORE_MULTIPLE);
@@ -278,6 +284,7 @@ class registration {
             'sitetheme' => get_string('sitetheme', 'hub', $siteinfo['sitetheme']),
             'primaryauthtype' => get_string('primaryauthtype', 'hub', $siteinfo['primaryauthtype']),
             'pluginusage' => get_string('pluginusagedata', 'hub', $pluginusagelinks),
+            'aiusage' => get_string('aiusagestats', 'hub', self::get_ai_usage_time_range(true)),
         ];
 
         foreach ($senddata as $key => $str) {
@@ -681,6 +688,120 @@ class registration {
                     $data[$plugin->type][$plugin->name]['count'] = $count;
                 }
             }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get the time range to use in collected and reporting AI usage data.
+     *
+     * @param bool $format Use true to format timestamp.
+     * @return array
+     */
+    private static function get_ai_usage_time_range(bool $format = false): array {
+        global $DB;
+
+        // We will try and use the last time this site was last registered for our 'from' time.
+        // Otherwise, default to using one week's worth of data to roughly match the site rego scheduled task.
+        $timenow = \core\di::get(\core\clock::class)->time();
+        $defaultfrom = $timenow - WEEKSECS;
+        $timeto = $timenow;
+        $params = [
+            'huburl' => HUB_MOODLEORGHUBURL,
+            'confirmed' => 1,
+        ];
+        $lastregistered = $DB->get_field('registration_hubs', 'timemodified', $params);
+        $timefrom = $lastregistered ? (int)$lastregistered : $defaultfrom;
+
+        if ($format) {
+            $timefrom = userdate($timefrom);
+            $timeto = userdate($timeto);
+        }
+
+        return [
+            'timefrom' => $timefrom,
+            'timeto' => $timeto,
+        ];
+    }
+
+    /**
+     * Get AI usage data.
+     *
+     * @return array
+     */
+    public static function get_ai_usage_data(): array {
+        global $DB;
+
+        $params = self::get_ai_usage_time_range();
+
+        $sql = "SELECT aar.*
+                  FROM {ai_action_register} aar
+                 WHERE aar.timecompleted >= :timefrom
+                   AND aar.timecompleted <= :timeto";
+
+        $actions = $DB->get_records_sql($sql, $params);
+
+        // Build data for site info reporting.
+        $data = [];
+
+        foreach ($actions as $action) {
+            $provider = $action->provider;
+            $actionname = $action->actionname;
+
+            // Initialise data structure.
+            if (!isset($data[$provider][$actionname])) {
+                $data[$provider][$actionname] = [
+                    'success_count' => 0,
+                    'fail_count' => 0,
+                    'times' => [],
+                    'errors' => [],
+                ];
+            }
+
+            if ($action->success === '1') {
+                $data[$provider][$actionname]['success_count'] += 1;
+                // Collect AI processing times for averaging.
+                $data[$provider][$actionname]['times'][] = (int)$action->timecompleted - (int)$action->timecreated;
+
+            } else {
+                $data[$provider][$actionname]['fail_count'] += 1;
+                // Collect errors for determing the predominant one.
+                $data[$provider][$actionname]['errors'][] = $action->errorcode;
+            }
+        }
+
+        // Parse the errors and everage the times, then add them to the data.
+        foreach ($data as $p => $provider) {
+            foreach ($provider as $a => $actionname) {
+                if (isset($data[$p][$a]['errors'])) {
+                    // Create an array with the error codes counted.
+                    $errors = array_count_values($data[$p][$a]['errors']);
+                    if (!empty($errors)) {
+                        // Sort values descending and convert to an array of error codes (most predominant will be at start).
+                        arsort($errors);
+                        $errors = array_keys($errors);
+                        $data[$p][$a]['predominant_error'] = $errors[0];
+                    }
+                    unset($data[$p][$a]['errors']);
+                }
+
+                if (isset($data[$p][$a]['times'])) {
+                    $count = count($data[$p][$a]['times']);
+                    if ($count > 0) {
+                        // Average the time to perform the action (seconds).
+                        $totaltime = array_sum($data[$p][$a]['times']);
+                        $data[$p][$a]['average_time'] = round($totaltime / $count);
+
+                    }
+                }
+                unset($data[$p][$a]['times']);
+            }
+        }
+
+        // Include the time range used to help interpret the data.
+        if (!empty($data)) {
+            $data['time_range'] = $params;
         }
 
         return $data;
