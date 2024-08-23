@@ -32,6 +32,9 @@
 - The following method has been deprecated and should no longer be used: `reset_password_and_mail`. Please consider using `setnew_password_and_mail` as a replacement.
 
   For more information see [MDL-64148](https://tracker.moodle.org/browse/MDL-64148)
+- `moodle_list` and `list_item` were only used by `qbank_managecategories`, and these usages have been removed, so these classes (and thus all of listlib.php) are now deprecated. This method was the only usage of the `QUESTION_PAGE_LENGTH` constant, which was defined in `question_category_object.php`, and so is also now deprecated.
+
+  For more information see [MDL-72397](https://tracker.moodle.org/browse/MDL-72397)
 - The following methods have been deprecated, existing usage should switch to secure `\core\encryption` library:
   - `rc4encrypt`
   - `rc4decrypt`
@@ -105,6 +108,9 @@
   after the improvement.
 
   For more information see [MDL-78030](https://tracker.moodle.org/browse/MDL-78030)
+- The `after_config()` callback has been converted to a hook, `\core\hook\after_config`.
+
+  For more information see [MDL-79011](https://tracker.moodle.org/browse/MDL-79011)
 - The following classes have been renamed.
   Existing classes are currently unaffected.
   | Old class name | New class name |
@@ -222,6 +228,9 @@
   | `\YUI_config` | `\core\output\requirements\yui` |
 
   For more information see [MDL-82183](https://tracker.moodle.org/browse/MDL-82183)
+- A new method, get_deprecated_icons(), has been added to the icon_system class. All deprecated icons should be registered through this method. Plugins can implement a callback to pluginname_get_deprecated_icons() to register their deprecated icons too. When $CFG->debugpageinfo is enabled, a console message will display a list of the deprecated icons.
+
+  For more information see [MDL-82212](https://tracker.moodle.org/browse/MDL-82212)
 - The Moodle autoloader should now be registered using `\core\component::register_autoloader` rather than manually doing so in any exceptional location which requires it. It is not normally necessary to include the autoloader manually, as it is registered automatically when the Moodle environment is bootstrapped.
 
   For more information see [MDL-82747](https://tracker.moodle.org/browse/MDL-82747)
