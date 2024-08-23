@@ -30,6 +30,7 @@ use moodle_url;
 use context_system;
 use stdClass;
 use html_writer;
+use core_plugin_manager;
 
 /**
  * Methods to use when registering the site at the moodle sites directory.
@@ -63,6 +64,8 @@ class registration {
         2020022600 => ['activeusers', 'activeparticipantnumberaverage'],
         // Database type, course date info, site theme, primary auth type added in Moodle 4.2.
         2023021700 => ['dbtype', 'coursesnodates', 'sitetheme', 'primaryauthtype'],
+        // Plugin usage added in Moodle 4.5.
+        2023072300 => ['pluginusage'],
     ];
 
     /** @var string Site privacy: not displayed */
@@ -186,6 +189,7 @@ class registration {
         $siteinfo['dbtype'] = $CFG->dbtype;
         $siteinfo['coursesnodates'] = $DB->count_records_select('course', 'enddate = ?', [0]) - 1;
         $siteinfo['sitetheme'] = get_config('core', 'theme');
+        $siteinfo['pluginusage'] = json_encode(self::get_plugin_usage_data());
 
         // Primary auth type.
         $primaryauthsql = 'SELECT auth, count(auth) as tc FROM {user} GROUP BY auth ORDER BY tc DESC';
@@ -239,6 +243,11 @@ class registration {
         if (preg_match('/^(\d+\.\d.*?)[\. ]/', $moodlerelease, $matches)) {
             $moodlerelease = $matches[1];
         }
+        $pluginusagelinks = [
+            'overview' => new moodle_url('/admin/plugins.php'),
+            'activities' => new moodle_url('/admin/modules.php'),
+            'blocks' => new moodle_url('/admin/blocks.php'),
+        ];
         $senddata = [
             'moodlerelease' => get_string('sitereleasenum', 'hub', $moodlerelease),
             'courses' => get_string('coursesnumber', 'hub', $siteinfo['courses']),
@@ -268,6 +277,7 @@ class registration {
             'coursesnodates' => get_string('coursesnodates', 'hub', $siteinfo['coursesnodates']),
             'sitetheme' => get_string('sitetheme', 'hub', $siteinfo['sitetheme']),
             'primaryauthtype' => get_string('primaryauthtype', 'hub', $siteinfo['primaryauthtype']),
+            'pluginusage' => get_string('pluginusagedata', 'hub', $pluginusagelinks),
         ];
 
         foreach ($senddata as $key => $str) {
@@ -638,5 +648,41 @@ class registration {
             $returnurl = new moodle_url($url);
             redirect(new moodle_url('/admin/registration/index.php', ['returnurl' => $returnurl->out_as_local_url(false)]));
         }
+    }
+
+    /**
+     * Return a list of plugins.
+     *
+     * Only blocks and activities will include instance counts.
+     *
+     * @return array
+     */
+    public static function get_plugin_usage_data(): array {
+        global $DB;
+
+        $pluginman = core_plugin_manager::instance();
+        $plugininfo = $pluginman->get_plugins();
+        $data = [];
+
+        foreach ($plugininfo as $plugins) {
+            foreach ($plugins as $plugin) {
+                // Plugins are considered enabled if $plugin->is_enabled() returns true or null.
+                // Plugins that return null cannot be disabled.
+                $enabled = ($plugin->is_enabled() || is_null($plugin->is_enabled()));
+                $data[$plugin->type][$plugin->name]['enabled'] = $enabled ? 1 : 0;
+
+                if ($plugin->type === 'mod') {
+                    $mid = $DB->get_field('modules', 'id', ['name' => $plugin->name]);
+                    $count = $DB->count_records('course_modules', ['module' => $mid]);
+                    $data[$plugin->type][$plugin->name]['count'] = $count;
+
+                } else if ($plugin->type === 'block') {
+                    $count = $DB->count_records('block_instances', ['blockname' => $plugin->name]);
+                    $data[$plugin->type][$plugin->name]['count'] = $count;
+                }
+            }
+        }
+
+        return $data;
     }
 }
