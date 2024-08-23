@@ -212,12 +212,8 @@ class version_test extends \advanced_testcase {
         quiz_add_quiz_question($question->id, $this->quiz);
 
         // Move the category to system context.
-        $contexts = new \core_question\local\bank\question_edit_contexts($systemcontext);
-        $qcobject = new \qbank_managecategories\question_category_object(null,
-            new \moodle_url('/question/bank/managecategories/category.php', ['courseid' => SITEID]),
-            $contexts->having_one_edit_tab_cap('categories'), 0, null, 0,
-            $contexts->having_cap('moodle/question:add'));
-        $qcobject->move_questions_and_delete_category($qcategorychild->id, $qcategorysys->id);
+        $manager = new category_manager();
+        $manager->move_questions_and_delete_category($qcategorychild->id, $qcategorysys->id);
 
         // The bank entry record should point to the new category in order to not break quizzes.
         $sql = "SELECT qbe.questioncategoryid

@@ -1,0 +1,84 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template qbank_managecategories/category
+
+    This template renders the list item for each category.
+
+    Context variables required for this template:
+    * categoryid - The id of the category this item represents.
+    * questionbankurl - Url for corresponding question bank.
+    * categoryname - Category name.
+    * idnumber - Id number string (optional).
+    * questioncount - Number of question in question bank.
+    * categorydesc - Category description.
+    * editactionmenu - Edit action menu link.
+    * draghandle - Boolean if handle should be displayed (if category is movable).
+    * children - Children category item to curent category (same variables as those above).
+
+    Example context (json):
+    {
+        "categoryid": "1",
+        "questionbankurl": "question/edit.php?cmid=123",
+        "categoryname": "Default for Miscellaneous",
+        "idnumber": "1",
+        "questioncount": " 1",
+        "categorydesc": "The default category for questions shared in context Miscellaneous",
+        "editactionmenu": "<div class='action-menu moodle-actionmenu'>...</div>",
+        "draghandle": true,
+        "children": ""
+    }
+}}
+<li class="qbank_managecategories-item{{#draghandle}} draghandle{{/draghandle}}"
+    id="category-{{{categoryid}}}"
+    data-categoryid="{{{categoryid}}}"
+    data-contextid="{{{contextid}}}"
+    data-categoryname="{{categoryname}}"
+    data-parent="{{parent}}"
+    data-sortorder="{{sortorder}}">
+    <div class="container{{#haschildren}} pb-0{{/haschildren}}">
+        <div class="row m-0">
+            <div class="p-2 mr-2 qbank_managecategories-handlecontainer">
+                <span class="qbank_managecategories-draghandle">
+                    <i class="fa fa-grip-vertical"></i>
+                </span>
+            </div>
+            <div class="col-11 p-0 qbank_managecategories-contentcontainer">
+                <div class="row m-0">
+                    <div class="col-11 p-0 pt-1 qbank_managecategories-details">
+                        {{>qbank_managecategories/category_details}}
+                    </div>
+                    <div class="col-1 qbank_managecategories-actioncontainer">
+                        {{#editactionmenu}}
+                            {{>core/action_menu}}
+                        {{/editactionmenu}}
+                    </div>
+                </div>
+                <div class="row m-0 mt-1 qbank_managecategories-childlistcontainer">
+                {{#haschildren}}
+                    {{> qbank_managecategories/childlist }}
+                {{/haschildren}}
+                </div>
+            </div>
+        </div>
+    </div>
+</li>
+{{#js}}
+    require(['qbank_managecategories/category'], function(component) {
+        component.init('#category-{{{categoryid}}}');
+    });
+{{/js}}

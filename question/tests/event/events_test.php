@@ -24,7 +24,6 @@
 
 namespace core_question\event;
 
-use qbank_managecategories\question_category_object;
 use qtype_description;
 use qtype_description_edit_form;
 use qtype_description_test_helper;
@@ -56,28 +55,21 @@ class events_test extends \advanced_testcase {
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
         $contexts = new \core_question\local\bank\question_edit_contexts(\context_module::instance($quiz->cmid));
 
-        $defaultcategoryobj = question_make_default_categories([$contexts->lowest()]);
-        $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
+        $defaultcategory = question_make_default_categories([$contexts->lowest()]);
 
-        $qcobject = new question_category_object(
-                1,
-                new \moodle_url('/mod/quiz/edit.php', ['cmid' => $quiz->cmid]),
-                $contexts->having_one_edit_tab_cap('categories'),
-                $defaultcategoryobj->id,
-                $defaultcategory,
-                null,
-                $contexts->having_cap('moodle/question:add'));
-
-        // Create the category.
-        $categoryid = $qcobject->add_category($defaultcategory, 'newcategory', '', true);
+        $category = $questiongenerator->create_question_category([
+            'name' => 'newcategory',
+            'parent' => $defaultcategory->id,
+        ]);
 
         // Log the view of this category.
         $params = [
                 'context' => \context_module::instance($quiz->cmid),
-                'other' => ['categoryid' => $categoryid, 'format' => 'testformat'],
+                'other' => ['categoryid' => $category->id, 'format' => 'testformat'],
         ];
 
         $event = \core\event\questions_imported::create($params);
@@ -91,7 +83,7 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\questions_imported', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $this->assertEquals($categoryid, $event->other['categoryid']);
+        $this->assertEquals($category->id, $event->other['categoryid']);
         $this->assertEquals('testformat', $event->other['format']);
         $this->assertDebuggingNotCalled();
 
@@ -107,28 +99,21 @@ class events_test extends \advanced_testcase {
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
         $contexts = new \core_question\local\bank\question_edit_contexts(\context_module::instance($quiz->cmid));
 
-        $defaultcategoryobj = question_make_default_categories([$contexts->lowest()]);
-        $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
+        $defaultcategory = question_make_default_categories([$contexts->lowest()]);
 
-        $qcobject = new question_category_object(
-                1,
-                new \moodle_url('/mod/quiz/edit.php', ['cmid' => $quiz->cmid]),
-                $contexts->having_one_edit_tab_cap('categories'),
-                $defaultcategoryobj->id,
-                $defaultcategory,
-                null,
-                $contexts->having_cap('moodle/question:add'));
-
-        // Create the category.
-        $categoryid = $qcobject->add_category($defaultcategory, 'newcategory', '', true);
+        $category = $questiongenerator->create_question_category([
+            'name' => 'newcategory',
+            'parent' => $defaultcategory->id,
+        ]);
 
         // Log the view of this category.
         $params = [
                 'context' => \context_module::instance($quiz->cmid),
-                'other' => ['categoryid' => $categoryid, 'format' => 'testformat'],
+                'other' => ['categoryid' => $category->id, 'format' => 'testformat'],
         ];
 
         $event = \core\event\questions_exported::create($params);
@@ -142,7 +127,7 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\questions_exported', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $this->assertEquals($categoryid, $event->other['categoryid']);
+        $this->assertEquals($category->id, $event->other['categoryid']);
         $this->assertEquals('testformat', $event->other['format']);
         $this->assertDebuggingNotCalled();
 

@@ -1,0 +1,64 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template qbank_managecategories/category_details
+
+    Partial template for rendering category details. Name, question count, tags, description, etc.
+
+    Context variables required for this template:
+    * categoryid - The id of the category this item represents.
+    * questionbankurl - Url for corresponding question bank.
+    * categoryname - Category name.
+    * idnumber - Id number string (optional).
+    * questioncount - Number of question in question bank.
+    * categorydesc - Category description.
+    * editactionmenu - Edit action menu link.
+    * draghandle - Boolean if handle should be displayed (if category is movable).
+    * children - Children category item to curent category (same variables as those above).
+
+    Example context (json):
+    {
+        "categoryid": "1",
+        "questionbankurl": "question/edit.php?cmid=123",
+        "categoryname": "Default for Miscellaneous",
+        "idnumber": "1",
+        "questioncount": " 1",
+        "categorydesc": "The default category for questions shared in context Miscellaneous",
+        "children": "",
+        "newchildtooltip": "New child of Default for Miscellaneous"
+    }
+}}
+<strong>
+    <a title="{{#str}}editquestions, question{{/str}}" href="{{{questionbankurl}}}" role="button">
+        {{{categoryname}}}
+        {{#idnumber}}
+            <span class="badge badge-primary">
+                        <span class="accesshide">
+                            {{#str}}idnumber, question{{/str}}
+                        </span>
+                {{idnumber}}
+                    </span>
+        {{/idnumber}}
+        ({{questioncount}})
+    </a>
+</strong>
+{{^children}}
+    {{> qbank_managecategories/newchild }}
+{{/children}}
+<div class="qbank_managecategories-description">
+    {{{categorydesc}}}
+</div>

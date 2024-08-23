@@ -1,0 +1,83 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template qbank_managecategories/move_context_list
+
+    Modal to move a category.
+
+    Context variables required for this template:
+    * contexts - Array of contexts containing question categories
+        * contextid - The id of the context.
+        * contextname - The name of the context to display as a heading.
+        * categories - Array of category objects. See qbank_managecategories/move_category_list partial for details.
+
+    Example context (json):
+    {
+        "contexts": [
+            {
+                "contexid": 1,
+                "contextname": "Course 1",
+                "categories": [
+                    {
+                        "categoryname": "Default category for course 1",
+                        "categoryid": 3,
+                        "firstchild": true,
+                        "current": false,
+                        "hascategories": false,
+                        "categories": []
+                    },
+                    {
+                        "categoryname": "Default category for course category 1",
+                        "categoryid": 4,
+                        "firstchild": false,
+                        "current": true,
+                        "hascategories": false,
+                        "categories": []
+                    }
+                ]
+            },
+            {
+                "contexid": 3,
+                "contextname": "Course 2",
+                "categories": [
+                    {
+                        "categoryname": "Default category for course 2",
+                        "categoryid": 5,
+                        "firstchild": true,
+                        "current": false,
+                        "hascategories": false,
+                        "categories": []
+                    },
+                    {
+                        "categoryname": "Default category for course category 2",
+                        "categoryid": 6,
+                        "firstchild": false,
+                        "current": false,
+                        "hascategories": false,
+                        "categories": []
+                    }
+                ]
+            }
+        ]
+    }
+}}
+<div role="tree">
+    {{#contexts}}
+        <h3>{{{contextname}}}</h3>
+        {{>qbank_managecategories/move_category_list}}
+    {{/contexts}}
+</div>
