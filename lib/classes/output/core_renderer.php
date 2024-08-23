@@ -18,6 +18,7 @@ namespace core\output;
 
 use breadcrumb_navigation_node;
 use cm_info;
+use core\hook\output\after_http_headers;
 use core_block\output\block_contents;
 use core_block\output\block_move_target;
 use core_completion\cm_completion_details;
@@ -937,7 +938,14 @@ class core_renderer extends renderer_base {
         if (!$this->page->cm || !empty($this->page->layout_options['noactivityheader'])) {
             $header .= $this->skip_link_target('maincontent');
         }
-        return $header;
+
+        $hook = new after_http_headers(
+            renderer: $this,
+            output: $header,
+        );
+        di::get(hook_manager::class)->dispatch($hook);
+
+        return $hook->get_output();
     }
 
     /**

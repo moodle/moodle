@@ -233,7 +233,7 @@ class ai_image {
     ): static {
         global $CFG;
         if (empty($watermark)) {
-            $watermark = get_string('imagewatermark', 'core_ai');
+            $watermark = get_string('contentwatermark', 'core_ai');
         }
         if (empty($options)) {
             $options = [
