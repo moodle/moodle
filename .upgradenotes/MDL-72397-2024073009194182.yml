@@ -12,7 +12,7 @@ notes:
         `moodle_list` and `list_item` were only used by
         `qbank_managecategories`, and these usages have been removed, so
         these classes (and thus all of listlib.php) are now deprecated.
-        This method was the only usage of the `QUESTION_PAGE_LENGTH` 
+        This method was the only usage of the `QUESTION_PAGE_LENGTH`
         constant, which was defined in `question_category_object.php`,
         and so is also now deprecated.
       type: deprecated
