@@ -36,7 +36,7 @@ function xmldb_factor_totp_upgrade($oldversion): bool {
         }
 
         // Savepoint reached.
-        upgrade_plugin_savepoint(true, 2024081600, 'factor', 'auth');
+        upgrade_plugin_savepoint(true, 2024081600, 'factor', 'totp');
     }
 
     return true;
