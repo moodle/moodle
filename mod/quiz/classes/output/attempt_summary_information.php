@@ -62,6 +62,84 @@ class attempt_summary_information implements renderable, named_templatable {
     }
 
     /**
+     * Add an item to the summary just before the given item.
+     *
+     * If that item is not present, then add as the first item.
+     *
+     * @param string $shortname unique identifier of this item (not displayed).
+     * @param string|renderable $title the title of this item.
+     * @param string|renderable $content the content of this item.
+     * @param string $addbefore identifier of the other item to add this before.
+     */
+    public function add_item_before(
+        string $shortname,
+        string|renderable $title,
+        string|renderable $content,
+        string $addbefore,
+    ): void {
+        $position = array_search($addbefore, array_keys($this->summarydata));
+        if ($position !== false) {
+            $this->insert_new_item_at_position($shortname, $title, $content, $position);
+        } else {
+            $this->insert_new_item_at_position($shortname, $title, $content, 0);
+        }
+    }
+
+    /**
+     * Add an item to the summary just after the given item.
+     *
+     * If that item is not present, then just add at the end.
+     *
+     * @param string $shortname unique identifier of this item (not displayed).
+     * @param string|renderable $title the title of this item.
+     * @param string|renderable $content the content of this item.
+     * @param string $addafter identifier of the other item to add this before.
+     */
+    public function add_item_after(
+        string $shortname,
+        string|renderable $title,
+        string|renderable $content,
+        string $addafter,
+    ): void {
+        $position = array_search($addafter, array_keys($this->summarydata));
+        if ($position !== false) {
+            $this->insert_new_item_at_position($shortname, $title, $content, $position + 1);
+        } else {
+            $this->add_item($shortname, $title, $content);
+        }
+    }
+
+    /**
+     * Add an item to the summary just before the given position.
+     *
+     * @param string $shortname unique identifier of this item (not displayed).
+     * @param string|renderable $title the title of this item.
+     * @param string|renderable $content the content of this item.
+     * @param int $position Numerical position to insert the item at. 0 means first.
+     */
+    protected function insert_new_item_at_position(
+        string $shortname,
+        string|renderable $title,
+        string|renderable $content,
+        int $position,
+    ) {
+        $this->summarydata = array_merge(
+            array_slice($this->summarydata, 0, $position),
+            [$shortname => ['title' => $title, 'content' => $content]],
+            array_slice($this->summarydata, $position, count($this->summarydata)),
+        );
+    }
+
+    /**
+     * Remove an item, if present.
+     *
+     * @param string $shortname
+     */
+    public function remove_item(string $shortname): void {
+        unset($this->summarydata[$shortname]);
+    }
+
+    /**
      * Filter the data held, to keep only the information with the given shortnames.
      *
      * @param array $shortnames items to keep.
