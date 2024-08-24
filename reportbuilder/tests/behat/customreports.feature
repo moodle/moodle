@@ -164,6 +164,28 @@ Feature: Manage custom reports
       | Name          | My users |
       | Report source | Users    |
 
+  Scenario: Reset filters in system report
+    Given the following "core_reportbuilder > Report" exists:
+      | name    | My report                                |
+      | source  | core_user\reportbuilder\datasource\users |
+    And I log in as "admin"
+    When I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I click on "Filters" "button"
+    And I set the following fields in the "Name" "core_reportbuilder > Filter" to these values:
+      | Name operator | Contains |
+      | Name value    | Lionel   |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
+    And I should see "Nothing to display"
+    And I click on "Reset all" "button" in the "[data-region='report-filters']" "css_element"
+    And I should not see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
+    And I should see "Filters" in the "#dropdownFiltersButton" "css_element"
+    And "[data-region='report-filters']" "css_element" should be visible
+    Then I should see "Filters reset"
+    And the following fields in the "Name" "core_reportbuilder > Filter" match these values:
+      | Name operator | Is any value |
+    And I should see "My report" in the "reportbuilder-table" "table"
+
   Scenario: Delete custom report
     Given the following "core_reportbuilder > Reports" exist:
       | name      | source                                   |
