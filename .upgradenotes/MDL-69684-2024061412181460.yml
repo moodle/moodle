@@ -1,0 +1,7 @@
+issueNumber: MDL-69684
+notes:
+  core:
+    - message: >-
+        Redis session cache has been improved to make a single call where two
+        were used before. The minimum redis version is now 2.6.12.
+      type: improved
