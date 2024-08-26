@@ -43,7 +43,7 @@ Feature: In an assignment, teachers can filter displayed submissions and see dra
   Scenario: View assignments with draft status on the view all submissions page
     Given I am on the "Test assignment" Activity page logged in as teacher1
     And I navigate to "Submissions" in current page administration
-    When I set the field "Filter" to "Draft"
+    When I set the field "Status" to "Draft"
     Then I should see "Student 2"
     And I should not see "Student 1"
     And I should not see "Student 3"

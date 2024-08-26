@@ -53,6 +53,14 @@ class behat_form_select_menu extends behat_form_field {
         return $input->getValue();
     }
 
+    public function matches($expectedvalue) {
+        $actualvalue = $this->get_value();
+        $selectedcontainer = $this->field->find('css', '[data-selected-option]');
+        $actualtext = $selectedcontainer ? $selectedcontainer->getText() : $this->field->getText();
+
+        return ($expectedvalue == $actualvalue || $expectedvalue == $actualtext);
+    }
+
     /**
      * Checks whether a given option exists in the select menu field.
      *

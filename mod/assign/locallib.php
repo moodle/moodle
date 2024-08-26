@@ -4484,6 +4484,12 @@ class assign {
         require_once($CFG->dirroot . '/mod/assign/gradingoptionsform.php');
         require_once($CFG->dirroot . '/mod/assign/quickgradingform.php');
         require_once($CFG->dirroot . '/mod/assign/gradingbatchoperationsform.php');
+
+        $submittedfilter = optional_param('status', null, PARAM_ALPHA);
+        if (isset($submittedfilter) && confirm_sesskey()) {
+            set_user_preference('assign_filter', $submittedfilter);
+        }
+
         $o = '';
         $cmid = $this->get_course_module()->id;
 
@@ -4570,7 +4576,6 @@ class assign {
 
         $gradingoptionsdata = new stdClass();
         $gradingoptionsdata->perpage = $perpage;
-        $gradingoptionsdata->filter = $filter;
         $gradingoptionsdata->markerfilter = $markerfilter;
         $gradingoptionsform->set_data($gradingoptionsdata);
 
@@ -7422,9 +7427,6 @@ class assign {
         $mform = new mod_assign\form\grading_options_temp_form(null, $gradingoptionsparams);
         if ($formdata = $mform->get_data()) {
             set_user_preference('assign_perpage', $formdata->perpage);
-            if (isset($formdata->filter)) {
-                set_user_preference('assign_filter', $formdata->filter);
-            }
             if (isset($formdata->markerfilter)) {
                 set_user_preference('assign_markerfilter', $formdata->markerfilter);
             }
@@ -9659,35 +9661,46 @@ class assign {
     /**
      * Return array of valid search filters for the grading interface.
      *
+     * @param bool $grouped Whether to return the filters grouped or not.
      * @return array
      */
-    public function get_filters() {
-        $filterkeys = [
-            ASSIGN_FILTER_NOT_SUBMITTED,
-            ASSIGN_FILTER_DRAFT,
-            ASSIGN_FILTER_SUBMITTED,
-            ASSIGN_FILTER_REQUIRE_GRADING,
-            ASSIGN_FILTER_GRANTED_EXTENSION
+    public function get_filters(bool $grouped = false): array {
+        $groupedfilterkeys = [
+            [
+                ASSIGN_FILTER_NOT_SUBMITTED,
+                ASSIGN_FILTER_DRAFT,
+                ASSIGN_FILTER_SUBMITTED,
+                ASSIGN_FILTER_REQUIRE_GRADING,
+            ],
+            [
+                ASSIGN_FILTER_GRANTED_EXTENSION,
+            ],
         ];
 
         $current = get_user_preferences('assign_filter', '');
 
         $filters = [];
         // First is always "no filter" option.
-        array_push($filters, [
-            'key' => 'none',
-            'name' => get_string('filternone', 'assign'),
-            'active' => ($current == '')
-        ]);
+        $filters[0] = [
+            [
+                'key' => 'none',
+                'name' => get_string('filterall', 'assign'),
+                'active' => ($current == ''),
+            ],
+        ];
 
-        foreach ($filterkeys as $key) {
-            array_push($filters, [
-                'key' => $key,
-                'name' => get_string('filter' . $key, 'assign'),
-                'active' => ($current == $key)
-            ]);
+        foreach ($groupedfilterkeys as $group => $filterkeys) {
+            foreach ($filterkeys as $key) {
+                $filters[$group] = $filters[$group] ?? [];
+                $filters[$group][] = [
+                    'key' => $key,
+                    'name' => get_string('filter' . $key, 'assign'),
+                    'active' => ($current == $key),
+                ];
+            }
         }
-        return $filters;
+
+        return $grouped ? $filters : array_merge(...$filters);
     }
 
     /**
