@@ -56,7 +56,7 @@ class redis extends handler {
     /**
      * Minimum version of the Redis extension required.
      */
-    private const REDIS_EXTENSION_MIN_VERSION = '2.2.4';
+    public const REDIS_EXTENSION_MIN_VERSION = '2.2.4';
     /**
      * Minimum version of the Redis extension required.
      */
