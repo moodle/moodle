@@ -117,8 +117,14 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
 
         $output .= html_writer::div($hiddenfields, 'ddform');
 
+        $output .= html_writer::empty_tag('input', [
+            'type' => 'hidden',
+            'data-visbled-dropzones' => json_encode($visibledropzones),
+            'value' => 0,
+            'id' => $qa->get_outer_question_div_unique_id() . ' visibledropzones',
+        ]);
         $this->page->requires->js_call_amd('qtype_ddmarker/question', 'init',
-                [$qa->get_outer_question_div_unique_id(), $options->readonly, $visibledropzones]);
+                [$qa->get_outer_question_div_unique_id(), $options->readonly]);
 
         return $output;
     }

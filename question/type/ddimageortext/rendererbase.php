@@ -121,12 +121,18 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
             $placeinfo->text = format_string($placeinfo->text);
             $placeinfoforjsandmobileapp[$placeno] = $placeinfo;
         }
+        $output .= html_writer::empty_tag('input', [
+            'type' => 'hidden',
+            'data-place-info' => json_encode($placeinfoforjsandmobileapp),
+            'value' => 0,
+            'id' => $qa->get_outer_question_div_unique_id() . ' placeinfoforjsandmobileapp',
+        ]);
 
         $output .= html_writer::end_div();
 
         $this->page->requires->string_for_js('blank', 'qtype_ddimageortext');
         $this->page->requires->js_call_amd('qtype_ddimageortext/question', 'init',
-                [$qa->get_outer_question_div_unique_id(), $options->readonly, $placeinfoforjsandmobileapp]);
+                [$qa->get_outer_question_div_unique_id(), $options->readonly]);
 
         if ($qa->get_state() == question_state::$invalid) {
             $output .= html_writer::div($question->get_validation_error($qa->get_last_qt_data()), 'validationerror');
