@@ -22,10 +22,10 @@
     Context variables required for this template:
     * categoryid - The id of the category this item represents.
     * questionbankurl - Url for corresponding question bank.
-    * categoryname - Category name.
+    * categoryname - Category name. Raw string. Will be HTML-escaped during rendering.
     * idnumber - Id number string (optional).
     * questioncount - Number of question in question bank.
-    * categorydesc - Category description.
+    * categorydesc - Category description. HTML that is safe to output (e.g. from format_text).
     * editactionmenu - Edit action menu link.
     * draghandle - Boolean if handle should be displayed (if category is movable).
     * children - Children category item to curent category (same variables as those above).
@@ -34,7 +34,7 @@
     {
         "categoryid": "1",
         "questionbankurl": "question/edit.php?cmid=123",
-        "categoryname": "Default for Miscellaneous",
+        "categoryname": "Default for Miscellaneous & < > \" '",
         "idnumber": "1",
         "questioncount": " 1",
         "categorydesc": "The default category for questions shared in context Miscellaneous",
