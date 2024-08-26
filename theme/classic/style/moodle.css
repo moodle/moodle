@@ -32730,6 +32730,22 @@ body.path-question-type .mform fieldset.hidden {
     margin: 0;
   }
 }
+.qbank_managecategories-item.qbank_managecategories-droptarget-before,
+.qbank_managecategories-item .qbank_managecategories-item.qbank_managecategories-droptarget-before,
+.qbank_managecategories-categorylist.qbank_managecategories-droptarget-before > .qbank_managecategories-item:first-child {
+  border-top-color: #0f6cbf;
+}
+
+.qbank_managecategories-item.qbank_managecategories-droptarget,
+.qbank_managecategories-categorylist.qbank_managecategories-droptarget > .qbank_managecategories-item:last-child {
+  border-bottom-color: #0f6cbf;
+}
+
+.qbank_managecategories-newchild.qbank_managecategories-droptarget {
+  border-color: #0f6cbf;
+  color: #0f6cbf;
+}
+
 /* user.less */
 .userprofile .fullprofilelink {
   text-align: center;

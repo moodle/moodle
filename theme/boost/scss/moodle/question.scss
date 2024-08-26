@@ -671,3 +671,18 @@ body.path-question-type .mform fieldset.hidden {
         margin: 0;
     }
 }
+
+.qbank_managecategories-item.qbank_managecategories-droptarget-before,
+.qbank_managecategories-item .qbank_managecategories-item.qbank_managecategories-droptarget-before,
+.qbank_managecategories-categorylist.qbank_managecategories-droptarget-before > .qbank_managecategories-item:first-child {
+    border-top-color: $link-color;
+}
+.qbank_managecategories-item.qbank_managecategories-droptarget,
+.qbank_managecategories-categorylist.qbank_managecategories-droptarget > .qbank_managecategories-item:last-child {
+    border-bottom-color: $link-color;
+}
+
+.qbank_managecategories-newchild.qbank_managecategories-droptarget {
+    border-color: $link-color;
+    color: $link-color;
+}
