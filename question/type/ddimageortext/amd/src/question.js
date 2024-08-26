@@ -1122,8 +1122,7 @@ define([
          * @param {boolean} readOnly whether the question is read-only.
          */
         init: function(containerId, readOnly) {
-            const placeInfo = document.getElementById(containerId + ' placeinfoforjsandmobileapp');
-            const places = JSON.parse(placeInfo.dataset.placeInfo);
+            const places = JSON.parse(document.querySelector('#' + containerId + ' .dropzones').dataset.placeInfo);
             questionManager.questions[containerId] =
                 new DragDropOntoImageQuestion(containerId, readOnly, places);
             if (!questionManager.eventHandlersInitialised) {

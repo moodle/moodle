@@ -910,8 +910,8 @@ define([
          * @param {boolean} readOnly whether the question is read-only.
          */
         init: function(containerId, readOnly) {
-            const visibleDropZonesInfo = document.getElementById(containerId + ' visibledropzones');
-            const visibleDropZones = JSON.parse(visibleDropZonesInfo.dataset.visbledDropzones);
+            const visibleDropZones = JSON.parse(document.querySelector('#' + containerId + ' .dropzones')
+                .dataset.visibledDropzones);
             questionManager.questions[containerId] =
                 new DragDropMarkersQuestion(containerId, readOnly, visibleDropZones);
             if (!questionManager.eventHandlersInitialised) {

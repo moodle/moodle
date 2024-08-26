@@ -18,9 +18,8 @@ Feature: Preview a drag-drop onto image question
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype         | name                           | template    |
-      | Test questions   | ddimageortext | Drag onto image                | xsection    |
-      | Test questions   | ddimageortext | Drag question lots of dropzone | lotsofdrops |
+      | questioncategory | qtype         | name            | template |
+      | Test questions   | ddimageortext | Drag onto image | xsection |
 
   @javascript @_bug_phantomjs
   Scenario: Preview a question using the mouse.
@@ -38,14 +37,6 @@ Feature: Preview a drag-drop onto image question
     And I press "Submit and finish"
     Then the state of "Identify the features" question is shown as "Correct"
     And I should see "Mark 1.00 out of 1.00"
-
-  @javascript
-  Scenario: Preview a question have lots of dropzone.
-    Given I am on the "Drag question lots of dropzone" "core_question > preview" page logged in as teacher
-    And I should see "Drag question lots of dropzone"
-    When I press "Fill in correct responses"
-    And I press "Submit and finish"
-    And I should see "Well done"
 
   @javascript
   Scenario: Preview a question using the keyboard.
