@@ -34,7 +34,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
 
     # Mark the submission.
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I should see "Not marked" in the "I'm the student's first submission" "table_row"
     And I click on "Grade" "link" in the "I'm the student's first submission" "table_row"
     And I set the field "Grade out of 100" to "50"
@@ -96,5 +96,5 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I press "Save"
     And I should see "Tuesday, 1 January 2030, 8:00"
     And I am on the "Test assignment name" "assign activity" page
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I should see "In review" in the "I'm the student's first submission" "table_row"

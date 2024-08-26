@@ -46,14 +46,14 @@ Feature: Outcome grading
       | Online text | My online text |
     And I press "Save changes"
     When I am on the "Test assignment name" "assign activity" page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I click on "Grade" "link" in the "Student 0" "table_row"
     And I set the following fields to these values:
       | Outcome Test: | Excellent |
     And I press "Save changes"
     And I click on "Edit settings" "link"
     When I am on the "Test assignment name" "assign activity" page
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     Then I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should not see "Outcome Test: Excellent" in the "Student 1" "table_row"
 
@@ -87,14 +87,14 @@ Feature: Outcome grading
       | Online text | My online text |
     And I press "Save changes"
     When I am on the "Test assignment name" "assign activity" page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I click on "Grade" "link" in the "Student 0" "table_row"
     And I set the following fields to these values:
       | Outcome Test: | Excellent |
       | Apply grades and feedback to entire group | Yes |
     And I press "Save changes"
     And I am on the "Test assignment name" "assign activity" page
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     Then I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should see "Outcome Test: Excellent" in the "Student 1" "table_row"
     And I should not see "Outcome Test: Excellent" in the "Student 2" "table_row"
@@ -104,7 +104,7 @@ Feature: Outcome grading
       | Apply grades and feedback to entire group | No |
     And I press "Save changes"
     And I am on the "Test assignment name" "assign activity" page
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should see "Outcome Test: Disappointing" in the "Student 1" "table_row"
     And I should not see "Outcome Test: Disappointing" in the "Student 0" "table_row"

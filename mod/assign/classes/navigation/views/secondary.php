@@ -35,10 +35,11 @@ class secondary extends core_secondary {
             'modedit' => 1,
             "mod_{$this->page->activityname}_useroverrides" => 2, // Overrides are module specific.
             "mod_{$this->page->activityname}_groupoverrides" => 3,
+            "mod_{$this->page->activityname}_submissions" => 4,
         ]);
 
         $defaultmaping[self::TYPE_CUSTOM] = array_merge($defaultmaping[self::TYPE_CUSTOM], [
-            'advgrading' => 4,
+            'advgrading' => 5,
         ]);
         return $defaultmaping;
     }

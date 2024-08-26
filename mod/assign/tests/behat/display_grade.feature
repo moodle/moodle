@@ -28,7 +28,7 @@ Feature: Check that the assignment grade can be updated correctly
       | markingworkflow  | 1                           |
       | submissiondrafts | 0                           |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    Then I follow "View all submissions"
+    Then I navigate to "Submissions" in current page administration
     And I change window size to "large"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50"
@@ -63,7 +63,7 @@ Feature: Check that the assignment grade can be updated correctly
       | teamsubmission   | 1                           |
       | groupmode        | 0                           |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    When I follow "View all submissions"
+    When I navigate to "Submissions" in current page administration
     And I change window size to "large"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I change window size to "medium"

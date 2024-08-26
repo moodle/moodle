@@ -32,7 +32,7 @@ Feature: In an assignment, teachers can edit a students submission inline
       | Test assignment name  | student1  | I'm the student first submission  |
 
     When I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I change window size to "medium"

@@ -100,7 +100,7 @@ Feature: Set availability dates for an assignment
 
     And I am on the "Assignment name" Activity page logged in as teacher1
     And I should see "1" in the "Submitted" "table_row"
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I should see "Submitted for grading" in the "Student 1" "table_row"
 
   @_file_upload
@@ -131,7 +131,7 @@ Feature: Set availability dates for an assignment
 
     And I am on the "Assignment name" Activity page logged in as teacher1
     And I should see "1" in the "Submitted" "table_row"
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I should see "Submitted for grading" in the "Student 1" "table_row"
     And I should see "2 days 5 hours late" in the "Student 1" "table_row"
 
@@ -214,7 +214,7 @@ Feature: Set availability dates for an assignment
 
     And I am on the "Assignment name" Activity page logged in as teacher1
     And I should see "0" in the "Submitted" "table_row"
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I should see "No submission" in the "Student 1" "table_row"
     And I should see "Assignment is overdue by: 2 days 5 hours" in the "Student 1" "table_row"
 

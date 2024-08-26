@@ -23,7 +23,7 @@ Feature: Admin can set Recover grades default setting
       | recovergradesdefault  | <recovergradesetting>  |
     # Grade student 1 via quick grading
     And I am on the "Assign 1" "assign activity" page logged in as admin
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I click on "Quick grading" "checkbox"
     And I set the field "User grade" to "60.00"
     And I press "Save all quick grading changes"

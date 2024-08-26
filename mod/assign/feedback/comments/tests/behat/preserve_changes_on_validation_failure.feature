@@ -22,7 +22,7 @@ Feature: Check that any changes to assignment feedback comments are not lost
       | activity | name                 | course | assignfeedback_comments_enabled |
       | assign   | Test assignment name | C1     | 1                               |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     When I set the following fields to these values:

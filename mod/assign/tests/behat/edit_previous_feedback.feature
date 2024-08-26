@@ -33,7 +33,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
       | assign                | user      | onlinetext                        |
       | Test assignment name  | student2  | I'm the student first submission  |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     And I click on "Grade" "link" in the "Student 2" "table_row"
     And I change window size to "medium"
@@ -50,7 +50,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
     And I log out
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     And I click on "Grade" "link" in the "Student 2" "table_row"
     And I change window size to "medium"

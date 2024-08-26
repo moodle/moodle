@@ -32,7 +32,7 @@ Feature: Ensure that a comment remains visible if its popup menu is open
       | file    | mod/assign/feedback/editpdf/tests/fixtures/submission.pdf  |
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     And I click on "Grade" "link" in the "Submitted for grading" "table_row"
     And I change window size to "medium"

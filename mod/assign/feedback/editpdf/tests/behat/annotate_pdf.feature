@@ -35,7 +35,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
       | file    | mod/assign/feedback/editpdf/tests/fixtures/testgs.pdf  |
 
     When I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     And I click on "Grade" "link" in the "Submitted for grading" "table_row"
     And I change window size to "medium"
@@ -55,7 +55,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     And I follow "View annotated PDF..."
     Then I should see "Page 1 of 1"
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     And I click on "Grade" "link" in the "Submitted for grading" "table_row"
     And I change window size to "medium"
@@ -111,7 +111,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     And I log out
 
     When I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     And I click on "Grade" "link" in the "Submitted for grading" "table_row"
     And I change window size to "medium"
@@ -183,7 +183,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
       | file    | mod/assign/feedback/editpdf/tests/fixtures/submission.pdf  |
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I open the action menu in "Student 2" "table_row"
     And I click on "Grade" "link" in the "Student 2" "table_row"
     And I wait for the complete PDF to load

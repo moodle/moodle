@@ -38,7 +38,7 @@ Feature: Within the assignment submissions page, test that we can search for use
     And the following config values are set as admin:
       | showuseridentity | idnumber,email,city,country,phone1,phone2,department,institution |
     And I am on the "Test assignment one" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
 
   Scenario: A teacher can view and trigger the user search

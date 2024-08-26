@@ -87,7 +87,7 @@ Feature: availability_grade
     When I am on the "A1" "assign activity" page logged in as teacher1
 
     # Give the assignment 40%.
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     # Pick the grade link in the row that has s@example.com in it.
     And I change window size to "large"
     And I click on "Grade" "link" in the "s@example.com" "table_row"

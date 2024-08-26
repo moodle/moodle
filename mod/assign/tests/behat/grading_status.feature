@@ -36,7 +36,7 @@ Feature: View the grading status of an assignment
       | Test assignment name  | student1  | I'm the student first submission  |
     # Mark the submission.
     And I am on the "Test assignment name" "assign activity" page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I should see "Not marked" in the "Student 1" "table_row"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I should see "1 of 2"
@@ -49,7 +49,7 @@ Feature: View the grading status of an assignment
     And I set the field "Notify student" to "0"
     And I press "Save changes"
     And I am on the "Test assignment name" "assign activity" page
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I should see "In review" in the "Student 1" "table_row"
     And I log out
     # View the grading status as a student.
@@ -59,7 +59,7 @@ Feature: View the grading status of an assignment
     And I log out
     # Mark the submission again but set the marking workflow to 'Released'.
     And I am on the "Test assignment name" "assign activity" page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I should see "In review" in the "Student 1" "table_row"
     And I change window size to "large"
     And I click on "Grade" "link" in the "Student 1" "table_row"
@@ -77,7 +77,7 @@ Feature: View the grading status of an assignment
     And I log out
     # Now, change the status from 'Released' to 'In marking' (this will remove the grade from the gradebook).
     And I am on the "Test assignment name" "assign activity" page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I should see "Released" in the "Student 1" "table_row"
     And I change window size to "large"
     And I click on "Grade" "link" in the "Student 1" "table_row"
@@ -87,7 +87,7 @@ Feature: View the grading status of an assignment
     And I set the field "Notify student" to "0"
     And I press "Save changes"
     And I am on the "Test assignment name" "assign activity" page
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I should see "In marking" in the "Student 1" "table_row"
     # The grade should also remain displayed as it's stored in the assign DB tables, but the final grade should be empty.
     And "Student 1" row "Grade" column of "generaltable" table should contain "50.00"
@@ -116,7 +116,7 @@ Feature: View the grading status of an assignment
       | Test assignment name  | student1  | I'm the student first submission  |
     # Mark the submission.
     And I am on the "Test assignment name" "assign activity" page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I should not see "Graded" in the "Student 1" "table_row"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I should see "1 of 2"
@@ -128,7 +128,7 @@ Feature: View the grading status of an assignment
     And I press "Save changes"
     And I click on "Edit settings" "link"
     And I am on the "Test assignment name" "assign activity" page
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I should see "Graded" in the "Student 1" "table_row"
     And I log out
     # View the grading status as a student.
@@ -145,7 +145,7 @@ Feature: View the grading status of an assignment
     And I log out
     # Teacher marks the submission again after noticing the 'Graded - resubmitted'.
     And I am on the "Test assignment name" "assign activity" page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I should see "Graded - resubmitted" in the "Student 1" "table_row"
     And I wait "10" seconds
     And I change window size to "large"
@@ -157,7 +157,7 @@ Feature: View the grading status of an assignment
     And I press "Save changes"
     And I click on "Edit settings" "link"
     And I am on the "Test assignment name" "assign activity" page
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I should see "Graded" in the "Student 1" "table_row"
     And I log out
     # View the grading status as a student again.

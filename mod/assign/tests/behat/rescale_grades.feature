@@ -28,7 +28,7 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
       | submissiondrafts | 0                           |
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I press "Save changes"
@@ -42,7 +42,7 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
     And I set the field "Rescale existing grades" to "No"
     And I set the field "Maximum grade" to "80"
     When I press "Save and display"
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     Then "Student 1" row "Grade" column of "generaltable" table should contain "40.00"
 
   Scenario: Update an assignment without touching the max grades
@@ -58,7 +58,7 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
     And I set the field "Rescale existing grades" to "Yes"
     And I set the field "Maximum grade" to "80"
     When I press "Save and display"
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     Then "Student 1" row "Grade" column of "generaltable" table should contain "40.00"
 
   Scenario: Update the max grade for an assignment rescaling existing grades
@@ -67,11 +67,11 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
     And I set the field "Rescale existing grades" to "Yes"
     And I set the field "Maximum grade" to "50"
     When I press "Save and display"
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     Then "Student 1" row "Grade" column of "generaltable" table should contain "20.00"
 
   Scenario: Rescaling should not produce negative grades
-    Given I follow "View all submissions"
+    Given I navigate to "Submissions" in current page administration
     And I change window size to "large"
     And I click on "Grade" "link" in the "Student 2" "table_row"
     And I change window size to "medium"
@@ -82,6 +82,6 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
     And I set the field "Rescale existing grades" to "Yes"
     And I set the field "Maximum grade" to "50"
     When I press "Save and display"
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     # Make sure the student did not receive a negative grade.
     Then "Student 2" row "Grade" column of "generaltable" table should not contain "-0.50"
