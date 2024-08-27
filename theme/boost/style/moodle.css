@@ -35302,12 +35302,12 @@ table .sticky-column {
   background-color: inherit;
 }
 
-.table-dynamic .loading-icon {
+.table-dynamic > .loading-icon {
   position: absolute;
   left: calc(50% - 1.5rem);
   top: 200px;
 }
-.table-dynamic .loading-icon .icon {
+.table-dynamic > .loading-icon .icon {
   height: 3rem;
   width: 3rem;
   font-size: 3rem;

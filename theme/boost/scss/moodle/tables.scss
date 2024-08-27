@@ -71,7 +71,7 @@ table {
     }
 }
 
-.table-dynamic .loading-icon {
+.table-dynamic > .loading-icon {
     position: absolute;
     left: calc(50% - 1.5rem);
     top: 200px;
