@@ -27,14 +27,12 @@ use core_ai\aiactions\responses\response_generate_text;
  * @covers     \core_ai\aiactions\responses\response_generate_text
  */
 final class response_generate_text_test extends \advanced_testcase {
-
     /**
      * Test get_basename.
      */
     public function test_get_success(): void {
         $actionresponse = new response_generate_text(
             success: true,
-            actionname: 'generate_text',
         );
 
         $this->assertTrue($actionresponse->get_success());
@@ -49,7 +47,6 @@ final class response_generate_text_test extends \advanced_testcase {
         $this->expectExceptionMessage('Error code and message must exist in an error response.');
         new response_generate_text(
             success: false,
-            actionname: 'generate_text'
         );
     }
 
@@ -68,7 +65,6 @@ final class response_generate_text_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_text(
             success: true,
-            actionname: 'generate_text',
         );
         $actionresponse->set_response_data($body);
 

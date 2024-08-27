@@ -16,6 +16,7 @@
 
 namespace core_ai;
 
+use core\exception\coding_exception;
 use core_ai\aiactions\base;
 use core_ai\aiactions\responses;
 
@@ -40,7 +41,7 @@ class manager {
             return "{$plugin}\\placement";
         } else {
             // Explode if neither.
-            throw new \coding_exception("Plugin name does not start with 'aiprovider_' or 'aiplacement_': " . $plugin);
+            throw new coding_exception("Plugin name does not start with 'aiprovider_' or 'aiplacement_': {$plugin}");
         }
     }
 
@@ -142,7 +143,6 @@ class manager {
         // Response if there are no providers available.
         return new $responseclassname(
             success: false,
-            actionname: $actionname,
             errorcode: -1,
             errormessage: 'No providers available to process the action.');
     }
@@ -237,7 +237,7 @@ class manager {
      * @param int $enabled The state to be set (e.g., enabled or disabled).
      * @return bool Returns true if the configuration was successfully set, false otherwise.
      */
-    public static function enable_action(string $plugin, string $action, int $enabled): bool {
+    public static function set_action_state(string $plugin, string $action, int $enabled): bool {
         $oldvalue = static::is_action_enabled($plugin, $action);
         // Only set value if there is no config setting or if the value is different from the previous one.
         if ($oldvalue !== $enabled) {
@@ -258,6 +258,7 @@ class manager {
      */
     public static function is_action_enabled(string $plugin, string $action): bool {
         $value = get_config($plugin, $action);
+
         // If not exist in DB, set it to true (enabled).
         if ($value === false) {
             return true;

@@ -16,9 +16,9 @@
 
 namespace aiprovider_openai;
 
-use core\http_client;
 use core_ai\aiactions;
 use core_ai\rate_limiter;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * Class provider.
@@ -91,21 +91,15 @@ class provider extends \core_ai\provider {
     }
 
     /**
-     * Create the HTTP client.
+     * Update a request to add any headers required by the provider.
      *
-     * @param string $apiendpoint The API endpoint.
-     * @return http_client The HTTP client used to make requests.
+     * @param \Psr\Http\Message\RequestInterface $request
+     * @return \Psr\Http\Message\RequestInterface
      */
-    public function create_http_client(string $apiendpoint): http_client {
-        return new http_client([
-            'base_uri' => $apiendpoint,
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . $this->apikey,
-                'OpenAI-Organization' => $this->orgid,
-            ],
-            'http_errors' => false, // We want to handle errors ourselves.
-        ]);
+    public function add_authentication_headers(RequestInterface $request): RequestInterface {
+        return $request
+            ->withAddedHeader('Authorization', "Bearer {$this->apikey}")
+            ->withAddedHeader('OpenAI-Organization', $this->orgid);
     }
 
     /**
@@ -116,7 +110,7 @@ class provider extends \core_ai\provider {
      */
     public function is_request_allowed(aiactions\base $action): array|bool {
         $ratelimiter = \core\di::get(rate_limiter::class);
-        $component = explode('\\', get_class($this))[0];
+        $component = \core\component::get_component_from_classname(get_class($this));
 
         // Check the user rate limit.
         if ($this->enableuserratelimit) {

@@ -16,6 +16,7 @@
 
 namespace core_ai\aiactions\responses;
 
+use core\exception\coding_exception;
 use core_ai\aiactions\responses\response_generate_image;
 
 /**
@@ -24,17 +25,15 @@ use core_ai\aiactions\responses\response_generate_image;
  * @package    core_ai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_ai\aiactions\responses\response_generate_imaget
+ * @covers     \core_ai\aiactions\responses\response_generate_image
  */
 final class response_generate_image_test extends \advanced_testcase {
-
     /**
      * Test get_basename.
      */
     public function test_get_success(): void {
         $actionresponse = new response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
 
         $this->assertTrue($actionresponse->get_success());
@@ -45,11 +44,10 @@ final class response_generate_image_test extends \advanced_testcase {
      * Test constructor with error.
      */
     public function test_construct_error(): void {
-        $this->expectException(\coding_exception::class);
+        $this->expectException(coding_exception::class);
         $this->expectExceptionMessage('Error code and message must exist in an error response.');
         new response_generate_image(
             success: false,
-            actionname: 'generate_image'
         );
     }
 
@@ -76,7 +74,6 @@ final class response_generate_image_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
         $actionresponse->set_response_data($body);
 

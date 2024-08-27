@@ -16,9 +16,9 @@
 
 namespace core_ai;
 
-use core\plugininfo\aiprovider;
-use core_ai\aiactions\base;
 use core_ai\aiactions\generate_image;
+use core_ai\aiactions\generate_text;
+use core_ai\aiactions\summarise_text;
 use core_ai\aiactions\responses\response_generate_image;
 
 /**
@@ -30,12 +30,11 @@ use core_ai\aiactions\responses\response_generate_image;
  * @covers     \core_ai\manager
  */
 final class manager_test extends \advanced_testcase {
-
     /**
      * Test get_ai_plugin_classname.
      */
     public function test_get_ai_plugin_classname(): void {
-        $manager = new manager();
+        $manager = \core\di::get(manager::class);
 
         // We're working with a private method here, so we need to use reflection.
         $method = new \ReflectionMethod($manager, 'get_ai_plugin_classname');
@@ -58,14 +57,14 @@ final class manager_test extends \advanced_testcase {
      * Test get_supported_actions.
      */
     public function test_get_supported_actions(): void {
-        $manager = new manager();
+        $manager = \core\di::get(manager::class);
         $actions = $manager->get_supported_actions('aiprovider_openai');
 
         // Assert array keys match the expected actions.
         $this->assertEquals([
-            \core_ai\aiactions\generate_text::class,
-            \core_ai\aiactions\generate_image::class,
-            \core_ai\aiactions\summarise_text::class,
+            generate_text::class,
+            generate_image::class,
+            summarise_text::class,
         ], $actions);
     }
 
@@ -76,10 +75,10 @@ final class manager_test extends \advanced_testcase {
         $this->resetAfterTest();
         set_config('enabled', 1, 'aiprovider_openai');
 
-        $manager = new manager();
+        $manager = \core\di::get(manager::class);
         $actions = [
-            \core_ai\aiactions\generate_text::class,
-            \core_ai\aiactions\summarise_text::class,
+            generate_text::class,
+            summarise_text::class,
         ];
 
         // Get the providers for the actions.
@@ -89,16 +88,16 @@ final class manager_test extends \advanced_testcase {
         $this->assertEquals($actions, array_keys($providers));
 
         // Assert that there is only one provider for each action.
-        $this->assertCount(1, $providers['core_ai\\aiactions\\generate_text']);
-        $this->assertCount(1, $providers['core_ai\\aiactions\\summarise_text']);
+        $this->assertCount(1, $providers[generate_text::class]);
+        $this->assertCount(1, $providers[summarise_text::class]);
 
         // Disable the generate text action for the open ai provider.
-        set_config('core_ai\\aiactions\\generate_text', 0, 'aiprovider_openai');
+        set_config(generate_text::class, 0, 'aiprovider_openai');
         $providers = $manager->get_providers_for_actions($actions, true);
 
         // Assert that there is no provider for the generate text action.
-        $this->assertCount(0, $providers['core_ai\\aiactions\\generate_text']);
-        $this->assertCount(1, $providers['core_ai\\aiactions\\summarise_text']);
+        $this->assertCount(0, $providers[generate_text::class]);
+        $this->assertCount(1, $providers[summarise_text::class]);
 
     }
 
@@ -113,7 +112,6 @@ final class manager_test extends \advanced_testcase {
 
         $expectedresult = new aiactions\responses\response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
 
         // Set up the expectation for call_action_provider to return the defined result.
@@ -121,7 +119,7 @@ final class manager_test extends \advanced_testcase {
             ->method('call_action_provider')
             ->willReturn($expectedresult);
 
-        $action = new \core_ai\aiactions\generate_image(
+        $action = new generate_image(
             contextid: 1,
             userid: 1,
             prompttext: 'This is a test prompt',
@@ -152,7 +150,6 @@ final class manager_test extends \advanced_testcase {
 
         $expectedresult = new aiactions\responses\response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
 
         // Set up the expectation for call_action_provider to return the defined result.
@@ -160,7 +157,7 @@ final class manager_test extends \advanced_testcase {
             ->method('call_action_provider')
             ->willReturn($expectedresult);
 
-        $action = new \core_ai\aiactions\generate_image(
+        $action = new generate_image(
             contextid: 1,
             userid: 1,
             prompttext: 'This is a test prompt',
@@ -307,13 +304,12 @@ final class manager_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
         $actionresponse->set_response_data($body);
 
         $provider = new \aiprovider_openai\provider();
 
-        $manager = new manager();
+        $manager = \core\di::get(manager::class);
         // We're working with a private method here, so we need to use reflection.
         $method = new \ReflectionMethod($manager, 'store_action_result');
         $storeresult = $method->invoke($manager, $provider, $action, $actionresponse);
@@ -354,7 +350,7 @@ final class manager_test extends \advanced_testcase {
 
         $provider = new \aiprovider_openai\provider();
 
-        $manager = new manager();
+        $manager = \core\di::get(manager::class);
 
         // We're working with a private method here, so we need to use reflection.
         $method = new \ReflectionMethod($manager, 'call_action_provider');
@@ -370,7 +366,7 @@ final class manager_test extends \advanced_testcase {
     public function test_is_action_enabled(): void {
         $this->resetAfterTest();
         $plugin = 'aiprovider_openai';
-        $action = 'core_ai\\aiactions\\generate_image';
+        $action = generate_image::class;
 
         // Should be enabled by default.
         $result = manager::is_action_enabled($plugin, $action);
@@ -390,7 +386,7 @@ final class manager_test extends \advanced_testcase {
     public function test_enable_action(): void {
         $this->resetAfterTest();
         $plugin = 'aiprovider_openai';
-        $action = 'core_ai\\aiactions\\generate_image';
+        $action = generate_image::class;
 
         // Disable the action.
         set_config($action, 0, $plugin);
@@ -400,7 +396,7 @@ final class manager_test extends \advanced_testcase {
         $this->assertFalse($result);
 
         // Enable the action.
-        $result = manager::enable_action($plugin, $action, 1);
+        $result = manager::set_action_state($plugin, $action, 1);
         $this->assertTrue($result);
     }
 }

@@ -28,53 +28,71 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
     // Provider specific settings heading.
-    $settings = new admin_settingspage_provider('aiprovider_openai',
-        new lang_string('pluginname', 'aiprovider_openai'), 'moodle/site:config', true);
+    $settings = new admin_settingspage_provider(
+        'aiprovider_openai',
+        new lang_string('pluginname', 'aiprovider_openai'),
+        'moodle/site:config',
+        true,
+    );
 
-    $settings->add(new admin_setting_heading('aiprovider_openai/general',
+    $settings->add(new admin_setting_heading(
+        'aiprovider_openai/general',
         new lang_string('providersettings', 'core_ai'),
-        new lang_string('providersettings_desc', 'core_ai')));
+        new lang_string('providersettings_desc', 'core_ai'),
+    ));
 
     // Setting to store OpenAI API key.
-    $settings->add(new admin_setting_configpasswordunmask('aiprovider_openai/apikey',
+    $settings->add(new admin_setting_configpasswordunmask(
+        'aiprovider_openai/apikey',
         new lang_string('apikey', 'aiprovider_openai'),
         new lang_string('apikey_desc', 'aiprovider_openai'),
-        ''));
+        '',
+    ));
 
     // Setting to store OpenAI organization ID.
-    $settings->add(new admin_setting_configtext('aiprovider_openai/orgid',
+    $settings->add(new admin_setting_configtext(
+        'aiprovider_openai/orgid',
         new lang_string('orgid', 'aiprovider_openai'),
         new lang_string('orgid_desc', 'aiprovider_openai'),
         '',
-        PARAM_TEXT));
+        PARAM_TEXT,
+    ));
 
     // Setting to enable/disable global rate limiting.
-    $settings->add(new admin_setting_configcheckbox('aiprovider_openai/enableglobalratelimit',
+    $settings->add(new admin_setting_configcheckbox(
+        'aiprovider_openai/enableglobalratelimit',
         new lang_string('enableglobalratelimit', 'aiprovider_openai'),
         new lang_string('enableglobalratelimit_desc', 'aiprovider_openai'),
-        0));
+        0,
+    ));
 
     // Setting to set how many requests per hour are allowed for the global rate limit.
     // Should only be enabled when global rate limiting is enabled.
-    $settings->add(new admin_setting_configtext('aiprovider_openai/globalratelimit',
+    $settings->add(new admin_setting_configtext(
+        'aiprovider_openai/globalratelimit',
         new lang_string('globalratelimit', 'aiprovider_openai'),
         new lang_string('globalratelimit_desc', 'aiprovider_openai'),
         100,
-        PARAM_INT));
+        PARAM_INT,
+    ));
     $settings->hide_if('aiprovider_openai/globalratelimit', 'aiprovider_openai/enableglobalratelimit', 'eq', 0);
 
     // Setting to enable/disable user rate limiting.
-    $settings->add(new admin_setting_configcheckbox('aiprovider_openai/enableuserratelimit',
+    $settings->add(new admin_setting_configcheckbox(
+        'aiprovider_openai/enableuserratelimit',
         new lang_string('enableuserratelimit', 'aiprovider_openai'),
         new lang_string('enableuserratelimit_desc', 'aiprovider_openai'),
-        0));
+        0,
+    ));
 
     // Setting to set how many requests per hour are allowed for the user rate limit.
     // Should only be enabled when user rate limiting is enabled.
-    $settings->add(new admin_setting_configtext('aiprovider_openai/userratelimit',
+    $settings->add(new admin_setting_configtext(
+        'aiprovider_openai/userratelimit',
         new lang_string('userratelimit', 'aiprovider_openai'),
         new lang_string('userratelimit_desc', 'aiprovider_openai'),
         10,
-        PARAM_INT));
+        PARAM_INT,
+    ));
     $settings->hide_if('aiprovider_openai/userratelimit', 'aiprovider_openai/enableuserratelimit', 'eq', 0);
 }

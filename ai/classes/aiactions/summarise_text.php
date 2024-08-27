@@ -52,7 +52,6 @@ class summarise_text extends base {
 
         $responsearr = $response->get_response_data();
 
-        $tablename = $this->get_tablename();
         $record = new \stdClass();
         $record->prompt = $this->prompttext;
         $record->responseid = $responsearr['id']; // Can be null.
@@ -62,6 +61,6 @@ class summarise_text extends base {
         $record->prompttokens = $responsearr['prompttokens']; // Can be null.
         $record->completiontoken = $responsearr['completiontokens']; // Can be null.
 
-        return $DB->insert_record($tablename, $record);
+        return $DB->insert_record($this->get_tablename(), $record);
     }
 }

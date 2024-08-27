@@ -64,7 +64,6 @@ class generate_image extends base {
 
         $responsearr = $response->get_response_data();
 
-        $tablename = $this->get_tablename();
         $record = new \stdClass();
         $record->prompt = $this->prompttext;
         $record->numberimages = $this->numimages;
@@ -74,6 +73,6 @@ class generate_image extends base {
         $record->sourceurl = $responsearr['sourceurl']; // Can be null.
         $record->revisedprompt = $responsearr['revisedprompt']; // Can be null.
 
-        return $DB->insert_record($tablename, $record);
+        return $DB->insert_record($this->get_tablename(), $record);
     }
 }

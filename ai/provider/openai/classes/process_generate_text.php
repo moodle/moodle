@@ -16,12 +16,11 @@
 
 namespace aiprovider_openai;
 
-use core\http_client;
-use core_ai\aiactions\responses\response_base;
-use core_ai\aiactions\responses\response_generate_text;
-use core_ai\process_base;
-use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Uri;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Class process text generation.
@@ -30,99 +29,31 @@ use Psr\Http\Message\ResponseInterface;
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class process_generate_text extends process_base {
-    /** @var string The API endpoint to make requests against. */
-    private string $aiendpoint = 'https://api.openai.com/v1/chat/completions';
-
-    /** @var string The API model to use. */
-    private string $model = 'gpt-4o';
-
-    /**
-     * Process the AI request.
-     *
-     * @return response_base The result of the action.
-     */
-    public function process(): response_base {
-        // Check the rate limiter.
-        $ratelimitcheck = $this->provider->is_request_allowed($this->action);
-        if ($ratelimitcheck !== true) {
-            return new response_generate_text(
-                success: false,
-                actionname: 'generate_text',
-                errorcode: $ratelimitcheck['errorcode'],
-                errormessage: $ratelimitcheck['errormessage'],
-            );
-        }
-
-        $userid = $this->provider->generate_userid($this->action->get_configuration('userid'));
-        $client = $this->provider->create_http_client($this->aiendpoint);
-
-        // Create the request object.
-        $requestobj = $this->create_request_object($this->action, $userid);
-
-        // Make the request to the OpenAI API.
-        $response = $this->query_ai_api($client, $requestobj);
-
-        // Format the action response object.
-        return $this->prepare_response($response);
+class process_generate_text extends abstract_processor {
+    #[\Override]
+    protected function get_endpoint(): UriInterface {
+        return new Uri('https://api.openai.com/v1/chat/completions');
     }
 
-    /**
-     * Query the AI service.
-     *
-     * @param http_client $client The http client.
-     * @param \stdClass $requestobj The request object.
-     * @return array The response from the AI service.
-     */
-    protected function query_ai_api(http_client $client, \stdClass $requestobj): array {
-        $requestjson = json_encode($requestobj);
-
-        try {
-            // Call the external AI service.
-            $response = $client->request('POST', '', [
-                'body' => $requestjson,
-            ]);
-
-            // Double-check the response codes, in case of a non 200 that didn't throw an error.
-            $status = $response->getStatusCode();
-            if ($status == 200) {
-                return $this->handle_api_success($response);
-            } else {
-                return $this->handle_api_error($status, $response);
-            }
-        } catch (RequestException $e) {
-            // Handle any exceptions.
-            return [
-                'success' => false,
-                'errorcode' => $e->getCode(),
-                'errormessage' => $e->getMessage(),
-            ];
-        }
-
+    #[\Override]
+    protected function get_model(): string {
+        return 'gpt-4o';
     }
 
-    /**
-     * Create the request object to send to the OpenAI API.
-     *
-     * This object contains all the required parameters for the request.
-     *
-     * @param \core_ai\aiactions\base $action The action to process.
-     * @param string $userid The user id.
-     * @return \stdClass The request object to send to the OpenAI API.
-     */
-    private function create_request_object(\core_ai\aiactions\base $action, string $userid): \stdClass {
+    #[\Override]
+    protected function create_request_object(string $userid): RequestInterface {
         // Create the user object.
         $userobj = new \stdClass();
         $userobj->role = 'user';
-        $userobj->content = $action->get_configuration('prompttext');
+        $userobj->content = $this->action->get_configuration('prompttext');
 
         // Create the request object.
         $requestobj = new \stdClass();
-        $requestobj->model = $this->model;
+        $requestobj->model = $this->get_model();
         $requestobj->user = $userid;
 
         // If there is a system string available, use it.
-        $systeminstruction = $action->get_system_instruction();
+        $systeminstruction = $this->action->get_system_instruction();
         if (!empty($systeminstruction)) {
             $systemobj = new \stdClass();
             $systemobj->role = 'system';
@@ -132,33 +63,14 @@ class process_generate_text extends process_base {
             $requestobj->messages = [$userobj];
         }
 
-        return $requestobj;
-    }
-
-    /**
-     * Handle an error from the external AI api.
-     *
-     * @param int $status The status code.
-     * @param ResponseInterface $response The response object.
-     * @return array The error response.
-     */
-    protected function handle_api_error(int $status, ResponseInterface $response): array {
-        $responsearr = [
-            'success' => false,
-            'errorcode' => $status,
-        ];
-
-        if ($status == 500) {
-            $responsearr['errormessage'] = 'Internal server error.';
-        } else if ($status == 503) {
-            $responsearr['errormessage'] = 'Service unavailable.';
-        } else {
-            $responsebody = $response->getBody();
-            $bodyobj = json_decode($responsebody->getContents());
-            $responsearr['errormessage'] = $bodyobj->error->message;
-        }
-
-        return $responsearr;
+        return new Request(
+            method: 'POST',
+            uri: '',
+            body: json_encode($requestobj),
+            headers: [
+                'Content-Type' => 'application/json',
+            ],
+        );
     }
 
     /**
@@ -180,29 +92,5 @@ class process_generate_text extends process_base {
             'prompttokens' => $bodyobj->usage->prompt_tokens,
             'completiontokens' => $bodyobj->usage->completion_tokens,
         ];
-    }
-
-    /**
-     * Prepare the response object.
-     *
-     * @param array $response The response object.
-     * @return response_generate_text The action response object.
-     */
-    private function prepare_response(array $response): response_generate_text {
-        if ($response['success']) {
-            $generatedtext = new response_generate_text(
-                success: true,
-                actionname: 'generate_text',
-            );
-            $generatedtext->set_response_data($response);
-            return $generatedtext;
-        } else {
-            return new response_generate_text(
-                success: false,
-                actionname: 'generate_text',
-                errorcode: $response['errorcode'],
-                errormessage: $response['errormessage'],
-            );
-        }
     }
 }

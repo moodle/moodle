@@ -73,7 +73,6 @@ final class generate_text_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_text(
             success: true,
-            actionname: 'generate_text',
         );
         $actionresponse->set_response_data($body);
 

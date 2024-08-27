@@ -84,7 +84,7 @@ class set_action extends external_api {
             );
         }
 
-        manager::enable_action($plugin, $action, $state);
+        manager::set_action_state($plugin, $action, $state);
 
         return [];
     }

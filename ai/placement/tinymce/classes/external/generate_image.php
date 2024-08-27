@@ -28,7 +28,6 @@ use core_external\external_value;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class generate_image extends external_api {
-
     /**
      * Generate image parameters.
      *
@@ -129,7 +128,7 @@ class generate_image extends external_api {
         );
 
         // Send the action to the AI manager.
-        $manager = new \core_ai\manager();
+        $manager = \core\di::get(\core_ai\manager::class);
         $response = $manager->process_action($action);
 
         // If we have a successful response, generate the URL for the draft file.

@@ -18,7 +18,6 @@ namespace aiplacement_tinymce\external;
 
 use core_external\external_api;
 use core_external\external_function_parameters;
-use core_external\external_single_structure;
 use core_external\external_value;
 
 /**
@@ -29,7 +28,6 @@ use core_external\external_value;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class generate_text extends external_api {
-
     /**
      * Generate image parameters.
      *
@@ -74,7 +72,7 @@ class generate_text extends external_api {
         ]);
         // Context validation and permission check.
         // Get the context from the passed in ID.
-        $context = \context::instance_by_id($contextid);
+        $context = \core\context::instance_by_id($contextid);
 
         // Check the user has permission to use the AI service.
         self::validate_context($context);
@@ -88,7 +86,7 @@ class generate_text extends external_api {
         );
 
         // Send the action to the AI manager.
-        $manager = new \core_ai\manager();
+        $manager = \core\di::get(\core_ai\manager::class);
         $response = $manager->process_action($action);
         // Return the response.
         return [

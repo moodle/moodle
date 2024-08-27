@@ -16,7 +16,7 @@
 
 namespace core_ai\aiactions\responses;
 
-use coding_exception;
+use core\exception\coding_exception;
 
 /**
  * Action response base class.

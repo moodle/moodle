@@ -16,8 +16,6 @@
 
 namespace aiprovider_openai;
 
-use core_ai\aiactions\responses\response_summarise_text;
-
 /**
  * Class process text summarisation.
  *
@@ -26,27 +24,4 @@ use core_ai\aiactions\responses\response_summarise_text;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class process_summarise_text extends process_generate_text {
-    /**
-     * Prepare the response object.
-     *
-     * @param array $response The response object.
-     * @return response_summarise_text The action response object.
-     */
-    private function prepare_response(array $response): response_summarise_text {
-        if ($response['success']) {
-            $generatedtext = new response_summarise_text(
-                success: true,
-                actionname: 'summarise_text',
-            );
-            $generatedtext->set_response_data($response);
-            return $generatedtext;
-        } else {
-            return new response_summarise_text(
-                success: false,
-                actionname: 'summarise_text',
-                errorcode: $response['errorcode'],
-                errormessage: $response['errormessage'],
-            );
-        }
-    }
 }

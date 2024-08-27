@@ -26,14 +26,14 @@ defined('MOODLE_INTERNAL') || die();
 
 $functions = [
     'aiplacement_tinymce_generate_image' => [
-        'classname' => 'aiplacement_tinymce\external\generate_image',
+        'classname' => \aiplacement_tinymce\external\generate_image::class,
         'description' => 'Generate image for the TinyMCE AI Placement',
         'type' => 'write',
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
     'aiplacement_tinymce_generate_text' => [
-        'classname' => 'aiplacement_tinymce\external\generate_text',
+        'classname' => \aiplacement_tinymce\external\generate_text::class,
         'description' => 'Generate text for the TinyMCE AI Placement',
         'type' => 'write',
         'ajax' => true,

@@ -16,52 +16,38 @@
 
 namespace aiprovider_openai;
 
-use core_ai\rate_limiter;
-
 /**
  * Test OpenAI provider methods.
  *
  * @package    aiprovider_openai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_ai\provider\openai
+ * @covers     \aiprovider_openai\provider
  */
 final class provider_test extends \advanced_testcase {
-
     /**
      * Test get_action_list
      */
     public function test_get_action_list(): void {
-        $provider = new \aiprovider_openai\provider();
+        $provider = new provider();
         $actionlist = $provider->get_action_list();
         $this->assertIsArray($actionlist);
         $this->assertCount(3, $actionlist);
-        $this->assertContains('core_ai\\aiactions\\generate_text', $actionlist);
-        $this->assertContains('core_ai\\aiactions\\generate_image', $actionlist);
-        $this->assertContains('core_ai\\aiactions\\summarise_text', $actionlist);
+        $this->assertContains(\core_ai\aiactions\generate_text::class, $actionlist);
+        $this->assertContains(\core_ai\aiactions\generate_image::class, $actionlist);
+        $this->assertContains(\core_ai\aiactions\summarise_text::class, $actionlist);
     }
 
     /**
      * Test generate_userid.
      */
     public function test_generate_userid(): void {
-        $provider = new \aiprovider_openai\provider();
+        $provider = new provider();
         $userid = $provider->generate_userid(1);
 
         // Assert that the generated userid is a string of proper length.
         $this->assertIsString($userid);
         $this->assertEquals(64, strlen($userid));
-    }
-
-    /**
-     * Test create_http_client.
-     */
-    public function test_create_http_client(): void {
-        $provider = new \aiprovider_openai\provider();
-        $url = 'https://api.openai.com/v1/images/generations';
-        $client = $provider->create_http_client($url);
-
-        $this->assertInstanceOf(\core\http_client::class, $client);
     }
 
     /**
@@ -92,7 +78,7 @@ final class provider_test extends \advanced_testcase {
             numimages: $numimages,
             style: $style,
         );
-        $provider = new \aiprovider_openai\provider();
+        $provider = new provider();
 
         // Make 3 requests, all should be allowed.
         for ($i = 0; $i < 3; $i++) {

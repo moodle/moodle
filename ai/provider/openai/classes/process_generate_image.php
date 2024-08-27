@@ -16,15 +16,12 @@
 
 namespace aiprovider_openai;
 
+use core\http_client;
 use core_ai\ai_image;
-use core_ai\aiactions\responses\response_base;
-use core_ai\aiactions\responses\response_generate_image;
-use curl;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Uri;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir . '/filelib.php');
 
 /**
  * Class process image generation.
@@ -33,44 +30,26 @@ require_once($CFG->libdir . '/filelib.php');
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class process_generate_image extends process_generate_text {
-    /** @var string The API endpoint to make requests against. */
-    private string $aiendpoint = 'https://api.openai.com/v1/images/generations';
-
-    /** @var string The API model to use. */
-    private string $model = 'dall-e-3';
-
+class process_generate_image extends abstract_processor {
     /** @var int The number of images to generate dall-e-3 only supports 1. */
     private int $numberimages = 1;
 
     /** @var string Response format: url or b64_json. */
     private string $responseformat = 'url';
 
-    /**
-     * Process the AI request.
-     *
-     * @return response_base The result of the action.
-     */
-    public function process(): response_base {
-        // Check the rate limiter.
-        $ratelimitcheck = $this->provider->is_request_allowed($this->action);
-        if ($ratelimitcheck !== true) {
-            return new response_generate_image(
-                success: false,
-                actionname: 'generate_image',
-                errorcode: $ratelimitcheck['errorcode'],
-                errormessage: $ratelimitcheck['errormessage'],
-            );
-        }
+    #[\Override]
+    protected function get_endpoint(): \Psr\Http\Message\UriInterface {
+        return new Uri('https://api.openai.com/v1/images/generations');
+    }
 
-        $userid = $this->provider->generate_userid($this->action->get_configuration('userid'));
-        $client = $this->provider->create_http_client($this->aiendpoint);
+    #[\Override]
+    protected function get_model(): string {
+        return 'dall-e-3';
+    }
 
-        // Create the request object.
-        $requestobj = $this->create_request_object($this->action, $userid);
-
-        // Make the request to the OpenAI API.
-        $response = $this->query_ai_api($client, $requestobj);
+    #[\Override]
+    protected function query_ai_api(): array {
+        $response = parent::query_ai_api();
 
         // If the request was successful, save the URL to a file.
         if ($response['success']) {
@@ -82,8 +61,7 @@ class process_generate_image extends process_generate_text {
             $response['draftfile'] = $fileobj;
         }
 
-        // Format the action response object.
-        return $this->prepare_response($response);
+        return $response;
     }
 
     /**
@@ -106,35 +84,28 @@ class process_generate_image extends process_generate_text {
         return $size;
     }
 
-    /**
-     * Create the request object to send to the OpenAI API.
-     *
-     * This object contains all the required parameters for the request.
-     *
-     * @param \core_ai\aiactions\base $action The action to process.
-     * @param string $userid The user id.
-     * @return \stdClass The request object to send to the OpenAI API.
-     */
-    private function create_request_object(\core_ai\aiactions\base $action, string $userid): \stdClass {
-        $requestobj = new \stdClass();
-        $requestobj->prompt = $action->get_configuration('prompttext');
-        $requestobj->model = $this->model;
-        $requestobj->n = $this->numberimages;
-        $requestobj->quality = $action->get_configuration('quality');
-        $requestobj->response_format = $this->responseformat;
-        $requestobj->size = $this->calculate_size($action->get_configuration('aspectratio'));
-        $requestobj->style = $action->get_configuration('style');
-        $requestobj->user = $userid;
-
-        return $requestobj;
+    #[\Override]
+    protected function create_request_object(string $userid): RequestInterface {
+        return new Request(
+            method: 'POST',
+            uri: '',
+            body: json_encode((object) [
+                'prompt' => $this->action->get_configuration('prompttext'),
+                'model' => $this->get_model(),
+                'n' => $this->numberimages,
+                'quality' => $this->action->get_configuration('quality'),
+                'response_format' => $this->responseformat,
+                'size' => $this->calculate_size($this->action->get_configuration('aspectratio')),
+                'style' => $this->action->get_configuration('style'),
+                'user' => $userid,
+            ]),
+            headers: [
+                'Content-Type' => 'application/json',
+            ],
+        );
     }
 
-    /**
-     * Handle a successful response from the external AI api.
-     *
-     * @param ResponseInterface $response The response object.
-     * @return array The response.
-     */
+    #[\Override]
     protected function handle_api_success(ResponseInterface $response): array {
         $responsebody = $response->getBody();
         $bodyobj = json_decode($responsebody->getContents());
@@ -147,31 +118,7 @@ class process_generate_image extends process_generate_text {
     }
 
     /**
-     * Prepare the response object.
-     *
-     * @param array $response The response object.
-     * @return response_generate_image The action response object.
-     */
-    private function prepare_response(array $response): response_generate_image {
-        if ($response['success']) {
-            $generatedimage = new response_generate_image(
-                success: true,
-                actionname: 'generate_image',
-            );
-            $generatedimage->set_response_data($response);
-            return $generatedimage;
-        } else {
-            return new response_generate_image(
-                success: false,
-                actionname: 'generate_image',
-                errorcode: $response['errorcode'],
-                errormessage: $response['errormessage'],
-            );
-        }
-    }
-
-    /**
-     * Convert the url for the image  to a file.
+     * Convert the url for the image to a file.
      *
      * Placements can't interact with the provider AI directly,
      * therefore we need to provide the image file in a format that can
@@ -183,18 +130,21 @@ class process_generate_image extends process_generate_text {
      */
     private function url_to_file(int $userid, string $url): \stored_file {
         global $CFG;
+
+        require_once("{$CFG->libdir}/filelib.php");
+
         $parsedurl = parse_url($url, PHP_URL_PATH); // Parse the URL to get the path.
         $filename = basename($parsedurl); // Get the basename of the path.
 
+        $client = \core\di::get(http_client::class);
+
         // Download the image and add the watermark.
-        $downloadtmpdir = make_request_directory();
-        $tempdst = $downloadtmpdir . $filename;
-        $c = new curl;
-        $result = $c->download_one(
-            $url,
-            null,
-            ['filepath' => $tempdst, 'timeout' => $CFG->repositorygetfiletimeout],
-        );
+        $tempdst = make_request_directory() . DIRECTORY_SEPARATOR . $filename;
+        $client->get($url, [
+            'sink' => $tempdst,
+            'timeout' => $CFG->repositorygetfiletimeout,
+        ]);
+
         $image = new ai_image($tempdst);
         $image->add_watermark()->save();
 

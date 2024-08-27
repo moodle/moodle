@@ -29,7 +29,6 @@ use ReflectionClass;
  * @covers     \core_ai\aiactions\base
  */
 final class base_test extends \advanced_testcase {
-
     /**
      * Test get_basename.
      */

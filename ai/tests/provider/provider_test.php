@@ -89,7 +89,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_text(
             success: true,
-            actionname: 'generate_text',
         );
         $actionresponse->set_response_data($body);
 
@@ -122,7 +121,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
         $actionresponse->set_response_data($body);
 
@@ -162,7 +160,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_text(
             success: true,
-            actionname: 'summarise_text',
         );
         $actionresponse->set_response_data($body);
 
@@ -236,7 +233,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_text(
             success: true,
-            actionname: 'generate_text',
         );
         $actionresponse->set_response_data($body);
 
@@ -263,7 +259,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_text(
             success: true,
-            actionname: 'generate_text',
         );
         $actionresponse->set_response_data($body);
         $method->invoke($manager, $provider, $action, $actionresponse);
@@ -342,7 +337,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
         $actionresponse->set_response_data($body);
 
@@ -369,7 +363,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
         $actionresponse->set_response_data($body);
         $method->invoke($manager, $provider, $action, $actionresponse);
@@ -452,7 +445,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_summarise_text(
             success: true,
-            actionname: 'generate_text',
         );
         $actionresponse->set_response_data($body);
 
@@ -479,7 +471,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_summarise_text(
             success: true,
-            actionname: 'generate_text',
         );
         $actionresponse->set_response_data($body);
         $method->invoke($manager, $provider, $action, $actionresponse);
@@ -587,7 +578,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_text(
             success: true,
-            actionname: 'generate_text',
         );
         $actionresponse->set_response_data($body);
 
@@ -613,7 +603,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_text(
             success: true,
-            actionname: 'generate_text',
         );
         $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
@@ -665,7 +654,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
         $actionresponse->set_response_data($body);
 
@@ -691,7 +679,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
         $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
@@ -741,7 +728,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_summarise_text(
             success: true,
-            actionname: 'summarise_text',
         );
         $actionresponse->set_response_data($body);
 
@@ -767,7 +753,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_summarise_text(
             success: true,
-            actionname: 'summarise_text',
         );
         $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
@@ -818,7 +803,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_text(
             success: true,
-            actionname: 'generate_text',
         );
         $actionresponse->set_response_data($body);
 
@@ -844,7 +828,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_text(
             success: true,
-            actionname: 'generate_text',
         );
         $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
@@ -897,7 +880,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
         $actionresponse->set_response_data($body);
 
@@ -923,7 +905,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
         $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
@@ -974,7 +955,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_summarise_text(
             success: true,
-            actionname: 'summarise_text',
         );
         $actionresponse->set_response_data($body);
 
@@ -1000,7 +980,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_summarise_text(
             success: true,
-            actionname: 'summarise_text',
         );
         $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
@@ -1083,7 +1062,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_text(
             success: true,
-            actionname: 'generate_text',
         );
         $actionresponse->set_response_data($body);
 
@@ -1109,7 +1087,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_text(
             success: true,
-            actionname: 'generate_text',
         );
         $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
@@ -1158,7 +1135,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
         $actionresponse->set_response_data($body);
 
@@ -1184,7 +1160,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
         $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
@@ -1234,7 +1209,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_summarise_text(
             success: true,
-            actionname: 'summarise_text',
         );
         $actionresponse->set_response_data($body);
 
@@ -1260,7 +1234,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_summarise_text(
             success: true,
-            actionname: 'summarise_text',
         );
         $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
@@ -1341,7 +1314,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_text(
             success: true,
-            actionname: 'generate_text',
         );
         $actionresponse->set_response_data($body);
 
@@ -1367,7 +1339,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_text(
             success: true,
-            actionname: 'generate_text',
         );
         $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
@@ -1423,7 +1394,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
         $actionresponse->set_response_data($body);
 
@@ -1449,7 +1419,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
         $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');
@@ -1502,7 +1471,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_summarise_text(
             success: true,
-            actionname: 'summarise_text',
         );
         $actionresponse->set_response_data($body);
 
@@ -1528,7 +1496,6 @@ final class provider_test extends \advanced_testcase {
         ];
         $actionresponse = new response_summarise_text(
             success: true,
-            actionname: 'summarise_text',
         );
         $actionresponse->set_response_data($body);
         $method = new \ReflectionMethod($manager, 'store_action_result');

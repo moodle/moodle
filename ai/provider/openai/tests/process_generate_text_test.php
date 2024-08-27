@@ -27,7 +27,9 @@ use GuzzleHttp\Psr7\Response;
  * @package    aiprovider_openai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_ai\provider\openai
+ * @covers     \aiprovider_openai\provider
+ * @covers     \aiprovider_openai\process_generate_text
+ * @covers     \aiprovider_openai\abstract_processor
  */
 final class process_generate_text_test extends \advanced_testcase {
     /** @var string A successful response in JSON format. */
@@ -45,7 +47,7 @@ final class process_generate_text_test extends \advanced_testcase {
     protected function setUp(): void {
         parent::setUp();
         // Load a response body from a file.
-        $this->responsebodyjson = file_get_contents(__DIR__ . '/fixtures/text_request_success.json');
+        $this->responsebodyjson = file_get_contents(self::get_fixture_path('aiprovider_openai', 'text_request_success.json'));
         $this->provider = new \aiprovider_openai\provider();
         $this->action = new \core_ai\aiactions\generate_text(
             contextid: 1,
@@ -62,38 +64,48 @@ final class process_generate_text_test extends \advanced_testcase {
 
         // We're working with a private method here, so we need to use reflection.
         $method = new \ReflectionMethod($processor, 'create_request_object');
-        $request = $method->invoke($processor, $this->action, 1);
+        $request = $method->invoke($processor, 1);
 
-        $this->assertEquals('This is a test prompt', $request->messages[0]->content);
-        $this->assertEquals('user', $request->messages[0]->role);
+        $body = (object) json_decode($request->getBody()->getContents());
+
+        $this->assertEquals('This is a test prompt', $body->messages[0]->content);
+        $this->assertEquals('user', $body->messages[0]->role);
     }
 
     /**
      * Test the API error response handler method.
-     *
      */
     public function test_handle_api_error(): void {
         $responses = [
             500 => new Response(500, ['Content-Type' => 'application/json']),
             503 => new Response(503, ['Content-Type' => 'application/json']),
-            401 => new Response(401, ['Content-Type' => 'application/json'],
-                '{"error": {"message": "Invalid Authentication"}}'),
-            404 => new Response(404, ['Content-Type' => 'application/json'],
-                '{"error": {"message": "You must be a member of an organization to use the API"}}'),
-            429 => new Response(429, ['Content-Type' => 'application/json'],
-                '{"error": {"message": "Rate limit reached for requests"}}'),
+            401 => new Response(
+                401,
+                ['Content-Type' => 'application/json'],
+                json_encode(['error' => ['message' => 'Invalid Authentication']]),
+            ),
+            404 => new Response(
+                404,
+                ['Content-Type' => 'application/json'],
+                json_encode(['error' => ['message' => 'You must be a member of an organization to use the API']]),
+            ),
+            429 => new Response(
+                429,
+                ['Content-Type' => 'application/json'],
+                json_encode(['error' => ['message' => 'Rate limit reached for requests']]),
+            ),
         ];
 
         $processor = new process_generate_text($this->provider, $this->action);
         $method = new \ReflectionMethod($processor, 'handle_api_error');
 
         foreach ($responses as $status => $response) {
-            $result = $method->invoke($processor, $status, $response);
+            $result = $method->invoke($processor, $response);
             $this->assertEquals($status, $result['errorcode']);
             if ($status == 500) {
-                $this->assertEquals('Internal server error.', $result['errormessage']);
+                $this->assertEquals('Internal Server Error', $result['errormessage']);
             } else if ($status == 503) {
-                $this->assertEquals('Service unavailable.', $result['errormessage']);
+                $this->assertEquals('Service Unavailable', $result['errormessage']);
             } else {
                 $this->assertStringContainsString($response->getBody()->getContents(), $result['errormessage']);
             }
@@ -131,28 +143,18 @@ final class process_generate_text_test extends \advanced_testcase {
      */
     public function test_query_ai_api_success(): void {
         // Mock the http client to return a successful response.
-        $response = new Response(
+        ['mock' => $mock] = $this->get_mocked_http_client();
+
+        // The response from OpenAI.
+        $mock->append(new Response(
             200,
             ['Content-Type' => 'application/json'],
             $this->responsebodyjson,
-        );
-        $client = $this->createMock(\core\http_client::class);
-        $client->method('request')->willReturn($response);
-
-        // Create a request object.
-        $requestobj = new \stdClass();
-        $requestobj->model = 'gpt-4o';
-        $requestobj->user = 't3464h89dftjltestudfaser';
-
-        $userobj = new \stdClass();
-        $userobj->role = 'user';
-        $userobj->content = 'This is a test prompt';
-
-        $requestobj->messages = [$userobj];
+        ));
 
         $processor = new process_generate_text($this->provider, $this->action);
         $method = new \ReflectionMethod($processor, 'query_ai_api');
-        $result = $method->invoke($processor, $client, $requestobj);
+        $result = $method->invoke($processor);
 
         $this->assertTrue($result['success']);
         $this->assertEquals('chatcmpl-9lkwPWOIiQEvI3nfcGofJcmS5lPYo', $result['id']);

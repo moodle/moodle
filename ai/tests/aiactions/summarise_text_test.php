@@ -73,7 +73,6 @@ final class summarise_text_test extends \advanced_testcase {
         ];
         $actionresponse = new response_summarise_text(
             success: true,
-            actionname: 'summarise_text',
         );
         $actionresponse->set_response_data($body);
 

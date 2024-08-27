@@ -35,6 +35,26 @@ class response_generate_image extends response_base {
     /** @var string|null The URL of the source image used to generate the image. */
     private ?string $sourceurl = null;
 
+    /**
+     * Constructor.
+     *
+     * @param bool $success The success status of the action.
+     * @param int $errorcode Error code. Must exist if success is false.
+     * @param string $errormessage Error message. Must exist if success is false
+     */
+    public function __construct(
+        bool $success,
+        int $errorcode = 0,
+        string $errormessage = '',
+    ) {
+        parent::__construct(
+            success: $success,
+            actionname: 'generate_image',
+            errorcode: $errorcode,
+            errormessage: $errormessage,
+        );
+    }
+
     #[\Override]
     public function set_response_data(array $response): void {
         $this->draftfile = $response['draftfile'] ?? null;

@@ -24,7 +24,6 @@ namespace aiplacement_tinymce;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class placement extends \core_ai\placement {
-
     /**
      * Get the list of actions that this placement uses.
      *
@@ -36,5 +35,4 @@ class placement extends \core_ai\placement {
             \core_ai\aiactions\generate_image::class,
         ];
     }
-
 }

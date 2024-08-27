@@ -26,7 +26,6 @@ namespace core_ai\aiactions\responses;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class response_generate_text extends response_base {
-
     /** @var string|null A unique identifier for the chat completion, returned by the AI. */
     private ?string $id = null;
 
@@ -44,6 +43,26 @@ class response_generate_text extends response_base {
 
     /** @var string|null Number of tokens in the generated completion. */
     private ?string $completiontokens = null;
+
+    /**
+     * Constructor.
+     *
+     * @param bool $success The success status of the action.
+     * @param int $errorcode Error code. Must exist if success is false.
+     * @param string $errormessage Error message. Must exist if success is false
+     */
+    public function __construct(
+        bool $success,
+        int $errorcode = 0,
+        string $errormessage = '',
+    ) {
+        parent::__construct(
+            success: $success,
+            actionname: 'generate_text',
+            errorcode: $errorcode,
+            errormessage: $errormessage,
+        );
+    }
 
     #[\Override]
     public function set_response_data(array $response): void {

@@ -88,7 +88,6 @@ final class generate_image_test extends \advanced_testcase {
         ];
         $actionresponse = new response_generate_image(
             success: true,
-            actionname: 'generate_image',
         );
         $actionresponse->set_response_data($body);
 

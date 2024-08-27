@@ -49,9 +49,9 @@ class generate_text extends base {
     #[\Override]
     public function store(response_base $response): int {
         global $DB;
+
         $responsearr = $response->get_response_data();
 
-        $tablename = $this->get_tablename();
         $record = new \stdClass();
         $record->prompt = $this->prompttext;
         $record->responseid = $responsearr['id']; // Can be null.
@@ -61,6 +61,6 @@ class generate_text extends base {
         $record->prompttokens = $responsearr['prompttokens']; // Can be null.
         $record->completiontoken = $responsearr['completiontokens']; // Can be null.
 
-        return $DB->insert_record($tablename, $record);
+        return $DB->insert_record($this->get_tablename(), $record);
     }
 }
