@@ -562,10 +562,13 @@ function user_get_user_details($user, $course = null, array $userfields = array(
                     }
                 }
 
+                $groupdescription = file_rewrite_pluginfile_urls($group->description, 'pluginfile.php', $context->id, 'group',
+                    'description', $group->id);
+
                 $userdetails['groups'][] = [
                     'id' => $group->id,
-                    'name' => format_string($group->name),
-                    'description' => format_text($group->description, $group->descriptionformat, ['context' => $context]),
+                    'name' => format_string($group->name, true, ['context' => $context]),
+                    'description' => format_text($groupdescription, $group->descriptionformat, ['context' => $context]),
                     'descriptionformat' => $group->descriptionformat
                 ];
             }
