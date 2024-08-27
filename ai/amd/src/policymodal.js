@@ -13,37 +13,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * AI text modal for Tiny.
- *
- * @module      tiny_aiplacement/textmodal
- * @copyright   2024 Matt Porritt <matt.porritt@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 import Modal from 'core/modal';
-import ModalEvents from 'core/modal_events';
+import Policy from './policy';
+import CustomEvents from 'core/custom_interaction_events';
 
-export default class TextModal extends Modal {
-    static TYPE = 'tiny_aiplacement/textmodal';
-    static TEMPLATE = 'tiny_aiplacement/textmodal';
-
-    /**
-     * Register event listeners.
-     */
-    registerEventListeners() {
-        // Call the parent registration.
-        super.registerEventListeners();
-
-        // Register to close on save/cancel.
-        this.registerCloseOnSave();
-        this.registerCloseOnCancel();
-
-        this.getRoot().on(ModalEvents.outsideClick, (e) => {
-            // Prevent closing the modal when clicking outside of it.
-            e.preventDefault();
-        });
-    }
+/**
+ * The Javascript module to handle the policy modal.
+ *
+ * @module     core_ai/policymodal
+ * @copyright  Andrew Lyons <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+export default class PolicyModal extends Modal {
+    static TYPE = 'core_ai/policymodal';
+    static TEMPLATE = 'core_ai/policymodal';
 
     /**
      * Configure the modal.
@@ -57,8 +40,7 @@ export default class TextModal extends Modal {
             removeOnClose: true,
         });
 
-        // Add modal extra class.
-        this.getModal().addClass('tiny_aiplacement_modal');
+        this.context = modalConfig.context;
         this.setXlarge();
     }
 
@@ -67,5 +49,19 @@ export default class TextModal extends Modal {
      */
     setXlarge() {
         this.getModal().addClass('modal-xl');
+    }
+
+    /**
+     * Handle click events within the policy modal.
+     */
+    registerEventListeners() {
+        super.registerEventListeners();
+        this.registerCloseOnSave();
+        this.registerCloseOnCancel();
+
+        this.getModal().on(CustomEvents.events.activate, this.getActionSelector('save'), (e) => {
+            e.preventDefault();
+            Policy.acceptPolicy();
+        });
     }
 }

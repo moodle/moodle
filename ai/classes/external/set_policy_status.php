@@ -29,7 +29,6 @@ use core_external\external_value;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class set_policy_status extends external_api {
-
     /**
      * Set policy parameters.
      *
@@ -38,11 +37,6 @@ class set_policy_status extends external_api {
      */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
-            'userid' => new external_value(
-                PARAM_INT,
-                'The user ID',
-                VALUE_REQUIRED,
-            ),
             'contextid' => new external_value(
                 PARAM_INT,
                 'The context ID',
@@ -55,33 +49,26 @@ class set_policy_status extends external_api {
      * Set a users AI policy acceptance.
      *
      * @since  Moodle 4.5
-     * @param int $userid The user ID.
      * @param int $contextid The context ID.
      * @return array The generated content.
      */
     public static function execute(
-        int $userid,
         int $contextid,
     ): array {
         global $USER;
+
         // Parameter validation.
         [
-            'userid' => $userid,
             'contextid' => $contextid,
         ] = self::validate_parameters(self::execute_parameters(), [
-            'userid' => $userid,
             'contextid' => $contextid,
         ]);
 
-        // No special permissions required to accept the policy.
-        // Just amke sure the user id is the user that is logged in.
-        // You can't accept a policy on behalf of someone else.
-        if ($userid !== (int)$USER->id) {
-            throw new \moodle_exception('invaliduser');
-        }
+        $usercontext = \core\context\user::instance($USER->id);
+        require_capability('moodle/ai:acceptpolicy', $usercontext);
 
         return [
-            'success' => manager::set_user_policy($userid, $contextid),
+            'success' => manager::set_user_policy($USER->id, $contextid),
         ];
     }
 

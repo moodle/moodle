@@ -17,6 +17,7 @@
 namespace core_ai\admin;
 
 use admin_setting;
+use coding_exception;
 
 /**
  * Admin setting plugin manager.
@@ -64,12 +65,14 @@ class admin_setting_action_manager extends admin_setting {
     #[\Override]
     public function output_html($data, $query = ''): string {
         $table = new $this->tableclass($this->pluginname);
-        if (!($table instanceof \core_ai\table\aiprovider_action_management_table)
-                && !($table instanceof \core_ai\table\aiplacement_action_management_table)) {
-            throw new \coding_exception(
+        if (
+            !($table instanceof \core_ai\table\aiprovider_action_management_table)
+            && !($table instanceof \core_ai\table\aiplacement_action_management_table)
+        ) {
+            throw new coding_exception(sprintf(
+                "% must be an instance aiprovider_action_management_table or aiplacement_action_management_table",
                 $this->tableclass
-                . 'must be an instance aiprovider_action_management_table or aiplacement_action_management_table'
-            );
+            ));
         }
         return highlight($query, $table->get_content());
     }

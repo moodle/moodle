@@ -29,7 +29,6 @@ use core_external\external_value;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class get_policy_status extends external_api {
-
     /**
      * Get policy parameters.
      *
@@ -43,11 +42,6 @@ class get_policy_status extends external_api {
                 'The user ID',
                 VALUE_REQUIRED,
             ),
-            'contextid' => new external_value(
-                PARAM_INT,
-                'The context ID',
-                VALUE_REQUIRED,
-            ),
         ]);
     }
 
@@ -56,34 +50,30 @@ class get_policy_status extends external_api {
      *
      * @since  Moodle 4.5
      * @param int $userid The user ID.
-     * @param int $contextid The context ID.
      * @return array The generated content.
      */
     public static function execute(
         int $userid,
-        int $contextid,
     ): array {
         global $USER;
+
         // Parameter validation.
         [
             'userid' => $userid,
-            'contextid' => $contextid,
         ] = self::validate_parameters(self::execute_parameters(), [
             'userid' => $userid,
-            'contextid' => $contextid,
         ]);
 
         // Context validation and permission check.
         // Get the context from the passed in ID.
-        $context = \context::instance_by_id($contextid);
+        $context = \core\context\user::instance($userid);
 
-        // Check the user has permission to use the AI service.
         self::validate_context($context);
-        require_capability('moodle/ai:fetchpolicy', $context);
 
-        // If the context level is that of a user, check the user is the same as the one passed in.
-        if ($context->contextlevel == CONTEXT_USER && ((int) $USER->id !== $userid)) {
-            throw new \moodle_exception('invaliduser', 'error');
+        if ($userid === $USER->id) {
+            require_capability('moodle/ai:fetchpolicy', $context);
+        } else {
+            require_capability('moodle/ai:fetchanyuserpolicystatus', $context);
         }
 
         return [

@@ -27,7 +27,6 @@ use core_ai\aiactions\responses;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manager {
-
     /**
      * Get communication provider class name from the plugin name.
      *
@@ -205,10 +204,11 @@ class manager {
     public static function set_user_policy(int $userid, int $contextid): bool {
         global $DB;
 
-        $record = new \stdClass();
-        $record->userid = $userid;
-        $record->contextid = $contextid;
-        $record->timeaccepted = time();
+        $record = (object) [
+            'userid' => $userid,
+            'contextid' => $contextid,
+            'timeaccepted' => \core\di::get(\core\clock::class)->time(),
+        ];
 
         if ($DB->insert_record('ai_policy_register', $record)) {
             $policycache = \cache::make('core', 'ai_policy');

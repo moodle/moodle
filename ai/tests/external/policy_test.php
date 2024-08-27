@@ -36,13 +36,9 @@ final class policy_test extends \advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user->id);
 
-        // Get system context.
-        $context = \context_system::instance();
-
         $_POST['sesskey'] = sesskey();
         $params = [
             'userid' => $user->id,
-            'contextid' => $context->id,
         ];
 
         $result = \core_external\external_api::call_external_function(
@@ -50,6 +46,7 @@ final class policy_test extends \advanced_testcase {
             $params,
         );
 
+        $this->assertFalse($result['error']);
         $this->assertFalse($result['data']['status']);
     }
 
@@ -78,7 +75,6 @@ final class policy_test extends \advanced_testcase {
         $_POST['sesskey'] = sesskey();
         $params = [
             'userid' => $user->id,
-            'contextid' => $context->id,
         ];
 
         $result = \core_external\external_api::call_external_function(
@@ -86,6 +82,7 @@ final class policy_test extends \advanced_testcase {
             $params
         );
 
+        $this->assertFalse($result['error']);
         $this->assertTrue($result['data']['status']);
     }
 
@@ -104,7 +101,6 @@ final class policy_test extends \advanced_testcase {
 
         $_POST['sesskey'] = sesskey();
         $params = [
-            'userid' => $user->id,
             'contextid' => $context->id,
         ];
 
@@ -113,6 +109,7 @@ final class policy_test extends \advanced_testcase {
             $params
         );
 
+        $this->assertFalse($result['error']);
         $this->assertTrue($result['data']['success']);
     }
 

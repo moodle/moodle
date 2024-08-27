@@ -3252,7 +3252,7 @@ $functions = array(
         'services'    => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
     'core_ai_get_policy_status' => [
-        'classname'   => 'core_ai\external\get_policy_status',
+        'classname'   => \core_ai\external\get_policy_status::class,
         'description' => 'Get a users AI policy acceptance',
         'type'        => 'read',
         'ajax'        => true,

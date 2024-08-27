@@ -16,8 +16,8 @@
 /**
  * AI Subsystem policy functions.
  *
- * @module     core/ai/policy
- * @copyright   2024 Matt Porritt <matt.porritt@moodle.com>
+ * @module     core_ai/repository
+ * @copyright  Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      4.5
  */
@@ -27,32 +27,21 @@ import Ajax from 'core/ajax';
 /**
  * Get the policy status for a user.
  *
- * @param {Number} userId The user ID.
- * @param {Number} contextId Context id request is made in.
+ * @param {Number} userid The user ID.
  * @return {Promise<Object>} The policy status.
  */
-export const getPolicyStatus = async(userId, contextId) => {
-    const request = {
-        methodname: 'core_ai_get_policy_status',
-        args: {userid: userId, contextid: contextId},
-    };
-
-    const response = await Ajax.call([request]);
-    return response[0];
-};
+export const getPolicyStatus = (userid) => Ajax.call([{
+    methodname: 'core_ai_get_policy_status',
+    args: {userid},
+}])[0];
 
 /**
  * Set the policy status for a user.
- * @param {Number} userId The user ID.
- * @param {Number} contextId Context id request is made in.
+ *
+ * @param {Number} contextId The context ID.
  * @return {Promise<Object>} Promise resolved with the policy set status.
  */
-export const setPolicyStatus = async(userId, contextId) => {
-    const request = {
-        methodname: 'core_ai_set_policy_status',
-        args: {userid: userId, contextid: contextId},
-    };
-
-    const response = await Ajax.call([request]);
-    return response[0];
-};
+export const setPolicyStatus = (contextId) => Ajax.call([{
+    methodname: 'core_ai_set_policy_status',
+    args: {contextid: contextId},
+}])[0];

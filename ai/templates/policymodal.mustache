@@ -15,9 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template tiny_aiplacement/modalfooterpolicy
+    @template core_ai/policymodal
 
-    Template to display the footer of the AI policy modal within the Tiny Editor.
+    Modal to allow acceptance of the AI Policy.
+
+    To be used in combination with core_ai/policy ESM monly.
 
     Classes required for JS:
     * none
@@ -33,9 +35,24 @@
         "elementid": "exampleId"
     }
 }}
-<button type="button" class="btn btn-secondary" data-action="cancel">
-    {{#str}} cancelai, aiplacement_tinymce {{/str}}
-</button>
-<button id="{{elementid}}_tiny_aiplacement_acceptbutton" type="button" class="btn btn-primary" data-action="accept">
-    {{#str}} accept, aiplacement_tinymce {{/str}}
-</button>
+{{< core/modal }}
+
+    {{$title}}
+        {{#str}} aiusagepolicy, core_ai{{/str}}
+    {{/title}}
+
+    {{$body}}
+        <div id="{{elementid}}_tiny_aiplacement_blur" class="">
+            <div id="{{elementid}}_tiny_aiplacement_overlay" class="tiny-aiplacement-overlay hidden"></div>
+            <div class="ai-policy-display">
+                {{#str}} userpolicy, core_ai{{/str}}
+            </div>
+        </div>
+    {{/body}}
+
+    {{$footer}}
+        <button type="button" class="btn btn-secondary" data-action="cancel">{{#str}} cancelai, aiplacement_tinymce {{/str}}</button>
+        <button type="button" class="btn btn-primary" data-action="save">{{#str}} accept, aiplacement_tinymce {{/str}}</button>
+    {{/footer}}
+
+{{/ core/modal }}

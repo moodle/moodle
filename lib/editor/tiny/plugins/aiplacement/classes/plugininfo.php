@@ -16,7 +16,7 @@
 
 namespace tiny_aiplacement;
 
-use context;
+use core\context;
 use core_ai\aiactions\generate_image;
 use core_ai\aiactions\generate_text;
 use core_ai\manager;
@@ -35,14 +35,14 @@ use editor_tiny\plugin_with_menuitems;
  */
 class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menuitems, plugin_with_configuration {
     /**
-     * Whether the plugin is enabled
-     *
-     * @param context $context The context that the editor is used within
-     * @param array $options The options passed in when requesting the editor
-     * @param array $fpoptions The filepicker options passed in when requesting the editor
-     * @param editor|null $editor $editor The editor instance in which the plugin is initialised
-     * @return boolean
+     * @var array|string[] The possible actions for the plugin.
      */
+    protected static array $possibleactions = [
+        'generate_text' => generate_text::class,
+        'generate_image' => generate_image::class,
+    ];
+
+    #[\Override]
     public static function is_enabled(
         context $context,
         array $options,
@@ -52,39 +52,17 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
         return in_array(true, self::get_allowed_actions($context));
     }
 
-    /**
-     * Get the list of buttons that this plugin provides.
-     *
-     * @return array
-     */
+    #[\Override]
     public static function get_available_buttons(): array {
-        return [
-            'tiny_aiplacement/generate_text',
-            'tiny_aiplacement/generate_image',
-        ];
+        return array_map(fn ($action) => "tiny_aiplacement/{$action}", self::$possibleactions);
     }
 
-    /**
-     * Get the list of menu items that this plugin provides.
-     *
-     * @return array
-     */
+    #[\Override]
     public static function get_available_menuitems(): array {
-        return [
-            'tiny_aiplacement/generate_text',
-            'tiny_aiplacement/generate_image',
-        ];
+        return array_map(fn ($action) => "tiny_aiplacement/{$action}", self::$possibleactions);
     }
 
-    /**
-     * Get extra configuration items to be passed to this plugin.
-     *
-     * @param context $context The context that the editor is used within
-     * @param array $options The options passed in when requesting the editor
-     * @param array $fpoptions The filepicker options passed in when requesting the editor
-     * @param editor|null $editor $editor The editor instance in which the plugin is initialised
-     * @return array
-     */
+    #[\Override]
     public static function get_plugin_configuration_for_context(
         context $context,
         array $options,
@@ -92,13 +70,15 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
         ?editor $editor = null
     ): array {
         global $USER;
+
+        $userid = (int) $USER->id;
         $allowedactions = self::get_allowed_actions($context);
-        return [
+
+        return array_merge([
             'contextid' => $context->id,
-            'userid' => (int) $USER->id,
-            'textallowed' => $allowedactions['textallowed'],
-            'imageallowed' => $allowedactions['imageallowed'],
-        ];
+            'userid' => $userid,
+            'policyagreed' => manager::get_user_policy($userid),
+        ], $allowedactions);
     }
 
     /**
@@ -108,26 +88,21 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
      * @return array The allowed actions.
      */
     private static function get_allowed_actions(context $context): array {
-        $allowedactions = [
-            'textallowed' => false,
-            'imageallowed' => false,
-        ];
         [$plugintype, $pluginname] = explode('_', \core_component::normalize_componentname('aiplacement_tinymce'), 2);
         $manager = \core_plugin_manager::resolve_plugininfo_class($plugintype);
+        $allowedactions = [];
         if ($manager::is_plugin_enabled($pluginname)) {
-            $providers = manager::get_providers_for_actions([
-                generate_text::class,
-                generate_image::class,
-            ], true);
-            if (has_capability('aiplacement/tinymce:generate_text', $context)
-                && manager::is_action_enabled('aiplacement_tinymce', 'generate_text')
-                && !empty($providers[generate_text::class])) {
-                $allowedactions['textallowed'] = true;
-            }
-            if (has_capability('aiplacement/tinymce:generate_image', $context)
-                && manager::is_action_enabled('aiplacement_tinymce', 'generate_image')
-                && !empty($providers[generate_image::class])) {
-                $allowedactions['imageallowed'] = true;
+            $providers = manager::get_providers_for_actions(array_values(self::$possibleactions), true);
+            foreach (self::$possibleactions as $action => $providerclass) {
+                if (
+                    has_capability("aiplacement/tinymce:{$action}", $context)
+                    && manager::is_action_enabled('aiplacement_tinymce', 'generate_text')
+                    && !empty($providers[$providerclass])
+                ) {
+                    $allowedactions[$action] = true;
+                } else {
+                    $allowedactions[$action] = false;
+                }
             }
         }
         return $allowedactions;

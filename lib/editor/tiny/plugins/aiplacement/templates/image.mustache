@@ -31,7 +31,8 @@
     Example context (json):
     {
         "elementid": "exampleId",
-        "url": "https://example.com/image.jpg"
+        "url": "https://example.com/image.jpg",
+        "alt": "Example image"
     }
 }}
-<img id="{{elementid}}_tiny_generated_image" src="{{{url}}}" class="img-fluid mw-100"/>
+<img id="{{elementid}}_tiny_generated_image" alt="{{alt}}" src="{{{url}}}" class="img-fluid mw-100">

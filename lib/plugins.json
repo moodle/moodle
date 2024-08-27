@@ -492,6 +492,7 @@
         ],
         "tiny": [
             "accessibilitychecker",
+            "aiplacement",
             "autosave",
             "equation",
             "h5p",
