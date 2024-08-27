@@ -28,12 +28,9 @@ use core\exception\moodle_exception;
 class ai_image {
     /** @var array Image information. */
     private array $imageinfo;
-    /** @var false|\GdImage|resource Image object. */
-    private $imgobject;
-    /** @var int Image's width. */
-    private int $width;
-    /** @var int Image's height. */
-    private int $height;
+
+    /** @var false|\GdImage Image object. */
+    private false|\GDImage $imgobject;
 
     /**
      * Constructor for the image processing class.
@@ -49,34 +46,39 @@ class ai_image {
         private string $imagepath,
     ) {
         ini_set('gd.jpeg_ignore_warning', 1);
-        if (!function_exists('imagecreatefrompng') && !function_exists('imagecreatefromjpeg')) {
-            throw new moodle_exception('gdnotexist');
-        }
 
         if (!file_exists($imagepath) || !is_readable($imagepath)) {
-            throw new moodle_exception('invalidfile');
+            throw new moodle_exception('invalidfile', debuginfo: $imagepath);
         }
 
-        $this->imageinfo = getimagesize($imagepath);
-        if (empty($this->imageinfo)) {
-            throw new moodle_exception('invalidfile');
+        $imageinfo = getimagesize($imagepath);
+        if (empty($imageinfo)) {
+            throw new moodle_exception('invalidfile', debuginfo: $imagepath);
         }
+        $this->imageinfo = $imageinfo;
 
         switch ($this->imageinfo['mime']) {
             case 'image/jpeg':
+                if (!function_exists('imagecreatefromjpeg')) {
+                    throw new moodle_exception('gdfeaturenotsupported', a: 'jpeg');
+                }
                 $this->imgobject = imagecreatefromjpeg($imagepath);
                 break;
             case 'image/png':
+                if (!function_exists('imagecreatefrompng')) {
+                    throw new moodle_exception('gdfeaturenotsupported', a: 'png');
+                }
                 $this->imgobject = imagecreatefrompng($imagepath);
                 break;
             case 'image/gif':
+                if (!function_exists('imagecreatefromgif')) {
+                    throw new moodle_exception('gdfeaturenotsupported', a: 'gif');
+                }
                 $this->imgobject = imagecreatefromgif($imagepath);
                 break;
             default:
-                break;
+                throw new moodle_exception('gdmimetypenotsupported', debuginfo: $this->imageinfo['mime']);
         }
-        $this->width = imagesx($this->imgobject);
-        $this->height = imagesy($this->imgobject);
     }
 
     /**
@@ -116,12 +118,13 @@ class ai_image {
             blue: 255,
         );
         if (!empty($options['ttf'])) {
+            $height = imagesy($this->imgobject);
             imagettftext(
                 image: $this->imgobject,
                 size: $options['fontsize'],
                 angle: $options['angle'],
                 x: $pos[0],
-                y: $this->height - ($pos[1] + $options['fontsize']),
+                y: $height - ($pos[1] + $options['fontsize']),
                 color: $clr,
                 font_filename: $options['font'],
                 text: $text,
@@ -141,17 +144,10 @@ class ai_image {
     }
 
     /**
-     * Destroy image object.
-     * @return bool
-     */
-    private function destroy(): bool {
-        return imagedestroy($this->imgobject);
-    }
-
-    /**
      * Save image.
+     *
      * @param string $newpath New path to save image.
-     * @return bool
+     * @return bool Whether the save was successful
      */
     public function save(string $newpath = ''): bool {
         if (empty($newpath)) {
@@ -165,8 +161,7 @@ class ai_image {
             case 'image/gif':
                 return imagegif(image: $this->imgobject, file: $newpath);
             default:
-                break;
+                return false;
         }
-        return $this->destroy();
     }
 }
