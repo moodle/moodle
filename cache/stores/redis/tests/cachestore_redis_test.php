@@ -16,9 +16,9 @@
 
 namespace cachestore_redis;
 
-use cache_definition;
-use cache_store;
 use cachestore_redis;
+use core_cache\definition;
+use core_cache\store;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -73,7 +73,7 @@ class cachestore_redis_test extends \cachestore_tests {
      * @return cachestore_redis
      */
     protected function create_cachestore_redis(): cachestore_redis {
-        $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_redis', 'phpunit_test');
+        $definition = definition::load_adhoc(store::MODE_APPLICATION, 'cachestore_redis', 'phpunit_test');
         $store = new cachestore_redis('Test', cachestore_redis::unit_test_configuration());
         $store->initialise($definition);
         $this->store = $store;

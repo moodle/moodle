@@ -14,31 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Cache dummy store.
- *
- * This dummy store is used when a load has no other stores that it can make use of.
- * This shouldn't happen in normal operation... I think.
- *
- * This file is part of Moodle's cache API, affectionately called MUC.
- * It contains the components that are requried in order to use caching.
- *
- * @package    core
- * @category   cache
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core_cache;
 
 /**
  * The cache dummy store.
  *
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package core_cache
  */
-class cachestore_dummy extends cache_store {
-
+class dummy_cachestore extends store {
     /**
      * The name of this store.
      * @var string
@@ -57,11 +42,11 @@ class cachestore_dummy extends cache_store {
      * The stored data array
      * @var array
      */
-    protected $store = array();
+    protected $store = [];
 
     /**
      * Cache definition
-     * @var cache_definition
+     * @var definition
      */
     protected $definition;
 
@@ -70,7 +55,7 @@ class cachestore_dummy extends cache_store {
      * @param string $name
      * @param array $configuration
      */
-    public function __construct($name = 'Dummy store', array $configuration = array()) {
+    public function __construct($name = 'Dummy store', array $configuration = []) {
         $this->name = $name;
     }
 
@@ -95,8 +80,8 @@ class cachestore_dummy extends cache_store {
      * @param array $configuration
      * @return int
      */
-    public static function get_supported_features(array $configuration = array()) {
-        return self::SUPPORTS_NATIVE_TTL;
+    public static function get_supported_features(array $configuration = []) {
+        return store::SUPPORTS_NATIVE_TTL;
     }
 
     /**
@@ -104,22 +89,22 @@ class cachestore_dummy extends cache_store {
      * @param array $configuration
      * @return int
      */
-    public static function get_supported_modes(array $configuration = array()) {
-        return self::MODE_APPLICATION + self::MODE_REQUEST + self::MODE_SESSION;
+    public static function get_supported_modes(array $configuration = []) {
+        return store::MODE_APPLICATION + store::MODE_REQUEST + store::MODE_SESSION;
     }
 
     /**
      * Initialises the store instance for a definition.
-     * @param cache_definition $definition
+     * @param definition $definition
      */
-    public function initialise(cache_definition $definition) {
+    public function initialise(definition $definition) {
         // If the definition isn't using static acceleration then we need to be store data here.
         // The reasoning behind this is that:
-        //   - If the definition is using static acceleration then the cache loader is going to
-        //     store things in its static array.
-        //   - If the definition is not using static acceleration then the cache loader won't try to store anything
-        //     and we will need to store it here in order to make sure it is accessible.
-        if ($definition->get_mode() !== self::MODE_APPLICATION) {
+        // - If the definition is using static acceleration then the cache loader is going to
+        // store things in its static array.
+        // - If the definition is not using static acceleration then the cache loader won't try to store anything
+        // and we will need to store it here in order to make sure it is accessible.
+        if ($definition->get_mode() !== store::MODE_APPLICATION) {
             // Neither the request cache nor the session cache provide static acceleration.
             $this->persist = true;
         } else {
@@ -164,7 +149,7 @@ class cachestore_dummy extends cache_store {
      * @return bool
      */
     public function get_many($keys) {
-        $return = array();
+        $return = [];
         foreach ($keys as $key) {
             if ($this->persist && array_key_exists($key, $this->store)) {
                 $return[$key] = $this->store[$key];
@@ -198,7 +183,6 @@ class cachestore_dummy extends cache_store {
             foreach ($keyvaluearray as $pair) {
                 $this->store[$pair['key']] = $pair['value'];
             }
-
         }
         return count($keyvaluearray);
     }
@@ -231,7 +215,7 @@ class cachestore_dummy extends cache_store {
      * @return bool
      */
     public function purge() {
-        $this->store = array();
+        $this->store = [];
         return true;
     }
 
@@ -239,11 +223,13 @@ class cachestore_dummy extends cache_store {
      * Performs any necessary clean up when the store instance is being deleted.
      *
      * @deprecated since 3.2
-     * @see cachestore_dummy::instance_deleted()
+     * @see dummy_cachestore::instance_deleted()
      */
     public function cleanup() {
-        debugging('cachestore_dummy::cleanup() is deprecated. Please use cachestore_dummy::instance_deleted() instead.',
-            DEBUG_DEVELOPER);
+        debugging(
+            'dummy_cachestore::cleanup() is deprecated. Please use dummy_cachestore::instance_deleted() instead.',
+            DEBUG_DEVELOPER
+        );
         $this->instance_deleted();
     }
 
@@ -261,11 +247,11 @@ class cachestore_dummy extends cache_store {
     /**
      * Generates an instance of the cache store that can be used for testing.
      *
-     * @param cache_definition $definition
-     * @return false
+     * @param definition $definition
+     * @return self
      */
-    public static function initialise_test_instance(cache_definition $definition) {
-        $cache = new cachestore_dummy('Dummy store test');
+    public static function initialise_test_instance(definition $definition) {
+        $cache = new dummy_cachestore('Dummy store test');
         if ($cache->is_ready()) {
             $cache->initialise($definition);
         }
@@ -289,3 +275,8 @@ class cachestore_dummy extends cache_store {
         return $this->name;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(dummy_cachestore::class, \cachestore_dummy::class);

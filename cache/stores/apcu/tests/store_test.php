@@ -16,8 +16,8 @@
 
 namespace cachestore_apcu;
 
-use cache_store;
-use cache_definition;
+use core_cache\store;
+use core_cache\definition;
 use cachestore_apcu;
 
 defined('MOODLE_INTERNAL') || die();
@@ -54,7 +54,7 @@ class store_test extends \cachestore_tests {
      * Test that the Moodle APCu store doesn't cross paths with other code using APCu as well.
      */
     public function test_cross_application_interaction(): void {
-        $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_apcu', 'phpunit_test');
+        $definition = definition::load_adhoc(store::MODE_APPLICATION, 'cachestore_apcu', 'phpunit_test');
         $instance = new cachestore_apcu('Test', cachestore_apcu::unit_test_configuration());
         $instance->initialise($definition);
 
@@ -73,11 +73,11 @@ class store_test extends \cachestore_tests {
     }
 
     public function test_different_caches_have_different_prefixes(): void {
-        $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_apcu', 'phpunit_test');
+        $definition = definition::load_adhoc(store::MODE_APPLICATION, 'cachestore_apcu', 'phpunit_test');
         $instance = new cachestore_apcu('Test', cachestore_apcu::unit_test_configuration());
         $instance->initialise($definition);
 
-        $definition2 = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_apcu', 'phpunit_test2');
+        $definition2 = definition::load_adhoc(store::MODE_APPLICATION, 'cachestore_apcu', 'phpunit_test2');
         $instance2 = new cachestore_apcu('Test', cachestore_apcu::unit_test_configuration());
         $instance2->initialise($definition2);
 

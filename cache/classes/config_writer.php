@@ -14,35 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * The supplementary cache API.
- *
- * This file is part of Moodle's cache API, affectionately called MUC.
- * It contains elements of the API that are not required in order to use caching.
- * Things in here are more in line with administration and management of the cache setup and configuration.
- *
- * @package    core
- * @category   cache
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_cache;
 
-defined('MOODLE_INTERNAL') || die();
+use core\exception\coding_exception;
+use core_cache\exception\cache_exception;
+use cachestore_static;
+use cachestore_session;
+use cachestore_file;
+use core_component;
+use ReflectionClass;
 
 /**
  * Cache configuration writer.
  *
- * This class should only be used when you need to write to the config, all read operations exist within the cache_config.
+ * This class should only be used when you need to write to the config, all read operations exist within the cache config.
  *
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_config_writer extends cache_config {
-
+class config_writer extends config {
     /**
-     * Switch that gets set to true when ever a cache_config_writer instance is saving the cache configuration file.
+     * Switch that gets set to true when ever a config_writer instance is saving the cache configuration file.
      * If this is set to true when save is next called we must avoid the trying to save and instead return the
      * generated config so that is may be used instead of the file.
      * @var bool
@@ -52,10 +46,10 @@ class cache_config_writer extends cache_config {
     /**
      * Returns an instance of the configuration writer.
      *
-     * @return cache_config_writer
+     * @return config_writer
      */
     public static function instance() {
-        $factory = cache_factory::instance();
+        $factory = factory::instance();
         return $factory->create_config_instance(true);
     }
 
@@ -85,7 +79,7 @@ class cache_config_writer extends cache_config {
         $configuration = $this->generate_configuration_array();
 
         // Prepare the file content.
-        $content = "<?php defined('MOODLE_INTERNAL') || die();\n \$configuration = ".var_export($configuration, true).";";
+        $content = "<?php defined('MOODLE_INTERNAL') || die();\n \$configuration = " . var_export($configuration, true) . ";";
 
         // Do both file content and hash based detection because this might be called
         // many times within a single request.
@@ -102,14 +96,14 @@ class cache_config_writer extends cache_config {
         if ($lockconf === false) {
             debugging('Your cache configuration file is out of date and needs to be refreshed.', DEBUG_DEVELOPER);
             // Use the default
-            $lockconf = array(
+            $lockconf = [
                 'name' => 'cachelock_file_default',
                 'type' => 'cachelock_file',
                 'dir' => 'filelocks',
-                'default' => true
-            );
+                'default' => true,
+            ];
         }
-        $factory = cache_factory::instance();
+        $factory = factory::instance();
         $locking = $factory->create_lock_instance($lockconf);
         if ($locking->lock('configwrite', 'config', true)) {
             $tempcachefile = "{$cachefile}.tmp";
@@ -133,7 +127,7 @@ class cache_config_writer extends cache_config {
      * @return array
      */
     protected function generate_configuration_array() {
-        $configuration = array();
+        $configuration = [];
         $configuration['siteidentifier'] = $this->siteidentifier;
         $configuration['stores'] = $this->configstores;
         $configuration['modemappings'] = $this->configmodemappings;
@@ -155,11 +149,11 @@ class cache_config_writer extends cache_config {
      * @return bool
      * @throws cache_exception
      */
-    public function add_store_instance($name, $plugin, array $configuration = array()) {
+    public function add_store_instance($name, $plugin, array $configuration = []) {
         if (array_key_exists($name, $this->configstores)) {
             throw new cache_exception('Duplicate name specificed for cache plugin instance. You must provide a unique name.');
         }
-        $class = 'cachestore_'.$plugin;
+        $class = 'cachestore_' . $plugin;
         if (!class_exists($class)) {
             $plugins = core_component::get_plugin_list_with_file('cachestore', 'lib.php');
             if (!array_key_exists($plugin, $plugins)) {
@@ -174,13 +168,13 @@ class cache_config_writer extends cache_config {
             }
         }
         $reflection = new ReflectionClass($class);
-        if (!$reflection->isSubclassOf('cache_store')) {
+        if (!$reflection->isSubclassOf(store::class)) {
             throw new cache_exception('Invalid cache plugin specified. The plugin does not extend the required class.');
         }
         if (!$class::are_requirements_met()) {
             throw new cache_exception('Unable to add new cache plugin instance. The requested plugin type is not supported.');
         }
-        $this->configstores[$name] = array(
+        $this->configstores[$name] = [
             'name' => $name,
             'plugin' => $plugin,
             'configuration' => $configuration,
@@ -188,8 +182,8 @@ class cache_config_writer extends cache_config {
             'modes' => $class::get_supported_modes($configuration),
             'mappingsonly' => !empty($configuration['mappingsonly']),
             'class' => $class,
-            'default' => false
-        );
+            'default' => false,
+        ];
         if (array_key_exists('lock', $configuration)) {
             $this->configstores[$name]['lock'] = $configuration['lock'];
             unset($this->configstores[$name]['configuration']['lock']);
@@ -210,11 +204,11 @@ class cache_config_writer extends cache_config {
      * @param string $configuration Configuration data from the config instance.
      * @throws cache_exception
      */
-    public function add_lock_instance($name, $plugin, $configuration = array()) {
+    public function add_lock_instance($name, $plugin, $configuration = []) {
         if (array_key_exists($name, $this->configlocks)) {
             throw new cache_exception('Duplicate name specificed for cache lock instance. You must provide a unique name.');
         }
-        $class = 'cachelock_'.$plugin;
+        $class = 'cachelock_' . $plugin;
         if (!class_exists($class)) {
             $plugins = core_component::get_plugin_list_with_file('cachelock', 'lib.php');
             if (!array_key_exists($plugin, $plugins)) {
@@ -229,14 +223,14 @@ class cache_config_writer extends cache_config {
             }
         }
         $reflection = new ReflectionClass($class);
-        if (!$reflection->implementsInterface('cache_lock_interface')) {
+        if (!$reflection->implementsInterface(lockable_cache_interface::class)) {
             throw new cache_exception('Invalid lock plugin specified. The plugin does not implement the required interface.');
         }
-        $this->configlocks[$name] = array_merge($configuration, array(
+        $this->configlocks[$name] = array_merge($configuration, [
             'name' => $name,
-            'type' => 'cachelock_'.$plugin,
-            'default' => false
-        ));
+            'type' => 'cachelock_' . $plugin,
+            'default' => false,
+        ]);
         $this->config_save();
     }
 
@@ -276,11 +270,11 @@ class cache_config_writer extends cache_config {
      * @throws cache_exception
      */
     public function set_mode_mappings(array $modemappings) {
-        $mappings = array(
-            cache_store::MODE_APPLICATION => array(),
-            cache_store::MODE_SESSION => array(),
-            cache_store::MODE_REQUEST => array(),
-        );
+        $mappings = [
+            store::MODE_APPLICATION => [],
+            store::MODE_SESSION => [],
+            store::MODE_REQUEST => [],
+        ];
         foreach ($modemappings as $mode => $stores) {
             if (!array_key_exists($mode, $mappings)) {
                 throw new cache_exception('The cache mode for the new mapping does not exist');
@@ -293,17 +287,17 @@ class cache_config_writer extends cache_config {
                 if (array_key_exists($store, $mappings[$mode])) {
                     throw new cache_exception('This cache mapping already exists');
                 }
-                $mappings[$mode][] = array(
+                $mappings[$mode][] = [
                     'store' => $store,
                     'mode' => $mode,
-                    'sort' => $sort++
-                );
+                    'sort' => $sort++,
+                ];
             }
         }
         $this->configmodemappings = array_merge(
-            $mappings[cache_store::MODE_APPLICATION],
-            $mappings[cache_store::MODE_SESSION],
-            $mappings[cache_store::MODE_REQUEST]
+            $mappings[store::MODE_APPLICATION],
+            $mappings[store::MODE_SESSION],
+            $mappings[store::MODE_REQUEST]
         );
 
         $this->config_save();
@@ -331,17 +325,19 @@ class cache_config_writer extends cache_config {
         if (!array_key_exists($plugin, $plugins)) {
             throw new cache_exception('Invalid plugin name specified. The plugin either does not exist or is not valid.');
         }
-        $class = 'cachestore_'.$plugin;
+        $class = 'cachestore_' . $plugin;
         $file = $plugins[$plugin];
         if (!class_exists($class)) {
             if (file_exists($file)) {
                 require_once($file);
             }
             if (!class_exists($class)) {
-                throw new cache_exception('Invalid cache plugin specified. The plugin does not contain the required class.'.$class);
+                throw new cache_exception(
+                    "Invalid cache plugin specified. The plugin does not contain the required class {$class}",
+                );
             }
         }
-        $this->configstores[$name] = array(
+        $this->configstores[$name] = [
             'name' => $name,
             'plugin' => $plugin,
             'configuration' => $configuration,
@@ -349,8 +345,8 @@ class cache_config_writer extends cache_config {
             'modes' => $class::get_supported_modes($configuration),
             'mappingsonly' => !empty($configuration['mappingsonly']),
             'class' => $class,
-            'default' => $this->configstores[$name]['default'] // Can't change the default.
-        );
+            'default' => $this->configstores[$name]['default'], // Can't change the default.
+        ];
         if (array_key_exists('lock', $configuration)) {
             $this->configstores[$name]['lock'] = $configuration['lock'];
             unset($this->configstores[$name]['configuration']['lock']);
@@ -388,7 +384,7 @@ class cache_config_writer extends cache_config {
         }
 
         // Call instance_deleted()
-        $class = 'cachestore_'.$this->configstores[$name]['plugin'];
+        $class = 'cachestore_' . $this->configstores[$name]['plugin'];
         $store = new $class($name, $this->configstores[$name]['configuration']);
         $store->instance_deleted();
 
@@ -411,42 +407,42 @@ class cache_config_writer extends cache_config {
         // HACK ALERT.
         // We probably need to come up with a better way to create the default stores, or at least ensure 100% that the
         // default store plugins are protected from deletion.
-        $writer = new self;
+        $writer = new self();
         $writer->configstores = self::get_default_stores();
         $writer->configdefinitions = self::locate_definitions();
-        $writer->configmodemappings = array(
-            array(
-                'mode' => cache_store::MODE_APPLICATION,
+        $writer->configmodemappings = [
+            [
+                'mode' => store::MODE_APPLICATION,
                 'store' => 'default_application',
-                'sort' => -1
-            ),
-            array(
-                'mode' => cache_store::MODE_SESSION,
+                'sort' => -1,
+            ],
+            [
+                'mode' => store::MODE_SESSION,
                 'store' => 'default_session',
-                'sort' => -1
-            ),
-            array(
-                'mode' => cache_store::MODE_REQUEST,
+                'sort' => -1,
+            ],
+            [
+                'mode' => store::MODE_REQUEST,
                 'store' => 'default_request',
-                'sort' => -1
-            )
-        );
-        $writer->configlocks = array(
-            'default_file_lock' => array(
+                'sort' => -1,
+            ],
+        ];
+        $writer->configlocks = [
+            'default_file_lock' => [
                 'name' => 'cachelock_file_default',
                 'type' => 'cachelock_file',
                 'dir' => 'filelocks',
-                'default' => true
-            )
-        );
+                'default' => true,
+            ],
+        ];
 
-        $factory = cache_factory::instance();
+        $factory = factory::instance();
         // We expect the cache to be initialising presently. If its not then something has gone wrong and likely
         // we are now in a loop.
-        if (!$forcesave && $factory->get_state() !== cache_factory::STATE_INITIALISING) {
+        if (!$forcesave && $factory->get_state() !== factory::STATE_INITIALISING) {
             return $writer->generate_configuration_array();
         }
-        $factory->set_state(cache_factory::STATE_SAVING);
+        $factory->set_state(factory::STATE_SAVING);
         $writer->config_save();
         return true;
     }
@@ -459,43 +455,43 @@ class cache_config_writer extends cache_config {
     protected static function get_default_stores() {
         global $CFG;
 
-        require_once($CFG->dirroot.'/cache/stores/file/lib.php');
-        require_once($CFG->dirroot.'/cache/stores/session/lib.php');
-        require_once($CFG->dirroot.'/cache/stores/static/lib.php');
+        require_once($CFG->dirroot . '/cache/stores/file/lib.php');
+        require_once($CFG->dirroot . '/cache/stores/session/lib.php');
+        require_once($CFG->dirroot . '/cache/stores/static/lib.php');
 
-        return array(
-            'default_application' => array(
+        return [
+            'default_application' => [
                 'name' => 'default_application',
                 'plugin' => 'file',
-                'configuration' => array(),
+                'configuration' => [],
                 'features' => cachestore_file::get_supported_features(),
                 'modes' => cachestore_file::get_supported_modes(),
                 'default' => true,
-            ),
-            'default_session' => array(
+            ],
+            'default_session' => [
                 'name' => 'default_session',
                 'plugin' => 'session',
-                'configuration' => array(),
+                'configuration' => [],
                 'features' => cachestore_session::get_supported_features(),
                 'modes' => cachestore_session::get_supported_modes(),
                 'default' => true,
-            ),
-            'default_request' => array(
+            ],
+            'default_request' => [
                 'name' => 'default_request',
                 'plugin' => 'static',
-                'configuration' => array(),
+                'configuration' => [],
                 'features' => cachestore_static::get_supported_features(),
                 'modes' => cachestore_static::get_supported_modes(),
                 'default' => true,
-            )
-        );
+            ],
+        ];
     }
 
     /**
      * Updates the default stores within the MUC config file.
      */
     public static function update_default_config_stores() {
-        $factory = cache_factory::instance();
+        $factory = factory::instance();
         $factory->updating_started();
         $config = $factory->create_config_instance(true);
         $config->configstores = array_merge($config->configstores, self::get_default_stores());
@@ -511,7 +507,7 @@ class cache_config_writer extends cache_config {
      * @param bool $coreonly If set to true only core definitions will be updated.
      */
     public static function update_definitions($coreonly = false) {
-        $factory = cache_factory::instance();
+        $factory = factory::instance();
         $factory->updating_started();
         $config = $factory->create_config_instance(true);
         $config->write_definitions_to_cache(self::locate_definitions($coreonly));
@@ -527,9 +523,9 @@ class cache_config_writer extends cache_config {
     protected static function locate_definitions($coreonly = false) {
         global $CFG;
 
-        $files = array();
-        if (file_exists($CFG->dirroot.'/lib/db/caches.php')) {
-            $files['core'] = $CFG->dirroot.'/lib/db/caches.php';
+        $files = [];
+        if (file_exists($CFG->dirroot . '/lib/db/caches.php')) {
+            $files['core'] = $CFG->dirroot . '/lib/db/caches.php';
         }
 
         if (!$coreonly) {
@@ -537,22 +533,22 @@ class cache_config_writer extends cache_config {
             foreach ($plugintypes as $type => $location) {
                 $plugins = core_component::get_plugin_list_with_file($type, 'db/caches.php');
                 foreach ($plugins as $plugin => $filepath) {
-                    $component = clean_param($type.'_'.$plugin, PARAM_COMPONENT); // Standardised plugin name.
+                    $component = clean_param($type . '_' . $plugin, PARAM_COMPONENT); // Standardised plugin name.
                     $files[$component] = $filepath;
                 }
             }
         }
 
-        $definitions = array();
+        $definitions = [];
         foreach ($files as $component => $file) {
             $filedefs = self::load_caches_file($file);
             foreach ($filedefs as $area => $definition) {
                 $area = clean_param($area, PARAM_AREA);
-                $id = $component.'/'.$area;
+                $id = $component . '/' . $area;
                 $definition['component'] = $component;
                 $definition['area'] = $area;
                 if (array_key_exists($id, $definitions)) {
-                    debugging('Error: duplicate cache definition found with id: '.$id, DEBUG_DEVELOPER);
+                    debugging('Error: duplicate cache definition found with id: ' . $id, DEBUG_DEVELOPER);
                     continue;
                 }
                 $definitions[$id] = $definition;
@@ -597,9 +593,9 @@ class cache_config_writer extends cache_config {
      */
     private static function load_caches_file($file) {
         if (!file_exists($file)) {
-            return array();
+            return [];
         }
-        $definitions = array();
+        $definitions = [];
         include($file);
         return $definitions;
     }
@@ -627,11 +623,11 @@ class cache_config_writer extends cache_config {
         }
         $sort = count($mappings);
         foreach ($mappings as $store) {
-            $this->configdefinitionmappings[] = array(
+            $this->configdefinitionmappings[] = [
                 'store' => $store,
                 'definition' => $definition,
-                'sort' => $sort
-            );
+                'sort' => $sort,
+            ];
             $sort--;
         }
 
@@ -672,3 +668,8 @@ class cache_config_writer extends cache_config {
         $this->config_save();
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(config_writer::class, \cache_config_writer::class);

@@ -26,6 +26,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_cache\definition;
+use core_cache\key_aware_cache_interface;
+use core_cache\searchable_cache_interface;
+use core_cache\store;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -34,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class session_data_store extends cache_store {
+abstract class session_data_store extends store {
 
     /**
      * Used for the actual storage.
@@ -90,8 +95,7 @@ abstract class session_data_store extends cache_store {
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cachestore_session extends session_data_store implements cache_is_key_aware, cache_is_searchable {
-
+class cachestore_session extends session_data_store implements key_aware_cache_interface, searchable_cache_interface {
     /**
      * The name of the store
      * @var store
@@ -132,7 +136,7 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      * Constructs the store instance.
      *
      * Noting that this function is not an initialisation. It is used to prepare the store for use.
-     * The store will be initialised when required and will be provided with a cache_definition at that time.
+     * The store will be initialised when required and will be provided with a definition at that time.
      *
      * @param string $name
      * @param array $configuration
@@ -186,11 +190,11 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
     /**
      * Returns true if the given mode is supported by this store.
      *
-     * @param int $mode One of cache_store::MODE_*
+     * @param int $mode One of store::MODE_*
      * @return bool
      */
     public static function is_supported_mode($mode) {
-        return ($mode === self::MODE_SESSION);
+        return ($mode === store::MODE_SESSION);
     }
 
     /**
@@ -198,9 +202,9 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      *
      * Once this has been done the cache is all set to be used.
      *
-     * @param cache_definition $definition
+     * @param definition $definition
      */
-    public function initialise(cache_definition $definition) {
+    public function initialise(definition $definition) {
         $this->storeid = $definition->generate_definition_hash();
         $this->store = &self::register_store_id($this->name.'-'.$definition->get_id());
         $this->ttl = $definition->get_ttl();
@@ -506,10 +510,10 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
     /**
      * Generates an instance of the cache store that can be used for testing.
      *
-     * @param cache_definition $definition
+     * @param definition $definition
      * @return cachestore_session
      */
-    public static function initialise_test_instance(cache_definition $definition) {
+    public static function initialise_test_instance(definition $definition) {
         // Do something here perhaps.
         $cache = new cachestore_session('Session test');
         $cache->initialise($definition);

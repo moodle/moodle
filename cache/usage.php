@@ -27,7 +27,7 @@ require_once('../config.php');
 require_once($CFG->dirroot . '/lib/adminlib.php');
 
 admin_externalpage_setup('cacheusage');
-$adminhelper = cache_factory::instance()->get_administration_display_helper();
+$adminhelper = \core_cache\factory::instance()->get_administration_display_helper();
 raise_memory_limit(MEMORY_EXTRA);
 
 $samples = optional_param('samples', 50, PARAM_INT);

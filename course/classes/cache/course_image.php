@@ -16,8 +16,8 @@
 
 namespace core_course\cache;
 
-use cache_data_source;
-use cache_definition;
+use core_cache\data_source_interface;
+use core_cache\definition;
 use moodle_url;
 use core_course_list_element;
 
@@ -30,7 +30,7 @@ use core_course_list_element;
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_image implements cache_data_source {
+class course_image implements data_source_interface {
 
     /** @var course_image */
     protected static $instance = null;
@@ -39,10 +39,10 @@ class course_image implements cache_data_source {
      * Returns an instance of the data source class that the cache can use for loading data using the other methods
      * specified by this interface.
      *
-     * @param cache_definition $definition
+     * @param definition $definition
      * @return \core_course\cache\course_image
      */
-    public static function get_instance_for_cache(cache_definition $definition): course_image {
+    public static function get_instance_for_cache(definition $definition): course_image {
         if (is_null(self::$instance)) {
             self::$instance = new course_image();
         }

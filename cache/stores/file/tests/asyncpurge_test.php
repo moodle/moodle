@@ -16,8 +16,8 @@
 
 namespace cachestore_file;
 
-use cache_definition;
-use cache_store;
+use core_cache\definition;
+use core_cache\store;
 use cachestore_file;
 
 /**
@@ -43,7 +43,7 @@ class asyncpurge_test extends \advanced_testcase {
         $this->resetAfterTest(true);
 
         // Cache definition.
-        $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_file', 'phpunit_test');
+        $definition = definition::load_adhoc(store::MODE_APPLICATION, 'cachestore_file', 'phpunit_test');
 
         // Extra config, set async purge = true.
         $extraconfig = ['asyncpurge' => true, 'filecacherev' => time()];

@@ -14,19 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Cache loaders
- *
- * This file is part of Moodle's cache API, affectionately called MUC.
- * It contains the components that are required in order to use caching.
- *
- * @package    core
- * @category   cache
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_cache;
 
-defined('MOODLE_INTERNAL') || die();
+use core\exception\coding_exception;
+use stdClass;
 
 /**
  * The main cache class.
@@ -35,13 +26,12 @@ defined('MOODLE_INTERNAL') || die();
  * In order to create an instance of a cache that they can work with they must call one of the static make methods belonging
  * to this class.
  *
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache implements cache_loader {
-
+class cache implements loader_interface {
     /**
      * @var int Constant for cache entries that do not have a version number
      */
@@ -65,13 +55,13 @@ class cache implements cache_loader {
 
     /**
      * The definition used when loading this cache if there was one.
-     * @var cache_definition
+     * @var definition
      */
     private $definition = false;
 
     /**
      * The cache store that this loader will make use of.
-     * @var cache_store
+     * @var store
      */
     private $store;
 
@@ -80,14 +70,14 @@ class cache implements cache_loader {
      * If a cache request misses for the store belonging to this loader then the loader
      * stored here will be checked next.
      * If there is a loader here then $datasource must be false.
-     * @var cache_loader|false
+     * @var loader_interface|false
      */
     private $loader = false;
 
     /**
      * The data source to use if we need to load data (because if doesn't exist in the cache store).
      * If there is a data source here then $loader above must be false.
-     * @var cache_data_source|false
+     * @var data_source_interface|false
      */
     private $datasource = false;
 
@@ -119,7 +109,7 @@ class cache implements cache_loader {
      * Items will be stored in this cache as they were provided. This ensure there is no unnecessary processing taking place.
      * @var array
      */
-    private $staticaccelerationarray = array();
+    private $staticaccelerationarray = [];
 
     /**
      * The number of items in the static acceleration array. Avoids count calls like you wouldn't believe.
@@ -134,7 +124,7 @@ class cache implements cache_loader {
      * key that is first on this array.
      * @var array
      */
-    private $staticaccelerationkeys = array();
+    private $staticaccelerationkeys = [];
 
     /**
      * The maximum size of the static acceleration array.
@@ -182,7 +172,7 @@ class cache implements cache_loader {
     /**
      * Gets set to true if the cache's primary store natively supports locking.
      * If it does then we use that, otherwise we need to instantiate a second store to use for locking.
-     * @var cache_store|null
+     * @var store|null
      */
     protected $nativelocking = null;
 
@@ -193,17 +183,17 @@ class cache implements cache_loader {
      * @param string $area The area for the definition
      * @param array $identifiers Any additional identifiers that should be provided to the definition.
      * @param string $unused Used to be datasourceaggregate but that was removed and this is now unused.
-     * @return cache_application|cache_session|cache_store
+     * @return application_cache|session_cache|store
      */
-    public static function make($component, $area, array $identifiers = array(), $unused = null) {
-        $factory = cache_factory::instance();
+    public static function make($component, $area, array $identifiers = [], $unused = null) {
+        $factory = factory::instance();
         return $factory->create_cache_from_definition($component, $area, $identifiers);
     }
 
     /**
      * Creates a new cache instance based upon the given params.
      *
-     * @param int $mode One of cache_store::MODE_*
+     * @param int $mode One of store::MODE_*
      * @param string $component The component this cache relates to.
      * @param string $area The area this cache relates to.
      * @param array $identifiers Any additional identifiers that should be provided to the definition.
@@ -212,10 +202,10 @@ class cache implements cache_loader {
      *   - simpledata : Set to true if the type of the data you are going to store is scalar, or an array of scalar vars
      *   - staticacceleration : If set to true the cache will hold onto data passing through it.
      *   - staticaccelerationsize : The max size for the static acceleration array.
-     * @return cache_application|cache_session|cache_request
+     * @return application_cache|session_cache|request_cache
      */
-    public static function make_from_params($mode, $component, $area, array $identifiers = array(), array $options = array()) {
-        $factory = cache_factory::instance();
+    public static function make_from_params($mode, $component, $area, array $identifiers = [], array $options = []) {
+        $factory = factory::instance();
         return $factory->create_cache_from_params($mode, $component, $area, $identifiers, $options);
     }
 
@@ -224,25 +214,25 @@ class cache implements cache_loader {
      *
      * You should not call this method from your code, instead you should use the cache::make methods.
      *
-     * This method is public so that the cache_factory is able to instantiate cache instances.
+     * This method is public so that the factory is able to instantiate cache instances.
      * Ideally we would make this method protected and expose its construction to the factory method internally somehow.
      * The factory class is responsible for this in order to centralise the storage of instances once created. This way if needed
      * we can force a reset of the cache API (used during unit testing).
      *
-     * @param cache_definition $definition The definition for the cache instance.
-     * @param cache_store $store The store that cache should use.
-     * @param cache_loader|cache_data_source $loader The next loader in the chain or the data source if there is one and there
-     *      are no other cache_loaders in the chain.
+     * @param definition $definition The definition for the cache instance.
+     * @param store $store The store that cache should use.
+     * @param loader_interface|data_source_interface $loader The next loader in the chain or the data source if there is one
+     *                                                       and there are no other loader_interfaces in the chain.
      */
-    public function __construct(cache_definition $definition, cache_store $store, $loader = null) {
+    public function __construct(definition $definition, store $store, $loader = null) {
         global $CFG;
         $this->definition = $definition;
         $this->store = $store;
         $this->storetype = get_class($store);
         $this->perfdebug = (!empty($CFG->perfdebug) and $CFG->perfdebug > 7);
-        if ($loader instanceof cache_loader) {
+        if ($loader instanceof loader_interface) {
             $this->set_loader($loader);
-        } else if ($loader instanceof cache_data_source) {
+        } else if ($loader instanceof data_source_interface) {
             $this->set_data_source($loader);
         }
         $this->definition->generate_definition_hash();
@@ -256,9 +246,9 @@ class cache implements cache_loader {
     /**
      * Set the loader for this cache.
      *
-     * @param   cache_loader $loader
+     * @param   loader_interface $loader
      */
-    protected function set_loader(cache_loader $loader): void {
+    protected function set_loader(loader_interface $loader): void {
         $this->loader = $loader;
 
         // Mark the loader as a sub (chained) loader.
@@ -268,9 +258,9 @@ class cache implements cache_loader {
     /**
      * Set the data source for this cache.
      *
-     * @param   cache_data_source $datasource
+     * @param   data_source_interface $datasource
      */
-    protected function set_data_source(cache_data_source $datasource): void {
+    protected function set_data_source(data_source_interface $datasource): void {
         $this->datasource = $datasource;
     }
 
@@ -312,9 +302,9 @@ class cache implements cache_loader {
         if ($this->definition->set_identifiers($identifiers)) {
             // As static acceleration uses input keys and not parsed keys
             // it much be cleared when the identifier set is changed.
-            $this->staticaccelerationarray = array();
+            $this->staticaccelerationarray = [];
             if ($this->staticaccelerationsize !== false) {
-                $this->staticaccelerationkeys = array();
+                $this->staticaccelerationkeys = [];
                 $this->staticaccelerationcount = 0;
             }
         }
@@ -368,7 +358,7 @@ class cache implements cache_loader {
          */
         $cache = self::make('core', 'eventinvalidation');
         $events = $cache->get_many($this->definition->get_invalidation_events());
-        $todelete = array();
+        $todelete = [];
         $purgeall = false;
 
         // Iterate the returned data for the events.
@@ -470,7 +460,7 @@ class cache implements cache_loader {
             }
         } else {
             // If there's no result, obviously it doesn't meet the required version.
-            if (!cache_helper::result_found($result)) {
+            if (!helper::result_found($result)) {
                 return false;
             }
             if (!($result instanceof \core_cache\version_wrapper)) {
@@ -503,7 +493,7 @@ class cache implements cache_loader {
 
         if ($usesstaticacceleration) {
             $result = $this->static_acceleration_get($key);
-            if (cache_helper::result_found($result) && self::check_version($result, $requiredversion)) {
+            if (helper::result_found($result) && self::check_version($result, $requiredversion)) {
                 if ($requiredversion === self::VERSION_NONE) {
                     return $result;
                 } else {
@@ -518,7 +508,7 @@ class cache implements cache_loader {
 
         // 3. Get it from the store. Obviously wasn't in the static acceleration array.
         $result = $this->store->get($parsedkey);
-        if (cache_helper::result_found($result)) {
+        if (helper::result_found($result)) {
             // Check the result has at least the required version.
             try {
                 $validversion = self::check_version($result, $requiredversion);
@@ -548,14 +538,14 @@ class cache implements cache_loader {
                 $this->store->delete($parsedkey);
             }
         }
-        if (cache_helper::result_found($result)) {
+        if (helper::result_found($result)) {
             // Look to see if there's a TTL wrapper. It might be inside a version wrapper.
             if ($requiredversion !== self::VERSION_NONE) {
                 $ttlconsider = $result->data;
             } else {
                 $ttlconsider = $result;
             }
-            if ($ttlconsider instanceof cache_ttl_wrapper) {
+            if ($ttlconsider instanceof ttl_wrapper) {
                 if ($ttlconsider->has_expired()) {
                     $this->store->delete($parsedkey);
                     $result = false;
@@ -575,16 +565,16 @@ class cache implements cache_loader {
                 $actualversion = $result->version;
                 $result = $result->data;
             }
-            if ($result instanceof cache_cached_object) {
+            if ($result instanceof cached_object) {
                 $result = $result->restore_object();
             }
         }
 
         // 4. Load if from the loader/datasource if we don't already have it.
         $setaftervalidation = false;
-        if (!cache_helper::result_found($result)) {
+        if (!helper::result_found($result)) {
             if ($this->perfdebug) {
-                cache_helper::record_cache_miss($this->store, $this->definition);
+                helper::record_cache_miss($this->store, $this->definition);
             }
             if ($this->loader !== false) {
                 // We must pass the original (unparsed) key to the next loader in the chain.
@@ -599,7 +589,7 @@ class cache implements cache_loader {
                 if ($requiredversion === self::VERSION_NONE) {
                     $result = $this->datasource->load_for_cache($key);
                 } else {
-                    if (!$this->datasource instanceof cache_data_source_versionable) {
+                    if (!$this->datasource instanceof versionable_data_source_interface) {
                         throw new \coding_exception('Data source is not versionable');
                     }
                     $result = $this->datasource->load_for_cache_versioned($key, $requiredversion, $actualversion);
@@ -608,13 +598,13 @@ class cache implements cache_loader {
                     }
                 }
             }
-            $setaftervalidation = (cache_helper::result_found($result));
+            $setaftervalidation = (helper::result_found($result));
         } else if ($this->perfdebug) {
             $readbytes = $this->store->get_last_io_bytes();
-            cache_helper::record_cache_hit($this->store, $this->definition, 1, $readbytes);
+            helper::record_cache_hit($this->store, $this->definition, 1, $readbytes);
         }
         // 5. Validate strictness.
-        if ($strictness === MUST_EXIST && !cache_helper::result_found($result)) {
+        if ($strictness === MUST_EXIST && !helper::result_found($result)) {
             throw new coding_exception('Requested key did not exist in any cache stores and could not be loaded.');
         }
         // 6. Set it to the store if we got it from the loader/datasource. Only set to this direct
@@ -639,7 +629,7 @@ class cache implements cache_loader {
             }
         }
         // 7. Make sure we don't pass back anything that could be a reference.
-        //    We don't want people modifying the data in the cache.
+        // We don't want people modifying the data in the cache.
         if (!$this->store->supports_dereferencing_objects() && !is_scalar($result)) {
             // If data is an object it will be a reference.
             // If data is an array if may contain references.
@@ -670,12 +660,12 @@ class cache implements cache_loader {
      */
     public function get_many(array $keys, $strictness = IGNORE_MISSING) {
 
-        $keysparsed = array();
-        $parsedkeys = array();
-        $resultpersist = array();
-        $resultstore = array();
-        $keystofind = array();
-        $readbytes = cache_store::IO_BYTES_NOT_SUPPORTED;
+        $keysparsed = [];
+        $parsedkeys = [];
+        $resultpersist = [];
+        $resultstore = [];
+        $keystofind = [];
+        $readbytes = store::IO_BYTES_NOT_SUPPORTED;
 
         // First up check the persist cache for each key.
         $isusingpersist = $this->use_static_acceleration();
@@ -704,7 +694,7 @@ class cache implements cache_loader {
             }
             // Process each item in the result to "unwrap" it.
             foreach ($resultstore as $key => $value) {
-                if ($value instanceof cache_ttl_wrapper) {
+                if ($value instanceof ttl_wrapper) {
                     if ($value->has_expired()) {
                         $value = false;
                     } else {
@@ -714,7 +704,7 @@ class cache implements cache_loader {
                 if ($value !== false && $this->use_static_acceleration()) {
                     $this->static_acceleration_set($keystofind[$key], $value);
                 }
-                if ($value instanceof cache_cached_object) {
+                if ($value instanceof cached_object) {
                     $value = $value->restore_object();
                 }
                 $resultstore[$key] = $value;
@@ -730,7 +720,7 @@ class cache implements cache_loader {
         $usingloader = ($this->loader !== false);
         $usingsource = (!$usingloader && ($this->datasource !== false));
         if ($usingloader || $usingsource) {
-            $missingkeys = array();
+            $missingkeys = [];
             foreach ($result as $key => $value) {
                 if ($value === false) {
                     $missingkeys[] = $parsedkeys[$key];
@@ -765,7 +755,7 @@ class cache implements cache_loader {
         }
 
         // Create an array with the original keys and the found values. This will be what we return.
-        $fullresult = array();
+        $fullresult = [];
         foreach ($result as $key => $value) {
             if (!is_scalar($value)) {
                 // If data is an object it will be a reference.
@@ -797,8 +787,8 @@ class cache implements cache_loader {
                     $hits++;
                 }
             }
-            cache_helper::record_cache_hit($this->store, $this->definition, $hits, $readbytes);
-            cache_helper::record_cache_miss($this->store, $this->definition, $misses);
+            helper::record_cache_hit($this->store, $this->definition, $hits, $readbytes);
+            helper::record_cache_miss($this->store, $this->definition, $misses);
         }
 
         // Return the result. Phew!
@@ -872,8 +862,8 @@ class cache implements cache_loader {
         }
         $usestaticacceleration = $this->use_static_acceleration();
 
-        if (is_object($data) && $data instanceof cacheable_object) {
-            $data = new cache_cached_object($data);
+        if (is_object($data) && $data instanceof cacheable_object_interface) {
+            $data = new cached_object($data);
         } else if (!$this->store->supports_dereferencing_objects() && !is_scalar($data)) {
             // If data is an object it will be a reference.
             // If data is an array if may contain references.
@@ -892,7 +882,7 @@ class cache implements cache_loader {
         }
 
         if ($this->has_a_ttl() && !$this->store_supports_native_ttl()) {
-            $data = new cache_ttl_wrapper($data, $this->definition->get_ttl());
+            $data = new ttl_wrapper($data, $this->definition->get_ttl());
         }
         $parsedkey = $this->parse_key($key);
 
@@ -902,8 +892,12 @@ class cache implements cache_loader {
 
         $success = $this->store->set($parsedkey, $data);
         if ($this->perfdebug) {
-            cache_helper::record_cache_set($this->store, $this->definition, 1,
-                    $this->store->get_last_io_bytes());
+            helper::record_cache_set(
+                $this->store,
+                $this->definition,
+                1,
+                $this->store->get_last_io_bytes()
+            );
         }
         return $success;
     }
@@ -1010,8 +1004,8 @@ class cache implements cache_loader {
         $usestaticaccelerationarray = $this->use_static_acceleration();
         $needsdereferencing = !$this->store->supports_dereferencing_objects();
         foreach ($keyvaluearray as $key => $value) {
-            if (is_object($value) && $value instanceof cacheable_object) {
-                $value = new cache_cached_object($value);
+            if (is_object($value) && $value instanceof cacheable_object_interface) {
+                $value = new cached_object($value);
             } else if ($needsdereferencing && !is_scalar($value)) {
                 // If data is an object it will be a reference.
                 // If data is an array if may contain references.
@@ -1023,17 +1017,21 @@ class cache implements cache_loader {
                 $this->static_acceleration_set($key, $value);
             }
             if ($simulatettl) {
-                $value = new cache_ttl_wrapper($value, $this->definition->get_ttl());
+                $value = new ttl_wrapper($value, $this->definition->get_ttl());
             }
-            $data[$key] = array(
+            $data[$key] = [
                 'key' => $this->parse_key($key),
-                'value' => $value
-            );
+                'value' => $value,
+            ];
         }
         $successfullyset = $this->store->set_many($data);
         if ($this->perfdebug && $successfullyset) {
-            cache_helper::record_cache_set($this->store, $this->definition, $successfullyset,
-                    $this->store->get_last_io_bytes());
+            helper::record_cache_set(
+                $this->store,
+                $this->definition,
+                $successfullyset,
+                $this->store->get_last_io_bytes()
+            );
         }
         return $successfullyset;
     }
@@ -1070,7 +1068,7 @@ class cache implements cache_loader {
             // The data has a TTL and the store doesn't support it natively.
             // We must fetch the data and expect a ttl wrapper.
             $data = $this->store->get($parsedkey);
-            $has = ($data instanceof cache_ttl_wrapper && !$data->has_expired());
+            $has = ($data instanceof ttl_wrapper && !$data->has_expired());
         } else if (!$this->store_supports_key_awareness()) {
             // The store doesn't support key awareness, get the data and check it manually... puke.
             // Either no TTL is set of the store supports its handling natively.
@@ -1117,7 +1115,7 @@ class cache implements cache_loader {
             }
             return true;
         }
-        $parsedkeys = array_map(array($this, 'parse_key'), $keys);
+        $parsedkeys = array_map([$this, 'parse_key'], $keys);
         return $this->store->has_all($parsedkeys);
     }
 
@@ -1151,7 +1149,7 @@ class cache implements cache_loader {
                 }
             }
         }
-        $parsedkeys = array_map(array($this, 'parse_key'), $keys);
+        $parsedkeys = array_map([$this, 'parse_key'], $keys);
         return $this->store->has_any($parsedkeys);
     }
 
@@ -1191,7 +1189,7 @@ class cache implements cache_loader {
             // Delete from the bottom of the stack first.
             $this->loader->delete_many($keys, $recurse);
         }
-        $parsedkeys = array_map(array($this, 'parse_key'), $keys);
+        $parsedkeys = array_map([$this, 'parse_key'], $keys);
         return $this->store->delete_many($parsedkeys);
     }
 
@@ -1225,8 +1223,8 @@ class cache implements cache_loader {
             $result['key'] = $key;
             return $result;
         }
-        // If not we need to generate a hash and to for that we use the cache_helper.
-        return cache_helper::hash_key($key, $this->definition);
+        // If not we need to generate a hash and to for that we use the helper.
+        return helper::hash_key($key, $this->definition);
     }
 
     /**
@@ -1251,7 +1249,7 @@ class cache implements cache_loader {
     /**
      * Returns the cache definition.
      *
-     * @return cache_definition
+     * @return definition
      */
     protected function get_definition() {
         return $this->definition;
@@ -1260,7 +1258,7 @@ class cache implements cache_loader {
     /**
      * Returns the cache store
      *
-     * @return cache_store
+     * @return store
      */
     protected function get_store() {
         return $this->store;
@@ -1280,7 +1278,7 @@ class cache implements cache_loader {
      * Returns the data source associated with this cache.
      *
      * @since Moodle 2.4.4
-     * @return cache_data_source|false
+     * @return data_source_interface|false
      */
     protected function get_datasource() {
         return $this->datasource;
@@ -1293,7 +1291,7 @@ class cache implements cache_loader {
      */
     protected function store_supports_key_awareness() {
         if ($this->supportskeyawareness === null) {
-            $this->supportskeyawareness = ($this->store instanceof cache_is_key_aware);
+            $this->supportskeyawareness = ($this->store instanceof key_aware_cache_interface);
         }
         return $this->supportskeyawareness;
     }
@@ -1305,7 +1303,7 @@ class cache implements cache_loader {
      */
     protected function store_supports_native_locking() {
         if ($this->nativelocking === null) {
-            $this->nativelocking = ($this->store instanceof cache_is_lockable);
+            $this->nativelocking = ($this->store instanceof lockable_cache_interface);
         }
         return $this->nativelocking;
     }
@@ -1373,7 +1371,7 @@ class cache implements cache_loader {
         } else {
             $data = $this->staticaccelerationarray[$key]['data'];
 
-            if ($data instanceof cache_cached_object) {
+            if ($data instanceof cached_object) {
                 $result = $data->restore_object();
             } else if ($this->staticaccelerationarray[$key]['serialized']) {
                 $result = unserialize($data);
@@ -1381,9 +1379,9 @@ class cache implements cache_loader {
                 $result = $data;
             }
         }
-        if (cache_helper::result_found($result)) {
+        if (helper::result_found($result)) {
             if ($this->perfdebug) {
-                cache_helper::record_cache_hit(cache_store::STATIC_ACCEL, $this->definition);
+                helper::record_cache_hit(store::STATIC_ACCEL, $this->definition);
             }
             if ($this->staticaccelerationsize > 1 && $this->staticaccelerationcount > 1) {
                 // Check to see if this is the last item on the static acceleration keys array.
@@ -1397,7 +1395,7 @@ class cache implements cache_loader {
             return $result;
         } else {
             if ($this->perfdebug) {
-                cache_helper::record_cache_miss(cache_store::STATIC_ACCEL, $this->definition);
+                helper::record_cache_miss(store::STATIC_ACCEL, $this->definition);
             }
             return false;
         }
@@ -1429,8 +1427,10 @@ class cache implements cache_loader {
         // 1. A known scalar safe value.
         // 2. A definition that says it's simpledata.  We trust it that it doesn't contain dangerous references.
         // 3. An object that handles dereferencing by itself.
-        if (is_scalar($data) || $this->definition->uses_simple_data()
-                || $data instanceof cache_cached_object) {
+        if (
+            is_scalar($data) || $this->definition->uses_simple_data()
+                || $data instanceof cached_object
+        ) {
             $this->staticaccelerationarray[$key]['data'] = $data;
             $this->staticaccelerationarray[$key]['serialized'] = false;
         } else {
@@ -1477,9 +1477,9 @@ class cache implements cache_loader {
      * Purge the static acceleration cache.
      */
     protected function static_acceleration_purge() {
-        $this->staticaccelerationarray = array();
+        $this->staticaccelerationarray = [];
         if ($this->staticaccelerationsize !== false) {
-            $this->staticaccelerationkeys = array();
+            $this->staticaccelerationkeys = [];
             $this->staticaccelerationcount = 0;
         }
     }
@@ -1542,10 +1542,10 @@ class cache implements cache_loader {
         }
 
         // The token for when the cache was last invalidated.
-        list($atime) = explode('-', "{$tokena}-", 2);
+        [$atime] = explode('-', "{$tokena}-", 2);
 
         // The token for this cache.
-        list($btime) = explode('-', "{$tokenb}-", 2);
+        [$btime] = explode('-', "{$tokenb}-", 2);
 
         if ($atime >= $btime) {
             // Token A is newer.
@@ -1564,898 +1564,7 @@ class cache implements cache_loader {
     }
 }
 
-/**
- * An application cache.
- *
- * This class is used for application caches returned by the cache::make methods.
- * On top of the standard functionality it also allows locking to be required and or manually operated.
- *
- * This cache class should never be interacted with directly. Instead you should always use the cache::make methods.
- * It is technically possible to call those methods through this class however there is no guarantee that you will get an
- * instance of this class back again.
- *
- * @internal don't use me directly.
- *
- * @package    core
- * @category   cache
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class cache_application extends cache implements cache_loader_with_locking {
-
-    /**
-     * Lock identifier.
-     * This is used to ensure the lock belongs to the cache instance + definition + user.
-     * @var string
-     */
-    protected $lockidentifier;
-
-    /**
-     * Gets set to true if the cache's primary store natively supports locking.
-     * If it does then we use that, otherwise we need to instantiate a second store to use for locking.
-     * @var cache_store
-     */
-    protected $nativelocking = null;
-
-    /**
-     * Gets set to true if the cache is going to be using locking.
-     * This isn't a requirement, it doesn't need to use locking (most won't) and this bool is used to quickly check things.
-     * If required then locking will be forced for the get|set|delete operation.
-     * @var bool
-     */
-    protected $requirelocking = false;
-
-    /**
-     * Gets set to true if the cache writes (set|delete) must have a manual lock created first
-     * @var bool
-     */
-    protected $requirelockingbeforewrite = false;
-
-    /**
-     * Gets set to a cache_store to use for locking if the caches primary store doesn't support locking natively.
-     * @var cache_lock_interface
-     */
-    protected $cachelockinstance;
-
-    /**
-     * Store a list of locks acquired by this process.
-     * @var array
-     */
-    protected $locks;
-
-    /**
-     * Overrides the cache construct method.
-     *
-     * You should not call this method from your code, instead you should use the cache::make methods.
-     *
-     * @param cache_definition $definition
-     * @param cache_store $store
-     * @param cache_loader|cache_data_source $loader
-     */
-    public function __construct(cache_definition $definition, cache_store $store, $loader = null) {
-        parent::__construct($definition, $store, $loader);
-        $this->nativelocking = $this->store_supports_native_locking();
-        if ($definition->require_locking()) {
-            $this->requirelocking = true;
-            $this->requirelockingbeforewrite = $definition->require_locking_before_write();
-        }
-
-        $this->handle_invalidation_events();
-    }
-
-    /**
-     * Returns the identifier to use
-     *
-     * @staticvar int $instances Counts the number of instances. Used as part of the lock identifier.
-     * @return string
-     */
-    public function get_identifier() {
-        static $instances = 0;
-        if ($this->lockidentifier === null) {
-            $this->lockidentifier = md5(
-                $this->get_definition()->generate_definition_hash() .
-                sesskey() .
-                $instances++ .
-                'cache_application'
-            );
-        }
-        return $this->lockidentifier;
-    }
-
-    /**
-     * Fixes the instance up after a clone.
-     */
-    public function __clone() {
-        // Force a new idenfitier.
-        $this->lockidentifier = null;
-    }
-
-    /**
-     * Acquires a lock on the given key.
-     *
-     * This is done automatically if the definition requires it.
-     * It is recommended to use a definition if you want to have locking although it is possible to do locking without having
-     * it required by the definition.
-     * The problem with such an approach is that you cannot ensure that code will consistently use locking. You will need to
-     * rely on the integrators review skills.
-     *
-     * @param string|int $key The key as given to get|set|delete
-     * @return bool Always returns true
-     * @throws moodle_exception If the lock cannot be obtained
-     */
-    public function acquire_lock($key) {
-        $releaseparent = false;
-        try {
-            if ($this->get_loader() !== false) {
-                $this->get_loader()->acquire_lock($key);
-                // We need to release this lock later if the lock is not successful.
-                $releaseparent = true;
-            }
-            $hashedkey = cache_helper::hash_key($key, $this->get_definition());
-            $before = microtime(true);
-            if ($this->nativelocking) {
-                $lock = $this->get_store()->acquire_lock($hashedkey, $this->get_identifier());
-            } else {
-                $this->ensure_cachelock_available();
-                $lock = $this->cachelockinstance->lock($hashedkey, $this->get_identifier());
-            }
-            $after = microtime(true);
-            if ($lock) {
-                $this->locks[$hashedkey] = $lock;
-                if (MDL_PERF || $this->perfdebug) {
-                    \core\lock\timing_wrapper_lock_factory::record_lock_data($after, $before,
-                        $this->get_definition()->get_id(), $hashedkey, $lock, $this->get_identifier() . $hashedkey);
-                }
-                $releaseparent = false;
-                return true;
-            } else {
-                throw new moodle_exception('ex_unabletolock', 'cache', '', null,
-                    'store: ' . get_class($this->get_store()) . ', lock: ' . $hashedkey);
-            }
-        } finally {
-            // Release the parent lock if we acquired it, then threw an exception.
-            if ($releaseparent) {
-                $this->get_loader()->release_lock($key);
-            }
-        }
-    }
-
-    /**
-     * Checks if this cache has a lock on the given key.
-     *
-     * @param string|int $key The key as given to get|set|delete
-     * @return bool|null Returns true if there is a lock and this cache has it, null if no one has a lock on that key, false if
-     *      someone else has the lock.
-     */
-    public function check_lock_state($key) {
-        $key = cache_helper::hash_key($key, $this->get_definition());
-        if (!empty($this->locks[$key])) {
-            return true; // Shortcut to save having to make a call to the cache store if the lock is held by this process.
-        }
-        if ($this->nativelocking) {
-            return $this->get_store()->check_lock_state($key, $this->get_identifier());
-        } else {
-            $this->ensure_cachelock_available();
-            return $this->cachelockinstance->check_state($key, $this->get_identifier());
-        }
-    }
-
-    /**
-     * Releases the lock this cache has on the given key
-     *
-     * @param string|int $key
-     * @return bool True if the operation succeeded, false otherwise.
-     */
-    public function release_lock($key) {
-        $loaderkey = $key;
-        $key = cache_helper::hash_key($key, $this->get_definition());
-        if ($this->nativelocking) {
-            $released = $this->get_store()->release_lock($key, $this->get_identifier());
-        } else {
-            $this->ensure_cachelock_available();
-            $released = $this->cachelockinstance->unlock($key, $this->get_identifier());
-        }
-        if ($released && array_key_exists($key, $this->locks)) {
-            unset($this->locks[$key]);
-            if (MDL_PERF || $this->perfdebug) {
-                \core\lock\timing_wrapper_lock_factory::record_lock_released_data($this->get_identifier() . $key);
-            }
-        }
-        if ($this->get_loader() !== false) {
-            $this->get_loader()->release_lock($loaderkey);
-        }
-        return $released;
-    }
-
-    /**
-     * Ensure that the dedicated lock store is ready to go.
-     *
-     * This should only happen if the cache store doesn't natively support it.
-     */
-    protected function ensure_cachelock_available() {
-        if ($this->cachelockinstance === null) {
-            $this->cachelockinstance = cache_helper::get_cachelock_for_store($this->get_store());
-        }
-    }
-
-    /**
-     * Sends a key => value pair to the cache.
-     *
-     * <code>
-     * // This code will add four entries to the cache, one for each url.
-     * $cache->set('main', 'http://moodle.org');
-     * $cache->set('docs', 'http://docs.moodle.org');
-     * $cache->set('tracker', 'http://tracker.moodle.org');
-     * $cache->set('qa', 'http://qa.moodle.net');
-     * </code>
-     *
-     * @param string|int $key The key for the data being requested.
-     * @param int $version Version number
-     * @param mixed $data The data to set against the key.
-     * @param bool $setparents If true, sets all parent loaders, otherwise only this one
-     * @return bool True on success, false otherwise.
-     * @throws coding_exception If a required lock has not beeen acquired
-     */
-    protected function set_implementation($key, int $version, $data, bool $setparents = true): bool {
-        if ($this->requirelockingbeforewrite && !$this->check_lock_state($key)) {
-            throw new coding_exception('Attempted to set cache key "' . $key . '" without a lock. '
-                . 'Locking before writes is required for ' . $this->get_definition()->get_id());
-        }
-        return parent::set_implementation($key, $version, $data, $setparents);
-    }
-
-    /**
-     * Sends several key => value pairs to the cache.
-     *
-     * Using this function comes with potential performance implications.
-     * Not all cache stores will support get_many/set_many operations and in order to replicate this functionality will call
-     * the equivalent singular method for each item provided.
-     * This should not deter you from using this function as there is a performance benefit in situations where the cache store
-     * does support it, but you should be aware of this fact.
-     *
-     * <code>
-     * // This code will add four entries to the cache, one for each url.
-     * $cache->set_many(array(
-     *     'main' => 'http://moodle.org',
-     *     'docs' => 'http://docs.moodle.org',
-     *     'tracker' => 'http://tracker.moodle.org',
-     *     'qa' => ''http://qa.moodle.net'
-     * ));
-     * </code>
-     *
-     * @param array $keyvaluearray An array of key => value pairs to send to the cache.
-     * @return int The number of items successfully set. It is up to the developer to check this matches the number of items.
-     *      ... if they care that is.
-     * @throws coding_exception If a required lock has not beeen acquired
-     */
-    public function set_many(array $keyvaluearray) {
-        if ($this->requirelockingbeforewrite) {
-            foreach ($keyvaluearray as $key => $value) {
-                if (!$this->check_lock_state($key)) {
-                    throw new coding_exception('Attempted to set cache key "' . $key . '" without a lock. '
-                            . 'Locking before writes is required for ' . $this->get_definition()->get_id());
-                }
-            }
-        }
-        return parent::set_many($keyvaluearray);
-    }
-
-    /**
-     * Delete the given key from the cache.
-     *
-     * @param string|int $key The key to delete.
-     * @param bool $recurse When set to true the key will also be deleted from all stacked cache loaders and their stores.
-     *     This happens by default and ensure that all the caches are consistent. It is NOT recommended to change this.
-     * @return bool True of success, false otherwise.
-     * @throws coding_exception If a required lock has not beeen acquired
-     */
-    public function delete($key, $recurse = true) {
-        if ($this->requirelockingbeforewrite && !$this->check_lock_state($key)) {
-            throw new coding_exception('Attempted to delete cache key "' . $key . '" without a lock. '
-                    . 'Locking before writes is required for ' . $this->get_definition()->get_id());
-        }
-        return parent::delete($key, $recurse);
-    }
-
-    /**
-     * Delete all of the given keys from the cache.
-     *
-     * @param array $keys The key to delete.
-     * @param bool $recurse When set to true the key will also be deleted from all stacked cache loaders and their stores.
-     *     This happens by default and ensure that all the caches are consistent. It is NOT recommended to change this.
-     * @return int The number of items successfully deleted.
-     * @throws coding_exception If a required lock has not beeen acquired
-     */
-    public function delete_many(array $keys, $recurse = true) {
-        if ($this->requirelockingbeforewrite) {
-            foreach ($keys as $key) {
-                if (!$this->check_lock_state($key)) {
-                    throw new coding_exception('Attempted to delete cache key "' . $key . '" without a lock. '
-                            . 'Locking before writes is required for ' . $this->get_definition()->get_id());
-                }
-            }
-        }
-        return parent::delete_many($keys, $recurse);
-    }
-}
-
-/**
- * A session cache.
- *
- * This class is used for session caches returned by the cache::make methods.
- *
- * It differs from the application loader in a couple of noteable ways:
- *    1. Sessions are always expected to exist.
- *       Because of this we don't ever use the static acceleration array.
- *    2. Session data for a loader instance (store + definition) is consolidate into a
- *       single array for storage within the store.
- *       Along with this we embed a lastaccessed time with the data. This way we can
- *       check sessions for a last access time.
- *    3. Session stores are required to support key searching and must
- *       implement cache_is_searchable. This ensures stores used for the cache can be
- *       targetted for garbage collection of session data.
- *
- * This cache class should never be interacted with directly. Instead you should always use the cache::make methods.
- * It is technically possible to call those methods through this class however there is no guarantee that you will get an
- * instance of this class back again.
- *
- * @todo we should support locking in the session as well. Should be pretty simple to set up.
- *
- * @internal don't use me directly.
- * @method cache_store|cache_is_searchable get_store() Returns the cache store which must implement both cache_is_searchable.
- *
- * @package    core
- * @category   cache
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class cache_session extends cache {
-    /**
-     * The user the session has been established for.
-     * @var int
-     */
-    protected static $loadeduserid = null;
-
-    /**
-     * The userid this cache is currently using.
-     * @var int
-     */
-    protected $currentuserid = null;
-
-    /**
-     * The session id we are currently using.
-     * @var array
-     */
-    protected $sessionid = null;
-
-    /**
-     * The session data for the above session id.
-     * @var array
-     */
-    protected $session = null;
-
-    /**
-     * Constant used to prefix keys.
-     */
-    const KEY_PREFIX = 'sess_';
-
-    /**
-     * This is the key used to track last access.
-     */
-    const LASTACCESS = '__lastaccess__';
-
-    /**
-     * Override the cache::construct method.
-     *
-     * This function gets overriden so that we can process any invalidation events if need be.
-     * If the definition doesn't have any invalidation events then this occurs exactly as it would for the cache class.
-     * Otherwise we look at the last invalidation time and then check the invalidation data for events that have occured
-     * between then now.
-     *
-     * You should not call this method from your code, instead you should use the cache::make methods.
-     *
-     * @param cache_definition $definition
-     * @param cache_store $store
-     * @param cache_loader|cache_data_source $loader
-     */
-    public function __construct(cache_definition $definition, cache_store $store, $loader = null) {
-        // First up copy the loadeduserid to the current user id.
-        $this->currentuserid = self::$loadeduserid;
-        $this->set_session_id();
-        parent::__construct($definition, $store, $loader);
-
-        // This will trigger check tracked user. If this gets removed a call to that will need to be added here in its place.
-        $this->set(self::LASTACCESS, cache::now());
-
-        $this->handle_invalidation_events();
-    }
-
-    /**
-     * Sets the session id for the loader.
-     */
-    protected function set_session_id() {
-        $this->sessionid = preg_replace('#[^a-zA-Z0-9_]#', '_', session_id());
-    }
-
-    /**
-     * Returns the prefix used for all keys.
-     * @return string
-     */
-    protected function get_key_prefix() {
-        return 'u'.$this->currentuserid.'_'.$this->sessionid;
-    }
-
-    /**
-     * Parses the key turning it into a string (or array is required) suitable to be passed to the cache store.
-     *
-     * This function is called for every operation that uses keys. For this reason we use this function to also check
-     * that the current user is the same as the user who last used this cache.
-     *
-     * On top of that if prepends the string 'sess_' to the start of all keys. The _ ensures things are easily identifiable.
-     *
-     * @param string|int $key As passed to get|set|delete etc.
-     * @return string|array String unless the store supports multi-identifiers in which case an array if returned.
-     */
-    protected function parse_key($key) {
-        $prefix = $this->get_key_prefix();
-        if ($key === self::LASTACCESS) {
-            return $key.$prefix;
-        }
-        return $prefix.'_'.parent::parse_key($key);
-    }
-
-    /**
-     * Check that this cache instance is tracking the current user.
-     */
-    protected function check_tracked_user() {
-        if (isset($_SESSION['USER']->id) && $_SESSION['USER']->id !== null) {
-            // Get the id of the current user.
-            $new = $_SESSION['USER']->id;
-        } else {
-            // No user set up yet.
-            $new = 0;
-        }
-        if ($new !== self::$loadeduserid) {
-            // The current user doesn't match the tracked userid for this request.
-            if (!is_null(self::$loadeduserid)) {
-                // Purge the data we have for the old user.
-                // This way we don't bloat the session.
-                $this->purge();
-            }
-            self::$loadeduserid = $new;
-            $this->currentuserid = $new;
-        } else if ($new !== $this->currentuserid) {
-            // The current user matches the loaded user but not the user last used by this cache.
-            $this->purge_current_user();
-            $this->currentuserid = $new;
-        }
-    }
-
-    /**
-     * Purges the session cache of all data belonging to the current user.
-     */
-    public function purge_current_user() {
-        $keys = $this->get_store()->find_by_prefix($this->get_key_prefix());
-        $this->get_store()->delete_many($keys);
-    }
-
-    /**
-     * Retrieves the value for the given key from the cache.
-     *
-     * @param string|int $key The key for the data being requested.
-     *      It can be any structure although using a scalar string or int is recommended in the interests of performance.
-     *      In advanced cases an array may be useful such as in situations requiring the multi-key functionality.
-     * @param int $requiredversion Minimum required version of the data or cache::VERSION_NONE
-     * @param int $strictness One of IGNORE_MISSING | MUST_EXIST
-     * @param mixed &$actualversion If specified, will be set to the actual version number retrieved
-     * @return mixed|false The data from the cache or false if the key did not exist within the cache.
-     * @throws coding_exception
-     */
-    protected function get_implementation($key, int $requiredversion, int $strictness, &$actualversion = null) {
-        // Check the tracked user.
-        $this->check_tracked_user();
-
-        // Use parent code.
-        return parent::get_implementation($key, $requiredversion, $strictness, $actualversion);
-    }
-
-    /**
-     * Sends a key => value pair to the cache.
-     *
-     * <code>
-     * // This code will add four entries to the cache, one for each url.
-     * $cache->set('main', 'http://moodle.org');
-     * $cache->set('docs', 'http://docs.moodle.org');
-     * $cache->set('tracker', 'http://tracker.moodle.org');
-     * $cache->set('qa', 'http://qa.moodle.net');
-     * </code>
-     *
-     * @param string|int $key The key for the data being requested.
-     *      It can be any structure although using a scalar string or int is recommended in the interests of performance.
-     *      In advanced cases an array may be useful such as in situations requiring the multi-key functionality.
-     * @param mixed $data The data to set against the key.
-     * @return bool True on success, false otherwise.
-     */
-    public function set($key, $data) {
-        $this->check_tracked_user();
-        $loader = $this->get_loader();
-        if ($loader !== false) {
-            // We have a loader available set it there as well.
-            // We have to let the loader do its own parsing of data as it may be unique.
-            $loader->set($key, $data);
-        }
-        if (is_object($data) && $data instanceof cacheable_object) {
-            $data = new cache_cached_object($data);
-        } else if (!$this->get_store()->supports_dereferencing_objects() && !is_scalar($data)) {
-            // If data is an object it will be a reference.
-            // If data is an array if may contain references.
-            // We want to break references so that the cache cannot be modified outside of itself.
-            // Call the function to unreference it (in the best way possible).
-            $data = $this->unref($data);
-        }
-        // We dont' support native TTL here as we consolidate data for sessions.
-        if ($this->has_a_ttl() && !$this->store_supports_native_ttl()) {
-            $data = new cache_ttl_wrapper($data, $this->get_definition()->get_ttl());
-        }
-        $success = $this->get_store()->set($this->parse_key($key), $data);
-        if ($this->perfdebug) {
-            cache_helper::record_cache_set($this->get_store(), $this->get_definition(), 1,
-                    $this->get_store()->get_last_io_bytes());
-        }
-        return $success;
-    }
-
-    /**
-     * Delete the given key from the cache.
-     *
-     * @param string|int $key The key to delete.
-     * @param bool $recurse When set to true the key will also be deleted from all stacked cache loaders and their stores.
-     *     This happens by default and ensure that all the caches are consistent. It is NOT recommended to change this.
-     * @return bool True of success, false otherwise.
-     */
-    public function delete($key, $recurse = true) {
-        $parsedkey = $this->parse_key($key);
-        if ($recurse && $this->get_loader() !== false) {
-            // Delete from the bottom of the stack first.
-            $this->get_loader()->delete($key, $recurse);
-        }
-        return $this->get_store()->delete($parsedkey);
-    }
-
-    /**
-     * Retrieves an array of values for an array of keys.
-     *
-     * Using this function comes with potential performance implications.
-     * Not all cache stores will support get_many/set_many operations and in order to replicate this functionality will call
-     * the equivalent singular method for each item provided.
-     * This should not deter you from using this function as there is a performance benefit in situations where the cache store
-     * does support it, but you should be aware of this fact.
-     *
-     * @param array $keys The keys of the data being requested.
-     *      Each key can be any structure although using a scalar string or int is recommended in the interests of performance.
-     *      In advanced cases an array may be useful such as in situations requiring the multi-key functionality.
-     * @param int $strictness One of IGNORE_MISSING or MUST_EXIST.
-     * @return array An array of key value pairs for the items that could be retrieved from the cache.
-     *      If MUST_EXIST was used and not all keys existed within the cache then an exception will be thrown.
-     *      Otherwise any key that did not exist will have a data value of false within the results.
-     * @throws coding_exception
-     */
-    public function get_many(array $keys, $strictness = IGNORE_MISSING) {
-        $this->check_tracked_user();
-        $parsedkeys = array();
-        $keymap = array();
-        foreach ($keys as $key) {
-            $parsedkey = $this->parse_key($key);
-            $parsedkeys[$key] = $parsedkey;
-            $keymap[$parsedkey] = $key;
-        }
-        $result = $this->get_store()->get_many($parsedkeys);
-        if ($this->perfdebug) {
-            $readbytes = $this->get_store()->get_last_io_bytes();
-        }
-        $return = array();
-        $missingkeys = array();
-        $hasmissingkeys = false;
-        foreach ($result as $parsedkey => $value) {
-            $key = $keymap[$parsedkey];
-            if ($value instanceof cache_ttl_wrapper) {
-                /* @var cache_ttl_wrapper $value */
-                if ($value->has_expired()) {
-                    $this->delete($keymap[$parsedkey]);
-                    $value = false;
-                } else {
-                    $value = $value->data;
-                }
-            }
-            if ($value instanceof cache_cached_object) {
-                /* @var cache_cached_object $value */
-                $value = $value->restore_object();
-            } else if (!$this->get_store()->supports_dereferencing_objects() && !is_scalar($value)) {
-                // If data is an object it will be a reference.
-                // If data is an array if may contain references.
-                // We want to break references so that the cache cannot be modified outside of itself.
-                // Call the function to unreference it (in the best way possible).
-                $value = $this->unref($value);
-            }
-            $return[$key] = $value;
-            if ($value === false) {
-                $hasmissingkeys = true;
-                $missingkeys[$parsedkey] = $key;
-            }
-        }
-        if ($hasmissingkeys) {
-            // We've got missing keys - we've got to check any loaders or data sources.
-            $loader = $this->get_loader();
-            $datasource = $this->get_datasource();
-            if ($loader !== false) {
-                foreach ($loader->get_many($missingkeys) as $key => $value) {
-                    if ($value !== false) {
-                        $return[$key] = $value;
-                        unset($missingkeys[$parsedkeys[$key]]);
-                    }
-                }
-            }
-            $hasmissingkeys = count($missingkeys) > 0;
-            if ($datasource !== false && $hasmissingkeys) {
-                // We're still missing keys but we've got a datasource.
-                foreach ($datasource->load_many_for_cache($missingkeys) as $key => $value) {
-                    if ($value !== false) {
-                        $return[$key] = $value;
-                        unset($missingkeys[$parsedkeys[$key]]);
-                    }
-                }
-                $hasmissingkeys = count($missingkeys) > 0;
-            }
-        }
-        if ($hasmissingkeys && $strictness === MUST_EXIST) {
-            throw new coding_exception('Requested key did not exist in any cache stores and could not be loaded.');
-        }
-        if ($this->perfdebug) {
-            $hits = 0;
-            $misses = 0;
-            foreach ($return as $value) {
-                if ($value === false) {
-                    $misses++;
-                } else {
-                    $hits++;
-                }
-            }
-            cache_helper::record_cache_hit($this->get_store(), $this->get_definition(), $hits, $readbytes);
-            cache_helper::record_cache_miss($this->get_store(), $this->get_definition(), $misses);
-        }
-        return $return;
-
-    }
-
-    /**
-     * Delete all of the given keys from the cache.
-     *
-     * @param array $keys The key to delete.
-     * @param bool $recurse When set to true the key will also be deleted from all stacked cache loaders and their stores.
-     *     This happens by default and ensure that all the caches are consistent. It is NOT recommended to change this.
-     * @return int The number of items successfully deleted.
-     */
-    public function delete_many(array $keys, $recurse = true) {
-        $parsedkeys = array_map(array($this, 'parse_key'), $keys);
-        if ($recurse && $this->get_loader() !== false) {
-            // Delete from the bottom of the stack first.
-            $this->get_loader()->delete_many($keys, $recurse);
-        }
-        return $this->get_store()->delete_many($parsedkeys);
-    }
-
-    /**
-     * Sends several key => value pairs to the cache.
-     *
-     * Using this function comes with potential performance implications.
-     * Not all cache stores will support get_many/set_many operations and in order to replicate this functionality will call
-     * the equivalent singular method for each item provided.
-     * This should not deter you from using this function as there is a performance benefit in situations where the cache store
-     * does support it, but you should be aware of this fact.
-     *
-     * <code>
-     * // This code will add four entries to the cache, one for each url.
-     * $cache->set_many(array(
-     *     'main' => 'http://moodle.org',
-     *     'docs' => 'http://docs.moodle.org',
-     *     'tracker' => 'http://tracker.moodle.org',
-     *     'qa' => ''http://qa.moodle.net'
-     * ));
-     * </code>
-     *
-     * @param array $keyvaluearray An array of key => value pairs to send to the cache.
-     * @return int The number of items successfully set. It is up to the developer to check this matches the number of items.
-     *      ... if they care that is.
-     */
-    public function set_many(array $keyvaluearray) {
-        $this->check_tracked_user();
-        $loader = $this->get_loader();
-        if ($loader !== false) {
-            // We have a loader available set it there as well.
-            // We have to let the loader do its own parsing of data as it may be unique.
-            $loader->set_many($keyvaluearray);
-        }
-        $data = array();
-        $definitionid = $this->get_definition()->get_ttl();
-        $simulatettl = $this->has_a_ttl() && !$this->store_supports_native_ttl();
-        foreach ($keyvaluearray as $key => $value) {
-            if (is_object($value) && $value instanceof cacheable_object) {
-                $value = new cache_cached_object($value);
-            } else if (!$this->get_store()->supports_dereferencing_objects() && !is_scalar($value)) {
-                // If data is an object it will be a reference.
-                // If data is an array if may contain references.
-                // We want to break references so that the cache cannot be modified outside of itself.
-                // Call the function to unreference it (in the best way possible).
-                $value = $this->unref($value);
-            }
-            if ($simulatettl) {
-                $value = new cache_ttl_wrapper($value, $definitionid);
-            }
-            $data[$key] = array(
-                'key' => $this->parse_key($key),
-                'value' => $value
-            );
-        }
-        $successfullyset = $this->get_store()->set_many($data);
-        if ($this->perfdebug && $successfullyset) {
-            cache_helper::record_cache_set($this->get_store(), $this->get_definition(), $successfullyset,
-                    $this->get_store()->get_last_io_bytes());
-        }
-        return $successfullyset;
-    }
-
-    /**
-     * Purges the cache store, and loader if there is one.
-     *
-     * @return bool True on success, false otherwise
-     */
-    public function purge() {
-        $this->get_store()->purge();
-        if ($this->get_loader()) {
-            $this->get_loader()->purge();
-        }
-        return true;
-    }
-
-    /**
-     * Test is a cache has a key.
-     *
-     * The use of the has methods is strongly discouraged. In a high load environment the cache may well change between the
-     * test and any subsequent action (get, set, delete etc).
-     * Instead it is recommended to write your code in such a way they it performs the following steps:
-     * <ol>
-     * <li>Attempt to retrieve the information.</li>
-     * <li>Generate the information.</li>
-     * <li>Attempt to set the information</li>
-     * </ol>
-     *
-     * Its also worth mentioning that not all stores support key tests.
-     * For stores that don't support key tests this functionality is mimicked by using the equivalent get method.
-     * Just one more reason you should not use these methods unless you have a very good reason to do so.
-     *
-     * @param string|int $key
-     * @param bool $tryloadifpossible If set to true, the cache doesn't contain the key, and there is another cache loader or
-     *      data source then the code will try load the key value from the next item in the chain.
-     * @return bool True if the cache has the requested key, false otherwise.
-     */
-    public function has($key, $tryloadifpossible = false) {
-        $this->check_tracked_user();
-        $parsedkey = $this->parse_key($key);
-        $store = $this->get_store();
-        if ($this->has_a_ttl() && !$this->store_supports_native_ttl()) {
-            // The data has a TTL and the store doesn't support it natively.
-            // We must fetch the data and expect a ttl wrapper.
-            $data = $store->get($parsedkey);
-            $has = ($data instanceof cache_ttl_wrapper && !$data->has_expired());
-        } else if (!$this->store_supports_key_awareness()) {
-            // The store doesn't support key awareness, get the data and check it manually... puke.
-            // Either no TTL is set of the store supports its handling natively.
-            $data = $store->get($parsedkey);
-            $has = ($data !== false);
-        } else {
-            // The store supports key awareness, this is easy!
-            // Either no TTL is set of the store supports its handling natively.
-            /* @var cache_store|cache_is_key_aware $store */
-            $has = $store->has($parsedkey);
-        }
-        if (!$has && $tryloadifpossible) {
-            $result = null;
-            if ($this->get_loader() !== false) {
-                $result = $this->get_loader()->get($parsedkey);
-            } else if ($this->get_datasource() !== null) {
-                $result = $this->get_datasource()->load_for_cache($key);
-            }
-            $has = ($result !== null);
-            if ($has) {
-                $this->set($key, $result);
-            }
-        }
-        return $has;
-    }
-
-    /**
-     * Test is a cache has all of the given keys.
-     *
-     * It is strongly recommended to avoid the use of this function if not absolutely required.
-     * In a high load environment the cache may well change between the test and any subsequent action (get, set, delete etc).
-     *
-     * Its also worth mentioning that not all stores support key tests.
-     * For stores that don't support key tests this functionality is mimicked by using the equivalent get method.
-     * Just one more reason you should not use these methods unless you have a very good reason to do so.
-     *
-     * @param array $keys
-     * @return bool True if the cache has all of the given keys, false otherwise.
-     */
-    public function has_all(array $keys) {
-        $this->check_tracked_user();
-        if (($this->has_a_ttl() && !$this->store_supports_native_ttl()) || !$this->store_supports_key_awareness()) {
-            foreach ($keys as $key) {
-                if (!$this->has($key)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        // The cache must be key aware and if support native ttl if it a ttl is set.
-        /* @var cache_store|cache_is_key_aware $store */
-        $store = $this->get_store();
-        return $store->has_all(array_map(array($this, 'parse_key'), $keys));
-    }
-
-    /**
-     * Test if a cache has at least one of the given keys.
-     *
-     * It is strongly recommended to avoid the use of this function if not absolutely required.
-     * In a high load environment the cache may well change between the test and any subsequent action (get, set, delete etc).
-     *
-     * Its also worth mentioning that not all stores support key tests.
-     * For stores that don't support key tests this functionality is mimicked by using the equivalent get method.
-     * Just one more reason you should not use these methods unless you have a very good reason to do so.
-     *
-     * @param array $keys
-     * @return bool True if the cache has at least one of the given keys
-     */
-    public function has_any(array $keys) {
-        if (($this->has_a_ttl() && !$this->store_supports_native_ttl()) || !$this->store_supports_key_awareness()) {
-            foreach ($keys as $key) {
-                if ($this->has($key)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        /* @var cache_store|cache_is_key_aware $store */
-        $store = $this->get_store();
-        return $store->has_any(array_map(array($this, 'parse_key'), $keys));
-    }
-
-    /**
-     * The session loader never uses static acceleration.
-     * Instead it stores things in the static $session variable. Shared between all session loaders.
-     *
-     * @return bool
-     */
-    protected function use_static_acceleration() {
-        return false;
-    }
-}
-
-/**
- * An request cache.
- *
- * This class is used for request caches returned by the cache::make methods.
- *
- * This cache class should never be interacted with directly. Instead you should always use the cache::make methods.
- * It is technically possible to call those methods through this class however there is no guarantee that you will get an
- * instance of this class back again.
- *
- * @internal don't use me directly.
- *
- * @package    core
- * @category   cache
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class cache_request extends cache {
-    // This comment appeases code pre-checker ;) !
-}
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(cache::class, \cache::class);

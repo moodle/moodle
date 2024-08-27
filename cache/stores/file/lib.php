@@ -14,17 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * The library file for the file cache store.
- *
- * This file is part of the file cache store, it contains the API for interacting with an instance of the store.
- * This is used as a default cache store within the Cache API. It should never be deleted.
- *
- * @package    cachestore_file
- * @category   cache
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+use core_cache\configurable_cache_interface;
+use core_cache\definition;
+use core_cache\key_aware_cache_interface;
+use core_cache\lockable_cache_interface;
+use core_cache\searchable_cache_interface;
+use core_cache\store;
 
 /**
  * The file store class.
@@ -34,12 +29,16 @@
  *      autocreate:     true, false
  *      prescan:        true, false
  *
+ * @package    cachestore_file
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cachestore_file extends cache_store implements cache_is_key_aware, cache_is_configurable, cache_is_searchable,
-        cache_is_lockable {
-
+class cachestore_file extends store implements
+    key_aware_cache_interface,
+    configurable_cache_interface,
+    searchable_cache_interface,
+    lockable_cache_interface
+{
     /**
      * The name of the store.
      * @var string
@@ -105,7 +104,7 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
 
     /**
      * The cache definition this instance has been initialised with.
-     * @var cache_definition
+     * @var definition
      */
     protected $definition;
 
@@ -150,7 +149,7 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      * Constructs the store instance.
      *
      * Noting that this function is not an initialisation. It is used to prepare the store for use.
-     * The store will be initialised when required and will be provided with a cache_definition at that time.
+     * The store will be initialised when required and will be provided with a definition at that time.
      *
      * @param string $name
      * @param array $configuration
@@ -302,11 +301,11 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
     /**
      * Returns true if the given mode is supported by this store.
      *
-     * @param int $mode One of cache_store::MODE_*
+     * @param int $mode One of store::MODE_*
      * @return bool
      */
     public static function is_supported_mode($mode) {
-        return ($mode === self::MODE_APPLICATION || $mode === self::MODE_SESSION);
+        return ($mode === static::MODE_APPLICATION || $mode === static::MODE_SESSION);
     }
 
     /**
@@ -314,9 +313,9 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      *
      * Once this has been done the cache is all set to be used.
      *
-     * @param cache_definition $definition
+     * @param definition $definition
      */
-    public function initialise(cache_definition $definition) {
+    public function initialise(definition $definition) {
         global $CFG;
 
         $this->definition = $definition;
@@ -802,10 +801,10 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      *
      * Returns an instance of the cache store, or false if one cannot be created.
      *
-     * @param cache_definition $definition
+     * @param definition $definition
      * @return cachestore_file
      */
-    public static function initialise_test_instance(cache_definition $definition) {
+    public static function initialise_test_instance(definition $definition) {
         $name = 'File test';
         $path = make_cache_directory('cachestore_file_test');
         $cache = new cachestore_file($name, array('path' => $path));
@@ -1009,7 +1008,6 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      * @param string $key Lock identifier
      * @param string $ownerid Cache identifier
      * @return bool
-     * @throws cache_exception
      */
     public function acquire_lock($key, $ownerid): bool {
         $lock = $this->lockfactory->get_lock($key, $this->lockwait);

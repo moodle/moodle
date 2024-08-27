@@ -50,6 +50,144 @@ $legacyclasses = [
     \required_capability_exception::class => 'exception/required_capability_exception.php',
     \webservice_parameter_exception::class => 'exception/webservice_parameter_exception.php',
 
+    // Cache API.
+    \cache::class => [
+        'core_cache',
+        'cache.php',
+    ],
+    \cache_application::class => [
+        'core_cache',
+        'application_cache.php',
+    ],
+    \cache_definition::class => [
+        'core_cache',
+        'definition.php',
+    ],
+    \cache_request::class => [
+        'core_cache',
+        'request_cache.php',
+    ],
+    \cache_session::class => [
+        'core_cache',
+        'session_cache.php',
+    ],
+    \cache_cached_object::class => [
+        'core_cache',
+        'cached_object.php',
+    ],
+    \cache_config::class => [
+        'core_cache',
+        'config.php',
+    ],
+    \cache_config_writer::class => [
+        'core_cache',
+        'config_writer.php',
+    ],
+    \cache_config_disabled::class => [
+        'core_cache',
+        'disabled_config.php',
+    ],
+    \cache_disabled::class => [
+        'core_cache',
+        'disabled_cache.php',
+    ],
+    \config_writer::class => [
+        'core_cache',
+        'config_writer.php',
+    ],
+    \cache_data_source::class => [
+        'core_cache',
+        'data_source_interface.php',
+    ],
+    \cache_data_source_versionable::class => [
+        'core_cache',
+        'versionable_data_source_interface.php',
+    ],
+    \cache_exception::class => [
+        'core_cache',
+        'exception/cache_exception.php',
+    ],
+    \cache_factory::class => [
+        'core_cache',
+        'factory.php',
+    ],
+    \cache_factory_disabled::class => [
+        'core_cache',
+        'disabled_factory.php',
+    ],
+    \cache_helper::class => [
+        'core_cache',
+        'helper.php',
+    ],
+    \cache_is_key_aware::class => [
+        'core_cache',
+        'key_aware_cache_interface.php',
+    ],
+    \cache_is_lockable::class => [
+        'core_cache',
+        'lockable_cache_interface.php',
+    ],
+    \cache_is_searchable::class => [
+        'core_cache',
+        'searchable_cache_interface.php',
+    ],
+    \cache_is_configurable::class => [
+        'core_cache',
+        'configurable_cache_interface.php',
+    ],
+    \cache_loader::class => [
+        'core_cache',
+        'loader_interface.php',
+    ],
+    \cache_loader_with_locking::class => [
+        'core_cache',
+        'loader_with_locking_interface.php',
+    ],
+    \cache_lock_interface::class => [
+        'core_cache',
+        'cache_lock_interface.php',
+    ],
+    \cache_store::class => [
+        'core_cache',
+        'store.php',
+    ],
+    \cache_store_interface::class => [
+        'core_cache',
+        'store_interface.php',
+    ],
+    \cache_ttl_wrapper::class => [
+        'core_cache',
+        'ttl_wrapper.php',
+    ],
+    \cacheable_object::class => [
+        'core_cache',
+        'cacheable_object_interface.php',
+    ],
+    \cacheable_object_array::class => [
+        'core_cache',
+        'cacheable_object_array.php',
+    ],
+    \cache_definition_mappings_form::class => [
+        'core_cache',
+        'form/cache_definition_mappings_form.php',
+    ],
+    \cache_definition_sharing_form::class => [
+        'core_cache',
+        'form/cache_definition_sharing_form.php',
+    ],
+    \cache_lock_form::class => [
+        'core_cache',
+        'form/cache_lock_form.php',
+    ],
+    \cache_mode_mappings_form::class => [
+        'core_cache',
+        'form/cache_mode_mappings_form.php',
+    ],
+    \cachestore_addinstance_form::class => [
+        'core_cache',
+        'form/cachestore_addinstance_form.php',
+    ],
+
     // Output API.
     \theme_config::class => 'output/theme_config.php',
     \xhtml_container_stack::class => 'output/xhtml_container_stack.php',
