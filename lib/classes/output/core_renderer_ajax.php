@@ -79,8 +79,11 @@ class core_renderer_ajax extends core_renderer {
      * @param string $message The message to print out.
      * @param string $type    The type of notification. See constants on \core\output\notification.
      * @param bool $closebutton Whether to show a close icon to remove the notification (default true).
+     * @param string|null $title The title of the notification.
+     * @param ?string $titleicon if the title should have an icon you can give the icon name with the component
+     *  (e.g. 'i/circleinfo, core' or 'i/circleinfo' if the icon is from core)
      */
-    public function notification($message, $type = null, $closebutton = true) {
+    public function notification($message, $type = null, $closebutton = true, ?string $title = null, ?string $titleicon = null) {
     }
 
     /**

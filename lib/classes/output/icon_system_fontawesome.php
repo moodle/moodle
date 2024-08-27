@@ -209,6 +209,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/checked' => 'fa-check',
             'core:i/checkedcircle' => 'fa-circle-check',
             'core:i/checkpermissions' => 'fa-user-lock',
+            'core:i/circleinfo' => 'fa-circle-info',
             'core:i/cloudupload' => 'fa-cloud-upload',
             'core:i/cohort' => 'fa-users-line',
             'core:i/competencies' => 'fa-list-check',
