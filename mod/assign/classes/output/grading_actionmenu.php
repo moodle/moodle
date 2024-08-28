@@ -123,7 +123,6 @@ class grading_actionmenu implements templatable, renderable {
                 'group' => 0,
                 'status' => '',
                 'workflowfilter' => '',
-                'sesskey' => sesskey(),
             ]);
             $data['pagereset'] = $url->out(false);
         }
@@ -243,14 +242,13 @@ class grading_actionmenu implements templatable, renderable {
         $groupedfilters = $this->assign->get_filters(true);
         foreach ($groupedfilters as $group => $filters) {
             foreach ($filters as $filter) {
-                if ($filter['key'] === 'none') {
+                if ($filter['key'] === ASSIGN_FILTER_NONE) {
                     // The 'none' filter is not a real filter.
                     $filter['key'] = '';
                 }
                 $url = new moodle_url('/mod/assign/view.php', [
                     'id' => $this->assign->get_course_module()->id,
                     'action' => 'grading',
-                    'sesskey' => sesskey(),
                     'status' => $filter['key'],
                 ]);
                 $statusmenu[$url->out(false)] = $filter['name'];

@@ -4486,8 +4486,12 @@ class assign {
         require_once($CFG->dirroot . '/mod/assign/gradingbatchoperationsform.php');
 
         $submittedfilter = optional_param('status', null, PARAM_ALPHA);
-        if (isset($submittedfilter) && confirm_sesskey()) {
-            set_user_preference('assign_filter', $submittedfilter);
+        if (isset($submittedfilter)) {
+            $validfilters = array_column($this->get_filters(), 'key');
+            $validfilters = array_diff($validfilters, [ASSIGN_FILTER_NONE]); // The 'none' filter is not a real filter.
+            if ($submittedfilter === '' || in_array($submittedfilter, $validfilters)) {
+                set_user_preference('assign_filter', $submittedfilter);
+            }
         }
 
         $submittedquickgrading = optional_param('quickgrading', null, PARAM_BOOL);
@@ -9675,7 +9679,7 @@ class assign {
         // First is always "no filter" option.
         $filters[0] = [
             [
-                'key' => 'none',
+                'key' => ASSIGN_FILTER_NONE,
                 'name' => get_string('filterall', 'assign'),
                 'active' => ($current == ''),
             ],
