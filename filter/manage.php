@@ -112,7 +112,6 @@ if ($forfilter) {
 } else {
     $title = get_string('filtersettingsin', 'filters', $contextname);
 }
-$straction = get_string('filters', 'admin'); // Used by tabs.php
 
 // Print the header and tabs.
 $PAGE->set_cacheable(false);
