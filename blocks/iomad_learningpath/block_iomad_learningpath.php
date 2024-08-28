@@ -64,7 +64,11 @@ class block_iomad_learningpath extends block_base {
         $companyid = iomad::get_my_companyid($sitecontext, false);
         $path = new \block_iomad_learningpath\path($companyid, $sitecontext);
         $userpaths = $path->get_user_paths($USER->id);
-//echo "<pre>"; var_dump($userpaths); die;
+
+        // Only show the block if there is something to see.
+        if (empty($userpaths)) {
+            return null;
+        }
 
         // Javascript
         $this->page->requires->js_call_amd('block_iomad_learningpath/path', 'init');
