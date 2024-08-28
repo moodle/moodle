@@ -32,10 +32,8 @@ Feature: Ensure that a comment remains visible if its popup menu is open
       | file    | mod/assign/feedback/editpdf/tests/fixtures/submission.pdf  |
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
-    And I click on "Grade actions" "actionmenu" in the "Submitted for grading" "table_row"
-    And I choose "Grade" in the open action menu
+    And I go to "Submitted for grading" "Test assignment name" activity advanced grading page
     And I change window size to "medium"
     And I wait for the complete PDF to load
 

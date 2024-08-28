@@ -53,16 +53,12 @@ Feature: In an assignment, teachers can filter displayed submissions by marking 
     And I expand all fieldsets
     And I set the field "Use marking workflow" to "Yes"
     And I press "Save and display"
-    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     # Change the marking workflow state for Student 2 and Student 3.
-    And I click on "Grade actions" "actionmenu" in the "Student 2" "table_row"
-    And I choose "Grade" in the open action menu
+    And I go to "Student 2" "Test assignment" activity advanced grading page
     And I set the field "Marking workflow state" to "In marking"
     And I press "Save changes"
-    And I follow "View all submissions"
-    And I click on "Grade actions" "actionmenu" in the "Student 3" "table_row"
-    And I choose "Grade" in the open action menu
+    And I go to "Student 3" "Test assignment" activity advanced grading page
     And I set the field "Marking workflow state" to "Marking completed"
     And I press "Save changes"
     And I follow "View all submissions"
@@ -131,11 +127,9 @@ Feature: In an assignment, teachers can filter displayed submissions by marking 
     And I expand all fieldsets
     And I set the field "Use marking workflow" to "Yes"
     And I press "Save and display"
-    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
     # Change the marking workflow state for Student 2.
-    And I click on "Grade actions" "actionmenu" in the "Student 2" "table_row"
-    And I choose "Grade" in the open action menu
+    And I go to "Student 2" "Test assignment" activity advanced grading page
     And I set the field "Marking workflow state" to "In marking"
     And I press "Save changes"
     And I follow "View all submissions"

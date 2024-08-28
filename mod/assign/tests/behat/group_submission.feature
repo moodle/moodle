@@ -205,9 +205,7 @@ Feature: Group assignment submissions
       | assign                | user      | onlinetext                          |
       | Test assignment name  | student1  | I'm the student's first submission  |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "Submissions" in current page administration
-    And I click on "Grade actions" "actionmenu" in the "Student 1" "table_row"
-    And I choose "Grade" in the open action menu
+    And I go to "Student 1" "Test assignment name" activity advanced grading page
     And I set the following fields to these values:
       | Grade out of 100 | 50.0 |
       | Apply grades and feedback to entire group | 1 |

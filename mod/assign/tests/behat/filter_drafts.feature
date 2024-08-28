@@ -51,9 +51,7 @@ Feature: In an assignment, teachers can filter displayed submissions and see dra
   @javascript
   Scenario: View assignments with draft status in the grader
     Given I am on the "Test assignment" Activity page logged in as teacher1
-    And I navigate to "Submissions" in current page administration
-    And I click on "Grade actions" "actionmenu" in the "Student 1" "table_row"
-    And I choose "Grade" in the open action menu
+    And I go to "Student 1" "Test assignment" activity advanced grading page
     When I click on "[data-region=user-filters]" "css_element"
     And I set the field "filter" to "Draft"
     Then I should see "1 of 1"

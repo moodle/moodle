@@ -85,13 +85,10 @@ Feature: availability_grade
 
     # Log back in as teacher.
     When I am on the "A1" "assign activity" page logged in as teacher1
+    And I change window size to "large"
 
     # Give the assignment 40%.
-    And I navigate to "Submissions" in current page administration
-    # Pick the grade link in the row that has s@example.com in it.
-    And I change window size to "large"
-    And I click on "Grade actions" "actionmenu" in the "s@example.com" "table_row"
-    And I choose "Grade" in the open action menu
+    And I go to "s@example.com" "A1" activity advanced grading page
     And I change window size to "medium"
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
