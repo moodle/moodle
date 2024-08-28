@@ -32,7 +32,6 @@ class send_assignment_due_digest_notification_to_user extends adhoc_task {
      * Execute the task.
      */
     public function execute(): void {
-        $user = $this->get_custom_data();
-        notification_helper::send_due_digest_notification_to_user($user->id);
+        notification_helper::send_due_digest_notification_to_user($this->get_userid());
     }
 }

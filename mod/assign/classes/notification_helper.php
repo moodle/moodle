@@ -17,6 +17,7 @@
 namespace mod_assign;
 
 use DateTime;
+use core\output\html_writer;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -507,19 +508,25 @@ class notification_helper {
         }
 
         // Build the digest.
-        $digest = '';
+        $digestarray = [];
         foreach ($assignmentsfordigest as $digestitem) {
-            $digest .= get_string('assignmentduedigestitem', 'mod_assign', $digestitem);
+            $digestarray[] = get_string('assignmentduedigestitem', 'mod_assign', $digestitem);
         }
 
+        // Put the digest into list.
+        $digest = html_writer::alist($digestarray);
+
+        // Get user's object.
+        $userobject = \core_user::get_user($userid);
+
         $stringparams = [
-            'firstname' => $assignmentobj->get_participant($userid)->firstname,
+            'firstname' => $userobject->firstname,
             'duedate' => userdate(self::get_future_time(self::INTERVAL_DUE_DIGEST), get_string('strftimedaydate', 'langconfig')),
             'digest' => $digest,
         ];
 
         $messagedata = [
-            'user' => \core_user::get_user($userid),
+            'user' => $userobject,
             'subject' => get_string('assignmentduedigestsubject', 'mod_assign'),
             'html' => get_string('assignmentduedigesthtml', 'mod_assign', $stringparams),
         ];

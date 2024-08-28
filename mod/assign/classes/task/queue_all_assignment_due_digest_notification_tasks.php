@@ -54,7 +54,6 @@ class queue_all_assignment_due_digest_notification_tasks extends scheduled_task 
         // Queue a task for each user.
         foreach ($users as $user) {
             $task = new send_assignment_due_digest_notification_to_user();
-            $task->set_custom_data($user);
             $task->set_userid($user->id);
             \core\task\manager::queue_adhoc_task($task, true);
         }

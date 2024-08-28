@@ -70,9 +70,9 @@ $string['assignfeedbackpluginname'] = 'Feedback plugin';
 $string['assignmentduedigesthtml'] = '<p>Hi {$a->firstname},</p>
 <p>The following assignments are due on <strong>{$a->duedate}</strong>.</p>
 {$a->digest}';
-$string['assignmentduedigestitem'] = '<p><strong>{$a->assignmentname}</strong> in course {$a->coursename}<br/>
+$string['assignmentduedigestitem'] = '<strong>{$a->assignmentname}</strong> in course {$a->coursename}<br/>
 <strong>Due: {$a->duetime}</strong><br/>
-<a href="{$a->url}">Go to activity</a></p>';
+<a href="{$a->url}" aria-label="Go to {$a->assignmentname}">Go to activity</a>';
 $string['assignmentduedigestsubject'] = 'You have assignments due in 7 days';
 $string['assignmentduesoonhtml'] = '<p>Hi {$a->firstname},</p>
 <p>The assignment <strong>{$a->assignmentname}</strong> in course {$a->coursename} is due soon.</p>
