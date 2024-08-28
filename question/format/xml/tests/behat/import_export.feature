@@ -34,7 +34,7 @@ Feature: Test importing questions from Moodle XML format.
     And I set the field "id_format_xml" to "1"
     And I set the field "Export category" to "TrueFalse"
     And I press "Export questions to file"
-    Then following "click here" should download between "57100" and "58150" bytes
+    Then following "click here" should download between "17042" and "18874" bytes
 
   @javascript @_file_upload
   Scenario: import some multiple choice questions from Moodle XML format
