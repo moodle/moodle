@@ -36,10 +36,10 @@ Feature: Manage custom report columns sorting
     Given I change window size to "large"
     And I click on "Show/hide 'Sorting'" "button"
     When I click on "Enable initial sorting for column 'Last name'" "checkbox"
-    And I click on "Sort column 'Last name' descending" "button"
+    And I click on "Change initial sorting for column 'Last name' to descending" "button"
     Then I should see "Updated sorting for column 'Last name'"
     And "user01" "table_row" should appear before "user02" "table_row"
-    And I click on "Sort column 'Last name' ascending" "button"
+    And I click on "Change initial sorting for column 'Last name' to ascending" "button"
     And I should see "Updated sorting for column 'Last name'"
     And "user02" "table_row" should appear before "user01" "table_row"
 
@@ -63,7 +63,7 @@ Feature: Manage custom report columns sorting
     # User1 = Alice Zebra; User2=Zoe Aardvark; User3 = Alice Badger.
     And "user03" "table_row" should appear before "user01" "table_row"
     And "user01" "table_row" should appear before "user02" "table_row"
-    And I click on "Sort column 'Full name' descending" "button"
+    And I click on "Change initial sorting for column 'Full name' to descending" "button"
     And I should see "Updated sorting for column 'Full name'"
     And "user02" "table_row" should appear before "user01" "table_row"
     And "user01" "table_row" should appear before "user03" "table_row"

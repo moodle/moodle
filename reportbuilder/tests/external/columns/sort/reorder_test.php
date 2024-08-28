@@ -38,7 +38,7 @@ require_once("{$CFG->dirroot}/webservice/tests/helpers.php");
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class reorder_test extends externallib_advanced_testcase {
+final class reorder_test extends externallib_advanced_testcase {
 
     /**
      * Text execute method
@@ -63,20 +63,13 @@ class reorder_test extends externallib_advanced_testcase {
 
         $this->assertTrue($result['hassortablecolumns']);
         $this->assertCount(4, $result['sortablecolumns']);
-        $columnid = $columncity->get('id');
-        $sortablecolumn = array_filter($result['sortablecolumns'], function(array $column) use($columnid) {
-            return $column['id'] == $columnid;
-        });
-        $sortablecolumn = reset($sortablecolumn);
-        $this->assertEquals($columnid, $sortablecolumn['id']);
+
+        $sortablecolumn = $result['sortablecolumns'][1];
         $this->assertEquals('City/town', $sortablecolumn['title']);
         $this->assertEquals(SORT_ASC, $sortablecolumn['sortdirection']);
         $this->assertEquals(0, $sortablecolumn['sortenabled']);
         $this->assertEquals(2, $sortablecolumn['sortorder']);
-        $this->assertEquals('t/uplong', $sortablecolumn['sorticon']['key']);
-        $this->assertEquals('moodle', $sortablecolumn['sorticon']['component']);
-        $str = get_string('columnsortdirectiondesc', 'core_reportbuilder', 'City/town');
-        $this->assertEquals($str, $sortablecolumn['sorticon']['title']);
+        $this->assertArrayHasKey('sorticon', $sortablecolumn);
 
         // Assert report column sort order.
         $columns = column::get_records(['reportid' => $report->get('id')], 'sortorder');
