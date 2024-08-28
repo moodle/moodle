@@ -31,8 +31,6 @@ $id = required_param('id', PARAM_INT); // Course Module ID.
 $url = new moodle_url('/mod/feedback/mapcourse.php', array('id'=>$id));
 $PAGE->set_url($url);
 
-$current_tab = 'mapcourse';
-
 list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
 require_login($course, true, $cm);
 $feedback = $PAGE->activityrecord;
