@@ -70,8 +70,11 @@ class course_badges extends system_report {
         $this->add_base_fields("{$badgeissuedalias}.uniquehash");
 
         // Now we can call our helper methods to add the content we want to include in the report.
-        $this->add_columns($badgeissuedalias);
+        $this->add_columns();
         $this->add_filters();
+
+        $this->set_initial_sort_column('badge:name', SORT_ASC);
+        $this->set_default_no_results_notice(new lang_string('nomatchingbadges', 'core_badges'));
 
         // Set if report can be downloaded.
         $this->set_downloadable(false);
@@ -91,18 +94,17 @@ class course_badges extends system_report {
      *
      * They are provided by the entities we previously added in the {@see initialise} method, referencing each by their
      * unique identifier. If custom columns are needed just for this report, they can be defined here.
-     *
-     * @param string $badgeissuedalias
      */
-    public function add_columns(string $badgeissuedalias): void {
-        $columns = [
+    protected function add_columns(): void {
+        $badgeissuedalias = $this->get_entity('badge_issued')->get_table_alias('badge_issued');
+
+        $this->add_columns_from_entities([
             'badge:image',
             'badge:name',
             'badge:description',
             'badge:criteria',
             'badge_issued:issued',
-        ];
-        $this->add_columns_from_entities($columns);
+        ]);
 
         $this->get_column('badge_issued:issued')
             ->set_title(new lang_string('awardedtoyou', 'core_badges'))
@@ -119,8 +121,6 @@ class course_badges extends system_report {
                 $icon = new pix_icon('i/valid', get_string('dateearned', 'badges', $date));
                 return $OUTPUT->action_icon($badgeurl, $icon, null, null, true);
             });
-
-        $this->set_initial_sort_column('badge:name', SORT_ASC);
     }
 
     /**
@@ -130,11 +130,9 @@ class course_badges extends system_report {
      * unique identifier
      */
     protected function add_filters(): void {
-        $filters = [
+        $this->add_filters_from_entities([
             'badge:name',
             'badge_issued:issued',
-        ];
-
-        $this->add_filters_from_entities($filters);
+        ]);
     }
 }
