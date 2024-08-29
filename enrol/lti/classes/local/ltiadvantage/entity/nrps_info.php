@@ -108,7 +108,7 @@ class nrps_info {
      * @return \moodle_url the service URL.
      */
     public function get_context_memberships_url(): \moodle_url {
-        return $this->contextmembershipsurl;
+        return clone $this->contextmembershipsurl;
     }
 
     /**
