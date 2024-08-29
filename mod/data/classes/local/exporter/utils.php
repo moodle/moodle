@@ -123,9 +123,10 @@ class utils {
                 }
                 if ($userdetails) { // Add user details to the export data.
                     $userdata = get_complete_user_data('id', $record->userid);
-                    $exporter->add_to_current_row(fullname($userdata));
-                    $exporter->add_to_current_row($userdata->username);
-                    $exporter->add_to_current_row($userdata->email);
+                    // In case of an already deleted user, we do not receive any userdata and export an empty string instead.
+                    $exporter->add_to_current_row($userdata ? fullname($userdata) : '');
+                    $exporter->add_to_current_row($userdata ? $userdata->username : '');
+                    $exporter->add_to_current_row($userdata ? $userdata->email : '');
                 }
                 if ($time) { // Add time added / modified.
                     $exporter->add_to_current_row(userdate($record->timecreated));
