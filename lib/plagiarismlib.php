@@ -54,67 +54,6 @@ function plagiarism_get_links($linkarray) {
 }
 
 /**
- * returns array of plagiarism details about specified file
- *
- * @deprecated Since Moodle 4.0. - this function was a placeholder and not used in core.
- * @todo MDL-71326 This is to be moved from here to deprecatedlib.php in Moodle 4.4
- * @param int $cmid
- * @param int $userid
- * @param object $file moodle file object
- * @return array - sets of details about specified file, one array of details per plagiarism plugin
- *  - each set contains at least 'analyzed', 'score', 'reporturl'
- */
-function plagiarism_get_file_results($cmid, $userid, $file) {
-    global $CFG;
-    $text = 'plagiarism_get_file_results is deprecated, please use plagiarism_get_links() or plugin specific functions.';
-    debugging($text, DEBUG_DEVELOPER);
-    $allresults = array();
-    if (empty($CFG->enableplagiarism)) {
-        return $allresults;
-    }
-    $plagiarismplugins = plagiarism_load_available_plugins();
-    foreach ($plagiarismplugins as $plugin => $dir) {
-        require_once($dir.'/lib.php');
-        $plagiarismclass = "plagiarism_plugin_$plugin";
-        $plagiarismplugin = new $plagiarismclass;
-        $allresults[] = $plagiarismplugin->get_file_results($cmid, $userid, $file);
-    }
-    return $allresults;
-}
-
-/**
- * Allows a plagiarism plugin to print a button/link at the top of activity overview report pages.
- *
- * @deprecated Since Moodle 4.0 - Please use {plugin name}_before_standard_top_of_body_html instead.
- * @todo MDL-71326 Remove this method.
- * @param object $course - full Course object
- * @param object $cm - full cm object
- * @return string
- */
-function plagiarism_update_status($course, $cm) {
-    global $CFG;
-    if (empty($CFG->enableplagiarism)) {
-        return '';
-    }
-    $plagiarismplugins = plagiarism_load_available_plugins();
-    $output = '';
-    foreach ($plagiarismplugins as $plugin => $dir) {
-        require_once($dir.'/lib.php');
-        $plagiarismclass = "plagiarism_plugin_$plugin";
-        $plagiarismplugin = new $plagiarismclass;
-
-        $reflectionmethod = new ReflectionMethod($plagiarismplugin, 'update_status');
-        if ($reflectionmethod->getDeclaringClass()->getName() == get_class($plagiarismplugin)) {
-            $text = 'plagiarism_plugin::update_status() is deprecated.';
-            $text .= ' Use plagiarism_' . $plugin . '_before_standard_top_of_body_html() instead';
-            debugging($text, DEBUG_DEVELOPER);
-        }
-        $output .= $plagiarismplugin->update_status($course, $cm);
-    }
-    return $output;
-}
-
-/**
  * Function that prints the student disclosure notifying that the files will be checked for plagiarism
  * @param integer $cmid - the cmid of this module
  * @return string
