@@ -27,6 +27,14 @@
 
 ### Removed
 
+- Support for the following entity classes, renamed since 4.1, has now been removed completely:
+  - `core_admin\local\entities\task_log`
+  - `core_cohort\local\entities\cohort`
+  - `core_cohort\local\entities\cohort_member`
+  - `core_course\local\entities\course_category`
+  - `report_configlog\local\entities\config_change`
+
+  For more information see [MDL-74583](https://tracker.moodle.org/browse/MDL-74583)
 - The following previously deprecated local helper methods have been removed and can no longer be used:
     - `audience::get_all_audiences_menu_types`
     - `report::get_available_columns`

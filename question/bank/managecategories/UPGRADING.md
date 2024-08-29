@@ -19,4 +19,3 @@
 - The methods in the `question_category_object` class that are still required following this change have been split between `\qbank_managecategories\question_categories` (for the parts used within this plugin for display a list of categories) and `\core_question\category_manager` (for the parts used for generate CRUD operations on question categories, including outside of this plugin). This will allow `question_category_object` to be deprecated, and avoids other parts of the system wishing to manipulate question categories from having to violate cross-component communication rules.
 
   For more information see [MDL-72397](https://tracker.moodle.org/browse/MDL-72397)
-

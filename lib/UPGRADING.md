@@ -32,6 +32,13 @@
 - The following method has been deprecated and should no longer be used: `reset_password_and_mail`. Please consider using `setnew_password_and_mail` as a replacement.
 
   For more information see [MDL-64148](https://tracker.moodle.org/browse/MDL-64148)
+- - Final deprecation and removal of the following functions:
+    - `plagiarism_plugin::get_configs()`
+    - `plagiarism_plugin::get_file_results()`
+    - `plagiarism_plugin::update_status()`, please use `{plugin name}_before_standard_top_of_body_html` instead.
+  - Final deprecation and removal of `plagiarism_get_file_results()`. Please use `plagiarism_get_links()` instead. - Final deprecation and removal of `plagiarism_update_status()`. Please use `{plugin name}_before_standard_top_of_body_html()` instead.
+
+  For more information see [MDL-71326](https://tracker.moodle.org/browse/MDL-71326)
 - `moodle_list` and `list_item` were only used by `qbank_managecategories`, and these usages have been removed, so these classes (and thus all of listlib.php) are now deprecated. This method was the only usage of the `QUESTION_PAGE_LENGTH` constant, which was defined in `question_category_object.php`, and so is also now deprecated.
 
   For more information see [MDL-72397](https://tracker.moodle.org/browse/MDL-72397)
@@ -91,6 +98,11 @@
   ```
 
   For more information see [MDL-66903](https://tracker.moodle.org/browse/MDL-66903)
+- Redis session cache has been improved to make a single call where two were used before.
+   - The minimum Redis server version is now 2.6.12.
+   - The minimum PHP Redis extension version is now 2.2.4.
+
+  For more information see [MDL-69684](https://tracker.moodle.org/browse/MDL-69684)
 - Added stored progress bars
 
   For more information see [MDL-70854](https://tracker.moodle.org/browse/MDL-70854)
@@ -111,6 +123,12 @@
 - The `after_config()` callback has been converted to a hook, `\core\hook\after_config`.
 
   For more information see [MDL-79011](https://tracker.moodle.org/browse/MDL-79011)
+- The core\output\select_menu widget now supports rendering dividers between menu options. Empty elements (null or empty strings) within the array of options are considered and rendered as dividers in the dropdown menu.
+
+  For more information see [MDL-80747](https://tracker.moodle.org/browse/MDL-80747)
+- The `core\output\select_menu` widget now supports a new feature: inline labels. You can render the label inside the combobox widget by passing `true` to the `$inlinelabel` parameter when calling the `->set_label()` method.
+
+  For more information see [MDL-80747](https://tracker.moodle.org/browse/MDL-80747)
 - The following classes have been renamed.
   Existing classes are currently unaffected.
   | Old class name | New class name |
@@ -231,6 +249,9 @@
 - A new method, get_deprecated_icons(), has been added to the icon_system class. All deprecated icons should be registered through this method. Plugins can implement a callback to pluginname_get_deprecated_icons() to register their deprecated icons too. When $CFG->debugpageinfo is enabled, a console message will display a list of the deprecated icons.
 
   For more information see [MDL-82212](https://tracker.moodle.org/browse/MDL-82212)
+- Add optional icon and title to notification. Two parameters have been added to the `core\output\notification` so when creating a notification you can pass an icon and a title.
+
+  For more information see [MDL-82297](https://tracker.moodle.org/browse/MDL-82297)
 - The Moodle autoloader should now be registered using `\core\component::register_autoloader` rather than manually doing so in any exceptional location which requires it. It is not normally necessary to include the autoloader manually, as it is registered automatically when the Moodle environment is bootstrapped.
 
   For more information see [MDL-82747](https://tracker.moodle.org/browse/MDL-82747)

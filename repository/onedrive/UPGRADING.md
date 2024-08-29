@@ -9,4 +9,3 @@
   - `import_skydrive_files`
 
   For more information see [MDL-72620](https://tracker.moodle.org/browse/MDL-72620)
-

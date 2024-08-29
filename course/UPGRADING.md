@@ -2,6 +2,15 @@
 
 ## 4.5dev+
 
+### Removed
+
+- The previously deprecated `print_course_request_buttons` method has been removed and can no longer be used
+
+  For more information see [MDL-73976](https://tracker.moodle.org/browse/MDL-73976)
+- The $course class property in the core_course\output\actionbar\group_selector class has been removed.
+
+  For more information see [MDL-82393](https://tracker.moodle.org/browse/MDL-82393)
+
 ### Added
 
 - - New optional sectionNum parameter has been added to activitychooser AMD module initializer. - New option sectionnum parameter has been added to get_course_content_items() external function. - New optional sectionnum parameter has been added to get_content_items_for_user_in_course() function.
@@ -34,9 +43,3 @@
 - The external function core_course::get_course_contents now returns the component and itemid of sections.
 
   For more information see [MDL-82385](https://tracker.moodle.org/browse/MDL-82385)
-
-### Removed
-
-- The $course class property in the core_course\output\actionbar\group_selector class has been removed.
-
-  For more information see [MDL-82393](https://tracker.moodle.org/browse/MDL-82393)

@@ -69,6 +69,13 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The following method has been deprecated and should no longer be used: `reset_password_and_mail`. Please consider using `setnew_password_and_mail` as a replacement.
 
   For more information see [MDL-64148](https://tracker.moodle.org/browse/MDL-64148)
+- - Final deprecation and removal of the following functions:
+    - `plagiarism_plugin::get_configs()`
+    - `plagiarism_plugin::get_file_results()`
+    - `plagiarism_plugin::update_status()`, please use `{plugin name}_before_standard_top_of_body_html` instead.
+  - Final deprecation and removal of `plagiarism_get_file_results()`. Please use `plagiarism_get_links()` instead. - Final deprecation and removal of `plagiarism_update_status()`. Please use `{plugin name}_before_standard_top_of_body_html()` instead.
+
+  For more information see [MDL-71326](https://tracker.moodle.org/browse/MDL-71326)
 - `moodle_list` and `list_item` were only used by `qbank_managecategories`, and these usages have been removed, so these classes (and thus all of listlib.php) are now deprecated. This method was the only usage of the `QUESTION_PAGE_LENGTH` constant, which was defined in `question_category_object.php`, and so is also now deprecated.
 
   For more information see [MDL-72397](https://tracker.moodle.org/browse/MDL-72397)
@@ -128,6 +135,11 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   ```
 
   For more information see [MDL-66903](https://tracker.moodle.org/browse/MDL-66903)
+- Redis session cache has been improved to make a single call where two were used before.
+   - The minimum Redis server version is now 2.6.12.
+   - The minimum PHP Redis extension version is now 2.2.4.
+
+  For more information see [MDL-69684](https://tracker.moodle.org/browse/MDL-69684)
 - Added stored progress bars
 
   For more information see [MDL-70854](https://tracker.moodle.org/browse/MDL-70854)
@@ -148,6 +160,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `after_config()` callback has been converted to a hook, `\core\hook\after_config`.
 
   For more information see [MDL-79011](https://tracker.moodle.org/browse/MDL-79011)
+- The core\output\select_menu widget now supports rendering dividers between menu options. Empty elements (null or empty strings) within the array of options are considered and rendered as dividers in the dropdown menu.
+
+  For more information see [MDL-80747](https://tracker.moodle.org/browse/MDL-80747)
+- The `core\output\select_menu` widget now supports a new feature: inline labels. You can render the label inside the combobox widget by passing `true` to the `$inlinelabel` parameter when calling the `->set_label()` method.
+
+  For more information see [MDL-80747](https://tracker.moodle.org/browse/MDL-80747)
 - The following classes have been renamed.
   Existing classes are currently unaffected.
   | Old class name | New class name |
@@ -268,6 +286,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - A new method, get_deprecated_icons(), has been added to the icon_system class. All deprecated icons should be registered through this method. Plugins can implement a callback to pluginname_get_deprecated_icons() to register their deprecated icons too. When $CFG->debugpageinfo is enabled, a console message will display a list of the deprecated icons.
 
   For more information see [MDL-82212](https://tracker.moodle.org/browse/MDL-82212)
+- Add optional icon and title to notification. Two parameters have been added to the `core\output\notification` so when creating a notification you can pass an icon and a title.
+
+  For more information see [MDL-82297](https://tracker.moodle.org/browse/MDL-82297)
 - The Moodle autoloader should now be registered using `\core\component::register_autoloader` rather than manually doing so in any exceptional location which requires it. It is not normally necessary to include the autoloader manually, as it is registered automatically when the Moodle environment is bootstrapped.
 
   For more information see [MDL-82747](https://tracker.moodle.org/browse/MDL-82747)
@@ -331,6 +352,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Removed
 
+- Support for the following entity classes, renamed since 4.1, has now been removed completely:
+  - `core_admin\local\entities\task_log`
+  - `core_cohort\local\entities\cohort`
+  - `core_cohort\local\entities\cohort_member`
+  - `core_course\local\entities\course_category`
+  - `report_configlog\local\entities\config_change`
+
+  For more information see [MDL-74583](https://tracker.moodle.org/browse/MDL-74583)
 - The following previously deprecated local helper methods have been removed and can no longer be used:
     - `audience::get_all_audiences_menu_types`
     - `report::get_available_columns`
@@ -491,6 +520,50 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-81428](https://tracker.moodle.org/browse/MDL-81428)
 
+### core_course
+
+#### Removed
+
+- The previously deprecated `print_course_request_buttons` method has been removed and can no longer be used
+
+  For more information see [MDL-73976](https://tracker.moodle.org/browse/MDL-73976)
+- The $course class property in the core_course\output\actionbar\group_selector class has been removed.
+
+  For more information see [MDL-82393](https://tracker.moodle.org/browse/MDL-82393)
+
+#### Added
+
+- - New optional sectionNum parameter has been added to activitychooser AMD module initializer. - New option sectionnum parameter has been added to get_course_content_items() external function. - New optional sectionnum parameter has been added to get_content_items_for_user_in_course() function.
+
+  For more information see [MDL-81675](https://tracker.moodle.org/browse/MDL-81675)
+- Webservices `core_course_get_courses_by_field` now accepts a new parameter `sectionid` to be able to retrieve the course that has the indicated section
+
+  For more information see [MDL-81699](https://tracker.moodle.org/browse/MDL-81699)
+- i_open_section_edit_menu(), i_show_section(), i_hide_section(), i_wait_until_section_is_available(), show_section_link_exists(), hide_section_link_exists() and section_exists() functions have been improved to accept not only section number but also section name.
+
+  For more information see [MDL-82259](https://tracker.moodle.org/browse/MDL-82259)
+
+#### Deprecated
+
+- The data-sectionid attribute in the activity chooser has been deprecated. Please update your code to use data-sectionnum instead.
+
+  For more information see [MDL-81676](https://tracker.moodle.org/browse/MDL-81676)
+- The $course parameter in the constructor of the core_course\output\actionbar\group_selector class has been deprecated and is no longer used.
+
+  For more information see [MDL-82393](https://tracker.moodle.org/browse/MDL-82393)
+
+#### Changed
+
+- The reset course page has been improved. The words "Delete" and "Remove" have been removed from all the options to make it easier to focus on the data to be removed and avoid inconsistencies and duplicated information. Third party plugins implementing reset methods might need to:
+  - Add static element in the _reset_course_form_definition method before all the options with the Delete string:
+      `$mform->addElement('static', 'assigndelete', get_string('delete'));`
+  - Review all the strings used in the reset page to remove the "Delete" or "Remove" words from them.
+
+  For more information see [MDL-81872](https://tracker.moodle.org/browse/MDL-81872)
+- The external function core_course::get_course_contents now returns the component and itemid of sections.
+
+  For more information see [MDL-82385](https://tracker.moodle.org/browse/MDL-82385)
+
 ### theme
 
 #### Removed
@@ -649,6 +722,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-80748](https://tracker.moodle.org/browse/MDL-80748)
 
+#### Changed
+
+- `core_table\dynamic` declares a new method `::has_capability()` to allow classes implementing this interface to perform access checks on the dynamic table. This is a breaking change that all dynamic table implementations must implement for continued functionality.
+
+  For more information see [MDL-82567](https://tracker.moodle.org/browse/MDL-82567)
+
 ### mod_data
 
 #### Added
@@ -704,47 +783,6 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - New \core_courseformat\output\local\content\cm\delegatedcontrolmenu class has been created extending \core_courseformat\output\local\content\basecontrolmenu class to render delegated section action menu combining section and module action menu.
 
   For more information see [MDL-82510](https://tracker.moodle.org/browse/MDL-82510)
-
-### core_course
-
-#### Added
-
-- - New optional sectionNum parameter has been added to activitychooser AMD module initializer. - New option sectionnum parameter has been added to get_course_content_items() external function. - New optional sectionnum parameter has been added to get_content_items_for_user_in_course() function.
-
-  For more information see [MDL-81675](https://tracker.moodle.org/browse/MDL-81675)
-- Webservices `core_course_get_courses_by_field` now accepts a new parameter `sectionid` to be able to retrieve the course that has the indicated section
-
-  For more information see [MDL-81699](https://tracker.moodle.org/browse/MDL-81699)
-- i_open_section_edit_menu(), i_show_section(), i_hide_section(), i_wait_until_section_is_available(), show_section_link_exists(), hide_section_link_exists() and section_exists() functions have been improved to accept not only section number but also section name.
-
-  For more information see [MDL-82259](https://tracker.moodle.org/browse/MDL-82259)
-
-#### Deprecated
-
-- The data-sectionid attribute in the activity chooser has been deprecated. Please update your code to use data-sectionnum instead.
-
-  For more information see [MDL-81676](https://tracker.moodle.org/browse/MDL-81676)
-- The $course parameter in the constructor of the core_course\output\actionbar\group_selector class has been deprecated and is no longer used.
-
-  For more information see [MDL-82393](https://tracker.moodle.org/browse/MDL-82393)
-
-#### Changed
-
-- The reset course page has been improved. The words "Delete" and "Remove" have been removed from all the options to make it easier to focus on the data to be removed and avoid inconsistencies and duplicated information. Third party plugins implementing reset methods might need to:
-  - Add static element in the _reset_course_form_definition method before all the options with the Delete string:
-      `$mform->addElement('static', 'assigndelete', get_string('delete'));`
-  - Review all the strings used in the reset page to remove the "Delete" or "Remove" words from them.
-
-  For more information see [MDL-81872](https://tracker.moodle.org/browse/MDL-81872)
-- The external function core_course::get_course_contents now returns the component and itemid of sections.
-
-  For more information see [MDL-82385](https://tracker.moodle.org/browse/MDL-82385)
-
-#### Removed
-
-- The $course class property in the core_course\output\actionbar\group_selector class has been removed.
-
-  For more information see [MDL-82393](https://tracker.moodle.org/browse/MDL-82393)
 
 ### core_completion
 
@@ -802,6 +840,48 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - get_activities_list() function returns also an array of disabled elements, apart from the array of activities.
 
   For more information see [MDL-82146](https://tracker.moodle.org/browse/MDL-82146)
+
+### core_cache
+
+#### Added
+
+- The following classes have been renamed and now support autoloading.
+  Existing classes are currently unaffected.
+  | Old class name | New class name |
+  | --- | --- |
+  | `\cache_definition` | `\core_cache\definition` |
+  | `\cache_request` | `\core_cache\request_cache` |
+  | `\cache_session` | `\core_cache\session_cache` |
+  | `\cache_cached_object` | `\core_cache\cached_object` |
+  | `\cache_config` | `\core_cache\config` |
+  | `\cache_config_writer` | `\core_cache\config_writer` |
+  | `\cache_config_disabled` | `\core_cache\disabled_config` |
+  | `\cache_disabled` | `\core_cache\disabled_cache` |
+  | `\config_writer` | `\core_cache\config_writer` |
+  | `\cache_data_source` | `\core_cache\data_source_interface` |
+  | `\cache_data_source_versionable` | `\core_cache\versionable_data_source_interface` |
+  | `\cache_exception` | `\core_cache\exception/cache_exception` |
+  | `\cache_factory` | `\core_cache\factory` |
+  | `\cache_factory_disabled` | `\core_cache\disabled_factory` |
+  | `\cache_helper` | `\core_cache\helper` |
+  | `\cache_is_key_aware` | `\core_cache\key_aware_cache_interface` |
+  | `\cache_is_lockable` | `\core_cache\lockable_cache_interface` |
+  | `\cache_is_searchable` | `\core_cache\searchable_cache_interface` |
+  | `\cache_is_configurable` | `\core_cache\configurable_cache_interface` |
+  | `\cache_loader` | `\core_cache\loader_interface` |
+  | `\cache_loader_with_locking` | `\core_cache\loader_with_locking_interface` |
+  | `\cache_lock_interface` | `\core_cache\cache_lock_interface` |
+  | `\cache_store` | `\core_cache\store` |
+  | `\cache_store_interface` | `\core_cache\store_interface` |
+  | `\cache_ttl_wrapper` | `\core_cache\ttl_wrapper` |
+  | `\cacheable_object` | `\core_cache\cacheable_object_interface` |
+  | `\cacheable_object_array` | `\core_cache\cacheable_object_array` |
+  | `\cache_definition_mappings_form` | `\core_cache\form/cache_definition_mappings_form` |
+  | `\cache_definition_sharing_form` | `\core_cache\form/cache_definition_sharing_form` |
+  | `\cache_lock_form` | `\core_cache\form/cache_lock_form` |
+  | `\cache_mode_mappings_form` | `\core_cache\form/cache_mode_mappings_form` |
+
+  For more information see [MDL-82158](https://tracker.moodle.org/browse/MDL-82158)
 
 ### tool_behat
 
