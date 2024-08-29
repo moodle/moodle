@@ -1,0 +1,7 @@
+issueNumber: MDL-82775
+notes:
+  mod_h5pactivity:
+    - message: >-
+        The external function get_user_attempts now returns the total number of
+        attempts.
+      type: changed

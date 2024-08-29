@@ -149,6 +149,7 @@ class get_user_attempts extends external_api {
         $result = (object)[
             'activityid' => $instance->id,
             'usersattempts' => $usersattempts,
+            'totalattempts' => $manager->count_attempts(),
             'warnings' => $warnings,
         ];
 
@@ -255,6 +256,7 @@ class get_user_attempts extends external_api {
             'usersattempts' => new external_multiple_structure(
                 self::get_user_attempts_returns(), 'The complete users attempts list'
             ),
+            'totalattempts' => new external_value(PARAM_INT, 'Total number of attempts'),
             'warnings' => new external_warnings(),
         ], 'Activity attempts data');
     }

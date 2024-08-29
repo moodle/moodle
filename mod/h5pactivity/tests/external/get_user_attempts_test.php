@@ -80,6 +80,7 @@ class get_user_attempts_test extends externallib_advanced_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_h5pactivity');
 
         $attemptcount = 1;
+        $totalattempts = 0;
         foreach ($users as $key => $user) {
             if (($key == 'noattempts') || ($key == 'noenrolled') || ($key == 'editingteacher')) {
                 $countattempts[$user->id] = 0;
@@ -87,6 +88,7 @@ class get_user_attempts_test extends externallib_advanced_testcase {
                 $params = ['cmid' => $cm->id, 'userid' => $user->id];
                 for ($i = 1; $i <= $attemptcount; $i++) {
                     $generator->create_content($activity, $params);
+                    $totalattempts++;
                 }
                 $countattempts[$user->id] = $attemptcount;
                 $attemptcount++;
@@ -107,6 +109,7 @@ class get_user_attempts_test extends externallib_advanced_testcase {
             $result
         );
 
+        $this->assertEquals($totalattempts, $result['totalattempts']);
         $this->assertCount(count($warnings), $result['warnings']);
         // Teacher is excluded.
         $this->assertCount(count($resultusers), $result['usersattempts']);
