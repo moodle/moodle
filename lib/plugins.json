@@ -230,7 +230,6 @@
             "mediaplugin",
             "multilang",
             "tex",
-            "tidy",
             "urltolink"
         ],
         "format": [
@@ -593,7 +592,8 @@
             "authorize"
         ],
         "filter": [
-            "censor"
+            "censor",
+            "tidy"
         ],
         "h5plib": [
             "v124"

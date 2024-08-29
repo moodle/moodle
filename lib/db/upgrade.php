@@ -1240,5 +1240,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024080500.00);
     }
 
+    if ($oldversion < 2024082300.00) {
+        // If filter_tidy is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/filter/tidy/version.php')) {
+            // Clean config.
+            unset_all_config_for_plugin('filter_tidy');
+        }
+
+        upgrade_main_savepoint(true, 2024082300.00);
+    }
+
     return true;
 }

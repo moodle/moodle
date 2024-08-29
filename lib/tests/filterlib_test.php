@@ -725,24 +725,24 @@ class filterlib_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         $this->assertFileExists("$CFG->dirroot/filter/emailprotect"); // Any standard filter.
-        $this->assertFileExists("$CFG->dirroot/filter/tidy");         // Any standard filter.
+        $this->assertFileExists("$CFG->dirroot/filter/glossary");         // Any standard filter.
         $this->assertFileDoesNotExist("$CFG->dirroot/filter/grgrggr");   // Any non-existent filter.
 
         // Setup fixture.
         set_config('filterall', 0);
         set_config('stringfilters', '');
         // Exercise SUT.
-        filter_set_applies_to_strings('tidy', true);
+        filter_set_applies_to_strings('glossary', true);
         // Validate.
-        $this->assertEquals('tidy', $CFG->stringfilters);
+        $this->assertEquals('glossary', $CFG->stringfilters);
         $this->assertEquals(1, $CFG->filterall);
 
         filter_set_applies_to_strings('grgrggr', true);
-        $this->assertEquals('tidy', $CFG->stringfilters);
+        $this->assertEquals('glossary', $CFG->stringfilters);
         $this->assertEquals(1, $CFG->filterall);
 
         filter_set_applies_to_strings('emailprotect', true);
-        $this->assertEquals('tidy,emailprotect', $CFG->stringfilters);
+        $this->assertEquals('glossary,emailprotect', $CFG->stringfilters);
         $this->assertEquals(1, $CFG->filterall);
     }
 
@@ -750,13 +750,13 @@ class filterlib_test extends \advanced_testcase {
         global $CFG;
         $this->resetAfterTest();
 
-        $this->assertFileExists("$CFG->dirroot/filter/tidy"); // Any standard filter.
+        $this->assertFileExists("$CFG->dirroot/filter/glossary"); // Any standard filter.
 
         // Setup fixture.
         set_config('filterall', 1);
-        set_config('stringfilters', 'tidy');
+        set_config('stringfilters', 'glossary');
         // Exercise SUT.
-        filter_set_applies_to_strings('tidy', false);
+        filter_set_applies_to_strings('glossary', false);
         // Validate.
         $this->assertEquals('', $CFG->stringfilters);
         $this->assertEquals('', $CFG->filterall);
@@ -767,14 +767,14 @@ class filterlib_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         $this->assertFileExists("$CFG->dirroot/filter/emailprotect"); // Any standard filter.
-        $this->assertFileExists("$CFG->dirroot/filter/tidy");         // Any standard filter.
+        $this->assertFileExists("$CFG->dirroot/filter/glossary");         // Any standard filter.
         $this->assertFileExists("$CFG->dirroot/filter/multilang");    // Any standard filter.
 
         // Setup fixture.
         set_config('filterall', 1);
-        set_config('stringfilters', 'emailprotect,tidy,multilang');
+        set_config('stringfilters', 'emailprotect,glossary,multilang');
         // Exercise SUT.
-        filter_set_applies_to_strings('tidy', false);
+        filter_set_applies_to_strings('glossary', false);
         // Validate.
         $this->assertEquals('emailprotect,multilang', $CFG->stringfilters);
         $this->assertEquals(1, $CFG->filterall);
