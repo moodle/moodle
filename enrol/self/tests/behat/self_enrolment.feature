@@ -9,6 +9,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
@@ -64,13 +65,13 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
   Scenario: Self-enrolment enabled requiring a group enrolment key
     Given I log in as "teacher1"
     When I add "Self enrolment" enrolment method in "Course 1" with:
-      | Custom instance name | Test student enrolment |
-      | Enrolment key | moodle_rules |
-      | Use group enrolment keys | Yes |
+      | Custom instance name     | Test student enrolment |
+      | Enrolment key            | moodle_rules           |
+      | Use group enrolment keys | Yes                    |
     And I am on the "Course 1" "groups" page
     And I press "Create group"
     And I set the following fields to these values:
-      | Group name | Group 1 |
+      | Group name    | Group 1             |
       | Enrolment key | Test-groupenrolkey1 |
     And I press "Save changes"
     And I log out
@@ -82,6 +83,16 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     Then I should see "Topic 1"
     And I should not see "Enrolment options"
     And I should not see "Enrol me in this course"
+    And I am on the "Course 1" course page logged in as student2
+    And I set the following fields to these values:
+      | Enrolment key | moodle_rules |
+    And I press "Enrol me"
+    And I am on the "Course 1" course page logged in as teacher1
+    And I navigate to course participants
+    And the following should exist in the "participants" table:
+      | First name | Email address        | Roles   | Groups    |
+      | Student 1  | student1@example.com | Student | Group 1   |
+      | Student 2  | student2@example.com | Student | No groups |
 
   @javascript
   Scenario: Edit a self-enrolled user's enrolment from the course participants page
