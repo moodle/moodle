@@ -131,6 +131,13 @@ $functions = array(
         'type'          => 'write',
         'ajax'          => true,
     ],
+    'core_badges_get_badge' => [
+        'classname'     => 'core_badges\external\get_badge',
+        'description'   => 'Retrieves a badge by id.',
+        'type'          => 'read',
+        'capabilities'  => 'moodle/badges:viewbadges',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_badges_get_user_badges' => array(
         'classname'     => 'core_badges_external',
         'methodname'    => 'get_user_badges',
