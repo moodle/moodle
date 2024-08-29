@@ -114,6 +114,7 @@ Feature: Manage analytics models
     And I should see "Read actions amount"
     And I click on "Select Student 6 for bulk action" "checkbox" in the "Student 6" "table_row"
     And I click on "Accept" "button"
+    And I wait until "Confirm" "button" exists
     And I click on "Confirm" "button" in the "Accept" "dialogue"
     And I click on "View prediction details" "icon" in the "Student 5" "table_row"
     And I click on "Select Student 5 for bulk action" "checkbox" in the "Student 5" "table_row"
