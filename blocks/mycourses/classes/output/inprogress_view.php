@@ -66,28 +66,45 @@ class inprogress_view implements renderable, templatable {
         $completed = 0;
 
         foreach ($this->mycompletion->myinprogress as $mid => $inprogress) {
-            $context = \context_course::instance($inprogress->courseid);
-            $course = $DB->get_record("course", array("id"=>$inprogress->courseid));
-            $courseobj = new \core_course_list_element($course);
+            if (!$course = $DB->get_record("course", array("id"=>$inprogress->courseid))) {
+                $context = \context_system::instance();
+                $linkurl = new \moodle_url('/my');
+                $exportedcourse = (object) ['id' => 0,
+                                            'fullname' => $inprogress->coursefullname,
+                                            'shortname' => $inprogress->coursefullname,
+                                            'summary' => '',
+                                            'summaryformat' => 1,
+                                            'visible' => 0,
+                                            'fullnamedisplay' => 0,
+                                            'courseimage' => 0,
+                                            'viewurl' => $linkurl->out(),
+                                            'image' => $OUTPUT->get_generated_image_for_id(SITEID),
+                                            'url' => $linkurl->out(),
+                                            'coursecategory' => ''];
 
-            $exporter = new course_summary_exporter($course, ['context' => $context]);
-            $exportedcourse = $exporter->export($output);
-            if ($CFG->mycourses_showsummary) {
-                // Convert summary to plain text.
-                $coursesummary = content_to_text($exportedcourse->summary, $exportedcourse->summaryformat);
             } else {
-                $coursesummary = '';
-            }
-            // display course overview files
-            $imageurl = \core_course\external\course_summary_exporter::get_course_image($courseobj);
-            if (empty($imageurl)) {
-                $imageurl = $OUTPUT->get_generated_image_for_id($course->id);
-            }
+                $context = \context_course::instance($inprogress->courseid);
+                $courseobj = new \core_course_list_element($course);
 
-            $exportedcourse = $exporter->export($output);
-            $exportedcourse->url = new \moodle_url('/course/view.php', array('id' => $inprogress->courseid));
-            $exportedcourse->image = $imageurl;
-            $exportedcourse->summary = $coursesummary;
+                $exporter = new course_summary_exporter($course, ['context' => $context]);
+                $exportedcourse = $exporter->export($output);
+                if ($CFG->mycourses_showsummary) {
+                    // Convert summary to plain text.
+                    $coursesummary = content_to_text($exportedcourse->summary, $exportedcourse->summaryformat);
+                } else {
+                    $coursesummary = '';
+                }
+                // display course overview files
+                $imageurl = \core_course\external\course_summary_exporter::get_course_image($courseobj);
+                if (empty($imageurl)) {
+                    $imageurl = $OUTPUT->get_generated_image_for_id($course->id);
+                }
+
+                $exportedcourse = $exporter->export($output);
+                $exportedcourse->url = new \moodle_url('/course/view.php', array('id' => $inprogress->courseid));
+                $exportedcourse->image = $imageurl;
+                $exportedcourse->summary = $coursesummary;
+            }
 
             // Get the course percentage.
             if ($totalrec = $DB->get_records('course_completion_criteria', array('course' => $inprogress->courseid))) {

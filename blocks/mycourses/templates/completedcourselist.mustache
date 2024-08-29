@@ -35,11 +35,26 @@
     }
 }}
 <div class="row">
+    {{^visible}}
+        <div class="dimmed_text">
+    {{/visible}}
     <div class="col-md-2 d-flex align-items-center mb-sm-3 mb-md-0">
-        <a href="{{ url }}"><img class="imgresponsive" src="{{ image }}" class="courseimage"></a>
+        {{#visible}}
+            <a href="{{ url }}">
+        {{/visible}}
+            <img class="imgresponsive" src="{{ image }}" class="courseimage">
+        {{#visible}}
+            </a>
+        {{/visible}}
     </div>
     <div class="col-md-9 d-flex flex-column">
-        <a href="{{ url }}">{{{fullname}}}</a>
+        {{#visible}}
+            <a href="{{ url }}">
+        {{/visible}}
+            {{{fullname}}}
+        {{#visible}}
+            </a>
+        {{/visible}}
         <p>
             {{ summary}}
         </p>
@@ -68,4 +83,7 @@
 
 
     </div>
+    {{^visible}}
+        </div>
+    {{/visible}}
 </div>

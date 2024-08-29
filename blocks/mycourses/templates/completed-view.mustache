@@ -39,20 +39,37 @@
                                 <li class="list-group-item course-listitem border-left-0 border-right-0 border-top-0 px-2 rounded-0" data-region="course-content" data-course-id="5">
                                     <div class="row">
                                         <div class="col-md-2 d-flex align-items-center mb-sm-3 mb-md-0">
-                                            <a href="{{url}}" tabindex="-1">
+                                        {{^visible}}
+                                            <div class="dimmed_text">
+                                        {{/visible}}
+                                            {{#visible}}
+                                                <a href="{{url}}" tabindex="-1">
+                                            {{/visible}}
                                                 <div class="card-img dashboard-list-img mw-100" style='background-image: url("{{{image}}}");'>
                                                     <span class="sr-only">{{fullname}}</span>
                                                 </div>
-                                            </a>
+                                            {{#visible}}
+                                                </a>
+                                            {{/visible}}
+                                            {{^visible}}
+                                                </div>
+                                            {{/visible}}
                                         </div>
                                         <div class="col-md-9 d-flex flex-column">
-                                            <a href="{{url}}" class="aalink fullname mr-2 mb-1">
+                                        {{^visible}}
+                                            <div class="dimmed_text">
+                                        {{/visible}}
+                                            {{#visible}}
+                                                <a href="{{url}}" class="aalink fullname mr-2 mb-1">
+                                            {{/visible}}
                                                 {{> core_course/favouriteicon }}
                                                 <span class="sr-only">
                                                     {{#str}}aria:coursename, core_course{{/str}}
                                                 </span>
                                                 {{{fullname}}}
-                                            </a>
+                                            {{#visible}}
+                                                </a>
+                                            {{/visible}}
                                             </br>
                                             {{ summary}}
                                             <div class="progress bg-white border">
@@ -77,6 +94,9 @@
                                                     <b>{{#str}} downloadcert, block_mycourses {{/str}}: </b><a href="{{ certificateurl }}" title="{{ certificatename }}"><img src="{{ certificateimage }}" alt="{{ certificatename }}"></a></p>
                                                 </div>
                                             {{/certificates}}
+                                            {{^visible}}
+                                                </div>
+                                            {{/visible}}
                                         </div>
                                     </div>
                                 </li>
