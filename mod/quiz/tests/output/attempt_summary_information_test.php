@@ -35,9 +35,7 @@ final class attempt_summary_information_test extends advanced_testcase {
         $summary->add_item('test', 'Test name', 'Test value');
 
         $data = $summary->export_for_template($PAGE->get_renderer('mod_quiz'));
-        $this->assertEquals([
-            (object) ['title' => 'Test name', 'content' => 'Test value'],
-        ], $data['items']);
+        $this->assertEquals([(object) ['title' => 'Test name', 'content' => 'Test value']], $data['items']);
     }
 
     public function test_add_item_before_start(): void {
@@ -49,10 +47,13 @@ final class attempt_summary_information_test extends advanced_testcase {
         $summary->add_item_before('newitem', 'New name', 'New value', 'test');
 
         $data = $summary->export_for_template($PAGE->get_renderer('mod_quiz'));
-        $this->assertEquals([
-            (object) ['title' => 'New name', 'content' => 'New value'],
-            (object) ['title' => 'Test name', 'content' => 'Test value'],
-        ], $data['items']);
+        $this->assertEquals(
+            [
+                (object) ['title' => 'New name', 'content' => 'New value'],
+                (object) ['title' => 'Test name', 'content' => 'Test value'],
+            ],
+            $data['items'],
+        );
     }
 
     public function test_add_item_before_middle(): void {
@@ -65,11 +66,14 @@ final class attempt_summary_information_test extends advanced_testcase {
         $summary->add_item_before('newitem', 'New name', 'New value', 'item2');
 
         $data = $summary->export_for_template($PAGE->get_renderer('mod_quiz'));
-        $this->assertEquals([
-            (object) ['title' => 'Existing 1', 'content' => 'One'],
-            (object) ['title' => 'New name', 'content' => 'New value'],
-            (object) ['title' => 'Existing 2', 'content' => 'Two'],
-        ], $data['items']);
+        $this->assertEquals(
+            [
+                (object) ['title' => 'Existing 1', 'content' => 'One'],
+                (object) ['title' => 'New name', 'content' => 'New value'],
+                (object) ['title' => 'Existing 2', 'content' => 'Two'],
+            ],
+            $data['items'],
+        );
     }
 
     public function test_add_item_before_no_match(): void {
@@ -81,10 +85,13 @@ final class attempt_summary_information_test extends advanced_testcase {
         $summary->add_item_before('newitem', 'New name', 'New value', 'unknown');
 
         $data = $summary->export_for_template($PAGE->get_renderer('mod_quiz'));
-        $this->assertEquals([
-            (object) ['title' => 'New name', 'content' => 'New value'],
-            (object) ['title' => 'Test name', 'content' => 'Test value'],
-        ], $data['items']);
+        $this->assertEquals(
+            [
+                (object) ['title' => 'New name', 'content' => 'New value'],
+                (object) ['title' => 'Test name', 'content' => 'Test value'],
+            ],
+            $data['items'],
+        );
     }
 
     public function test_add_item_before_empty(): void {
@@ -95,9 +102,7 @@ final class attempt_summary_information_test extends advanced_testcase {
         $summary->add_item_before('newitem', 'New name', 'New value', 'unknown');
 
         $data = $summary->export_for_template($PAGE->get_renderer('mod_quiz'));
-        $this->assertEquals([
-            (object) ['title' => 'New name', 'content' => 'New value'],
-        ], $data['items']);
+        $this->assertEquals([(object) ['title' => 'New name', 'content' => 'New value']], $data['items']);
     }
 
     public function test_add_item_after_end(): void {
@@ -109,10 +114,13 @@ final class attempt_summary_information_test extends advanced_testcase {
         $summary->add_item_after('newitem', 'New name', 'New value', 'test');
 
         $data = $summary->export_for_template($PAGE->get_renderer('mod_quiz'));
-        $this->assertEquals([
-            (object) ['title' => 'Test name', 'content' => 'Test value'],
-            (object) ['title' => 'New name', 'content' => 'New value'],
-        ], $data['items']);
+        $this->assertEquals(
+            [
+                (object) ['title' => 'Test name', 'content' => 'Test value'],
+                (object) ['title' => 'New name', 'content' => 'New value'],
+            ],
+            $data['items'],
+        );
     }
 
     public function test_add_item_after_middle(): void {
@@ -125,11 +133,14 @@ final class attempt_summary_information_test extends advanced_testcase {
         $summary->add_item_after('newitem', 'New name', 'New value', 'item1');
 
         $data = $summary->export_for_template($PAGE->get_renderer('mod_quiz'));
-        $this->assertEquals([
-            (object) ['title' => 'Existing 1', 'content' => 'One'],
-            (object) ['title' => 'New name', 'content' => 'New value'],
-            (object) ['title' => 'Existing 2', 'content' => 'Two'],
-        ], $data['items']);
+        $this->assertEquals(
+            [
+                (object) ['title' => 'Existing 1', 'content' => 'One'],
+                (object) ['title' => 'New name', 'content' => 'New value'],
+                (object) ['title' => 'Existing 2', 'content' => 'Two'],
+            ],
+            $data['items'],
+        );
     }
 
     public function test_add_item_after_no_match(): void {
@@ -141,10 +152,13 @@ final class attempt_summary_information_test extends advanced_testcase {
         $summary->add_item_after('newitem', 'New name', 'New value', 'unknown');
 
         $data = $summary->export_for_template($PAGE->get_renderer('mod_quiz'));
-        $this->assertEquals([
-            (object) ['title' => 'Test name', 'content' => 'Test value'],
-            (object) ['title' => 'New name', 'content' => 'New value'],
-        ], $data['items']);
+        $this->assertEquals(
+            [
+                (object) ['title' => 'Test name', 'content' => 'Test value'],
+                (object) ['title' => 'New name', 'content' => 'New value'],
+            ],
+            $data['items'],
+        );
     }
 
     public function test_add_item_after_empty(): void {
@@ -155,9 +169,7 @@ final class attempt_summary_information_test extends advanced_testcase {
         $summary->add_item_after('newitem', 'New name', 'New value', 'unknown');
 
         $data = $summary->export_for_template($PAGE->get_renderer('mod_quiz'));
-        $this->assertEquals([
-            (object) ['title' => 'New name', 'content' => 'New value'],
-        ], $data['items']);
+        $this->assertEquals([(object) ['title' => 'New name', 'content' => 'New value']], $data['items']);
     }
 
     public function test_remove_item(): void {
@@ -170,9 +182,7 @@ final class attempt_summary_information_test extends advanced_testcase {
         $summary->remove_item('item1');
 
         $data = $summary->export_for_template($PAGE->get_renderer('mod_quiz'));
-        $this->assertEquals([
-            (object) ['title' => 'Existing 2', 'content' => 'Two'],
-        ], $data['items']);
+        $this->assertEquals([(object) ['title' => 'Existing 2', 'content' => 'Two']], $data['items']);
     }
 
     public function test_remove_item_not_present(): void {
@@ -185,9 +195,12 @@ final class attempt_summary_information_test extends advanced_testcase {
         $summary->remove_item('item3');
 
         $data = $summary->export_for_template($PAGE->get_renderer('mod_quiz'));
-        $this->assertEquals([
-            (object) ['title' => 'Existing 1', 'content' => 'One'],
-            (object) ['title' => 'Existing 2', 'content' => 'Two'],
-        ], $data['items']);
+        $this->assertEquals(
+            [
+                (object) ['title' => 'Existing 1', 'content' => 'One'],
+                (object) ['title' => 'Existing 2', 'content' => 'Two'],
+            ],
+            $data['items'],
+        );
     }
 }
