@@ -170,6 +170,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I click on "Actions" "link_or_button" in the "This privacy policy" "table_row"
     And I click on "Set status to \"Active\"" "link" in the "This privacy policy" "table_row"
+    And I wait until "Activate" "button" exists
     And I press "Activate"
     And I log out
     When I log in as "manager"
@@ -260,6 +261,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I click on "Actions" "link_or_button" in the "This privacy policy" "table_row"
     And I click on "Set status to \"Active\"" "link" in the "This privacy policy" "table_row"
+    And I wait until "Activate" "button" exists
     And I press "Activate"
     And I log out
     When I log in as "manager"
