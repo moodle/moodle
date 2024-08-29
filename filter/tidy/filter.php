@@ -29,7 +29,7 @@
  */
 class filter_tidy extends moodle_text_filter {
     #[\Override]
-    public function filter($text, array $options = []]) {
+    public function filter($text, array $options = []) {
         return $text;
     }
 }
