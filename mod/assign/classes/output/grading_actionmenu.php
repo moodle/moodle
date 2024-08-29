@@ -123,7 +123,6 @@ class grading_actionmenu implements templatable, renderable {
                 'group' => 0,
                 'status' => '',
                 'workflowfilter' => '',
-                'sesskey' => sesskey(),
             ]);
             $data['pagereset'] = $url->out(false);
         }
@@ -141,6 +140,26 @@ class grading_actionmenu implements templatable, renderable {
                 'action' => 'grader',
             ]);
             $data['graderurl'] = $url->out(false);
+        }
+
+        $gradingmanager = get_grading_manager($this->assign->get_context(), 'mod_assign', 'submissions');
+        $controller = $gradingmanager->get_active_controller();
+        $showquickgrading = empty($controller) && $this->assign->can_grade();
+        if ($showquickgrading) {
+            $quickgradingbaseurl = new moodle_url('/mod/assign/view.php', [
+                'id' => $this->assign->get_course_module()->id,
+                'action' => 'grading',
+            ]);
+            if ($userid) {
+                $quickgradingbaseurl->param('userid', $userid);
+            } else if ($usersearch) {
+                $quickgradingbaseurl->param('search', $usersearch);
+            }
+
+            $data['quickgrading'] = [
+                'baseurl' => $quickgradingbaseurl->out(false),
+                'enabled' => get_user_preferences('assign_quickgrading', false),
+            ];
         }
 
         $actions = $this->get_actions();
@@ -223,14 +242,13 @@ class grading_actionmenu implements templatable, renderable {
         $groupedfilters = $this->assign->get_filters(true);
         foreach ($groupedfilters as $group => $filters) {
             foreach ($filters as $filter) {
-                if ($filter['key'] === 'none') {
+                if ($filter['key'] === ASSIGN_FILTER_NONE) {
                     // The 'none' filter is not a real filter.
                     $filter['key'] = '';
                 }
                 $url = new moodle_url('/mod/assign/view.php', [
                     'id' => $this->assign->get_course_module()->id,
                     'action' => 'grading',
-                    'sesskey' => sesskey(),
                     'status' => $filter['key'],
                 ]);
                 $statusmenu[$url->out(false)] = $filter['name'];
