@@ -53,6 +53,7 @@ class edit_menu_column extends column_base {
 
         $menu = new \action_menu();
         $menu->set_menu_trigger(get_string('edit'));
+        $menu->set_boundary('window');
         foreach ($actions as $action) {
             $action = $action->get_action_menu_link($question);
             if ($action) {
