@@ -93,6 +93,9 @@ class report_log_renderable implements renderable {
     /** @var table_log table log which will be used for rendering logs */
     public $tablelog;
 
+    /** @var array Index of delegated sections (indexed by component and itemid) */
+    protected $delegatedbycm;
+
     /**
      * @var array group ids
      * @deprecated since Moodle 4.4 - please do not use this public property
@@ -207,7 +210,9 @@ class report_log_renderable implements renderable {
         }
 
         $modinfo = get_fast_modinfo($this->course);
-        $delegatedsections = $modinfo->get_sections_delegated_by_cm();
+        if (!$this->delegatedbycm) {
+            $this->delegatedbycm = $modinfo->get_sections_delegated_by_cm();
+        }
 
         if (!empty($modinfo->cms)) {
             $section = 0;
@@ -235,8 +240,8 @@ class report_log_renderable implements renderable {
                 }
                 $thissection[$key][$cm->id] = $modname;
                 // Check if the module is delegating a section.
-                if (array_key_exists($cm->id, $delegatedsections)) {
-                    $delegated = $delegatedsections[$cm->id];
+                if (array_key_exists($cm->id, $this->delegatedbycm)) {
+                    $delegated = $this->delegatedbycm[$cm->id];
                     $modules = (empty($delegated->sequence)) ? [] : explode(',', $delegated->sequence);
                     $thissection[$key] = $thissection[$key] + $this->get_delegated_section_activities($modinfo, $modules);
                     $disabled[] = $cm->id;
@@ -276,7 +281,9 @@ class report_log_renderable implements renderable {
      */
     private function get_activity_name(cm_info $cm): string {
         // Exclude activities that aren't visible or have no view link (e.g. label). Account for folders displayed inline.
-        if (!$cm->uservisible || (!$cm->has_view() && strcmp($cm->modname, 'folder') !== 0)) {
+        // Activities delegating sections might not have a URL, but should be return a name to be shown.
+        $tobeshown = (strcmp($cm->modname, 'folder') == 0) || array_key_exists($cm->id, $this->delegatedbycm);
+        if (!$cm->uservisible || (!$cm->has_view() && !$tobeshown)) {
             return '';
         }
         $modname = strip_tags($cm->get_formatted_name());
