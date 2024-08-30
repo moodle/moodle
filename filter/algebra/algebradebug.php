@@ -60,14 +60,10 @@
         $output = algebra2tex($algebra);
         $output = refineTeX($output);
       }
-      if ($action == 'ShowImage'|| $action == 'SlashArguments') {
+      if ($action == 'ShowImage') {
         $output = algebra2tex($algebra);
         $output = refineTeX($output);
-        if ($action == 'ShowImage') {
-          tex2image($output, $md5);
-        } else {
-          slasharguments($output, $md5);
-        }
+        tex2image($output, $md5);
       } else {
         outputText($output);
       }
@@ -252,23 +248,6 @@ function tex2image($texexp, $md5, $return=false) {
     }
 }
 
-function slasharguments($texexp, $md5) {
-  global $CFG;
-  $admin = $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=http';
-  $image = tex2image($texexp,$md5,true);
-  echo "<p>If the following image displays correctly, set your ";
-  echo "<a href=\"$admin\" target=\"_blank\">Administration->Server->HTTP</a> ";
-  echo "setting for slasharguments to file.php/1/pic.jpg: ";
-  echo "<img src=\"pix.php/$image\" align=\"absmiddle\"></p>\n";
-  echo "<p>Otherwise set it to file.php?file=/1/pic.jpg ";
-  echo "It should display correctly as ";
-  echo "<img src=\"pix.php?file=$image\" align=\"absmiddle\"></p>\n";
-  echo "<p>If neither equation image displays correctly, please seek ";
-  echo "further help at moodle.org at the ";
-  echo "<a href=\"http://moodle.org/mod/forum/view.php?id=752&loginguest=true\" target=\"_blank\">";
-  echo "Mathematics Tools Forum</a></p>";
-}
-
 ?>
 
 <html>
@@ -294,8 +273,6 @@ function slasharguments($texexp, $md5) {
                A more refined translation into TeX will appear in the box below.</li>
            <li>Then click on this button <button type="submit" name="action" value="ShowImage">Show Image</button>
                to show a graphic image of the algebraic expression.</li>
-           <li>Finally check your slash arguments setting
-               <button type="submit" name="action" value="SlashArguments">Check Slash Arguments</button></li>
            </ol>
            <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
           </form> <br /> <br />
