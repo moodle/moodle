@@ -127,9 +127,7 @@ Feature: Configure access to reports based on intended audience
       | User 3     |
     # Now let's filter them.
     And I click on "Filters" "button"
-    And I set the following fields in the "Audience" "core_reportbuilder > Filter" to these values:
-      | Audience operator | Is equal to         |
-      | Audience value    | Site administrators |
+    And I set the field "Audience value" in the "Audience" "core_reportbuilder > Filter" to "Site administrators"
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
     And the following should exist in the "Report access list" table:
       | -1-        |

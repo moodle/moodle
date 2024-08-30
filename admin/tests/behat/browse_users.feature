@@ -171,9 +171,7 @@ Feature: An administrator can browse user accounts
       | User Two               | two@example.com   |
       | User Three             | three@example.com |
     And I click on "Filters" "button"
-    And I set the following fields in the "System role" "core_reportbuilder > Filter" to these values:
-      | System role operator | Is equal to    |
-      | System role value    | Course creator |
+    And I set the field "System role value" in the "System role" "core_reportbuilder > Filter" to "Course creator"
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
     And I click on "Filters" "button"
     And I should see "User One" in the "reportbuilder-table" "table"
@@ -181,8 +179,7 @@ Feature: An administrator can browse user accounts
     And I should not see "User Three" in the "reportbuilder-table" "table"
     And I click on "Filters" "button"
     And I click on "Reset all" "button" in the "[data-region='report-filters']" "css_element"
-    And I set the following fields in the "Course role" "core_reportbuilder > Filter" to these values:
-      | Role name | Teacher |
+    And I set the field "Role name" in the "Course role" "core_reportbuilder > Filter" to "Teacher"
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
     And I click on "Filters" "button"
     And I should not see "User One" in the "reportbuilder-table" "table"
