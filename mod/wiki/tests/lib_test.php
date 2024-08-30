@@ -922,4 +922,26 @@ class lib_test extends \advanced_testcase {
 
         return \calendar_event::create($event);
     }
+
+    /**
+     * Tests the wiki_parser_real_path function to ensure it correctly resolves URLs.
+     *
+     * @covers ::wiki_parser_real_path()
+     */
+    public function test_wiki_parser_real_path(): void {
+        global $CFG;
+        $this->resetAfterTest();
+
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
+        $wiki = $this->getDataGenerator()->create_module('wiki', ['course' => $course->id]);
+        $context = \context_module::instance($wiki->cmid);
+
+        $moodleurl = new \moodle_url('/mod/wiki/view.php', ['id' => 2]);
+        $url = wiki_parser_real_path($moodleurl->out(), $context, 'mod_wiki', 'attachments', 3);
+        $this->assertSame("{$CFG->wwwroot}/mod/wiki/view.php?id=2", $url);
+
+        $url = wiki_parser_real_path('mod/wiki/view.php?id=2', $context, 'mod_wiki', 'attachments', 3);
+        $this->assertSame("{$CFG->wwwroot}/pluginfile.php/{$context->id}/mod_wiki/attachments/3/mod/wiki/view.php?id=2", $url);
+    }
 }
