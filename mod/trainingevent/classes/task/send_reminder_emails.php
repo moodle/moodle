@@ -55,6 +55,7 @@ class send_reminder_emails extends \core\task\scheduled_task {
                                                     FROM {trainingevent}
                                                     WHERE sendreminder > 0
                                                     AND setreminder = 1
+                                                    AND remindersent = 0
                                                     AND startdatetime > :now",
                                                     ['now' => $runtime])) {
             foreach ($trainingevents as $trainingevent) {
@@ -64,11 +65,13 @@ class send_reminder_emails extends \core\task\scheduled_task {
 
                     // Does the course actually exist?
                     if (!$course = $DB->get_record('course', ['id' => $trainingevent->course])) {
+                        $DB->set_field('trainingevent', 'remindersent', 1, ['id' => $trainingevent->id]);
                         continue;
                     }
 
                     // How about the location?
                     if (!$location = $DB->get_record('classroom', array('id' => $trainingevent->classroomid))) {
+                        $DB->set_field('trainingevent', 'remindersent', 1, ['id' => $trainingevent->id]);
                         continue;
                     }
 
@@ -96,6 +99,7 @@ class send_reminder_emails extends \core\task\scheduled_task {
 
                         }
                     }
+                    $DB->set_field('trainingevent', 'remindersent', 1, ['id' => $trainingevent->id]);
                 }
             }
         }

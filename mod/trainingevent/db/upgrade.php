@@ -201,5 +201,33 @@ function xmldb_trainingevent_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2024030100, 'trainingevent');
     }
 
+    if ($oldversion < 2024083000) {
+
+        // Define field remindersent to be added to trainingevent.
+        $table = new xmldb_table('trainingevent');
+        $field = new xmldb_field('remindersent', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'isexclusive');
+
+        // Conditionally launch add field remindersent.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Update all of the past events and events which will already have sent a reminder.
+        $runtime = time();
+        $DB->set_field_select('trainingevent',
+                              'remindersent',
+                               1,
+                              "setreminder = 1 AND startdatetime < :runtime",
+                              ['runtime' => $runtime]);
+        $DB->set_field_select('trainingevent',
+                              'remindersent',
+                               1,
+                              "setreminder = 1 AND sendreminder > 0 AND (sendreminder - 1) *24 * 60 * 60 + :runtime > startdatetime",
+                              ['runtime' => $runtime]);
+
+        // Trainingevent savepoint reached.
+        upgrade_mod_savepoint(true, 2024083000, 'trainingevent');
+    }
+
     return $result;
 }
