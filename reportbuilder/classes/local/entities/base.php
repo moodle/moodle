@@ -94,6 +94,16 @@ abstract class base {
     }
 
     /**
+     * Database tables that the entity once used but now no longer does. To prevent errors in third-party code, rather than
+     * simply removing the table from {@see get_default_tables} you can override this method, which will emit developer debug
+     *
+     * @return string[]
+     */
+    protected function get_deprecated_tables(): array {
+        return [];
+    }
+
+    /**
      * The default title for this entity
      *
      * @return lang_string
@@ -164,21 +174,35 @@ abstract class base {
     }
 
     /**
+     * Validate the given table is expected by the entity
+     *
+     * @param string $tablename
+     * @throws coding_exception For invalid table name
+     */
+    private function validate_table_name(string $tablename): void {
+        $deprecatedtables = $this->get_deprecated_tables();
+        if (!in_array($tablename, array_merge($this->get_default_tables(), $deprecatedtables))) {
+            throw new coding_exception('Invalid table name', $tablename);
+        }
+
+        // Emit debugging if table is marked as deprecated by the entity.
+        if (in_array($tablename, $deprecatedtables)) {
+            debugging("The table '{$tablename}' is deprecated, please do not use it any more.", DEBUG_DEVELOPER);
+        }
+    }
+
+    /**
      * Override the default alias for given database table used in entity queries, for instance when the same table is used
      * by multiple entities and you want them each to refer to it by the same alias
      *
      * @param string $tablename One of the tables set by {@see get_default_tables}
      * @param string $alias
      * @return self
-     * @throws coding_exception For invalid table name
      */
     final public function set_table_alias(string $tablename, string $alias): self {
-        $tablenames = $this->get_default_tables();
-        if (!in_array($tablename, $tablenames)) {
-            throw new coding_exception('Invalid table name', $tablename);
-        }
-
+        $this->validate_table_name($tablename);
         $this->tablealiases[$tablename] = $alias;
+
         return $this;
     }
 
@@ -200,13 +224,9 @@ abstract class base {
      *
      * @param string $tablename One of the tables set by {@see get_default_tables}
      * @return string
-     * @throws coding_exception For invalid table name
      */
     final public function get_table_alias(string $tablename): string {
-        $tablenames = $this->get_default_tables();
-        if (!in_array($tablename, $tablenames)) {
-            throw new coding_exception('Invalid table name', $tablename);
-        }
+        $this->validate_table_name($tablename);
 
         // We don't have the alias yet, generate a new one.
         if (!array_key_exists($tablename, $this->tablealiases)) {
