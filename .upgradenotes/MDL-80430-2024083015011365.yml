@@ -1,0 +1,8 @@
+issueNumber: MDL-80430
+notes:
+  core_reportbuilder:
+    - message: >-
+        Final removal of support for `get_default_table_aliases` method.
+        Entities must now implement `get_default_tables`, which is now abstract,
+        to define the tables they use
+      type: removed
