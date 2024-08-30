@@ -406,7 +406,6 @@ $string['sided'] = 'To the side';
 $string['skipview'] = 'Student skip content structure page';
 $string['skipview_help'] = 'This setting specifies whether the content structure page should ever be skipped (not displayed). If the package contains only one learning object, the content structure page can always be skipped.';
 $string['skipviewdesc'] = 'This preference sets the default for when to skip content structure for a page';
-$string['slashargs'] = 'WARNING: slash arguments is disabled on this site and objects may not function as expected!';
 $string['stagesize'] = 'Stage size';
 $string['stagesize_help'] = 'These two settings specify the frame/window width and height for the learning objects.';
 $string['started'] = 'Started on';
@@ -458,3 +457,6 @@ $string['youmustselectastatus'] = 'You must select a status to require';
 
 // Deprecated since Moodle 4.3.
 $string['completionscorerequired_help'] = 'Enabling this setting will require a user to have at least the minimum score entered to be marked complete in this SCORM activity, as well as any other Activity Completion requirements.';
+
+// Deprecated since Moodle 4.5.
+$string['slashargs'] = 'WARNING: slash arguments is disabled on this site and objects may not function as expected!';
