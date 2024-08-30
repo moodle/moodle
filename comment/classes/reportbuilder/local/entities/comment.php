@@ -20,7 +20,6 @@ namespace core_comment\reportbuilder\local\entities;
 
 use context;
 use context_helper;
-use html_writer;
 use lang_string;
 use stdClass;
 use core_reportbuilder\local\entities\base;
@@ -116,52 +115,6 @@ class comment extends base {
                 $context = context::instance_by_id($comment->contextid);
 
                 return format_text($content, $comment->format, ['context' => $context]);
-            });
-
-        // Context.
-        $columns[] = (new column(
-            'context',
-            new lang_string('context'),
-            $this->get_entity_name()
-        ))
-            ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
-            ->add_join($this->get_context_join())
-            ->add_fields("{$commentalias}.contextid, " . context_helper::get_preload_record_columns_sql($contextalias))
-            // Sorting may not order alphabetically, but will at least group contexts together.
-            ->set_is_sortable(true)
-            ->set_is_deprecated('See \'context:name\' for replacement')
-            ->add_callback(static function($contextid, stdClass $context): string {
-                if ($contextid === null) {
-                    return '';
-                }
-
-                context_helper::preload_from_record($context);
-                return context::instance_by_id($contextid)->get_context_name();
-            });
-
-        // Context URL.
-        $columns[] = (new column(
-            'contexturl',
-            new lang_string('contexturl'),
-            $this->get_entity_name()
-        ))
-            ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
-            ->add_join($this->get_context_join())
-            ->add_fields("{$commentalias}.contextid, " . context_helper::get_preload_record_columns_sql($contextalias))
-            // Sorting may not order alphabetically, but will at least group contexts together.
-            ->set_is_sortable(true)
-            ->set_is_deprecated('See \'context:link\' for replacement')
-            ->add_callback(static function($contextid, stdClass $context): string {
-                if ($contextid === null) {
-                    return '';
-                }
-
-                context_helper::preload_from_record($context);
-                $context = context::instance_by_id($contextid);
-
-                return html_writer::link($context->get_url(), $context->get_context_name());
             });
 
         // Component.

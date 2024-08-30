@@ -20,7 +20,6 @@ namespace core_course\reportbuilder\local\formatters;
 
 use core_user\output\status_field;
 use lang_string;
-use stdClass;
 
 /**
  * Formatters for the course enrolment entity
@@ -32,25 +31,11 @@ use stdClass;
 class enrolment {
 
     /**
-     * Return enrolment plugin instance name
-     *
-     * @param string|null $value
-     * @param stdClass $row
-     * @return string
-     *
      * @deprecated since Moodle 4.3 - please do not use this function any more (to remove in MDL-78118)
      */
-    public static function enrolment_name(?string $value, stdClass $row): string {
-        global $DB;
-
-        if (empty($value)) {
-            return '';
-        }
-
-        $instance = $DB->get_record('enrol', ['id' => $row->id, 'enrol' => $row->enrol], '*', MUST_EXIST);
-        $plugin = enrol_get_plugin($row->enrol);
-
-        return $plugin ? $plugin->get_instance_name($instance) : '-';
+    #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.3', mdl: 'MDL-76900', final: true)]
+    public static function enrolment_name(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**

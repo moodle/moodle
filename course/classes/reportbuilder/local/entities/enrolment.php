@@ -89,20 +89,6 @@ class enrolment extends base {
      */
     protected function get_all_columns(): array {
         $userenrolments = $this->get_table_alias('user_enrolments');
-        $enrol = $this->get_table_alias('enrol');
-
-        // Enrolment method column (Deprecated since Moodle 4.3, to remove in MDL-78118).
-        $columns[] = (new column(
-            'method',
-            new lang_string('method', 'enrol'),
-            $this->get_entity_name()
-        ))
-            ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$enrol}.enrol, {$enrol}.id")
-            ->set_is_sortable(true)
-            ->set_is_deprecated('See \'enrol:name\' for replacement')
-            ->add_callback([enrolment_formatter::class, 'enrolment_name']);
 
         // Enrolment time created.
         $columns[] = (new column(
@@ -156,33 +142,6 @@ class enrolment extends base {
             ->set_is_sortable(true)
             ->add_callback([enrolment_formatter::class, 'enrolment_status']);
 
-        // Role column (Deprecated since Moodle 4.3, to remove in MDL-78118).
-        $ctx = database::generate_alias();
-        $ra = database::generate_alias();
-        $r = database::generate_alias();
-        $columns[] = (new column(
-            'role',
-            new lang_string('role', 'moodle'),
-            $this->get_entity_name()
-        ))
-            ->add_joins($this->get_joins())
-            ->add_join("LEFT JOIN {context} {$ctx}
-                ON {$ctx}.instanceid = {$enrol}.courseid AND {$ctx}.contextlevel = " . CONTEXT_COURSE)
-            ->add_join("LEFT JOIN {role_assignments} {$ra}
-                ON {$ra}.contextid = {$ctx}.id AND {$ra}.userid = {$userenrolments}.userid")
-            ->add_join("LEFT JOIN {role} {$r} ON {$r}.id = {$ra}.roleid")
-            ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$r}.id, {$r}.name, {$r}.shortname, {$ctx}.instanceid")
-            ->set_is_sortable(true, ["{$r}.shortname"])
-            ->set_is_deprecated('See \'role:name\' for replacement')
-            ->add_callback(static function(?string $value, stdClass $row): string {
-                if (!$row->id) {
-                    return '';
-                }
-                $context = context_course::instance($row->instanceid);
-                return role_get_name($row, $context, ROLENAME_ALIAS);
-            });
-
         return $columns;
     }
 
@@ -215,24 +174,6 @@ class enrolment extends base {
      */
     protected function get_all_filters(): array {
         $userenrolments = $this->get_table_alias('user_enrolments');
-        $enrol = $this->get_table_alias('enrol');
-
-        // Enrolment method (Deprecated since Moodle 4.3, to remove in MDL-78118).
-        $enrolmentmethods = static function(): array {
-            return array_map(static function(enrol_plugin $plugin): string {
-                return get_string('pluginname', 'enrol_' . $plugin->get_name());
-            }, enrol_get_plugins(true));
-        };
-        $filters[] = (new filter(
-            select::class,
-            'method',
-            new lang_string('method', 'enrol'),
-            $this->get_entity_name(),
-            "{$enrol}.enrol"
-        ))
-            ->add_joins($this->get_joins())
-            ->set_is_deprecated('See \'enrol:plugin\' for replacement')
-            ->set_options_callback($enrolmentmethods);
 
         // Enrolment time created.
         $filters[] = (new filter(

@@ -1,0 +1,32 @@
+issueNumber: MDL-78118
+notes:
+  core_reportbuilder:
+    - message: >-
+        New `get_deprecated_tables` method in base entity, to be overridden when
+        an entity no longer uses a table (due to column/filter re-factoring,
+        etc) in order to avoid breaking third-party reports
+      type: improved
+    - message: >-
+        The following deprecated report entity elements have been removed:
+
+
+        - `comment:context`
+
+        - `comment:contexturl`
+
+        - `enrolment:method` (plus enrolment formatter `enrolment_name` method)
+
+        - 'enrolment:role`
+
+        - `file:context`
+
+        - `file:contexturl`
+
+        - `instance:context` (tag)
+
+        - `instance:contexturl` (tag)
+
+
+        Use of the `context` table is also deprecated in the `file` and
+        `instance` (tag) entities
+      type: removed
