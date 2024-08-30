@@ -29860,6 +29860,9 @@ span.editinstructions .alert-link {
 .bulkenabled .bulk-hidden {
   display: none !important;
 }
+.bulkenabled .section {
+  margin-left: 1rem;
+}
 .bulkenabled .section:not(:first-child) {
   margin-top: 1.5rem;
 }
