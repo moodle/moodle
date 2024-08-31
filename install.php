@@ -240,11 +240,6 @@ $hint_dataroot = '';
 $hint_admindir = '';
 $hint_database = '';
 
-// Are we in help mode?
-if (isset($_GET['help'])) {
-    install_print_help_page($_GET['help']);
-}
-
 //first time here? find out suitable dataroot
 if (is_null($CFG->dataroot)) {
     $CFG->dataroot = __DIR__.'/../moodledata';

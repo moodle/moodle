@@ -150,25 +150,6 @@ $string['langdownloaderror'] = 'Unfortunately the language "{$a}" could not be d
 $string['langdownloadok'] = 'The language "{$a}" was installed successfully. The installation process will continue in this language.';
 $string['memorylimit'] = 'Memory limit';
 $string['memorylimiterror'] = 'The PHP memory limit is set quite low ... you may run into problems later.';
-$string['memorylimithelp'] = '<p>The PHP memory limit for your server is currently set to {$a}.</p>
-
-<p>This may cause Moodle to have memory problems later on, especially
-   if you have a lot of modules enabled and/or a lot of users.</p>
-
-<p>We recommend that you configure PHP with a higher limit if possible, like 40M.
-   There are several ways of doing this that you can try:</p>
-<ol>
-<li>If you are able to, recompile PHP with <i>--enable-memory-limit</i>.
-    This will allow Moodle to set the memory limit itself.</li>
-<li>If you have access to your php.ini file, you can change the <b>memory_limit</b>
-    setting in there to something like 40M.  If you don\'t have access you might
-    be able to ask your administrator to do this for you.</li>
-<li>On some PHP servers you can create a .htaccess file in the Moodle directory
-    containing this line:
-    <blockquote><div>php_value memory_limit 40M</div></blockquote>
-    <p>However, on some servers this will prevent <b>all</b> PHP pages from working
-    (you will see errors when you look at pages) so you\'ll have to remove the .htaccess file.</p></li>
-</ol>';
 $string['mysqliextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQLi extension for it to communicate with MySQL. Please check your php.ini file or recompile PHP.';
 $string['nativeauroramysql'] = 'Aurora MySQL (native/auroramysql)';
 $string['nativeauroramysqlhelp'] = '<p>The database is where most of the Moodle settings and data are stored and must be configured here.</p>
@@ -218,9 +199,6 @@ $string['pathswrongadmindir'] = 'Admin directory does not exist';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the PGSQL extension so that it can communicate with PostgreSQL.  Please check your php.ini file or recompile PHP.';
 $string['phpextension'] = '{$a} PHP extension';
 $string['phpversion'] = 'PHP version';
-$string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 5.6.5 or 7.1 (7.0.x has some engine limitations).</p>
-<p>You are currently running version {$a}.</p>
-<p>You must upgrade PHP or move to a host with a newer version of PHP.</p>';
 $string['releasenoteslink'] = 'For information about this version of Moodle, please see the release notes at {$a}';
 $string['safemode'] = 'Safe mode';
 $string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
