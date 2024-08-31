@@ -78,15 +78,17 @@
 
         <div id="bigbluebuttonbn-room-view-control-panel" data-bbb-id="{{bigbluebuttonbnid}}" class="mt-2">
             {{#haspresentations}}
-                <h5>{{#str}}view_section_title_presentation, mod_bigbluebuttonbn{{/str}}</h5>
-                <div class="list-group list-group-flush">
-                    {{#presentations}}
-                        <a href="{{url}}" target="_blank" class="list-group-item list-group-item-action">
-                            {{#pix}}{{iconname}},core, {{icondesc}}{{/pix}}
-                            {{name}}
-                        </a>
-                    {{/presentations}}
-                </div>
+                {{#showpresentations}}
+                    <h5>{{#str}}view_section_title_presentation, mod_bigbluebuttonbn{{/str}}</h5>
+                    <div class="list-group list-group-flush">
+                        {{#presentations}}
+                            <a href="{{url}}" target="_blank" class="list-group-item list-group-item-action">
+                                {{#pix}}{{iconname}},core, {{icondesc}}{{/pix}}
+                                {{name}}
+                            </a>
+                        {{/presentations}}
+                    </div>
+                {{/showpresentations}}
             {{/haspresentations}}
         </div>
     </div>

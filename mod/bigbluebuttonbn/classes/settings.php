@@ -715,6 +715,28 @@ class settings {
             );
 
             $preuploadsettings->add($filemanager);
+            $item = new admin_setting_configcheckbox(
+                'mod_bigbluebuttonbn/showpresentation_default',
+                get_string('config_showpresentation_default', 'bigbluebuttonbn'),
+                get_string('config_showpresentation_default_description', 'bigbluebuttonbn'),
+                1
+            );
+            $this->add_conditional_element(
+                'showpresentation_default',
+                $item,
+                $preuploadsettings
+            );
+            $item = new admin_setting_configcheckbox(
+                'mod_bigbluebuttonbn/showpresentation_editable',
+                get_string('config_showpresentation_editable', 'bigbluebuttonbn'),
+                get_string('config_showpresentation_editable_description', 'bigbluebuttonbn'),
+                0
+            );
+            $this->add_conditional_element(
+                'showpresentation_editable',
+                $item,
+                $preuploadsettings
+            );
         }
         $this->admin->add($this->parent, $preuploadsettings);
     }
