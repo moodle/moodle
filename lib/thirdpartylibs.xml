@@ -672,7 +672,7 @@ All rights reserved.</copyright>
     <location>psr/log</location>
     <name>log</name>
     <description>Common interface for logging libraries</description>
-    <version>3.0.0</version>
+    <version>3.0.2</version>
     <license>MIT</license>
     <repository>https://github.com/php-fig/log</repository>
   </library>
