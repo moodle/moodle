@@ -51,11 +51,26 @@ abstract class sectiondelegatemodule extends sectiondelegate {
     ) {
         parent::__construct($sectioninfo);
 
-        [$this->course, $this->cm] = get_course_and_cm_from_instance(
-            $this->sectioninfo->itemid,
-            $this->get_module_name(),
-            $this->sectioninfo->course,
-        );
+        try {
+            // Disabled or missing plugins can throw exceptions.
+            [$this->course, $this->cm] = get_course_and_cm_from_instance(
+                $this->sectioninfo->itemid,
+                $this->get_module_name(),
+                $this->sectioninfo->course,
+            );
+        } catch (\Exception $e) {
+            $this->cm = null;
+            $this->course = null;
+        }
+    }
+
+    /**
+     * Check if the delegated component is enabled.
+     *
+     * @return bool
+     */
+    public function is_enabled(): bool {
+        return $this->cm !== null;
     }
 
     /**
