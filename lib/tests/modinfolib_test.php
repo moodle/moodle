@@ -1109,8 +1109,8 @@ class modinfolib_test extends advanced_testcase {
         $this->assertCount(4, $listed);
 
         // Generate some delegated sections (not listed).
-        formatactions::section($course)->create_delegated('mod_label', 0);
-        formatactions::section($course)->create_delegated('mod_label', 1);
+        formatactions::section($course)->create_delegated('test_component', 0);
+        formatactions::section($course)->create_delegated('test_component', 1);
 
         $this->assertCount(6, get_fast_modinfo($course)->get_section_info_all());
 
@@ -1955,6 +1955,78 @@ class modinfolib_test extends advanced_testcase {
     }
 
     /**
+     * Test get_uservisible method when the section is delegated and depending on if the plugin is enabled.
+     *
+     * @covers \section_info::get_uservisible
+     * @dataProvider provider_test_get_uservisible_delegate_enabled
+     * @param string $role The role to assign to the user.
+     * @param bool $enabled Whether the plugin is enabled.
+     * @param bool $expected The expected visibility of the delegated section.
+     * @return void
+     */
+    public function test_get_uservisible_delegate_enabled(
+        string $role,
+        bool $enabled,
+        bool $expected,
+    ): void {
+        $this->resetAfterTest();
+
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('subsection', 1);
+
+        $course = $this->getDataGenerator()->create_course(['numsections' => 1]);
+        $subsection = $this->getDataGenerator()->create_module('subsection', ['course' => $course], ['section' => 1]);
+
+        $modinfo = get_fast_modinfo($course);
+        $delegatedsection = $modinfo->get_cm($subsection->cmid)->get_delegated_section_info();
+
+        $user = $this->getDataGenerator()->create_and_enrol($course, $role);
+
+        if (!$enabled) {
+            $manager::enable_plugin('subsection', 0);
+            rebuild_course_cache($course->id, true);
+        }
+
+        $this->setUser($user);
+        $modinfo = get_fast_modinfo($course);
+
+        $delegatedsection = $modinfo->get_section_info($delegatedsection->section);
+
+        // The get_uservisible is a magic getter.
+        $this->assertEquals($expected, $delegatedsection->uservisible);
+    }
+
+    /**
+     * Data provider for test_get_uservisible_delegate_enabled.
+     *
+     * @return array
+     */
+    public static function provider_test_get_uservisible_delegate_enabled(): array {
+        return [
+            'Student with plugin enabled' => [
+                'role' => 'student',
+                'enabled' => true,
+                'expected' => true,
+            ],
+            'Student with plugin disabled' => [
+                'role' => 'student',
+                'enabled' => false,
+                'expected' => false,
+            ],
+            'Teacher with plugin enabled' => [
+                'role' => 'editingteacher',
+                'enabled' => true,
+                'expected' => true,
+            ],
+            'Teacher with plugin disabled' => [
+                'role' => 'editingteacher',
+                'enabled' => false,
+                'expected' => true,
+            ],
+        ];
+    }
+
+    /**
      * Test get_available method when the section is delegated.
      *
      * @covers \section_info::get_available
@@ -2092,5 +2164,63 @@ class modinfolib_test extends advanced_testcase {
                 'expecteduservisible' => true,
             ],
         ];
+    }
+
+    /**
+     * Test when a section is considered orphan.
+     *
+     * @covers \section_info::is_orphan
+     * @return void
+     */
+    public function test_is_orphan(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('subsection', 1);
+
+        $course = $this->getDataGenerator()->create_course(['numsections' => 1]);
+        $subsection = $this->getDataGenerator()->create_module('subsection', ['course' => $course], ['section' => 1]);
+
+        $modinfo = get_fast_modinfo($course);
+        $delegatedsection = $modinfo->get_cm($subsection->cmid)->get_delegated_section_info();
+
+        // If mod_subsection is enabled, a subsection is not orphan.
+        $modinfo = get_fast_modinfo($course);
+        $this->assertFalse($delegatedsection->is_orphan());
+
+        // Delegated sections without a component instance (disabled mod_subsection) is considered orphan.
+        $manager::enable_plugin('subsection', 0);
+        rebuild_course_cache($course->id, true);
+
+        $modinfo = get_fast_modinfo($course);
+        $delegatedsection = $modinfo->get_section_info($delegatedsection->section);
+        $this->assertTrue($delegatedsection->is_orphan());
+
+        // Check enabling the plugin restore the previous state.
+        $manager::enable_plugin('subsection', 1);
+        rebuild_course_cache($course->id, true);
+
+        $modinfo = get_fast_modinfo($course);
+        $delegatedsection = $modinfo->get_section_info($delegatedsection->section);
+        $this->assertFalse($delegatedsection->is_orphan());
+
+        // Force section limit in the course format instance.
+        rebuild_course_cache($course->id, true);
+        $modinfo = get_fast_modinfo($course);
+
+        // Core formats does not use numsections anymore. We need to use reflection to change the value.
+        $format = course_get_format($course);
+        // Add a fake numsections format data (Force loading format data first).
+        $format->get_course();
+        $reflection = new \ReflectionObject($format);
+        $property = $reflection->getProperty('course');
+        $courseobject = $property->getValue($format);
+        $courseobject->numsections = 1;
+        $property->setValue($format, $courseobject);
+
+        $delegatedsection = $modinfo->get_section_info($delegatedsection->section);
+        $this->assertTrue($delegatedsection->is_orphan());
     }
 }
