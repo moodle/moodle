@@ -33,12 +33,12 @@
 		"phpstan/phpstan" : "^1.5"
 	},
 	"autoload" : {
+		"files": ["source/CAS.php"],
 		"classmap" : [
 			"source/"
 		]
 	},
 	"autoload-dev" : {
-		"files": ["source/CAS.php"],
 		"psr-4" : {
 			"PhpCas\\" : "test/CAS/"
 		}
