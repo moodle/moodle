@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->release  = '4.3.6 (Build: 20240812)'; // Human-friendly version name
+$plugin->release  = '4.3.7 (Build: 20240902)'; // Human-friendly version name
 $plugin->component  = 'block_iomad_approve_access';
 $plugin->version = 2022042300;  // YYYYMMDDHH (year, month, day, 24-hr time).
 $plugin->requires = 2019052000; // YYYYMMDDHH (This is the release version for Moodle 2.0).

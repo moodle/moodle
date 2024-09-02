@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->release  = '4.3.6 (Build: 20240812)'; // Human-friendly version name
+$plugin->release  = '4.3.7 (Build: 20240902)'; // Human-friendly version name
 $plugin->version  = 2010121500;   // The (date) version of this plugin.
 $plugin->requires = 2019052000;   // Requires this Moodle version.
 $plugin->component  = 'local_course_selector';
