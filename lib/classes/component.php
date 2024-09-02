@@ -102,6 +102,7 @@ class component {
     ];
     /** @var array<string|array<string>> associative array of PRS-4 namespaces and corresponding paths. */
     protected static $psr4namespaces = [
+        \Html2Text::class => 'lib/html2text/src',
         \MaxMind::class => 'lib/maxmind/MaxMind',
         \GeoIp2::class => 'lib/maxmind/GeoIp2',
         \Sabberworm\CSS::class => 'lib/php-css-parser',
