@@ -98,7 +98,7 @@ class controlmenu extends basecontrolmenu {
         $usecomponents = $format->supports_components();
         $coursecontext = context_course::instance($course->id);
         $numsections = $format->get_last_section_number();
-        $isstealth = $section->section > $numsections;
+        $isstealth = $section->is_orphan();
 
         $baseurl = course_get_url($course, $sectionreturn);
         $baseurl->param('sesskey', sesskey());
