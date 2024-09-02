@@ -30,5 +30,5 @@ Feature: In an assignment, page titles are informative
     Then the page title should contain "C1: History of ants"
     And I navigate to "Submissions" in current page administration
     And the page title should contain "C1: History of ants - Submissions"
-    And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I click on "Grade" "link" in the ".tertiary-navigation" "css_element"
     And the page title should contain "C1: History of ants - Grading"
