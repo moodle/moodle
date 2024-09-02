@@ -29,8 +29,9 @@ Feature: Subsection visibility should work as a module
     When I hide section "Section 1"
     And I should see "Hidden from students" in the "Section 1" "section"
     # We cannot use generators because they don't check the parent section visibility.
-    And I add a subsection activity to course "Course 1" section "1" and I fill the form with:
-      | Name | Subsection 1 |
+    And I add a subsection activity to course "Course 1" section "1"
+    And I set the field "Name" to "Subsection 1"
+    And I press "Save and return to course"
     And I add a assign activity to course "Course 1" section "1" and I fill the form with:
       | Assignment name                     | Hidden assignment name        |
       | ID number                           | assign1                       |

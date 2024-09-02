@@ -37,7 +37,7 @@ function subsection_supports($feature) {
         FEATURE_GROUPS => false,
         FEATURE_GROUPINGS => false,
         FEATURE_MOD_INTRO => false,
-        FEATURE_COMPLETION_TRACKS_VIEWS => true,
+        FEATURE_COMPLETION_TRACKS_VIEWS => false,
         FEATURE_GRADE_HAS_GRADE => false,
         FEATURE_GRADE_OUTCOMES => false,
         FEATURE_BACKUP_MOODLE2 => true,

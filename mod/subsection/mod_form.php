@@ -26,6 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
+use mod_subsection\manager;
+
 /**
  * Module instance settings form.
  *
@@ -41,27 +43,37 @@ class mod_subsection_mod_form extends moodleform_mod {
     public function definition() {
         global $CFG;
 
-        $mform = $this->_form;
-
-        // Adding the "general" fieldset, where all the common settings are shown.
-        $mform->addElement('header', 'general', get_string('general', 'form'));
-
-        // Adding the standard "name" field.
-        $mform->addElement('text', 'name', get_string('subsectionname', 'mod_subsection'), ['size' => '64']);
-
-        if (!empty($CFG->formatstringstriptags)) {
-            $mform->setType('name', PARAM_TEXT);
+        // Showing edit form. Redirect to the edit section page.
+        if (!empty($this->current->instance)) {
+            $manager = manager::create_from_id($this->current->course, $this->current->id);
+            $editurl = new moodle_url('/course/editsection.php', ['id' => $manager->get_delegated_section_info()->id]);
+            redirect($editurl->out());
         } else {
-            $mform->setType('name', PARAM_CLEANHTML);
+            $mform = $this->_form;
+
+            // Adding the "general" fieldset, where all the common settings are shown.
+            $mform->addElement('header', 'general', get_string('general', 'form'));
+
+            // Adding the standard "name" field.
+            $mform->addElement('text', 'name', get_string('subsectionname', 'mod_subsection'), ['size' => '64']);
+
+            if (!empty($CFG->formatstringstriptags)) {
+                $mform->setType('name', PARAM_TEXT);
+            } else {
+                $mform->setType('name', PARAM_CLEANHTML);
+            }
+
+            $mform->addRule('name', null, 'required', null, 'client');
+            $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+
+            // Add standard elements.
+            $this->standard_coursemodule_elements();
+
+            // Add standard buttons.
+            $this->add_action_buttons();
+
+            // Show only general and restrictions form sections.
+            $mform->filter_shown_headers(['general', 'availabilityconditionsheader']);
         }
-
-        $mform->addRule('name', null, 'required', null, 'client');
-        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-
-        // Add standard elements.
-        $this->standard_coursemodule_elements();
-
-        // Add standard buttons.
-        $this->add_action_buttons();
     }
 }
