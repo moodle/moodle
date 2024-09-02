@@ -523,8 +523,7 @@ final class zip_packer_test extends \advanced_testcase implements file_progress 
         unlink($archive);
 
         // Create archive and close if forcing error.
-        // (returns true for old PHP versions and
-        // false with warnings for new PHP versions). MDL-51863.
+        // (returns false with warnings).
         $zip_archive = new zip_archive();
         $result = $zip_archive->open($archive, file_archive::CREATE);
         $this->assertTrue($result);
