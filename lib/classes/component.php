@@ -122,6 +122,44 @@ class core_component {
     ];
 
     /**
+     *  An array containing files which are normally in a package's composer/autoload.files section.
+     *
+     * PHP does not provide a mechanism for automatically including the files that methods are in.
+     *
+     * The Composer autoloader includes all files in this section of the composer.json file during the instantiation of the loader.
+     *
+     * @var array<string>
+     */
+    protected static $composerautoloadfiles = [
+        'lib/guzzlehttp/guzzle/src/functions_include.php',
+        'lib/guzzlehttp/promises/src/functions_include.php',
+        'lib/jmespath/src/JmesPath.php',
+        'lib/php-di/php-di/src/functions.php',
+        'lib/ralouphi/getallheaders/src/getallheaders.php',
+        'lib/symfony/deprecation-contracts/function.php',
+    ];
+
+    /**
+     * Register the Moodle class autoloader.
+     */
+    public static function register_autoloader(): void {
+        if (defined('COMPONENT_CLASSLOADER')) {
+            spl_autoload_register(COMPONENT_CLASSLOADER);
+        } else {
+            spl_autoload_register([self::class, 'classloader']);
+        }
+
+        // Load any composer-driven autoload files.
+        // This is intended to mimic the behaviour of the standard Composer Autoloader.
+        foreach (static::$composerautoloadfiles as $file) {
+            $path = dirname(__DIR__, 2) . '/' . $file;
+            if (file_exists($path)) {
+                require_once($path);
+            }
+        }
+    }
+
+    /**
      * Class loader for Frankenstyle named classes in standard locations.
      * Frankenstyle namespaces are supported.
      *

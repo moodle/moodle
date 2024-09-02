@@ -53,6 +53,15 @@ class redis extends handler {
      */
     const COMPRESSION_ZSTD      = 'zstd';
 
+    /**
+     * Minimum version of the Redis extension required.
+     */
+    public const REDIS_EXTENSION_MIN_VERSION = '2.2.4';
+    /**
+     * Minimum version of the Redis extension required.
+     */
+    private const REDIS_SERVER_MIN_VERSION = '2.6.12';
+
     /** @var string $host save_path string  */
     protected $host = '';
     /** @var int $port The port to connect to */
@@ -193,13 +202,14 @@ class redis extends handler {
 
         if (empty($this->host)) {
             throw new exception('sessionhandlerproblem', 'error', '', null,
-                    '$CFG->session_redis_host must be specified in config.php');
+                '$CFG->session_redis_host must be specified in config.php');
         }
 
-        // The session handler requires a version of Redis with the SETEX command (at least 2.0).
+        // The session handler requires a version of PHP Redis extension with support for SET command options (at least 2.2.4).
         $version = phpversion('Redis');
-        if (!$version or version_compare($version, '2.0') <= 0) {
-            throw new exception('sessionhandlerproblem', 'error', '', null, 'redis extension version must be at least 2.0');
+        if (!$version || version_compare($version, self::REDIS_EXTENSION_MIN_VERSION) <= 0) {
+            throw new exception('sessionhandlerproblem', 'error', '', null,
+                'redis extension version must be at least ' . self::REDIS_EXTENSION_MIN_VERSION);
         }
 
         $this->connection = new \Redis();
@@ -264,6 +274,13 @@ class redis extends handler {
                     if (!$this->connection->select($this->database)) {
                         throw new RedisException('Unable to select Redis database '.$this->database.'.');
                     }
+                }
+
+                // The session handler requires a version of Redis server with support for SET command options (at least 2.6.12).
+                $serverversion = $this->connection->info('server')['redis_version'];
+                if (version_compare($serverversion, self::REDIS_SERVER_MIN_VERSION) <= 0) {
+                    throw new exception('sessionhandlerproblem', 'error', '', null,
+                        'redis server version must be at least ' . self::REDIS_SERVER_MIN_VERSION);
                 }
                 return true;
             } catch (RedisException $e) {
@@ -507,12 +524,10 @@ class redis extends handler {
         $haswarned = false; // Have we logged a lock warning?
 
         while (!$haslock) {
-
-            $haslock = $this->connection->setnx($lockkey, $whoami);
+            $haslock = $this->connection->set($lockkey, $whoami, ['nx', 'ex' => $this->lockexpire]);
 
             if ($haslock) {
                 $this->locks[$id] = $this->time() + $this->lockexpire;
-                $this->connection->expire($lockkey, $this->lockexpire);
                 return true;
             }
 

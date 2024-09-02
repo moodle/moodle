@@ -30,6 +30,7 @@ require_once('all_checks.php');
 
 /**
  * Class test_css_text_has_contrast_test
+ * @covers \tool_brickfield\local\htmlchecker\brickfield_accessibility
  */
 class css_text_has_contrast_test extends all_checks {
     /** @var string The check type. */
@@ -229,7 +230,7 @@ EOD;
     /**
      * Test for the area assign intro
      */
-    public function test_check() {
+    public function test_check(): void {
         $results = $this->get_checker_results($this->htmlfail1);
         $this->assertTrue($results[0]->element->tagName == 'p');
 
@@ -255,7 +256,7 @@ EOD;
     /**
      * Test with valid colour names.
      */
-    public function test_check_for_namedcolours() {
+    public function test_check_for_namedcolours(): void {
         $results = $this->get_checker_results($this->namecolours);
         $this->assertTrue($results[0]->element->tagName == 'p');
     }
@@ -263,7 +264,7 @@ EOD;
     /**
      * Test with invalid colour names.
      */
-    public function test_check_for_invalidcolours() {
+    public function test_check_for_invalidcolours(): void {
         $results = $this->get_checker_results($this->invalidcolours);
         $this->assertTrue($results[0]->element->tagName == 'p');
     }
@@ -271,7 +272,7 @@ EOD;
     /**
      * Test with invalid colour numeric values.
      */
-    public function test_check_for_invalidvalues() {
+    public function test_check_for_invalidvalues(): void {
         $results = $this->get_checker_results($this->invalidvalue);
         $this->assertTrue($results[0]->element->tagName == 'p');
     }
@@ -279,7 +280,7 @@ EOD;
     /**
      * Test with empty colour values.
      */
-    public function test_check_for_emptyvalues() {
+    public function test_check_for_emptyvalues(): void {
         $results = $this->get_checker_results($this->emptyvalue);
         $this->assertEmpty($results);
     }
@@ -287,7 +288,7 @@ EOD;
     /**
      * Test for text px18 with insufficient contrast of 4.49.
      */
-    public function test_check_for_px18_fail() {
+    public function test_check_for_px18_fail(): void {
         $results = $this->get_checker_results($this->px18);
         $this->assertTrue($results[0]->element->tagName == 'p');
     }
@@ -295,7 +296,7 @@ EOD;
     /**
      * Test for text px19 bold with sufficient contrast of 4.49.
      */
-    public function test_check_for_px19bold_pass() {
+    public function test_check_for_px19bold_pass(): void {
         $results = $this->get_checker_results($this->px19bold);
         $this->assertEmpty($results);
     }
@@ -303,7 +304,7 @@ EOD;
     /**
      * Test for text px18 with sufficient contrast of 4.81.
      */
-    public function test_check_for_px18_pass() {
+    public function test_check_for_px18_pass(): void {
         $results = $this->get_checker_results($this->px18pass);
         $this->assertEmpty($results);
     }
@@ -311,7 +312,7 @@ EOD;
     /**
      * Test for medium (12pt) text with insufficient contrast of 4.49.
      */
-    public function test_check_for_medium_fail() {
+    public function test_check_for_medium_fail(): void {
         $results = $this->get_checker_results($this->mediumfail);
         $this->assertTrue($results[0]->element->tagName == 'p');
     }
@@ -319,7 +320,7 @@ EOD;
     /**
      * Test for medium (12pt) text with sufficient contrast of 4.81.
      */
-    public function test_check_for_medium_pass() {
+    public function test_check_for_medium_pass(): void {
         $results = $this->get_checker_results($this->mediumpass);
         $this->assertEmpty($results);
     }
@@ -327,7 +328,7 @@ EOD;
     /**
      * Test for larger (14pt) text with insufficient contrast of 2.94.
      */
-    public function test_check_for_larger_fail() {
+    public function test_check_for_larger_fail(): void {
         $results = $this->get_checker_results($this->largerfail);
         $this->assertTrue($results[0]->element->tagName == 'p');
     }
@@ -335,7 +336,7 @@ EOD;
     /**
      * Test for larger (14pt) text with insufficient contrast of 3.02.
      */
-    public function test_check_for_larger_pass() {
+    public function test_check_for_larger_pass(): void {
         $results = $this->get_checker_results($this->largerpass);
         $this->assertTrue($results[0]->element->tagName == 'p');
     }
@@ -343,8 +344,118 @@ EOD;
     /**
      * Test for larger (14pt) bold text with sufficient contrast of 3.02.
      */
-    public function test_check_for_largerbold_pass() {
+    public function test_check_for_largerbold_pass(): void {
         $results = $this->get_checker_results($this->largerboldpass);
+        $this->assertEmpty($results);
+    }
+
+    /**
+     * Test for rgb colors with insufficient contrast.
+     */
+    public function test_bad_rgbcolor(): void {
+        $html = '<body><p style="color:rgb(255, 255, 255); background-color:rgb(204, 204, 204);">
+            This is not contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertTrue($results[0]->element->tagName == 'p');
+    }
+
+    /**
+     * Test for rgb colors with sufficient contrast.
+     */
+    public function test_good_rgbcolor(): void {
+        $html = '<body><p style="color:rgb(255, 255, 255); background-color:rgb(0, 0, 0);">
+            This is contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertEmpty($results);
+    }
+
+    /**
+     * Test for named colors with insufficient contrast.
+     */
+    public function test_bad_namedcolor2(): void {
+        $html = '<body><p style="color:lightcyan; background-color:lavender;">
+            This is not contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertTrue($results[0]->element->tagName == 'p');
+    }
+
+    /**
+     * Test for named colors with sufficient contrast.
+     */
+    public function test_good_namedcolor2(): void {
+        $html = '<body><p style="color:linen; background-color:darkslategray;">
+            This is contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertEmpty($results);
+    }
+
+    /**
+     * Test for background value with insufficient contrast.
+     */
+    public function test_bad_backgroundcss(): void {
+        $html = '<body><p style="color:lightcyan; background:fixed lavender center;">
+            This is not contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertTrue($results[0]->element->tagName == 'p');
+    }
+
+    /**
+     * Test for background value with sufficient contrast.
+     */
+    public function test_good_backgroundcss(): void {
+        $html = '<body><p style="color:linen; background:fixed darkslategray center;">
+            This is contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertEmpty($results);
+    }
+
+    /**
+     * Test for background value with rgb with insufficient contrast.
+     */
+    public function test_bad_backgroundcssrgb(): void {
+        $html = '<body><p style="color:rgb(255, 255, 255); background:fixed rgb(204, 204, 204) center;">
+            This is not contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertTrue($results[0]->element->tagName == 'p');
+    }
+
+    /**
+     * Test for background value with rgb with sufficient contrast.
+     */
+    public function test_good_backgroundcssrgb(): void {
+        $html = '<body><p style="color:rgb(255, 255, 255); background:fixed rgb(0, 0, 0) center;">
+            This is contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertEmpty($results);
+    }
+
+    /**
+     * Test for text with insufficient contrast of 4.3.
+     */
+    public function test_bad_contrastrounding(): void {
+        $html = '<body><p style="color:#F50000; background-color:white; font-size: 12px">
+            This is not contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertTrue($results[0]->element->tagName == 'p');
+    }
+
+    /**
+     * Test for background value with rgba with insufficient contrast.
+     */
+    public function test_bad_backgroundcssrgba(): void {
+        $html = '<body><p style="color:rgba(255, 255, 255, 0.5); background:fixed rgba(0, 204, 204, 0.5) center;">
+            This is not contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertTrue($results[0]->element->tagName == 'p');
+    }
+
+    /**
+     * Test for background value with rgba with sufficient contrast.
+     */
+    public function test_good_backgroundcssrgba(): void {
+        $html = '<body><p style="color:rgba(255, 255, 255, 0.75); background:fixed rgba(0, 0, 0, 0.75) center;">
+            This is contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
         $this->assertEmpty($results);
     }
 }

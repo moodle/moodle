@@ -33,11 +33,6 @@ Feature: Course activity controls works as expected
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     When I click on <targetpage> "link" in the "region-main" "region"
-    And I add the "Recent activity" block
-    And I open the action menu in "Recent activity" "block"
-    And I click on "Delete Recent activity block" "link"
-    And I click on "Delete" "button" in the "Delete block?" "dialogue"
-    And <belowpage> "section" <should_see_other_sections> exist
     And <belowpage> "section" <should_see_other_sections> exist
     And I open "Test forum name 1" actions menu
     And I click on "Edit settings" "link" in the "Test forum name 1" activity
@@ -100,10 +95,6 @@ Feature: Course activity controls works as expected
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     When I click on <targetpage> "link" in the "region-main" "region"
-    And I add the "Recent activity" block
-    And I open the action menu in "Recent activity" "block"
-    And I click on "Delete Recent activity block" "link"
-    And I press "Yes"
     And <belowpage> "section" <should_see_other_sections> exist
     And I click on "Edit settings" "link" in the "Test forum name 1" activity
     And I should see "Updating Forum"

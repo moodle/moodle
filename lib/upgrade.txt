@@ -1,6 +1,16 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.3.7 ===
+
+* The Moodle autoloader should now be registered using `\core\component::register_autoloader` rather
+  than manually doing so in any exceptional location which requires it. It is not normally necessary
+  to include the autoloader manually, as it is registered automatically when the Moodle environment
+  is bootstrapped.
+* Redis session cache has been improved to make a single call where two were used before.
+  - The minimum Redis server version is now 2.6.12.
+  - The minimum PHP Redis extension version is now 2.2.4.
+
 === 4.3.6 ===
 
 * The `\core\dataformat::get_format_instance` method is now public, and can be used to retrieve a writer instance for

@@ -53,4 +53,5 @@ Feature: View licence links
     And I click on "Private files" "link" in the "File picker" "dialogue"
     And I click on "empty.txt" "link" in the "File picker" "dialogue"
     And I click on "Help with Choose licence" "icon" in the ".fp-setlicense" "css_element"
+    And I change window size to "large"
     Then I should see "Follow these links for further information on the available licence options:"

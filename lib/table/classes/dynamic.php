@@ -41,4 +41,7 @@ namespace core_table;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 interface dynamic {
+    // Classes implementing this interface must define function `public has_capability(): bool`
+    // If it is not defined, the web service `core_table_get_dynamic_table_content` will check capability
+    // 'moodle/site:config' in the system context, allowing only admins to access the table data.
 }

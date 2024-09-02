@@ -29,6 +29,7 @@ Feature: The questions in the question bank can be filtered by tags
     And I set the following fields to these values:
       | Tags | bar |
     And I press "id_submitbutton"
+    And I change the window size to "large"
 
   @javascript
   Scenario: The questions can be filtered by tag

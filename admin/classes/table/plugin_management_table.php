@@ -500,4 +500,15 @@ abstract class plugin_management_table extends flexible_table implements dynamic
     protected function supports_ordering(): bool {
         return $this->plugininfoclass::plugintype_supports_ordering();
     }
+
+    /**
+     * Check if the user has the capability to access this table.
+     *
+     * Default implementation for plugin management tables is to require 'moodle/site:config' capability
+     *
+     * @return bool Return true if capability check passed.
+     */
+    public function has_capability(): bool {
+        return has_capability('moodle/site:config', $this->get_context());
+    }
 }
