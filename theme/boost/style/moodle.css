@@ -29937,6 +29937,10 @@ span.editinstructions .alert-link {
   display: none !important;
 }
 
+.bulkenabled .section {
+  margin-left: 1.5rem;
+}
+
 .activity-item .bulkselect {
   position: absolute;
   left: -2rem;
