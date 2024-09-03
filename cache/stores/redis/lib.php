@@ -604,7 +604,8 @@ class cachestore_redis extends store implements
      * @return bool True if the lock was acquired, false if it was not.
      */
     public function acquire_lock($key, $ownerid) {
-        $timelimit = time() + $this->lockwait;
+        $clock = \core\di::get(\core\clock::class);
+        $timelimit = $clock->time() + $this->lockwait;
         do {
             // If the key doesn't already exist, grab it and return true.
             if ($this->redis->setnx($key, $ownerid)) {
@@ -620,7 +621,7 @@ class cachestore_redis extends store implements
             }
             // Wait 1 second then retry.
             sleep(1);
-        } while (time() < $timelimit);
+        } while ($clock->time() < $timelimit);
         return false;
     }
 

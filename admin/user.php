@@ -131,7 +131,7 @@
             if (!is_siteadmin($user) and $USER->id != $user->id and $user->suspended != 1) {
                 $user->suspended = 1;
                 // Force logout.
-                \core\session\manager::kill_user_sessions($user->id);
+                \core\session\manager::destroy_user_sessions($user->id);
                 user_update_user($user, false);
             }
         }

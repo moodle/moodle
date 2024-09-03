@@ -931,7 +931,7 @@ class process {
             }
 
             if ($dologout) {
-                \core\session\manager::kill_user_sessions($existinguser->id);
+                \core\session\manager::destroy_user_sessions($existinguser->id);
             }
 
         } else {

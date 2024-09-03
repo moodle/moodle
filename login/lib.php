@@ -288,7 +288,7 @@ function core_login_process_password_set($token) {
         }
         user_add_password_history($user->id, $data->password);
         if (!empty($CFG->passwordchangelogout) || !empty($data->logoutothersessions)) {
-            \core\session\manager::kill_user_sessions($user->id, session_id());
+            \core\session\manager::destroy_user_sessions($user->id, session_id());
         }
         // Reset login lockout (if present) before a new password is set.
         login_unlock_account($user);

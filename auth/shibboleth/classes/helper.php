@@ -98,7 +98,7 @@ class helper {
                 // If there is a match, kill the session.
                 if ($usersession['SESSION']->shibboleth_session_id == trim($spsessionid)) {
                     // Delete this user's sessions.
-                    \core\session\manager::kill_user_sessions($session->userid);
+                    \core\session\manager::destroy_user_sessions($session->userid);
                 }
             }
         }

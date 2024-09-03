@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * File based session handler.
- *
- * @package    core
- * @copyright  2013 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\session;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * File based session handler.
@@ -34,6 +24,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file extends handler {
+
     /** @var string session dir */
     protected $sessiondir;
 
@@ -50,9 +41,7 @@ class file extends handler {
         }
     }
 
-    /**
-     * Init session handler.
-     */
+    #[\Override]
     public function init() {
         if (preg_match('/^[0-9]+;/', $this->sessiondir)) {
             throw new exception('sessionhandlerproblem', 'error', '', null, 'Multilevel session directories are not supported');
@@ -75,14 +64,7 @@ class file extends handler {
         ini_set('session.save_path', $this->sessiondir);
     }
 
-    /**
-     * Check the backend contains data for this session id.
-     *
-     * Note: this is intended to be called from manager::session_exists() only.
-     *
-     * @param string $sid
-     * @return bool true if session found.
-     */
+    #[\Override]
     public function session_exists($sid) {
         $sid = clean_param($sid, PARAM_FILE);
         if (!$sid) {
@@ -92,30 +74,28 @@ class file extends handler {
         return file_exists($sessionfile);
     }
 
-    /**
-     * Kill all active sessions, the core sessions table is
-     * purged afterwards.
-     */
-    public function kill_all_sessions() {
+    #[\Override]
+    public function destroy_all(): bool {
         if (is_dir($this->sessiondir)) {
             foreach (glob("$this->sessiondir/sess_*") as $filename) {
                 @unlink($filename);
             }
         }
+
+        return true;
     }
 
-    /**
-     * Kill one session, the session record is removed afterwards.
-     * @param string $sid
-     */
-    public function kill_session($sid) {
-        $sid = clean_param($sid, PARAM_FILE);
+    #[\Override]
+    public function destroy(string $id): bool {
+        $sid = clean_param($id, PARAM_FILE);
         if (!$sid) {
-            return;
+            return false;
         }
         $sessionfile = "$this->sessiondir/sess_$sid";
         if (file_exists($sessionfile)) {
             @unlink($sessionfile);
         }
+
+        return true;
     }
 }

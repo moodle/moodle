@@ -14,8 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core;
+namespace core\session;
 
+use core\tests\session\mock_handler;
 use Redis;
 use RedisException;
 
@@ -34,21 +35,21 @@ use RedisException;
  * @copyright 2016 Russell Smith
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @runClassInSeparateProcess
+ * @covers \core\session\redis
  */
-class session_redis_test extends \advanced_testcase {
-
-    /** @var $keyprefix This key prefix used when testing Redis */
-    protected $keyprefix = null;
-    /** @var $redis The current testing redis connection */
-    protected $redis = null;
+final class redis_test extends \advanced_testcase {
+    /** @var string $keyprefix This key prefix used when testing Redis */
+    protected string $keyprefix = '';
+    /** @var ?Redis $redis The current testing redis connection */
+    protected ?Redis $redis = null;
     /** @var bool $encrypted Is the current testing redis connection encrypted*/
-    protected $encrypted = false;
+    protected bool $encrypted = false;
     /** @var int $acquiretimeout how long we wait for session lock in seconds when testing Redis */
-    protected $acquiretimeout = 1;
+    protected int $acquiretimeout = 1;
     /** @var int $lockexpire how long to wait in seconds before expiring the lock when testing Redis */
-    protected $lockexpire = 70;
+    protected int $lockexpire = 70;
 
-
+    #[\Override]
     public function setUp(): void {
         global $CFG;
         parent::setUp();
@@ -62,8 +63,8 @@ class session_redis_test extends \advanced_testcase {
         $version = phpversion('Redis');
         if (!$version) {
             $this->markTestSkipped('Redis extension version missing');
-        } else if (version_compare($version, \core\session\redis::REDIS_EXTENSION_MIN_VERSION) <= 0) {
-            $this->markTestSkipped('Redis extension version must be at least ' . \core\session\redis::REDIS_EXTENSION_MIN_VERSION .
+        } else if (version_compare($version, \core\session\redis::REDIS_MIN_EXTENSION_VERSION) <= 0) {
+            $this->markTestSkipped('Redis extension version must be at least ' . \core\session\redis::REDIS_MIN_EXTENSION_VERSION .
                 ': now running "' . $version . '"');
         }
 
@@ -135,7 +136,7 @@ class session_redis_test extends \advanced_testcase {
         $this->assertSame('DATA', $sess->read('sess1'));
         $this->assertTrue($sess->write('sess1', 'DATA-new'));
         $this->assertTrue($sess->close());
-        $this->assertSessionNoLocks();
+        $this->assert_session_no_locks();
     }
 
     public function test_compression_read_and_write_works(): void {
@@ -187,16 +188,16 @@ class session_redis_test extends \advanced_testcase {
             $sessblocked->read('sess1');
             $this->fail('Session lock must fail to be obtained.');
         } catch (\core\session\exception $e) {
-            $this->assertStringContainsString("Unable to obtain lock for session id sess1", $e->getMessage());
+            $this->assertStringContainsString("Unable to obtain lock for session id session_se", $e->getMessage());
             $this->assertStringContainsString('within 1 sec.', $e->getMessage());
             $this->assertStringContainsString('session lock timeout (1 min 10 secs) ', $e->getMessage());
-            $this->assertStringContainsString('Cannot obtain session lock for sid: sess1', file_get_contents($errorlog));
+            $this->assertStringContainsString('Cannot obtain session lock for sid: session_sess1', file_get_contents($errorlog));
         }
 
         $this->assertTrue($sessblocked->close());
         $this->assertTrue($sess->write('sess1', 'DATA-new'));
         $this->assertTrue($sess->close());
-        $this->assertSessionNoLocks();
+        $this->assert_session_no_locks();
     }
 
     public function test_session_is_destroyed_when_it_does_not_exist(): void {
@@ -205,7 +206,7 @@ class session_redis_test extends \advanced_testcase {
         $sess->set_requires_write_lock(true);
         $this->assertTrue($sess->open('Not used', 'Not used'));
         $this->assertTrue($sess->destroy('sess-destroy'));
-        $this->assertSessionNoLocks();
+        $this->assert_session_no_locks();
     }
 
     public function test_session_is_destroyed_when_we_have_it_open(): void {
@@ -216,7 +217,7 @@ class session_redis_test extends \advanced_testcase {
         $this->assertSame('', $sess->read('sess-destroy'));
         $this->assertTrue($sess->destroy('sess-destroy'));
         $this->assertTrue($sess->close());
-        $this->assertSessionNoLocks();
+        $this->assert_session_no_locks();
     }
 
     public function test_multiple_sessions_do_not_interfere_with_each_other(): void {
@@ -260,7 +261,7 @@ class session_redis_test extends \advanced_testcase {
         $this->assertTrue($sess2->close());
 
         // Read the session again to ensure locking did what it should.
-        $this->assertSessionNoLocks();
+        $this->assert_session_no_locks();
     }
 
     public function test_multiple_sessions_work_with_a_single_instance(): void {
@@ -279,7 +280,7 @@ class session_redis_test extends \advanced_testcase {
         $this->assertTrue($sess->destroy('sess2'));
 
         $this->assertTrue($sess->close());
-        $this->assertSessionNoLocks();
+        $this->assert_session_no_locks();
 
         $this->assertTrue($sess->close());
     }
@@ -299,11 +300,13 @@ class session_redis_test extends \advanced_testcase {
         $this->assertFalse($sess->session_exists('sess1'), 'Session should be destroyed.');
     }
 
-    public function test_kill_sessions_removes_the_session_from_redis(): void {
+    public function test_destroy_removes_the_session_from_redis(): void {
         global $DB;
 
         $sess = new \core\session\redis();
         $sess->init();
+
+        $mockhandler = new mock_handler();
 
         $this->assertTrue($sess->open('Not used', 'Not used'));
         $this->assertTrue($sess->write('sess1', 'DATA'));
@@ -316,22 +319,27 @@ class session_redis_test extends \advanced_testcase {
         $sessiondata->timemodified = time();
 
         $sessiondata->sid = 'sess1';
-        $DB->insert_record('sessions', $sessiondata);
+        $mockhandler->add_test_session($sessiondata);
         $sessiondata->sid = 'sess2';
-        $DB->insert_record('sessions', $sessiondata);
+        $mockhandler->add_test_session($sessiondata);
         $sessiondata->sid = 'sess3';
-        $DB->insert_record('sessions', $sessiondata);
+        $mockhandler->add_test_session($sessiondata);
 
         $this->assertNotEquals('', $sess->read('sess1'));
-        $sess->kill_session('sess1');
+        $sess->destroy('sess1');
         $this->assertEquals('', $sess->read('sess1'));
 
         $this->assertEmpty($this->redis->keys($this->keyprefix.'sess1.lock'));
 
-        $sess->kill_all_sessions();
+        $sess->destroy_all();
 
-        $this->assertEquals(3, $DB->count_records('sessions'), 'Moodle handles session database, plugin must not change it.');
-        $this->assertSessionNoLocks();
+        $mockhandler = new mock_handler();
+        $this->assertEquals(
+            3,
+            $mockhandler->count_sessions(),
+            'Moodle handles session database, plugin must not change it.',
+        );
+        $this->assert_session_no_locks();
         $this->assertEmpty($this->redis->keys($this->keyprefix.'*'), 'There should be no session data left.');
     }
 
@@ -360,7 +368,7 @@ class session_redis_test extends \advanced_testcase {
     /**
      * Assert that we don't have any session locks in Redis.
      */
-    protected function assertSessionNoLocks() {
+    protected function assert_session_no_locks(): void {
         $this->assertEmpty($this->redis->keys($this->keyprefix.'*.lock'));
     }
 
@@ -374,5 +382,209 @@ class session_redis_test extends \advanced_testcase {
         $prop = new \ReflectionProperty(\core\session\redis::class, 'sslopts');
 
         $this->assertEquals($CFG->session_redis_encrypt, $prop->getValue($sess));
+    }
+
+    /**
+     * Test the get maxlifetime method.
+     */
+    public function test_get_maxlifetime(): void {
+        global $CFG;
+
+        // Set the timeout to something known for the test.
+        set_config('sessiontimeout', 100);
+
+        // Generate a test user.
+        $user = $this->getDataGenerator()->create_user();
+
+        // Create a new redis session object.
+        $session = new \core\session\redis();
+        $session->init();
+
+        // The get_maxlifetime is private, so we need to use reflection to access it.
+        $method = new \ReflectionMethod(\core\session\redis::class, 'get_maxlifetime');
+
+        // Test guest timeout, which should be longer.
+        $result = $method->invoke($session, $CFG->siteguest);
+        $this->assertEquals(500, $result);
+
+        // Test first access timeout.
+        $result = $method->invoke($session, 0, true);
+        $this->assertEquals(180, $result);
+
+        // Test with a real user.
+        $result = $method->invoke($session, $user->id);
+        $this->assertEquals(180, $result);
+
+    }
+
+    /**
+     * Test the add session method.
+     */
+    public function test_add_session(): void {
+
+        // Set the timeout to something known for the test.
+        set_config('sessiontimeout', 100);
+
+        // Generate a test user.
+        $user = $this->getDataGenerator()->create_user();
+
+        // Create a new redis session object.
+        $session = new \core\session\redis();
+        $session->init();
+
+        // Create two sessions for the user.
+        session_id('id1');
+        $session1data = $session->add_session($user->id);
+        session_id('id2');
+        $session2data = $session->add_session($user->id);
+
+        $session1 = $session->get_session_by_sid('id1');
+        $session2 = $session->get_session_by_sid('id2');
+
+        // Assert that the sessions were created and have expected data.
+        $this->assertEqualsCanonicalizing((array)$session1data, (array)$session1);
+        $this->assertEqualsCanonicalizing((array)$session2data, (array)$session2);
+
+        // Check that the session hash has a ttl set.
+        $this->assertGreaterThan(-1, $this->redis->ttl($this->keyprefix . 'session_id1'));
+
+        // Check that the session ttl is less or equal to what we set it.
+        $this->assertLessThanOrEqual(180, $this->redis->ttl($this->keyprefix . 'session_id1'));
+
+    }
+
+    /**
+     * Test writing session data.
+     */
+    public function test_write(): void {
+        // Set the timeout to something known for the test.
+        set_config('sessiontimeout', 100);
+
+        // Generate a test user.
+        $user = $this->getDataGenerator()->create_user();
+
+        // Create a new redis session object.
+        $session = new \core\session\redis();
+        $session->init();
+
+        // Create two sessions for the user.
+        session_id('id1');
+        $session->add_session($user->id);
+        session_id('id2');
+        $session->add_session($user->id);
+
+        $testdata = 'some test data';
+
+        // Write some data to the store.
+        $result = $session->write('id2', $testdata);
+
+        // Check that the write was successful.
+        $this->assertTrue($result);
+
+        // Check that the data was written to the store.
+        $getdata = $this->redis->hget($this->keyprefix . 'session_id2', 'sessdata');
+        $this->assertStringContainsString($testdata, $getdata);
+    }
+
+    /**
+     * Test reading session data.
+     */
+    public function test_read(): void {
+        // Set the timeout to something known for the test.
+        set_config('sessiontimeout', 100);
+
+        // Generate a test user.
+        $user = $this->getDataGenerator()->create_user();
+
+        // Create a new redis session object.
+        $session = new \core\session\redis();
+        $session->init();
+
+        // Create two sessions for the user.
+        session_id('id1');
+        $session->add_session($user->id);
+        session_id('id2');
+        $session->add_session($user->id);
+
+        $testdata = 'some test data';
+
+        // Write some session data to the store.
+        $session->write('id2', $testdata);
+
+        // Read the session data.
+        $result = $session->read('id2');
+
+        // Check that the read was successful.
+        $this->assertEquals($result, $testdata);
+
+    }
+
+    /**
+     * Test updating a session.
+     */
+    public function test_update_session(): void {
+        // Set the timeout to something known for the test.
+        set_config('sessiontimeout', 100);
+
+        // Generate a test user.
+        $user = $this->getDataGenerator()->create_user();
+
+        // Create a new redis session object.
+        $session = new \core\session\redis();
+        $session->init();
+
+        // Create two sessions for the user.
+        session_id('id1');
+        $session->add_session($user->id);
+        session_id('id2');
+        $sessiondata = $session->add_session($user->id);
+
+        // Update the session data.
+        $sessiondata->lastip = '8.8.8.8';
+        $session->update_session($sessiondata);
+
+        // Check the value was updated.
+        $updatedsession = $session->get_session_by_sid('id2');
+        $this->assertEquals('8.8.8.8', $updatedsession->lastip);
+
+        // Test session update when userid is not set, should not error.
+        unset($sessiondata->userid);
+        $session->update_session($sessiondata);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test destroying a session by auth plugin.
+     */
+    public function test_destroy_by_auth_plugin(): void {
+        // Create test users.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user(['auth' => 'db']);
+
+        // Create a new redis session object.
+        $session = new \core\session\redis();
+        $session->init();
+
+        // Create  sessions for the users.
+        session_id('id1');
+        $session1data = $session->add_session($user1->id);
+        session_id('id2');
+        $session2data = $session->add_session($user2->id);
+
+        $session1 = $session->get_session_by_sid('id1');
+        $session2 = $session->get_session_by_sid('id2');
+
+        // Assert that the sessions were created and have expected data.
+        $this->assertEqualsCanonicalizing((array) $session1data, (array) $session1);
+        $this->assertEqualsCanonicalizing((array) $session2data, (array) $session2);
+
+        // Destroy the session by auth plugin.
+        $session->destroy_by_auth_plugin('manual');
+
+        // Check that the session was destroyed.
+        $this->assertFalse($session->session_exists('id1'));
+
+        // Check the session with db auth plugin was not destroyed.
+        $this->assertTrue($session->session_exists('id2'));
     }
 }

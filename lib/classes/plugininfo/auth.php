@@ -87,6 +87,7 @@ class auth extends base {
             $new = implode(',', array_flip($plugins));
             add_to_config_log('auth', $CFG->auth, $new, 'core');
             set_config('auth', $new);
+            \core\session\manager::destroy_by_auth_plugin($pluginname);
             // Remove stale sessions.
             \core\session\manager::gc();
             // Reset caches.
@@ -160,6 +161,7 @@ class auth extends base {
             $value = implode(',', $auths);
             add_to_config_log('auth', $CFG->auth, $value, 'core');
             set_config('auth', $value);
+            \core\session\manager::destroy_by_auth_plugin($this->name);
         }
 
         if (!empty($CFG->registerauth) and $CFG->registerauth === $this->name) {
