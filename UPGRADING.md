@@ -427,6 +427,23 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-82857](https://tracker.moodle.org/browse/MDL-82857)
 
+### core_role
+
+#### Added
+
+- Move all session management to the \core\session\manager class.
+  This removes the dependancy to use the "sessions" table.
+  Session management plugins (like redis) now need to inherit
+  the base \core\session\handler class which implements
+  SessionHandlerInterface and override methods as required.
+  The following methods in \core\session\manager have been deprecated:
+  * kill_all_sessions use destroy_all instead
+  * kill_session use destroy instead
+  * kill_sessions_for_auth_plugin use destroy_by_auth_plugin instead
+  * kill_user_sessions use destroy_user_sessions instead
+
+  For more information see [MDL-66151](https://tracker.moodle.org/browse/MDL-66151)
+
 ### tool_oauth2
 
 #### Added
@@ -630,6 +647,21 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Final deprecation of base_controller::set_copy(). Please use a restore controller for storing copy information instead.
 
   For more information see [MDL-75025](https://tracker.moodle.org/browse/MDL-75025)
+
+### core_files
+
+#### Added
+
+- The following are the changes made:
+  - New hook after_file_created
+  - In the \core_files\file_storage, new additional param $notify (default is true) added to:
+    - ::create_file_from_storedfile()
+    - ::create_file_from_pathname()
+    - ::create_file_from_string()
+    - ::create_file()
+    If true, it will trigger the after_file_created hook to re-create the image.
+
+  For more information see [MDL-75850](https://tracker.moodle.org/browse/MDL-75850)
 
 ### core_user
 

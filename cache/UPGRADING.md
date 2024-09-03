@@ -41,4 +41,3 @@
   | `\cache_mode_mappings_form` | `\core_cache\form/cache_mode_mappings_form` |
 
   For more information see [MDL-82158](https://tracker.moodle.org/browse/MDL-82158)
-
