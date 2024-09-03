@@ -212,12 +212,13 @@ class settings_provider {
      * @param \MoodleQuickForm $mform the wrapped MoodleQuickForm.
      */
     protected static function add_seb_templates(\mod_quiz_mod_form $quizform, \MoodleQuickForm $mform) {
-        if (self::can_use_seb_template($quizform->get_context()) || self::is_conflicting_permissions($quizform->get_context())) {
+        $context = $quizform->get_context();
+        if (self::can_use_seb_template($context) || self::is_conflicting_permissions($context)) {
             $element = $mform->createElement(
                 'select',
                 'seb_templateid',
                 get_string('seb_templateid', 'quizaccess_seb'),
-                self::get_template_options()
+                self::get_template_options($context->instanceid)
             );
         } else {
             $element = $mform->createElement('hidden', 'seb_templateid');
@@ -230,7 +231,7 @@ class settings_provider {
 
         // In case if the user can't use templates, but the quiz is configured to use them,
         // we'd like to display template, but freeze it.
-        if (self::is_conflicting_permissions($quizform->get_context())) {
+        if (self::is_conflicting_permissions($context)) {
             self::freeze_element($quizform, $mform, 'seb_templateid');
         }
     }
@@ -566,7 +567,7 @@ class settings_provider {
         }
 
         if (self::can_use_seb_template($context) || self::is_conflicting_permissions($context)) {
-            if (!empty(self::get_template_options())) {
+            if (!empty(self::get_template_options($context->instanceid))) {
                 $options[self::USE_SEB_TEMPLATE] = get_string('seb_use_template', 'quizaccess_seb');
             }
         }
@@ -584,10 +585,18 @@ class settings_provider {
      * Returns a list of templates.
      * @return array
      */
-    protected static function get_template_options(): array {
+    protected static function get_template_options($cmid): array {
         $templates = [];
-        $records = template::get_records(['enabled' => 1], 'name');
-        if ($records) {
+        $templatetable = template::TABLE;
+        $sebquizsettingstable = seb_quiz_settings::TABLE;
+        $select = "enabled = 1
+            OR EXISTS (
+                SELECT 1
+                  FROM {{$sebquizsettingstable}}
+                 WHERE templateid = {{$templatetable}}.id
+                   AND cmid = ?
+            )";
+        if ($records = template::get_records_select($select, [$cmid], 'id, name')) {
             foreach ($records as $record) {
                 $templates[$record->get('id')] = $record->get('name');
             }

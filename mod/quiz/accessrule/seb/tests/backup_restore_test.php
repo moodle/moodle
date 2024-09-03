@@ -194,6 +194,48 @@ class backup_restore_test extends \advanced_testcase {
     }
 
     /**
+     * Test backup and restore when using template when said template is disabled.
+     *
+     * @covers \quizaccess_seb\seb_quiz_settings::get_record
+     * @covers \restore_quizaccess_seb_subplugin::process_quizaccess_seb_quizsettings
+     */
+    public function test_backup_restore_disabled_template_config(): void {
+        $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
+
+        $expected = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $template = $this->create_template();
+        $expected->set('requiresafeexambrowser', settings_provider::USE_SEB_TEMPLATE);
+        $expected->set('templateid', $template->get('id'));
+        $expected->save();
+
+        // Disable template.
+        $template->set('enabled', 0);
+        $template->save();
+
+        $this->assertEquals(1, seb_quiz_settings::count_records());
+
+        $newcm = $this->backup_and_restore_quiz();
+
+        $this->assertEquals(2, seb_quiz_settings::count_records());
+        $actual = seb_quiz_settings::get_record(['quizid' => $newcm->instance]);
+
+        // Test that the restored quiz no longer uses SEB.
+        $expected = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $this->assertEquals(0, $actual->get('templateid'));
+        $this->assertEquals(settings_provider::USE_SEB_NO, $actual->get('requiresafeexambrowser'));
+        $this->assertEquals($expected->get('showsebdownloadlink'), $actual->get('showsebdownloadlink'));
+        $this->assertEquals($expected->get('allowuserquitseb'), $actual->get('allowuserquitseb'));
+        $this->assertEquals($expected->get('quitpassword'), $actual->get('quitpassword'));
+        $this->assertEquals($expected->get('allowedbrowserexamkeys'), $actual->get('allowedbrowserexamkeys'));
+
+        // Validate specific SEB config settings.
+        foreach (settings_provider::get_seb_config_elements() as $name => $notused) {
+            $name = preg_replace("/^seb_/", "", $name);
+            $this->assertEquals($expected->get($name), $actual->get($name));
+        }
+    }
+
+    /**
      * Test backup and restore when using uploaded file.
      */
     public function test_backup_restore_uploaded_config(): void {
