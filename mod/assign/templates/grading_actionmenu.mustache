@@ -30,6 +30,7 @@
     * pagereset - (optional) URL to reset the page
     * graderurl - (optional) URL to the grader page
     * quickgrading - (optional) Includes the baseurl and enabled properties for the quick grading checkbox
+    * downloadasfolders - (optional) Includes the baseurl and enabled properties for the download as folders checkbox
     * actions - (optional) HTML that outputs the bulk action menu
 
     Example context (json):
@@ -54,6 +55,10 @@
         "pagereset": "http://moodle.local/mod/assign/view.php?id=2&action=grading&group=0",
         "graderurl": "http://moodle.local/mod/assign/view.php?id=2&action=grader",
         "quickgrading": {
+            "baseurl": "http://moodle.local/mod/assign/view.php?id=2&action=grading",
+            "enabled": true
+        },
+        "downloadasfolders": {
             "baseurl": "http://moodle.local/mod/assign/view.php?id=2&action=grading",
             "enabled": true
         },
@@ -127,6 +132,22 @@
                 });
             {{/js}}
         {{/quickgrading}}
+        {{#downloadasfolders}}
+            <div class="navitem m-0">
+                <div class="form-check align-self-center">
+                    <input class="form-check-input" type="checkbox" id="downloadasfolders-{{uniqid}}" {{#enabled}}checked{{/enabled}}/>
+                    <label class="form-check-label" for="downloadasfolders-{{uniqid}}">{{#str}}downloadasfolders, mod_assign{{/str}}</label>
+                </div>
+            </div>
+            <div class="navitem-divider m-0"></div>
+            {{#js}}
+                document.querySelector('#downloadasfolders-{{uniqid}}').addEventListener('change', function(e) {
+                    var url = new URL('{{{baseurl}}}');
+                    url.searchParams.set('downloadasfolders', e.target.checked ? 1 : 0);
+                    window.location.href = url;
+                });
+            {{/js}}
+        {{/downloadasfolders}}
         {{#actions}}
             <div class="navitem m-0">{{{actions}}}</div>
         {{/actions}}

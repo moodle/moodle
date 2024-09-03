@@ -48,6 +48,8 @@ class grading_actionmenu implements templatable, renderable {
     protected int $submissioncount;
     /** @var assign The assign instance. */
     protected assign $assign;
+    /** @var bool If there are submissions to download. */
+    protected bool $showdownload;
 
     /**
      * Constructor for this object.
@@ -69,6 +71,7 @@ class grading_actionmenu implements templatable, renderable {
             $assign = new assign($context, null, null);
         }
         $this->assign = $assign;
+        $this->showdownload = $this->assign->is_any_submission_plugin_enabled() && $this->assign->count_submissions();
     }
 
     /**
@@ -162,6 +165,23 @@ class grading_actionmenu implements templatable, renderable {
             ];
         }
 
+        if ($this->showdownload) {
+            $downloadasfoldersbaseurl = new moodle_url('/mod/assign/view.php', [
+                'id' => $this->assign->get_course_module()->id,
+                'action' => 'grading',
+            ]);
+            if ($userid) {
+                $downloadasfoldersbaseurl->param('userid', $userid);
+            } else if ($usersearch) {
+                $downloadasfoldersbaseurl->param('search', $usersearch);
+            }
+            $downloadasfolders = get_user_preferences('assign_downloadasfolders', 1);
+            $data['downloadasfolders'] = [
+                'baseurl' => $downloadasfoldersbaseurl->out(false),
+                'enabled' => $downloadasfolders,
+            ];
+        }
+
         $actions = $this->get_actions();
         if ($actions) {
             $menu = new \action_menu();
@@ -219,7 +239,7 @@ class grading_actionmenu implements templatable, renderable {
                 }
             }
         }
-        if ($this->assign->is_any_submission_plugin_enabled() && $this->assign->count_submissions()) {
+        if ($this->showdownload) {
             $url = new moodle_url('/mod/assign/view.php', [
                 'id' => $this->assign->get_course_module()->id,
                 'action' => 'downloadall',
