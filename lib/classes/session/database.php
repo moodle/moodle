@@ -75,7 +75,7 @@ class database extends handler implements SessionHandlerInterface {
 
     #[\Override]
     public function destroy(string $id): bool {
-        if (!$session = $this->get_session_by_sid($id)) {
+        if (!$session = $this->database->get_record('sessions', ['sid' => $id], 'id, sid')) {
             if ($id == session_id()) {
                 $this->recordid = null;
                 $this->lasthash = null;
