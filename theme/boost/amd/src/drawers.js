@@ -813,7 +813,7 @@ const registerListeners = () => {
     document.addEventListener('focusin', preventOverlap);
     document.addEventListener('focusout', preventOverlap);
 
-    window.addEventListener('resize', debounce(closeOnResizeListener, 400));
+    window.addEventListener('resize', debounce(closeOnResizeListener, 400, {pending: true}));
 };
 
 registerListeners();
