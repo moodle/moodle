@@ -77,8 +77,8 @@ class badges extends system_report {
         $this->add_filters();
         $this->add_actions();
 
-        // Set initial sorting by name.
         $this->set_initial_sort_column('badge:namewithlink', SORT_ASC);
+        $this->set_default_no_results_notice(new lang_string('nomatchingbadges', 'core_badges'));
 
         // Set if report can be downloaded.
         $this->set_downloadable(false);
@@ -157,13 +157,12 @@ class badges extends system_report {
      * unique identifier
      */
     protected function add_filters(): void {
-        $filters = [
+        $this->add_filters_from_entities([
             'badge:name',
             'badge:version',
             'badge:status',
             'badge:expiry',
-        ];
-        $this->add_filters_from_entities($filters);
+        ]);
     }
 
     /**

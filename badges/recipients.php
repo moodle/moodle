@@ -24,6 +24,9 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
+use core_badges\reportbuilder\local\systemreports\recipients;
+use core_reportbuilder\system_report_factory;
+
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
@@ -63,6 +66,7 @@ $PAGE->set_heading($heading);
 $PAGE->set_title($badge->name);
 $PAGE->navbar->add($badge->name);
 
+/** @var core_badges_renderer $output */
 $output = $PAGE->get_renderer('core', 'badges');
 
 echo $output->header();
@@ -73,9 +77,7 @@ echo $output->render_tertiary_navigation($actionbar);
 echo $OUTPUT->heading(print_badge_image($badge, $context, 'small') . ' ' . $badge->name);
 echo $output->print_badge_status_box($badge);
 
-$report = \core_reportbuilder\system_report_factory::create(\core_badges\reportbuilder\local\systemreports\recipients::class,
-    $PAGE->context, '', '', 0, ['badgeid' => $badge->id]);
-$report->set_default_no_results_notice(new lang_string('noawards', 'badges'));
+$report = system_report_factory::create(recipients::class, $PAGE->context, '', '', 0, ['badgeid' => $badge->id]);
 echo $report->output();
 
 echo $output->footer();

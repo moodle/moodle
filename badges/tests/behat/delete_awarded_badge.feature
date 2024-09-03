@@ -44,8 +44,7 @@ Feature: Delete course badge already awarded
     # Navigate to Badges page to confirm that no badges exist, hence, Manage badges would not exist
     And I navigate to "Badges" in current page administration
     # Confirm that badges are sucessfully deleted
-    And I should see "There are currently no badges available for users to earn."
-
+    And I should see "There are no matching badges available for users to earn"
     Examples:
       | badgename | deleteoption                             | visibility |
       | Badge 1   | Delete and keep existing issued badges   | should     |
