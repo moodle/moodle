@@ -60,6 +60,8 @@ if (!empty($badgeid)) {
     } else {
         require_capability('moodle/badges:configuredetails', $context);
     }
+
+    $cancelurl = new moodle_url('/badges/overview.php', ['id' => $badgeid]);
 } else {
     // New badge.
     if ($courseid) {
@@ -79,6 +81,8 @@ if (!empty($badgeid)) {
 
     // Check capabilities.
     require_capability('moodle/badges:createbadge', $context);
+
+    $cancelurl = new moodle_url('/badges/index.php', ['type' => $badge->type, 'id' => $courseid]);
 }
 
 // Check if course badges are enabled.
@@ -141,7 +145,7 @@ if ($badge->id) {
 
 $form = new $formclass($currenturl, $params);
 if ($form->is_cancelled()) {
-    redirect(new moodle_url('/badges/overview.php', ['id' => $badgeid]));
+    redirect($cancelurl);
 } else if ($form->is_submitted() && $form->is_validated() && ($data = $form->get_data())) {
     switch ($action) {
         case 'new':

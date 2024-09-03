@@ -67,7 +67,6 @@ Feature: Add badges to the system
       | Image caption | Test caption image |
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
-    And I wait until the page is ready
     And I navigate to "Badges > Manage badges" in site administration
     And I press "Add a new badge"
     And I set the following fields to these values:
@@ -83,7 +82,6 @@ Feature: Add badges to the system
     And I should see "This badge does not have any related badges."
     And I press "Add related badge"
     And I follow "Related badges"
-    And I wait until the page is ready
     And I follow "Related badges"
     And I set the field "relatedbadgeids[]" to "Test Badge 1 (version: v1, language: French, Site badges)"
     When I press "Save changes"
@@ -220,3 +218,42 @@ Feature: Add badges to the system
       | badges_defaultissuername    | Test Badge Site      |
     And I navigate to "Badges > Add a new badge" in site administration
     And the field "Issuer name" matches value "Test Badge Site"
+
+  Scenario: Cancel button behaviour when creating badges
+    Given the following "course" exists:
+      | fullname         | Course 1                           |
+      | shortname        | C1                                 |
+    And the following "core_badges > Badge" exists:
+      | name        | Site Badge 1                 |
+      | description | Site badge 1 description     |
+      | image       | badges/tests/behat/badge.png |
+      | status      | 0                            |
+      | type        | 1                            |
+    And the following "core_badges > Badge" exists:
+      | name        | Course Badge 1               |
+      | course      | C1                           |
+      | description | Course badge 1 description   |
+      | image       | badges/tests/behat/badge.png |
+      | status      | 0                            |
+      | type        | 2                            |
+    # Site badge: cancel when creating.
+    When I navigate to "Badges > Add a new badge" in site administration
+    And I click on "Cancel" "button"
+    Then I should see "Manage badges"
+    And I should see "Add a new badge"
+    # Site badge: cancel when editing.
+    And I press "Edit" action in the "Site Badge 1" report row
+    And I click on "Cancel" "button"
+    And I should see "Site badge 1"
+    And I should not see "Save changes"
+    # Course badge: cancel when creating.
+    And I am on the "Course 1" "course" page
+    And I navigate to "Badges > Manage badges > Add a new badge" in current page administration
+    And I click on "Cancel" "button"
+    Then I should see "Manage badges"
+    And I should see "Add a new badge"
+    # Course badge: cancel when editing.
+    And I press "Edit" action in the "Course Badge 1" report row
+    And I click on "Cancel" "button"
+    And I should see "Course badge 1"
+    And I should not see "Save changes"
