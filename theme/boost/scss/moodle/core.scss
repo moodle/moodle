@@ -2939,6 +2939,13 @@ body.dragging {
     }
 }
 
+#page-my-index .my-action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
 .dropdown-toggle::after {
     @extend .fa-solid;
     content: fa-content($fa-var-chevron-down);

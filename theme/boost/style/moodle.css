@@ -25917,6 +25917,13 @@ body.dragging .dragging {
   padding-right: 0 !important; /* stylelint-disable-line declaration-no-important */
 }
 
+#page-my-index .my-action-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
 .dropdown-toggle::after {
   content: "\f078";
   margin-right: 0;
