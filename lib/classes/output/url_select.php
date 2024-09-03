@@ -94,6 +94,11 @@ class url_select implements renderable, templatable {
     public $showbutton = null;
 
     /**
+     * @var array $disabledoptions array of disabled options
+     */
+    public $disabledoptions = [];
+
+    /**
      * Constructor
      * @param array $urls list of options
      * @param string $selected selected element
@@ -108,6 +113,17 @@ class url_select implements renderable, templatable {
         $this->nothing    = $nothing;
         $this->formid     = $formid;
         $this->showbutton = $showbutton;
+        $this->disabledoptions = [];
+    }
+
+    /**
+     * Disable the option(url).
+     *
+     * @param string $urlkey
+     * @param bool $disabled
+     */
+    public function set_option_disabled(string $urlkey, bool $disabled = true) {
+        $this->disabledoptions[$urlkey] = $disabled;
     }
 
     /**
@@ -189,6 +205,7 @@ class url_select implements renderable, templatable {
                             'name' => $optoption,
                             'value' => $cleanedvalue,
                             'selected' => $this->selected == $optvalue,
+                            'disabled' => $this->disabledoptions[$optvalue] ?? false,
                         ];
                     }
                 }
@@ -198,6 +215,7 @@ class url_select implements renderable, templatable {
                     'name' => $option,
                     'value' => $cleanedvalue,
                     'selected' => $this->selected == $value,
+                    'disabled' => $this->disabledoptions[$value] ?? false,
                 ];
             }
         }
