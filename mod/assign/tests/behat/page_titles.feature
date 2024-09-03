@@ -25,6 +25,7 @@ Feature: In an assignment, page titles are informative
     And I press "Add submission"
     And the page title should contain "C1: History of ants - Edit submission"
 
+  @javascript
   Scenario: I view an assignment as a teacher and take an action
     When I am on the "History of ants" Activity page logged in as teacher1
     Then the page title should contain "C1: History of ants"

@@ -32,8 +32,7 @@ Feature: In an assignment, teachers can filter displayed submissions by assigned
       | markingworkflow                     | 1                       |
       | markingallocation                   | 1                       |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "Submissions" in current page administration
-    And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I go to "Student 1" "Test assignment name" activity advanced grading page
     And I set the field "allocatedmarker" to "Marker 1"
     And I set the field "Notify student" to "0"
     And I press "Save changes"

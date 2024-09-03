@@ -46,8 +46,7 @@ Feature: Outcome grading
       | Online text | My online text |
     And I press "Save changes"
     When I am on the "Test assignment name" "assign activity" page logged in as teacher1
-    And I navigate to "Submissions" in current page administration
-    And I click on "Grade" "link" in the "Student 0" "table_row"
+    And I go to "Student 0" "Test assignment name" activity advanced grading page
     And I set the following fields to these values:
       | Outcome Test: | Excellent |
     And I press "Save changes"
@@ -87,8 +86,7 @@ Feature: Outcome grading
       | Online text | My online text |
     And I press "Save changes"
     When I am on the "Test assignment name" "assign activity" page logged in as teacher1
-    And I navigate to "Submissions" in current page administration
-    And I click on "Grade" "link" in the "Student 0" "table_row"
+    And I go to "Student 0" "Test assignment name" activity advanced grading page
     And I set the following fields to these values:
       | Outcome Test: | Excellent |
       | Apply grades and feedback to entire group | Yes |
@@ -98,7 +96,8 @@ Feature: Outcome grading
     Then I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should see "Outcome Test: Excellent" in the "Student 1" "table_row"
     And I should not see "Outcome Test: Excellent" in the "Student 2" "table_row"
-    And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "Student 1" "table_row"
+    And I choose "Grade" in the open action menu
     And I set the following fields to these values:
       | Outcome Test: | Disappointing |
       | Apply grades and feedback to entire group | No |

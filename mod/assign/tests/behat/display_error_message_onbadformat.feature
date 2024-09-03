@@ -28,9 +28,8 @@ Feature: Check that the assignment grade can not be input in a wrong format.
       | markingworkflow  | 1                           |
       | submissiondrafts | 0                           |
     When I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
-    And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I go to "Student 1" "Test assignment name" activity advanced grading page
     And I set the field "Grade out of 100" to "50,,6"
     And I press "Save changes"
     Then I should see "The grade provided could not be understood: 50,,6"
@@ -59,9 +58,8 @@ Feature: Check that the assignment grade can not be input in a wrong format.
       | markingworkflow  | 1                           |
       | submissiondrafts | 0                           |
     When I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
-    And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I go to "Student 1" "Test assignment name" activity advanced grading page
     And I set the field "Grade out of 100" to "50..6"
     And I press "Save changes"
     Then I should see "The grade provided could not be understood: 50..6"

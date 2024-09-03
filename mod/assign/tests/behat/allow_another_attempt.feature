@@ -33,9 +33,8 @@ Feature: In an assignment, students start a new attempt based on their previous 
       | Test assignment name  | student1  | I'm the student first submission |
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
-    And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I go to "Student 1" "Test assignment name" activity advanced grading page
     And I change window size to "medium"
     And I set the following fields to these values:
       | Allow another attempt | 1 |
@@ -50,9 +49,8 @@ Feature: In an assignment, students start a new attempt based on their previous 
     And I log out
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "Submissions" in current page administration
     And I change window size to "large"
-    And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I go to "Student 1" "Test assignment name" activity advanced grading page
     And I change window size to "medium"
     And I should see "I'm the student first submission"
 
@@ -134,7 +132,8 @@ Feature: In an assignment, students start a new attempt based on their previous 
     And "Student 2" row "Status" column of "generaltable" table should contain "Reopened"
     And "Student 3" row "Status" column of "generaltable" table should contain "Submitted for grading"
     And "Student 4" row "Status" column of "generaltable" table should contain "Submitted for grading"
-    And I click on "Grade" "link" in the "Student 3" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "Student 3" "table_row"
+    And I choose "Grade" in the open action menu
     And I set the following fields to these values:
       | Allow another attempt | 1 |
     And I press "Save changes"
