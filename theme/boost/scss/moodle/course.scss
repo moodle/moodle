@@ -1622,8 +1622,11 @@ $divider-hover-color: $primary !default;
     .bulk-hidden {
         display: none !important; // stylelint-disable-line declaration-no-important
     }
-    .section:not(:first-child) {
-        margin-top: map-get($spacers, 4);
+    .section {
+        margin-left: map-get($spacers, 3);
+        &:not(:first-child) {
+            margin-top: map-get($spacers, 4);
+        }
     }
     .activity {
         margin-top: map-get($spacers, 2);
