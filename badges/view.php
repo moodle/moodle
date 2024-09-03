@@ -24,6 +24,9 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
+use core_badges\reportbuilder\local\systemreports\course_badges;
+use core_reportbuilder\system_report_factory;
+
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
@@ -67,6 +70,8 @@ if ($type == BADGE_TYPE_SITE) {
 require_capability('moodle/badges:viewbadges', $PAGE->context);
 
 $PAGE->set_title($title);
+
+/** @var core_badges_renderer $output */
 $output = $PAGE->get_renderer('core', 'badges');
 
 // Display "Manage badges" button to users with proper capabilities.
@@ -98,9 +103,8 @@ if ($course && $course->startdate > time()) {
     echo $OUTPUT->box(get_string('error:notifycoursedate', 'badges'), 'generalbox notifyproblem');
 }
 
-$report = \core_reportbuilder\system_report_factory::create(\core_badges\reportbuilder\local\systemreports\course_badges::class,
-    $PAGE->context, '', '', 0, ['type' => $type, 'courseid' => $courseid]);
-$report->set_default_no_results_notice(new lang_string('nobadges', 'badges'));
+$report = system_report_factory::create(course_badges::class, $PAGE->context, '', '', 0,
+    ['type' => $type, 'courseid' => $courseid]);
 echo $report->output();
 
 // Trigger event, badge listing viewed.

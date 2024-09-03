@@ -62,6 +62,9 @@ class recipients extends system_report {
         $this->add_filters();
         $this->add_actions();
 
+        $this->set_initial_sort_column('badge_issued:issued', SORT_DESC);
+        $this->set_default_no_results_notice(new lang_string('nomatchingawards', 'core_badges'));
+
         // Set if report can be downloaded.
         $this->set_downloadable(false);
     }
@@ -81,14 +84,11 @@ class recipients extends system_report {
      * They are provided by the entities we previously added in the {@see initialise} method, referencing each by their
      * unique identifier. If custom columns are needed just for this report, they can be defined here.
      */
-    public function add_columns(): void {
-        $columns = [
+    protected function add_columns(): void {
+        $this->add_columns_from_entities([
             'user:fullnamewithlink',
             'badge_issued:issued',
-        ];
-
-        $this->add_columns_from_entities($columns);
-        $this->set_initial_sort_column('badge_issued:issued', SORT_DESC);
+        ]);
     }
 
     /**
@@ -98,12 +98,10 @@ class recipients extends system_report {
      * unique identifier
      */
     protected function add_filters(): void {
-        $filters = [
+        $this->add_filters_from_entities([
             'user:fullname',
             'badge_issued:issued',
-        ];
-
-        $this->add_filters_from_entities($filters);
+        ]);
     }
 
     /**
