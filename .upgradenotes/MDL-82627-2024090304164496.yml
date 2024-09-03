@@ -1,0 +1,11 @@
+issueNumber: MDL-82627
+notes:
+  core:
+    - message: >
+        There is a new method called `get_fixture_path()` that supports getting
+        the path to the fixture
+      type: improved
+    - message: >
+        There is a new method called `get_mocked_http_client()` that supports
+        mocking the `http_client`
+      type: improved
