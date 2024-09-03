@@ -61,7 +61,7 @@ final class provider_test extends \advanced_testcase {
 
         // AI policy.
         // Set the user policy.
-        manager::set_user_policy($user1->id, $course1context->id);
+        manager::user_policy_accepted($user1->id, $course1context->id);
 
         // Retrieve the user1's context ids.
         $contextids = provider::get_contexts_for_userid($user1->id);
@@ -185,7 +185,7 @@ final class provider_test extends \advanced_testcase {
         $coursecontext = \context_course::instance($course->id);
 
         // Set the user policy.
-        manager::set_user_policy($user->id, $coursecontext->id);
+        manager::user_policy_accepted($user->id, $coursecontext->id);
 
         // Retrieve the user's context ids.
         $contextlist = provider::get_contexts_for_userid($user->id);
@@ -535,9 +535,9 @@ final class provider_test extends \advanced_testcase {
         $course2context = \context_course::instance($course2->id);
 
         // Set the user policy.
-        manager::set_user_policy($user1->id, $course1context->id);
-        manager::set_user_policy($user2->id, $course1context->id);
-        manager::set_user_policy($user3->id, $course2context->id);
+        manager::user_policy_accepted($user1->id, $course1context->id);
+        manager::user_policy_accepted($user2->id, $course1context->id);
+        manager::user_policy_accepted($user3->id, $course2context->id);
 
         provider::delete_data_for_all_users_in_context($course1context);
 
@@ -1016,8 +1016,8 @@ final class provider_test extends \advanced_testcase {
         $course1context = \context_course::instance($course1->id);
         $course2context = \context_course::instance($course2->id);
 
-        manager::set_user_policy($user1->id, $course1context->id);
-        manager::set_user_policy($user2->id, $course2context->id);
+        manager::user_policy_accepted($user1->id, $course1context->id);
+        manager::user_policy_accepted($user2->id, $course2context->id);
 
         // The user list for course1context should return user1.
         $userlist = new \core_privacy\local\request\userlist($course1context, 'core_ai');
@@ -1268,9 +1268,9 @@ final class provider_test extends \advanced_testcase {
         $course2context = \context_course::instance($course2->id);
 
         // Set the user policy.
-        manager::set_user_policy($user1->id, $course1context->id);
-        manager::set_user_policy($user2->id, $course1context->id);
-        manager::set_user_policy($user3->id, $course2context->id);
+        manager::user_policy_accepted($user1->id, $course1context->id);
+        manager::user_policy_accepted($user2->id, $course1context->id);
+        manager::user_policy_accepted($user3->id, $course2context->id);
 
         $userlist = new \core_privacy\local\request\userlist($course1context, 'core_ai');
         provider::get_users_in_context($userlist);

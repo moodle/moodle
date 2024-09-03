@@ -195,13 +195,13 @@ class manager {
     }
 
     /**
-     * Set the user policy.
+     * Set the policy acceptance for a given user.
      *
      * @param int $userid The user id.
      * @param int $contextid The context id the policy was accepted in.
      * @return bool True if the policy was set, false otherwise.
      */
-    public static function set_user_policy(int $userid, int $contextid): bool {
+    public static function user_policy_accepted(int $userid, int $contextid): bool {
         global $DB;
 
         $record = (object) [
@@ -224,7 +224,7 @@ class manager {
      * @param int $userid The user id.
      * @return bool True if the policy was accepted, false otherwise.
      */
-    public static function get_user_policy(int $userid): bool {
+    public static function get_user_policy_status(int $userid): bool {
         $policycache = \cache::make('core', 'ai_policy');
         return $policycache->get($userid);
     }

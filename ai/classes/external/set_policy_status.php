@@ -68,7 +68,7 @@ class set_policy_status extends external_api {
         require_capability('moodle/ai:acceptpolicy', $usercontext);
 
         return [
-            'success' => manager::set_user_policy($USER->id, $contextid),
+            'success' => manager::user_policy_accepted($USER->id, $contextid),
         ];
     }
 

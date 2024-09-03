@@ -179,7 +179,7 @@ final class manager_test extends \advanced_testcase {
         $this->resetAfterTest();
         global $DB;
 
-        $result = manager::set_user_policy(1, 1);
+        $result = manager::user_policy_accepted(1, 1);
         $this->assertTrue($result);
 
         // Check record exists.
@@ -195,7 +195,7 @@ final class manager_test extends \advanced_testcase {
         global $DB;
 
         // Should be false for user initially.
-        $result = manager::get_user_policy(1);
+        $result = manager::get_user_policy_status(1);
         $this->assertFalse($result);
 
         // Manually add record to the database.
@@ -207,7 +207,7 @@ final class manager_test extends \advanced_testcase {
         $DB->insert_record('ai_policy_register', $record);
 
         // Should be true for user now.
-        $result = manager::get_user_policy(1);
+        $result = manager::get_user_policy_status(1);
         $this->assertTrue($result);
     }
 

@@ -77,7 +77,7 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
         return array_merge([
             'contextid' => $context->id,
             'userid' => $userid,
-            'policyagreed' => manager::get_user_policy($userid),
+            'policyagreed' => manager::get_user_policy_status($userid),
         ], $allowedactions);
     }
 

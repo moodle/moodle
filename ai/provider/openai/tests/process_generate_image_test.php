@@ -47,10 +47,25 @@ final class process_generate_image_test extends \advanced_testcase {
         parent::setUp();
         // Load a response body from a file.
         $this->responsebodyjson = file_get_contents(self::get_fixture_path('aiprovider_openai', 'image_request_success.json'));
+        $this->create_provider();
+        $this->create_action();
+    }
+
+    /**
+     * Create the provider object.
+     */
+    private function create_provider(): void {
         $this->provider = new \aiprovider_openai\provider();
+    }
+
+    /**
+     * Create the action object.
+     * @param int $userid The user id to use in the action.
+     */
+    private function create_action(int $userid = 1): void {
         $this->action = new \core_ai\aiactions\generate_image(
             contextid: 1,
-            userid: 1,
+            userid: $userid,
             prompttext: 'This is a test prompt',
             quality: 'hd',
             aspectratio: 'square',
@@ -325,5 +340,309 @@ final class process_generate_image_test extends \advanced_testcase {
         $this->assertEquals('generate_image', $result->get_actionname());
         $this->assertEquals('An image that represents the concept of a \'test\'.', $result->get_response_data()['revisedprompt']);
         $this->assertEquals($url, $result->get_response_data()['sourceurl']);
+    }
+
+    /**
+     * Test process method with error.
+     */
+    public function test_process_error(): void {
+        $this->resetAfterTest();
+        // Log in user.
+        $this->setUser($this->getDataGenerator()->create_user());
+
+        // Mock the http client to return a successful response.
+        ['mock' => $mock] = $this->get_mocked_http_client();
+
+        // The response from OpenAI.
+        $mock->append(new Response(
+            401,
+            ['Content-Type' => 'application/json'],
+            json_encode(['error' => ['message' => 'Invalid Authentication']]),
+        ));
+
+        $processor = new process_generate_image($this->provider, $this->action);
+        $result = $processor->process();
+
+        $this->assertInstanceOf(\core_ai\aiactions\responses\response_base::class, $result);
+        $this->assertFalse($result->get_success());
+        $this->assertEquals('generate_image', $result->get_actionname());
+        $this->assertEquals(401, $result->get_errorcode());
+        $this->assertEquals('Invalid Authentication', $result->get_errormessage());
+    }
+
+    /**
+     * Test process method with user rate limiter.
+     */
+    public function test_process_with_user_rate_limiter(): void {
+        $this->resetAfterTest();
+        // Create users.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        // Log in user1.
+        $this->setUser($user1);
+        // Mock clock.
+        $clock = $this->mock_clock_with_frozen();
+
+        // Set the user rate limiter.
+        set_config('enableuserratelimit', 1, 'aiprovider_openai');
+        set_config('userratelimit', 1, 'aiprovider_openai');
+
+        // Mock the http client to return a successful response.
+        ['mock' => $mock] = $this->get_mocked_http_client();
+        $url = 'https://example.com/test.jpg';
+
+        // Case 1: User rate limit has not been reached.
+        $this->create_provider();
+        $this->create_action($user1->id);
+        // The response from OpenAI.
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'application/json'],
+            json_encode([
+                'created' => 1719140500,
+                'data' => [
+                    (object) [
+                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'url' => $url,
+                    ],
+                ],
+            ]),
+        ));
+        // The image downloaded from the server successfully.
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'image/jpeg'],
+            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
+        ));
+        $processor = new process_generate_image($this->provider, $this->action);
+        $result = $processor->process();
+        $this->assertTrue($result->get_success());
+
+        // Case 2: User rate limit has been reached.
+        $clock->bump(HOURSECS - 10);
+        // The response from OpenAI.
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'application/json'],
+            json_encode([
+                'created' => 1719140500,
+                'data' => [
+                    (object) [
+                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'url' => $url,
+                    ],
+                ],
+            ]),
+        ));
+        // The image downloaded from the server successfully.
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'image/jpeg'],
+            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
+        ));
+        $this->create_provider();
+        $this->create_action($user1->id);
+        $processor = new process_generate_image($this->provider, $this->action);
+        $result = $processor->process();
+        $this->assertEquals(429, $result->get_errorcode());
+        $this->assertEquals('User rate limit exceeded', $result->get_errormessage());
+        $this->assertFalse($result->get_success());
+
+        // Case 3: User rate limit has not been reached for a different user.
+        // Log in user2.
+        $this->setUser($user2);
+        $this->create_provider();
+        $this->create_action($user2->id);
+        // The response from OpenAI.
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'application/json'],
+            json_encode([
+                'created' => 1719140500,
+                'data' => [
+                    (object) [
+                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'url' => $url,
+                    ],
+                ],
+            ]),
+        ));
+        // The image downloaded from the server successfully.
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'image/jpeg'],
+            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
+        ));
+        $processor = new process_generate_image($this->provider, $this->action);
+        $result = $processor->process();
+        $this->assertTrue($result->get_success());
+
+        // Case 4: Time window has passed, user rate limit should be reset.
+        $clock->bump(11);
+        // Log in user1.
+        $this->setUser($user1);
+        // The response from OpenAI.
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'application/json'],
+            json_encode([
+                'created' => 1719140500,
+                'data' => [
+                    (object) [
+                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'url' => $url,
+                    ],
+                ],
+            ]),
+        ));
+        // The image downloaded from the server successfully.
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'image/jpeg'],
+            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
+        ));
+        $this->create_provider();
+        $this->create_action($user1->id);
+        $processor = new process_generate_image($this->provider, $this->action);
+        $result = $processor->process();
+        $this->assertTrue($result->get_success());
+    }
+
+    /**
+     * Test process method with global rate limiter.
+     */
+    public function test_process_with_global_rate_limiter(): void {
+        $this->resetAfterTest();
+        // Create users.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        // Log in user1.
+        $this->setUser($user1);
+        // Mock clock.
+        $clock = $this->mock_clock_with_frozen();
+
+        // Set the global rate limiter.
+        set_config('enableglobalratelimit', 1, 'aiprovider_openai');
+        set_config('globalratelimit', 1, 'aiprovider_openai');
+
+        // Mock the http client to return a successful response.
+        ['mock' => $mock] = $this->get_mocked_http_client();
+        $url = 'https://example.com/test.jpg';
+
+        // Case 1: Global rate limit has not been reached.
+        $this->create_provider();
+        $this->create_action($user1->id);
+        // The response from OpenAI.
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'application/json'],
+            json_encode([
+                'created' => 1719140500,
+                'data' => [
+                    (object) [
+                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'url' => $url,
+                    ],
+                ],
+            ]),
+        ));
+        // The image downloaded from the server successfully.
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'image/jpeg'],
+            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
+        ));
+        $processor = new process_generate_image($this->provider, $this->action);
+        $result = $processor->process();
+        $this->assertTrue($result->get_success());
+
+        // Case 2: Global rate limit has been reached.
+        $clock->bump(HOURSECS - 10);
+        // The response from OpenAI.
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'application/json'],
+            json_encode([
+                'created' => 1719140500,
+                'data' => [
+                    (object) [
+                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'url' => $url,
+                    ],
+                ],
+            ]),
+        ));
+        // The image downloaded from the server successfully.
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'image/jpeg'],
+            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
+        ));
+        $this->create_provider();
+        $this->create_action($user1->id);
+        $processor = new process_generate_image($this->provider, $this->action);
+        $result = $processor->process();
+        $this->assertEquals(429, $result->get_errorcode());
+        $this->assertEquals('Global rate limit exceeded', $result->get_errormessage());
+        $this->assertFalse($result->get_success());
+
+        // Case 3: Global rate limit has been reached for a different user too.
+        // Log in user2.
+        $this->setUser($user2);
+        $this->create_provider();
+        $this->create_action($user2->id);
+        // The response from OpenAI.
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'application/json'],
+            json_encode([
+                'created' => 1719140500,
+                'data' => [
+                    (object) [
+                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'url' => $url,
+                    ],
+                ],
+            ]),
+        ));
+        // The image downloaded from the server successfully.
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'image/jpeg'],
+            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
+        ));
+        $processor = new process_generate_image($this->provider, $this->action);
+        $result = $processor->process();
+        $this->assertFalse($result->get_success());
+
+        // Case 4: Time window has passed, global rate limit should be reset.
+        $clock->bump(11);
+        // Log in user1.
+        $this->setUser($user1);
+        // The response from OpenAI.
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'application/json'],
+            json_encode([
+                'created' => 1719140500,
+                'data' => [
+                    (object) [
+                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'url' => $url,
+                    ],
+                ],
+            ]),
+        ));
+        // The image downloaded from the server successfully.
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'image/jpeg'],
+            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
+        ));
+        $this->create_provider();
+        $this->create_action($user1->id);
+        $processor = new process_generate_image($this->provider, $this->action);
+        $result = $processor->process();
+        $this->assertTrue($result->get_success());
     }
 }
