@@ -500,6 +500,8 @@ define('MOD_PURPOSE_OTHER', 'other');
 */
 define('MOD_PURPOSE_INTERFACE', 'interface');
 
+/** True if module can be quickly created without filling a previous form. */
+define('FEATURE_QUICKCREATE', 'quickcreate');
 /**
  * Security token used for allowing access
  * from external application such as web services.

@@ -136,6 +136,7 @@ class cm implements named_templatable, renderable {
         $haspartials['editor'] = $this->add_editor_data($data, $output);
         $haspartials['groupmode'] = $this->add_groupmode_data($data, $output);
         $haspartials['visibility'] = $this->add_visibility_data($data, $output);
+        $this->add_actvitychooserbutton_data($data, $output);
         $this->add_format_data($data, $haspartials, $output);
 
         // Calculated fields.
@@ -357,6 +358,17 @@ class cm implements named_templatable, renderable {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Add the activity chooser button data to the data structure.
+     *
+     * @param stdClass $data the current cm data reference
+     * @param renderer_base $output typically, the renderer that's calling this function
+     */
+    protected function add_actvitychooserbutton_data(stdClass &$data, renderer_base $output): void {
+        $activitychooserbutton = new \core_course\output\activitychooserbutton($this->section, $this->mod);
+        $data->activitychooserbutton = $activitychooserbutton->export_for_template($output);
     }
 
     /**

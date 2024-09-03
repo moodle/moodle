@@ -224,16 +224,20 @@ class core_course_renderer extends plugin_renderer_base {
             return '';
         }
 
-        $data = [
-            'sectionnum' => $section,
-            'sectionreturn' => $sectionreturn
-        ];
-        $ajaxcontrol = $this->render_from_template('course/activitychooserbutton', $data);
+        $sectioninfo = get_fast_modinfo($course)->get_section_info($section);
+
+        $activitychooserbutton = new \core_course\output\activitychooserbutton($sectioninfo, null, $sectionreturn);
 
         // Load the JS for the modal.
         $this->course_activitychooser($course->id);
 
-        return $ajaxcontrol;
+        return $this->render_from_template(
+            'core_courseformat/local/content/divider',
+            [
+                'content' => $this->render($activitychooserbutton),
+                'extraclasses' => 'always-visible my-3',
+            ]
+        );
     }
 
     /**

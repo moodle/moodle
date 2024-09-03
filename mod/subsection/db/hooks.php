@@ -30,4 +30,8 @@ $callbacks = [
         'callback' => 'mod_subsection\local\callbacks\after_cm_name_edited_handler::callback',
         'priority' => 0,
     ],
+    [
+        'hook' => core_course\hook\before_activitychooserbutton_exported::class,
+        'callback' => [mod_subsection\local\callbacks\before_activitychooserbutton_exported_handler::class, 'callback'],
+    ],
 ];

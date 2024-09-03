@@ -599,6 +599,14 @@ $functions = array(
         'ajax'          => true,
         'capabilities'  => 'moodle/course:sectionvisibility, moodle/course:activityvisibility',
     ],
+    'core_courseformat_create_module' => [
+        'classname'     => 'core_courseformat\external\create_module',
+        'methodname'    => 'execute',
+        'description'   => 'Add module to course.',
+        'type'          => 'write',
+        'ajax'          => true,
+        'capabilities'  => 'moodle/course:manageactivities',
+    ],
     'core_course_edit_module' => array(
         'classname'   => 'core_course_external',
         'methodname'  => 'edit_module',

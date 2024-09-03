@@ -59,7 +59,9 @@
 }}
 {{#editing}}
     {{< core_courseformat/local/content/divider}}
-        {{$content}}{{> core_course/activitychooserbuttonactivity}}{{/content}}
+        {{$content}}
+            {{#activitychooserbutton}}{{> core_course/activitychooserbutton}}{{/activitychooserbutton}}
+        {{/content}}
     {{/ core_courseformat/local/content/divider}}
 {{/editing}}
 <div class="activity-item focus-control {{#modstealth}}hiddenactivity{{/modstealth}}{{!
