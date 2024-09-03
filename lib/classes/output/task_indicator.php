@@ -16,13 +16,20 @@
 
 namespace core\output;
 
+use core\plugin_manager;
 use core\task\adhoc_task;
 use core\task\stored_progress_task_trait;
 use core\url;
+use core\context\system;
 use stdClass;
 
 /**
  * Indicator for displaying status and progress of a background task
+ *
+ * This will display a section containing an icon, heading and message describing the background task being performed,
+ * as well as a progress bar that is updated as the task progresses. Optionally, it will redirect to a given URL (or reload
+ * the current one) when the task completes. If the task is still waiting in the queue, an admin viewing the indicator
+ * will also see a "Run now" button.
  *
  * @package   core
  * @copyright 2024 onwards Catalyst IT EU {@link https://catalyst-eu.net}
@@ -35,6 +42,12 @@ class task_indicator implements renderable, templatable {
 
     /** @var ?stored_progress_bar $progressbar */
     protected ?stored_progress_bar $progressbar;
+
+    /** @var ?url $runurl The URL to manually run the task. */
+    protected ?url $runurl = null;
+
+    /** @var string $runlabel Label for the link to run the task. */
+    protected string $runlabel = '';
 
     /**
      * Find the task record, and get the progress bar object.
@@ -80,6 +93,16 @@ class task_indicator implements renderable, templatable {
             $this->task->set_id($this->taskrecord->id);
             $idnumber = stored_progress_bar::convert_to_idnumber($this->task::class, $this->task->get_id());
             $this->progressbar = stored_progress_bar::get_by_idnumber($idnumber);
+            // As long as the tool_task plugin hasn't been removed,
+            // allow admins to trigger the task manually if it's not running yet.
+            if (
+                array_key_exists('task', plugin_manager::instance()->get_present_plugins('tool'))
+                && is_null($this->taskrecord->timestarted)
+                && has_capability('moodle/site:config', system::instance())
+            ) {
+                $this->runurl = new url('/admin/tool/task/run_adhoctasks.php', ['id' => $this->taskrecord->id]);
+                $this->runlabel = get_string('runnow', 'tool_task');
+            }
         }
     }
 
@@ -103,8 +126,10 @@ class task_indicator implements renderable, templatable {
             $export['message'] = $this->message;
             $export['progress'] = $this->progressbar->export_for_template($output);
             $export['icon'] = $this->icon ? $this->icon->export_for_template($output) : '';
-            $export['redirecturl'] = $this->redirecturl->out();
+            $export['redirecturl'] = $this->redirecturl?->out();
             $export['extraclasses'] = implode(' ', $this->extraclasses);
+            $export['runurl'] = $this->runurl?->out();
+            $export['runlabel'] = $this->runlabel;
             $this->progressbar->init_js();
         }
         return $export;

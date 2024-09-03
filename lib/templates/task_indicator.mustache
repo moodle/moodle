@@ -33,29 +33,36 @@
             "id": "progressbar_test",
             "message": "Recalculating grades",
             "idnumber": "progressbar_test",
+            "class": "stored-progress-bar",
             "width": "500",
             "value": "50"
         }
     }
 }}
 <div class="task-indicator {{extraclasses}}">
-    {{#icon}}
-        <div class="text-center">
-            {{>core/pix_icon}}
-        </div>
-    {{/icon}}
-    <h3 class="text-center">{{heading}}</h3>
-    <p class="text-center">{{message}}</p>
+    <div class="text-center">
+        {{#icon}}
+            <div>
+                {{>core/pix_icon}}
+            </div>
+        {{/icon}}
+        <h2>{{heading}}</h2>
+        <p>{{message}}</p>
+    </div>
+    {{#runurl}}
+        <p class="text-center">
+            <a class="runlink btn btn-primary" href="{{runurl}}" data-idnumber="{{progress.idnumber}}">{{runlabel}}</a>
+        </p>
+    {{/runurl}}
     {{#progress}}
         {{>core/progress_bar}}
     {{/progress}}
+
+
 </div>
 
-{{#redirecturl}}
-    {{#js}}
-        require(['core/task_indicator'], function(TaskIndicator) {
-            TaskIndicator.init('{{progress.idnumber}}', '{{redirecturl}}');
-        });
-    {{/js}}
-{{/redirecturl}}
-
+{{#js}}
+    require(['core/task_indicator'], function(TaskIndicator) {
+        TaskIndicator.init('{{progress.idnumber}}', '{{redirecturl}}');
+    });
+{{/js}}

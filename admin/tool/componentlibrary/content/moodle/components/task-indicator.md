@@ -6,7 +6,7 @@ date: 2024-08-21T00:00:00+01:00
 draft: false
 tags:
 - MDL-81714
-- 4.5
+- 5.0
 ---
 
 {{< mustache template="core/task_indicator" >}}
@@ -89,5 +89,34 @@ if ($taskindicator->has_task_record()) {
 
 {{< /php  >}}
 
+When the task begins running and the progress is updated, the progress bar will automatically be displayed.
+
 If the optional `redirecturl` parameter is set when creating the indicator, the page will automatically reload or redirect to
 this URL when the progress bar completes.
+
+While the task is still queued, admins will see a "Run now" button below the indicator. This is designed for convenience if
+a user is blocked on a job and needs the task run immediately. It will run the specific instance of the task tracked by the
+indicator.
+
+{{< mustache template="core/task_indicator" >}}
+{
+    "heading": "Regrade in progress",
+    "icon": {
+        "attributes": [
+            {"name": "src", "value": "/pix/i/timer.svg"},
+            {"name": "alt", "value": ""}
+        ]
+    },
+    "message": "Grades are being recalculated due to recent changes.",
+    "progress": {
+        "id": "progressbar_test",
+        "message": "Task pending",
+        "idnumber": "progressbar_test",
+        "class": "stored-progress-bar stored-progress-notstarted",
+        "width": "500",
+        "value": "0"
+    },
+    "runurl": "http://example.com/runtask.php?id=1",
+    "runlabel": "Run now"
+}
+{{< /mustache >}}
