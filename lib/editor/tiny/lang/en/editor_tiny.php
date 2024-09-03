@@ -210,6 +210,7 @@ $string['tiny:imageproxy_http_error_unknown_imageproxy_error'] = 'ImageProxy HTT
 $string['tiny:increase_indent'] = 'Increase indent';
 $string['tiny:inline'] = 'Inline';
 $string['tiny:insert'] = 'Insert';
+$string['tiny:insert_accordion'] = 'Insert accordion';
 $string['tiny:insert_template'] = 'Insert template';
 $string['tiny:insert_column_after'] = 'Insert column after';
 $string['tiny:insert_column_before'] = 'Insert column before';
