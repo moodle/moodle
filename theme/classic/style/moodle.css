@@ -29178,7 +29178,6 @@ span.editinstructions .alert-link {
 /* Activity cards */
 .activity {
   list-style: none;
-  position: relative;
   padding-top: 0.25rem;
   margin-top: 0.25rem;
   border-top: 1px solid #dee2e6;
@@ -29190,7 +29189,6 @@ span.editinstructions .alert-link {
 }
 
 .activity-item {
-  position: relative;
   padding: 0.75rem;
   border-radius: 1rem;
 }
@@ -29911,8 +29909,8 @@ span.editinstructions .alert-link {
   margin-top: 1.5rem;
 }
 .bulkenabled .activity-item .bulkselect {
-  position: absolute;
-  left: -2rem;
+  float: left;
+  margin-left: -2rem;
 }
 .bulkenabled .activity-item:has(.delegated-section):hover {
   outline: none !important;
