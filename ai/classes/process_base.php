@@ -17,7 +17,7 @@
 namespace core_ai;
 
 use core_ai\aiactions\base;
-use core_ai\aiactions\responses;
+use core_ai\aiactions\responses\response_base;
 
 /**
  * Base class for provider processors.
@@ -46,7 +46,63 @@ abstract class process_base {
     /**
      * Process the AI request.
      *
-     * @return responses\response_base The result of the action.
+     * @return response_base The result of the action.
      */
-    abstract public function process(): responses\response_base;
+    public function process(): response_base {
+        // Check the rate limiter.
+        $ratelimitcheck = $this->provider->is_request_allowed($this->action);
+        if ($ratelimitcheck !== true) {
+            return $this->get_response(
+                success: false,
+                errorcode: $ratelimitcheck['errorcode'],
+                errormessage: $ratelimitcheck['errormessage'],
+            );
+        }
+
+        // Format the action response object.
+        return $this->prepare_response($this->query_ai_api());
+    }
+
+    /**
+     * Query the AI service.
+     *
+     * @return array The response from the AI service.
+     */
+    abstract protected function query_ai_api(): array;
+
+    /**
+     * Prepare the response object.
+     *
+     * @param array $responsedata The response object.
+     * @return response_base The action response object.
+     */
+    private function prepare_response(array $responsedata): response_base {
+        if ($responsedata['success']) {
+            $response = $this->get_response(
+                success: true,
+            );
+            $response->set_response_data($responsedata);
+
+            return $response;
+        } else {
+            return $this->get_response(
+                success: false,
+                errorcode: $responsedata['errorcode'],
+                errormessage: $responsedata['errormessage'],
+            );
+        }
+    }
+
+    /**
+     * Get the instantiated Response Class for the action described by this processor.
+     *
+     * @param mixed ...$args The arguments to pass to the response class constructor.
+     * @return response_base
+     */
+    protected function get_response(...$args): response_base {
+        $responseclassname = $this->action::get_response_classname();
+        return new $responseclassname(
+            ...$args,
+        );
+    }
 }

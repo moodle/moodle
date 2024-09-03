@@ -69,44 +69,7 @@ abstract class abstract_processor extends process_base {
      */
     abstract protected function handle_api_success(ResponseInterface $response): array;
 
-    /**
-     * Process the AI request.
-     *
-     * @return response_base The result of the action.
-     */
-    public function process(): response_base {
-        // Check the rate limiter.
-        $ratelimitcheck = $this->provider->is_request_allowed($this->action);
-        if ($ratelimitcheck !== true) {
-            return $this->get_response(
-                success: false,
-                errorcode: $ratelimitcheck['errorcode'],
-                errormessage: $ratelimitcheck['errormessage'],
-            );
-        }
-
-        // Format the action response object.
-        return $this->prepare_response($this->query_ai_api());
-    }
-
-    /**
-     * Get the instantiated Response Class for the action described by this processor.
-     *
-     * @param array $args
-     * @return \core_ai\aiactions\responses\response_base
-     */
-    protected function get_response(...$args): response_base {
-        $responseclassname = $this->action::get_response_classname();
-        return new $responseclassname(
-            ...$args,
-        );
-    }
-
-    /**
-     * Query the AI service.
-     *
-     * @return array The response from the AI service.
-     */
+    #[\Override]
     protected function query_ai_api(): array {
         $request = $this->create_request_object(
             userid: $this->provider->generate_userid($this->action->get_configuration('userid')),
@@ -159,28 +122,5 @@ abstract class abstract_processor extends process_base {
         }
 
         return $responsearr;
-    }
-
-    /**
-     * Prepare the response object.
-     *
-     * @param array $responsedata The response object.
-     * @return response_base The action response object.
-     */
-    private function prepare_response(array $responsedata): response_base {
-        if ($responsedata['success']) {
-            $response = $this->get_response(
-                success: true,
-            );
-            $response->set_response_data($responsedata);
-
-            return $response;
-        } else {
-            return $this->get_response(
-                success: false,
-                errorcode: $responsedata['errorcode'],
-                errormessage: $responsedata['errormessage'],
-            );
-        }
     }
 }
