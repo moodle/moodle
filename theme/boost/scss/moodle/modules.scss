@@ -1562,7 +1562,9 @@ $popout-header-height: 4rem;
             margin: 0 map-get($spacers, 2);
         }
     }
-
+    .feedback-item-label {
+        width: 100%;
+    }
     // Feedback edit form.
     #feedback_edit_form {
         [id*=_feedback_item_].feedback_itemlist {

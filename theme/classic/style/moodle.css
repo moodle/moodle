@@ -35015,6 +35015,9 @@ img.userpicture {
   display: inline-block;
   margin: 0 0.5rem;
 }
+.path-mod-feedback .feedback-item-label {
+  width: 100%;
+}
 .path-mod-feedback #feedback_edit_form [id*=_feedback_item_].feedback_itemlist {
   padding: 1rem;
   border: 1px solid #dee2e6;
