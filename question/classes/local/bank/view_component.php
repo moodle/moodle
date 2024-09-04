@@ -55,9 +55,9 @@ abstract class view_component {
      * 200 edit_action
      * 250 copy_action
      * 300 tags_action
-     * 400 delete_action
      * 500 history_action
      * 600 export_xml_action
+     * 2000 delete_action
      * (So, if you want your action at a particular place in the order, there should be space.)
      *
      * If two actions get the same order number, then the tie-break on the sort
