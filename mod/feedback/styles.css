@@ -45,6 +45,10 @@
     margin: 0 .5em;
 }
 
+.path-mod-feedback .feedback-item-label {
+    width: 100%;
+}
+
 /* Analysis page */
 .path-mod-feedback table.analysis {
     width: 100%;
