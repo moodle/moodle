@@ -296,7 +296,7 @@ class administration_display_helper extends \core_cache\administration_helper {
      * @return array
      * @throws coding_exception
      */
-    public function get_store_configuration_from_data(stClass $data): array {
+    public function get_store_configuration_from_data(stdClass $data): array {
         global $CFG;
         $file = $CFG->dirroot . '/cache/stores/' . $data->plugin . '/lib.php';
         if (!file_exists($file)) {
