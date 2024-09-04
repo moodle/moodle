@@ -357,22 +357,24 @@ class redis extends handler implements SessionHandlerInterface {
                         throw new $exceptionclass('Unable to set the Redis Prefix option.');
                     }
                 }
-                $info = $this->connection->info('server');
-                if (!$info) {
-                    throw new $exceptionclass("Failed to fetch server information");
-                }
 
                 // Check the server version.
-                // Note: In case of a TLS connection,
-                // if phpredis client does not communicate immediately with the server the connection hangs.
-                // See https://github.com/phpredis/phpredis/issues/2332.
+                // The session handler requires a version of Redis server with support for SET command options (at least 2.6.12).
+                // Note: In the case of a TLS connection, the connection will hang if the phpredis client does not communicate
+                // with the server immediately after connect(). See https://github.com/phpredis/phpredis/issues/2332.
                 // This version check satisfies that requirement.
-                $version = $info['redis_version'];
-                if (!$version || version_compare($version, static::REDIS_MIN_SERVER_VERSION) <= 0) {
+                try {
+                    $serverversion = $this->connection->info('server')['redis_version'];
+                } catch (RedisException | RedisClusterException $e) {
+                    // Some proxies e.g envoy or twemproxy lack support of INFO command. So just assume we meet the minimum
+                    // version requirement.
+                    $serverversion = self::REDIS_MIN_SERVER_VERSION;
+                }
+                if (version_compare($serverversion, self::REDIS_MIN_SERVER_VERSION) < 0) {
                     throw new $exceptionclass(sprintf(
                         "Version %s is not supported. The minimum version required is %s.",
-                        $version,
-                        static::REDIS_MIN_SERVER_VERSION,
+                        $serverversion,
+                        self::REDIS_MIN_SERVER_VERSION,
                     ));
                 }
 
@@ -382,12 +384,6 @@ class redis extends handler implements SessionHandlerInterface {
                     }
                 }
 
-                // The session handler requires a version of Redis server with support for SET command options (at least 2.6.12).
-                $serverversion = $this->connection->info('server')['redis_version'];
-                if (version_compare($serverversion, self::REDIS_MIN_SERVER_VERSION) <= 0) {
-                    throw new exception('sessionhandlerproblem', 'error', '', null,
-                        'redis server version must be at least ' . self::REDIS_MIN_SERVER_VERSION);
-                }
                 return true;
             } catch (RedisException | RedisClusterException $e) {
                 $redishost = $this->clustermode ? implode(',', $this->host) : $server . ':' . $port;
