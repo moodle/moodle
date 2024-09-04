@@ -1060,7 +1060,7 @@ class renderer extends \plugin_renderer_base {
             $link = '';
             if ($showviewlink) {
                 $previewstr = get_string('viewsubmission', 'assign');
-                $icon = $this->output->pix_icon('t/preview', $previewstr);
+                $icon = $this->output->pix_icon('t/viewdetails', $previewstr);
 
                 $expandstr = get_string('viewfull', 'assign');
                 $expandicon = $this->output->pix_icon('t/switch_plus', $expandstr);
@@ -1177,7 +1177,7 @@ class renderer extends \plugin_renderer_base {
             $link = '';
             if ($showviewlink) {
                 $previewstr = get_string('viewfeedback', 'assign');
-                $icon = $this->output->pix_icon('t/preview', $previewstr);
+                $icon = $this->output->pix_icon('t/viewdetails', $previewstr);
 
                 $expandstr = get_string('viewfull', 'assign');
                 $expandicon = $this->output->pix_icon('t/switch_plus', $expandstr);

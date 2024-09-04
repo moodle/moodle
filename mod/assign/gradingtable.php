@@ -1594,7 +1594,7 @@ class assign_grading_table extends table_sql implements renderable {
         $separator = '';
         if ($showviewlink) {
             $viewstr = get_string('view' . substr($plugin->get_subtype(), strlen('assign')), 'assign');
-            $icon = $this->output->pix_icon('t/preview', $viewstr);
+            $icon = $this->output->pix_icon('t/viewdetails', $viewstr);
             $urlparams = array('id' => $this->assignment->get_course_module()->id,
                                                      'sid' => $item->id,
                                                      'gid' => $item->id,
