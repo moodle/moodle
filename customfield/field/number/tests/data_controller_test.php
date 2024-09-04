@@ -132,17 +132,17 @@ final class data_controller_test extends advanced_testcase {
             'Export float value' => [42, 42.0, [
                 'decimalplaces' => 2,
                 'display' => '{value}',
-                'displaywhenzero' => 0],
-            ],
+                'displaywhenzero' => 0,
+            ]],
             'Export value with a prefix' => [10, '$ 10.00', [
                 'decimalplaces' => 2,
                 'display' => $template,
-                'displaywhenzero' => 0],
-            ],
+                'displaywhenzero' => 0,
+            ]],
             'Export value when zero' => [0, 'Unknown', [
                 'display' => '{value}',
-                'displaywhenzero' => $whenzero],
-            ],
+                'displaywhenzero' => $whenzero,
+            ]],
         ];
     }
 

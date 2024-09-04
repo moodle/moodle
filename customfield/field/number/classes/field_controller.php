@@ -143,7 +143,7 @@ class field_controller  extends \core_customfield\field_controller {
      * @return string|null
      */
     public function prepare_field_for_display(mixed $value, ?context $context = null): ?string {
-        if ((float)$value == 0) {
+        if ((float) $value == 0) {
             $value = $this->get_configdata_property('displaywhenzero');
             if ((string) $value === '') {
                 return null;
