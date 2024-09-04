@@ -52,7 +52,6 @@ Feature: Award badges based on activity completion
 
   Scenario: Student does not earn a badge using activity completion when does not get passing grade
     Given I navigate to "Badges" in current page administration
-    And I press "Manage badges"
     And I follow "Course Badge 1"
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Activity completion"
@@ -69,7 +68,7 @@ Feature: Award badges based on activity completion
     And user "student2" has attempted "Test quiz name 1" with responses:
       | slot | response |
       | 1    | False    |
-    And I navigate to "Badges > Manage badges" in current page administration
+    And I navigate to "Badges" in current page administration
     And I follow "Course Badge 1"
     Then I should see "Recipients (1)"
     And I select "Recipients (1)" from the "jump" singleselect
@@ -78,7 +77,6 @@ Feature: Award badges based on activity completion
 
   Scenario: Students with any grades in an activity will receive a badge if the completion condition is set to receive any grade
     Given I navigate to "Badges" in current page administration
-    And I press "Manage badges"
     And I follow "Course Badge 2"
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Activity completion"
@@ -94,7 +92,7 @@ Feature: Award badges based on activity completion
     And user "student2" has attempted "Test quiz name 2" with responses:
       | slot | response |
       | 1    | False    |
-    And I navigate to "Badges > Manage badges" in current page administration
+    And I navigate to "Badges" in current page administration
     And I follow "Course Badge 2"
     Then I should see "Recipients (2)"
     And I select "Recipients (2)" from the "jump" singleselect
@@ -111,7 +109,6 @@ Feature: Award badges based on activity completion
       | slot | response |
       | 1    | False    |
     And I navigate to "Badges" in current page administration
-    And I press "Manage badges"
     And I follow "Course Badge 1"
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Activity completion"

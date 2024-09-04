@@ -24902,6 +24902,23 @@ ul.badges {
   color: #f0ad4e;
 }
 
+#page-badges-index #page .badges-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#page-badges-index #page h2 {
+  margin: 0; /* Removes default margins */
+}
+#page-badges-index #page #action_bar {
+  margin: 0; /* Removes any default margin that might affect alignment */
+}
+#page-badges-index #page .tertiary-navigation.container-fluid, #page-badges-index #page .tertiary-navigation.container-sm, #page-badges-index #page .tertiary-navigation.container-md, #page-badges-index #page .tertiary-navigation.container-lg, #page-badges-index #page .tertiary-navigation.container-xl {
+  width: auto;
+  height: 50px;
+  padding-top: 0;
+}
+
 #page-badges-award .recipienttable tr td {
   vertical-align: top;
 }

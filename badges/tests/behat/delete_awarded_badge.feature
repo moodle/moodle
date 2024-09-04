@@ -19,33 +19,33 @@ Feature: Delete course badge already awarded
   @javascript
   Scenario Outline: Delete course badge already awarded to student
     Given the following "core_badges > Badges" exist:
-      | name        | course | description             | image                        | status | type |
-      | <badgename> | C1     | <badgename> description | badges/tests/behat/badge.png | active | 2    |
+      | name            | course | description                 | image                        | status | type |
+      | Testing badge 1 | C1     | Testing badge 1 description | badges/tests/behat/badge.png | active | 2    |
     And the following "core_badges > Criterias" exist:
-      | badge       | role           |
-      | <badgename> | editingteacher |
+      | badge           | role           |
+      | Testing badge 1 | editingteacher |
     And the following "core_badges > Issued badges" exist:
-      | badge       | user     |
-      | <badgename> | student1 |
+      | badge           | user     |
+      | Testing badge 1 | student1 |
     When I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     And I click on "Student 1" "link"
-    Then I should see "<badgename>"
+    Then I should see "Testing badge 1"
     And I am on the "Course 1" course page
-    # Navigate to Manage Badges page in order to delete the badge
-    And I navigate to "Badges > Manage badges" in current page administration
+    # Navigate to Badges page in order to delete the badge
+    And I navigate to "Badges" in current page administration
     # Delete the badge
-    And I press "Delete" action in the "<badgename>" report row
+    And I press "Delete" action in the "Testing badge 1" report row
     And I press "<deleteoption>"
+    And the following <shouldtable> exist in the "reportbuilder-table" table:
+      | Name            | Badge status |
+      | Testing badge 1 | Archived     |
+    And I <shouldmsg> see "There are no matching badges available for users to earn"
+    # Confirm that badge is retained in the first case as awarded badge but not in the second.
     And I am on the "Course 1" "enrolled users" page
     And I click on "Student 1" "link"
-    # Confirm that Badge 1 is retained as awarded badge but Badge 2 is not
-    And I <visibility> see "<badgename>"
-    And I am on the "Course 1" course page
-    # Navigate to Badges page to confirm that no badges exist, hence, Manage badges would not exist
-    And I navigate to "Badges" in current page administration
-    # Confirm that badges are sucessfully deleted
-    And I should see "There are no matching badges available for users to earn"
+    And I <shouldtable> see "Testing badge 1"
+
     Examples:
-      | badgename | deleteoption                             | visibility |
-      | Badge 1   | Delete and keep existing issued badges   | should     |
-      | Badge 2   | Delete and remove existing issued badges | should not |
+      | deleteoption                             | shouldtable | shouldmsg  |
+      | Delete and keep existing issued badges   | should      | should not |
+      | Delete and remove existing issued badges | should not  | should     |

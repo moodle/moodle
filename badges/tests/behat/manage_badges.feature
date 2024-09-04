@@ -23,9 +23,9 @@ Feature: Manage badges
     And I press "Save changes"
     And I click on "Back" "button"
     Then the following should exist in the "reportbuilder-table" table:
-      | Name             | Version | Badge status  |
-      | Badge #1         | 1.0     | Not available |
-      | Copy of Badge #1 | 1.0     | Not available |
+      | Name             | Badge status  |
+      | Badge #1         | Not available |
+      | Copy of Badge #1 | Not available |
 
   Scenario: Edit a badge
     Given I log in as "admin"
@@ -37,8 +37,10 @@ Feature: Manage badges
     And I press "Save changes"
     And I click on "Back" "button"
     Then the following should exist in the "reportbuilder-table" table:
-      | Name          | Version | Badge status  |
-      | New Badge #1  | 1.1     | Not available |
+      | Name          | Badge status  |
+      | New Badge #1  | Not available |
+    And I follow "New Badge #1"
+    And I should see "1.1"
 
   Scenario: Delete a badge
     Given I log in as "admin"

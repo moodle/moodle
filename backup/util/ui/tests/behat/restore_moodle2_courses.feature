@@ -285,7 +285,7 @@ Feature: Restore Moodle 2 course backups
       | Confirmation | Filename                         | test_backup.mbz     |
     When I restore "test_backup.mbz" backup into a new course using this options:
       | Settings | Include badges | 1 |
-    And I navigate to "Badges > Manage badges" in current page administration
+    And I navigate to "Badges" in current page administration
     Then I should see "Published course badge"
     And I should see "Unpublished course badge"
     And I should see "Unpublished without criteria course badge"

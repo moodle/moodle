@@ -1,0 +1,7 @@
+issueNumber: MDL-82503
+notes:
+  core_badges:
+    - message: >-
+        The $showmanage parameter in the core_badges\output\standard_action_bar
+        constructor has been deprecated and should not be used anymore.
+      type: deprecated

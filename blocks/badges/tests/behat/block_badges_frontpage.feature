@@ -28,7 +28,7 @@ Feature: Enable Block Badges on the frontpage and view awarded badges
       | badge  | Badge 1       |
       | role   | editingteacher |
     And I am on the "Course 1" "course" page logged in as "teacher1"
-    And I navigate to "Badges > Manage badges" in current page administration
+    And I navigate to "Badges" in current page administration
     And I follow "Badge 1"
     And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"

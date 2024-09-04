@@ -38,7 +38,7 @@ Feature: Award badges with separate groups
       | status      | 0                            |
       | type        | 2                            |
     And I am on the "Course 1" "course" page logged in as "teacher1"
-    And I navigate to "Badges > Manage badges" in current page administration
+    And I navigate to "Badges" in current page administration
     And I follow "Course Badge"
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Manual issue by role"
@@ -55,7 +55,7 @@ Feature: Award badges with separate groups
   Scenario: Award course badge as non-editing teacher with only one group
     When I log in as "teacher2"
     And I am on "Course 1" course homepage
-    And I navigate to "Badges > Manage badges" in current page administration
+    And I navigate to "Badges" in current page administration
     And I follow "Course Badge"
     And I press "Award badge"
     And I set the field "role" to "Non-editing teacher"
@@ -68,7 +68,7 @@ Feature: Award badges with separate groups
     And I set the field "potentialrecipients[]" to "Student 2 (student2@example.com)"
     And I press "Award badge"
     And I am on "Course 1" course homepage
-    And I navigate to "Badges > Manage badges" in current page administration
+    And I navigate to "Badges" in current page administration
     And I follow "Course Badge"
     And I should see "Recipients (1)"
     And I log out
@@ -89,7 +89,7 @@ Feature: Award badges with separate groups
     And I log out
     When I log in as "teacher2"
     And I am on "Course 1" course homepage
-    And I navigate to "Badges > Manage badges" in current page administration
+    And I navigate to "Badges" in current page administration
     And I follow "Course Badge"
     And I press "Award badge"
     And I set the field "role" to "Non-editing teacher"
@@ -114,7 +114,7 @@ Feature: Award badges with separate groups
     And I log out
     When I log in as "teacher2"
     And I am on "Course 1" course homepage
-    And I navigate to "Badges > Manage badges" in current page administration
+    And I navigate to "Badges" in current page administration
     And I follow "Course Badge"
     And I press "Award badge"
     # Teacher 2 shouldn't be able to go further
@@ -123,7 +123,7 @@ Feature: Award badges with separate groups
   @javascript
   Scenario: Editing teacher can award badge to members of separate groups
     Given I am on the "Course 1" course page logged in as teacher1
-    And I navigate to "Badges > Manage badges" in current page administration
+    And I navigate to "Badges" in current page administration
     And I follow "Course Badge"
     And I press "Award badge"
     When I set the field "role" to "Teacher"
@@ -155,7 +155,7 @@ Feature: Award badges with separate groups
     And I set the field "Group mode" to "Visible groups"
     And I press "Save and display"
     When I am on the "Course 1" course page logged in as <loggedinuser>
-    And I navigate to "Badges > Manage badges" in current page administration
+    And I navigate to "Badges" in current page administration
     And I follow "Course Badge"
     And I press "Award badge"
     And I set the field "role" to "<awarder>"
@@ -196,7 +196,7 @@ Feature: Award badges with separate groups
     And I set the field "Group mode" to "No groups"
     And I press "Save and display"
     When I am on the "Course 1" course page logged in as <loggedinuser>
-    And I navigate to "Badges > Manage badges" in current page administration
+    And I navigate to "Badges" in current page administration
     And I follow "Course Badge"
     And I press "Award badge"
     And I set the field "role" to "<awarder>"

@@ -69,9 +69,7 @@ class manage_badge_action_bar_test extends \advanced_testcase {
                 ]
             ],
             "Test tertiary nav as a student" => [
-                "student", [
-                    'Overview'
-                ]
+                "student", [],
             ]
         ];
     }

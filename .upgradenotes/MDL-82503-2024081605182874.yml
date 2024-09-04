@@ -1,0 +1,7 @@
+issueNumber: MDL-82503
+notes:
+  core_badges:
+    - message: >-
+        The badges/view.php page has been deprecated and merged with
+        badges/index.php. Please, use badges/index.php instead.
+      type: deprecated

@@ -23,7 +23,7 @@ Feature: Enable Block Badges in a course
       | Badge 1 | editingteacher |
       | Badge 2 | editingteacher |
     And I am on the "Course 1" "course" page logged in as "teacher1"
-    And I navigate to "Badges > Manage badges" in current page administration
+    And I navigate to "Badges" in current page administration
     And I follow "Badge 1"
     And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
@@ -31,7 +31,7 @@ Feature: Enable Block Badges in a course
     And I press "Award badge"
     # Issue Badge 2 of 2
     And I am on "Course 1" course homepage
-    And I navigate to "Badges > Manage badges" in current page administration
+    And I navigate to "Badges" in current page administration
     And I follow "Badge 2"
     And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
