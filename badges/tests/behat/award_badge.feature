@@ -73,7 +73,7 @@ Feature: Award badges
     And I should not see "Add a new badge"
     # Student 1 should have both badges in the course too.
     And I am on "Course 1" course homepage
-    And I navigate to "Badges" in current page administration
+    And I follow "Badges"
     And I should see "Course Badge 1"
     And I should see "Course Badge 2"
     And I should not see "Course badge 1 description"
