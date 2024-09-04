@@ -120,12 +120,8 @@ class data_controller extends \core_customfield\data_controller {
      * @return string|null
      */
     public function export_value(): ?string {
-        $value = $this->get_value();
-        if ($this->is_empty($value)) {
-            return null;
-        }
-
-        $decimalplaces = (int) $this->get_field()->get_configdata_property('decimalplaces');
-        return format_float((float) $value, $decimalplaces);
+        /** @var field_controller $field */
+        $field = $this->get_field();
+        return $field->prepare_field_for_display($this->get_value(), $this->get_context());
     }
 }

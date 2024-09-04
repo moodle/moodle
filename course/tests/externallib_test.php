@@ -892,6 +892,49 @@ final class externallib_test extends externallib_advanced_testcase {
             'value' => userdate(1580389200),
             'valueraw' => 1580389200,
         ], reset($course['customfields']));
+
+        // Set the multilang filter to apply to strings + reset filer caches.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+        \filter_manager::reset_caches();
+
+        // Let's create a custom field (number), and test the placeholders/multilang display.
+        /** @var core_customfield_generator $cfgenerator */
+        $cfgenerator = $this->getDataGenerator()->get_plugin_generator('core_customfield');
+        $numberfieldata = [
+            'categoryid' => $fieldcategory->get('id'),
+            'name' => 'Price',
+            'shortname' => 'price',
+            'type' => 'number',
+            'configdata' => [
+                'display' => '{value}',
+                'decimalplaces' => 2,
+            ],
+        ];
+
+        // Create a number custom field with default display template.
+        $numberfield = $cfgenerator->create_field($numberfieldata);
+        $cfgenerator->add_instance_data($numberfield, $newcourse->id, 15);
+
+        // Create a number custom field with multilang display template.
+        $numberfieldata['name'] = 'Price (multilang)';
+        $numberfieldata['shortname'] = 'pricemultilang';
+        $numberfieldata['configdata']['display'] = '<span lang="en" class="multilang">$ {value}</span>'
+            . '<span lang="es" class="multilang">€ {value}</span>';
+        $numberfield1 = $cfgenerator->create_field($numberfieldata);
+        $cfgenerator->add_instance_data($numberfield1, $newcourse->id, 20);
+
+        $courses = external_api::clean_returnvalue(
+            core_course_external::get_courses_returns(),
+            core_course_external::get_courses(['ids' => [$newcourse->id]])
+        );
+
+        $course = reset($courses);
+        $this->assertCount(3, $course['customfields']);
+
+        // Assert the received number custom fields display placeholders correctly with multilang filter when applied.
+        $this->assertEquals('15.00', $course['customfields'][1]['value']);
+        $this->assertEquals('$ 20.00', $course['customfields'][2]['value']);
     }
 
     /**

@@ -26,6 +26,18 @@ defined('MOODLE_INTERNAL') || die;
 
 $string['decimalplaces'] = 'Decimal places';
 $string['defaultvalueconfigerror'] = 'Default value must be between minimum and maximum';
+$string['display'] = 'Display template';
+$string['display_help'] = 'How to display the value of the field. Use the following placeholders:
+
+* **{value}** - display value in a general format (float with decimals configured in the field)
+* **$ {value}** - price in dollars
+* **{value} hrs** - duration in hours';
+$string['displayvalueconfigerror'] = 'The placeholder is not invalid';
+$string['displaywhenzero'] = 'Display when zero';
+$string['displaywhenzero_help'] = 'How to display the field value when the value is "0". For example, in case of a price you can display the word "Free" but in case of the duration you may want to leave it empty since it means that the duration was not estimated.
+
+Leave empty if you do not want to display anything at all when the value is set to "0".';
+$string['headerdisplaysettings'] = 'Display format';
 $string['maximumvalue'] = 'Maximum value';
 $string['maximumvalueerror'] = 'Value must be less than or equal to {$a}';
 $string['minimumvalue'] = 'Minimum value';
