@@ -194,6 +194,31 @@ class recording_proxy extends proxy_base {
     }
 
     /**
+     * Helper function to retrieve recordings that failed to be fetched from a BigBlueButton server.
+     *
+     * @param array $keyids list of recordingids
+     * @return array array of recording recordingids not fetched from server
+     *  and sorted by {@see recording_proxy::sort_recordings}
+     */
+    public static function fetch_missing_recordings(array $keyids = []): array {
+        $unfetchedids = [];
+        $pagesize = 25;
+        // If $ids is empty return array() to prevent a getRecordings with meetingID and recordID set to ''.
+        if (empty($keyids)) {
+            return $unfetchedids;
+        }
+        while ($ids = array_splice($keyids, 0, $pagesize)) {
+            // We make getRecordings API call to check recordings are successfully retrieved.
+            $xml = self::fetch_endpoint_xml('getRecordings', ['recordID' => implode(',', $ids), 'state' => 'any']);
+            if (!$xml || $xml->returncode != 'SUCCESS' || !isset($xml->recordings)) {
+                $unfetchedids = array_merge($unfetchedids, $ids);
+                continue; // We will keep record of all unfetched ids.
+            }
+        }
+        return $unfetchedids;
+    }
+
+    /**
      * Helper function to fetch recordings from a BigBlueButton server.
      *
      * @param array $keyids list of meetingids
