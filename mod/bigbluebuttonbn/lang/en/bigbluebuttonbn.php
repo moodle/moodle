@@ -43,6 +43,7 @@ $string['bigbluebuttonbn:protectrecordings'] = 'Protect recordings';
 $string['bigbluebuttonbn:unprotectrecordings'] = 'Unprotect recordings';
 $string['bigbluebuttonbn:deleterecordings'] = 'Delete recordings';
 $string['bigbluebuttonbn:importrecordings'] = 'Import recordings';
+$string['bigbluebuttonbn:seepresentation'] = 'Always see presentation file on activity page';
 $string['bigbluebuttonbn:viewallrecordingformats'] = 'View all recording formats';
 $string['bigbluebuttonbn'] = 'BigBlueButton';
 $string['cannotperformaction'] = 'Cannot perform action {$a} on this recording';
@@ -213,6 +214,11 @@ $string['config_preuploadpresentation_editable_description'] = 'Preupload presen
 
 $string['config_presentation_default'] = 'Default presentation file';
 $string['config_presentation_default_description'] = 'A file may be provided for use in all rooms.';
+
+$string['config_showpresentation_default'] = 'Show presentation file on activity page';
+$string['config_showpresentation_default_description'] = 'Allow students to access the preuploaded presentation file prior to the session on the activity page';
+$string['config_showpresentation_editable'] = 'Show presentation file editable';
+$string['config_showpresentation_editable_description'] = 'Show presentation file feature is editable in the UI when the room or conference is added or updated.';
 
 $string['config_participant'] = 'Participants';
 $string['config_participant_description'] = 'These settings define the default role for participants.';
@@ -396,6 +402,7 @@ $string['mod_form_field_participant_list_action_add'] = 'Add';
 $string['mod_form_field_participant_list_action_remove'] = 'Remove';
 $string['mod_form_field_participant_bbb_role_moderator'] = 'Moderator';
 $string['mod_form_field_participant_bbb_role_viewer'] = 'Viewer';
+$string['mod_form_field_showpresentation'] = 'Show presentation file on activity page';
 $string['mod_form_field_instanceprofiles'] = 'Instance type';
 $string['mod_form_field_instanceprofiles_help'] = 'If a session is to be recorded, select \'Room with recordings\', otherwise \'Room only\'. After a session is recorded, if there are to be no more sessions, select \'Recordings only\'.';
 $string['mod_form_field_muteonstart'] = 'Mute on start';

@@ -123,6 +123,8 @@ class config {
             'default_dpa_accepted' => false,
             'poll_interval' => bigbluebutton_proxy::DEFAULT_POLL_INTERVAL,
             'checksum_algorithm' => self::DEFAULT_CHECKSUM_ALGORITHM,
+            'showpresentation_default' => true,
+            'showpresentation_editable' => false,
         ];
     }
 
@@ -251,6 +253,8 @@ class config {
             'welcome_editable' => self::get('welcome_editable'),
             'poll_interval' => self::get('poll_interval'),
             'guestaccess_enabled' => self::get('guestaccess_enabled'),
+            'showpresentation_editable' => self::get('showpresentation_editable'),
+            'showpresentation_default' => self::get('showpresentation_default'),
         ];
     }
 

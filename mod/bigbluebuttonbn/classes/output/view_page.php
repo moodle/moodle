@@ -86,8 +86,10 @@ class view_page implements renderable, templatable {
         }
 
         if ($this->instance->is_feature_enabled('showroom')) {
+            $showpresentation = $this->instance->should_show_presentation();
             $roomdata = meeting::get_meeting_info_for_instance($this->instance);
             $roomdata->haspresentations = false;
+            $roomdata->showpresentations = $showpresentation;
             if (!empty($roomdata->presentations)) {
                 $roomdata->haspresentations = true;
             }

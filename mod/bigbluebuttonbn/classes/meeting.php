@@ -283,6 +283,7 @@ class meeting {
         $presentation = $instance->get_presentation(); // This is for internal use.
         if (!empty($presentation)) {
             $meetinginfo->presentations[] = $presentation;
+            $meetinginfo->showpresentations = $instance->should_show_presentation();
         }
         $meetinginfo->attendees = [];
         if (!empty($info['attendees'])) {
