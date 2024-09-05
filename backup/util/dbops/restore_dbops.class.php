@@ -1826,8 +1826,10 @@ abstract class restore_dbops {
             }
 
             // Ensure we don't overflow maximum length of name fields, in multi-byte safe manner.
-            $currentfullname = core_text::substr($fullname, 0, 254 - strlen($suffixfull)) . $suffixfull;
-            $currentshortname = core_text::substr($shortname, 0, 100 - strlen($suffixshort)) . $suffixshort;
+            $currentfullname = core_text::substr($fullname, 0,
+                    \core_course\constants::FULLNAME_MAXIMUM_LENGTH - strlen($suffixfull)) . $suffixfull;
+            $currentshortname = core_text::substr($shortname, 0,
+                    \core_course\constants::SHORTNAME_MAXIMUM_LENGTH - strlen($suffixshort)) . $suffixshort;
 
             $coursefull  = $DB->get_record_select('course', 'fullname = ? AND id != ?',
                     array($currentfullname, $courseid), '*', IGNORE_MULTIPLE);
