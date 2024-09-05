@@ -425,6 +425,8 @@ define('FEATURE_CONTROLS_GRADE_VISIBILITY', 'controlsgradevisbility');
 /** True if module supports plagiarism plugins */
 define('FEATURE_PLAGIARISM', 'plagiarism');
 
+/** True if module supports completion (true by default) */
+define('FEATURE_COMPLETION', 'completion_enabled');
 /** True if module has code to track whether somebody viewed it */
 define('FEATURE_COMPLETION_TRACKS_VIEWS', 'completion_tracks_views');
 /** True if module has custom completion rules */

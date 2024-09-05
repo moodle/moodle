@@ -276,6 +276,9 @@ class manager {
      */
     public static function can_edit_bulk_completion($courseorid, $cm = null) {
         if ($cm) {
+            if (!plugin_supports('mod', $cm->modname, FEATURE_COMPLETION, true)) {
+                return false;
+            }
             return $cm->uservisible && has_capability('moodle/course:manageactivities', $cm->context);
         }
         $coursecontext = context_course::instance(is_object($courseorid) ? $courseorid->id : $courseorid);
