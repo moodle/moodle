@@ -376,8 +376,11 @@ class quizaccess_seb extends access_rule_base {
      */
     private function get_invalid_key_error_message() : string {
         // Return error message with download link and links to get the seb config.
-        return get_string('invalidkeys', 'quizaccess_seb')
-            . $this->display_buttons($this->get_action_buttons());
+        if ($this->accessmanager->is_using_seb()) {
+            return get_string('invalidkeys', 'quizaccess_seb')
+                . $this->display_buttons($this->get_action_buttons());
+        }
+        return $this->display_buttons($this->get_action_buttons());
     }
 
     /**
