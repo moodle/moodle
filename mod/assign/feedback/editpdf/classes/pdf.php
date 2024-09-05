@@ -734,7 +734,7 @@ class pdf extends TcpdfFpdi {
         $gsexec = \escapeshellarg($CFG->pathtogs);
         $tempdstarg = \escapeshellarg($tempdst);
         $tempsrcarg = \escapeshellarg($tempsrc);
-        $command = "$gsexec -q -sDEVICE=pdfwrite -dPreserveAnnots=false -dSAFER -dBATCH -dNOPAUSE "
+        $command = "$gsexec -q -sDEVICE=pdfwrite -dPreserveAnnots=false -dSAFER -dBATCH -dNOPAUSE -dCompatibilityLevel=1.4 "
             . "-sOutputFile=$tempdstarg $tempsrcarg";
 
         exec($command);
