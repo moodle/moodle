@@ -70,6 +70,9 @@ class get_edit_grading_page_data extends external_api {
         require_capability('mod/quiz:manage', $quizobj->get_context());
         self::validate_context($quizobj->get_context());
 
+        // Set dummy URL to stop debugging in the renderer (TODO: remove as part of MDL-76728).
+        $PAGE->set_url('/');
+
         $structure = $quizobj->get_structure();
         $editpage = new edit_grading_page($structure);
         return json_encode($editpage->export_for_template($PAGE->get_renderer('core')));
