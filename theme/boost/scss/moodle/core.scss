@@ -3086,6 +3086,10 @@ blockquote {
     border-left: 5px solid $gray-400;
 }
 
+.page-header-headings {
+    background-color: $body-bg;
+}
+
 /* Prevent long strings exceeding page width */
 .page-header-headings,
 .coursename,
