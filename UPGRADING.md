@@ -18,6 +18,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - OPEN_BADGES_V1 is deprecated and should not be used anymore.
 
   For more information see [MDL-70983](https://tracker.moodle.org/browse/MDL-70983)
+- The course_badges systemreport has been deprecated and merged with the badges systemreport. Please, use the badges systemreport instead.
+
+  For more information see [MDL-82503](https://tracker.moodle.org/browse/MDL-82503)
+- The $showmanage parameter in the core_badges\output\standard_action_bar constructor has been deprecated and should not be used anymore.
+
+  For more information see [MDL-82503](https://tracker.moodle.org/browse/MDL-82503)
+- The badges/view.php page has been deprecated and merged with badges/index.php. Please, use badges/index.php instead.
+
+  For more information see [MDL-82503](https://tracker.moodle.org/browse/MDL-82503)
 
 #### Removed
 
@@ -289,6 +298,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Add optional icon and title to notification. Two parameters have been added to the `core\output\notification` so when creating a notification you can pass an icon and a title.
 
   For more information see [MDL-82297](https://tracker.moodle.org/browse/MDL-82297)
+- Add set_disabled_option method to url_select to enable or disable an option from its url (the key for the option).
+
+  For more information see [MDL-82490](https://tracker.moodle.org/browse/MDL-82490)
 - The Moodle autoloader should now be registered using `\core\component::register_autoloader` rather than manually doing so in any exceptional location which requires it. It is not normally necessary to include the autoloader manually, as it is registered automatically when the Moodle environment is bootstrapped.
 
   For more information see [MDL-82747](https://tracker.moodle.org/browse/MDL-82747)
@@ -556,6 +568,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Webservices `core_course_get_courses_by_field` now accepts a new parameter `sectionid` to be able to retrieve the course that has the indicated section
 
   For more information see [MDL-81699](https://tracker.moodle.org/browse/MDL-81699)
+- Added new 'activitychooserbutton' output class to display the activitychooser button. New action_links can be added to the button via hooks converting it into a dropdown.
+
+  For more information see [MDL-81767](https://tracker.moodle.org/browse/MDL-81767)
+- New `core_course\hook\before_activitychooserbutton_exported` hook added to allow third-party plugins to extend activity chooser button options
+
+  For more information see [MDL-81767](https://tracker.moodle.org/browse/MDL-81767)
 - i_open_section_edit_menu(), i_show_section(), i_hide_section(), i_wait_until_section_is_available(), show_section_link_exists(), hide_section_link_exists() and section_exists() functions have been improved to accept not only section number but also section name.
 
   For more information see [MDL-82259](https://tracker.moodle.org/browse/MDL-82259)
@@ -806,6 +824,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   If `istrackeduser` is pre-computed for the course module's course, it can be provided here to avoid an additional function call.
 
   For more information see [MDL-81610](https://tracker.moodle.org/browse/MDL-81610)
+- Added new 'create_module' webservice to create new module (with quickcreate feature) instances in the course.
+
+  For more information see [MDL-81767](https://tracker.moodle.org/browse/MDL-81767)
 - New $disabled parameter has been added to select, select_optgroup and select_option html_writers to create disabled option elements.
 
   For more information see [MDL-82146](https://tracker.moodle.org/browse/MDL-82146)
@@ -823,6 +844,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - get_overall_completion_state() function could also return COMPLETION_COMPLETE_FAIL and not only COMPLETION_COMPLETE and COMPLETION_INCOMPLETE
 
   For more information see [MDL-81749](https://tracker.moodle.org/browse/MDL-81749)
+
+### mod
+
+#### Added
+
+- Added new FEATURE_QUICKCREATE for modules that can be quickly created in the course wihout filling a previous form.
+
+  For more information see [MDL-81767](https://tracker.moodle.org/browse/MDL-81767)
 
 ### core_report
 
@@ -923,6 +952,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-82212](https://tracker.moodle.org/browse/MDL-82212)
 
+### core_availability
+
+#### Removed
+
+- The previously deprecated renderer `render_core_availability_multiple_messages` method has been removed
+
+  For more information see [MDL-82223](https://tracker.moodle.org/browse/MDL-82223)
+
 ### core_filters
 
 #### Added
@@ -944,6 +981,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Mobile support via plugin has been removed.
 
   For more information see [MDL-82447](https://tracker.moodle.org/browse/MDL-82447)
+
+#### Added
+
+- Added new meeting_info value to show presentation file on BBB activity page
+
+  For more information see [MDL-82520](https://tracker.moodle.org/browse/MDL-82520)
 
 ### customfield_select
 

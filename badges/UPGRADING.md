@@ -10,6 +10,15 @@
 - OPEN_BADGES_V1 is deprecated and should not be used anymore.
 
   For more information see [MDL-70983](https://tracker.moodle.org/browse/MDL-70983)
+- The course_badges systemreport has been deprecated and merged with the badges systemreport. Please, use the badges systemreport instead.
+
+  For more information see [MDL-82503](https://tracker.moodle.org/browse/MDL-82503)
+- The $showmanage parameter in the core_badges\output\standard_action_bar constructor has been deprecated and should not be used anymore.
+
+  For more information see [MDL-82503](https://tracker.moodle.org/browse/MDL-82503)
+- The badges/view.php page has been deprecated and merged with badges/index.php. Please, use badges/index.php instead.
+
+  For more information see [MDL-82503](https://tracker.moodle.org/browse/MDL-82503)
 
 ### Removed
 

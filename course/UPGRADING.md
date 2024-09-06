@@ -19,6 +19,12 @@
 - Webservices `core_course_get_courses_by_field` now accepts a new parameter `sectionid` to be able to retrieve the course that has the indicated section
 
   For more information see [MDL-81699](https://tracker.moodle.org/browse/MDL-81699)
+- Added new 'activitychooserbutton' output class to display the activitychooser button. New action_links can be added to the button via hooks converting it into a dropdown.
+
+  For more information see [MDL-81767](https://tracker.moodle.org/browse/MDL-81767)
+- New `core_course\hook\before_activitychooserbutton_exported` hook added to allow third-party plugins to extend activity chooser button options
+
+  For more information see [MDL-81767](https://tracker.moodle.org/browse/MDL-81767)
 - i_open_section_edit_menu(), i_show_section(), i_hide_section(), i_wait_until_section_is_available(), show_section_link_exists(), hide_section_link_exists() and section_exists() functions have been improved to accept not only section number but also section name.
 
   For more information see [MDL-82259](https://tracker.moodle.org/browse/MDL-82259)

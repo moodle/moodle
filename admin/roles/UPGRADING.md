@@ -16,4 +16,3 @@
   * kill_user_sessions use destroy_user_sessions instead
 
   For more information see [MDL-66151](https://tracker.moodle.org/browse/MDL-66151)
-

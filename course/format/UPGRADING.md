@@ -8,6 +8,9 @@
   If `istrackeduser` is pre-computed for the course module's course, it can be provided here to avoid an additional function call.
 
   For more information see [MDL-81610](https://tracker.moodle.org/browse/MDL-81610)
+- Added new 'create_module' webservice to create new module (with quickcreate feature) instances in the course.
+
+  For more information see [MDL-81767](https://tracker.moodle.org/browse/MDL-81767)
 - New $disabled parameter has been added to select, select_optgroup and select_option html_writers to create disabled option elements.
 
   For more information see [MDL-82146](https://tracker.moodle.org/browse/MDL-82146)

@@ -14,4 +14,3 @@
     If true, it will trigger the after_file_created hook to re-create the image.
 
   For more information see [MDL-75850](https://tracker.moodle.org/browse/MDL-75850)
-

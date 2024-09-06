@@ -252,6 +252,9 @@
 - Add optional icon and title to notification. Two parameters have been added to the `core\output\notification` so when creating a notification you can pass an icon and a title.
 
   For more information see [MDL-82297](https://tracker.moodle.org/browse/MDL-82297)
+- Add set_disabled_option method to url_select to enable or disable an option from its url (the key for the option).
+
+  For more information see [MDL-82490](https://tracker.moodle.org/browse/MDL-82490)
 - The Moodle autoloader should now be registered using `\core\component::register_autoloader` rather than manually doing so in any exceptional location which requires it. It is not normally necessary to include the autoloader manually, as it is registered automatically when the Moodle environment is bootstrapped.
 
   For more information see [MDL-82747](https://tracker.moodle.org/browse/MDL-82747)
