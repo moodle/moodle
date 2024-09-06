@@ -36,5 +36,8 @@ Feature: Files added in folder activity are visible in the recent activity block
     And "//img[@alt='empty.txt']" "xpath_element" should exist
     And "//img[contains(@src, 'preview=tinyicon')]" "xpath_element" should exist
     # Confirm files are downloadable
-    And following "empty.txt" should download between "1" and "3000" bytes
-    And following "gd-logo.png" should download between "1" and "3000" bytes
+    And following "empty.txt" should download a file that:
+      | Has mimetype  | text/plain                      |
+      | Contains text | empty file for testing purposes |
+    And following "gd-logo.png" should download a file that:
+      | Has mimetype  | image/png |
