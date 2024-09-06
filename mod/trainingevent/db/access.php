@@ -82,6 +82,18 @@ $capabilities = array(
             'manager' => CAP_ALLOW,
         )
     ),
+    
+    'mod/trainingevent:viewallattendees' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'companycourseeditor' => CAP_ALLOW,
+            'companycoursenoneditor' => CAP_ALLOW,
+            'clientadministrator' => CAP_ALLOW,
+        )
+    ),
 
     'mod/trainingevent:resetattendees' => array(
         'captype' => 'read',

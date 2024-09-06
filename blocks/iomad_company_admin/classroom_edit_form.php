@@ -116,7 +116,13 @@ if ($mform->is_cancelled()) {
             $data->capacity = 0;
         }
     }
-
+    
+    if (!empty($data->ispublic)) {
+        $data->ispublic = 1;
+     } else {
+         $data->ispublic = 0;
+     }
+    
     $data->description = "";
     $data->descriptionformat = $data->description_editor['format'];
 

@@ -68,8 +68,20 @@ class mod_trainingevent_mod_form extends moodleform_mod {
             }
             $rooms->close();
         }
+        
+        $publicchoices = array();
+        if ($rooms = $DB->get_recordset_sql('SELECT * FROM mdl_classroom WHERE ispublic = 1 AND companyid <> ?',
+        [
+            $params['companyid']
+        ]
+        )) {
+            foreach ($rooms as $room) {
+                $publicchoices[$room->id] = $room->name;
+            }
+            $rooms->close();
+        }
 
-        $choices = array('' => get_string('selectaroom', 'trainingevent').'...') + $choices;
+        $choices = array('' => get_string('selectaroom', 'trainingevent').'...') + $choices + $publicchoices;
         $mform->addElement('select', 'classroomid', get_string('selectaroom', 'trainingevent'), $choices);
         $mform->addRule('classroomid', get_string('required'), 'required', null, 'client');
 

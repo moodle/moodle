@@ -224,45 +224,50 @@ foreach ($columns as $column) {
 
 // Get all or company users depending on capability.
 
-// Check if has capability edit all users.
-// Get department users.
-$departmentusers = company::get_recursive_department_users($departmentid);
-if ( count($departmentusers) > 0 ) {
-    $departmentids = "";
-    foreach ($departmentusers as $departmentuser) {
-        if (!empty($departmentids)) {
-            $departmentids .= ",".$departmentuser->userid;
-        } else {
-            $departmentids .= $departmentuser->userid;
+// Check if has capability to view all attendees.
+$coursecontext = context_course::instance($event->course);
+if (!has_capability('mod/trainingevent:viewallattendees', $coursecontext)) {
+	 // Get department users.
+    $departmentusers = company::get_recursive_department_users($departmentid);
+    if ( count($departmentusers) > 0 ) {
+        $departmentids = "";
+        foreach ($departmentusers as $departmentuser) {
+            if (!empty($departmentids)) {
+                $departmentids .= ",".$departmentuser->userid;
+            } else {
+                $departmentids .= $departmentuser->userid;
+            }
         }
+        $sqlsearch = " id in ($departmentids) AND ";
+    } else {
+        $sqlsearch = "1 = 0 AND ";
     }
-    $sqlsearch = " id in ($departmentids) ";
 } else {
-    $sqlsearch = "1 = 0";
+    $sqlsearch = "";
 }
 
 // Deal with search strings..
 if (!empty($idlist)) {
-    $sqlsearch .= "AND id in (".implode(',', array_keys($idlist)).") ";
+    $sqlsearch .= "id in (".implode(',', array_keys($idlist)).") AND ";
 }
 if (!empty($params['firstname'])) {
-    $sqlsearch .= " AND firstname like '%".$params['firstname']."%' ";
+    $sqlsearch .= "firstname like '%".$params['firstname']."%' AND ";
 }
 
 if (!empty($params['lastname'])) {
-    $sqlsearch .= " AND lastname like '%".$params['lastname']."%' ";
+    $sqlsearch .= "lastname like '%".$params['lastname']."%' AND ";
 }
 
 if (!empty($params['email'])) {
-    $sqlsearch .= " AND email like '%".$params['email']."%' ";
+    $sqlsearch .= "email like '%".$params['email']."%' AND ";
 }
 // Deal with users already assigned..
 if ($assignedusers = $DB->get_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 0), null, 'userid')) {
-    $sqlsearch .= " AND id not in (".implode(',', array_keys($assignedusers)).") ";
+    $sqlsearch .= "id not in (".implode(',', array_keys($assignedusers)).") AND ";
 }
 
 // Strip out no course users.
-$sqlsearch .= " AND id IN (SELECT u.id FROM {user} u
+$sqlsearch .= "id IN (SELECT u.id FROM {user} u
                            JOIN (SELECT DISTINCT eu2_u.id FROM {user} eu2_u
                                  JOIN {user_enrolments} eu2_ue ON eu2_ue.userid = eu2_u.id
                                  JOIN {enrol} eu2_e ON (eu2_e.id = eu2_ue.enrolid AND eu2_e.courseid = " . $event->course . ")

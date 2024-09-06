@@ -119,11 +119,13 @@ $table = new block_iomad_company_admin\tables\teaching_locations_table('teaching
 
 $tableheaders = [get_string('name'),
                  get_string('classroom_capacity', 'block_iomad_company_admin'),
-                 get_string('address')];
+                 get_string('address'),
+                 get_string('locationsharing', 'block_iomad_company_admin')];
 
 $tablecolumns = ['name',
                  'capacity',
-                 'address'];
+                 'address',
+                 'ispublic'];
 
 // Are we adding the actions buttons?
 if (iomad::has_capability('block/iomad_company_admin:classrooms_delete', $companycontext) ||

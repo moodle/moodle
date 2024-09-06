@@ -1201,7 +1201,8 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             echo $OUTPUT->header();
 
             // Check the userid is valid.
-            if (!company::check_valid_user($company->id, $USER->id, $departmentid)) {
+            $coursecontext = context_course::instance($event->course);
+            if (!company::check_valid_user($company->id, $USER->id, $departmentid) && !is_enrolled($coursecontext, $USER)) {
                 throw new moodle_exception('invaliduserdepartment', 'block_iomad_company_management');
             }
 
@@ -1295,7 +1296,8 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         // Output the attendees.
         if (!empty($view) && has_capability('mod/trainingevent:viewattendees', $context)) {
             // Get the associated department id.
-            $company = new company($location->companyid);
+            $companyid = iomad::get_my_companyid($systemcontext);
+            $company = new company($companyid);
             $parentlevel = company::get_company_parentnode($company->id);
             $companydepartment = $parentlevel->id;
 
@@ -1367,12 +1369,21 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         'department',
                         'email'];
 
-            $selectsql = "DISTINCT u.*, " . $location->companyid . " AS companyid";
+            $selectsql = "DISTINCT u.*, " . $event->course . " AS courseid";
             $fromsql = " {user} u
                          JOIN {trainingevent_users} teu ON (u.id = teu.userid)";
-            $wheresql = "teu.trainingeventid = :event
-                         AND u.id IN (".$allowedlist.")
-                         AND teu.waitlisted = :waitlisted"; 
+                         
+            $coursecontext = context_course::instance($event->course);
+                         
+            if(has_capability('mod/trainingevent:viewallattendees', $coursecontext)) {
+                $wheresql = "teu.trainingeventid = :event
+                            AND teu.waitlisted = :waitlisted"; 
+            } else {
+                $wheresql = "teu.trainingeventid = :event
+                            AND u.id IN (".$allowedlist.")
+                            AND teu.waitlisted = :waitlisted"; 
+            }
+            
             $sqlparams = ['waitlisted' => $waitingoption,
                           'event' => $event->id];
 

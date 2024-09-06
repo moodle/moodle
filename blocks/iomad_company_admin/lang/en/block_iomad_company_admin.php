@@ -765,6 +765,11 @@ $string['headingcolor'] = 'Heading Colour';
 $string['maincolor'] = 'Main Colour';
 $string['linkcolor'] = 'Link Colour';
 $string['totalusers'] = '{$a} Users';
+$string['public'] = 'Make this location public';
+$string['public_help'] = 'Public training locations are shared with all IOMAD companies. Any company will be able to see this location and use it for training events.';
+$string['locationsharing'] = 'Location sharing';
+$string['locationpublic'] = 'Public';
+$string['locationnotpublic'] = 'Private';
 
 // Role stuff
 $string['archetypeclientadministrator_role'] = 'IOMAD client administrator';

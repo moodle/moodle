@@ -89,6 +89,24 @@ class teaching_locations_table extends table_sql {
 
         return format_string($row->capacity);
     }
+    
+    
+    /**
+     * Generate column to show whether location is public or private.
+     * @param object $row the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_ispublic($row) {
+        global $output;
+
+        if (empty($row->ispublic)) {
+            return get_string('locationnotpublic', 'block_iomad_company_admin');
+        } elseif(!empty($row->ispublic)) {
+            return get_string('locationpublic', 'block_iomad_company_admin');
+        }
+
+        return format_string($row->ispublic);
+    }
 
     /**
      * Generate the display of the action column.
