@@ -249,7 +249,7 @@ Feature: Safe Exam Browser settings in quiz edit form
     And I set the field "Safe Exam Browser config template" to "Template 1"
     And I press "Save and return to course"
     # Disable Template 1
-    And I navigate to "Plugins > Activity modules > Category: Quiz > Safe Exam Browser templates" in site administration
+    And I navigate to "Plugins > Activity modules > Quiz > Safe Exam Browser templates" in site administration
     And I click on "Edit" "link" in the "Template 1" "table_row"
     And I set the field "Enabled" to "No"
     And I press "Save changes"
