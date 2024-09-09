@@ -27,8 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->component = 'tiny_aiplacement';
 $plugin->version = 2024061901;
 $plugin->requires = 2024041600;
-$plugin->maturity = MATURITY_ALPHA;
+$plugin->maturity = MATURITY_STABLE;
 $plugin->dependencies = [
-    'aiplacement_tinymce' => 2024061801,
+    'aiplacement_editor' => 2024061801,
     'tiny_media' => 2024042200,
 ];

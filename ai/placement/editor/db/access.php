@@ -14,25 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace aiplacement_tinymce;
-
 /**
- * Class placement.
+ * Capabilities for the aiplacement_editor plugin.
  *
- * @package    aiplacement_tinymce
+ * @package    aiplacement_editor
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class placement extends \core_ai\placement {
-    /**
-     * Get the list of actions that this placement uses.
-     *
-     * @return array An array of action class names.
-     */
-    public function get_action_list(): array {
-        return [
-            \core_ai\aiactions\generate_text::class,
-            \core_ai\aiactions\generate_image::class,
-        ];
-    }
-}
+
+defined('MOODLE_INTERNAL') || die();
+
+$capabilities = [
+    'aiplacement/editor:generate_image' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+        ],
+    ],
+    'aiplacement/editor:generate_text' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+        ],
+    ],
+];

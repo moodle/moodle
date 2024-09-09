@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TinyMCE AI Placement webservice definitions.
+ * HTML Text editor AI Placement webservice definitions.
  *
- * @package    aiplacement_tinymce
+ * @package    aiplacement_editor
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,16 +25,16 @@
 defined('MOODLE_INTERNAL') || die();
 
 $functions = [
-    'aiplacement_tinymce_generate_image' => [
-        'classname' => \aiplacement_tinymce\external\generate_image::class,
-        'description' => 'Generate image for the TinyMCE AI Placement',
+    'aiplacement_editor_generate_image' => [
+        'classname' => \aiplacement_editor\external\generate_image::class,
+        'description' => 'Generate image for the HTML Text editor AI Placement',
         'type' => 'write',
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
-    'aiplacement_tinymce_generate_text' => [
-        'classname' => \aiplacement_tinymce\external\generate_text::class,
-        'description' => 'Generate text for the TinyMCE AI Placement',
+    'aiplacement_editor_generate_text' => [
+        'classname' => \aiplacement_editor\external\generate_text::class,
+        'description' => 'Generate text for the HTML Text editor AI Placement',
         'type' => 'write',
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],

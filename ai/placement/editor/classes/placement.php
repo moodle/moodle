@@ -14,26 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace aiplacement_tinymce\privacy;
-
-use core_privacy\local\metadata\null_provider;
+namespace aiplacement_editor;
 
 /**
- * Privacy Subsystem for TinyMCE placement implementing null_provider.
+ * Class placement.
  *
- * @package    aiplacement_tinymce
+ * @package    aiplacement_editor
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @codeCoverageIgnore
  */
-class provider implements null_provider {
+class placement extends \core_ai\placement {
     /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
+     * Get the list of actions that this placement uses.
      *
-     * @return  string
+     * @return array An array of action class names.
      */
-    public static function get_reason(): string {
-        return 'privacy:metadata';
+    public function get_action_list(): array {
+        return [
+            \core_ai\aiactions\generate_text::class,
+            \core_ai\aiactions\generate_image::class,
+        ];
     }
 }

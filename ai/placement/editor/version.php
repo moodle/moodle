@@ -15,16 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for aiplacement_tinymce.
+ * Version information for aiplacement_editor.
  *
- * @package    aiplacement_tinymce
+ * @package    aiplacement_editor
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'aiplacement_tinymce';
+$plugin->component = 'aiplacement_editor';
 $plugin->version = 2024062200;
 $plugin->requires = 2024041600;
-$plugin->maturity = MATURITY_ALPHA;
+$plugin->maturity = MATURITY_STABLE;

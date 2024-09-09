@@ -26,42 +26,42 @@ Feature: Generate image using AI
       | page     | PageName2 | PageDesc2 | 1           | C2     | PageContent | 1             | 2        |
     And the following "permission overrides" exist:
       | capability                         | permission | role    | contextlevel | reference |
-      | aiplacement/tinymce:generate_text  | Prohibit   | user    | System       |           |
-      | aiplacement/tinymce:generate_image | Prohibit   | custom2 | Course       | C1        |
+      | aiplacement/editor:generate_text  | Prohibit   | user    | System       |           |
+      | aiplacement/editor:generate_image | Prohibit   | custom2 | Course       | C1        |
     And I enable "openai" "aiprovider" plugin
-    And I enable "tinymce" "aiplacement" plugin
+    And I enable "editor" "aiplacement" plugin
 
   @javascript
   Scenario: Image generation using AI is not available if placement is not enabled
-    Given I disable "tinymce" "aiplacement" plugin
+    Given I disable "editor" "aiplacement" plugin
     When I am on the "PageName2" "page activity" page logged in as teacher1
     And I navigate to "Settings" in current page administration
-    Then "AI Generate Image" button should not exist in the "Description" TinyMCE editor
-    And I enable "tinymce" "aiplacement" plugin
+    Then "AI generate image" button should not exist in the "Description" TinyMCE editor
+    And I enable "editor" "aiplacement" plugin
     And I am on the "PageName2" "page activity" page logged in as teacher1
     And I navigate to "Settings" in current page administration
-    And "AI Generate Image" button should exist in the "Description" TinyMCE editor
+    And "AI generate image" button should exist in the "Description" TinyMCE editor
 
   @javascript
   Scenario: Image generation using AI is not available if provider is not enabled
     Given I disable "openai" "aiprovider" plugin
     When I am on the "PageName2" "page activity" page logged in as teacher1
     And I navigate to "Settings" in current page administration
-    Then "AI Generate Image" button should not exist in the "Description" TinyMCE editor
+    Then "AI generate image" button should not exist in the "Description" TinyMCE editor
     And I enable "openai" "aiprovider" plugin
     And I am on the "PageName2" "page activity" page logged in as teacher1
     And I navigate to "Settings" in current page administration
-    And "AI Generate Image" button should exist in the "Description" TinyMCE editor
+    And "AI generate image" button should exist in the "Description" TinyMCE editor
 
   @javascript
   Scenario: Image generation using AI is not available if the user does not have permission
     Given I am on the "PageName1" "page activity" page logged in as teacher2
     When I navigate to "Settings" in current page administration
-    Then "AI Generate Image" button should not exist in the "Description" TinyMCE editor
+    Then "AI generate image" button should not exist in the "Description" TinyMCE editor
     And I am on the "PageName1" "page activity" page logged in as teacher1
     And I navigate to "Settings" in current page administration
-    And "AI Generate Image" button should exist in the "Description" TinyMCE editor
-    And I click on the "AI Generate Image" button for the "Description" TinyMCE editor
+    And "AI generate image" button should exist in the "Description" TinyMCE editor
+    And I click on the "AI generate image" button for the "Description" TinyMCE editor
     And I should see "Welcome to the new AI feature!" in the "AI usage policy" "dialogue"
     And I click on "Accept and continue" "button" in the "AI usage policy" "dialogue"
     And I should see "Describe the image you want AI to create"

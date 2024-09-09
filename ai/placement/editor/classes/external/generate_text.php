@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace aiplacement_tinymce\external;
+namespace aiplacement_editor\external;
 
 use core_external\external_api;
 use core_external\external_function_parameters;
@@ -23,11 +23,11 @@ use core_external\external_value;
 /**
  * External API to call an action for this placement.
  *
- * @package    aiplacement_tinymce
+ * @package    aiplacement_editor
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generate_image extends external_api {
+class generate_text extends external_api {
     /**
      * Generate image parameters.
      *
@@ -46,112 +46,57 @@ class generate_image extends external_api {
                 'The prompt text for the AI service',
                 VALUE_REQUIRED,
             ),
-            'aspectratio' => new external_value(
-                PARAM_ALPHA,
-                'The aspect ratio of the image',
-                VALUE_REQUIRED,
-            ),
-            'quality' => new external_value(
-                PARAM_ALPHA,
-                'The quality of the image',
-                VALUE_REQUIRED,
-            ),
-            'numimages' => new external_value(
-                PARAM_INT,
-                'The number of images to generate',
-                VALUE_DEFAULT,
-                1,
-            ),
-            'style' => new external_value(
-                PARAM_ALPHA,
-                'The style of the image',
-                VALUE_DEFAULT,
-                'natural',
-            ),
         ]);
     }
 
     /**
-     * Generate image from the AI placement.
+     * Generate text from the AI placement.
      *
      * @param int $contextid The context ID.
      * @param string $prompttext The data encoded as a json array.
-     * @param string $aspectratio The aspect ratio of the image.
-     * @param string $quality The quality of the image.
-     * @param string $numimages The number of images to generate.
-     * @param string $style The style of the image.
      * @return array The generated content.
      * @since  Moodle 4.5
      */
     public static function execute(
         int $contextid,
-        string $prompttext,
-        string $aspectratio,
-        string $quality,
-        string $numimages,
-        string $style = '',
+        string $prompttext
     ): array {
         global $USER;
         // Parameter validation.
         [
             'contextid' => $contextid,
             'prompttext' => $prompttext,
-            'aspectratio' => $aspectratio,
-            'quality' => $quality,
-            'numimages' => $numimages,
-            'style' => $style,
         ] = self::validate_parameters(self::execute_parameters(), [
             'contextid' => $contextid,
             'prompttext' => $prompttext,
-            'aspectratio' => $aspectratio,
-            'quality' => $quality,
-            'numimages' => $numimages,
-            'style' => $style,
         ]);
         // Context validation and permission check.
         // Get the context from the passed in ID.
-        $context = \context::instance_by_id($contextid);
+        $context = \core\context::instance_by_id($contextid);
 
         // Check the user has permission to use the AI service.
         self::validate_context($context);
-        require_capability('aiplacement/tinymce:generate_image', $context);
+        require_capability('aiplacement/editor:generate_text', $context);
 
         // Prepare the action.
-        $action = new \core_ai\aiactions\generate_image(
+        $action = new \core_ai\aiactions\generate_text(
             contextid: $contextid,
             userid: $USER->id,
             prompttext: $prompttext,
-            quality: $quality,
-            aspectratio: $aspectratio,
-            numimages: $numimages,
-            style: $style,
         );
 
         // Send the action to the AI manager.
         $manager = \core\di::get(\core_ai\manager::class);
         $response = $manager->process_action($action);
-
-        // If we have a successful response, generate the URL for the draft file.
-        if ($response->get_success()) {
-            $draftfile = $response->get_response_data()['draftfile'];
-            $drafturl = \moodle_url::make_draftfile_url(
-                $draftfile->get_itemid(),
-                $draftfile->get_filepath(),
-                $draftfile->get_filename(),
-                false,
-            )->out(false);
-
-        } else {
-            $drafturl = '';
-        }
-
         // Return the response.
         return [
             'success' => $response->get_success(),
-            'revisedprompt' => $response->get_response_data()['revisedprompt'] ?? '',
-            'drafturl' => $drafturl,
+            'generatedcontent' => $response->get_response_data()['generatedcontent'] ?? '',
+            'finishreason' => $response->get_response_data()['finishreason'] ?? '',
             'errorcode' => $response->get_errorcode(),
             'error' => $response->get_errormessage(),
+            'timecreated' => $response->get_timecreated(),
+            'prompttext' => $prompttext,
         ];
     }
 
@@ -168,17 +113,26 @@ class generate_image extends external_api {
                 'Was the request successful',
                 VALUE_REQUIRED,
             ),
-            'revisedprompt' => new external_value(
-                PARAM_TEXT,
-                'Revised prompt generated by the AI',
-                VALUE_DEFAULT,
-                '',
+            'timecreated' => new external_value(
+                PARAM_INT,
+                'The time the request was created',
+                VALUE_REQUIRED,
             ),
-            'drafturl' => new external_value(
-                PARAM_URL,
-                'Draft file URL for the image',
+            'prompttext' => new external_value(
+                PARAM_RAW,
+                'The prompt text for the AI service',
+                VALUE_REQUIRED,
+            ),
+            'generatedcontent' => new external_value(
+                PARAM_TEXT,
+                'The text generated by AI.',
                 VALUE_DEFAULT,
-                '',
+            ),
+            'finishreason' => new external_value(
+                PARAM_ALPHA,
+                'The reason generation was stopped',
+                VALUE_DEFAULT,
+                'stop',
             ),
             'errorcode' => new external_value(
                 PARAM_INT,

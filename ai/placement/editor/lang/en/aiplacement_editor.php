@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component aiplacement_tinymce, language 'en'.
+ * Strings for component aiplacement_editor, language 'en'.
  *
- * @package    aiplacement_tinymce
+ * @package    aiplacement_editor
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,7 +31,7 @@ $string['generateimagesetting_desc'] = 'Enable or disable the generation of imag
 $string['generatetext'] = 'AI generate text';
 $string['generatetextsetting'] = 'Enable generate text';
 $string['generatetextsetting_desc'] = 'Enable or disable the generation of text from a text prompt.';
-$string['pluginname'] = 'TinyMCE Editor Placement';
-$string['privacy:metadata'] = 'The TinyMCE editor placement plugin does not store any personal data.';
-$string['tinymce:generate_image'] = 'Generate AI Images in TinyMCE';
-$string['tinymce:generate_text'] = 'Generate AI Text in TinyMCE';
+$string['pluginname'] = 'HTML Text Editor Placement';
+$string['privacy:metadata'] = 'The HTML text editor placement plugin does not store any personal data.';
+$string['editor:generate_image'] = 'Generate AI Images in HTML Text Editor';
+$string['editor:generate_text'] = 'Generate AI Text in HTML Text Editor';

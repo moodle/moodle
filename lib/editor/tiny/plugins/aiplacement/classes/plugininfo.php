@@ -88,15 +88,15 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
      * @return array The allowed actions.
      */
     private static function get_allowed_actions(context $context): array {
-        [$plugintype, $pluginname] = explode('_', \core_component::normalize_componentname('aiplacement_tinymce'), 2);
+        [$plugintype, $pluginname] = explode('_', \core_component::normalize_componentname('aiplacement_editor'), 2);
         $manager = \core_plugin_manager::resolve_plugininfo_class($plugintype);
         $allowedactions = [];
         if ($manager::is_plugin_enabled($pluginname)) {
             $providers = manager::get_providers_for_actions(array_values(self::$possibleactions), true);
             foreach (self::$possibleactions as $action => $providerclass) {
                 if (
-                    has_capability("aiplacement/tinymce:{$action}", $context)
-                    && manager::is_action_enabled('aiplacement_tinymce', 'generate_text')
+                    has_capability("aiplacement/editor:{$action}", $context)
+                    && manager::is_action_enabled('aiplacement_editor', $action)
                     && !empty($providers[$providerclass])
                 ) {
                     $allowedactions[$action] = true;
