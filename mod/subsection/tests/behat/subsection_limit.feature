@@ -17,16 +17,14 @@ Feature: Teacher can only add subsection when certain conditions are met
       | teacher1 | C1     | editingteacher |
 
   @javascript
-  Scenario: The activity chooser filter subsections when section limit is reached
+  Scenario: We cannot add subsections when maxsections is reached
     Given the following config values are set as admin:
       | maxsections | 10 | moodlecourse |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I click on "Add content" "button" in the "Section 1" "section"
-    And I click on "Activity or resource" "button" in the ".dropdown-menu.show" "css_element"
-    And I should see "Subsection" in the "Add an activity or resource" "dialogue"
+    And I click on "Subsection" "link" in the ".dropdown-menu.show" "css_element"
     When the following config values are set as admin:
       | maxsections | 4 | moodlecourse |
     And I am on "Course 1" course homepage
-    Then I click on "Add an activity or resource" "button" in the "Section 1" "section"
-    And I should not see "Subsection" in the "Add an activity or resource" "dialogue"
+    And I should see "You have reached the maximum number of sections allowed for a course."

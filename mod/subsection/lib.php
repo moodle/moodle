@@ -302,3 +302,22 @@ function mod_subsection_get_fontawesome_icon_map() {
         'mod_subsection:subsection' => 'fa-rectangle-list',
     ];
 }
+
+/**
+ * Get the course content items for the subsection module.
+ *
+ * This function is called when the course content is being generated for the activity chooser.
+ * However, here this module is never shown in the activity chooser so we return an empty array.
+ *
+ * @param \core_course\local\entity\content_item $contentitem
+ * @param stdClass $user
+ * @param stdClass $course
+ * @return array
+ */
+function mod_subsection_get_course_content_items(
+    core_course\local\entity\content_item $contentitem,
+    stdClass $user,
+    stdClass $course
+): array {
+    return [];
+}
