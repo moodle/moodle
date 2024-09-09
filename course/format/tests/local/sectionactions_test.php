@@ -901,4 +901,42 @@ class sectionactions_test extends \advanced_testcase {
         $sectioninfo = get_fast_modinfo($course->id)->get_section_info_by_id($section->id);
         $this->assertEquals('null_name', $sectioninfo->name);
     }
+
+    /**
+     * Test that the position of a new section in a course with deleghated sections.
+     * @covers ::create
+     * @covers ::create_delegated
+     */
+    public function test_create_position(): void {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+
+        require_once($CFG->libdir . '/tests/fixtures/sectiondelegatetest.php');
+
+        $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 1]);
+
+        $section1 = get_fast_modinfo($course->id)->get_section_info(1);
+
+        $sectionactions = new sectionactions($course);
+        $delegatedsection1 = $sectionactions->create_delegated('test_component', 1);
+        $delegatedsection2 = $sectionactions->create_delegated('test_component', 2);
+
+        $this->assertEquals(2, $delegatedsection1->section);
+        $this->assertEquals(3, $delegatedsection2->section);
+
+        // Create some regular sections with zero and none param.
+        $newsection1 = $sectionactions->create(0);
+        $newsection2 = $sectionactions->create();
+
+        $this->assertEquals(2, $newsection1->section);
+        $this->assertEquals(3, $newsection2->section);
+
+        // Check the section order.
+        $section = $sectioninfo = get_fast_modinfo($course->id)->get_section_info_all();
+        $this->assertEquals($section1->id, $section[1]->id);
+        $this->assertEquals($newsection1->id, $section[2]->id);
+        $this->assertEquals($newsection2->id, $section[3]->id);
+        $this->assertEquals($delegatedsection1->id, $section[4]->id);
+        $this->assertEquals($delegatedsection2->id, $section[5]->id);
+    }
 }
