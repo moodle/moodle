@@ -244,6 +244,9 @@ class manager {
             if (!file_exists($libfile)) {
                 continue;
             }
+            if (!plugin_supports('mod', $module->name, FEATURE_MODEDIT_DEFAULT_COMPLETION, true)) {
+                continue;
+            }
             $module->icon = $OUTPUT->image_url('monologo', $module->name)->out();
             $module->formattedname = format_string(get_string('modulename', 'mod_' . $module->name),
                 true, ['context' => $context]);
