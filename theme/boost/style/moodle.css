@@ -38102,6 +38102,11 @@ div.editor_atto_toolbar button .icon {
 .reportbuilder-table .action-menu .menubar {
   justify-content: end;
 }
+.reportbuilder-table .action-menu .menubar .btn.btn-icon {
+  height: 32px;
+  width: 32px;
+  border-radius: 0.5rem;
+}
 
 .reportbuilder-wrapper .filters-dropdown {
   width: 27rem;
