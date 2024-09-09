@@ -28613,9 +28613,9 @@ span.editinstructions .alert-link {
 #frontpage-category-combo .coursebox > .info > .coursename a {
   display: block;
   background-image: url([[pix:moodle|i/course]]);
+  background-size: 16px 16px;
   background-repeat: no-repeat;
   padding-left: 21px;
-  background-position: left 0.2em;
 }
 
 .coursebox > .info > .coursename {
@@ -28688,6 +28688,7 @@ span.editinstructions .alert-link {
 
 .course_category_tree .category.with_children > .info > .categoryname {
   background-image: url([[pix:moodle|t/expanded]]);
+  background-size: 16px 16px;
   background-repeat: no-repeat;
   background-position: center left;
 }

@@ -612,9 +612,9 @@ span.editinstructions {
     .coursebox > .info > .coursename a {
         display: block;
         background-image: url([[pix:moodle|i/course]]);
+        background-size: $icon-width $icon-height;
         background-repeat: no-repeat;
         padding-left: 21px;
-        background-position: left 0.2em;
     }
 }
 
@@ -690,6 +690,7 @@ span.editinstructions {
 
 .course_category_tree .category.with_children > .info > .categoryname {
     background-image: url([[pix:moodle|t/expanded]]);
+    background-size: $icon-width $icon-height;
     background-repeat: no-repeat;
     background-position: center left;
 }
