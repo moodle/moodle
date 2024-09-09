@@ -106,29 +106,6 @@ final class get_badge_test extends externallib_advanced_testcase {
     }
 
     /**
-     * Check the capability to view badges.
-     * @covers ::execute
-     */
-    public function test_get_badge_viewbadges(): void {
-
-        global $DB, $SITE;
-        $data = $this->prepare_test_data();
-
-        $capability = 'moodle/badges:viewbadges';
-        $role = $DB->get_record('role', ['shortname' => 'student']);
-        $context = \context_system::instance();
-        assign_capability($capability, CAP_PROHIBIT, $role->id, $context->id, true);
-
-        $student1 = $this->getDataGenerator()->create_and_enrol($SITE, 'student');
-        role_assign($role->id, $student1->id, $context->id);
-        accesslib_clear_all_caches_for_unit_testing();
-
-        $this->setUser($student1);
-        $this->expectException(\moodle_exception::class);
-        get_badge::execute($data['badge']['id']);
-    }
-
-    /**
      * Test get badge by id.
      * @covers ::execute
      */

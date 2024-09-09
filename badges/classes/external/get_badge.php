@@ -16,12 +16,12 @@
 
 namespace core_badges\external;
 
+use core\exception\moodle_exception;
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_value;
 use core_external\external_warnings;
-use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,16 +31,14 @@ require_once($CFG->libdir . '/badgeslib.php');
 /**
  * External service to get badge by id.
  *
- * This is mainly used by the mobile application.
- *
  * @package   core_badges
  * @category  external
- *
  * @copyright  2024 Daniel Ureña <durenadev@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 4.5
  */
 class get_badge extends external_api {
+
     /**
      * Returns description of method parameters
      *
@@ -57,10 +55,10 @@ class get_badge extends external_api {
      *
      * @param int $id
      * @return array
-     * @throws \restricted_context_exception
+     * @throws moodle_exception
      */
     public static function execute(int $id): array {
-        global $CFG;
+        global $CFG, $PAGE;
 
         // Initialize return variables.
         $warnings = [];
@@ -71,24 +69,20 @@ class get_badge extends external_api {
         ] = self::validate_parameters(self::execute_parameters(), [
             'id' => $id,
         ]);
+
         // Validate badges is not disabled.
         if (empty($CFG->enablebadges)) {
             throw new moodle_exception('badgesdisabled', 'badges');
         }
 
-        $context = \context_system::instance();
-        if (!has_capability('moodle/badges:viewbadges', $context)) {
-            throw new moodle_exception('error:nopermissiontoview', 'badges');
-        }
-
         // Get the badge by id.
         $badgeclass = new \core_badges\output\badgeclass($id);
-
         if (empty($badgeclass->badge)) {
             throw new moodle_exception('error:relatedbadgedoesntexist', 'badges');
         }
 
-        // Manage the badge.
+        $PAGE->set_context($badgeclass->context);
+
         $result = badges_prepare_badgeclass_for_external($badgeclass);
 
         return [
