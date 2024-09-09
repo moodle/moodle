@@ -149,7 +149,7 @@ class move_category extends external_api {
                 !is_null($origincategory->idnumber)
                 && !$manager->idnumber_is_unique_in_context($origincategory->idnumber, $targetparent->contextid)
             ) {
-                throw new moodle_exception('idnumberexists', 'qbank_managecategories');
+                $transaction->rollback(new moodle_exception('idnumberexists', 'qbank_managecategories'));
             }
             $originstateupdate->fields->context = $targetparent->contextid;
         }
