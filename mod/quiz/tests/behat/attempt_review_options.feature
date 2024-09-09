@@ -62,3 +62,8 @@ Feature: Allow settings to show Max marks and Marks, Max marks only, or hide the
     And I should see "Question 1" in the ".info" "css_element"
     And I should see "Correct" in the ".info" "css_element"
     And I should see "Mark 2.00 out of 2.00" in the ".info" "css_element"
+
+    # Check the page that lists all the quizzes in a course.
+    And I am on the "C1" "quiz index" page
+    And I should see "Quiz 1"
+    And I should see "Quiz 2"
