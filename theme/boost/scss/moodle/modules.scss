@@ -1275,6 +1275,44 @@ img.userpicture {
         border-radius: 0 0 3px 3px;
     }
 
+    .qnbutton.correct .thispageholder {
+        border-color: $success;
+    }
+
+    .qnbutton.incorrect .thispageholder {
+        border-color: $danger;
+    }
+
+    .qnbutton.partiallycorrect .thispageholder {
+        border-color: $warning;
+    }
+
+    .qnbutton.correct,
+    .qnbutton.correct .trafficlight {
+        background-color: #dff4d8; /* light green */
+    }
+
+    .qnbutton.incorrect,
+    .qnbutton.incorrect .trafficlight {
+        background-color: #fdd; /* light red */
+    }
+
+    .qnbutton.partiallycorrect,
+    .qnbutton.partiallycorrect .trafficlight {
+        background-color: #fcefdc; /* light yellow */
+    }
+
+    .qnbutton.blocked,
+    .qnbutton.blocked .trafficlight,
+    .qnbutton.complete,
+    .qnbutton.complete .trafficlight,
+    .qnbutton.answersaved,
+    .qnbutton.answersaved .trafficlight,
+    .qnbutton.requiresgrading,
+    .qnbutton.requiresgrading .trafficlight {
+        background-color: $gray-300;
+    }
+
     .qnbutton.notyetanswered .trafficlight,
     .qnbutton.invalidanswer .trafficlight {
         background-color: $card-bg;
@@ -1285,29 +1323,29 @@ img.userpicture {
     }
 
     .qnbutton.correct .trafficlight {
-        background-image: url([[pix:theme|mod/quiz/checkmark]]);
-        background-color: $success;
+        background-image: url([[pix:core|i/grade_correct]]);
+        color: $success;
     }
 
     .qnbutton.blocked .trafficlight {
         background-image: url([[pix:core|t/locked]]);
-        background-color: $input-disabled-bg;
     }
 
     .qnbutton.notanswered .trafficlight,
     .qnbutton.incorrect .trafficlight {
-        background-color: $danger;
+        background-image: url([[pix:core|i/grade_incorrect]]);
+        color: $danger;
     }
 
     .qnbutton.partiallycorrect .trafficlight {
-        background-image: url([[pix:theme|mod/quiz/whitecircle]]);
-        background-color: $warning;
+        background-image: url([[pix:core|i/grade_partiallycorrect]]);
+        color: $warning;
     }
 
     .qnbutton.complete .trafficlight,
     .qnbutton.answersaved .trafficlight,
     .qnbutton.requiresgrading .trafficlight {
-        background-color: $gray-600;
+        background-color: $gray-300;
     }
 }
 
