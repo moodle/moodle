@@ -78,7 +78,8 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         $PAGE->set_context(context_module::instance($id));
 
         // Get the associated department id.
-        $company = new company($location->companyid);
+        $companyid = iomad::get_my_companyid($systemcontext);
+        $company = new company($companyid);
         $parentlevel = company::get_company_parentnode($company->id);
         $companydepartment = $parentlevel->id;
         if (!empty($event->coursecapacity)) {
@@ -1078,12 +1079,6 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         if (!empty($publish)) {
 
             echo $OUTPUT->header();
-
-            // Check the userid is valid.
-            if (!company::check_valid_user($company->id, $USER->id, $departmentid)) {
-                throw new moodle_exception('invaliduserdepartment', 'block_iomad_company_management');
-            }
-
             echo "<h2>".get_string('sendingemails', 'trainingevent')."</h2>";
             $course = $DB->get_record('course', array('id' => $event->course));
             $course->url = new moodle_url('course/view.php', array('id' => $course->id));
@@ -1199,13 +1194,6 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
         if (!$download) {
             echo $OUTPUT->header();
-
-            // Check the userid is valid.
-            $coursecontext = context_course::instance($event->course);
-            if (!company::check_valid_user($company->id, $USER->id, $departmentid) && !is_enrolled($coursecontext, $USER)) {
-                throw new moodle_exception('invaliduserdepartment', 'block_iomad_company_management');
-            }
-
             echo $eventtable;
 
             // Output the buttons.
