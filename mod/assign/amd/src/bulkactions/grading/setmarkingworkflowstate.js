@@ -22,9 +22,10 @@
  */
 
 import BulkAction from 'core/bulkactions/bulk_action';
-import Notification from 'core/notification';
 import Templates from 'core/templates';
 import {getString} from 'core/str';
+import SaveCancelModal from 'core/modal_save_cancel';
+import ModalEvents from 'core/modal_events';
 
 const Selectors = {
     selectBulkItemCheckbox: 'input[type="checkbox"][name="selectedusers"]:checked',
@@ -34,14 +35,19 @@ export default class extends BulkAction {
     /** @type {number} The course module ID. */
     #cmid;
 
+    /** @type {string} The session key. */
+    #sesskey;
+
     /**
      * The class constructor.
      *
      * @param {number} cmid The course module ID.
+     * @param {string} sesskey The session key.
      */
-    constructor(cmid) {
+    constructor(cmid, sesskey) {
         super();
         this.#cmid = cmid;
+        this.#sesskey = sesskey;
     }
 
     getBulkActionTriggerSelector() {
@@ -49,21 +55,28 @@ export default class extends BulkAction {
     }
 
     async triggerBulkAction() {
-        Notification.saveCancelPromise(
-            getString('setmarkingworkflowstate', 'mod_assign'),
-            getString('batchoperationconfirmsetmarkingworkflowstate', 'mod_assign'),
-            getString('batchoperationsetmarkingworkflowstate', 'mod_assign'),
-        ).then(() => {
-            const selectedUsers = [...document.querySelectorAll(Selectors.selectBulkItemCheckbox)].map(checkbox => checkbox.value);
-            const url = new URL(window.location.href);
-            url.searchParams.set('id', this.#cmid);
-            url.searchParams.set('action', 'viewbatchsetmarkingworkflowstate');
-            url.searchParams.set('selectedusers', selectedUsers.join(','));
-            window.location = url;
+        const selectedUsers = [...document.querySelectorAll(Selectors.selectBulkItemCheckbox)].map(checkbox => checkbox.value);
 
-            return;
-        }).catch(() => {
-            return;
+        const modal = await SaveCancelModal.create({
+            title: await getString('setmarkingworkflowstate', 'mod_assign'),
+            buttons: {
+                save: await getString('batchoperationsetmarkingworkflowstate', 'mod_assign'),
+            },
+            body: Templates.render('mod_assign/bulkactions/grading/bulk_action_modal_body', {
+                text: await getString('batchoperationconfirmsetmarkingworkflowstate', 'mod_assign'),
+                operation: 'setmarkingworkflowstate',
+                cmid: this.#cmid,
+                selectedusers: selectedUsers.join(','),
+                sesskey: this.#sesskey
+            }),
+            show: true,
+            removeOnClose: true,
+        });
+
+        // Handle save event.
+        modal.getRoot().on(ModalEvents.save, (e) => {
+            e.preventDefault();
+            modal.getRoot().find('form').submit();
         });
     }
 

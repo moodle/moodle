@@ -158,7 +158,7 @@ export default class extends BulkActions {
         }
 
         if (this.#extend) {
-            actions.push(new ExtendAction(this.#cmid));
+            actions.push(new ExtendAction(this.#cmid, this.#sesskey));
         }
 
         if (this.#grantAttempt) {
@@ -177,11 +177,11 @@ export default class extends BulkActions {
         }
 
         if (this.#workflowState) {
-            actions.push(new SetMarkingWorkflowStateAction(this.#cmid));
+            actions.push(new SetMarkingWorkflowStateAction(this.#cmid, this.#sesskey));
         }
 
         if (this.#markingAllocation) {
-            actions.push(new SetMarkingAllocationAction(this.#cmid));
+            actions.push(new SetMarkingAllocationAction(this.#cmid, this.#sesskey));
         }
 
         if (this.#submissionDrafts) {

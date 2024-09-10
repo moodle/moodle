@@ -34,9 +34,9 @@ export default class extends BulkAction {
         return '[data-type="bulkactions"] [data-action="message"]';
     }
 
-     triggerBulkAction() {
+    triggerBulkAction() {
         const selectedUsers = [...document.querySelectorAll(Selectors.selectBulkItemCheckbox)].map(checkbox => checkbox.value);
-         showMessageModal(selectedUsers);
+        showMessageModal(selectedUsers);
     }
 
     async renderBulkActionTrigger(showInDropdown, index) {

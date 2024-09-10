@@ -22,9 +22,10 @@
  */
 
 import BulkAction from 'core/bulkactions/bulk_action';
-import Notification from 'core/notification';
 import Templates from 'core/templates';
 import {getString} from 'core/str';
+import DeleteCancelModal from 'core/modal_delete_cancel';
+import ModalEvents from 'core/modal_events';
 
 const Selectors = {
     selectBulkItemCheckbox: 'input[type="checkbox"][name="selectedusers"]:checked',
@@ -54,43 +55,28 @@ export default class extends BulkAction {
     }
 
     async triggerBulkAction() {
-        Notification.deleteCancelPromise(
-            getString('removesubmission', 'mod_assign'),
-            getString('batchoperationconfirmremovesubmission', 'mod_assign'),
-            getString('batchoperationremovesubmission', 'mod_assign'),
-        ).then(() => {
-            const selectedUsers = [...document.querySelectorAll(Selectors.selectBulkItemCheckbox)].map(checkbox => checkbox.value);
-            const url = new URL(window.location.href);
-            url.searchParams.set('id', this.#cmid);
+        const selectedUsers = [...document.querySelectorAll(Selectors.selectBulkItemCheckbox)].map(checkbox => checkbox.value);
 
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = url.toString();
-
-            // Create hidden inputs for the form.
-            ((form, hiddenInputs) => {
-                for (const [name, value] of Object.entries(hiddenInputs)) {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = name;
-                    input.value = value;
-                    form.appendChild(input);
-                }
-            })(form, {
-                action: 'gradingbatchoperation',
+        const modal = await DeleteCancelModal.create({
+            title: await getString('removesubmission', 'mod_assign'),
+            buttons: {
+                save: await getString('batchoperationremovesubmission', 'mod_assign'),
+            },
+            body: Templates.render('mod_assign/bulkactions/grading/bulk_action_modal_body', {
+                text: await getString('batchoperationconfirmremovesubmission', 'mod_assign'),
                 operation: 'removesubmission',
+                cmid: this.#cmid,
                 selectedusers: selectedUsers.join(','),
-                sesskey: this.#sesskey,
-            });
+                sesskey: this.#sesskey
+            }),
+            show: true,
+            removeOnClose: true,
+        });
 
-            // Append the form to the body, submit it, and then remove it from the DOM.
-            document.body.appendChild(form);
-            form.submit();
-            form.remove();
-
-            return;
-        }).catch(() => {
-            return;
+        // Handle delete event.
+        modal.getRoot().on(ModalEvents.delete, (e) => {
+            e.preventDefault();
+            modal.getRoot().find('form').submit();
         });
     }
 
