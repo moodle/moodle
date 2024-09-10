@@ -267,11 +267,38 @@ class cachestore_redis extends store implements
         $redis = null;
         try {
             // Create a $redis object of a RedisCluster or Redis class.
+            $phpredisversion = phpversion('redis');
             if ($clustermode) {
-                $redis = new RedisCluster(null, $trimmedservers, 1, 1, true, $password, !empty($opts) ? $opts : null);
+                if (version_compare($phpredisversion, '6.0.0', '>=')) {
+                    // Named parameters are fully supported starting from version 6.0.0.
+                    $redis = new RedisCluster(
+                        name: null,
+                        seeds: $trimmedservers,
+                        timeout: 1,
+                        read_timeout: 1,
+                        persistent: true,
+                        auth: $password,
+                        context: !empty($opts) ? $opts : null,
+                    );
+                } else {
+                    $redis = new RedisCluster(null, $trimmedservers, 1, 1, true, $password, !empty($opts) ? $opts : null);
+                }
             } else {
                 $redis = new Redis();
-                $redis->connect($server, $port, 1, null, 100, 1, $opts);
+                if (version_compare($phpredisversion, '6.0.0', '>=')) {
+                    // Named parameters are fully supported starting from version 6.0.0.
+                    $redis->connect(
+                        host: $server,
+                        port: $port,
+                        timeout: 1,
+                        retry_interval: 100,
+                        read_timeout: 1,
+                        context: $opts,
+                    );
+                } else {
+                    $redis->connect($server, $port, 1, null, 100, 1, $opts);
+                }
+
                 if (!empty($password)) {
                     $redis->auth($password);
                 }
