@@ -25953,7 +25953,8 @@ blockquote {
   border-left: 5px solid #8f959e;
 }
 
-.page-header-headings {
+.pagelayout-maintenance .page-header-headings,
+.pagelayout-secure .page-header-headings {
   background-color: #fff;
 }
 
