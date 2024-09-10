@@ -1338,12 +1338,22 @@ $divider-hover-color: $primary !default;
         // Add a border on hover to the activity card (avoiding hover effect in inner activities).
         &:hover:not(:has(.activity:hover)),
         &.selected {
+            // We use outline here to avoid changing the layout everytime we hover.
             outline: $activity-border-width solid $activity-hover-border-color;
             box-shadow: $box-shadow-sm;
             .activityiconcontainer,
             .badge {
                 mix-blend-mode: multiply;
             }
+        }
+    }
+    .activity.dragging & {
+        border: $activity-border-width solid $activity-hover-border-color;
+        .editing &:hover {
+            // We cancel the outline when dragging because it is not taken into account
+            // in the element/image representing the drag and drop and it cuts out part of the
+            // border.
+            outline: none;
         }
     }
 

@@ -29226,6 +29226,12 @@ span.editinstructions .alert-link {
 .editing .activity-item.selected .badge {
   mix-blend-mode: multiply;
 }
+.activity.dragging .activity-item {
+  border: 2px solid #0f6cbf;
+}
+.editing .activity.dragging .activity-item:hover {
+  outline: none;
+}
 .activity-item .activity-grid {
   display: grid;
   align-items: center;
