@@ -49,7 +49,7 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
         array $fpoptions,
         ?editor $editor = null
     ): bool {
-        return in_array(true, self::get_allowed_actions($context));
+        return in_array(true, self::get_allowed_actions($context, $options));
     }
 
     #[\Override]
@@ -72,7 +72,7 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
         global $USER;
 
         $userid = (int) $USER->id;
-        $allowedactions = self::get_allowed_actions($context);
+        $allowedactions = self::get_allowed_actions($context, $options);
 
         return array_merge([
             'contextid' => $context->id,
@@ -85,9 +85,10 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
      * Get the allowed actions for the plugin.
      *
      * @param context $context The context that the editor is used within
+     * @param array $options The options passed in when requesting the editor
      * @return array The allowed actions.
      */
-    private static function get_allowed_actions(context $context): array {
+    private static function get_allowed_actions(context $context, array $options): array {
         [$plugintype, $pluginname] = explode('_', \core_component::normalize_componentname('aiplacement_editor'), 2);
         $manager = \core_plugin_manager::resolve_plugininfo_class($plugintype);
         $allowedactions = [];
@@ -99,7 +100,14 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
                     && manager::is_action_enabled('aiplacement_editor', $action)
                     && !empty($providers[$providerclass])
                 ) {
-                    $allowedactions[$action] = true;
+                    if ($action == 'generate_image') {
+                        // For generate image, we need to check if the user has the capability to upload files.
+                        $canhavefiles = !empty($options['maxfiles']);
+                        $canhaveexternalfiles = !empty($options['return_types']) && ($options['return_types'] & FILE_EXTERNAL);
+                        $allowedactions[$action] = $canhavefiles || $canhaveexternalfiles;
+                    } else {
+                        $allowedactions[$action] = true;
+                    }
                 } else {
                     $allowedactions[$action] = false;
                 }
