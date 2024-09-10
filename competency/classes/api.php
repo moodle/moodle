@@ -37,6 +37,7 @@ use require_login_exception;
 use moodle_exception;
 use moodle_url;
 use required_capability_exception;
+use iomad;
 
 require_once($CFG->dirroot . '/local/iomad/lib/iomad.php');
 
@@ -1902,6 +1903,15 @@ class api {
             }
         }
 
+        // Check if there are learningpaths associated.
+        $templatelearningpaths = template_learningpath::get_relations_by_templateid($template->get('id'));
+        foreach ($templatelearningpaths as $templatelearningpath) {
+            $success = $templatelearningpath->delete();
+            if (!$success) {
+                break;
+            }
+        }
+
         // Still OK, delete or unlink the plans from the template.
         if ($success) {
             $plans = plan::get_records(array('templateid' => $template->get('id')));
@@ -2391,6 +2401,45 @@ class api {
     }
 
     /**
+     * Create a relation between a template and a learningpath.
+     *
+     * This silently ignores when the relation already existed.
+     *
+     * @param  template|int $templateorid The template or its ID.
+     * @param  stdClass|int $learningpathid   The learningpath or its ID.
+     * @return template_learningpath
+     */
+    public static function create_template_learningpath($templateorid, $learningpathorid) {
+        global $DB, $USER;
+        static::require_enabled();
+
+        $template = $templateorid;
+        if (!is_object($template)) {
+            $template = new template($template);
+        }
+        require_capability('moodle/competency:templatemanage', $template->get_context());
+
+        $learningpath = $learningpathorid;
+        if (!is_object($learningpath)) {
+            $learningpath = $DB->get_record('iomad_learningpath', array('id' => $learningpath), '*', MUST_EXIST);
+        }
+
+        // Check thet the user can see this learning path.
+        $context = \context_system::instance();
+        $companyid = \iomad::get_my_companyid($context, false);
+        if (!iomad::has_capability('local/iomad_learningpath:manage', $context) || $learningpath->company != $companyid) {
+            throw new required_capability_exception($context, 'local/iomad_learningpath:manage', 'nopermissions', '');
+        }
+
+        $tpllearningpath = template_learningpath::get_relation($template->get('id'), $learningpath->id);
+        if (!$tpllearningpath->get('id')) {
+            $tpllearningpath->create();
+        }
+
+        return $tpllearningpath;
+    }
+
+    /**
      * Remove a relation between a template and a cohort.
      *
      * @param  template|int $templateorid The template or its ID.
@@ -2418,6 +2467,36 @@ class api {
         }
 
         return $tplcohort->delete();
+    }
+
+    /**
+     * Remove a relation between a template and a learningpath.
+     *
+     * @param  template|int $templateorid The template or its ID.
+     * @param  stdClass|int $learningpathorid   The learningpath ot its ID.
+     * @return boolean True on success or when the relation did not exist.
+     */
+    public static function delete_template_learningpath($templateorid, $learningpathorid) {
+        global $DB;
+        static::require_enabled();
+
+        $template = $templateorid;
+        if (!is_object($template)) {
+            $template = new template($template);
+        }
+        require_capability('moodle/competency:templatemanage', $template->get_context());
+
+        $learningpath = $learningpathorid;
+        if (!is_object($learningpath)) {
+            $learningpath = $DB->get_record('iomad_learningpath', array('id' => $learningpath), '*', MUST_EXIST);
+        }
+
+        $tpllearningpath = template_learningpath::get_relation($template->get('id'), $learningpath->id);
+        if (!$tpllearningpath->get('id')) {
+            return true;
+        }
+
+        return $tpllearningpath->delete();
     }
 
     /**
@@ -2703,6 +2782,83 @@ class api {
         // Create the plans.
         $created = 0;
         $userids = template_cohort::get_missing_plans($template->get('id'), $cohortid, $recreateunlinked);
+        foreach ($userids as $userid) {
+            $record = (object) (array) $recordbase;
+            $record->userid = $userid;
+
+            $plan = new plan(0, $record);
+            if (!$plan->can_manage()) {
+                // Silently skip members where permissions are lacking.
+                continue;
+            }
+
+            $plan->create();
+            // Trigger created event.
+            \core\event\competency_plan_created::create_from_plan($plan)->trigger();
+            $created++;
+        }
+
+        return $created;
+    }
+
+    /**
+     * Create learning plans from a template and learningpath.
+     *
+     * @param  mixed $templateorid The template object or ID.
+     * @param  int $learningpathid The learningpath ID.
+     * @param  bool $recreateunlinked When true the plans that were unlinked from this template will be re-created.
+     * @return int The number of plans created.
+     */
+    public static function create_plans_from_template_learningpath($templateorid, $learningpathid, $recreateunlinked = false) {
+        global $DB, $CFG;
+        static::require_enabled();
+
+        $template = $templateorid;
+        if (!is_object($template)) {
+            $template = new template($template);
+        }
+
+        // The user must be able to view the template to use it as a base for a plan.
+        if (!$template->can_read()) {
+            throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview',
+                'nopermissions', '');
+        }
+
+        // Can not create plan from a hidden template.
+        if ($template->get('visible') == false) {
+            throw new coding_exception('A plan can not be created from a hidden template');
+        }
+
+        // Check thet the user can see this learning path.
+        $learningpath = $DB->get_record('iomad_learningpath', array('id' => $learningpathid), '*', MUST_EXIST);
+        $context = \context_system::instance();
+        $companyid = \iomad::get_my_companyid($context, false);
+        if (!iomad::has_capability('local/iomad_learningpath:manage', $context) || $learningpath->company != $companyid) {
+            throw new required_capability_exception($context, 'local/iomad_learningpath:manage', 'nopermissions', '');
+        }
+
+        // Convert the template to a plan.
+        $recordbase = $template->to_record();
+        $recordbase->templateid = $recordbase->id;
+        $recordbase->name = $recordbase->shortname;
+        $recordbase->status = plan::STATUS_ACTIVE;
+
+        unset($recordbase->id);
+        unset($recordbase->timecreated);
+        unset($recordbase->timemodified);
+        unset($recordbase->usermodified);
+
+        // Remove extra keys.
+        $properties = plan::properties_definition();
+        foreach ($recordbase as $key => $value) {
+            if (!array_key_exists($key, $properties)) {
+                unset($recordbase->$key);
+            }
+        }
+
+        // Create the plans.
+        $created = 0;
+        $userids = template_learningpath::get_missing_plans($template->get('id'), $learningpathid, $recreateunlinked);
         foreach ($userids as $userid) {
             $record = (object) (array) $recordbase;
             $record->userid = $userid;
@@ -4878,6 +5034,19 @@ class api {
     public static function hook_cohort_deleted(\stdClass $cohort) {
         global $DB;
         $DB->delete_records(template_cohort::TABLE, array('cohortid' => $cohort->id));
+    }
+
+    /**
+     * Action to perform when a learningpath is deleted.
+     *
+     * Do not call this directly, this is reserved for core use.
+     *
+     * @param \stdClass $learningpath The learningpath object.
+     * @return void
+     */
+    public static function hook_learningpath_deleted(\stdClass $learningpath) {
+        global $DB;
+        $DB->delete_records(template_learningpath::TABLE, array('learningpathid' => $learningpath->id));
     }
 
     /**
