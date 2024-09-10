@@ -7,6 +7,12 @@
 - Bootstrap .no-gutters class is no longer used, use .g-0  instead.
 
   For more information see [MDL-81818](https://tracker.moodle.org/browse/MDL-81818)
+- The `.page-header-headings` CSS class now has a background colour applied to the maintenance and secure layouts.
+  You may need to override this class in your maintenance and secure layouts if both of the following are true:
+  * Your theme plugin inherits from `theme_boost` and uses this CSS class
+  * Your theme plugin applies a different styling for the page header for the maintenance and secure layouts.
+
+  For more information see [MDL-83047](https://tracker.moodle.org/browse/MDL-83047)
 
 ### Added
 
