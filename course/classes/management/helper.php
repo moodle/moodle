@@ -179,7 +179,7 @@ class helper {
         // View link.
         $actions['view'] = [
             'url' => new \moodle_url('/course/index.php', ['categoryid' => $category->id]),
-            'icon' => null,
+            'icon' => new \pix_icon('i/viewcategory', new \lang_string('view')),
             'string' => get_string('view')
         ];
 

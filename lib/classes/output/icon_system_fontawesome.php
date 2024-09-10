@@ -352,6 +352,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/userevent' => 'fa-clipboard-user',
             'core:i/users' => 'fa-user-group',
             'core:i/valid' => 'fa-check text-success',
+            'core:i/viewcategory' => 'fa-pager',
             'core:i/viewsection' => 'fa-pager',
             'core:i/warning' => 'fa-triangle-exclamation text-warning',
             'core:i/window_close' => 'fa-xmark',
