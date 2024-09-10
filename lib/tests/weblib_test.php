@@ -824,125 +824,90 @@ EXPECTED;
      * Data provider for test_get_file_argument.
      */
     public static function provider_get_file_argument() {
-        return array(
+        return [
             // Serving SCORM content w/o HTTP GET params.
-            array(array(
+            [
+                [
                     'SERVER_SOFTWARE' => 'Apache',
                     'SERVER_PORT' => '80',
                     'REQUEST_METHOD' => 'GET',
                     'REQUEST_URI' => '/pluginfile.php/3854/mod_scorm/content/1/swf.html',
                     'SCRIPT_NAME' => '/pluginfile.php',
                     'PATH_INFO' => '/3854/mod_scorm/content/1/swf.html',
-                ), 0, '/3854/mod_scorm/content/1/swf.html'),
-            array(array(
-                    'SERVER_SOFTWARE' => 'Apache',
-                    'SERVER_PORT' => '80',
-                    'REQUEST_METHOD' => 'GET',
-                    'REQUEST_URI' => '/pluginfile.php/3854/mod_scorm/content/1/swf.html',
-                    'SCRIPT_NAME' => '/pluginfile.php',
-                    'PATH_INFO' => '/3854/mod_scorm/content/1/swf.html',
-                ), 1, '/3854/mod_scorm/content/1/swf.html'),
+                ],
+                '/3854/mod_scorm/content/1/swf.html',
+            ],
             // Serving SCORM content w/ HTTP GET 'file' as first param.
-            array(array(
+            [
+                [
                     'SERVER_SOFTWARE' => 'Apache',
                     'SERVER_PORT' => '80',
                     'REQUEST_METHOD' => 'GET',
                     'REQUEST_URI' => '/pluginfile.php/3854/mod_scorm/content/1/swf.html?file=video_.swf',
                     'SCRIPT_NAME' => '/pluginfile.php',
                     'PATH_INFO' => '/3854/mod_scorm/content/1/swf.html',
-                ), 0, '/3854/mod_scorm/content/1/swf.html'),
-            array(array(
-                    'SERVER_SOFTWARE' => 'Apache',
-                    'SERVER_PORT' => '80',
-                    'REQUEST_METHOD' => 'GET',
-                    'REQUEST_URI' => '/pluginfile.php/3854/mod_scorm/content/1/swf.html?file=video_.swf',
-                    'SCRIPT_NAME' => '/pluginfile.php',
-                    'PATH_INFO' => '/3854/mod_scorm/content/1/swf.html',
-                ), 1, '/3854/mod_scorm/content/1/swf.html'),
+                ],
+                '/3854/mod_scorm/content/1/swf.html',
+            ],
             // Serving SCORM content w/ HTTP GET 'file' not as first param.
-            array(array(
+            [
+                [
                     'SERVER_SOFTWARE' => 'Apache',
                     'SERVER_PORT' => '80',
                     'REQUEST_METHOD' => 'GET',
                     'REQUEST_URI' => '/pluginfile.php/3854/mod_scorm/content/1/swf.html?foo=bar&file=video_.swf',
                     'SCRIPT_NAME' => '/pluginfile.php',
                     'PATH_INFO' => '/3854/mod_scorm/content/1/swf.html',
-                ), 0, '/3854/mod_scorm/content/1/swf.html'),
-            array(array(
-                    'SERVER_SOFTWARE' => 'Apache',
-                    'SERVER_PORT' => '80',
-                    'REQUEST_METHOD' => 'GET',
-                    'REQUEST_URI' => '/pluginfile.php/3854/mod_scorm/content/1/swf.html?foo=bar&file=video_.swf',
-                    'SCRIPT_NAME' => '/pluginfile.php',
-                    'PATH_INFO' => '/3854/mod_scorm/content/1/swf.html',
-                ), 1, '/3854/mod_scorm/content/1/swf.html'),
+                ],
+                '/3854/mod_scorm/content/1/swf.html',
+            ],
             // Serving content from a generic activity w/ HTTP GET 'file', still forcing slash arguments.
-            array(array(
+            [
+                [
                     'SERVER_SOFTWARE' => 'Apache',
                     'SERVER_PORT' => '80',
                     'REQUEST_METHOD' => 'GET',
                     'REQUEST_URI' => '/pluginfile.php/3854/whatever/content/1/swf.html?file=video_.swf',
                     'SCRIPT_NAME' => '/pluginfile.php',
                     'PATH_INFO' => '/3854/whatever/content/1/swf.html',
-                ), 0, '/3854/whatever/content/1/swf.html'),
-            array(array(
-                    'SERVER_SOFTWARE' => 'Apache',
-                    'SERVER_PORT' => '80',
-                    'REQUEST_METHOD' => 'GET',
-                    'REQUEST_URI' => '/pluginfile.php/3854/whatever/content/1/swf.html?file=video_.swf',
-                    'SCRIPT_NAME' => '/pluginfile.php',
-                    'PATH_INFO' => '/3854/whatever/content/1/swf.html',
-                ), 1, '/3854/whatever/content/1/swf.html'),
+                ],
+                '/3854/whatever/content/1/swf.html',
+            ],
             // Serving content from a generic activity w/ HTTP GET 'file', still forcing slash arguments (edge case).
-            array(array(
+            [
+                [
                     'SERVER_SOFTWARE' => 'Apache',
                     'SERVER_PORT' => '80',
                     'REQUEST_METHOD' => 'GET',
                     'REQUEST_URI' => '/pluginfile.php/?file=video_.swf',
                     'SCRIPT_NAME' => '/pluginfile.php',
                     'PATH_INFO' => '/',
-                ), 0, 'video_.swf'),
-            array(array(
-                    'SERVER_SOFTWARE' => 'Apache',
-                    'SERVER_PORT' => '80',
-                    'REQUEST_METHOD' => 'GET',
-                    'REQUEST_URI' => '/pluginfile.php/?file=video_.swf',
-                    'SCRIPT_NAME' => '/pluginfile.php',
-                    'PATH_INFO' => '/',
-                ), 1, 'video_.swf'),
+                ],
+                'video_.swf',
+            ],
             // Serving content from a generic activity w/ HTTP GET 'file', w/o forcing slash arguments.
-            array(array(
+            [
+                [
                     'SERVER_SOFTWARE' => 'Apache',
                     'SERVER_PORT' => '80',
                     'REQUEST_METHOD' => 'GET',
                     'REQUEST_URI' => '/pluginfile.php?file=%2F3854%2Fwhatever%2Fcontent%2F1%2Fswf.html%3Ffile%3Dvideo_.swf',
                     'SCRIPT_NAME' => '/pluginfile.php',
-                ), 0, '/3854/whatever/content/1/swf.html?file=video_.swf'),
-            array(array(
-                    'SERVER_SOFTWARE' => 'Apache',
-                    'SERVER_PORT' => '80',
-                    'REQUEST_METHOD' => 'GET',
-                    'REQUEST_URI' => '/pluginfile.php?file=%2F3854%2Fwhatever%2Fcontent%2F1%2Fswf.html%3Ffile%3Dvideo_.swf',
-                    'SCRIPT_NAME' => '/pluginfile.php',
-                ), 1, '/3854/whatever/content/1/swf.html?file=video_.swf'),
-        );
+                ],
+                '/3854/whatever/content/1/swf.html?file=video_.swf',
+            ],
+        ];
     }
 
     /**
      * Tests for get_file_argument() function.
      *
      * @param array $server mockup for $_SERVER.
-     * @param string $cfgslasharguments slasharguments setting.
-     * @param string|false $expected Expected value.
+     * @param string $expected Expected value.
      * @dataProvider provider_get_file_argument
      * @covers ::get_file_argument
      */
-    public function test_get_file_argument($server, $cfgslasharguments, $expected): void {
-        global $CFG;
-
-        // Overwrite the related settings.
-        $currentsetting = $CFG->slasharguments;
-        $CFG->slasharguments = $cfgslasharguments;
+    public function test_get_file_argument(array $server, string $expected): void {
         // Mock global $_SERVER.
         $currentserver = isset($_SERVER) ? $_SERVER : null;
         $_SERVER = $server;
@@ -965,7 +930,6 @@ EXPECTED;
         $this->assertEquals($expected, get_file_argument());
 
         // Restore the current settings and global values.
-        $CFG->slasharguments = $currentsetting;
         if (is_null($currentserver)) {
             unset($_SERVER);
         } else {

@@ -682,15 +682,7 @@ class theme_config {
             }
 
             $url = new moodle_url("/theme/styles.php");
-            if (!empty($CFG->slasharguments)) {
-                $url->set_slashargument("/{$this->name}/{$rev}/{$type}", 'noparam', true);
-            } else {
-                $url->params([
-                    'theme' => $this->name,
-                    'rev' => $rev,
-                    'type' => $type,
-                ]);
-            }
+            $url->set_slashargument("/{$this->name}/{$rev}/{$type}", 'noparam');
         } else {
             $url = new moodle_url('/theme/styles_debug.php', [
                 'theme' => $this->name,
@@ -825,30 +817,17 @@ class theme_config {
                 $rev .= "_{$themesubrevision}";
             }
 
-            if (!empty($CFG->slasharguments)) {
-                $slashargs = '';
-                if (!$svg) {
-                    // We add a simple /_s to the start of the path.
-                    // The underscore is used to ensure that it isn't a valid theme name.
-                    $slashargs .= '/_s' . $slashargs;
-                }
-                $slashargs .= '/' . $this->name . '/' . $rev . '/' . $filename;
-                if ($separate) {
-                    $slashargs .= '/chunk0';
-                }
-                $url->set_slashargument($slashargs, 'noparam', true);
-            } else {
-                $params = ['theme' => $this->name, 'rev' => $rev, 'type' => $filename];
-                if (!$svg) {
-                    // We add an SVG param so that we know not to serve SVG images.
-                    // We do this because all modern browsers support SVG and this param will one day be removed.
-                    $params['svg'] = '0';
-                }
-                if ($separate) {
-                    $params['chunk'] = '0';
-                }
-                $url->params($params);
+            $slashargs = '';
+            if (!$svg) {
+                // We add a simple /_s to the start of the path.
+                // The underscore is used to ensure that it isn't a valid theme name.
+                $slashargs .= '/_s' . $slashargs;
             }
+            $slashargs .= '/' . $this->name . '/' . $rev . '/' . $filename;
+            if ($separate) {
+                $slashargs .= '/chunk0';
+            }
+            $url->set_slashargument($slashargs, 'noparam');
             $urls[] = $url;
         } else {
             $baseurl = new moodle_url('/theme/styles_debug.php');
@@ -1457,9 +1436,9 @@ class theme_config {
             return null;
         }
 
-        if (!empty($CFG->slasharguments) && $rev > 0) {
+        if ($rev > 0) {
             $url = new moodle_url("/theme/javascript.php");
-            $url->set_slashargument('/' . $this->name . '/' . $rev . '/' . $params['type'], 'noparam', true);
+            $url->set_slashargument('/' . $this->name . '/' . $rev . '/' . $params['type'], 'noparam');
             return $url;
         } else {
             return new moodle_url('/theme/javascript.php', $params);
@@ -1697,14 +1676,14 @@ class theme_config {
         $params['image'] = $imagename;
 
         $url = new moodle_url("/theme/image.php");
-        if (!empty($CFG->slasharguments) && $rev > 0) {
+        if ($rev > 0) {
             $path = '/' . $params['theme'] . '/' . $params['component'] . '/' . $params['rev'] . '/' . $params['image'];
             if (!$svg) {
                 // We add a simple /_s to the start of the path.
                 // The underscore is used to ensure that it isn't a valid theme name.
                 $path = '/_s' . $path;
             }
-            $url->set_slashargument($path, 'noparam', true);
+            $url->set_slashargument($path, 'noparam');
         } else {
             if (!$svg) {
                 // We add an SVG param so that we know not to serve SVG images.
@@ -1743,9 +1722,9 @@ class theme_config {
         $params['font'] = $font;
 
         $url = new moodle_url("/theme/font.php");
-        if (!empty($CFG->slasharguments) && $rev > 0) {
+        if ($rev > 0) {
             $path = '/' . $params['theme'] . '/' . $params['component'] . '/' . $params['rev'] . '/' . $params['font'];
-            $url->set_slashargument($path, 'noparam', true);
+            $url->set_slashargument($path, 'noparam');
         } else {
             $url->params($params);
         }

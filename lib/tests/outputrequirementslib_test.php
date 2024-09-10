@@ -61,15 +61,12 @@ final class outputrequirementslib_test extends \advanced_testcase {
     /**
      * Test for the jquery_plugin method.
      *
-     * Test to make sure that backslashes are not generated with either slasharguments set to on or off.
+     * Test to make sure that backslashes are not generated.
      */
     public function test_jquery_plugin(): void {
-        global $CFG, $PAGE;
+        global $PAGE;
 
         $this->resetAfterTest();
-
-        // With slasharguments on.
-        $CFG->slasharguments = 1;
 
         $page = new \moodle_page();
         $requirements = $page->requires;
@@ -79,20 +76,6 @@ final class outputrequirementslib_test extends \advanced_testcase {
 
         // Get the code containing the required jquery plugins.
         $renderer = $PAGE->get_renderer('core', null, RENDERER_TARGET_MAINTENANCE);
-        $requirecode = $requirements->get_top_of_body_code($renderer);
-        // Make sure that the generated code does not contain backslashes.
-        $this->assertFalse(strpos($requirecode, '\\'), "Output contains backslashes: " . $requirecode);
-
-        // With slasharguments off.
-        $CFG->slasharguments = 0;
-
-        $page = new \moodle_page();
-        $requirements = $page->requires;
-        // Assert successful method call.
-        $this->assertTrue($requirements->jquery_plugin('jquery'));
-        $this->assertTrue($requirements->jquery_plugin('ui'));
-
-        // Get the code containing the required jquery plugins.
         $requirecode = $requirements->get_top_of_body_code($renderer);
         // Make sure that the generated code does not contain backslashes.
         $this->assertFalse(strpos($requirecode, '\\'), "Output contains backslashes: " . $requirecode);
@@ -134,7 +117,6 @@ final class outputrequirementslib_test extends \advanced_testcase {
      * Test the actual URL through which a JavaScript file is served.
      *
      * @param \moodle_url $moodleurl The <u>moodle_url</u> instance pointing to a web resource.
-     * @param int $cfgslashargs The value to force $CFG->slasharguments.
      * @param string $expected The expected output URL.
      * @throws ReflectionException if the class does not exist.
      * @see \page_requirements_manager::js_fix_url()
@@ -142,18 +124,12 @@ final class outputrequirementslib_test extends \advanced_testcase {
      * @covers \page_requirements_manager::js_fix_url
      * @dataProvider js_fix_url_moodle_url_provider
      */
-    public function test_js_fix_url_moodle_url(\moodle_url $moodleurl, int $cfgslashargs, string $expected): void {
-        global $CFG;
-        $defaultslashargs = $CFG->slasharguments;
-
-        $CFG->slasharguments = $cfgslashargs;
+    public function test_js_fix_url_moodle_url(\moodle_url $moodleurl, string $expected): void {
         $rc = new \ReflectionClass(\page_requirements_manager::class);
         $rcm = $rc->getMethod('js_fix_url');
         $requires = new \page_requirements_manager();
         $actualmoodleurl = $rcm->invokeArgs($requires, [$moodleurl]);
         $this->assertEquals($expected, $actualmoodleurl->out(false));
-
-        $CFG->slasharguments = $defaultslashargs;
     }
 
     /**
@@ -169,47 +145,30 @@ final class outputrequirementslib_test extends \advanced_testcase {
         $libdir = rtrim($CFG->libdir, '/');
         $admin = "/{$CFG->admin}/"; // Deprecated, just for coverage purposes.
 
-        // Note: $CFG->slasharguments is enabled by default; it will be a forced setting one day (MDL-62640).
         return [
             'Environment XML file' => [
                 new \moodle_url('/admin/environment.xml'),
-                0,
-                $wwwroot . $admin . 'environment.xml'
+                $wwwroot . $admin . 'environment.xml',
             ],
             'Google Maps CDN (HTTPS)' => [
                 new \moodle_url('https://maps.googleapis.com/maps/api/js', ['key' => 'googlemapkey3', 'sensor' => 'false']),
-                1,
-                'https://maps.googleapis.com/maps/api/js?key=googlemapkey3&sensor=false'
+                'https://maps.googleapis.com/maps/api/js?key=googlemapkey3&sensor=false',
             ],
             'Google Maps CDN (HTTP)' => [
                 new \moodle_url('http://maps.googleapis.com/maps/api/js', ['key' => 'googlemapkey3', 'sensor' => 'false']),
-                0,
-                'http://maps.googleapis.com/maps/api/js?key=googlemapkey3&sensor=false'
+                'http://maps.googleapis.com/maps/api/js?key=googlemapkey3&sensor=false',
             ],
-            'H5P JS internal resource (slasharguments on)' => [
+            'H5P JS internal resource' => [
                 new \moodle_url('/h5p/js/embed.js'),
-                1,
-                $wwwroot . '/lib/javascript.php/1/h5p/js/embed.js'
-            ],
-            'H5P JS internal resource (slasharguments off)' => [
-                new \moodle_url('/h5p/js/embed.js'),
-                0,
-                $wwwroot . '/lib/javascript.php?rev=1&jsfile=%2Fh5p%2Fjs%2Fembed.js'
+                $wwwroot . '/lib/javascript.php/1/h5p/js/embed.js',
             ],
             'A custom Moodle CSS Handler' => [
                 new \moodle_url('/mod/data/css.php?d=1234567890'),
-                1,
-                $wwwroot . '/mod/data/css.php?d=1234567890'
+                $wwwroot . '/mod/data/css.php?d=1234567890',
             ],
-            'A custom Moodle JS Handler (slasharguments on)' => [
+            'A custom Moodle JS Handler' => [
                 new \moodle_url('/mod/data/js.php?d=1234567890'),
-                1,
-                $wwwroot . '/mod/data/js.php?d=1234567890'
-            ],
-            'A custom Moodle JS Handler (slasharguments off)' => [
-                new \moodle_url('/mod/data/js.php?d=1234567890'),
-                0,
-                $wwwroot . '/mod/data/js.php?d=1234567890'
+                $wwwroot . '/mod/data/js.php?d=1234567890',
             ],
         ];
     }
@@ -218,25 +177,18 @@ final class outputrequirementslib_test extends \advanced_testcase {
      * Test the actual url through which a JavaScript file is served.
      *
      * @param string $url The URL pointing to a web resource.
-     * @param int $cfgslashargs The value to force $CFG->slasharguments.
      * @param string $expected The expected output URL.
      * @throws ReflectionException if the class does not exist.
      * @see \page_requirements_manager::js_fix_url()
      * @covers \page_requirements_manager::js_fix_url
      * @dataProvider js_fix_url_plain_string_provider
      */
-    public function test_js_fix_url_plain_string(string $url, int $cfgslashargs, string $expected): void {
-        global $CFG;
-        $defaultslashargs = $CFG->slasharguments;
-
-        $CFG->slasharguments = $cfgslashargs;
+    public function test_js_fix_url_plain_string(string $url, string $expected): void {
         $rc = new \ReflectionClass(\page_requirements_manager::class);
         $rcm = $rc->getMethod('js_fix_url');
         $requires = new \page_requirements_manager();
         $actualmoodleurl = $rcm->invokeArgs($requires, [$url]);
         $this->assertEquals($expected, $actualmoodleurl->out(false));
-
-        $CFG->slasharguments = $defaultslashargs;
     }
 
     /**
@@ -250,47 +202,34 @@ final class outputrequirementslib_test extends \advanced_testcase {
         $wwwroot = rtrim($CFG->wwwroot, '/');
         $admin = "/{$CFG->admin}/"; // Deprecated, just for coverage purposes.
 
-        // Note: $CFG->slasharguments is enabled by default; it will be a forced setting one day (MDL-62640).
         return [
             'Environment XML file' => [
                 '/admin/environment.xml',
-                0,
-                $wwwroot . $admin . 'environment.xml'
+                $wwwroot . $admin . 'environment.xml',
             ],
             'Data JS' => [
                 '/mod/data/data.js',
-                1,
-                $wwwroot . '/lib/javascript.php/1/mod/data/data.js'
+                $wwwroot . '/lib/javascript.php/1/mod/data/data.js',
             ],
             'SCORM Request JS' => [
                 '/mod/scorm/request.js',
-                1,
-                $wwwroot . '/lib/javascript.php/1/mod/scorm/request.js'
+                $wwwroot . '/lib/javascript.php/1/mod/scorm/request.js',
             ],
             'Wiki Editors Buttons JS' => [
                 '/mod/wiki/editors/wiki/buttons.js',
-                1,
-                $wwwroot . '/lib/javascript.php/1/mod/wiki/editors/wiki/buttons.js'
+                $wwwroot . '/lib/javascript.php/1/mod/wiki/editors/wiki/buttons.js',
             ],
             'A non-JS internal resource' => [
                 '/theme/boost/pix/favicon.ico',
-                0,
-                $wwwroot . '/theme/boost/pix/favicon.ico'
+                $wwwroot . '/theme/boost/pix/favicon.ico',
             ],
             'A custom Moodle CSS Handler' => [
                 '/mod/data/css.php?d=1234567890',
-                1,
-                $wwwroot . '/mod/data/css.php?d=1234567890'
+                $wwwroot . '/mod/data/css.php?d=1234567890',
             ],
-            'A custom Moodle JS Handler (slasharguments on)' => [
+            'A custom Moodle JS Handler' => [
                 '/mod/data/js.php?d=1234567890',
-                1,
-                $wwwroot . '/mod/data/js.php?d=1234567890'
-            ],
-            'A custom Moodle JS Handler (slasharguments off)' => [
-                '/mod/data/js.php?d=1234567890',
-                0,
-                $wwwroot . '/mod/data/js.php?d=1234567890'
+                $wwwroot . '/mod/data/js.php?d=1234567890',
             ],
         ];
     }
