@@ -85,7 +85,7 @@ function tool_moodlenet_custom_chooser_footer(int $courseid, int $sectionid): ac
         'generic' => $defaultlink,
         'advanced' => $advanced,
         'courseID' => $courseid,
-        'sectionID' => $sectionid,
+        'sectionnum' => $sectionid,
         'img' => $OUTPUT->image_url('MoodleNet', 'tool_moodlenet')->out(false),
     ]);
 
@@ -93,7 +93,7 @@ function tool_moodlenet_custom_chooser_footer(int $courseid, int $sectionid): ac
         'buttonName' => get_config('tool_moodlenet', 'defaultmoodlenetname'),
         'generic' => $defaultlink,
         'courseID' => $courseid,
-        'sectionID' => $sectionid,
+        'sectionnum' => $sectionid,
         'img' => $OUTPUT->image_url('MoodleNet', 'tool_moodlenet')->out(false),
     ]);
     return new activity_chooser_footer(
