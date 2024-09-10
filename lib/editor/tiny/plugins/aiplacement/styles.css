@@ -181,7 +181,8 @@
 }
 
 .tiny-aiplacement-generate-footer button img {
-    width: 1em;
+    width: 1.5em;
+    margin-right: 0.2em;
 }
 
 .tiny-aiplacement-error-display {
