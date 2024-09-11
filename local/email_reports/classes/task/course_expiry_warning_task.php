@@ -350,7 +350,7 @@ class course_expiry_warning_task extends \core\task\scheduled_task {
             $expiretime = 24 * 60 * 60 * $completionexpirecourse->expireafter;
             $userlist = $DB->get_records_sql("SELECT lit.* FROM
                                               {local_iomad_track} lit
-                                              JOIN {user_enrolments} ue ON (lit.userid = ue.userid)
+                                              JOIN {user_enrolments} ue ON (lit.userid = ue.userid AND lit.timestarted = ue.timecreated)
                                               JOIN {enrol} e ON (lit.courseid = e.courseid AND ue.enrolid = e.id)
                                               JOIN {course} co ON (lit.courseid = co.id AND e.courseid = co.id)
                                               WHERE co.visible = 1
@@ -362,7 +362,7 @@ class course_expiry_warning_task extends \core\task\scheduled_task {
 
             //  Cycle through any found users.
             foreach ($userlist as $founduser) {
-                if (!$DB->get_record('local_iomad_track', array('userid' => $founduser->userid, 'courseid' => $founduser->courseid, 'timecompleted' => null))) {
+                if (!$DB->get_records('local_iomad_track', array('userid' => $founduser->userid, 'courseid' => $founduser->courseid, 'timecompleted' => null))) {
                     // Expire the user from the course.
                     mtrace("expiring user $founduser->userid from course $founduser->courseid");
                     $event = \block_iomad_company_admin\event\user_course_expired::create(array('context' => context_course::instance($founduser->courseid),
