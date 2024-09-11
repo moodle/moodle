@@ -26,6 +26,8 @@ namespace mod_assign\output;
 
 use assign;
 use context_module;
+use core_course\output\actionbar\group_selector;
+use core_course\output\actionbar\user_selector;
 use templatable;
 use renderable;
 use moodle_url;
@@ -88,12 +90,10 @@ class grading_actionmenu implements templatable, renderable {
      * @return array Data to render.
      */
     public function export_for_template(\renderer_base $output): array {
-        global $PAGE, $OUTPUT;
+        global $PAGE;
 
         $course = $this->assign->get_course();
         $cm = get_coursemodule_from_id('assign', $this->cmid);
-        $actionbarrenderer = $PAGE->get_renderer('core_course', 'actionbar');
-
         $data = [];
 
         $userid = optional_param('userid', null, PARAM_INT);
@@ -103,7 +103,7 @@ class grading_actionmenu implements templatable, renderable {
 
         $resetlink = new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'grading']);
         $groupid = groups_get_course_group($course, true);
-        $userselector = new \core_course\output\actionbar\user_selector(
+        $userselector = new user_selector(
             course: $course,
             resetlink: $resetlink,
             userid: $userid,
@@ -111,7 +111,7 @@ class grading_actionmenu implements templatable, renderable {
             usersearch: $usersearch,
             instanceid: $this->assign->get_instance()->id
         );
-        $data['userselector'] = $actionbarrenderer->render($userselector);
+        $data['userselector'] = $userselector->export_for_template($output);
 
         $hasinitials = !empty($this->userinitials['firstname']) || !empty($this->userinitials['lastname']);
         $additionalparams = ['action' => 'grading', 'id' => $this->cmid];
@@ -132,16 +132,16 @@ class grading_actionmenu implements templatable, renderable {
             additionalparams: $additionalparams
         );
 
-        $data['initialselector'] = $actionbarrenderer->render($initialselector);
+        $data['initialselector'] = $initialselector->export_for_template($output);
 
         if (groups_get_activity_groupmode($cm, $course)) {
-            $data['groupselector'] = $actionbarrenderer->render(
-                new \core_course\output\actionbar\group_selector($PAGE->context));
+            $gs = new group_selector($PAGE->context);
+            $data['groupselector'] = $gs->export_for_template($output);
         }
 
         if ($extrafiltersdropdown = $this->get_extra_filters_dropdown()) {
             $PAGE->requires->js_call_amd('mod_assign/actionbar/grading/extra_filters_dropdown', 'init', []);
-            $data['extrafiltersdropdown'] = $OUTPUT->render($extrafiltersdropdown);
+            $data['extrafiltersdropdown'] = $extrafiltersdropdown->export_for_template($output);
         }
 
         $activitygroup = groups_get_activity_group($cm);
