@@ -1,5 +1,7 @@
 {
     "plugintypes": {
+        "aiplacement": "ai/placement",
+        "aiprovider": "ai/provider",
         "antivirus": "lib\/antivirus",
         "availability": "availability\/condition",
         "qtype": "question\/type",
@@ -44,6 +46,7 @@
         "paygw": "payment\/gateway"
     },
     "subsystems": {
+        "ai": "ai",
         "access": null,
         "admin": "admin",
         "adminpresets": "admin/presets",

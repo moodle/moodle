@@ -1,5 +1,11 @@
 {
     "standard": {
+        "aiplacement": [
+            "editor"
+        ],
+        "aiprovider": [
+            "openai"
+        ],
         "antivirus": [
             "clamav"
         ],
@@ -486,6 +492,7 @@
         ],
         "tiny": [
             "accessibilitychecker",
+            "aiplacement",
             "autosave",
             "equation",
             "h5p",

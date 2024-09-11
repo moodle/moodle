@@ -16,6 +16,10 @@
 
 use core\di;
 use core\hook;
+use core\http_client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 
 /**
  * Advanced PHPUnit test case customised for Moodle.
@@ -831,6 +835,30 @@ abstract class advanced_testcase extends base_testcase {
     }
 
     /**
+     * Convenience method to get the path to a fixture.
+     *
+     * @param string $component
+     * @param string $path
+     * @throws coding_exception
+     */
+    protected static function get_fixture_path(
+        string $component,
+        string $path,
+    ): string {
+        $fullpath = sprintf(
+            "%s/tests/fixtures/%s",
+            \core_component::get_component_directory($component),
+            $path,
+        );
+
+        if (!file_exists($fullpath)) {
+            throw new \coding_exception("Fixture file not found: $fullpath");
+        }
+
+        return $fullpath;
+    }
+
+    /**
      * Convenience method to load a fixture from a component's fixture directory.
      *
      * @param string $component
@@ -841,15 +869,6 @@ abstract class advanced_testcase extends base_testcase {
         string $component,
         string $path,
     ): void {
-        $fullpath = sprintf(
-            "%s/tests/fixtures/%s",
-            \core_component::get_component_directory($component),
-            $path,
-        );
-        if (!file_exists($fullpath)) {
-            throw new \coding_exception("Fixture file not found: $fullpath");
-        }
-
         global $ADMIN;
         global $CFG;
         global $DB;
@@ -861,6 +880,33 @@ abstract class advanced_testcase extends base_testcase {
         global $COURSE;
         global $SITE;
 
-        require_once($fullpath);
+        require_once(static::get_fixture_path($component, $path));
+    }
+
+    /**
+     * Get a mocked HTTP Client, inserting it into the Dependency Injector.
+     *
+     * @param array|null $history An array which will contain the Request/Response history of the HTTP client
+     * @return array Containing the client, the mock, and the history
+     */
+    protected function get_mocked_http_client(
+        ?array &$history = null,
+    ): array {
+        $mock = new MockHandler([]);
+        $handlerstack = HandlerStack::create($mock);
+
+        if ($history !== null) {
+            $historymiddleware = Middleware::history($history);
+            $handlerstack->push($historymiddleware);
+        }
+        $client = new http_client(['handler' => $handlerstack]);
+
+        di::set(http_client::class, $client);
+
+        return [
+            'client' => $client,
+            'mock' => $mock,
+            'handlerstack' => $handlerstack,
+        ];
     }
 }

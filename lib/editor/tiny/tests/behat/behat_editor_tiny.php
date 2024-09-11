@@ -86,6 +86,36 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
     }
 
     /**
+     * Checks that a button exists in specified TinyMCE editor.
+     *
+     * @When /^"(?P<button_string>(?:[^"]|\\")*)" button should exist in the "(?P<locator_string>(?:[^"]|\\")*)" TinyMCE editor$/
+     *
+     * @param string $button The label of the button
+     * @param string $locator The locator for the editor
+     */
+    public function button_should_exist(string $button, string $locator): void {
+        $this->require_tiny_tags();
+        $container = $this->get_editor_container_for_locator($locator);
+
+        $this->execute('behat_general::should_exist_in_the', [$button, 'button', $container, 'NodeElement']);
+    }
+
+    /**
+     * Checks that a button does not exist in specified TinyMCE editor.
+     *
+     * @When /^"(?P<button_string>(?:[^"]|\\")*)" button should not exist in the "(?P<locator_string>(?:[^"]|\\")*)" TinyMCE editor$/
+     *
+     * @param string $button The label of the button
+     * @param string $locator The locator for the editor
+     */
+    public function button_should_not_exist(string $button, string $locator): void {
+        $this->require_tiny_tags();
+        $container = $this->get_editor_container_for_locator($locator);
+
+        $this->execute('behat_general::should_not_exist_in_the', [$button, 'button', $container, 'NodeElement']);
+    }
+
+    /**
      * Confirm that the button state of the specified button/editor combination matches the expectation.
      *
      * @Then /^the "(?P<button_string>(?:[^"]|\\")*)" button of the "(?P<locator_string>(?:[^"]|\\")*)" TinyMCE editor has state "(?P<state_string>(?:[^"]|\\")*)"$/

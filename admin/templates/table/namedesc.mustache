@@ -1,0 +1,39 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_admin/table/namedesc
+
+    Admin setting template to display an name and description
+    in a single table cell.
+
+    Context variables required for this template:
+    * name - Name of the table setting
+    * description - Description of the setting
+
+    Example context (json):
+    {
+        "name": "Fancy Setting",
+        "description": "Text that describes this setting well"
+    }
+}}
+{{!
+    Name and description.
+}}
+<div>
+    <div><strong>{{name}}</strong></div>
+    <div>{{description}}</div>
+</div>
