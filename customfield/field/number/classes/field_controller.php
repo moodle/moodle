@@ -143,18 +143,21 @@ class field_controller  extends \core_customfield\field_controller {
      * @return string|null
      */
     public function prepare_field_for_display(mixed $value, ?context $context = null): ?string {
-        if ((float) $value == 0) {
+        if ($value === null) {
+            return null;
+        }
+        $decimalplaces = (int) $this->get_configdata_property('decimalplaces');
+        if (round((float) $value, $decimalplaces) == 0) {
             $value = $this->get_configdata_property('displaywhenzero');
             if ((string) $value === '') {
                 return null;
             }
         } else {
             // Let's format the value.
-            $decimalplaces = (int) $this->get_configdata_property('decimalplaces');
             $value = format_float((float) $value, $decimalplaces);
 
             // Apply the display format.
-            $format = $this->get_configdata_property('display');
+            $format = $this->get_configdata_property('display') ?? '{value}';
             $value = str_replace('{value}', $value, $format);
         }
         return format_string($value, true, ['context' => $context ?? system::instance()]);

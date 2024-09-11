@@ -129,7 +129,7 @@ final class data_controller_test extends advanced_testcase {
         $template = '<span class="multilang" lang="en">$ {value}</span><span class="multilang" lang="es">€ {value}</span>';
         $whenzero = '<span class="multilang" lang="en">Unknown</span><span class="multilang" lang="es">Desconocido</span>';
         return [
-            'Export float value' => [42, 42.0, [
+            'Export float value' => [42, '42.00', [
                 'decimalplaces' => 2,
                 'display' => '{value}',
                 'displaywhenzero' => 0,
@@ -143,6 +143,22 @@ final class data_controller_test extends advanced_testcase {
                 'display' => '{value}',
                 'displaywhenzero' => $whenzero,
             ]],
+            'Export value when not set' => ['', null, [
+                'display' => '{value}',
+                'displaywhenzero' => $whenzero,
+            ]],
+            'Export almost zero that rounds to non-zero' => [0.0009, '0.001', [
+                'decimalplaces' => 3,
+                'display' => '{value}',
+                'displaywhenzero' => 'Free',
+            ]],
+            'Export almost zero that rounds to zero' => [0.0004, 'Free', [
+                'decimalplaces' => 3,
+                'display' => '{value}',
+                'displaywhenzero' => 'Free',
+            ]],
+            'Export when config not set' => [42, '42', []],
+            'Export zero when config not set' => [0, null, []],
         ];
     }
 
@@ -150,14 +166,14 @@ final class data_controller_test extends advanced_testcase {
      * Test exporting instance
      *
      * @param float|string $datavalue
-     * @param float|string $expectedvalue
+     * @param string|null $expectedvalue
      * @param array $configdata
      *
      * @dataProvider export_value_provider
      */
     public function test_export_value(
         float|string $datavalue,
-        float|string $expectedvalue,
+        string|null $expectedvalue,
         array $configdata,
     ): void {
         $this->resetAfterTest();
@@ -181,6 +197,6 @@ final class data_controller_test extends advanced_testcase {
         $data = $generator->add_instance_data($field, (int) $course->id, $datavalue);
 
         $result = \core_customfield\data_controller::create($data->get('id'))->export_value();
-        $this->assertEquals($expectedvalue, $result);
+        $this->assertSame($expectedvalue, $result);
     }
 }
