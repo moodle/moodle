@@ -204,38 +204,6 @@ class block_tag_youtube extends block_base {
     }
 
     /**
-     * Sends a request to fetch data.
-     *
-     * @see block_tag_youtube::service
-     * @deprecated since Moodle 2.8.8, 2.9.2 and 3.0 MDL-49085 - please do not use this function any more.
-     * @param string $request
-     * @throws coding_exception
-     */
-    public function fetch_request($request) {
-        throw new coding_exception('Sorry, this function has been deprecated in Moodle 2.8.8, 2.9.2 and 3.0. Use block_tag_youtube::get_service instead.');
-
-        $c = new curl(array('cache' => true, 'module_cache'=>'tag_youtube'));
-        $c->setopt(array('CURLOPT_TIMEOUT' => 3, 'CURLOPT_CONNECTTIMEOUT' => 3));
-
-        $response = $c->get($request);
-
-        $xml = new SimpleXMLElement($response);
-        return $this->render_video_list($xml);
-    }
-
-    /**
-     * Renders the video list.
-     *
-     * @see block_tag_youtube::render_items
-     * @deprecated since Moodle 2.8.8, 2.9.2 and 3.0 MDL-49085 - please do not use this function any more.
-     * @param SimpleXMLElement $xml
-     * @throws coding_exception
-     */
-    function render_video_list(SimpleXMLElement $xml){
-        throw new coding_exception('Sorry, this function has been deprecated in Moodle 2.8.8, 2.9.2 and 3.0. Use block_tag_youtube::render_items instead.');
-    }
-
-    /**
      * Returns an error message.
      *
      * Useful when the block is not properly set or something goes wrong.
