@@ -37,6 +37,7 @@ export default class Component extends DndSection {
         this.name = 'courseindex_section';
         // Default query selectors.
         this.selectors = {
+            SECTION: `[data-for='section']`,
             SECTION_ITEM: `[data-for='section_item']`,
             SECTION_TITLE: `[data-for='section_title']`,
             CM_LAST: `[data-for="cm"]:last-child`,
@@ -148,14 +149,18 @@ export default class Component extends DndSection {
         if (!element.pageItem) {
             return;
         }
-        if (element.pageItem.sectionId !== this.id && this.isPageItem || element.pageItem.type !== 'section') {
+
+        const containsPageItem = this._isPageItemInThisSection(element.pageItem);
+
+        if (!containsPageItem || this._isParentSectionIndexCollapsed(state)) {
             this.pageItem = false;
             this.getElement(this.selectors.SECTION_ITEM).classList.remove(this.classes.PAGEITEM);
             return;
         }
+
         const section = state.section.get(this.id);
         if (section.indexcollapsed && !element.pageItem?.isStatic) {
-            this.pageItem = (element.pageItem?.sectionId == this.id);
+            this.pageItem = containsPageItem;
         } else {
             this.pageItem = (element.pageItem.type == 'section' && element.pageItem.id == this.id);
         }
@@ -164,6 +169,42 @@ export default class Component extends DndSection {
         if (this.pageItem && !this.reactive.isEditing) {
             this.element.scrollIntoView({block: "nearest"});
         }
+    }
+
+    /**
+     * Check if the page item is inside this section.
+     *
+     * @private
+     * @param {Object} pageItem
+     * @param {Object} pageItem.sectionId the current page item section id.
+     * @returns {boolean}
+     */
+    _isPageItemInThisSection(pageItem) {
+        if (pageItem.sectionId == this.id) {
+            return true;
+        }
+        // Check for any possible subsections.
+        const subsection = this.element.querySelector(`${this.selectors.SECTION}[data-id="${pageItem.sectionId}"]`);
+        if (subsection) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check if the parent section index is collapsed.
+     *
+     * @private
+     * @param {Object} state the current state
+     * @returns {boolean|null} null if no parent section is found.
+     */
+    _isParentSectionIndexCollapsed(state) {
+        const parentElement = this.element.parentElement.closest(this.selectors.SECTION);
+        if (!parentElement || !parentElement.dataset.id) {
+            return null;
+        }
+        const parentSection = state.section.get(parentElement.dataset.id);
+        return !!parentSection.indexcollapsed;
     }
 
     /**
