@@ -371,7 +371,7 @@ class meeting {
         'disablemic' => 'lockSettingsDisableMic',
         'disableprivatechat' => 'lockSettingsDisablePrivateChat',
         'disablepublicchat' => 'lockSettingsDisablePublicChat',
-        'disablenote' => 'lockSettingsDisableNote',
+        'disablenote' => 'lockSettingsDisableNotes',
         'hideuserlist' => 'lockSettingsHideUserList'
     ];
     /**
