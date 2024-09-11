@@ -3377,6 +3377,7 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
         $student3 = $this->getDataGenerator()->create_and_enrol($course, 'student');
         $student4 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student5 = $this->getDataGenerator()->create_and_enrol($course, 'student');
 
         $grouping = $this->getDataGenerator()->create_grouping(array('courseid' => $course->id));
         $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
@@ -3394,6 +3395,7 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
             'submissiondrafts' => 1,
             'groupingid' => $grouping->id,
             'groupmode' => SEPARATEGROUPS,
+            'preventsubmissionnotingroup' => 0,
         ]);
 
         // Add the capability to the new \assignment for student 1.
@@ -3407,12 +3409,27 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $this->assertTrue($assign->can_edit_submission($student2->id, $student1->id));
         $this->assertFalse($assign->can_edit_submission($student3->id, $student1->id));
         $this->assertFalse($assign->can_edit_submission($student4->id, $student1->id));
+        $this->assertFalse($assign->can_edit_submission($student5->id, $student1->id));
 
         // Verify other students do not have the ability to edit submissions for other users.
         $this->assertTrue($assign->can_edit_submission($student2->id, $student2->id));
         $this->assertFalse($assign->can_edit_submission($student1->id, $student2->id));
         $this->assertFalse($assign->can_edit_submission($student3->id, $student2->id));
         $this->assertFalse($assign->can_edit_submission($student4->id, $student2->id));
+        $this->assertFalse($assign->can_edit_submission($student5->id, $student2->id));
+
+        // Add the required capability to edit other submissions and to view all groups to the teacher.
+        $roleid = create_role('Dummy role 2', 'dummyrole2', 'dummy role description');
+        assign_capability('mod/assign:editothersubmission', CAP_ALLOW, $roleid, $assign->get_context()->id);
+        assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $roleid, $assign->get_context()->id);
+        role_assign($roleid, $teacher->id, $assign->get_context()->id);
+
+        // Verify the teacher has the ability to edit submissions for other users including users not in a group.
+        $this->assertTrue($assign->can_edit_submission($student1->id, $teacher->id));
+        $this->assertTrue($assign->can_edit_submission($student2->id, $teacher->id));
+        $this->assertTrue($assign->can_edit_submission($student3->id, $teacher->id));
+        $this->assertTrue($assign->can_edit_submission($student4->id, $teacher->id));
+        $this->assertTrue($assign->can_edit_submission($student5->id, $teacher->id));
     }
 
     /**
