@@ -26877,6 +26877,12 @@ img.icon {
   display: inline-block;
   margin-right: 1em;
 }
+#page-admin-plugins #plugins-overview-panel .info [data-filterby].active {
+  font-weight: bold;
+}
+#page-admin-plugins #plugins-overview-panel .updateavailableinstallall {
+  margin-right: 1em;
+}
 #page-admin-plugins .checkforupdates {
   margin: 10px 0;
 }
