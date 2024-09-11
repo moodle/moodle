@@ -6307,7 +6307,8 @@ class assign {
         }
 
         $cm = $this->get_course_module();
-        if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {
+        if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS &&
+                !has_capability('moodle/site:accessallgroups', $this->context, $graderid)) {
             $sharedgroupmembers = $this->get_shared_group_members($cm, $graderid);
             return in_array($userid, $sharedgroupmembers);
         }
