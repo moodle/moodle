@@ -1,0 +1,7 @@
+issueNumber: MDL-83080
+notes:
+  core_message:
+    - message: >-
+        The `contexturl` property to `\core\message\message` instances can now
+        contain `\core\url` values in addition to plain strings
+      type: improved
