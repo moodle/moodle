@@ -38,6 +38,8 @@ Feature: Courses should not lose subsection contents when mod_subsection is disa
     And "Move" "link" should not exist in the "Subsection1" "core_courseformat > Section actions menu"
     And "View" "link" should exist in the "Subsection1" "core_courseformat > Section actions menu"
     And "Delete" "link" should exist in the "Subsection1" "core_courseformat > Section actions menu"
+    And "Permalink" "link" should not exist in the "Subsection1" "core_courseformat > Section actions menu"
+    And I should see "This section and its content are not part of the course structure" in the "Subsection1" "section"
 
   Scenario: Students should not see orphaned subsections
     When I log in as "student1"
@@ -54,6 +56,7 @@ Feature: Courses should not lose subsection contents when mod_subsection is disa
     And I should see "Subsection1" in the "page-content" "region"
     And I should see "Subactivity" in the "Subsection1" "section"
     And "Section 2" "section" should appear before "Subsection1" "section"
+    And I should see "This section and its content are not part of the course structure"
     When I enable "subsection" "mod" plugin
     And I am on "Course 1" course homepage with editing mode on
     Then I should see "Activity Sample" in the "Section 1" "section"
@@ -66,6 +69,7 @@ Feature: Courses should not lose subsection contents when mod_subsection is disa
     And "Move" "link" should exist in the "Subsection1" "core_courseformat > Section actions menu"
     And "View" "link" should exist in the "Subsection1" "core_courseformat > Section actions menu"
     And "Delete" "link" should exist in the "Subsection1" "core_courseformat > Section actions menu"
+    And I should not see "This section and its content are not part of the course structure"
 
   @javascript
   Scenario: Deleting the subsections with mod_subsection disabled should not break the course
@@ -104,14 +108,18 @@ Feature: Courses should not lose subsection contents when mod_subsection is disa
     And I press "Save changes"
     And I should see "Not available unless: You belong to a group in GX1"
     And I disable "subsection" "mod" plugin
-    When I am on the "C1 > Subsection1" "course > section" page
-    And I turn editing mode on
+    When I am on "Course 1" course homepage with editing mode on
+    And I should see "This section and its content are not part of the course structure" in the "Subsection1" "section"
+    And I should see "Not available unless: You belong to a group in GX1"
+    And I should not see "Edit restrictions"
+    And I am on the "C1 > Subsection1" "course > section" page
     And I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete section?" "dialogue"
     And I enable "subsection" "mod" plugin
     Then I am on "Course 1" course homepage
     And I should see "Not available unless: You belong to a group in GX1"
+    And I should see "Edit restrictions"
 
   @javascript
   Scenario: Visibility is restored when a subsection is deleted while mod_subsection is disabled

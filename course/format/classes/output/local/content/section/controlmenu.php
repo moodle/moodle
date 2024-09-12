@@ -277,6 +277,7 @@ class controlmenu extends basecontrolmenu {
             }
         }
         if (
+            !$isstealth &&
             has_any_capability([
                 'moodle/course:movesections',
                 'moodle/course:update',

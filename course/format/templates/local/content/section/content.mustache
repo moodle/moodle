@@ -83,6 +83,7 @@
         "insertafter": true,
         "numsections": 42,
         "sitehome": false,
+        "isstealth": false,
         "highlightedlabel" : "Highlighted"
     }
 }}
@@ -163,6 +164,11 @@
 <div id="coursecontentcollapse{{num}}"
      class="content {{^iscoursedisplaymultipage}}{{^sitehome}}{{^displayonesection}}course-content-item-content collapse {{^contentcollapsed}}show{{/contentcollapsed}}{{/displayonesection}}{{/sitehome}}{{/iscoursedisplaymultipage}}">
     <div class="{{#hasavailability}}description{{/hasavailability}} my-3" data-for="sectioninfo">
+        {{#isstealth}}
+        <div class="alert alert-warning">
+            {{#str}} orphansectionwarning, core_courseformat {{/str}}
+        </div>
+        {{/isstealth}}
         {{#summary}}
             {{$ core_courseformat/local/content/section/summary }}
                 {{> core_courseformat/local/content/section/summary }}

@@ -76,6 +76,10 @@ class visibility implements named_templatable, renderable {
 
         $data->editing = $this->format->show_editor();
 
+        if ($this->section->is_orphan()) {
+            $data->editing = false;
+        }
+
         $data->notavailable = false;
         $data->hiddenfromstudents = true;
         if ($data->editing && $this->is_section_visibility_editable()) {
