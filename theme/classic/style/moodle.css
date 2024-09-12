@@ -34691,6 +34691,37 @@ img.userpicture {
   margin-top: 20px;
   border-radius: 0 0 3px 3px;
 }
+.path-mod-quiz #mod_quiz_navblock .qnbutton.correct .thispageholder {
+  border-color: #357a32;
+}
+.path-mod-quiz #mod_quiz_navblock .qnbutton.incorrect .thispageholder {
+  border-color: #ca3120;
+}
+.path-mod-quiz #mod_quiz_navblock .qnbutton.partiallycorrect .thispageholder {
+  border-color: #f0ad4e;
+}
+.path-mod-quiz #mod_quiz_navblock .qnbutton.correct,
+.path-mod-quiz #mod_quiz_navblock .qnbutton.correct .trafficlight {
+  background-color: #dff4d8; /* light green */
+}
+.path-mod-quiz #mod_quiz_navblock .qnbutton.incorrect,
+.path-mod-quiz #mod_quiz_navblock .qnbutton.incorrect .trafficlight {
+  background-color: #fdd; /* light red */
+}
+.path-mod-quiz #mod_quiz_navblock .qnbutton.partiallycorrect,
+.path-mod-quiz #mod_quiz_navblock .qnbutton.partiallycorrect .trafficlight {
+  background-color: #fcefdc; /* light yellow */
+}
+.path-mod-quiz #mod_quiz_navblock .qnbutton.blocked,
+.path-mod-quiz #mod_quiz_navblock .qnbutton.blocked .trafficlight,
+.path-mod-quiz #mod_quiz_navblock .qnbutton.complete,
+.path-mod-quiz #mod_quiz_navblock .qnbutton.complete .trafficlight,
+.path-mod-quiz #mod_quiz_navblock .qnbutton.answersaved,
+.path-mod-quiz #mod_quiz_navblock .qnbutton.answersaved .trafficlight,
+.path-mod-quiz #mod_quiz_navblock .qnbutton.requiresgrading,
+.path-mod-quiz #mod_quiz_navblock .qnbutton.requiresgrading .trafficlight {
+  background-color: #dee2e6;
+}
 .path-mod-quiz #mod_quiz_navblock .qnbutton.notyetanswered .trafficlight,
 .path-mod-quiz #mod_quiz_navblock .qnbutton.invalidanswer .trafficlight {
   background-color: #fff;
@@ -34699,25 +34730,25 @@ img.userpicture {
   background-image: url([[pix:theme|mod/quiz/warningtriangle]]);
 }
 .path-mod-quiz #mod_quiz_navblock .qnbutton.correct .trafficlight {
-  background-image: url([[pix:theme|mod/quiz/checkmark]]);
-  background-color: #357a32;
+  background-image: url([[pix:core|i/grade_correct]]);
+  color: #357a32;
 }
 .path-mod-quiz #mod_quiz_navblock .qnbutton.blocked .trafficlight {
   background-image: url([[pix:core|t/locked]]);
-  background-color: #e9ecef;
 }
 .path-mod-quiz #mod_quiz_navblock .qnbutton.notanswered .trafficlight,
 .path-mod-quiz #mod_quiz_navblock .qnbutton.incorrect .trafficlight {
-  background-color: #ca3120;
+  background-image: url([[pix:core|i/grade_incorrect]]);
+  color: #ca3120;
 }
 .path-mod-quiz #mod_quiz_navblock .qnbutton.partiallycorrect .trafficlight {
-  background-image: url([[pix:theme|mod/quiz/whitecircle]]);
-  background-color: #f0ad4e;
+  background-image: url([[pix:core|i/grade_partiallycorrect]]);
+  color: #f0ad4e;
 }
 .path-mod-quiz #mod_quiz_navblock .qnbutton.complete .trafficlight,
 .path-mod-quiz #mod_quiz_navblock .qnbutton.answersaved .trafficlight,
 .path-mod-quiz #mod_quiz_navblock .qnbutton.requiresgrading .trafficlight {
-  background-color: #6a737b;
+  background-color: #dee2e6;
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer form input {
