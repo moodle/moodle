@@ -290,11 +290,11 @@ Feature: Restore Moodle 2 course backups
     And I should see "Unpublished course badge"
     And I should see "Unpublished without criteria course badge"
     # If activities were included, the criteria have been restored too; otherwise no criteria have been set up for badges.
-    And I <shouldornotsee> "Criteria for this badge have not been set up yet" in the "Published course badge" "table_row"
-    And I <shouldornotsee> "Criteria for this badge have not been set up yet" in the "Unpublished course badge" "table_row"
-    And I should see "Criteria for this badge have not been set up yet" in the "Unpublished without criteria course badge" "table_row"
+    And ".no-criteria-set" "css_element" <shouldornotexist> in the "Published course badge" "table_row"
+    And ".no-criteria-set" "css_element" <shouldornotexist> in the "Unpublished course badge" "table_row"
+    And ".no-criteria-set" "css_element" should exist in the "Unpublished without criteria course badge" "table_row"
 
     Examples:
-      | includeactivities | shouldornotsee |
-      | 0                 | should see     |
-      | 1                 | should not see |
+      | includeactivities | shouldornotexist |
+      | 0                 | should exist     |
+      | 1                 | should not exist |
