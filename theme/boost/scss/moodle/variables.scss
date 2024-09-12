@@ -7,17 +7,17 @@
  * preset files instead.
  */
 
-$state-success-bg: theme-color-level("success", -10) !default;
-$state-success-border: theme-color-level("success", -9) !default;
+$state-success-bg: shift-color($success, -80%) !default;
+$state-success-border: shift-color($success, -70%) !default;
 
-$state-info-bg: theme-color-level("info", -10) !default;
-$state-info-border: theme-color-level("info", -9) !default;
+$state-info-bg: shift-color($info, -80%) !default;
+$state-info-border: shift-color($info, -70%) !default;
 
-$state-warning-bg: theme-color-level("warning", -10) !default;
-$state-warning-border: theme-color-level("warning", -10) !default;
+$state-warning-bg: shift-color($warning, -80%) !default;
+$state-warning-border: shift-color($warning, -80%) !default;
 
-$state-danger-bg: theme-color-level("danger", -10) !default;
-$state-danger-border: theme-color-level("danger", -9) !default;
+$state-danger-bg: shift-color($danger, -80%) !default;
+$state-danger-border: shift-color($danger, -70%) !default;
 
 $primary-nav-padding-y: ($spacer * 0.25) !default;
 $primary-nav-padding-x: ($spacer * 0.5) !default;
@@ -33,10 +33,10 @@ $box-shadow-drawer-right: 0 .25rem .8rem rgba($black, .025) !default;
 
 $moremenu-height: 60px !default;
 
-$primary-light-background: theme-color-level('primary', -12) !default;
-$primary-light-border: theme-color-level('primary', -2) !default;
+$primary-light-background: shift-color($primary, -90%) !default;
+$primary-light-border: shift-color($primary, -20%) !default;
 $primary-light-color: $body-color;
-$primary-light-hover: theme-color-level('primary', -10) !default;
+$primary-light-hover: shift-color($primary, -80%) !default;
 $activity-iconcontainer-height: 52px;
 $activity-iconcontainer-width: 52px;
 

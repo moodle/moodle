@@ -23002,6 +23002,15 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 /* Bootstrap 5 bridge classes */
+/*
+ * These variables used to bridge the gap between Bootstrap 4 and Bootstrap 5 for
+ * alert and list-group-item.
+ */
+/*
+ * These function used to bridge the gap between Bootstrap 4 and Bootstrap 5 and
+ * and will be located in __functions.scss in Bootstrap 5
+ * This file should be removed as part of MDL-75669.
+ */
 /* These classes are used to bridge the gap between Bootstrap 4 and Bootstrap 5. */
 /* This file should be removed as part of MDL-75669. */
 /**
@@ -23261,7 +23270,7 @@ button.btn-close:focus:hover,
 }
 
 .bg-primary-light {
-  background-color: #f5f9fc;
+  background-color: #e7f0f9;
 }
 
 .fitem.advanced .text-info {
@@ -25592,23 +25601,23 @@ input[disabled] {
 }
 
 .alert-primary a {
-  color: #041d34;
+  color: #041c31;
 }
 .alert-primary .btn-close {
-  color: #000305;
+  color: #000102;
   opacity: 0.6;
 }
 
 .alert-secondary a {
-  color: #525557;
+  color: #4e5153;
 }
 .alert-secondary .btn-close {
-  color: #393b3d;
+  color: #353739;
   opacity: 0.6;
 }
 
 .alert-success a, .environmenttable .ok a {
-  color: #0c1b0b;
+  color: #0b190a;
 }
 .alert-success .btn-close, .environmenttable .ok .btn-close {
   color: black;
@@ -25616,7 +25625,7 @@ input[disabled] {
 }
 
 .alert-info a {
-  color: #00171b;
+  color: #001518;
 }
 .alert-info .btn-close {
   color: black;
@@ -25624,31 +25633,31 @@ input[disabled] {
 }
 
 .alert-warning a, .environmenttable .warn a {
-  color: #573e1c;
+  color: #523b1a;
 }
 .alert-warning .btn-close, .environmenttable .warn .btn-close {
-  color: #302310;
+  color: #2b1f0e;
   opacity: 0.6;
 }
 
 .alert-danger a, .environmenttable .error a {
-  color: #3d0f0a;
+  color: #390e09;
 }
 .alert-danger .btn-close, .environmenttable .error .btn-close {
-  color: #110403;
+  color: #0d0302;
   opacity: 0.6;
 }
 
 .alert-light a {
-  color: #686868;
+  color: #636363;
 }
 .alert-light .btn-close {
-  color: #4e4e4f;
+  color: #494a4a;
   opacity: 0.6;
 }
 
 .alert-dark a {
-  color: #040505;
+  color: #030404;
 }
 .alert-dark .btn-close {
   color: black;
@@ -25918,8 +25927,8 @@ body.dragging .dragging {
   padding: 0.5rem 1rem;
 }
 .collapse-list .collapse-list-item:hover, .collapse-list .collapse-list-item:focus {
-  background-color: #e0f0f2;
-  border-color: #b8dce2;
+  background-color: #e6f2f5;
+  border-color: #b3d9e0;
 }
 .collapse-list .collapse-list-item-content .collapse-list-item {
   padding-left: calc(1rem * 3);
@@ -27376,27 +27385,27 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
 
 .block-add {
   color: #0f6cbf;
-  background-color: #f5f9fc;
-  border-color: #3584c9;
+  background-color: #e7f0f9;
+  border-color: #3f89cc;
   border-radius: 0.5rem;
   width: 100%;
   border-width: 1px;
 }
 .block-add hr {
-  border-top-color: #3077b5;
+  border-top-color: #337cbf;
 }
 .block-add .alert-link {
   color: #0b5190;
 }
 .block-add .pluscontainer {
-  border: 1px solid #3584c9;
+  border: 1px solid #3f89cc;
   border-radius: 50%;
   width: 32px;
   height: 32px;
 }
 .block-add:hover {
   cursor: pointer;
-  background-color: #f5f9fc;
+  background-color: #e7f0f9;
 }
 .block-add:hover .activity-add-text {
   text-decoration: underline;
@@ -28552,15 +28561,15 @@ span.editinstructions {
   z-index: 9999;
   border: 0 solid transparent;
   width: fit-content;
-  color: #00434e;
+  color: #00414b;
   background-color: #cce6ea;
-  border-color: #b8dce2;
+  border-color: #b3d9e0;
 }
 span.editinstructions hr {
-  border-top-color: #a6d3db;
+  border-top-color: #a1d0d9;
 }
 span.editinstructions .alert-link {
-  color: #00171b;
+  color: #001518;
 }
 
 /* COURSES LISTINGS AND COURSE SUMMARY */
@@ -29149,7 +29158,7 @@ span.editinstructions .alert-link {
   font-weight: bold;
 }
 .btn.add-section:hover, .btn.add-section:focus {
-  background-color: #f5f9fc;
+  background-color: #e7f0f9;
   border: 2px solid #0f6cbf;
   color: #0f6cbf;
 }
@@ -29224,6 +29233,12 @@ span.editinstructions .alert-link {
 .editing .activity-item:hover:not(:has(.activity:hover)) .badge, .editing .activity-item.selected .activityiconcontainer,
 .editing .activity-item.selected .badge {
   mix-blend-mode: multiply;
+}
+.activity.dragging .activity-item {
+  border: 2px solid #0f6cbf;
+}
+.editing .activity.dragging .activity-item:hover {
+  outline: none;
 }
 .activity-item .activity-grid {
   display: grid;
@@ -29344,7 +29359,7 @@ span.editinstructions .alert-link {
   color: #1d2125;
   background-color: #cfe2f2;
   border-color: #cfe2f2;
-  color: #083863;
+  color: #083660;
 }
 .activity-item .activity-completion button.btn-primary:hover,
 .activity-item .activity-completion a[role=button].btn-primary:hover {
@@ -29390,7 +29405,7 @@ span.editinstructions .alert-link {
   color: #1d2125;
   background-color: #f5f6f8;
   border-color: #f5f6f8;
-  color: #6b6e71;
+  color: #676a6d;
 }
 .activity-item .activity-completion button.btn-secondary:hover,
 .activity-item .activity-completion a[role=button].btn-secondary:hover {
@@ -29436,7 +29451,7 @@ span.editinstructions .alert-link {
   color: #1d2125;
   background-color: #d7e4d6;
   border-color: #d7e4d6;
-  color: #1c3f1a;
+  color: #1b3d19;
 }
 .activity-item .activity-completion button.btn-success:hover,
 .activity-item .activity-completion a[role=button].btn-success:hover {
@@ -29482,7 +29497,7 @@ span.editinstructions .alert-link {
   color: #1d2125;
   background-color: #cce6ea;
   border-color: #cce6ea;
-  color: #00434e;
+  color: #00414b;
 }
 .activity-item .activity-completion button.btn-info:hover,
 .activity-item .activity-completion a[role=button].btn-info:hover {
@@ -29528,7 +29543,7 @@ span.editinstructions .alert-link {
   color: #1d2125;
   background-color: #fcefdc;
   border-color: #fcefdc;
-  color: #7d5a29;
+  color: #785727;
 }
 .activity-item .activity-completion button.btn-warning:hover,
 .activity-item .activity-completion a[role=button].btn-warning:hover {
@@ -29574,7 +29589,7 @@ span.editinstructions .alert-link {
   color: #1d2125;
   background-color: #f4d6d2;
   border-color: #f4d6d2;
-  color: #691911;
+  color: #651910;
 }
 .activity-item .activity-completion button.btn-danger:hover,
 .activity-item .activity-completion a[role=button].btn-danger:hover {
@@ -29620,7 +29635,7 @@ span.editinstructions .alert-link {
   color: #1d2125;
   background-color: #fefefe;
   border-color: #fefefe;
-  color: #818182;
+  color: #7c7d7d;
 }
 .activity-item .activity-completion button.btn-light:hover,
 .activity-item .activity-completion a[role=button].btn-light:hover {
@@ -29666,7 +29681,7 @@ span.editinstructions .alert-link {
   color: #1d2125;
   background-color: #d6d8d9;
   border-color: #d6d8d9;
-  color: #1b1e21;
+  color: #1a1d20;
 }
 .activity-item .activity-completion button.btn-dark:hover,
 .activity-item .activity-completion a[role=button].btn-dark:hover {
@@ -29871,7 +29886,7 @@ span.editinstructions .alert-link {
   border-radius: 0.5rem;
   font-size: 0.8203125rem;
   font-weight: bold;
-  color: #083863;
+  color: #083660;
   background-color: #cfe2f2;
 }
 .btn.add-content:hover, .btn.add-content:focus {
@@ -29981,7 +29996,7 @@ span.editinstructions .alert-link {
   background-color: #cfe2f2;
 }
 .move-activity-tree .collapse-list-item:hover a, .move-activity-tree .collapse-list-item:focus a {
-  color: #083863;
+  color: #083660;
 }
 .move-activity-tree .collapse-list-item a {
   color: #1d2125;
@@ -32324,12 +32339,12 @@ body.path-question-type .fitem .col-form-label.sr-only:not(legend):not([for=id_c
 .que .comment {
   color: #8e662e;
   background-color: #fcefdc;
-  border-color: #fbe8cd;
+  border-color: #fbe6ca;
   /* stylelint-disable-line max-line-length */
 }
 .que .outcome hr,
 .que .comment hr {
-  border-top-color: #f9ddb5;
+  border-top-color: #f9dbb2;
 }
 .que .outcome .alert-link,
 .que .comment .alert-link {
@@ -32341,13 +32356,13 @@ body.path-question-type .fitem .col-form-label.sr-only:not(legend):not([for=id_c
 }
 
 .que .formulation {
-  color: #001a1e;
-  background-color: #e7f3f5;
-  border-color: #b8dce2;
+  color: #000d0f;
+  background-color: #cce6ea;
+  border-color: #b3d9e0;
   /* stylelint-disable-line max-line-length */
 }
 .que .formulation hr {
-  border-top-color: #a6d3db;
+  border-top-color: #a1d0d9;
 }
 .que .formulation .alert-link {
   color: black;
@@ -32381,16 +32396,16 @@ body.path-question-type .fitem .col-form-label.sr-only:not(legend):not([for=id_c
 }
 
 .que .comment {
-  color: #1c3f1a;
+  color: #1b3d19;
   background-color: #d7e4d6;
-  border-color: #c6dac6;
+  border-color: #c2d7c2;
   /* stylelint-disable-line max-line-length */
 }
 .que .comment hr {
-  border-top-color: #b7d0b7;
+  border-top-color: #b3cdb3;
 }
 .que .comment .alert-link {
-  color: #0c1b0b;
+  color: #0b190a;
 }
 
 .que .ablock {
@@ -33125,7 +33140,7 @@ body.path-question-type .mform fieldset.hidden {
 
 #adminsettings span.error {
   display: inline-block;
-  border: 1px solid #f0c5c1;
+  border: 1px solid #efc1bc;
   border-radius: 4px;
   background-color: #f4d6d2;
   padding: 4px;
@@ -34938,16 +34953,16 @@ img.userpicture {
   margin-bottom: 1rem;
   border: 0 solid transparent;
   border-radius: 0.5rem;
-  color: #00434e;
+  color: #00414b;
   background-color: #cce6ea;
-  border-color: #b8dce2;
+  border-color: #b3d9e0;
   /* stylelint-disable-line max-line-length */
 }
 .assignfeedback_editpdf_widget .label hr {
-  border-top-color: #a6d3db;
+  border-top-color: #a1d0d9;
 }
 .assignfeedback_editpdf_widget .label .alert-link {
-  color: #00171b;
+  color: #001518;
 }
 
 .assignfeedback_editpdf_menu {
@@ -35618,7 +35633,7 @@ p.arrow_button {
 
 .btn.btn-icon.icons-collapse-expand {
   color: #0f6cbf;
-  background-color: #f5f9fc;
+  background-color: #e7f0f9;
 }
 .btn.btn-icon.icons-collapse-expand:hover {
   outline: 2px solid #0f6cbf;
@@ -35823,7 +35838,7 @@ p.arrow_button {
   margin-right: 28px;
   font-style: italic;
   font-weight: bold;
-  color: #2d662a;
+  color: #2a6228;
 }
 .gradingform_rubric .criterion .score input {
   margin-bottom: 0;
@@ -35930,12 +35945,12 @@ p.arrow_button {
   padding-left: 2rem;
 }
 .path-grade-edit-tree .collapse-list .unlist [data-for=sectionnode]:focus > .collapse-list-item:first-child {
-  background-color: #e0f0f2;
-  border-color: #b8dce2;
+  background-color: #e6f2f5;
+  border-color: #b3d9e0;
 }
 .path-grade-edit-tree .collapse-list .unlist [data-for=sectionnode][data-selected=true] > .collapse-list-item:first-child {
-  background-color: #e0f0f2;
-  border-color: #b8dce2;
+  background-color: #e6f2f5;
+  border-color: #b3d9e0;
   color: #0f6cbf;
 }
 .path-grade-edit-tree .collapse-list .unlist [data-for=sectionnode] .collapse-list-item-content[aria-hidden=true] {
@@ -37901,10 +37916,10 @@ div.editor_atto_toolbar button .icon {
 }
 .toast.toast-success {
   background-color: rgba(215, 228, 214, 0.95);
-  color: #1c3f1a;
+  color: #1b3d19;
 }
 .toast.toast-success .toast-header {
-  color: #1c3f1a;
+  color: #1b3d19;
 }
 .toast.toast-success .toast-body:before {
   margin: 2px 5px 0 0;
@@ -37912,10 +37927,10 @@ div.editor_atto_toolbar button .icon {
 }
 .toast.toast-danger {
   background-color: rgba(244, 214, 210, 0.95);
-  color: #691911;
+  color: #651910;
 }
 .toast.toast-danger .toast-header {
-  color: #691911;
+  color: #651910;
 }
 .toast.toast-danger .toast-body:before {
   margin: 2px 5px 0 0;
@@ -37923,10 +37938,10 @@ div.editor_atto_toolbar button .icon {
 }
 .toast.toast-info {
   background-color: rgba(204, 230, 234, 0.95);
-  color: #00434e;
+  color: #00414b;
 }
 .toast.toast-info .toast-header {
-  color: #00434e;
+  color: #00414b;
 }
 .toast.toast-info .toast-body:before {
   margin: 2px 5px 0 0;
@@ -37934,10 +37949,10 @@ div.editor_atto_toolbar button .icon {
 }
 .toast.toast-warning {
   background-color: rgba(252, 239, 220, 0.95);
-  color: #7d5a29;
+  color: #785727;
 }
 .toast.toast-warning .toast-header {
-  color: #7d5a29;
+  color: #785727;
 }
 .toast.toast-warning .toast-body:before {
   margin: 2px 5px 0 0;
@@ -38611,8 +38626,8 @@ div.editor_atto_toolbar button .icon {
   cursor: move;
 }
 .courseindex .courseindex-item.dragging {
-  border: 1px solid #b8dce2;
-  background-color: #e0f0f2;
+  border: 1px solid #b3d9e0;
+  background-color: #e6f2f5;
 }
 .courseindex .courseindex-item.active {
   background-color: #f8f9fa;
@@ -38670,8 +38685,8 @@ div.editor_atto_toolbar button .icon {
   border-left: solid 3px transparent;
 }
 .courseindex .courseindex-section.dragging {
-  border: 1px solid #b8dce2;
-  background-color: #e0f0f2;
+  border: 1px solid #b3d9e0;
+  background-color: #e6f2f5;
 }
 .courseindex .courseindex-section .current-badge {
   line-height: 1.5;
@@ -39017,15 +39032,15 @@ div.editor_atto_toolbar button .icon {
 .moodlenet-share-dialog .modal-body .moodlenet-share-activity-info {
   border-radius: 0.5rem;
   color: #1d2125;
-  background-color: #f5f9fc;
-  border-color: #3584c9;
+  background-color: #e7f0f9;
+  border-color: #3f89cc;
   border-width: 1px;
   border-style: solid;
   padding: 0.6em 1.5em;
   margin-bottom: 1rem;
 }
 .moodlenet-share-dialog .modal-body .moodlenet-share-activity-info hr {
-  border-top-color: #3077b5;
+  border-top-color: #337cbf;
 }
 .moodlenet-share-dialog .modal-body .moodlenet-share-activity-info .alert-link {
   color: #070808;

@@ -6,8 +6,8 @@ $dropzone-border: $gray-900 !default;
 
 $collapse-list-item-padding-y: 0.5rem !default;
 $collapse-list-item-padding-x: 1rem !default;
-$collapse-list-item-hover-bg: theme-color-level('info', -11) !default;
-$collapse-list-item-hover-border: theme-color-level('info', -9) !default;
+$collapse-list-item-hover-bg: shift-color($info, -90%) !default;
+$collapse-list-item-hover-border: shift-color($info, -70%) !default;
 
 $thin-scroll-bg-thumb: $gray-600 !default;
 $thin-scroll-bg-hover: $gray-700 !default;
@@ -2626,11 +2626,11 @@ $picker-emojis-per-row: 7 !default;
 @each $color, $value in $theme-colors {
     .alert-#{$color} {
         a {
-            color: darken(theme-color-level($color, $alert-color-level), 10%);
+            color: darken(shift-color($value, $alert-color-scale), 10%);
         }
         // Darken the close button text colour inside notification alerts for better contrast.
         .btn-close {
-            color: darken(theme-color-level($color, $alert-color-level), 20%);
+            color: darken(shift-color($value, $alert-color-scale), 20%);
             opacity: 0.6;
         }
     }
