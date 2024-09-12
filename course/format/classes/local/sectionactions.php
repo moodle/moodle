@@ -162,11 +162,11 @@ class sectionactions extends baseactions {
      *
      * @param int $position The position to add to, 0 means to the end.
      * @param bool $skipcheck the check has already been made and we know that the section with this position does not exist
-     * @return stdClass created section object)
+     * @return stdClass created section object
      */
     public function create(int $position = 0, bool $skipcheck = false): stdClass {
         $record = (object) [
-            'section' => $position,
+            'section' => ($position == 0 && !$skipcheck) ? null : $position,
         ];
         return $this->create_from_object($record, $skipcheck);
     }
