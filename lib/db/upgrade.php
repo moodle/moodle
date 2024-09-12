@@ -1274,12 +1274,12 @@ function xmldb_main_upgrade($oldversion) {
 
         // Adding fields to table ai_action_generate_image.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('prompt', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('prompt', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('numberimages', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('quality', XMLDB_TYPE_CHAR, '21', null, XMLDB_NOTNULL, null, null);
         $table->add_field('aspectratio', XMLDB_TYPE_CHAR, '20', null, null, null, null);
         $table->add_field('style', XMLDB_TYPE_CHAR, '20', null, null, null, null);
-        $table->add_field('sourceurl', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('sourceurl', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('revisedprompt', XMLDB_TYPE_TEXT, null, null, null, null, null);
 
         // Adding keys to table ai_action_generate_image.
@@ -1324,7 +1324,7 @@ function xmldb_main_upgrade($oldversion) {
 
         // Adding fields to table ai_action_generate_text.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('prompt', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('prompt', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('responseid', XMLDB_TYPE_CHAR, '128', null, null, null, null);
         $table->add_field('fingerprint', XMLDB_TYPE_CHAR, '128', null, null, null, null);
         $table->add_field('generatedcontent', XMLDB_TYPE_TEXT, null, null, null, null, null);
@@ -1345,7 +1345,7 @@ function xmldb_main_upgrade($oldversion) {
 
         // Adding fields to table ai_action_summarise_text.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('prompt', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('prompt', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('responseid', XMLDB_TYPE_CHAR, '128', null, null, null, null);
         $table->add_field('fingerprint', XMLDB_TYPE_CHAR, '128', null, null, null, null);
         $table->add_field('generatedcontent', XMLDB_TYPE_TEXT, null, null, null, null, null);
