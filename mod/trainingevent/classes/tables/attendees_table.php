@@ -148,13 +148,13 @@ class attendees_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_department($row) {
-        global $CFG, $DB;
+        global $CFG, $DB, $companyid;
 
         $userdepartments = $DB->get_records_sql("select d.* FROM {department} d JOIN {company_users} cu ON (d.id = cu.departmentid)
                                                  WHERE cu.userid = :userid
                                                  AND cu.companyid = :companyid",
                                                  ['userid' => $row->id,
-                                                  'companyid' => $row->companyid]);
+                                                  'companyid' => $companyid]);
         $count = count($userdepartments);
         $current = 1;
         $returnstr = "";
