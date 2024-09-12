@@ -30,6 +30,12 @@ Moodle is Free, and Open Source software. You can easily [download Moodle][9] an
 
 Moodle also offers hosting through both [MoodleCloud][11], and our [partner network][10].
 
+## Self-Hosting Moodle
+
+### Elestio
+
+[![Deploy on Elestio](https://elest.io/images/logos/deploy-to-elestio-btn.png)][13]
+
 ## License
 
 Moodle is provided freely as open source software, under version 3 of the GNU General Public License. For more information on our license see
@@ -46,3 +52,4 @@ Moodle is provided freely as open source software, under version 3 of the GNU Ge
 [10]: https://moodle.com/partners
 [11]: https://moodle.com/cloud
 [12]: https://moodledev.io/general/license
+[13]: https://elest.io/open-source/moodle
