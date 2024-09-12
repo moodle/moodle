@@ -594,17 +594,6 @@ All rights reserved.</copyright>
     </copyrights>
   </library>
   <library>
-    <location>php-enum</location>
-    <name>php-enum</name>
-    <description>PHP Enum implementation inspired from SplEnum</description>
-    <version>1.8.4</version>
-    <license>MIT</license>
-    <repository>https://github.com/myclabs/php-enum</repository>
-    <copyrights>
-      <copyright>2015 My C-Labs</copyright>
-    </copyrights>
-  </library>
-  <library>
     <location>psr/container</location>
     <name>container</name>
     <description>Common Container Interface (PHP FIG PSR-11).</description>

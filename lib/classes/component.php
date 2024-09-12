@@ -140,7 +140,6 @@ class component {
         \MoodleHQ::class => [
             'lib/rtlcss/src/MoodleHQ',
         ],
-        \MyCLabs\Enum::class => 'lib/php-enum/src',
         \OpenSpout::class => 'lib/openspout/src',
         \Packback\Lti1p3::class => 'lib/lti1p3/src',
         \PHPMailer\PHPMailer::class => 'lib/phpmailer/src',

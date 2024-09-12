@@ -1,0 +1,8 @@
+issueNumber: MDL-82825
+notes:
+  core:
+    - message: >-
+        - Remove php-enum library.
+        - It was a dependency of zipstream, but is no longer required as this 
+          functionality has been replaced by native PHP functionality.
+      type: removed
