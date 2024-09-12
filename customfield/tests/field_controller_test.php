@@ -30,6 +30,7 @@ use customfield_textarea;
  * @category   test
  * @copyright  2018 Ruslan Kabalin
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \core_customfield\field_controller
  */
 class field_controller_test extends \advanced_testcase {
 
@@ -87,6 +88,30 @@ class field_controller_test extends \advanced_testcase {
         $fieldrecord = $DB->get_record(\core_customfield\field::TABLE, ['id' => $field4->get('id')], '*', MUST_EXIST);
         $this->assertInstanceOf(customfield_textarea\field_controller::class,
             field_controller::create(0, $fieldrecord, $category0));
+    }
+
+    /**
+     * Test creation of field instance from pre-defined object
+     */
+    public function test_constructor_from_record(): void {
+        $this->resetAfterTest();
+
+        // Create field object that matches the persistent/schema definition.
+        $category = $this->get_generator()->create_category();
+        $field = field_controller::create(0, (object) [
+            'name' => 'Test',
+            'shortname' => 'test',
+            'type' => 'text',
+            'description' => null,
+            'descriptionformat' => null,
+            'sortorder' => null,
+            'configdata' => null,
+        ], $category);
+
+        // Saving the field will validate the persistent internally.
+        $field->save();
+
+        $this->assertInstanceOf(\customfield_text\field_controller::class, $field);
     }
 
     /**
