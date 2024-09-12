@@ -1301,7 +1301,8 @@ function stats_get_view_actions() {
 }
 
 function stats_get_post_actions() {
-    return array('add','delete','edit','add mod','delete mod','edit section'.'enrol','loginas','new','unenrol','update','update mod');
+    return ['add', 'delete', 'edit', 'add mod', 'delete mod', 'edit section', 'enrol', 'loginas', 'new', 'unenrol', 'update',
+            'update mod'];
 }
 
 function stats_get_action_names($str) {
