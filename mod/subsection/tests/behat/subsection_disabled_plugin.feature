@@ -129,3 +129,12 @@ Feature: Courses should not lose subsection contents when mod_subsection is disa
     And I enable "subsection" "mod" plugin
     Then I am on "Course 1" course homepage
     And I should see "Hidden from students"
+
+  @javascript
+  Scenario: Orphaned sections should appear after any other section
+    Given I log in as "teacher1"
+    When I am on "Course 1" course homepage with editing mode on
+    And I click on "Add section" "link" in the "course-addsection" "region"
+    Then I should see "New section"
+    And "Section 2" "section" should appear before "New section" "section"
+    And "New section" "section" should appear before "Subsection1" "section"

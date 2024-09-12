@@ -97,6 +97,7 @@
     data-id="{{id}}"
     data-number="{{num}}"
     data-sectionname="{{sectionname}}"
+    {{#isstealth}} data-orphan="true" {{/isstealth}}
 >
     <div class="section-item">
         {{$ core_courseformat/local/content/section/content }}
