@@ -94,6 +94,30 @@ final class field_controller_test extends \advanced_testcase {
     }
 
     /**
+     * Test creation of field instance from pre-defined object
+     */
+    public function test_constructor_from_record(): void {
+        $this->resetAfterTest();
+
+        // Create field object that matches the persistent/schema definition.
+        $category = $this->get_generator()->create_category();
+        $field = field_controller::create(0, (object) [
+            'name' => 'Test',
+            'shortname' => 'test',
+            'type' => 'text',
+            'description' => null,
+            'descriptionformat' => null,
+            'sortorder' => null,
+            'configdata' => null,
+        ], $category);
+
+        // Saving the field will validate the persistent internally.
+        $field->save();
+
+        $this->assertInstanceOf(\customfield_text\field_controller::class, $field);
+    }
+
+    /**
      * Test for function \core_customfield\field_controller::create() in case of wrong parameters
      */
     public function test_constructor_errors(): void {
