@@ -181,7 +181,7 @@ class text_filter extends \core_filters\text_filter {
                     $texcache->rawtext = $texexp;
                     $texcache->timemodified = time();
                     $DB->insert_record("cache_filters", $texcache, false);
-                    $text = str_replace($matches[0][$i], filter_algebra_image($filename, $texexp, '', '', $align), $text);
+                    $text = str_replace($matches[0][$i], self::get_image_markup($filename, $texexp, 0, 0, $align), $text);
                 } else {
                     $text = str_replace($matches[0][$i], "<b>Undetermined error:</b> " . $matches[0][$i], $text);
                 }
