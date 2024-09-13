@@ -804,7 +804,7 @@ class renderer extends plugin_renderer_base {
             if ($attemptobj->is_question_flagged($slot)) {
                 // Quiz has custom JS manipulating these image tags - so we can't use the pix_icon method here.
                 $flag = html_writer::empty_tag('img', ['src' => $this->image_url('i/flagged'),
-                        'alt' => get_string('flagged', 'question'), 'class' => 'questionflag']);
+                    'alt' => get_string('flagged', 'question'), 'class' => 'questionflag icon ms-2']);
             }
             if ($attemptobj->can_navigate_to($slot)) {
                 $row = [html_writer::link($attemptobj->attempt_url($slot),
