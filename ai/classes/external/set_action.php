@@ -16,6 +16,7 @@
 
 namespace core_ai\external;
 
+use core\context\system;
 use core_ai\manager;
 use core_external\external_api;
 use core_external\external_function_parameters;
@@ -68,6 +69,10 @@ class set_action extends external_api {
             'plugin' => $plugin,
             'state' => $state,
         ]);
+
+        $context = system::instance();
+        self::validate_context($context);
+        require_capability('moodle/site:config', $context);
 
         [$plugin, $action] = explode('-', $plugin);
         $actionname = get_string("action_$action", 'core_ai');
