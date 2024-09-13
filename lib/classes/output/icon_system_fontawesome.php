@@ -428,7 +428,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/messages' => 'fa-comments',
             'core:t/messages-o' => 'fa-regular fa-comments',
             'core:t/more' => 'fa-caret-down',
-            'core:t/move' => 'fa-arrows-up-down-left-right',
+            'core:t/move' => 'fa-arrows-up-down',
             'core:t/online' => 'fa-circle-check',
             'core:t/passwordunmask-edit' => 'fa-pen',
             'core:t/passwordunmask-reveal' => 'fa-solid fa-eye',
