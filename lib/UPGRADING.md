@@ -255,6 +255,12 @@
 - Add set_disabled_option method to url_select to enable or disable an option from its url (the key for the option).
 
   For more information see [MDL-82490](https://tracker.moodle.org/browse/MDL-82490)
+- There is a new method called `get_fixture_path()` that supports getting the path to the fixture
+
+  For more information see [MDL-82627](https://tracker.moodle.org/browse/MDL-82627)
+- There is a new method called `get_mocked_http_client()` that supports mocking the `http_client`
+
+  For more information see [MDL-82627](https://tracker.moodle.org/browse/MDL-82627)
 - The Moodle autoloader should now be registered using `\core\component::register_autoloader` rather than manually doing so in any exceptional location which requires it. It is not normally necessary to include the autoloader manually, as it is registered automatically when the Moodle environment is bootstrapped.
 
   For more information see [MDL-82747](https://tracker.moodle.org/browse/MDL-82747)

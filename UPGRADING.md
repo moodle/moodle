@@ -301,6 +301,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Add set_disabled_option method to url_select to enable or disable an option from its url (the key for the option).
 
   For more information see [MDL-82490](https://tracker.moodle.org/browse/MDL-82490)
+- There is a new method called `get_fixture_path()` that supports getting the path to the fixture
+
+  For more information see [MDL-82627](https://tracker.moodle.org/browse/MDL-82627)
+- There is a new method called `get_mocked_http_client()` that supports mocking the `http_client`
+
+  For more information see [MDL-82627](https://tracker.moodle.org/browse/MDL-82627)
 - The Moodle autoloader should now be registered using `\core\component::register_autoloader` rather than manually doing so in any exceptional location which requires it. It is not normally necessary to include the autoloader manually, as it is registered automatically when the Moodle environment is bootstrapped.
 
   For more information see [MDL-82747](https://tracker.moodle.org/browse/MDL-82747)
@@ -845,6 +851,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-81749](https://tracker.moodle.org/browse/MDL-81749)
 
+#### Added
+
+- A new FEATURE_COMPLETION plugin support constant has been added. In the future, this constant will be used to indicate when a plugin does not allow completion and it is enabled by default.
+
+  For more information see [MDL-83008](https://tracker.moodle.org/browse/MDL-83008)
+
 ### mod
 
 #### Added
@@ -866,6 +878,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### theme_boost
 
+#### Added
+
+- Bridged theme-color-level using a new shift-color function to prepare for its deprecation in Boostrap 5.
+
+  For more information see [MDL-81816](https://tracker.moodle.org/browse/MDL-81816)
+- Upon upgrading Font Awesome from version 4 to 6, the solid family was selected by default. However, FA6 includes additional families such as regular and brands. Support for these families has now been integrated, allowing icons defined with icon_system::FONTAWESOME to use them. Icons can add the FontAwesome family (fa-regular, fa-brands, fa-solid) near the icon name to display it using this styling.
+
+  For more information see [MDL-82210](https://tracker.moodle.org/browse/MDL-82210)
+
 #### Changed
 
 - Bootstrap .no-gutters class is no longer used, use .g-0  instead.
@@ -877,12 +898,6 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   * Your theme plugin applies a different styling for the page header for the maintenance and secure layouts.
 
   For more information see [MDL-83047](https://tracker.moodle.org/browse/MDL-83047)
-
-#### Added
-
-- Upon upgrading Font Awesome from version 4 to 6, the solid family was selected by default. However, FA6 includes additional families such as regular and brands. Support for these families has now been integrated, allowing icons defined with icon_system::FONTAWESOME to use them. Icons can add the FontAwesome family (fa-regular, fa-brands, fa-solid) near the icon name to display it using this styling.
-
-  For more information see [MDL-82210](https://tracker.moodle.org/browse/MDL-82210)
 
 ### availability
 
@@ -1009,3 +1024,11 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Previously, the 'duration' form field type would allow users to input positive or negative durations. However looking at all the uses, everyone was expecting this input type to only accept times >= 0 seconds, and almost no-one was bothering to write manual form validation, leading to subtle bugs. So now, by default this field type will validate the input value is not negative. If you need the previous behaviour, there is a new option 'allownegative' which you can set to true. (The default is false.)
 
   For more information see [MDL-82687](https://tracker.moodle.org/browse/MDL-82687)
+
+### core_external
+
+#### Changed
+
+- The external function core_webservice_external::get_site_info now returns the default home page URL when needed.
+
+  For more information see [MDL-82844](https://tracker.moodle.org/browse/MDL-82844)
