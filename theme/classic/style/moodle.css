@@ -25959,6 +25959,11 @@ body.dragging .dragging {
   border: 0;
 }
 
+.listitem-category .dropdown-toggle::after {
+  /* This can be removed when the .dropdown-toggle::after is updated to remove content. */
+  content: none;
+}
+
 .dropleft .dropdown-toggle::before {
   border: 0;
   content: "\f053";
