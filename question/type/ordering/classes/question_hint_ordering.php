@@ -54,9 +54,16 @@ class question_hint_ordering extends question_hint_with_parts {
         global $DB;
 
         // Initialize with the old questions.
-        if (is_null($row->options) || is_null($row->shownumcorrect)) {
-            $row->options = 1;
-            $row->shownumcorrect = 1;
+        if (is_null($row->options) || is_null($row->shownumcorrect) || is_null($row->clearwrong)) {
+            if (is_null($row->options)) {
+                $row->options = 1;
+            }
+            if (is_null($row->shownumcorrect)) {
+                $row->shownumcorrect = 1;
+            }
+            if (is_null($row->clearwrong)) {
+                $row->clearwrong = 1;
+            }
             $DB->update_record('question_hints', $row);
         }
 
