@@ -167,7 +167,7 @@ class processor {
             } else {
 
                 // Enrol user into course.
-                $user = new stdClass;
+                $user = (object) [];
                 $user->id = $invoice->userid;
                 company_user::enrol($user, array($course->courseid));
             }
