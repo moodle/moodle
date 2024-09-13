@@ -49,6 +49,14 @@ if ($ADMIN->fulltree) {
             $settings->add(new admin_setting_configtext('search_solr/ssl_cainfo', new lang_string('solrsslcainfo', 'search_solr'), new lang_string('solrsslcainfo_desc', 'search_solr'), '', PARAM_RAW));
             $settings->add(new admin_setting_configtext('search_solr/ssl_capath', new lang_string('solrsslcapath', 'search_solr'), new lang_string('solrsslcapath_desc', 'search_solr'), '', PARAM_RAW));
 
+            $settings->add(new admin_setting_configtext(
+                'search_solr/indexsizelimit',
+                new lang_string('indexsizelimit', 'search_solr'),
+                new lang_string('indexsizelimit_desc', 'search_solr'),
+                0,
+                PARAM_INT,
+            ));
+
             $settings->add(new admin_setting_heading('search_solr_fileindexing',
                     new lang_string('fileindexsettings', 'search_solr'), ''));
             $settings->add(new admin_setting_configcheckbox('search_solr/fileindexing',

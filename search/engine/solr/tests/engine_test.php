@@ -1472,6 +1472,19 @@ final class engine_test extends \advanced_testcase {
     }
 
     /**
+     * Tests that the get_status function works OK on the real server (there are more detailed
+     * tests for this function in {@see mock_engine_test}).
+     *
+     * @covers \search_solr\check\connection
+     */
+    public function test_get_status(): void {
+        $status = $this->engine->get_status(5);
+        $this->assertTrue($status['connected']);
+        $this->assertTrue($status['foundcore']);
+        $this->assertGreaterThan(0, $status['indexsize']);
+    }
+
+    /**
      * Carries out a raw Solr query using the Solr basic query syntax.
      *
      * This is used to test data contained in the index without going through Moodle processing.
