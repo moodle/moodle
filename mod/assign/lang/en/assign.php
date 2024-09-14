@@ -439,6 +439,7 @@ $string['noteamgrader'] = 'Not a member of any group, so unable to make submissi
 $string['notgraded'] = 'Not graded';
 $string['notgradedyet'] = 'Not graded yet';
 $string['notifications'] = 'Notifications';
+$string['notifystudents'] = 'Notify students';
 $string['nousersselected'] = 'No users selected';
 $string['nousers'] = 'No users';
 $string['numberofdraftsubmissions'] = 'Drafts';

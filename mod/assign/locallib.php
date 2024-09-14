@@ -4610,15 +4610,16 @@ class assign {
             'perpage' => $gradingtable->get_paging_selector(),
             'pagingbar' => $gradingtable->get_paging_bar(),
             'hassubmit' => $usequickgrading,
+            'sendstudentnotifications' => $this->get_instance()->sendstudentnotifications,
         ];
         $footer = new core\output\sticky_footer($OUTPUT->render_from_template('mod_assign/grading_sticky_footer', $footerdata));
 
         if ($usequickgrading) {
             $page = optional_param('page', null, PARAM_INT);
+            $PAGE->requires->js_call_amd('mod_assign/quick_grading', 'init', []);
             $quickformparams = [
                 'cm' => $this->get_course_module()->id,
                 'gradingtable' => $table,
-                'sendstudentnotifications' => $this->get_instance()->sendstudentnotifications,
                 'page' => $page,
                 'footer' => $this->get_renderer()->render($footer),
             ];

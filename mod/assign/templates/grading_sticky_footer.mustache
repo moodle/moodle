@@ -23,7 +23,8 @@
     {
         "perpage": "<label>Show<select name='perpage' class='custom-select'><option value='-1'>All</select></label>",
         "pagingbar": "<nav class='pagination pagination-centered justify-content-center'><ul class='mt-1 pagination '><li class='page-item active'><a href='#' class='page-link'><span>1</span></a></li></ul></nav>",
-        "hassubmit": true
+        "hassubmit": true,
+        "sendstudentnotifications": true
     }
 }}
 <div class="col-auto">
@@ -38,13 +39,15 @@
 </div>
 <div class="col-auto">
     {{#hassubmit}}
-        <button type="submit" id="{{uniqid}}-submit" class="btn btn-primary">
-            {{#str}}save{{/str}}
-        </button>
-        {{#js}}
-            require(['core_form/submit'], function(Submit) {
-                Submit.init("{{uniqid}}-submit");
-            });
-        {{/js}}
+        <div class="d-flex align-items-center" data-region="quick-grading-save">
+            <div class="me-4">
+                <input type="hidden" name="sendstudentnotifications" value="0" {{#sendstudentnotifications}}disabled{{/sendstudentnotifications}}>
+                <input type="checkbox" id="send-student-notifications-{{uniqid}}" name="sendstudentnotifications" {{#sendstudentnotifications}}checked="checked"{{/sendstudentnotifications}}>
+                <label for="send-student-notifications-{{uniqid}}" class="m-0">{{#str}} notifystudents, mod_assign {{/str}}</label>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                {{#str}}save{{/str}}
+            </button>
+        </div>
     {{/hassubmit}}
 </div>
