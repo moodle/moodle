@@ -63,7 +63,7 @@ class manager {
      *
      * Will return an array of arrays, indexed by action name.
      *
-     * @param array $actions An array of action class names.
+     * @param array $actions An array of fully qualified action class names.
      * @param bool $enabledonly If true, only return enabled providers.
      * @return array An array of provider instances indexed by action name.
      */
@@ -233,15 +233,16 @@ class manager {
      * Set the action state for a given plugin.
      *
      * @param string $plugin The name of the plugin.
-     * @param string $action The action to be set.
+     * @param string $actionbasename The action to be set.
      * @param int $enabled The state to be set (e.g., enabled or disabled).
      * @return bool Returns true if the configuration was successfully set, false otherwise.
      */
-    public static function set_action_state(string $plugin, string $action, int $enabled): bool {
-        $oldvalue = static::is_action_enabled($plugin, $action);
+    public static function set_action_state(string $plugin, string $actionbasename, int $enabled): bool {
+        $actionclass = 'core_ai\\aiactions\\' . $actionbasename;
+        $oldvalue = static::is_action_enabled($plugin, $actionclass);
         // Only set value if there is no config setting or if the value is different from the previous one.
         if ($oldvalue !== $enabled) {
-            set_config($action, $enabled, $plugin);
+            set_config($actionbasename, $enabled, $plugin);
             add_to_config_log('disabled', !$oldvalue, !$enabled, $plugin);
             \core_plugin_manager::reset_caches();
             return true;
@@ -253,16 +254,38 @@ class manager {
      * Check if an action is enabled for a given plugin.
      *
      * @param string $plugin The name of the plugin.
-     * @param string $action The action to be checked.
+     * @param string $actionclass The fully qualified action class name to be checked.
      * @return mixed Returns the configuration value of the action for the given plugin.
      */
-    public static function is_action_enabled(string $plugin, string $action): bool {
-        $value = get_config($plugin, $action);
-
+    public static function is_action_enabled(string $plugin, string $actionclass): bool {
+        $value = get_config($plugin, $actionclass::get_basename());
         // If not exist in DB, set it to true (enabled).
         if ($value === false) {
             return true;
         }
         return (bool) $value;
+    }
+
+    /**
+     * Check if an action is available.
+     * Action is available if it is enabled for at least one enabled provider.
+     *
+     * @param string $actionclass The fully qualified action class name to be checked.
+     * @return bool
+     */
+    public static function is_action_available(string $actionclass): bool {
+        $providers = self::get_providers_for_actions([$actionclass], true);
+        // Check if the requested action is enabled for at least one provider.
+        foreach ($providers as $provideractions) {
+            foreach ($provideractions as $provider) {
+                $classnamearray = explode('\\', $provider::class);
+                $pluginname = reset($classnamearray);
+                if (self::is_action_enabled($pluginname, $actionclass)) {
+                    return true;
+                }
+            }
+        }
+        // There are no providers with this action enabled.
+        return false;
     }
 }
