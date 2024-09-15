@@ -148,7 +148,8 @@ class mod_glossary_external extends external_api {
             $context,
             'mod_glossary',
             'entry',
-            $entry->id
+            $entry->id,
+            ['trusted' => true],
         );
 
         // Author details.

@@ -20,13 +20,18 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
       | activity | name               | intro                     | displayformat  | course | idnumber |
       | glossary | Test glossary name | Test glossary description | fullwithauthor | C1     | g1       |
     And the following "mod_glossary > categories" exist:
-      | glossary | name            |
-      | g1       | The ones I like |
-      | g1       | All for you     |
+      | glossary | name                                                                                                                          |
+      | g1       | <span lang=\"en\" class=\"multilang\">The ones I like</span><span lang=\"fr\" class=\"multilang\">Ceux qui me plaisent</span> |
+      | g1       | <span lang=\"en\" class=\"multilang\">All for you</span><span lang=\"fr\" class=\"multilang\">Tout pour toi</span>            |
+
     And the following "mod_glossary > entries" exist:
-      | glossary | concept  | definition     | user     | categories      |
-      | g1       | Eggplant | Sour eggplants | teacher1 | All for you     |
-      | g1       | Cucumber | Sweet cucumber | student1 | The ones I like |
+      | glossary | concept                                                                                             | definition                                                                                                              | user     | categories                                                                                                                    |
+      | g1       | <span lang="en" class="multilang">Eggplant</span><span lang="fr" class="multilang">Aubergine</span> | <span lang="en" class="multilang">Sour eggplants</span><span lang="fr" class="multilang">Aubergines aigres</span>       | teacher1 | <span lang=\"en\" class=\"multilang\">All for you</span><span lang=\"fr\" class=\"multilang\">Tout pour toi</span>            |
+      | g1       | 7up                                                                                                 | <span lang="en" class="multilang">7up is a softdrink</span><span lang="fr" class="multilang">7up est une boisson</span> | teacher1 | <span lang=\"en\" class=\"multilang\">The ones I like</span><span lang=\"fr\" class=\"multilang\">Ceux qui me plaisent</span> |
+      | g1       | <span lang="en" class="multilang">Cucumber</span><span lang="fr" class="multilang">Concombre</span> | <span lang="en" class="multilang">Sweet cucumber</span><span lang="fr" class="multilang">Doux concombre</span>          | student1 | <span lang=\"en\" class=\"multilang\">The ones I like</span><span lang=\"fr\" class=\"multilang\">Ceux qui me plaisent</span> |
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I log out
     And I am on the "Test glossary name" "glossary activity" page logged in as teacher1
 
   @javascript
@@ -35,12 +40,34 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
     And I press "Search"
     Then I should see "Sweet cucumber"
     And I should see "Search: cucumber"
+    And I set the field "hook" to "aubergine"
+    And I press "Search"
+    And I should see "Sour eggplants"
+    And I should see "Search: aubergine"
+    And I should see "E" in the ".glossarycategoryheader" "css_element"
     And I click on "E" "link" in the ".entrybox" "css_element"
     And I should see "Sour eggplants"
     And I should not see "Sweet cucumber"
+    And I should not see "No entries found in this section"
+    And I click on "Special" "link" in the ".entrybox" "css_element"
+    And I should see "7up"
+    And I should not see "Sweet cucumber"
+    And I should not see "Sour eggplants"
+    And I should not see "No entries found in this section"
     And I click on "X" "link" in the ".entrybox" "css_element"
     And I should not see "Sweet cucumber"
     And I should see "No entries found in this section"
+
+  @javascript
+  Scenario: Search by keyword and browse by alphabet when several multilang entries can be found
+    When I add a glossary entry with the following data:
+      | Concept    | <span lang="de" class="multilang">Concombre</span><span lang="en" class="multilang">Cucumber</span>            |
+      | Definition | <span lang="fr" class="multilang">Doux concombre</span><span lang="en" class="multilang">Sweet cucumber alternate entry</span> |
+    And I set the field "hook" to "cucumber"
+    And I press "Search"
+    Then I should see "Sweet cucumber"
+    And I should see "Sweet cucumber alternate entry"
+    And I should see "Search: cucumber"
 
   @javascript
   Scenario: Browse by category

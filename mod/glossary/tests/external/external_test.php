@@ -367,7 +367,7 @@ final class external_test extends externallib_advanced_testcase {
 
         // Ordering including to approve.
         $return = mod_glossary_external::get_entries_by_date($g1->id, 'CREATION', 'ASC', 0, 20,
-            array('includenotapproved' => true));
+            ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_date_returns(), $return);
         $this->assertCount(4, $return['entries']);
         $this->assertEquals(4, $return['count']);
@@ -378,14 +378,14 @@ final class external_test extends externallib_advanced_testcase {
 
         // Ordering including to approve and pagination.
         $return = mod_glossary_external::get_entries_by_date($g1->id, 'CREATION', 'ASC', 0, 2,
-            array('includenotapproved' => true));
+            ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_date_returns(), $return);
         $this->assertCount(2, $return['entries']);
         $this->assertEquals(4, $return['count']);
         $this->assertEquals($e1a->id, $return['entries'][0]['id']);
         $this->assertEquals($e1c->id, $return['entries'][1]['id']);
         $return = mod_glossary_external::get_entries_by_date($g1->id, 'CREATION', 'ASC', 2, 2,
-            array('includenotapproved' => true));
+            ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_date_returns(), $return);
         $this->assertCount(2, $return['entries']);
         $this->assertEquals(4, $return['count']);
@@ -480,7 +480,7 @@ final class external_test extends externallib_advanced_testcase {
 
         // Including to approve.
         $return = mod_glossary_external::get_entries_by_category($g1->id, $cat1b->id, 0, 20,
-            array('includenotapproved' => true));
+            ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_category_returns(), $return);
         $this->assertCount(2, $return['entries']);
         $this->assertEquals(2, $return['count']);
@@ -489,7 +489,7 @@ final class external_test extends externallib_advanced_testcase {
 
         // Using limit.
         $return = mod_glossary_external::get_entries_by_category($g1->id, GLOSSARY_SHOW_ALL_CATEGORIES, 0, 3,
-            array('includenotapproved' => true));
+            ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_category_returns(), $return);
         $this->assertCount(3, $return['entries']);
         $this->assertEquals(6, $return['count']);
@@ -497,7 +497,7 @@ final class external_test extends externallib_advanced_testcase {
         $this->assertEquals($e1b2->id, $return['entries'][1]['id']);
         $this->assertEquals($e1a1->id, $return['entries'][2]['id']);
         $return = mod_glossary_external::get_entries_by_category($g1->id, GLOSSARY_SHOW_ALL_CATEGORIES, 3, 2,
-            array('includenotapproved' => true));
+            ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_category_returns(), $return);
         $this->assertCount(2, $return['entries']);
         $this->assertEquals(6, $return['count']);
@@ -536,7 +536,7 @@ final class external_test extends externallib_advanced_testcase {
         $this->assertEquals($u1->id, $return['authors'][1]['id']);
 
         // Include users with entries pending approval.
-        $return = mod_glossary_external::get_authors($g1->id, 0, 20, array('includenotapproved' => true));
+        $return = mod_glossary_external::get_authors($g1->id, 0, 20, ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_authors_returns(), $return);
         $this->assertCount(3, $return['authors']);
         $this->assertEquals(3, $return['count']);
@@ -545,7 +545,7 @@ final class external_test extends externallib_advanced_testcase {
         $this->assertEquals($u1->id, $return['authors'][2]['id']);
 
         // Pagination.
-        $return = mod_glossary_external::get_authors($g1->id, 1, 1, array('includenotapproved' => true));
+        $return = mod_glossary_external::get_authors($g1->id, 1, 1, ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_authors_returns(), $return);
         $this->assertCount(1, $return['authors']);
         $this->assertEquals(3, $return['count']);
@@ -613,7 +613,7 @@ final class external_test extends externallib_advanced_testcase {
         // Including non-approved.
         $this->setAdminUser();
         $return = mod_glossary_external::get_entries_by_author($g1->id, 'ALL', 'LASTNAME', 'ASC', 0, 20,
-            array('includenotapproved' => true));
+            ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_returns(), $return);
         $this->assertCount(7, $return['entries']);
         $this->assertEquals(7, $return['count']);
@@ -750,7 +750,7 @@ final class external_test extends externallib_advanced_testcase {
 
         // Including non approved.
         $return = mod_glossary_external::get_entries_by_author_id($g1->id, $u1->id, 'CONCEPT', 'ASC', 0, 20,
-            array('includenotapproved' => true));
+            ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_id_returns(), $return);
         $this->assertCount(4, $return['entries']);
         $this->assertEquals(4, $return['count']);
@@ -761,14 +761,14 @@ final class external_test extends externallib_advanced_testcase {
 
         // Pagination.
         $return = mod_glossary_external::get_entries_by_author_id($g1->id, $u1->id, 'CONCEPT', 'ASC', 0, 2,
-            array('includenotapproved' => true));
+            ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_id_returns(), $return);
         $this->assertCount(2, $return['entries']);
         $this->assertEquals(4, $return['count']);
         $this->assertEquals($e1a2->id, $return['entries'][0]['id']);
         $this->assertEquals($e1a4->id, $return['entries'][1]['id']);
         $return = mod_glossary_external::get_entries_by_author_id($g1->id, $u1->id, 'CONCEPT', 'ASC', 1, 2,
-            array('includenotapproved' => true));
+            ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_id_returns(), $return);
         $this->assertCount(2, $return['entries']);
         $this->assertEquals(4, $return['count']);
@@ -872,7 +872,7 @@ final class external_test extends externallib_advanced_testcase {
         // Including not approved.
         $query = 'ou';
         $return = mod_glossary_external::get_entries_by_search($g1->id, $query, false, 'CONCEPT', 'ASC', 0, 20,
-            array('includenotapproved' => true));
+            ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_search_returns(), $return);
         $this->assertCount(4, $return['entries']);
         $this->assertEquals(4, $return['count']);
@@ -884,7 +884,7 @@ final class external_test extends externallib_advanced_testcase {
         // Advanced query string.
         $query = '+Heroes -Abcd';
         $return = mod_glossary_external::get_entries_by_search($g1->id, $query, true, 'CONCEPT', 'ASC', 0, 20,
-            array('includenotapproved' => true));
+            ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_search_returns(), $return);
         $this->assertCount(2, $return['entries']);
         $this->assertEquals(2, $return['count']);
@@ -914,7 +914,7 @@ final class external_test extends externallib_advanced_testcase {
         $e5 = $gg->create_content($g2, array('userid' => $u1->id, 'approved' => 1, 'concept' => 'dog'), array('cat'));
 
         // Search concept + alias.
-        $return = mod_glossary_external::get_entries_by_term($g1->id, 'cat', 0, 20, array('includenotapproved' => false));
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'cat', 0, 20, ['includenotapproved' => false]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
         $this->assertCount(2, $return['entries']);
         $this->assertEquals(2, $return['count']);
@@ -933,7 +933,7 @@ final class external_test extends externallib_advanced_testcase {
         $this->assertEqualsCanonicalizing($expected, $actual);
 
         // Search alias.
-        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, array('includenotapproved' => false));
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, ['includenotapproved' => false]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
 
         $this->assertCount(2, $return['entries']);
@@ -944,7 +944,7 @@ final class external_test extends externallib_advanced_testcase {
         $this->assertEqualsCanonicalizing($expected, $actual);
 
         // Search including not approved.
-        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, array('includenotapproved' => true));
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
         $this->assertCount(3, $return['entries']);
         $this->assertEquals(3, $return['count']);
@@ -954,13 +954,104 @@ final class external_test extends externallib_advanced_testcase {
         $this->assertEqualsCanonicalizing($expected, $actual);
 
         // Pagination.
-        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 1, array('includenotapproved' => true));
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 1, ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
         $this->assertCount(1, $return['entries']);
         // We don't compare the returned entry id because it may be different depending on the DBMS,
         // for example, Postgres does a random sorting in this case.
         $this->assertEquals(3, $return['count']);
-        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 1, 1, array('includenotapproved' => true));
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 1, 1, ['includenotapproved' => true]);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(3, $return['count']);
+    }
+
+    /**
+     * Test get_entries_by_multilingual_term.
+     *
+     * @covers \mod_glossary_external::get_entries_by_term
+     * @return void
+     * @throws \coding_exception
+     * @throws \invalid_response_exception
+     * @throws \moodle_exception
+     */
+    public function test_get_entries_by_multilingual_term(): void {
+        $this->resetAfterTest(true);
+
+        // Enable multilang filter to on content and heading.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', 1);
+
+        // Generate all the things.
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $c1 = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_module('glossary', ['course' => $c1->id]);
+        $g2 = $this->getDataGenerator()->create_module('glossary', ['course' => $c1->id]);
+        $u1 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
+
+        $this->setAdminUser();
+
+        $e1 = $gg->create_content($g1, ['userid' => $u1->id, 'approved' => 1, 'concept' => '<span lang="en" ' .
+            'class="multilang">cat</span><span lang="fr" class="multilang">chat</span>', 'tags' => ['Cats', 'Dogs']]);
+        $e2 = $gg->create_content($g1, ['userid' => $u1->id, 'approved' => 1], ['<span lang="en" class="' .
+            'multilang">cat</span><span lang="fr" class="multilang">chat</span>', '<span lang="en" class="multilang">' .
+            'dog</span><span lang="fr" class="multilang">chien</span>']);
+        $e3 = $gg->create_content($g1, ['userid' => $u1->id, 'approved' => 1], ['<span lang="en" class="' .
+            'multilang">dog</span><span lang="fr" class="multilang">chien</span>']);
+        $e4 = $gg->create_content($g1, ['userid' => $u1->id, 'approved' => 0, 'concept' => '<span lang="en" class="' .
+            'multilang">dog</span><span lang="fr" class="multilang">chien</span>']);
+        $e5 = $gg->create_content($g2, ['userid' => $u1->id, 'approved' => 1, 'concept' => '<span lang="en" class="' .
+            'multilang">cog</span><span lang="fr" class="multilang">chien</span>'], ['cat']);
+
+        // Search concept + alias.
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'cat', 0, 20, ['includenotapproved' => false]);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
+        $this->assertCount(2, $return['entries']);
+        $this->assertEquals(2, $return['count']);
+        // Compare ids, ignore ordering of array, using canonicalize parameter of assertEquals.
+        $expected = [$e1->id, $e2->id];
+        $actual = [$return['entries'][0]['id'], $return['entries'][1]['id']];
+        $this->assertEqualsCanonicalizing($expected, $actual);
+        // Compare rawnames of all expected tags, ignore ordering of array, using canonicalize parameter of assertEquals.
+        $expected = ['Cats', 'Dogs']; // Only $e1 has 2 tags.
+        $actual = []; // Accumulate all tags returned.
+        foreach ($return['entries'] as $entry) {
+            foreach ($entry['tags'] as $tag) {
+                $actual[] = $tag['rawname'];
+            }
+        }
+        $this->assertEqualsCanonicalizing($expected, $actual);
+
+        // Search alias.
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, ['includenotapproved' => false]);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
+
+        $this->assertCount(2, $return['entries']);
+        $this->assertEquals(2, $return['count']);
+        // Compare ids, ignore ordering of array, using canonicalize parameter of assertEquals.
+        $expected = [$e2->id, $e3->id];
+        $actual = [$return['entries'][0]['id'], $return['entries'][1]['id']];
+        $this->assertEqualsCanonicalizing($expected, $actual);
+
+        // Search including not approved.
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, ['includenotapproved' => true]);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
+        $this->assertCount(3, $return['entries']);
+        $this->assertEquals(3, $return['count']);
+        // Compare ids, ignore ordering of array, using canonicalize parameter of assertEquals.
+        $expected = [$e4->id, $e2->id, $e3->id];
+        $actual = [$return['entries'][0]['id'], $return['entries'][1]['id'], $return['entries'][2]['id']];
+        $this->assertEqualsCanonicalizing($expected, $actual);
+
+        // Pagination.
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 1, ['includenotapproved' => true]);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        // We don't compare the returned entry id because it may be different depending on the DBMS,
+        // for example, Postgres does a random sorting in this case.
+        $this->assertEquals(3, $return['count']);
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 1, 1, ['includenotapproved' => true]);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
         $this->assertCount(1, $return['entries']);
         $this->assertEquals(3, $return['count']);

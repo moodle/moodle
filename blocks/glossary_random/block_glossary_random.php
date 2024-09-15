@@ -81,75 +81,92 @@ class block_glossary_random extends block_base {
 
             $glossaryctx = context_module::instance($cm->id);
 
-            $limitfrom = 0;
-            $limitnum = 1;
+            $entries = $DB->get_records_sql('SELECT id, concept, definition, definitionformat, definitiontrust
+                                               FROM {glossary_entries}
+                                              WHERE glossaryid = ? AND approved = 1
+                                              ORDER BY timemodified ASC', [$this->config->glossary]);
 
-            $orderby = 'timemodified ASC';
+            if (empty($entries)) {
+                $text = get_string('noentriesyet', 'block_glossary_random');
+            } else {
+                // Now picking out the correct entry from the array.
+                switch ($this->config->type) {
+                    case BGR_RANDOMLY:
+                        $i = ($numberofentries > 1) ? rand(1, $numberofentries) : 1;
+                        if (count($entries) == 1) {
+                            $entry = reset($entries);
+                        } else {
+                            $entry = $entries[$i - 1];
+                        }
+                        break;
 
-            switch ($this->config->type) {
+                    case BGR_NEXTONE:
+                        // The array is already sorted by last modified.
+                        if (isset($this->config->previous)) {
+                            $i = $this->config->previous + 1;
+                        } else {
+                            $i = 1;
+                        }
+                        if ($i > $numberofentries) {  // Loop back to beginning.
+                            $i = 1;
+                        }
+                        if (count($entries) == 1) {
+                            $entry = reset($entries);
+                        } else {
+                            $entry = $entries[$i - 1];
+                        }
+                        break;
 
-                case BGR_RANDOMLY:
-                    $i = ($numberofentries > 1) ? rand(1, $numberofentries) : 1;
-                    $limitfrom = $i-1;
-                    break;
+                    case BGR_NEXTALPHA:
+                        // Now sort the array in regard to the current language.
+                        usort($entries, function($a, $b) {
+                            return format_string($a->concept) <=> format_string($b->concept);
+                        });
+                        if (isset($this->config->previous)) {
+                            $i = $this->config->previous + 1;
+                        } else {
+                            $i = 1;
+                        }
+                        if ($i > $numberofentries) {  // Loop back to beginning.
+                            $i = 1;
+                        }
+                        if (count($entries) == 1) {
+                            $entry = $entries;
+                        } else {
+                            $entry = $entries[$i - 1];
+                        }
+                        break;
 
-                case BGR_NEXTONE:
-                    if (isset($this->config->previous)) {
-                        $i = $this->config->previous + 1;
-                    } else {
-                        $i = 1;
-                    }
-                    if ($i > $numberofentries) {  // Loop back to beginning
-                        $i = 1;
-                    }
-                    $limitfrom = $i-1;
-                    break;
-
-                case BGR_NEXTALPHA:
-                    $orderby = 'concept ASC';
-                    if (isset($this->config->previous)) {
-                        $i = $this->config->previous + 1;
-                    } else {
-                        $i = 1;
-                    }
-                    if ($i > $numberofentries) {  // Loop back to beginning
-                        $i = 1;
-                    }
-                    $limitfrom = $i-1;
-                    break;
-
-                default:  // BGR_LASTMODIFIED
-                    $i = $numberofentries;
-                    $limitfrom = 0;
-                    $orderby = 'timemodified DESC, id DESC';
-                    break;
-            }
-
-            if ($entry = $DB->get_records_sql("SELECT id, concept, definition, definitionformat, definitiontrust
-                                                 FROM {glossary_entries}
-                                                WHERE glossaryid = ? AND approved = 1
-                                             ORDER BY $orderby", array($this->config->glossary), $limitfrom, $limitnum)) {
-
-                $entry = reset($entry);
-
-                if (empty($this->config->showconcept)) {
+                    default:  // BGR_LASTMODIFIED
+                        // The array is already sorted by last modified.
+                        $i = $numberofentries;
+                        if (count($entries) == 1) {
+                            $entry = reset($entries);
+                        } else {
+                            $entry = array_pop($entries);
+                        }
+                        break;
+                }
+                if (empty($this->config->showconcept) || (!isset($entry->concept))) {
                     $text = '';
                 } else {
-                    $text = "<h3>".format_string($entry->concept,true)."</h3>";
+                    $text = "<h3>" . format_string($entry->concept, true, ["context" => $glossaryctx]) . "</h3>";
                 }
 
                 $options = new stdClass();
-                $options->trusted = $entry->definitiontrust;
+                if (isset($entry->definitiontrust)) {
+                    $options->trusted = $entry->definitiontrust;
+                }
                 $options->overflowdiv = true;
-                $entry->definition = file_rewrite_pluginfile_urls($entry->definition, 'pluginfile.php', $glossaryctx->id, 'mod_glossary', 'entry', $entry->id);
-                $text .= format_text($entry->definition, $entry->definitionformat, $options);
-
+                if (isset($entry->definitiontrust) && isset($entry->id) && isset($entry->definition)) {
+                    $entry->definition = file_rewrite_pluginfile_urls($entry->definition, 'pluginfile.php', $glossaryctx->id,
+                        'mod_glossary', 'entry', $entry->id);
+                    $text .= format_text($entry->definition, $entry->definitionformat, $options);
+                }
                 $this->config->nexttime = usergetmidnight(time()) + DAYSECS * $this->config->refresh;
                 $this->config->previous = $i;
-
-            } else {
-                $text = get_string('noentriesyet','block_glossary_random');
             }
+
             // store the text
             $this->config->cache = $text;
             $this->instance_config_commit();

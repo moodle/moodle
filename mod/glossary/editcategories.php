@@ -120,7 +120,7 @@ if ( $hook >0 ) {
             echo $OUTPUT->heading(format_string($glossary->name), 2);
             echo $OUTPUT->heading(format_string(get_string("editcategory", "glossary")), 3);
 
-            $name = $category->name;
+            $name = format_string($category->name, true, ['context' => $context]);
             $usedynalink = $category->usedynalink;
             require "editcategories.html";
             echo $OUTPUT->footer();

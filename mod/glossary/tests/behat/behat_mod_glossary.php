@@ -69,7 +69,7 @@ class behat_mod_glossary extends behat_base {
 
         $this->execute("behat_forms::press_button", get_string('addcategory', 'glossary'));
 
-        $this->execute('behat_forms::i_set_the_field_to', array('name', $this->escape($categoryname)));
+        $this->execute('behat_forms::i_set_the_field_to', ['name', $categoryname]);
 
         $this->execute("behat_forms::press_button", get_string('savechanges'));
         $this->execute("behat_forms::press_button", get_string('back', 'mod_glossary'));
