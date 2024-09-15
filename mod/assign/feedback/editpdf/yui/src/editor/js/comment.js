@@ -175,7 +175,7 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
                 'preserveAspectRatio="xMinYMin meet">' +
                 '<path d="M11 0H1C.4 0 0 .4 0 1v6c0 .6.4 1 1 1h1v4l4-4h5c.6 0 1-.4 1-1V1c0-.6-.4-1-1-1z" ' +
                 'fill="currentColor" opacity="0.9" stroke="rgb(153, 153, 153)" stroke-width="0.5"/></svg>');
-        menu = Y.Node.create('<a href="#"><img src="' + M.util.image_url('t/contextmenu', 'core') + '"/></a>');
+        menu = Y.Node.create('<a href="#"><img class="icon" src="' + M.util.image_url('t/contextmenu', 'core') + '"/></a>');
 
         this.menulink = menu;
         container.append(label);
