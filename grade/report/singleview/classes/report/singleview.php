@@ -146,7 +146,7 @@ class singleview extends grade_report {
     protected static function groups_course_menu(stdClass $course) {
         global $PAGE;
 
-        $renderer = $PAGE->get_renderer('core_course', 'actionbar');
+        $renderer = $PAGE->get_renderer('core', 'course');
         return $renderer->render(new \core_course\output\actionbar\group_selector(null, $PAGE->context));
     }
 

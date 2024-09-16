@@ -122,7 +122,7 @@ class grading_actionmenu implements templatable, renderable {
             $additionalparams['search'] = $usersearch;
         }
 
-        $initialselector = new \core_course\output\actionbar\initial_selector(
+        $initialselector = new \core_course\output\actionbar\initials_selector(
             course: $course,
             targeturl: 'mod/assign/view.php',
             firstinitial: $this->userinitials['firstname'] ?? '',

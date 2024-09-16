@@ -95,7 +95,7 @@ class action_bar extends \core_grades\output\action_bar {
             $course = get_course($courseid);
             if ($course->groupmode) {
                 $groupselector = new \core_course\output\actionbar\group_selector(null, $this->context);
-                $data['groupselector'] = $PAGE->get_renderer('core_course', 'actionbar')->render($groupselector);
+                $data['groupselector'] = $PAGE->get_renderer('core_course')->render($groupselector);
             }
             $data['userselector'] = [
                 'courseid' => $courseid,

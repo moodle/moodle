@@ -17,6 +17,7 @@
 namespace gradereport_grader\output;
 
 use core\output\comboboxsearch;
+use core_course\output\actionbar\initials_selector;
 use core_grades\output\general_action_bar;
 use moodle_url;
 
@@ -94,7 +95,7 @@ class action_bar extends \core_grades\output\action_bar {
             }
 
             $actionbarrenderer = $PAGE->get_renderer('core_course', 'actionbar');
-            $initialselector = new \core_course\output\actionbar\initial_selector(
+            $initialselector = new initials_selector(
                 course: $course,
                 targeturl: '/grade/report/grader/index.php',
                 firstinitial: $firstnameinitial,

@@ -93,18 +93,19 @@ class gradereport_user_renderer extends plugin_renderer_base {
      * @throws coding_exception
      */
     public function users_selector(object $course, ?int $userid = null, ?int $groupid = null, string $usersearch = ''): string {
-        $actionbarrenderer = $this->page->get_renderer('core_course', 'actionbar');
+        $courserenderer = $this->page->get_renderer('core', 'course');
         $resetlink = new moodle_url('/grade/report/user/index.php', ['id' => $course->id, 'group' => 0]);
         $baseurl = new moodle_url('/grade/report/user/index.php', ['id' => $course->id]);
         $this->page->requires->js_call_amd('gradereport_user/user', 'init', [$baseurl->out(false)]);
-        $userselector = new \core_course\output\actionbar\user_selector(
-            course: $course,
-            resetlink: $resetlink,
-            userid: $userid,
-            groupid: $groupid,
-            usersearch: $usersearch
+        return $courserenderer->render(
+            new \core_course\output\actionbar\user_selector(
+                course: $course,
+                resetlink: $resetlink,
+                userid: $userid,
+                groupid: $groupid,
+                usersearch: $usersearch
+            )
         );
-        return $actionbarrenderer->render($userselector);
     }
 
     /**
