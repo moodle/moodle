@@ -107,7 +107,7 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
             'itemid',
             $gradeitemid
         );
-        return $this->render_from_template($dropdown->get_template(), $dropdown->export_for_template($this));
+        return $this->render($dropdown);
     }
 
     /**
