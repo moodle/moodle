@@ -106,7 +106,7 @@ class action_bar extends \core_grades\output\action_bar {
 
             if ($course->groupmode) {
                 $data['groupselector'] = $actionbarrenderer->render(
-                    new \core_course\output\actionbar\group_selector(null, $this->context));
+                    new \core_course\output\actionbar\group_selector($this->context));
             }
 
             $resetlink = new moodle_url('/grade/report/grader/index.php', ['id' => $courseid]);

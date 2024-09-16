@@ -28,28 +28,26 @@ use stdClass;
  */
 class group_selector extends comboboxsearch {
 
-    /**
-     * @var stdClass The context object.
-     */
-    private stdClass $context;
+    /** @var int|bool the active group, false if groups not used. */
+    private int|bool $activegroup;
 
     /**
      * The class constructor.
      *
-     * @param null|stdClass $course This parameter has been deprecated since Moodle 4.5 and should not be used anymore.
      * @param stdClass $context The context object.
      */
-    public function __construct(?stdClass $course, stdClass $context) {
-        if ($course !== null) {
-            debugging(
-                'The course argument has been deprecated. Please remove it from your group_selector class instances.',
-                DEBUG_DEVELOPER,
-            );
-        }
-        $this->context = $context;
+    public function __construct(private stdClass $context) {
+        $this->activegroup = $this->get_active_group();
+        $this->label = $this->get_label();
+
+        // The second and third arguments (buttoncontent and dropdowncontent) need to be rendered here, since the comboboxsearch
+        // template expects HTML in its respective context properties. Ideally, children of comboboxsearch would leverage Mustache's
+        // blocks pragma, meaning a child template could extend the comboboxsearch, allowing rendering of the child component,
+        // instead of needing to inject the child's content HTML as part of rendering the comboboxsearch parent, as is the case
+        // here. Achieving this, however, requires a refactor of comboboxsearch. For now, this must be pre-rendered and injected.
         parent::__construct(false, $this->get_button_content(), $this->get_dropdown_content(), 'group-search',
-            'groupsearchwidget', 'groupsearchdropdown overflow-auto', null, true, $this->get_label(), 'group',
-            $this->get_active_group());
+            'groupsearchwidget', 'groupsearchdropdown overflow-auto', null, true, $this->label, 'group',
+            $this->activegroup);
     }
 
     /**
@@ -58,23 +56,10 @@ class group_selector extends comboboxsearch {
      * @return string HTML fragment
      */
     private function get_button_content(): string {
-        global $OUTPUT;
+        global $PAGE;
+        $groupsselectorbutton = new group_selector_button($this->context, $this->activegroup, $this->label);
 
-        $activegroup = $this->get_active_group();
-        $buttondata = [
-            'label' => $this->get_label(),
-            'group' => $activegroup,
-        ];
-
-        if ($activegroup) {
-            $group = groups_get_group($activegroup);
-            $buttondata['selectedgroup'] = format_string($group->name, true,
-                ['context' => $this->context->get_course_context()]);
-        } else if ($activegroup === 0) {
-            $buttondata['selectedgroup'] = get_string('allparticipants');
-        }
-
-        return $OUTPUT->render_from_template('core_group/comboboxsearch/group_selector', $buttondata);
+        return $PAGE->get_renderer('core', 'course')->render($groupsselectorbutton);
     }
 
     /**
@@ -83,13 +68,10 @@ class group_selector extends comboboxsearch {
      * @return string HTML fragment
      */
     private function get_dropdown_content(): string {
-        global $OUTPUT;
+        global $PAGE;
+        $groupsdropdownform = new group_selector_dropdown_form($this->context);
 
-        return $OUTPUT->render_from_template('core_group/comboboxsearch/searchbody', [
-            'courseid' => $this->context->get_course_context()->instanceid,
-            'currentvalue' => optional_param('groupsearchvalue', '', PARAM_NOTAGS),
-            'instance' => rand(),
-        ]);
+        return $PAGE->get_renderer('core', 'course')->render($groupsdropdownform);
     }
 
     /**
