@@ -59,7 +59,7 @@ class grading_options_temp_form extends \moodleform {
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'userid', $instance['userid']);
         $mform->setType('userid', PARAM_INT);
-        $mform->addElement('hidden', 'action', 'saveoptions');
+        $mform->addElement('hidden', 'action', 'saveoptionstemp');
         $mform->setType('action', PARAM_ALPHA);
 
         // Buttons.

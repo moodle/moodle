@@ -80,9 +80,43 @@ M.mod_assign.init_grading_table = function(Y) {
 
 M.mod_assign.init_grading_options = function(Y) {
     Y.use('node', function(Y) {
+        var paginationelement = Y.one('#id_perpage');
+        paginationelement.on('change', function() {
+            Y.one('form.gradingoptionsform').submit();
+        });
+        var filterelement = Y.one('#id_filter');
+        if (filterelement) {
+            filterelement.on('change', function() {
+                Y.one('form.gradingoptionsform').submit();
+            });
+        }
+        var markerfilterelement = Y.one('#id_markerfilter');
+        if (markerfilterelement) {
+            markerfilterelement.on('change', function() {
+                Y.one('form.gradingoptionsform').submit();
+            });
+        }
+        var workflowfilterelement = Y.one('#id_workflowfilter');
+        if (workflowfilterelement) {
+            workflowfilterelement.on('change', function() {
+                Y.one('form.gradingoptionsform').submit();
+            });
+        }
+        var quickgradingelement = Y.one('#id_quickgrading');
+        if (quickgradingelement) {
+            quickgradingelement.on('change', function() {
+                Y.one('form.gradingoptionsform').submit();
+            });
+        }
+        var showonlyactiveenrolelement = Y.one('#id_showonlyactiveenrol');
+        if (showonlyactiveenrolelement) {
+            showonlyactiveenrolelement.on('change', function() {
+                Y.one('form.gradingoptionsform').submit();
+            });
+        }
         var downloadasfolderselement = Y.one('#id_downloadasfolders');
         if (downloadasfolderselement) {
-            downloadasfolderselement.on('change', function(e) {
+            downloadasfolderselement.on('change', function() {
                 Y.one('form.gradingoptionsform').submit();
             });
         }
