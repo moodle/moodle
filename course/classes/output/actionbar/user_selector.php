@@ -40,57 +40,38 @@ class user_selector extends comboboxsearch {
      * @param int|null $instanceid The instance ID.
      */
     public function __construct(
-        stdClass $course,
-        moodle_url $resetlink,
-        ?int $userid = null,
-        ?int $groupid = null,
-        string $usersearch = '',
-        ?int $instanceid = null
+        private stdClass $course,
+        private moodle_url $resetlink,
+        private ?int $userid = null,
+        private ?int $groupid = null,
+        private string $usersearch = '',
+        private ?int $instanceid = null
     ) {
-
-        $userselectorontent = $this->user_selector_output($course, $resetlink, $userid, $groupid, $usersearch, $instanceid);
-        parent::__construct(true, $userselectorontent, null, 'user-search d-flex',
+        // The second argument (buttoncontent) needs to be rendered here, since the comboboxsearch
+        // template expects HTML in its respective context properties. Ideally, children of comboboxsearch would leverage Mustache's
+        // blocks pragma, meaning a child template could extend the comboboxsearch, allowing rendering of the child component,
+        // instead of needing to inject the child's content HTML as part of rendering the comboboxsearch parent, as is the case
+        // here. Achieving this, however, requires a refactor of comboboxsearch. For now, this must be pre-rendered and injected.
+        parent::__construct(true, $this->user_selector_output(), null, 'user-search d-flex',
             null, 'usersearchdropdown overflow-auto', null, false);
     }
 
     /**
      * Method that generates the output for the user selector.
      *
-     * @param stdClass $course The course object.
-     * @param moodle_url|null $resetlink The reset link.
-     * @param int|null $userid The user ID.
-     * @param int|null $groupid The group ID.
-     * @param string $usersearch The user search query.
-     * @param int|null $instanceid The instance ID.
      * @return string The HTML output.
      */
-    private function user_selector_output(
-        stdClass $course,
-        ?moodle_url $resetlink = null,
-        ?int $userid = null,
-        ?int $groupid = null,
-        string $usersearch = '',
-        ?int $instanceid = null
-    ): string {
-        global $OUTPUT;
+    private function user_selector_output(): string {
+        global $PAGE;
 
-        // If the user ID is set, it indicates that a user has been selected. In this case, override the user search
-        // string with the full name of the selected user.
-        if ($userid) {
-            $usersearch = fullname(\core_user::get_user($userid));
-        }
-
-        return $OUTPUT->render_from_template('core_user/comboboxsearch/user_selector', [
-            'currentvalue' => $usersearch,
-            'courseid' => $course->id,
-            'instance' => $instanceid ?? rand(),
-            'resetlink' => $resetlink->out(false),
-            'group' => $groupid ?? 0,
-            'name' => 'usersearch',
-            'value' => json_encode([
-                'userid' => $userid,
-                'search' => $usersearch,
-            ]),
-        ]);
+        $userselectordropdown = new user_selector_button(
+            $this->course,
+            $this->resetlink,
+            $this->userid,
+            $this->groupid,
+            $this->usersearch,
+            $this->instanceid
+        );
+        return $PAGE->get_renderer('core', 'course')->render($userselectordropdown);
     }
 }
