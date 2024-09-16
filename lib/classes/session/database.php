@@ -143,7 +143,7 @@ class database extends handler implements SessionHandlerInterface {
      */
     public function read(string $sid): string|false {
         try {
-            if (!$record = $this->get_session_by_sid($sid)) {
+            if (!$record = $this->database->get_record('sessions', ['sid' => $sid])) {
                 // Let's cheat and skip locking if this is the first access,
                 // do not create the record here, let the manager do it after session init.
                 $this->failed = false;
