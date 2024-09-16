@@ -303,10 +303,6 @@ body.path-mod-quiz table tbody tr.gradedattempt > td.sticky-column {
     text-align: center;
 }
 
-#page-mod-quiz-summary .questionflag {
-    vertical-align: text-bottom;
-}
-
 #page-mod-quiz-summary #quiz-timer {
     text-align: center;
     margin-top: 1em;
