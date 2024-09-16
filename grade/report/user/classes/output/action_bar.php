@@ -91,25 +91,46 @@ class action_bar extends \core_grades\output\action_bar {
         // If the user has the capability to view all grades, display the group selector (if applicable), the user selector
         // and the view mode selector (if applicable).
         if (has_capability('moodle/grade:viewall', $this->context)) {
-            $userreportrenderer = $PAGE->get_renderer('gradereport_user');
             $course = get_course($courseid);
             if ($course->groupmode) {
                 $groupselector = new \core_course\output\actionbar\group_selector($this->context);
-                $data['groupselector'] = $PAGE->get_renderer('core_course')->render($groupselector);
+                $data['groupselector'] = $groupselector->export_for_template($output);
             }
+
+            $resetlink = new moodle_url('/grade/report/user/index.php', ['id' => $courseid, 'group' => 0]);
+            $baseurl = new moodle_url('/grade/report/user/index.php', ['id' => $courseid]);
+            $PAGE->requires->js_call_amd('gradereport_user/user', 'init', [$baseurl->out(false)]);
+
+            $userselector = new \core_course\output\actionbar\user_selector(
+                course: $course,
+                resetlink: $resetlink,
+                userid: $this->userid,
+                groupid: $this->currentgroupid,
+                usersearch: $this->usersearch
+            );
             $data['userselector'] = [
                 'courseid' => $courseid,
-                'content' => $userreportrenderer->users_selector(
-                    course: get_course($courseid),
-                    userid: $this->userid,
-                    groupid: $this->currentgroupid,
-                    usersearch: $this->usersearch
-                ),
+                'content' => $userselector->export_for_template($output),
             ];
 
             // Do not output the 'view mode' selector when in zero state or when the current user is viewing its own report.
             if (!is_null($this->userid) && $USER->id != $this->userid) {
-                $data['viewasselector'] = $userreportrenderer->view_mode_selector($this->userid, $this->userview, $courseid);
+                $viewasotheruser = new moodle_url('/grade/report/user/index.php',
+                    ['id' => $courseid, 'userid' => $this->userid, 'userview' => GRADE_REPORT_USER_VIEW_USER]);
+                $viewasmyself = new moodle_url('/grade/report/user/index.php',
+                    ['id' => $courseid, 'userid' => $this->userid, 'userview' => GRADE_REPORT_USER_VIEW_SELF]);
+
+                $selectoroptions = [
+                    $viewasotheruser->out(false) => get_string('otheruser', 'core_grades'),
+                    $viewasmyself->out(false) => get_string('myself', 'core_grades')
+                ];
+
+                $selectoractiveurl = $this->userview === GRADE_REPORT_USER_VIEW_USER ? $viewasotheruser : $viewasmyself;
+
+                $viewasselect = new \core\output\select_menu('viewas', $selectoroptions, $selectoractiveurl->out(false));
+                $viewasselect->set_label(get_string('viewas', 'core_grades'));
+
+                $data['viewasselector'] = $viewasselect->export_for_template($output);
             }
         }
 
