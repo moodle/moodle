@@ -1303,7 +1303,6 @@ $divider-hover-color: $primary !default;
 
 .activity {
     list-style: none;
-    position: relative;
     padding-top: map-get($spacers, 1);
     margin-top: map-get($spacers, 1);
     border-top: $border-width solid $border-color;
@@ -1318,7 +1317,6 @@ $divider-hover-color: $primary !default;
 }
 
 .activity-item {
-    position: relative;
     padding: $activity-item-padding;
     @include border-radius($activity-border-radius);
     &.activityinline {
@@ -1695,8 +1693,8 @@ $divider-hover-color: $primary !default;
     }
     .activity-item {
         .bulkselect {
-            position: absolute;
-            left: -2rem;
+            float: left;
+            margin-left: -2rem;
         }
         // Delegated sections are not available for bulk editing.
         &:has(.delegated-section):hover {

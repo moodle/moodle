@@ -29198,7 +29198,6 @@ span.editinstructions .alert-link {
 /* Activity cards */
 .activity {
   list-style: none;
-  position: relative;
   padding-top: 0.25rem;
   margin-top: 0.25rem;
   border-top: 1px solid #dee2e6;
@@ -29210,7 +29209,6 @@ span.editinstructions .alert-link {
 }
 
 .activity-item {
-  position: relative;
   padding: 0.75rem;
   border-radius: 1rem;
 }
@@ -29937,8 +29935,8 @@ span.editinstructions .alert-link {
   margin-top: 1.5rem;
 }
 .bulkenabled .activity-item .bulkselect {
-  position: absolute;
-  left: -2rem;
+  float: left;
+  margin-left: -2rem;
 }
 .bulkenabled .activity-item:has(.delegated-section):hover {
   outline: none !important;
@@ -38661,6 +38659,30 @@ div.editor_atto_toolbar button .icon {
 .courseindex .courseindex-item:hover.draggable, .courseindex .courseindex-item:focus.draggable {
   cursor: move;
 }
+.courseindex .courseindex-item:hover.pageitem,
+.courseindex .courseindex-item:hover .pageitem, .courseindex .courseindex-item:focus.pageitem,
+.courseindex .courseindex-item:focus .pageitem {
+  background-color: #0c589c;
+  color: #e6e6e6;
+}
+.courseindex .courseindex-item:hover.pageitem .courseindex-link,
+.courseindex .courseindex-item:hover.pageitem .courseindex-chevron,
+.courseindex .courseindex-item:hover .pageitem .courseindex-link,
+.courseindex .courseindex-item:hover .pageitem .courseindex-chevron, .courseindex .courseindex-item:focus.pageitem .courseindex-link,
+.courseindex .courseindex-item:focus.pageitem .courseindex-chevron,
+.courseindex .courseindex-item:focus .pageitem .courseindex-link,
+.courseindex .courseindex-item:focus .pageitem .courseindex-chevron {
+  color: #e6e6e6;
+}
+.courseindex .courseindex-item:hover.pageitem .courseindex-link a,
+.courseindex .courseindex-item:hover.pageitem .courseindex-chevron a,
+.courseindex .courseindex-item:hover .pageitem .courseindex-link a,
+.courseindex .courseindex-item:hover .pageitem .courseindex-chevron a, .courseindex .courseindex-item:focus.pageitem .courseindex-link a,
+.courseindex .courseindex-item:focus.pageitem .courseindex-chevron a,
+.courseindex .courseindex-item:focus .pageitem .courseindex-link a,
+.courseindex .courseindex-item:focus .pageitem .courseindex-chevron a {
+  color: #e6e6e6;
+}
 .courseindex .courseindex-item.dragging {
   border: 1px solid #b3d9e0;
   background-color: #e6f2f5;
@@ -38695,15 +38717,6 @@ div.editor_atto_toolbar button .icon {
 }
 .courseindex .courseindex-item.pageitem a {
   color: #fff;
-}
-.courseindex .courseindex-item.pageitem:hover, .courseindex .courseindex-item.pageitem:focus {
-  background-color: #0c589c;
-  color: #e6e6e6;
-}
-.courseindex .courseindex-item.pageitem:hover .courseindex-link,
-.courseindex .courseindex-item.pageitem:hover .courseindex-chevron, .courseindex .courseindex-item.pageitem:focus .courseindex-link,
-.courseindex .courseindex-item.pageitem:focus .courseindex-chevron {
-  color: #e6e6e6;
 }
 .courseindex .courseindex-item .completioninfo {
   min-width: 24px;
