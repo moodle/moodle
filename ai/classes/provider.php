@@ -54,4 +54,21 @@ abstract class provider {
         return get_string('pluginname', $component);
     }
 
+    /**
+     * Get any action settings for this provider.
+     *
+     * @param string $action The action class name.
+     * @param \admin_root $ADMIN The admin root object.
+     * @param string $section The section name.
+     * @param bool $hassiteconfig Whether the current user has moodle/site:config capability.
+     * @return array An array of settings.
+     */
+    public function get_action_settings(
+        string $action,
+        \admin_root $ADMIN,
+        string $section,
+        bool $hassiteconfig
+    ): array {
+        return [];
+    }
 }

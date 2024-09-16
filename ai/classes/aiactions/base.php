@@ -89,8 +89,8 @@ abstract class base {
      *
      * @return string The system instruction for the action.
      */
-    public function get_system_instruction(): string {
-        $stringid = 'action_' . $this->get_basename() . '_instruction';
+    public static function get_system_instruction(): string {
+        $stringid = 'action_' . self::get_basename() . '_instruction';
 
         // If the string doesn't exist, return an empty string.
         if (!get_string_manager()->string_exists($stringid, 'core_ai')) {

@@ -27,6 +27,9 @@ $string['action_generate_image'] = 'Generate image';
 $string['action_generate_image_desc'] = 'Generates an image based on a text prompt.';
 $string['action_generate_text'] = 'Generate text';
 $string['action_generate_text_desc'] = 'Generates text based on a text prompt.';
+$string['action_generate_text_instruction'] = 'You will receive a text input from the user. Your task is to generate text based on their request. Follow these important instructions:
+    1. Return the summary in plain text only.
+    2. Do not include any markdown formatting, greetings, or platitudes.';
 $string['action_summarise_text'] = 'Summarise text';
 $string['action_summarise_text_desc'] = 'Summarises text based on provided input text.';
 $string['action_summarise_text_instruction'] = 'You will receive a text input from the user. Your task is to summarize the provided text. Follow these guidelines:
@@ -41,6 +44,9 @@ Important Instructions:
 Ensure the summary is easy to read and effectively conveys the main points of the original text.';
 $string['action_translate_text'] = 'Translate text';
 $string['action_translate_text_desc'] = 'Translate provided text from one language to another.';
+$string['actionsettingprovider'] = '{$a} action settings';
+$string['actionsettingprovider_desc'] = 'These settings are specifc to this action for this provider.<br/>
+They are used to control how the action is processed by the provider.';
 $string['ai'] = 'AI';
 $string['aiplacementsettings'] = 'Manage settings for AI placements';
 $string['aiprovidersettings'] = 'Manage settings for AI providers';

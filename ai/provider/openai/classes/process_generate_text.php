@@ -32,12 +32,17 @@ use Psr\Http\Message\UriInterface;
 class process_generate_text extends abstract_processor {
     #[\Override]
     protected function get_endpoint(): UriInterface {
-        return new Uri('https://api.openai.com/v1/chat/completions');
+        return new Uri(get_config('aiprovider_openai', 'action_generate_text_endpoint'));
     }
 
     #[\Override]
     protected function get_model(): string {
-        return 'gpt-4o';
+        return get_config('aiprovider_openai', 'action_generate_text_model');
+    }
+
+    #[\Override]
+    protected function get_system_instruction(): string {
+        return get_config('aiprovider_openai', 'action_generate_text_systeminstruction');
     }
 
     #[\Override]
@@ -53,7 +58,7 @@ class process_generate_text extends abstract_processor {
         $requestobj->user = $userid;
 
         // If there is a system string available, use it.
-        $systeminstruction = $this->action->get_system_instruction();
+        $systeminstruction = $this->get_system_instruction();
         if (!empty($systeminstruction)) {
             $systemobj = new \stdClass();
             $systemobj->role = 'system';

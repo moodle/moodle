@@ -18,7 +18,6 @@ namespace core\plugininfo;
 
 use core_plugin_manager;
 use moodle_url;
-use core\lang_string;
 
 /**
  * AI placement plugin info class.
@@ -103,18 +102,36 @@ class aiprovider extends base {
         } else {
             // Provider action settings heading.
             $settings->add(new \admin_setting_heading("{$section}/generals",
-                new lang_string('provideractionsettings', 'core_ai'),
-                new lang_string('provideractionsettings_desc', 'core_ai')));
+                new \lang_string('provideractionsettings', 'core_ai'),
+                new \lang_string('provideractionsettings_desc', 'core_ai')));
             // Load the setting table of actions that this provider supports.
             $settings->add(new \core_ai\admin\admin_setting_action_manager(
                 $section,
                 \core_ai\table\aiprovider_action_management_table::class,
                 'manageaiproviders',
-                new lang_string('manageaiproviders', 'core_ai'),
+                new \lang_string('manageaiproviders', 'core_ai'),
             ));
         }
-
         $ADMIN->add($parentnodename, $settings);
+        // Load any action settings for this provider.
+        $providerclass = "\\{$section}\\provider";
+        $provider = new $providerclass();
+        $actionlist = $provider->get_action_list();
+        foreach ($actionlist as $action) {
+            $actionsettings = $provider->get_action_settings($action, $ADMIN, $section, $hassiteconfig);
+            if (!empty($actionsettings)) {
+                $actionname = substr($action, (strrpos($action, '\\') + 1));
+                $settings = new \admin_settingpage($section . '_' . $actionname, $action::get_name(), 'moodle/site:config', true);
+                $setting = new \admin_setting_heading("{$section}_actions/heading",
+                    new \lang_string('actionsettingprovider', 'core_ai', $provider->get_name()),
+                    new \lang_string('actionsettingprovider_desc', 'core_ai'));
+                $settings->add($setting);
+                foreach ($actionsettings as $setting) {
+                    $settings->add($setting);
+                }
+                $ADMIN->add('root', $settings);
+            }
+        }
     }
 
     /**

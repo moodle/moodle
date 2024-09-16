@@ -83,8 +83,8 @@ final class process_generate_text_test extends \advanced_testcase {
 
         $body = (object) json_decode($request->getBody()->getContents());
 
-        $this->assertEquals('This is a test prompt', $body->messages[0]->content);
-        $this->assertEquals('user', $body->messages[0]->role);
+        $this->assertEquals('This is a test prompt', $body->messages[1]->content);
+        $this->assertEquals('user', $body->messages[1]->role);
     }
 
     /**

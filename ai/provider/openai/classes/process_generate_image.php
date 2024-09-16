@@ -22,6 +22,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Class process image generation.
@@ -38,13 +39,13 @@ class process_generate_image extends abstract_processor {
     private string $responseformat = 'url';
 
     #[\Override]
-    protected function get_endpoint(): \Psr\Http\Message\UriInterface {
-        return new Uri('https://api.openai.com/v1/images/generations');
+    protected function get_endpoint(): UriInterface {
+        return new Uri(get_config('aiprovider_openai', 'action_generate_image_endpoint'));
     }
 
     #[\Override]
     protected function get_model(): string {
-        return 'dall-e-3';
+        return get_config('aiprovider_openai', 'action_generate_image_model');
     }
 
     #[\Override]
