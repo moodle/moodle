@@ -2298,11 +2298,9 @@ class global_navigation extends navigation_node {
                 $parentnode = $coursenode;
 
                 // Set the parent node to the parent section if this is a delegated section.
-                if ($section->is_delegated()) {
-                    $parentsection = $section->get_component_instance()->get_parent_section();
-                    if ($parentsection) {
-                        $parentnode = $coursenode->find($parentsection->id, self::TYPE_SECTION) ?: $coursenode;
-                    }
+                $parentsection = $section->get_component_instance()?->get_parent_section();
+                if ($parentsection) {
+                    $parentnode = $coursenode->find($parentsection->id, self::TYPE_SECTION) ?: $coursenode;
                 }
 
                 $sectionname = get_section_name($course, $section);

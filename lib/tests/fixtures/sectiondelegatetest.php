@@ -42,6 +42,9 @@ class sectiondelegate extends sectiondelegatebase {
     /** @var string force a null action menu. */
     public const MENUNULL = 'null';
 
+    /** @var int The itemid to use to simulate disabled component. */
+    public const DISABLEDITEMID = 999;
+
     /**
      * @var string|null Status to define which action menu to return when calling get_section_action_menu().
      * Alternatively, different testing classes could be created, but it wasn't worth it for this case.
@@ -113,5 +116,19 @@ class sectiondelegate extends sectiondelegatebase {
             default:
                 return null;
         }
+    }
+
+    /**
+     * Check if the delegate is enabled.
+     *
+     * To simulate a disabled component, the itemid is set to DISABLEDITEMID.
+     *
+     * @return bool
+     */
+    public function is_enabled(): bool {
+        if ($this->sectioninfo->itemid === self::DISABLEDITEMID) {
+            return false;
+        }
+        return true;
     }
 }

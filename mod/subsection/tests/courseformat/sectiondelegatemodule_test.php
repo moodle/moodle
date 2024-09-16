@@ -109,4 +109,40 @@ final class sectiondelegatemodule_test extends \advanced_testcase {
         $this->assertInstanceOf(stdClass::class, $delegatedsectioncourse);
         $this->assertEquals($course->id, $delegatedsectioncourse->id);
     }
+
+    public function test_instance_plugin_disabled(): void {
+        $this->resetAfterTest();
+
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('subsection', 1);
+
+        $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 2]);
+        $module = $this->getDataGenerator()->create_module(
+            'subsection',
+            (object) ['course' => $course->id, 'section' => 2]
+        );
+
+        // Get the section info for the delegated section.
+        $sectioninfo = get_fast_modinfo($course)->get_section_info_by_component('mod_subsection', $module->id);
+
+        /** @var testsectiondelegatemodule $delegated */
+        $delegated = sectiondelegate::instance($sectioninfo);
+        $this->assertTrue($delegated->is_enabled());
+
+        // Disabling the plugin should disable the delegate.
+        $manager::enable_plugin('subsection', 0);
+        rebuild_course_cache($course->id, true);
+
+        $sectioninfo = get_fast_modinfo($course)->get_section_info_by_component('mod_subsection', $module->id);
+
+        /** @var testsectiondelegatemodule $delegated */
+        $delegated = sectiondelegate::instance($sectioninfo);
+        // Delegated from a disabled plugin are considered orphaned, not delegated.
+        $this->assertNull($delegated);
+
+        // Section delegate should not be created directly but we do it
+        // here to validate the is_enabled() method neverthless.
+        $delegatedinstance = new sectiondelegate($sectioninfo);
+        $this->assertFalse($delegatedinstance->is_enabled());
+    }
 }

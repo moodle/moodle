@@ -746,22 +746,22 @@ export default class Component extends BaseComponent {
             }
         });
 
-        // Dndupload add a fake element we need to keep.
-        let dndFakeActivity;
-
         // Remove the remaining elements.
+        const orphanElements = [];
         while (container.children.length > neworder.length) {
             const lastchild = container.lastChild;
-            if (lastchild?.classList?.contains('dndupload-preview')) {
-                dndFakeActivity = lastchild;
+            // Any orphan element is always displayed after the listed elements.
+            // Also, some third-party plugins can use a fake dndupload-preview indicator.
+            if (lastchild?.classList?.contains('dndupload-preview') || lastchild.dataset?.orphan) {
+                orphanElements.push(lastchild);
             } else {
                 dettachedelements[lastchild?.dataset?.id ?? 0] = lastchild;
             }
             container.removeChild(lastchild);
         }
-        // Restore dndupload fake element.
-        if (dndFakeActivity) {
-            container.append(dndFakeActivity);
-        }
+        // Restore orphan elements.
+        orphanElements.forEach((element) => {
+            container.append(element);
+        });
     }
 }

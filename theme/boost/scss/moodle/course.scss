@@ -1150,7 +1150,8 @@ $divider-hover-color: $primary !default;
         @include border-radius($activity-border-radius);
     }
 
-    &.hidden {
+    &.hidden,
+    &.orphaned {
         .section-item {
             background-color: $gray-100;
         }

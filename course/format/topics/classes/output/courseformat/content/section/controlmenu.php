@@ -55,12 +55,16 @@ class controlmenu extends controlmenu_base {
         $section = $this->section;
         $coursecontext = $format->get_context();
 
-        $controls = [];
-        if ($section->section && has_capability('moodle/course:setcurrentsection', $coursecontext)) {
-            $controls['highlight'] = $this->get_highlight_control();
+        $parentcontrols = parent::section_control_items();
+
+        if ($section->is_orphan() || !$section->section) {
+            return $parentcontrols;
         }
 
-        $parentcontrols = parent::section_control_items();
+        $controls = [];
+        if (has_capability('moodle/course:setcurrentsection', $coursecontext)) {
+            $controls['highlight'] = $this->get_highlight_control();
+        }
 
         // If the edit key exists, we are going to insert our controls after it.
         if (array_key_exists("edit", $parentcontrols)) {

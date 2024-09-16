@@ -29085,7 +29085,7 @@ span.editinstructions .alert-link {
   border: 1px solid #dee2e6;
   border-radius: 1rem;
 }
-.course-section.hidden .section-item {
+.course-section.hidden .section-item, .course-section.orphaned .section-item {
   background-color: #f8f9fa;
 }
 .course-section .sectionname > a {

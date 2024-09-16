@@ -300,6 +300,9 @@ export default class Component extends BaseComponent {
     _refreshSectionCmlist({element}) {
         const cmlist = element.cmlist ?? [];
         const listparent = this.getElement(this.selectors.SECTION_CMLIST, element.id);
+        if (!listparent) {
+            return;
+        }
         this._fixOrder(listparent, cmlist, this.cms);
     }
 

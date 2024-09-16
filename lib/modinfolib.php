@@ -347,7 +347,7 @@ class course_modinfo {
         }
         $sections = [];
         foreach ($this->sectioninfobynum as $section) {
-            if (!$section->is_delegated()) {
+            if (!$section->get_component_instance()) {
                 $sections[$section->section] = $section;
             }
         }
@@ -3227,6 +3227,11 @@ class section_info implements IteratorAggregate {
     private ?sectiondelegate $_delegateinstance = null;
 
     /**
+     * @var bool|null $_isorphan True if the section is orphan for some reason.
+     */
+    private $_isorphan = null;
+
+    /**
      * Availability conditions for this section based on the completion of
      * course-modules (array from course-module id to required completion state
      * for that module) - from cached data in sectioncache field
@@ -3564,12 +3569,19 @@ class section_info implements IteratorAggregate {
         }
 
         $this->_uservisible = true;
-        if (!$this->_visible || !$this->get_available()) {
+        if ($this->is_orphan() || !$this->_visible || !$this->get_available()) {
             $coursecontext = context_course::instance($this->get_course());
-            if (!$this->_visible && !has_capability('moodle/course:viewhiddensections', $coursecontext, $userid) ||
-                    (!$this->get_available() &&
-                    !has_capability('moodle/course:ignoreavailabilityrestrictions', $coursecontext, $userid))) {
-
+            if (
+                ($this->_isorphan || !$this->_visible)
+                && !has_capability('moodle/course:viewhiddensections', $coursecontext, $userid)
+            ) {
+                $this->_uservisible = false;
+            }
+            if (
+                $this->_uservisible
+                && !$this->get_available()
+                && !has_capability('moodle/course:ignoreavailabilityrestrictions', $coursecontext, $userid)
+            ) {
                 $this->_uservisible = false;
             }
         }
@@ -3662,6 +3674,33 @@ class section_info implements IteratorAggregate {
      */
     public function is_delegated(): bool {
         return !empty($this->_component);
+    }
+
+    /**
+     * Returns true if this section is orphan.
+     *
+     * @return bool
+     */
+    public function is_orphan(): bool {
+        if ($this->_isorphan !== null) {
+            return $this->_isorphan;
+        }
+
+        $courseformat = course_get_format($this->modinfo->get_course());
+        // There are some cases where a restored course using third-party formats can
+        // have orphaned sections due to a fixed section number.
+        if ($this->_sectionnum > $courseformat->get_last_section_number()) {
+            $this->_isorphan = true;
+            return $this->_isorphan;
+        }
+        // Some delegated sections can belong to a plugin that is disabled or not present.
+        if ($this->is_delegated() && !$this->get_component_instance()) {
+            $this->_isorphan = true;
+            return $this->_isorphan;
+        }
+
+        $this->_isorphan = false;
+        return $this->_isorphan;
     }
 
     /**

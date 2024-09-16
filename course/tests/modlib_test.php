@@ -18,12 +18,6 @@ namespace core_course;
 
 use core_courseformat\formatactions;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/course/lib.php');
-require_once($CFG->dirroot . '/course/modlib.php');
-
 /**
  * Module lib related unit tests
  *
@@ -33,6 +27,16 @@ require_once($CFG->dirroot . '/course/modlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class modlib_test extends \advanced_testcase {
+    /**
+     * Setup to ensure that fixtures are loaded.
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
+        require_once($CFG->dirroot . '/course/modlib.php');
+        require_once($CFG->libdir . '/tests/fixtures/sectiondelegatetest.php');
+        parent::setUpBeforeClass();
+    }
 
     /**
      * Test prepare_new_moduleinfo_data
@@ -397,7 +401,7 @@ class modlib_test extends \advanced_testcase {
             ['createsections' => true]
         );
 
-        $section = formatactions::section($course)->create_delegated('mod_label', 0);
+        $section = formatactions::section($course)->create_delegated('test_component', 0);
 
         $modinfo = get_fast_modinfo($course);
         $this->assertCount(4, $modinfo->get_section_info_all());

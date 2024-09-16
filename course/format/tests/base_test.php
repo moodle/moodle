@@ -964,6 +964,38 @@ class base_test extends advanced_testcase {
         $format = course_get_format($course);
         $this->assertTrue($format->can_sections_be_removed_from_navigation());
     }
+
+    public function test_is_section_visible(): void {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['format' => 'testformatsections'], ['hiddensections' => 1]);
+        course_create_sections_if_missing($course, [0, 1, 2]);
+
+        // Students cannot view hidden sections.
+        $sectioninfo = get_fast_modinfo($course)->get_section_info(1);
+        \core_courseformat\formatactions::section($course)->update($sectioninfo, ['visible' => false]);
+
+        $format = course_get_format($course);
+
+        // Force max sections to 1 to detect section 2 as orphan.
+        $format->forcemaxsections = 1;
+
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $this->setUser($teacher);
+        $modinfoteacher = get_fast_modinfo($course, $teacher->id);
+        $this->assertTrue($format->is_section_visible($modinfoteacher->get_section_info(0)));
+        $this->assertTrue($format->is_section_visible($modinfoteacher->get_section_info(1)));
+        $this->assertTrue($format->is_section_visible($modinfoteacher->get_section_info(2)));
+
+        $this->setUser($student);
+        $modinfostudent = get_fast_modinfo($course, $student->id);
+        $this->assertTrue($format->is_section_visible($modinfostudent->get_section_info(0)));
+        $this->assertFalse($format->is_section_visible($modinfostudent->get_section_info(1)));
+        $this->assertFalse($format->is_section_visible($modinfostudent->get_section_info(2)));
+    }
 }
 
 /**
@@ -1000,6 +1032,10 @@ class format_testformat extends core_courseformat\base {
  */
 class format_testformatsections extends core_courseformat\base {
     /**
+     * @var int|null $forcemaxsections The maximum number of sections.
+     */
+    public ?int $forcemaxsections = null;
+    /**
      * Returns if this course format uses sections.
      *
      * @return true
@@ -1010,6 +1046,13 @@ class format_testformatsections extends core_courseformat\base {
 
     public function can_sections_be_removed_from_navigation(): bool {
         return true;
+    }
+
+    public function get_last_section_number(): int {
+        if ($this->forcemaxsections !== null) {
+            return $this->forcemaxsections;
+        }
+        return parent::get_last_section_number();
     }
 }
 

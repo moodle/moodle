@@ -77,6 +77,33 @@ class sectiondelegate_test extends \advanced_testcase {
     }
 
     /**
+     * Test that the instance method returns null when the delegate class is disabled.
+     *
+     * @covers ::instance
+     */
+    public function test_instance_disabled(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 3]);
+
+        // Section 2 has an existing delegate class.
+        course_update_section(
+            $course,
+            $DB->get_record('course_sections', ['course' => $course->id, 'section' => 2]),
+            [
+                'component' => 'test_component',
+                'itemid' => testsectiondelegate::DISABLEDITEMID,
+            ]
+        );
+
+        $modinfo = get_fast_modinfo($course->id);
+        $sectioninfos = $modinfo->get_section_info_all();
+
+        $this->assertNull(sectiondelegate::instance($sectioninfos[2]));
+    }
+
+    /**
      * Test has_delegate_class().
      *
      * @covers ::has_delegate_class

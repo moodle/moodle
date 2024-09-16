@@ -59,7 +59,11 @@ abstract class sectiondelegate {
         if ($classname === null) {
             return null;
         }
-        return new $classname($sectioninfo);
+        $instance = new $classname($sectioninfo);
+        if (!$instance->is_enabled()) {
+            return null;
+        }
+        return $instance;
     }
 
     /**
@@ -82,6 +86,16 @@ abstract class sectiondelegate {
      */
     public static function has_delegate_class(string $pluginname): bool {
         return self::get_delegate_class_name($pluginname) !== null;
+    }
+
+    /**
+     * Check if the delegate is enabled.
+     *
+     * Usually this happens when the delegate plugin is disabled.
+     * @return bool
+     */
+    public function is_enabled(): bool {
+        return true;
     }
 
     /**

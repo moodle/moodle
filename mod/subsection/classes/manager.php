@@ -186,17 +186,21 @@ class manager {
     /**
      * Get the delegated section info.
      *
-     * @return section_info the delegated section info
+     * @return section_info|null the delegated section info
      */
-    public function get_delegated_section_info(): section_info {
+    public function get_delegated_section_info(): ?section_info {
         $delegatedsection = $this->cm->get_delegated_section_info();
         if (!$delegatedsection) {
             // Some restorations can produce a situation where the section is not found.
             // In that case, we create a new one.
             $delegatedsection = formatactions::section($this->cm->course)->create_delegated(
                 self::PLUGINNAME,
-                $this->cm->id,
-                (object) ['name' => $this->instance->name],
+                $this->cm->instance,
+                (object) [
+                    'name' => $this->cm->name,
+                    'visible' => $this->cm->visible,
+                    'availability' => (!empty($this->cm->availability)) ? $this->cm->availability : null,
+                ],
             );
         }
         return $delegatedsection;

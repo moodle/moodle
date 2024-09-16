@@ -19,6 +19,7 @@ namespace core_courseformat\output\local;
 use core\output\named_templatable;
 use core_courseformat\base as course_format;
 use course_modinfo;
+use section_info;
 use renderable;
 
 /**
@@ -142,7 +143,7 @@ class content implements named_templatable, renderable {
     /**
      * Export sections array data.
      *
-     * @param renderer_base $output typically, the renderer that's calling this function
+     * @param \renderer_base $output typically, the renderer that's calling this function
      * @return array data context for a mustache template
      */
     protected function export_sections(\renderer_base $output): array {
@@ -154,7 +155,6 @@ class content implements named_templatable, renderable {
         // Generate section list.
         $sections = [];
         $stealthsections = [];
-        $numsections = $format->get_last_section_number();
         foreach ($this->get_sections_to_display($modinfo) as $sectionnum => $thissection) {
             // The course/view.php check the section existence but the output can be called
             // from other parts so we need to check it.
@@ -163,17 +163,18 @@ class content implements named_templatable, renderable {
                     format_string($course->fullname));
             }
 
+            if (!$format->is_section_visible($thissection)) {
+                continue;
+            }
+
+            /** @var \core_courseformat\output\local\content\section $section */
             $section = new $this->sectionclass($format, $thissection);
 
-            if ($sectionnum > $numsections) {
+            if ($section->is_stealth()) {
                 // Activities inside this section are 'orphaned', this section will be printed as 'stealth' below.
                 if (!empty($modinfo->sections[$sectionnum])) {
                     $stealthsections[] = $section->export_for_template($output);
                 }
-                continue;
-            }
-
-            if (!$format->is_section_visible($thissection)) {
                 continue;
             }
 

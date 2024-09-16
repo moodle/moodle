@@ -142,6 +142,11 @@ class availability implements named_templatable, renderable {
             ['id' => $this->section->id, 'showonly' => 'availabilityconditions']
         );
         $info = ['editurl' => $editurl->out(false)];
+
+        if ($section->is_orphan()) {
+            $info['editing'] = false;
+        }
+
         if (!$section->visible) {
             return [];
         } else if (!$section->uservisible) {

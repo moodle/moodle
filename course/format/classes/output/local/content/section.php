@@ -95,9 +95,7 @@ class section implements named_templatable, renderable {
         $this->format = $format;
         $this->section = $section;
 
-        if ($section->section > $format->get_last_section_number()) {
-            $this->isstealth = true;
-        }
+        $this->isstealth = $section->is_orphan();
 
         // Load output classes names from format.
         $this->headerclass = $format->get_output_classname('content\\section\\header');
@@ -108,6 +106,15 @@ class section implements named_templatable, renderable {
         $this->availabilityclass = $format->get_output_classname('content\\section\\availability');
         $this->movehereclass = $format->get_output_classname('content\\section\\movehere');
         $this->visibilityclass = $format->get_output_classname('content\\section\\visibility');
+    }
+
+    /**
+     * Check if the section is considered stealth.
+     *
+     * @return bool
+     */
+    public function is_stealth(): bool {
+        return $this->isstealth;
     }
 
     /**

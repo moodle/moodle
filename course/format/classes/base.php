@@ -1592,6 +1592,10 @@ abstract class base {
      * @return bool;
      */
     public function is_section_visible(section_info $section): bool {
+        // It is unlikely that a section is orphan, but it needs to be checked.
+        if ($section->is_orphan() && !has_capability('moodle/course:viewhiddensections', $this->get_context())) {
+            return false;
+        }
         // Previous to Moodle 4.0 thas logic was hardcoded. To prevent errors in the contrib plugins
         // the default logic is the same required for topics and weeks format and still uses
         // a "hiddensections" format setting.
