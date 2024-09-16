@@ -44,7 +44,19 @@ class data_controller extends \core_customfield\data_controller {
      * @param MoodleQuickForm $mform
      */
     public function instance_form_definition(MoodleQuickForm $mform): void {
+        global $OUTPUT;
+
+        $field = $this->get_field();
         $elementname = $this->get_form_element_name();
+        if (!$field->is_editable()) {
+            // Display the value as static text.
+            $instanceid = (int)$this->get('instanceid');
+            $data = ['value' => $this->export_value(), 'fieldid' => $field->get('id'), 'instanceid' => $instanceid];
+            $value = $OUTPUT->render_from_template('customfield_number/staticvalue', $data);
+            $mform->addElement('static', $elementname . '_static', $this->get_field()->get_formatted_name(),
+                $value);
+            return;
+        }
 
         $mform->addElement('float', $elementname, $this->get_field()->get_formatted_name());
         if (!$this->get('id')) {
@@ -63,8 +75,11 @@ class data_controller extends \core_customfield\data_controller {
         $errors = parent::instance_form_validation($data, $files);
 
         $elementname = $this->get_form_element_name();
-        $elementvalue = $data[$elementname];
-
+        $elementvalue = '';
+        // Providers calculate values automatically, so nothing to validate.
+        if (!provider_base::instance($this->get_field())) {
+            $elementvalue = $data[$elementname];
+        }
         $minimumvalue = $this->get_field()->get_configdata_property('minimumvalue') ?? '';
         $maximumvalue = $this->get_field()->get_configdata_property('maximumvalue') ?? '';
 
@@ -107,6 +122,10 @@ class data_controller extends \core_customfield\data_controller {
      * @return float|null
      */
     public function get_default_value(): ?float {
+        // If a provider is available, use its default value.
+        if ($provider = provider_base::instance($this->get_field())) {
+            return $provider->get_default_value();
+        }
         $defaultvalue = $this->get_field()->get_configdata_property('defaultvalue');
         if ($this->is_empty($defaultvalue)) {
             return null;
@@ -117,9 +136,9 @@ class data_controller extends \core_customfield\data_controller {
     /**
      * Returns value in a human-readable format
      *
-     * @return string|null
+     * @return string|float|null
      */
-    public function export_value(): ?string {
+    public function export_value(): string|float|null {
         /** @var field_controller $field */
         $field = $this->get_field();
         return $field->prepare_field_for_display($this->get_value(), $this->get_context());
