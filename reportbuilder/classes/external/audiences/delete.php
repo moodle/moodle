@@ -18,10 +18,10 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\external\audiences;
 
-use core_reportbuilder\local\audiences\base;
 use external_api;
 use external_function_parameters;
 use external_value;
+use core_reportbuilder\local\helpers\audience;
 use core_reportbuilder\manager;
 use core_reportbuilder\permission;
 
@@ -74,14 +74,7 @@ class delete extends external_api {
         self::validate_context($report->get_context());
         permission::require_can_edit_report($report->get_report_persistent());
 
-        $baseinstance = base::instance($instanceid);
-        if ($baseinstance && $baseinstance->user_can_edit()) {
-            $persistent = $baseinstance->get_persistent();
-            $persistent->delete();
-            return true;
-        }
-
-        return false;
+        return audience::delete_report_audience($reportid, $instanceid);
     }
 
     /**
