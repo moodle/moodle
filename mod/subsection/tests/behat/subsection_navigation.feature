@@ -16,9 +16,11 @@ Feature: Teachers navigate to subsections
       | user      | course  | role            |
       | teacher1  | C1      | editingteacher  |
     And the following "activities" exist:
-      | activity   | name                 | course | idnumber     | section |
-      | subsection | Subsection 1         | C1     | subsection1  | 1       |
-      | page       | Page in Subsection 1 | C1     | page1        | 2       |
+      | activity   | name                 | course | idnumber    | section |
+      | assign     | Assignment 1         | C1     | assignment1 | 1       |
+      | subsection | Subsection 1         | C1     | subsection1 | 1       |
+      | page       | Page in Subsection 1 | C1     | page1       | 2       |
+      | assign     | Assignment 2         | C1     | assignment2 | 1       |
     And I log in as "teacher1"
 
   Scenario: Subsection section page shows parent section in the breadcrumb
@@ -34,11 +36,41 @@ Feature: Teachers navigate to subsections
     And "Subsection 1" "link" should exist in the ".breadcrumb" "css_element"
     And "Page in Subsection 1" "text" should exist in the ".breadcrumb" "css_element"
 
-  Scenario: Sections and Subsections are displayed in the navigation block
+  Scenario: Activity page shows Sections and Subsections in the navigation block
     Given the following config values are set as admin:
       | unaddableblocks | | theme_boost|
     And I turn editing mode on
     When I am on the "page1" "Activity" page
     And I add the "Navigation" block if not present
-    Then "Section 1" "link" should appear before "Subsection 1" "link" in the "Navigation" "block"
+    Then "Section 1" "link" should appear before "Assignment 1" "link" in the "Navigation" "block"
+    And "Assignment 1" "link" should appear before "Subsection 1" "link" in the "Navigation" "block"
     And "Subsection 1" "link" should appear before "Page in Subsection 1" "link" in the "Navigation" "block"
+    And "Page in Subsection 1" "link" should appear before "Assignment 2" "link" in the "Navigation" "block"
+
+  @javascript
+  Scenario: Subsection page shows Sections and Subsections in the navigation block
+    Given the following config values are set as admin:
+      | unaddableblocks |  | theme_boost |
+    And I turn editing mode on
+    When I am on the "C1 > Subsection 1" "course > section" page
+    And I add the "Navigation" block if not present
+    Then "Section 1" "link" should appear before "Assignment 1" "link" in the "Navigation" "block"
+    And "Assignment 1" "link" should appear before "Subsection 1" "link" in the "Navigation" "block"
+    And "Subsection 1" "link" should appear before "Page in Subsection 1" "link" in the "Navigation" "block"
+    And "Page in Subsection 1" "link" should appear before "Assignment 2" "link" in the "Navigation" "block"
+
+  @javascript
+  Scenario: The navigation block can load subsections via ajax
+    Given the following config values are set as admin:
+      | unaddableblocks |  | theme_boost |
+    And I am on "Course 1" course homepage with editing mode on
+    And I add the "Navigation" block if not present
+    # Open all navigation nodes via keyboard because it does not use buttons/links chevrons.
+    And I click on "Actions menu" "link" in the "Navigation" "block"
+    And I press the escape key
+    And I press the tab key
+    And I press the multiply key
+    Then "Section 1" "link" should appear before "Assignment 1" "link" in the "Navigation" "block"
+    And "Assignment 1" "link" should appear before "Subsection 1" "link" in the "Navigation" "block"
+    And "Subsection 1" "link" should appear before "Page in Subsection 1" "link" in the "Navigation" "block"
+    And "Page in Subsection 1" "link" should appear before "Assignment 2" "link" in the "Navigation" "block"

@@ -2204,7 +2204,7 @@ class global_navigation extends navigation_node {
                 $activity = $this->load_stealth_activity($coursenode, get_fast_modinfo($course));
             }
         }
-   }
+    }
 
     /**
      * Generates an array of sections and an array of activities for the given course.
@@ -2220,29 +2220,29 @@ class global_navigation extends navigation_node {
 
         $modinfo = get_fast_modinfo($course);
         $sections = $modinfo->get_section_info_all();
+        $format = course_get_format($course);
 
         // For course formats using 'numsections' trim the sections list
-        $courseformatoptions = course_get_format($course)->get_format_options();
+        $courseformatoptions = $format->get_format_options();
         if (isset($courseformatoptions['numsections'])) {
             $sections = array_slice($sections, 0, $courseformatoptions['numsections']+1, true);
         }
 
-        $activities = array();
+        $activities = [];
 
         foreach ($sections as $key => $section) {
             // Clone and unset summary to prevent $SESSION bloat (MDL-31802).
             $sections[$key] = clone($section);
             unset($sections[$key]->summary);
             $sections[$key]->hasactivites = false;
-            if (!array_key_exists($section->section, $modinfo->sections)) {
+            if (!array_key_exists($section->sectionnum, $modinfo->sections)) {
                 continue;
             }
-            foreach ($modinfo->sections[$section->section] as $cmid) {
-                $cm = $modinfo->cms[$cmid];
+            foreach ($section->get_sequence_cm_infos() as $cm) {
                 $activity = new stdClass;
                 $activity->id = $cm->id;
                 $activity->course = $course->id;
-                $activity->section = $section->section;
+                $activity->section = $section->sectionnum;
                 $activity->name = $cm->name;
                 $activity->icon = $cm->icon;
                 $activity->iconcomponent = $cm->iconcomponent;
@@ -2251,6 +2251,16 @@ class global_navigation extends navigation_node {
                 $activity->nodetype = navigation_node::NODETYPE_LEAF;
                 $activity->onclick = $cm->onclick;
                 $url = $cm->url;
+
+                // Activities witout url but with delegated section uses the section url.
+                $activity->delegatedsection = $cm->get_delegated_section_info();
+                if (empty($cm->url) && $activity->delegatedsection) {
+                    $url = $format->get_view_url(
+                        $activity->delegatedsection->sectionnum,
+                        ['navigation' => true]
+                    );
+                }
+
                 if (!$url) {
                     $activity->url = null;
                     $activity->display = false;
@@ -2261,14 +2271,14 @@ class global_navigation extends navigation_node {
                         $activity->nodetype = navigation_node::NODETYPE_BRANCH;
                     }
                 }
-                $activities[$cmid] = $activity;
+                $activities[$cm->id] = $activity;
                 if ($activity->display) {
                     $sections[$key]->hasactivites = true;
                 }
             }
         }
 
-        return array($sections, $activities);
+        return [$sections, $activities];
     }
 
     /**
@@ -2284,40 +2294,231 @@ class global_navigation extends navigation_node {
 
         list($sections, $activities) = $this->generate_sections_and_activities($course);
 
-        $navigationsections = array();
+        $navigationsections = [];
         foreach ($sections as $sectionid => $section) {
-            $section = clone($section);
             if ($course->id == $SITE->id) {
-                $this->load_section_activities($coursenode, $section->section, $activities);
-            } else {
-                if (!$section->uservisible || (!$this->showemptysections &&
-                        !$section->hasactivites && $this->includesectionnum !== $section->section)) {
-                    continue;
-                }
-
-                $parentnode = $coursenode;
-
-                // Set the parent node to the parent section if this is a delegated section.
-                $parentsection = $section->get_component_instance()?->get_parent_section();
-                if ($parentsection) {
-                    $parentnode = $coursenode->find($parentsection->id, self::TYPE_SECTION) ?: $coursenode;
-                }
-
-                $sectionname = get_section_name($course, $section);
-                $url = course_get_url($course, $section->section, array('navigation' => true));
-
-                $sectionnode = $parentnode->add($sectionname, $url, navigation_node::TYPE_SECTION,
-                    null, $section->id, new pix_icon('i/section', ''));
-                $sectionnode->nodetype = navigation_node::NODETYPE_BRANCH;
-                $sectionnode->hidden = (!$section->visible || !$section->available);
-                $sectionnode->add_attribute('data-section-name-for', $section->id);
-                if ($this->includesectionnum !== false && $this->includesectionnum == $section->section) {
-                    $this->load_section_activities($sectionnode, $section->section, $activities);
-                }
-                $navigationsections[$sectionid] = $section;
+                $this->load_section_activities_navigation($coursenode, $section, $activities);
+                continue;
             }
+
+            if (
+                !$section->uservisible
+                || (
+                    !$this->showemptysections
+                    && !$section->hasactivites
+                    && $this->includesectionnum !== $section->section
+                )
+            ) {
+                continue;
+            }
+
+            // Delegated sections are added from the activity node.
+            if ($section->get_component_instance()) {
+                continue;
+            }
+
+            $navigationsections[$sectionid] = $this->load_section_navigation(
+                parentnode: $coursenode,
+                section: $section,
+                activitiesdata: $activities,
+            );
         }
         return $navigationsections;
+    }
+
+    /**
+     * Returns true if the section is included in the breadcrumb.
+     *
+     * @param section_info $section
+     * @param moodle_url|null $sectionurl
+     * @return bool
+     */
+    protected function is_section_in_breadcrumb(section_info $section, ?moodle_url $sectionurl): bool {
+        // Ajax requests uses includesectionnum as param.
+        if ($this->includesectionnum !== false && $this->includesectionnum == $section->sectionnum) {
+            return true;
+        }
+
+        // If we are in a section page, we need to check for any child section.
+        $checkchildrenurls = false;
+        $format = null;
+        if ($sectionurl && $this->page->url->compare($sectionurl, URL_MATCH_BASE)) {
+            $checkchildrenurls = true;
+            $format = course_get_format($section->course);
+        }
+
+        // Activities can have delegated sections that acts as a child section.
+        foreach ($section->get_sequence_cm_infos() as $cm) {
+            $delegatedsection = $cm->get_delegated_section_info();
+            if (!$delegatedsection) {
+                continue;
+            }
+            // Check if the child node is requested via Ajax.
+            if ($this->includesectionnum == $delegatedsection->sectionnum) {
+                return true;
+            }
+
+            if ($checkchildrenurls) {
+                $childurl = $format->get_view_url($delegatedsection, ['navigation' => true]);
+                if ($childurl && $this->page->url->compare($childurl, URL_MATCH_EXACT)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Loads a section into the navigation structure.
+     *
+     * @param navigation_node $parentnode
+     * @param section_info $section
+     * @param stdClass[] $activitiesdata Array of objects containing activities data indexed by cmid.
+     * @return navigation_node the section navigaiton node
+     */
+    public function load_section_navigation($parentnode, $section, $activitiesdata): navigation_node {
+        $format = course_get_format($section->course);
+        $sectionname = $format->get_section_name($section);
+        $url = $format->get_view_url($section, ['navigation' => true]);
+
+        $sectionnode = $parentnode->add(
+            text: $sectionname,
+            action: $url,
+            type: navigation_node::TYPE_SECTION,
+            key: $section->id,
+            icon: new pix_icon('i/section', ''),
+        );
+        $sectionnode->nodetype = navigation_node::NODETYPE_BRANCH;
+        $sectionnode->hidden = (!$section->visible || !$section->available);
+        $sectionnode->add_attribute('data-section-name-for', $section->id);
+
+        // Sections content are usually loaded via ajax but the sections from the requested breadcrumb.
+        if ($this->is_section_in_breadcrumb($section, $url)) {
+            $this->load_section_activities_navigation($sectionnode, $section, $activitiesdata);
+        }
+        return $sectionnode;
+    }
+
+    /**
+     * Loads the activities for a section into the navigation structure.
+     *
+     * This method is called from global_navigation::load_section_navigation(),
+     * It is not intended to be called directly.
+     *
+     * @param navigation_node $sectionnode
+     * @param section_info $section
+     * @param stdClass[] $activitiesdata Array of objects containing activities data indexed by cmid.
+     */
+    protected function load_section_activities_navigation(
+        navigation_node $sectionnode,
+        section_info $section,
+        array $activitiesdata
+    ): array {
+        global $CFG, $SITE;
+
+        $activitynodes = [];
+        if (empty($activitiesdata)) {
+            return $activitynodes;
+        }
+
+        foreach ($section->get_sequence_cm_infos() as $cm) {
+            $activitydata = $activitiesdata[$cm->id];
+
+            // If activity is a delegated section, load a section node instead of the activity one.
+            if ($activitydata->delegatedsection) {
+                $activitynodes[$activitydata->id] = $this->load_section_navigation(
+                    parentnode: $sectionnode,
+                    section: $activitydata->delegatedsection,
+                    activitiesdata: $activitiesdata,
+                );
+                continue;
+            }
+
+            $activitynodes[$activitydata->id] = $this->load_activity_navigation($sectionnode, $activitydata);
+        }
+
+        return $activitynodes;
+    }
+
+    /**
+     * Loads an activity into the navigation structure.
+     *
+     * This method is called from global_navigation::load_section_activities_navigation(),
+     * It is not intended to be called directly.
+     *
+     * @param navigation_node $sectionnode
+     * @param stdClass $activitydata The acitivy navigation data generated from generate_sections_and_activities
+     * @return navigation_node
+     */
+    protected function load_activity_navigation(
+        navigation_node $sectionnode,
+        stdClass $activitydata,
+    ): navigation_node {
+        global $SITE, $CFG;
+
+        $showactivities = ($activitydata->course != $SITE->id || !empty($CFG->navshowfrontpagemods));
+
+        $icon = new pix_icon(
+            $activitydata->icon ?: 'monologo',
+            get_string('modulename', $activitydata->modname),
+            $activitydata->modname
+        );
+
+        // Prepare the default name and url for the node.
+        $displaycontext = \context_helper::get_navigation_filter_context(context_module::instance($activitydata->id));
+        $activityname = format_string($activitydata->name, true, ['context' => $displaycontext]);
+
+        $activitynode = $sectionnode->add(
+            text: $activityname,
+            action: $this->get_activity_action($activitydata, $activityname),
+            type: navigation_node::TYPE_ACTIVITY,
+            key: $activitydata->id,
+            icon: $icon,
+        );
+        $activitynode->title(get_string('modulename', $activitydata->modname));
+        $activitynode->hidden = $activitydata->hidden;
+        $activitynode->display = $showactivities && $activitydata->display;
+        $activitynode->nodetype = $activitydata->nodetype;
+
+        return $activitynode;
+    }
+
+    /**
+     * Returns the action for the activity.
+     *
+     * @param stdClass $activitydata The acitivy navigation data generated from generate_sections_and_activities
+     * @param string $activityname
+     * @return moodle_url|action_link
+     */
+    protected function get_activity_action(stdClass $activitydata, string $activityname): moodle_url|action_link {
+        // A static counter for JS function naming.
+        static $legacyonclickcounter = 0;
+
+        $action = new moodle_url($activitydata->url);
+
+        // Check if the onclick property is set (puke!).
+        if (!empty($activitydata->onclick)) {
+            // Increment the counter so that we have a unique number.
+            $legacyonclickcounter++;
+            // Generate the function name we will use.
+            $functionname = 'legacy_activity_onclick_handler_' . $legacyonclickcounter;
+            $propogrationhandler = '';
+            // Check if we need to cancel propogation. Remember inline onclick
+            // events would return false if they wanted to prevent propogation and the
+            // default action.
+            if (strpos($activitydata->onclick, 'return false')) {
+                $propogrationhandler = 'e.halt();';
+            }
+            // Decode the onclick - it has already been encoded for display (puke).
+            $onclick = htmlspecialchars_decode($activitydata->onclick, ENT_QUOTES);
+            // Build the JS function the click event will call.
+            $jscode = "function {$functionname}(e) { $propogrationhandler $onclick }";
+            $this->page->requires->js_amd_inline($jscode);
+            // Override the default url with the new action link.
+            $action = new action_link($action, $activityname, new component_action('click', $functionname));
+        }
+        return $action;
     }
 
     /**
@@ -2329,70 +2530,22 @@ class global_navigation extends navigation_node {
      * @param stdClass $course The course object the section and activities relate to.
      * @return array Array of activity nodes
      */
+    #[\core\attribute\deprecated(
+        replacement: 'load_section_activities_navigation',
+        since: '4.5',
+        mdl: 'MDL-82845',
+        final: true,
+    )]
     protected function load_section_activities(navigation_node $sectionnode, $sectionnumber, array $activities, $course = null) {
-        global $CFG, $SITE;
-        // A static counter for JS function naming
-        static $legacyonclickcounter = 0;
-
-        $activitynodes = array();
-        if (empty($activities)) {
-            return $activitynodes;
-        }
-
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
         if (!is_object($course)) {
             $activity = reset($activities);
             $courseid = $activity->course;
         } else {
             $courseid = $course->id;
         }
-        $showactivities = ($courseid != $SITE->id || !empty($CFG->navshowfrontpagemods));
-
-        foreach ($activities as $activity) {
-            if ($activity->section != $sectionnumber) {
-                continue;
-            }
-            if ($activity->icon) {
-                $icon = new pix_icon($activity->icon, get_string('modulename', $activity->modname), $activity->iconcomponent);
-            } else {
-                $icon = new pix_icon('monologo', get_string('modulename', $activity->modname), $activity->modname);
-            }
-
-            // Prepare the default name and url for the node
-            $displaycontext = \context_helper::get_navigation_filter_context(context_module::instance($activity->id));
-            $activityname = format_string($activity->name, true, ['context' => $displaycontext]);
-            $action = new moodle_url($activity->url);
-
-            // Check if the onclick property is set (puke!)
-            if (!empty($activity->onclick)) {
-                // Increment the counter so that we have a unique number.
-                $legacyonclickcounter++;
-                // Generate the function name we will use
-                $functionname = 'legacy_activity_onclick_handler_'.$legacyonclickcounter;
-                $propogrationhandler = '';
-                // Check if we need to cancel propogation. Remember inline onclick
-                // events would return false if they wanted to prevent propogation and the
-                // default action.
-                if (strpos($activity->onclick, 'return false')) {
-                    $propogrationhandler = 'e.halt();';
-                }
-                // Decode the onclick - it has already been encoded for display (puke)
-                $onclick = htmlspecialchars_decode($activity->onclick, ENT_QUOTES);
-                // Build the JS function the click event will call
-                $jscode = "function {$functionname}(e) { $propogrationhandler $onclick }";
-                $this->page->requires->js_amd_inline($jscode);
-                // Override the default url with the new action link
-                $action = new action_link($action, $activityname, new component_action('click', $functionname));
-            }
-
-            $activitynode = $sectionnode->add($activityname, $action, navigation_node::TYPE_ACTIVITY, null, $activity->id, $icon);
-            $activitynode->title(get_string('modulename', $activity->modname));
-            $activitynode->hidden = $activity->hidden;
-            $activitynode->display = $showactivities && $activity->display;
-            $activitynode->nodetype = $activity->nodetype;
-            $activitynodes[$activity->id] = $activitynode;
-        }
-
-        return $activitynodes;
+        $sectionifo = get_fast_modinfo($courseid)->get_section_info($sectionnumber);
+        return $this->load_section_activities_navigation($sectionnode, $sectionifo, $activities);
     }
     /**
      * Loads a stealth module from unavailable section
