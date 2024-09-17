@@ -75,7 +75,9 @@ class recipients extends system_report {
      * @return bool
      */
     protected function can_view(): bool {
-        return has_capability('moodle/badges:viewawarded', $this->get_context());
+        $badgeid = $this->get_parameter('badgeid', 0, PARAM_INT);
+        $badge = new \core_badges\badge($badgeid);
+        return has_capability('moodle/badges:viewawarded', $badge->get_context());
     }
 
     /**
