@@ -170,7 +170,7 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
             $firstlink->mouseover();
 
             // Now match by title where the role matches any menuitem, or menuitemcheckbox, or menuitem*.
-            $link = $openmenu->find('css', "[title='{$menuitem}'][role^='menuitem']");
+            $link = $openmenu->find('css', "[aria-label='{$menuitem}'][role^='menuitem']");
             $this->execute('behat_general::i_click_on', [$link, 'NodeElement']);
         }
     }
@@ -301,7 +301,7 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
             return;
         }
 
-        if ($button->getAttribute(('aria-pressed')) === 'false') {
+        if ($button->getAttribute(('aria-expanded')) === 'false') {
             $this->execute('behat_general::i_click_on', [$button, 'NodeElement']);
         }
     }
