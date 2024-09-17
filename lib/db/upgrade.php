@@ -1365,5 +1365,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024091000.01);
     }
 
+    if ($oldversion < 2024091700.01) {
+        // Convert the ai_action_register.success column to an integer, if necessary.
+        upgrade_change_binary_column_to_int('ai_action_register', 'success', XMLDB_NOTNULL, 'actionid');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024091700.01);
+    }
+
     return true;
 }
