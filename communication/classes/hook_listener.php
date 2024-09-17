@@ -442,8 +442,10 @@ class hook_listener {
                     courseid: $course->id,
                     context: $coursecontext,
                 );
-                $communication->get_room_user_provider()->remove_members_from_room(userids: [$user->id]);
-                $communication->get_processor()->delete_instance_user_mapping(userids: [$user->id]);
+                if ($communication->get_processor() !== null) {
+                    $communication->get_room_user_provider()->remove_members_from_room(userids: [$user->id]);
+                    $communication->get_processor()->delete_instance_user_mapping(userids: [$user->id]);
+                }
             } else {
                 // If group mode is set then handle the group communication rooms.
                 $coursegroups = groups_get_all_groups(courseid: $course->id);
@@ -452,8 +454,11 @@ class hook_listener {
                         groupid: $coursegroup->id,
                         context: $coursecontext,
                     );
-                    $communication->get_room_user_provider()->remove_members_from_room(userids: [$user->id]);
-                    $communication->get_processor()->delete_instance_user_mapping(userids: [$user->id]);
+                    if ($communication->get_processor() !== null) {
+                        $communication->get_room_user_provider()->remove_members_from_room(userids: [$user->id]);
+                        $communication->get_processor()->delete_instance_user_mapping(userids: [$user->id]);
+                    }
+
                 }
             }
         }
