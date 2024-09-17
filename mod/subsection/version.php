@@ -28,4 +28,4 @@ $plugin->component = 'mod_subsection';
 $plugin->release = '0.1.0';
 $plugin->version = 2024080800;
 $plugin->requires = 2024070500;
-$plugin->maturity = MATURITY_ALPHA;
+$plugin->maturity = MATURITY_BETA;
