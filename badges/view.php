@@ -103,8 +103,7 @@ if ($course && $course->startdate > time()) {
     echo $OUTPUT->box(get_string('error:notifycoursedate', 'badges'), 'generalbox notifyproblem');
 }
 
-$report = system_report_factory::create(course_badges::class, $PAGE->context, '', '', 0,
-    ['type' => $type, 'courseid' => $courseid]);
+$report = system_report_factory::create(course_badges::class, $PAGE->context);
 echo $report->output();
 
 // Trigger event, badge listing viewed.
