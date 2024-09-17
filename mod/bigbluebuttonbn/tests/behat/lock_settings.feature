@@ -36,7 +36,7 @@ Feature: Test that the meeting has the right lock setting.
       | disablemic         | 1     | disableMic : enabled         |
       | disableprivatechat | 1     | disablePrivateChat : enabled |
       | disablepublicchat  | 1     | disablePublicChat : enabled  |
-      | disablenote        | 1     | disableNote : enabled        |
+      | disablenote        | 1     | disableNotes : enabled        |
       | hideuserlist       | 1     | hideUserList : enabled       |
 
   @javascript
