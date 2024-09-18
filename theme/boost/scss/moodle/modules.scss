@@ -1276,15 +1276,15 @@ img.userpicture {
     }
 
     .qnbutton.correct .thispageholder {
-        border-color: $success;
+        border-color: shift-color($success, 10%);
     }
 
     .qnbutton.incorrect .thispageholder {
-        border-color: $danger;
+        border-color: shift-color($danger, 10%);
     }
 
     .qnbutton.partiallycorrect .thispageholder {
-        border-color: $warning;
+        border-color: shift-color($warning, 40%);
     }
 
     .qnbutton.correct,
@@ -1325,6 +1325,7 @@ img.userpicture {
     .qnbutton.correct .trafficlight {
         background-image: url([[pix:core|i/grade_correct]]);
         color: $success;
+        background-size: 14px;
     }
 
     .qnbutton.blocked .trafficlight {
@@ -1335,11 +1336,13 @@ img.userpicture {
     .qnbutton.incorrect .trafficlight {
         background-image: url([[pix:core|i/grade_incorrect]]);
         color: $danger;
+        background-size: 14px;
     }
 
     .qnbutton.partiallycorrect .trafficlight {
         background-image: url([[pix:core|i/grade_partiallycorrect]]);
         color: $warning;
+        background-size: 14px;
     }
 
     .qnbutton.complete .trafficlight,
@@ -1357,6 +1360,20 @@ img.userpicture {
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
     padding: 0.5em 0 0.5em 0.1em;
     margin: 2px;
+}
+
+/* Override the color of the quiz attempt icons for accessibility. */
+#attemptsform,
+.formulation .answer {
+    .icon.text-success {
+        color: shift-color($success, 10%) !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .icon.text-danger {
+        color: shift-color($danger, 10%) !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .icon.text-warning {
+        color: shift-color($warning, 40%) !important; /* stylelint-disable-line declaration-no-important */
+    }
 }
 
 /* Countdown timer. */
