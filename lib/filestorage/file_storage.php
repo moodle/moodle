@@ -1493,6 +1493,10 @@ class file_storage {
 
         $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
 
+        if (!empty($filerecord->repositoryid)) {
+            $newrecord->referencefileid = $this->get_or_create_referencefileid($filerecord->repositoryid, $filerecord->reference);
+        }
+
         try {
             $this->create_file($newrecord, $notify);
         } catch (dml_exception $e) {
