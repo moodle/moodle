@@ -77,8 +77,8 @@ Feature: Adding random questions to a quiz based on category and tags
     And I apply question bank filter "Tag" with value "foo"
     And I select "1" from the "randomcount" singleselect
     And I press "Add random question"
-    And I should see "Random question based on filter condition with tags: foo" on quiz page "1"
-    When I click on "Configure question" "link" in the "Random question based on filter condition with tags: foo" "list_item"
+    And I should see "Random (Questions Category 1) based on filter condition with tags: foo" on quiz page "1"
+    When I click on "Configure question" "link" in the "Random (Questions Category 1) based on filter condition with tags: foo" "list_item"
     Then I should see "Questions Category 1"
     And I should see "foo"
     And I should see "question 1 name"
@@ -115,6 +115,6 @@ Feature: Adding random questions to a quiz based on category and tags
       | Name            | New Random category |
       | Parent category |  Default for Quiz 1 |
     And I press "Create category and add random question"
-    And I should see "Random question based on filter condition" on quiz page "1"
-    And I click on "Configure question" "link" in the "Random question based on filter condition" "list_item"
+    And I should see "Random (New Random category) based on filter condition" on quiz page "1"
+    And I click on "Configure question" "link" in the "Random (New Random category) based on filter condition" "list_item"
     Then I should see "New Random category"
