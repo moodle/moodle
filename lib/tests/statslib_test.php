@@ -460,7 +460,7 @@ class statslib_test extends \advanced_testcase {
             2 => 'edit',
             3 => 'add mod',
             4 => 'delete mod',
-            5 => 'edit sectionenrol',
+            5 => 'edit section',
             6 => 'loginas',
             7 => 'new',
             8 => 'unenrol',
@@ -495,6 +495,7 @@ class statslib_test extends \advanced_testcase {
             37 => 'editquestions',
             38 => 'delete attempt',
             39 => 'manualgrade',
+            40 => 'enrol',
         );
 
          $baseviewactions = array (
