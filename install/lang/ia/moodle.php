@@ -31,3 +31,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['language'] = 'Linguage';
 $string['moodlelogo'] = 'Logo de Moodle';
+$string['next'] = 'Proxime';
