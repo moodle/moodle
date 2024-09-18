@@ -40,10 +40,6 @@
     z-index: 1000;
 }
 
-.tiny-aiplacement-image-options {
-    padding-left: 20px;
-    padding-right: 20px;
-}
 .tiny-aiplacement-generate-image,
 .tiny_aiplacement_textresponse_placeholder {
     border-radius: 15px;
@@ -54,6 +50,9 @@
     justify-content: center;
     align-items: center;
     height: 100%;
+    min-height: 150px;
+    margin-left: 0;
+    margin-top: 0;
 }
 
 .tiny_aiplacement_textresponse textarea:disabled {
@@ -210,11 +209,5 @@
     .tiny_aiplacement_textresponse_placeholder {
         min-height: 12em;
         margin-top: 20px;
-    }
-
-    .tiny-aiplacement-generate-image {
-        min-height: 200px;
-        margin-left: 15px;
-        margin-right: 15px;
     }
 }
