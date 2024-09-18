@@ -1821,3 +1821,88 @@ function upgrade_add_foreign_key_and_indexes() {
     // Launch add key contextid.
     $dbman->add_key($table, $key);
 }
+
+/**
+ * Upgrade helper to change a binary column to an integer column with a length of 1 in a consistent manner across databases.
+ *
+ * This function will
+ * - rename the existing column to a temporary name,
+ * - add a new column with the integer type,
+ * - copy the values from the old column to the new column,
+ * - and finally, drop the old column.
+ *
+ * This function will do nothing if the field is already an integer.
+ *
+ * The new column with the integer type will need to have a default value of 0.
+ * This is to avoid breaking the not null constraint, if it's set, especially if there are existing records.
+ * Please make sure that the column definition in install.xml also has the `DEFAULT` attribute value set to 0.
+ *
+ * @param string $tablename The name of the table.
+ * @param string $fieldname The name of the field to be converted.
+ * @param bool|null $notnull {@see XMLDB_NOTNULL} or null.
+ * @param string|null $previous The name of the field that this field should come after.
+ * @return bool
+ */
+function upgrade_change_binary_column_to_int(
+    string $tablename,
+    string $fieldname,
+    ?bool $notnull = null,
+    ?string $previous = null,
+): bool {
+    global $DB;
+
+    // Get the information about the field to be converted.
+    $columns = $DB->get_columns($tablename);
+    $toconvert = $columns[$fieldname];
+
+    // Check if the field to be converted is already an integer-type column (`meta_type` property of 'I').
+    if ($toconvert->meta_type === 'I') {
+        // Nothing to do if the field is already an integer-type.
+        return false;
+    } else if (!$toconvert->binary) {
+        throw new \core\exception\coding_exception(
+            'This function is only used to convert XMLDB_TYPE_BINARY fields to XMLDB_TYPE_INTEGER fields. '
+            . 'For other field types, please check out \database_manager::change_field_type()'
+        );
+    }
+
+    $dbman = $DB->get_manager();
+    $table = new xmldb_table($tablename);
+    // Temporary rename the field. We'll drop this later.
+    $tmpfieldname = "tmp$fieldname";
+    $field = new xmldb_field($fieldname, XMLDB_TYPE_BINARY);
+    $dbman->rename_field($table, $field, $tmpfieldname);
+
+    // Add the new field wih the integer type.
+    $field = new xmldb_field($fieldname, XMLDB_TYPE_INTEGER, '1', null, $notnull, null, '0', $previous);
+    $dbman->add_field($table, $field);
+
+    // Copy the 'true' values from the old field to the new field.
+    if ($DB->get_dbfamily() === 'oracle') {
+        // It's tricky to use the binary column in the WHERE clause in Oracle DBs.
+        // Let's go updating the records one by one. It's nasty, but it's only done for instances with Oracle DBs.
+        // The normal SQL UPDATE statement will be used for other DBs.
+        $columns = implode(', ', ['id', $tmpfieldname, $fieldname]);
+        $records = $DB->get_recordset($tablename, null, '', $columns);
+        if ($records->valid()) {
+            foreach ($records as $record) {
+                if (!$record->$tmpfieldname) {
+                    continue;
+                }
+                $DB->set_field($tablename, $fieldname, 1, ['id' => $record->id]);
+            }
+        }
+        $records->close();
+    } else {
+        $sql = 'UPDATE {' . $tablename . '}
+                   SET ' . $fieldname . ' = 1
+                 WHERE ' . $tmpfieldname . ' = ?';
+        $DB->execute($sql, [1]);
+    }
+
+    // Drop the old field.
+    $oldfield = new xmldb_field($tmpfieldname);
+    $dbman->drop_field($table, $oldfield);
+
+    return true;
+}

@@ -1297,7 +1297,7 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('actionname', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
         $table->add_field('actionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('success', XMLDB_TYPE_BINARY, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('success', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('provider', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
@@ -1363,6 +1363,14 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2024091000.01);
+    }
+
+    if ($oldversion < 2024091700.01) {
+        // Convert the ai_action_register.success column to an integer, if necessary.
+        upgrade_change_binary_column_to_int('ai_action_register', 'success', XMLDB_NOTNULL, 'actionid');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024091700.01);
     }
 
     return true;

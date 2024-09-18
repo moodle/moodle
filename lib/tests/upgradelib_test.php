@@ -1640,4 +1640,99 @@ calendar,core_calendar|/calendar/view.php?view=month',
         $upgrade = get_config('core', 'upgraderunning');
         $this->assertFalse($upgrade);
     }
+
+    /**
+     * Data provider for {@see test_upgrade_change_binary_column_to_int()}.
+     *
+     * @return array[]
+     */
+    public static function upgrade_change_binary_column_to_int_provider(): array {
+        return [
+            'Binary column' => [
+                XMLDB_TYPE_BINARY,
+                null,
+                true,
+                false,
+            ],
+            'Integer column' => [
+                XMLDB_TYPE_INTEGER,
+                '1',
+                false,
+                false,
+            ],
+            'Non-binary and non-integer column' => [
+                XMLDB_TYPE_TEXT,
+                null,
+                false,
+                true,
+            ],
+        ];
+    }
+
+    /**
+     * Unit test for {@see upgrade_change_binary_column_to_int()}.
+     *
+     * @dataProvider upgrade_change_binary_column_to_int_provider
+     * @covers ::upgrade_change_binary_column_to_int()
+     * @param int $type The field type.
+     * @param string|null $length The field length.
+     * @param bool $expectedresult Whether the conversion succeeded.
+     * @param bool $expecexception Whether to expect an exception.
+     * @return void
+     */
+    public function test_upgrade_change_binary_column_to_int(
+        int $type,
+        ?string $length,
+        bool $expectedresult,
+        bool $expecexception,
+    ): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $dbman = $DB->get_manager();
+        $tmptablename = 'test_convert_table';
+        $fieldname = 'success';
+        $table = new xmldb_table($tmptablename);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        $table->add_field($fieldname, $type, $length, null, XMLDB_NOTNULL);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $dbman->create_table($table);
+
+        // Insert sample data.
+        $ones = [];
+        $truerecord = (object)[$fieldname => 1];
+        $falserecord = (object)[$fieldname => 0];
+        $ones[] = $DB->insert_record($tmptablename, $truerecord);
+        $DB->insert_record($tmptablename, $falserecord);
+        $ones[] = $DB->insert_record($tmptablename, $truerecord);
+        $DB->insert_record($tmptablename, $falserecord);
+        $ones[] = $DB->insert_record($tmptablename, $truerecord);
+        $ones[] = $DB->insert_record($tmptablename, $truerecord);
+
+        if ($expecexception) {
+            $this->expectException(coding_exception::class);
+        }
+
+        $result = upgrade_change_binary_column_to_int($tmptablename, $fieldname);
+        $this->assertEquals($expectedresult, $result);
+
+        // Verify converted column and data.
+        if ($result) {
+            $columns = $DB->get_columns($tmptablename);
+            // Verify the new field has been created and is no longer a binary field.
+            $this->assertArrayHasKey($fieldname, $columns);
+            $field = $columns[$fieldname];
+            $this->assertFalse($field->binary);
+
+            // Verify that the renamed old field has now been removed.
+            $this->assertArrayNotHasKey("tmp$fieldname", $columns);
+
+            // Confirm that the values for the converted column are the same.
+            $records = $DB->get_fieldset($tmptablename, 'id', [$fieldname => 1]);
+            $this->assertEqualsCanonicalizing($ones, $records);
+        }
+
+        // Cleanup.
+        $dbman->drop_table($table);
+    }
 }
