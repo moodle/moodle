@@ -25,7 +25,6 @@
 namespace mod_quiz\output;
 
 use core_question\local\bank\question_version_status;
-use mod_quiz\question\bank\qbank_helper;
 use \mod_quiz\structure;
 use \html_writer;
 use qbank_previewquestion\question_preview_options;
@@ -1067,7 +1066,7 @@ class edit_renderer extends \plugin_renderer_base {
 
         $temp = clone($question);
         $temp->questiontext = '';
-        $temp->name = qbank_helper::describe_random_question($slot);
+        $temp->name = $structure->describe_random_slot($slot->id);
         $instancename = quiz_question_tostring($temp);
 
         $configuretitle = get_string('configurerandomquestion', 'quiz');
