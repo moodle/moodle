@@ -230,4 +230,9 @@ export default class extends BulkActions {
             checkbox.addEventListener('change', eventHandler.bind(this));
         });
     }
+
+    deselectItem(selectedItem) {
+        selectedItem.checked = false;
+        selectedItem.closest('tr').classList.replace('selectedrow', 'unselectedrow');
+    }
 }
