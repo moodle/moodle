@@ -1663,7 +1663,7 @@ class structure {
      * @param int $slotid id of slot.
      * @return string that can be used to display the random slot.
      */
-    public function describe_random_slot($slotid) {
+    public function describe_random_slot(int $slotid): string {
         $this->ensure_random_slot_info_loaded();
 
         if (!isset($this->randomslotcategories[$slotid])) {
@@ -1687,7 +1687,7 @@ class structure {
     /**
      * Ensure that {@see load_random_slot_info()} has been called, so the data is available.
      */
-    protected function ensure_random_slot_info_loaded() {
+    protected function ensure_random_slot_info_loaded(): void {
         if ($this->randomslotcategories == null) {
             $this->load_random_slot_info();
         }
@@ -1696,7 +1696,7 @@ class structure {
     /**
      * Load information about the question categories and tags for all random slots,
      */
-    protected function load_random_slot_info() {
+    protected function load_random_slot_info(): void {
         global $DB;
 
         // Find the random slots.
