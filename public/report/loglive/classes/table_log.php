@@ -308,6 +308,12 @@ class report_loglive_table_log extends table_sql {
             $params['courseid'] = $this->filterparams->courseid;
         }
 
+        // Add filters for missing/deleted courses in site context.
+        if (!empty($this->filterparams->sitecoursefilter)) {
+            $joins[] = "courseid = :courseid";
+            $params['courseid'] = $this->filterparams->sitecoursefilter;
+        }
+
         // Getting all members of a group.
         [
             'joins' => $groupjoins,

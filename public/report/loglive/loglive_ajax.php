@@ -33,14 +33,18 @@ $logreader = optional_param('logreader', '', PARAM_COMPONENT); // Reader which w
 $PAGE->set_url('/report/loglive/loglive_ajax.php');
 
 // Capability checks.
-if (empty($id)) {
+if (!empty($id)) {
+    $course = $DB->get_record('course', ['id' => $id], '*');
+    if ($course) {
+        require_login($course);
+        $context = context_course::instance($course->id);
+    }
+}
+
+if (empty($course)) {
     require_login();
     $context = context_system::instance();
     $PAGE->set_context($context);
-} else {
-    $course = get_course($id);
-    require_login($course);
-    $context = context_course::instance($course->id);
 }
 
 require_capability('report/loglive:view', $context);
