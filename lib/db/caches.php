@@ -644,4 +644,12 @@ $definitions = array(
         'simpledata' => true, // Cache stores integer values which are simple data.
         'staticacceleration' => true,
     ],
+
+    // The navigation_cache class used this cache to store the navigation nodes.
+    'navigation_cache' => [
+        'mode' => cache_store::MODE_SESSION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'ttl' => 1800,
+    ],
 );
