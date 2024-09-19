@@ -56,10 +56,13 @@ class recalculate extends external_api {
      */
     public static function execute(int $fieldid, int $instanceid): array {
         // Parameter validation.
-        ['fieldid' => $fieldid, 'instanceid' => $instanceid] = self::validate_parameters(
-            self::execute_parameters(),
-            ['fieldid' => $fieldid, 'instanceid' => $instanceid]
-        );
+        [
+            'fieldid' => $fieldid,
+            'instanceid' => $instanceid,
+        ] = self::validate_parameters(self::execute_parameters(), [
+            'fieldid' => $fieldid,
+            'instanceid' => $instanceid,
+        ]);
 
         // Access validation.
         $context = \context_system::instance();

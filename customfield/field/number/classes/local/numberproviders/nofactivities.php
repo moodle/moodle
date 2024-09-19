@@ -55,7 +55,7 @@ class nofactivities extends provider_base {
      * Add autocomplete field for selecting activity type.
      * Also add checkbox to display the field when the number of activities is zero.
      *
-     * @param \MoodleQuickForm $mform
+     * @param MoodleQuickForm $mform
      */
     public function config_form_definition(MoodleQuickForm $mform): void {
         $options = [];
@@ -87,14 +87,13 @@ class nofactivities extends provider_base {
         global $DB;
         $types = $this->field->get_configdata_property('activitytypes');
         $displaywhenzero = $this->field->get_configdata_property('displaywhenzero');
-        if (!empty($types)) {
-            // Prepare the SQL for non-empty types.
-            [$sqlin, $params] = $DB->get_in_or_equal($types, SQL_PARAMS_NAMED);
-        } else {
+
+        if (empty($types)) {
             return;
         }
 
         // Subquery to select all modules of selected types.
+        [$sqlin, $params] = $DB->get_in_or_equal($types, SQL_PARAMS_NAMED);
         $cmsql = "SELECT m.id
                     FROM {modules} m
                    WHERE m.name $sqlin
@@ -160,7 +159,7 @@ class nofactivities extends provider_base {
      * Preparation for export for number of activities provider.
      *
      * @param mixed $value String or float
-     * @param \context|null $context |null $context Context
+     * @param \context|null $context Context
      * @return ?string
      */
     public function prepare_export_value(mixed $value, ?\context $context = null): ?string {

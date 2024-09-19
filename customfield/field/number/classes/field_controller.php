@@ -31,6 +31,7 @@ use MoodleQuickForm;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class field_controller  extends \core_customfield\field_controller {
+
     /**
      * Add form elements for editing the custom field definition
      *
@@ -102,14 +103,14 @@ class field_controller  extends \core_customfield\field_controller {
      * Adds selector to provider for field population.
      *
      * @param MoodleQuickForm $mform
-     * @param array $providers
+     * @param provider_base[] $providers
      */
-    protected function add_field_type_select(\MoodleQuickForm $mform, array $providers): void {
+    protected function add_field_type_select(MoodleQuickForm $mform, array $providers): void {
         $autooptions = [];
         foreach ($providers as $provider) {
             $autooptions[get_class($provider)] = $provider->get_name();
         }
-        $options = [get_string('genericfield', 'customfield_number')];
+        $options = ['' => get_string('genericfield', 'customfield_number')];
         $options = array_merge($options, $autooptions);
         $mform->addElement('select', 'configdata[fieldtype]', get_string('fieldtype', 'customfield_number'), $options);
     }
@@ -175,6 +176,7 @@ class field_controller  extends \core_customfield\field_controller {
         if ($value === null) {
             return null;
         }
+
         $decimalplaces = (int) $this->get_configdata_property('decimalplaces');
         if (round((float) $value, $decimalplaces) == 0) {
             $value = $this->get_configdata_property('displaywhenzero');
@@ -188,11 +190,13 @@ class field_controller  extends \core_customfield\field_controller {
                 $value = $provider->prepare_export_value($value, $context);
             } else {
                 $value = format_float((float)$value, $decimalplaces);
+
                 // Apply the display format.
                 $format = $this->get_configdata_property('display') ?? '{value}';
                 $value = str_replace('{value}', $value, $format);
             }
         }
+
         return format_string($value, true, ['context' => $context ?? system::instance()]);
     }
 
@@ -202,7 +206,6 @@ class field_controller  extends \core_customfield\field_controller {
      * @return bool
      */
     public function is_editable(): bool {
-        return $this->get_configdata_property('fieldtype') == false;
+        return (string) $this->get_configdata_property('fieldtype') === '';
     }
-
 }

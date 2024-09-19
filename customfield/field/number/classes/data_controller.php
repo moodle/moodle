@@ -46,10 +46,11 @@ class data_controller extends \core_customfield\data_controller {
     public function instance_form_definition(MoodleQuickForm $mform): void {
         global $OUTPUT;
 
-        $field = $this->get_field();
         $elementname = $this->get_form_element_name();
+
+        // If the field isn't editable (based on type/provider config), then display static element.
+        $field = $this->get_field();
         if (!$field->is_editable()) {
-            // Display the value as static text.
             $instanceid = (int)$this->get('instanceid');
             $data = ['value' => $this->export_value(), 'fieldid' => $field->get('id'), 'instanceid' => $instanceid];
             $value = $OUTPUT->render_from_template('customfield_number/staticvalue', $data);

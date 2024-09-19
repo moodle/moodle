@@ -30,9 +30,8 @@ use customfield_number\field_controller;
  */
 #[\core\attribute\label('This hook allows adding custom providers to calculate custom field automatically like price for course')]
 class add_custom_providers {
-    /**
-     * @var array
-     */
+
+    /** @var provider_base[] $providers */
     protected array $providers = [];
 
     /**

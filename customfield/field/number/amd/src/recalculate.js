@@ -43,8 +43,6 @@ export function init() {
         return;
     }
 
-    initialised = true;
-
     document.addEventListener('click', (e) => {
         const target = e.target.closest(SELECTORS.wrapper + " " + SELECTORS.link);
         if (!target) {
@@ -55,8 +53,8 @@ export function init() {
             return;
         }
         e.preventDefault();
-        const fieldid = target.dataset.fieldid;
-        const instanceid = target.dataset.instanceid;
+
+        const {fieldid, instanceid} = target.dataset;
 
         const pendingPromise = new Pending('recalculate_customfield_number');
         addIconToContainer(el).then(() => {
@@ -66,8 +64,9 @@ export function init() {
             }])[0];
         }).then((data) => {
             el.innerHTML = data.value;
-            pendingPromise.resolve();
-            return;
+            return pendingPromise.resolve();
         }).catch(Notification.exception);
     });
+
+    initialised = true;
 }
