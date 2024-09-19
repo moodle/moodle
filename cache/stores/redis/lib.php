@@ -65,6 +65,9 @@ class cachestore_redis extends store implements
      */
     const TTL_EXPIRE_BATCH = 10000;
 
+    /** @var int The number of seconds to wait for a connection or response from the Redis server. */
+    const CONNECTION_TIMEOUT = 10;
+
     /**
      * Name of this store.
      *
@@ -268,10 +271,26 @@ class cachestore_redis extends store implements
         try {
             // Create a $redis object of a RedisCluster or Redis class.
             if ($clustermode) {
-                $redis = new RedisCluster(null, $trimmedservers, 1, 1, true, $password, !empty($opts) ? $opts : null);
+                $redis = new RedisCluster(
+                    null,
+                    $trimmedservers,
+                    self::CONNECTION_TIMEOUT, // Timeout.
+                    self::CONNECTION_TIMEOUT, // Read timeout.
+                    true,
+                    $password,
+                    !empty($opts) ? $opts : null,
+                );
             } else {
                 $redis = new Redis();
-                $redis->connect($server, $port, 1, null, 100, 1, $opts);
+                $redis->connect(
+                    $server,
+                    $port,
+                    self::CONNECTION_TIMEOUT, // Timeout.
+                    null,
+                    100, // Retry interval.
+                    self::CONNECTION_TIMEOUT, // Read timeout.
+                    $opts,
+                );
                 if (!empty($password)) {
                     $redis->auth($password);
                 }

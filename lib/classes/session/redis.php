@@ -114,6 +114,9 @@ class redis extends handler implements SessionHandlerInterface {
     /** @var clock A clock instance */
     protected clock $clock;
 
+    /** @var int The number of seconds to wait for a connection or response from the Redis server. */
+    const CONNECTION_TIMEOUT = 10;
+
     /**
      * Create new instance of handler.
      */
@@ -274,8 +277,8 @@ class redis extends handler implements SessionHandlerInterface {
                     $this->connection = new \RedisCluster(
                         name: null,
                         seeds: $trimmedservers,
-                        timeout: 1,
-                        readTimeout: 1,
+                        timeout: self::CONNECTION_TIMEOUT, // Timeout.
+                        readTimeout: self::CONNECTION_TIMEOUT, // Read timeout.
                         persistent: true,
                         auth: $this->auth,
                         context: !empty($opts) ? $opts : null,
@@ -286,9 +289,9 @@ class redis extends handler implements SessionHandlerInterface {
                     $this->connection->connect(
                         host: $server,
                         port: $port,
-                        timeout: 1,
+                        timeout: self::CONNECTION_TIMEOUT, // Timeout.
                         retry_interval: $delay,
-                        read_timeout: 1,
+                        read_timeout: self::CONNECTION_TIMEOUT, // Read timeout.
                         context: $opts,
                     );
                     if ($this->auth !== '' && !$this->connection->auth($this->auth)) {
