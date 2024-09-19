@@ -41,8 +41,8 @@ Feature: Manage custom report schedules
     And I click on "Save" "button" in the "New schedule" "dialogue"
     Then I should see "Schedule created"
     And the following should exist in the "Report schedules" table:
-      | Name        | Starting from                           | Time last sent | Modified by |
-      | My schedule | ##tomorrow 11:00##%A, %d %B %Y, %H:%M## | Never          | Admin User  |
+      | Name        | Time last sent | Time next send                          | Modified by |
+      | My schedule | Never          | ##tomorrow 11:00##%A, %d %B %Y, %H:%M## | Admin User  |
 
   Scenario: Create report schedule for audience renamed using filters
     Given the "multilang" filter is "on"
@@ -86,6 +86,27 @@ Feature: Manage custom report schedules
     And I should see "Are you sure you want to delete the schedule 'English'?" in the "Delete schedule" "dialogue"
     And I click on "Cancel" "button" in the "Delete schedule" "dialogue"
 
+  Scenario Outline: Filter report schedules by date
+    Given the following "core_reportbuilder > Schedules" exist:
+      | report    | name          | timescheduled | timelastsent  |
+      | My report | My schedule 1 | ##yesterday## | ##yesterday## |
+      | My report | My schedule 2 | ##tomorrow##  | 0             |
+    And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    When I click on the "Schedules" dynamic tab
+    And I click on "Filters" "button"
+    And I set the following fields in the "<filter>" "core_reportbuilder > Filter" to these values:
+      | <filter> operator | Range          |
+      | <filter> from     | ##2 days ago## |
+      | <filter> to       | ##today##      |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    Then I should see "Filters applied"
+    And I should see "My schedule 1" in the "Report schedules" "table"
+    And I should not see "My schedule 2" in the "Report schedules" "table"
+    Examples:
+      | filter         |
+      | Time last sent |
+      | Time next send |
+
   Scenario: Toggle report schedule
     Given the following "core_reportbuilder > Schedules" exist:
       | report    | name        |
@@ -110,8 +131,8 @@ Feature: Manage custom report schedules
     And I click on "Save" "button" in the "Edit schedule details" "dialogue"
     Then I should see "Schedule updated"
     And the following should exist in the "Report schedules" table:
-      | Name                | Starting from                           |
-      | My updated schedule | ##tomorrow 11:00##%A, %d %B %Y, %H:%M## |
+      | Name                | Time last sent | Time next send                          | Modified by |
+      | My updated schedule | Never          | ##tomorrow 11:00##%A, %d %B %Y, %H:%M## | Admin User  |
 
   Scenario: Send report schedule
     Given the following "core_reportbuilder > Schedules" exist:
@@ -122,6 +143,11 @@ Feature: Manage custom report schedules
     When I press "Send schedule" action in the "My schedule" report row
     And I click on "Confirm" "button" in the "Send schedule" "dialogue"
     Then I should see "Schedule sent"
+    And I run all adhoc tasks
+    And I reload the page
+    And the following should exist in the "Report schedules" table:
+      | Name        | Time last sent |
+      | My schedule | ##today##%A##  |
 
   Scenario: Delete report schedule
     Given the following "core_reportbuilder > Schedules" exist:

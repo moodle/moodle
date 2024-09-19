@@ -222,6 +222,27 @@ Feature: Manage custom reports
       | Time created  |
       | Time modified |
 
+  Scenario: Filter custom reports by schedule presence
+    Given the following "core_reportbuilder > Reports" exist:
+      | name       | source                                       |
+      | My users   | core_user\reportbuilder\datasource\users     |
+      | My courses | core_course\reportbuilder\datasource\courses |
+    And the following "core_reportbuilder > Schedules" exist:
+      | report   | name        |
+      | My users | My schedule |
+    And I log in as "admin"
+    When I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I click on "Filters" "button"
+    And I set the field "Schedules operator" in the "Schedules" "core_reportbuilder > Filter" to "Yes"
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    Then I should see "Filters applied"
+    And I should see "My users" in the "Reports list" "table"
+    And I should not see "My courses" in the "Reports list" "table"
+    And I set the field "Schedules operator" in the "Schedules" "core_reportbuilder > Filter" to "No"
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should see "My courses" in the "Reports list" "table"
+    And I should not see "My users" in the "Reports list" "table"
+
   Scenario: Reset filters in system report
     Given the following "core_reportbuilder > Report" exists:
       | name    | My report                                |
