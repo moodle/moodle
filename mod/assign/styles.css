@@ -43,10 +43,6 @@
     font-weight: 900;
 }
 
-.path-mod-assign.jsenabled .gradingoptionsform [type=submit] {
-    display: none;
-}
-
 .path-mod-assign.jsenabled .gradingtable .c1 select {
     display: none;
 }
