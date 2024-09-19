@@ -18,7 +18,6 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\helpers;
 
-use core\context\system;
 use core\lang_string;
 use core_text;
 use core_reportbuilder\local\filters\{boolean_select, date, select, text};
@@ -132,8 +131,7 @@ class user_profile_fields {
 
             $columns[] = (new column(
                 'profilefield_' . core_text::strtolower($profilefield->field->shortname),
-                new lang_string('customfieldcolumn', 'core_reportbuilder',
-                    format_string($profilefield->field->name, true, ['escape' => false, 'context' => system::instance()])),
+                new lang_string('customfieldcolumn', 'core_reportbuilder', $profilefield->display_name(false)),
                 $this->entityname
             ))
                 ->add_joins($this->get_joins())
@@ -218,8 +216,7 @@ class user_profile_fields {
             $filter = (new filter(
                 $classname,
                 'profilefield_' . core_text::strtolower($profilefield->field->shortname),
-                new lang_string('customfieldcolumn', 'core_reportbuilder',
-                    format_string($profilefield->field->name, true, ['escape' => false, 'context' => system::instance()])),
+                new lang_string('customfieldcolumn', 'core_reportbuilder', $profilefield->display_name(false)),
                 $this->entityname,
                 $userinfosql,
                 $userinfoparams,
