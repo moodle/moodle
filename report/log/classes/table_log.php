@@ -420,6 +420,10 @@ class report_log_table_log extends table_sql {
         if (!empty($this->filterparams->courseid) && $this->filterparams->courseid != SITEID) {
             $joins[] = "courseid = :courseid";
             $params['courseid'] = $this->filterparams->courseid;
+        } else if (!empty($this->filterparams->sitecoursefilter)) {
+            // Add filters for missing/deleted courses in site context.
+            $joins[] = "courseid = :courseid";
+            $params['courseid'] = $this->filterparams->sitecoursefilter;
         }
 
         if (!empty($this->filterparams->siteerrors)) {
