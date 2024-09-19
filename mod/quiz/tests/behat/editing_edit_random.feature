@@ -49,6 +49,6 @@ Feature: Editing random questions already in a quiz based on category and tags
     And I apply question bank filter "Tag" with value "essay"
     And I press "Update filter conditions"
     Then I should see "Random (Questions Category 1) based on filter condition with tags: essay" on quiz page "1"
-    And I should see "Random (Questions Category 1) based on filter condition with tags: essay, hard" on quiz page "2"
+    And I should see "Random (Questions Category 1) based on filter condition with tags: hard" on quiz page "2"
     And I click on "Configure question" "link" in the "Random (Questions Category 1) based on filter condition with tags: hard" "list_item"
     And "hard" "autocomplete_selection" should be visible
