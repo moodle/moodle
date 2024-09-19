@@ -31,20 +31,24 @@
     padding-left: 0;
 }
 
-.block_private_files [role="treeitem"][aria-expanded="false"] > p::before {
+.block_private_files [role="treeitem"][aria-expanded="false"] > p {
     /*rtl:remove*/
-    content: url('[[pix:t/collapsed]]');
+    background-image: url('[[pix:t/collapsed]]');
     /*rtl:raw:
-        content: url('[[pix:t/collapsed_rtl]]');
+        background-image: url('[[pix:t/collapsed_rtl]]');
     */
-    vertical-align: sub;
-    margin-right: 5px;
+    background-size: 16px 16px;
+    background-position: 1px 1px;
+    background-repeat: no-repeat;
+    padding-left: 22px;
 }
 
-.block_private_files [role="treeitem"][aria-expanded="true"] > p::before {
-    content: url('[[pix:t/expanded]]');
-    vertical-align: sub;
-    margin-right: 5px;
+.block_private_files [role="treeitem"][aria-expanded="true"] > p {
+    background-image: url('[[pix:t/expanded]]');
+    background-size: 16px 16px;
+    background-position: 1px 1px;
+    background-repeat: no-repeat;
+    padding-left: 22px;
 }
 
 .block_private_files [role="treeitem"]:not([aria-expanded]) {
@@ -88,6 +92,7 @@
     background-repeat: no-repeat;
     background-position: left 8px top 100%;
     background-size: 1px 100%;
+    padding-left: 22px;
     margin-left: 0;
 }
 
