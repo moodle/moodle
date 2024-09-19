@@ -108,6 +108,9 @@ class redis extends handler implements SessionHandlerInterface {
     /** @var int Maximum number of retries for cache store operations. */
     const MAX_RETRIES = 5;
 
+    /** @var int The number of seconds to wait for a connection or response from the Redis server. */
+    const CONNECTION_TIMEOUT = 10;
+
     /**
      * Create new instance of handler.
      */
@@ -275,12 +278,27 @@ class redis extends handler implements SessionHandlerInterface {
             try {
                 // Create a $redis object of a RedisCluster or Redis class.
                 if ($this->clustermode) {
-                    $this->connection = new \RedisCluster(null, $trimmedservers, 1, 1, true,
-                        $this->auth, !empty($opts) ? $opts : null);
+                    $this->connection = new \RedisCluster(
+                        null,
+                        $trimmedservers,
+                        self::CONNECTION_TIMEOUT, // Timeout.
+                        self::CONNECTION_TIMEOUT, // Read timeout.
+                        true,
+                        $this->auth,
+                        !empty($opts) ? $opts : null,
+                    );
                 } else {
                     $delay = rand(100, 500);
                     $this->connection = new \Redis();
-                    $this->connection->connect($server, $port, 1, null, $delay, 1, $opts);
+                    $this->connection->connect(
+                        $server,
+                        $port,
+                        self::CONNECTION_TIMEOUT, // Timeout.
+                        null,
+                        $delay, // Retry interval.
+                        self::CONNECTION_TIMEOUT, // Read timeout.
+                        $opts,
+                    );
                     if ($this->auth !== '' && !$this->connection->auth($this->auth)) {
                         throw new $exceptionclass('Unable to authenticate.');
                     }
