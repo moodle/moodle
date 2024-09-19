@@ -3226,6 +3226,9 @@ class section_info implements IteratorAggregate {
      */
     private ?sectiondelegate $_delegateinstance = null;
 
+    /** @var cm_info[]|null Section cm_info activities, null when it is not loaded yet. */
+    private array|null $_sequencecminfos = null;
+
     /**
      * @var bool|null $_isorphan True if the section is orphan for some reason.
      */
@@ -3623,6 +3626,27 @@ class section_info implements IteratorAggregate {
         } else {
             return '';
         }
+    }
+
+    /**
+     * Returns the course modules in this section.
+     *
+     * @return cm_info[]
+     */
+    public function get_sequence_cm_infos(): array {
+        if ($this->_sequencecminfos !== null) {
+            return $this->_sequencecminfos;
+        }
+        $sequence = $this->modinfo->sections[$this->_sectionnum] ?? [];
+        $cms = $this->modinfo->get_cms();
+        $result = [];
+        foreach ($sequence as $cmid) {
+            if (isset($cms[$cmid])) {
+                $result[] = $cms[$cmid];
+            }
+        }
+        $this->_sequencecminfos = $result;
+        return $result;
     }
 
     /**
