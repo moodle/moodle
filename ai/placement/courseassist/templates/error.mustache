@@ -1,0 +1,43 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template aiplacement_courseassist/error
+
+    Template to display error message when AI placement fails.
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+    }
+}}
+<section class="mb-3">
+    <div class="card-body p-3">
+        <h3 id="instance-9-header" class="h6 card-title d-inline">
+            {{#pix}} req, core {{/pix}}
+            {{#str}} generatefailtitle, aiplacement_courseassist {{/str}}
+        </h3>
+        <div class="card-text content mt-3">
+            <div class="d-block pt-3">
+                <button class="btn btn-sm btn-outline-secondary" data-action="course-summarise-retry">
+                    {{#str}} tryagain, aiplacement_courseassist {{/str}}
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
