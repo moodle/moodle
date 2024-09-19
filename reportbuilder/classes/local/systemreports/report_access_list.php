@@ -18,12 +18,15 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\systemreports;
 
+use core\lang_string;
 use core_reportbuilder\local\models\audience;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\permission;
 use core_reportbuilder\system_report;
 use core_reportbuilder\local\entities\user;
+use core_reportbuilder\local\filters\audience as audience_filter;
 use core_reportbuilder\local\helpers\audience as audience_helper;
+use core_reportbuilder\local\report\filter;
 
 /**
  * Report access list
@@ -99,6 +102,19 @@ class report_access_list extends system_report {
      */
     protected function add_filters(user $userentity): void {
         $this->add_filter($userentity->get_filter('fullname'));
+
+        // Include audience filter.
+        $this->add_filter((new filter(
+            audience_filter::class,
+            'audience',
+            new lang_string('audience', 'core_reportbuilder'),
+            $userentity->get_entity_name(),
+            $userentity->get_table_alias('user') . '.id',
+        ))
+            ->set_options([
+                'reportid' => $this->get_parameter('id', 0, PARAM_INT),
+            ])
+        );
 
         // Include all identity field filters.
         $identityfilters = $userentity->get_identity_filters($this->get_context());
