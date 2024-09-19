@@ -79,7 +79,10 @@ class hook_callbacks {
         if (!empty($policies)) {
             $url = new moodle_url('/admin/tool/policy/viewall.php', ['returnurl' => $PAGE->url]);
             $hook->add_html(
-                html_writer::link($url, get_string('userpolicysettings', 'tool_policy'), ['class' => 'policiesfooter']),
+                html_writer::div(
+                    html_writer::link($url, get_string('userpolicysettings', 'tool_policy')),
+                    'policiesfooter',
+                ),
             );
         }
     }
