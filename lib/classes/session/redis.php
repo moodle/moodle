@@ -102,6 +102,9 @@ class redis extends handler {
     /** @var int $timeout How long sessions live before expiring. */
     protected $timeout;
 
+    /** @var int The number of seconds to wait for a connection or response from the Redis server. */
+    const CONNECTION_TIMEOUT = 10;
+
     /**
      * Create new instance of handler.
      */
@@ -239,8 +242,16 @@ class redis extends handler {
 
                 $delay = rand(100, 500);
 
-                // One second timeout was chosen as it is long for connection, but short enough for a user to be patient.
-                if (!$this->connection->connect($this->host, $this->port, 1, null, $delay, 1, $opts)) {
+                $connection = $this->connection->connect(
+                    $this->host,
+                    $this->port,
+                    self::CONNECTION_TIMEOUT, // Timeout.
+                    null,
+                    $delay, // Retry interval.
+                    self::CONNECTION_TIMEOUT, // Read timeout.
+                    $opts,
+                );
+                if (!$connection) {
                     throw new RedisException('Unable to connect to host.');
                 }
 
