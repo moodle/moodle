@@ -778,10 +778,12 @@ export default class extends BaseComponent {
             }
         });
         const courseAddSection = this.getElement(this.selectors.COURSEADDSECTION);
-        const addSection = courseAddSection.querySelector(this.selectors.ADDSECTION);
-        addSection.classList.toggle(this.classes.DISPLAYNONE, locked);
-        const noMoreSections = courseAddSection.querySelector(this.selectors.MAXSECTIONSWARNING);
-        noMoreSections.classList.toggle(this.classes.DISPLAYNONE, !locked);
+        if (courseAddSection) {
+            const addSection = courseAddSection.querySelector(this.selectors.ADDSECTION);
+            addSection.classList.toggle(this.classes.DISPLAYNONE, locked);
+            const noMoreSections = courseAddSection.querySelector(this.selectors.MAXSECTIONSWARNING);
+            noMoreSections.classList.toggle(this.classes.DISPLAYNONE, !locked);
+        }
     }
 
     /**
