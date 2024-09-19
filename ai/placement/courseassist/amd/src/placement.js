@@ -28,6 +28,7 @@ import Notification from 'core/notification';
 import Selectors from 'aiplacement_courseassist/selectors';
 import Policy from 'core_ai/policy';
 import AIHelper from 'core_ai/helper';
+import Drawer from 'core/drawer';
 
 const AICourseAssist = class {
 
@@ -75,6 +76,15 @@ const AICourseAssist = class {
                 }
                 // Display summary.
                 this.displaySummary();
+            }
+            // Close AI drawer if message drawer is open.
+            const messageDrawerToggle = e.target.closest(Selectors.ELEMENTS.MESSAGE_DRAWER_TOGGLE);
+            if (messageDrawerToggle && this.isAIDrawerOpen()) {
+                const messageDrawer = document.querySelector(Selectors.ELEMENTS.MESSAGE_DRAWER);
+                if (messageDrawer && !messageDrawer.classList.contains('hidden')) {
+                    this.closeAIDrawer();
+                    messageDrawerToggle.focus();
+                }
             }
         });
     }
@@ -164,6 +174,7 @@ const AICourseAssist = class {
      * Open the AI drawer.
      */
     openAIDrawer() {
+        this.closeMessageDrawer();
         this.aiDrawerElement.classList.add('show');
         this.aiDrawerBodyElement.setAttribute('aria-live', 'polite');
         if (!this.pageElement.classList.contains('show-drawer-right')) {
@@ -171,6 +182,16 @@ const AICourseAssist = class {
         }
         // Disable the summary button.
         this.disableSummaryButton();
+    }
+
+    /**
+     * Close message drawer.
+     */
+    closeMessageDrawer() {
+        var messageElement = document.querySelector(Selectors.ELEMENTS.MESSAGE_DRAWER).parentElement;
+        if (!messageElement.classList.contains('hidden')) {
+            Drawer.hide(messageElement);
+        }
     }
 
     /**
