@@ -14,17 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+declare(strict_types=1);
+
+namespace customfield_number;
+
 /**
- * Plugin version details
+ * Class missing_provider
  *
  * @package    customfield_number
- * @copyright  2024 Paul Holden <paulh@moodle.com>
+ * @author     2024 Marina Glancy
+ * @copyright  2024 Moodle Pty Ltd <support@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class missing_provider extends provider_base {
 
-defined('MOODLE_INTERNAL') || die;
+    /**
+     * {@inheritDoc}
+     */
+    public function get_name(): string {
+        return get_string('invalidprovider', 'customfield_number');
+    }
 
-$plugin->component = 'customfield_number';
-$plugin->version   = 2024042202;
-$plugin->requires  = 2024041600;
-$plugin->maturity  = MATURITY_STABLE;
+    /**
+     * {@inheritDoc}
+     */
+    public function is_available(): bool {
+        return false;
+    }
+}

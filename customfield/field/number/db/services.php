@@ -15,16 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version details
+ * External functions and service declaration for Number
+ *
+ * Documentation: {@link https://moodledev.io/docs/apis/subsystems/external/description}
  *
  * @package    customfield_number
- * @copyright  2024 Paul Holden <paulh@moodle.com>
+ * @category   webservice
+ * @author     2024 Marina Glancy
+ * @copyright  2024 Moodle Pty Ltd <support@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'customfield_number';
-$plugin->version   = 2024042202;
-$plugin->requires  = 2024041600;
-$plugin->maturity  = MATURITY_STABLE;
+$functions = [
+    'customfield_number_recalculate_value' => [
+        'classname' => customfield_number\external\recalculate::class,
+        'description' => 'This web service is used to recalculate the value of automatically populated number custom field.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+];

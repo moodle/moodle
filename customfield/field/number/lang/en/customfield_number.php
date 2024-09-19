@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+$string['activitytypes'] = 'Activity types';
+$string['automaticallypopulated'] = 'Automatically populated';
+$string['crontaskname'] = 'Populating automatic number custom fields';
 $string['decimalplaces'] = 'Decimal places';
 $string['defaultvalueconfigerror'] = 'Default value must be between minimum and maximum';
 $string['display'] = 'Display template';
@@ -37,12 +40,18 @@ $string['displaywhenzero'] = 'Display when zero';
 $string['displaywhenzero_help'] = 'How to display the field value when the value is "0". For example, in case of a price you can display the word "Free" but in case of the duration you may want to leave it empty since it means that the duration was not estimated.
 
 Leave empty if you do not want to display anything at all when the value is set to "0".';
+$string['fieldtype'] = 'Field type';
+$string['genericfield'] = 'Generic field for any numeric data';
 $string['headerdisplaysettings'] = 'Display format';
+$string['invalidprovider'] = 'Invalid provider';
+$string['manualinput'] = 'Manual input';
 $string['maximumvalue'] = 'Maximum value';
 $string['maximumvalueerror'] = 'Value must be less than or equal to {$a}';
 $string['minimumvalue'] = 'Minimum value';
 $string['minimumvalueconfigerror'] = 'Minimum value must be less than maximum';
 $string['minimumvalueerror'] = 'Value must be greater than or equal to {$a}';
+$string['missingrequired'] = 'Missing instanceid or fieldid';
+$string['nofactivities'] = 'Number of activities in the course';
 $string['pluginname'] = 'Number';
 $string['privacy:metadata'] = 'The number custom field plugin does not store any personal data';
 $string['specificsettings'] = 'Number field settings';

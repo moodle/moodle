@@ -15,16 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version details
+ * Scheduled task definitions for Number
+ *
+ * Documentation: {@link https://moodledev.io/docs/apis/subsystems/task/scheduled}
  *
  * @package    customfield_number
- * @copyright  2024 Paul Holden <paulh@moodle.com>
+ * @category   task
+ * @author     2024 Marina Glancy
+ * @copyright  2024 Moodle Pty Ltd <support@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'customfield_number';
-$plugin->version   = 2024042202;
-$plugin->requires  = 2024041600;
-$plugin->maturity  = MATURITY_STABLE;
+$tasks = [
+    [
+        'classname' => customfield_number\task\cron::class,
+        'minute' => 'R',
+        'hour' => '2',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+    ],
+];
