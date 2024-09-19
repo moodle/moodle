@@ -6029,7 +6029,7 @@ class navigation_cache {
      * Contructor for the cache. Requires a area string be passed in.
      *
      * @param string $area The unique string to segregate this particular cache.
-     * @param int $timeout The number of seconds to time the information out after
+     * @param int $timeout Deprecated since Moodle 4.5. The number of seconds to time the information out after
      */
     public function __construct($area, $timeout = null) {
         if ($timeout !== null) {
