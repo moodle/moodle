@@ -7342,9 +7342,18 @@ class assign {
     /**
      * Save grading options.
      *
+     * @deprecated since Moodle 4.5
+     * @todo Final deprecation in Moodle 6.0. See MDL-82876.
      * @return void
      */
+    #[\core\attribute\deprecated(
+        'null',
+        since: '4.5',
+        reason: 'It is no longer used.',
+        mdl: 'MDL-82681',
+    )]
     protected function process_save_grading_options() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
