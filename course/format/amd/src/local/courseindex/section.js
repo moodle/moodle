@@ -148,12 +148,15 @@ export default class Component extends DndSection {
         if (!element.pageItem) {
             return;
         }
-        if (element.pageItem.sectionId !== this.id && this.isPageItem || element.pageItem.type !== 'section') {
+        const section = state.section.get(this.id);
+        const isRelevantPageItem = element.pageItem.sectionId === this.id || !this.isPageItem;
+        const isSectionOrCollapsed = element.pageItem.type === 'section' || section.indexcollapsed;
+
+        if (!(isRelevantPageItem && isSectionOrCollapsed)) {
             this.pageItem = false;
             this.getElement(this.selectors.SECTION_ITEM).classList.remove(this.classes.PAGEITEM);
             return;
         }
-        const section = state.section.get(this.id);
         if (section.indexcollapsed && !element.pageItem?.isStatic) {
             this.pageItem = (element.pageItem?.sectionId == this.id);
         } else {
