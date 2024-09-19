@@ -258,8 +258,33 @@ class reports_list extends system_report {
             ->set_limited_operators([
                 date::DATE_ANY,
                 date::DATE_RANGE,
+                date::DATE_BEFORE,
+                date::DATE_LAST,
+                date::DATE_CURRENT,
             ])
         );
+
+        // Time modified filter.
+        $this->add_filter((new filter(
+            date::class,
+            'timemodified',
+            new lang_string('timemodified', 'core_reportbuilder'),
+            $this->get_report_entity_name(),
+            "{$tablealias}.timemodified",
+        ))
+            ->set_limited_operators([
+                date::DATE_ANY,
+                date::DATE_RANGE,
+                date::DATE_BEFORE,
+                date::DATE_LAST,
+                date::DATE_CURRENT,
+            ])
+        );
+
+        // User modified filter.
+        $this->add_filter_from_entity('user:userselect')
+            ->set_header(new lang_string('usermodified', 'reportbuilder'))
+            ->set_is_available(has_capability('moodle/user:viewalldetails', $this->get_context()));
     }
 
     /**
