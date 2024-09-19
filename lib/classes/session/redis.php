@@ -164,12 +164,15 @@ class redis extends handler implements SessionHandlerInterface {
         }
 
         // This sets the Redis session lock expiry time to whatever is lower, either
-        // the PHP execution time `max_execution_time`, if the value was defined in
-        // the `php.ini` or the globally configured `sessiontimeout`. Setting it to
-        // the lower of the two will not make things worse it if the execution timeout
+        // the PHP execution time `max_execution_time`, if the value is positive, or the
+        // globally configured `sessiontimeout`.
+        //
+        // Setting it to the lower of the two will not make things worse it if the execution timeout
         // is longer than the session timeout.
+        //
         // For the PHP execution time, once the PHP execution time is over, we can be sure
         // that the lock is no longer actively held so that the lock can expire safely.
+        //
         // Although at `lib/classes/php_time_limit.php::raise(int)`, Moodle can
         // progressively increase the maximum PHP execution time, this is limited to the
         // `max_execution_time` value defined in the `php.ini`.
@@ -177,9 +180,19 @@ class redis extends handler implements SessionHandlerInterface {
         // once the session itself expires.
         // If we unnecessarily hold the lock any longer, it blocks other session requests.
         $this->lockexpire = ini_get('max_execution_time');
+        if ($this->lockexpire < 0) {
+            // If the max_execution_time is set to a value lower than 0, which is invalid, use the default value.
+            // https://www.php.net/manual/en/info.configuration.php#ini.max-execution-time defines the default as 30.
+            // Note: This value is not available programatically.
+            $this->lockexpire = 30;
+        }
+
         if (empty($this->lockexpire) || ($this->lockexpire > (int)$CFG->sessiontimeout)) {
+            // The value of the max_execution_time is either unlimited (0), or higher than the session timeout.
+            // Cap it at the session timeout.
             $this->lockexpire = (int)$CFG->sessiontimeout;
         }
+
         if (isset($CFG->session_redis_lock_expire)) {
             $this->lockexpire = (int)$CFG->session_redis_lock_expire;
         }
