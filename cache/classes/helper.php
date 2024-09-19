@@ -16,6 +16,8 @@
 
 namespace core_cache;
 
+use cache_ttl_wrapper;
+use core\lang_string;
 use core_cache\administration_helper;
 use core\exception\coding_exception;
 use DirectoryIterator;
@@ -777,7 +779,7 @@ class helper {
                     }
                 }
                 if ($todelete) {
-                    $outcome = (int) store->delete_many($todelete);
+                    $outcome = (int) $store->delete_many($todelete);
                     if ($output) {
                         $strdef = s($definition->get_id());
                         $strstore = s($store->my_name());
