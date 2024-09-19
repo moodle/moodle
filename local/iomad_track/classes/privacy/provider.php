@@ -205,7 +205,7 @@ class provider implements
         $DB->delete_records('local_iomad_track', array('userid' => $userid));
 
         // Get the certs.
-        if ($certs = $DB->get_records_sql("SELECT litc* FROM {local_iomad_track_certs}
+        if ($certs = $DB->get_records_sql("SELECT litc.* FROM {local_iomad_track_certs}
                                            JOIN {local_iomad_track} lit ON (litc.trackid = lit.id)
                                            WHERE lit.userid = :userid",
                                            array('userid' => $userid))) {
