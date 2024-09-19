@@ -40,6 +40,8 @@ class assign_grading_table extends table_sql implements renderable {
     private $assignment = null;
     /** @var int $perpage */
     private $perpage = 10;
+    /** @var int[] $pagingoptions Available pagination options */
+    private $pagingoptions = [10, 20, 50, 100];
     /** @var int $rownum (global index of current row in table) */
     private $rownum = -1;
     /** @var renderer_base for getting output */
@@ -58,8 +60,6 @@ class assign_grading_table extends table_sql implements renderable {
     private $groupsubmissions = array();
     /** @var array $submissiongroups - A static cache of submission groups */
     private $submissiongroups = array();
-    /** @var string $plugingradingbatchoperations - List of plugin supported batch operations */
-    public $plugingradingbatchoperations = array();
     /** @var array $plugincache - A cache of plugin lookups to match a column name to a plugin efficiently */
     private $plugincache = array();
     /** @var array $scale - A list of the keys and descriptions for the custom scale */
@@ -100,16 +100,6 @@ class assign_grading_table extends table_sql implements renderable {
         $this->hasviewblind = has_capability('mod/assign:viewblinddetails',
                 $this->assignment->get_context());
 
-        foreach ($assignment->get_feedback_plugins() as $plugin) {
-            if ($plugin->is_visible() && $plugin->is_enabled()) {
-                foreach ($plugin->get_grading_batch_operations() as $action => $description) {
-                    if (empty($this->plugingradingbatchoperations)) {
-                        $this->plugingradingbatchoperations[$plugin->get_type()] = array();
-                    }
-                    $this->plugingradingbatchoperations[$plugin->get_type()][$action] = $description;
-                }
-            }
-        }
         $this->perpage = $perpage;
         $this->quickgrading = $quickgrading && $this->hasgrade;
         $this->output = $PAGE->get_renderer('mod_assign');
@@ -929,6 +919,7 @@ class assign_grading_table extends table_sql implements renderable {
         $selectcol .= get_string('selectuser', 'assign', $this->assignment->fullname($row));
         $selectcol .= '</label>';
         $selectcol .= '<input type="checkbox"
+                              class="ignoredirty"
                               id="selectuser_' . $row->userid . '"
                               name="selectedusers"
                               value="' . $row->userid . '"/>';
@@ -1823,5 +1814,122 @@ class assign_grading_table extends table_sql implements renderable {
             return;
         }
         parent::setup();
+    }
+
+    /**
+     * Returns the html for the paging bar.
+     *
+     * @return string
+     */
+    public function get_paging_bar(): string {
+        global $OUTPUT;
+
+        if ($this->use_pages) {
+            $pagingbar = new paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl);
+            $pagingbar->pagevar = $this->request[TABLE_VAR_PAGE];
+            return $OUTPUT->render($pagingbar);
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns the html for the paging selector.
+     *
+     * @return string
+     */
+    public function get_paging_selector(): string {
+        global $OUTPUT;
+
+        if ($this->use_pages) {
+            $pagingoptions = [...$this->pagingoptions, $this->perpage]; // To make sure the actual page size is within the options.
+            $pagingoptions = array_unique($pagingoptions);
+            sort($pagingoptions);
+            $pagingoptions = array_combine($pagingoptions, $pagingoptions);
+            $maxperpage = get_config('assign', 'maxperpage');
+            if (isset($maxperpage) && $maxperpage != -1) {
+                // Remove any options that are greater than the maxperpage.
+                $pagingoptions = array_filter($pagingoptions, fn($value) => $value <= $maxperpage);
+            } else {
+                $pagingoptions[-1] = get_string('all');
+            }
+
+            $data = [
+                'baseurl' => $this->baseurl->out(false),
+                'options' => array_map(fn($key, $name): array => [
+                    'name' => $name,
+                    'value' => $key,
+                    'selected' => $key == $this->perpage,
+                ], array_keys($pagingoptions), $pagingoptions),
+            ];
+
+            return $OUTPUT->render_from_template('mod_assign/grading_paging_selector', $data);
+        }
+
+        return '';
+    }
+
+    /**
+     * Finish the HTML output.
+     * This function is essentially a copy of the parent function except the paging bar not being rendered.
+     *
+     * @return void
+     */
+    public function finish_html(): void {
+        if (!$this->started_output) {
+            // No data has been added to the table.
+            $this->print_nothing_to_display();
+        } else {
+            // Print empty rows to fill the table to the current pagesize.
+            // This is done so the header aria-controls attributes do not point to
+            // non-existent elements.
+            $emptyrow = array_fill(0, count($this->columns), '');
+            while ($this->currentrow < $this->pagesize) {
+                $this->print_row($emptyrow, 'emptyrow');
+            }
+
+            echo html_writer::end_tag('tbody');
+            echo html_writer::end_tag('table');
+            if ($this->responsive) {
+                echo html_writer::end_tag('div');
+            }
+            $this->wrap_html_finish();
+
+            if (in_array(TABLE_P_BOTTOM, $this->showdownloadbuttonsat)) {
+                echo $this->download_buttons();
+            }
+
+            // Render the dynamic table footer.
+            echo $this->get_dynamic_table_html_end();
+        }
+    }
+
+    /**
+     * Start the HTML output.
+     * This function is essentially a copy of the parent function except the paging bar not being rendered.
+     *
+     * @return void
+     */
+    public function start_html(): void {
+        // Render the dynamic table header.
+        echo $this->get_dynamic_table_html_start();
+
+        // Render button to allow user to reset table preferences.
+        echo $this->render_reset_button();
+
+        // Do we need to print initial bars?
+        $this->print_initials_bar();
+
+        if (in_array(TABLE_P_TOP, $this->showdownloadbuttonsat)) {
+            echo $this->download_buttons();
+        }
+
+        $this->wrap_html_start();
+        // Start of main data table.
+
+        if ($this->responsive) {
+            echo html_writer::start_tag('div', ['class' => 'no-overflow']);
+        }
+        echo html_writer::start_tag('table', $this->attributes) . $this->render_caption();
     }
 }

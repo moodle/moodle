@@ -433,14 +433,18 @@ class assign_feedback_file extends assign_feedback_plugin {
         return true;
     }
 
-    /**
-     * Return a list of the batch grading operations performed by this plugin.
-     * This plugin supports batch upload files and upload zip.
-     *
-     * @return array The list of batch grading operations
-     */
-    public function get_grading_batch_operations() {
-        return array('uploadfiles'=>get_string('uploadfiles', 'assignfeedback_file'));
+    public function get_grading_batch_operation_details() {
+        global $OUTPUT;
+
+        return [
+            (object) [
+                'key' => 'uploadfiles',
+                'label' => get_string('batchoperationuploadfiles', 'assignfeedback_file'),
+                'icon' => $OUTPUT->pix_icon('i/upload', ''),
+                'confirmationtitle' => get_string('uploadfiles', 'assignfeedback_file'),
+                'confirmationquestion' => get_string('batchoperationconfirmuploadfiles', 'assignfeedback_file'),
+            ],
+        ];
     }
 
     /**

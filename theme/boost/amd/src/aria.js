@@ -107,7 +107,7 @@ const dropdownFix = () => {
     // Search for menu items by finding the first item that has
     // text starting with the typed character (case insensitive).
     document.addEventListener('keypress', e => {
-        if (e.target.matches('.dropdown [role="menu"] [role="menuitem"]')) {
+        if (e.target.matches('[role="menu"] [role="menuitem"]')) {
             const menu = e.target.closest('[role="menu"]');
             if (!menu) {
                 return;
@@ -139,7 +139,7 @@ const dropdownFix = () => {
             handleMenuButton(e);
         }
 
-        if (e.target.matches('.dropdown [role="menu"] [role="menuitem"]')) {
+        if (e.target.matches('[role="menu"] [role="menuitem"]')) {
             const trigger = e.key;
             let next = false;
             const menu = e.target.closest('[role="menu"]');
@@ -193,8 +193,9 @@ const dropdownFix = () => {
         }
     });
 
-    $('.dropdown').on('shown.bs.dropdown', e => {
-        const dialog = e.target.querySelector(`#${e.relatedTarget.getAttribute('aria-controls')}[role="dialog"]`);
+    // Trap focus if the dropdown is a dialog.
+    $(document).on('shown.bs.dropdown', e => {
+        const dialog = e.target.querySelector('.dropdown-menu[role="dialog"]');
         if (dialog) {
             // Use setTimeout to make sure the dialog is positioned correctly to prevent random scrolling.
             setTimeout(() => {
@@ -203,8 +204,9 @@ const dropdownFix = () => {
         }
     });
 
-    $('.dropdown').on('hidden.bs.dropdown', e => {
-        const dialog = e.target.querySelector(`#${e.relatedTarget.getAttribute('aria-controls')}[role="dialog"]`);
+    // Untrap focus when the dialog dropdown is closed.
+    $(document).on('hidden.bs.dropdown', e => {
+        const dialog = e.target.querySelector('.dropdown-menu[role="dialog"]');
         if (dialog) {
             FocusLockManager.untrapFocus();
         }
@@ -414,47 +416,50 @@ const autoFocus = () => {
 };
 
 /**
- * Changes the focus to the correct tab based on the key that is pressed.
- * @param {KeyboardEvent} e
+ * Changes the focus to the correct element based on the key that is pressed.
+ * @param {NodeList} elements A NodeList of focusable elements to navigate between.
+ * @param {KeyboardEvent} e The keyboard event that triggers the roving focus.
+ * @param {boolean} vertical Whether the navigation is vertical.
+ * @param {boolean} updateTabIndex Whether to update the tabIndex of the elements.
  */
-const updateTabFocus = e => {
-    const tabList = e.target.closest('[role="tablist"]');
-    const vertical = tabList.getAttribute('aria-orientation') == 'vertical';
+const rovingFocus = (elements, e, vertical, updateTabIndex) => {
     const rtl = window.right_to_left();
     const arrowNext = vertical ? 'ArrowDown' : (rtl ? 'ArrowLeft' : 'ArrowRight');
     const arrowPrevious = vertical ? 'ArrowUp' : (rtl ? 'ArrowRight' : 'ArrowLeft');
-    const tabs = Array.prototype.filter.call(
-        tabList.querySelectorAll('[role="tab"]'),
-        tab => !!tab.offsetHeight); // We only work with the visible tabs.
+    const keys = [arrowNext, arrowPrevious, 'Home', 'End'];
 
-    for (let i = 0; i < tabs.length; i++) {
-        tabs[i].index = i;
+    if (!keys.includes(e.key)) {
+        return;
     }
+
+    const focusElement = index => {
+        elements[index].focus();
+        if (updateTabIndex) {
+            elements.forEach((element, i) => element.setAttribute('tabindex', i === index ? '0' : '-1'));
+        }
+    };
+
+    const currentIndex = Array.prototype.indexOf.call(elements, e.target);
+    let nextIndex;
 
     switch (e.key) {
         case arrowNext:
             e.preventDefault();
-            if (e.target.index !== undefined && tabs[e.target.index + 1]) {
-                tabs[e.target.index + 1].focus();
-            } else {
-                tabs[0].focus();
-            }
+            nextIndex = (currentIndex + 1 < elements.length) ? currentIndex + 1 : 0;
+            focusElement(nextIndex);
             break;
         case arrowPrevious:
             e.preventDefault();
-            if (e.target.index !== undefined && tabs[e.target.index - 1]) {
-                tabs[e.target.index - 1].focus();
-            } else {
-                tabs[tabs.length - 1].focus();
-            }
+            nextIndex = (currentIndex - 1 >= 0) ? currentIndex - 1 : elements.length - 1;
+            focusElement(nextIndex);
             break;
         case 'Home':
             e.preventDefault();
-            tabs[0].focus();
+            focusElement(0);
             break;
         case 'End':
             e.preventDefault();
-            tabs[tabs.length - 1].focus();
+            focusElement(elements.length - 1);
     }
 };
 
@@ -465,7 +470,14 @@ const tabElementFix = () => {
     document.addEventListener('keydown', e => {
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
             if (e.target.matches('[role="tablist"] [role="tab"]')) {
-                updateTabFocus(e);
+                const tabList = e.target.closest('[role="tablist"]');
+                const tabs = Array.prototype.filter.call(
+                    tabList.querySelectorAll('[role="tab"]'),
+                    tab => !!tab.offsetHeight
+                ); // We only work with the visible tabs.
+                const vertical = tabList.getAttribute('aria-orientation') == 'vertical';
+
+                rovingFocus(tabs, e, vertical, false);
             }
         }
     });
@@ -500,10 +512,25 @@ const collapseFix = () => {
     });
 };
 
+/**
+ * Fix accessibility issues
+ */
+const toolbarFix = () => {
+    document.addEventListener('keydown', e => {
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+            if (e.target.matches('[role="toolbar"] button')) {
+                const buttons = e.target.closest('[role="toolbar"]').querySelectorAll('button');
+                rovingFocus(buttons, e, false, true);
+            }
+        }
+    });
+};
+
 export const init = () => {
     dropdownFix();
     comboboxFix();
     autoFocus();
     tabElementFix();
     collapseFix();
+    toolbarFix();
 };

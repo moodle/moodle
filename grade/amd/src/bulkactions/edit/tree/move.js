@@ -64,7 +64,7 @@ export default class GradebookEditTreeBulkMove extends BulkAction {
      * @returns {string} The bulk move action trigger selector.
      */
     getBulkActionTriggerSelector() {
-        return 'button[data-action="move"]';
+        return '[data-type="bulkactions"] [data-action="move"]';
     }
 
     /**
@@ -82,10 +82,15 @@ export default class GradebookEditTreeBulkMove extends BulkAction {
      * Renders the bulk move action trigger element.
      *
      * @method renderBulkActionTrigger
+     * @param {boolean} showInDropdown Whether the action is displayed under a 'More' dropdown or as a separate button.
+     * @param {number} index The index of the action.
      * @returns {Promise} The bulk move action trigger promise
      */
-    async renderBulkActionTrigger() {
-        return Templates.render('core_grades/bulkactions/edit/tree/bulk_move_trigger', {});
+    async renderBulkActionTrigger(showInDropdown, index) {
+        return Templates.render('core_grades/bulkactions/edit/tree/bulk_move_trigger', {
+            showindropdown: showInDropdown,
+            isfirst: index === 0,
+        });
     }
 
     /**

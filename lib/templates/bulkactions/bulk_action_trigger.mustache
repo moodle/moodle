@@ -20,18 +20,27 @@
     Renders a trigger element for a given bulk action.
 
     Context variables required for this template:
-    * none
+    * showindropdown - Whether the action is displayed under a 'More' dropdown or as a separate button.
+    * isfirst - Whether the action is the first one in the list.
 
     Example context (json):
     {
+        "showindropdown": false,
+        "isfirst": true
     }
 }}
-<button
-    type="button"
-    class="btn py-0 d-flex flex-column"
-    data-action="{{$action}}{{/action}}"
-    title="{{$title}}{{/title}}"
->
-    <span class="w-100 ps-2">{{$icon}}{{/icon}}</span>
-    <span>{{$title}}{{/title}}</span>
-</button>
+{{#showindropdown}}
+    <a class="dropdown-item" href="#" data-action="{{$action}}{{/action}}" role="menuitem">{{$title}}{{/title}}</a>
+{{/showindropdown}}
+{{^showindropdown}}
+    <button
+        type="button"
+        class="btn py-0 d-flex flex-column"
+        data-action="{{$action}}{{/action}}"
+        title="{{$title}}{{/title}}"
+        {{^isfirst}}tabindex="-1"{{/isfirst}}
+    >
+        <span class="w-100 ps-2">{{$icon}}{{/icon}}</span>
+        <span>{{$title}}{{/title}}</span>
+    </button>
+{{/showindropdown}}

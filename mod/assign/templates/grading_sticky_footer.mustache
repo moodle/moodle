@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_assign/grading_sticky_footer
+
+    Sticky footer template for the assignment grading page.
+
+    Example context (json):
+    {
+        "perpage": "<label>Show<select name='perpage' class='custom-select'><option value='-1'>All</select></label>",
+        "pagingbar": "<nav class='pagination pagination-centered justify-content-center'><ul class='mt-1 pagination '><li class='page-item active'><a href='#' class='page-link'><span>1</span></a></li></ul></nav>",
+        "hassubmit": true,
+        "sendstudentnotifications": true
+    }
+}}
+<div class="col-auto">
+    {{#perpage}}
+        {{{.}}}
+    {{/perpage}}
+</div>
+<div class="col">
+    {{#pagingbar}}
+        {{{.}}}
+    {{/pagingbar}}
+</div>
+<div class="col-auto">
+    {{#hassubmit}}
+        <div class="d-flex align-items-center" data-region="quick-grading-save">
+            <div class="me-4">
+                <input type="hidden" name="sendstudentnotifications" value="0" {{#sendstudentnotifications}}disabled{{/sendstudentnotifications}}>
+                <input type="checkbox" id="send-student-notifications-{{uniqid}}" name="sendstudentnotifications" {{#sendstudentnotifications}}checked="checked"{{/sendstudentnotifications}}>
+                <label for="send-student-notifications-{{uniqid}}" class="m-0">{{#str}} notifystudents, mod_assign {{/str}}</label>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                {{#str}}save{{/str}}
+            </button>
+        </div>
+    {{/hassubmit}}
+</div>

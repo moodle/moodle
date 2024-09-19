@@ -69,53 +69,6 @@ M.mod_assign.init_grading_table = function(Y) {
             });
         }
 
-        const batchform = Y.one('form.gradingbatchoperationsform');
-        if (batchform) {
-            batchform.on('submit', function(e) {
-                M.util.js_pending('mod_assign/module.js:batch:submit');
-                let selectedusers = [];
-                checkboxes.each(function(node) {
-                    if (node.get('checked')) {
-                        selectedusers.push(node.get('value'));
-                    }
-                });
-
-                const operation = Y.one('#id_operation');
-                const usersinput = Y.one('input.selectedusers');
-                usersinput.set('value', selectedusers.join(','));
-                if (selectedusers.length === 0) {
-                    alert(M.util.get_string('nousersselected', 'assign'));
-                    e.preventDefault();
-                } else {
-                    let action = operation.get('value');
-                    const prefix = 'plugingradingbatchoperation_';
-                    let confirmmessage = false;
-                    if (action.indexOf(prefix) === 0) {
-                        const pluginaction = action.slice(prefix.length);
-                        const plugin = pluginaction.split('_')[0];
-                        action = pluginaction.slice(plugin.length + 1);
-                        confirmmessage = M.util.get_string('batchoperationconfirm' + action, 'assignfeedback_' + plugin);
-                    } else if (action === 'message') {
-                        e.preventDefault();
-                        require(['core_message/message_send_bulk'], function(BulkSender) {
-                            BulkSender.showModal(selectedusers, function() {
-                                document.getElementById('page-header').scrollIntoView();
-                            });
-                        });
-                    } else {
-                        confirmmessage = M.util.get_string('batchoperationconfirm' + operation.get('value'), 'assign');
-                    }
-                    // Complete here the action (js_complete event) when we send a bulk message, or we have a confirmation message.
-                    // When the confirmation dialogue is completed, the event is fired.
-                    if (action === 'message' || confirmmessage !== false && !confirm(confirmmessage)) {
-                        M.util.js_complete('mod_assign/module.js:batch:submit');
-                        e.preventDefault();
-                    }
-                    // Note: Do not js_complete. The page being reloaded will empty it.
-                }
-            });
-        }
-
         var quickgrade = Y.all('.gradingtable .quickgrade');
         quickgrade.each(function(quick) {
             quick.on('change', function(e) {
@@ -127,10 +80,6 @@ M.mod_assign.init_grading_table = function(Y) {
 
 M.mod_assign.init_grading_options = function(Y) {
     Y.use('node', function(Y) {
-        var paginationelement = Y.one('#id_perpage');
-        paginationelement.on('change', function(e) {
-            Y.one('form.gradingoptionsform').submit();
-        });
         var markerfilterelement = Y.one('#id_markerfilter');
         if (markerfilterelement) {
             markerfilterelement.on('change', function(e) {

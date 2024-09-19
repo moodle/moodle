@@ -23,6 +23,7 @@
  */
 
 $string['batchoperationconfirmuploadfiles'] = 'Upload one or more feedback files for all selected users?';
+$string['batchoperationuploadfiles'] = 'Upload feedback';
 $string['batchuploadfiles'] = 'Upload feedback files for multiple users';
 $string['batchuploadfilesforusers'] = 'Send feedback files to {$a} selected user(s).';
 $string['configmaxbytes'] = 'Maximum file size';

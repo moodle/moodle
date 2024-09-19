@@ -33,12 +33,30 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
  * @package   mod_assign
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since 4.5
+ * @todo Final deprecation in Moodle 6.0. See MDL-82869.
  */
+#[\core\attribute\deprecated(
+    replacement: null,
+    since: '4.5',
+    reason: 'It is no longer used.',
+    mdl: 'MDL-80750',
+)]
 class mod_assign_grading_batch_operations_form extends moodleform {
     /**
      * Define this form - called by the parent constructor.
+     *
+     * @deprecated since 4.5
      */
+    #[\core\attribute\deprecated(
+        replacement: null,
+        since: '4.5',
+        reason: 'It is no longer used.',
+        mdl: 'MDL-80750'
+    )]
     public function definition() {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+
         global $CFG;
         $mform = $this->_form;
         $instance = $this->_customdata;
@@ -100,4 +118,3 @@ class mod_assign_grading_batch_operations_form extends moodleform {
         $mform->addElement('group', 'actionsgrp', $batchdescription, $objs, ' ', false);
     }
 }
-

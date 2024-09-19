@@ -1131,23 +1131,6 @@ class renderer extends \plugin_renderer_base {
         $o .= $this->output->box_start('boxaligncenter gradingtable position-relative');
 
         $this->page->requires->js_init_call('M.mod_assign.init_grading_table', array());
-        $this->page->requires->string_for_js('nousersselected', 'assign');
-        $this->page->requires->string_for_js('batchoperationconfirmgrantextension', 'assign');
-        $this->page->requires->string_for_js('batchoperationconfirmlock', 'assign');
-        $this->page->requires->string_for_js('batchoperationconfirmremovesubmission', 'assign');
-        $this->page->requires->string_for_js('batchoperationconfirmreverttodraft', 'assign');
-        $this->page->requires->string_for_js('batchoperationconfirmunlock', 'assign');
-        $this->page->requires->string_for_js('batchoperationconfirmaddattempt', 'assign');
-        $this->page->requires->string_for_js('batchoperationconfirmdownloadselected', 'assign');
-        $this->page->requires->string_for_js('batchoperationconfirmsetmarkingworkflowstate', 'assign');
-        $this->page->requires->string_for_js('batchoperationconfirmsetmarkingallocation', 'assign');
-        $this->page->requires->string_for_js('editaction', 'assign');
-        foreach ($table->plugingradingbatchoperations as $plugin => $operations) {
-            foreach ($operations as $operation => $description) {
-                $this->page->requires->string_for_js('batchoperationconfirm' . $operation,
-                                                     'assignfeedback_' . $plugin);
-            }
-        }
         $o .= $this->flexible_table($table, $table->get_rows_per_page(), true);
         $o .= $this->output->box_end();
 
