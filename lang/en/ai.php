@@ -117,9 +117,13 @@ This Artificial Intelligence (AI) feature is based solely on external Large Lang
 <br>
 <b>Accuracy of AI-generated content</b>
 <br>
-AI can provide useful suggestions and information, but its accuracy may vary. You should always double-check the information provided to make sure it\'s accurate, complete, and suitable for your specific situation.
+AI can give useful suggestions and information, but its accuracy may vary. You should always double-check the information provided to make sure it\'s accurate, complete, and suitable for your specific situation.
 <br>
 <b>How your data is processed</b>
 <br>
-This AI feature is provided by external, third-party LLMs. If you choose to use this feature, any inputs or personal data you submit will be processed in accordance with the privacy policy of the third-party service. We recommend that you review the LLM\'s privacy to understand how your personal data will be handled.
-Additionally, a record of your interactions with the AI features may be kept within this site. If you have questions about this, please check with your teachers or learning administrators.';
+This AI feature uses external Large Language Models (LLM). If you use this feature, any information or personal data you share will be handled according to the privacy policy of those LLMs. We recommend that you read their privacy policy to understand how they will handle your data.
+Additionally, a record of your interactions with the AI features may be saved in this site.
+<br>
+If you have questions about how your data is processed, please check with your teachers or learning organisation.
+<br>
+By continuing, you acknowledge that you understand and agree to this policy.';
