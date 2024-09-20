@@ -1557,10 +1557,15 @@ $cache = '.var_export($cache, true).';
      * @return bool True if the plugin has a monologo icon
      */
     public static function has_monologo_icon(string $plugintype, string $pluginname): bool {
-        $plugindir = core_component::get_plugin_directory($plugintype, $pluginname);
+        global $PAGE;
+        $plugindir = self::get_plugin_directory($plugintype, $pluginname);
         if ($plugindir === null) {
             return false;
         }
-        return file_exists("$plugindir/pix/monologo.svg") || file_exists("$plugindir/pix/monologo.png");
+        $theme = \theme_config::load($PAGE->theme->name);
+        $component = self::normalize_componentname("{$plugintype}_{$pluginname}");
+        $hassvgmonologo = $theme->resolve_image_location('monologo', $component, true) !== null;
+        $haspngmonologo = $theme->resolve_image_location('monologo', $component) !== null;
+        return $haspngmonologo || $hassvgmonologo;
     }
 }
