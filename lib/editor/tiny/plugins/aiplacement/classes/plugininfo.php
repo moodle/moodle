@@ -93,12 +93,10 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
         $manager = \core_plugin_manager::resolve_plugininfo_class($plugintype);
         $allowedactions = [];
         if ($manager::is_plugin_enabled($pluginname)) {
-            $providers = manager::get_providers_for_actions(array_values(self::$possibleactions), true);
-            foreach (self::$possibleactions as $action => $providerclass) {
+            foreach (self::$possibleactions as $action => $actionclass) {
                 if (
                     has_capability("aiplacement/editor:{$action}", $context)
-                    && manager::is_action_enabled('aiplacement_editor', $action)
-                    && !empty($providers[$providerclass])
+                    && manager::is_action_available($actionclass)
                 ) {
                     if ($action == 'generate_image') {
                         // For generate image, we need to check if the user has the capability to upload files.

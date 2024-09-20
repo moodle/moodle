@@ -92,7 +92,7 @@ final class manager_test extends \advanced_testcase {
         $this->assertCount(2, $providers[summarise_text::class]);
 
         // Disable the generate text action for the Open AI provider.
-        set_config(generate_text::class, 0, 'aiprovider_openai');
+        manager::set_action_state('aiprovider_openai', generate_text::class::get_basename(), 0);
         $providers = $manager->get_providers_for_actions($actions, true);
 
         // Assert that there is no provider for the generate text action.
@@ -372,7 +372,7 @@ final class manager_test extends \advanced_testcase {
         $this->assertTrue($result);
 
         // Disable the action.
-        set_config($action, 0, $plugin);
+        manager::set_action_state($plugin, $action::get_basename(), 0);
 
         // Should now be disabled.
         $result = manager::is_action_enabled($plugin, $action);
@@ -388,14 +388,41 @@ final class manager_test extends \advanced_testcase {
         $action = generate_image::class;
 
         // Disable the action.
-        set_config($action, 0, $plugin);
+        set_config('generate_image', 0, $plugin);
 
         // Should now be disabled.
         $result = manager::is_action_enabled($plugin, $action);
         $this->assertFalse($result);
 
         // Enable the action.
-        $result = manager::set_action_state($plugin, $action, 1);
+        $result = manager::set_action_state($plugin, $action::get_basename(), 1);
         $this->assertTrue($result);
+    }
+
+    /**
+     * Test is_action_available method.
+     */
+    public function test_is_action_available(): void {
+        $this->resetAfterTest();
+        $action = generate_image::class;
+
+        // Plugin is disabled by default, action state should not matter. Everything should be false.
+        $result = manager::is_action_available($action);
+        $this->assertFalse($result);
+
+        // Enable the plugin, actions will be enabled by default when the plugin is enabled.
+        $manager = \core_plugin_manager::resolve_plugininfo_class('aiprovider');
+        $manager::enable_plugin('openai', 1);
+
+        // Should now be available.
+        $result = manager::is_action_available($action);
+        $this->assertTrue($result);
+
+        // Disable the action.
+        set_config('generate_image', 0, 'aiprovider_openai');
+
+        // Should now be unavailable.
+        $result = manager::is_action_available($action);
+        $this->assertFalse($result);
     }
 }

@@ -134,7 +134,7 @@ class behat_general extends behat_base {
         // Getting the refresh time and the url if present.
         if (strstr($content, 'url') != false) {
 
-            list($waittime, $url) = explode(';', $content);
+            [$waittime, $url] = explode(';', $content);
 
             // Cleaning the URL value.
             $url = trim(substr($url, strpos($url, 'http')));
@@ -974,8 +974,8 @@ class behat_general extends behat_base {
             $msg .= " in the '{$containerelement}' '{$containerselectortype}'";
         }
 
-        list($preselector, $prelocator) = $this->transform_selector($preselectortype, $preelement);
-        list($postselector, $postlocator) = $this->transform_selector($postselectortype, $postelement);
+        [$preselector, $prelocator] = $this->transform_selector($preselectortype, $preelement);
+        [$postselector, $postlocator] = $this->transform_selector($postselectortype, $postelement);
 
         $newlines = [
             "\r\n",
@@ -1737,7 +1737,7 @@ EOF;
     public function following_should_download_between_and_bytes($link, $minexpectedsize, $maxexpectedsize) {
         // If the minimum is greater than the maximum then swap the values.
         if ((int)$minexpectedsize > (int)$maxexpectedsize) {
-            list($minexpectedsize, $maxexpectedsize) = array($maxexpectedsize, $minexpectedsize);
+            [$minexpectedsize, $maxexpectedsize] = [$maxexpectedsize, $minexpectedsize];
         }
 
         $exception = new ExpectationException('Error while downloading data from ' . $link, $this->getSession());
@@ -2101,7 +2101,7 @@ EOF;
         $validmodifiers = array('ctrl', 'alt', 'shift', 'meta');
         $char = $key;
         if (strpos($key, '-')) {
-            list($modifier, $char) = preg_split('/-/', $key, 2);
+            [$modifier, $char] = preg_split('/-/', $key, 2);
             $modifier = strtolower($modifier);
             if (!in_array($modifier, $validmodifiers)) {
                 throw new ExpectationException(sprintf('Unknown key modifier: %s.', $modifier),
@@ -2642,5 +2642,70 @@ EOF;
             $node, "NodeElement",
         ]);
         $this->execute("behat_general::i_wait_to_be_redirected");
+    }
+
+    /**
+     * Clicks on a specific link within a table row.
+     * Good for clicking links on tables where links have repeated text in diiferent rows.
+     *
+     * Example:
+     * - I click on the "Settings" link in the row containing "HTML Text Editor Placement"
+     *
+     * @Given /^I click on the "(?P<linktext>(?:[^"]|\\")*)" link in the table row containing "(?P<rowtext>(?:[^"]|\\")*)"$/
+     * @param string $linktext
+     * @param string $rowtext
+     */
+    public function i_click_on_the_link_in_the_table_row_containing(string $linktext, string $rowtext): void {
+        $row = $this->getSession()->getPage()->find('xpath', "//tr[contains(., '{$rowtext}')]");
+        if (!$row) {
+            throw new Exception("Row containing '{$rowtext}' not found");
+        }
+        $link = $row->findLink($linktext);
+        if (!$link) {
+            throw new Exception("Link '{$linktext}' not found in the row containing '{$rowtext}'");
+        }
+        $link->click();
+    }
+
+    /**
+     * Checks if a specific text is present in a table row.
+     * Good for checking text in tables where text is repeated in different rows.
+     *
+     * Example:
+     * - I should see "This action is unavailable." in the table row containing "Generate text"
+     *
+     * @Then /^I should see "(?P<text>(?:[^"]|\\")*)" in the table row containing "(?P<rowtext>(?:[^"]|\\")*)"$/
+     * @param string $text
+     * @param string $rowtext
+     */
+    public function i_should_see_in_the_table_row_containing(string $text, string $rowtext): void {
+        $row = $this->getSession()->getPage()->find('xpath', "//tr[contains(., '{$rowtext}')]");
+        if (!$row) {
+            throw new Exception("Row containing '{$rowtext}' not found");
+        }
+        if (strpos($row->getText(), $text) === false) {
+            throw new Exception("Text '{$text}' not found in the row containing '{$rowtext}'");
+        }
+    }
+
+    /**
+     * Checks if a specific text is not present in a table row.
+     * Good for checking text in tables where text is repeated in different rows.
+     *
+     * Example:
+     * - I should not see "This action is unavailable." in the table row containing "Generate text"
+     *
+     * @Then /^I should not see "(?P<text>(?:[^"]|\\")*)" in the table row containing "(?P<rowtext>(?:[^"]|\\")*)"$/
+     * @param string $text
+     * @param string $rowtext
+     */
+    public function i_should_not_see_in_the_table_row_containing(string $text, string $rowtext): void {
+        $row = $this->getSession()->getPage()->find('xpath', "//tr[contains(., '{$rowtext}')]");
+        if (!$row) {
+            throw new Exception("Row containing '{$rowtext}' not found");
+        }
+        if (strpos($row->getText(), $text) !== false) {
+            throw new Exception("Text '{$text}' found in the row containing '{$rowtext}'");
+        }
     }
 }
