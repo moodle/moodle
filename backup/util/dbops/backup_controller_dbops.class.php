@@ -572,6 +572,7 @@ abstract class backup_controller_dbops extends backup_dbops {
                         'backup_general_questionbank'       => 'questionbank',
                         'backup_general_groups'             => 'groups',
                         'backup_general_competencies'       => 'competencies',
+                        'backup_general_customfield'        => 'customfield',
                         'backup_general_contentbankcontent' => 'contentbankcontent',
                         'backup_general_xapistate'          => 'xapistate',
                         'backup_general_legacyfiles'        => 'legacyfiles'
@@ -589,6 +590,7 @@ abstract class backup_controller_dbops extends backup_dbops {
                         'backup_import_questionbank'       => 'questionbank',
                         'backup_import_groups'             => 'groups',
                         'backup_import_competencies'       => 'competencies',
+                        'backup_import_customfield'        => 'customfield',
                         'backup_import_contentbankcontent' => 'contentbankcontent',
                         'backup_import_legacyfiles'        => 'legacyfiles'
                 );
@@ -623,6 +625,7 @@ abstract class backup_controller_dbops extends backup_dbops {
                         'backup_auto_questionbank'       => 'questionbank',
                         'backup_auto_groups'             => 'groups',
                         'backup_auto_competencies'       => 'competencies',
+                        'backup_auto_customfield'        => 'customfield',
                         'backup_auto_contentbankcontent' => 'contentbankcontent',
                         'backup_auto_xapistate'          => 'xapistate',
                         'backup_auto_legacyfiles'        => 'legacyfiles'
