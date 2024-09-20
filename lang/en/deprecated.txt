@@ -132,3 +132,4 @@ registration_help,core_admin
 coursemanagementoptions,core_my
 configslasharguments,core_admin
 slasharguments,core_admin
+slashargumentswarning,core_admin
