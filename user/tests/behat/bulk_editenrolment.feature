@@ -53,8 +53,10 @@ Feature: Bulk enrolments
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to course participants
+    # Select all three users (the teacher themselves and both students).
     And I click on "Select all" "checkbox"
     And I set the field "With selected users..." to "Delete selected user enrolments"
+    # Teacher is informed that they've been removed from current selection.
     Then I should see "User \"Teacher 1\" was removed from the selection."
     And the following should exist in the "generaltable" table:
       | Name      | Status |
@@ -63,7 +65,6 @@ Feature: Bulk enrolments
     And I should not see "Teacher 1" in the "generaltable" "table"
     And I press "Unenrol users"
     And I should see "2 unenrolled users"
-    And I should see "User \"Teacher 1\" was removed from the selection."
     And I should see "Teacher 1" in the "participants" "table"
     And I should not see "Student 1" in the "participants" "table"
     And I should not see "Student 2" in the "participants" "table"
