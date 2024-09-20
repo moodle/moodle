@@ -1,7 +1,11 @@
 This files describes API changes in /customfield/*,
 Information provided here is intended especially for developers.
 
-=== 4.4.6 ===
+=== 4.3.8 ===
+* The field controller `get_formatted_name()` method now accepts an  optional `$escape` parameter to define whether to
+  escape the returned name
+
+=== 4.3.6 ===
 * The customfield_select field controller `get_options` method now returns each option pre-formatted
 
 === 4.3 ===
