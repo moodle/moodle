@@ -40,13 +40,9 @@ use core\hook\output\before_html_attributes;
 use core\hook\output\before_http_headers;
 use core\hook\output\before_standard_footer_html_generation;
 use core\hook\output\before_standard_top_of_body_html_generation;
-use core\output\action_menu\link as action_menu_link;
-use core\output\action_menu\link_primary as action_menu_link_primary;
 use core\output\actions\component_action;
 use core\output\actions\popup_action;
-use core\output\action_menu\filler as action_menu_filler;
 use core\plugin_manager;
-use core\output\action_menu\link_secondary as action_menu_link_secondary;
 use moodleform;
 use moodle_page;
 use moodle_url;
@@ -1304,7 +1300,7 @@ class core_renderer extends renderer_base {
 
         // We don't want the class icon there!
         foreach ($menu->get_secondary_actions() as $action) {
-            if ($action instanceof \action_menu_link && $action->has_class('icon')) {
+            if ($action instanceof action_menu\link && $action->has_class('icon')) {
                 $action->attributes['class'] = preg_replace('/(^|\s+)icon(\s+|$)/i', '', $action->attributes['class']);
             }
         }
@@ -1391,43 +1387,95 @@ class core_renderer extends renderer_base {
     }
 
     /**
-     * Renders an action_menu_link item.
+     * @deprecated Since Moodle 4.5. Will be removed in MDL-83221
+     */
+    #[\core\attribute\deprecated(
+        replacement: 'render_action_menu__link',
+        since: '4.5',
+        mdl: 'MDL-83164',
+    )]
+    protected function render_action_menu_link(\action_menu_link $action) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        return $this->render_action_menu__link($action);
+    }
+
+    /**
+     * @deprecated Since Moodle 4.5. Will be removed in MDL-83221
+     */
+    #[\core\attribute\deprecated(
+        replacement: 'render_action_menu__filler',
+        since: '4.5',
+        mdl: 'MDL-83164',
+    )]
+    protected function render_action_menu_filler(\action_menu_filler $action) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        return $this->render_action_menu__filler($action);
+    }
+
+    /**
+     * @deprecated Since Moodle 4.5. Will be removed in MDL-83221
+     */
+    #[\core\attribute\deprecated(
+        replacement: 'render_action_menu__link_primary',
+        since: '4.5',
+        mdl: 'MDL-83164',
+    )]
+    protected function render_action_menu_primary(\action_menu_link $action) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        return $this->render_action_menu__link_primary($action);
+    }
+
+    /**
+     * @deprecated Since Moodle 4.5. Will be removed in MDL-83221
+     */
+    #[\core\attribute\deprecated(
+        replacement: 'render_action_menu__link_secondary',
+        since: '4.5',
+        mdl: 'MDL-83164',
+    )]
+    protected function render_action_menu_secondary(\action_menu_link $action) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        return $this->render_action_menu__link_secondary($action);
+    }
+
+    /**
+     * Renders an action_menu link item.
      *
-     * @param action_menu_link $action
+     * @param action_menu\link $action
      * @return string HTML fragment
      */
-    protected function render_action_menu_link(action_menu_link $action) {
+    protected function render_action_menu__link(action_menu\link $action) {
         return $this->render_from_template('core/action_menu_link', $action->export_for_template($this));
     }
 
     /**
-     * Renders a primary action_menu_filler item.
+     * Renders a primary action_menu filler item.
      *
-     * @param action_menu_filler $action
+     * @param action_menu\filler $action
      * @return string HTML fragment
      */
-    protected function render_action_menu_filler(action_menu_filler $action) {
+    protected function render_action_menu__filler(action_menu\filler $action) {
         return html_writer::span('&nbsp;', 'filler');
     }
 
     /**
-     * Renders a primary action_menu_link item.
+     * Renders a primary action_menu link item.
      *
-     * @param action_menu_link_primary $action
+     * @param action_menu\link_primary $action
      * @return string HTML fragment
      */
-    protected function render_action_menu_link_primary(action_menu_link_primary $action) {
-        return $this->render_action_menu_link($action);
+    protected function render_action_menu__link_primary(action_menu\link_primary $action) {
+        return $this->render_action_menu__link($action);
     }
 
     /**
-     * Renders a secondary action_menu_link item.
+     * Renders a secondary action_menu link item.
      *
-     * @param action_menu_link_secondary $action
+     * @param action_menu\link_secondary $action
      * @return string HTML fragment
      */
-    protected function render_action_menu_link_secondary(action_menu_link_secondary $action) {
-        return $this->render_action_menu_link($action);
+    protected function render_action_menu__link_secondary(action_menu\link_secondary $action) {
+        return $this->render_action_menu__link($action);
     }
 
     /**
@@ -3178,7 +3226,7 @@ EOD;
         );
 
         // Create a divider (well, a filler).
-        $divider = new action_menu_filler();
+        $divider = new action_menu\filler();
         $divider->primary = false;
 
         $am = new action_menu();
@@ -3215,7 +3263,7 @@ EOD;
                             ) . $value->title;
                         }
 
-                        $al = new action_menu_link_secondary(
+                        $al = new action_menu\link_secondary(
                             $value->url,
                             $pix,
                             $value->title,

@@ -218,15 +218,29 @@ class renderer_base {
     public function render(renderable $widget) {
         $classparts = explode('\\', get_class($widget));
         // Strip namespaces.
-        $classname = array_pop($classparts);
+        $classpartname = array_pop($classparts);
         // Remove _renderable suffixes.
-        $classname = preg_replace('/_renderable$/', '', $classname);
+        $classname = preg_replace('/_renderable$/', '', $classpartname);
 
-        $rendermethod = "render_{$classname}";
-        if (method_exists($this, $rendermethod)) {
-            // Call the render_[widget_name] function.
-            // Note: This has a higher priority than the named_templatable to allow the theme to override the template.
-            return $this->$rendermethod($widget);
+        $rendermethods = [];
+
+        // If the renderable is located within a namespace, and that namespace is within the `output` L2 API,
+        // include the namespace as a possible renderer method name.
+        if (array_search('output', $classparts) === 1 && count($classparts) > 2) {
+            $concatenators = array_slice($classparts, 2);
+            $concatenators[] = $classname;
+            $rendermethods[] = "render_" . implode('__', $concatenators);
+        }
+
+        // Fall back to the last part of the class name.
+        $rendermethods[] = "render_{$classname}";
+
+        foreach ($rendermethods as $rendermethod) {
+            if (method_exists($this, $rendermethod)) {
+                // Call the render_[widget_name] function.
+                // Note: This has a higher priority than the named_templatable to allow the theme to override the template.
+                return $this->$rendermethod($widget);
+            }
         }
 
         if ($widget instanceof named_templatable) {
@@ -250,6 +264,8 @@ class renderer_base {
             $context = $widget->export_for_template($this);
             return $this->render_from_template($template, $context);
         }
+
+        $rendermethod = reset($rendermethods);
         throw new coding_exception("Can not render widget, renderer method ('{$rendermethod}') not found.");
     }
 
