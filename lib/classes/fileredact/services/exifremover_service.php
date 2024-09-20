@@ -230,6 +230,8 @@ class exifremover_service extends service {
             'itemid'    => $this->storedfile->get_itemid(),
             'filepath'  => $this->storedfile->get_filepath(),
             'filename'  => $this->storedfile->get_filename(),
+            'repositoryid' => $this->storedfile->get_repository_id(),
+            'reference' => $this->storedfile->get_reference(),
         ];
         $fs = get_file_storage();
         $existingfile = $fs->get_file(
