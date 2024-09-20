@@ -97,7 +97,7 @@ class assist_ui {
         }
         $providers = manager::get_providers_for_actions([summarise_text::class], true);
         if (!has_capability('aiplacement/courseassist:summarise_text', $PAGE->context)
-            || !manager::is_action_enabled('aiplacement_courseassist', 'summarise_text')
+            || !manager::is_action_enabled('aiplacement_courseassist', summarise_text::class)
             || empty($providers[summarise_text::class])
         ) {
             return false;
