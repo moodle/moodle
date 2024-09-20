@@ -88,6 +88,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - `moodle_list` and `list_item` were only used by `qbank_managecategories`, and these usages have been removed, so these classes (and thus all of listlib.php) are now deprecated. This method was the only usage of the `QUESTION_PAGE_LENGTH` constant, which was defined in `question_category_object.php`, and so is also now deprecated.
 
   For more information see [MDL-72397](https://tracker.moodle.org/browse/MDL-72397)
+- Deprecate timeout in navigation_cache constructor and clean up unused properties
+
+  For more information see [MDL-79628](https://tracker.moodle.org/browse/MDL-79628)
 - The following methods have been deprecated, existing usage should switch to secure `\core\encryption` library:
   - `rc4encrypt`
   - `rc4decrypt`
@@ -121,6 +124,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   - `print_arrow`
 
   For more information see [MDL-82287](https://tracker.moodle.org/browse/MDL-82287)
+- The global_navigation::load_section_activities method is now deprecated and replaced by global_navigation::load_section_activities_navigation.
+
+  For more information see [MDL-82845](https://tracker.moodle.org/browse/MDL-82845)
 
 #### Added
 
@@ -175,6 +181,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `core\output\select_menu` widget now supports a new feature: inline labels. You can render the label inside the combobox widget by passing `true` to the `$inlinelabel` parameter when calling the `->set_label()` method.
 
   For more information see [MDL-80747](https://tracker.moodle.org/browse/MDL-80747)
+- A new hook called `core\hook\output\after_http_headers` has been created. This hook allow plugins to modify the content after headers are sent.
+
+  For more information see [MDL-80890](https://tracker.moodle.org/browse/MDL-80890)
 - The following classes have been renamed.
   Existing classes are currently unaffected.
   | Old class name | New class name |
@@ -314,6 +323,26 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   For more information see the documentation in the `core/fetch` module.
 
   For more information see [MDL-82778](https://tracker.moodle.org/browse/MDL-82778)
+- The section_info class now includes a new method called get_sequence_cm_infos that retrieves all cm_info instances associated with the course section.
+
+  For more information see [MDL-82845](https://tracker.moodle.org/browse/MDL-82845)
+
+#### Fixed
+
+- The `navigation_cache` class now uses the Moodle Universal Cache (MUC) to store the navigation cache data instead of storing it in the global `$SESSION` variable.
+
+  For more information see [MDL-79628](https://tracker.moodle.org/browse/MDL-79628)
+- All the setup and tear down methods of `PHPUnit` now are required to, always, call to their parent counterparts. This is a good practice to avoid future problems, especially when updating to PHPUnit >= 10.
+  This includes the following methods:
+    - `setUp()`
+    - `tearDown()`
+    - `setUpBeforeClass()`
+    - `tearDownAfterClass()`
+
+  For more information see [MDL-81523](https://tracker.moodle.org/browse/MDL-81523)
+- Use server timezone when constructing `\DateTimeImmutable` for the system `\core\clock` implementation.
+
+  For more information see [MDL-81894](https://tracker.moodle.org/browse/MDL-81894)
 
 #### Changed
 
@@ -328,20 +357,6 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   A new method, `get_default_home_page_url()` has been added which will return the correct URL when this constant is returned
 
   For more information see [MDL-82066](https://tracker.moodle.org/browse/MDL-82066)
-
-#### Fixed
-
-- All the setup and tear down methods of `PHPUnit` now are required to, always, call to their parent counterparts. This is a good practice to avoid future problems, especially when updating to PHPUnit >= 10.
-  This includes the following methods:
-    - `setUp()`
-    - `tearDown()`
-    - `setUpBeforeClass()`
-    - `tearDownAfterClass()`
-
-  For more information see [MDL-81523](https://tracker.moodle.org/browse/MDL-81523)
-- Use server timezone when constructing `\DateTimeImmutable` for the system `\core\clock` implementation.
-
-  For more information see [MDL-81894](https://tracker.moodle.org/browse/MDL-81894)
 
 ### core_reportbuilder
 
@@ -420,6 +435,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - A new default value for `attemptreopenmethod` has been set to "Automatically until pass".
 
   For more information see [MDL-80741](https://tracker.moodle.org/browse/MDL-80741)
+- A new method named `get_grading_batch_operation_details` has been added to the `assign_feedback_plugin` abstract class. Assignment feedback plugins can now override this method to define bulk action buttons that will appear in the sticky footer on the assignment grading page.
+
+  For more information see [MDL-80750](https://tracker.moodle.org/browse/MDL-80750)
 
 #### Removed
 
@@ -432,6 +450,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The constant `ASSIGN_ATTEMPT_REOPEN_METHOD_NONE` has been deprecated, and a new default value for `attemptreopenmethod` has been set to "Automatically until pass".
 
   For more information see [MDL-80741](https://tracker.moodle.org/browse/MDL-80741)
+- The `assign_feedback_plugin::get_grading_batch_operations` method is now deprecated. Use `assign_feedback_plugin::get_grading_batch_operation_details` instead.
+
+  For more information see [MDL-80750](https://tracker.moodle.org/browse/MDL-80750)
+- The `assign_grading_table::plugingradingbatchoperations` property is removed. You can use `assign_feedback_plugin::get_grading_batch_operation_details` instead.
+
+  For more information see [MDL-80750](https://tracker.moodle.org/browse/MDL-80750)
 - The `$submissionpluginenabled` and `$submissioncount` parameters from the constructor of the `mod_assign\output::grading_actionmenu` class have been deprecated.
 
   For more information see [MDL-80752](https://tracker.moodle.org/browse/MDL-80752)
@@ -469,6 +493,32 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `get_additional_login_parameters()` method now supports adding the language code to the authentication request so that the OAuth2 login page matches the language in Moodle.
 
   For more information see [MDL-67554](https://tracker.moodle.org/browse/MDL-67554)
+
+### core_user
+
+#### Added
+
+- New '\core_user\hook\extend_user_menu' hook added to allow third party plugin to extend the user menu navigation
+
+  For more information see [MDL-71823](https://tracker.moodle.org/browse/MDL-71823)
+- New `\core_user\hook\extend_default_homepage` hook added to allow third-party plugins to extend the default homepage options for the site
+
+  For more information see [MDL-82066](https://tracker.moodle.org/browse/MDL-82066)
+
+#### Deprecated
+
+- The participants_search::get_total_participants_count() is no longer used since the total count can be obtained from ::get_participants()
+
+  For more information see [MDL-78030](https://tracker.moodle.org/browse/MDL-78030)
+
+#### Changed
+
+- The visibility of the methods: check_access_for_dynamic_submission() and get_options() in core_user\form\private_files has been changed from protected to public.
+
+  For more information see [MDL-78293](https://tracker.moodle.org/browse/MDL-78293)
+- The user profile field `display_name()` method now accepts an optional `$escape` parameter to define whether to escape the returned name
+
+  For more information see [MDL-82494](https://tracker.moodle.org/browse/MDL-82494)
 
 ### report
 
@@ -686,26 +736,6 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
     If true, it will trigger the after_file_created hook to re-create the image.
 
   For more information see [MDL-75850](https://tracker.moodle.org/browse/MDL-75850)
-
-### core_user
-
-#### Deprecated
-
-- The participants_search::get_total_participants_count() is no longer used since the total count can be obtained from ::get_participants()
-
-  For more information see [MDL-78030](https://tracker.moodle.org/browse/MDL-78030)
-
-#### Changed
-
-- The visibility of the methods: check_access_for_dynamic_submission() and get_options() in core_user\form\private_files has been changed from protected to public.
-
-  For more information see [MDL-78293](https://tracker.moodle.org/browse/MDL-78293)
-
-#### Added
-
-- New `\core_user\hook\extend_default_homepage` hook added to allow third-party plugins to extend the default homepage options for the site
-
-  For more information see [MDL-82066](https://tracker.moodle.org/browse/MDL-82066)
 
 ### core_question
 
@@ -1017,6 +1047,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-82481](https://tracker.moodle.org/browse/MDL-82481)
 
+### core_customfield
+
+#### Changed
+
+- The field controller `get_formatted_name()` method now accepts an optional `$escape` parameter to define whether to escape the returned name
+
+  For more information see [MDL-82488](https://tracker.moodle.org/browse/MDL-82488)
+
 ### core_form
 
 #### Added
@@ -1024,6 +1062,22 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Previously, the 'duration' form field type would allow users to input positive or negative durations. However looking at all the uses, everyone was expecting this input type to only accept times >= 0 seconds, and almost no-one was bothering to write manual form validation, leading to subtle bugs. So now, by default this field type will validate the input value is not negative. If you need the previous behaviour, there is a new option 'allownegative' which you can set to true. (The default is false.)
 
   For more information see [MDL-82687](https://tracker.moodle.org/browse/MDL-82687)
+
+### customfield_number
+
+#### Added
+
+- New 'customfield_number\hook\add_custom_providers' hook has been added.
+  It allows automatic calculation of number course custom field.
+  Added new class '\customfield_number\local\numberproviders\nofactivities'
+  that allows to automatically calculate number of activities of a given
+  type in a given course.
+  Added new webservice customfield_number_recalculate_value to recalculate
+  a value of number course custom field.
+  Added 'customfield_number\task\cron' cron task that recalculates
+  automatically calculated number course custom fields.
+
+  For more information see [MDL-82715](https://tracker.moodle.org/browse/MDL-82715)
 
 ### core_external
 

@@ -42,6 +42,9 @@
 - `moodle_list` and `list_item` were only used by `qbank_managecategories`, and these usages have been removed, so these classes (and thus all of listlib.php) are now deprecated. This method was the only usage of the `QUESTION_PAGE_LENGTH` constant, which was defined in `question_category_object.php`, and so is also now deprecated.
 
   For more information see [MDL-72397](https://tracker.moodle.org/browse/MDL-72397)
+- Deprecate timeout in navigation_cache constructor and clean up unused properties
+
+  For more information see [MDL-79628](https://tracker.moodle.org/browse/MDL-79628)
 - The following methods have been deprecated, existing usage should switch to secure `\core\encryption` library:
   - `rc4encrypt`
   - `rc4decrypt`
@@ -75,6 +78,9 @@
   - `print_arrow`
 
   For more information see [MDL-82287](https://tracker.moodle.org/browse/MDL-82287)
+- The global_navigation::load_section_activities method is now deprecated and replaced by global_navigation::load_section_activities_navigation.
+
+  For more information see [MDL-82845](https://tracker.moodle.org/browse/MDL-82845)
 
 ### Added
 
@@ -129,6 +135,9 @@
 - The `core\output\select_menu` widget now supports a new feature: inline labels. You can render the label inside the combobox widget by passing `true` to the `$inlinelabel` parameter when calling the `->set_label()` method.
 
   For more information see [MDL-80747](https://tracker.moodle.org/browse/MDL-80747)
+- A new hook called `core\hook\output\after_http_headers` has been created. This hook allow plugins to modify the content after headers are sent.
+
+  For more information see [MDL-80890](https://tracker.moodle.org/browse/MDL-80890)
 - The following classes have been renamed.
   Existing classes are currently unaffected.
   | Old class name | New class name |
@@ -268,6 +277,26 @@
   For more information see the documentation in the `core/fetch` module.
 
   For more information see [MDL-82778](https://tracker.moodle.org/browse/MDL-82778)
+- The section_info class now includes a new method called get_sequence_cm_infos that retrieves all cm_info instances associated with the course section.
+
+  For more information see [MDL-82845](https://tracker.moodle.org/browse/MDL-82845)
+
+### Fixed
+
+- The `navigation_cache` class now uses the Moodle Universal Cache (MUC) to store the navigation cache data instead of storing it in the global `$SESSION` variable.
+
+  For more information see [MDL-79628](https://tracker.moodle.org/browse/MDL-79628)
+- All the setup and tear down methods of `PHPUnit` now are required to, always, call to their parent counterparts. This is a good practice to avoid future problems, especially when updating to PHPUnit >= 10.
+  This includes the following methods:
+    - `setUp()`
+    - `tearDown()`
+    - `setUpBeforeClass()`
+    - `tearDownAfterClass()`
+
+  For more information see [MDL-81523](https://tracker.moodle.org/browse/MDL-81523)
+- Use server timezone when constructing `\DateTimeImmutable` for the system `\core\clock` implementation.
+
+  For more information see [MDL-81894](https://tracker.moodle.org/browse/MDL-81894)
 
 ### Changed
 
@@ -282,17 +311,3 @@
   A new method, `get_default_home_page_url()` has been added which will return the correct URL when this constant is returned
 
   For more information see [MDL-82066](https://tracker.moodle.org/browse/MDL-82066)
-
-### Fixed
-
-- All the setup and tear down methods of `PHPUnit` now are required to, always, call to their parent counterparts. This is a good practice to avoid future problems, especially when updating to PHPUnit >= 10.
-  This includes the following methods:
-    - `setUp()`
-    - `tearDown()`
-    - `setUpBeforeClass()`
-    - `tearDownAfterClass()`
-
-  For more information see [MDL-81523](https://tracker.moodle.org/browse/MDL-81523)
-- Use server timezone when constructing `\DateTimeImmutable` for the system `\core\clock` implementation.
-
-  For more information see [MDL-81894](https://tracker.moodle.org/browse/MDL-81894)

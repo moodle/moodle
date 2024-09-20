@@ -15,6 +15,9 @@
 - A new default value for `attemptreopenmethod` has been set to "Automatically until pass".
 
   For more information see [MDL-80741](https://tracker.moodle.org/browse/MDL-80741)
+- A new method named `get_grading_batch_operation_details` has been added to the `assign_feedback_plugin` abstract class. Assignment feedback plugins can now override this method to define bulk action buttons that will appear in the sticky footer on the assignment grading page.
+
+  For more information see [MDL-80750](https://tracker.moodle.org/browse/MDL-80750)
 
 ### Removed
 
@@ -27,6 +30,12 @@
 - The constant `ASSIGN_ATTEMPT_REOPEN_METHOD_NONE` has been deprecated, and a new default value for `attemptreopenmethod` has been set to "Automatically until pass".
 
   For more information see [MDL-80741](https://tracker.moodle.org/browse/MDL-80741)
+- The `assign_feedback_plugin::get_grading_batch_operations` method is now deprecated. Use `assign_feedback_plugin::get_grading_batch_operation_details` instead.
+
+  For more information see [MDL-80750](https://tracker.moodle.org/browse/MDL-80750)
+- The `assign_grading_table::plugingradingbatchoperations` property is removed. You can use `assign_feedback_plugin::get_grading_batch_operation_details` instead.
+
+  For more information see [MDL-80750](https://tracker.moodle.org/browse/MDL-80750)
 - The `$submissionpluginenabled` and `$submissioncount` parameters from the constructor of the `mod_assign\output::grading_actionmenu` class have been deprecated.
 
   For more information see [MDL-80752](https://tracker.moodle.org/browse/MDL-80752)
