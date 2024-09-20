@@ -108,7 +108,7 @@ function note_save(&$note) {
     $note->lastmodified = time();
     $note->usermodified = $USER->id;
     if (empty($note->format)) {
-        $note->format = FORMAT_PLAIN;
+        $note->format = FORMAT_MOODLE;
     }
     if (empty($note->publishstate)) {
         $note->publishstate = NOTES_STATE_PUBLIC;
