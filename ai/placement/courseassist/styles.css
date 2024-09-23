@@ -5,7 +5,7 @@
     right: calc(-315px + -10px);
     width: 315px;
     background-color: #f8f9fa;
-    z-index: 2001;
+    z-index: 1016;
     transition: right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease, transform 0.5s ease;
     visibility: hidden;
 }

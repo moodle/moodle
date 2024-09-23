@@ -26,6 +26,8 @@ export default {
         AIDRAWER_BODY: '#ai-drawer .ai-drawer-body',
         PAGE: '#page',
         MAIN_REGION: '[role="main"]',
+        MESSAGE_DRAWER: '.message-app[data-region="message-drawer"]',
+        MESSAGE_DRAWER_TOGGLE: '[id^="message-drawer-toggle"]',
     },
     ACTIONS: {
         SUMMARY: '[data-action="course-summarise"]',
