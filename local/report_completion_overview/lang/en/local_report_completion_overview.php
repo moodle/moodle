@@ -86,9 +86,6 @@ Last completed: {$a->lastcompleted}
 Expired: {$a->timeexpired}';
 $string['report_completion_overview_title'] = 'Completion overview report';
 $string['notcompleted'] = 'In progress';
-<<<<<<< HEAD
-$string['notenrolled']  = 'Not enroled';
-=======
 $string['notcompleted-expiring'] = 'In progress (Due)';
 $string['notcompleted-indate'] = 'In progress (OK)';
 $string['notcompleted-outdate'] = 'In progress (Expired)';
@@ -96,7 +93,6 @@ $string['notenrolled']  = 'Not enrolled';
 $string['notenrolled-expiring']  = 'Not enrolled (Due)';
 $string['notenrolled-indate']  = 'Not enrolled (OK)';
 $string['notenrolled-outdate']  = 'Not enrolled (Expired)';
->>>>>>> fd82133eb6f (IOMAD: improvements to course completion overview report to allow for sticky headers, switching the headers/columns and changing the numbers displayed)
 $string['indate'] = 'OK';
 $string['expiring'] = 'Due';
 $string['expired'] = 'Expired';
