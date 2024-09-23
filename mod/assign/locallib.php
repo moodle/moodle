@@ -634,10 +634,6 @@ class assign {
         } else if ($action == 'quickgrade') {
             $message = $this->process_save_quick_grades();
             $action = 'quickgradingresult';
-        } else if ($action == 'saveoptions') {
-            $this->process_save_grading_options();
-            $action = 'redirect';
-            $nextpageparams['action'] = 'grading';
         } else if ($action == 'saveextension') {
             $action = 'grantextension';
             if ($this->process_save_extension($mform)) {
@@ -4480,8 +4476,6 @@ class assign {
     protected function view_grading_table() {
         global $USER, $CFG, $SESSION, $PAGE, $OUTPUT;
 
-        // Include grading options form.
-        require_once($CFG->dirroot . '/mod/assign/gradingoptionsform.php');
         require_once($CFG->dirroot . '/mod/assign/quickgradingform.php');
 
         $submittedfilter = optional_param('status', null, PARAM_ALPHA);
@@ -4515,7 +4509,6 @@ class assign {
 
         $perpage = $this->get_assign_perpage();
         $filter = get_user_preferences('assign_filter', '');
-        $markerfilter = get_user_preferences('assign_markerfilter', '');
 
         // Retrieve the 'workflowfilter' parameter, or set it to null if not provided.
         $workflowfilter = optional_param('workflowfilter', null, PARAM_ALPHA);
@@ -4525,53 +4518,32 @@ class assign {
             set_user_preference('assign_workflowfilter', $workflowfilter);
         }
 
+        // Retrieve the 'markingallocationfilter' parameter, or set it to null if not provided.
+        $markingallocationfilter = optional_param('markingallocationfilter', null, PARAM_ALPHANUMEXT);
+        // Check if the parameter is not null and if it exists in the list of valid marking allocation filters.
+        if ($markingallocationfilter !== null &&
+                array_key_exists($markingallocationfilter, $this->get_marking_allocation_filters())) {
+            // Save the valid 'markingallocationfilter' value as a user preference.
+            set_user_preference('assign_markerfilter', $markingallocationfilter);
+        }
+
+        // Retrieve the 'suspendedparticipantsfilter' parameter, or set it to null if not provided.
+        $suspendedparticipantsfilter = optional_param('suspendedparticipantsfilter', null, PARAM_BOOL);
+        if ($suspendedparticipantsfilter !== null &&
+                has_capability('moodle/course:viewsuspendedusers', $this->get_context())) {
+            // Save the 'suspendedparticipantsfilter' value as a user preference.
+            set_user_preference('grade_report_showonlyactiveenrol', !$suspendedparticipantsfilter);
+        }
+
         $controller = $gradingmanager->get_active_controller();
         $showquickgrading = empty($controller) && $this->can_grade();
         $quickgrading = get_user_preferences('assign_quickgrading', false);
-        $showonlyactiveenrolopt = has_capability('moodle/course:viewsuspendedusers', $this->context);
 
         $markingallocation = $this->get_instance()->markingworkflow &&
             $this->get_instance()->markingallocation &&
             has_capability('mod/assign:manageallocations', $this->context);
-        // Get markers to use in drop lists.
-        $markingallocationoptions = array();
-        if ($markingallocation) {
-            list($sort, $params) = users_order_by_sql('u');
-            // Only enrolled users could be assigned as potential markers.
-            $markers = get_enrolled_users($this->context, 'mod/assign:grade', 0, 'u.*', $sort);
-            $markingallocationoptions[''] = get_string('filternone', 'assign');
-            $markingallocationoptions[ASSIGN_MARKER_FILTER_NO_MARKER] = get_string('markerfilternomarker', 'assign');
-            $viewfullnames = has_capability('moodle/site:viewfullnames', $this->context);
-            foreach ($markers as $marker) {
-                $markingallocationoptions[$marker->id] = fullname($marker, $viewfullnames);
-            }
-        }
 
         $markingworkflow = $this->get_instance()->markingworkflow;
-        // Get marking states to show in form.
-        $markingworkflowoptions = $this->get_marking_workflow_filters();
-
-        // Print options for changing the filter and changing the number of results per page.
-        $gradingoptionsformparams = [
-            'cm' => $cmid,
-            'contextid' => $this->context->id,
-            'userid' => $USER->id,
-            'markingworkflowopt' => $markingworkflowoptions,
-            'markingallocationopt' => $markingallocationoptions,
-            'showonlyactiveenrolopt' => $showonlyactiveenrolopt,
-            'showonlyactiveenrol' => $this->show_only_active_users(),
-        ];
-
-        $classoptions = array('class'=>'gradingoptionsform');
-        $gradingoptionsform = new \mod_assign\form\grading_options_temp_form(null,
-                                                                  $gradingoptionsformparams,
-                                                                  'post',
-                                                                  '',
-                                                                  $classoptions);
-
-        $gradingoptionsdata = new stdClass();
-        $gradingoptionsdata->markerfilter = $markerfilter;
-        $gradingoptionsform->set_data($gradingoptionsdata);
 
         $buttons = new \mod_assign\output\grading_actionmenu(cmid: $this->get_course_module()->id, assign: $this);
         $actionformtext = $this->get_renderer()->render($buttons);
@@ -4638,11 +4610,6 @@ class assign {
             $useridlist = $gradingtable->get_column_data('userid');
             $SESSION->mod_assign_useridlist[$this->get_useridlist_key()] = $useridlist;
         }
-
-        $assignform = new assign_form('gradingoptionsform',
-                                      $gradingoptionsform,
-                                      'M.mod_assign.init_grading_options');
-        $o .= $this->get_renderer()->render($assignform);
 
         $currentgroup = groups_get_activity_group($this->get_course_module(), true);
         $users = array_keys($this->list_participants($currentgroup, true));
@@ -7375,63 +7342,18 @@ class assign {
     /**
      * Save grading options.
      *
+     * @deprecated since Moodle 4.5
+     * @todo Final deprecation in Moodle 6.0. See MDL-82876.
      * @return void
      */
+    #[\core\attribute\deprecated(
+        'null',
+        since: '4.5',
+        reason: 'It is no longer used.',
+        mdl: 'MDL-82681',
+    )]
     protected function process_save_grading_options() {
-        global $USER, $CFG;
-
-        // Include grading options form.
-        require_once($CFG->dirroot . '/mod/assign/gradingoptionsform.php');
-
-        // Need submit permission to submit an assignment.
-        $this->require_view_grades();
-        require_sesskey();
-
-        if (!is_null($this->context)) {
-            $showonlyactiveenrolopt = has_capability('moodle/course:viewsuspendedusers', $this->context);
-        } else {
-            $showonlyactiveenrolopt = false;
-        }
-
-        $markingallocation = $this->get_instance()->markingworkflow &&
-            $this->get_instance()->markingallocation &&
-            has_capability('mod/assign:manageallocations', $this->context);
-        // Get markers to use in drop lists.
-        $markingallocationoptions = array();
-        if ($markingallocation) {
-            $markingallocationoptions[''] = get_string('filternone', 'assign');
-            $markingallocationoptions[ASSIGN_MARKER_FILTER_NO_MARKER] = get_string('markerfilternomarker', 'assign');
-            list($sort, $params) = users_order_by_sql('u');
-            // Only enrolled users could be assigned as potential markers.
-            $markers = get_enrolled_users($this->context, 'mod/assign:grade', 0, 'u.*', $sort);
-            foreach ($markers as $marker) {
-                $markingallocationoptions[$marker->id] = fullname($marker);
-            }
-        }
-
-        // Get marking states to show in form.
-        $markingworkflowoptions = $this->get_marking_workflow_filters();
-
-        $gradingoptionsparams = [
-            'cm' => $this->get_course_module()->id,
-            'contextid' => $this->context->id,
-            'userid' => $USER->id,
-            'markingworkflowopt' => $markingworkflowoptions,
-            'markingallocationopt' => $markingallocationoptions,
-            'showonlyactiveenrolopt' => $showonlyactiveenrolopt,
-            'showonlyactiveenrol' => $this->show_only_active_users(),
-        ];
-        $mform = new mod_assign\form\grading_options_temp_form(null, $gradingoptionsparams);
-        if ($formdata = $mform->get_data()) {
-            if (isset($formdata->markerfilter)) {
-                set_user_preference('assign_markerfilter', $formdata->markerfilter);
-            }
-            if (!empty($showonlyactiveenrolopt)) {
-                $showonlyactiveenrol = isset($formdata->showonlyactiveenrol);
-                set_user_preference('grade_report_showonlyactiveenrol', $showonlyactiveenrol);
-                $this->showonlyactiveenrol = $showonlyactiveenrol;
-            }
-        }
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -9612,7 +9534,7 @@ class assign {
             }
             return $result;
         }
-        return $markingworkflowoptions;
+        return $markingallocationoptions;
     }
 
     /**

@@ -78,29 +78,6 @@ M.mod_assign.init_grading_table = function(Y) {
     });
 };
 
-M.mod_assign.init_grading_options = function(Y) {
-    Y.use('node', function(Y) {
-        var markerfilterelement = Y.one('#id_markerfilter');
-        if (markerfilterelement) {
-            markerfilterelement.on('change', function(e) {
-                Y.one('form.gradingoptionsform').submit();
-            });
-        }
-        var showonlyactiveenrolelement = Y.one('#id_showonlyactiveenrol');
-        if (showonlyactiveenrolelement) {
-            showonlyactiveenrolelement.on('change', function(e) {
-            Y.one('form.gradingoptionsform').submit();
-            });
-        }
-        var downloadasfolderselement = Y.one('#id_downloadasfolders');
-        if (downloadasfolderselement) {
-            downloadasfolderselement.on('change', function(e) {
-                Y.one('form.gradingoptionsform').submit();
-            });
-        }
-    });
-};
-
 M.mod_assign.init_plugin_summary = function(Y, subtype, type, submissionid) {
     var suffix = subtype + '_' + type + '_' + submissionid;
     var classname = 'contract_' + suffix;

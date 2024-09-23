@@ -30,15 +30,13 @@ Feature: In an assignment, teachers can filter displayed submissions by marking 
     Given I am on the "Test assignment" Activity page logged in as teacher1
     And I navigate to "Submissions" in current page administration
     And I change window size to "large"
-    And "Advanced" "button" should not exist in the ".tertiary-navigation" "css_element"
     When I am on the "Test assignment" "assign activity editing" page
     And I expand all fieldsets
     And I set the field "Use marking workflow" to "Yes"
     And I press "Save and display"
     And I navigate to "Submissions" in current page administration
-    Then "Advanced" "button" should exist in the ".tertiary-navigation" "css_element"
     And I click on "Advanced" "button" in the ".tertiary-navigation" "css_element"
-    And "Marking state" "select" should exist in the ".extrafilters .dropdown-menu" "css_element"
+    Then "Marking state" "select" should exist in the ".extrafilters .dropdown-menu" "css_element"
     And the field "Marking state" matches value "No filter"
     And the "Marking state" select box should contain "No filter"
     And the "Marking state" select box should contain "Not marked"
@@ -140,7 +138,7 @@ Feature: In an assignment, teachers can filter displayed submissions by marking 
     And I set the field "Marking state" in the ".extrafilters .dropdown-menu" "css_element" to "In marking"
     And I click on "Apply" "button" in the ".extrafilters .dropdown-menu" "css_element"
     # Ensure only Student 2 is now displayed in the submissions table.
-    Then the following should exist in the "submissions" table:
+    And the following should exist in the "submissions" table:
       | -2-       |
       | Student 2 |
     And the following should not exist in the "submissions" table:

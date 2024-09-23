@@ -7,3 +7,4 @@ viewgrader,mod_assign
 downloadasfolders_help,mod_assign
 editaction,mod_assign
 saveallquickgradingchanges,mod_assign
+gradingoptions,mod_assign
