@@ -76,7 +76,9 @@ class hook_callbacks {
             return;
         }
         $hook->add_html(
-            html_writer::link($url, get_string('getmoodleonyourmobile', 'tool_mobile'), ['class' => 'mobilelink']),
+            html_writer::div(
+                html_writer::link($url, get_string('getmoodleonyourmobile', 'tool_mobile'), ['class' => 'mobilelink']),
+            ),
         );
     }
 
