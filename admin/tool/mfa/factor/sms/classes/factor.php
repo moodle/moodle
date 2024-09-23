@@ -19,6 +19,7 @@ namespace factor_sms;
 use moodle_url;
 use stdClass;
 use tool_mfa\local\factor\object_factor_base;
+use tool_mfa\local\secret_manager;
 
 /**
  * SMS Factor implementation.
@@ -231,7 +232,7 @@ class factor extends object_factor_base {
             unset($SESSION->tool_mfa_sms_number);
         }
         // Clean temp secrets code.
-        $secretmanager = new \tool_mfa\local\secret_manager('sms');
+        $secretmanager = new secret_manager('sms');
         $secretmanager->cleanup_temp_secrets();
     }
 
@@ -323,14 +324,6 @@ class factor extends object_factor_base {
      * @return bool
      */
     public function is_enabled(): bool {
-        if (empty(get_config('factor_sms', 'gateway'))) {
-            return false;
-        }
-
-        $class = '\factor_sms\local\smsgateway\\' . get_config('factor_sms', 'gateway');
-        if (!call_user_func($class . '::is_gateway_enabled')) {
-            return false;
-        }
         return parent::is_enabled();
     }
 
@@ -412,9 +405,17 @@ class factor extends object_factor_base {
         ];
         $message = get_string('smsstring', 'factor_sms', $content);
 
-        $class = '\factor_sms\local\smsgateway\\' . get_config('factor_sms', 'gateway');
-        $gateway = new $class();
-        $gateway->send_sms_message($message, $phonenumber);
+        $manager = \core\di::get(\core_sms\manager::class);
+        $manager->send(
+            recipientnumber: $phonenumber,
+            content: $message,
+            component: 'factor_sms',
+            messagetype: 'mfa',
+            recipientuserid: null,
+            issensitive: true,
+            async: false,
+            gatewayid: get_config('factor_sms', 'smsgateway'),
+        );
     }
 
     /**
@@ -424,7 +425,7 @@ class factor extends object_factor_base {
      * @return bool
      */
     private function check_verification_code(string $enteredcode): bool {
-        return ($this->secretmanager->validate_secret($enteredcode) === \tool_mfa\local\secret_manager::VALID) ? true : false;
+        return $this->secretmanager->validate_secret($enteredcode) === secret_manager::VALID;
     }
 
     /**
@@ -453,8 +454,8 @@ class factor extends object_factor_base {
 
         if (empty($phonenumber)) {
             return get_string('errorsmssent', 'factor_sms');
-        } else {
-            return get_string('logindesc', 'factor_' . $this->name, $phonenumber);
         }
+
+        return get_string('logindesc', 'factor_' . $this->name, $phonenumber);
     }
 }

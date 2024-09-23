@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * AWS helper class. Contains useful functions when interacting with the SDK.
- *
- * @package    core
- * @author     Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright  2020 Catalyst IT
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\aws;
 
 use Aws\CommandInterface;
@@ -34,6 +25,8 @@ use Psr\Http\Message\RequestInterface;
  *
  * @copyright  2020 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated Since Moodle 4.5
+ * @todo       MDL-82459 Final deprecation in Moodle 5.0.
  */
 class aws_helper {
 
@@ -41,8 +34,15 @@ class aws_helper {
      * This creates a proxy string suitable for use with the AWS SDK.
      *
      * @return string the string to use for proxy settings.
+     * @deprecated Since Moodle 4.5
      */
+    #[\core\attribute\deprecated(
+        'aws_helper::get_proxy_string()',
+        since: '4.5',
+        mdl: 'MDL-80962',
+    )]
     public static function get_proxy_string(): string {
+        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
         global $CFG;
         $proxy = '';
         if (empty($CFG->proxytype)) {
@@ -71,8 +71,15 @@ class aws_helper {
      *
      * @param AwsClient $client
      * @return AwsClient
+     * @deprecated Since Moodle 4.5
      */
+    #[\core\attribute\deprecated(
+        'aws_helper::configure_client_proxy()',
+        since: '4.5',
+        mdl: 'MDL-80962',
+    )]
     public static function configure_client_proxy(AwsClient $client): AwsClient {
+        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
         $client->getHandlerList()->appendBuild(self::add_proxy_when_required(), 'proxy_bypass');
         return $client;
     }
@@ -81,8 +88,15 @@ class aws_helper {
      * Generate a middleware higher order function to wrap the handler and append proxy configuration based on target.
      *
      * @return callable Middleware high order callable.
+     * @deprecated Since Moodle 4.5
      */
+    #[\core\attribute\deprecated(
+        'aws_helper::add_proxy_when_required()',
+        since: '4.5',
+        mdl: 'MDL-80962',
+    )]
     protected static function add_proxy_when_required(): callable {
+        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
         return function (callable $fn) {
             return function (CommandInterface $command, ?RequestInterface $request = null) use ($fn) {
                 if (isset($request)) {

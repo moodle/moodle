@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * AWS Client factory. Retrieves a client with moodle specific HTTP configuration.
- *
- * @package    core
- * @author     Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright  2022 Catalyst IT
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\aws;
 use Aws\AwsClient;
 
@@ -32,6 +23,8 @@ use Aws\AwsClient;
  * @copyright  2022 Catalyst IT
  * @author     Peter Burnett <peterburnett@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated Since Moodle 4.5
+ * @todo       MDL-82459 Final deprecation in Moodle 5.0.
  */
 class client_factory {
     /**
@@ -40,8 +33,15 @@ class client_factory {
      * @param string $class Fully qualified AWS classname e.g. \Aws\S3\S3Client
      * @param array $opts array of constructor options for AWS Client.
      * @return AwsClient
+     * @deprecated Since Moodle 4.5
      */
+    #[\core\attribute\deprecated(
+        'client_factory::get_client()',
+        since: '4.5',
+        mdl: 'MDL-80962',
+    )]
     public static function get_client(string $class, array $opts): AwsClient {
+        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
         // Modify the opts to add HTTP timeouts.
         if (empty($opts['http'])) {
             $opts['http'] = ['connect_timeout' => HOURSECS];

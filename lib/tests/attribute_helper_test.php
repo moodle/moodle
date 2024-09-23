@@ -136,7 +136,7 @@ final class attribute_helper_test extends \advanced_testcase {
         $this->assertInstanceOf(attribute_helper_attribute_b::class, $instance);
     }
 
-    public function test_get_attributes_invalid(): void {
+    public function test_get_attributes_not_valid(): void {
         $this->assertNull(attribute_helper::from(non_existent_class::class));
         $this->assertNull(attribute_helper::from([non_existent_class::class]));
         $this->assertNull(attribute_helper::from([attribute_helper_example::class, 'non_existent']));

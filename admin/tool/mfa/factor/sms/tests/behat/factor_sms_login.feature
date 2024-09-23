@@ -6,11 +6,21 @@ Feature: Login user with sms authentication factor
 
   Background:
     Given I log in as "admin"
+    And the following "core_sms > sms_gateways" exist:
+      | name          | classname              | enabled | config                                                                                                         |
+      | Dummy gateway | smsgateway_aws\gateway | 1       | {"countrycode":"+61", "gateway":"aws_sns", "api_region":"ap-southeast-2", "api_key":"abc", "api_secret":"123"} |
     And the following config values are set as admin:
       | enabled | 1 | tool_mfa |
       | lockout | 3 | tool_mfa |
     And the following config values are set as admin:
-      | enabled | 1 | factor_sms |
+      | enabled  | 1    | factor_sms |
+      | weight   | 100  | factor_sms |
+      | duration | 1800 | factor_sms |
+    And I navigate to "Plugins > Admin tools > Multi-factor authentication" in site administration
+    And I follow "Edit settings for the SMS mobile phone factor"
+    And I set the field "SMS gateway" to "Dummy gateway (AWS)"
+    And I press "Save changes"
+    And I should see "Changes saved"
     # Set up user SMS factor in user preferences.
     When I follow "Preferences" in the user menu
     And I click on "Multi-factor authentication preferences" "link"

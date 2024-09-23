@@ -43,7 +43,8 @@
         "theme": "theme",
         "local": "local",
         "h5plib": "h5p\/h5plib",
-        "paygw": "payment\/gateway"
+        "paygw": "payment\/gateway",
+        "smsgateway": "sms/gateway"
     },
     "subsystems": {
         "ai": "ai",
@@ -118,6 +119,7 @@
         "rss": "rss",
         "role": "admin\/roles",
         "search": "search",
+        "sms": "sms",
         "table": "lib\/table",
         "tag": "tag",
         "timezones": null,

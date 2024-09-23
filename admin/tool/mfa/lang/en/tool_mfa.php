@@ -36,6 +36,7 @@ $string['confirmationrevoke'] = 'You will no longer be able to use \'{$a}\' to l
 $string['connector'] = 'AND';
 $string['debugmode:heading'] = 'Debug mode';
 $string['devicename'] = 'Device';
+$string['editfactor'] = 'Edit settings for the {$a} factor';
 $string['entercode'] = 'Enter code';
 $string['email:subject'] = 'Unable to log in to {$a}';
 $string['enablefactor'] = 'Enable factor';

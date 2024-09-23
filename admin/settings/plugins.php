@@ -836,6 +836,37 @@ if ($hassiteconfig && core_communication\api::is_available()) {
     }
 }
 
+// SMS plugins.
+if ($hassiteconfig) {
+    $ADMIN->add(
+        'modules',
+        new admin_category(
+            'sms',
+            new lang_string('sms', 'core_sms'),
+        ),
+    );
+    $ADMIN->add(
+        'sms',
+        new admin_externalpage(
+            'smsgateway',
+            new lang_string('manage_sms_gateways', 'core_sms'),
+            $CFG->wwwroot . '/sms/sms_gateways.php',
+        ),
+    );
+    foreach (core_component::get_plugin_list('smsgateway') as $plugin => $path) {
+        $settingspath = $path . '/settings.php';
+        if (file_exists($settingspath)) {
+            $settings = new admin_settingpage(
+                'smsgateway_' . $plugin . '_settings',
+                new lang_string('pluginname', 'smsgateway_' . $plugin),
+                'moodle/site:config',
+            );
+            include($settingspath);
+            $ADMIN->add('smsgateway', $settings);
+        }
+    }
+}
+
 // Content bank content types.
 if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('contentbanksettings', new lang_string('contentbank')));
