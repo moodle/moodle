@@ -34695,13 +34695,13 @@ img.userpicture {
   border-radius: 0 0 3px 3px;
 }
 .path-mod-quiz #mod_quiz_navblock .qnbutton.correct .thispageholder {
-  border-color: #357a32;
+  border-color: #306e2d;
 }
 .path-mod-quiz #mod_quiz_navblock .qnbutton.incorrect .thispageholder {
-  border-color: #ca3120;
+  border-color: #b62c1d;
 }
 .path-mod-quiz #mod_quiz_navblock .qnbutton.partiallycorrect .thispageholder {
-  border-color: #f0ad4e;
+  border-color: #90682f;
 }
 .path-mod-quiz #mod_quiz_navblock .qnbutton.correct,
 .path-mod-quiz #mod_quiz_navblock .qnbutton.correct .trafficlight {
@@ -34735,6 +34735,7 @@ img.userpicture {
 .path-mod-quiz #mod_quiz_navblock .qnbutton.correct .trafficlight {
   background-image: url([[pix:core|i/grade_correct]]);
   color: #357a32;
+  background-size: 14px;
 }
 .path-mod-quiz #mod_quiz_navblock .qnbutton.blocked .trafficlight {
   background-image: url([[pix:core|t/locked]]);
@@ -34743,10 +34744,12 @@ img.userpicture {
 .path-mod-quiz #mod_quiz_navblock .qnbutton.incorrect .trafficlight {
   background-image: url([[pix:core|i/grade_incorrect]]);
   color: #ca3120;
+  background-size: 14px;
 }
 .path-mod-quiz #mod_quiz_navblock .qnbutton.partiallycorrect .trafficlight {
   background-image: url([[pix:core|i/grade_partiallycorrect]]);
   color: #f0ad4e;
+  background-size: 14px;
 }
 .path-mod-quiz #mod_quiz_navblock .qnbutton.complete .trafficlight,
 .path-mod-quiz #mod_quiz_navblock .qnbutton.answersaved .trafficlight,
@@ -34762,6 +34765,20 @@ img.userpicture {
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
   padding: 0.5em 0 0.5em 0.1em;
   margin: 2px;
+}
+
+/* Override the color of the quiz attempt icons for accessibility. */
+#attemptsform .icon.text-success,
+.formulation .answer .icon.text-success {
+  color: #306e2d !important; /* stylelint-disable-line declaration-no-important */
+}
+#attemptsform .icon.text-danger,
+.formulation .answer .icon.text-danger {
+  color: #b62c1d !important; /* stylelint-disable-line declaration-no-important */
+}
+#attemptsform .icon.text-warning,
+.formulation .answer .icon.text-warning {
+  color: #90682f !important; /* stylelint-disable-line declaration-no-important */
 }
 
 /* Countdown timer. */
