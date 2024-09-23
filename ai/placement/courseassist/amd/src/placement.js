@@ -28,7 +28,9 @@ import Notification from 'core/notification';
 import Selectors from 'aiplacement_courseassist/selectors';
 import Policy from 'core_ai/policy';
 import AIHelper from 'core_ai/helper';
-import Drawer from 'core/drawer';
+import DrawerEvents from 'core/drawer_events';
+import {subscribe} from 'core/pubsub';
+import * as MessageDrawerHelper from 'core_message/message_drawer_helper';
 
 const AICourseAssist = class {
 
@@ -77,14 +79,12 @@ const AICourseAssist = class {
                 // Display summary.
                 this.displaySummary();
             }
-            // Close AI drawer if message drawer is open.
-            const messageDrawerToggle = e.target.closest(Selectors.ELEMENTS.MESSAGE_DRAWER_TOGGLE);
-            if (messageDrawerToggle && this.isAIDrawerOpen()) {
-                const messageDrawer = document.querySelector(Selectors.ELEMENTS.MESSAGE_DRAWER);
-                if (messageDrawer && !messageDrawer.classList.contains('hidden')) {
-                    this.closeAIDrawer();
-                    messageDrawerToggle.focus();
-                }
+        });
+
+        // Close AI drawer if message drawer is shown.
+        subscribe(DrawerEvents.DRAWER_SHOWN, () => {
+            if (this.isAIDrawerOpen()) {
+                this.closeAIDrawer();
             }
         });
     }
@@ -174,7 +174,8 @@ const AICourseAssist = class {
      * Open the AI drawer.
      */
     openAIDrawer() {
-        this.closeMessageDrawer();
+        // Close message drawer if it is shown.
+        MessageDrawerHelper.hide();
         this.aiDrawerElement.classList.add('show');
         this.aiDrawerBodyElement.setAttribute('aria-live', 'polite');
         if (!this.pageElement.classList.contains('show-drawer-right')) {
@@ -182,16 +183,6 @@ const AICourseAssist = class {
         }
         // Disable the summary button.
         this.disableSummaryButton();
-    }
-
-    /**
-     * Close message drawer.
-     */
-    closeMessageDrawer() {
-        var messageElement = document.querySelector(Selectors.ELEMENTS.MESSAGE_DRAWER).parentElement;
-        if (!messageElement.classList.contains('hidden')) {
-            Drawer.hide(messageElement);
-        }
     }
 
     /**
