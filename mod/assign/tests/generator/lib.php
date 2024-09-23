@@ -77,10 +77,21 @@ class mod_assign_generator extends testing_module_generator {
     /**
      * Create an assignment submission.
      *
-     * @param array $data
+     * @param array $data with keys userid, cmid and
+     *      then data for each assignsubmission plugin used.
+     *      For backwards compatibility, you can pass cmid as 'assignid' but that generates a warning.
      */
     public function create_submission(array $data): void {
         global $USER;
+
+        if (array_key_exists('assignid', $data)) {
+            debugging(
+                'The cmid passed to create_submission should have array key cmid, not assignid.',
+                DEBUG_DEVELOPER,
+            );
+            $data['cmid'] = $data['assignid'];
+            unset($data['assignid']);
+        }
 
         $currentuser = $USER;
         $user = \core_user::get_user($data['userid']);
@@ -90,7 +101,7 @@ class mod_assign_generator extends testing_module_generator {
             'userid' => $user->id,
         ];
 
-        [$course, $cm] = get_course_and_cm_from_cmid($data['assignid'], 'assign');
+        [$course, $cm] = get_course_and_cm_from_cmid($data['cmid'], 'assign');
         $context = context_module::instance($cm->id);
         $assign = new assign($context, $cm, $course);
 
@@ -102,9 +113,26 @@ class mod_assign_generator extends testing_module_generator {
             }
         }
 
-        $assign->save_submission((object) $submission, $notices);
+        $assign->save_submission($submission, $notices);
 
         $this->set_user($currentuser);
+    }
+
+    /**
+     * Create an assignment extension.
+     *
+     * @param array $data must have keys cmid, userid, extensionduedate.
+     */
+    public function create_extension(array $data): void {
+        $user = \core_user::get_user($data['userid'], '*', MUST_EXIST);
+
+        [$course, $cm] = get_course_and_cm_from_cmid($data['cmid'], 'assign');
+        $context = context_module::instance($cm->id);
+        $assign = new assign($context, $cm, $course);
+
+        if (!$assign->save_user_extension($user->id, $data['extensionduedate'] ?: null)) {
+            throw new \core\exception\coding_exception('The requested extension could not be created.');
+        }
     }
 
     /**
@@ -119,7 +147,7 @@ class mod_assign_generator extends testing_module_generator {
 
         // Do not fetch grouping ID for empty grouping idnumber.
         if (empty($idnumber)) {
-            return null;
+            throw new \core\exception\coding_exception('idnumber cannot be empty');
         }
 
         if (!$id = $DB->get_field('groupings', 'id', ['idnumber' => $idnumber])) {
