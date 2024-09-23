@@ -455,6 +455,13 @@ function upgrade_stale_php_files_present(): bool {
     global $CFG;
 
     $someexamplesofremovedfiles = [
+        // Removed in 4.5.
+        '/admin/tool/innodb/index.php',
+        '/backup/util/ui/classes/copy/copy.php',
+        '/backup/util/ui/yui/build/moodle-backup-backupselectall/moodle-backup-backupselectall.js',
+        '/cache/classes/interfaces.php',
+        '/cache/disabledlib.php',
+        '/cache/lib.php',
         // Removed in 4.4.
         '/README.txt',
         '/lib/dataformatlib.php',
