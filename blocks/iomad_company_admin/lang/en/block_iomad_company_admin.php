@@ -256,6 +256,7 @@ $string['custom2'] = 'Custom 2';
 $string['custom3'] = 'Custom 3';
 $string['dashboard'] = 'IOMAD dashboard';
 $string['datefilter'] = 'Filter by date';
+$string['defaultrows'] = 'Default rows';
 $string['deleteanddestroycoursesfull'] = 'Are you sure you want to delete course {$a}? Clicking continue will remove all current user enrolments, any license allocations and the course from the company. If you click destroy, it will also remove all of the user reords from the all reports. <b>There is no recovery from this without backup</b>';
 $string['deletecertificates'] = 'OK to delete company certificates';
 $string['deletecourses'] = 'OK to delete company courses';
