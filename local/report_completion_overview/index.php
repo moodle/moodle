@@ -47,6 +47,12 @@ $showtext = optional_param('showtext', false, PARAM_BOOL);
 $ifirst = optional_param('firstinitial', '', PARAM_ALPHA);
 $ilast = optional_param('lastinitial', '', PARAM_ALPHA);
 $showexpiryonly = optional_param('showexpiryonly', get_config('local_report_completion_overview', 'showexpiryonly'), PARAM_BOOL);
+$bycourse = optional_param('bycourse', false, PARAM_BOOL);
+
+// Deal with pagination.
+if ($perpage == 0) {
+    $page = 0;
+}
 
 $params = array();
 
@@ -71,6 +77,9 @@ if ($page) {
 if ($perpage) {
     $params['perpage'] = $perpage;
 }
+if ($bycourse) {
+    $params['bycourse'] = $bycourse;
+}
 if ($search) {
     $params['search'] = $search;
 }
@@ -83,7 +92,7 @@ if ($courses) {
         $params['courses['.$a.']'] = $b;
     }
 }
-$params['fistinitial'] = $ifirst;
+$params['firstinitial'] = $ifirst;
 $params['lastinitial'] = $ilast;
 $params['showexpiryonly'] = $showexpiryonly;
 if ($showsuspended) {
@@ -96,6 +105,8 @@ if ($dir == 'ASC') {
 }
 if ($sort == "name") {
     $sort = 'd.' . $sort;
+} else if ($sort == "fullname") {
+    $sort = 'c.' . $sort;
 } else {
     $sort = 'u.' . $sort;
 }
@@ -145,6 +156,16 @@ $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading($linktext);
 if (iomad::has_capability('local/report_completion:view', $companycontext)) {
+    $switchparams = $params;
+    $switchparams['bycourse'] = !$bycourse;
+    $switchlink = new moodle_url('/local/report_completion_overview/index.php', $switchparams);
+    if ($bycourse) {
+        $switchcaption = get_string('byusers', 'local_report_completion_overview');
+    } else {
+        $switchcaption = get_string('bycourses', 'local_report_completion_overview');
+    }
+    $buttons = $OUTPUT->single_button($switchlink, $switchcaption, 'get');
+
     if ($showtext) {
         $displaycaption = get_string('format_image', 'portfolio');
     } else {
@@ -153,7 +174,7 @@ if (iomad::has_capability('local/report_completion:view', $companycontext)) {
     $textparams = $params;
     $textparams['showtext'] = !$showtext;
     $displaylink = new moodle_url('/local/report_completion_overview/index.php', $textparams);
-    $buttons = $OUTPUT->single_button($displaylink, $displaycaption, 'get');
+    $buttons .= $OUTPUT->single_button($displaylink, $displaycaption, 'get');
     if ($showexpiryonly) {
         $displaycaption = get_string('showexpiry', 'local_report_completion_overview');
     } else {
@@ -166,6 +187,11 @@ if (iomad::has_capability('local/report_completion:view', $companycontext)) {
     $buttoncaption = get_string('pluginname', 'local_report_completion');
     $buttonlink = new moodle_url($CFG->wwwroot . "/local/report_completion/index.php");
     $buttons .= $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
+    $numberarray = [$CFG->iomad_max_list_users => get_string('defaultrows', 'block_iomad_company_admin'), 10 => 10, 25 => 25, 50 => 50, 0 => get_string('all')];
+    $perpageparams = $params;
+    unset($perpageparams['page']);
+    $perpagelink = new moodle_url('/local/report_completion_overview/index.php', $perpageparams);
+    $buttons .= "&nbsp" . $OUTPUT->single_select($perpagelink, 'perpage', $numberarray, $perpage, ['' => 'Number of rows']);
     $PAGE->set_button($buttons);
 }
 $PAGE->navbar->add($linktext, $linkurl);
@@ -201,16 +227,21 @@ $coursesform = new local_iomad\forms\course_select_form($linkurl, $params);
 
 // Deal with company courses and search.
 $allcompanycourses = $company->get_menu_courses(true, false, false, false, false);
+$courselistsql = "";
+if (!empty($allcompanycourses)) {
+    $courselistsql = " AND ic.courseid IN (" . implode(',', array_keys($allcompanycourses)) . ")";
+}
+if ($showexpiryonly) {
+    $courselistsql .= " AND ic.validlength > 0";
+}
 if (empty($courses)) {
-    $courses = array_keys($allcompanycourses);
+    $courses = $DB->get_records_sql("SELECT ic.courseid, c.fullname FROM {iomad_courses} ic
+                                                JOIN {course} c ON (ic.courseid = c.id)
+                                                WHERE 1=1 $courselistsql
+                                                ORDER BY c.fullname");
 }
 
-// Are we also showing detail on all courses?
-if ($showexpiryonly) {
-    $expirecourses = $DB->get_records_sql("SELECT courseid FROM {iomad_courses} WHERE validlength > 0");
-} else {
-    $expirecourses = $DB->get_records_sql("SELECT courseid FROM {iomad_courses} WHERE validlength IS NOT NULL");
-}
+$expirecourses = $courses;
 
 // Get courses where we don't show the grade.
 $gradelesscourses = $DB->get_records_sql("SELECT courseid FROM {iomad_courses} WHERE hasgrade = 0");
@@ -286,7 +317,7 @@ $currentdepartment = company::get_departmentbyid($departmentid);
 $showdepartments = company::get_subdepartments_list($currentdepartment);
 $showdepartments[$departmentid] = $departmentid;
 $departmentsql = " AND d.id IN (" . implode(',', array_keys($showdepartments)) . ")";
-$coursesql = " AND lit.courseid IN (" . implode (',', $courses) . ")";
+$coursesql = " AND lit.courseid IN (" . implode (',', array_keys($courses)) . ")";
 
 //Set up the SQL to get the users.
 $selectsql = "DISTINCT u.*";
@@ -294,7 +325,17 @@ $fromsql = " {user} u JOIN {company_users} cu ON (u.id = cu.userid) JOIN {depart
 
 // Set up the headers for the form.
 $sortparams = $params;
-$sortparams['sort'] = 'firstname';
+if (!$bycourse) {
+    $sortparams['sort'] = 'firstname';
+} else {
+    $sortparams['sort'] = 'fullname';
+}
+if ($sort == 'c.fullnamename') {
+    $sortparams['dir'] = $reversedir;
+} else {
+    $sortparams['dir'] = $dir;
+}
+$coursenamesort = new moodle_url($baseurl, $sortparams);
 if ($sort == 'u.firstname') {
     $sortparams['dir'] = $reversedir;
 } else {
@@ -319,7 +360,7 @@ if ($sort == 'u.email') {
 $emailsort = new moodle_url($baseurl, $sortparams);
 $sortparams = $params;
 $sortparams['sort'] = 'name';
-if ($sort == 'u.name') {
+if ($sort == 'd.name') {
     $sortparams['dir'] = $reversedir;
 } else {
     $sortparams['dir'] = $dir;
@@ -327,30 +368,44 @@ if ($sort == 'u.name') {
 $departmentsort = new moodle_url($baseurl, $sortparams);
 
 if (!$download) {
-    $headers = [html_writer::tag('a', get_string('firstname'), ['href' => $firstnamesort]) . '&nbsp/&nbsp' . html_writer::tag('a', get_string('lastname'), ['href' => $lastnamesort]),
-                get_string('department', 'block_iomad_company_admin'),
-                html_writer::tag('a', get_string('email'), ['href' => $emailsort])];
+    if (!$bycourse) {
+        $headers = [html_writer::tag('a', get_string('firstname'), ['href' => $firstnamesort]) . '&nbsp/&nbsp' . html_writer::tag('a', get_string('lastname'), ['href' => $lastnamesort]),
+                    get_string('department', 'block_iomad_company_admin'),
+                    html_writer::tag('a', get_string('email'), ['href' => $emailsort])];
+    } else {
+        $headers = [html_writer::tag('a', get_string('course'), ['href' => $coursenamesort])];
+    }
 } else {
-    $headers = [get_string('fullname'),
-                get_string('department', 'block_iomad_company_admin'),
-                get_string('email')];
+    if (!$bycourse) {
+        $headers = [get_string('fullname'),
+                    get_string('department', 'block_iomad_company_admin'),
+                    get_string('email')];
+    } else {
+        $headers = [get_string('course')];
+    }
 }
 
-$columns = array('fullname',
-                 'department',
-                 'email');
+if (!$bycourse) {
+    $columns = ['fullname',
+                'department',
+                'email'];
+} else {
+    $columns = ['course'];
+}
 
-foreach ($courses as $courseid) {
-    if (!$download) {
-        $headers[] = $allcompanycourses[$courseid];
-        $columns[] = "c" . $courseid . "coursename";
-    } else {
-        $headers[] = get_string('coursestatus', 'local_report_completion_overview', $allcompanycourses[$courseid]);
-        $columns[] = "c" . $courseid . "coursestatus";
-        $headers[] = get_string('coursecompletion', 'local_report_completion_overview', $allcompanycourses[$courseid]);
-        $columns[] = "c" . $courseid . "coursecompletion";
-        $headers[] = get_string('courseexpiry', 'local_report_completion_overview', $allcompanycourses[$courseid]);
-        $columns[] = "c" . $courseid . "courseexpiry";
+if (!$bycourse) {
+    foreach ($courses as $courseid => $junk) {
+        if (!$download) {
+            $headers[] = html_writer::tag('a', $allcompanycourses[$courseid], ['href' => new moodle_url($CFG->wwwroot . '/local/report_completion/index.php', ['courseid' => $courseid])]);
+            $columns[] = "c" . $courseid . "coursename";
+        } else {
+            $headers[] = get_string('coursestatus', 'local_report_completion_overview', $allcompanycourses[$courseid]);
+            $columns[] = "c" . $courseid . "coursestatus";
+            $headers[] = get_string('coursecompletion', 'local_report_completion_overview', $allcompanycourses[$courseid]);
+            $columns[] = "c" . $courseid . "coursecompletion";
+            $headers[] = get_string('courseexpiry', 'local_report_completion_overview', $allcompanycourses[$courseid]);
+            $columns[] = "c" . $courseid . "courseexpiry";
+        }
     }
 }
 
@@ -388,7 +443,11 @@ if (!empty($ilast)) {
     $ilastsort = " AND " . $DB->sql_like('u.lastname', ':ilast', false, false);
     $sqlparams['ilast'] = $ilast . "%";
 }
-$wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $ifirstsort $ilastsort ORDER BY $sort $dir";
+$usersort = $sort;
+if ($bycourse) {
+    $usersort = "u.lastname";
+}
+$wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $ifirstsort $ilastsort ORDER BY $usersort $dir";
 $countwheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $ifirstsort $ilastsort";
 $countsql = "SELECT COUNT(u.id) FROM $fromsql WHERE $countwheresql";
 
@@ -406,33 +465,122 @@ $coursedetailsql = "SELECT lit.*
                       FROM {local_iomad_track}
                       WHERE userid = lit.userid
                       AND courseid = lit.courseid)";
-foreach ($userlist as $userid => $user) {
-    $usercourses = [];
-    foreach ($courses as $courseid) {
-        if ($comprecord = $DB->get_record_sql($coursedetailsql, ['userid' => $userid, 'courseid' => $courseid])) {
-            $usercourses[$courseid] = $comprecord;
-        } else {
-            $usercourses[$courseid] = (object) ['coursename' => $allcompanycourses[$courseid],
-                                                'courseid' => $courseid,
-                                                'timestarted' => null,
-                                                'timeenrolled' => null,
-                                                'timecompleted' => null,
-                                                'timeexpires' => null,
-                                                'finalscore' => 0,
-                                                'userid' => $userid];
+if (!$bycourse) {
+    foreach ($userlist as $userid => $user) {
+        $usercourses = [];
+        foreach ($courses as $courseid => $junk) {
+            if ($comprecord = $DB->get_record_sql($coursedetailsql, ['userid' => $userid, 'courseid' => $courseid])) {
+                $comprecord->indate = false;
+                $comprecord->outdate = false;
+                $comprecord->lastcompleted = null;
+                $comprecord->timeexpired = null;
+                // Do we have an in-date record?
+                if ($indate = $DB->get_records_sql("SELECT * FROM {local_iomad_track}
+                                                    WHERE userid = :userid
+                                                    AND courseid = :courseid
+                                                    AND timecompleted > :time
+                                                    ORDER BY id DESC",
+                                                   ['userid' => $userid,
+                                                   'courseid' => $courseid,
+                                                   'time' => time()], 0, 1)) {
+                    $comprecord->indate = $indaterec->timeexpires;
+                    $indaterec = reset($indate);
+                    $comprecord->lastcompleted = $indaterec->timecompleted;
+                    $comprecord->timeexpires = $indaterec->timeexpires;
+                // Do we have an out-date record?
+                } else if ($outdate = $DB->get_records_sql("SELECT * FROM {local_iomad_track}
+                                                            WHERE userid = :userid
+                                                            AND courseid = :courseid
+                                                            AND timecompleted > 0
+                                                            ORDER BY id DESC",
+                                                           ['userid' => $userid,
+                                                            'courseid' => $courseid], 0, 1)) {
+                    $comprecord->outdate = true;
+                    $outdaterec = reset($outdate);
+                    $comprecord->lastcompleted = $outdaterec->timecompleted;
+                    $comprecord->timeexpired = $outdaterec->timeexpires;
+                }
+                $usercourses[$courseid] = $comprecord;
+            } else {
+                $usercourses[$courseid] = (object) ['coursename' => $allcompanycourses[$courseid],
+                                                    'courseid' => $courseid,
+                                                    'timestarted' => null,
+                                                    'timeenrolled' => null,
+                                                    'timecompleted' => null,
+                                                    'timeexpires' => null,
+                                                    'finalscore' => 0,
+                                                    'indate' => false,
+                                                    'outdate' => false,
+                                                    'userid' => $userid];
+            }
         }
+        $userlist[$userid]->coursedetails = $usercourses;
     }
-    $userlist[$userid]->coursedetails = $usercourses;
+} else {
+    foreach ($courses as $courseid => $junk) {
+        $courseusers = [];
+        foreach ($userlist as $userid => $user) {
+            if ($comprecord = $DB->get_record_sql($coursedetailsql, ['userid' => $userid, 'courseid' => $courseid])) {
+                $comprecord->indate = false;
+                $comprecord->outdate = false;
+                $comprecord->lastcompleted = null;
+                $comprecord->timeexpired = null;
+                // Do we have an in-date record?
+                if ($indate = $DB->get_records_sql("SELECT * FROM {local_iomad_track}
+                                                    WHERE userid = :userid
+                                                    AND courseid = :courseid
+                                                    AND timecompleted > :time
+                                                    ORDER BY id DESC",
+                                                   ['userid' => $userid,
+                                                   'courseid' => $courseid,
+                                                   'time' => time()], 0, 1)) {
+                    $comprecord->indate = $indaterec->timeexpires;
+                    $indaterec = reset($indate);
+                    $comprecord->lastcompleted = $indaterec->timecompleted;
+                    $comprecord->timeexpires = $indaterec->timeexpires;
+                // Do we have an out-date record?
+                } else if ($outdate = $DB->get_records_sql("SELECT * FROM {local_iomad_track}
+                                                            WHERE userid = :userid
+                                                            AND courseid = :courseid
+                                                            AND timecompleted > 0
+                                                            ORDER BY id DESC",
+                                                           ['userid' => $userid,
+                                                            'courseid' => $courseid], 0, 1)) {
+                    $comprecord->outdate = true;
+                    $outdaterec = reset($outdate);
+                    $comprecord->lastcompleted = $outdaterec->timecompleted;
+                    $comprecord->timeexpired = $outdaterec->timeexpires;
+                }
+                $coursesusers[$userid] = $comprecord;
+            } else {
+                $coursesusers[$userid] = (object) ['coursename' => $allcompanycourses[$courseid],
+                                                    'courseid' => $courseid,
+                                                    'timestarted' => null,
+                                                    'timeenrolled' => null,
+                                                    'timecompleted' => null,
+                                                    'timeexpires' => null,
+                                                    'finalscore' => 0,
+                                                    'indate' => false,
+                                                    'outdate' => false,
+                                                    'userid' => $userid];
+            }
+        }
+        $courses[$courseid]->userdetails = $coursesusers;
+    }
 }
 
 if (!$download) {
     $pagingurl = new moodle_url($baseurl, $params);
     echo $OUTPUT->initials_bar($ifirst, 'firstinitial', get_string('firstname'), 'firstinitial', $pagingurl);
     echo $OUTPUT->initials_bar($ilast, 'lastinitial', get_string('lastname'), 'lastinitial', $pagingurl);
-    echo $OUTPUT->paging_bar($usercount, $page, $perpage, $pagingurl);
     $downloadparams = $params;
     $downloadparams['download'] = true;
+    echo html_writer::start_tag("div", ['class' => 'displayflex']);
     echo $OUTPUT->download_dataformat_selector(get_string('downloadas', 'table'), $baseurl, 'downloadformat', $downloadparams);
+    echo html_writer::end_tag("div");
+    if ($perpage != 0) {
+        echo $OUTPUT->paging_bar($usercount, $page, $perpage, $pagingurl);
+    }
 }
 
 // Are we showing all detail or not?
@@ -440,118 +588,322 @@ $showfulldetails = get_config('local_report_completion_overview', 'showfulldetai
 
 // Set up the table. 
 $table = new html_table();
+
+// Class is different depending on which way around we are looking at this.
+if (!$bycourse) {
+    $table->attributes = ['class' => 'generaltable overviewbyuser'];
+}
 $table->head = $headers;
-foreach ($userlist as $user) {
-    $row = [fullname($user)];
-    $userdepartments = $DB->get_records_sql("SELECT d.name
-                                             FROM {department} d
-                                             JOIN {company_users} cu
-                                             ON d.id = cu.departmentid
-                                             WHERE cu.userid = :userid
-                                             AND cu.companyid = :companyid",
-                                             ['userid' => $user->id, 'companyid' => $companyid]);
-    $departmentinfo = "";
-    $count = count($userdepartments);
-    $current = 1;
-    if ($count > 5 && !$download) {
-        $departmentinfo .= "<details><summary>" . get_string('show') . "</summary>";
-    }
-    $first = true;
-    foreach ($userdepartments as $userdepartment) {
-        $departmentinfo .= format_string($userdepartment->name);
-        if ($current < $count) {
-            if (!$download) {
-                $departmentinfo .= ",<br>";
-            } else {
-                $departmentinfo .= ",\n";
-            }
-        }
-        $current++;
-    }
 
-    if ($count > 5) {
-        $departmentinfo .= "</details>";
-    }
-    $row[] = $departmentinfo;
-    $row[] = $user->email;
-    $runtime = time();
-    foreach ($user->coursedetails as $usercourse) {
-        $coursesummary = [];
-        if (empty($usercourse->timeenrolled)) {
-            $coursesummary['enrolled'] = get_string('never');
+if (!$bycourse) {
+    foreach ($userlist as $user) {
+        if (!$download) {
+            $row = [html_writer::tag("a", fullname($user), ['href' => new moodle_url($CFG->wwwroot . '/local/report_users/userdisplay.php', ['userid' => $user->id])])];
         } else {
-            $coursesummary['enrolled'] = date($CFG->iomad_date_format, $usercourse->timeenrolled);
+            $row = [fullname($user)];
         }
-        if (empty($usercourse->timestarted)) {
-            $coursesummary['timestarted'] = get_string('never');
-        } else {
-            $coursesummary['timestarted'] = date($CFG->iomad_date_format, $usercourse->timestarted);
+        $userdepartments = $DB->get_records_sql("SELECT d.name
+                                                 FROM {department} d
+                                                 JOIN {company_users} cu
+                                                 ON d.id = cu.departmentid
+                                                 WHERE cu.userid = :userid
+                                                 AND cu.companyid = :companyid",
+                                                 ['userid' => $user->id, 'companyid' => $companyid]);
+        $departmentinfo = "";
+        $count = count($userdepartments);
+        $current = 1;
+        if ($count > 5 && !$download) {
+            $departmentinfo .= "<details><summary>" . get_string('show') . "</summary>";
         }
-        if (empty($usercourse->timecompleted)) {
-            $coursesummary['timecompleted'] = get_string('never');
-        } else {
-            $coursesummary['timecompleted'] = date($CFG->iomad_date_format, $usercourse->timecompleted);
-        }
-        if (empty($usercourse->timeexpires)) {
-            $coursesummary['timeexpires'] = '';
-        } else {
-            $coursesummary['timeexpires'] = date($CFG->iomad_date_format, $usercourse->timeexpires);
-        }
-        $coursesummary['finalscore'] = $usercourse->finalscore;
-
-        // Make the extra info.
-        if (!$showfulldetails) {
-            $rowtext = get_string('coursesummary_partial', 'local_report_completion_overview', (object) $coursesummary);
-        } else {
-            if (!empty($expirecourses[$usercourse->courseid]) && empty($gradelesscourses[$usercourse->courseid])) {
-                $rowtext = get_string('coursesummary', 'local_report_completion_overview', (object) $coursesummary);
-            } else if (empty($expirecourses[$usercourse->courseid]) && empty($gradelesscourses[$usercourse->courseid])) {
-                $rowtext = get_string('coursesummary_noexpiry', 'local_report_completion_overview', (object) $coursesummary);
-            } else if (!empty($expirecourses[$usercourse->courseid]) && !empty($gradelesscourses[$usercourse->courseid])) {
-                $rowtext = get_string('coursesummary_nograde', 'local_report_completion_overview', (object) $coursesummary);
-            } else if (empty($expirecourses[$usercourse->courseid]) && !empty($gradelesscourses[$usercourse->courseid])) {
-                $rowtext = get_string('coursesummary_nograde_noexpiry', 'local_report_completion_overview', (object) $coursesummary);
-            }
-        }
-
-        // Set up the cell classes.
-        if (empty($expirecourses[$usercourse->courseid])) {
-            $rowclass = "ignored";
-            $statustext = "";
-        } else {
-            if (empty($usercourse->timeenrolled)) {
-                $rowclass = "notenrolled";
-            }
-            if (!empty($usercourse->timeenrolled) && empty($usercourse->timecompleted)) {
-                $rowclass = "notcompleted";
-            }
-            if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timeexpires > $runtime) {
-                $rowclass = "indate";
-            }
-            if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timeexpires < $runtime + get_config('local_report_completion_overview', 'warningduration')) {
-                $rowclass = "expiring";
-            }
-            if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timeexpires < $runtime) {
-                if (empty($usercourse->timeexpires)) {
-                    $rowclass = "indate";
+        $first = true;
+        foreach ($userdepartments as $userdepartment) {
+            $departmentinfo .= format_string($userdepartment->name);
+            if ($current < $count) {
+                if (!$download) {
+                    $departmentinfo .= ",<br>";
                 } else {
-                    $rowclass = "expired";
-                } 
+                    $departmentinfo .= ",\n";
+                }
             }
-            $statustext = get_string($rowclass, 'local_report_completion_overview');
+            $current++;
         }
 
-        if ($download) {
-            $row[] = $statustext;
-            $row[] = $coursesummary['timecompleted'];
-            $row[] = $coursesummary['timeexpires'];
-        } else if (!$showtext) {
-            $row[] = "<div class='completion_overview_icon' title='$rowtext'><span class='dot $rowclass'></span></div>";
-        } else { 
-            $row[] = "<span class='$rowclass'>" . nl2br($rowtext) . "</span>";
-        } 
+        if ($count > 5) {
+            $departmentinfo .= "</details>";
+        }
+        $row[] = $departmentinfo;
+        $row[] = $user->email;
+
+        $runtime = time();
+        foreach ($user->coursedetails as $usercourse) {
+            $coursesummary = [];
+            if (empty($usercourse->timeenrolled)) {
+                $coursesummary['enrolled'] = get_string('never');
+            } else {
+                $coursesummary['enrolled'] = date($CFG->iomad_date_format, $usercourse->timeenrolled);
+            }
+            if (empty($usercourse->timestarted)) {
+                $coursesummary['timestarted'] = get_string('never');
+            } else {
+                $coursesummary['timestarted'] = date($CFG->iomad_date_format, $usercourse->timestarted);
+            }
+            if (empty($usercourse->timecompleted)) {
+                $coursesummary['timecompleted'] = get_string('never');
+            } else {
+                $coursesummary['timecompleted'] = date($CFG->iomad_date_format, $usercourse->timecompleted);
+            }
+            if (empty($usercourse->lastcompleted)) {
+                $coursesummary['lastcompleted'] = get_string('never');
+            } else {
+                $coursesummary['lastcompleted'] = date($CFG->iomad_date_format, $usercourse->lastcompleted);
+            }
+            if (empty($usercourse->timeexpires)) {
+                $coursesummary['timeexpires'] = '';
+            } else {
+                $coursesummary['timeexpires'] = date($CFG->iomad_date_format, $usercourse->timeexpires);
+            }
+            if (empty($usercourse->timeexpired)) {
+                $coursesummary['timeexpired'] = '';
+            } else {
+                $coursesummary['timeexpired'] = date($CFG->iomad_date_format, $usercourse->timeexpired);
+            }
+            $coursesummary['finalscore'] = $usercourse->finalscore;
+
+            // Make the extra info.
+            if (!$showfulldetails) {
+                if (empty($coursesummary['timeexpired'])) {
+                    $rowtext = get_string('coursesummary_partial', 'local_report_completion_overview', (object) $coursesummary);
+                } else {
+                    if ($usercourse->timeexpired > $runtime) {
+                        $rowtext = get_string('coursesummary_partial_extra_indate', 'local_report_completion_overview', (object) $coursesummary);
+                    } else {
+                        $rowtext = get_string('coursesummary_partial_extra_outdate', 'local_report_completion_overview', (object) $coursesummary);
+                    }
+                }
+            } else {
+                if (!empty($expirecourses[$usercourse->courseid]) && empty($gradelesscourses[$usercourse->courseid])) {
+                    if (empty($coursesummary['timeexpired'])) {
+                        $rowtext = get_string('coursesummary', 'local_report_completion_overview', (object) $coursesummary);
+                    } else {
+                    if ($usercourse->timeexpired > $runtime) {
+                            $rowtext = get_string('coursesummary_extra_indate', 'local_report_completion_overview', (object) $coursesummary);
+                        } else {
+                            $rowtext = get_string('coursesummary_extra_outdate', 'local_report_completion_overview', (object) $coursesummary);
+                        }
+                    }
+                } else if (empty($expirecourses[$usercourse->courseid]) && empty($gradelesscourses[$usercourse->courseid])) {
+                    $rowtext = get_string('coursesummary_noexpiry', 'local_report_completion_overview', (object) $coursesummary);
+                } else if (!empty($expirecourses[$usercourse->courseid]) && !empty($gradelesscourses[$usercourse->courseid])) {
+                    $rowtext = get_string('coursesummary_nograde', 'local_report_completion_overview', (object) $coursesummary);
+                } else if (empty($expirecourses[$usercourse->courseid]) && !empty($gradelesscourses[$usercourse->courseid])) {
+                    $rowtext = get_string('coursesummary_nograde_noexpiry', 'local_report_completion_overview', (object) $coursesummary);
+                }
+            }
+
+            // Set up the cell classes.
+            if (empty($expirecourses[$usercourse->courseid])) {
+                $rowclass = "ignored";
+                $statustext = "";
+            } else {
+                if (empty($usercourse->timeenrolled)) {
+                    $rowclass = "notenrolled";
+                    if ($usercourse->indate) {
+                        if ($usercourse->indate > $runtime) {
+                            $rowclass .= "-indate";
+                        } else {
+                            $rowclass .= "-expiring";
+                        }
+                    }
+                    if ($usercourse->outdate) {
+                        $rowclass .= "-outdate";
+                    }
+                }
+                if (!empty($usercourse->timeenrolled) && empty($usercourse->timecompleted)) {
+                    $rowclass = "notcompleted";
+                    if ($usercourse->indate) {
+                        if ($usercourse->indate > $runtime) {
+                            $rowclass .= "-indate";
+                        } else {
+                            $rowclass .= "-expiring";
+                        }
+                    }
+                    if ($usercourse->outdate) {
+                        $rowclass .= "-outdate";
+                    }
+                }
+                if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timeexpires > $runtime) {
+                    $rowclass = "indate";
+                }
+                if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timeexpires < $runtime + get_config('local_report_completion_overview', 'warningduration')) {
+                    $rowclass = "expiring";
+                }
+                if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timeexpires < $runtime) {
+                    if (empty($usercourse->timeexpires)) {
+                        $rowclass = "indate";
+                    } else {
+                        $rowclass = "expired";
+                    } 
+                }
+                $statustext = get_string($rowclass, 'local_report_completion_overview');
+            }
+    
+            if ($download) {
+                $row[] = $statustext;
+                $row[] = $coursesummary['timecompleted'];
+                $row[] = $coursesummary['timeexpires'];
+            } else if (!$showtext) {
+                $row[] = "<div class='completion_overview_icon' title='$rowtext'><span class='dot $rowclass'></span></div>";
+            } else { 
+                $row[] = "<span>" . nl2br($rowtext) . "</span>";
+            } 
+        }
+        $table->data[] = $row;
     }
-    $table->data[] = $row;
+} else {
+    // Doing this by course instead.
+    foreach ($userlist as $user) {
+        if (!$download) {
+            $headers[] = html_writer::tag("a", fullname($user), ['href' => new moodle_url($CFG->wwwroot . '/local/report_users/userdisplay.php', ['userid' => $user->id])]);
+            $columns[] = "u" . $user->id;
+        } else {
+            $headers[] = fullname($user);
+            $columns[] = "u" . $user->id;
+        }
+    }
+
+    $table->head = $headers;
+            
+    foreach ($courses as $course) {
+        $runtime = time();
+        if (!$download) {
+            $row = [html_writer::tag("a", $course->fullname, ['href' => new moodle_url($CFG->wwwroot . '/local/report_completion/index.php', ['courseid' => $course->courseid])])];
+        } else {
+            $row = [$course->fullname];
+        }
+        foreach ($course->userdetails as $usercourse) {
+            $coursesummary = [];
+            if (empty($usercourse->timeenrolled)) {
+                $coursesummary['enrolled'] = get_string('never');
+            } else {
+                $coursesummary['enrolled'] = date($CFG->iomad_date_format, $usercourse->timeenrolled);
+            }
+            if (empty($usercourse->timestarted)) {
+                $coursesummary['timestarted'] = get_string('never');
+            } else {
+                $coursesummary['timestarted'] = date($CFG->iomad_date_format, $usercourse->timestarted);
+            }
+            if (empty($usercourse->timecompleted)) {
+                $coursesummary['timecompleted'] = get_string('never');
+            } else {
+                $coursesummary['timecompleted'] = date($CFG->iomad_date_format, $usercourse->timecompleted);
+            }
+            if (empty($usercourse->lastcompleted)) {
+                $coursesummary['lastcompleted'] = get_string('never');
+            } else {
+                $coursesummary['lastcompleted'] = date($CFG->iomad_date_format, $usercourse->lastcompleted);
+            }
+            if (empty($usercourse->timeexpires)) {
+                $coursesummary['timeexpires'] = '';
+            } else {
+                $coursesummary['timeexpires'] = date($CFG->iomad_date_format, $usercourse->timeexpires);
+            }
+            if (empty($usercourse->timeexpired)) {
+                $coursesummary['timeexpired'] = '';
+            } else {
+                $coursesummary['timeexpired'] = date($CFG->iomad_date_format, $usercourse->timeexpired);
+            }
+            $coursesummary['finalscore'] = $usercourse->finalscore;
+
+            // Make the extra info.
+            if (!$showfulldetails) {
+                if (empty($coursesummary['timeexpired'])) {
+                    $rowtext = get_string('coursesummary_partial', 'local_report_completion_overview', (object) $coursesummary);
+                } else {
+                    if ($usercourse->timeexpired > $runtime) {
+                        $rowtext = get_string('coursesummary_partial_extra_indate', 'local_report_completion_overview', (object) $coursesummary);
+                    } else {
+                        $rowtext = get_string('coursesummary_partial_extra_outdate', 'local_report_completion_overview', (object) $coursesummary);
+                    }
+                }
+            } else {
+                if (!empty($expirecourses[$usercourse->courseid]) && empty($gradelesscourses[$usercourse->courseid])) {
+                    if (empty($coursesummary['timeexpired'])) {
+                        $rowtext = get_string('coursesummary', 'local_report_completion_overview', (object) $coursesummary);
+                    } else {
+                    if ($usercourse->timeexpired > $runtime) {
+                            $rowtext = get_string('coursesummary_extra_indate', 'local_report_completion_overview', (object) $coursesummary);
+                        } else {
+                            $rowtext = get_string('coursesummary_extra_outdate', 'local_report_completion_overview', (object) $coursesummary);
+                        }
+                    }
+                } else if (empty($expirecourses[$usercourse->courseid]) && empty($gradelesscourses[$usercourse->courseid])) {
+                    $rowtext = get_string('coursesummary_noexpiry', 'local_report_completion_overview', (object) $coursesummary);
+                } else if (!empty($expirecourses[$usercourse->courseid]) && !empty($gradelesscourses[$usercourse->courseid])) {
+                    $rowtext = get_string('coursesummary_nograde', 'local_report_completion_overview', (object) $coursesummary);
+                } else if (empty($expirecourses[$usercourse->courseid]) && !empty($gradelesscourses[$usercourse->courseid])) {
+                    $rowtext = get_string('coursesummary_nograde_noexpiry', 'local_report_completion_overview', (object) $coursesummary);
+                }
+            }
+
+            // Set up the cell classes.
+            if (empty($expirecourses[$usercourse->courseid])) {
+                $rowclass = "ignored";
+                $statustext = "";
+            } else {
+                if (empty($usercourse->timeenrolled)) {
+                    $rowclass = "notenrolled";
+                    if ($usercourse->indate) {
+                        if ($usercourse->indate > $runtime) {
+                            $rowclass .= "-indate";
+                        } else {
+                            $rowclass .= "-expiring";
+                        }
+                    }
+                    if ($usercourse->outdate) {
+                        $rowclass .= "-outdate";
+                    }
+                }
+                if (!empty($usercourse->timeenrolled) && empty($usercourse->timecompleted)) {
+                    $rowclass = "notcompleted";
+                    if ($usercourse->indate) {
+                        if ($usercourse->indate > $runtime) {
+                            $rowclass .= "-indate";
+                        } else {
+                            $rowclass .= "-expiring";
+                        }
+                    }
+                    if ($usercourse->outdate) {
+                        $rowclass .= "-outdate";
+                    }
+                }
+                if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timeexpires > $runtime) {
+                    $rowclass = "indate";
+                }
+                if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timeexpires < $runtime + get_config('local_report_completion_overview', 'warningduration')) {
+                    $rowclass = "expiring";
+                }
+                if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timeexpires < $runtime) {
+                    if (empty($usercourse->timeexpires)) {
+                        $rowclass = "indate";
+                    } else {
+                        $rowclass = "expired";
+                    } 
+                }
+                $statustext = get_string($rowclass, 'local_report_completion_overview');
+            }
+    
+            if ($download) {
+                $row[] = $statustext;
+                $row[] = $coursesummary['timecompleted'];
+                $row[] = $coursesummary['timeexpires'];
+            } else if (!$showtext) {
+                $row[] = "<div class='completion_overview_icon' title='$rowtext'><span class='dot $rowclass'></span></div>";
+            } else { 
+                $row[] = "<span>" . nl2br($rowtext) . "</span>";
+            } 
+        }
+        $table->data[] = $row;
+    }
 }
 if (!$download) {
     echo html_writer::table($table);

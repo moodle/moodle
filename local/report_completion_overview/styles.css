@@ -10,8 +10,32 @@
   background-color: #bbb;
 }
 
+#page-local-report_completion_overview-index .notenrolled-outdate {
+  background: linear-gradient(to right, darkred 50%, #bbb 50%);
+}
+
+#page-local-report_completion_overview-index .notenrolled-indate {
+  background: linear-gradient(to right, darkgreen 50%, #bbb 50%);
+}
+
+#page-local-report_completion_overview-index .notenrolled-expiring {
+  background: linear-gradient(to right, darkorange 50%, #bbb 50%);
+}
+
 #page-local-report_completion_overview-index .notcompleted {
   background-color: darkblue;
+}
+
+#page-local-report_completion_overview-index .notcompleted-outdate {
+  background: linear-gradient(to right, darkred 50%, darkblue 50%);
+}
+
+#page-local-report_completion_overview-index .notcompleted-indate {
+  background: linear-gradient(to right, darkgreen 50%, darkblue 50%);
+}
+
+#page-local-report_completion_overview-index .notcompleted-expiring {
+  background: linear-gradient(to right, darkorange 50%, darkblue 50%);
 }
 
 #page-local-report_completion_overview-index .expired {
@@ -30,13 +54,32 @@
   background-color: white;
 }
 
+#page-local-report_completion_overview-index #region-main > div > div.table-responsive {
+    overflow-x: unset;
+}
+
+#page-local-report_completion_overview-index #region-main > div > div.table-responsive > table {
+    background-color: #fff;
+}
 #page-local-report_completion_overview-index th.header {
     writing-mode: vertical-lr;
+    position: sticky;
+    top:0;
+    background-color: #fff;
+    align-content: baseline;
+
+}
+
+#page-local-report_completion_overview-index .displayflex form {
+    display: ruby-text;
 }
 
 #page-local-report_completion_overview-index #region-main > div > div.table-responsive > table > thead > tr > th.header.c0,
-#page-local-report_completion_overview-index #region-main > div > div.table-responsive > table > thead > tr > th.header.c1,
-#page-local-report_completion_overview-index #region-main > div > div.table-responsive > table > thead > tr > th.header.c2 {
+#page-local-report_completion_overview-index #region-main > div > div.table-responsive > table.overviewbyuser > thead > tr > th.header.c1,
+#page-local-report_completion_overview-index #region-main > div > div.table-responsive > table.overviewbyuser > thead > tr > th.header.c2 {
     writing-mode: horizontal-tb !important;
+    align-content: end;
 }
+
+
 
