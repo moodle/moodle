@@ -488,6 +488,9 @@
             "simpledb",
             "solr"
         ],
+        "smsgateway": [
+            "aws"
+        ],
         "theme": [
             "boost",
             "classic"
