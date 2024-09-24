@@ -27,6 +27,8 @@ namespace core;
 
 use file_exception;
 use file_reference_exception;
+use file_storage;
+use file_system;
 use repository;
 use stored_file;
 use stored_file_creation_exception;
@@ -2213,6 +2215,158 @@ class file_storage_test extends \advanced_testcase {
         $this->assertEquals($hash2, $hash3);
     }
 
+    /**
+     * Test that the before_file_created hook has no impact if not called.
+     *
+     * @covers \core_files\hook\before_file_created
+     */
+    public function test_before_file_created_hook_executed_nochange(): void {
+        global $TESTCALLBACK; // phpcs:ignore moodle.NamingConventions.ValidVariableName.VariableNameLowerCase
+
+        $this->resetAfterTest(true);
+        $testdata = self::get_fixture_path('core_files', 'hook/before_file_created_hooks.php');
+
+        \core\di::set(
+            \core\hook\manager::class,
+            \core\hook\manager::phpunit_get_instance([]),
+        );
+
+        // Create a file.
+        $fs = get_file_storage();
+        $file = $fs->create_file_from_pathname(
+            (object) [
+                'contextid' => 1,
+                'component' => 'core',
+                'filearea' => 'phpunit',
+                'itemid' => 0,
+                'filepath' => '/',
+                'filename' => 'testfile.csv',
+            ],
+            $testdata,
+        );
+
+        // The content should have been updated.
+        $this->assertEquals(
+            file_get_contents($testdata),
+            $file->get_content(),
+        );
+
+        // The content hash should match the new content.
+        $this->assertEquals(
+            file_storage::hash_from_path($testdata),
+            $file->get_contenthash(),
+        );
+    }
+
+    /**
+     * Test that the before_file_created hook is called before a file is created.
+     *
+     * @covers \core_files\hook\before_file_created
+     */
+    public function test_before_file_created_hook_executed_filepath(): void {
+        global $TESTCALLBACK; // phpcs:ignore moodle.NamingConventions.ValidVariableName.VariableNameLowerCase
+
+        $this->resetAfterTest(true);
+        $testdata = self::get_fixture_path('core', 'tabfile.csv');
+
+        // The before_file_created test hook calls a callback function at TESTCALLBACK.
+        $TESTCALLBACK = function( // phpcs:ignore moodle.NamingConventions.ValidVariableName.VariableNameLowerCase
+            \core_files\hook\before_file_created $hook,
+        ) use ($testdata) {
+            if ($hook->get_filecontent() === '') {
+                return;
+            }
+            $hook->update_filepath($testdata);
+        };
+
+        \core\di::set(
+            \core\hook\manager::class,
+            \core\hook\manager::phpunit_get_instance([
+                'example' => self::get_fixture_path('core_files', 'hook/before_file_created_hooks.php'),
+            ]),
+        );
+
+        // Create a file.
+        $fs = get_file_storage();
+        $file = $fs->create_file_from_pathname(
+            (object) [
+                'contextid' => 1,
+                'component' => 'core',
+                'filearea' => 'phpunit',
+                'itemid' => 0,
+                'filepath' => '/',
+                'filename' => 'testfile.csv',
+            ],
+            self::get_fixture_path('core_files', 'hook/before_file_created_hooks.php'),
+        );
+
+        // The content should have been updated.
+        $this->assertEquals(
+            file_get_contents($testdata),
+            $file->get_content(),
+        );
+
+        // The content hash should match the new content.
+        $this->assertEquals(
+            file_storage::hash_from_path($testdata),
+            $file->get_contenthash(),
+        );
+    }
+
+    /**
+     * Test that the before_file_created hook is called before a file is created with content.
+     *
+     * @covers \core_files\hook\before_file_created
+     */
+    public function test_before_file_created_hook_executed_filecontent(): void {
+        global $TESTCALLBACK; // phpcs:ignore moodle.NamingConventions.ValidVariableName.VariableNameLowerCase
+
+        $this->resetAfterTest(true);
+        $testdata = 'New content';
+
+        // The before_file_created test hook calls a callback function at TESTCALLBACK.
+        $TESTCALLBACK = function( // phpcs:ignore moodle.NamingConventions.ValidVariableName.VariableNameLowerCase
+            \core_files\hook\before_file_created $hook,
+        ) use ($testdata) {
+            if ($hook->get_filecontent() === '') {
+                return;
+            }
+            $hook->update_filecontent($testdata);
+        };
+
+        \core\di::set(
+            \core\hook\manager::class,
+            \core\hook\manager::phpunit_get_instance([
+                'example' => self::get_fixture_path('core_files', 'hook/before_file_created_hooks.php'),
+            ]),
+        );
+
+        // Create a file.
+        $fs = get_file_storage();
+        $file = $fs->create_file_from_string(
+            (object) [
+                'contextid' => 1,
+                'component' => 'core',
+                'filearea' => 'phpunit',
+                'itemid' => 0,
+                'filepath' => '/',
+                'filename' => 'testfile.csv',
+            ],
+            'Original content',
+        );
+
+        // The content should have been updated.
+        $this->assertEquals(
+            $testdata,
+            $file->get_content(),
+        );
+
+        // The content hash should match the new content.
+        $this->assertEquals(
+            file_storage::hash_from_string($testdata),
+            $file->get_contenthash(),
+        );
+    }
 }
 
 class test_stored_file_inspection extends stored_file {

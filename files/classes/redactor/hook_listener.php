@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\fileredact;
+namespace core_files\redactor;
 
-use core\hook\filestorage\after_file_created;
+use core_files\hook\before_file_created;
 
 /**
  * Allow the plugin to call as soon as possible before the file is created.
@@ -27,20 +27,37 @@ use core\hook\filestorage\after_file_created;
  */
 class hook_listener {
     /**
-     * Execute the available services after creating the file.
+     * Execute the before_file_created hook listener for file redaction.
      *
-     * @param after_file_created $hook
+     * @param before_file_created $hook
      */
-    public static function redact_after_file_created(after_file_created $hook): void {
-        $storedfile = $hook->storedfile;
-
+    public static function file_redaction_handler(before_file_created $hook): void {
         // The file mime-type must be present. Otherwise, bypass the process.
-        if (empty($storedfile->get_mimetype())) {
+        if (empty($hook->get_filerecord()) || empty($hook->get_filerecord()->mimetype)) {
             return;
         }
 
-        $manager = new manager($storedfile);
-        $manager->execute();
+        $manager = \core\di::get(manager::class);
+
+        if ($hook->has_filepath()) {
+            $file = $manager->redact_file(
+                $hook->get_filerecord()->mimetype,
+                $hook->get_filepath(),
+            );
+
+            if ($file !== null) {
+                $hook->update_filepath($file);
+            }
+        } else {
+            $data = $manager->redact_file_content(
+                $hook->get_filerecord()->mimetype,
+                $hook->get_filecontent(),
+            );
+
+            if ($data !== null) {
+                $hook->update_filecontent($data);
+            }
+        }
 
         // Iterates through the errors returned by the manager and outputs each error message.
         foreach ($manager->get_errors() as $e) {
