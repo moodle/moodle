@@ -2,7 +2,7 @@ issueNumber: MDL-81610
 notes:
   core_courseformat:
     - message: >
-        The constructor of `core_courseformat\output\local\state\cm` has been updated to accept a new optional parameter, `$istrackeduser`.
+        The constructor of `\core_courseformat\output\local\state\cm` has been updated to accept a new optional parameter, `$istrackeduser`.
 
         If `istrackeduser` is pre-computed for the course module's course, it can be provided here to avoid an additional function call.
       type: improved

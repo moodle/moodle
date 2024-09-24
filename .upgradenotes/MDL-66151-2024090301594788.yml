@@ -2,14 +2,18 @@ issueNumber: MDL-66151
 notes:
   core_role:
     - message: |
-        Move all session management to the \core\session\manager class.
-        This removes the dependancy to use the "sessions" table.
-        Session management plugins (like redis) now need to inherit
-        the base \core\session\handler class which implements
-        SessionHandlerInterface and override methods as required.
-        The following methods in \core\session\manager have been deprecated:
-        * kill_all_sessions use destroy_all instead
-        * kill_session use destroy instead
-        * kill_sessions_for_auth_plugin use destroy_by_auth_plugin instead
-        * kill_user_sessions use destroy_user_sessions instead
+        All session management hsa been moved to the `\core\session\manager` class.
+        This removes the dependancy to use the `sessions` table.
+
+        Session management plugins (like Redis) should now inherit
+        the base `\core\session\handler` class, which implements
+        `SessionHandlerInterface`, and override methods as required.
+
+        The following methods in `\core\session\manager` have been deprecated:
+        | Old method name | New method name |
+        | --- | --- |
+        | `kill_all_sessions` | `destroy_all` |
+        | `kill_session` | `destroy` |
+        | `kill_sessions_for_auth_plugin` | `destroy_by_auth_plugin` |
+        | `kill_user_sessions` | `destroy_user_sessions` |
       type: improved

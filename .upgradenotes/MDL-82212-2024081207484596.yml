@@ -3,5 +3,5 @@ notes:
   tool_behat:
     - message: >-
         Behat tests are now checking for deprecated icons. This check can be
-        disabled by using the --no-icon-deprecations option in the behat CLI.
+        disabled by using the `--no-icon-deprecations` option in the behat CLI.
       type: improved

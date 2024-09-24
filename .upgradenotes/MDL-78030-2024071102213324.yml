@@ -5,7 +5,9 @@ notes:
         Two new functions have been introduced in the \moodle_database class:
         - `get_counted_records_sql()`
         - `get_counted_recordset_sql()`
+
         These methods are compatible with all databases.
+
         They will check the current running database engine and apply the COUNT window function if it is supported,
         otherwise, they will use the usual COUNT function.
 
@@ -13,6 +15,7 @@ notes:
         - PostgreSQL
         - MariaDB
         - Oracle
-        MySQL and SQL Server do not use this optimization due to insignificant performance differences before and
+
+        Note: MySQL and SQL Server do not use this optimization due to insignificant performance differences before and
         after the improvement.
       type: improved
