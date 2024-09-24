@@ -16,7 +16,8 @@
 import yaml from 'js-yaml';
 import path from 'path';
 import { writeFile, mkdir, readdir, readFile, unlink } from 'fs/promises';
-import { isValidNoteName } from './noteTypes.mjs';
+import { isValidNoteName, sortNoteTypes } from './noteTypes.mjs';
+import { sortComponents } from './components.mjs';
 
 const unreleasedPath = path.resolve('.upgradenotes');
 
@@ -164,7 +165,17 @@ export const getCombinedNotesByComponent = async () => {
         });
     });
 
-    return combinedNotes;
+    // Sort notes by note type.
+    Object.entries(combinedNotes).forEach(([component, types]) => {
+        combinedNotes[component] = Object.fromEntries(
+            Object.entries(types).sort(([a], [b]) => sortNoteTypes(a, b))
+        );
+    });
+
+    // Sort components.
+    return Object.fromEntries(
+        Object.entries(combinedNotes).sort(([a], [b]) => sortComponents(a, b))
+    );
 };
 
 /**
