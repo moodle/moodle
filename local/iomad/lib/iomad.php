@@ -565,6 +565,92 @@ class iomad {
 
     /**
      * IOMAD:
+     * Add in potential courses for the current user
+     * so they can see the calendar events in their calendar
+     * @param array $courses list of courses objects
+     * @return array filtered list of courses
+     */
+    public static function add_calendar_trainingevent_courses( $courses ) {
+        global $DB, $USER;
+
+        $context = context_system::instance();
+        $companyid = self::get_my_companyid($context);
+
+        if (!empty($companyid)) {
+            $companyselfenrolcourses = $DB->get_records_sql("SELECT DISTINCT c.id,c.category,c.sortorder,c.shortname,c.fullname,c.idnumber,c.startdate,c.defaultgroupingid,c.groupmodeforce,c.groupmode, c.visible
+                                                             FROM {enrol} e
+                                                             JOIN {course} c ON (e.courseid = c.id)
+                                                             JOIN {trainingevent} t ON (c.id = t.course and e.courseid = t.course)
+                                                             WHERE e.enrol = :enrol
+                                                             AND e.status = 0
+                                                             AND c.id IN (
+                                                               SELECT courseid FROM {company_course}
+                                                               WHERE companyid = :companyid)",
+                                                             array('companyid' => $companyid,
+                                                                   'enrol' => 'self'));
+
+            // Add them.
+            foreach ($companyselfenrolcourses as $course) {
+                $courses[$course->id] = $course;
+            }
+            $sharedselfenrolcourses = $DB->get_records_sql("SELECT DISTINCT c.id,c.category,c.sortorder,c.shortname,c.fullname,c.idnumber,c.startdate,c.defaultgroupingid,c.groupmodeforce,c.groupmode, c.visible
+                                                            FROM {enrol} e
+                                                            JOIN {course} c ON (e.courseid = c.id)
+                                                            JOIN {trainingevent} t ON (c.id = t.course and e.courseid = t.course)
+                                                            WHERE e.enrol = :enrol
+                                                             AND e.status = 0
+                                                             AND c.id IN (
+                                                               SELECT courseid FROM {iomad_courses}
+                                                               WHERE shared = 1)",
+                                                            array('enrol' => 'self'));
+            // Add them.
+            foreach ($sharedselfenrolcourses as $course) {
+                $courses[$course->id] = $course;
+            }
+
+            // Check if there are any courses from 'blanket' licenses.
+            if ($blanketlicenses = $DB->get_records_sql("SELECT * FROM {companylicense}
+                                                         WHERE companyid = :companyid
+                                                         AND type = :type
+                                                         AND startdate < :startdate
+                                                         AND expirydate > :expirydate",
+                                                        ['companyid' => $companyid, 'type' => 4, 'startdate' => time(), 'expirydate' => time()])) {
+                $blanketcourses = [];
+                foreach ($blanketlicenses as $blanketlicense) {
+                    $licensecourses = $DB->get_records_sql("SELECT DISTINCT c.id,c.category,c.sortorder,c.shortname,c.fullname,c.idnumber,c.startdate,c.defaultgroupingid,c.groupmodeforce,c.groupmode, c.visible
+                                                            FROM {course} c
+                                                            JOIN {companylicense_courses} clc on (c.id = clc.courseid)
+                                                            JOIN {trainingevent} t ON (c.id = t.course and clc.courseid = t.course)
+                                                            WHERE clc.licenseid = :licenseid",
+                                                            ['licenseid' => $blanketlicense->id]);
+                    // Add them.
+                    foreach ($licensecourses as $course) {
+                        $courses[$course->id] = $course;
+                    }
+                }
+            }
+
+            // Check for any unused license courses.
+            $mynotstartedlicense = $DB->get_records_sql("SELECT  DISTINCT c.id,c.category,c.sortorder,c.shortname,c.fullname,c.idnumber,c.startdate,c.defaultgroupingid,c.groupmodeforce,c.groupmode, c.visible
+                                                  FROM {companylicense_users} clu
+                                                  JOIN {course} c ON (c.id = clu.licensecourseid)
+                                                  JOIN {trainingevent} t ON (c.id = t.course and clu.licensecourseid = t.course)
+                                                  WHERE clu.userid = :userid
+                                                  AND clu.isusing = 0",
+                                                  ['userid' => $USER->id,
+                                                   'companyid' => $companyid]);
+
+            // Add them.
+            foreach ($mynotstartedlicense as $course) {
+                $courses[$course->id] = $course;
+            }
+        }
+
+        return $courses;
+    }
+
+    /**
+     * IOMAD:
      * Filter objects to only show 'company' objects for the
      * current user. All other pass through as normal
      * @param array $objects list of competency objects

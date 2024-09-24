@@ -33,6 +33,7 @@ $attending = optional_param('attending', null, PARAM_ALPHA);
 $view = optional_param('view', 0, PARAM_INTEGER);
 $waitingoption = optional_param('waiting', 0, PARAM_INTEGER);
 $publish = optional_param('publish', 0, PARAM_INTEGER);
+$remove = optional_param('remove', false, PARAM_BOOL);
 $download = optional_param('download', 0, PARAM_CLEAN);
 $exportcalendar = optional_param('exportcalendar', null, PARAM_CLEAN);
 $userid = optional_param('userid', 0, PARAM_INTEGER);
@@ -70,12 +71,11 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
     } else {
 
         // Page stuff.
-        $url = new moodle_url('/course/view.php', array('id' => $event->course));
-        $context = context_course::instance($event->course);
-        require_login($event->course); // Adds to $PAGE, creates $OUTPUT.
+        $url = new moodle_url('/mod/trainingevent/view.php', array('id' => $id));
+        $context = context_module::instance($cm->id);
+        require_login($event->course, false, $cm); // Adds to $PAGE, creates $OUTPUT.
         $PAGE->set_url($url);
         $PAGE->set_title($event->name);
-        $PAGE->set_context(context_module::instance($id));
 
         // Get the associated department id.
         $companyid = iomad::get_my_companyid($systemcontext);
@@ -1077,30 +1077,47 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
         // Are we sending out emails?
         if (!empty($publish)) {
-
-            echo $OUTPUT->header();
-            echo "<h2>".get_string('sendingemails', 'trainingevent')."</h2>";
-            $course = $DB->get_record('course', array('id' => $event->course));
-            $course->url = new moodle_url('course/view.php', array('id' => $course->id));
-            $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
-            if ($waitingoption) {
-                $waiting = (array) $DB->get_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 1));
-                $waitinglist = array_map(function($training_user) {return array('user' => $training_user->userid);}, $waiting);
-
-                EmailTemplate::send('advertise_classroom_based_course',
-                                    array('course' => $course,
-                                    'classroom' => $location,
-                                    'event' => $event),
-                                    $waitinglist);
-            } else {
-                EmailTemplate::send_to_all_users_in_department($departmentid,
-                                                            'advertise_classroom_based_course',
-                                                            array('course' => $course,
-                                                            'classroom' => $location,
-                                                            'event' => $event));
-                redirect("$CFG->wwwroot/mod/trainingevent/view.php?id=$id", get_string('emailssent', 'trainingevent'));
+            if (!$remove &&
+                !$DB->get_record('event', ['courseid' => $course->id,
+                                          'eventtype' => 'trainingevent',
+                                          'modulename' => 'trainingevent',
+                                          'instance' => $event->id])) {
+                // Add to the course calendar.
+                $calendarevent = new stdClass();
+                $calendarevent->eventtype = 'trainingevent';
+                $calendarevent->type = CALENDAR_EVENT_TYPE_ACTION; // This is used for events we only want to display on the calendar, and are not needed on the block_myoverview.
+                $calendarevent->name = get_string('publishedtitle', 'trainingevent', (object) ['coursename' => format_string($course->fullname), 'eventname' => format_string($event->name)]);
+                $calendarevent->description = format_module_intro('trainingevent', $event, $cmidinfo->id, false);
+                $calendarevent->format = FORMAT_HTML;
+                $eventlocation = format_string($location->name);
+                if (!empty($location->address)) {
+                    $eventlocation .= ", " . format_string($location->address);
+                }
+                if (!empty($location->city)) {
+                    $eventlocation .= ", " . format_string($location->city);
+                }
+                if (!empty($location->country)) {
+                    $eventlocation .= ", " . format_string($location->country);
+                }
+                if (!empty($location->postcode)) {
+                    $eventlocation .= ", " . format_string($location->postcode);
+                }
+                $calendarevent->location = $eventlocation; 
+                $calendarevent->courseid = $course->id;
+                $calendarevent->modulename = 'trainingevent';
+                $calendarevent->instance = $event->id;
+                $calendarevent->timestart = $event->startdatetime;
+                $calendarevent->visible = instance_is_visible('trainingevent', $event);
+                $calendarevent->timeduration = $event->enddatetime - $event->startdatetime;
+    
+                calendar_event::create($calendarevent, false);
             }
-            die;
+            if ($remove) {
+                $DB->delete_records('event', ['courseid' => $course->id,
+                                              'eventtype' => 'trainingevent',
+                                              'modulename' => 'trainingevent',
+                                              'instance' => $event->id]);
+            }
         }
 
         // Get the current number booked on it.
@@ -1112,17 +1129,21 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         }
         $eventtable .= "<table><tr>";
         if (has_capability('mod/trainingevent:invite', $context)) {
+            $publishparams = ['id' => $id,
+                              'publish' => 1];
+
+            if ($DB->get_record('event', ['courseid' => $course->id,
+                                          'eventtype' => 'trainingevent',
+                                          'modulename' => 'trainingevent',
+                                          'instance' => $event->id])) {
+                $publishparams['remove'] = true;
+                $publishstring = get_string('unpublish', 'trainingevent');
+            } else {
+                $publishstring = get_string('publish', 'trainingevent');
+            }
             $eventtable .= "<td>".$OUTPUT->single_button(new moodle_url($CFG->wwwroot . '/mod/trainingevent/view.php',
-                                                         array('id' => $id,
-                                                               'publish' => 1)),
-                                                         get_string('publish', 'trainingevent')). "</td>";
-        }
-        if (has_capability('mod/trainingevent:invite', $context) && !empty($event->haswaitinglist)) {
-            $eventtable .= "<td>".$OUTPUT->single_button(new moodle_url($CFG->wwwroot . '/mod/trainingevent/view.php',
-                                                         array('id' => $id,
-                                                               'publish' => 1,
-                                                               'waiting' => 1)),
-                                                         get_string('publishwaitlist', 'trainingevent')). "</td>";
+                                                         $publishparams),
+                                                         $publishstring). "</td>";
         }
         if (has_capability('mod/trainingevent:viewattendees', $context)) {
             $eventtable .= "<td>".$OUTPUT->single_button(new moodle_url($CFG->wwwroot . '/mod/trainingevent/view.php',

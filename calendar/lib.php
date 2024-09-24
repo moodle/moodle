@@ -2480,6 +2480,9 @@ function calendar_get_default_courses($courseid = null, $fields = '*', $canmanag
         $courses = enrol_get_users_courses($userid, true, $fields, 'c.shortname');
     }
 
+    // IOMAD - add in courses which are available to the user.
+    $courses = iomad::add_calendar_trainingevent_courses( $courses );
+
     if ($courseid && $courseid != SITEID) {
         if (empty($courses[$courseid]) && has_capability('moodle/calendar:manageentries', context_system::instance(), $userid)) {
             // Allow a site admin to see calendars from courses he is not enrolled in.
