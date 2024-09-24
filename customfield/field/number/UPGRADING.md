@@ -15,4 +15,3 @@
   automatically calculated number course custom fields.
 
   For more information see [MDL-82715](https://tracker.moodle.org/browse/MDL-82715)
-

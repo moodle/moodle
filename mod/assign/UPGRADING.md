@@ -45,6 +45,9 @@
 - Method assign_grading_table::col_userid has been deprecated.
 
   For more information see [MDL-82295](https://tracker.moodle.org/browse/MDL-82295)
+- The method process_save_grading_options() has been deprecated as it is no longer used.
+
+  For more information see [MDL-82681](https://tracker.moodle.org/browse/MDL-82681)
 - The mod_assign_grading_options_form class has been deprecated since it is no longer used.
 
   For more information see [MDL-82857](https://tracker.moodle.org/browse/MDL-82857)

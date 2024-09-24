@@ -26,6 +26,9 @@
 - Remove deprecation layer for YUI Events. The deprecation layer was introduced with MDL-70990 and MDL-72291.
 
   For more information see [MDL-77167](https://tracker.moodle.org/browse/MDL-77167)
+- The following test classes are removed as their base classes are deprecated: - admin_settings_aws_region_test (lib/tests/aws/admin_settings_aws_region_test.php) - aws_helper_test (lib/tests/aws/aws_helper_test.php)
+
+  For more information see [MDL-80962](https://tracker.moodle.org/browse/MDL-80962)
 
 ### Deprecated
 
@@ -45,6 +48,9 @@
 - Deprecate timeout in navigation_cache constructor and clean up unused properties
 
   For more information see [MDL-79628](https://tracker.moodle.org/browse/MDL-79628)
+- The following classes are deprecated as they are handled by core_sms API and smsgateway_aws plugin: - admin_settings_aws_region (lib/classes/aws/admin_settings_aws_region.php) - aws_helper (lib/classes/aws/aws_helper.php) - client_factory (lib/classes/aws/client_factory.php)
+
+  For more information see [MDL-80962](https://tracker.moodle.org/browse/MDL-80962)
 - The following methods have been deprecated, existing usage should switch to secure `\core\encryption` library:
   - `rc4encrypt`
   - `rc4decrypt`
@@ -81,6 +87,15 @@
 - The global_navigation::load_section_activities method is now deprecated and replaced by global_navigation::load_section_activities_navigation.
 
   For more information see [MDL-82845](https://tracker.moodle.org/browse/MDL-82845)
+- The following renderer methods have been deprecated from the core renderer:
+  | method                              | replacement                          |
+  | ---                                 | ---                                  |
+  | `render_action_menu_link`           | `render_action_menu__link`           |
+  | `render_action_menu_link_primary`   | `render_action_menu__link_primary`   |
+  | `render_action_menu_link_secondary` | `render_action_menu__link_secondary` |
+  | `render_action_menu_filler`         | `render_action_menu__filler`         |
+
+  For more information see [MDL-83164](https://tracker.moodle.org/browse/MDL-83164)
 
 ### Added
 
@@ -280,6 +295,17 @@
 - The section_info class now includes a new method called get_sequence_cm_infos that retrieves all cm_info instances associated with the course section.
 
   For more information see [MDL-82845](https://tracker.moodle.org/browse/MDL-82845)
+- When rendering a renderable located within a namespace, the namespace will now be included in the renderer method name with double-underscores separating the namespace parts.
+  Note: Only those renderables within an `output` namespace will be considered, for example `\core\output\action_menu\link` and only the parts of the namespace after `output` will be included.
+  The following are examples of the new behaviour:
+  | Renderable name                         | Renderer method name               |
+  | ---                                     | ---                                |
+  | `\core\output\action_menu\link`         | `render_action_menu__link`         |
+  | `\core\output\action_menu\link_primary` | `render_action_menu__link_primary` |
+  | `\core\output\action\menu\link`         | `render_action__menu__link`        |
+  | `\core\output\user_menu\link`           | `render_user_menu__link`           |
+
+  For more information see [MDL-83164](https://tracker.moodle.org/browse/MDL-83164)
 
 ### Fixed
 

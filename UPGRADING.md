@@ -72,6 +72,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Remove deprecation layer for YUI Events. The deprecation layer was introduced with MDL-70990 and MDL-72291.
 
   For more information see [MDL-77167](https://tracker.moodle.org/browse/MDL-77167)
+- The following test classes are removed as their base classes are deprecated: - admin_settings_aws_region_test (lib/tests/aws/admin_settings_aws_region_test.php) - aws_helper_test (lib/tests/aws/aws_helper_test.php)
+
+  For more information see [MDL-80962](https://tracker.moodle.org/browse/MDL-80962)
 
 #### Deprecated
 
@@ -91,6 +94,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Deprecate timeout in navigation_cache constructor and clean up unused properties
 
   For more information see [MDL-79628](https://tracker.moodle.org/browse/MDL-79628)
+- The following classes are deprecated as they are handled by core_sms API and smsgateway_aws plugin: - admin_settings_aws_region (lib/classes/aws/admin_settings_aws_region.php) - aws_helper (lib/classes/aws/aws_helper.php) - client_factory (lib/classes/aws/client_factory.php)
+
+  For more information see [MDL-80962](https://tracker.moodle.org/browse/MDL-80962)
 - The following methods have been deprecated, existing usage should switch to secure `\core\encryption` library:
   - `rc4encrypt`
   - `rc4decrypt`
@@ -127,6 +133,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The global_navigation::load_section_activities method is now deprecated and replaced by global_navigation::load_section_activities_navigation.
 
   For more information see [MDL-82845](https://tracker.moodle.org/browse/MDL-82845)
+- The following renderer methods have been deprecated from the core renderer:
+  | method                              | replacement                          |
+  | ---                                 | ---                                  |
+  | `render_action_menu_link`           | `render_action_menu__link`           |
+  | `render_action_menu_link_primary`   | `render_action_menu__link_primary`   |
+  | `render_action_menu_link_secondary` | `render_action_menu__link_secondary` |
+  | `render_action_menu_filler`         | `render_action_menu__filler`         |
+
+  For more information see [MDL-83164](https://tracker.moodle.org/browse/MDL-83164)
 
 #### Added
 
@@ -326,6 +341,17 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The section_info class now includes a new method called get_sequence_cm_infos that retrieves all cm_info instances associated with the course section.
 
   For more information see [MDL-82845](https://tracker.moodle.org/browse/MDL-82845)
+- When rendering a renderable located within a namespace, the namespace will now be included in the renderer method name with double-underscores separating the namespace parts.
+  Note: Only those renderables within an `output` namespace will be considered, for example `\core\output\action_menu\link` and only the parts of the namespace after `output` will be included.
+  The following are examples of the new behaviour:
+  | Renderable name                         | Renderer method name               |
+  | ---                                     | ---                                |
+  | `\core\output\action_menu\link`         | `render_action_menu__link`         |
+  | `\core\output\action_menu\link_primary` | `render_action_menu__link_primary` |
+  | `\core\output\action\menu\link`         | `render_action__menu__link`        |
+  | `\core\output\user_menu\link`           | `render_user_menu__link`           |
+
+  For more information see [MDL-83164](https://tracker.moodle.org/browse/MDL-83164)
 
 #### Fixed
 
@@ -465,6 +491,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Method assign_grading_table::col_userid has been deprecated.
 
   For more information see [MDL-82295](https://tracker.moodle.org/browse/MDL-82295)
+- The method process_save_grading_options() has been deprecated as it is no longer used.
+
+  For more information see [MDL-82681](https://tracker.moodle.org/browse/MDL-82681)
 - The mod_assign_grading_options_form class has been deprecated since it is no longer used.
 
   For more information see [MDL-82857](https://tracker.moodle.org/browse/MDL-82857)
@@ -814,6 +843,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-82567](https://tracker.moodle.org/browse/MDL-82567)
 
+### factor_sms
+
+#### Removed
+
+- The following classes are removed as the SMS feature now takes advantage of core_sms API: - sms_sent (admin/tool/mfa/factor/sms/classes/event/sms_sent.php) - aws_sns (admin/tool/mfa/factor/sms/classes/local/smsgateway/aws_sns.php) - gateway_interface (admin/tool/mfa/factor/sms/classes/local/smsgateway/gateway_interface.php)
+
+  For more information see [MDL-80962](https://tracker.moodle.org/browse/MDL-80962)
+
 ### mod_data
 
 #### Added
@@ -936,6 +973,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The base class `info::get_groups` method has a `$userid` parameter to specify for which user you want to retrieve course groups (defaults to current user)
 
   For more information see [MDL-81850](https://tracker.moodle.org/browse/MDL-81850)
+
+### core_sms
+
+#### Added
+
+- A new `\core_sms` subsystem has been created
+
+  For more information see [MDL-81924](https://tracker.moodle.org/browse/MDL-81924)
 
 ### core_communication
 
