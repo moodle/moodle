@@ -273,27 +273,55 @@ class redis extends handler implements SessionHandlerInterface {
             // Make a connection to Redis server(s).
             try {
                 // Create a $redis object of a RedisCluster or Redis class.
+                $phpredisversion = phpversion('redis');
                 if ($this->clustermode) {
-                    $this->connection = new \RedisCluster(
-                        name: null,
-                        seeds: $trimmedservers,
-                        timeout: self::CONNECTION_TIMEOUT, // Timeout.
-                        readTimeout: self::CONNECTION_TIMEOUT, // Read timeout.
-                        persistent: true,
-                        auth: $this->auth,
-                        context: !empty($opts) ? $opts : null,
-                    );
+                    if (version_compare($phpredisversion, '6.0.0', '>=')) {
+                        // Named parameters are fully supported starting from version 6.0.0.
+                        $this->connection = new \RedisCluster(
+                            name: null,
+                            seeds: $trimmedservers,
+                            timeout: self::CONNECTION_TIMEOUT, // Timeout.
+                            read_timeout: self::CONNECTION_TIMEOUT, // Read timeout.
+                            persistent: true,
+                            auth: $this->auth,
+                            context: !empty($opts) ? $opts : null,
+                        );
+                    } else {
+                        $this->connection = new \RedisCluster(
+                            null,
+                            $trimmedservers,
+                            self::CONNECTION_TIMEOUT,
+                            self::CONNECTION_TIMEOUT,
+                            true,
+                            $this->auth,
+                            !empty($opts) ? $opts : null
+                        );
+                    }
                 } else {
                     $delay = rand(100, 500);
                     $this->connection = new \Redis();
-                    $this->connection->connect(
-                        host: $server,
-                        port: $port,
-                        timeout: self::CONNECTION_TIMEOUT, // Timeout.
-                        retry_interval: $delay,
-                        read_timeout: self::CONNECTION_TIMEOUT, // Read timeout.
-                        context: $opts,
-                    );
+                    if (version_compare($phpredisversion, '6.0.0', '>=')) {
+                        // Named parameters are fully supported starting from version 6.0.0.
+                        $this->connection->connect(
+                            host: $server,
+                            port: $port,
+                            timeout: self::CONNECTION_TIMEOUT, // Timeout.
+                            retry_interval: $delay,
+                            read_timeout: self::CONNECTION_TIMEOUT, // Read timeout.
+                            context: $opts,
+                        );
+                    } else {
+                        $this->connection->connect(
+                            $server,
+                            $port,
+                            self::CONNECTION_TIMEOUT,
+                            null,
+                            $delay,
+                            self::CONNECTION_TIMEOUT,
+                            $opts
+                        );
+                    }
+
                     if ($this->auth !== '' && !$this->connection->auth($this->auth)) {
                         throw new $exceptionclass('Unable to authenticate.');
                     }

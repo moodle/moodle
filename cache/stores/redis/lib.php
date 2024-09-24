@@ -270,27 +270,52 @@ class cachestore_redis extends store implements
         $redis = null;
         try {
             // Create a $redis object of a RedisCluster or Redis class.
+            $phpredisversion = phpversion('redis');
             if ($clustermode) {
-                $redis = new RedisCluster(
-                    null,
-                    $trimmedservers,
-                    self::CONNECTION_TIMEOUT, // Timeout.
-                    self::CONNECTION_TIMEOUT, // Read timeout.
-                    true,
-                    $password,
-                    !empty($opts) ? $opts : null,
-                );
+                if (version_compare($phpredisversion, '6.0.0', '>=')) {
+                    // Named parameters are fully supported starting from version 6.0.0.
+                    $redis = new RedisCluster(
+                        name: null,
+                        seeds: $trimmedservers,
+                        timeout: self::CONNECTION_TIMEOUT, // Timeout.
+                        read_timeout: self::CONNECTION_TIMEOUT, // Read timeout.
+                        persistent: true,
+                        auth: $password,
+                        context: !empty($opts) ? $opts : null,
+                    );
+                } else {
+                    $redis = new RedisCluster(
+                        null,
+                        $trimmedservers,
+                        self::CONNECTION_TIMEOUT,
+                        self::CONNECTION_TIMEOUT,
+                        true, $password,
+                        !empty($opts) ? $opts : null,
+                    );
+                }
             } else {
                 $redis = new Redis();
-                $redis->connect(
-                    $server,
-                    $port,
-                    self::CONNECTION_TIMEOUT, // Timeout.
-                    null,
-                    100, // Retry interval.
-                    self::CONNECTION_TIMEOUT, // Read timeout.
-                    $opts,
-                );
+                if (version_compare($phpredisversion, '6.0.0', '>=')) {
+                    // Named parameters are fully supported starting from version 6.0.0.
+                    $redis->connect(
+                        host: $server,
+                        port: $port,
+                        timeout: self::CONNECTION_TIMEOUT, // Timeout.
+                        retry_interval: 100, // Retry interval.
+                        read_timeout: self::CONNECTION_TIMEOUT, // Read timeout.
+                        context: $opts,
+                    );
+                } else {
+                    $redis->connect(
+                        $server, $port,
+                        self::CONNECTION_TIMEOUT,
+                        null,
+                        100,
+                        self::CONNECTION_TIMEOUT,
+                        $opts,
+                    );
+                }
+
                 if (!empty($password)) {
                     $redis->auth($password);
                 }
