@@ -97,6 +97,14 @@ function trainingevent_update_instance($trainingevent) {
     if (empty($trainingevent->haswaitinglist)) {
         $trainingevent->haswaitinglist = 0;
     }
+    
+    if (empty($trainingevent->isexclusive)) {
+        $trainingevent->isexclusive = 0;
+    }
+    
+    if (empty($trainingevent->emailteachers)) {
+        $trainingevent->emailteachers = 0;
+    }
 
     grade_update('mod/trainingevent',
                  $trainingevent->course,
@@ -291,10 +299,10 @@ function trainingevent_event_clashes($event, $userid) {
     if ($DB->get_records_sql("SELECT cc.id FROM {trainingevent} cc
                               RIGHT JOIN {trainingevent_users} ccu
                               ON (ccu.trainingeventid = cc.id AND ccu.userid = :userid AND waitlisted=0)
-                              WHERE ( cc.startdatetime <= ".$event->startdatetime."
-                              AND cc.enddatetime >= ".$event->startdatetime.")
-                              OR ( cc.startdatetime <= ".$event->enddatetime."
-                              AND cc.enddatetime >= ".$event->enddatetime.")",
+                              WHERE ( cc.startdatetime < ".$event->startdatetime."
+                              AND cc.enddatetime > ".$event->startdatetime.")
+                              OR ( cc.startdatetime < ".$event->enddatetime."
+                              AND cc.enddatetime > ".$event->enddatetime.")",
                               array('userid' => $userid))) {
         return true;
     } else if ($event->isexclusive &&
