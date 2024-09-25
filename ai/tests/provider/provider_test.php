@@ -86,6 +86,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 9,
             'completiontokens' => 12,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_generate_text(
             success: true,
@@ -118,6 +119,7 @@ final class provider_test extends \advanced_testcase {
         $body = [
             'revisedprompt' => 'This is a revised prompt',
             'sourceurl' => 'https://example.com/image.png',
+            'model' => 'dall-e-3',
         ];
         $actionresponse = new response_generate_image(
             success: true,
@@ -157,6 +159,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 9,
             'completiontokens' => 12,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_generate_text(
             success: true,
@@ -230,6 +233,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 9,
             'completiontokens' => 12,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_generate_text(
             success: true,
@@ -256,6 +260,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 10,
             'completiontokens' => 15,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_generate_text(
             success: true,
@@ -288,6 +293,7 @@ final class provider_test extends \advanced_testcase {
                 $this->assertEquals('9', $data->prompttokens);
                 $this->assertEquals('12', $data->completiontoken);
                 $this->assertEquals(get_string('yes'), $data->success);
+                $this->assertEquals('gpt-4o', $data->model);
             }
 
             if ($context->instanceid == $course2context->instanceid) {
@@ -305,6 +311,7 @@ final class provider_test extends \advanced_testcase {
                 $this->assertEquals('10', $data->prompttokens);
                 $this->assertEquals('15', $data->completiontoken);
                 $this->assertEquals(get_string('yes'), $data->success);
+                $this->assertEquals('gpt-4o', $data->model);
             }
         }
     }
@@ -334,6 +341,7 @@ final class provider_test extends \advanced_testcase {
         $body = [
             'revisedprompt' => 'This is a revised prompt',
             'sourceurl' => 'https://example.com/image1.png',
+            'model' => 'dall-e-3',
         ];
         $actionresponse = new response_generate_image(
             success: true,
@@ -360,6 +368,7 @@ final class provider_test extends \advanced_testcase {
         $body = [
             'revisedprompt' => 'This is a revised prompt',
             'sourceurl' => 'https://example.com/image2.png',
+            'model' => 'dall-e-3',
         ];
         $actionresponse = new response_generate_image(
             success: true,
@@ -394,6 +403,7 @@ final class provider_test extends \advanced_testcase {
                 $this->assertEquals('vivid', $data->style);
                 $this->assertEquals('https://example.com/image1.png', $data->sourceurl);
                 $this->assertEquals(get_string('yes'), $data->success);
+                $this->assertEquals('dall-e-3', $data->model);
             }
 
             if ($context->instanceid == $course2context->instanceid) {
@@ -413,6 +423,7 @@ final class provider_test extends \advanced_testcase {
                 $this->assertEquals('vivid', $data->style);
                 $this->assertEquals('https://example.com/image2.png', $data->sourceurl);
                 $this->assertEquals(get_string('yes'), $data->success);
+                $this->assertEquals('dall-e-3', $data->model);
             }
         }
     }
@@ -442,6 +453,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 9,
             'completiontokens' => 12,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_summarise_text(
             success: true,
@@ -468,6 +480,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 10,
             'completiontokens' => 15,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_summarise_text(
             success: true,
@@ -500,6 +513,7 @@ final class provider_test extends \advanced_testcase {
                 $this->assertEquals('9', $data->prompttokens);
                 $this->assertEquals('12', $data->completiontoken);
                 $this->assertEquals(get_string('yes'), $data->success);
+                $this->assertEquals('gpt-4o', $data->model);
             }
 
             if ($context->instanceid == $course2context->instanceid) {
@@ -517,6 +531,7 @@ final class provider_test extends \advanced_testcase {
                 $this->assertEquals('10', $data->prompttokens);
                 $this->assertEquals('15', $data->completiontoken);
                 $this->assertEquals(get_string('yes'), $data->success);
+                $this->assertEquals('gpt-4o', $data->model);
             }
         }
     }
@@ -575,6 +590,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 9,
             'completiontokens' => 12,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_generate_text(
             success: true,
@@ -600,6 +616,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 10,
             'completiontokens' => 15,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_generate_text(
             success: true,
@@ -651,6 +668,7 @@ final class provider_test extends \advanced_testcase {
         $body = [
             'revisedprompt' => 'This is a revised prompt',
             'sourceurl' => 'https://example.com/image1.png',
+            'model' => 'dall-e-3',
         ];
         $actionresponse = new response_generate_image(
             success: true,
@@ -676,6 +694,7 @@ final class provider_test extends \advanced_testcase {
         $body = [
             'revisedprompt' => 'This is a revised prompt',
             'sourceurl' => 'https://example.com/image2.png',
+            'model' => 'dall-e-3',
         ];
         $actionresponse = new response_generate_image(
             success: true,
@@ -725,6 +744,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 9,
             'completiontokens' => 12,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_summarise_text(
             success: true,
@@ -750,6 +770,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 10,
             'completiontokens' => 15,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_summarise_text(
             success: true,
@@ -800,6 +821,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 9,
             'completiontokens' => 12,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_generate_text(
             success: true,
@@ -825,6 +847,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 10,
             'completiontokens' => 15,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_generate_text(
             success: true,
@@ -877,6 +900,7 @@ final class provider_test extends \advanced_testcase {
         $body = [
             'revisedprompt' => 'This is a revised prompt',
             'sourceurl' => 'https://example.com/image1.png',
+            'model' => 'dall-e-3',
         ];
         $actionresponse = new response_generate_image(
             success: true,
@@ -902,6 +926,7 @@ final class provider_test extends \advanced_testcase {
         $body = [
             'revisedprompt' => 'This is a revised prompt',
             'sourceurl' => 'https://example.com/image2.png',
+            'model' => 'dall-e-3',
         ];
         $actionresponse = new response_generate_image(
             success: true,
@@ -952,6 +977,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 9,
             'completiontokens' => 12,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_summarise_text(
             success: true,
@@ -977,6 +1003,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 10,
             'completiontokens' => 15,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_summarise_text(
             success: true,
@@ -1059,6 +1086,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 9,
             'completiontokens' => 12,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_generate_text(
             success: true,
@@ -1084,6 +1112,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 10,
             'completiontokens' => 15,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_generate_text(
             success: true,
@@ -1132,6 +1161,7 @@ final class provider_test extends \advanced_testcase {
         $body = [
             'revisedprompt' => 'This is a revised prompt',
             'sourceurl' => 'https://example.com/image1.png',
+            'model' => 'dall-e-3',
         ];
         $actionresponse = new response_generate_image(
             success: true,
@@ -1157,6 +1187,7 @@ final class provider_test extends \advanced_testcase {
         $body = [
             'revisedprompt' => 'This is a revised prompt',
             'sourceurl' => 'https://example.com/image2.png',
+            'model' => 'dall-e-3',
         ];
         $actionresponse = new response_generate_image(
             success: true,
@@ -1206,6 +1237,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 9,
             'completiontokens' => 12,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_summarise_text(
             success: true,
@@ -1231,6 +1263,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 10,
             'completiontokens' => 15,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_summarise_text(
             success: true,
@@ -1311,6 +1344,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 9,
             'completiontokens' => 12,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_generate_text(
             success: true,
@@ -1336,6 +1370,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 10,
             'completiontokens' => 15,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_generate_text(
             success: true,
@@ -1391,6 +1426,7 @@ final class provider_test extends \advanced_testcase {
         $body = [
             'revisedprompt' => 'This is a revised prompt',
             'sourceurl' => 'https://example.com/image1.png',
+            'model' => 'dall-e-3',
         ];
         $actionresponse = new response_generate_image(
             success: true,
@@ -1416,6 +1452,7 @@ final class provider_test extends \advanced_testcase {
         $body = [
             'revisedprompt' => 'This is a revised prompt',
             'sourceurl' => 'https://example.com/image2.png',
+            'model' => 'dall-e-3',
         ];
         $actionresponse = new response_generate_image(
             success: true,
@@ -1468,6 +1505,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 9,
             'completiontokens' => 12,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_summarise_text(
             success: true,
@@ -1493,6 +1531,7 @@ final class provider_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 10,
             'completiontokens' => 15,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_summarise_text(
             success: true,
