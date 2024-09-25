@@ -70,6 +70,7 @@ final class generate_text_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => 9,
             'completiontokens' => 12,
+            'model' => 'gpt-4o',
         ];
         $actionresponse = new response_generate_text(
             success: true,
