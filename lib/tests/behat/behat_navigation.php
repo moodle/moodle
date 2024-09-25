@@ -1628,4 +1628,60 @@ class behat_navigation extends behat_base {
         set_user_preference('behat_keep_drawer_closed', 1);
         $this->i_close_block_drawer_if_open();
     }
+
+    /**
+     * Checks if a navigation menu item is active.
+     *
+     * @Then menu item :navigationmenuitem should be active
+     * @param string $navigationmenuitem The navigation menu item name.
+     */
+    public function menu_item_should_be_active(string $navigationmenuitem): void {
+        $elementselector = "//*//a/following-sibling::*//a[contains(text(), '$navigationmenuitem') and @aria-current='true']";
+        $params = [$elementselector, "xpath_element"];
+        $this->execute("behat_general::should_exist", $params);
+    }
+
+    /**
+     * Checks if a navigation menu item is not active
+     *
+     * @Then menu item :navigationmenuitem should not be active
+     * @param string $navigationmenuitem The navigation menu item name.
+     */
+    public function menu_item_should_not_be_active(string $navigationmenuitem): void {
+        $elementselector = "//*//a/following-sibling::*//a[contains(text(), '$navigationmenuitem') and @aria-current='true']";
+        $params = [$elementselector, "xpath_element"];
+        $this->execute("behat_general::should_not_exist", $params);
+    }
+
+    /**
+     * Sets a link to no longer navigate when selected.
+     *
+     * @When /^I update the href of the "(?P<locator_string>[^"]*)" "(?P<selector_string>[^"]*)" link to "(?P<href_string>[^"]*)"$/
+     * @param string $locator The locator to use
+     * @param string $selector selector type
+     * @param string $href The value
+     */
+    public function i_update_the_link_to_go_nowhere(
+        string $locator,
+        string $selector,
+        string $href,
+    ): void {
+        $this->require_javascript();
+        $xpath = $this->find(
+            selector: $selector,
+            locator: $locator,
+        )->getXpath();
+        $script = <<<JS
+            var result = document.evaluate("{$xpath}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+            var link = result.singleNodeValue;
+
+            if (link) {
+                link.setAttribute('href', '{$href}');
+            } else {
+                throw new Error('No element found with the XPath: ' + "$selector");
+            }
+        JS;
+
+        $this->getSession()->executeScript($script);
+    }
 }
