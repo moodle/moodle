@@ -440,12 +440,6 @@ if (!defined('MOODLE_INTERNAL')) { // Necessary because cli installer has to def
 // The core_component class can be used in any scripts, it does not need anything else.
 require_once($CFG->libdir .'/classes/component.php');
 
-// Early profiling start, based exclusively on config.php $CFG settings
-if (!empty($CFG->earlyprofilingenabled) && !defined('ABORT_AFTER_CONFIG_CANCEL')) {
-    require_once($CFG->libdir . '/xhprof/xhprof_moodle.php');
-    profiling_start();
-}
-
 /**
  * Database connection. Used for all access to the database.
  * @global moodle_database $DB
@@ -596,6 +590,12 @@ ini_set('include_path', $CFG->libdir . '/pear' . PATH_SEPARATOR . ini_get('inclu
 
 // Register our classloader.
 \core\component::register_autoloader();
+
+// Early profiling start, based exclusively on config.php $CFG settings
+if (!empty($CFG->earlyprofilingenabled) && !defined('ABORT_AFTER_CONFIG_CANCEL')) {
+    require_once($CFG->libdir . '/xhprof/xhprof_moodle.php');
+    profiling_start();
+}
 
 // Special support for highly optimised scripts that do not need libraries and DB connection.
 if (defined('ABORT_AFTER_CONFIG')) {
