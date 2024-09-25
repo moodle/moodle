@@ -65,6 +65,8 @@ H5PEditor.language.core = {
   numberField: 'numerokenttä',
   orderItemUp: 'Järjestä kohde ylemmäksi',
   orderItemDown: 'Järjestä kohde alemmaksi',
+  expandAllContent: 'Expand all content',
+  collapseAllContent: 'Collapse all content',
   removeItem: 'Poista kohde',
   hubPanelLabel: 'Valitse sisältötyyppi',
   importantInstructions: 'Tärkeitä ohjeita',

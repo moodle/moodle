@@ -65,6 +65,8 @@ H5PEditor.language.core = {
   numberField: '숫자 영역',
   orderItemUp: '아이템 위로',
   orderItemDown: '아이템 아래로',
+  expandAllContent: 'Expand all content',
+  collapseAllContent: 'Collapse all content',
   removeItem: '아이템 제거',
   hubPanelLabel: '콘텐츠 유형 선택',
   importantInstructions: '중요 지침',

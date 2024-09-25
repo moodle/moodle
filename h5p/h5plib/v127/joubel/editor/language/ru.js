@@ -67,6 +67,8 @@ H5PEditor.language.core = {
   numberField: 'числовое поле',
   orderItemUp: 'Возрастающий порядок элементов',
   orderItemDown: 'Убывающий порядок элементов',
+  expandAllContent: 'Expand all content',
+  collapseAllContent: 'Collapse all content',
   removeItem: 'Удалить элемент',
   hubPanelLabel: 'Выберите тип контента',
   importantInstructions: 'Важные инструкции',

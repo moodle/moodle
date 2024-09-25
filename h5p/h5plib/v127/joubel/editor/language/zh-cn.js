@@ -64,6 +64,8 @@ H5PEditor.language.core = {
   numberField: '数字字段',
   orderItemUp: '向上',
   orderItemDown: '向下',
+  expandAllContent: 'Expand all content',
+  collapseAllContent: 'Collapse all content',
   removeItem: '移除',
   hubPanelLabel: '选择内容类型',
   importantInstructions: '重要说明',

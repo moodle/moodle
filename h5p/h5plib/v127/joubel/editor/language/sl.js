@@ -65,6 +65,8 @@ H5PEditor.language.core = {
   numberField: 'polje za vnos števila',
   orderItemUp: 'Premakni navzgor',
   orderItemDown: 'Premakni navzdol',
+  expandAllContent: 'Expand all content',
+  collapseAllContent: 'Collapse all content',
   removeItem: 'Odstrani',
   hubPanelLabel: 'Izberi tip vsebine',
   importantInstructions: 'Pomembna navodila',
