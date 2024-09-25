@@ -32,6 +32,8 @@ $id = optional_param('id', null, PARAM_INT);
 $gateway = optional_param('smsgateway', null, PARAM_PLUGIN);
 $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
 
+$title = get_string('createnewgateway', 'sms');
+$data = [];
 $urlparams = [];
 if ($id) {
     $urlparams['id'] = $id;
@@ -39,21 +41,6 @@ if ($id) {
 if ($gateway) {
     $urlparams['gateway'] = $gateway;
 }
-
-$title = get_string('configure_sms_gateway', 'sms');
-$PAGE->set_context($context);
-$PAGE->set_url('/sms/configure.php', $urlparams);
-$PAGE->set_title($title);
-$PAGE->set_heading($title);
-
-if (empty($returnurl)) {
-    $returnurl = new moodle_url('/sms/sms_gateways.php');
-} else {
-    $returnurl = new moodle_url($returnurl);
-}
-$data = [
-    'returnurl' => $returnurl,
-];
 
 if (!empty($gateway)) {
     $configs = new stdClass();
@@ -77,7 +64,22 @@ if (!empty($id)) {
     $data = [
         'gatewayconfigs' => $configs,
     ];
+
+    $a = ['gateway' => $gatewayrecord->name];
+    $title = get_string('edit_sms_gateway', 'sms', $a);
 }
+
+$PAGE->set_context($context);
+$PAGE->set_url('/sms/configure.php', $urlparams);
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
+
+if (empty($returnurl)) {
+    $returnurl = new moodle_url('/sms/sms_gateways.php');
+} else {
+    $returnurl = new moodle_url($returnurl);
+}
+$data['returnurl'] = $returnurl;
 
 $mform = new \core_sms\form\sms_gateway_form(customdata: $data);
 
