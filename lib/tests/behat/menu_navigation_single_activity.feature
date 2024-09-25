@@ -69,10 +69,10 @@ Feature: Menu navigation has accurate checkmarks in single activity course forma
   Scenario: Admin should not see checkmark if link is not navigated to in current browser for single activity format quiz
     Given I log in as "admin"
     And I am on "Course 1" course homepage
-    And I update the link with selector "//*//a/following-sibling::*//a[contains(text(), 'Participants')]" to go nowhere
+    And I update the href of the "//*//a/following-sibling::*//a[contains(text(), 'Participants')]" "xpath" link to "#"
     When I navigate to "Participants" in current page administration
     Then menu item "Participants" should not be active
-    And I update the link with selector "//*//a/following-sibling::*//a[contains(text(), 'Backup')]" to go nowhere
+    And I update the href of the "//*//a/following-sibling::*//a[contains(text(), 'Backup')]" "xpath" link to "#"
     When I click on "//*//a[contains(text(),'Activity')]" "xpath"
     And I click on "//*//a/following-sibling::*//a[contains(text(), 'Backup')]" "xpath"
     Then menu item "Backup" should not be active
