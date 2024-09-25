@@ -2,7 +2,7 @@ issueNumber: MDL-66151
 notes:
   core_role:
     - message: |
-        All session management hsa been moved to the `\core\session\manager` class.
+        All session management has been moved to the `\core\session\manager` class.
         This removes the dependancy to use the `sessions` table.
 
         Session management plugins (like Redis) should now inherit
