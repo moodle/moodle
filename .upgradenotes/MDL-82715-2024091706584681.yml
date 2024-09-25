@@ -1,28 +1,21 @@
 issueNumber: MDL-82715
 notes:
   customfield_number:
-    - message: >+
-        New 'customfield_number\hook\add_custom_providers' hook has been added.
+    - message: >
+        A new hook, `customfield_number\hook\add_custom_providers`, has been added which
+        allows automatic calculation of number course custom field.
 
-        It allows automatic calculation of number course custom field.
-
-
-        Added new class
-        '\customfield_number\local\numberproviders\nofactivities'
-
+      type: improved
+    - message: >
+        A new class, `\customfield_number\local\numberproviders\nofactivities` has been added
         that allows to automatically calculate number of activities of a given
-
         type in a given course.
-
-
-        Added new webservice customfield_number_recalculate_value to recalculate
-
+      type: improved
+    - message: >
+        Added new webservice `customfield_number_recalculate_value` to recalculate
         a value of number course custom field.
-
-
-        Added 'customfield_number\task\cron' cron task that recalculates
-
+      type: improved
+    - message: >
+        Added `customfield_number\task\cron` cron task that recalculates
         automatically calculated number course custom fields.
-
-
       type: improved

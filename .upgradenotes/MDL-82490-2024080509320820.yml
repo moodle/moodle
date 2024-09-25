@@ -2,6 +2,6 @@ issueNumber: MDL-82490
 notes:
   core:
     - message: >-
-        Add set_disabled_option method to url_select to enable or disable an option
+        Add `set_disabled_option` method to `url_select` to enable or disable an option
         from its url (the key for the option).
       type: improved

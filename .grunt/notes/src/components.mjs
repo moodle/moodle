@@ -93,7 +93,7 @@ export const rewritePlugintypeAsSubsystem = (componentName) => {
     }
 
     return false;
-}
+};
 
 /**
  * Whether the specified component is a community component.
@@ -107,4 +107,32 @@ export const isCommunityComponent = (componentName) => {
     }
 
     return Object.values(componentData.components).indexOf(componentName) !== -1;
-}
+};
+
+/**
+ * Sort method for components.
+ *
+ * This method sorts components putting `core` first, followed by core subsystems, then everything else.
+ *
+ * @param {String} a
+ * @param {String} b
+ * @returns {Number}
+ */
+export const sortComponents = (a, b) => {
+    // Always put 'core' first.
+    if (a === 'core') {
+        return -1;
+    } else if (b === 'core') {
+        return 1;
+    }
+
+    // Put core subsystems next.
+    if (a.startsWith('core_') && !b.startsWith('core_')) {
+        return -1;
+    } else if (b.startsWith('core_') && !a.startsWith('core_')) {
+        return 1;
+    }
+
+    // Sort alphabetically for everything else.
+    return a.localeCompare(b);
+};

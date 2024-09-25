@@ -13,12 +13,47 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * The note types.
+ *
+ * Matches the suggested order in https://keepachangelog.com/en/1.1.0/.
+ * @type {Object<string, string>}
+ */
 const noteTypes = {
     'improved': 'Added',
-    'removed': 'Removed',
     'changed': 'Changed',
     'deprecated': 'Deprecated',
+    'removed': 'Removed',
     'fixed': 'Fixed',
+};
+
+/**
+ * The preferred order of note types.
+ *
+ * @type {string[]}
+ */
+const preferredOrder = Object.keys(noteTypes);
+
+/**
+ * Comparison method to sort note types.
+ *
+ * @param {String} a
+ * @param {String} b
+ * @returns {Number}
+ */
+export const sortNoteTypes = (a, b) => {
+    const aIndex = preferredOrder.indexOf(a);
+    const bIndex = preferredOrder.indexOf(b);
+
+    if (aIndex === -1) {
+        return 1;
+    }
+
+    if (bIndex === -1) {
+        return -1;
+    }
+
+    return aIndex - bIndex;
 };
 
 /**

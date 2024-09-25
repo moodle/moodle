@@ -2,6 +2,5 @@ issueNumber: MDL-79628
 notes:
   core:
     - message: >-
-        Deprecate timeout in navigation_cache constructor and clean up unused
-        properties
+        The `$timeout` property of the `navigation_cache` class has been deprecated.
       type: deprecated

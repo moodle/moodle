@@ -123,8 +123,6 @@ const findUnreleasedHeadingIndex = (versionHeadings) => versionHeadings.findInde
         return true;
     }
 
-
-
     if (heading.version.endsWith('dev')) {
         // Development version.
         return true;
@@ -188,7 +186,48 @@ const getNotesForComponent = (types, headingLevel) => {
             // Split the message into lines, removing empty lines.
             const messageLines = message
                 .split('\n')
-                .filter((line) => line.trim().length > 0);
+                // Remove empty lines between tables, and list entries, but not after lists.
+                .filter((line, index, lines) => {
+                    if (line.trim().length === 0) {
+                        // This line is empty.
+
+                        // If it's the first line in the file, remove it.
+                        if (index === 0) {
+                            return false;
+                        }
+
+                        // This is the last line in the file, remove it.
+                        if (index === lines.length - 1) {
+                            return false;
+                        }
+
+                        // If the previous line relates to a table, remove this line.
+                        if (lines[index - 1].match(/^\s*\|/)) {
+                            return false;
+                        }
+
+                        // If the next line is also empty, do not remove this line.
+                        if (lines[index + 1].trim().length === 0) {
+                            return true;
+                        }
+
+                        // Do not remove the line if the previous line was a list item.
+                        if (lines[index - 1].match(/^\s*[-*]\s/)) {
+                            return true;
+                        }
+
+                        if (lines[index - 1].match(/^\s*\d+\.\s/)) {
+                            return true;
+                        }
+
+                        // Preserve all other empty lines by default.
+                        return true;
+                    }
+
+                    // Keep any line which has content.
+                    return true;
+                });
+
 
             const firstLine = messageLines.shift().trim();
             upgradeNotes += `- ${firstLine}\n`;

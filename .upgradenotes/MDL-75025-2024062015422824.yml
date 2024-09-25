@@ -2,6 +2,6 @@ issueNumber: MDL-75025
 notes:
   core_backup:
     - message: >-
-        Final deprecation of base_controller::get_copy(). Please use
-        restore_controller::get_copy() instead.
+        Final deprecation of `base_controller::get_copy()`. Please use
+        `restore_controller::get_copy()` instead.
       type: removed
