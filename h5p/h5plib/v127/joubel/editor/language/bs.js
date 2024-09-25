@@ -65,6 +65,8 @@ H5PEditor.language.core = {
   numberField: 'polje za broj',
   orderItemUp: 'Uredite elemente ka gore',
   orderItemDown: 'Uredite elemente ka dolje',
+  expandAllContent: 'Expand all content',
+  collapseAllContent: 'Collapse all content',
   removeItem: 'Uklonite element',
   hubPanelLabel: 'Označite tip sadržaja',
   importantInstructions: 'Važna uputstva',

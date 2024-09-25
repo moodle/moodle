@@ -150,7 +150,7 @@ ns.widgets.image.prototype.appendTo = function ($wrapper) {
     self.$editImage.removeClass('loading');
   });
 
-  $container.find('.h5p-editing-image-button').click(function () {
+  $container.find('.h5p-editing-image-button').click(function (event) {
     if (self.params && self.params.path) {
       var imageSrc;
       if (!self.isEditing) {
@@ -160,7 +160,7 @@ ns.widgets.image.prototype.appendTo = function ($wrapper) {
       self.$editImage.toggleClass('loading');
 
       // Add throbber to image
-      editImagePopup.show(ns.$(this).offset(), imageSrc);
+      editImagePopup.show(ns.$(this).offset(), imageSrc, event);
     }
   });
 

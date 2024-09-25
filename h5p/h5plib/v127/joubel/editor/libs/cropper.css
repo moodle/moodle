@@ -1,0 +1,190 @@
+.cropper-inline {
+  display: inline-block;
+}
+.cropper-hidden {
+  display: none;
+}
+.cropper-buttons {
+  background-color: #2f323a;
+  text-align: center;
+  padding: 35px;
+  user-select: none;
+}
+.cropper-button {
+  position: relative;
+  border: 3px solid #2f323a;
+  border-radius: 11px;
+  margin: 0 5px 0 5px;
+  padding: 10px;
+  display: inline-grid;
+  align-items: center;
+  grid-template-columns: 23px auto;
+  column-gap: 5px;
+}
+.cropper-image-button {
+  column-gap: 0;
+}
+.cropper-button:hover {
+  background-color: #111111;
+  border: 3px solid #9096a8;
+  cursor: pointer;
+}
+.cropper-icon {
+  display: inline-block;
+  min-width: 23px;
+  height: 23px;
+  background-repeat: no-repeat;
+}
+.cropper-rotate-left {
+  background-image: url("../images/cropper/rotate-left.svg");
+}
+.cropper-rotate-right {
+  background-image: url("../images/cropper/rotate-right.svg");
+}
+.cropper-crop {
+  background-image: url("../images/cropper/crop.svg");
+}
+.cropper-confirm {
+  background-image: url("../images/cropper/confirm.svg");
+}
+.cropper-confirm-text {
+  color: #a0e9a3;
+}
+.cropper-cancel {
+  background-image: url("../images/cropper/cancel.svg");
+}
+.cropper-cancel-text {
+  color: #fcaaaa;
+}
+.cropper-canvas-container {
+  position: relative;
+}
+.cropper-canvas-container canvas {
+  display: block;
+}
+.cropper-selector-border {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  left: -1px;
+  top: -1px;
+  border: 1px solid #3c7eff;
+  display: grid;
+  grid-template-areas:
+    "top-left top top-righ"
+    "center-left center center-right"
+    "bottom-left bottom bottom-right";
+  grid-template-rows: calc(100% / 3 - 1px) calc(100% / 3) calc(100% / 3 - 1px);
+  grid-template-columns: calc(100% / 3 - 1px) calc(100% / 3) calc(100% / 3 - 1px);
+}
+.cropper-selector-border div {
+  border: dashed #3c7eff;
+  border-width: 0;
+}
+.cropper-selector-border .cropper-border-top-left {
+  border-width: 0 1px 1px 0;
+}
+.cropper-selector-border .cropper-border-top {
+  border-width: 0 0 1px 0;
+}
+.cropper-selector-border .cropper-border-top-right {
+  border-width: 0 0 1px 1px;
+}
+.cropper-selector-border .cropper-border-center-left {
+  border-width: 0 1px 0 0;
+}
+.cropper-selector-border .cropper-border-center-right {
+  border-width: 0 0 0 1px;
+}
+.cropper-selector-border .cropper-border-bottom-left {
+  border-width: 1px 1px 0 0;
+}
+.cropper-selector-border .cropper-border-bottom {
+  border-width: 1px 0 0 0;
+}
+.cropper-selector-border .cropper-border-bottom-right {
+  border-width: 1px 0 0 1px;
+}
+.cropper-selector {
+  display: none;
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  left: 0px;
+  top: 0px;
+  background-color: transparent;
+  cursor: move;
+}
+.cropper-selector .cropper-handle {
+  position: absolute;
+  background-color: white;
+  width: 8px;
+  height: 8px;
+  border: 1px solid #3c7eff;
+  border-radius: 5px;
+  transition: opacity 0.25s ease-out;
+}
+.cropper-selector .cropper-top-left {
+  left: -5px;
+  top: -5px;
+  cursor: nw-resize;
+}
+.cropper-selector .cropper-top {
+  left: calc(50% - 16px);
+  top: -4px;
+  width: 30px;
+  height: 6px;
+  cursor: n-resize;
+}
+.cropper-selector .cropper-top-right {
+  right: -5px;
+  top: -5px;
+  cursor: ne-resize;
+}
+.cropper-selector .cropper-left {
+  left: -4px;
+  top: calc(50% - 16px);
+  width: 6px;
+  height: 30px;
+  cursor: w-resize;
+}
+.cropper-selector .cropper-right {
+  right: -4px;
+  top: calc(50% - 16px);
+  width: 6px;
+  height: 30px;
+  cursor: e-resize;
+}
+.cropper-selector .cropper-bottom-left {
+  left: -5px;
+  bottom: -5px;
+  cursor: sw-resize;
+}
+.cropper-selector .cropper-bottom {
+  left: calc(50% - 16px);
+  bottom: -4px;
+  width: 30px;
+  height: 6px;
+  cursor: s-resize;
+}
+.cropper-selector .cropper-bottom-right {
+  right: -5px;
+  bottom: -5px;
+  cursor: se-resize;
+}
+.cropper-mask {
+  position: absolute;
+  background-color: #2f323a;
+  opacity: 0.5;
+  display: none;
+}
+.cropper-h5p-tooltip {
+  bottom: unset;
+  top: -30px;
+  border-radius: 5px;
+  animation: none;
+  z-index: 999;
+}
+.h5p-editing-image-popup {
+  border: 1px solid #9e9e9e;
+}

@@ -66,6 +66,8 @@ H5PEditor.language.core = {
   numberField: 'αριθμητικό πεδίο',
   orderItemUp: 'Ταξινόμηση στοιχείου προς τα επάνω',
   orderItemDown: 'Ταξινόμηση στοιχείου προς τα κάτω',
+  expandAllContent: 'Expand all content',
+  collapseAllContent: 'Collapse all content',
   removeItem: 'Αφαίρεση στοιχείου',
   hubPanelLabel: 'Επιλέξτε τύπο περιεχομένου',
   importantInstructions: 'Σημαντικές οδηγίες',

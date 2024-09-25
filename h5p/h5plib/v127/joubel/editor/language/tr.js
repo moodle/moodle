@@ -65,6 +65,8 @@ H5PEditor.language.core = {
   numberField: 'sayı alanı',
   orderItemUp: 'Öğeleri yukarıya doğru sırala',
   orderItemDown: 'Öğeleri aşağıya doğru sırala',
+  expandAllContent: 'Expand all content',
+  collapseAllContent: 'Collapse all content',
   removeItem: 'Öğeyi kaldır',
   hubPanelLabel: 'İçerik türünü seç',
   importantInstructions: 'Önemli açıklamalar',

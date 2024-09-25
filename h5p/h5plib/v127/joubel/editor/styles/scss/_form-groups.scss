@@ -179,9 +179,9 @@
   }
 
   .order-up, .order-down {
-    width: $form-item-height-normal / 2;
-    height: $form-item-height-normal / 2;
-    line-height: $form-item-height-normal / 2;
+    width: calc($form-item-height-normal / 2);
+    height: calc($form-item-height-normal / 2);
+    line-height: calc($form-item-height-normal / 2);
 
     &:hover {
       background: $form-item-importance-medium-background-hover;
@@ -227,9 +227,9 @@
     }
 
     .order-up, .order-down {
-      width: $form-item-height-large / 2;
-      height: $form-item-height-large / 2;
-      line-height: $form-item-height-large / 2;
+      width: calc($form-item-height-large / 2);
+      height: calc($form-item-height-large / 2);
+      line-height: calc($form-item-height-large / 2);
 
       &:hover {
         background: $form-item-importance-high-background-hover;
@@ -271,11 +271,11 @@
     }
 
     .order-up, .order-down {
-      width: $form-item-height-normal / 2;
-      height: $form-item-height-normal / 2;
+      width: calc($form-item-height-normal / 2);
+      height: calc($form-item-height-normal / 2);
       background: $form-item-importance-low-border-color;
       font-size: $font-size-normal;
-      line-height: $form-item-height-normal / 2;
+      line-height: calc($form-item-height-normal / 2);
 
       &:hover {
         background: $form-item-importance-low-background-hover;
@@ -302,7 +302,7 @@
   &:before {
     content: "\e566";
     font-family: $icon-font-family;
-    margin-right: $min-padding/2;
+    margin-right: calc($min-padding / 2);
   }
 
   &:focus:before {

@@ -6,6 +6,7 @@
 // Grab common resources set in parent window, but avoid sharing back resources set in iframe)
 window.ns = window.H5PEditor = H5P.jQuery.extend(false, {}, window.parent.H5PEditor);
 ns.$ = H5P.jQuery;
+window.jQuery = H5P.jQuery;
 
 // Load needed resources from parent.
 H5PIntegration = H5P.jQuery.extend(false, {}, window.parent.H5PIntegration);
@@ -1818,6 +1819,8 @@ ns.supportedLanguages = {
   'or': 'Oriya',
   'os': 'Ossetian',
   'pa': 'Punjabi',
+  'pap-cw': 'Papiamento (Curaçao and Bonaire)',
+  'pap-aw': 'Papiamento (Aruba)',
   'pi': 'Pali',
   'pl': 'Polish (Polski)',
   'ps': 'Pashto (پښتو)',

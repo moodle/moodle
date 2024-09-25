@@ -64,6 +64,8 @@ H5PEditor.language.core = {
   numberField: 'numerické pole',
   orderItemUp: 'Seřaďte položky vzestupně',
   orderItemDown: 'Seřaďte položky sestupně',
+  expandAllContent: 'Expand all content',
+  collapseAllContent: 'Collapse all content',
   removeItem: 'Odstranit položku',
   hubPanelLabel: 'Vyberte typ obsahu',
   importantInstructions: 'Důležité pokyny',

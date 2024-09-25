@@ -65,6 +65,8 @@ H5PEditor.language.core = {
   numberField: 'getalveld',
   orderItemUp: 'Oplopend sorteren',
   orderItemDown: 'Aflopend sorteren',
+  expandAllContent: 'Expand all content',
+  collapseAllContent: 'Collapse all content',
   removeItem: 'Item verwijderen',
   hubPanelLabel: 'Selecteer content type',
   importantInstructions: 'Belangrijke instructies',

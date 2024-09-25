@@ -22,7 +22,7 @@ $h5p-tutorial-icon-diameter: 2rem;
   margin-bottom: 0.5em;
   margin-left: 0.25em;
   height: $h5p-tutorial-icon-diameter;
-  border-radius: $h5p-tutorial-icon-diameter / 2;
+  border-radius: calc($h5p-tutorial-icon-diameter / 2);
 
   &:focus {
     @include h5p-tutorial-focus-shadow;
