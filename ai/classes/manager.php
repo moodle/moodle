@@ -174,6 +174,7 @@ class manager {
             'errormessage' => $response->get_errormessage(),
             'timecreated' => $action->get_configuration('timecreated'),
             'timecompleted' => $response->get_timecreated(),
+            'model' => $response->get_model_used(),
         ];
 
         try {

@@ -72,6 +72,7 @@ class response_summarise_text extends response_base {
         $this->finishreason = $response['finishreason'] ?? null;
         $this->prompttokens = $response['prompttokens'] ?? null;
         $this->completiontokens = $response['completiontokens'] ?? null;
+        $this->model = $response['model'] ?? null;
     }
 
     #[\Override]
@@ -83,6 +84,7 @@ class response_summarise_text extends response_base {
             'finishreason' => $this->finishreason,
             'prompttokens' => $this->prompttokens,
             'completiontokens' => $this->completiontokens,
+            'model' => $this->model,
         ];
     }
 }
