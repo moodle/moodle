@@ -10,7 +10,7 @@ Import procedure:
 Removed:
  * composer.json
  * .gitignore
- * ckeditor/skins/bootstrapck/sample
+ * ckeditor5/sample
 
 Changed:
  * In the method ns.LibrarySelector.prototype.appendTo (scripts/h5peditor-library-selector.js),
@@ -31,9 +31,3 @@ Changed:
  * Add "use stdClass;" in h5peditor.class.php and h5peditor-file.class.php (check that it's still used before replacing it when
    upgrading the library).
  * Edit language/en.js and remove the content for 'filters' (it's a JSON with several fields, such as level or language).
- * If https://github.com/h5p/h5p-editor-php-library/pull/148 hasn't been merged, a patch needs to be added in
- joubel/editor/h5peditor-file.class.php, to replace FILTER_SANITIZE_STRING to FILTER_SANITIZE_FULL_SPECIAL_CHARS.
-
-Notes:
- * 2023-05-10 Applied patch https://github.com/h5p/h5p-editor-php-library/pull/169 to avoid PHP 8.2 deprecations.
-   See MDL-78147 for more details.
