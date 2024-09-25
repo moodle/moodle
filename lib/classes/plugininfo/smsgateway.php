@@ -70,9 +70,7 @@ class smsgateway extends base {
 
     #[\Override]
     public static function get_manage_url(): moodle_url {
-        return new \moodle_url('/admin/settings.php', [
-            'section' => 'smsgateway',
-        ]);
+        return new moodle_url('/sms/sms_gateways.php');
     }
 
     #[\Override]
