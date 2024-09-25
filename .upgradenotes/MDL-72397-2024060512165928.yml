@@ -6,6 +6,6 @@ notes:
         The following classes have been deprecated:
 
         - `question_category_list`
-        
+
         - `question_category_list_item`
       type: deprecated
