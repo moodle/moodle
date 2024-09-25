@@ -370,7 +370,7 @@ class assign {
      *
      * @return array The array of error messages
      */
-    protected function get_error_messages(): array {
+    public function get_error_messages(): array {
         return $this->errors;
     }
 
