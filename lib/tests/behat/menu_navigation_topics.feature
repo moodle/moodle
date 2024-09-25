@@ -78,7 +78,7 @@ Feature: Menu navigation has accurate checkmarks in topic course format
   Scenario: Admin should not see checkmark if link is not navigated to in current browser in course view for topics format
     Given I log in as "admin"
     And I am on "Course 1" course homepage
-    And I update the link with selector "//*//a/following-sibling::*//a[contains(text(), 'Filters')]" to go nowhere
+    And I update the href of the "//*//a/following-sibling::*//a[contains(text(), 'Filters')]" "xpath" link to "#"
     And I navigate to "Question bank" in current page administration
     Then menu item "Filters" should not be active
 
@@ -87,6 +87,6 @@ Feature: Menu navigation has accurate checkmarks in topic course format
     Given I log in as "admin"
     And I am on "Course 1" course homepage
     And I follow "Quiz 1"
-    And I update the link with selector "//*//a/following-sibling::*//a[contains(text(), 'Backup')]" to go nowhere
+    And I update the href of the "//*//a/following-sibling::*//a[contains(text(), 'Backup')]" "xpath" link to "#"
     And I navigate to "Backup" in current page administration
     Then menu item "Backup" should not be active

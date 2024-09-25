@@ -1632,7 +1632,7 @@ class behat_navigation extends behat_base {
     /**
      * Checks if a navigation menu item is active.
      *
-     * @Given menu item :navigationmenuitem should be active
+     * @Then menu item :navigationmenuitem should be active
      * @param string $navigationmenuitem The navigation menu item name.
      */
     public function menu_item_should_be_active(string $navigationmenuitem): void {
@@ -1644,7 +1644,7 @@ class behat_navigation extends behat_base {
     /**
      * Checks if a navigation menu item is not active
      *
-     * @Given menu item :navigationmenuitem should not be active
+     * @Then menu item :navigationmenuitem should not be active
      * @param string $navigationmenuitem The navigation menu item name.
      */
     public function menu_item_should_not_be_active(string $navigationmenuitem): void {
@@ -1656,16 +1656,27 @@ class behat_navigation extends behat_base {
     /**
      * Sets a link to no longer navigate when selected.
      *
-     * @When I update the link with selector :selector to go nowhere
-     * @param string $selector selector for link to go nowhere
+     * @When /^I update the href of the "(?P<locator_string>[^"]*)" "(?P<selector_string>[^"]*)" link to "(?P<href_string>[^"]*)"$/
+     * @param string $locator The locator to use
+     * @param string $selector selector type
+     * @param string $href The value
      */
-    public function i_update_the_link_to_go_nowhere(string $selector) {
+    public function i_update_the_link_to_go_nowhere(
+        string $locator,
+        string $selector,
+        string $href,
+    ): void {
+        $this->require_javascript();
+        $xpath = $this->find(
+            selector: $selector,
+            locator: $locator,
+        )->getXpath();
         $script = <<<JS
-            var result = document.evaluate("$selector", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+            var result = document.evaluate("{$xpath}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
             var link = result.singleNodeValue;
 
             if (link) {
-                link.setAttribute('href', '#');
+                link.setAttribute('href', '{$href}');
             } else {
                 throw new Error('No element found with the XPath: ' + "$selector");
             }
