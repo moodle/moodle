@@ -452,6 +452,11 @@ class framework implements H5PFrameworkInterface {
             'width' => 'width',
             'height' => 'height',
             'Missing main library @library' => 'missingmainlibrary',
+            'Rotate Left' => 'rotateLeft',
+            'Rotate Right' => 'rotateRight',
+            'Crop Image' => 'cropImage',
+            'Confirm Crop' => 'confirmCrop',
+            'Cancel Crop' => 'cancelCrop',
         ];
 
         if (isset($translationsmap[$message])) {

@@ -1,5 +1,7 @@
 <?php
 
+namespace Moodle;
+
 /**
  * The base class for H5P events. Extend to track H5P events in your system.
  *

@@ -1898,7 +1898,7 @@ H5P.MediaCopyright = function (copyright, labels, order, extraFields) {
  * @param {string} source
  * @param {number} width
  * @param {number} height
- * @param {string} alt 
+ * @param {string} alt
  *  alternative text for the thumbnail
  */
 H5P.Thumbnail = function (source, width, height, alt) {
@@ -2377,6 +2377,11 @@ H5P.createTitle = function (rawTitle, maxLength) {
       done('Not signed in.');
       return;
     }
+    // Moodle patch to let override this method.
+    if (H5P.contentUserDataAjax !== undefined) {
+      return H5P.contentUserDataAjax(contentId, dataType, subContentId, done, data, preload, invalidate, async);
+    }
+    // End of Moodle patch.
 
     var options = {
       url: H5PIntegration.ajax.contentUserData.replace(':contentId', contentId).replace(':dataType', dataType).replace(':subContentId', subContentId ? subContentId : 0),
@@ -2720,7 +2725,7 @@ H5P.createTitle = function (rawTitle, maxLength) {
         }
         return path.substr(0, prefix.length) === prefix ? path : prefix + path;
       }
-      
+
       return path; // Will automatically be looked for in tmp folder
     });
 
