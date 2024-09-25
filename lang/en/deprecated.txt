@@ -130,3 +130,7 @@ cannotsetpassword,core_error
 registerwithmoodleorginfoapp,core_hub
 registration_help,core_admin
 coursemanagementoptions,core_my
+filterbothactive,core_grades
+filterbyname,core_grades
+filterfirstactive,core_grades
+filterlastactive,core_grades

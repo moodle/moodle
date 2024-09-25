@@ -14,13 +14,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A small dropdown to filter users within the gradebook.
+ * A small dropdown to filter users.
  *
- * @module    core_grades/searchwidget/initials
+ * @module    core_course/actionbar/initials
  * @copyright 2022 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated since Moodle 4.5 - please use core_course/actionbar/initials instead.
- * @todo       Final deprecation in Moodle 6.0. See MDL-82421.
  */
 
 import Pending from 'core/pending';
@@ -57,15 +55,17 @@ const selectors = {
  * Our initial hook into the module which will eventually allow us to handle the dropdown initials bar form.
  *
  * @param {String} callingLink The link to redirect upon form submission.
- * @param {Null|Number} gpr_userid The user id to filter by.
- * @param {Null|String} gpr_search The search value to filter by.
+ * @param {String} firstInitialParam The URL parameter to set for the first name initial.
+ * @param {String} lastInitialParam The URL parameter to set for the last name initial.
+ * @param {Array} additionalParams Any additional parameters to set for the URL.
  */
-export const init = (callingLink, gpr_userid = null, gpr_search = null) => {
+export const init = (callingLink, firstInitialParam = 'sifirst',
+        lastInitialParam = 'silast', additionalParams = []) => {
     if (registered) {
         return;
     }
     const pendingPromise = new Pending();
-    registerListenerEvents(callingLink, gpr_userid, gpr_search);
+    registerListenerEvents(callingLink, firstInitialParam, lastInitialParam, additionalParams);
     // BS events always bubble so, we need to listen for the event higher up the chain.
     $(selectors.parentDomNode).on('shown.bs.dropdown', () => {
         document.querySelector(selectors.pageClickableItem).focus({preventScroll: true});
@@ -78,10 +78,12 @@ export const init = (callingLink, gpr_userid = null, gpr_search = null) => {
  * Register event listeners.
  *
  * @param {String} callingLink The link to redirect upon form submission.
- * @param {Null|Number} gpr_userid The user id to filter by.
- * @param {Null|String} gpr_search The search value to filter by.
+ * @param {String} firstInitialParam The URL parameter to set for the first name initial.
+ * @param {String} lastInitialParam The URL parameter to set for the last name initial.
+ * @param {Array} additionalParams Any additional parameters to set for the URL.
  */
-const registerListenerEvents = (callingLink, gpr_userid = null, gpr_search = null) => {
+const registerListenerEvents = (callingLink, firstInitialParam = 'sifirst',
+        lastInitialParam = 'silast', additionalParams = []) => {
     const events = [
         'click',
         CustomEvents.events.activate,
@@ -129,12 +131,13 @@ const registerListenerEvents = (callingLink, gpr_userid = null, gpr_search = nul
                     // Then we will redirect the user back onto the page with new filters applied.
                     const params = {
                         'id': e.target.closest(selectors.formDropdown).dataset.courseid,
-                        'gpr_search': gpr_search !== null ? gpr_search : '',
-                        'sifirst': sifirst.parentElement.classList.contains('initialbarall') ? '' : sifirst.value,
-                        'silast': silast.parentElement.classList.contains('initialbarall') ? '' : silast.value,
+                        [firstInitialParam]: sifirst.parentElement.classList.contains('initialbarall') ? '' : sifirst.value,
+                        [lastInitialParam]: silast.parentElement.classList.contains('initialbarall') ? '' : silast.value,
                     };
-                    if (gpr_userid !== null) {
-                        params.gpr_userid = gpr_userid;
+
+                    // If additional parameters are passed, add them here (overriding any already set above).
+                    for (const [key, value] of Object.entries(additionalParams)) {
+                        params[key] = value;
                     }
                     window.location = Url.relativeUrl(callingLink, params);
                 }

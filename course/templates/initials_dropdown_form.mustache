@@ -15,30 +15,24 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_group/comboboxsearch/group_selector
+    @template core_course/initials_dropdown_form
 
-    The group selector trigger element.
+    The form component of our dropdown within the tertiary navigation.
 
     Context variables required for this template:
-    * label - The label text fot the group selector element.
-    * group - The value of the group selector element (id of the preselected group)
-    * selectedgroup - The text of the selected group option.
+    * courseid - The course ID.
+    * initialsbars - The rendered mini renderer from the user renderer.
 
     Example context (json):
     {
-        "label": "Select separate groups",
-        "group": "21",
-        "selectedgroup": "Group 1"
+        "courseid": "2",
+        "initialsbars": "Output from renderer method"
     }
 }}
-<span class="d-none" data-region="groupid" data-groupid="{{group}}"></span>
-<div class="align-items-center d-flex">
-    <div class="d-block pe-3 text-truncate">
-        <label class="d-block m-0 small" aria-hidden="true">
-            {{label}}
-        </label>
-        <span class="p-0 font-weight-bold" data-selected-option>
-            {{selectedgroup}}
-        </span>
+<form class="initialsdropdownform" action="#" data-courseid="{{courseid}}">
+    {{{initialsbars}}}
+    <div class="d-flex flex-row justify-content-end">
+        <input class="btn btn-outline-secondary pull-right mx-2" data-action="cancel" type="submit" value="{{#str}}closebuttontitle{{/str}}">
+        <input class="btn btn-primary pull-right" data-action="save" type="submit" value="{{#str}}apply{{/str}}">
     </div>
-</div>
+</form>

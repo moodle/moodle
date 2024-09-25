@@ -45,7 +45,7 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
      * @return string The raw HTML to render.
      */
     public function users_selector(object $course, ?int $userid = null, ?int $groupid = null): string {
-        $actionbarrenderer = $this->page->get_renderer('core_course', 'actionbar');
+        $courserenderer = $this->page->get_renderer('core', 'course');
         $resetlink = new moodle_url('/grade/report/singleview/index.php', ['id' => $course->id, 'group' => $groupid ?? 0]);
         $usersearch = '';
 
@@ -54,7 +54,7 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
             $usersearch = fullname($user);
         }
 
-        return $actionbarrenderer->render(
+        return $courserenderer->render(
             new \core_course\output\actionbar\user_selector(
                 course: $course,
                 resetlink: $resetlink,
@@ -107,7 +107,7 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
             'itemid',
             $gradeitemid
         );
-        return $this->render_from_template($dropdown->get_template(), $dropdown->export_for_template($this));
+        return $this->render($dropdown);
     }
 
     /**

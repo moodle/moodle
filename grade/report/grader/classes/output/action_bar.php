@@ -17,6 +17,9 @@
 namespace gradereport_grader\output;
 
 use core\output\comboboxsearch;
+use core_course\output\actionbar\group_selector;
+use core_course\output\actionbar\initials_selector;
+use core_course\output\actionbar\user_selector;
 use core_grades\output\general_action_bar;
 use moodle_url;
 
@@ -69,7 +72,7 @@ class action_bar extends \core_grades\output\action_bar {
      * @throws \moodle_exception
      */
     public function export_for_template(\renderer_base $output): array {
-        global $PAGE, $OUTPUT, $SESSION, $USER;
+        global $SESSION, $USER;
         // If in the course context, we should display the general navigation selector in gradebook.
         $courseid = $this->context->instanceid;
         // Get the data used to output the general navigation selector.
@@ -82,50 +85,40 @@ class action_bar extends \core_grades\output\action_bar {
         // and the view mode selector (if applicable).
         if (has_capability('moodle/grade:viewall', $this->context)) {
             $course = get_course($courseid);
-            $gradesrenderer = $PAGE->get_renderer('core_grades');
-
-            $initialscontent = $gradesrenderer->initials_selector(
-                $course,
-                $this->context,
-                '/grade/report/grader/index.php'
-            );
 
             $firstnameinitial = $SESSION->gradereport["filterfirstname-{$this->context->id}"] ?? '';
             $lastnameinitial  = $SESSION->gradereport["filtersurname-{$this->context->id}"] ?? '';
+            $additionalparams = [];
 
-            $initialselector = new comboboxsearch(
-                false,
-                $initialscontent->buttoncontent,
-                $initialscontent->dropdowncontent,
-                'initials-selector',
-                'initialswidget',
-                'initialsdropdown',
-                $initialscontent->buttonheader,
-                true,
-                get_string('filterbyname', 'core_grades'),
-                'nameinitials',
-                json_encode([
-                    'first' => $firstnameinitial,
-                    'last' => $lastnameinitial,
-                ])
+            if ($this->userid > 0) {
+                $additionalparams['gpr_userid'] = $this->userid;
+            } else if (!empty($this->usersearch)) {
+                $additionalparams['gpr_search'] = $this->usersearch;
+            }
+
+            $initialselector = new initials_selector(
+                course: $course,
+                targeturl: '/grade/report/grader/index.php',
+                firstinitial: $firstnameinitial,
+                lastinitial: $lastnameinitial,
+                additionalparams: $additionalparams,
             );
             $data['initialselector'] = $initialselector->export_for_template($output);
 
             if ($course->groupmode) {
-                $actionbarrenderer = $PAGE->get_renderer('core_course', 'actionbar');
-                $data['groupselector'] = $actionbarrenderer->render(
-                    new \core_course\output\actionbar\group_selector(null, $this->context));
+                $gs = new group_selector($this->context);
+                $data['groupselector'] = $gs->export_for_template($output);
             }
 
             $resetlink = new moodle_url('/grade/report/grader/index.php', ['id' => $courseid]);
-            $userselectorrenderer = new \core_course\output\actionbar\user_selector(
+            $userselector = new user_selector(
                 course: $course,
                 resetlink: $resetlink,
                 userid: $this->userid,
                 groupid: 0,
                 usersearch: $this->usersearch
             );
-            $data['searchdropdown'] = $userselectorrenderer->export_for_template($output);
+            $data['searchdropdown'] = $userselector->export_for_template($output);
             // The collapsed column dialog is aligned to the edge of the screen, we need to place it such that it also aligns.
             $collapsemenudirection = right_to_left() ? 'dropdown-menu-left' : 'dropdown-menu-right';
 

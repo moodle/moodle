@@ -1236,3 +1236,11 @@ body.tox-fullscreen.path-mod-assign [data-region="grade-panel"] {
 body.path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felement[data-fieldtype="editor"] {
     overflow: unset;
 }
+
+.path-mod-assign .initialsdropdown {
+    width: 460px;
+}
+
+.path-mod-assign .initialsdropdown::after {
+    content: '';
+}

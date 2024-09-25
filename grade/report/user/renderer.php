@@ -91,20 +91,25 @@ class gradereport_user_renderer extends plugin_renderer_base {
      * @param string $usersearch Search string.
      * @return string The raw HTML to render.
      * @throws coding_exception
+     * @deprecated since Moodle 4.5. See user_selector use in \gradereport_user\output\action_bar::export_for_template.
      */
     public function users_selector(object $course, ?int $userid = null, ?int $groupid = null, string $usersearch = ''): string {
-        $actionbarrenderer = $this->page->get_renderer('core_course', 'actionbar');
+
+        debugging('users_selector is deprecated.', DEBUG_DEVELOPER);
+
+        $courserenderer = $this->page->get_renderer('core', 'course');
         $resetlink = new moodle_url('/grade/report/user/index.php', ['id' => $course->id, 'group' => 0]);
         $baseurl = new moodle_url('/grade/report/user/index.php', ['id' => $course->id]);
         $this->page->requires->js_call_amd('gradereport_user/user', 'init', [$baseurl->out(false)]);
-        $userselector = new \core_course\output\actionbar\user_selector(
-            course: $course,
-            resetlink: $resetlink,
-            userid: $userid,
-            groupid: $groupid,
-            usersearch: $usersearch
+        return $courserenderer->render(
+            new \core_course\output\actionbar\user_selector(
+                course: $course,
+                resetlink: $resetlink,
+                userid: $userid,
+                groupid: $groupid,
+                usersearch: $usersearch
+            )
         );
-        return $actionbarrenderer->render($userselector);
     }
 
     /**
@@ -167,8 +172,11 @@ class gradereport_user_renderer extends plugin_renderer_base {
      * @param int $userview The current view user setting constant
      * @param int $courseid The course ID.
      * @return string The raw HTML to render.
+     * @deprecated since Moodle 4.5 See select_menu use in \gradereport_user\output\action_bar::export_for_template.
      */
     public function view_mode_selector(int $userid, int $userview, int $courseid): string {
+
+        debugging('view_mode_selector is deprecated.', DEBUG_DEVELOPER);
 
         $viewasotheruser = new moodle_url('/grade/report/user/index.php', ['id' => $courseid, 'userid' => $userid,
             'userview' => GRADE_REPORT_USER_VIEW_USER]);

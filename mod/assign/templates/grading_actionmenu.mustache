@@ -35,8 +35,9 @@
 
     Example context (json):
     {
-        "userselector": "<div class='user-search'></div>",
-        "groupselector": "<div class='group-selector'></div>",
+        "userselector": {"user selector": "context here"},
+        "groupselector": {"group selector": "context here"},
+        "initialselector": {"initial selector": "context here"},
         "statusselector": {
             "name": "filter",
             "value": "submitted",
@@ -74,16 +75,22 @@
         <div class="navitem-divider d-none d-sm-flex"></div>
         {{#userselector}}
             <div class="navitem">
-                {{{.}}}
+                {{>core/comboboxsearch}}
             </div>
             <div class="navitem-divider d-none d-sm-flex"></div>
         {{/userselector}}
         {{#groupselector}}
             <div class="navitem">
-                {{{.}}}
+                {{>core/comboboxsearch}}
             </div>
             <div class="navitem-divider d-none d-sm-flex"></div>
         {{/groupselector}}
+        {{#initialselector}}
+            <div class="navitem d-flex flex-column align-self-center">
+                {{>core/comboboxsearch}}
+            </div>
+            <div class="navitem-divider"></div>
+        {{/initialselector}}
         {{#statusselector}}
             <div class="navitem">
                 {{>core/select_menu}}
@@ -97,7 +104,7 @@
         {{/statusselector}}
         {{#extrafiltersdropdown}}
             <div class="navitem">
-                {{{.}}}
+            {{>core/local/dropdown/dialog}}
             </div>
             <div class="navitem-divider d-none d-sm-flex"></div>
         {{/extrafiltersdropdown}}
