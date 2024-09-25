@@ -1,5 +1,6 @@
 <?php
 
+namespace Moodle;
 
 /**
  * Handles Ajax functionality that must be implemented separately for each of the
