@@ -66,6 +66,8 @@ H5PEditor.language.core = {
   numberField: 'Nummernfeld',
   orderItemUp: 'Element nach oben schieben',
   orderItemDown: 'Element nach unten schieben',
+  expandAllContent: 'Alle Inhalte ausklappen',
+  collapseAllContent: 'Alle Inhalte einklappen',
   removeItem: 'Element entfernen',
   hubPanelLabel: 'Inhaltstyp auswählen',
   importantInstructions: 'Wichtige Hinweise',

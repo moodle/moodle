@@ -63,6 +63,8 @@ H5PEditor.language.core = {
   numberField: 'number field',
   orderItemUp: 'Order item up',
   orderItemDown: 'Order item down',
+  expandAllContent: 'Expand all content',
+  collapseAllContent: 'Collapse all content',
   removeItem: 'Remove item',
   hubPanelLabel: 'Select content type',
   importantInstructions: 'Important instructions',
@@ -226,6 +228,46 @@ H5PEditor.language.core = {
   allNew: 'All New',
   filterBy: 'Filter by',
   filter: 'Filter',
+  filters: {
+    level: {
+      dropdownLabel: 'Level',
+      dialogHeader: 'Select level of education',
+      dialogButtonLabel: 'Filter level of education'
+    },
+    language: {
+      dropdownLabel: 'Language',
+      dialogHeader: 'Select language(s)',
+      dialogButtonLabel: 'Filter languages',
+      searchPlaceholder: 'Type to search for languages'
+    },
+    reviewed: {
+      dropdownLabel: 'Reviewed',
+      dialogHeader: 'Reviewed Content',
+      dialogButtonLabel: 'Filter',
+      optionLabel: 'Show only reviewed content'
+    },
+    contentTypes: {
+      dropdownLabel: 'Content types',
+      dialogHeader: 'Select Content type(s)',
+      dialogButtonLabel: 'Filter Content Types',
+      searchPlaceholder: 'Type to search for content types'
+    },
+    disciplines: {
+      dropdownLabel: 'Discipline',
+      dialogHeader: 'Select Your Discipline',
+      dialogButtonLabel: 'Filter Disciplines',
+      searchPlaceholder: 'Type to search for disciplines'
+    },
+    licenses: {
+      dropdownLabel: 'License',
+      dialogHeader: 'Select preferred rights of use',
+      dialogButtonLabel: 'Filter licenses',
+      options: {
+        modified: 'Can be modified',
+        commercial: 'Allows commercial use'
+      }
+    }
+  },
   clearFilters: 'Clear all filters',
   contentSearchFieldPlaceholder: 'Search for Content',
   loadingContentTitle: 'We are loading content for you...',

@@ -64,6 +64,8 @@ H5PEditor.language.core = {
   numberField: 'ilość pól',
   orderItemUp: 'Uporządkuj rosnąco',
   orderItemDown: 'Uporządkuj malejąco',
+  expandAllContent: 'Expand all content',
+  collapseAllContent: 'Collapse all content',
   removeItem: 'Usuń',
   hubPanelLabel: 'Wybierz typ zasobu',
   importantInstructions: 'Ważne instrukcje',

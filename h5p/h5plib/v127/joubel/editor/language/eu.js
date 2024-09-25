@@ -65,6 +65,8 @@ H5PEditor.language.core = {
   numberField: 'eremu numerikoa',
   orderItemUp: 'Ordenean gora eraman',
   orderItemDown: 'Ordenean behera eraman',
+  expandAllContent: 'Expand all content',
+  collapseAllContent: 'Collapse all content',
   removeItem: 'Kendu elementua',
   hubPanelLabel: 'Hautatu ariketa mota',
   importantInstructions: 'Jarraibide garrantzitsuak',
