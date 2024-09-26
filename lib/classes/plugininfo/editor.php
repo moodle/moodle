@@ -41,10 +41,13 @@ class editor extends base {
         global $CFG;
 
         if (empty($CFG->texteditors)) {
-            return array('atto'=>'atto', 'tinymce'=>'tinymce', 'textarea'=>'textarea');
+            return [
+                'tiny' => 'tiny',
+                'textarea' => 'textarea',
+            ];
         }
 
-        $enabled = array();
+        $enabled = [];
         foreach (explode(',', $CFG->texteditors) as $editor) {
             $enabled[$editor] = $editor;
         }

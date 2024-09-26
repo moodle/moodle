@@ -261,11 +261,6 @@ class helper {
         $tools = array();
 
         // Getting information from available H5P tools one by one because their enabled/disabled options are totally different.
-        // Check the atto button status.
-        $link = \editor_atto\plugininfo\atto::get_manage_url();
-        $status = strpos(get_config('editor_atto', 'toolbar'), 'h5p') > -1;
-        $tools[] = self::convert_info_into_array('atto_h5p', $link, $status);
-
         // Check the Display H5P filter status.
         $link = \core\plugininfo\filter::get_manage_url();
         $status = filter_get_active_state('displayh5p', context_system::instance()->id);

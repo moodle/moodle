@@ -112,7 +112,7 @@ class behat_context_helper {
      * This method will return all contexts which match the specified prefix.
      *
      * For example, to find all editors, you would pass in 'behat_editor', and this might return:
-     * - behat_editor_atto
+     * - behat_editor_tiny
      * - behat_editor_textarea
      *
      * @param string $prefix The prefix to search for
