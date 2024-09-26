@@ -63,13 +63,8 @@ class restore_structure_parser_processor extends grouped_parser_processor {
 
         if (strpos($cdata, '$@FILEPHP@$') !== false) {
             // We need to convert $@FILEPHP@$.
-            if ($CFG->slasharguments) {
-                $slash = '/';
-                $forcedownload = '?forcedownload=1';
-            } else {
-                $slash = '%2F';
-                $forcedownload = '&amp;forcedownload=1';
-            }
+            $slash = '/';
+            $forcedownload = '?forcedownload=1';
 
             // We have to remove trailing slashes, otherwise file URLs will be restored with an extra slash.
             $basefileurl = rtrim(moodle_url::make_legacyfile_url($this->courseid, null)->out(true), $slash);

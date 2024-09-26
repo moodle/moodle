@@ -1,0 +1,7 @@
+issueNumber: MDL-62640
+notes:
+  core:
+    - message: |
+        Due to the removal of the slashargument configuration, the server check page will no longer inspect the slash argument,
+        therefore, the function check_slasharguments() is deprecated because it is no longer used.
+      type: deprecated

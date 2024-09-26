@@ -134,3 +134,6 @@ filterbothactive,core_grades
 filterbyname,core_grades
 filterfirstactive,core_grades
 filterlastactive,core_grades
+configslasharguments,core_admin
+slasharguments,core_admin
+slashargumentswarning,core_admin

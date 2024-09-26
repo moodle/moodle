@@ -736,9 +736,6 @@ function wiki_parser_real_path($url, $context, $component, $filearea, $swid) {
     } else {
 
         $file = 'pluginfile.php';
-        if (!$CFG->slasharguments) {
-            $file = $file . '?file=';
-        }
         $baseurl = "$CFG->wwwroot/$file/{$context->id}/$component/$filearea/$swid/";
         // it is a file in current file area
         return $baseurl . $url;

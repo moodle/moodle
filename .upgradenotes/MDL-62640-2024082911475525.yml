@@ -1,0 +1,9 @@
+issueNumber: MDL-62640
+notes:
+  core:
+    - message: |
+        The code that is associated with the slashargument option has been deprecated. Here is the detail:
+        - The parameter $support of the \url::set_slashargument().
+        - The parameter $includeslashargument of the \url::get_path().
+        - The $CFG->yuislasharguments configuration.
+      type: deprecated

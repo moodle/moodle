@@ -174,15 +174,12 @@ class page_requirements_manager {
     public function __construct() {
         global $CFG;
 
-        // You may need to set up URL rewrite rule because oversized URLs might not be allowed by web server.
-        $sep = empty($CFG->yuislasharguments) ? '?' : '/';
-
         $this->yui3loader = new stdClass();
         $this->YUI_config = new yui();
 
         // Set up some loader options.
         $this->yui3loader->local_base = $CFG->wwwroot . '/lib/yuilib/' . $CFG->yui3version . '/';
-        $this->yui3loader->local_comboBase = $CFG->wwwroot . '/theme/yui_combo.php' . $sep;
+        $this->yui3loader->local_comboBase = $CFG->wwwroot . '/theme/yui_combo.php/';
 
         $this->yui3loader->base = $this->yui3loader->local_base;
         $this->yui3loader->comboBase = $this->yui3loader->local_comboBase;
@@ -211,7 +208,7 @@ class page_requirements_manager {
         $this->YUI_config->add_group('yui2', [
             // Loader configuration for our 2in3.
             'base' => $CFG->wwwroot . '/lib/yuilib/2in3/' . $CFG->yui2version . '/build/',
-            'comboBase' => $CFG->wwwroot . '/theme/yui_combo.php' . $sep,
+            'comboBase' => $CFG->wwwroot . '/theme/yui_combo.php/',
             'combine' => $this->yui3loader->combine,
             'ext' => false,
             'root' => '2in3/' . $CFG->yui2version . '/build/',
@@ -225,9 +222,9 @@ class page_requirements_manager {
         $configname = $this->YUI_config->set_config_source('lib/yui/config/moodle.js');
         $this->YUI_config->add_group('moodle', [
             'name' => 'moodle',
-            'base' => $CFG->wwwroot . '/theme/yui_combo.php' . $sep . 'm/' . $jsrev . '/',
+            'base' => $CFG->wwwroot . '/theme/yui_combo.php/m/' . $jsrev . '/',
             'combine' => $this->yui3loader->combine,
-            'comboBase' => $CFG->wwwroot . '/theme/yui_combo.php' . $sep,
+            'comboBase' => $CFG->wwwroot . '/theme/yui_combo.php/',
             'ext' => false,
             'root' => 'm/' . $jsrev . '/', // Add the rev to the root path so that we can control caching.
             'patterns' => [
@@ -242,7 +239,7 @@ class page_requirements_manager {
             'name' => 'gallery',
             'base' => $CFG->wwwroot . '/lib/yuilib/gallery/',
             'combine' => $this->yui3loader->combine,
-            'comboBase' => $CFG->wwwroot . '/theme/yui_combo.php' . $sep,
+            'comboBase' => $CFG->wwwroot . '/theme/yui_combo.php/',
             'ext' => false,
             'root' => 'gallery/' . $jsrev . '/',
             'patterns' => [
@@ -321,7 +318,6 @@ class page_requirements_manager {
                 'sessiontimeout'        => $CFG->sessiontimeout,
                 'sessiontimeoutwarning' => $CFG->sessiontimeoutwarning,
                 'themerev'              => theme_get_revision(),
-                'slasharguments'        => (int)(!empty($CFG->slasharguments)),
                 'theme'                 => $page->theme->name,
                 'iconsystemmodule'      => $iconsystem->get_amd_name(),
                 'jsrev'                 => $this->get_jsrev(),
@@ -606,23 +602,9 @@ class page_requirements_manager {
                 debugging("Invalid file '$file' specified in jQuery plugin '$plugin' in component '$component'");
                 continue;
             }
-            if (!empty($CFG->slasharguments)) {
-                $url = new moodle_url("/theme/jquery.php");
-                $url->set_slashargument("/$component/$file");
-            } else {
-                // This is not really good, we need slasharguments for relative links, this means no caching...
-                $path = realpath("$componentdir/jquery/$file");
-                if (strpos($path, $CFG->dirroot) === 0) {
-                    $url = $CFG->wwwroot . preg_replace('/^' . preg_quote($CFG->dirroot, '/') . '/', '', $path);
-                    // Replace all occurences of backslashes characters in url to forward slashes.
-                    $url = str_replace('\\', '/', $url);
-                    $url = new moodle_url($url);
-                } else {
-                    // Bad luck, fix your server!
-                    debugging("Moodle jQuery integration requires 'slasharguments' setting to be enabled.");
-                    continue;
-                }
-            }
+            $url = new moodle_url("/theme/jquery.php");
+            $url->set_slashargument("/$component/$file");
+
             $this->jqueryplugins[$plugin]->urls[] = $url;
         }
 
@@ -769,13 +751,9 @@ class page_requirements_manager {
             }
             if (substr($url, -3) === '.js') {
                 $jsrev = $this->get_jsrev();
-                if (empty($CFG->slasharguments)) {
-                    return new moodle_url('/lib/javascript.php', ['rev' => $jsrev, 'jsfile' => $url]);
-                } else {
-                    $returnurl = new moodle_url('/lib/javascript.php');
-                    $returnurl->set_slashargument('/' . $jsrev . $url);
-                    return $returnurl;
-                }
+                $returnurl = new moodle_url('/lib/javascript.php');
+                $returnurl->set_slashargument('/' . $jsrev . $url);
+                return $returnurl;
             } else {
                 return new moodle_url($url);
             }
@@ -1469,11 +1447,8 @@ class page_requirements_manager {
 
         $requirejsconfig = file_get_contents($CFG->dirroot . '/lib/requirejs/moodle-config.js');
 
-        // No extension required unless slash args is disabled.
-        $jsextension = '.js';
-        if (!empty($CFG->slasharguments)) {
-            $jsextension = '';
-        }
+        // No extension required.
+        $jsextension = '';
 
         $minextension = '.min';
         if (!$cachejs) {
