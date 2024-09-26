@@ -1,0 +1,9 @@
+issueNumber: MDL-83282
+notes:
+  core:
+    - message: |
+        The Atto HTML editor has been removed from core, along with all standard
+        subplugins.
+
+        The editor is available for continued use in the Plugins Database.
+      type: removed

@@ -1,7 +1,0 @@
-{
-    "moodle-atto_underline-button": {
-        "requires": [
-            "moodle-editor_atto-plugin"
-        ]
-    }
-}

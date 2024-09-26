@@ -1,8 +1,0 @@
-{
-    "moodle-atto_media-button": {
-        "requires": [
-            "moodle-editor_atto-plugin",
-            "moodle-form-shortforms"
-        ]
-    }
-}

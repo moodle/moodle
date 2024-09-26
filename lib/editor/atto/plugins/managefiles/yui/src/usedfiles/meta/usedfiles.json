@@ -1,8 +1,0 @@
-{
-    "moodle-atto_managefiles-usedfiles": {
-        "requires": [
-            "node",
-            "escape"
-        ]
-    }
-}

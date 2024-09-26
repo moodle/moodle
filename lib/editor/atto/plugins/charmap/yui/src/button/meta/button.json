@@ -1,7 +1,0 @@
-{
-    "moodle-atto_charmap-button": {
-        "requires": [
-            "moodle-editor_atto-plugin"
-        ]
-    }
-}

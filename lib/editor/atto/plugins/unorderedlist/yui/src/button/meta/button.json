@@ -1,7 +1,0 @@
-{
-    "moodle-atto_unorderedlist-button": {
-        "requires": [
-            "moodle-editor_atto-plugin"
-        ]
-    }
-}
