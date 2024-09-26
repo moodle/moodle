@@ -38,13 +38,11 @@ global $PAGE, $USER, $CFG, $SESSION, $DB;
 
 $params = $_REQUEST;
 
-$broker = new broker();
-$error = $broker->validate_parameters($params);
+$error = broker::validate_parameters($params);
 if (!empty($error)) {
     header('HTTP/1.0 400 Bad Request. ' . $error);
     return;
 }
-
 $action = $params['action'];
 
 $instance = instance::get_from_instanceid($params['bigbluebuttonbn']);
