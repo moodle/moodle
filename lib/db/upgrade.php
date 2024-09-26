@@ -1429,5 +1429,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024092400.01);
     }
 
+    if ($oldversion < 2024092600.00) {
+        // If h5plib_v126 is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/h5p/h5plib/v126/version.php')) {
+            // Clean config.
+            uninstall_plugin('h5plib', 'v126');
+        }
+
+        // If h5plib_v127 is present, set it as the default one.
+        if (file_exists($CFG->dirroot . '/h5p/h5plib/v127/version.php')) {
+            set_config('h5plibraryhandler', 'h5plib_v127');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024092600.00);
+    }
+
     return true;
 }
