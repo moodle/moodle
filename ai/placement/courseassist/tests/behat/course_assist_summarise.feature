@@ -47,6 +47,44 @@ Feature: AI Course assist summarise
     And "Summarise" "button" should exist
 
   @javascript
+  Scenario: Summarise text using AI is not available if provider action is not enabled
+    Given the following config values are set as admin:
+      | summarise_text |  | aiprovider_openai |
+    When I am on the "PageName1" "page activity" page logged in as teacher1
+    Then "Summarise" "button" should not exist
+    And the following config values are set as admin:
+      | summarise_text | 1 | aiprovider_openai |
+    And I am on the "PageName1" "page activity" page logged in as teacher1
+    And "Summarise" "button" should exist
+
+  @javascript
+  Scenario: Summarise text using AI is not available if placement action is not enabled
+    Given the following config values are set as admin:
+      | summarise_text |  | aiplacement_courseassist |
+    When I am on the "PageName1" "page activity" page logged in as teacher1
+    Then "Summarise" "button" should not exist
+    And the following config values are set as admin:
+      | summarise_text | 1 | aiplacement_courseassist |
+    And I am on the "PageName1" "page activity" page logged in as teacher1
+    And "Summarise" "button" should exist
+
+  @javascript
+  Scenario: Summarise text using AI is not available if provider action is not enabled and placement action is enabled
+    Given the following config values are set as admin:
+      | summarise_text |  | aiplacement_courseassist |
+      | summarise_text |  | aiprovider_openai        |
+    When I am on the "PageName1" "page activity" page logged in as teacher1
+    Then "Summarise" "button" should not exist
+    And the following config values are set as admin:
+      | summarise_text | 1 | aiplacement_courseassist |
+    And I am on the "PageName1" "page activity" page logged in as teacher1
+    And "Summarise" "button" should not exist
+    And the following config values are set as admin:
+      | summarise_text | 1 | aiprovider_openai |
+    And I am on the "PageName1" "page activity" page logged in as teacher1
+    And "Summarise" "button" should exist
+
+  @javascript
   Scenario: Summarise text using AI is not available if the user does not have permission
     When I am on the "PageName1" "page activity" page logged in as teacher2
     Then "Summarise" "button" should not exist

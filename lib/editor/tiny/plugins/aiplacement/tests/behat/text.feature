@@ -55,6 +55,51 @@ Feature: Generate text using AI
     And "AI generate text" button should exist in the "Description" TinyMCE editor
 
   @javascript
+  Scenario: Text generation using AI is not available if provider action is not enabled
+    Given the following config values are set as admin:
+      | generate_text |  | aiprovider_openai |
+    When I am on the "PageName2" "page activity" page logged in as teacher1
+    And I navigate to "Settings" in current page administration
+    Then "AI generate text" button should not exist in the "Description" TinyMCE editor
+    And the following config values are set as admin:
+      | generate_text | 1 | aiprovider_openai |
+    And I am on the "PageName2" "page activity" page logged in as teacher1
+    And I navigate to "Settings" in current page administration
+    And "AI generate text" button should exist in the "Description" TinyMCE editor
+
+  @javascript
+  Scenario: Text generation using AI is not available if placement action is not enabled
+    Given the following config values are set as admin:
+      | generate_text |  | aiplacement_editor |
+    When I am on the "PageName2" "page activity" page logged in as teacher1
+    And I navigate to "Settings" in current page administration
+    Then "AI generate text" button should not exist in the "Description" TinyMCE editor
+    And the following config values are set as admin:
+      | generate_text | 1 | aiplacement_editor |
+    And I am on the "PageName2" "page activity" page logged in as teacher1
+    And I navigate to "Settings" in current page administration
+    And "AI generate text" button should exist in the "Description" TinyMCE editor
+
+  @javascript
+  Scenario: Text generation using AI is not available if provider action is not enabled and placement action is enabled
+    Given the following config values are set as admin:
+      | generate_text |  | aiplacement_editor |
+      | generate_text |  | aiprovider_openai  |
+    When I am on the "PageName2" "page activity" page logged in as teacher1
+    And I navigate to "Settings" in current page administration
+    Then "AI generate text" button should not exist in the "Description" TinyMCE editor
+    And the following config values are set as admin:
+      | generate_text | 1 | aiplacement_editor |
+    And I am on the "PageName2" "page activity" page logged in as teacher1
+    And I navigate to "Settings" in current page administration
+    And "AI generate text" button should not exist in the "Description" TinyMCE editor
+    And the following config values are set as admin:
+      | generate_text | 1 | aiprovider_openai |
+    And I am on the "PageName2" "page activity" page logged in as teacher1
+    And I navigate to "Settings" in current page administration
+    And "AI generate text" button should exist in the "Description" TinyMCE editor
+
+  @javascript
   Scenario: Text generation using AI is not available if the user does not have permission
     When I am on the "PageName1" "page activity" page logged in as teacher2
     And I navigate to "Settings" in current page administration

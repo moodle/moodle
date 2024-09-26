@@ -327,6 +327,7 @@ const AICourseAssist = class {
                 }
             } catch (error) {
                 window.console.log(error);
+                this.displayError();
             }
         }
     }

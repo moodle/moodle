@@ -27,6 +27,7 @@ $string['courseassist:summarise_text'] = 'Summarise text';
 $string['copy'] = 'Copy';
 $string['generatefailtitle'] = 'Something went wrong';
 $string['generating'] = 'Generating your response';
+$string['nocourseassist'] = 'AI summary is not available for this context';
 $string['pluginname'] = 'Course Assistance Placement';
 $string['privacy:metadata'] = 'The Course Assistance placement plugin does not store any personal data.';
 $string['regenerate'] = 'Regenerate';
