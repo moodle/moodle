@@ -61,6 +61,7 @@ const SELECTORS = {
         reportCreate: '[data-action="report-create"]',
         reportEdit: '[data-action="report-edit"]',
         reportDelete: '[data-action="report-delete"]',
+        reportDuplicate: '[data-action="report-duplicate"]',
         reportAddColumn: '[data-action="report-add-column"]',
         reportRemoveColumn: '[data-action="report-remove-column"]',
         reportAddCondition: '[data-action="report-add-condition"]',

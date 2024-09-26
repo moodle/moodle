@@ -306,6 +306,24 @@ class reports_list extends system_report {
             })
         );
 
+        // Duplicate action.
+        $this->add_action((new action(
+            new moodle_url('#'),
+            new pix_icon('t/copy', ''),
+            ['data-action' => 'report-duplicate', 'data-report-id' => ':id', 'data-report-name' => ':name'],
+            false,
+            new lang_string('duplicatereport', 'core_reportbuilder')
+        ))
+            ->add_callback(function(stdClass $row): bool {
+
+                // Ensure data name attribute is properly formatted.
+                $report = new report(0, $row);
+                $row->name = $report->get_formatted_name();
+
+                return $this->report_source_valid($row->source) && permission::can_duplicate_report($report);
+            })
+        );
+
         // Delete action.
         $this->add_action((new action(
             new moodle_url('#'),

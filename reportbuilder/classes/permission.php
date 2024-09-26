@@ -183,4 +183,30 @@ class permission {
             throw new report_access_exception('errorreportcreate');
         }
     }
+
+    /**
+     * Whether given user can duplicate a report
+     *
+     * @param report $report
+     * @param int|null $userid User ID to check, or the current user if omitted
+     * @param context|null $context
+     * @return bool
+     */
+    public static function can_duplicate_report(report $report, ?int $userid = null, ?context $context = null): bool {
+        return static::can_edit_report($report, $userid) && static::can_create_report($userid, $context);
+    }
+
+    /**
+     * Require given user can duplicate a report
+     *
+     * @param report $report
+     * @param int|null $userid User ID to check, or the current user if omitted
+     * @param context|null $context
+     * @throws report_access_exception
+     */
+    public static function require_can_duplicate_report(report $report, ?int $userid = null, ?context $context = null): void {
+        if (!static::can_duplicate_report($report, $userid, $context)) {
+            throw new report_access_exception('errorreportduplicate');
+        }
+    }
 }
