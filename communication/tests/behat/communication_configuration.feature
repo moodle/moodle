@@ -107,3 +107,26 @@ Feature: Access the communication configuration page
     And I navigate to "Communication" in current page administration
     And the field "Room name" matches value "Matrix room"
     And the field "Room topic" matches value "Matrix topic"
+
+  @javascript
+  Scenario: Emptying the room name field always sets course name as default
+    Given a Matrix mock server is configured
+    And I am on the "Test course" "Course" page logged in as "teacher1"
+    When I navigate to "Communication" in current page administration
+    And I set the following fields to these values:
+      | selectedcommunication        | communication_matrix |
+    And I wait to be redirected
+    And I should see "Room name"
+    And I should see "Room topic"
+    And I set the following fields to these values:
+      | communication_matrixroomname | Matrix room  |
+      | matrixroomtopic              | Matrix topic |
+    And I click on "Save changes" "button"
+    And I navigate to "Communication" in current page administration
+    Then the field "Room name" matches value "Matrix room"
+    And the field "Room topic" matches value "Matrix topic"
+    And I set the following fields to these values:
+      | communication_matrixroomname | |
+    And I click on "Save changes" "button"
+    And I navigate to "Communication" in current page administration
+    And the field "Room name" matches value "Test course"
