@@ -29,6 +29,7 @@ require_once(__DIR__ . '/../../../../lib/tests/behat/behat_navigation.php');
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException;
 use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
+use Behat\Mink\Exception\DriverException as DriverException;
 
 /**
  * Step definitions and overrides to navigate through the navigation tree nodes in the Classic theme.
@@ -427,5 +428,19 @@ class behat_theme_classic_behat_navigation extends behat_navigation {
 
         throw new ElementNotFoundException($this->getSession(),
             'Link "' . join(' > ', $nodelist) . '" in the current page edit menu"');
+    }
+
+    #[\Override]
+    public function menu_item_should_be_active(string $navigationmenuitem): void {
+        throw new DriverException(
+            'The Classic theme does not implement navigation in a way that allows this step to be used.',
+        );
+    }
+
+    #[\Override]
+    public function menu_item_should_not_be_active(string $navigationmenuitem): void {
+        throw new DriverException(
+            'The Classic theme does not implement the navigation in a way that allows this step to be used.',
+        );
     }
 }
