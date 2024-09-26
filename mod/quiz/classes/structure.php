@@ -1716,7 +1716,9 @@ class structure {
         // Loop over all random slots to build arrays of the data we will need.
         $tagids = [];
         $questioncategoriesids = [];
-        $randomcategoriesandtags = []; // An associative array of slotid => ['cat' => catid, 'tag' => [tagid, tagid, ...]].
+        // An associative array of slotid. Example structure:
+        // ['cat' => [values => catid, 'includesubcategories' => true, 'tag' => [tagid, tagid, ...]].
+        $randomcategoriesandtags = [];
         foreach ($allslots as $slotid => $slot) {
             foreach ($slot->filtercondition as $name => $value) {
                 if ($name !== 'filter') {
@@ -1726,8 +1728,9 @@ class structure {
                 // Parse the filter condition.
                 foreach ($value as $filteroption => $filtervalue) {
                     if ($filteroption === 'category') {
-                        $randomcategoriesandtags[$slotid]['cat'] = $filtervalue['values'];
-                        $questioncategoriesids[] = $filtervalue['values'][0];
+                        $randomcategoriesandtags[$slotid]['cat']['values'] = $questioncategoriesids[] = $filtervalue['values'][0];
+                        $randomcategoriesandtags[$slotid]['cat']['includesubcategories'] =
+                            $filtervalue['filteroptions']['includesubcategories'] ?? false;
                     }
 
                     if ($filteroption === 'qtagids') {
@@ -1752,19 +1755,13 @@ class structure {
         // Get names for all question categories.
         $categories = $DB->get_records_list('question_categories', 'id', $questioncategoriesids,
             'id', 'id, name, contextid, parent');
-        $categorynames = [];
-        foreach ($categories as $id => $category) {
-            if ($category->name === 'top') {
-                $categoryname = $DB->get_field('question_categories', 'name', ['parent' => $id]);
-            } else {
-                $categoryname = $category->name;
-            }
-            $categorynames[$id] = $categoryname;
-        }
 
         // Now, put the data required for each slot into $this->randomslotcategories and $this->randomslottags.
         foreach ($randomcategoriesandtags as $slotid => $catandtags) {
-            $this->randomslotcategories[$slotid] = $categorynames[$catandtags['cat'][0]];
+            $qcategoryid = $catandtags['cat']['values'];
+            $qcategory = $categories[$qcategoryid];
+            $includesubcategories = $catandtags['cat']['includesubcategories'];
+            $this->randomslotcategories[$slotid] = $this->get_used_category_description($qcategory, $includesubcategories);
             if (isset($catandtags['tag'])) {
                 $slottagnames = [];
                 foreach ($catandtags['tag'] as $tagid) {
@@ -1773,5 +1770,49 @@ class structure {
                 $this->randomslottags[$slotid] = implode(', ', $slottagnames);
             }
         }
+    }
+
+    /**
+     * Returns a description of the used question category, taking into account the context and whether subcategories are
+     * included.
+     *
+     * @param stdClass $qcategory The question category object containing category details.
+     * @param bool $includesubcategories Whether subcategories are included.
+     * @return string The generated description based on the used category.
+     * @throws coding_exception If the context level is unsupported.
+     */
+    private function get_used_category_description(stdClass $qcategory, bool $includesubcategories): string {
+        if ($qcategory->name === 'top') { // This is a "top" question category.
+            if (!$includesubcategories) {
+                // Question categories labeled as "top" cannot directly contain questions. If the subcategories that may
+                // hold questions are excluded, the generated random questions will be invalid. Thus, return a description
+                // that informs the user about the issues associated with these types of generated random questions.
+                return get_string('randomfaultynosubcat', 'mod_quiz');
+            }
+
+            $context = \context::instance_by_id($qcategory->contextid);
+
+            switch ($context->contextlevel) {
+                case CONTEXT_MODULE:
+                    return get_string('randommodulewithsubcat', 'mod_quiz');
+
+                case CONTEXT_COURSE:
+                    return get_string('randomcoursewithsubcat', 'mod_quiz');
+
+                case CONTEXT_COURSECAT:
+                    $contextname = shorten_text($context->get_context_name(false), 100);
+                    return get_string('randomcoursecatwithsubcat', 'mod_quiz', $contextname);
+
+                case CONTEXT_SYSTEM:
+                    return get_string('randomsystemwithsubcat', 'mod_quiz');
+
+                default:
+                    throw new coding_exception('Unsupported context.');
+            }
+        }
+        // Otherwise, return the description of the used standard question category, also indicating whether subcategories
+        // are included.
+        return $includesubcategories ? get_string('randomcatwithsubcat', 'mod_quiz', $qcategory->name) :
+            $qcategory->name;
     }
 }
