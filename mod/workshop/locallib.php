@@ -582,20 +582,7 @@ class workshop {
      * @return array array[userid] => stdClass
      */
     public function get_potential_authors($musthavesubmission=true, $groupid=0, $limitfrom=0, $limitnum=0) {
-        global $DB;
-
-        list($sql, $params) = $this->get_users_with_capability_sql('mod/workshop:submit', $musthavesubmission, $groupid);
-
-        if (empty($sql)) {
-            return array();
-        }
-
-        list($sort, $sortparams) = users_order_by_sql('tmp');
-        $sql = "SELECT *
-                  FROM ($sql) tmp
-              ORDER BY $sort";
-
-        return $DB->get_records_sql($sql, array_merge($params, $sortparams), $limitfrom, $limitnum);
+        return $this->get_users_with_capability(['mod/workshop:submit'], $musthavesubmission, $groupid, $limitfrom, $limitnum);
     }
 
     /**
@@ -606,18 +593,7 @@ class workshop {
      * @return int
      */
     public function count_potential_authors($musthavesubmission=true, $groupid=0) {
-        global $DB;
-
-        list($sql, $params) = $this->get_users_with_capability_sql('mod/workshop:submit', $musthavesubmission, $groupid);
-
-        if (empty($sql)) {
-            return 0;
-        }
-
-        $sql = "SELECT COUNT(*)
-                  FROM ($sql) tmp";
-
-        return $DB->count_records_sql($sql, $params);
+        return count($this->get_users_with_capability(['mod/workshop:submit'], $musthavesubmission, $groupid));
     }
 
     /**
@@ -633,20 +609,7 @@ class workshop {
      * @return array array[userid] => stdClass
      */
     public function get_potential_reviewers($musthavesubmission=false, $groupid=0, $limitfrom=0, $limitnum=0) {
-        global $DB;
-
-        list($sql, $params) = $this->get_users_with_capability_sql('mod/workshop:peerassess', $musthavesubmission, $groupid);
-
-        if (empty($sql)) {
-            return array();
-        }
-
-        list($sort, $sortparams) = users_order_by_sql('tmp');
-        $sql = "SELECT *
-                  FROM ($sql) tmp
-              ORDER BY $sort";
-
-        return $DB->get_records_sql($sql, array_merge($params, $sortparams), $limitfrom, $limitnum);
+        return $this->get_users_with_capability(['mod/workshop:peerassess'], $musthavesubmission, $groupid, $limitfrom, $limitnum);
     }
 
     /**
@@ -657,18 +620,8 @@ class workshop {
      * @return int
      */
     public function count_potential_reviewers($musthavesubmission=false, $groupid=0) {
-        global $DB;
+        return count($this->get_users_with_capability(['mod/workshop:peerassess'], $musthavesubmission, $groupid));
 
-        list($sql, $params) = $this->get_users_with_capability_sql('mod/workshop:peerassess', $musthavesubmission, $groupid);
-
-        if (empty($sql)) {
-            return 0;
-        }
-
-        $sql = "SELECT COUNT(*)
-                  FROM ($sql) tmp";
-
-        return $DB->count_records_sql($sql, $params);
     }
 
     /**
@@ -686,29 +639,11 @@ class workshop {
      * @return array array[userid] => stdClass
      */
     public function get_participants($musthavesubmission=false, $groupid=0, $limitfrom=0, $limitnum=0) {
-        global $DB;
 
-        list($sql, $params) = $this->get_participants_sql($musthavesubmission, $groupid);
-        list($filteringsql, $filteringparams) = $this->get_users_with_initial_filtering_sql_where();
-        $wheresql = "";
+        // Get any users who have either of these 2 capabilities on the activity.
+        return $this->get_users_with_capability(['mod/workshop:submit', 'mod/workshop:peerassess'],
+            $musthavesubmission, $groupid, $limitfrom, $limitnum);
 
-        if ($filteringsql) {
-            $wheresql .= $filteringsql;
-            $params = array_merge($params, $filteringparams);
-        }
-        if (empty($sql)) {
-            return array();
-        }
-
-        list($sort, $sortparams) = users_order_by_sql('tmp');
-        $sql = "SELECT * FROM ($sql) tmp";
-
-        if ($wheresql) {
-            $sql .= " WHERE $wheresql";
-        }
-        $sql .= " ORDER BY $sort";
-
-        return $DB->get_records_sql($sql, array_merge($params, $sortparams), $limitfrom, $limitnum);
     }
 
     /**
@@ -719,18 +654,7 @@ class workshop {
      * @return int
      */
     public function count_participants($musthavesubmission=false, $groupid=0) {
-        global $DB;
-
-        list($sql, $params) = $this->get_participants_sql($musthavesubmission, $groupid);
-
-        if (empty($sql)) {
-            return 0;
-        }
-
-        $sql = "SELECT COUNT(*)
-                  FROM ($sql) tmp";
-
-        return $DB->count_records_sql($sql, $params);
+        return count($this->get_participants($musthavesubmission, $groupid));
     }
 
     /**
@@ -740,29 +664,17 @@ class workshop {
      * @return boolean
      */
     public function is_participant($userid=null) {
-        global $USER, $DB;
+
+        global $USER;
 
         if (is_null($userid)) {
             $userid = $USER->id;
         }
 
-        list($sql, $params) = $this->get_participants_sql();
+        // Get the participants on this activity and see if the user exists in that array.
+        $participants = $this->get_participants();
+        return (array_key_exists($userid, $participants));
 
-        if (empty($sql)) {
-            return false;
-        }
-
-        $sql = "SELECT COUNT(*)
-                  FROM {user} uxx
-                  JOIN ({$sql}) pxx ON uxx.id = pxx.id
-                 WHERE uxx.id = :uxxid";
-        $params['uxxid'] = $userid;
-
-        if ($DB->count_records_sql($sql, $params)) {
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -3447,120 +3359,145 @@ class workshop {
     }
 
     /**
-     * Returns SQL to fetch all enrolled users with the given capability in the current workshop
+     * This is a replacement for the old get_users_with_capability_sql method.
+     * The old method returned huge amounts of SQL for large courses, potentially 10s of thousands of lines
+     * with hundreds of UNIONS, which caused some poor performance. This new method aims to streamline it all
+     * into one query.
      *
-     * The returned array consists of string $sql and the $params array. Note that the $sql can be
-     * empty if a grouping is selected and it has no groups.
+     * Gets users with any of the specified capabilities on the workshop activity.
      *
      * The list is automatically restricted according to any availability restrictions
      * that apply to user lists (e.g. group, grouping restrictions).
      *
-     * @param string $capability the name of the capability
-     * @param bool $musthavesubmission ff true, return only users who have already submitted
+     * @param array $capabilities array of capability names (If the user has ANY of them, it returns true for that user)
+     * @param bool $musthavesubmission if true, return only users who have already submitted
      * @param int $groupid 0 means ignore groups, any other value limits the result by group id
-     * @return array of (string)sql, (array)params
+     * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set)
+     * @param int $limitnum return a subset containing this number of records (optional, required if $limitfrom is set)
+     * @return array of users
      */
-    protected function get_users_with_capability_sql($capability, $musthavesubmission, $groupid) {
-        global $CFG;
-        /** @var int static counter used to generate unique parameter holders */
-        static $inc = 0;
-        $inc++;
+    protected function get_users_with_capability(array $capabilities, bool $musthavesubmission, int $groupid,
+            int $limitfrom = 0, int $limitnum = 0): array {
 
-        // If the caller requests all groups and we are using a selected grouping,
-        // recursively call this function for each group in the grouping (this is
-        // needed because get_enrolled_sql only supports a single group).
-        if (empty($groupid) and $this->cm->groupingid) {
-            $groupingid = $this->cm->groupingid;
-            $groupinggroupids = array_keys(groups_get_all_groups($this->cm->course, 0, $this->cm->groupingid, 'g.id'));
-            $sql = array();
-            $params = array();
-            foreach ($groupinggroupids as $groupinggroupid) {
-                if ($groupinggroupid > 0) { // just in case in order not to fall into the endless loop
-                    list($gsql, $gparams) = $this->get_users_with_capability_sql($capability, $musthavesubmission, $groupinggroupid);
-                    $sql[] = $gsql;
-                    $params = array_merge($params, $gparams);
-                }
-            }
-            $sql = implode(PHP_EOL." UNION ".PHP_EOL, $sql);
-            return array($sql, $params);
+        global $CFG, $DB;
+
+        $params = [];
+
+        // This is from enrollib.php:get_enrolled_join(). It says it's better for caching to use round.
+        $now = round(time(), -2);
+
+        $sqlarray = [];
+        $sqlarray['select'] = "SELECT DISTINCT u.*";
+        $sqlarray['from'] = "FROM {user} u";
+        $sqlarray['join'] = [];
+        $sqlarray['join'][] = "JOIN {user_enrolments} ue ON ue.userid = u.id";
+        $sqlarray['join'][] = "JOIN {enrol} e ON e.id = ue.enrolid AND e.courseid = :courseid";
+        $sqlarray['where'] = [];
+        $sqlarray['where'][] = "WHERE u.deleted = 0";
+        $sqlarray['where'][] = "AND u.id <> :guestid";
+        $sqlarray['where'][] = "AND ue.status = :activestatus";
+        $sqlarray['where'][] = "AND e.status = :enabledstatus";
+        $sqlarray['where'][] = "AND ue.timestart < :timestart";
+        $sqlarray['where'][] = "AND (ue.timeend > :timeend OR ue.timeend = 0)";
+
+        // Apply sorting.
+        [$sortby, $sortbyparams] = users_order_by_sql('u');
+        $sqlarray['sort'] = "ORDER BY {$sortby}";
+
+        // Apply filtering.
+        [$filtersql, $filterparams] = $this->get_users_with_initial_filtering_sql_where('u');
+        if ($filtersql) {
+            $sqlarray['where'][] = "AND {$filtersql}";
+            $params = array_merge($params, $filterparams);
         }
 
-        list($esql, $params) = get_enrolled_sql($this->context, $capability, $groupid, true);
+        $params['courseid'] = $this->context->get_course_context()->instanceid;
+        $params['timestart'] = $now;
+        $params['timeend'] = $now;
+        $params['guestid'] = $CFG->siteguest;
+        $params['activestatus'] = ENROL_USER_ACTIVE;
+        $params['enabledstatus'] = ENROL_INSTANCE_ENABLED;
 
-        $userfieldsapi = \core_user\fields::for_userpic();
-        $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-
-        $sql = "SELECT $userfields
-                  FROM {user} u
-                  JOIN ($esql) je ON (je.id = u.id AND u.deleted = 0) ";
-
+        // If we are filtering by users who have submitted.
         if ($musthavesubmission) {
-            $sql .= " JOIN {workshop_submissions} ws ON (ws.authorid = u.id AND ws.example = 0 AND ws.workshopid = :workshopid{$inc}) ";
-            $params['workshopid'.$inc] = $this->id;
+            $sqlarray['join'][] = "JOIN {workshop_submissions} ws ON
+                (ws.authorid = u.id AND ws.example = 0 AND ws.workshopid = :workshopid) ";
+            $params['workshopid'] = $this->id;
         }
 
-        // If the activity is restricted so that only certain users should appear
-        // in user lists, integrate this into the same SQL.
+        // Are we searching one specific group?
+        if ($groupid > 0) {
+            $sqlarray['join'][] = "JOIN {groups_members} gm ON (gm.userid = u.id AND gm.groupid = :groupid)";
+            $params['groupid'] = $groupid;
+        } else if ($this->cm->groupingid) {
+            // If not, is there a groupingid set on the activity?
+            $sqlarray['join'][] = "JOIN {groupings_groups} gg ON gg.groupingid = :groupingid";
+            $sqlarray['join'][] = "JOIN {groups_members} gm ON (gm.userid = u.id AND gm.groupid = gg.groupid)";
+            $params['groupingid'] = $this->cm->groupingid;
+        }
+
+        // Is the activity restricted so only certain users can access it?
         $info = new \core_availability\info_module($this->cm);
-        list ($listsql, $listparams) = $info->get_user_list_sql(false);
+        [$listsql, $listparams] = $info->get_user_list_sql(false);
         if ($listsql) {
-            $sql .= " JOIN ($listsql) restricted ON restricted.id = u.id ";
+            $sqlarray['join'][] = " JOIN ($listsql) restricted ON restricted.id = u.id";
             $params = array_merge($params, $listparams);
         }
 
-        return array($sql, $params);
+        // Join the role assignments to only return users with the right capabilities.
+        $capjoin = get_with_capability_join($this->context, $capabilities, 'u.id');
+        $sqlarray['join'][] = $capjoin->joins;
+
+        // Convert the sql array into a string.
+        $sql = $this->build_sql($sqlarray);
+
+        // We actually query the users here instead of returning SQL like it used to.
+        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+
+    }
+
+    /**
+     * Build SQL string from array of clauses
+     *
+     * @param array $sqlarray ['select' => '', 'from' => '', 'join' => [], 'where' => [], 'sort' => '']
+     * @return string
+     */
+    protected function build_sql(array $sqlarray): string {
+
+        $sql = "";
+        foreach ($sqlarray as $el) {
+            if (is_array($el)) {
+                $sql .= implode(" ", $el) . " ";
+            } else {
+                $sql .= " {$el} ";
+            }
+        }
+
+        return $sql;
+
     }
 
     /**
      * Returns SQL to fetch all enrolled users with the first name or last name.
      *
+     * @param string $table Table alias for users table
      * @return array
      */
-    protected function get_users_with_initial_filtering_sql_where(): array {
+    protected function get_users_with_initial_filtering_sql_where(string $table): array {
         global $DB;
         $conditions = [];
         $params = [];
         $ifirst = $this->get_initial_first();
         $ilast = $this->get_initial_last();
         if ($ifirst) {
-            $conditions[] = $DB->sql_like('LOWER(tmp.firstname)', ':i_first' , false, false);
+            $conditions[] = $DB->sql_like('LOWER(' . $table . '.firstname)', ':i_first' , false, false);
             $params['i_first'] = $DB->sql_like_escape($ifirst) . '%';
         }
         if ($ilast) {
-            $conditions[] = $DB->sql_like('LOWER(tmp.lastname)', ':i_last' , false, false);
+            $conditions[] = $DB->sql_like('LOWER(' . $table . '.lastname)', ':i_last' , false, false);
             $params['i_last'] = $DB->sql_like_escape($ilast) . '%';
         }
         return [implode(" AND ", $conditions), $params];
-    }
-
-    /**
-     * Returns SQL statement that can be used to fetch all actively enrolled participants in the workshop
-     *
-     * @param bool $musthavesubmission if true, return only users who have already submitted
-     * @param int $groupid 0 means ignore groups, any other value limits the result by group id
-     * @return array of (string)sql, (array)params
-     */
-    protected function get_participants_sql($musthavesubmission=false, $groupid=0) {
-
-        list($sql1, $params1) = $this->get_users_with_capability_sql('mod/workshop:submit', $musthavesubmission, $groupid);
-        list($sql2, $params2) = $this->get_users_with_capability_sql('mod/workshop:peerassess', $musthavesubmission, $groupid);
-
-        if (empty($sql1) or empty($sql2)) {
-            if (empty($sql1) and empty($sql2)) {
-                return array('', array());
-            } else if (empty($sql1)) {
-                $sql = $sql2;
-                $params = $params2;
-            } else {
-                $sql = $sql1;
-                $params = $params1;
-            }
-        } else {
-            $sql = $sql1.PHP_EOL." UNION ".PHP_EOL.$sql2;
-            $params = array_merge($params1, $params2);
-        }
-
-        return array($sql, $params);
     }
 
     /**
