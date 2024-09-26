@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Configure the settings for fileredact.
+ * Configure the settings for file redaction service.
  *
  * @package   core_admin
  * @copyright Meirza <meirza.arson@moodle.com>
@@ -25,19 +25,20 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-    if (!$ADMIN->locate('fileredact')) {
-        $ADMIN->add('server', new admin_category('fileredact', get_string('fileredact', 'core_files')));
+    if (!$ADMIN->locate('file_redactor')) {
+        $ADMIN->add('server', new admin_category('file_redactor', get_string('redactor', 'core_files')));
     }
+
+    $manager = \core\di::get(\core_files\redactor\manager::class);
+
     // Get settings from each service.
-    $servicesdir = "{$CFG->libdir}/classes/fileredact/services/";
-    $servicefiles = glob("{$servicesdir}*_service.php");
-    foreach ($servicefiles as $servicefile) {
-        $servicename = basename($servicefile, '_service.php');
-        $classname = "\\core\\fileredact\\services\\{$servicename}_service";
-        if (class_exists($classname)) {
-            $fileredactsettings = new admin_settingpage($servicename, new lang_string("fileredact:$servicename", 'core_files'));
-            call_user_func("{$classname}::add_settings", $fileredactsettings);
-            $ADMIN->add('fileredact', $fileredactsettings);
-        }
+    foreach ($manager->get_service_classnames() as $servicename => $service) {
+        $servicesettings = new admin_settingpage(
+            $servicename,
+            new lang_string("redactor:{$servicename}", 'core_files'),
+        );
+        $service::add_settings($servicesettings);
+
+        $ADMIN->add('file_redactor', $servicesettings);
     }
 }

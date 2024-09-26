@@ -14,19 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\hook\filestorage;
+namespace core_files\hook;
 
 use core\attribute;
 use core\hook\stoppable_trait;
 
 /**
- * Class after_file_created
+ * A hook which is fired after a file is created in the file storage API.
  *
  * @package   core
  * @copyright 2024 Huong Nguyen <huongnv13@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[attribute\label('Allows subscribers to modify file after it is created')]
+#[attribute\label('Allows subscribers to inspect a file after it is created in the file pool')]
 #[attribute\tags('file')]
 #[attribute\hook\replaces_callbacks('after_file_created')]
 final class after_file_created {

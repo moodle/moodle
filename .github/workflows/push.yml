@@ -122,3 +122,6 @@ jobs:
           dbtype: ${{ matrix.db }}
           phpunit_options: ${{ secrets.phpunit_options }}
         run: vendor/bin/phpunit $phpunit_options ${{ inputs.phpunit_extra_options }}
+
+      - name: Git status
+        run: git status

@@ -111,7 +111,7 @@ $callbacks = [
         'callback' => [\core\router\hook_callbacks::class, 'provide_di_configuration'],
     ],
     [
-        'hook' => \core\hook\filestorage\after_file_created::class,
-        'callback' => \core\fileredact\hook_listener::class . '::redact_after_file_created',
+        'hook' => \core_files\hook\before_file_created::class,
+        'callback' => [\core_files\redactor\hook_listener::class, 'file_redaction_handler'],
     ],
 ];

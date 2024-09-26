@@ -14,50 +14,28 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\fileredact\services;
+namespace core_files\redactor\services;
 
+use stored_file;
 /**
- * Dummy service for testing only.
+ * The interface of the redaction service outlines the necessary methods for each redaction blueprint.
  *
  * @package   core
  * @copyright Meirza <meirza.arson@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class dummy_service extends service {
-
+abstract class service {
     /**
-     * Performs redaction on the specified file.
-     */
-    public function execute(): void {
-        // The function body.
-    }
-
-    /**
-     * Returns true if the service is enabled, and "false" if it is not.
+     * Returns true if the service is enabled, and false if it is not.
      *
      * @return bool
      */
-    public function is_enabled(): bool {
-        return true;
-    }
-
-    /**
-     * Determines whether a certain mime-type is supported by the service.
-     * It will return true if the mime-type is supported, and false if it is not.
-     *
-     * @param string $mimetype
-     * @return bool
-     */
-    public function is_mimetype_supported(string $mimetype): bool {
-        return true;
-    }
+    abstract public function is_enabled(): bool;
 
     /**
      * Adds settings to the provided admin settings page.
      *
      * @param \admin_settingpage $settings The admin settings page to which settings are added.
      */
-    public static function add_settings(\admin_settingpage $settings): void {
-        // The function body.
-    }
+    abstract public static function add_settings(\admin_settingpage $settings): void;
 }

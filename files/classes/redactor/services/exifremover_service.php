@@ -14,9 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\fileredact\services;
+namespace core_files\redactor\services;
 
-use stored_file;
+use admin_setting_configcheckbox;
+use admin_setting_configexecutable;
+use admin_setting_configselect;
+use admin_setting_configtextarea;
+use admin_setting_heading;
+use core\exception\moodle_exception;
+use core\output\html_writer;
 
 /**
  * Remove EXIF data from supported image files using PHP GD, or ExifTool if it is configured.
@@ -24,12 +30,11 @@ use stored_file;
  * The PHP GD stripping has minimal configuration and removes all EXIF data.
  * More stripping is made available when using ExifTool.
  *
- * @package   core
+ * @package   core_files
  * @copyright Meirza <meirza.arson@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class exifremover_service extends service {
-
+class exifremover_service extends service implements file_redactor_service_interface {
     /** @var array REMOVE_TAGS Tags to remove and their corresponding values. */
     const REMOVE_TAGS = [
         "gps" => '"-gps*="',
@@ -59,85 +64,136 @@ class exifremover_service extends service {
     private bool $useexiftool = false;
 
     /**
-     * Class constructor.
-     *
-     * @param stored_file $storedfile The file record.
+     * Initialise the EXIF remover service.
      */
-    public function __construct(
-        /** @var stored_file The file record. */
-        private readonly stored_file $storedfile,
-    ) {
-        parent::__construct($storedfile);
-
+    public function __construct() {
         // To decide whether to use ExifTool or PHP GD, check the ExifTool path.
         if (!empty($this->get_exiftool_path())) {
             $this->useexiftool = true;
         }
     }
 
-    /**
-     * Performs redaction on the specified file.
-     */
-    public function execute(): void {
+    #[\Override]
+    public function redact_file_by_path(
+        string $mimetype,
+        string $filepath,
+    ): ?string {
+        if (!$this->is_mimetype_supported($mimetype)) {
+            return null;
+        }
+
         if ($this->useexiftool) {
             // Use the ExifTool executable to remove the desired EXIF tags.
-            $this->execute_exiftool();
+            return $this->execute_exiftool($filepath);
         } else {
             // Use PHP GD lib to remove all EXIF tags.
-            $this->execute_gd();
+            return $this->execute_gd($filepath);
+        }
+    }
+
+    #[\Override]
+    public function redact_file_by_content(
+        string $mimetype,
+        string $filecontent,
+    ): ?string {
+        if (!$this->is_mimetype_supported($mimetype)) {
+            return null;
+        }
+
+        if ($this->useexiftool) {
+            // Use the ExifTool executable to remove the desired EXIF tags.
+            return $this->execute_exiftool_on_content($filecontent);
+        } else {
+            // Use PHP GD lib to remove all EXIF tags.
+            return $this->execute_gd_on_content($filecontent);
         }
     }
 
     /**
      * Executes ExifTool to remove metadata from the original file.
      *
-     * @throws \moodle_exception If the ExifTool process fails or the destination file is not created.
+     * @param string $sourcefile The file path of the file to redact
+     * @return string The destination path of the recreated content
+     * @throws moodle_exception If the ExifTool process fails or the destination file is not created.
      */
-    private function execute_exiftool(): void {
-        $tmpfilepath = make_request_directory();
-        $filerecordname = $this->clean_filename($this->storedfile->get_filename());
-        $neworiginalfile = $tmpfilepath . DIRECTORY_SEPARATOR . 'new_' . $filerecordname;
-        $destinationfile = $tmpfilepath . DIRECTORY_SEPARATOR . $filerecordname;
-
-        // Copy the original file to a new file.
-        try {
-            $this->storedfile->copy_content_to($neworiginalfile);
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
-        }
+    private function execute_exiftool(string $sourcefile): string {
+        $destinationfile = make_request_directory() . '/' . basename($sourcefile);
 
         // Prepare the ExifTool command.
-        $command = $this->get_exiftool_command($neworiginalfile, $destinationfile);
+        $command = $this->get_exiftool_command($sourcefile, $destinationfile);
+
         // Run the command.
         exec($command, $output, $resultcode);
+
         // If the return code was not zero or the destination file was not successfully created.
         if ($resultcode !== 0 || !file_exists($destinationfile)) {
-            throw new \moodle_exception(
-                errorcode: 'fileredact:exifremover:failedprocessexiftool',
+            throw new moodle_exception(
+                errorcode: 'redactor:exifremover:failedprocessexiftool',
                 module: 'core_files',
                 a: get_class($this),
                 debuginfo: implode($output),
             );
         }
-        // Replacing the EXIF processed file to the original file.
-        $this->persist_redacted_file(file_get_contents($destinationfile));
+
+        return $destinationfile;
+    }
+
+    /**
+     * Executes ExifTool to remove metadata from the original file content.
+     *
+     * @param string $filecontent The file content to redact.
+     * @return string The redacted updated content
+     * @throws moodle_exception If the ExifTool process fails or the destination file is not created.
+     */
+    private function execute_exiftool_on_content(string $filecontent): string {
+        $sourcefile = make_request_directory() . '/input';
+        file_put_contents($sourcefile, $filecontent);
+
+        $destinationfile = $this->execute_exiftool($sourcefile);
+        return file_get_contents($destinationfile);
     }
 
     /**
      * Executes GD library to remove metadata from the original file.
+     *
+     * @param string $sourcefile The source file to redact.
+     * @return string The destination path of the recreated content
+     * @throws moodle_exception If the image data is not successfully recreated.
      */
-    private function execute_gd(): void {
-        $imagedata = $this->recreate_image_gd();
-        if (!$imagedata) {
-            throw new \moodle_exception(
-                errorcode: 'fileredact:exifremover:failedprocessgd',
+    private function execute_gd(string $sourcefile): string {
+        $filecontent = file_get_contents($sourcefile);
+        $destinationfile = $this->recreate_image_gd($filecontent);
+        if (!$destinationfile) {
+            throw new moodle_exception(
+                errorcode: 'redactor:exifremover:failedprocessgd',
                 module: 'core_files',
                 a: get_class($this),
             );
         }
-        // Put the image string object data to the original file.
-        $this->persist_redacted_file($imagedata);
+
+        return $destinationfile;
     }
+
+    /**
+     * Executes GD library to remove metadata from the original file.
+     *
+     * @param string $filecontent The source file content to redact.
+     * @return string The redacted file content
+     * @throws moodle_exception If the image data is not successfully recreated.
+     */
+    private function execute_gd_on_content(string $filecontent): string {
+        $destinationfile = $this->recreate_image_gd($filecontent);
+        if (!$destinationfile) {
+            throw new moodle_exception(
+                errorcode: 'redactor:exifremover:failedprocessgd',
+                module: 'core_files',
+                a: get_class($this),
+            );
+        }
+
+        return file_get_contents($destinationfile);
+    }
+
     /**
      * Gets the ExifTool command to strip the file of EXIF data.
      *
@@ -162,7 +218,7 @@ class exifremover_service extends service {
      * @return string The remove tag options.
      */
     private function get_remove_tags(): string {
-        $removetags = get_config('core_fileredact', 'exifremoverremovetags');
+        $removetags = get_config('core', 'file_redactor_exifremoverremovetags');
         // If the remove tags value is empty or not empty but does not exist in the array, then set the default.
         if (!$removetags || ($removetags && !array_key_exists($removetags, self::REMOVE_TAGS))) {
             $removetags = self::DEFAULT_REMOVE_TAGS;
@@ -176,7 +232,7 @@ class exifremover_service extends service {
      * @return string The path to the ExifTool executable.
      */
     private function get_exiftool_path(): string {
-        $toolpathconfig = get_config('core_fileredact', 'exifremovertoolpath');
+        $toolpathconfig = get_config('core', 'file_redactor_exifremovertoolpath');
         if (!empty($toolpathconfig) && is_executable($toolpathconfig)) {
             return $toolpathconfig;
         }
@@ -186,84 +242,36 @@ class exifremover_service extends service {
     /**
      * Recreate the image using PHP GD library to strip all EXIF data.
      *
-     * @return string|false The recreated image data as a string if successful, false otherwise.
+     * @param string $content The source file content
+     * @return null|string The path to the recreated image, or null on failure.
      */
-    private function recreate_image_gd(): string|false {
-        $content = $this->storedfile->get_content();
+    private function recreate_image_gd(
+        string $content,
+    ): ?string {
         // Fetch the image information for this image.
         $imageinfo = @getimagesizefromstring($content);
         if (empty($imageinfo)) {
-            return false;
+            return null;
         }
         // Create a new image from the file.
         $image = @imagecreatefromstring($content);
 
+        $destinationfile = make_request_directory() . '/output';
+
         // Capture the image as a string object, rather than straight to file.
-        ob_start();
-        if (!imagejpeg(
-                image: $image,
-                quality: self::DEFAULT_JPEG_COMPRESSION,
-            )
-        ) {
-            ob_end_clean();
-            return false;
-        }
-        $data = ob_get_clean();
-        imagedestroy($image);
-        return $data;
-    }
-
-    /**
-     * Persists the redacted file to the file storage.
-     *
-     * @param string $content File content.
-     */
-    private function persist_redacted_file(string $content): void {
-        $filerecord = (object) [
-            'id' => $this->storedfile->get_id(),
-            'mimetype' => $this->storedfile->get_mimetype(),
-            'userid' => $this->storedfile->get_userid(),
-            'source' => $this->storedfile->get_source(),
-            'contextid' => $this->storedfile->get_contextid(),
-            'component' => $this->storedfile->get_component(),
-            'filearea'  => $this->storedfile->get_filearea(),
-            'itemid'    => $this->storedfile->get_itemid(),
-            'filepath'  => $this->storedfile->get_filepath(),
-            'filename'  => $this->storedfile->get_filename(),
-            'repositoryid' => $this->storedfile->get_repository_id(),
-            'reference' => $this->storedfile->get_reference(),
-        ];
-        $fs = get_file_storage();
-        $existingfile = $fs->get_file(
-            $filerecord->contextid,
-            $filerecord->component,
-            $filerecord->filearea,
-            $filerecord->itemid,
-            $filerecord->filepath,
-            $filerecord->filename,
+        $result = imagejpeg(
+            image: $image,
+            file: $destinationfile,
+            quality: self::DEFAULT_JPEG_COMPRESSION,
         );
-        if ($existingfile) {
-            $existingfile->delete();
-        }
-        $redactedfile = $fs->create_file_from_string($filerecord, $content, false);
-        $this->storedfile->replace_file_with($redactedfile);
-    }
 
-    /**
-     * Clean up a file name if it starts with a dash (U+002D) or a Unicode minus sign (U+2212).
-     *
-     * According to https://exiftool.org/#security, ensure that input file names do not start with
-     * a dash (U+002D) or a Unicode minus sign (U+2212). If found, remove the leading dash or Unicode minus sign.
-     *
-     * @param string $filename The file name to clean.
-     * @return string The cleaned file name.
-     */
-    private function clean_filename(string $filename): string {
-        $pattern = '/^[\x{002D}\x{2212}]/u';
-        if (preg_match($pattern, $filename)) {
-            $filename = preg_replace($pattern, '', $filename);
+        imagedestroy($image);
+
+        if ($result) {
+            return $destinationfile;
         }
-        return clean_param($filename, PARAM_PATH);
+
+        return null;
     }
 
     /**
@@ -272,7 +280,7 @@ class exifremover_service extends service {
      * @return bool
      */
     public function is_enabled(): bool {
-        return (bool) get_config('core_fileredact', 'exifremoverenabled');
+        return (bool) get_config('core', 'file_redactor_exifremoverenabled');
     }
 
     /**
@@ -289,7 +297,7 @@ class exifremover_service extends service {
 
         if ($this->useexiftool) {
             // Get the supported MIME types from the config if using ExifTool.
-            $supportedmimetypesconfig = get_config('core_fileredact', 'exifremovermimetype');
+            $supportedmimetypesconfig = get_config('core', 'file_redactor_exifremovermimetype');
             $supportedmimetypes = array_filter(array_map('trim', explode("\n",  $supportedmimetypesconfig)));
             return in_array($mimetype, $supportedmimetypes) ?? false;
         }
@@ -307,66 +315,70 @@ class exifremover_service extends service {
 
         // Enabled for a fresh install, disabled for an upgrade.
         $defaultenabled = 1;
-        if (!during_initial_install() && empty(get_config('core_fileredact', 'exifremoverenabled'))) {
-            $defaultenabled = 0;
+
+        if (empty(get_config('core', 'file_redactor_exifremoverenabled'))) {
+            if (PHPUNIT_TEST || !during_initial_install()) {
+                $defaultenabled = 0;
+            }
         }
 
         $icon = $OUTPUT->pix_icon('i/externallink', get_string('opensinnewwindow'));
-        $a = new \stdClass;
-        $a->link = \html_writer::link(
-            url: 'https://exiftool.sourceforge.net/install.html',
-            text: "https://exiftool.sourceforge.net/install.html $icon",
-            attributes: ['role' => 'opener', 'rel' => 'noreferrer', 'target' => '_blank'],
-        );
+        $a = (object) [
+            'link' => html_writer::link(
+                url: 'https://exiftool.sourceforge.net/install.html',
+                text: "https://exiftool.sourceforge.net/install.html $icon",
+                attributes: ['role' => 'opener', 'rel' => 'noreferrer', 'target' => '_blank'],
+            ),
+        ];
 
         $settings->add(
-            new \admin_setting_configcheckbox(
-                name: 'core_fileredact/exifremoverenabled',
-                visiblename: get_string('fileredact:exifremover:enabled', 'core_files'),
-                description: get_string('fileredact:exifremover:enabled_desc', 'core_files', $a),
+            new admin_setting_configcheckbox(
+                name: 'file_redactor_exifremoverenabled',
+                visiblename: get_string('redactor:exifremover:enabled', 'core_files'),
+                description: get_string('redactor:exifremover:enabled_desc', 'core_files', $a),
                 defaultsetting: $defaultenabled,
             ),
         );
 
         $settings->add(
-            new \admin_setting_heading(
+            new admin_setting_heading(
                 name: 'exifremoverheading',
-                heading: get_string('fileredact:exifremover:heading', 'core_files'),
+                heading: get_string('redactor:exifremover:heading', 'core_files'),
                 information: '',
             )
         );
 
         $settings->add(
-            new \admin_setting_configexecutable(
-                name: 'core_fileredact/exifremovertoolpath',
-                visiblename: get_string('fileredact:exifremover:toolpath', 'core_files'),
-                description: get_string('fileredact:exifremover:toolpath_desc', 'core_files'),
+            new admin_setting_configexecutable(
+                name: 'file_redactor_exifremovertoolpath',
+                visiblename: get_string('redactor:exifremover:toolpath', 'core_files'),
+                description: get_string('redactor:exifremover:toolpath_desc', 'core_files'),
                 defaultdirectory: '',
             )
         );
 
         foreach (array_keys(self::REMOVE_TAGS) as $key) {
-            $removedtagchoices[$key] = get_string("fileredact:exifremover:tag:$key", 'core_files');
+            $removedtagchoices[$key] = get_string("redactor:exifremover:tag:$key", 'core_files');
         }
         $settings->add(
-            new \admin_setting_configselect(
-                name: 'core_fileredact/exifremoverremovetags',
-                visiblename: get_string('fileredact:exifremover:removetags', 'core_files'),
-                description: get_string('fileredact:exifremover:removetags_desc', 'core_files'),
+            new admin_setting_configselect(
+                name: 'files_redactor_exifremoverremovetags',
+                visiblename: get_string('redactor:exifremover:removetags', 'core_files'),
+                description: get_string('redactor:exifremover:removetags_desc', 'core_files'),
                 defaultsetting: self::DEFAULT_REMOVE_TAGS,
                 choices: $removedtagchoices,
             ),
         );
 
         $mimetypedefault = <<<EOF
-                        image/jpeg
-                        image/tiff
-                        EOF;
+        image/jpeg
+        image/tiff
+        EOF;
         $settings->add(
-            new \admin_setting_configtextarea(
-                name: 'core_fileredact/exifremovermimetype',
-                visiblename: get_string('fileredact:exifremover:mimetype', 'core_files'),
-                description: get_string('fileredact:exifremover:mimetype_desc', 'core_files'),
+            new admin_setting_configtextarea(
+                name: 'file_redactor_exifremovermimetype',
+                visiblename: get_string('redactor:exifremover:mimetype', 'core_files'),
+                description: get_string('redactor:exifremover:mimetype_desc', 'core_files'),
                 defaultsetting: $mimetypedefault,
             ),
         );
