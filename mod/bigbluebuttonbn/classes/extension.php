@@ -18,6 +18,7 @@ namespace mod_bigbluebuttonbn;
 use cache;
 use cm_info;
 use mod_bigbluebuttonbn\local\extension\action_url_addons;
+use mod_bigbluebuttonbn\local\extension\broker_meeting_events_addons;
 use mod_bigbluebuttonbn\local\extension\custom_completion_addons;
 use mod_bigbluebuttonbn\local\extension\mod_form_addons;
 use mod_bigbluebuttonbn\local\extension\mod_instance_helper;
@@ -216,5 +217,16 @@ class extension {
         foreach ($formmanagersclasses as $fmclass) {
             $fmclass->delete_instance($id);
         }
+    }
+
+    /**
+     * Get all broker_meeting_events addons classes instances
+     *
+     * @param instance|null $instance
+     * @param string|null $data
+     * @return array of custom completion addon classes instances
+     */
+    public static function broker_meeting_events_addons_instances(instance $instance, string $data): array {
+        return self::get_instances_implementing(broker_meeting_events_addons::class, [$instance, $data]);
     }
 }

@@ -87,3 +87,37 @@ Feature: BigBlueButtonBN Subplugins test
     And I run all adhoc tasks
     When I reload the page
     Then I should see "Done: Raise hand twice in a meeting."
+
+  @javascript
+  Scenario: I check that custom events are triggered and sent to subplugin when enabled
+    Given a BigBlueButton mock server is configured
+    And the following config values are set as admin:
+      | bigbluebuttonbn_meetingevents_enabled | 1 |
+    And the following "users" exist:
+      | username | firstname | lastname | email                 |
+      | traverst | Terry     | Travers  | t.travers@example.com |
+    And the following "course enrolments" exist:
+      | user     | course      | role    |
+      | traverst | Test course | student |
+    And the following "mod_bigbluebuttonbn > meeting" exists:
+      | activity | BBB Instance name |
+    And I log out
+    And I am on the "BBB Instance name" "bigbluebuttonbn activity" page logged in as "traverst"
+    And I click on "Join session" "link"
+    And I switch to "bigbluebutton_conference" window
+    And I wait until the page is ready
+    And I follow "End Meeting"
+    And the BigBlueButtonBN server has received the following events from user "traverst":
+      | instancename      | eventtype | eventdata |
+      | BBB Instance name | chats     | 1         |
+    # Selenium driver does not like the click action to be done before we
+    # automatically close the window so we need to make sure that the window
+    # is closed before.
+    And I close all opened windows
+    And I switch to the main window
+    And the BigBlueButtonBN activity "BBB Instance name" has sent recording all its events
+    And I log out
+    And I log in as "admin"
+    And I run all adhoc tasks
+    When I am on fixture page "/mod/bigbluebuttonbn/tests/behat/fixtures/show_simpleplugin_values.php"
+    Then I should see "(BBB Instance name): meetingevents: 1"

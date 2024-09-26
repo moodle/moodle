@@ -37,7 +37,7 @@ class backup_bbbext_simple_subplugin extends backup_subplugin {
         $subpluginelement = new backup_nested_element(
             'bbbext_simple',
             null,
-            ['newfield', 'completionextraisehandtwice']
+            ['newfield', 'completionextraisehandtwice', 'meetingevents']
         );
 
         // Connect XML elements into the tree.

@@ -1,0 +1,7 @@
+issueNumber: MDL-82872
+notes:
+  mod_bigbluebuttonbn:
+    - message: >-
+        The process_meeting_events in the broker class has been extended to process all the process_action functions
+        implemented by the plugins.
+      type: improved
