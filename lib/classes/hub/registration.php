@@ -756,6 +756,7 @@ class registration {
                     'fail_count' => 0,
                     'times' => [],
                     'errors' => [],
+                    'modelstemp' => [],
                 ];
             }
 
@@ -769,9 +770,13 @@ class registration {
                 // Collect errors for determing the predominant one.
                 $data[$provider][$actionname]['errors'][] = $action->errorcode;
             }
+
+            // Collect models used and identify unknown ones.
+            $model = $action->model ?? 'unknown';
+            $data[$provider][$actionname]['modelstemp'][] = $model;
         }
 
-        // Parse the errors and everage the times, then add them to the data.
+        // Parse the errors, average the times, count the models and then add them to the data.
         foreach ($data as $p => $provider) {
             foreach ($provider as $a => $actionname) {
                 if (isset($data[$p][$a]['errors'])) {
@@ -796,6 +801,15 @@ class registration {
                     }
                 }
                 unset($data[$p][$a]['times']);
+
+                if (isset($data[$p][$a]['modelstemp'])) {
+                    // Create an array with the models counted.
+                    $countedmodels = array_count_values($data[$p][$a]['modelstemp']);
+                    foreach ($countedmodels as $model => $count) {
+                        $data[$p][$a]['models'][$model]['count'] = $count;
+                    }
+                }
+                unset($data[$p][$a]['modelstemp']);
             }
         }
 

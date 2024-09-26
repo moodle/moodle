@@ -94,6 +94,9 @@ class registration_test extends \advanced_testcase {
         $this->resetAfterTest();
         $clock = $this->mock_clock_with_frozen();
 
+        $gpt4omodel = 'gpt-4o';
+        $dalle3model = 'dall-e-3';
+
         // Record some generated text.
         $record = new \stdClass();
         $record->provider = 'openai';
@@ -104,15 +107,17 @@ class registration_test extends \advanced_testcase {
         $record->success = true;
         $record->timecreated = $clock->time() - 5;
         $record->timecompleted = $clock->time();
+        $record->model = $gpt4omodel;
         $DB->insert_record('ai_action_register', $record);
 
         // Record a generated image.
         $record->actionname = 'generate_image';
-        $record->actionid = 2;
+        $record->actionid = 111;
         $record->timecreated = $clock->time() - 20;
+        $record->model = $dalle3model;
         $DB->insert_record('ai_action_register', $record);
         // Record another image.
-        $record->actionid = 3;
+        $record->actionid = 222;
         $record->timecreated = $clock->time() - 10;
         $DB->insert_record('ai_action_register', $record);
 
@@ -121,6 +126,7 @@ class registration_test extends \advanced_testcase {
         $record->actionid = 4;
         $record->success = false;
         $record->errorcode = 403;
+        $record->model = null;
         $DB->insert_record('ai_action_register', $record);
         $record->actionid = 5;
         $record->errorcode = 403;
@@ -143,5 +149,9 @@ class registration_test extends \advanced_testcase {
         // Check time range is set correctly.
         $this->assertEquals($clock->time() - WEEKSECS, $aisuage->time_range->timefrom);
         $this->assertEquals($clock->time(), $aisuage->time_range->timeto);
+        // Check model counts.
+        $this->assertEquals(1, $aisuage->openai->generate_text->models->{$gpt4omodel}->count);
+        $this->assertEquals(2, $aisuage->openai->generate_image->models->{$dalle3model}->count);
+        $this->assertEquals(3, $aisuage->openai->generate_image->models->unknown->count);
     }
 }
