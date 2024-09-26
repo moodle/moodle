@@ -362,7 +362,7 @@ class exifremover_service extends service implements file_redactor_service_inter
         }
         $settings->add(
             new admin_setting_configselect(
-                name: 'files_redactor_exifremoverremovetags',
+                name: 'file_redactor_exifremoverremovetags',
                 visiblename: get_string('redactor:exifremover:removetags', 'core_files'),
                 description: get_string('redactor:exifremover:removetags_desc', 'core_files'),
                 defaultsetting: self::DEFAULT_REMOVE_TAGS,
