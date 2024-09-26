@@ -95,7 +95,7 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
             var listitem = Y.Node.create('<li class="quicklist_comment"></li>'),
                 linkitem = Y.Node.create('<a href="#" tabindex="-1">' + quickcomment.rawtext + '</a>'),
                 deletelinkitem = Y.Node.create('<a href="#" tabindex="-1" class="delete_quicklist_comment">' +
-                                               '<img src="' + M.util.image_url('t/delete', 'core') + '" ' +
+                                               '<img class="icon" src="' + M.util.image_url('t/delete', 'core') + '" ' +
                                                'alt="' + M.util.get_string('deletecomment', 'assignfeedback_editpdf') + '"/>' +
                                                '</a>');
             linkitem.setAttribute('title', quickcomment.rawtext);
