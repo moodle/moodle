@@ -1,0 +1,140 @@
+body.h5p-editor-image-popup {
+  position: relative;
+}
+
+.h5p-editing-image-popup-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  padding: 3em 1em;
+  box-sizing: border-box;
+  z-index: 102;
+}
+
+#darkroom-icons {
+  top:0;
+  left:0;
+}
+
+.h5p-editing-image-popup-background.hidden {
+  display: none;
+}
+
+.h5p-editing-image-popup {
+  display: inline-block;
+  position: relative;
+  top: 0;
+  background: #fff;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.h5p-editing-image-header {
+  padding: 1em 0.75em;
+}
+
+.h5p-editing-image {
+  max-height:100%;
+  max-width:100%;
+}
+
+.h5p-editing-image.hidden {
+  display: none;
+}
+
+.h5p-editing-image-popup {
+  .darkroom-toolbar {
+    position: relative;
+    -webkit-border-radius:0;
+    -moz-border-radius:0;
+    border-radius:0;
+    top:0;
+  }
+
+  .darkroom-toolbar:before {
+    content: initial;
+  }
+
+  .darkroom-image-container {
+    padding: 32px 2em;
+  }
+
+  .darkroom-image-container .canvas-container {
+    box-shadow: 0 0 8px 3px rgba(0, 0, 0, 0.6);
+    margin: auto;
+  }
+}
+
+.h5p-editing-image-header-title {
+  display: inline-block;
+  font-size: 1.25em;
+}
+
+.h5p-editing-image-header-buttons {
+  display: inline-block;
+  float: right;
+}
+.h5p-editing-image-loading {
+  padding: 1em;
+}
+
+.h5p-editing-image-loading.hidden {
+  display: none;
+}
+
+.h5p-editing-image-editing-container {
+  background: #666;
+}
+
+.h5p-editing-image-header-buttons {
+  button {
+    padding: 0.5em 1.75em;
+    margin: 0 0 0 1em;
+
+    border: 1px solid #ccc;
+    border-radius: 0.25em;
+    color: #333;
+    cursor: pointer;
+
+    background: #f2f2f2;
+    background: -webkit-linear-gradient(top,#fff 0,#f2f2f2 100%);
+    background: -ms-linear-gradient(top,#fff 0,#f2f2f2 100%);
+  }
+
+  button:hover {
+    background: #ededed;
+  }
+
+  .h5p-done {
+    color: #fff;
+    border-color: #20588F;
+
+    background: #3673B5;
+    background: -webkit-linear-gradient(top,#5A94D3 0,#3673B5 100%);
+    background: -ms-linear-gradient(top,#5A94D3 0,#3673B5 100%);
+  }
+
+  .h5p-done:hover {
+    background: #3275bc;
+    background: -webkit-linear-gradient(top,#3275bc 0,#285585 100%);
+    background: -ms-linear-gradient(top,#3275bc 0,#285585 100%);
+  }
+
+  .h5p-remove {
+    background: none;
+    border: none;
+    color: #a00;
+    padding-right: 0;
+    padding-left: 0;
+    border-radius: 0;
+  }
+
+  .h5p-remove:hover {
+    background: none;
+    color: #e40000;
+  }
+}
