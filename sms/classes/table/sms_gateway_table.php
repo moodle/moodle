@@ -49,6 +49,8 @@ class sms_gateway_table extends flexible_table implements dynamic_table {
         $this->setup_column_configuration();
         $this->set_filterset(new sms_gateway_table_filterset());
         $this->setup();
+        $tableclasses = $this->attributes['class'] . ' ' . $this->get_table_id();
+        $this->set_attribute('class', $tableclasses);
     }
 
     #[\Override]
