@@ -311,12 +311,10 @@ const AICourseAssist = class {
             try {
                 const responseObj = await Ajax.call([request])[0];
                 if (responseObj.error) {
-                    window.console.log(responseObj.error);
                     this.displayError();
                     return;
                 } else {
                     if (!this.isRequestCancelled()) {
-                        window.console.log(responseObj);
                         // Replace double line breaks with <br> and with </p><p> for paragraphs.
                         const generatedContent = AIHelper.replaceLineBreaks(responseObj.generatedcontent);
                         this.displayResponse(generatedContent);
