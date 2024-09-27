@@ -7502,4 +7502,36 @@ class courselib_test extends advanced_testcase {
         $this->assertEquals('course_sections', $event->objecttable);
         $this->assertEquals($section->id, $event->objectid);
     }
+
+    /**
+     * Tests get_sorted_course_formats returns all plugins in cases where plugins are installed now,
+     * installed previously but no longer exist, or not installed yet.
+     *
+     * @covers ::get_sorted_course_formats()
+     */
+    public function test_get_sorted_course_formats_installed_or_not(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // By default returns all course formats.
+        $formats = get_sorted_course_formats();
+        $this->assertEquals(['topics', 'weeks', 'singleactivity', 'social'], $formats);
+
+        // If there is an extra format installed that no longer exists, include in list (at end).
+        $DB->insert_record('config_plugins', [
+            'plugin' => 'format_frogs',
+            'name' => 'version',
+            'value' => '20240916',
+        ]);
+        \core\plugin_manager::reset_caches();
+        $formats = get_sorted_course_formats();
+        $this->assertEquals(['topics', 'weeks', 'singleactivity', 'social', 'frogs'], $formats);
+
+        // If one of the formats is not installed yet, we still return it.
+        $DB->delete_records('config_plugins', ['plugin' => 'format_weeks']);
+        \core\plugin_manager::reset_caches();
+        $formats = get_sorted_course_formats();
+        $this->assertEquals(['topics', 'weeks', 'singleactivity', 'social', 'frogs'], $formats);
+    }
 }
