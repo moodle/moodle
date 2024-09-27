@@ -62,6 +62,29 @@ final class category_controller_test extends \advanced_testcase {
     }
 
     /**
+     * Test creation of category instance from pre-defined object
+     */
+    public function test_constructor_from_record(): void {
+        $this->resetAfterTest();
+
+        // Create field object that matches the persistent/schema definition.
+        $category = category_controller::create(0, (object) [
+            'name' => 'Test',
+            'description' => null,
+            'descriptionformat' => null,
+            'component' => 'core_course',
+            'area' => 'course',
+            'itemid' => 0,
+            'sortorder' => null,
+        ]);
+
+        // Saving the category will validate the persistent internally.
+        $category->save();
+
+        $this->assertInstanceOf(category_controller::class, $category);
+    }
+
+    /**
      * Test for function \core_customfield\field_controller::create() in case of wrong parameters
      */
     public function test_constructor_errors(): void {
