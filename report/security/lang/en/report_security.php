@@ -131,6 +131,7 @@ $string['check_unsecuredataroot_error'] = 'Your dataroot directory <code>{$a}</c
 $string['check_unsecuredataroot_name'] = 'Insecure dataroot';
 $string['check_unsecuredataroot_ok'] = 'Dataroot directory must not be accessible via the web.';
 $string['check_unsecuredataroot_warning'] = 'Your dataroot directory <code>{$a}</code> is in the wrong location and might be exposed to the web.';
+$string['check_upgradefile_info'] = 'Upgrade note files should not be public';
 $string['check_vendordir_details'] = '<p>The directory <code>{$a->path}</code> contains various third-party libraries and their dependencies, typically installed by the PHP Composer. These libraries may be needed for local Moodle development, such as for installing the PHPUnit framework. They are not needed to run a Moodle site in production and they can contain potentially dangerous code exposing your site to remote attacks.</p><p>It is strongly recommended to remove the directory if the site is available via a public URL, or at least prohibit web access to it in your webserver configuration.</p>';
 $string['check_vendordir_info'] = 'The vendor directory should not be present on public sites.';
 $string['check_vendordir_name'] = 'Vendor directory';
