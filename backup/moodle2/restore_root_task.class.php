@@ -300,8 +300,16 @@ class restore_root_task extends restore_task {
         $competencies->set_ui(new backup_setting_ui_checkbox($competencies, get_string('rootsettingcompetencies', 'backup')));
         $this->add_setting($competencies);
 
-        $customfields = new restore_customfield_setting('customfields', base_setting::IS_BOOLEAN, $defaultvalue);
+        // Custom fields.
+        $defaultvalue = false;
+        $changeable = false;
+        if (isset($rootsettings['customfield']) && $rootsettings['customfield']) { // Only enabled when available.
+            $defaultvalue = true;
+            $changeable = true;
+        }
+        $customfields = new restore_customfield_setting('customfield', base_setting::IS_BOOLEAN, $defaultvalue);
         $customfields->set_ui(new backup_setting_ui_checkbox($customfields, get_string('rootsettingcustomfield', 'backup')));
+        $customfields->get_ui()->set_changeable($changeable);
         $this->add_setting($customfields);
 
         // Define Content bank content.
