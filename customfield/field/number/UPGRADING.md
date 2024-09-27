@@ -4,14 +4,15 @@
 
 ### Added
 
-- New 'customfield_number\hook\add_custom_providers' hook has been added.
-  It allows automatic calculation of number course custom field.
-  Added new class '\customfield_number\local\numberproviders\nofactivities'
-  that allows to automatically calculate number of activities of a given
-  type in a given course.
-  Added new webservice customfield_number_recalculate_value to recalculate
-  a value of number course custom field.
-  Added 'customfield_number\task\cron' cron task that recalculates
-  automatically calculated number course custom fields.
+- A new hook, `customfield_number\hook\add_custom_providers`, has been added which allows automatic calculation of number course custom field.
+
+  For more information see [MDL-82715](https://tracker.moodle.org/browse/MDL-82715)
+- A new class, `\customfield_number\local\numberproviders\nofactivities` has been added that allows to automatically calculate number of activities of a given type in a given course.
+
+  For more information see [MDL-82715](https://tracker.moodle.org/browse/MDL-82715)
+- Added new webservice `customfield_number_recalculate_value` to recalculate a value of number course custom field.
+
+  For more information see [MDL-82715](https://tracker.moodle.org/browse/MDL-82715)
+- Added `customfield_number\task\cron` cron task that recalculates automatically calculated number course custom fields.
 
   For more information see [MDL-82715](https://tracker.moodle.org/browse/MDL-82715)

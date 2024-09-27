@@ -6,6 +6,7 @@
 
 - The following classes have been renamed and now support autoloading.
   Existing classes are currently unaffected.
+  
   | Old class name | New class name |
   | --- | --- |
   | `\cache_definition` | `\core_cache\definition` |

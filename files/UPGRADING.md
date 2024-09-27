@@ -4,13 +4,9 @@
 
 ### Added
 
-- The following are the changes made:
-  - New hook after_file_created
-  - In the \core_files\file_storage, new additional param $notify (default is true) added to:
-    - ::create_file_from_storedfile()
-    - ::create_file_from_pathname()
-    - ::create_file_from_string()
-    - ::create_file()
-    If true, it will trigger the after_file_created hook to re-create the image.
+- A new hook, `\core_files\hook\after_file_created`, has been created to allow the inspection of files after they have been saved in the filesystem.
 
   For more information see [MDL-75850](https://tracker.moodle.org/browse/MDL-75850)
+- A new hook, `\core_files\hook\before_file_created`, has been created to allow modification of a file immediately before it is stored in the file system.
+
+  For more information see [MDL-83245](https://tracker.moodle.org/browse/MDL-83245)
