@@ -880,13 +880,15 @@ class courselib_test extends advanced_testcase {
         rebuild_course_cache($course->id, true);
 
         // Create some cms for testing.
+        $mods = $DB->get_records('modules');
+        $mod = reset($mods);
         $cmids = array();
         for ($i=0; $i<4; $i++) {
-            $cmids[$i] = $DB->insert_record('course_modules', array('course' => $course->id));
+            $cmids[$i] = $DB->insert_record('course_modules', ['course' => $course->id, 'module' => $mod->id]);
         }
 
         // Add it to section that exists.
-        course_add_cm_to_section($course, $cmids[0], 1);
+        course_add_cm_to_section($course, $cmids[0], 1, null, $mod->name);
 
         // Check it got added to sequence.
         $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 1));
@@ -894,7 +896,7 @@ class courselib_test extends advanced_testcase {
 
         // Add a second, this time using courseid variant of parameters.
         $coursecacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
-        course_add_cm_to_section($course->id, $cmids[1], 1);
+        course_add_cm_to_section($course->id, $cmids[1], 1, null, $mod->name);
         $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 1));
         $this->assertEquals($cmids[0] . ',' . $cmids[1], $sequence);
 
@@ -904,16 +906,55 @@ class courselib_test extends advanced_testcase {
         $this->assertEmpty(cache::make('core', 'coursemodinfo')->get_versioned($course->id, $newcacherev));
 
         // Add one to section that doesn't exist (this might rebuild modinfo).
-        course_add_cm_to_section($course, $cmids[2], 2);
+        course_add_cm_to_section($course, $cmids[2], 2, null, $mod->name);
         $this->assertEquals(3, $DB->count_records('course_sections', array('course' => $course->id)));
         $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 2));
         $this->assertEquals($cmids[2], $sequence);
 
         // Add using the 'before' option.
-        course_add_cm_to_section($course, $cmids[3], 2, $cmids[2]);
+        course_add_cm_to_section($course, $cmids[3], 2, $cmids[2], $mod->name);
         $this->assertEquals(3, $DB->count_records('course_sections', array('course' => $course->id)));
         $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 2));
         $this->assertEquals($cmids[3] . ',' . $cmids[2], $sequence);
+    }
+
+    /**
+     * Module types that have FEATURE_CAN_DISPLAY flag set to false cannot be in any section other than 0.
+     *
+     * @return void
+     * @covers ::course_add_cm_to_section()
+     */
+    public function test_add_non_display_types_to_cm_section(): void {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $generator = self::getDataGenerator();
+
+        // Create course with 1 section.
+        $course = self::getDataGenerator()->create_course(
+            [
+                'shortname' => 'GrowingCourse',
+                'fullname' => 'Growing Course',
+                'numsections' => 1,
+            ],
+            ['createsections' => true]
+        );
+
+        // Create the module and assert in section 0.
+        $sectionzero = $DB->get_record('course_sections', ['course' => $course->id, 'section' => 0], '*', MUST_EXIST);
+        $module = $generator->create_module('qbank', ['course' => $course, 'section' => $sectionzero->section]);
+
+        // Try to add to section 1.
+        $this->expectExceptionMessage("Modules with FEATURE_CAN_DISPLAY set to false can not be moved from section 0");
+
+        try {
+            course_add_cm_to_section($course, $module->cmid, 1, null, 'qbank');
+        } finally {
+            // Assert still in section 0.
+            $cm = $DB->get_record('course_modules', ['id' => $module->cmid]);
+            $modsection = $DB->get_record('course_sections', ['id' => $cm->section]);
+            $this->assertEquals($sectionzero->section, $modsection->section);
+        }
     }
 
     public function test_reorder_sections(): void {
@@ -1320,6 +1361,36 @@ class courselib_test extends advanced_testcase {
         $newsection = $DB->get_record('course_sections', array('id' => $newsection->id));
         $newsequences = explode(',', $newsection->sequence);
         $this->assertTrue(in_array($cm->id, $newsequences));
+    }
+
+    /**
+     * Ensure that qbank module which has feature flag FEATURE_CAN_DISPLAY set to false cannot be moved from section 0.
+     *
+     * @return void
+     * @covers ::moveto_module()
+     */
+    public function test_move_feature_cannot_display(): void {
+        $this->resetAfterTest(true);
+        // Setup fixture.
+        $course = $this->getDataGenerator()->create_course(['numsections' => 5], ['createsections' => true]);
+        $qbank = $this->getDataGenerator()->create_module('qbank', ['course' => $course->id]);
+        $qbankcms = get_fast_modinfo($course)->get_instances_of('qbank');
+        $qbankcm = reset($qbankcms);
+
+        // Check that mods with FEATURE_CAN_DISPLAY set to false cannot be moved from section 0.
+        $newsection = get_fast_modinfo($course)->get_section_info(3);
+
+        $codingerror = "/ .* Modules with FEATURE_CAN_DISPLAY set to false can not be moved from section 0/";
+
+        // Try to perform the move.
+        $this->expectExceptionMessageMatches($codingerror);
+        try {
+            moveto_module($qbankcm, $newsection);
+        } finally {
+            $qbankcms = get_fast_modinfo($course)->get_instances_of('qbank');
+            $qbankcm = reset($qbankcms);
+            $this->assertEquals(0, $qbankcm->sectionnum);
+        }
     }
 
     public function test_module_visibility(): void {
@@ -3131,6 +3202,22 @@ class courselib_test extends advanced_testcase {
         $overrides = $DB->get_records('role_assignments', ['contextid' => $cmcontext->id]);
         $newoverrides = $DB->get_records('role_assignments', ['contextid' => $newcmcontext->id]);
         $this->assertEquals(count($overrides), count($newoverrides));
+    }
+
+    /**
+     * Ensure that modules with the feature flag FEATURE_CAN_DISPLAY set to false cannot be duplicated into a section other than 0.
+     * @covers ::duplicate_module()
+     */
+    public function test_duplicate_cannot_display_mods(): void {
+        self::setAdminUser();
+        $this->resetAfterTest();
+        $course = self::getDataGenerator()->create_course(['numsections' => 2], ['createsections' => true]);
+        $res = self::getDataGenerator()->create_module('qbank', ['course' => $course]);
+        $cm = get_coursemodule_from_id('qbank', $res->cmid, 0, false, MUST_EXIST);
+        $sectionid = get_fast_modinfo($course)->get_section_info(1)->id;
+
+        $this->expectExceptionMessage("Modules with FEATURE_CAN_DISPLAY set to false can not be moved from section 0");
+        duplicate_module($course, $cm, $sectionid);
     }
 
     /**

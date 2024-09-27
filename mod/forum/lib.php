@@ -2147,7 +2147,7 @@ function forum_get_course_forum($courseid, $type) {
         echo $OUTPUT->notification("Could not add a new course module to the course '" . $courseid . "'");
         return false;
     }
-    $sectionid = course_add_cm_to_section($courseid, $mod->coursemodule, 0);
+    $sectionid = course_add_cm_to_section($courseid, $mod->coursemodule, 0, null, 'forum');
     return $DB->get_record("forum", array("id" => "$forum->id"));
 }
 

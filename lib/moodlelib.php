@@ -454,7 +454,7 @@ define('FEATURE_BACKUP_MOODLE2', 'backup_moodle2');
 /** True if module shares questions with other modules. */
 define('FEATURE_PUBLISHES_QUESTIONS', 'publishesquestions');
 
-/** Used to determine if a plugin should render to display */
+/** Used by {@see course_modinfo::is_mod_type_visible_on_course()} to determine if a plugin should render to display */
 define('FEATURE_CAN_DISPLAY', 'candisplay');
 
 /** Can this module type be uninstalled */
@@ -4797,6 +4797,11 @@ function remove_course_contents($courseid, $showfeedback = true, ?array $options
     // Delete every instance of every module,
     // this has to be done before deleting of course level stuff.
     $locations = core_component::get_plugin_list('mod');
+    // Sort mod instances that publish questions to the end of the list, so that they will be removed last.
+    // This is because they could have questions in use by other activities in this course.
+    uksort($locations, static function ($a, $b) {
+        return plugin_supports('mod', $a, FEATURE_PUBLISHES_QUESTIONS) <=> plugin_supports('mod', $b, FEATURE_PUBLISHES_QUESTIONS);
+    });
     foreach ($locations as $modname => $moddir) {
         if ($modname === 'NEWMODULE') {
             continue;

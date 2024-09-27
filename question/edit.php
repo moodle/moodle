@@ -43,6 +43,18 @@ if ($PAGE->course->id == $SITE->id) {
     $PAGE->set_primary_active_tab('home');
 }
 
+// Mods that publish questions need a modified navbar breadcrumb here as they are managed differently to other module types.
+if (plugin_supports('mod', $cm->modname, FEATURE_PUBLISHES_QUESTIONS, false)) {
+    $PAGE->navbar->ignore_active();
+    $coursenode = $PAGE->navigation->find($PAGE->course->id, navigation_node::TYPE_COURSE);
+    $modnode = $PAGE->navigation->find($cm->id, navigation_node::TYPE_ACTIVITY);
+    $PAGE->navbar->add($coursenode->text, $coursenode->action, $coursenode->type, $coursenode->shorttext, icon: $coursenode->icon);
+    $PAGE->navbar->add(get_string('questionbank_plural', 'core_question'),
+        \core_question\local\bank\question_bank_helper::get_url_for_qbank_list($PAGE->course->id)
+    );
+    $PAGE->navbar->add($modnode->text, $modnode->action, $modnode->type, $modnode->shorttext, icon: $modnode->icon);
+}
+
 $thispageurl->param('deleteall', 1);
 $questionbank = new view($contexts, $thispageurl, $COURSE, $cm, $pagevars);
 
@@ -53,6 +65,12 @@ $PAGE->set_heading($COURSE->fullname);
 $PAGE->activityheader->disable();
 
 echo $OUTPUT->header();
+if (!\core_question\local\bank\question_bank_helper::has_bank_migration_task_completed_successfully()) {
+    $defaultactivityname = \core_question\local\bank\question_bank_helper::get_default_question_bank_activity_name();
+    echo $OUTPUT->notification(get_string('transfernotfinished', 'mod_' . $defaultactivityname),
+        \core\output\notification::NOTIFY_WARNING
+    );
+}
 
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');

@@ -182,7 +182,7 @@ class import_processor {
         // Rebuild the course cache after update action.
         rebuild_course_cache($this->course->id, true);
 
-        course_add_cm_to_section($this->course, $cmid, $this->section);
+        course_add_cm_to_section($this->course, $cmid, $this->section, modname: $this->handlerinfo->get_module_name());
 
         set_coursemodule_visible($cmid, $visible);
         if (!$visible) {

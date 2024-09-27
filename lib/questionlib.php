@@ -1547,7 +1547,9 @@ function question_edit_url($context) {
 function question_extend_settings_navigation(navigation_node $navigationnode, $context, $baseurl = '/question/edit.php') {
     global $PAGE;
 
-    if ($context->contextlevel == CONTEXT_COURSE) {
+    $iscourse = $context->contextlevel === CONTEXT_COURSE;
+
+    if ($iscourse) {
         $params = ['courseid' => $context->instanceid];
     } else if ($context->contextlevel == CONTEXT_MODULE) {
         $params = ['cmid' => $context->instanceid];
@@ -1559,7 +1561,7 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
         $params['cat'] = $cat;
     }
 
-    $questionnode = $navigationnode->add(get_string('questionbank', 'question'),
+    $questionnode = $navigationnode->add(get_string($iscourse ? 'questionbank_plural' : 'questionbank', 'question'),
             new moodle_url($baseurl, $params), navigation_node::TYPE_CONTAINER, null, 'questionbank');
 
     $corenavigations = [
