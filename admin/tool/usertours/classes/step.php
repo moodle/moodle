@@ -562,7 +562,8 @@ class step {
      * @return  $this
      */
     public function persist($force = false) {
-        global $DB;
+        global $CFG, $DB;
+        require_once("{$CFG->libdir}/filelib.php");
 
         if (!$this->dirty && !$force) {
             return $this;
@@ -719,6 +720,9 @@ class step {
      * @return  object
      */
     public function prepare_data_for_form() {
+        global $CFG;
+        require_once("{$CFG->libdir}/filelib.php");
+
         $data = $this->to_record();
         foreach (self::get_config_keys() as $key) {
             $data->$key = $this->get_config($key, configuration::get_step_default_value($key));
