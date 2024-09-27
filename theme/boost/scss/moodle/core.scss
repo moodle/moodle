@@ -2687,8 +2687,7 @@ $picker-emojis-per-row: 7 !default;
             border: 0;
             margin: $spacer * 0.125;
             &.active {
-                @include button-outline-variant($gray-600);
-                border-color: $gray-600;
+                @include button-outline-variant($blue, $active-border: $gray-600);
             }
         }
     }
