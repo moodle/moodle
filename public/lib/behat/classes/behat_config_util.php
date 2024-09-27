@@ -400,7 +400,7 @@ class behat_config_util {
         }
 
         // We require here when we are sure behat dependencies are available.
-        require_once($CFG->dirroot . '/vendor/autoload.php');
+        require_once($CFG->dirroot . '/../vendor/autoload.php');
 
         $config = $this->build_config();
 

@@ -113,7 +113,7 @@ jobs:
           cp .github/workflows/config-template.php config.php
           mkdir ../moodledata
           sudo locale-gen en_AU.UTF-8
-          php admin/tool/phpunit/cli/init.php --no-composer-self-update
+          php public/admin/tool/phpunit/cli/init.php --no-composer-self-update
 
       - name: Run PHPUnit test (one by one)
         env:

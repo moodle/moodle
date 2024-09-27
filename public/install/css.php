@@ -22,18 +22,17 @@
  * @copyright  2011 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-if (file_exists(__DIR__.'/../config.php')) {
-    // already installed
+if (file_exists(__DIR__.'/../../config.php')) {
+    // Site is already installed.
     die;
 }
 
-// and remove some of the CSS in $content.
+// Remove some of the CSS in $content.
 $files = array('boost/style/moodle.css');
 
 $content = '';
 
-foreach($files as $file) {
+foreach ($files as $file) {
     $content .= file_get_contents(__DIR__.'/../theme/'.$file) . "\n";
 }
 

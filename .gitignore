@@ -43,9 +43,9 @@ composer.phar
 /vendor/
 /behat.yml
 */yui/build/*/*-coverage.js
-/lib/yuilib/*/build/*/*-coverage.js
+/public/lib/yuilib/*/build/*/*-coverage.js
 # lib/yuilib/version/module/module-coverage.js
-/lib/yuilib/*/*/*-coverage.js
+/public/lib/yuilib/*/*/*-coverage.js
 atlassian-ide-plugin.xml
 /node_modules/
 /.vscode/
@@ -53,8 +53,8 @@ moodle-plugin-ci.phar
 .eslintignore
 .stylelintignore
 /jsdoc
-/admin/tool/componentlibrary/docs
-/admin/tool/componentlibrary/hugo/site/data/my-index.json
+/public/admin/tool/componentlibrary/docs
+/public/admin/tool/componentlibrary/hugo/site/data/my-index.json
 .hugo_build.lock
 phpcs.xml
 jsconfig.json

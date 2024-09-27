@@ -94,7 +94,7 @@ if (!empty($options['help'])) {
 // The command will install composer if not present. Usually composer libraries are
 // installed when behat or phpunit are installed, but we do not want to force users
 // to create all phpunit or behat databases tables just to run a test scenario locally.
-if (!file_exists($CFG->dirroot . '/vendor/autoload.php')) {
+if (!file_exists($CFG->dirroot . '/../vendor/autoload.php')) {
     // Force OPcache reset if used, we do not want any stale caches
     // when preparing test environment.
     if (function_exists('opcache_reset')) {

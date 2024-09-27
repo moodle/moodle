@@ -522,7 +522,7 @@ class phpunit_util extends testing_util {
     }
 
     /**
-     * Builds dirroot/phpunit.xml file using defaults from /phpunit.xml.dist
+     * Builds root/phpunit.xml file using defaults from /phpunit.xml.dist
      * @static
      * @return bool true means main config file created, false means only dataroot file created
      */
@@ -531,13 +531,13 @@ class phpunit_util extends testing_util {
 
         $template = <<<EOF
             <testsuite name="@component@_testsuite">
-              <directory suffix="_test.php">@dir@</directory>
-              <exclude>@dir@/classes</exclude>
-              <exclude>@dir@/fixtures</exclude>
+              <directory suffix="_test.php">public/@dir@</directory>
+              <exclude>public/@dir@/classes</exclude>
+              <exclude>public/@dir@/fixtures</exclude>
             </testsuite>
 
         EOF;
-        $data = file_get_contents("$CFG->dirroot/phpunit.xml.dist");
+        $data = file_get_contents("$CFG->root/phpunit.xml.dist");
 
         $suites = '';
         $includelists = [];
@@ -556,8 +556,8 @@ class phpunit_util extends testing_util {
 
             $dir = substr($fulldir, strlen($CFG->dirroot) + 1);
             if ($coverageinfo = self::get_coverage_info($fulldir)) {
-                $includelists = array_merge($includelists, $coverageinfo->get_includelists($dir));
-                $excludelists = array_merge($excludelists, $coverageinfo->get_excludelists($dir));
+                $includelists = array_merge($includelists, $coverageinfo->get_includelists("public/{$dir}"));
+                $excludelists = array_merge($excludelists, $coverageinfo->get_excludelists("public/{$dir}"));
             }
         }
 
@@ -583,8 +583,8 @@ class phpunit_util extends testing_util {
 
                 if ($coverageinfo = self::get_coverage_info($plugindir)) {
 
-                    $includelists = array_merge($includelists, $coverageinfo->get_includelists($dir));
-                    $excludelists = array_merge($excludelists, $coverageinfo->get_excludelists($dir));
+                    $includelists = array_merge($includelists, $coverageinfo->get_includelists("public/{$dir}"));
+                    $excludelists = array_merge($excludelists, $coverageinfo->get_excludelists("public/{$dir}"));
                 }
             }
         }
@@ -605,8 +605,8 @@ class phpunit_util extends testing_util {
 
         $result = false;
         if (is_writable($CFG->dirroot)) {
-            if ($result = file_put_contents("$CFG->dirroot/phpunit.xml", $data)) {
-                testing_fix_file_permissions("$CFG->dirroot/phpunit.xml");
+            if ($result = file_put_contents("$CFG->root/phpunit.xml", $data)) {
+                testing_fix_file_permissions("$CFG->root/phpunit.xml");
             }
         }
 
@@ -646,7 +646,7 @@ class phpunit_util extends testing_util {
         $sequencestart = 100000 + mt_rand(0, 99) * 1000;
 
         // Use the upstream file as source for the distributed configurations
-        $ftemplate = file_get_contents("$CFG->dirroot/phpunit.xml.dist");
+        $ftemplate = file_get_contents("$CFG->root/phpunit.xml.dist");
         $ftemplate = preg_replace('| *<!--All core suites.*</testsuites>|s', '<!--@component_suite@-->', $ftemplate);
 
         // Gets all the components with tests
@@ -676,7 +676,7 @@ class phpunit_util extends testing_util {
 
             // fix link to schema
             $level = substr_count(str_replace('\\', '/', $cpath), '/') - substr_count(str_replace('\\', '/', $CFG->dirroot), '/');
-            $fcontents = str_replace('lib/phpunit/', str_repeat('../', $level).'lib/phpunit/', $fcontents);
+            $fcontents = str_replace('public/lib/phpunit/', str_repeat('../', $level).'lib/phpunit/', $fcontents);
 
             // Write the file
             $result = false;

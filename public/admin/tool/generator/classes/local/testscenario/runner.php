@@ -61,10 +61,10 @@ class runner {
      */
     public function include_composer_libraries() {
         global $CFG;
-        if (!file_exists($CFG->dirroot . '/vendor/autoload.php')) {
+        if (!file_exists($CFG->dirroot . '/../vendor/autoload.php')) {
             throw new \moodle_exception('Missing composer.');
         }
-        require_once($CFG->dirroot . '/vendor/autoload.php');
+        require_once($CFG->dirroot . '/../vendor/autoload.php');
         return true;
     }
 

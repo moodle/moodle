@@ -62,7 +62,7 @@ class get_entity_generator extends external_api {
         global $CFG;
 
         // Ensure we can load Behat and Facebook namespaces in behat libraries.
-        require_once("{$CFG->dirroot}/vendor/autoload.php");
+        require_once("{$CFG->dirroot}/../vendor/autoload.php");
         require_once("{$CFG->libdir}/tests/behat/behat_data_generators.php");
 
         $params = self::validate_parameters(self::execute_parameters(), ['entitytype' => $entitytype]);

@@ -188,7 +188,7 @@ function testing_update_composer_dependencies(bool $selfupdate = true, bool $upd
     $cwd = getcwd();
 
     // Set some paths.
-    $dirroot = dirname(dirname(__DIR__));
+    $dirroot = dirname(dirname(dirname(__DIR__)));
 
     // Switch to Moodle's dirroot for easier path handling.
     chdir($dirroot);

@@ -359,7 +359,7 @@ if (file_exists("$CFG->dataroot/climaintenance.html")) {
         header('Retry-After: 300');
         header('Content-type: text/html; charset=utf-8');
         header('X-UA-Compatible: IE=edge');
-        /// Headers to make it not cacheable and json
+        // Headers to make it not cacheable and json.
         header('Cache-Control: no-store, no-cache, must-revalidate');
         header('Cache-Control: post-check=0, pre-check=0', false);
         header('Pragma: no-cache');
@@ -501,7 +501,7 @@ global $COURSE;
  * $OUTPUT is an instance of core_renderer or one of its subclasses. Use
  * it to generate HTML for output.
  *
- * $OUTPUT is initialised the first time it is used. See {@link bootstrap_renderer}
+ * $OUTPUT is initialised the first time it is used. See {@see bootstrap_renderer}
  * for the magic that does that. After $OUTPUT has been initialised, any attempt
  * to change something that affects the current theme ($PAGE->course, logged in use,
  * httpsrequried ... will result in an exception.)

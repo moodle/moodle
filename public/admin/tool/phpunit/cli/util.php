@@ -55,9 +55,9 @@ list($options, $unrecognized) = cli_get_params(
 );
 
 // Basic check to see if phpunit is installed.
-if (!file_exists(__DIR__.'/../../../../vendor/phpunit/phpunit/composer.json') ||
-        !file_exists(__DIR__.'/../../../../vendor/bin/phpunit') ||
-        !file_exists(__DIR__.'/../../../../vendor/autoload.php')) {
+if (!file_exists(__DIR__.'/../../../../../vendor/phpunit/phpunit/composer.json') ||
+        !file_exists(__DIR__.'/../../../../../vendor/bin/phpunit') ||
+        !file_exists(__DIR__.'/../../../../../vendor/autoload.php')) {
     phpunit_bootstrap_error(PHPUNIT_EXITCODE_PHPUNITMISSING);
 }
 
@@ -76,13 +76,13 @@ if ($options['run']) {
         }
     }
     $_SERVER['argv'] = array_values($_SERVER['argv']);
-    require(__DIR__ . '/../../../../vendor/bin/phpunit');
+    require(__DIR__ . '/../../../../../vendor/bin/phpunit');
     exit(0);
 }
 
 define('PHPUNIT_UTIL', true);
 
-require(__DIR__.'/../../../../vendor/autoload.php');
+require(__DIR__.'/../../../../../vendor/autoload.php');
 require(__DIR__ . '/../../../../lib/phpunit/bootstrap.php');
 
 // From now on this is a regular moodle CLI_SCRIPT.
