@@ -1,6 +1,6 @@
 # factor_sms Upgrade notes
 
-## 4.5dev+
+## 4.5beta
 
 ### Removed
 

@@ -1,6 +1,6 @@
 # core_sms (subsystem) Upgrade notes
 
-## 4.5dev+
+## 4.5beta
 
 ### Added
 

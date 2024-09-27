@@ -1,6 +1,6 @@
 # core_reportbuilder (subsystem) Upgrade notes
 
-## 4.5dev+
+## 4.5beta
 
 ### Added
 
@@ -28,7 +28,7 @@
 ### Changed
 
 - In order to better support float values in filter forms, the following filter types now cast given SQL prior to comparison:
-  
+
     - `duration`
     - `filesize`
     - `number`
@@ -54,7 +54,7 @@
 ### Removed
 
 - Support for the following entity classes, renamed since 4.1, has now been removed completely:
-  
+
   - `core_admin\local\entities\task_log`
   - `core_cohort\local\entities\cohort`
   - `core_cohort\local\entities\cohort_member`

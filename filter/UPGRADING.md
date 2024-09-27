@@ -1,6 +1,6 @@
 # core_filters (subsystem / plugintype) Upgrade notes
 
-## 4.5dev+
+## 4.5beta
 
 ### Added
 

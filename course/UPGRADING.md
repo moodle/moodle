@@ -1,6 +1,6 @@
 # core_course (subsystem) Upgrade notes
 
-## 4.5dev+
+## 4.5beta
 
 ### Added
 
@@ -33,7 +33,7 @@
   - Add static element in the _reset_course_form_definition method before all the options with the Delete string:
       `$mform->addElement('static', 'assigndelete', get_string('delete'));`
   - Review all the strings used in the reset page to remove the "Delete" or "Remove" words from them.
-  
+
 
   For more information see [MDL-81872](https://tracker.moodle.org/browse/MDL-81872)
 - The external function `core_course::get_course_contents` now returns the `component` and `itemid` of sections.

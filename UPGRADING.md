@@ -6,7 +6,7 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
-## 4.5dev+
+## 4.5beta
 
 ### core
 
@@ -17,7 +17,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   For more information see [MDL-64148](https://tracker.moodle.org/browse/MDL-64148)
 - The following classes have been renamed and now support autoloading.
   Existing classes are currently unaffected.
-  
+
   | Old class name | New class name |
   | --- | --- |
   | `\core_component` | `\core\component` |
@@ -28,7 +28,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-66903](https://tracker.moodle.org/browse/MDL-66903)
 - Added a helper to load fixtures from a components `tests/fixtures/` folder:
-  
+
   ```php
   advanced_testcase::load_fixture(string $component, string $fixture): void;
   ```
@@ -43,17 +43,17 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Two new functions have been introduced in the \moodle_database class:
   - `get_counted_records_sql()`
   - `get_counted_recordset_sql()`
-  
+
   These methods are compatible with all databases.
-  
+
   They will check the current running database engine and apply the COUNT window function if it is supported,
   otherwise, they will use the usual COUNT function.
-  
+
   The COUNT window function optimization is applied to the following databases:
   - PostgreSQL
   - MariaDB
   - Oracle
-  
+
   Note: MySQL and SQL Server do not use this optimization due to insignificant performance differences before and
   after the improvement.
 
@@ -72,7 +72,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   For more information see [MDL-80890](https://tracker.moodle.org/browse/MDL-80890)
 - The following classes have been renamed.
   Existing classes are currently unaffected.
-  
+
   | Old class name | New class name |
   | --- | --- |
   | `\core_user` | `\core\user` |
@@ -92,7 +92,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-81919](https://tracker.moodle.org/browse/MDL-81919)
 - The following exceptions are now also available in the `\core\exception` namespace:
-  
+
     - `\coding_exception`
     - `\file_serving_exception`
     - `\invalid_dataroot_permissions`
@@ -107,7 +107,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-81919](https://tracker.moodle.org/browse/MDL-81919)
 - The following classes have been moved into the `\core` namespace and now support autoloading:
-  
+
   - `emoticon_manager`
   - `lang_string`
 
@@ -219,9 +219,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-82845](https://tracker.moodle.org/browse/MDL-82845)
 - When rendering a renderable located within a namespace, the namespace will now be included in the renderer method name with double-underscores separating the namespace parts.
-  
+
   Note: Only those renderables within an `output` namespace will be considered, for example `\core\output\action_menu\link` and only the parts of the namespace after `output` will be included.
-  
+
   The following are examples of the new behaviour:
   | Renderable name                         | Renderer method name               |
   | ---                                     | ---                                |
@@ -238,7 +238,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-69684](https://tracker.moodle.org/browse/MDL-69684)
 - The class autoloader has been moved to an earlier point in the Moodle bootstrap.
-  
+
   Autoloaded classes are now available to scripts using the `ABORT_AFTER_CONFIG` constant.
 
   For more information see [MDL-80275](https://tracker.moodle.org/browse/MDL-80275)
@@ -246,7 +246,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-81781](https://tracker.moodle.org/browse/MDL-81781)
 - The `get_home_page()` method can now return new constant `HOMEPAGE_URL`, applicable when a third-party hook has extended the default homepage options for the site
-  
+
   A new method, `get_default_home_page_url()` has been added which will return the correct URL when this constant is returned
 
   For more information see [MDL-82066](https://tracker.moodle.org/browse/MDL-82066)
@@ -271,7 +271,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
     - `plagiarism_plugin::get_file_results()`
     - `plagiarism_plugin::update_status()`, please use `{plugin name}_before_standard_top_of_body_html` instead.
   - Final deprecation and removal of `plagiarism_get_file_results()`. Please use `plagiarism_get_links()` instead. - Final deprecation and removal of `plagiarism_update_status()`. Please use `{plugin name}_before_standard_top_of_body_html()` instead.
-  
+
 
   For more information see [MDL-71326](https://tracker.moodle.org/browse/MDL-71326)
 - `moodle_list` and `list_item` were only used by `qbank_managecategories`, and these usages have been removed, so these classes (and thus all of listlib.php) are now deprecated. This method was the only usage of the `QUESTION_PAGE_LENGTH` constant, which was defined in `question_category_object.php`, and so is also now deprecated.
@@ -284,7 +284,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-80962](https://tracker.moodle.org/browse/MDL-80962)
 - The following methods have been deprecated, existing usage should switch to secure `\core\encryption` library:
-  
+
   - `rc4encrypt`
   - `rc4decrypt`
   - `endecrypt`
@@ -294,13 +294,13 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-82157](https://tracker.moodle.org/browse/MDL-82157)
 - The following files and their contents have been deprecated:
-  
+
   - `lib/soaplib.php`
   - `lib/tokeniserlib.php`
 
   For more information see [MDL-82191](https://tracker.moodle.org/browse/MDL-82191)
 - The following methods have been formally deprecated:
-  
+
   - `get_core_subsystems`
   - `get_plugin_types`
   - `get_plugin_list`
@@ -309,12 +309,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   - `normalize_component`
   - `get_component_directory`
   - `get_context_instance`
-  
+
   Note: These methods have been deprecated for a long time, but previously did not emit any deprecation notice.
 
   For more information see [MDL-82287](https://tracker.moodle.org/browse/MDL-82287)
 - The following methods have been finally deprecated and will now throw an exception if called:
-  
+
   - `get_context_instance`
   - `can_use_rotated_text`
   - `get_system_context`
@@ -325,7 +325,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-82845](https://tracker.moodle.org/browse/MDL-82845)
 - The following renderer methods have been deprecated from the core renderer:
-  
+
   | method                              | replacement                          |
   | ---                                 | ---                                  |
   | `render_action_menu_link`           | `render_action_menu__link`           |
@@ -454,7 +454,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 - The following classes have been renamed and now support autoloading.
   Existing classes are currently unaffected.
-  
+
   | Old class name | New class name |
   | --- | --- |
   | `\cache_definition` | `\core_cache\definition` |
@@ -546,7 +546,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   - Add static element in the _reset_course_form_definition method before all the options with the Delete string:
       `$mform->addElement('static', 'assigndelete', get_string('delete'));`
   - Review all the strings used in the reset page to remove the "Delete" or "Remove" words from them.
-  
+
 
   For more information see [MDL-81872](https://tracker.moodle.org/browse/MDL-81872)
 - The external function `core_course::get_course_contents` now returns the `component` and `itemid` of sections.
@@ -747,7 +747,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 #### Changed
 
 - In order to better support float values in filter forms, the following filter types now cast given SQL prior to comparison:
-  
+
     - `duration`
     - `filesize`
     - `number`
@@ -773,7 +773,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 #### Removed
 
 - Support for the following entity classes, renamed since 4.1, has now been removed completely:
-  
+
   - `core_admin\local\entities\task_log`
   - `core_cohort\local\entities\cohort`
   - `core_cohort\local\entities\cohort_member`
@@ -793,11 +793,11 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 - All session management has been moved to the `\core\session\manager` class.
   This removes the dependancy to use the `sessions` table.
-  
+
   Session management plugins (like Redis) should now inherit
   the base `\core\session\handler` class, which implements
   `SessionHandlerInterface`, and override methods as required.
-  
+
   The following methods in `\core\session\manager` have been deprecated:
   | Old method name | New method name |
   | --- | --- |
@@ -822,7 +822,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 - A new `$reponsive` property (defaulting to `true`) has been added to the `core_table\flexible_table` class.
   This property allows you to control whether the table is rendered as a responsive table.
-  
+
 
   For more information see [MDL-80748](https://tracker.moodle.org/browse/MDL-80748)
 
@@ -1152,9 +1152,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-81816](https://tracker.moodle.org/browse/MDL-81816)
 - Upon upgrading Font Awesome from version 4 to 6, the solid family was selected by default.
-  
+
   Support for the `regular`, and `brands` families of icons has now been adde, allowing icons defined with `icon_system::FONTAWESOME` to use them.
-  
+
   Icons can select the FontAwesome family (`fa-regular`, `fa-brands`, `fa-solid`) by using the relevant class name when display the icon.
 
   For more information see [MDL-82210](https://tracker.moodle.org/browse/MDL-82210)
@@ -1167,7 +1167,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `.page-header-headings` CSS class now has a background colour applied to the maintenance and secure layouts.
   You may need to override this class in your maintenance and secure layouts if both of the following are true:
   - Your theme plugin inherits from `theme_boost` and uses this CSS class - Your theme plugin applies a different styling for the page header for the maintenance and secure layouts.
-  
+
 
   For more information see [MDL-83047](https://tracker.moodle.org/browse/MDL-83047)
 

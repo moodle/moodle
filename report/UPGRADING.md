@@ -1,6 +1,6 @@
 # report (plugin type) Upgrade notes
 
-## 4.5dev+
+## 4.5beta
 
 ### Added
 

@@ -1,16 +1,16 @@
 # core_role (subsystem) Upgrade notes
 
-## 4.5dev+
+## 4.5beta
 
 ### Added
 
 - All session management has been moved to the `\core\session\manager` class.
   This removes the dependancy to use the `sessions` table.
-  
+
   Session management plugins (like Redis) should now inherit
   the base `\core\session\handler` class, which implements
   `SessionHandlerInterface`, and override methods as required.
-  
+
   The following methods in `\core\session\manager` have been deprecated:
   | Old method name | New method name |
   | --- | --- |
