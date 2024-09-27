@@ -1810,7 +1810,7 @@ $divider-hover-color: $primary !default;
         border: $border-width solid $border-color;
         padding: 0;
         margin: map-get($spacers, 2) 0;
-        .activity-altcontent {
+        > .activity-grid > .activity-altcontent {
             margin-top: 0;
         }
     }
