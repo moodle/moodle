@@ -30028,7 +30028,7 @@ span.editinstructions .alert-link {
   padding: 0;
   margin: 0.5rem 0;
 }
-.activity.subsection > .activity-item .activity-altcontent {
+.activity.subsection > .activity-item > .activity-grid > .activity-altcontent {
   margin-top: 0;
 }
 .activity.subsection .section {
