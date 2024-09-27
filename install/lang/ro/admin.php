@@ -41,4 +41,4 @@ Te rugăm folosește--opţiunea Ajutor.';
 $string['cliyesnoprompt'] = 'tastează d (pentru \'da\') sau \'n\' (pentru \'nu\')';
 $string['environmentrequireinstall'] = 'trebuie instalat şi activat';
 $string['environmentrequireversion'] = 'versiuna necesară este {$a->needed} în timp ce dumneavoastră rulaţi versiunea {$a->current}';
-$string['upgradekeyset'] = 'Actualizează cheie  (lăsați gol pentru a nu fi setat)';
+$string['upgradekeyset'] = 'Actualizează cheie (lăsați necompletat pentru a nu fi setat)';
