@@ -25674,25 +25674,24 @@ input[disabled] {
   }
   .nav-tabs:not(.more-nav) .nav-link.active,
   .nav-pills .nav-link.active {
-    color: #6a737b;
-    border-color: #6a737b;
-    border-color: #6a737b;
+    color: #0f6cbf;
+    border-color: #0f6cbf;
   }
   .nav-tabs:not(.more-nav) .nav-link.active:hover,
   .nav-pills .nav-link.active:hover {
     color: #fff;
-    background-color: #6a737b;
+    background-color: #0f6cbf;
     border-color: #6a737b;
   }
   .nav-tabs:not(.more-nav) .nav-link.active:focus, .nav-tabs:not(.more-nav) .nav-link.active.focus,
   .nav-pills .nav-link.active:focus,
   .nav-pills .nav-link.active.focus {
-    box-shadow: 0 0 0 0.2rem rgba(106, 115, 123, 0.5);
+    box-shadow: 0 0 0 0.2rem rgba(15, 108, 191, 0.5);
   }
   .nav-tabs:not(.more-nav) .nav-link.active.disabled, .nav-tabs:not(.more-nav) .nav-link.active:disabled,
   .nav-pills .nav-link.active.disabled,
   .nav-pills .nav-link.active:disabled {
-    color: #6a737b;
+    color: #0f6cbf;
     background-color: transparent;
   }
   .nav-tabs:not(.more-nav) .nav-link.active:not(:disabled):not(.disabled):active, .nav-tabs:not(.more-nav) .nav-link.active:not(:disabled):not(.disabled).active, .show > .nav-tabs:not(.more-nav) .nav-link.active.dropdown-toggle,
@@ -25700,14 +25699,14 @@ input[disabled] {
   .nav-pills .nav-link.active:not(:disabled):not(.disabled).active,
   .show > .nav-pills .nav-link.active.dropdown-toggle {
     color: #fff;
-    background-color: #6a737b;
+    background-color: #0f6cbf;
     border-color: #6a737b;
   }
   .nav-tabs:not(.more-nav) .nav-link.active:not(:disabled):not(.disabled):active:focus, .nav-tabs:not(.more-nav) .nav-link.active:not(:disabled):not(.disabled).active:focus, .show > .nav-tabs:not(.more-nav) .nav-link.active.dropdown-toggle:focus,
   .nav-pills .nav-link.active:not(:disabled):not(.disabled):active:focus,
   .nav-pills .nav-link.active:not(:disabled):not(.disabled).active:focus,
   .show > .nav-pills .nav-link.active.dropdown-toggle:focus {
-    box-shadow: 0 0 0 0.2rem rgba(106, 115, 123, 0.5);
+    box-shadow: 0 0 0 0.2rem rgba(15, 108, 191, 0.5);
   }
 }
 @media (max-width: 576px) and (max-height: 320px) {
