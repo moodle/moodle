@@ -174,7 +174,7 @@ class provider extends \core_ai\provider {
             $settings[] = new \admin_setting_configtext(
                 "aiprovider_openai/action_{$actionname}_endpoint",
                 new \lang_string("action:{$actionname}:endpoint", 'aiprovider_openai'),
-                new \lang_string("action:{$actionname}:endpoint_desc", 'aiprovider_openai'),
+                '',
                 'https://api.openai.com/v1/chat/completions',
                 PARAM_URL,
             );
@@ -199,7 +199,7 @@ class provider extends \core_ai\provider {
             $settings[] = new \admin_setting_configtext(
                 "aiprovider_openai/action_{$actionname}_endpoint",
                 new \lang_string("action:{$actionname}:endpoint", 'aiprovider_openai'),
-                new \lang_string("action:{$actionname}:endpoint_desc", 'aiprovider_openai'),
+                '',
                 'https://api.openai.com/v1/images/generations',
                 PARAM_URL,
             );

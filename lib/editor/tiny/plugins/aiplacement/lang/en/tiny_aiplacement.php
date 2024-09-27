@@ -54,6 +54,6 @@ $string['pluginname'] = 'AI Placement';
 $string['privacy:metadata'] = 'The AI Placement plugin does not store any personal data.';
 $string['regenerate'] = 'Regenerate';
 $string['textmodaltitle'] = 'Generate text using AI';
-$string['textprompt_label'] = 'Describe the text you want AI to create';
+$string['textprompt_label'] = 'Describe the text you want AI to create. You can include details like topic, length, audience, or tone.';
 $string['textresponse_label'] = 'AI generated text';
 $string['textresponse_placeholder'] = 'Generated text will appear here, and can be edited before inserting into the editor.';

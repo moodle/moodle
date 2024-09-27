@@ -39,7 +39,7 @@ class aiprovider_management_table extends \core_admin\table\plugin_management_ta
     #[\Override]
     protected function get_column_list(): array {
         $columns = [
-            'name' => get_string('name', 'core'),
+            'name' => get_string('provider', 'core_ai'),
         ];
 
         if ($this->supports_disabling()) {

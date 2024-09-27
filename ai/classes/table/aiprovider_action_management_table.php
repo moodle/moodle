@@ -113,7 +113,7 @@ class aiprovider_action_management_table extends flexible_table implements dynam
      */
     protected function get_column_list(): array {
         return [
-            'namedesc' => get_string('name', 'core'),
+            'namedesc' => get_string('action', 'core_ai'),
             'enabled' => get_string('pluginenabled', 'core_plugin'),
             'settings' => get_string('settings', 'core'),
         ];

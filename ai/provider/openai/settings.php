@@ -37,8 +37,8 @@ if ($hassiteconfig) {
 
     $settings->add(new admin_setting_heading(
         'aiprovider_openai/general',
-        new lang_string('providersettings', 'core_ai'),
-        new lang_string('providersettings_desc', 'core_ai'),
+        new lang_string('settings', 'core'),
+        '',
     ));
 
     // Setting to store OpenAI API key.
