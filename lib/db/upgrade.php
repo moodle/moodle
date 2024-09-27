@@ -1421,5 +1421,12 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024092000.01);
     }
 
+    if ($oldversion < 2024092400.01) {
+        upgrade_store_relative_url_sitehomepage();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024092400.01);
+    }
+
     return true;
 }

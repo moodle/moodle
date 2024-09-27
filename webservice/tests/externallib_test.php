@@ -303,23 +303,23 @@ final class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals(HOMEPAGE_MY, $result['userhomepage']);
         $this->assertArrayNotHasKey('userhomepageurl', $result);
 
-        $CFG->defaulthomepage = "{$CFG->wwwroot}/home";
+        $CFG->defaulthomepage = "/home";
 
         $result = \core_webservice_external::get_site_info();
         $result = external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $result);
         $this->assertEquals(HOMEPAGE_URL, $result['userhomepage']);
-        $this->assertEquals($CFG->defaulthomepage, $result['userhomepageurl']);
+        $this->assertEquals("{$CFG->wwwroot}/home", $result['userhomepageurl']);
 
         // User preference.
         $CFG->defaulthomepage = HOMEPAGE_USER;
 
-        $userpreference = "{$CFG->wwwroot}/about";
+        $userpreference = "/about";
         set_user_preference('user_home_page_preference', $userpreference);
 
         $result = \core_webservice_external::get_site_info();
         $result = external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $result);
         $this->assertEquals(HOMEPAGE_URL, $result['userhomepage']);
-        $this->assertEquals($userpreference, $result['userhomepageurl']);
+        $this->assertEquals("{$CFG->wwwroot}/about", $result['userhomepageurl']);
     }
 
 }
