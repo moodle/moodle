@@ -1159,11 +1159,15 @@ class restore_groups_structure_step extends restore_structure_step {
         $groupinfo = $this->get_setting_value('groups');
         if ($groupinfo) {
             $paths[] = new restore_path_element('group', '/groups/group');
-            $paths[] = new restore_path_element('groupcustomfield', '/groups/groupcustomfields/groupcustomfield');
             $paths[] = new restore_path_element('grouping', '/groups/groupings/grouping');
-            $paths[] = new restore_path_element('groupingcustomfield',
-                '/groups/groupings/groupingcustomfields/groupingcustomfield');
             $paths[] = new restore_path_element('grouping_group', '/groups/groupings/grouping/grouping_groups/grouping_group');
+
+            // Custom fields.
+            if ($this->get_setting_value('customfield')) {
+                $paths[] = new restore_path_element('groupcustomfield', '/groups/groupcustomfields/groupcustomfield');
+                $paths[] = new restore_path_element('groupingcustomfield',
+                    '/groups/groupings/groupingcustomfields/groupingcustomfield');
+            }
         }
         return $paths;
     }
@@ -1831,12 +1835,19 @@ class restore_course_structure_step extends restore_structure_step {
 
     protected function define_structure() {
 
+        $paths = [];
+
         $course = new restore_path_element('course', '/course');
-        $category = new restore_path_element('category', '/course/category');
-        $tag = new restore_path_element('tag', '/course/tags/tag');
-        $customfield = new restore_path_element('customfield', '/course/customfields/customfield');
-        $courseformatoptions = new restore_path_element('course_format_option', '/course/courseformatoptions/courseformatoption');
-        $allowedmodule = new restore_path_element('allowed_module', '/course/allowed_modules/module');
+        $paths[] = $course;
+        $paths[] = new restore_path_element('category', '/course/category');
+        $paths[] = new restore_path_element('tag', '/course/tags/tag');
+        $paths[] = new restore_path_element('course_format_option', '/course/courseformatoptions/courseformatoption');
+        $paths[] = new restore_path_element('allowed_module', '/course/allowed_modules/module');
+
+        // Custom fields.
+        if ($this->get_setting_value('customfield')) {
+            $paths[] = new restore_path_element('customfield', '/course/customfields/customfield');
+        }
 
         // Apply for 'format' plugins optional paths at course level
         $this->add_plugin_structure('format', $course);
@@ -1859,7 +1870,7 @@ class restore_course_structure_step extends restore_structure_step {
         // Apply for admin tool plugins optional paths at course level.
         $this->add_plugin_structure('tool', $course);
 
-        return array($course, $category, $tag, $customfield, $allowedmodule, $courseformatoptions);
+        return $paths;
     }
 
     /**
