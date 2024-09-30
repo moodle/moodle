@@ -248,7 +248,7 @@ class report_log_table_log extends table_sql {
                     if (empty($this->download) && $url = $context->get_url()) {
                         $contextname = html_writer::link($url, $contextname);
                     }
-                } else {
+                } else if (!$contextname = \report_log\helper::get_context_fallback($event)) {
                     $contextname = get_string('other');
                 }
             }
