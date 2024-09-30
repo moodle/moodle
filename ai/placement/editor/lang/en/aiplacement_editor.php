@@ -29,6 +29,7 @@ $string['generateimagesetting_desc'] = 'Enable or disable the generation of imag
 $string['generatetext'] = 'AI generate text';
 $string['generatetextsetting'] = 'Enable generate text';
 $string['generatetextsetting_desc'] = 'Enable or disable the generation of text from a text prompt.';
+$string['noeditor'] = 'HTML Text Editor Placement is not available for this context';
 $string['pluginname'] = 'HTML Text Editor Placement';
 $string['privacy:metadata'] = 'The HTML text editor placement plugin does not store any personal data.';
 $string['editor:generate_image'] = 'Generate AI Images in HTML Text Editor';

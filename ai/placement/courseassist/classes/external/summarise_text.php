@@ -16,6 +16,7 @@
 
 namespace aiplacement_courseassist\external;
 
+use aiplacement_courseassist\utils;
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_value;
@@ -77,7 +78,9 @@ class summarise_text extends external_api {
 
         // Check the user has permission to use the AI service.
         self::validate_context($context);
-        require_capability('aiplacement/courseassist:summarise_text', $context);
+        if (!utils::is_course_assist_available($context)) {
+            throw new \moodle_exception('nocourseassist', 'aiplacement_courseassist');
+        }
 
         // Prepare the action.
         $action = new \core_ai\aiactions\summarise_text(

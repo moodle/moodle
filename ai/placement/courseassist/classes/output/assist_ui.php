@@ -16,10 +16,9 @@
 
 namespace aiplacement_courseassist\output;
 
+use aiplacement_courseassist\utils;
 use core\hook\output\after_http_headers;
 use core\hook\output\before_footer_html_generation;
-use core_ai\aiactions\summarise_text;
-use core_ai\manager;
 
 /**
  * Output handler for the course assist AI Placement.
@@ -90,18 +89,8 @@ class assist_ui {
         if ($PAGE->context->contextlevel != CONTEXT_MODULE) {
             return false;
         }
-        [$plugintype, $pluginname] = explode('_', \core_component::normalize_componentname('aiplacement_courseassist'), 2);
-        $manager = \core_plugin_manager::resolve_plugininfo_class($plugintype);
-        if (!$manager::is_plugin_enabled($pluginname)) {
-            return false;
-        }
-        $providers = manager::get_providers_for_actions([summarise_text::class], true);
-        if (!has_capability('aiplacement/courseassist:summarise_text', $PAGE->context)
-            || !manager::is_action_enabled('aiplacement_courseassist', summarise_text::class)
-            || empty($providers[summarise_text::class])
-        ) {
-            return false;
-        }
-        return true;
+
+        // Check if the user has permission to use the AI service.
+        return utils::is_course_assist_available($PAGE->context);
     }
 }
