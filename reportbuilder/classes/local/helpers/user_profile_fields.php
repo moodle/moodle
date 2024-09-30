@@ -64,18 +64,7 @@ class user_profile_fields {
     public function __construct(string $usertablefieldalias, string $entityname) {
         $this->usertablefieldalias = $usertablefieldalias;
         $this->entityname = $entityname;
-        $this->userprofilefields = $this->get_user_profile_fields();
-    }
-
-    /**
-     * Retrieves the list of available/visible user profile fields
-     *
-     * @return profile_field_base[]
-     */
-    private function get_user_profile_fields(): array {
-        return array_filter(profile_get_user_fields_with_data(0), static function(profile_field_base $profilefield): bool {
-            return $profilefield->is_visible();
-        });
+        $this->userprofilefields = profile_get_user_fields_with_data(0);
     }
 
     /**
@@ -183,7 +172,8 @@ class user_profile_fields {
 
                     $field->data = $value;
                     return (string) $field->display_data();
-                }, $profilefield);
+                }, $profilefield)
+                ->set_is_available($profilefield->is_visible());
         }
 
         return $columns;
@@ -240,11 +230,12 @@ class user_profile_fields {
                 $params
             ))
                 ->add_joins($this->get_joins())
-                ->add_join($this->get_table_join($profilefield));
+                ->add_join($this->get_table_join($profilefield))
+                ->set_is_available($profilefield->is_visible());
 
-            // If menu type then set filter options as appropriate.
-            if ($profilefield->field->datatype === 'menu') {
-                $filter->set_options($profilefield->options);
+            // If using a select filter, then populate the options.
+            if ($filter->get_filter_class() === select::class) {
+                $filter->set_options_callback(fn(): array => $profilefield->options);
             }
 
             $filters[] = $filter;
