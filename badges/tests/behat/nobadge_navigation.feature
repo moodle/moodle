@@ -4,7 +4,7 @@ Feature: Manage badges is not shown when there are no existing badges.
   Scenario: Check navigation at site level with no badges
     Given I log in as "admin"
     When I navigate to "Badges > Manage badges" in site administration
-    And I should see "There are no matching badges available for users to earn"
+    And I should see "There are no matching badges available for users to earn."
     Then "Manage badges" "button" should not exist
 
   Scenario: Check navigation at course level with no badges

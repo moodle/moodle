@@ -104,7 +104,7 @@ Feature: Award badges
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Site badges" "link" in the "Navigation" "block"
-    Then I should see "There are no matching badges available for users to earn"
+    Then I should see "There are no matching badges available for users to earn."
     And I should not see "Manage badges"
     And I should not see "Add a new badge"
 
