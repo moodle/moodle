@@ -16,8 +16,6 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-use Behat\Gherkin\Node\TableNode;
-
 require_once(__DIR__ . '/../../../lib/behat/behat_deprecated_base.php');
 
 /**
@@ -33,26 +31,6 @@ require_once(__DIR__ . '/../../../lib/behat/behat_deprecated_base.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_grade_deprecated extends behat_deprecated_base {
-
-    /**
-     * Enters a quick feedback via the gradebook for a specific grade item and user when viewing
-     * the 'Grader report' with editing mode turned on.
-     *
-     * @deprecated since 4.2 - we don't allow edit feedback on grader report anymore.
-     * @todo MDL-77107 This will be deleted in Moodle 4.6.
-     * @Given /^I give the feedback "(?P<grade_number>(?:[^"]|\\")*)" to the user "(?P<username_string>(?:[^"]|\\")*)" for the grade item "(?P<grade_activity_string>(?:[^"]|\\")*)"$/
-     * @param string $feedback
-     * @param string $userfullname the user's fullname as returned by fullname()
-     * @param string $itemname
-     */
-    public function i_give_the_feedback($feedback, $userfullname, $itemname) {
-        $this->deprecated_message(['behat_grade::i_give_the_feedback']);
-
-        $gradelabel = $userfullname . ' ' . $itemname;
-        $fieldstr = get_string('useractivityfeedback', 'gradereport_grader', $gradelabel);
-
-        $this->execute('behat_forms::i_set_the_field_to', array($this->escape($fieldstr), $this->escape($feedback)));
-    }
 
     /**
      * Confirm if a value is within the search widget within the gradebook.
