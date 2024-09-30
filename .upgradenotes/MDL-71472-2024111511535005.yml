@@ -1,0 +1,7 @@
+issueNumber: MDL-71472
+notes:
+  core:
+    - message: >
+        The method `site_registration_form::add_select_with_email()` has been
+        finally deprecated and will now throw an exception if called.
+      type: removed
