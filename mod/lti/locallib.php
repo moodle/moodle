@@ -4586,23 +4586,4 @@ function lti_new_access_token($typeid, $scopes) {
     $DB->insert_record('lti_access_tokens', $newtoken);
 
     return $newtoken;
-
-}
-
-
-/**
- * Wrapper for function libxml_disable_entity_loader() deprecated in PHP 8
- *
- * Method was deprecated in PHP 8 and it shows deprecation message. However it is still
- * required in the previous versions on PHP. While Moodle supports both PHP 7 and 8 we need to keep it.
- * @see https://php.watch/versions/8.0/libxml_disable_entity_loader-deprecation
- *
- * @param bool $value
- * @return bool
- *
- * @deprecated since Moodle 4.3
- */
-function lti_libxml_disable_entity_loader(bool $value): bool {
-    debugging(__FUNCTION__ . '() is deprecated, please do not use it any more', DEBUG_DEVELOPER);
-    return true;
 }
