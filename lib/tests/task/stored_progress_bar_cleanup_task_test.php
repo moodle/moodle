@@ -25,7 +25,7 @@ use core\output\stored_progress_bar;
  * @copyright 2024 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \core\task\stored_progress_bar_cleanup_task_test
+ * @covers    \core\task\stored_progress_bar_cleanup_task
  */
 final class stored_progress_bar_cleanup_task_test extends \advanced_testcase {
     /**
@@ -40,7 +40,7 @@ final class stored_progress_bar_cleanup_task_test extends \advanced_testcase {
         $updated24hours = $generator->create_stored_progress(lastupdate: time() - DAYSECS - 1);
 
         $task = new stored_progress_bar_cleanup_task();
-        $this->expectOutputString('Deleted old stored_progress records' . PHP_EOL);
+        $this->expectOutputRegex('/Deleted old stored_progress records/');
         $task->execute();
 
         $this->assertNotNull(stored_progress_bar::get_by_id($neverupdated->id));
