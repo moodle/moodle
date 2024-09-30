@@ -38,14 +38,13 @@ $confirm = optional_param('confirm', 0, PARAM_BOOL);
 // Set up the page.
 $title = get_string('sms_gateways', 'sms');
 $returnurl = new moodle_url('/sms/sms_gateways.php');
+admin_externalpage_setup('smsgateway');
+$PAGE->set_primary_active_tab('siteadminnode');
+$PAGE->navbar->add($title, $returnurl);
 $PAGE->set_context($context);
 $PAGE->set_url($returnurl);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-
-admin_externalpage_setup('smsgateway');
-$PAGE->set_primary_active_tab('siteadminnode');
-$PAGE->navbar->add($title, $returnurl);
 
 if (!empty($id) && !empty($action)) {
     $manager = \core\di::get(\core_sms\manager::class);
@@ -53,10 +52,10 @@ if (!empty($id) && !empty($action)) {
     $gatewayrecord = reset($gatewayrecord);
     $pluginname = explode('\\', $gatewayrecord->gateway);
     $pluginname = $pluginname[0];
-    $a = new stdClass();
-    $a->gateway = get_string('pluginname', $pluginname);
     $gateway = $manager->get_gateway_instances(['id' => $id]);
     $gateway = reset($gateway);
+    $a = new stdClass();
+    $a->gateway = $gateway->name;
 }
 
 if ($action === 'delete') {
@@ -78,8 +77,12 @@ if ($action === 'delete') {
 
     echo $OUTPUT->header();
     $yesurl = new moodle_url($returnurl, ['id' => $id, 'action' => 'delete', 'confirm' => 1]);
+    $deletedisplay = [
+        'confirmtitle' => get_string('deletecheck', '', $a->gateway),
+        'continuestr' => get_string('delete'),
+    ];
     $message = get_string('delete_sms_gateway_confirmation', 'sms', $a);
-    echo $OUTPUT->confirm($message, $yesurl, $returnurl);
+    echo $OUTPUT->confirm($message, $yesurl, $returnurl, $deletedisplay);
     echo $OUTPUT->footer();
     die;
 }

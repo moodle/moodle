@@ -7,7 +7,7 @@ Feature: Set up SMS factor in user preferences
   Background:
     Given I log in as "admin"
     And I navigate to "Plugins > SMS > Manage SMS gateways" in site administration
-    And I follow "Create a new SMS gateway"
+    And I follow "Create new SMS gateway"
     And I set the following fields to these values:
       | SMS gateway provider | AWS           |
       | Gateway name         | Dummy gateway |

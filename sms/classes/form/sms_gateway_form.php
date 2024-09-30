@@ -46,8 +46,6 @@ class sms_gateway_form extends moodleform {
             $smsplugins[$plugin] = get_string('pluginname', $plugin);
         }
 
-        $mform->addElement('static', 'information', get_string('sms_form_information', 'sms'));
-
         $mform->addElement(
             'select',
             'smsgateway',
