@@ -88,7 +88,7 @@ $string['sortbylastaccessed'] = 'Sort by last accessed';
 $string['sortbyshortname'] = 'Sort by short name';
 $string['privacy:request:preference:set'] = 'The value of the setting \'{$a->name}\' was \'{$a->value}\'';
 $string['viewquickstart'] = 'View Quickstart guide';
-$string['zero_default_title'] = 'You\'re not enrolled in any course';
+$string['zero_default_title'] = 'You\'re not enrolled in any courses.';
 $string['zero_default_intro'] = 'Once you\'re enrolled in a course, it will appear here.';
 $string['zero_nocourses_intro'] = 'Need help getting started? Check out the <a href="{$a->dochref}" title="{$a->doctitle}" target="{$a->doctarget}">Moodle documentation</a>.';
 $string['zero_nocourses_title'] = 'Create your first course';

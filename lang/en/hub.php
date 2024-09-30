@@ -90,7 +90,7 @@ $string['nohubselected'] = 'No hub selected';
 $string['none'] = 'None';
 $string['operation'] = 'Actions';
 $string['participantnumberaverage'] = 'Average number of participants ({$a})';
-$string['pluginusagedata'] = 'Plugin usage data collected from the following pages: <a href="{$a->overview}">Plugin overview</a>, <a href="{$a->activities}">Activities</a>, and <a href="{$a->blocks}">Blocks</a>';
+$string['pluginusagedata'] = 'Plugin usage data collected from: <a href="{$a->overview}">Plugins overview</a>, <a href="{$a->activities}">Manage activities</a>, and <a href="{$a->blocks}">Manage blocks</a>';
 $string['policyagreed'] = 'Privacy notice and data processing agreement';
 $string['policyagreeddesc'] = 'I agree to the <a href="{$a}" target="_blank">Privacy notice and data processing agreement</a>';
 $string['postaladdress'] = 'Postal address';
