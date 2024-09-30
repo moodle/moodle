@@ -351,7 +351,7 @@ class zipwriter {
 
         $path[] = $filepathinzip;
 
-        $finalpath = implode(DIRECTORY_SEPARATOR, $path);
+        $finalpath = implode('/', $path);
 
         // Remove relative paths (./).
         $finalpath = str_replace('./', '/', $finalpath);
