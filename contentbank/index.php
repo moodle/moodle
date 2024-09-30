@@ -79,25 +79,19 @@ foreach ($enabledcontenttypes as $contenttypename) {
 $toolbar = array ();
 
 if (has_capability('moodle/contentbank:viewunlistedcontent', $context)) {
-    $setdisplay = optional_param('displayunlisted', null, PARAM_INT);
-    if (is_null($setdisplay)) {
-        $display = get_user_preferences('core_contentbank_displayunlisted', 1);
-    } else {
-        set_user_preference('core_contentbank_displayunlisted', $setdisplay);
-        $display = $setdisplay;
-    }
+    $display = get_user_preferences('core_contentbank_displayunlisted', 1);
     $toolbar[] = [
         'name' => 'displayunlisted',
         'id' => 'displayunlisted',
         'checkbox' => true,
-        'checked' => $display,
+        'checked' => !empty($display),
         'label' => get_string('displayunlisted', 'contentbank'),
         'class' => 'displayunlisted m-2',
         'action' => 'displayunlisted',
     ];
     $PAGE->requires->js_call_amd(
         'core_contentbank/displayunlisted',
-        'update',
+        'init',
         ['[data-action=displayunlisted]']
     );
 }

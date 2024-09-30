@@ -36,6 +36,23 @@ Feature: Make content public or unlisted
     And I click on "More" "button"
     And I should see "Make public"
 
+  Scenario: Unlisted content can be hidden by user preference
+    Given the following "contentbank content" exist:
+      | contextlevel | reference | contenttype     | user  | contentname             | filepath                                    | visibility |
+      | System       |           | contenttype_h5p | admin | filltheblanks.h5p       | /h5p/tests/fixtures/filltheblanks.h5p       | 1          |
+      | System       |           | contenttype_h5p | admin | find-the-words.h5p      | /h5p/tests/fixtures/find-the-words.h5p      | 2          |
+    And I am on the "Content bank" page logged in as "admin"
+    And I should see "filltheblanks.h5p"
+    And I should see "find-the-words.h5p (Unlisted)"
+    When I set the field "Show unlisted content" to "0"
+    And I wait until the page is ready
+    Then I should see "filltheblanks.h5p"
+    And I should not see "find-the-words.h5p (Unlisted)"
+    And I set the field "Show unlisted content" to "1"
+    And I wait until the page is ready
+    And I should see "filltheblanks.h5p"
+    And I should see "find-the-words.h5p (Unlisted)"
+
   Scenario: Unlisted content cannot be seen by other users
     Given the following "users" exist:
       | username  | firstname  | lastname  | email                 |
