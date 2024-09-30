@@ -260,7 +260,6 @@ $string['erroroutput'] = 'Error output, so disabling automatic redirect.';
 $string['errorparsingxml'] = 'Error parsing XML: {$a->errorstring} at line {$a->errorline}, char {$a->errorchar}';
 $string['errorreadingfile'] = 'Error reading file "{$a}"';
 $string['errorsavingrequest'] = 'An error occurred when trying to save your request.';
-$string['errorsettinguserpref'] = 'Error setting user preference';
 $string['errorunzippingfiles'] = 'Error unzipping files';
 $string['expiredkey'] = 'Expired key';
 $string['externalauthpassworderror'] = 'Non-empty password for external authentication';
@@ -484,7 +483,6 @@ $string['nosite'] = 'Could not find a top-level course!';
 $string['nositeid'] = 'No site ID';
 $string['nostartdatenoenddate'] = 'A course end date can only be set if a start date is also set.';
 $string['nostatstodisplay'] = 'Sorry, there is no available data to display';
-$string['notallowedtoupdateprefremotely'] = 'You are not allowed to update this user preference remotely';
 $string['notavailable'] = 'That is not currently available';
 $string['notfound'] = 'Not found';
 $string['notlocalisederrormessage'] = '{$a}';
@@ -668,3 +666,5 @@ $string['myisamproblem'] = 'Database tables are using MyISAM database engine, it
 
 // Deprecated since Moodle 5.0.
 $string['cannotdeletecategoryquestions'] = 'Could not delete questions from category \'{$a}\'';
+$string['errorsettinguserpref'] = 'Error setting user preference';
+$string['notallowedtoupdateprefremotely'] = 'You are not allowed to update this user preference remotely';

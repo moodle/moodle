@@ -1846,17 +1846,7 @@ class core_user_external extends \core_external\external_api {
 
             try {
 
-                // Support legacy preferences from the old M.util.set_user_preference API (always using the current user).
-                if (isset($USER->ajax_updatable_user_prefs[$pref['name']])) {
-                    debugging('Updating preferences via ajax_updatable_user_prefs is deprecated. ' .
-                        'Please use the "core_user/repository" module instead.', DEBUG_DEVELOPER);
-
-                    set_user_preference($pref['name'], $pref['value']);
-                    $saved[] = array(
-                        'name' => $pref['name'],
-                        'userid' => $USER->id,
-                    );
-                } else if (core_user::can_edit_preference($pref['name'], $user)) {
+                if (core_user::can_edit_preference($pref['name'], $user)) {
                     $value = core_user::clean_preference($pref['value'], $pref['name']);
                     set_user_preference($pref['name'], $value, $user->id);
                     $saved[] = array(
