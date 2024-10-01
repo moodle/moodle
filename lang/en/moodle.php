@@ -1520,22 +1520,17 @@ $string['newusernewpasswordtext'] = 'Hi {$a->firstname},
 A new account has been created for you at \'{$a->sitename}\'
 and you have been issued with a new temporary password.
 
-Your current login information is now:
+Your login information is:
    username: {$a->username}
    password: {$a->newpassword}
              (you will have to change your password
-              when you login for the first time)
+              when you log in for the first time)
 
-To start using \'{$a->sitename}\', login at
+To start using \'{$a->sitename}\', log in at
    {$a->link}
 
-In most mail programs, this should appear as a blue link
-which you can just click on.  If that doesn\'t work,
-then cut and paste the address into the address
-line at the top of your web browser window.
-
-Cheers from the \'{$a->sitename}\' administrator,
-{$a->signoff}';
+If you need help, you can contact the site administrator,
+{$a->admin}';
 $string['newusers'] = 'New users';
 $string['newwindow'] = 'New window';
 $string['next'] = 'Next';
@@ -1708,7 +1703,7 @@ $string['pluginsetup'] = 'Setting up plugin tables';
 $string['policyaccept'] = 'I understand and agree';
 $string['policyagree'] = 'You must agree to this policy to continue using this site.  Do you agree?';
 $string['policyagreement'] = 'Site policy agreement';
-$string['policyagreementclick'] = 'Link to site policy agreement';
+$string['policyagreementclick'] = 'Site policy agreement';
 $string['popup'] = 'popup';
 $string['popupwindow'] = 'Open file in new window';
 $string['popupwindowname'] = 'Popup window';
