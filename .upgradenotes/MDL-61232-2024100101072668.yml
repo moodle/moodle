@@ -1,0 +1,6 @@
+issueNumber: MDL-61232
+notes:
+  core:
+    - message: |
+        moodle_process_email() has been deprecated with the removal of the unused and non-functioning admin/process_email.php.
+      type: removed

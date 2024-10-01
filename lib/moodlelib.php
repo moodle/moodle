@@ -5355,35 +5355,6 @@ function generate_email_processing_address($modid, $modargs) {
     return $header . substr(md5($header.get_site_identifier()), 0, 16).'@'.$CFG->maildomain;
 }
 
-/**
- * ?
- *
- * @todo Finish documenting this function
- *
- * @param string $modargs
- * @param string $body Currently unused
- */
-function moodle_process_email($modargs, $body) {
-    global $DB;
-
-    // The first char should be an unencoded letter. We'll take this as an action.
-    switch ($modargs[0]) {
-        case 'B': { // Bounce.
-            list(, $userid) = unpack('V', base64_decode(substr($modargs, 1, 8)));
-            if ($user = $DB->get_record("user", array('id' => $userid), "id,email")) {
-                // Check the half md5 of their email.
-                $md5check = substr(md5($user->email), 0, 16);
-                if ($md5check == substr($modargs, -16)) {
-                    set_bounce_count($user);
-                }
-                // Else maybe they've already changed it?
-            }
-        }
-        break;
-        // Maybe more later?
-    }
-}
-
 // CORRESPONDENCE.
 
 /**

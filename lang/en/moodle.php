@@ -1551,10 +1551,6 @@ $string['nopotentialcreators'] = 'No potential course creators';
 $string['nopotentialstudents'] = 'No potential students';
 $string['nopotentialteachers'] = 'No potential teachers';
 $string['norecentactivity'] = 'No recent activity';
-$string['noreplybouncemessage'] = 'You have replied to a no-reply email address. If you were attempting to reply to a forum post, please instead reply using the {$a} forums.
-
-Following is the content of your email:';
-$string['noreplybouncesubject'] = '{$a} - bounced email.';
 $string['noreplyname'] = 'Do not reply to this email';
 $string['noresetrecord'] = 'There is no record of that reset request. Please initiate a new password reset request.';
 $string['noresults'] = 'No results';
@@ -2522,5 +2518,9 @@ line at the top of your web browser window.
 
 Cheers from the \'{$a->sitename}\' administrator,
 {$a->signoff}';
+$string['noreplybouncemessage'] = 'You have replied to a no-reply email address. If you were attempting to reply to a forum post, please instead reply using the {$a} forums.
+
+Following is the content of your email:';
+$string['noreplybouncesubject'] = '{$a} - bounced email.';
 $string['registrationcontactno'] = 'No, I do not want to be contacted by other people';
 $string['registrationcontactyes'] = 'Yes, provide a form for other Moodlers to contact me';

@@ -785,3 +785,40 @@ function plagiarism_get_file_results(): void {
 function plagiarism_update_status(): void {
     \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
 }
+
+/**
+ * ?
+ *
+ * @param string $modargs
+ * @param string $body Currently unused
+ *
+ * @deprecated Since Moodle 5.0
+ * @todo Final deprecation on Moodle 6.0. See MDL-83366.
+ */
+#[\core\attribute\deprecated(
+    replacement: null,
+    since: '5.0',
+    mdl: 'MDL-83366',
+    reason: 'The function is no longer used with the removal of the unused and non-functioning admin/process_email.php.',
+)]
+function moodle_process_email($modargs, $body) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    global $DB;
+
+    // The first char should be an unencoded letter. We'll take this as an action.
+    switch ($modargs[0]) {
+        case 'B': { // Bounce.
+            list(, $userid) = unpack('V', base64_decode(substr($modargs, 1, 8)));
+            if ($user = $DB->get_record("user", array('id' => $userid), "id,email")) {
+                // Check the half md5 of their email.
+                $md5check = substr(md5($user->email), 0, 16);
+                if ($md5check == substr($modargs, -16)) {
+                    set_bounce_count($user);
+                }
+                // Else maybe they've already changed it?
+            }
+        }
+        break;
+        // Maybe more later?
+    }
+}
