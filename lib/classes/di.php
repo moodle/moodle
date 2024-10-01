@@ -120,7 +120,16 @@ class di {
 
             // The Moodle Clock implementation, which itself is an extension of PSR-20.
             // Alias the PSR-20 clock interface to the Moodle clock. They are compatible.
-            \core\clock::class => fn() => new \core\system_clock(),
+            \core\clock::class => function () {
+                global $CFG;
+
+                // Web requests to the Behat site can use a frozen clock if configured.
+                if (defined('BEHAT_SITE_RUNNING') && !empty($CFG->behat_frozen_clock)) {
+                    require_once($CFG->libdir . '/testing/classes/frozen_clock.php');
+                    return new \frozen_clock((int)$CFG->behat_frozen_clock);
+                }
+                return new \core\system_clock();
+            },
             \Psr\Clock\ClockInterface::class => \DI\get(\core\clock::class),
         ]);
 

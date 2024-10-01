@@ -2493,4 +2493,34 @@ EOF;
             );
         }
     }
+
+    /**
+     * Sets the current time for the remainder of this Behat test.
+     *
+     * This is not supported everywhere in Moodle: if code uses \core\clock through DI then
+     * it will work, but if it just calls time() it will still get the real time.
+     *
+     * @Given the time is frozen at :datetime
+     * @param string $datetime Date and time in a format that strtotime understands
+     */
+    public function the_time_is_frozen_at(string $datetime): void {
+        global $CFG;
+        require_once($CFG->libdir . '/testing/classes/frozen_clock.php');
+
+        $timestamp = strtotime($datetime);
+        // The config variable is used to set up a frozen clock in each Behat web request.
+        set_config('behat_frozen_clock', $timestamp);
+        // Simply setting a frozen clock in DI should work for future steps in Behat CLI process.
+        \core\di::set(\core\clock::class, new \frozen_clock($timestamp));
+    }
+
+    /**
+     * Stops freezing time so that it goes back to real time.
+     *
+     * @Given the time is no longer frozen
+     */
+    public function the_time_is_no_longer_frozen(): void {
+        unset_config('behat_frozen_clock');
+        \core\di::set(\core\clock::class, new \core\system_clock());
+    }
 }
