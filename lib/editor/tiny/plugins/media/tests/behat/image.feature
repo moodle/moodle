@@ -64,3 +64,15 @@ Feature: Use the TinyMCE editor to upload an image
     Then the field "Custom size" matches value "1"
     And the field "Width" matches value "102"
     And the field "Keep proportion" matches value "0"
+
+  @_file_upload
+  Scenario: Set the alt text to the maximum and below the maximum length
+    Given I log in as "admin"
+    And I open my profile in edit mode
+    And I click on the "Image" button for the "Description" TinyMCE editor
+    And I click on "Browse repositories" "button" in the "Insert image" "dialogue"
+    And I upload "/lib/editor/tiny/tests/behat/fixtures/tinyscreenshot.png" to the file picker for TinyMCE
+    When I set the field "How would you describe this image to someone who can't see it?" to "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet."
+    Then I should see "750" in the "#currentcount" "css_element"
+    And I set the field "How would you describe this image to someone who can't see it?" to "Lorem ipsum dolor sit amet."
+    And I should see "27" in the "#currentcount" "css_element"
