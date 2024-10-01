@@ -841,11 +841,16 @@ $string['quiz:viewreports'] = 'View quiz reports';
 $string['quiztimer'] = 'Quiz Timer';
 $string['quizwillopen'] = 'This quiz will open {$a}';
 $string['random'] = 'Random question';
+$string['randomcatwithsubcat'] = '{$a} and subcategories';
+$string['randomcoursecatwithsubcat'] = 'Any category inside course category {$a}';
+$string['randomcoursewithsubcat'] = 'Any category in this course';
 $string['randomcreate'] = 'Create random questions';
 $string['randomediting'] = 'Editing a random question';
+$string['randomfaultynosubcat'] = 'Faulty question';
 $string['randomfromcategory'] = 'Random question from category:';
 $string['randomfromexistingcategory'] = 'Random question from an existing category';
 $string['randomfromunavailabletag'] = '{$a} (unavailable)';
+$string['randommodulewithsubcat'] = 'Any category of this quiz';
 $string['randomnumber'] = 'Number of random questions';
 $string['randomnosubcat'] = 'Questions from this category only, not its subcategories.';
 $string['randomqname'] = 'Random question based on filter condition';
@@ -860,6 +865,7 @@ $string['randomquestiontags_help'] = 'You can restrict the selection criteria fu
 
 The "random" questions will be selected from the questions that have all these tags.';
 $string['randomquestionusinganewcategory'] = 'Random question using a new category';
+$string['randomsystemwithsubcat'] = 'Any system-level category';
 $string['randomwithsubcat'] = 'Questions from this category and its subcategories.';
 $string['readytosend'] = 'You are about to send your whole quiz to be graded.  Are you sure you want to continue?';
 $string['reattemptquiz'] = 'Re-attempt quiz';
