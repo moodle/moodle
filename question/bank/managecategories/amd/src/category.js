@@ -243,8 +243,6 @@ export default class extends BaseComponent {
      * @return {Promise<void>}
      */
     async updatePosition({element}) {
-        window.console.log('updating', this.getElement());
-        window.console.log('new state', element);
         // Move to a new parent category.
         let newParent;
         const originParent = document.querySelector(this.selectors.CHILD_LIST(this.getElement().dataset.parent));
@@ -258,7 +256,6 @@ export default class extends BaseComponent {
         } else {
             newParent = this.getElement().parentElement;
         }
-        window.console.log('newParent', newParent);
 
         // Move to a new position within the parent.
         let previousSibling;
@@ -271,21 +268,15 @@ export default class extends BaseComponent {
             previousSibling = newParent.querySelector(this.selectors.PREVIOUS_SIBLING(element.sortorder - 1));
             nextSibling = previousSibling?.nextElementSibling;
         }
-        window.console.log('previousSibling', previousSibling);
-        window.console.log('nextSibling', nextSibling);
 
         // Check if this has actually moved, or if it's just having its sortorder updated due to another element moving.
         const moved = (newParent !== this.getElement().parentElement || nextSibling !== this.getElement());
 
-        window.console.log('moved', moved);
-
         if (moved) {
             if (nextSibling) {
-                window.console.log('insertBefore');
                 // Move to the specified position in the list.
                 newParent.insertBefore(this.getElement(), nextSibling);
             } else {
-                window.console.log('appendChild');
                 // Move to the end of the list (may also be the top of the list is empty).
                 newParent.appendChild(this.getElement());
             }
@@ -395,7 +386,7 @@ export default class extends BaseComponent {
      */
     async showMoveModal(e) {
         // Return if it is not menu item.
-        const item = e.target;
+        const item = e.target.closest(this.selectors.MOVE_BUTTON);
         if (!item) {
             return;
         }
