@@ -1,6 +1,6 @@
 # core (subsystem) Upgrade notes
 
-## 4.5beta
+## 4.5rc1
 
 ### Added
 
@@ -263,7 +263,6 @@
     - `plagiarism_plugin::get_file_results()`
     - `plagiarism_plugin::update_status()`, please use `{plugin name}_before_standard_top_of_body_html` instead.
   - Final deprecation and removal of `plagiarism_get_file_results()`. Please use `plagiarism_get_links()` instead. - Final deprecation and removal of `plagiarism_update_status()`. Please use `{plugin name}_before_standard_top_of_body_html()` instead.
-
 
   For more information see [MDL-71326](https://tracker.moodle.org/browse/MDL-71326)
 - `moodle_list` and `list_item` were only used by `qbank_managecategories`, and these usages have been removed, so these classes (and thus all of listlib.php) are now deprecated. This method was the only usage of the `QUESTION_PAGE_LENGTH` constant, which was defined in `question_category_object.php`, and so is also now deprecated.

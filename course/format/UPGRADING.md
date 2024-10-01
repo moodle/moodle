@@ -1,6 +1,6 @@
 # core_courseformat (subsystem / plugintype) Upgrade notes
 
-## 4.5beta
+## 4.5rc1
 
 ### Added
 

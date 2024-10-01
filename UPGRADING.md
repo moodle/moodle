@@ -6,7 +6,7 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
-## 4.5beta
+## 4.5rc1
 
 ### core
 
@@ -271,7 +271,6 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
     - `plagiarism_plugin::get_file_results()`
     - `plagiarism_plugin::update_status()`, please use `{plugin name}_before_standard_top_of_body_html` instead.
   - Final deprecation and removal of `plagiarism_get_file_results()`. Please use `plagiarism_get_links()` instead. - Final deprecation and removal of `plagiarism_update_status()`. Please use `{plugin name}_before_standard_top_of_body_html()` instead.
-
 
   For more information see [MDL-71326](https://tracker.moodle.org/browse/MDL-71326)
 - `moodle_list` and `list_item` were only used by `qbank_managecategories`, and these usages have been removed, so these classes (and thus all of listlib.php) are now deprecated. This method was the only usage of the `QUESTION_PAGE_LENGTH` constant, which was defined in `question_category_object.php`, and so is also now deprecated.
@@ -547,7 +546,6 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
       `$mform->addElement('static', 'assigndelete', get_string('delete'));`
   - Review all the strings used in the reset page to remove the "Delete" or "Remove" words from them.
 
-
   For more information see [MDL-81872](https://tracker.moodle.org/browse/MDL-81872)
 - The external function `core_course::get_course_contents` now returns the `component` and `itemid` of sections.
 
@@ -822,7 +820,6 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 - A new `$reponsive` property (defaulting to `true`) has been added to the `core_table\flexible_table` class.
   This property allows you to control whether the table is rendered as a responsive table.
-
 
   For more information see [MDL-80748](https://tracker.moodle.org/browse/MDL-80748)
 
@@ -1167,7 +1164,6 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `.page-header-headings` CSS class now has a background colour applied to the maintenance and secure layouts.
   You may need to override this class in your maintenance and secure layouts if both of the following are true:
   - Your theme plugin inherits from `theme_boost` and uses this CSS class - Your theme plugin applies a different styling for the page header for the maintenance and secure layouts.
-
 
   For more information see [MDL-83047](https://tracker.moodle.org/browse/MDL-83047)
 
