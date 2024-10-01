@@ -234,7 +234,7 @@ const getNotesForComponent = (types, headingLevel) => {
 
             messageLines
                 .forEach((line) => {
-                    upgradeNotes += `  ${line.trimEnd()}\n`;
+                    upgradeNotes += `  ${line}`.trimEnd() + `\n`;
                 });
             upgradeNotes += `\n  For more information see [${issueNumber}](https://tracker.moodle.org/browse/${issueNumber})\n`;
         });
