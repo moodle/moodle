@@ -22,24 +22,23 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['action_apiversion'] = 'Azure AI API version';
-$string['action_apiversion_desc'] = 'Enter the version number for your Azure AI API.';
+$string['action_apiversion'] = 'API version';
 $string['action_deployment'] = 'Deployment ID';
 $string['action_deployment_desc'] = 'The deployment ID that relates to the API endpoint  the provider uses for this action.';
 $string['action_systeminstruction'] = 'System Instruction';
-$string['action_systeminstruction_desc'] = 'The instruction is used provided along with the user request for this action. It provides information to the AI model on how to generate the response.';
+$string['action_systeminstruction_desc'] = 'This instruction is sent to the AI model along with the user\'s prompt. Editing this instruction is not recommended unless absolutely required.';
 $string['apikey'] = 'Azure AI API key';
 $string['apikey_desc'] = 'Enter your Azure AI API key.';
 $string['deployment'] = 'Azure AI API deployment name';
 $string['deployment_desc'] = 'Enter the deployment name for your Azure AI API.';
-$string['enableglobalratelimit'] = 'Enable global rate limiting';
-$string['enableglobalratelimit_desc'] = 'Enable global rate limiting for the Azure AI API provider.';
-$string['enableuserratelimit'] = 'Enable user rate limiting';
-$string['enableuserratelimit_desc'] = 'Enable user rate limiting for the Azure AI API provider.';
+$string['enableglobalratelimit'] = 'Set site-wide rate limit';
+$string['enableglobalratelimit_desc'] = 'Limit the number of requests that the Azure AI API provider can receive across the entire site every hour.';
+$string['enableuserratelimit'] = 'Set user rate limit';
+$string['enableuserratelimit_desc'] = 'Limit the number of requests each user can make to the Azure AI API provider every hour.';
 $string['endpoint'] = 'Azure AI API endpoint';
-$string['endpoint_desc'] = 'Enter the endpoint URL for your Azure AI API. In the form of: https://YOUR_RESOURCE_NAME.azureai.azure.com/azureai/deployments';
-$string['globalratelimit'] = 'Global rate limit';
-$string['globalratelimit_desc'] = 'Set the number of requests per hour allowed for the global rate limit.';
+$string['endpoint_desc'] = 'Enter the endpoint URL for your Azure AI API, in the following format: https://YOUR_RESOURCE_NAME.azureai.azure.com/azureai/deployments';
+$string['globalratelimit'] = 'Maximum number of site-wide requests';
+$string['globalratelimit_desc'] = 'The number of site-wide requests allowed per hour.';
 $string['pluginname'] = 'Azure AI API Provider';
 $string['privacy:metadata'] = 'The Azure Ai API provider plugin does not store any personal data.';
 $string['privacy:metadata:aiprovider_azureai:externalpurpose'] = 'This information is sent to the Azure API in order for a response to be generated. Your Azure AI account settings may change how Microsoft stores and retains this data. No user data is explicitly sent to Microsoft or stored in Moodle LMS by this plugin.';
@@ -47,5 +46,5 @@ $string['privacy:metadata:aiprovider_azureai:model'] = 'The model used to genera
 $string['privacy:metadata:aiprovider_azureai:numberimages'] = 'The number of images used in the response. When generating images.';
 $string['privacy:metadata:aiprovider_azureai:prompttext'] = 'The user entered text prompt used to generate the response.';
 $string['privacy:metadata:aiprovider_azureai:responseformat'] = 'The format of the response. When generating images.';
-$string['userratelimit'] = 'User rate limit';
-$string['userratelimit_desc'] = 'Set the number of requests per hour allowed for the user rate limit.';
+$string['userratelimit'] = 'Maximum number of requests per user';
+$string['userratelimit_desc'] = 'The number of requests allowed per hour, per user.';

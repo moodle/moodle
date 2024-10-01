@@ -171,7 +171,7 @@ class provider extends \core_ai\provider {
         $settings[] = new \admin_setting_configtext(
             "aiprovider_azureai/action_{$actionname}_apiversion",
             new \lang_string("action_apiversion", 'aiprovider_azureai'),
-            new \lang_string("action_apiversion_desc", 'aiprovider_azureai'),
+            '',
             '2024-06-01',
             PARAM_ALPHANUMEXT,
         );
