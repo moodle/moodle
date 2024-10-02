@@ -23,8 +23,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_backup;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -38,9 +36,8 @@ require_once($CFG->dirroot . '/backup/util/helper/restore_structure_parser_proce
  * @package core_backup
  * @copyright 2017 Dmitrii Metelkin (dmitriim@catalyst-au.net)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_backup\restore_structure_parser_processor
  */
-final class restore_structure_parser_processor_test extends \advanced_testcase {
+class restore_structure_parser_processor_test extends advanced_testcase {
 
     /**
      * Initial set up.
@@ -57,52 +54,83 @@ final class restore_structure_parser_processor_test extends \advanced_testcase {
      * @return array
      */
     public function process_cdata_data_provider() {
-        return [
-            [null, null],
-            ["$@NULL@$", null],
-            ["$@NULL@$ ", "$@NULL@$ "],
-            [1, 1],
-            [" ", " "],
-            ["1", "1"],
-            ["$@FILEPHP@$1.jpg", "$@FILEPHP@$1.jpg"],
-            [
+        return array(
+            array(null, null, true),
+            array("$@NULL@$", null, true),
+            array("$@NULL@$ ", "$@NULL@$ ", true),
+            array(1, 1, true),
+            array(" ", " ", true),
+            array("1", "1", true),
+            array("$@FILEPHP@$1.jpg", "$@FILEPHP@$1.jpg", true),
+            array(
                 "http://test.test/$@SLASH@$",
                 "http://test.test/$@SLASH@$",
-            ],
-            [
+                true
+            ),
+            array(
                 "<a href='$@FILEPHP@$1.jpg'>Image</a>",
                 "<a href='http://test.test/file.php/11.jpg'>Image</a>",
-            ],
-            [
+                true
+            ),
+            array(
                 "<a href='$@FILEPHP@$$@SLASH@$1.jpg'>Image</a>",
                 "<a href='http://test.test/file.php/1/1.jpg'>Image</a>",
-            ],
-            [
+                true
+            ),
+            array(
                 "<a href='$@FILEPHP@$$@SLASH@$$@SLASH@$1.jpg'>Image</a>",
                 "<a href='http://test.test/file.php/1//1.jpg'>Image</a>",
-            ],
-            [
+                true
+            ),
+            array(
+                "<a href='$@FILEPHP@$1.jpg'>Image</a>",
+                "<a href='http://test.test/file.php?file=%2F11.jpg'>Image</a>",
+                false
+            ),
+            array(
+                "<a href='$@FILEPHP@$$@SLASH@$1.jpg'>Image</a>",
+                "<a href='http://test.test/file.php?file=%2F1%2F1.jpg'>Image</a>",
+                false
+            ),
+            array(
+                "<a href='$@FILEPHP@$$@SLASH@$$@SLASH@$1.jpg'>Image</a>",
+                "<a href='http://test.test/file.php?file=%2F1%2F%2F1.jpg'>Image</a>",
+                false
+            ),
+            array(
                 "<a href='$@FILEPHP@$$@SLASH@$1.jpg$@FORCEDOWNLOAD@$'>Image</a>",
                 "<a href='http://test.test/file.php/1/1.jpg?forcedownload=1'>Image</a>",
-            ],
-            [
+                true
+            ),
+            array(
+                "<a href='$@FILEPHP@$$@SLASH@$1.jpg$@FORCEDOWNLOAD@$'>Image</a>",
+                "<a href='http://test.test/file.php?file=%2F1%2F1.jpg&amp;forcedownload=1'>Image</a>",
+                false
+            ),
+            array(
                 "<iframe src='$@H5PEMBED@$?url=testurl'></iframe>",
                 "<iframe src='http://test.test/h5p/embed.php?url=testurl'></iframe>",
-            ],
-        ];
+                true
+            ),
+        );
     }
 
     /**
      * Test that restore_structure_parser_processor replaces $@FILEPHP@$ to correct file php links.
      *
      * @dataProvider process_cdata_data_provider
-     * @param mixed $content Testing content.
-     * @param mixed $expected Expected result.
+     * @param string $content Testing content.
+     * @param string $expected Expected result.
+     * @param bool $slasharguments A value for $CFG->slasharguments setting.
      */
-    public function test_process_cdata(mixed $content, mixed $expected): void {
+    public function test_process_cdata($content, $expected, $slasharguments): void {
         global $CFG;
+
+        $CFG->slasharguments = $slasharguments;
         $CFG->wwwroot = 'http://test.test';
-        $processor = new \restore_structure_parser_processor(1, 1);
+
+        $processor = new restore_structure_parser_processor(1, 1);
+
         $this->assertEquals($expected, $processor->process_cdata($content));
     }
 

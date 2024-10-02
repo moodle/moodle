@@ -450,26 +450,58 @@ class helper {
     /**
      * Returns the url to the cartridge representing the tool.
      *
+     * If you have slash arguments enabled, this will be a nice url ending in cartridge.xml.
+     * If not it will be a php page with some parameters passed.
+     *
      * @param \stdClass $tool The lti tool
      * @return string The url to the cartridge representing the tool
      * @since Moodle 3.2
      */
     public static function get_cartridge_url($tool) {
+        global $CFG;
+        $url = null;
+
         $id = $tool->id;
         $token = self::generate_cartridge_token($tool->id);
-        return new \moodle_url('/enrol/lti/cartridge.php/' . $id . '/' . $token . '/cartridge.xml');
+        if ($CFG->slasharguments) {
+            $url = new \moodle_url('/enrol/lti/cartridge.php/' . $id . '/' . $token . '/cartridge.xml');
+        } else {
+            $url = new \moodle_url('/enrol/lti/cartridge.php',
+                    array(
+                        'id' => $id,
+                        'token' => $token
+                    )
+                );
+        }
+        return $url;
     }
 
     /**
      * Returns the url to the tool proxy registration url.
      *
+     * If you have slash arguments enabled, this will be a nice url ending in cartridge.xml.
+     * If not it will be a php page with some parameters passed.
+     *
      * @param \stdClass $tool The lti tool
      * @return string The url to the cartridge representing the tool
      */
     public static function get_proxy_url($tool) {
+        global $CFG;
+        $url = null;
+
         $id = $tool->id;
         $token = self::generate_proxy_token($tool->id);
-        return new \moodle_url('/enrol/lti/proxy.php/' . $id . '/' . $token . '/');
+        if ($CFG->slasharguments) {
+            $url = new \moodle_url('/enrol/lti/proxy.php/' . $id . '/' . $token . '/');
+        } else {
+            $url = new \moodle_url('/enrol/lti/proxy.php',
+                    array(
+                        'id' => $id,
+                        'token' => $token
+                    )
+                );
+        }
+        return $url;
     }
 
     /**

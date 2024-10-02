@@ -230,7 +230,12 @@ class text_filter extends \core_filters\text_filter {
         $anchorcontents = '';
         if ($imagefile) {
             $anchorcontents .= "<img $title alt=\"" . s($tex) . "\" src=\"";
-            $anchorcontents .= "$CFG->wwwroot/filter/algebra/pix.php/$imagefile";
+            if ($CFG->slasharguments) {
+                // Use this method if possible for better caching.
+                $anchorcontents .= "$CFG->wwwroot/filter/algebra/pix.php/$imagefile";
+            } else {
+                $anchorcontents .= "$CFG->wwwroot/filter/algebra/pix.php?file=$imagefile";
+            }
             $anchorcontents .= "\" $style />";
 
             $imagefound = file_exists("$CFG->dataroot/filter/algebra/$imagefile");

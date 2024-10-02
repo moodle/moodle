@@ -186,7 +186,12 @@ class text_filter extends \core_filters\text_filter {
 
         // Build the output.
         $anchorcontents = "<img class=\"texrender\" $title alt=\"$alt\" src=\"";
-        $anchorcontents .= "$CFG->wwwroot/filter/tex/pix.php/$imagefile";
+        if ($CFG->slasharguments) {
+            // Use this method if possible for better client-side caching.
+            $anchorcontents .= "$CFG->wwwroot/filter/tex/pix.php/$imagefile";
+        } else {
+            $anchorcontents .= "$CFG->wwwroot/filter/tex/pix.php?file=$imagefile";
+        }
         $anchorcontents .= "\" $style/>";
 
         $imagefound = file_exists("$CFG->dataroot/filter/tex/$imagefile");

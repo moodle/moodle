@@ -1,2 +1,1 @@
 completionscorerequired_help,mod_scorm
-slashargs,mod_scorm

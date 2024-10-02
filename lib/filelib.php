@@ -73,12 +73,20 @@ function file_encode_url($urlbase, $path, $forcedownload=false, $https=false) {
 
 //TODO: deprecate this
 
-    $parts = explode('/', $path);
-    $parts = array_map('rawurlencode', $parts);
-    $path  = implode('/', $parts);
-    $return = $urlbase . $path;
-    if ($forcedownload) {
-        $return .= '?forcedownload=1';
+    if ($CFG->slasharguments) {
+        $parts = explode('/', $path);
+        $parts = array_map('rawurlencode', $parts);
+        $path  = implode('/', $parts);
+        $return = $urlbase.$path;
+        if ($forcedownload) {
+            $return .= '?forcedownload=1';
+        }
+    } else {
+        $path = rawurlencode($path);
+        $return = $urlbase.'?file='.$path;
+        if ($forcedownload) {
+            $return .= '&amp;forcedownload=1';
+        }
     }
 
     if ($https) {
@@ -496,7 +504,13 @@ function file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $fil
         $finalfile = basename($file);
         $tokenfile = "token{$finalfile}";
         $file = substr($file, 0, strlen($file) - strlen($finalfile)) . $tokenfile;
-        $baseurl = "{$CFG->wwwroot}/{$file}/{$token}";
+        $baseurl = "{$CFG->wwwroot}/{$file}";
+
+        if (!$CFG->slasharguments) {
+            $baseurl .= "?token={$token}&file=";
+        } else {
+            $baseurl .= "/{$token}";
+        }
     }
 
     $baseurl .= "/{$contextid}/{$component}/{$filearea}/";

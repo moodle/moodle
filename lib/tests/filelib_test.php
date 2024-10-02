@@ -1317,7 +1317,9 @@ EOF;
      * Test file_rewrite_pluginfile_urls with includetoken.
      */
     public function test_file_rewrite_pluginfile_urls_includetoken(): void {
-        global $USER;
+        global $USER, $CFG;
+
+        $CFG->slasharguments = true;
 
         $this->resetAfterTest();
 
@@ -1358,6 +1360,43 @@ EOF;
         $expectedurl = new \moodle_url("/tokenpluginfile.php/{$token}/{$syscontext->id}/user/private/0/image.png");
         $expectedtext = "Fake test with an image <img src=\"{$expectedurl}\">";
         $this->assertEquals($expectedtext, $finaltext);
+    }
+
+    /**
+     * Test file_rewrite_pluginfile_urls with includetoken with slasharguments disabled..
+     */
+    public function test_file_rewrite_pluginfile_urls_includetoken_no_slashargs(): void {
+        global $USER, $CFG;
+
+        $CFG->slasharguments = false;
+
+        $this->resetAfterTest();
+
+        $syscontext = \context_system::instance();
+        $originaltext = 'Fake test with an image <img src="@@PLUGINFILE@@/image.png">';
+        $options = ['includetoken' => true];
+
+        // Rewrite the content. This will generate a new token.
+        $finaltext = file_rewrite_pluginfile_urls(
+                $originaltext, 'pluginfile.php', $syscontext->id, 'user', 'private', 0, $options);
+
+        $token = get_user_key('core_files', $USER->id);
+        $expectedurl = new \moodle_url("/tokenpluginfile.php");
+        $expectedurl .= "?token={$token}&file=/{$syscontext->id}/user/private/0/image.png";
+        $expectedtext = "Fake test with an image <img src=\"{$expectedurl}\">";
+        $this->assertEquals($expectedtext, $finaltext);
+
+        // Do it again - the second time will use an existing token.
+        $finaltext = file_rewrite_pluginfile_urls(
+                $originaltext, 'pluginfile.php', $syscontext->id, 'user', 'private', 0, $options);
+        $this->assertEquals($expectedtext, $finaltext);
+
+        // Now undo.
+        $options['reverse'] = true;
+        $finaltext = file_rewrite_pluginfile_urls($finaltext, 'pluginfile.php', $syscontext->id, 'user', 'private', 0, $options);
+
+        // Compare the final text is the same that the original.
+        $this->assertEquals($originaltext, $finaltext);
     }
 
     /**
@@ -2005,36 +2044,6 @@ EOF;
             ],
         ];
     }
-
-    /**
-     * Tests the file_encode_url function to ensure it generates the correct URLs.
-     *
-     * @dataProvider file_encode_url_provider
-     * @covers ::file_encode_url()
-     *
-     * @param string $urlbase The base URL to be used in the encoding.
-     * @param string $path The path to be appended to the base URL.
-     * @param bool $forcedownload Whether to force the file to download.
-     * @param bool $https Whether to use HTTPS for the URL.
-     * @param string $expected The expected URL after encoding.
-     * @return void
-     */
-    public function test_file_encode_url(string $urlbase, string $path, bool $forcedownload, bool $https, string $expected): void {
-        $actual = file_encode_url($urlbase, $path, $forcedownload, $https);
-        $this->assertSame($expected, $actual);
-    }
-
-    /**
-     * Provides data sets for test_file_encode_url.
-     */
-    public static function file_encode_url_provider(): array {
-        return [
-            ['http://local.test/', '1/1', false, false, 'http://local.test/1/1'],
-            ['http://local.test/', '1/number two', true, false, 'http://local.test/1/number%20two?forcedownload=1'],
-            ['http://local.test/', 'number@one/3', true, true, 'https://local.test/number%40one/3?forcedownload=1'],
-        ];
-    }
-
 }
 
 /**

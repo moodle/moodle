@@ -29,6 +29,10 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         $mform = $this->_form;
 
+        if (!$CFG->slasharguments) {
+            $mform->addElement('static', '', '', $OUTPUT->notification(get_string('slashargs', 'scorm'), 'notifyproblem'));
+        }
+
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Name.
