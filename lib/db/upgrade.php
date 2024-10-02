@@ -1421,14 +1421,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024092000.01);
     }
 
-    if ($oldversion < 2024092400.01) {
-        // The slasharguments setting has been removed.
-        unset_config('slasharguments');
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2024092400.01);
-    }
-
     if ($oldversion < 2024092600.00) {
         // If h5plib_v126 is no longer present, remove it.
         if (!file_exists($CFG->dirroot . '/h5p/h5plib/v126/version.php')) {
@@ -1443,14 +1435,6 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2024092600.00);
-    }
-
-    if ($oldversion < 2024100100.01) {
-        // Set the slasharguments to 1 as default.
-        set_config('slasharguments', 1);
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2024100100.01);
     }
 
     return true;
