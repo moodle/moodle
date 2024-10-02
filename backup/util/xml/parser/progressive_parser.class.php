@@ -79,7 +79,6 @@ class progressive_parser {
     public function __construct($case_folding = false) {
         $this->xml_parser = xml_parser_create('UTF-8');
         xml_parser_set_option($this->xml_parser, XML_OPTION_CASE_FOLDING, $case_folding);
-        xml_set_object($this->xml_parser, $this);
         xml_set_element_handler($this->xml_parser, array($this, 'start_tag'), array($this, 'end_tag'));
         xml_set_character_data_handler($this->xml_parser, array($this, 'char_data'));
 

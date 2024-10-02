@@ -78,10 +78,9 @@ class mnet_encxml_parser {
      */
     function initialise() {
         $this->parser = xml_parser_create();
-        xml_set_object($this->parser, $this);
 
-        xml_set_element_handler($this->parser, "start_element", "end_element");
-        xml_set_character_data_handler($this->parser, "discard_data");
+        xml_set_element_handler($this->parser, [$this, "start_element"], [$this, "end_element"]);
+        xml_set_character_data_handler($this->parser, [$this, "discard_data"]);
 
         $this->tag_number        = 0; // Just a unique ID for each tag
         $this->digest            = '';
@@ -224,7 +223,7 @@ class mnet_encxml_parser {
             default:
                 break;
         }
-        xml_set_character_data_handler($this->parser, $handler);
+        xml_set_character_data_handler($this->parser, [$this, $handler]);
         return true;
     }
 
@@ -351,7 +350,7 @@ class mnet_encxml_parser {
      * @return  bool            True
      */
     function end_element($parser, $name) {
-        $ok = xml_set_character_data_handler($this->parser, "discard_data");
+        $ok = xml_set_character_data_handler($this->parser, [$this, "discard_data"]);
         return true;
     }
 }
