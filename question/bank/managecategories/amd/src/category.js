@@ -372,17 +372,19 @@ export default class extends BaseComponent {
                 categories.push(child);
                 precedingSibling = category;
             });
-            const precedingId = parseInt(precedingSibling.dataset.categoryid);
-            if (precedingId !== movingCategoryId) {
-                // If this is the last child of its parent, also create a target to move the category after this one.
-                categories.push({
-                    movingcategoryid: movingCategoryId,
-                    precedingsiblingid: precedingId,
-                    parent: precedingSibling.dataset.parent,
-                    categoryname: precedingSibling.dataset.categoryname,
-                    categories: null,
-                    lastchild: true,
-                });
+            if (precedingSibling) {
+                const precedingId = parseInt(precedingSibling.dataset.categoryid);
+                if (precedingId !== movingCategoryId) {
+                    // If this is the last child of its parent, also create a target to move the category after this one.
+                    categories.push({
+                        movingcategoryid: movingCategoryId,
+                        precedingsiblingid: precedingId,
+                        parent: precedingSibling.dataset.parent,
+                        categoryname: precedingSibling.dataset.categoryname,
+                        categories: null,
+                        lastchild: true,
+                    });
+                }
             }
         }
         return categories;
