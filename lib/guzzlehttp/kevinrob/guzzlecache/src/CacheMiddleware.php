@@ -61,7 +61,7 @@ class CacheMiddleware
     /**
      * @param CacheStrategyInterface|null $cacheStrategy
      */
-    public function __construct(CacheStrategyInterface $cacheStrategy = null)
+    public function __construct(?CacheStrategyInterface $cacheStrategy = null)
     {
         $this->cacheStorage = $cacheStrategy !== null ? $cacheStrategy : new PrivateCacheStrategy();
 
@@ -131,14 +131,14 @@ class CacheMiddleware
                             $response = $this->invalidateCache($request, $response);
                         }
 
-                        return $response->withHeader(self::HEADER_CACHE_INFO, self::HEADER_CACHE_MISS);
+                        return $response->withHeader(static::HEADER_CACHE_INFO, static::HEADER_CACHE_MISS);
                     }
                 );
             }
 
-            if ($request->hasHeader(self::HEADER_RE_VALIDATION)) {
+            if ($request->hasHeader(static::HEADER_RE_VALIDATION)) {
                 // It's a re-validation request, so bypass the cache!
-                return $handler($request->withoutHeader(self::HEADER_RE_VALIDATION), $options);
+                return $handler($request->withoutHeader(static::HEADER_RE_VALIDATION), $options);
             }
 
             // Retrieve information from request (Cache-Control)
@@ -162,14 +162,14 @@ class CacheMiddleware
                 ) {
                     // Cache HIT!
                     return new FulfilledPromise(
-                        $cacheEntry->getResponse()->withHeader(self::HEADER_CACHE_INFO, self::HEADER_CACHE_HIT)
+                        $cacheEntry->getResponse()->withHeader(static::HEADER_CACHE_INFO, static::HEADER_CACHE_HIT)
                     );
                 } elseif ($staleResponse
                     || ($maxStaleCache !== null && $cacheEntry->getStaleAge() <= $maxStaleCache)
                 ) {
                     // Staled cache!
                     return new FulfilledPromise(
-                        $cacheEntry->getResponse()->withHeader(self::HEADER_CACHE_INFO, self::HEADER_CACHE_HIT)
+                        $cacheEntry->getResponse()->withHeader(static::HEADER_CACHE_INFO, static::HEADER_CACHE_HIT)
                     );
                 } elseif ($cacheEntry->hasValidationInformation() && !$onlyFromCache) {
                     // Re-validation header
@@ -180,7 +180,7 @@ class CacheMiddleware
 
                         return new FulfilledPromise(
                             $cacheEntry->getResponse()
-                                ->withHeader(self::HEADER_CACHE_INFO, self::HEADER_CACHE_STALE)
+                                ->withHeader(static::HEADER_CACHE_INFO, static::HEADER_CACHE_STALE)
                         );
                     }
                 }
@@ -215,7 +215,7 @@ class CacheMiddleware
                         /** @var ResponseInterface $response */
                         $response = $response
                             ->withStatus($cacheEntry->getResponse()->getStatusCode())
-                            ->withHeader(self::HEADER_CACHE_INFO, self::HEADER_CACHE_HIT);
+                            ->withHeader(static::HEADER_CACHE_INFO, static::HEADER_CACHE_HIT);
                         $response = $response->withBody($cacheEntry->getResponse()->getBody());
 
                         // Merge headers of the "304 Not Modified" and the cache entry
@@ -224,14 +224,14 @@ class CacheMiddleware
                          * @var string[] $headerValue
                          */
                         foreach ($cacheEntry->getOriginalResponse()->getHeaders() as $headerName => $headerValue) {
-                            if (!$response->hasHeader($headerName) && $headerName !== self::HEADER_CACHE_INFO) {
+                            if (!$response->hasHeader($headerName) && $headerName !== static::HEADER_CACHE_INFO) {
                                 $response = $response->withHeader($headerName, $headerValue);
                             }
                         }
 
                         $update = true;
                     } else {
-                        $response = $response->withHeader(self::HEADER_CACHE_INFO, self::HEADER_CACHE_MISS);
+                        $response = $response->withHeader(static::HEADER_CACHE_INFO, static::HEADER_CACHE_MISS);
                     }
 
                     return static::addToCache($this->cacheStorage, $request, $response, $update);
@@ -299,7 +299,7 @@ class CacheMiddleware
         // Add the promise for revalidate
         if ($this->client !== null) {
             /** @var RequestInterface $request */
-            $request = $request->withHeader(self::HEADER_RE_VALIDATION, '1');
+            $request = $request->withHeader(static::HEADER_RE_VALIDATION, '1');
             $this->waitingRevalidate[] = $this->client
                 ->sendAsync($request)
                 ->then(function (ResponseInterface $response) use ($request, &$cacheStorage, $cacheEntry) {
@@ -335,12 +335,12 @@ class CacheMiddleware
      *
      * @return null|ResponseInterface
      */
-    protected static function getStaleResponse(CacheEntry $cacheEntry = null)
+    protected static function getStaleResponse(?CacheEntry $cacheEntry = null)
     {
         // Return staled cache entry if we can
         if ($cacheEntry instanceof CacheEntry && $cacheEntry->serveStaleIfError()) {
             return $cacheEntry->getResponse()
-                ->withHeader(self::HEADER_CACHE_INFO, self::HEADER_CACHE_STALE);
+                ->withHeader(static::HEADER_CACHE_INFO, static::HEADER_CACHE_STALE);
         }
 
         return;
@@ -352,7 +352,7 @@ class CacheMiddleware
      *
      * @return RequestInterface
      */
-    protected static function getRequestWithReValidationHeader(RequestInterface $request, CacheEntry $cacheEntry)
+    protected static function getRequestWithReValidationHeader(RequestInterface $request, ?CacheEntry $cacheEntry)
     {
         if ($cacheEntry->getResponse()->hasHeader('Last-Modified')) {
             $request = $request->withHeader(
@@ -377,7 +377,7 @@ class CacheMiddleware
      *
      * @deprecated Use constructor => `new CacheMiddleware()`
      */
-    public static function getMiddleware(CacheStrategyInterface $cacheStorage = null)
+    public static function getMiddleware(?CacheStrategyInterface $cacheStorage = null)
     {
         return new self($cacheStorage);
     }
@@ -395,6 +395,6 @@ class CacheMiddleware
             $this->cacheStorage->delete($request->withMethod($method));
         }
 
-        return $response->withHeader(self::HEADER_INVALIDATION, true);
+        return $response->withHeader(static::HEADER_INVALIDATION, true);
     }
 }
