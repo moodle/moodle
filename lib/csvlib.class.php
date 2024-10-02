@@ -126,7 +126,7 @@ class csv_import_reader {
         $columns = array();
         // str_getcsv doesn't iterate through the csv data properly. It has
         // problems with line returns.
-        while ($fgetdata = fgetcsv($fp, 0, $csv_delimiter, $enclosure)) {
+        while ($fgetdata = fgetcsv($fp, 0, $csv_delimiter, $enclosure, '\\')) {
             // Check to see if we have an empty line.
             if (count($fgetdata) == 1) {
                 if ($fgetdata[0] !== null) {
@@ -204,7 +204,7 @@ class csv_import_reader {
             return false;
         }
         $fp = fopen($filename, "r");
-        $line = fgetcsv($fp);
+        $line = fgetcsv($fp, escape: '\\');
         fclose($fp);
         if ($line === false) {
             return false;
@@ -234,7 +234,7 @@ class csv_import_reader {
             return false;
         }
         //skip header
-        return (fgetcsv($this->_fp) !== false);
+        return (fgetcsv($this->_fp, escape: '\\') !== false);
     }
 
     /**
@@ -246,7 +246,7 @@ class csv_import_reader {
         if (empty($this->_fp) or feof($this->_fp)) {
             return false;
         }
-        if ($ser = fgetcsv($this->_fp)) {
+        if ($ser = fgetcsv($this->_fp, escape: '\\')) {
             return $ser;
         } else {
             return false;
@@ -449,7 +449,7 @@ class csv_export_writer {
             }
         }
         $delimiter = csv_import_reader::get_delimiter($this->delimiter);
-        fputcsv($this->fp, $row, $delimiter, $this->csvenclosure);
+        fputcsv($this->fp, $row, $delimiter, $this->csvenclosure, '\\');
     }
 
     /**

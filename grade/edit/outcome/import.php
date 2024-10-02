@@ -112,7 +112,7 @@ if ($handle = fopen($imported_file, 'r')) {
 
     // data should be separated by a ';'.  *NOT* by a comma!  TODO: version 2.0
     // or whenever we can depend on PHP5, set the second parameter (8192) to 0 (unlimited line length) : the database can store over 128k per line.
-    while ( $csv_data = fgetcsv($handle, 8192, ';', '"')) { // if the line is over 8k, it won't work...
+    while ( $csv_data = fgetcsv($handle, 8192, ';', '"', '\\')) { // if the line is over 8k, it won't work...
         $line++;
 
         // be tolerant on input, as fgetcsv returns "an array comprising a single null field" on blank lines
