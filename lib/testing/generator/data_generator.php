@@ -1001,9 +1001,11 @@ EOD;
     public function combine_defaults_and_record(array $defaults, $record) {
         $record = (array) $record;
 
-        foreach ($defaults as $key => $defaults) {
+        foreach ($defaults as $key => $default) {
             if (!array_key_exists($key, $record)) {
-                $record[$key] = $defaults;
+                $record[$key] = $default;
+            } else if (is_array($record[$key]) && is_array($default)) {
+                $record[$key] = $this->combine_defaults_and_record($default, $record[$key]);
             }
         }
         return $record;
