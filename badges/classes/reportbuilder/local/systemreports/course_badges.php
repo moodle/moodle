@@ -18,8 +18,10 @@ declare(strict_types=1);
 
 namespace core_badges\reportbuilder\local\systemreports;
 
+use core\context\system;
 use core_badges\reportbuilder\local\entities\badge;
 use core_badges\reportbuilder\local\entities\badge_issued;
+use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\system_report;
 use lang_string;
 use moodle_url;
@@ -58,12 +60,19 @@ class course_badges extends system_report {
         $this->set_main_table('badge', $entityalias);
         $this->add_entity($badgeentity);
 
-        $type = $this->get_parameter('type', 0, PARAM_INT);
-        $courseid = $this->get_parameter('courseid', 0, PARAM_INT);
+        $paramtype = database::generate_param_name();
+        $context = $this->get_context();
+        if ($context instanceof system) {
+            $type = BADGE_TYPE_SITE;
+            $this->add_base_condition_sql("{$entityalias}.type = :$paramtype", [$paramtype => $type]);
+        } else {
+            $type = BADGE_TYPE_COURSE;
+            $paramcourseid = database::generate_param_name();
+            $this->add_base_condition_sql("{$entityalias}.type = :$paramtype AND {$entityalias}.courseid = :$paramcourseid",
+                [$paramtype => $type, $paramcourseid => $context->instanceid]);
+        }
 
-        $this->add_base_condition_simple('type', $type);
-        $this->add_base_condition_simple('courseid', $courseid);
-        $this->add_base_condition_sql("({$entityalias}.status = " . BADGE_STATUS_ACTIVE .
+         $this->add_base_condition_sql("({$entityalias}.status = " . BADGE_STATUS_ACTIVE .
             " OR {$entityalias}.status = " . BADGE_STATUS_ACTIVE_LOCKED . ")");
 
         $badgeissuedentity = new badge_issued();
