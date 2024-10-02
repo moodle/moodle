@@ -778,7 +778,10 @@ const registerListeners = () => {
             drawerMap.forEach(drawerInstance => {
                 disableDrawerTooltips(drawerInstance.drawerNode);
                 if (drawerInstance.isOpen) {
-                    if (drawerInstance.closeOnResize) {
+                    const currentFocus = document.activeElement;
+                    const drawerContent = drawerInstance.drawerNode.querySelector(SELECTORS.DRAWERCONTENT);
+                    const shouldClose = drawerInstance.closeOnResize && (!drawerContent || !drawerContent.contains(currentFocus));
+                    if (shouldClose) {
                         drawerInstance.closeDrawer();
                     } else {
                         anyOpen = true;
@@ -798,6 +801,12 @@ const registerListeners = () => {
     };
 
     document.addEventListener('scroll', () => {
+        const currentFocus = document.activeElement;
+        const drawerContentElements = document.querySelectorAll(SELECTORS.DRAWERCONTENT);
+        // Check if the current focus is within any drawer content.
+        if (Array.from(drawerContentElements).some(drawer => drawer.contains(currentFocus))) {
+            return;
+        }
         const body = document.querySelector('body');
         if (window.scrollY >= window.innerHeight) {
             body.classList.add(CLASSES.SCROLLED);
