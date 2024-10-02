@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2024042200;
-$plugin->requires  = 2024041600;  // Requires this Moodle version.
+$plugin->version   = 2024100700;
+$plugin->requires  = 2024100100;  // Requires this Moodle version.
 $plugin->component = 'dataformat_excel';
 
