@@ -36,6 +36,7 @@ require_once($CFG->dirroot . '/question/editlib.php');
  *
  * @copyright  2014 Nikita Nikitsky, Volgograd State Technical University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \qformat_xml
  */
 class qformat_xml_import_export_test extends advanced_testcase {
     /**
@@ -393,7 +394,10 @@ class qformat_xml_import_export_test extends advanced_testcase {
         $kappaquestion  = $generator->create_question('essay', null, [
                 'category' => $categorykappa->id,
                 'name' => 'Kappa Essay Question',
-                'questiontext' => ['text' => 'Testing Kappa Essay Question'],
+                'questiontext' => [
+                    'format' => '0',
+                    'text' => 'Testing Kappa Essay Question',
+                ],
                 'generalfeedback' => '',
                 'responseformat' => 'editor',
                 'responserequired' => 1,
