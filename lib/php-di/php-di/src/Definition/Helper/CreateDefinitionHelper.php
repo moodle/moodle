@@ -43,7 +43,7 @@ class CreateDefinitionHelper implements DefinitionHelper
      * @param string|null $className Class name of the object.
      *                               If null, the name of the entry (in the container) will be used as class name.
      */
-    public function __construct(string $className = null)
+    public function __construct(?string $className = null)
     {
         $this->className = $className;
     }

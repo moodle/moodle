@@ -29,7 +29,7 @@ class PropertyInjection
      * @param string $propertyName Property name
      * @param mixed $value Value that should be injected in the property
      */
-    public function __construct(string $propertyName, mixed $value, string $className = null)
+    public function __construct(string $propertyName, mixed $value, ?string $className = null)
     {
         $this->propertyName = $propertyName;
         $this->value = $value;

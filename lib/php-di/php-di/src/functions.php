@@ -30,7 +30,7 @@ if (! function_exists('DI\create')) {
      * @param string|null $className Class name of the object.
      *                               If null, the name of the entry (in the container) will be used as class name.
      */
-    function create(string $className = null) : CreateDefinitionHelper
+    function create(?string $className = null) : CreateDefinitionHelper
     {
         return new CreateDefinitionHelper($className);
     }
@@ -43,7 +43,7 @@ if (! function_exists('DI\autowire')) {
      * @param string|null $className Class name of the object.
      *                               If null, the name of the entry (in the container) will be used as class name.
      */
-    function autowire(string $className = null) : AutowireDefinitionHelper
+    function autowire(?string $className = null) : AutowireDefinitionHelper
     {
         return new AutowireDefinitionHelper($className);
     }

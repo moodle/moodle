@@ -782,7 +782,7 @@ All rights reserved.</copyright>
   <library>
       <location>php-di/php-di</location>
       <name>PHP Dependency Injector</name>
-      <version>7.0.6</version>
+      <version>7.0.8</version>
       <license>MIT</license>
       <repository>https://github.com/PHP-DI/PHP-DI</repository>
   </library>

@@ -27,7 +27,7 @@ class DefinitionArray implements DefinitionSource, MutableDefinitionSource
 
     private DefinitionNormalizer $normalizer;
 
-    public function __construct(array $definitions = [], Autowiring $autowiring = null)
+    public function __construct(array $definitions = [], ?Autowiring $autowiring = null)
     {
         if (isset($definitions[0])) {
             throw new \Exception('The PHP-DI definition is not indexed by an entry name in the definition array');
