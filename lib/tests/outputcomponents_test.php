@@ -136,6 +136,7 @@ final class outputcomponents_test extends \advanced_testcase {
 
         // Verify new install contains expected defaults.
         $this->assertSame(theme_config::DEFAULT_THEME, $CFG->theme);
+        $this->assertEquals(1, $CFG->slasharguments);
         $this->assertEquals(1, $CFG->themerev);
         $this->assertEquals(0, $CFG->themedesignermode);
         $this->assertSame('https://www.example.com/moodle', $CFG->wwwroot);
@@ -304,13 +305,14 @@ final class outputcomponents_test extends \advanced_testcase {
         // Test non-slashargument images.
         set_config('theme', 'classic');
         $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
+        $CFG->slasharguments = 0;
         $page = new \moodle_page();
         $page->set_url('/user/profile.php');
         $page->set_context(\context_system::instance());
         $renderer = $page->get_renderer('core');
 
         $up3 = new user_picture($user3);
-        $this->assertSame($CFG->wwwroot.'/theme/image.php/classic/core/1/u/f2', $up3->get_url($page, $renderer)->out(false));
+        $this->assertSame($CFG->wwwroot.'/theme/image.php?theme=classic&component=core&rev=1&image=u%2Ff2', $up3->get_url($page, $renderer)->out(false));
     }
 
     public function test_empty_menu(): void {

@@ -580,21 +580,24 @@ class url {
      *
      * @param string $path usually file path
      * @param string $parameter name of page parameter if slasharguments not supported
-     * @param bool|null $supported This parameter has been deprecated since 4.5 and should not be used anymore.
-     * @todo Final deprecation on Moodle 6.0. See MDL-82768.
+     * @param bool $supported usually null, then it depends on $CFG->slasharguments, use true or false for other servers
      */
-    public function set_slashargument($path, $parameter = 'file', ?bool $supported = null) {
-        if ($supported !== null) {
-            debugging(
-                'Deprecated argument passed to ' . __FUNCTION__,
-                DEBUG_DEVELOPER,
-            );
+    public function set_slashargument($path, $parameter = 'file', $supported = null) {
+        global $CFG;
+        if (is_null($supported)) {
+            $supported = !empty($CFG->slasharguments);
         }
-        $parts = explode('/', $path);
-        $parts = array_map('rawurlencode', $parts);
-        $path  = implode('/', $parts);
-        $this->slashargument = $path;
-        unset($this->params[$parameter]);
+
+        if ($supported) {
+            $parts = explode('/', $path);
+            $parts = array_map('rawurlencode', $parts);
+            $path  = implode('/', $parts);
+            $this->slashargument = $path;
+            unset($this->params[$parameter]);
+        } else {
+            $this->slashargument = '';
+            $this->params[$parameter] = $path;
+        }
     }
 
     // Static factory methods.
@@ -697,7 +700,9 @@ class url {
             $urlbase = "$CFG->wwwroot/tokenpluginfile.php";
             $userid = $includetoken === true ? $USER->id : $includetoken;
             $token = get_user_key('core_files', $userid);
-            $path[] = $token;
+            if ($CFG->slasharguments) {
+                $path[] = $token;
+            }
         } else {
             $urlbase = "$CFG->wwwroot/pluginfile.php";
         }
@@ -711,7 +716,10 @@ class url {
 
         $path = "/" . implode('/', $path) . "{$pathname}{$filename}";
 
-        $url = self::make_file_url($urlbase, $path, $forcedownload);
+        $url = self::make_file_url($urlbase, $path, $forcedownload, $includetoken);
+        if ($includetoken && empty($CFG->slasharguments)) {
+            $url->param('token', $token);
+        }
         return $url;
     }
 
@@ -823,20 +831,16 @@ class url {
      *
      * By default the path includes slash-arguments (for example,
      * '/myfile.php/extra/arguments') so it is what you would expect from a
-     * URL path.
+     * URL path. If you don't want this behaviour, you can opt to exclude the
+     * slash arguments. (Be careful: if the $CFG variable slasharguments is
+     * disabled, these URLs will have a different format and you may need to
+     * look at the 'file' parameter too.)
      *
-     * @param bool|null $includeslashargument This parameter has been deprecated since 4.5 and should not be used anymore.
-     *                                        Final deprecation on Moodle 6.0. See MDL-82768.
+     * @param bool $includeslashargument If true, includes slash arguments
      * @return string Path of URL
      */
-    public function get_path(?bool $includeslashargument = null) {
-        if ($includeslashargument !== null) {
-            debugging(
-                'The includeslashargument argument has been deprecated. Please remove it from your method calls.',
-                DEBUG_DEVELOPER,
-            );
-        }
-        return $this->path . $this->slashargument;
+    public function get_path($includeslashargument = true) {
+        return $this->path . ($includeslashargument ? $this->slashargument : '');
     }
 
     /**

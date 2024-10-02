@@ -1445,5 +1445,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024092600.00);
     }
 
+    if ($oldversion < 2024100100.01) {
+        // Set the slasharguments to 1 as default.
+        set_config('slasharguments', 1);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024100100.01);
+    }
+
     return true;
 }

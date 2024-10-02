@@ -1,8 +1,0 @@
-issueNumber: MDL-62640
-notes:
-  core_admin:
-    - message: >-
-        The HTTP Server setting "Use slash arguments" (slasharguments) configuration setting and related
-        to it has been removed. Calling the option with $CFG->slasharguments or
-        get_config('slasharguments') is no longer available.
-      type: removed

@@ -329,6 +329,12 @@ $CFG->admin = 'admin';
 // Please note: It is *not* possible to use X-Sendfile with the per-request directory.
 // The directory is highly likely to have been deleted by the time the web server sends the file.
 //
+// YUI caching may be sometimes improved by slasharguments:
+//     $CFG->yuislasharguments = 1;
+// Some servers may need a special rewrite rule to work around internal path length limitations:
+// RewriteRule (^.*/theme/yui_combo\.php)(/.*) $1?file=$2
+//
+//
 // Following settings may be used to select session driver, uncomment only one of the handlers.
 //   Database session handler:
 //      $CFG->session_handler_class = '\core\session\database';
