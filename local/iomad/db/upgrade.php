@@ -2527,5 +2527,29 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024090400, 'local', 'iomad');
     }
 
+    if ($oldversion < 2024090401) {
+
+        // Define index complic_comp_ix (not unique) to be added to companylicense.
+        $table = new xmldb_table('companylicense');
+        $index = new xmldb_index('complic_comp_ix', XMLDB_INDEX_NOTUNIQUE, ['companyid']);
+
+        // Conditionally launch add index complic_comp_ix.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index complicu_userlicid_ix (not unique) to be added to companylicense_users.
+        $table = new xmldb_table('companylicense_users');
+        $index = new xmldb_index('complicu_userlicid_ix', XMLDB_INDEX_NOTUNIQUE, ['userid', 'licenseid', 'licensecourseid']);
+
+        // Conditionally launch add index complicu_userlicid_ix.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2024090401, 'local', 'iomad');
+    }
+
     return $result;
 }
