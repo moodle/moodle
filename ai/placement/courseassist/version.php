@@ -25,6 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'aiplacement_courseassist';
-$plugin->version = 2024061401;
-$plugin->requires = 2024041600;
+$plugin->version = 2024100700;
+$plugin->requires = 2024100100;
 $plugin->maturity = MATURITY_ALPHA;
