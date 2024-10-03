@@ -1,9 +1,11 @@
 issueNumber: MDL-82529
 notes:
   core_reportbuilder:
-    - message: >-
-        Methods `add_columns_from_entity()`, `add_filters_from_entity()` and
-        `report_element_search()` have been moved from
-        `\core_reportbuilder\datasource` class to `\core_reportbuilder\base` class
-        in order to be available also for system reports
+    - message: >
+        The following methods have been moved from `\core_reportbuilder\datasource` class to
+        its parent class `\core_reportbuilder\base` to make them available for use in system reports:
+
+          - `add_columns_from_entity()`
+          - `add_filters_from_entity()`
+          - `report_element_search()`
       type: improved

@@ -2,10 +2,10 @@ issueNumber: MDL-82627
 notes:
   core:
     - message: >
-        There is a new method called `get_fixture_path()` that supports getting
-        the path to the fixture
+        A new static method, `\advanced_testcase::get_fixture_path()`, has been added to
+        enable unit tests to fetch the path to a fixture.
       type: improved
     - message: >
-        There is a new method called `get_mocked_http_client()` that supports
-        mocking the `http_client`
+        A new static method, `\advanced_testcase::get_mocked_http_client()`, has been added to
+        allow unit tests to mock the `\core\http_client` and update the DI container.
       type: improved

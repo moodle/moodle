@@ -4,18 +4,18 @@ notes:
     - message: >-
         The following methods have been updated to accept a section name in addition to the section number:
 
-        - `i_open_section_edit_menu()`
+        - `\behat_course::i_open_section_edit_menu()`
 
-        - `i_show_section()`
+        - `\behat_course::i_show_section()`
 
-        - `i_hide_section(),`
+        - `\behat_course::i_hide_section(),`
 
-        - `i_wait_until_section_is_available()`
+        - `\behat_course::i_wait_until_section_is_available()`
 
-        - `show_section_link_exists()`
+        - `\behat_course::show_section_link_exists()`
 
-        - `hide_section_link_exists()`
+        - `\behat_course::hide_section_link_exists()`
 
-        - `section_exists()`
+        - `\behat_course::section_exists()`
 
       type: improved

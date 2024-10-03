@@ -2,8 +2,11 @@ issueNumber: MDL-82567
 notes:
   core_table:
     - message: >-
-        `core_table\dynamic` declares a new method `::has_capability()` to
+        The `\core_table\dynamic` class declares a new method `::has_capability()` to
         allow classes implementing this interface to perform access checks
-        on the dynamic table. This is a breaking change that all dynamic table
-        implementations must implement for continued functionality.
+        on the dynamic table.
+
+        Note: This is a breaking change. All implementations of the `\core_table\dynamic`
+        table interface _must_ implement the new `has_capability(): bool` method for continued
+        functionality.
       type: changed

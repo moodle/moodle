@@ -2,6 +2,6 @@ issueNumber: MDL-73976
 notes:
   core_course:
     - message: >-
-        The previously deprecated `print_course_request_buttons` method has been
-        removed and can no longer be used
+        The previously deprecated `\print_course_request_buttons()` method has been
+        removed and can no longer be used.
       type: removed

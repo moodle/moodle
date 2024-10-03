@@ -2,6 +2,9 @@ issueNumber: MDL-78293
 notes:
   core_user:
     - message: >
-        The visibility of the methods: `check_access_for_dynamic_submission()` and `get_options()`
-        in `\core_user\form\private_files` has been changed from protected to public.
+        The visibility of the following methods have been increased to public:
+
+        - `\core_user\form\private_files::check_access_for_dynamic_submission()`
+
+        - `\core_user\form\private_files::get_options()`
       type: changed

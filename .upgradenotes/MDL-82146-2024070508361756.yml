@@ -1,7 +1,13 @@
 issueNumber: MDL-82146
 notes:
   core_courseformat:
-    - message: >-
-        New `$disabled` parameter has been added to `select`, `select_optgroup` and
-        `select_option` html_writers to create disabled option elements.
+    - message: >
+        A new `$disabled` parameter has been added to the following `html_writer` methods:
+
+
+        - `\core\output\html_writer::select()`
+
+        - `\core\output\html_writer::select_optgroup()`
+
+        - `\core\output\html_writer::select_option()`
       type: improved

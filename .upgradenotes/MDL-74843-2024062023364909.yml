@@ -1,5 +1,5 @@
 issueNumber: MDL-74843
 notes:
   core:
-    - message: 'Final deprecation of `\core\task\manager::ensure_adhoc_task_qos()`'
+    - message: 'Final deprecation of `\core\task\manager::ensure_adhoc_task_qos()`.'
       type: removed

@@ -5,7 +5,7 @@ notes:
         The following deprecated methods in `report_eventlist_list_generator` have
         been removed:
 
-        - `get_core_events_list()`
+        - `\report_eventlist_list_generator::get_core_events_list()`
 
-        - `get_non_core_event_list()`
+        - `\report_eventlist_list_generator::get_non_core_event_list()`
       type: deprecated

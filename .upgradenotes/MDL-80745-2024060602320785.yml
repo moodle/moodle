@@ -2,7 +2,7 @@ issueNumber: MDL-80745
 notes:
   core_grades:
     - message: >
-        The `core_grades_renderer::group_selector()` method has been deprecated.
+        The `\core_grades_renderer::group_selector()` method has been deprecated.
         Please use `\core_course\output\actionbar\renderer` to render a
         `group_selector` renderable instead.
       type: deprecated
