@@ -205,7 +205,7 @@ class core_message_external extends external_api {
             // Check if the recipient can be messaged by the sender.
             if ($success && !\core_message\api::can_send_message($tousers[$message['touserid']]->id, $USER->id)) {
                 $success = false;
-                $errormessage = get_string('usercantbemessaged', 'message', fullname(\core_user::get_user($message['touserid'])));
+                $errormessage = get_string('usercantbemessaged', 'message');
             }
 
             // Now we can send the message (at least try).
