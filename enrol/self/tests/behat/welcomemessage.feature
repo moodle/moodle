@@ -34,7 +34,7 @@ Feature: A course welcome message will be sent to the user when they auto-enrol 
     Then I should see "Send course welcome message"
     And the field "Send course welcome message" matches value "From the course contact"
     And I should see "Custom welcome message"
-    And the field "Custom welcome message" matches value "Hi {$a->firstname}, you have successfully been enrolled to course {$a->coursename}"
+    And the field "Custom welcome message" matches value "Hi {$a->firstname}, you are enrolled in the course {$a->coursename}."
     And I should see "Accepted formats: Plain text or Moodle-auto format. HTML tags and multi-lang tags are also accepted, as well as the following placeholders:"
     And I set the field "Send course welcome message" to "No"
     And I should not see "Custom welcome message"
@@ -73,7 +73,7 @@ Feature: A course welcome message will be sent to the user when they auto-enrol 
     And I open the notification popover
     And I should see "Welcome to Course 1"
     And I click on "View full notification" "link" in the ".popover-region-notifications" "css_element"
-    And I should see "Hi First, you have successfully been enrolled to course Course 1"
+    And I should see "Hi First, you are enrolled in the course Course 1."
     # Login as second user and check the notification.
     And I log in as "user2"
     And I am on "Course 2" course homepage
@@ -82,7 +82,7 @@ Feature: A course welcome message will be sent to the user when they auto-enrol 
     And I open the notification popover
     And I should see "Welcome to Course 2"
     And I click on "View full notification" "link" in the ".popover-region-notifications" "css_element"
-    And I should see "Hi Second, you have successfully been enrolled to course Course 2"
+    And I should see "Hi Second, you are enrolled in the course Course 2."
 
   @javascript
   Scenario: Students should receive a welcome message if the setting is enabled - Custom message
@@ -91,7 +91,7 @@ Feature: A course welcome message will be sent to the user when they auto-enrol 
     And I click on "Edit" "link" in the "Test student enrolment" "table_row"
     And I set the field "Custom welcome message" to multiline:
     """
-    Dear {$a->fullname}, you have successfully been enrolled to course {$a->coursename}.
+    Dear {$a->fullname}, you are enrolled in the course {$a->coursename}.
     Your email address: {$a->email}
     Your first name: {$a->firstname}
     Your last name: {$a->lastname}
@@ -106,7 +106,7 @@ Feature: A course welcome message will be sent to the user when they auto-enrol 
     And I open the notification popover
     And I should see "Welcome to Course 1"
     And I click on "View full notification" "link" in the ".popover-region-notifications" "css_element"
-    And I should see "Dear First User, you have successfully been enrolled to course Course 1"
+    And I should see "Dear First User, you are enrolled in the course Course 1."
     And I should see "Your email address: first@example.com"
     And I should see "Your first name: First"
     And I should see "Your last name: User"
@@ -119,7 +119,7 @@ Feature: A course welcome message will be sent to the user when they auto-enrol 
     And I open the notification popover
     And I should see "Welcome to Course 1"
     And I click on "View full notification" "link" in the ".popover-region-notifications" "css_element"
-    And I should see "Dear Second User, you have successfully been enrolled to course Course 1"
+    And I should see "Dear Second User, you are enrolled in the course Course 1."
     And I should see "Your email address: second@example.com"
     And I should see "Your first name: Second"
     And I should see "Your last name: User"

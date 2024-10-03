@@ -39,7 +39,7 @@ Feature: Delete course badge already awarded
     And the following <shouldtable> exist in the "reportbuilder-table" table:
       | Name            | Badge status |
       | Testing badge 1 | Archived     |
-    And I <shouldmsg> see "There are no matching badges available for users to earn"
+    And I <shouldmsg> see "There are no matching badges available for users to earn."
     # Confirm that badge is retained in the first case as awarded badge but not in the second.
     And I am on the "Course 1" "enrolled users" page
     And I click on "Student 1" "link"

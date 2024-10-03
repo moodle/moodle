@@ -25,7 +25,7 @@ Feature: Confirm that we can open multiple browser tabs
     And I open a tab named "CourseViewer4" on the "My courses" page
 
     # Switch between all the tabs and confirm their different contents.
-    Then I should see "You're not enrolled in any course"
+    Then I should see "You're not enrolled in any courses."
     And I switch to "CourseViewer2" tab
     And "Course 3" "heading" should exist
     And I switch to "CourseViewer1" tab

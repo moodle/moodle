@@ -207,18 +207,18 @@ $string['config_voicebridge_description'] = 'These settings enable or disable op
 $string['config_voicebridge_editable'] = 'Conference voice bridge can be edited';
 $string['config_voicebridge_editable_description'] = 'A conference voice bridge number can be permanently assigned to a room. When assigned, the number cannot be used for any other room.';
 
-$string['config_preuploadpresentation'] = 'Pre-upload presentation';
+$string['config_preuploadpresentation'] = 'Presentation file';
 $string['config_preuploadpresentation_description'] = 'These settings enable or disable options in the UI and also define default values for these options. The feature works only if the Moodle server is accessible to BigBlueButton.';
-$string['config_preuploadpresentation_editable'] = 'Pre-uploading presentation editable';
-$string['config_preuploadpresentation_editable_description'] = 'Preupload presentation feature is editable in the UI when the room or conference is added or updated.';
+$string['config_preuploadpresentation_editable'] = 'Presentation file on activity page';
+$string['config_preuploadpresentation_editable_description'] = 'Option in activity settings to upload presentation file to show on activity page.';
 
 $string['config_presentation_default'] = 'Default presentation file';
 $string['config_presentation_default_description'] = 'A file may be provided for use in all rooms.';
 
 $string['config_showpresentation_default'] = 'Show presentation file on activity page';
-$string['config_showpresentation_default_description'] = 'Allow students to access the preuploaded presentation file prior to the session on the activity page';
-$string['config_showpresentation_editable'] = 'Show presentation file editable';
-$string['config_showpresentation_editable_description'] = 'Show presentation file feature is editable in the UI when the room or conference is added or updated.';
+$string['config_showpresentation_default_description'] = 'Should students have access to the presentation file before the session? This setting has no effect on users with the capability \'Always see presentation file on activity page\' .';
+$string['config_showpresentation_editable'] = '\'Show presentation file on activity page\' option';
+$string['config_showpresentation_editable_description'] = 'Option in activity settings for teachers to choose whether to show the presentation file to students.';
 
 $string['config_participant'] = 'Participants';
 $string['config_participant_description'] = 'These settings define the default role for participants.';

@@ -19,7 +19,7 @@ Feature: Managers can manage course custom fields number
       | Short name         | numberfield  |
       | Display template   | test         |
     And I click on "Save changes" "button" in the "Adding a new Number" "dialogue"
-    Then I should see "The placeholder is not invalid"
+    Then I should see "Invalid placeholder"
     And I set the following fields to these values:
       | Name               | Number field |
       | Short name         | numberfield  |

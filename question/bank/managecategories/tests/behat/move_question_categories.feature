@@ -98,4 +98,4 @@ Feature: A teacher can reorder question categories
     And I open the action menu in "Course category 2" "list_item"
     And I choose "Move" in the open action menu
     And I click on "After Course category 1" "link" in the "Move Course category 2" "dialogue"
-    And I should see "ID number already in use, please change it to move or update category"
+    And I should see "ID number already in use. Change it to move or update category."

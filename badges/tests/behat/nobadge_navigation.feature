@@ -4,7 +4,7 @@ Feature: Badges not shown when there are no existing badges.
   Scenario: Check navigation at site level with no badges
     Given I log in as "admin"
     When I navigate to "Badges > Manage badges" in site administration
-    Then I should see "There are no matching badges available for users to earn"
+    Then I should see "There are no matching badges available for users to earn."
 
   Scenario: Check navigation at course level with no badges
     Given the following "users" exist:
