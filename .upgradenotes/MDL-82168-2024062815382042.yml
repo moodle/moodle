@@ -1,5 +1,10 @@
 issueNumber: MDL-82168
 notes:
   core_badges:
-    - message: New webservices `enable_badges` and `disable_badges` have been added.
+    - message: >
+        The following new webservices have been added:
+
+         - `core_badges_enable_badges`
+
+         - `core_badges_disable_badges`
       type: improved

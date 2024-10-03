@@ -5,9 +5,7 @@ notes:
         The following classes have been renamed.
         Existing classes are currently unaffected.
 
-        | Old class name | New class name |
-
-        | --- | --- |
-
-        | `\core_user` | `\core\user` |
+        | Old class name  | New class name  |
+        | ---             | ---             |
+        | `\core_user`    | `\core\user`    |
       type: improved

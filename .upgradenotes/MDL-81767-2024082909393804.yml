@@ -7,6 +7,6 @@ notes:
       type: improved
   core_courseformat:
     - message: >-
-        Added new `create_module` webservice to create new module (with
+        Added new `core_courseformat_create_module` webservice to create new module (with
         quickcreate feature) instances in the course.
       type: improved

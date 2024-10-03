@@ -2,7 +2,6 @@ issueNumber: MDL-74939
 notes:
   core:
     - message: >-
-        Support for deprecated `<component>\local\views\secondary`
-        block/activity namespace, for overriding secondary navigation, is now
-        entirely removed
+        Support for the deprecated block and activity namespaces `<component>\local\views\secondary`,
+        which supported the overriding of secondary navigation, has now been entirely removed.
       type: removed

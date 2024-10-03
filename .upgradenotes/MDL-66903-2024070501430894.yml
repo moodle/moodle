@@ -5,7 +5,7 @@ notes:
         The following classes have been renamed and now support autoloading.
         Existing classes are currently unaffected.
 
-        | Old class name | New class name |
-        | --- | --- |
-        | `\core_component` | `\core\component` |
+        | Old class name     | New class name     |
+        | ---                | ---                |
+        | `\core_component`  | `\core\component`  |
       type: improved

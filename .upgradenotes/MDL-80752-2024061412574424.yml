@@ -3,6 +3,6 @@ notes:
   mod_assign:
     - message: >
         The `$submissionpluginenabled` and `$submissioncount` parameters from
-        the constructor of the `mod_assign\output::grading_actionmenu` class
+        the constructor of the `\mod_assign\output::grading_actionmenu` class
         have been deprecated.
       type: deprecated

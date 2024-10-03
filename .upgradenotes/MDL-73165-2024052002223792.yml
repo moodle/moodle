@@ -3,5 +3,5 @@ notes:
   core:
     - message: >
         The following previously deprecated methods have been removed and can no longer be used:
-          - `renderer_base::should_display_main_logo`
+          - `\renderer_base::should_display_main_logo()`
       type: removed

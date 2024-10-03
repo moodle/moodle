@@ -4,5 +4,5 @@ notes:
     - message: >
         A new web service called `mod_assign_remove_submission` has been created
         to remove the submission for a specific user ID and assignment activity
-        ID
+        ID.
       type: improved

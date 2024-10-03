@@ -1,7 +1,7 @@
 issueNumber: MDL-83164
 notes:
   core:
-    - message: >
+    - message: |
         When rendering a renderable located within a namespace, the namespace
         will now be included in the renderer method name with double-underscores
         separating the namespace parts.
@@ -14,44 +14,22 @@ notes:
 
         The following are examples of the new behaviour:
 
-        | Renderable name                         | Renderer method
-        name               |
-
-        | ---                                     |
-        ---                                |
-
-        | `\core\output\action_menu\link`         |
-        `render_action_menu__link`         |
-
-        | `\core\output\action_menu\link_primary` |
-        `render_action_menu__link_primary` |
-
-        | `\core\output\action\menu\link`         |
-        `render_action__menu__link`        |
-
-        | `\core\output\user_menu\link`           |
-        `render_user_menu__link`           |
+        | Renderable name                          | Renderer method name                |
+        | ---                                      | ---                                 |
+        | `\core\output\action_menu\link`          | `render_action_menu__link`          |
+        | `\core\output\action_menu\link_primary`  | `render_action_menu__link_primary`  |
+        | `\core\output\action\menu\link`          | `render_action__menu__link`         |
+        | `\core\output\user_menu\link`            | `render_user_menu__link`            |
       type: improved
-    - message: >
+    - message: |
         The following renderer methods have been deprecated from the core
         renderer:
 
 
-        | method                              |
-        replacement                          |
-
-        | ---                                 |
-        ---                                  |
-
-        | `render_action_menu_link`           |
-        `render_action_menu__link`           |
-
-        | `render_action_menu_link_primary`   |
-        `render_action_menu__link_primary`   |
-
-        | `render_action_menu_link_secondary` |
-        `render_action_menu__link_secondary` |
-
-        | `render_action_menu_filler`         |
-        `render_action_menu__filler`         |
+        | method                               | replacement                           |
+        | ---                                  | ---                                   |
+        | `render_action_menu_link`            | `render_action_menu__link`            |
+        | `render_action_menu_link_primary`    | `render_action_menu__link_primary`    |
+        | `render_action_menu_link_secondary`  | `render_action_menu__link_secondary`  |
+        | `render_action_menu_filler`          | `render_action_menu__filler`          |
       type: deprecated

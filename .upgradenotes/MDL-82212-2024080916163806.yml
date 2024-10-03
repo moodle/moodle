@@ -2,8 +2,8 @@ issueNumber: MDL-82212
 notes:
   core:
     - message: >-
-        A new method, `get_deprecated_icons()`, has been added to the icon_system
-        class. All deprecated icons should be registered through this method.
+        A new method, `\core\output\::get_deprecated_icons()`, has been added
+        to the `icon_system` class. All deprecated icons should be registered through this method.
 
         Plugins can implement a callback to `pluginname_get_deprecated_icons()` to
         register their deprecated icons too.

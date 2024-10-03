@@ -8,5 +8,5 @@ notes:
       type: improved
     - message: >-
         New `\core_course\hook\before_activitychooserbutton_exported` hook added
-        to allow third-party plugins to extend activity chooser button options
+        to allow third-party plugins to extend activity chooser button options.
       type: improved

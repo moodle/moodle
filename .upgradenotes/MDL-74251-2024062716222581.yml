@@ -3,5 +3,5 @@ notes:
   theme:
     - message: >-
         Removed all references to `iconhelp`, `icon-pre`, `icon-post`, `iconlarge`, and
-        `iconsort` classes
+        `iconsort` CSS classes.
       type: removed

@@ -3,5 +3,5 @@ notes:
   customfield_select:
     - message: >
         The field controller `get_options` method now returns each option
-        pre-formatted
+        pre-formatted.
       type: changed

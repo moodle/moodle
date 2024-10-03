@@ -2,6 +2,7 @@ issueNumber: MDL-82146
 notes:
   report_log:
     - message: >-
-        `get_activities_list()` function returns also an array of disabled
-        elements, apart from the array of activities.
+        The `\report_log_renderable::get_activities_list()` method return values
+        now includes an array of disabled
+        elements, in addition to the array of activities.
       type: improved

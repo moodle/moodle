@@ -1,9 +1,12 @@
 issueNumber: MDL-82510
 notes:
   core_courseformat:
-    - message: >-
-        New `\core_courseformat\output\local\content\basecontrolmenu` class
-        has been created. Existing `\core_courseformat\output\local\content\cm\controlmenu`
-        and `\core_courseformat\output\local\content\section\controlmenu` classes extend
-        the new `\core_courseformat\output\local\content\basecontrolmenu` class.
+    - message: >
+        A new class, `\core_courseformat\output\local\content\basecontrolmenu`,
+        has been created.
+
+        The following existing classes extend the new class:
+
+         - `\core_courseformat\output\local\content\cm\controlmenu`
+         - `\core_courseformat\output\local\content\section\controlmenu`
       type: improved

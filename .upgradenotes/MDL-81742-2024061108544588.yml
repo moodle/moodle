@@ -2,6 +2,6 @@ issueNumber: MDL-81742
 notes:
   mod_feedback:
     - message: >-
-        The method `mod_feedback\output\renderer::create_template_form()` has
+        The method `\mod_feedback\output\renderer::create_template_form()` has
         been deprecated. It is not used anymore.
       type: deprecated

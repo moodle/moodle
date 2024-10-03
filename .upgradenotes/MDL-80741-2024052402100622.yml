@@ -2,7 +2,7 @@ issueNumber: MDL-80741
 notes:
   mod_assign:
     - message: >
-        The default option "Never" for `attemptreopenmethod` setting, which
+        The default option "Never" for the `attemptreopenmethod` setting, which
         disallowed multiple attempts at the assignment, has been removed. This
         option was unnecessary because limiting attempts to 1 through the
         `maxattempts` setting achieves the same behavior.

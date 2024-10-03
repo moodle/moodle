@@ -2,7 +2,8 @@ issueNumber: MDL-82297
 notes:
   core:
     - message: >
-        Add optional icon and title to notification. Two parameters have been added to the `core\output\notification` so when creating a notification you can pass
-        an icon and a title.
+        Two new optional parameters have been added to the `\core\output\notification` constructor:
 
+        - `null|string $title`
+        - `null|string $icon`
       type: improved

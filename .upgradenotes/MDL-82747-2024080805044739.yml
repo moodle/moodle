@@ -6,6 +6,6 @@ notes:
         `\core\component::register_autoloader` rather than manually doing so in
         any exceptional location which requires it.
 
-        Note: It is not normally necessaryto include the autoloader manually,
+        Note: It is not normally necessary to include the autoloader manually,
         as it is registered automatically when the Moodle environment is bootstrapped.
       type: improved

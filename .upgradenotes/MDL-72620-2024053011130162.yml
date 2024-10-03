@@ -5,7 +5,7 @@ notes:
         The following previously deprecated methods have been removed and can no
         longer be used:
 
-        - `can_import_skydrive_files`
+        - `\repository_onedrive::can_import_skydrive_files()`
 
-        - `import_skydrive_files`
+        - `\repository_onedrive::import_skydrive_files()`
       type: removed

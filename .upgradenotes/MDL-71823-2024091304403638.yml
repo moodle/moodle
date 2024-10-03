@@ -3,5 +3,5 @@ notes:
   core_user:
     - message: >-
         New `\core_user\hook\extend_user_menu` hook added to allow third party
-        plugin to extend the user menu navigation
+        plugins to extend the user menu navigation.
       type: improved

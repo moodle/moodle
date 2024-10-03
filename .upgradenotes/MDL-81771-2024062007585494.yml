@@ -1,5 +1,5 @@
 issueNumber: MDL-81771
 notes:
   core_report:
-    - message: New `coursestructure` output general class has been created
+    - message: A new general output class, `\core_report\output\coursestructure`, has been created.
       type: improved
