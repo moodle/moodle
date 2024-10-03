@@ -84,8 +84,8 @@ class restore_course_task extends restore_task {
         if ($this->plan->get_mode() == backup::MODE_IMPORT) {
             // No need to do anything with enrolments.
 
-        } else if (!$this->get_setting_value('users') or $this->plan->get_mode() == backup::MODE_HUB) {
-            if ($this->get_setting_value('enrolments') == backup::ENROL_ALWAYS && $this->plan->get_mode() != backup::MODE_HUB) {
+        } else if (!$this->get_setting_value('users')) {
+            if ($this->get_setting_value('enrolments') == backup::ENROL_ALWAYS) {
                 // Restore enrolment methods.
                 $this->add_step(new restore_enrolments_structure_step('course_enrolments', 'enrolments.xml'));
             } else if ($this->get_target() == backup::TARGET_CURRENT_ADDING or $this->get_target() == backup::TARGET_EXISTING_ADDING) {

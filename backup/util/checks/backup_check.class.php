@@ -206,7 +206,7 @@ abstract class backup_check {
 
         // Now, if mode is HUB or IMPORT, and still we are including users in backup, turn them off
         // Defaults processing should have handled this, but we need to be 100% sure
-        if ($mode == backup::MODE_IMPORT || $mode == backup::MODE_HUB) {
+        if ($mode == backup::MODE_IMPORT) {
             $userssetting = $backup_controller->get_plan()->get_setting('users');
             if ($userssetting->get_value()) {
                 $userssetting->set_value(false);                              // Set the value to false

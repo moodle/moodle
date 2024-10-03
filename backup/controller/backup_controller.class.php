@@ -144,7 +144,7 @@ class backup_controller extends base_controller {
      * @param int $id The ID of the item to backup; e.g the course id
      * @param string $format The backup format to use; Most likely backup::FORMAT_MOODLE
      * @param bool $interactive Whether this backup will require user interaction; backup::INTERACTIVE_YES or INTERACTIVE_NO
-     * @param int $mode One of backup::MODE_GENERAL, MODE_IMPORT, MODE_SAMESITE, MODE_HUB, MODE_AUTOMATED
+     * @param int $mode One of backup::MODE_GENERAL, MODE_IMPORT, MODE_SAMESITE, MODE_AUTOMATED
      * @param int $userid The id of the user making the backup
      * @param bool $releasesession Should release the session? backup::RELEASESESSION_YES or backup::RELEASESESSION_NO
      */

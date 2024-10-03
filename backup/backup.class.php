@@ -64,7 +64,6 @@ abstract class backup implements checksumable {
      * during a restore they are copied from the existing file record.
      */
     const MODE_IMPORT    = 20;
-    const MODE_HUB       = 30;
 
     /**
      * This mode is intended for duplicating courses and cases where the backup target is
