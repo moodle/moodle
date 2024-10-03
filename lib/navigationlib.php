@@ -2462,7 +2462,7 @@ class global_navigation extends navigation_node {
         $icon = new pix_icon(
             $activitydata->icon ?: 'monologo',
             get_string('modulename', $activitydata->modname),
-            $activitydata->modname
+            $activitydata->icon ? $activitydata->iconcomponent : $activitydata->modname,
         );
 
         // Prepare the default name and url for the node.
