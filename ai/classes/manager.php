@@ -73,13 +73,15 @@ class manager {
         foreach ($actions as $action) {
             $providers[$action] = [];
             foreach ($plugins as $plugin) {
-                if ($enabledonly && (!$plugin->is_enabled() || !static::is_action_enabled($plugin->component, $action))) {
+                $pluginclassname = static::get_ai_plugin_classname($plugin->component);
+                $provider = new $pluginclassname();
+                // Check the plugin is enabled and the provider is configured before making the action available.
+                if ($enabledonly && (!$plugin->is_enabled() || !static::is_action_enabled($plugin->component, $action)) ||
+                        $enabledonly && !$provider->is_provider_configured()) {
                     continue;
                 }
-                $pluginclassname = static::get_ai_plugin_classname($plugin->component);
-                $plugin = new $pluginclassname();
-                if (in_array($action, $plugin->get_action_list())) {
-                    $providers[$action][] = $plugin;
+                if (in_array($action, $provider->get_action_list())) {
+                    $providers[$action][] = $provider;
                 }
             }
         }

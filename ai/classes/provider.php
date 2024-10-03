@@ -71,4 +71,13 @@ abstract class provider {
     ): array {
         return [];
     }
+
+    /**
+     * Check if a provider has the minimal configuration to work.
+     *
+     * @return bool Return true if configured.
+     */
+    public function is_provider_configured(): bool {
+        return false;
+    }
 }

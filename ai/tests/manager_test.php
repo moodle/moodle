@@ -74,6 +74,8 @@ final class manager_test extends \advanced_testcase {
     public function test_get_providers_for_actions(): void {
         $this->resetAfterTest();
         set_config('enabled', 1, 'aiprovider_openai');
+        set_config('apikey', '123', 'aiprovider_openai');
+        set_config('orgid', 'abc', 'aiprovider_openai');
 
         $manager = \core\di::get(manager::class);
         $actions = [
@@ -141,7 +143,11 @@ final class manager_test extends \advanced_testcase {
 
         // Enable the providers.
         set_config('enabled', 1, 'aiprovider_openai');
+        set_config('apikey', '123', 'aiprovider_openai');
+        set_config('orgid', 'abc', 'aiprovider_openai');
         set_config('enabled', 1, 'aiprovider_azureai');
+        set_config('apikey', '123', 'aiprovider_azureai');
+        set_config('endpoint', 'abc', 'aiprovider_azureai');
 
         $managermock = $this->getMockBuilder(manager::class)
             ->onlyMethods(['call_action_provider'])
@@ -413,6 +419,8 @@ final class manager_test extends \advanced_testcase {
         // Enable the plugin, actions will be enabled by default when the plugin is enabled.
         $manager = \core_plugin_manager::resolve_plugininfo_class('aiprovider');
         $manager::enable_plugin('openai', 1);
+        set_config('apikey', '123', 'aiprovider_openai');
+        set_config('orgid', 'abc', 'aiprovider_openai');
 
         // Should now be available.
         $result = manager::is_action_available($action);

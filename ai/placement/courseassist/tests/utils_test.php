@@ -46,6 +46,8 @@ final class utils_test extends \advanced_testcase {
         $this->assertFalse(utils::is_course_assist_available($context));
 
         set_config('enabled', 1, 'aiprovider_openai');
+        set_config('apikey', '123', 'aiprovider_openai');
+        set_config('orgid', 'abc', 'aiprovider_openai');
 
         // Plugin is not enabled.
         $this->setUser($user1);
@@ -55,7 +57,6 @@ final class utils_test extends \advanced_testcase {
         // Plugin is enabled but user does not have capability.
         assign_capability('aiplacement/courseassist:summarise_text', CAP_PROHIBIT, $teacherrole->id, $context);
         $this->setUser($user2);
-        set_config('enabled', 1, 'aiprovider_openai');
         set_config('enabled', 1, 'aiplacement_courseassist');
         $this->assertFalse(utils::is_course_assist_available($context));
 

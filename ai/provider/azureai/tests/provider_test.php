@@ -110,4 +110,27 @@ final class provider_test extends \advanced_testcase {
         $this->assertFalse($result['success']);
         $this->assertEquals('Global rate limit exceeded', $result['errormessage']);
     }
+
+    /**
+     * Test is_provider_configured.
+     */
+    public function test_is_provider_configured(): void {
+        $this->resetAfterTest();
+
+        // No configured values.
+        $provider = new \aiprovider_azureai\provider();
+        $this->assertFalse($provider->is_provider_configured());
+
+        // Partially configured values.
+        set_config('apikey', '123', 'aiprovider_azureai');
+        set_config('endpoint', '', 'aiprovider_azureai');
+        $provider = new \aiprovider_azureai\provider();
+        $this->assertFalse($provider->is_provider_configured());
+
+        // Properly configured values.
+        set_config('apikey', '123', 'aiprovider_azureai');
+        set_config('endpoint', 'abc', 'aiprovider_azureai');
+        $provider = new \aiprovider_azureai\provider();
+        $this->assertTrue($provider->is_provider_configured());
+    }
 }
