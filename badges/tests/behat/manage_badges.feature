@@ -43,7 +43,7 @@ Feature: Manage badges
     And I navigate to "Badges > Manage badges" in site administration
     And I press "Delete" action in the "Badge #1" report row
     And I press "Delete and remove existing issued badges"
-    Then I should see "There are no matching badges available for users to earn"
+    Then I should see "There are no matching badges available for users to earn."
 
   Scenario: Enable and disable access to a badge
     Given I log in as "admin"
