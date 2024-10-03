@@ -1,6 +1,0 @@
-issueNumber: MDL-82295
-notes:
-  mod_assign:
-    - message: |
-        Method `assign_grading_table::col_userid` has been deprecated.
-      type: deprecated

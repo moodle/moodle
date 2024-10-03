@@ -1,8 +1,0 @@
-issueNumber: MDL-80962
-notes:
-  core:
-    - message: >
-        The following test classes are removed as their base classes are deprecated:
-        - admin_settings_aws_region_test (lib/tests/aws/admin_settings_aws_region_test.php)
-        - aws_helper_test (lib/tests/aws/aws_helper_test.php)
-      type: removed
