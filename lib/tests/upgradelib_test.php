@@ -1735,4 +1735,32 @@ calendar,core_calendar|/calendar/view.php?view=month',
         // Cleanup.
         $dbman->drop_table($table);
     }
+
+    /**
+     * Test for upgrade script replacing full urls with relative urls in defaulthomepage setting
+     *
+     * @covers ::upgrade_change_binary_column_to_int()
+     */
+    public function test_upgrade_store_relative_url_sitehomepage(): void {
+        global $CFG;
+        $this->resetAfterTest();
+
+        // Check updating the value for the defaulthomepage.
+        $CFG->defaulthomepage = $CFG->wwwroot . '/page1';
+        upgrade_store_relative_url_sitehomepage();
+        $this->assertEquals('/page1', $CFG->defaulthomepage);
+
+        $CFG->defaulthomepage = HOMEPAGE_SITE;
+        upgrade_store_relative_url_sitehomepage();
+        $this->assertEquals(HOMEPAGE_SITE, $CFG->defaulthomepage);
+
+        // Check updating user preferences.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        set_user_preference('user_home_page_preference', $CFG->wwwroot . '/page2', $user1);
+        set_user_preference('user_home_page_preference', HOMEPAGE_MY, $user2);
+        upgrade_store_relative_url_sitehomepage();
+        $this->assertEquals('/page2', get_user_preferences('user_home_page_preference', null, $user1->id));
+        $this->assertEquals(HOMEPAGE_MY, get_user_preferences('user_home_page_preference', null, $user2->id));
+    }
 }

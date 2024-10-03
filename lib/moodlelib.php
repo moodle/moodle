@@ -9888,11 +9888,11 @@ function get_home_page() {
             if (empty($CFG->enabledashboard) && $userhomepage == HOMEPAGE_MY) {
                 // If the user was using the dashboard but it's disabled, return the default home page.
                 $userhomepage = $defaultpage;
-            } else if (clean_param($userhomepage, PARAM_LOCALURL)) {
+            } else if (get_default_home_page_url()) {
                 return HOMEPAGE_URL;
             }
             return (int) $userhomepage;
-        } else if (clean_param($CFG->defaulthomepage, PARAM_LOCALURL)) {
+        } else if (get_default_home_page_url()) {
             return HOMEPAGE_URL;
         }
     }
@@ -9922,13 +9922,15 @@ function get_default_home_page(): int {
 function get_default_home_page_url(): ?\core\url {
     global $CFG;
 
-    if ($defaulthomepage = clean_param($CFG->defaulthomepage, PARAM_LOCALURL)) {
+    if (substr((string)$CFG->defaulthomepage, 0, 1) === '/' &&
+            ($defaulthomepage = clean_param($CFG->wwwroot . $CFG->defaulthomepage, PARAM_LOCALURL))) {
         return new \core\url($defaulthomepage);
     }
 
     if ($CFG->defaulthomepage == HOMEPAGE_USER) {
         $userhomepage = get_user_preferences('user_home_page_preference');
-        if ($userhomepage = clean_param($userhomepage, PARAM_LOCALURL)) {
+        if (substr((string)$userhomepage, 0, 1) === '/' &&
+                ($userhomepage = clean_param($CFG->wwwroot . $userhomepage, PARAM_LOCALURL))) {
             return new \core\url($userhomepage);
         }
     }

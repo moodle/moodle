@@ -50,11 +50,11 @@ final class extend_default_homepage {
     /**
      * To be called by callback to add an option
      *
-     * @param url $url
+     * @param url $url URL that can be used as a site homepage. Must be a local URL.
      * @param lang_string|string $title
      */
     public function add_option(url $url, lang_string|string $title): void {
-        $this->options[(string) $url] = $title;
+        $this->options[$url->out_as_local_url()] = $title;
     }
 
     /**

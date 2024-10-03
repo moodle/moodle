@@ -1906,3 +1906,25 @@ function upgrade_change_binary_column_to_int(
 
     return true;
 }
+
+/**
+ * Upgrade script replacing absolute URLs in defaulthomepage setting with relative URLs
+ */
+function upgrade_store_relative_url_sitehomepage() {
+    global $CFG, $DB;
+
+    if (str_starts_with((string)$CFG->defaulthomepage, $CFG->wwwroot . '/')) {
+        set_config('defaulthomepage', substr((string)$CFG->defaulthomepage, strlen($CFG->wwwroot)));
+    }
+
+    $records = $DB->get_records_select('user_preferences', "name = :name AND " . $DB->sql_like('value', ':pattern'),
+        ['name' => 'user_home_page_preference', 'pattern' => 'http%']);
+    foreach ($records as $record) {
+        if (str_starts_with($record->value, $CFG->wwwroot . '/')) {
+            $DB->update_record('user_preferences', [
+                'id' => $record->id,
+                'value' => substr($record->value, strlen($CFG->wwwroot)),
+            ]);
+        }
+    }
+}

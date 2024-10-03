@@ -5301,7 +5301,7 @@ EOT;
             'Logged user. URL set as default home page.' => [
                 'user' => 'logged',
                 'expected' => HOMEPAGE_URL,
-                'defaulthomepage' => "{$CFG->wwwroot}/home",
+                'defaulthomepage' => "/home",
             ],
             'Logged user. User preference set as default page with dashboard enabled and user preference set to dashboard' => [
                 'user' => 'logged',
@@ -5336,7 +5336,7 @@ EOT;
                 'expected' => HOMEPAGE_URL,
                 'defaulthomepage' => HOMEPAGE_USER,
                 'enabledashboard' => null,
-                'userpreference' => "{$CFG->wwwroot}/home",
+                'userpreference' => "/home",
             ],
         ];
     }
@@ -5374,15 +5374,23 @@ EOT;
         $this->assertNull(get_default_home_page_url());
 
         // Site configuration.
-        $CFG->defaulthomepage = "{$CFG->wwwroot}/home";
-        $this->assertEquals($CFG->defaulthomepage, get_default_home_page_url());
+        $CFG->defaulthomepage = "/home";
+        $this->assertEquals("{$CFG->wwwroot}/home", get_default_home_page_url());
+
+        // Site configuration with invalid value.
+        $CFG->defaulthomepage = "home";
+        $this->assertNull(get_default_home_page_url());
 
         // User preference.
         $CFG->defaulthomepage = HOMEPAGE_USER;
 
-        $userpreference = "{$CFG->wwwroot}/about";
+        $userpreference = "/about";
         set_user_preference('user_home_page_preference', $userpreference);
-        $this->assertEquals($userpreference, get_default_home_page_url());
+        $this->assertEquals("{$CFG->wwwroot}/about", get_default_home_page_url());
+
+        // User preference with invalid value.
+        set_user_preference('user_home_page_preference', "about");
+        $this->assertNull(get_default_home_page_url());
     }
 
     /**
