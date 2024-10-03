@@ -26,6 +26,9 @@ Feature: AI Course assist summarise
       | aiplacement/courseassist:summarise_text | Prohibit   | custom2 | Course       | C1        |
     And I log in as "admin"
     And I enable "openai" "aiprovider" plugin
+    And the following config values are set as admin:
+      | apikey | 123 | aiprovider_openai |
+      | orgid  | abc | aiprovider_openai |
     And I enable "courseassist" "aiplacement" plugin
 
   @javascript

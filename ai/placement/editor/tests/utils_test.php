@@ -72,6 +72,8 @@ final class utils_test extends \advanced_testcase {
         ));
 
         set_config('enabled', 1, 'aiprovider_openai');
+        set_config('apikey', '123', 'aiprovider_openai');
+        set_config('orgid', 'abc', 'aiprovider_openai');
 
         // Plugin is not enabled.
         $this->setUser($this->users[1]);
@@ -85,7 +87,6 @@ final class utils_test extends \advanced_testcase {
         // Plugin is enabled but user does not have capability.
         assign_capability("aiplacement/editor:{$actionname}", CAP_PROHIBIT, $this->teacherrole->id, $this->context);
         $this->setUser($this->users[2]);
-        set_config('enabled', 1, 'aiprovider_openai');
         set_config('enabled', 1, 'aiplacement_editor');
         $this->assertFalse(utils::is_html_editor_placement_action_available(
             context: $this->context,

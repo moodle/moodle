@@ -190,4 +190,12 @@ class provider extends \core_ai\provider {
         return $settings;
     }
 
+    /**
+     * Check this provider has the minimal configuration to work.
+     *
+     * @return bool Return true if configured.
+     */
+    public function is_provider_configured(): bool {
+        return !empty($this->apikey) && !empty($this->apiendpoint);
+    }
 }
