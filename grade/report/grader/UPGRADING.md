@@ -1,6 +1,6 @@
 # gradereport_grader Upgrade notes
 
-## 4.5rc1
+## 4.5rc2
 
 ### Deprecated
 

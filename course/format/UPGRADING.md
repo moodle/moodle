@@ -1,6 +1,6 @@
 # core_courseformat (subsystem / plugintype) Upgrade notes
 
-## 4.5rc1
+## 4.5rc2
 
 ### Added
 
@@ -8,15 +8,23 @@
   If `istrackeduser` is pre-computed for the course module's course, it can be provided here to avoid an additional function call.
 
   For more information see [MDL-81610](https://tracker.moodle.org/browse/MDL-81610)
-- Added new `create_module` webservice to create new module (with quickcreate feature) instances in the course.
+- Added new `core_courseformat_create_module` webservice to create new module (with quickcreate feature) instances in the course.
 
   For more information see [MDL-81767](https://tracker.moodle.org/browse/MDL-81767)
-- New `$disabled` parameter has been added to `select`, `select_optgroup` and `select_option` html_writers to create disabled option elements.
+- A new `$disabled` parameter has been added to the following `html_writer` methods:
+
+  - `\core\output\html_writer::select()`
+  - `\core\output\html_writer::select_optgroup()`
+  - `\core\output\html_writer::select_option()`
 
   For more information see [MDL-82146](https://tracker.moodle.org/browse/MDL-82146)
-- New `\core_courseformat\output\local\content\basecontrolmenu` class has been created. Existing `\core_courseformat\output\local\content\cm\controlmenu` and `\core_courseformat\output\local\content\section\controlmenu` classes extend the new `\core_courseformat\output\local\content\basecontrolmenu` class.
+- A new class, `\core_courseformat\output\local\content\basecontrolmenu`, has been created.
+  The following existing classes extend the new class:
+
+   - `\core_courseformat\output\local\content\cm\controlmenu`
+   - `\core_courseformat\output\local\content\section\controlmenu`
 
   For more information see [MDL-82510](https://tracker.moodle.org/browse/MDL-82510)
-- New `\core_courseformat\output\local\content\cm\delegatedcontrolmenu` class has been created extending `\core_courseformat\output\local\content\basecontrolmenu` class to render delegated section action menu combining section and module action menu.
+- Course sections now use an action menu to display possible actions that a user may take in each section. This action menu is rendered using the `\core_courseformat\output\local\content\cm\delegatedcontrolmenu` renderable class.
 
   For more information see [MDL-82510](https://tracker.moodle.org/browse/MDL-82510)

@@ -1,9 +1,9 @@
 # report_log Upgrade notes
 
-## 4.5rc1
+## 4.5rc2
 
 ### Added
 
-- `get_activities_list()` function returns also an array of disabled elements, apart from the array of activities.
+- The `\report_log_renderable::get_activities_list()` method return values now includes an array of disabled elements, in addition to the array of activities.
 
   For more information see [MDL-82146](https://tracker.moodle.org/browse/MDL-82146)

@@ -1,6 +1,6 @@
 # core_filters (subsystem / plugintype) Upgrade notes
 
-## 4.5rc1
+## 4.5rc2
 
 ### Added
 
@@ -10,6 +10,6 @@
 
 ### Deprecated
 
-- The `filter_manager::text_filtering_hash` method has been finally deprecated and removed.
+- The `\core_filters\filter_manager::text_filtering_hash` method has been finally deprecated and removed.
 
   For more information see [MDL-82427](https://tracker.moodle.org/browse/MDL-82427)

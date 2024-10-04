@@ -1,6 +1,6 @@
 # core_external (subsystem) Upgrade notes
 
-## 4.5rc1
+## 4.5rc2
 
 ### Changed
 

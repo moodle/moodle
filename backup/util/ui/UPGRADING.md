@@ -1,15 +1,17 @@
 # core_backup (subsystem) Upgrade notes
 
-## 4.5rc1
+## 4.5rc2
 
 ### Removed
 
-- Final deprecation and removal of `core_backup\copy\copy` in `backup/util/ui/classes/copy.php`. Please use `copy_helper` from `backup/util/helper/copy_helper.class.php` instead.
+- The `\core_backup\copy\copy` class has been deprecated and removed. Please use `\copy_helper` instead.
 
   For more information see [MDL-75022](https://tracker.moodle.org/browse/MDL-75022)
-- Final deprecation of `base_controller::get_copy()`. Please use `restore_controller::get_copy()` instead.
+- The following methods in the `\base_controller` class have been removed:
 
-  For more information see [MDL-75025](https://tracker.moodle.org/browse/MDL-75025)
-- Final deprecation of `base_controller::set_copy()`. Please use a restore controller for storing copy information instead.
+  | Method                          | Replacement                                                     |
+  | ---                             | ---                                                             |
+  | `\base_controller::set_copy()`  | Use a restore controller for storing copy information instead.  |
+  | `\base_controller::get_copy()`  | `\restore_controller::get_copy()`                               |
 
   For more information see [MDL-75025](https://tracker.moodle.org/browse/MDL-75025)

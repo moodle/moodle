@@ -1,6 +1,6 @@
 # tool (plugin type) Upgrade notes
 
-## 4.5rc1
+## 4.5rc2
 
 ### Removed
 

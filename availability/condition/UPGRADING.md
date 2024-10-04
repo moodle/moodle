@@ -1,9 +1,9 @@
 # availability (plugin type) Upgrade notes
 
-## 4.5rc1
+## 4.5rc2
 
 ### Changed
 
-- The base class `info::get_groups` method has a `$userid` parameter to specify for which user you want to retrieve course groups (defaults to current user)
+- The base class `\core_availability\info::get_groups()` method now accepts a `$userid` parameter to specify which user you want to retrieve course groups (defaults to current user).
 
   For more information see [MDL-81850](https://tracker.moodle.org/browse/MDL-81850)
