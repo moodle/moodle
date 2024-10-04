@@ -31,3 +31,5 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 's';
+$string['cliincorrectvalueerror'] = 'Error, valor incorrecte "{$a->value}" for "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Valor incorrecte, per favor essaya novemente';
