@@ -20,6 +20,7 @@ import chalk from 'chalk';
 import { getNoteNames } from './notes/src/noteTypes.mjs';
 import createAction from './notes/src/create.mjs';
 import generateAction from './notes/src/generate.mjs';
+import generateReleaseNotesLinks from './notes/src/releasenotes.mjs';
 import logger from './notes/src/logger.mjs';
 
 console.log(`
@@ -74,6 +75,13 @@ program
         new Argument('[version]', 'The Moodle version to create the summary notes for')
     )
     .action((version) => generateAction(version));
+program
+    .command('releasenotes')
+    .summary('Generate a list of upgrade notes for individual components in markdown format for the release notes')
+    .addArgument(
+        new Argument('[tag]', 'The Moodle tag')
+    )
+    .action((tag) => generateReleaseNotesLinks(tag));
 
 program
     .command('release')
