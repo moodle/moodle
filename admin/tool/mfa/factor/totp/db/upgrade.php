@@ -39,5 +39,8 @@ function xmldb_factor_totp_upgrade($oldversion): bool {
         upgrade_plugin_savepoint(true, 2024081600, 'factor', 'totp');
     }
 
+    // Automatically generated Moodle v4.5.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
