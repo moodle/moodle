@@ -1,5 +1,0 @@
-issueNumber: MDL-73284
-notes:
-  core_message:
-    - message: Final deprecation of the `MESSAGE_DEFAULT_LOGGEDOFF`, and `MESSAGE_DEFAULT_LOGGEDIN` constants.
-      type: removed

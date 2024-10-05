@@ -1,7 +1,0 @@
-issueNumber: MDL-79011
-notes:
-  core:
-    - message: >-
-        The `after_config()` callback has been converted to a hook,
-        `\core\hook\after_config`.
-      type: improved

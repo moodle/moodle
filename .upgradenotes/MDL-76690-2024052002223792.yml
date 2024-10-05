@@ -1,8 +1,0 @@
-issueNumber: MDL-76690
-notes:
-  core_reportbuilder:
-    - message: >
-        The following previously deprecated local helper methods have been removed and can no longer be used:
-          - `\core_reportbuilder\local\helpers\audience::get_all_audiences_menu_types()`
-          - `\core_reportbuilder\local\helpers\report::get_available_columns()`
-      type: removed

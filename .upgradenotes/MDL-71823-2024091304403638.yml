@@ -1,7 +1,0 @@
-issueNumber: MDL-71823
-notes:
-  core_user:
-    - message: >-
-        New `\core_user\hook\extend_user_menu` hook added to allow third party
-        plugins to extend the user menu navigation.
-      type: improved

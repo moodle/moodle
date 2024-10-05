@@ -1,9 +1,0 @@
-issueNumber: MDL-80747
-notes:
-  core:
-    - message: >
-        The `\core\output\select_menu` widget now supports rendering dividers
-        between menu options. Empty elements (`null` or empty strings) within the
-        array of options are considered and rendered as dividers in the dropdown
-        menu.
-      type: improved

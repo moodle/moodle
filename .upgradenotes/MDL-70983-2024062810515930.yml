@@ -1,7 +1,0 @@
-issueNumber: MDL-70983
-notes:
-  core_badges:
-    - message: Final removal of `BADGE_BACKPACKAPIURL` and `BADGE_BACKPACKWEBURL` constants.
-      type: removed
-    - message: The `OPEN_BADGES_V1` constant is deprecated and should not be used anymore.
-      type: deprecated

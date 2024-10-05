@@ -1,7 +1,0 @@
-issueNumber: MDL-82160
-notes:
-  theme:
-    - message: >-
-        The method `\core\output\core_renderer::render_context_header` has been deprecated
-        please use `\core\output\core_renderer::render($contextheader)` instead
-      type: deprecated

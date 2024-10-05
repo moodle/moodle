@@ -1,5 +1,0 @@
-issueNumber: MDL-81597
-notes:
-  theme:
-    - message: New `core/context_header` mustache template has been added. This template can be overridden by themes to modify the context header.
-      type: improved

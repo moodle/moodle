@@ -1,8 +1,0 @@
-issueNumber: MDL-82466
-notes:
-  core_reportbuilder:
-    - message: >
-        A new static method, `\core_reportbuilder\local\helpers\format::format_time()`,
-        has been added for use in column callbacks that represent a duration of time
-        (for example "3 days 4 hours").
-      type: improved

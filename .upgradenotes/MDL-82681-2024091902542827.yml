@@ -1,7 +1,0 @@
-issueNumber: MDL-82681
-notes:
-  mod_assign:
-    - message: >-
-        The method `\assign::process_save_grading_options()` has been deprecated as it is
-        no longer used.
-      type: deprecated

@@ -1,6 +1,0 @@
-issueNumber: MDL-75850
-notes:
-  core_files:
-    - message: |
-        A new hook, `\core_files\hook\after_file_created`, has been created to allow the inspection of files after they have been saved in the filesystem.
-      type: improved

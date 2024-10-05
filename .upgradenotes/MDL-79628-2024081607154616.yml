@@ -1,6 +1,0 @@
-issueNumber: MDL-79628
-notes:
-  core:
-    - message: >-
-        The `$timeout` property of the `\navigation_cache` class has been deprecated.
-      type: deprecated

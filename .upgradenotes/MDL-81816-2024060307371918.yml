@@ -1,7 +1,0 @@
-issueNumber: MDL-81816
-notes:
-  theme_boost:
-    - message: >-
-        Bridged `theme-color-level` using a new `shift-color` function to prepare
-        for its deprecation in Boostrap 5.
-      type: improved

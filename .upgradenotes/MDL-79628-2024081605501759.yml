@@ -1,7 +1,0 @@
-issueNumber: MDL-79628
-notes:
-  core:
-    - message: >-
-        The `\navigation_cache` class now uses the Moodle Universal Cache (MUC) to store the navigation cache data instead of storing
-        it in the global `$SESSION` variable.
-      type: fixed

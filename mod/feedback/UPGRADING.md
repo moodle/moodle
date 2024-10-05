@@ -1,6 +1,6 @@
 # mod_feedback Upgrade notes
 
-## 4.5rc2
+## 4.5
 
 ### Deprecated
 

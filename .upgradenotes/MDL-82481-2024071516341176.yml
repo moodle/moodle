@@ -1,7 +1,0 @@
-issueNumber: MDL-82481
-notes:
-  customfield_select:
-    - message: >
-        The field controller `get_options` method now returns each option
-        pre-formatted.
-      type: changed

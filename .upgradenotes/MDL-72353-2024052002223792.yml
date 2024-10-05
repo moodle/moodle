@@ -1,6 +1,0 @@
-issueNumber: MDL-72353
-notes:
-  core_report:
-    - message: >-
-        The previously deprecated `\core\report_helper::save_selected_report()` method has been removed and can no longer be used.
-      type: removed

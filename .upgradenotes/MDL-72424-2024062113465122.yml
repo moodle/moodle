@@ -1,7 +1,0 @@
-issueNumber: MDL-72424
-notes:
-  mod_feedback:
-    - message: >-
-        The `\feedback_check_is_switchrole()` function has been deprecated as it
-        didn't work.
-      type: deprecated

@@ -1,9 +1,0 @@
-issueNumber: MDL-82297
-notes:
-  core:
-    - message: >
-        Two new optional parameters have been added to the `\core\output\notification` constructor:
-
-        - `null|string $title`
-        - `null|string $icon`
-      type: improved

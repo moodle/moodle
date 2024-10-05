@@ -1,7 +1,0 @@
-issueNumber: MDL-82385
-notes:
-  core_course:
-    - message: >-
-        The external function `core_course_get_contents` now returns the
-        `component` and `itemid` of sections.
-      type: changed

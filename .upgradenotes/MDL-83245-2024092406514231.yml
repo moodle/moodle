@@ -1,8 +1,0 @@
-issueNumber: MDL-83245
-notes:
-  core_files:
-    - message: >-
-        A new hook, `\core_files\hook\before_file_created`, has been created to
-        allow modification of a file immediately before it is stored in the file
-        system.
-      type: improved

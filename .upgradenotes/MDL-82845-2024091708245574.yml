@@ -1,8 +1,0 @@
-issueNumber: MDL-82845
-notes:
-  core:
-    - message: >-
-        The `\section_info` class now includes a new method
-        `\section_info::get_sequence_cm_infos()` that retrieves all
-        `\cm_info` instances associated with the course section.
-      type: improved

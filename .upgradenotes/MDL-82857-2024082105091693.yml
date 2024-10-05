@@ -1,7 +1,0 @@
-issueNumber: MDL-82857
-notes:
-  mod_assign:
-    - message: >-
-        The `\mod_assign_grading_options_form` class has been removed since it
-        is no longer used.
-      type: removed

@@ -1,5 +1,0 @@
-issueNumber: MDL-82520
-notes:
-  mod_bigbluebuttonbn:
-    - message: Added new `meeting_info` value to show presentation file on BBB activity page
-      type: improved

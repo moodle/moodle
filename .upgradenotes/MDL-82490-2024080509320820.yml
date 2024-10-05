@@ -1,7 +1,0 @@
-issueNumber: MDL-82490
-notes:
-  core:
-    - message: >-
-        A new method, `\url_select::set_disabled_option()`, has been added
-        to enable or disable an option from its url (the key for the option).
-      type: improved

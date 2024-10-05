@@ -1,9 +1,0 @@
-issueNumber: MDL-82778
-notes:
-  core:
-    - message: >
-        A new JS module for interacting with the Routed REST API has been
-        introduced.
-
-        For more information see the documentation in the `core/fetch` module.
-      type: improved

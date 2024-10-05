@@ -1,6 +1,6 @@
 # customfield_select Upgrade notes
 
-## 4.5rc2
+## 4.5
 
 ### Changed
 

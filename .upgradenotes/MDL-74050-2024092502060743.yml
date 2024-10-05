@@ -1,8 +1,0 @@
-issueNumber: MDL-74050
-notes:
-  mod_assign:
-    - message: >
-        A new web service called `mod_assign_remove_submission` has been created
-        to remove the submission for a specific user ID and assignment activity
-        ID.
-      type: improved

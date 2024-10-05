@@ -1,7 +1,0 @@
-issueNumber: MDL-82872
-notes:
-  mod_bigbluebuttonbn:
-    - message: >-
-        The `broker::process_meeting_events()` method has been extended to call the `::process_action()` method
-        implemented by plugins.
-      type: improved

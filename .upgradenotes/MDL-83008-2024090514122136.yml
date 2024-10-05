@@ -1,8 +1,0 @@
-issueNumber: MDL-83008
-notes:
-  core_completion:
-    - message: >
-        A new `FEATURE_COMPLETION` plugin support constant has been added. In the
-        future, this constant will be used to indicate when a plugin does not
-        allow completion and it is enabled by default.
-      type: improved

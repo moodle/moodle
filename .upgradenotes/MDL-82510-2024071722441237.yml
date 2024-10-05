@@ -1,9 +1,0 @@
-issueNumber: MDL-82510
-notes:
-  core_courseformat:
-    - message: >
-        Course sections now use an action menu to display possible actions that a
-        user may take in each section. This action menu is rendered using the
-        `\core_courseformat\output\local\content\cm\delegatedcontrolmenu` renderable
-        class.
-      type: improved

@@ -1,5 +1,0 @@
-issueNumber: MDL-81818
-notes:
-  theme_boost:
-    - message: The Bootstrap `.no-gutters` class is no longer used, use `.g-0`  instead.
-      type: changed

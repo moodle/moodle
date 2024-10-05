@@ -1,7 +1,0 @@
-issueNumber: MDL-82845
-notes:
-  core:
-    - message: >-
-        The `global_navigation::load_section_activities` method is now deprecated
-        and replaced by `global_navigation::load_section_activities_navigation`.
-      type: deprecated

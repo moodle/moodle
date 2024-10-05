@@ -1,6 +1,0 @@
-issueNumber: MDL-75022
-notes:
-  core_backup:
-    - message: >-
-        The `\core_backup\copy\copy` class has been deprecated and removed. Please use `\copy_helper` instead.
-      type: removed

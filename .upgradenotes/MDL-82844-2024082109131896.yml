@@ -1,7 +1,0 @@
-issueNumber: MDL-82844
-notes:
-  core_external:
-    - message: >-
-        The external function `core_webservice_external::get_site_info` now
-        returns the default home page URL when needed.
-      type: changed

@@ -1,8 +1,0 @@
-issueNumber: MDL-80890
-notes:
-  core:
-    - message: >
-        A new hook called `\core\hook\output\after_http_headers` has been
-        created. This hook allow plugins to modify the content after headers are
-        sent.
-      type: improved

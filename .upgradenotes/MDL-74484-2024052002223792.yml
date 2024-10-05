@@ -1,5 +1,0 @@
-issueNumber: MDL-74484
-notes:
-  core:
-    - message: Final deprecation of `\print_error()`. Please use the `\moodle_exception` class instead.
-      type: removed

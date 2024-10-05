@@ -1,5 +1,0 @@
-issueNumber: MDL-81903
-notes:
-  core:
-    - message: Added a new `exception` L2 Namespace to APIs.
-      type: improved

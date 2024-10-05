@@ -1,9 +1,0 @@
-issueNumber: MDL-80747
-notes:
-  core:
-    - message: >
-        The `\core\output\select_menu` widget now supports a new feature: inline
-        labels. You can render the label inside the combobox widget by passing
-        `true` to the `$inlinelabel` parameter when calling the `->set_label()`
-        method.
-      type: improved

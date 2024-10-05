@@ -1,8 +1,0 @@
-issueNumber: MDL-78773
-notes:
-  core_report:
-    - message: >
-        The `\core\report_helper::print_report_selector()` method accepts a new `$additional``
-        argument for adding content to the tertiary navigation to align with the
-        report selector.
-      type: changed

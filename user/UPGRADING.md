@@ -1,6 +1,6 @@
 # core_user (subsystem) Upgrade notes
 
-## 4.5rc2
+## 4.5
 
 ### Added
 

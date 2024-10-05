@@ -1,8 +1,0 @@
-issueNumber: MDL-81407
-notes:
-  core_question:
-    - message: >
-        `\core_question\local\bank\column_base::from_column_name()` method now accepts a `bool $ingoremissing` parameter, which can
-        be used to ignore if the class does not exist, instead of throwing an
-        exception.
-      type: changed

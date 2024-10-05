@@ -1,6 +1,6 @@
 # mod_quiz Upgrade notes
 
-## 4.5rc2
+## 4.5
 
 ### Added
 
@@ -9,4 +9,3 @@
   - `\quiz_overview_report::regrade_batch_of_attempts()`
 
   For more information see [MDL-79546](https://tracker.moodle.org/browse/MDL-79546)
-

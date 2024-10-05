@@ -1,8 +1,0 @@
-issueNumber: MDL-81699
-notes:
-  core_course:
-    - message: >
-        The `core_course_get_courses_by_field` web service now accepts a new
-        parameter `sectionid` to be able to retrieve the course that has the
-        indicated section.
-      type: improved
