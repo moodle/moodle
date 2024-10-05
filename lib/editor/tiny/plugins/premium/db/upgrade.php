@@ -51,5 +51,8 @@ function xmldb_tiny_premium_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024042201, 'tiny', 'premium');
     }
 
+    // Automatically generated Moodle v4.5.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

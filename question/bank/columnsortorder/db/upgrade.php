@@ -77,5 +77,8 @@ function xmldb_qbank_columnsortorder_upgrade(int $oldversion): bool {
         upgrade_plugin_savepoint(true, 2024051000, 'qbank', 'columnsortorder');
     }
 
+    // Automatically generated Moodle v4.5.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
