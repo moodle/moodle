@@ -346,6 +346,8 @@ class repository_local extends repository {
         $return = array(
             'list' => array_values($results),
             'dynload' => true,
+            'nosearch' => false,
+            'nologin' => true,
             'pages' => $pages,
             'page' => $page
         );
