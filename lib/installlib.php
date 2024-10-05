@@ -373,9 +373,9 @@ function install_cli_database(array $options, $interactive) {
     require_once($CFG->libdir.'/upgradelib.php');
 
     // show as much debug as possible
-    @error_reporting(E_ALL | E_STRICT);
+    @error_reporting(E_ALL);
     @ini_set('display_errors', '1');
-    $CFG->debug = (E_ALL | E_STRICT);
+    $CFG->debug = (E_ALL);
     $CFG->debugdisplay = true;
     $CFG->debugdeveloper = true;
 

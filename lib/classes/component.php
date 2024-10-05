@@ -565,7 +565,7 @@ class component {
     /**
      * Are we in developer debug mode?
      *
-     * Note: You need to set "$CFG->debug = (E_ALL | E_STRICT);" in config.php,
+     * Note: You need to set "$CFG->debug = (E_ALL);" in config.php,
      *       the reason is we need to use this before we setup DB connection or caches for CFG.
      *
      * @return bool
@@ -580,7 +580,7 @@ class component {
             return false;
         }
 
-        if ($debug & E_ALL && $debug & E_STRICT) {
+        if ($debug & E_ALL) {
             return true;
         }
 

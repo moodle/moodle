@@ -27,3 +27,5 @@ Local changes:
     it has the patch, please ignore this note.
   * 2023-01-31 Applied patch https://github.com/gggeek/phpxmlrpc/pull/110. See MDL-76412 for more details.
   * readme_moodle.txt - this file ;-)
+  * 2025/01/17 - Server.php has minor changes for PHP 8.4 compatibility. See https://github.com/gggeek/phpxmlrpc/pull/125 and
+    MDL-83334 for more details.

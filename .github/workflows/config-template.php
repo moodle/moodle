@@ -45,7 +45,7 @@ $CFG->admin     = 'admin';
 $CFG->directorypermissions = 0777;
 
 // Debug options - possible to be controlled by flag in future.
-$CFG->debug = (E_ALL | E_STRICT); // DEBUG_DEVELOPER.
+$CFG->debug = (E_ALL); // DEBUG_DEVELOPER.
 $CFG->debugdisplay = 1;
 $CFG->debugstringids = 1; // Add strings=1 to url to get string ids.
 $CFG->perfdebug = 15;

@@ -430,7 +430,7 @@ if (isset($CFG->debug)) {
 } else {
     $CFG->debug = 0;
 }
-$CFG->debugdeveloper = (($CFG->debug & (E_ALL | E_STRICT)) === (E_ALL | E_STRICT)); // DEBUG_DEVELOPER is not available yet.
+$CFG->debugdeveloper = (($CFG->debug & E_ALL) === E_ALL); // DEBUG_DEVELOPER is not available yet.
 
 if (!defined('MOODLE_INTERNAL')) { // Necessary because cli installer has to define it earlier.
     /** Used by library scripts to check they are being called by Moodle. */
@@ -651,14 +651,14 @@ $OUTPUT = new bootstrap_renderer();
 // Set handler for uncaught exceptions - equivalent to throw new \moodle_exception() call.
 if (!PHPUNIT_TEST or PHPUNIT_UTIL) {
     set_exception_handler('default_exception_handler');
-    set_error_handler('default_error_handler', E_ALL | E_STRICT);
+    set_error_handler('default_error_handler', E_ALL);
 }
 
 // Acceptance tests needs special output to capture the errors,
 // but not necessary for behat CLI command and init script.
 if (defined('BEHAT_SITE_RUNNING') && !defined('BEHAT_TEST') && !defined('BEHAT_UTIL')) {
     require_once(__DIR__ . '/behat/lib.php');
-    set_error_handler('behat_error_handler', E_ALL | E_STRICT);
+    set_error_handler('behat_error_handler', E_ALL);
 }
 
 if (defined('WS_SERVER') && WS_SERVER) {
@@ -667,7 +667,7 @@ if (defined('WS_SERVER') && WS_SERVER) {
 }
 
 // If there are any errors in the standard libraries we want to know!
-error_reporting(E_ALL | E_STRICT);
+error_reporting(E_ALL);
 
 // Just say no to link prefetching (Moz prefetching, Google Web Accelerator, others)
 // http://www.google.com/webmasters/faq.html#prefetchblock

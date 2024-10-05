@@ -1416,8 +1416,10 @@ class Server
         }
 
         //if ($errCode != E_NOTICE && $errCode != E_WARNING && $errCode != E_USER_NOTICE && $errCode != E_USER_WARNING)
-        if ($errCode != E_STRICT) {
+        if (PHP_VERSION_ID >= 70400) {
             static::error_occurred($errString);
+        } elseif ($errCode != E_STRICT) {
+                static::error_occurred($errString);
         }
 
         // Try to avoid as much as possible disruption to the previous error handling mechanism in place
