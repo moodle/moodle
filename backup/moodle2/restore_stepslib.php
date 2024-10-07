@@ -1159,11 +1159,15 @@ class restore_groups_structure_step extends restore_structure_step {
         $groupinfo = $this->get_setting_value('groups');
         if ($groupinfo) {
             $paths[] = new restore_path_element('group', '/groups/group');
-            $paths[] = new restore_path_element('groupcustomfield', '/groups/groupcustomfields/groupcustomfield');
             $paths[] = new restore_path_element('grouping', '/groups/groupings/grouping');
-            $paths[] = new restore_path_element('groupingcustomfield',
-                '/groups/groupings/groupingcustomfields/groupingcustomfield');
             $paths[] = new restore_path_element('grouping_group', '/groups/groupings/grouping/grouping_groups/grouping_group');
+
+            // Custom fields.
+            if ($this->get_setting_value('customfield')) {
+                $paths[] = new restore_path_element('groupcustomfield', '/groups/groupcustomfields/groupcustomfield');
+                $paths[] = new restore_path_element('groupingcustomfield',
+                    '/groups/groupings/groupingcustomfields/groupingcustomfield');
+            }
         }
         return $paths;
     }
@@ -1235,9 +1239,11 @@ class restore_groups_structure_step extends restore_structure_step {
      */
     public function process_groupcustomfield($data) {
         $newgroup = $this->get_mapping('group', $data['groupid']);
-        $data['groupid'] = $newgroup->newitemid ?? $data['groupid'];
-        $handler = \core_group\customfield\group_handler::create();
-        $handler->restore_instance_data_from_backup($this->task, $data);
+        if ($newgroup && $newgroup->newitemid) {
+            $data['groupid'] = $newgroup->newitemid;
+            $handler = \core_group\customfield\group_handler::create();
+            $handler->restore_instance_data_from_backup($this->task, $data);
+        }
     }
 
     public function process_grouping($data) {
@@ -1291,10 +1297,12 @@ class restore_groups_structure_step extends restore_structure_step {
      * @return void
      */
     public function process_groupingcustomfield($data) {
-        $newgroup = $this->get_mapping('grouping', $data['groupingid']);
-        $data['groupingid'] = $newgroup->newitemid ?? $data['groupingid'];
-        $handler = \core_group\customfield\grouping_handler::create();
-        $handler->restore_instance_data_from_backup($this->task, $data);
+        $newgrouping = $this->get_mapping('grouping', $data['groupingid']);
+        if ($newgrouping && $newgrouping->newitemid) {
+            $data['groupingid'] = $newgrouping->newitemid;
+            $handler = \core_group\customfield\grouping_handler::create();
+            $handler->restore_instance_data_from_backup($this->task, $data);
+        }
     }
 
     public function process_grouping_group($data) {
@@ -1827,12 +1835,19 @@ class restore_course_structure_step extends restore_structure_step {
 
     protected function define_structure() {
 
+        $paths = [];
+
         $course = new restore_path_element('course', '/course');
-        $category = new restore_path_element('category', '/course/category');
-        $tag = new restore_path_element('tag', '/course/tags/tag');
-        $customfield = new restore_path_element('customfield', '/course/customfields/customfield');
-        $courseformatoptions = new restore_path_element('course_format_option', '/course/courseformatoptions/courseformatoption');
-        $allowedmodule = new restore_path_element('allowed_module', '/course/allowed_modules/module');
+        $paths[] = $course;
+        $paths[] = new restore_path_element('category', '/course/category');
+        $paths[] = new restore_path_element('tag', '/course/tags/tag');
+        $paths[] = new restore_path_element('course_format_option', '/course/courseformatoptions/courseformatoption');
+        $paths[] = new restore_path_element('allowed_module', '/course/allowed_modules/module');
+
+        // Custom fields.
+        if ($this->get_setting_value('customfield')) {
+            $paths[] = new restore_path_element('customfield', '/course/customfields/customfield');
+        }
 
         // Apply for 'format' plugins optional paths at course level
         $this->add_plugin_structure('format', $course);
@@ -1855,7 +1870,7 @@ class restore_course_structure_step extends restore_structure_step {
         // Apply for admin tool plugins optional paths at course level.
         $this->add_plugin_structure('tool', $course);
 
-        return array($course, $category, $tag, $customfield, $allowedmodule, $courseformatoptions);
+        return $paths;
     }
 
     /**
@@ -4912,6 +4927,12 @@ class restore_create_categories_and_questions extends restore_structure_step {
     /** @var array $cachedcategory store a question category */
     protected $cachedcategory = null;
 
+    /** @var stdClass the last question_bank_entry seen during the restore. Processed when we get to a question. */
+    protected $latestqbe;
+
+    /** @var stdClass the last question_version seen during the restore. Processed when we get to a question. */
+    protected $latestversion;
+
     protected function define_structure() {
 
         // Check if the backup is a pre 4.0 one.
@@ -5037,45 +5058,25 @@ class restore_create_categories_and_questions extends restore_structure_step {
     }
 
     /**
-     * Process pre 4.0 question data where in creates the record for version and entry table.
+     * Set up date to allow restore of questions from pre-4.0 backups.
      *
-     * @param array $data the data from the XML file.
+     * @param stdClass $data the data from the XML file.
      */
     protected function process_question_legacy_data($data) {
-        global $DB;
+        $this->latestqbe = (object) [
+            'id' => $data->id,
+            'questioncategoryid' => $data->category,
+            'ownerid' => $data->createdby,
+            'idnumber' => $data->idnumber ?? null,
+        ];
 
-        $oldid = $data->id;
-        // Process question bank entry.
-        $entrydata = new stdClass();
-        $entrydata->questioncategoryid = $data->category;
-        $userid = $this->get_mappingid('user', $data->createdby);
-        if ($userid) {
-            $entrydata->ownerid = $userid;
-        } else {
-            if (!$this->task->is_samesite()) {
-                $entrydata->ownerid = $this->task->get_userid();
-            }
-        }
-        // The idnumber if it exists also needs to be unique within a category or reset it to null.
-        if (isset($data->idnumber) && !$DB->record_exists('question_bank_entries',
-                ['idnumber' => $data->idnumber, 'questioncategoryid' => $data->category])) {
-            $entrydata->idnumber = $data->idnumber;
-        }
-
-        $newentryid = $DB->insert_record('question_bank_entries', $entrydata);
-        // Process question versions.
-        $versiondata = new stdClass();
-        $versiondata->questionbankentryid = $newentryid;
-        $versiondata->version = 1;
-        // Question id is updated after inserting the question.
-        $versiondata->questionid = 0;
-        $versionstatus = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
-        if ((int)$data->hidden === 1) {
-            $versionstatus = \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN;
-        }
-        $versiondata->status = $versionstatus;
-        $newversionid = $DB->insert_record('question_versions', $versiondata);
-        $this->set_mapping('question_version_created', $oldid, $newversionid);
+        $this->latestversion = (object) [
+            'id' => $data->id,
+            'version' => 1,
+            'status' => $data->hidden ?
+                \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN :
+                \core_question\local\bank\question_version_status::QUESTION_STATUS_READY,
+        ];
     }
 
     /**
@@ -5084,37 +5085,9 @@ class restore_create_categories_and_questions extends restore_structure_step {
      * @param array $data the data from the XML file.
      */
     protected function process_question_bank_entry($data) {
-        global $DB;
-
-        $data = (object)$data;
-        $oldid = $data->id;
-
-        $questioncreated = $this->get_mappingid('question_category_created', $data->questioncategoryid) ? true : false;
-        $recordexist = $DB->record_exists('question_bank_entries', ['id' => $data->id,
-            'questioncategoryid' => $data->questioncategoryid]);
-        // Check we have category created.
-        if (!$questioncreated && $recordexist) {
-            return self::SKIP_ALL_CHILDREN;
-        }
-
-        $data->questioncategoryid = $this->get_new_parentid('question_category');
-        $userid = $this->get_mappingid('user', $data->ownerid);
-        if ($userid) {
-            $data->ownerid = $userid;
-        } else {
-            if (!$this->task->is_samesite()) {
-                $data->ownerid = $this->task->get_userid();
-            }
-        }
-
-        // The idnumber if it exists also needs to be unique within a category or reset it to null.
-        if (!empty($data->idnumber) && $DB->record_exists('question_bank_entries',
-                ['idnumber' => $data->idnumber, 'questioncategoryid' => $data->questioncategoryid])) {
-            unset($data->idnumber);
-        }
-
-        $newitemid = $DB->insert_record('question_bank_entries', $data);
-        $this->set_mapping('question_bank_entry', $oldid, $newitemid);
+        // We can only determine the right way to process this once we get to
+        // process_question and have more information, so for now just store.
+        $this->latestqbe = (object) $data;
     }
 
     /**
@@ -5123,16 +5096,9 @@ class restore_create_categories_and_questions extends restore_structure_step {
      * @param array $data the data from the XML file.
      */
     protected function process_question_versions($data) {
-        global $DB;
-
-        $data = (object)$data;
-        $oldid = $data->id;
-
-        $data->questionbankentryid = $this->get_new_parentid('question_bank_entry');
-        // Question id is updated after inserting the question.
-        $data->questionid = 0;
-        $newitemid = $DB->insert_record('question_versions', $data);
-        $this->set_mapping('question_versions', $oldid, $newitemid);
+        // We can only determine the right way to process this once we get to
+        // process_question and have more information, so for now just store.
+        $this->latestversion = (object) $data;
     }
 
     /**
@@ -5143,17 +5109,19 @@ class restore_create_categories_and_questions extends restore_structure_step {
     protected function process_question($data) {
         global $DB;
 
-        $data = (object)$data;
+        $data = (object) $data;
         $oldid = $data->id;
 
-        // Check if the backup is a pre 4.0 one.
+        // Check we have one mapping for this question.
+        if (!$questionmapping = $this->get_mapping('question', $oldid)) {
+            // No mapping = this question doesn't need to be created/mapped.
+            return;
+        }
+
+        // Check if this is a pre 4.0 backup, then there will not be a question bank entry
+        // or question version in the file. So, we need to set up that data ready to be used below.
         $restoretask = $this->get_task();
         if ($restoretask->backup_release_compare('4.0', '<') || $restoretask->backup_version_compare(20220202, '<')) {
-            // Check we have one mapping for this question.
-            if (!$questionmapping = $this->get_mapping('question', $oldid)) {
-                return; // No mapping = this question doesn't need to be created/mapped.
-            }
-
             // Get the mapped category (cannot use get_new_parentid() because not
             // all the categories have been created, so it is not always available
             // Instead we get the mapping for the question->parentitemid because
@@ -5197,28 +5165,66 @@ class restore_create_categories_and_questions extends restore_structure_step {
             }
         }
 
-        $newitemid = $DB->insert_record('question', $data);
-        $this->set_mapping('question', $oldid, $newitemid);
-        // Also annotate them as question_created, we need
-        // that later when remapping parents (keeping the old categoryid as parentid).
-        $parentcatid = $this->get_old_parentid('question_category');
-        $this->set_mapping('question_created', $oldid, $newitemid, false, null, $parentcatid);
-        // Now update the question_versions table with the new question id. we dont need to do that for random qtypes.
-        $legacyquestiondata = $this->get_mappingid('question_version_created', $oldid) ? true : false;
-        if ($legacyquestiondata) {
-            $parentitemid = $this->get_mappingid('question_version_created', $oldid);
+        // With newitemid = 0, let's create the question.
+        if (!$questionmapping->newitemid) {
+            // Now we know we are inserting a question, we may need to insert the questionbankentry.
+            if (empty($this->latestqbe->newid)) {
+                $this->latestqbe->oldid = $this->latestqbe->id;
+
+                $this->latestqbe->questioncategoryid = $this->get_new_parentid('question_category');
+                $userid = $this->get_mappingid('user', $this->latestqbe->ownerid);
+                if ($userid) {
+                    $this->latestqbe->ownerid = $userid;
+                } else {
+                    if (!$this->task->is_samesite()) {
+                        $this->latestqbe->ownerid = $this->task->get_userid();
+                    }
+                }
+
+                // The idnumber if it exists also needs to be unique within a category or reset it to null.
+                if (!empty($this->latestqbe->idnumber) && $DB->record_exists('question_bank_entries',
+                        ['idnumber' => $this->latestqbe->idnumber, 'questioncategoryid' => $this->latestqbe->questioncategoryid])) {
+                    unset($this->latestqbe->idnumber);
+                }
+
+                $this->latestqbe->newid = $DB->insert_record('question_bank_entries', $this->latestqbe);
+                $this->set_mapping('question_bank_entry', $this->latestqbe->oldid, $this->latestqbe->newid);
+            }
+
+            // Now store the question.
+            $newitemid = $DB->insert_record('question', $data);
+            $this->set_mapping('question', $oldid, $newitemid);
+            // Also annotate them as question_created, we need
+            // that later when remapping parents (keeping the old categoryid as parentid).
+            $parentcatid = $this->get_old_parentid('question_category');
+            $this->set_mapping('question_created', $oldid, $newitemid, false, null, $parentcatid);
+
+            // Also insert this question_version.
+            $oldqvid = $this->latestversion->id;
+            $this->latestversion->questionbankentryid = $this->latestqbe->newid;
+            $this->latestversion->questionid = $newitemid;
+            $newqvid = $DB->insert_record('question_versions', $this->latestversion);
+            $this->set_mapping('question_versions', $oldqvid, $newqvid);
+
         } else {
-            $parentitemid = $this->get_new_parentid('question_versions');
+            // By performing this set_mapping() we make get_old/new_parentid() to work for all the
+            // children elements of the 'question' one (so qtype plugins will know the question they belong to).
+            $this->set_mapping('question', $oldid, $questionmapping->newitemid);
+
+            // Also create the question_bank_entry and version mappings, if required.
+            $newquestionversion = $DB->get_record('question_versions', ['questionid' => $questionmapping->newitemid]);
+            $this->set_mapping('question_versions', $this->latestversion->id, $newquestionversion->id);
+            if (empty($this->latestqbe->newid)) {
+                $this->latestqbe->oldid = $this->latestqbe->id;
+                $this->latestqbe->newid = $newquestionversion->questionbankentryid;
+                $this->set_mapping('question_bank_entry', $this->latestqbe->oldid, $this->latestqbe->newid);
+            }
         }
-        $version = new stdClass();
-        $version->id = $parentitemid;
-        $version->questionid = $newitemid;
-        $DB->update_record('question_versions', $version);
 
         // Note, we don't restore any question files yet
         // as far as the CONTEXT_MODULE categories still
         // haven't their contexts to be restored to
-        // The {@link restore_create_question_files}, executed in the final step
+        // The {@see restore_create_question_files}, executed in the final
         // step will be in charge of restoring all the question files.
     }
 

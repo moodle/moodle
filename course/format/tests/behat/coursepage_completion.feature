@@ -174,3 +174,19 @@ Feature: Course page activities completion
     # Student view.
     And I am on the "C1" "Course" page logged in as "student1"
     And "There are no completion conditions set for this activity." "text" should exist in the "Activity sample" "core_courseformat > Activity completion"
+
+  @javascript
+  Scenario: Completion edit button should be hidden in bulk editing
+    Given the following "activity" exists:
+      | activity       | assign          |
+      | name           | Activity sample |
+      | course         | C1              |
+      | completion     | 2               |
+      | completionview | 1               |
+    And I log in as "teacher1"
+    And I am on "C1" course homepage with editing mode on
+    And I click on "Completion" "button"
+    And "Edit conditions" "link" in the "Activity sample" "activity" should be visible
+    When I click on "Bulk actions" "button"
+    And I click on "Completion" "button"
+    Then "Edit conditions" "link" in the "Activity sample" "activity" should not be visible

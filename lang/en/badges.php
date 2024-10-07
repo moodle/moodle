@@ -429,6 +429,7 @@ $string['nobackpackbadgessummary'] = 'There are no badges in the collections you
 $string['nobackpackcollectionssummary'] = 'No badge collections have been selected.';
 $string['nobackpacks'] = 'There are no backpacks available';
 $string['nobadges'] = 'There are currently no badges available for users to earn.';
+$string['nomatchingbadges'] = 'There are no matching badges available for users to earn.';
 $string['nocompetencies'] = 'No competencies selected.';
 $string['nocriteria'] = 'Criteria for this badge have not been set up yet.';
 $string['noendorsement'] = 'This badge does not have an endorsement.';

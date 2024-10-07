@@ -1789,6 +1789,10 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     display: none !important; // stylelint-disable-line declaration-no-important
 }
 
+.bulkenabled .section {
+    margin-left: map-get($spacers, 4);
+}
+
 .activity-item .bulkselect {
     position: absolute;
     left: -2rem;

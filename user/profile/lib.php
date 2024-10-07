@@ -149,11 +149,13 @@ class profile_field_base {
     /**
      * Display the name of the profile field.
      *
+     * @param bool $escape
      * @return string
      */
-    public function display_name(): string {
-        return format_text($this->field->name, FORMAT_MOODLE, [
-            'para' => false,
+    public function display_name(bool $escape = true): string {
+        return format_string($this->field->name, true, [
+            'context' => context_system::instance(),
+            'escape' => $escape,
         ]);
     }
 
@@ -1037,7 +1039,7 @@ function get_profile_field_list(): array {
             if (!isset($data[$categoryname])) {
                 $data[$categoryname] = [];
             }
-            $data[$categoryname][$field->inputname] = $field->field->name;
+            $data[$categoryname][$field->inputname] = $field->display_name();
         }
     }
     return $data;

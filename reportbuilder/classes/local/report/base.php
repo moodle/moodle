@@ -785,8 +785,9 @@ abstract class base {
     /**
      * Set the default lang string for the notice used when no results are found.
      *
+     * Note this should be called from within the report class instance itself (ideally it would be protected)
+     *
      * @param lang_string|null $notice string, or null to tell the report to omit the notice entirely.
-     * @return void
      */
     public function set_default_no_results_notice(?lang_string $notice): void {
         $this->noresultsnotice = $notice;

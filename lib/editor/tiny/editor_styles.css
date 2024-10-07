@@ -10,4 +10,11 @@ body.mce-content-body a[data-mce-selected="inline-boundary"] {
 body.mce-content-body a {
     color: #0f6cbf;
 }
-/** */
+
+/** blockquote */
+.mce-content-body blockquote {
+    margin: 0 0.5rem 1rem;
+    padding-left: 1rem;
+    color: #495057;
+    border-left: 5px solid #8f959e;
+}

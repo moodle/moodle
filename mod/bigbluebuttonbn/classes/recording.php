@@ -714,13 +714,14 @@ class recording extends persistent {
 
         // Fetch all metadata for these recordings.
         $metadatas = recording_proxy::fetch_recordings($recordingids);
+        $failedids = recording_proxy::fetch_missing_recordings($recordingids);
 
         // Return the instances.
-        return array_filter(array_map(function ($recording) use ($metadatas, $withindays) {
+        return array_filter(array_map(function ($recording) use ($metadatas, $withindays, $failedids) {
             // Filter out if no metadata was fetched.
             if (!array_key_exists($recording->recordingid, $metadatas)) {
-                // Mark it as dismissed if it is older than 30 days.
-                if ($withindays > $recording->timecreated) {
+                // If the recording was successfully fetched, mark it as dismissed if it is older than 30 days.
+                if (!in_array($recording->recordingid, $failedids) && $withindays > $recording->timecreated) {
                     $recording = new self(0, $recording, null);
                     $recording->set_status(self::RECORDING_STATUS_DISMISSED);
                 }

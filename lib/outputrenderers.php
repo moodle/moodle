@@ -807,7 +807,9 @@ class core_renderer extends renderer_base {
             if (!isset($CFG->additionalhtmlhead)) {
                 $CFG->additionalhtmlhead = '';
             }
-            $CFG->additionalhtmlhead .= '<meta name="robots" content="noindex" />';
+            if (stripos($CFG->additionalhtmlhead, '<meta name="robots" content="noindex" />') === false) {
+                $CFG->additionalhtmlhead .= '<meta name="robots" content="noindex" />';
+            }
         }
 
         if (!empty($CFG->additionalhtmlhead)) {

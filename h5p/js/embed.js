@@ -159,6 +159,17 @@ var getH5PObject = async (iFrame) => {
     return H5P;
 };
 
+/* eslint-disable promise/no-native */
+/**
+ * Load the core/pending module.
+ * @returns {Promise<Pending>}
+ */
+const getPendingClass = () => new Promise((resolve) => {
+    require(['core/pending'], (Pending) => {
+        resolve(Pending);
+    });
+});
+
 document.onreadystatechange = async() => {
     // Wait for instances to be initialize.
     if (document.readyState !== 'complete') {
@@ -212,6 +223,9 @@ document.onreadystatechange = async() => {
         H5P.trigger(instance, 'resize');
     });
 
+    const Pending = await getPendingClass();
+    var resizePending = new Pending('core_h5p/iframe:resize');
+
     H5P.on(instance, 'resize', function() {
         if (H5P.isFullscreen) {
             return; // Skip iframe resize.
@@ -231,7 +245,8 @@ document.onreadystatechange = async() => {
             } else {
                 H5PEmbedCommunicator.send('hello');
             }
-        }, 0);
+            resizePending.resolve();
+        }, 150);
     });
 
     // Get emitted xAPI data.
@@ -294,6 +309,5 @@ document.onreadystatechange = async() => {
         }
     });
 
-    // Trigger initial resize for instance.
     H5P.trigger(instance, 'resize');
 };

@@ -89,6 +89,8 @@ if (!has_any_capability(array(
 }
 
 $PAGE->set_title($hdr);
+
+/** @var core_badges_renderer $output */
 $output = $PAGE->get_renderer('core', 'badges');
 
 if ($delete || $archive) {
@@ -159,8 +161,6 @@ if ($msg !== '') {
 }
 
 $report = system_report_factory::create(badges::class, $PAGE->context);
-$report->set_default_no_results_notice(new lang_string('nobadges', 'badges'));
-
 echo $report->output();
 
 echo $OUTPUT->footer();

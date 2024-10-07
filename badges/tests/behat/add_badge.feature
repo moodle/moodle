@@ -51,7 +51,7 @@ Feature: Add badges to the system
     And I should see "Math"
     And I should see "Physics"
     And I navigate to "Badges > Manage badges" in site administration
-    And I should not see "There are currently no badges available for users to earn."
+    And I should not see "There are no matching badges available for users to earn."
 
   @javascript @_file_upload
   Scenario: Add a badge related
@@ -163,7 +163,7 @@ Feature: Add badges to the system
     And I should see "Alignments (0)"
     And I should not see "Create badge"
     And I navigate to "Badges > Manage badges" in site administration
-    And I should not see "There are currently no badges available for users to earn."
+    And I should not see "There are no matching badges available for users to earn."
     # See buttons from the "Site badges" page.
     And I am on homepage
     When I click on "Site pages" "list_item" in the "Navigation" "block"

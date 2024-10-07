@@ -959,15 +959,16 @@ class qformat_default {
             $contextid = $DB->get_field('question_categories', 'contextid', ['id' => $qcategory]);
             $question->contextid = $contextid;
             $question->idnumber = $questionbankentry->idnumber;
+
+            // Do not export hidden questions.
+            if ($question->status === \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN) {
+                continue;
+            }
+
             if ($question->status === \core_question\local\bank\question_version_status::QUESTION_STATUS_READY) {
                 $question->status = 0;
             } else {
                 $question->status = 1;
-            }
-
-            // do not export hidden questions
-            if (!empty($question->hidden)) {
-                continue;
             }
 
             // do not export random questions

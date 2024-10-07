@@ -3762,5 +3762,20 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023100905.09);
     }
 
+    if ($oldversion < 2023100907.08) {
+        // If h5plib_v126 is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/h5p/h5plib/v126/version.php')) {
+            // Clean config.
+            uninstall_plugin('h5plib', 'v126');
+        }
+
+        // If h5plib_v127 is present, set it as the default one.
+        if (file_exists($CFG->dirroot . '/h5p/h5plib/v127/version.php')) {
+            set_config('h5plibraryhandler', 'h5plib_v127');
+        }
+
+        upgrade_main_savepoint(true, 2023100907.08);
+    }
+
     return true;
 }
