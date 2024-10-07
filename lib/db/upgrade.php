@@ -1444,5 +1444,8 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024100100.02);
     }
 
+    // Automatically generated Moodle v4.5.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
