@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->release  = '4.3.7 (Build: 20240902)'; // Human-friendly version name
+$plugin->release  = '4.3.8 (Build: 20241007)'; // Human-friendly version name
 $plugin->version  = 2024091000;
 $plugin->requires = 2019052000;
 $plugin->component  = 'block_iomad_learningpath';
