@@ -33516,6 +33516,7 @@ textarea[data-auto-rows] {
 .felement[data-fieldtype=autocomplete],
 .felement[data-fieldtype=tags] {
   display: block !important; /* stylelint-disable-line declaration-no-important */
+  position: static;
 }
 
 [data-fieldtype=editor] > div {
@@ -37192,6 +37193,17 @@ span[data-flexitour=container][x-placement=right] div[data-role=arrow]:after, sp
 }
 .modal .btn-close:not(:disabled):not(.disabled):hover, .modal .btn-close:not(:disabled):not(.disabled):focus {
   opacity: inherit;
+}
+
+/* Change the modal-dialog-scrollable class to position: static to fix the issue with popper.js and autocomplete. */
+.modal-dialog-scrollable:has(.form-autocomplete-suggestions) {
+  position: static;
+}
+.modal-dialog-scrollable:has(.form-autocomplete-suggestions) .modal-content {
+  position: static;
+}
+.modal-dialog-scrollable:has(.form-autocomplete-suggestions) .modal-content .modal-body {
+  position: static;
 }
 
 /* Bug fix for TinyMCE menu when in fullscreen mode. */
