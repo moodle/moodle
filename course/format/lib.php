@@ -58,9 +58,12 @@ class format_site extends course_format {
         if ((string)$section->name !== '') {
             // Return the name the user set.
             return format_string($section->name, true, array('context' => context_course::instance($this->courseid)));
-        } else {
-            return get_string('site');
         }
+        // The section zero is located in a block.
+        if ($section->sectionnum == 0) {
+            return get_string('block');
+        }
+        return get_string('site');
     }
 
     /**
