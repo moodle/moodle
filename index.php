@@ -109,6 +109,14 @@ $PAGE->set_title(get_string('home'));
 $PAGE->set_heading($SITE->fullname);
 $PAGE->set_secondary_active_tab('coursehome');
 
+$siteformatoptions = course_get_format($SITE)->get_format_options();
+$modinfo = get_fast_modinfo($SITE);
+$modnamesused = $modinfo->get_used_module_names();
+
+// The home page can have acitvities in the block aside. We should
+// initialize the course editor before the page structure is rendered.
+include_course_ajax($SITE, $modnamesused);
+
 $courserenderer = $PAGE->get_renderer('core', 'course');
 
 if ($hassiteconfig) {
@@ -118,10 +126,6 @@ if ($hassiteconfig) {
 }
 
 echo $OUTPUT->header();
-
-$siteformatoptions = course_get_format($SITE)->get_format_options();
-$modinfo = get_fast_modinfo($SITE);
-$modnamesused = $modinfo->get_used_module_names();
 
 // Print Section or custom info.
 if (!empty($CFG->customfrontpageinclude)) {
@@ -135,8 +139,6 @@ if (!empty($CFG->customfrontpageinclude)) {
 } else if ($siteformatoptions['numsections'] > 0) {
     echo $courserenderer->frontpage_section1();
 }
-// Include course AJAX.
-include_course_ajax($SITE, $modnamesused);
 
 echo $courserenderer->frontpage();
 

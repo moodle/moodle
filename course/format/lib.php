@@ -51,7 +51,7 @@ class format_site extends course_format {
      * Returns the display name of the given section that the course prefers.
      *
      * @param int|stdClass $section Section object from database or just field section.section
-     * @return Display name that the course format prefers, e.g. "Topic 2"
+     * @return string Display name that the course format prefers, e.g. "Topic 2"
      */
     function get_section_name($section) {
         $section = $this->get_section($section);
@@ -86,6 +86,26 @@ class format_site extends course_format {
      */
     public function get_default_blocks() {
         return blocks_get_default_site_course_blocks();
+    }
+
+    #[\Override]
+    public function supports_ajax() {
+        // All home page is rendered in the backend, we only need an ajax editor components in edit mode.
+        // This will also prevent redirectng to the login page when a guest tries to access the site,
+        // and will make the home page loading faster.
+        $ajaxsupport = new stdClass();
+        $ajaxsupport->capable = $this->show_editor();
+        return $ajaxsupport;
+    }
+
+    #[\Override]
+    public function supports_components() {
+        return true;
+    }
+
+    #[\Override]
+    public function uses_sections() {
+        return true;
     }
 
     /**
