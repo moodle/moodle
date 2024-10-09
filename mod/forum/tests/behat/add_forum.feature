@@ -42,6 +42,10 @@ Feature: Add forum activities and discussions
     And I follow "Edit"
     And the field "Attachment" matches value "empty.txt"
 
+    # Check the page that lists all the forums in a course.
+    And I am on the "C1" "forum index" page
+    And I should see "Test forum name"
+
   Scenario: Test forum settings validation
     Given the following "courses" exist:
       | fullname | shortname | category |
