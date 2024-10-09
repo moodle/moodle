@@ -1,0 +1,85 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_site_main_menu/mainsection
+
+    This mustache emulates a course single section structure inside a block.
+
+    It requires to include several divs to emulate the structure of a course format.
+
+    Example context (json):
+    {
+        "cmlist": "Sample",
+        "siteid": 1,
+        "sectionid": 1,
+        "sectionname": "Sample",
+        "sectionnum": 1,
+        "editing": true
+    }
+}}
+<div
+    id="block_site_main_menu_section"
+    class="course-content"
+>
+    {{! The section list is used by the content module to init the sections.}}
+    <div
+        data-for="course_sectionlist"
+    >
+        {{! The section need some bottom padding and margin for the dropzone.
+        Otherwise the activities will cover the area. }}
+        <div
+            class="mainsection section pb-3"
+            data-for="section"
+            data-sectionid="{{sectionid}}"
+            data-id="{{sectionid}}"
+            data-number="{{sectionnum}}"
+            data-sectionname="{{sectionname}}"
+        >
+            {{#editing}}
+            {{! The section header is used as a dropzone when the section is empty.}}
+            <div
+                class="section-header"
+                data-for="section_title"
+                data-id="{{sectionid}}"
+                data-number="{{sectionnum}}"
+            >&nbsp;</div>
+            {{/editing}}
+            {{{cmlist}}}
+        </div>
+    </div>
+</div>
+{{#js}}
+{{! The block should be fast to load, we only load the editor when needed.}}
+{{#editing}}
+require(
+    [
+        'core_courseformat/local/content',
+        'core_courseformat/courseeditor'
+    ],
+    function(
+        Component,
+        Courseeditor
+    ) {
+        {{! The block could be included static in other courses so we use Courseeditor.getCourseEditor. }}
+        new Component({
+            element: document.getElementById('block_site_main_menu_section'),
+            reactive: Courseeditor.getCourseEditor({{siteid}}),
+        });
+    }
+);
+{{/editing}}
+{{/js}}
