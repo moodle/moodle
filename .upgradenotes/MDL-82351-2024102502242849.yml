@@ -1,0 +1,7 @@
+issueNumber: MDL-82351
+notes:
+  core_course:
+    - message: >-
+        The course_format_ajax_support function is now deprecated. Use
+        course_get_format($course)->supports_ajax() instead.
+      type: deprecated

@@ -1718,10 +1718,14 @@ function course_format_uses_sections($format) {
  * The returned object's property (boolean)capable indicates that
  * the course format supports Moodle course ajax features.
  *
+ * @deprecated since Moodle 5.0 MDL-82351
+ * @todo MDL-83417 Remove this function in Moodle 6.0
  * @param string $format
  * @return stdClass
  */
+#[\core\attribute\deprecated(since: '5.0', mdl: 'MDL-82351')]
 function course_format_ajax_support($format) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     $course = new stdClass();
     $course->format = $format;
     return course_get_format($course)->supports_ajax();
@@ -2738,7 +2742,7 @@ function course_ajax_enabled($course) {
     // Check that the course format supports ajax functionality
     // The site 'format' doesn't have information on course format support
     if ($SITE->id !== $course->id) {
-        $courseformatajaxsupport = course_format_ajax_support($course->format);
+        $courseformatajaxsupport = course_get_format($course)->supports_ajax();
         if (!$courseformatajaxsupport->capable) {
             return false;
         }
