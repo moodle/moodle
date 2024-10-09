@@ -508,7 +508,7 @@ class ReflectionClosure extends ReflectionFunction
                     break;
                 case 'id_name':
                     switch ($token[0]) {
-                        case $token[0] === ':' && $context !== 'instanceof':
+                        case $token[0] === ':' && ! in_array($context, ['instanceof', 'new'], true):
                             if ($lastState === 'closure' && $context === 'root') {
                                 $state = 'closure';
                                 $code .= $id_start.$token;
@@ -680,27 +680,25 @@ class ReflectionClosure extends ReflectionFunction
         $this->isBindingRequired = $isUsingThisObject;
         $this->isScopeRequired = $isUsingScope;
 
-        if (PHP_VERSION_ID >= 80100) {
-            $attributesCode = array_map(function ($attribute) {
-                $arguments = $attribute->getArguments();
+        $attributesCode = array_map(function ($attribute) {
+            $arguments = $attribute->getArguments();
 
-                $name = $attribute->getName();
-                $arguments = implode(', ', array_map(function ($argument, $key) {
-                    $argument = sprintf("'%s'", str_replace("'", "\\'", $argument));
+            $name = $attribute->getName();
+            $arguments = implode(', ', array_map(function ($argument, $key) {
+                $argument = sprintf("'%s'", str_replace("'", "\\'", $argument));
 
-                    if (is_string($key)) {
-                        $argument = sprintf('%s: %s', $key, $argument);
-                    }
+                if (is_string($key)) {
+                    $argument = sprintf('%s: %s', $key, $argument);
+                }
 
-                    return $argument;
-                }, $arguments, array_keys($arguments)));
+                return $argument;
+            }, $arguments, array_keys($arguments)));
 
-                return "#[$name($arguments)]";
-            }, $this->getAttributes());
+            return "#[$name($arguments)]";
+        }, $this->getAttributes());
 
-            if (! empty($attributesCode)) {
-                $code = implode("\n", array_merge($attributesCode, [$code]));
-            }
+        if (! empty($attributesCode)) {
+            $code = implode("\n", array_merge($attributesCode, [$code]));
         }
 
         $this->code = $code;
@@ -715,25 +713,7 @@ class ReflectionClosure extends ReflectionFunction
      */
     protected static function getBuiltinTypes()
     {
-        // PHP 8.1
-        if (PHP_VERSION_ID >= 80100) {
-            return ['array', 'callable', 'string', 'int', 'bool', 'float', 'iterable', 'void', 'object', 'mixed', 'false', 'null', 'never'];
-        }
-
-        // PHP 8
-        if (\PHP_MAJOR_VERSION === 8) {
-            return ['array', 'callable', 'string', 'int', 'bool', 'float', 'iterable', 'void', 'object', 'mixed', 'false', 'null'];
-        }
-
-        // PHP 7
-        switch (\PHP_MINOR_VERSION) {
-            case 0:
-                return ['array', 'callable', 'string', 'int', 'bool', 'float'];
-            case 1:
-                return ['array', 'callable', 'string', 'int', 'bool', 'float', 'iterable', 'void'];
-            default:
-                return ['array', 'callable', 'string', 'int', 'bool', 'float', 'iterable', 'void', 'object'];
-        }
+        return ['array', 'callable', 'string', 'int', 'bool', 'float', 'iterable', 'void', 'object', 'mixed', 'false', 'null', 'never'];
     }
 
     /**
@@ -806,7 +786,7 @@ class ReflectionClosure extends ReflectionFunction
     }
 
     /**
-     * The the hash of the current file name.
+     * The hash of the current file name.
      *
      * @return string
      */
@@ -1135,10 +1115,10 @@ class ReflectionClosure extends ReflectionFunction
                             if (--$open == 0) {
                                 if (! $structIgnore) {
                                     $structures[] = [
-                                        'type'  => $structType,
-                                        'name'  => $structName,
+                                        'type' => $structType,
+                                        'name' => $structName,
                                         'start' => $startLine,
-                                        'end'   => $endLine,
+                                        'end' => $endLine,
                                     ];
                                 }
                                 $structIgnore = false;
@@ -1169,8 +1149,14 @@ class ReflectionClosure extends ReflectionFunction
     {
         $ns = $this->getNamespaceName();
 
+        $name = $this->getName();
+
         // First class callables...
-        if ($this->getName() !== '{closure}' && empty($ns) && ! is_null($this->getClosureScopeClass())) {
+        if ($name !== '{closure}'
+            && ! str_contains($name, '{closure:/')
+            && ! str_contains($name, '{closure:\\')
+            && empty($ns)
+            && ! is_null($this->getClosureScopeClass())) {
             $ns = $this->getClosureScopeClass()->getNamespaceName();
         }
 

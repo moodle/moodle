@@ -25,7 +25,7 @@ git add  lib/php-di/invoker
 
 cp -rf "$installdir"/vendor/laravel/serializable-closure lib/laravel/serializable-closure
 echo "See instructions in lib/php-di/readme_moodle.md" > lib/laravel/serializable-closure/readme_moodle.txt
-git add  lib/phplaravel/serializable-closure
+git add  lib/laravel/serializable-closure
 ```
 
 Now update the thirdpartylibs.xml as appropriate.
