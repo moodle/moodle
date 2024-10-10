@@ -1323,7 +1323,6 @@ function lti_verify_with_keyset($jwtparam, $keyseturl, $clientid) {
             throw new moodle_exception('errornocachedkeysetfound', 'mod_lti');
         }
         $keysetarr = json_decode($keyset, true);
-        // JWK::parseKeySet uses RS256 algorithm by default.
         $keys = JWK::parseKeySet($keysetarr);
         $jwt = JWT::decode($jwtparam, $keys);
     } catch (Exception $e) {
@@ -1332,7 +1331,10 @@ function lti_verify_with_keyset($jwtparam, $keyseturl, $clientid) {
         $keysetarr = json_decode($keyset, true);
 
         // Fix for firebase/php-jwt's dependency on the optional 'alg' property in the JWK.
+        // The fix_jwks_alg() call only fixes a single, matched key and will leave others present (which may be missing alg too),
+        // Remaining keys missing alg are excluded since they cannot be used for decoding anyway (no match to JWT kid).
         $keysetarr = jwks_helper::fix_jwks_alg($keysetarr, $jwtparam);
+        $keysetarr['keys'] = array_filter($keysetarr['keys'], fn($key) => isset($key['alg']));
 
         // JWK::parseKeySet uses RS256 algorithm by default.
         $keys = JWK::parseKeySet($keysetarr);
