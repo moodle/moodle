@@ -314,12 +314,6 @@ class company {
     public static function get_companies_select($showsuspended=false, $useprepend = true, $showchildren = true, $sort = 'name', $search = '') {
         global $CFG, $DB, $USER;
 
-        // We use SQL IF statements here.  These could be different depending on the dbtype.
-        $SQLIF = "IF";
-        if ($CFG->dbtype == 'sqlsrv') {
-            $SQLIF = "IIF";
-        }
-
         // Is this an admin, or a normal user?
         if (iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
             $sqlparams = [];
@@ -336,7 +330,7 @@ class company {
                 $sqlwhere .= " AND " . $DB->sql_like('name', ':search', false);
                 $sqlparams['search'] = '%' . $DB->sql_like_escape($search) . '%';
             }
-            $companies = $DB->get_records_sql_menu("SELECT id, $SQLIF (suspended=0, name, concat(name, ' (S)')) AS name FROM {company}
+            $companies = $DB->get_records_sql_menu("SELECT id, CASE WHEN suspended=0 THEN name ELSE concat(name, ' (S)') END AS name FROM {company}
                                                     WHERE 1 = 1
                                                     $sqlwhere
                                                     ORDER BY name",
