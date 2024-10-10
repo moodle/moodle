@@ -47,7 +47,6 @@ final class utils_test extends \advanced_testcase {
 
         set_config('enabled', 1, 'aiprovider_openai');
         set_config('apikey', '123', 'aiprovider_openai');
-        set_config('orgid', 'abc', 'aiprovider_openai');
 
         // Plugin is not enabled.
         $this->setUser($user1);

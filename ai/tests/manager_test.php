@@ -75,7 +75,6 @@ final class manager_test extends \advanced_testcase {
         $this->resetAfterTest();
         set_config('enabled', 1, 'aiprovider_openai');
         set_config('apikey', '123', 'aiprovider_openai');
-        set_config('orgid', 'abc', 'aiprovider_openai');
 
         $manager = \core\di::get(manager::class);
         $actions = [
@@ -144,7 +143,6 @@ final class manager_test extends \advanced_testcase {
         // Enable the providers.
         set_config('enabled', 1, 'aiprovider_openai');
         set_config('apikey', '123', 'aiprovider_openai');
-        set_config('orgid', 'abc', 'aiprovider_openai');
         set_config('enabled', 1, 'aiprovider_azureai');
         set_config('apikey', '123', 'aiprovider_azureai');
         set_config('endpoint', 'abc', 'aiprovider_azureai');
@@ -420,7 +418,6 @@ final class manager_test extends \advanced_testcase {
         $manager = \core_plugin_manager::resolve_plugininfo_class('aiprovider');
         $manager::enable_plugin('openai', 1);
         set_config('apikey', '123', 'aiprovider_openai');
-        set_config('orgid', 'abc', 'aiprovider_openai');
 
         // Should now be available.
         $result = manager::is_action_available($action);

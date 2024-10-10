@@ -121,15 +121,8 @@ final class provider_test extends \advanced_testcase {
         $provider = new \aiprovider_openai\provider();
         $this->assertFalse($provider->is_provider_configured());
 
-        // Partially configured values.
-        set_config('apikey', '123', 'aiprovider_openai');
-        set_config('orgid', '', 'aiprovider_openai');
-        $provider = new \aiprovider_openai\provider();
-        $this->assertFalse($provider->is_provider_configured());
-
         // Properly configured values.
         set_config('apikey', '123', 'aiprovider_openai');
-        set_config('orgid', 'abc', 'aiprovider_openai');
         $provider = new \aiprovider_openai\provider();
         $this->assertTrue($provider->is_provider_configured());
     }
