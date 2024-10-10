@@ -1082,11 +1082,7 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
     // If a student is not part of a group and seperate groups is enabled, we don't
     // want them seeing all records.
     $groupmode = groups_get_activity_groupmode($cm);
-    if ($currentgroup == 0 && $groupmode == 1 && !$canmanageentries) {
-        $canviewallrecords = false;
-    } else {
-        $canviewallrecords = true;
-    }
+    $canviewallrecords = $groupmode != SEPARATEGROUPS || has_capability('moodle/site:accessallgroups', $context);
 
     $numentries = data_numentries($data);
     $requiredentriesallowed = true;
