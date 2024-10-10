@@ -195,6 +195,12 @@ class calendartype_test extends \advanced_testcase {
         $this->assertEquals($calendar->timestamp_to_date_string($this->user->timecreated, '', 99, true, true),
             userdate($this->user->timecreated));
 
+        // Test the userdate function with a timezone.
+        $this->assertEquals(
+            $calendar->timestamp_to_date_string($this->user->timecreated, '', 'Australia/Sydney', true, true),
+            userdate($this->user->timecreated, timezone: 'Australia/Sydney'),
+        );
+
         // Test the calendar/lib.php functions.
         $this->assertEquals($calendar->get_weekdays(), calendar_get_days());
         $this->assertEquals($calendar->get_starting_weekday(), calendar_get_starting_weekday());
