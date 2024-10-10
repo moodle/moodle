@@ -118,15 +118,15 @@ Cards usually don't really look great without images. That's why we show a place
 {{< example show_markup="false">}}
 <div class="card-deck">
 {{< root.inline >}}
-{{- $pl1 := readFile "admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-1.txt" -}}
-{{- $pl2 := readFile "admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-2.txt" -}}
-{{- $pl3 := readFile "admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-3.txt" -}}
-{{- $pl4 := readFile "admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-4.txt" -}}
-{{- $pl5 := readFile "admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-5.txt" -}}
-{{- $pl6 := readFile "admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-6.txt" -}}
-{{- $pl7 := readFile "admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-7.txt" -}}
-{{- $pl8 := readFile "admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-8.txt" -}}
-{{- $pl9 := readFile "admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-9.txt" -}}
+{{- $pl1 := readFile "public/admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-1.txt" -}}
+{{- $pl2 := readFile "public/admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-2.txt" -}}
+{{- $pl3 := readFile "public/admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-3.txt" -}}
+{{- $pl4 := readFile "public/admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-4.txt" -}}
+{{- $pl5 := readFile "public/admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-5.txt" -}}
+{{- $pl6 := readFile "public/admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-6.txt" -}}
+{{- $pl7 := readFile "public/admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-7.txt" -}}
+{{- $pl8 := readFile "public/admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-8.txt" -}}
+{{- $pl9 := readFile "public/admin/tool/componentlibrary/content/static/moodle/components/coursecards/placeholder-9.txt" -}}
 
   <div class="card mb-2 justify-content-center align-items-center d-flex text-center" style="flex: 0 0 20%; height: 150px; background-image: url('{{- $pl1 -}}')">
   </div>

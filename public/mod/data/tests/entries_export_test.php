@@ -151,9 +151,9 @@ final class entries_export_test extends \advanced_testcase {
             // file stored in a file and picture field.
             // So we expect that this file has to have the same content as sample.png.
             // Also, the default value for the subdirectory in the zip archive containing the files is 'files/'.
-            'files/samplefile.png' => 'mod/data/field/picture/pix/sample.png',
-            'files/samplefile_1.png' => 'mod/data/field/picture/pix/sample.png',
-            'files/picturefile.png' => 'mod/data/field/picture/pix/sample.png',
+            'files/samplefile.png' => 'public/mod/data/field/picture/pix/sample.png',
+            'files/samplefile_1.png' => 'public/mod/data/field/picture/pix/sample.png',
+            'files/picturefile.png' => 'public/mod/data/field/picture/pix/sample.png',
             // By checking that the content of the exported csv is identical to the fixture file it is verified
             // that the filenames in the csv file correspond to the names of the exported file.
             // It also verifies that files with identical file names in different fields (or records) will be numbered

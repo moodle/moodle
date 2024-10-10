@@ -111,7 +111,7 @@ final class course_delete_modules_test extends \advanced_testcase {
             $this->assertStringContainsString('course/lib.php', $errormsg);
             $this->assertStringContainsString('mod/TestModuleToDelete/lib.php is missing', $errormsg);
             // Get line numbers array which contains the exception name.
-            $lines = array_keys(preg_grep("/cannotdeletemodulemissinglib/", file('course/lib.php')));
+            $lines = array_keys(preg_grep("/cannotdeletemodulemissinglib/", file(dirname(__DIR__) . '/lib.php')));
             // Increase 1 to keys to convert to actual line number.
             $lines = array_map(function($key) {
                 return ++$key;

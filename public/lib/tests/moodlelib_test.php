@@ -5740,7 +5740,7 @@ EOT;
         // which is necessary to test things like class autoloading, required for class callbacks checks.
         $this->add_full_mocked_plugintype(
             plugintype: 'fake',
-            path: 'lib/tests/fixtures/fakeplugins/fake',
+            path: 'public/lib/tests/fixtures/fakeplugins/fake',
         );
         $this->deprecate_full_mocked_plugintype('fake');
 
@@ -5783,7 +5783,7 @@ EOT;
         // which is necessary to test things like class autoloading, required for class callbacks checks.
         $this->add_full_mocked_plugintype(
             plugintype: 'fake',
-            path: 'lib/tests/fixtures/fakeplugins/fake',
+            path: 'public/lib/tests/fixtures/fakeplugins/fake',
         );
         $this->delete_full_mocked_plugintype('fake');
 

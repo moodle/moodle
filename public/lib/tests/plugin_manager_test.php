@@ -804,7 +804,7 @@ final class plugin_manager_test extends \advanced_testcase {
         // Inject the mock plugin 'fake_fullfeatured' and deprecate it.
         $this->add_full_mocked_plugintype(
             plugintype: 'fake',
-            path: 'lib/tests/fixtures/fakeplugins/fake',
+            path: 'public/lib/tests/fixtures/fakeplugins/fake',
         );
         $this->deprecate_full_mocked_plugintype('fake');
 
@@ -867,7 +867,7 @@ final class plugin_manager_test extends \advanced_testcase {
         // 3. fulldeletedsubtype_demo: a deleted subplugin type.
         $this->add_full_mocked_plugintype(
             plugintype: 'fake',
-            path: 'lib/tests/fixtures/fakeplugins/fake',
+            path: 'public/lib/tests/fixtures/fakeplugins/fake',
             subpluginsupport: true
         );
 
@@ -934,7 +934,7 @@ final class plugin_manager_test extends \advanced_testcase {
         // Inject the mock plugin 'fake_fullfeatured', and deprecate it.
         $this->add_full_mocked_plugintype(
             plugintype: 'fake',
-            path: 'lib/tests/fixtures/fakeplugins/fake',
+            path: 'public/lib/tests/fixtures/fakeplugins/fake',
         );
         $this->delete_full_mocked_plugintype('fake');
 
@@ -999,7 +999,7 @@ final class plugin_manager_test extends \advanced_testcase {
         // 3. fulldeletedsubtype_demo: a deleted subplugin type.
         $this->add_full_mocked_plugintype(
             plugintype: 'fake',
-            path: 'lib/tests/fixtures/fakeplugins/fake',
+            path: 'public/lib/tests/fixtures/fakeplugins/fake',
             subpluginsupport: true
         );
 

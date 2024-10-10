@@ -44,7 +44,7 @@ final class manager_test extends \advanced_testcase {
         // This 'fake_fullfeatured' plugin is an available plugin at this stage (not yet deprecated).
         $this->add_full_mocked_plugintype(
             plugintype: 'fake',
-            path: 'lib/tests/fixtures/fakeplugins/fake',
+            path: 'public/lib/tests/fixtures/fakeplugins/fake',
         );
 
         $observers = array_filter(

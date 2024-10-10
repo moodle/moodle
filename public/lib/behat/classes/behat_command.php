@@ -135,6 +135,7 @@ class behat_command {
             $command = 'php ' . $pathprefix . 'admin' . $separator . 'tool' . $separator . 'behat' . $separator . 'cli'
                 . $separator . 'run.php';
         }
+
         return $command;
     }
 

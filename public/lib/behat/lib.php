@@ -66,11 +66,11 @@ function behat_error($errorcode, $text = '') {
             $text = 'Behat permissions problem: ' . $text . ', check the permissions';
             break;
         case BEHAT_EXITCODE_REINSTALL:
-            $path = testing_cli_argument_path('/admin/tool/behat/cli/init.php');
+            $path = testing_cli_argument_path('/public/admin/tool/behat/cli/init.php');
             $text = "Reinstall Behat: ".$text.", use:\n php ".$path;
             break;
         case BEHAT_EXITCODE_INSTALL:
-            $path = testing_cli_argument_path('/admin/tool/behat/cli/init.php');
+            $path = testing_cli_argument_path('/public/admin/tool/behat/cli/init.php');
             $text = "Install Behat before enabling it, use:\n php ".$path;
             break;
         case BEHAT_EXITCODE_INSTALLED:
@@ -214,7 +214,7 @@ function behat_clean_init_config() {
     global $CFG;
 
     $allowed = array_flip(array(
-        'wwwroot', 'dataroot', 'dirroot', 'admin', 'directorypermissions', 'filepermissions',
+        'wwwroot', 'dataroot', 'root', 'dirroot', 'admin', 'directorypermissions', 'filepermissions',
         'umaskpermissions', 'dbtype', 'dblibrary', 'dbhost', 'dbname', 'dbuser', 'dbpass', 'prefix',
         'dboptions', 'proxyhost', 'proxyport', 'proxytype', 'proxyuser', 'proxypassword',
         'proxybypass', 'pathtogs', 'pathtophp', 'pathtodu', 'aspellpath', 'pathtodot', 'skiplangupgrade',
@@ -530,7 +530,7 @@ function behat_get_run_process() {
  * @return array list of processes.
  */
 function cli_execute_parallel($cmds, $cwd = null, $delay = 0) {
-    require_once(__DIR__ . "/../../vendor/autoload.php");
+    require_once(__DIR__ . "/../../../vendor/autoload.php");
 
     $processes = array();
 

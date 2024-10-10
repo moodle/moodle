@@ -273,7 +273,7 @@ if (empty($parallelrun)) {
     }
 
     // Execute all commands, relative to moodle root directory.
-    $processes = cli_execute_parallel($cmds, __DIR__ . "/../../../../", BEHAT_PARALLEL_START_DELAY);
+    $processes = cli_execute_parallel($cmds, __DIR__ . "/../../../../../", BEHAT_PARALLEL_START_DELAY);
     $stoponfail = empty($options['stop-on-failure']) ? false : true;
 
     // Print header.
@@ -525,4 +525,3 @@ function get_status_lines_from_run_op(Symfony\Component\Process\Process $process
 
     return $statusstr;
 }
-
