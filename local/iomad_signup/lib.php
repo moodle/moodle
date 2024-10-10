@@ -43,9 +43,8 @@ function local_iomad_signup_user_created($user) {
     if ($usercompanies = $DB->get_records_sql("SELECT DISTINCT companyid,id
                                                FROM {company_users}
                                                WHERE userid = :userid
-                                               ORDER BY id DESC
-                                               LIMIT 1",
-                                               ['userid' => $user->id])) {
+                                               ORDER BY id DESC",
+                                               ['userid' => $user->id], 0, 1)) {
 
         $userrecord = array_shift($usercompanies);
         $company = new company($userrecord->companyid);

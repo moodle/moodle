@@ -60,9 +60,8 @@ if (is_siteadmin($USER->id)) {
                                                       WHERE userid = :userid
                                                       AND companyid = :companyid
                                                       AND managertype > 0
-                                                      ORDER BY id
-                                                      LIMIT 1",
-                                                      ['userid' => $USER->id, 'companyid' => $companyid])) {
+                                                      ORDER BY id",
+                                                      ['userid' => $USER->id, 'companyid' => $companyid], 0, 1)) {
                 $companyuser = array_shift($companyusers);
         if ($companyuser->managertype == 2) {
             $approvaltype = 'manager';

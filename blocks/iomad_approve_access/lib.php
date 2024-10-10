@@ -134,9 +134,8 @@ class iomad_approve_access {
                                                       WHERE userid = :userid
                                                       AND companyid = :companyid
                                                       AND managertype > 0
-                                                      ORDER BY id
-                                                      LIMIT 1",
-                                                      ['userid' => $USER->id, 'companyid' => $companyid])) {
+                                                      ORDER BY id",
+                                                      ['userid' => $USER->id, 'companyid' => $companyid], 0, 1)) {
                 $manageruser = array_shift($managerusers);
                 if ($manageruser->managertype == 2) {
 

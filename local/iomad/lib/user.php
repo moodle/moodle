@@ -1130,11 +1130,10 @@ class company_user {
                                                     AND cl.program = 0
                                                     AND cl.expirydate > :date
                                                     AND cl.allocation > cl.used
-                                                    ORDER BY cl.expirydate DESC
-                                                    LIMIT 1",
+                                                    ORDER BY cl.expirydate DESC",
                                                     array('courseid' => $courseid,
                                                           'companyid' => $companyid,
-                                                          'date' => time()))) {
+                                                          'date' => time()), 0, 1)) {
             $latestlicense = array_pop($latestlicenses);
             $newlicense = (object) ['userid' => $userid,
                                     'isusing' => 0,
