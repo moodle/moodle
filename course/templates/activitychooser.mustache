@@ -74,8 +74,8 @@
                            role="tab"
                            aria-label="{{#str}} aria:recommendedtab, core_course {{/str}}"
                            aria-controls="recommended-{{uniqid}}"
-                           aria-selected="false"
-                           tabindex="-1"
+                           aria-selected="{{#recommendedFirst}}true{{/recommendedFirst}}{{^recommendedFirst}}false{{/recommendedFirst}}"
+                           tabindex="{{#recommendedFirst}}0{{/recommendedFirst}}{{^recommendedFirst}}-1{{/recommendedFirst}}"
                         >
                             {{#str}} recommended, core {{/str}}
                         </a>
