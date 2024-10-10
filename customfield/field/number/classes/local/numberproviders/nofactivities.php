@@ -157,13 +157,20 @@ class nofactivities extends provider_base {
     /**
      * Preparation for export for number of activities provider.
      *
-     * @param mixed $value String or float
+     * @param mixed $value String or float or null if the value is not present in the database for this instance
      * @param \context|null $context Context
      * @return ?string
      */
     public function prepare_export_value(mixed $value, ?\context $context = null): ?string {
-        if (trim((string)$value) === '') {
+        if ($value === null) {
             return null;
+        } else if (round((float)$value) == 0) {
+            $whenzero = $this->field->get_configdata_property('displaywhenzero');
+            if ((string) $whenzero === '') {
+                return null;
+            } else {
+                return format_string($whenzero, true, ['context' => $context ?? \core\context\system::instance()]);
+            }
         } else {
             return format_float((float)$value, 0);
         }
