@@ -16,6 +16,8 @@ Feature: Group data activity
     And the following "users" exist:
       | username | firstname    | lastname | email                |
       | teacher1 | TeacherG1    | 1        | teacher1@example.com |
+      | teacher2 | TeacherGNone | 2        | teacher2@example.com |
+      | teacher3 | TeacherGNone | 3        | teacher3@example.com |
       | user1    | User1G1      | 1        | user1@example.com    |
       | user2    | User2G2      | 2        | user2@example.com    |
       | user3    | User3None    | 3        | user3@example.com    |
@@ -23,6 +25,8 @@ Feature: Group data activity
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+      | teacher2 | C1     | editingteacher |
+      | teacher3 | C1     | teacher        |
       | user1    | C1     | student        |
       | user2    | C1     | student        |
       | user3    | C1     | student        |
@@ -73,11 +77,15 @@ Feature: Group data activity
     Examples:
       | data  | user     | all            | G1             | G2             | user1          | user2          |
       | data1 | teacher1 | should see     | should see     | should see     | should see     | should see     |
+      | data1 | teacher2 | should see     | should see     | should see     | should see     | should see     |
+      | data1 | teacher3 | should see     | should not see | should not see | should not see | should not see |
       | data1 | user1    | should not see | should see     | should not see | should see     | should not see |
       | data1 | user2    | should not see | should not see | should see     | should not see | should see     |
       | data1 | user3    | should see     | should not see | should not see | should not see | should not see |
       | data1 | user4    | should see     | should not see | should not see | should not see | should not see |
       | data2 | teacher1 | should see     | should see     | should see     | should see     | should see     |
+      | data2 | teacher2 | should see     | should see     | should see     | should see     | should see     |
+      | data2 | teacher3 | should see     | should see     | should see     | should see     | should not see |
       | data2 | user1    | should see     | should see     | should see     | should see     | should not see |
       | data2 | user2    | should see     | should see     | should see     | should not see | should see     |
       | data2 | user3    | should see     | should see     | should see     | should see     | should not see |
