@@ -17,7 +17,7 @@
 {{!
     @template tiny_media/embed/metadata/chapters
 
-    Media preview footer template.
+    Insert media chapters template.
 
     Example context (json):
     {
@@ -58,7 +58,7 @@
         </div>
         <div class="mb-3">
             <label class="w-100" for="chapter-video-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
-            <select id="chapter-video-lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
+            <select id="chapter-video-lang-input" class="form-select tiny_media_track_lang_entry" data-value="{{srclang}}">
                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                     {{#langsInstalled}}
                         <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
@@ -110,7 +110,7 @@
         </div>
         <div class="mb-3">
             <label class="w-100" for="chapter-video-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
-            <select id="chapter-video-lang-input" class="custom-select tiny_media_track_lang_entry">
+            <select id="chapter-video-lang-input" class="form-select tiny_media_track_lang_entry">
                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                     {{#langsInstalled}}
                         <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>

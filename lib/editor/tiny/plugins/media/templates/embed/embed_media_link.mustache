@@ -15,19 +15,17 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template tiny_media/embed_media_link
+    @template tiny_media/embed/embed_media_link
 
     Embed media link template.
 
     Example context (json):
     {
-
+        "name": "Media title",
+        "url": "/"
     }
 }}
-<a href="{{url}}"{{!
-    }}{{#width}} data-width="{{.}}"{{/width}}{{!
-    }}{{#height}} data-height="{{.}}"{{/height}}{{!
-}}>{{!
-    }}{{#name}}{{.}}{{/name}}{{!
-    }}{{^name}}{{url}}{{/name}}{{!
-}}</a>
+<a href="{{url}}" class="external-media-provider">
+    {{#name}}{{.}}{{/name}}
+    {{^name}}{{url}}{{/name}}
+</a>

@@ -17,7 +17,7 @@
 {{!
     @template tiny_media/embed/insert_media_subtitle_caption
 
-    Media preview footer template.
+    Insert media subtitles, captions, chapters, descriptions and metadata template.
 
     Example context (json):
     {
@@ -36,27 +36,27 @@
 <div id="vtracks" class="fcontainer px-1">
     <ul class="nav nav-tabs mb-3" role="tablist">
         <li data-track-kind="subtitles" class="nav-item">
-            <a class="nav-link active" href="#{{elementid}}_vtracks_subtitles" role="tab" data-toggle="tab">
+            <a class="nav-link active" href="#{{elementid}}_vtracks_subtitles" role="tab" data-bs-toggle="tab">
                 {{#str}} subtitles, tiny_media {{/str}}
             </a>
         </li>
         <li data-track-kind="captions" class="nav-item">
-            <a class="nav-link" href="#{{elementid}}_vtracks_captions" role="tab" data-toggle="tab">
+            <a class="nav-link" href="#{{elementid}}_vtracks_captions" role="tab" data-bs-toggle="tab">
                 {{#str}} captions, tiny_media {{/str}}
             </a>
         </li>
         <li data-track-kind="descriptions" class="nav-item">
-            <a class="nav-link" href="#{{elementid}}_vtracks_descriptions" role="tab" data-toggle="tab">
+            <a class="nav-link" href="#{{elementid}}_vtracks_descriptions" role="tab" data-bs-toggle="tab">
                 {{#str}} descriptions, tiny_media {{/str}}
             </a>
         </li>
         <li data-track-kind="chapters" class="nav-item">
-            <a class="nav-link" href="#{{elementid}}_vtracks_chapters" role="tab" data-toggle="tab">
+            <a class="nav-link" href="#{{elementid}}_vtracks_chapters" role="tab" data-bs-toggle="tab">
                 {{#str}} chapters, tiny_media {{/str}}
             </a>
         </li>
         <li data-track-kind="metadata" class="nav-item">
-            <a class="nav-link" href="#{{elementid}}_vtracks_metadata" role="tab" data-toggle="tab">
+            <a class="nav-link" href="#{{elementid}}_vtracks_metadata" role="tab" data-bs-toggle="tab">
                 {{#str}} metadata, tiny_media {{/str}}
             </a>
         </li>

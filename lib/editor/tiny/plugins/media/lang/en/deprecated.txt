@@ -8,7 +8,6 @@ helplinktext,tiny_media
 addsource,tiny_media
 addsource_help,tiny_media
 advancedsettings,tiny_media
-audio,tiny_media
 audiosourcelabel,tiny_media
 browserepositoriesimage,tiny_media
 createmedia,tiny_media
@@ -16,8 +15,8 @@ displayoptions,tiny_media
 entername,tiny_media
 entersource,tiny_media
 link,tiny_media
+tracks_help,tiny_media
 updatemedia,tiny_media
-video,tiny_media
 videoheight,tiny_media
 videosourcelabel,tiny_media
 videowidth,tiny_media

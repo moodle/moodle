@@ -15,15 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tiny media plugin version details.
+ * This file contains a controller for receiving Tiny Media service requests.
  *
  * @package    tiny_media
- * @copyright  2022 Huong Nguyen <huongnv13@gmail.com>
+ * @copyright  2025 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2025031500;
-$plugin->requires  = 2024100100;
-$plugin->component = 'tiny_media';
+$functions = [
+    'tiny_media_preview' => [
+        'classname' => 'tiny_media\external\preview',
+        'methodname' => 'execute',
+        'description' => 'Filters the content',
+        'type' => 'read',
+        'ajax' => true,
+    ],
+];

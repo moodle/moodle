@@ -44,13 +44,21 @@ iframe.mm_iframe {
     font-size: 1.25rem;
 }
 
-.tiny_image_form .tiny_image_loader_container {
+.tiny_image_form .tiny_image_loader_container,
+.tiny_media_form .tiny_media_loader_container {
     height: 200px;
+}
+
+.tiny_image_form  .tiny_image_preview_box {
+    height: 300px;
+}
+
+.tiny_media_form  .tiny_media_preview_box {
+    height: 100%;
 }
 
 .tiny_image_form  .tiny_image_preview_box,
 .tiny_media_form  .tiny_media_preview_box {
-    height: 300px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -61,6 +69,10 @@ iframe.mm_iframe {
     position: relative;
 }
 
+.tiny_media_form .tiny_media_preview_box img {
+    max-height: 300px;
+}
+
 .tiny_image_form .tiny_image_deleteicon,
 .tiny_media_form .tiny_media_delete_icon {
     position: absolute;
@@ -68,11 +80,8 @@ iframe.mm_iframe {
     right: 5px;
     cursor: pointer;
     z-index: 1;
-    width: 30px;
-    height: 30px;
     background: rgba(255, 255, 255, 1);
-    border-radius: 50%;
-    padding: 4px 5px 5px 9px;
+    padding: 5px 10px;
 }
 
 .tiny_image_form .tiny_image_deleteicon .fa-trash,
@@ -88,17 +97,39 @@ iframe.mm_iframe {
     }
 }
 
-.tiny_media_properties_col .size-container {
-    margin-left: 23px;
-}
-
 .subtitle-caption {
-    color: #0f6cbf;
     text-decoration: underline;
-    font-size: inherit;
-    cursor: pointer;
 }
 
-.upload-custom-thumbnail {
+.upload-custom-thumbnail,
+.delete-custom-thumbnail {
+    width: 100%;
+}
+
+.cs-link {
+    margin-left: -23px;
+}
+
+.dropzone-container .dropzone-icon img.icon {
+    height: .83em;
+    opacity: .4;
+}
+
+.tiny_media_preview_tag {
+    max-height: 500px;
+}
+
+.link_as_audio i,
+.link_as_video i {
+    font-size: 5em;
+    color: #bdc6cd;
+}
+
+.link_as_audio:hover i,
+.link_as_video:hover i {
+    color: rgb(97, 97, 97);
+}
+
+#media-filter-preview-container > video {
     width: 100%;
 }
