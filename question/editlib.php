@@ -280,11 +280,14 @@ function question_build_edit_resources($edittab, $baseurl, $params,
             if ($filterkey == 'jointype') {
                 $cleanparams['filter']['jointype'] = clean_param($filtervalue, PARAM_INT);
             } else {
+                if (!array_key_exists('name', $filtervalue)) {
+                    $filtervalue['name'] = $filterkey;
+                }
                 $cleanfilter = [
                     'name' => clean_param($filtervalue['name'], PARAM_ALPHANUM),
                     'jointype' => clean_param($filtervalue['jointype'], PARAM_INT),
                     'values' => $filtervalue['values'],
-                    'filteroptions' => $filtervalue['filteroptions'],
+                    'filteroptions' => $filtervalue['filteroptions'] ?? [],
                 ];
                 $cleanparams['filter'][$filterkey] = $cleanfilter;
             }
