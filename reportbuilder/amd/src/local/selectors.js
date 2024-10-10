@@ -46,6 +46,7 @@ const SELECTORS = {
         activeFilters: '[data-region="active-filters"]',
         activeFilter: '[data-region="active-filter"]',
         settingsSorting: '[data-region="settings-sorting"]',
+        activeColumnSort: '[data-region="active-column-sort"]',
         audiencesContainer: '[data-region="audiences"]',
         audienceFormContainer: '[data-region="audience-form-container"]',
         audienceCard: '[data-region="audience-card"]',

@@ -210,20 +210,22 @@ export const init = initialized => {
         }
     });
 
-    // Initialize sortable list to handle active conditions moving (note JQuery dependency, see MDL-72293 for resolution).
-    var activeConditionsSortableList = new SortableList(`${reportSelectors.regions.activeConditions}`,
-        {isHorizontal: false});
+    // Initialize sortable list to handle active conditions moving.
+    const activeConditionsSelector = reportSelectors.regions.activeConditions;
+    const activeConditionsSortableList = new SortableList(activeConditionsSelector, {isHorizontal: false});
     activeConditionsSortableList.getElementName = element => Promise.resolve(element.data('conditionName'));
 
-    $(document).on(SortableList.EVENTS.DROP, reportSelectors.regions.activeCondition, (event, info) => {
-        if (info.positionChanged) {
+    document.addEventListener(SortableList.EVENTS.elementDrop, event => {
+        const reportOrderCondition = event.target.closest(`${activeConditionsSelector} ${reportSelectors.regions.activeCondition}`);
+        if (reportOrderCondition && event.detail.positionChanged) {
             const pendingPromise = new Pending('core_reportbuilder/conditions:reorder');
-            const reportElement = event.target.closest(reportSelectors.regions.report);
-            const conditionId = info.element.data('conditionId');
-            const conditionPosition = info.element.data('conditionPosition');
+
+            const reportElement = reportOrderCondition.closest(reportSelectors.regions.report);
+            const {conditionId, conditionPosition, conditionName} = reportOrderCondition.dataset;
 
             // Select target position, if moving to the end then count number of element siblings.
-            let targetConditionPosition = info.targetNextElement.data('conditionPosition') || info.element.siblings().length + 2;
+            let targetConditionPosition = event.detail.targetNextElement.data('conditionPosition')
+                || event.detail.element.siblings().length + 2;
             if (targetConditionPosition > conditionPosition) {
                 targetConditionPosition--;
             }
@@ -232,7 +234,7 @@ export const init = initialized => {
             const reorderPromise = reorderCondition(reportElement.dataset.reportId, conditionId, targetConditionPosition);
             Promise.all([reorderPromise, new Promise(resolve => setTimeout(resolve, 1000))])
                 .then(([data]) => reloadSettingsConditionsRegion(reportElement, data))
-                .then(() => getString('conditionmoved', 'core_reportbuilder', info.element.data('conditionName')))
+                .then(() => getString('conditionmoved', 'core_reportbuilder', conditionName))
                 .then(addToast)
                 .then(() => {
                     dispatchEvent(reportEvents.tableReload, {}, reportElement);
