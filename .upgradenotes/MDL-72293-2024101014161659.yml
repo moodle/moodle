@@ -1,0 +1,9 @@
+issueNumber: MDL-72293
+notes:
+  core:
+    - message: >-
+        The `core/sortable_list` Javascript module now emits native events,
+        removing the jQuery dependency from calling code that wants to listen
+        for the events. Backwards compatibility with existing code using jQuery
+        is preserved
+      type: improved
