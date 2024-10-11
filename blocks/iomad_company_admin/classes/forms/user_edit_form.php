@@ -40,9 +40,10 @@ class user_edit_form extends \moodleform {
     protected $companyname = '';
     protected $licenseid = 0;
     protected $licensecourses = array();
+    protected $subhierarchieslist = array();
 
     public function __construct($actionurl, $companyid, $departmentid, $licenseid=0) {
-        global $CFG, $USER, $companycontext;
+        global $CFG, $USER, $output, $companycontext;
 
         $this->selectedcompany = $companyid;
         $this->departmentid = $departmentid;
@@ -54,15 +55,21 @@ class user_edit_form extends \moodleform {
         $parentlevel = company::get_company_parentnode($company->id);
         $this->companydepartment = $parentlevel->id;
         $systemcontext = \context_system::instance();
+        $departmenttree = array();
 
         if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', $this->companycontext)) {
             $userhierarchylevel = $parentlevel->id;
+            $userlevels = array($parentlevel->id => $parentlevel->id);
         } else {
-            $userlevel = $company->get_userlevel($USER);
+            $userlevels = $company->get_userlevel($USER);
             $userhierarchylevel = key($userlevel);
         }
+        foreach ($userlevels as $userlevelid => $userlevel) {
+            $this->subhierarchieslist = $this->subhierarchieslist + \company::get_all_subdepartments($userlevelid);
+            $departmenttree[] = \company::get_all_subdepartments_raw($userlevelid);
+        }
+        $this->treehtml = $output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
 
-        $this->subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
         if ($this->departmentid == 0) {
             $departmentid = $userhierarchylevel;
         } else {
@@ -147,7 +154,9 @@ class user_edit_form extends \moodleform {
 
         // Deal with company optional fields.
         $mform->addElement('header', 'category_id', get_string('advanced'));
-        $output->display_tree_selector_form($this->company, $mform, 0, '', false, true);
+        $mform->addElement('static', 'departmenttext', get_string('department', 'block_iomad_company_admin'));
+        $mform->addElement('html', $this->treehtml);
+        $mform->addElement('select', 'deptid', get_string('department', 'block_iomad_company_admin'), $this->subhierarchieslist, 0);
 
         // Add in company/department manager checkboxes.
         $managerarray = array();
