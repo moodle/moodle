@@ -109,7 +109,7 @@ Feature: A course welcome message will be sent to the user when they are enrolle
     And I should see "Your email address: first@example.com"
     And I should see "Your first name: First"
     And I should see "Your last name: User"
-    And I should see "Your course role: student"
+    And I should see "Your course role: Student"
     # Login as second user and check the notification.
     When I am on the "C1" "course" page logged in as user2
     Then I should see "1" in the "#nav-notification-popover-container [data-region='count-container']" "css_element"
@@ -120,4 +120,4 @@ Feature: A course welcome message will be sent to the user when they are enrolle
     And I should see "Your email address: second@example.com"
     And I should see "Your first name: Second"
     And I should see "Your last name: User"
-    And I should see "Your course role: student"
+    And I should see "Your course role: Student"

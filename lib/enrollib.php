@@ -3655,11 +3655,7 @@ abstract class enrol_plugin {
         $context = context_course::instance($instance->courseid);
         $user = core_user::get_user($userid);
         $course = get_course($instance->courseid);
-        $courserole = $DB->get_field(
-            table: 'role',
-            return: 'shortname',
-            conditions: ['id' => $instance->roleid],
-        );
+        $courserole = $DB->get_record('role', ['id' => $instance->roleid]);
 
         $a = new stdClass();
         $a->coursename = format_string($course->fullname, true, ['context' => $context, 'escape' => false]);
@@ -3689,7 +3685,7 @@ abstract class enrol_plugin {
                 $user->email,
                 $user->firstname,
                 $user->lastname,
-                $courserole,
+                role_get_name($courserole, $context),
             ];
             $message = str_replace($placeholders, $values, $message);
             if (strpos($message, '<') === false) {
