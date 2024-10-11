@@ -2159,6 +2159,7 @@ abstract class enrol_plugin {
         $hook = new \core_enrol\hook\after_user_enrolled(
             enrolinstance: $instance,
             userenrolmentinstance: $ue,
+            roleid: $roleid,
         );
         \core\di::get(\core\hook\manager::class)->dispatch($hook);
 
@@ -3644,18 +3645,23 @@ abstract class enrol_plugin {
      * @param int $userid User ID.
      * @param int $sendoption Send email from constant ENROL_SEND_EMAIL_FROM_*
      * @param null|string $message Message to send to the user.
+     * @param int|null $roleid The assigned role ID
      */
     public function send_course_welcome_message_to_user(
         stdClass $instance,
         int $userid,
         int $sendoption,
         ?string $message = '',
+        ?int $roleid = null,
     ): void {
         global $DB;
         $context = context_course::instance($instance->courseid);
         $user = core_user::get_user($userid);
         $course = get_course($instance->courseid);
-        $courserole = $DB->get_record('role', ['id' => $instance->roleid]);
+
+        // Fallback to the instance role ID if parameter not specified.
+        $courseroleid = $roleid ?: $instance->roleid;
+        $courserole = $DB->get_record('role', ['id' => $courseroleid]);
 
         $a = new stdClass();
         $a->coursename = format_string($course->fullname, true, ['context' => $context, 'escape' => false]);
