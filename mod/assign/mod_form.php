@@ -42,7 +42,7 @@ class mod_assign_mod_form extends moodleform_mod {
      * @return void
      */
     public function definition() {
-        global $CFG, $COURSE, $DB;
+        global $CFG, $COURSE;
         $mform = $this->_form;
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -73,19 +73,7 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'submissionattachments', get_string('submissionattachments', 'assign'));
         $mform->addHelpButton('submissionattachments', 'submissionattachments', 'assign');
 
-        $ctx = null;
-        if ($this->current && $this->current->coursemodule) {
-            $cm = get_coursemodule_from_instance('assign', $this->current->id, 0, false, MUST_EXIST);
-            $ctx = context_module::instance($cm->id);
-        }
-        $assignment = new assign($ctx, null, null);
-        if ($this->current && $this->current->course) {
-            if (!$ctx) {
-                $ctx = context_course::instance($this->current->course);
-            }
-            $course = $DB->get_record('course', array('id'=>$this->current->course), '*', MUST_EXIST);
-            $assignment->set_course($course);
-        }
+        [$assignment] = $this->get_assign();
 
         $mform->addElement('header', 'availability', get_string('availability', 'assign'));
         $mform->setExpanded('availability', true);
@@ -287,6 +275,9 @@ class mod_assign_mod_form extends moodleform_mod {
             $errors['attemptreopenmethod'] = get_string('reopenuntilpassincompatiblewithblindmarking', 'assign');
         }
 
+        [$assignment] = $this->get_assign();
+        $errors = array_merge($errors, $assignment->plugin_settings_validation($data, $files));
+
         return $errors;
     }
 
@@ -296,21 +287,7 @@ class mod_assign_mod_form extends moodleform_mod {
      * @param array $defaultvalues
      */
     public function data_preprocessing(&$defaultvalues) {
-        global $DB;
-
-        $ctx = null;
-        if ($this->current && $this->current->coursemodule) {
-            $cm = get_coursemodule_from_instance('assign', $this->current->id, 0, false, MUST_EXIST);
-            $ctx = context_module::instance($cm->id);
-        }
-        $assignment = new assign($ctx, null, null);
-        if ($this->current && $this->current->course) {
-            if (!$ctx) {
-                $ctx = context_course::instance($this->current->course);
-            }
-            $course = $DB->get_record('course', array('id'=>$this->current->course), '*', MUST_EXIST);
-            $assignment->set_course($course);
-        }
+        [$assignment, $ctx] = $this->get_assign();
 
         $draftitemid = file_get_submitted_draft_itemid('introattachments');
         file_prepare_draft_area($draftitemid, $ctx->id, 'mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA,
@@ -405,5 +382,31 @@ class mod_assign_mod_form extends moodleform_mod {
                 }
             }
         }
+    }
+
+    /**
+     * Get a relevant assign instance for this form, and the context.
+     *
+     * If we are editing an existing assign, it is that assignment and context, otherwise it is for the course context.
+     *
+     * @return array [$assignment, $ctx] the assignment object and the context.
+     */
+    protected function get_assign(): array {
+        global $DB;
+
+        $ctx = null;
+        if ($this->current && $this->current->coursemodule) {
+            $cm = get_coursemodule_from_instance('assign', $this->current->id, 0, false, MUST_EXIST);
+            $ctx = context_module::instance($cm->id);
+        }
+        $assignment = new assign($ctx, null, null);
+        if ($this->current && $this->current->course) {
+            if (!$ctx) {
+                $ctx = context_course::instance($this->current->course);
+            }
+            $course = $DB->get_record('course', ['id' => $this->current->course], '*', MUST_EXIST);
+            $assignment->set_course($course);
+        }
+        return [$assignment, $ctx];
     }
 }
