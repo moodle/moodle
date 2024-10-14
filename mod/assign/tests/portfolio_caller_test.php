@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/group/lib.php');
  * @copyright Brendan Cox <brendan.cox@totaralearning.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class portfolio_caller_test extends \advanced_testcase {
+final class portfolio_caller_test extends \advanced_testcase {
 
     /**
      * Test an assignment file is loaded for a user who submitted it.

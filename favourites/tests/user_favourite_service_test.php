@@ -26,7 +26,7 @@ use core_favourites\local\entity\favourite;
  * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_favourite_service_test extends \advanced_testcase {
+final class user_favourite_service_test extends \advanced_testcase {
 
     public function setUp(): void {
         parent::setUp();

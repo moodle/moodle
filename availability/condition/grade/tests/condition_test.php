@@ -23,7 +23,7 @@ namespace availability_grade;
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class condition_test extends \advanced_testcase {
+final class condition_test extends \advanced_testcase {
     /**
      * Tests constructing and using grade condition.
      */

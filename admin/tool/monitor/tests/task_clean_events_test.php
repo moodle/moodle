@@ -24,7 +24,7 @@ namespace tool_monitor;
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class task_clean_events_test extends \advanced_testcase {
+final class task_clean_events_test extends \advanced_testcase {
 
     /**
      * Test set up.

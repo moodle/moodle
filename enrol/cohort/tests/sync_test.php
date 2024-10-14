@@ -31,7 +31,7 @@ require_once($CFG->dirroot.'/group/lib.php');
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sync_test extends \advanced_testcase {
+final class sync_test extends \advanced_testcase {
 
     protected function enable_plugin() {
         $enabled = enrol_get_plugins(true);

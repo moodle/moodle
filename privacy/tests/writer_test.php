@@ -40,7 +40,7 @@ use \core_privacy\local\request\writer;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\request\writer
  */
-class writer_test extends advanced_testcase {
+final class writer_test extends advanced_testcase {
     /**
      * Ensure that the writer is cleared away as appropriate after each
      * test.

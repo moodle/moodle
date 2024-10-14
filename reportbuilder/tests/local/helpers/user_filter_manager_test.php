@@ -32,6 +32,16 @@ use core_user\reportbuilder\datasource\users;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class user_filter_manager_test extends advanced_testcase {
+    /**
+     * Helper method to return all user preferences for filters - based on the current storage backend using the same
+     *
+     * @return array
+     */
+    private function get_filter_preferences(): array {
+        return array_filter(get_user_preferences(), static function(string $key): bool {
+            return strpos($key, 'reportbuilder-report-') === 0;
+        }, ARRAY_FILTER_USE_KEY);
+    }
 
     /**
      * Data provider for {@see test_get}

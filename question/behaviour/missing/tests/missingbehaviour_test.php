@@ -40,7 +40,7 @@ require_once(__DIR__ . '/../behaviour.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class missingbehaviour_test extends \advanced_testcase {
+final class missingbehaviour_test extends \advanced_testcase {
 
     public function test_missing_cannot_start(): void {
         $qa = new question_attempt(\test_question_maker::make_question('truefalse', 'true'), 0);

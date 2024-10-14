@@ -35,7 +35,7 @@ require_once($CFG->dirroot.'/grade/report/grader/lib.php');
  * @copyright 2012 Andrew Davis
  * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class report_graderlib_test extends \advanced_testcase {
+final class report_graderlib_test extends \advanced_testcase {
 
     /**
      * Tests grade_report_grader::process_data()

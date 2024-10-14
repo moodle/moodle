@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/privacy/tests/fixtures/provider_throwing_exceptio
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\manager
  */
-class manager_test extends \advanced_testcase {
+final class manager_test extends \advanced_testcase {
     /**
      * Test tearDown.
      */

@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright  2012 Jean-Michel Vedrine
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class blackboardformatpool_test extends \question_testcase {
+final class blackboardformatpool_test extends \question_testcase {
 
     public function make_test_xml() {
         $xmlfile = new qformat_blackboard_six_file();

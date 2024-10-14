@@ -26,7 +26,7 @@ namespace core;
  * @copyright  2016 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class curl_security_helper_test extends \advanced_testcase {
+final class curl_security_helper_test extends \advanced_testcase {
     /**
      * Test for \core\files\curl_security_helper::url_is_blocked().
      *

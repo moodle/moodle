@@ -34,7 +34,7 @@ require_once($CFG->libdir . '/filterlib.php');
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filterlib_test extends \advanced_testcase {
+final class filterlib_test extends \advanced_testcase {
 
     private function assert_only_one_filter_globally($filter, $state) {
         global $DB;

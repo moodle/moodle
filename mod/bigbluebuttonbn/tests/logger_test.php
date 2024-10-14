@@ -36,7 +36,7 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @covers \mod_bigbluebuttonbn\logger
  * @coversDefaultClass \mod_bigbluebuttonbn\logger
  */
-class logger_test extends \advanced_testcase {
+final class logger_test extends \advanced_testcase {
     use testcase_helper_trait;
 
     /**

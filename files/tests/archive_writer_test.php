@@ -28,7 +28,7 @@ use core_files\local\archive_writer\zip_writer;
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @covers \core_files\archive_writer
  */
-class archive_writer_test extends advanced_testcase {
+final class archive_writer_test extends advanced_testcase {
 
     /**
      * Test get_file_writer().

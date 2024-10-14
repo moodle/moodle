@@ -26,7 +26,7 @@ use message_airnotifier_manager;
  * @copyright   2020 Juan Leyva <juan@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class manager_test extends \advanced_testcase {
+final class manager_test extends \advanced_testcase {
 
     /** Test check_configuration by default **/
     public function test_check_configuration_default(): void {

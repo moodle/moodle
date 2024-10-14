@@ -38,7 +38,7 @@ use mod_forum\local\entities\forum as forum_entity;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @coversDefaultClass \core_grades\component_gradeitem
  */
-class component_gradeitem_test extends advanced_testcase {
+final class component_gradeitem_test extends advanced_testcase {
 
     /**
      * Test get_formatted_grade_for_user with points.

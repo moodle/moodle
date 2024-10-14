@@ -26,7 +26,7 @@ use core_role_preset;
  * @copyright 2013 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class preset_test extends \advanced_testcase {
+final class preset_test extends \advanced_testcase {
     public function test_xml(): void {
         global $DB;
 

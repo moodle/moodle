@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright  2015 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class least_used_variant_strategy_test extends \advanced_testcase {
+final class least_used_variant_strategy_test extends \advanced_testcase {
 
     public function test_question_with_one_variant_always_picks_that(): void {
         $question = \test_question_maker::make_question('shortanswer');

@@ -33,7 +33,7 @@ namespace core;
  * @copyright   2020 Michael Hawkins <michaelh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class content_test extends \advanced_testcase {
+final class content_test extends \advanced_testcase {
 
     /**
      * A test to confirm only valid cases allow exporting of course content.

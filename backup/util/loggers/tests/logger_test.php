@@ -55,7 +55,7 @@ require_once($CFG->dirroot . '/backup/util/loggers/file_logger.class.php');
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class logger_test extends \basic_testcase {
+final class logger_test extends \basic_testcase {
 
     /**
      * test base_logger class

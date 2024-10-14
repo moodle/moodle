@@ -24,7 +24,7 @@ namespace core;
  * @copyright  2015 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class recordset_walk_test extends \advanced_testcase {
+final class recordset_walk_test extends \advanced_testcase {
 
     public function setUp(): void {
         parent::setUp();

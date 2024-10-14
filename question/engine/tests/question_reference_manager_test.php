@@ -30,7 +30,7 @@ use core_question_generator;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core_question\question_reference_manager
  */
-class question_reference_manager_test extends advanced_testcase {
+final class question_reference_manager_test extends advanced_testcase {
 
     public function test_questions_with_references(): void {
         global $DB;

@@ -38,7 +38,7 @@ use stdClass;
  * @covers \mod_quiz\external\reopen_attempt
  * @covers \mod_quiz\external\get_reopen_attempt_confirmation
  */
-class reopen_attempt_test extends externallib_advanced_testcase {
+final class reopen_attempt_test extends externallib_advanced_testcase {
     /** @var stdClass|null if we make a quiz attempt, we store the student object here. */
     protected $student;
 

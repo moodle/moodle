@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @copyright  2015 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_log_rule_test extends \basic_testcase {
+final class restore_log_rule_test extends \basic_testcase {
 
     function test_process_keeps_log_unmodified(): void {
 

@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_type_test extends \question_testcase {
+final class question_type_test extends \question_testcase {
     /** @var qtype_gapselect instance of the question type class to test. */
     protected $qtype;
 

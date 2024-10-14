@@ -45,7 +45,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @since      Moodle 4.3
  * @coversDefaultClass \mod_chat\external\view_sessions
  */
-class view_sessions_test extends externallib_advanced_testcase {
+final class view_sessions_test extends externallib_advanced_testcase {
 
     /**
      * Prepare the test.

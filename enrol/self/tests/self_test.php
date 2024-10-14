@@ -34,7 +34,7 @@ require_once($CFG->dirroot.'/enrol/self/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_self_plugin
  */
-class self_test extends \advanced_testcase {
+final class self_test extends \advanced_testcase {
 
     public function test_basics(): void {
         $this->assertTrue(enrol_is_enabled('self'));

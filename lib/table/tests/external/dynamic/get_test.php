@@ -38,7 +38,7 @@ use advanced_testcase;
  * @copyright  2020 Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_test extends advanced_testcase {
+final class get_test extends advanced_testcase {
     /**
      * Test execute invalid component format.
      */

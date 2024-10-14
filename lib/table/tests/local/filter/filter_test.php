@@ -30,7 +30,7 @@ use InvalidArgumentException;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \core_table\local\filter\filter
  */
-class filter_test extends advanced_testcase {
+final class filter_test extends advanced_testcase {
     /**
      * Test that the constructor correctly handles a number of conditions.
      *

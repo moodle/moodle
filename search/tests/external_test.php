@@ -31,7 +31,7 @@ namespace core_search;
  * @copyright 2017 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external_test extends \advanced_testcase {
+final class external_test extends \advanced_testcase {
 
     public function setUp(): void {
         parent::setUp();

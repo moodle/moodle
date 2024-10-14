@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/mod/data/locallib.php');
  * @copyright  2022 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class locallib_test extends \advanced_testcase {
+final class locallib_test extends \advanced_testcase {
 
     /**
      * Confirms that search is working

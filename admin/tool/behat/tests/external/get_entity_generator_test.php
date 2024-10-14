@@ -30,7 +30,7 @@ namespace tool_behat\external;
  *
  * @covers \tool_behat\external\get_entity_generator
  */
-class get_entity_generator_test extends \advanced_testcase {
+final class get_entity_generator_test extends \advanced_testcase {
 
     /**
      * Log in as admin

@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_search\external\view_results
  */
-class view_results_test extends \externallib_advanced_testcase {
+final class view_results_test extends \externallib_advanced_testcase {
 
     public function setUp(): void {
         parent::setUp();

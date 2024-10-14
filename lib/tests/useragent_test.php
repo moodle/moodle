@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core_useragent
  */
-class useragent_test extends advanced_testcase {
+final class useragent_test extends advanced_testcase {
 
     /**
      * Restores the user agent to the default one.

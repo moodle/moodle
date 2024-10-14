@@ -32,7 +32,7 @@ use core_privacy\local\metadata\types;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\metadata\collection
  */
-class collection_test extends \advanced_testcase {
+final class collection_test extends \advanced_testcase {
 
     /**
      * Test that adding an unknown type causes the type to be added to the collection.

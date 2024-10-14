@@ -33,7 +33,7 @@ require_once($CFG->dirroot.'/course/tests/fixtures/course_capability_assignment.
  * @copyright  2013 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class management_helper_test extends \advanced_testcase {
+final class management_helper_test extends \advanced_testcase {
 
     /** Category management capability: moodle/category:manage */
     const CATEGORY_MANAGE = 'moodle/category:manage';

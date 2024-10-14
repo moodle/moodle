@@ -29,7 +29,7 @@ require_once($CFG->dirroot.'/mod/lti/servicelib.php');
  * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class servicelib_test extends \basic_testcase {
+final class servicelib_test extends \basic_testcase {
     /**
      * Test that lti_parse_message_id never fails with good and bad XML.
      *

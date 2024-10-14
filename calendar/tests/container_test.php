@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/calendar/lib.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core_calendar\local\event\container
  */
-class container_test extends \advanced_testcase {
+final class container_test extends \advanced_testcase {
 
     /**
      * Test setup.

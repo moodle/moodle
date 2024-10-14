@@ -35,7 +35,7 @@ global $CFG;
 
 require_once($CFG->dirroot . '/question/editlib.php');
 
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Tests set up.

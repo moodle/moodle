@@ -31,7 +31,7 @@ use \core\oauth2\user_field_mapping;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  * @covers \core\oauth2\api
  */
-class oauth2_test extends \advanced_testcase {
+final class oauth2_test extends \advanced_testcase {
 
     /**
      * Tests the crud operations on oauth2 issuers.

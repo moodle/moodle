@@ -25,7 +25,7 @@ use mod_forum\local\entities\post as post_entity;
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class entities_post_test extends \advanced_testcase {
+final class entities_post_test extends \advanced_testcase {
     /**
      * Test the entity returns expected values.
      */

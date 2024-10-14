@@ -30,7 +30,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers ::has_capability
  */
-class accesslib_has_capability_test extends \advanced_testcase {
+final class accesslib_has_capability_test extends \advanced_testcase {
 
     /**
      * Unit tests to check the operation of locked contexts.

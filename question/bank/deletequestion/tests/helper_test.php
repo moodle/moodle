@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright 2023 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class helper_test extends \advanced_testcase {
+final class helper_test extends \advanced_testcase {
 
     /**
      * @var \context_module module context.

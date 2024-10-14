@@ -26,7 +26,7 @@ use core_competency\course_module_competency;
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class processor_test extends \advanced_testcase {
+final class processor_test extends \advanced_testcase {
 
     /** @var \core_competency\competency_framework|null $f1  */
     protected $f1 = null;

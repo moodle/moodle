@@ -24,7 +24,7 @@ namespace tool_usertours;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \tool_usertours\local\filter\role
  */
-class role_filter_test extends \advanced_testcase {
+final class role_filter_test extends \advanced_testcase {
     /**
      * @var $course Test course
      */

@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/mod/scorm/lib.php');
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class locallib_test extends \advanced_testcase {
+final class locallib_test extends \advanced_testcase {
 
     public function setUp(): void {
         parent::setUp();

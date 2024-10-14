@@ -33,7 +33,7 @@ require_once(__DIR__ . '/../behaviour.php');
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mark_display_test extends \basic_testcase {
+final class mark_display_test extends \basic_testcase {
     /** @var qbehaviour_adaptive_renderer the renderer to test. */
     protected $renderer;
 

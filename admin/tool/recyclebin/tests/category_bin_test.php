@@ -24,7 +24,7 @@ namespace tool_recyclebin;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \tool_recyclebin\category_bin
  */
-class category_bin_test extends \advanced_testcase {
+final class category_bin_test extends \advanced_testcase {
 
     /**
      * @var \stdClass $course

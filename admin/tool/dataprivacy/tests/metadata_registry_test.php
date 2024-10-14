@@ -23,7 +23,7 @@ namespace tool_dataprivacy;
  * @copyright  2018 Adrian Greeve <adriangreeve.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class metadata_registry_test extends \advanced_testcase {
+final class metadata_registry_test extends \advanced_testcase {
 
     /**
      * Fetch the meta data and return it in a form that we can easily unit test.

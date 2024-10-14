@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/tests/fixtures/testable_flexible_table.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \flexible_table
  */
-class tablelib_test extends \advanced_testcase {
+final class tablelib_test extends \advanced_testcase {
     protected function generate_columns($cols) {
         $columns = array();
         foreach (range(0, $cols - 1) as $j) {

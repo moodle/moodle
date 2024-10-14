@@ -26,7 +26,7 @@ use Google_Service_YouTube;
  * @copyright  2021 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class googlelib_test extends \advanced_testcase {
+final class googlelib_test extends \advanced_testcase {
 
     public function test_invalid_google_api_key(): void {
         global $CFG;

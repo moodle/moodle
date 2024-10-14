@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class strike_is_not_used_testcase
  */
-class strike_is_not_used_test extends all_checks {
+final class strike_is_not_used_test extends all_checks {
     /** @var string Check type */
     public $checktype = 'strike_is_not_used';
 

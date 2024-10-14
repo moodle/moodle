@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/rating/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \rating
  */
-class rating_test extends \advanced_testcase {
+final class rating_test extends \advanced_testcase {
 
     protected $syscontext;
     protected $neededcaps = array('view', 'viewall', 'viewany', 'rate');

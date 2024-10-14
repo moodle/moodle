@@ -34,7 +34,7 @@ use IMSGlobal\LTI\ToolProvider\User;
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class data_connector_test extends \advanced_testcase {
+final class data_connector_test extends \advanced_testcase {
 
     /**
      * Test set up.

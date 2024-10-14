@@ -39,7 +39,7 @@ use tool_dataprivacy\api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \tool_dataprivacy\api
  */
-class submit_selected_courses_form_test extends \externallib_advanced_testcase {
+final class submit_selected_courses_form_test extends \externallib_advanced_testcase {
     /**
      * Test for submit_selected_courses_form().
      */

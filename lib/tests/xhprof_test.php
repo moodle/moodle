@@ -24,7 +24,7 @@ namespace core;
  * @copyright 2019 Brendan Heywood <brendan@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class xhprof_test extends \advanced_testcase {
+final class xhprof_test extends \advanced_testcase {
 
     public static function setUpBeforeClass(): void {
         global $CFG;

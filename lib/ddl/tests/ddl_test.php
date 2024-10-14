@@ -33,7 +33,7 @@ use xmldb_table;
  * @copyright  2008 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ddl_test extends \database_driver_testcase {
+final class ddl_test extends \database_driver_testcase {
     /** @var xmldb_table[] keys are table name. Created in setUp. */
     private $tables = array();
     /** @var array table name => array of stdClass test records loaded into that table. Created in setUp. */

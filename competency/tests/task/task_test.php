@@ -27,7 +27,7 @@ use core_competency\template;
  * @copyright  2015 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class task_test extends \advanced_testcase {
+final class task_test extends \advanced_testcase {
 
     public function test_sync_plans_from_cohorts_task(): void {
         global $DB;

@@ -36,7 +36,7 @@ use question_engine;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \question_engine
  */
-class question_engine_test extends advanced_testcase {
+final class question_engine_test extends advanced_testcase {
 
     /**
      * Load required libraries.

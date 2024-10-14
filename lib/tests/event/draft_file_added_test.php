@@ -34,7 +34,7 @@ namespace core\event;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \core\event\draft_file_added
  */
-class draft_file_added_test extends \advanced_testcase {
+final class draft_file_added_test extends \advanced_testcase {
     /**
      * Test draft file added event.
      */

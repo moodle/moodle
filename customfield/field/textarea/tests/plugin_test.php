@@ -31,7 +31,7 @@ use context_system;
  * @covers     \customfield_textarea\field_controller
  * @covers     \customfield_textarea\data_controller
  */
-class plugin_test extends \advanced_testcase {
+final class plugin_test extends \advanced_testcase {
 
     /** @var \stdClass[] */
     private $courses = [];

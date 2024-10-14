@@ -24,7 +24,7 @@ namespace core;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Petr Skoda <petr.skoda@totaralms.com>
  */
-class date_legacy_test extends \advanced_testcase {
+final class date_legacy_test extends \advanced_testcase {
     public function test_settings(): void {
         global $CFG;
         $this->resetAfterTest();

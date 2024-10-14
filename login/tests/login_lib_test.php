@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/login/lib.php');
  * @copyright  2017 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class login_lib_test extends \advanced_testcase {
+final class login_lib_test extends \advanced_testcase {
 
     public function test_core_login_process_password_reset_one_time_without_username_protection(): void {
         global $CFG;

@@ -25,7 +25,7 @@ namespace block_online_users;
  * @author     Barry Oosthuizen <barry.oosthuizen@nottingham.ac.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class online_users_test extends \advanced_testcase {
+final class online_users_test extends \advanced_testcase {
 
     protected $data;
 

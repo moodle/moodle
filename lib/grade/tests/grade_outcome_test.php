@@ -28,7 +28,7 @@ require_once(__DIR__.'/fixtures/lib.php');
  * @copyright  nicolas@moodle.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class grade_outcome_test extends \grade_base_testcase {
+final class grade_outcome_test extends \grade_base_testcase {
 
     public function test_grade_outcome(): void {
         $this->sub_test_grade_outcome_construct();

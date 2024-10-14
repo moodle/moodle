@@ -28,7 +28,7 @@ use core\context, core\context_helper;
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\context\module
  */
-class module_test extends \advanced_testcase {
+final class module_test extends \advanced_testcase {
     /**
      * Tests legacy class.
      * @coversNothing

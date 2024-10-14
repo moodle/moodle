@@ -28,7 +28,7 @@ use advanced_testcase;
  * @covers \mod_bigbluebuttonbn\task\base_send_notification
  * @covers \mod_bigbluebuttonbn\task\send_recording_ready_notification
  */
-class send_recording_ready_notification_test extends advanced_testcase {
+final class send_recording_ready_notification_test extends advanced_testcase {
     /**
      * Test the sending of messages.
      */

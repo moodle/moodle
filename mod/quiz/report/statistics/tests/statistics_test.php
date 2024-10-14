@@ -101,7 +101,7 @@ class testable_question_statistics extends \core_question\statistics\questions\c
  * @copyright 2008 Jamie Pratt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class statistics_test extends \basic_testcase {
+final class statistics_test extends \basic_testcase {
     /** @var testable_all_calculated_for_qubaid_condition object created to test class. */
     protected $qstats;
 

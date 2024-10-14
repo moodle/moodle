@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright Copyright (c) 2016 Blackboard Inc. (http://www.blackboard.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class httpsreplace_test extends \advanced_testcase {
+final class httpsreplace_test extends \advanced_testcase {
 
     /**
      * Data provider for test_upgrade_http_links

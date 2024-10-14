@@ -23,7 +23,7 @@ namespace mod_feedback\form;
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package mod_feedback
  */
-class create_template_form_test extends \advanced_testcase {
+final class create_template_form_test extends \advanced_testcase {
     /**
      * Run the basic setup for the test
      */

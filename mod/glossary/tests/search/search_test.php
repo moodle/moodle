@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/mod/glossary/tests/generator/lib.php');
  * @copyright   2016 David Monllao {@link http://www.davidmonllao.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class search_test extends \advanced_testcase {
+final class search_test extends \advanced_testcase {
 
     /**
      * @var string Area id
