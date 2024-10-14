@@ -1,5 +1,11 @@
 This file describes API changes in the quiz code.
 
+=== 4.4.5 ===
+* A new test-case, `\mod_quiz\tests\attempt_walkthrough_testcase`, has been extracted from the
+  `\mod_quiz\attempt_walkthrough_from_csv_test` unit test and should be used instead.
+  To support this testcase the existing `$files` instance property should be replaced with a new static method,
+  `::get_test_files`. Both the existing instance property and the new static method can co-exist.
+
 === 4.4 ===
 * A quiz_structure_modified callback has been added for quiz_ plugins, called from
   grade_calculator::recompute_quiz_sumgrades(). Plugins can implement this by creating a `quiz_structure_modified`
