@@ -38,7 +38,7 @@ require_once(__DIR__.'/../lib.php');
  * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class store_test extends \cachestore_tests {
+final class store_test extends \cachestore_tests {
     /**
      * @var cachestore_redis
      */

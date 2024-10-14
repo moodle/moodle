@@ -31,7 +31,7 @@ namespace core_notes;
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_test extends \advanced_testcase {
+final class generator_test extends \advanced_testcase {
 
     /** Test create_instance method */
     public function test_create_instance(): void {

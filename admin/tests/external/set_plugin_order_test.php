@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright   2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class set_plugin_order_test extends \externallib_advanced_testcase {
+final class set_plugin_order_test extends \externallib_advanced_testcase {
     /**
      * Text execute method for editor plugins, which support ordering.
      *

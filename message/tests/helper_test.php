@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core_message\helper
  */
-class helper_test extends \advanced_testcase {
+final class helper_test extends \advanced_testcase {
 
     public function setUp(): void {
         parent::setUp();

@@ -25,7 +25,7 @@ use tool_uploadcourse_helper;
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class helper_test extends \advanced_testcase {
+final class helper_test extends \advanced_testcase {
 
     public function test_generate_shortname(): void {
         $data = (object) array('fullname' => 'Ah bh Ch 01 02 03', 'idnumber' => 'ID123');

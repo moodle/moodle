@@ -30,7 +30,7 @@ require_once($CFG->dirroot.'/grade/querylib.php');
  * @copyright 2011 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class querylib_test extends \advanced_testcase {
+final class querylib_test extends \advanced_testcase {
 
     public function test_grade_get_gradable_activities(): void {
         $this->resetAfterTest(true);

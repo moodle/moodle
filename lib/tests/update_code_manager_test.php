@@ -29,7 +29,7 @@ require_once(__DIR__.'/fixtures/testable_update_code_manager.php');
  * @copyright 2015 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class update_code_manager_test extends \advanced_testcase {
+final class update_code_manager_test extends \advanced_testcase {
 
     public function test_get_remote_plugin_zip(): void {
         $codeman = new \core\update\testable_code_manager();

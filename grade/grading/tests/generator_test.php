@@ -38,7 +38,7 @@ use gradingform_rubric_controller;
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_test extends advanced_testcase {
+final class generator_test extends advanced_testcase {
 
     /**
      * Test gradingform controller creation.

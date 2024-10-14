@@ -26,7 +26,7 @@ namespace mod_forum;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Brendan Cox <brendan.cox@totaralearning.com>
  */
-class portfolio_caller_test extends \advanced_testcase {
+final class portfolio_caller_test extends \advanced_testcase {
 
     /**
      * Ensure that a file will be loaded in an instance of the caller when supplied valid and

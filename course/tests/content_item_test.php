@@ -31,7 +31,7 @@ use core_course\local\entity\string_title;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \core_course\local\entity\content_item
  */
-class content_item_test extends \advanced_testcase {
+final class content_item_test extends \advanced_testcase {
 
     /**
      * Test the content_item class.

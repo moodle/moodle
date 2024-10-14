@@ -37,7 +37,7 @@ require_once($CFG->dirroot.'/mod/book/tool/importhtml/locallib.php');
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class locallib_test extends \advanced_testcase {
+final class locallib_test extends \advanced_testcase {
 
     public function setUp(): void {
         parent::setUp();

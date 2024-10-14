@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_test extends \basic_testcase {
+final class question_test extends \basic_testcase {
 
     public function test_get_question_summary(): void {
         $dd = \test_question_maker::make_question('ddwtos');

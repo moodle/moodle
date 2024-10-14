@@ -42,7 +42,7 @@ require_once($CFG->libdir . '/blocklib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \moodle_page
  */
-class moodle_page_test extends \advanced_testcase {
+final class moodle_page_test extends \advanced_testcase {
 
     /**
      * @var testable_moodle_page

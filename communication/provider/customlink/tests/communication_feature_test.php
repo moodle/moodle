@@ -32,7 +32,7 @@ require_once(__DIR__ . '/../../../tests/communication_test_helper_trait.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \communication_customlink\communication_feature
  */
-class communication_feature_test extends \advanced_testcase {
+final class communication_feature_test extends \advanced_testcase {
     use communication_test_helper_trait;
 
     public function setUp(): void {

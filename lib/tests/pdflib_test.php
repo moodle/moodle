@@ -26,7 +26,7 @@ use TCPDF_STATIC;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \pdf
  */
-class pdflib_test extends \advanced_testcase {
+final class pdflib_test extends \advanced_testcase {
 
     public function test_gettcpdf_producer(): void {
         global $CFG;

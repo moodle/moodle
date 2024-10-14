@@ -33,7 +33,7 @@ require_once($CFG->dirroot.'/grade/report/user/lib.php');
  * @copyright 2012 Andrew Davis
  * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class reportuserlib_test extends \advanced_testcase {
+final class reportuserlib_test extends \advanced_testcase {
 
     /**
      * Tests grade_report_user::inject_rowspans()

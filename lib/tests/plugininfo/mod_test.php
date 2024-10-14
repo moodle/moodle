@@ -28,7 +28,7 @@ use advanced_testcase;
  * @copyright   2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_test extends advanced_testcase {
+final class mod_test extends advanced_testcase {
     public function test_get_enabled_plugins(): void {
         $this->resetAfterTest();
 

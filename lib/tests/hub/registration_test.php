@@ -24,7 +24,7 @@ namespace core\hub;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core\hub\registration
  */
-class registration_test extends \advanced_testcase {
+final class registration_test extends \advanced_testcase {
 
     /**
      * Test getting site registration information.

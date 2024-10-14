@@ -38,7 +38,7 @@ use enrol_flatfile\privacy\provider;
  * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /** @var \stdClass $user1 a test user.*/
     protected $user1;

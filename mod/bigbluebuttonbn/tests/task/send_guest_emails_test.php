@@ -27,7 +27,7 @@ use advanced_testcase;
  * @covers \mod_bigbluebuttonbn\task\send_guest_emails
  * @coversDefaultClass \mod_bigbluebuttonbn\task\send_guest_emails
  */
-class send_guest_emails_test extends advanced_testcase {
+final class send_guest_emails_test extends advanced_testcase {
     /**
      * Check if set instance ID works correctly
      *

@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/message/output/popup/tests/base.php');
  * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class api_test extends \advanced_testcase {
+final class api_test extends \advanced_testcase {
     use \message_popup_test_helper;
 
     /** @var \phpunit_message_sink message redirection. */

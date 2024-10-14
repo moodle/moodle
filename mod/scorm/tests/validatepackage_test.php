@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/mod/scorm/locallib.php');
  * @copyright  2013 Dan Marsden
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class validatepackage_test extends \advanced_testcase {
+final class validatepackage_test extends \advanced_testcase {
 
     /**
      * Convenience to take a fixture test file and create a stored_file.

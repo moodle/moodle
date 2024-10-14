@@ -25,7 +25,7 @@ namespace core_completion;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core_completion\api
  */
-class api_test extends \advanced_testcase {
+final class api_test extends \advanced_testcase {
 
     /**
      * Test setup.

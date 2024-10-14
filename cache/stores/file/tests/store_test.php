@@ -35,7 +35,7 @@ require_once($CFG->dirroot.'/cache/stores/file/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \cachestore_file
  */
-class store_test extends \cachestore_tests {
+final class store_test extends \cachestore_tests {
     /**
      * Returns the file class name
      * @return string

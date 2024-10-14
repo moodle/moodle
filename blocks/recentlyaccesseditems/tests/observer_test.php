@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.6
  */
-class observer_test extends \advanced_testcase {
+final class observer_test extends \advanced_testcase {
     use \mod_assign_test_generator;
 
     /** @var string Table name. */

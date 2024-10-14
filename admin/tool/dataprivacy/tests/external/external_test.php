@@ -43,7 +43,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2018 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external_test extends externallib_advanced_testcase {
+final class external_test extends externallib_advanced_testcase {
 
     /**
      * Test for external::approve_data_request() with the user not logged in.

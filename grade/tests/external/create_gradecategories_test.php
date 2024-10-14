@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.11
  */
-class create_gradecategories_test extends \externallib_advanced_testcase {
+final class create_gradecategories_test extends \externallib_advanced_testcase {
 
     /**
      * Test create_gradecategories.

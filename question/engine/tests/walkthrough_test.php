@@ -34,7 +34,7 @@ require_once(__DIR__ . '/helpers.php');
  * @copyright  2017 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class walkthrough_test extends \qbehaviour_walkthrough_test_base {
+final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     public function test_regrade_does_not_lose_flag(): void {
 

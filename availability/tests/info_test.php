@@ -23,7 +23,7 @@ namespace core_availability;
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class info_test extends \advanced_testcase {
+final class info_test extends \advanced_testcase {
     public function setUp(): void {
         // Load the mock condition so that it can be used.
         require_once(__DIR__ . '/fixtures/mock_condition.php');

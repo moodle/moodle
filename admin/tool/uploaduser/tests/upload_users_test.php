@@ -31,7 +31,7 @@ use tool_uploaduser\local\text_progress_tracker;
  * @copyright  2020 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class upload_users_test extends advanced_testcase {
+final class upload_users_test extends advanced_testcase {
 
     /**
      * Load required test libraries

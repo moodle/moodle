@@ -43,7 +43,7 @@ class test_exernal_api extends \core_external\external_api {
  * @package core
  * @subpackage phpunit
  */
-class core_externallib_test extends \advanced_testcase {
+final class core_externallib_test extends \advanced_testcase {
     /**
      * Test the get_context_wrapper helper.
      *

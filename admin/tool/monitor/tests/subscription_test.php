@@ -25,7 +25,7 @@ namespace tool_monitor;
  * @copyright  2016 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class subscription_test extends \advanced_testcase {
+final class subscription_test extends \advanced_testcase {
 
     /**
      * @var \tool_monitor\subscription $subscription object.

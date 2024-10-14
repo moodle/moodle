@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/lib/grouplib.php');
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     public function test_member_added_event(): void {
         $this->resetAfterTest();

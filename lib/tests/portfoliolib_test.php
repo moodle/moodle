@@ -35,7 +35,7 @@ require_once($CFG->libdir.'/portfolio/formats.php');
  * @copyright  2014 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class portfoliolib_test extends advanced_testcase {
+final class portfoliolib_test extends advanced_testcase {
 
     public function test_portfolio_rewrite_pluginfile_urls(): void {
         $this->resetAfterTest();

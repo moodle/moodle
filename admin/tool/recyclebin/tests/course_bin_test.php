@@ -26,7 +26,7 @@ use stdClass;
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_bin_test extends \advanced_testcase {
+final class course_bin_test extends \advanced_testcase {
 
     /**
      * @var \stdClass $course

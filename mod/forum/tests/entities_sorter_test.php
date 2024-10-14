@@ -25,7 +25,7 @@ use mod_forum\local\entities\sorter as sorter_entity;
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class entities_sorter_test extends \advanced_testcase {
+final class entities_sorter_test extends \advanced_testcase {
     /**
      * Test the entity returns expected values.
      */

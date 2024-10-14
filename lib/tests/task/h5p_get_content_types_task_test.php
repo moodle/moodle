@@ -28,7 +28,7 @@ use core_h5p\h5p_test_factory;
  *
  * @runTestsInSeparateProcesses
  */
-class h5p_get_content_types_task_test extends \advanced_testcase {
+final class h5p_get_content_types_task_test extends \advanced_testcase {
 
     protected function setup(): void {
         global $CFG;

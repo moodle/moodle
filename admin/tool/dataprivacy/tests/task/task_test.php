@@ -29,7 +29,7 @@ require_once(__DIR__ . '/../data_privacy_testcase.php');
  * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class task_test extends \data_privacy_testcase {
+final class task_test extends \data_privacy_testcase {
 
     use task_trait;
 

@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/question/engine/upgrade/tests/helper.php');
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base {
+final class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base {
     public function test_calculatedsimple_adaptive_qsession95(): void {
         $quiz = (object) array(
             'id' => '4',

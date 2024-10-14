@@ -32,7 +32,7 @@ use stdClass;
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
 
     /** @var stdClass A teacher who is only enrolled in course1. */
     protected $teacher1;

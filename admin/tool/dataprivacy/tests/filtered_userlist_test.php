@@ -23,7 +23,7 @@ namespace tool_dataprivacy;
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filtered_userlist_test extends \advanced_testcase {
+final class filtered_userlist_test extends \advanced_testcase {
     /**
      * Test the apply_expired_contexts_filters function with arange of options.
      *

@@ -24,7 +24,7 @@ namespace core;
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_test extends \advanced_testcase {
+final class user_test extends \advanced_testcase {
 
     /**
      * Setup test data.

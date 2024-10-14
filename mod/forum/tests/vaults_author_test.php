@@ -23,7 +23,7 @@ namespace mod_forum;
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class vaults_author_test extends \advanced_testcase {
+final class vaults_author_test extends \advanced_testcase {
     /**
      * Test get_from_id.
      */

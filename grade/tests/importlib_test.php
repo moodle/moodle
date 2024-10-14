@@ -26,7 +26,7 @@ use grade_item;
  * @copyright 2015 Adrian Greeve <adrian@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class importlib_test extends \advanced_testcase {
+final class importlib_test extends \advanced_testcase {
 
     /**
      * Load required test libraries

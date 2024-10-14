@@ -32,7 +32,7 @@ use ZipArchive;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @covers      \core\content\export\zipwriter
  */
-class zipwriter_test extends advanced_testcase {
+final class zipwriter_test extends advanced_testcase {
 
     /**
      * Test add_file_from_stored_file().

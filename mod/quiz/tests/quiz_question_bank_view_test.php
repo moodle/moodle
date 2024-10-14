@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/question/editlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \core_question\local\bank\view
  */
-class quiz_question_bank_view_test extends \advanced_testcase {
+final class quiz_question_bank_view_test extends \advanced_testcase {
 
     public function test_viewing_question_bank_should_not_load_individual_questions(): void {
         $this->resetAfterTest();

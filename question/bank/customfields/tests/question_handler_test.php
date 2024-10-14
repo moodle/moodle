@@ -24,7 +24,7 @@ namespace qbank_customfields;
  * @author      Matt Porritt <mattp@catalyst-au.net>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_handler_test extends \advanced_testcase {
+final class question_handler_test extends \advanced_testcase {
 
     /**
      * Question setup helper method.

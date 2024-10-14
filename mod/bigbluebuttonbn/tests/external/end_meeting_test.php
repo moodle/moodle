@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_bigbluebuttonbn\external\end_meeting
  */
-class end_meeting_test extends \externallib_advanced_testcase {
+final class end_meeting_test extends \externallib_advanced_testcase {
     use testcase_helper_trait;
     /**
      * Setup for test

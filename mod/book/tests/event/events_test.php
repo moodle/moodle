@@ -33,7 +33,7 @@ namespace mod_book\event;
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     public function setUp(): void {
         parent::setUp();

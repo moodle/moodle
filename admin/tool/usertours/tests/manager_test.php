@@ -30,7 +30,7 @@ require_once(__DIR__ . '/helper_trait.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \tool_usertours\manager
  */
-class manager_test extends \advanced_testcase {
+final class manager_test extends \advanced_testcase {
     // There are shared helpers for these tests in the helper trait.
     use \tool_usertours_helper_trait;
 

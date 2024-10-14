@@ -30,7 +30,7 @@ use qbank_editquestion\external\update_question_version_status;
  * @covers \core_question\local\bank\question_version_status
  * @coversDefaultClass \qbank_editquestion\external\update_question_version_status
  */
-class update_question_version_status_test extends \advanced_testcase {
+final class update_question_version_status_test extends \advanced_testcase {
 
     /** @var \stdClass course record. */
     protected $course;

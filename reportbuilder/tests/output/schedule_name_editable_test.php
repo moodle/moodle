@@ -31,7 +31,7 @@ use core_user\reportbuilder\datasource\users;
  * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class schedule_name_editable_test extends advanced_testcase {
+final class schedule_name_editable_test extends advanced_testcase {
 
     /**
      * Test update method

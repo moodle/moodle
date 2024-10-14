@@ -47,7 +47,7 @@ require_once($CFG->dirroot . '/mod/workshop/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.4
  */
-class external_test extends externallib_advanced_testcase {
+final class external_test extends externallib_advanced_testcase {
 
     /** @var stdClass course object */
     private $course;

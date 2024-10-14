@@ -23,7 +23,7 @@ namespace core_search;
  * @copyright  2018 Dmitrii Metelkin <dmitriim@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class document_icon_test extends \advanced_testcase {
+final class document_icon_test extends \advanced_testcase {
     /**
      * Test that default component gets returned correctly.
      */

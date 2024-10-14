@@ -24,7 +24,7 @@ namespace mod_wiki\backup;
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_format_test extends \advanced_testcase {
+final class restore_format_test extends \advanced_testcase {
 
     /**
      * Data provider for test_duplicating_wiki_removes_unwanted_formats.

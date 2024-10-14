@@ -44,7 +44,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \moodle_database
  */
-class dml_test extends \database_driver_testcase {
+final class dml_test extends \database_driver_testcase {
 
     protected function setUp(): void {
         parent::setUp();

@@ -24,7 +24,7 @@ namespace core\output;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core\output\icon_system_fontawesome
  */
-class icon_system_fontawesome_test extends \advanced_testcase {
+final class icon_system_fontawesome_test extends \advanced_testcase {
 
     /**
      * Test that the specified icon has an SVG fallback.

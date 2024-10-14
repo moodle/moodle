@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2013 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class progress_test extends \basic_testcase {
+final class progress_test extends \basic_testcase {
 
     /**
      * Tests for basic use with simple numeric progress.

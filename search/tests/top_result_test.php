@@ -32,7 +32,7 @@ require_once(__DIR__ . '/fixtures/mock_search_area.php');
  * @copyright  Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class top_result_test extends \advanced_testcase {
+final class top_result_test extends \advanced_testcase {
 
     /** @var stdClass course 1 */
     protected $course1;

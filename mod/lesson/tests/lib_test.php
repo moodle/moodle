@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/mod/lesson/lib.php');
  * @copyright  2017 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
     /**
      * Test for lesson_get_group_override_priorities().
      */

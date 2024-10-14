@@ -38,7 +38,7 @@ use Moodle\H5PCore;
  *
  * @runTestsInSeparateProcesses
  */
-class editor_ajax_test extends \advanced_testcase {
+final class editor_ajax_test extends \advanced_testcase {
 
     /** @var editor_ajax H5P editor ajax instance */
     protected $editorajax;

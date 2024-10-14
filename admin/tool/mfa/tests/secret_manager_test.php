@@ -24,7 +24,7 @@ namespace tool_mfa;
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class secret_manager_test extends \advanced_testcase {
+final class secret_manager_test extends \advanced_testcase {
 
     /**
      * Tests create factor's secret

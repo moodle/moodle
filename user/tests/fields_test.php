@@ -24,7 +24,7 @@ namespace core_user;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core_user\fields
  */
-class fields_test extends \advanced_testcase {
+final class fields_test extends \advanced_testcase {
 
     /**
      * Tests getting the user picture fields.

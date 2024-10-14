@@ -35,7 +35,7 @@ use stdClass;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers      \core\content\export\exportable_items\exportable_filearea
  */
-class exportable_filearea_test extends advanced_testcase {
+final class exportable_filearea_test extends advanced_testcase {
 
     /**
      * Ensure that the the exportable_filearea does not fetch files when none exist.
