@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/mod/assign/feedback/comments/locallib.php');
  * @copyright   2018 Adrian Greeve <adriangreeve.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class feedback_legacy_polyfill_test extends \advanced_testcase {
+final class feedback_legacy_polyfill_test extends \advanced_testcase {
 
     /**
      * Convenience function to create an instance of an assignment.

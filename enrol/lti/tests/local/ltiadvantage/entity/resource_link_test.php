@@ -24,7 +24,7 @@ namespace enrol_lti\local\ltiadvantage\entity;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\entity\resource_link
  */
-class resource_link_test extends \advanced_testcase {
+final class resource_link_test extends \advanced_testcase {
     /**
      * Test creation of the object instances.
      *

@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_test extends \advanced_testcase {
+final class backup_test extends \advanced_testcase {
 
     /**
      * Makes a backup of the course.

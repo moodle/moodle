@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/comment/lib.php');
  * @copyright  2016 Serge Gauthier <serge.gauthier.2@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Test the competency framework created event.

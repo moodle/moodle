@@ -40,7 +40,7 @@ use contenttype_testable\contenttype as contenttype;
  * @coversDefaultClass \core_contentbank\contenttype
  *
  */
-class contenttype_test extends \advanced_testcase {
+final class contenttype_test extends \advanced_testcase {
 
     /** @var int Identifier for the manager role. */
     protected $managerroleid;

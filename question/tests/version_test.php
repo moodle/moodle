@@ -28,7 +28,7 @@ use question_bank;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \question_bank
  */
-class version_test extends \advanced_testcase {
+final class version_test extends \advanced_testcase {
 
     /**
      * @var \context_module module context.

@@ -28,7 +28,7 @@ require_once($CFG->dirroot . "/user/tests/fixtures/myprofile_fixtures.php");
  * @copyright 2015 onwards Ankit Agarwal
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later (5)
  */
-class myprofile_test extends \advanced_testcase {
+final class myprofile_test extends \advanced_testcase {
     /**
      * Test node::__construct().
      */

@@ -46,7 +46,7 @@ require_once($CFG->dirroot . '/mod/forum/tests/generator_trait.php');
  * @copyright Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class custom_completion_test extends advanced_testcase {
+final class custom_completion_test extends advanced_testcase {
 
     use \mod_forum_tests_generator_trait;
 

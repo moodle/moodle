@@ -23,7 +23,56 @@ namespace report_log;
  * @copyright  2023 Stephan Robotta <stephan.robotta@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class renderable_test extends \advanced_testcase {
+final class renderable_test extends \advanced_testcase {
+    /**
+     * @var int The course with separate groups.
+     */
+    const COURSE_SEPARATE_GROUP = 0;
+    /**
+     * @var int The course with separate groups.
+     */
+    const COURSE_VISIBLE_GROUP = 1;
+    /**
+     * @var int The course with separate groups.
+     */
+    const COURSE_NO_GROUP = 2;
+    /**
+     * @var array The setup of users.
+     */
+    const SETUP_USER_DEFS = [
+        // Make student2 also member of group1.
+        'student' => [
+            'student0' => ['group0'],
+            'student1' => ['group1'],
+            'student2' => ['group0', 'group1'],
+            'student3' => [],
+        ],
+        // Make teacher2 also member of group1.
+        'teacher' => [
+            'teacher0' => ['group0'],
+            'teacher1' => ['group1'],
+            'teacher2' => ['group0', 'group1'],
+            'teacher3' => [],
+        ],
+        // Make editingteacher also member of group1.
+        'editingteacher' => [
+            'editingteacher0' => ['group0'],
+            'editingteacher1' => ['group1'],
+            'editingteacher2' => ['group0', 'group1'],
+        ],
+    ];
+    /**
+     * @var array|\stdClass all users indexed by username.
+     */
+    private $users = [];
+    /**
+     * @var array The groups by courses (array of array).
+     */
+    private $groupsbycourse = [];
+    /**
+     * @var array The courses.
+     */
+    private $courses;
 
     /**
      * @var [stdClass] The students.

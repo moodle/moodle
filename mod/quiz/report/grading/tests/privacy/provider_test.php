@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/question/engine/questionattempt.php');
 /**
  * Privacy provider tests class.
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * When no preference exists, there should be no export.
      */

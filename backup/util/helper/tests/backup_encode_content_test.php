@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/backup/moodle2/backup_course_task.class.php');
  * @copyright  2013 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_encode_content_test extends \basic_testcase {
+final class backup_encode_content_test extends \basic_testcase {
 
     /**
      * Test the encode_content_links method for course.

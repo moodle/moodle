@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class table_th_should_have_scope_test
  */
-class table_th_should_have_scope_test extends all_checks {
+final class table_th_should_have_scope_test extends all_checks {
     /** @var string Check type */
     public $checktype = 'table_th_should_have_scope';
 

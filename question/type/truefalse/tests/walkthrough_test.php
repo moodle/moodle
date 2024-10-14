@@ -32,8 +32,8 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \qtype_truefalse_question
  */
-class walkthrough_test extends \qbehaviour_walkthrough_test_base {
-    public function test_false_right_does_not_show_feedback_when_not_answered() {
+final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
+    public function test_false_right_does_not_show_feedback_when_not_answered(): void {
 
         // Create a true-false question with correct answer false.
         $tf = \test_question_maker::make_question('truefalse', 'false');

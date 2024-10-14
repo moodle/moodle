@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/enrol/imsenterprise/lib.php');
  * @copyright  2012 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class imsenterprise_test extends \advanced_testcase {
+final class imsenterprise_test extends \advanced_testcase {
 
     /**
      * @var $imsplugin enrol_imsenterprise_plugin IMS plugin instance.

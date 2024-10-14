@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class walkthrough_test extends \qbehaviour_walkthrough_test_base {
+final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     protected function get_contains_drop_box_expectation($place, $group, $readonly,
             $stateclass = '0') {

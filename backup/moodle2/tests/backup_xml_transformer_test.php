@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/backup/moodle2/backup_plan_builder.class.php');
  * @copyright 2017 Dmitrii Metelkin (dmitriim@catalyst-au.net)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_xml_transformer_test extends \advanced_testcase {
+final class backup_xml_transformer_test extends \advanced_testcase {
 
     /**
      * Initial set up.

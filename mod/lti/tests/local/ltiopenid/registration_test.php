@@ -42,7 +42,7 @@ namespace mod_lti\local\ltiopenid;
  * @author     Claude Vervoort
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class registration_test extends \advanced_testcase {
+final class registration_test extends \advanced_testcase {
 
     /**
      * @var string A has-it-all client registration.

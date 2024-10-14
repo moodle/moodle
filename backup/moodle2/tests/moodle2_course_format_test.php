@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/backup/moodle2/tests/fixtures/format_test_cs_opti
  * @copyright 2014 Russell Smith
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle2_course_format_test extends \advanced_testcase {
+final class moodle2_course_format_test extends \advanced_testcase {
 
     /**
      * Tests a backup and restore adds the required section option data

@@ -43,7 +43,7 @@ require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
  * @covers \backup_bigbluebuttonbn_activity_task
  * @covers \restore_bigbluebuttonbn_activity_task
  */
-class backup_restore_test extends restore_date_testcase {
+final class backup_restore_test extends restore_date_testcase {
     use testcase_helper_trait;
 
     /**

@@ -33,7 +33,7 @@ require_once(__DIR__ . '/../lti_advantage_testcase.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\task\sync_grades
  */
-class sync_grades_test extends \lti_advantage_testcase {
+final class sync_grades_test extends \lti_advantage_testcase {
     /**
      * Get a task which has a mocked ags instance injected, meaning no real calls will be made to the platform.
      *

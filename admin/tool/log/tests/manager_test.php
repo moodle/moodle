@@ -23,8 +23,8 @@ namespace tool_log;
  * @copyright  2014 Petr Skoda {@link http://skodak.org/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manager_test extends \advanced_testcase {
-    public function test_get_log_manager() {
+final class manager_test extends \advanced_testcase {
+    public function test_get_log_manager(): void {
         global $CFG;
         $this->resetAfterTest();
 

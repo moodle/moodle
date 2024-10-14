@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \quiz_statistics_report
  */
-class quiz_statistics_report_test extends \advanced_testcase {
+final class quiz_statistics_report_test extends \advanced_testcase {
 
     use \quiz_question_helper_test_trait;
 

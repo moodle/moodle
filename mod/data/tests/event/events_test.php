@@ -29,7 +29,7 @@ use mod_data\local\importer\preset_existing_importer;
 use mod_data\manager;
 use mod_data\preset;
 
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Test set up.

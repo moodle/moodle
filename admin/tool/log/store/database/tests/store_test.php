@@ -28,7 +28,7 @@ require_once(__DIR__ . '/fixtures/store.php');
  * @copyright  2014 Petr Skoda {@link http://skodak.org/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class store_test extends \advanced_testcase {
+final class store_test extends \advanced_testcase {
     /**
      * Tests log writing.
      *

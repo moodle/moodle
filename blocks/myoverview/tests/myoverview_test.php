@@ -24,7 +24,7 @@ namespace block_myoverview;
  * @copyright  2019 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class myoverview_test extends \advanced_testcase {
+final class myoverview_test extends \advanced_testcase {
 
     /**
      * Test getting block configuration

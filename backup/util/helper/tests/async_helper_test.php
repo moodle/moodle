@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @copyright  2018 Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class async_helper_test extends \advanced_testcase {
+final class async_helper_test extends \advanced_testcase {
 
     /**
      * Tests sending message for asynchronous backup.

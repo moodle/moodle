@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/editlib.php');
  * @copyright  2014 Nikita Nikitsky, Volgograd State Technical University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qformat_xml_import_export_test extends advanced_testcase {
+final class qformat_xml_import_export_test extends advanced_testcase {
     /**
      * Create object qformat_xml for test.
      * @param string $filename with name for testing file.

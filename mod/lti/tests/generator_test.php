@@ -25,8 +25,8 @@ namespace mod_lti;
  * @author     Mark Nielsen
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_test extends \advanced_testcase {
-    public function test_generator() {
+final class generator_test extends \advanced_testcase {
+    public function test_generator(): void {
         global $DB;
 
         $this->resetAfterTest(true);

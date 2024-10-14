@@ -39,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sync_members_test extends \advanced_testcase {
+final class sync_members_test extends \advanced_testcase {
     /** @var dummy_sync_members_task $task */
     protected $task;
 

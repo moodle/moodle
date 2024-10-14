@@ -25,7 +25,7 @@ use core\dataformat;
  * @copyright  2022 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class writer_test extends \advanced_testcase {
+final class writer_test extends \advanced_testcase {
 
     /**
      * Test writing data whose content contains an image with pluginfile.php source

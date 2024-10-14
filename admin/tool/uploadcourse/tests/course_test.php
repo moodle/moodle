@@ -26,7 +26,7 @@ use tool_uploadcourse_course;
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class course_test extends \advanced_testcase {
+final class course_test extends \advanced_testcase {
 
     public function test_proceed_without_prepare() {
         $this->resetAfterTest(true);

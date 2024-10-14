@@ -38,14 +38,15 @@ use advanced_testcase;
  * @copyright  2020 Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_test extends advanced_testcase {
-
+final class get_test extends advanced_testcase {
     /**
      * Setup before class.
      */
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once("{$CFG->libdir}/externallib.php");
+
+        parent::setUpBeforeClass();
     }
 
     /**

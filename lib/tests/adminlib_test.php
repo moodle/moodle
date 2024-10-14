@@ -28,7 +28,7 @@ require_once($CFG->libdir.'/adminlib.php');
  * @copyright  2020 Brendan Heywood <brendan@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class adminlib_test extends \advanced_testcase {
+final class adminlib_test extends \advanced_testcase {
 
     /**
      * Data provider of serialized string.

@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/question/tests/fixtures/testable_core_question_co
  * @copyright 2018 Huong Nguyen <huongnv13@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_bank_column_test extends \advanced_testcase {
+final class question_bank_column_test extends \advanced_testcase {
 
     /**
      * Test function display_header multiple sorts with no custom tooltips.

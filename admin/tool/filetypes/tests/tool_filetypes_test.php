@@ -33,7 +33,7 @@ use tool_filetypes\utils;
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_filetypes_test extends advanced_testcase {
+final class tool_filetypes_test extends advanced_testcase {
     /**
      * Tests is_extension_invalid() function.
      */

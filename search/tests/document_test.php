@@ -32,7 +32,7 @@ use stdClass;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_search\document
  */
-class document_test extends \advanced_testcase {
+final class document_test extends \advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.

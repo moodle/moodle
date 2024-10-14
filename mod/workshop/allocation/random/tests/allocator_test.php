@@ -43,7 +43,7 @@ require_once($CFG->dirroot . '/mod/workshop/allocation/random/lib.php');
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class allocator_test extends \advanced_testcase {
+final class allocator_test extends \advanced_testcase {
 
     /** workshop instance emulation */
     protected $workshop;

@@ -33,7 +33,7 @@ use profile_field_text;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \profilefield_text\profile_field_text
  */
-class field_class_test extends \advanced_testcase {
+final class field_class_test extends \advanced_testcase {
     /**
      * Test that the profile text data is formatted and required filters applied
      *

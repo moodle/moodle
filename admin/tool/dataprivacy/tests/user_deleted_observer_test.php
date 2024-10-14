@@ -25,7 +25,7 @@ use tool_dataprivacy\event\user_deleted_observer;
  * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_deleted_observer_test extends \advanced_testcase {
+final class user_deleted_observer_test extends \advanced_testcase {
 
     /**
      * Ensure that a delete data request is created upon user deletion.

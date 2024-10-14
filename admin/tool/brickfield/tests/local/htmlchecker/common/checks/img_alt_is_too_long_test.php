@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class img_alt_is_too_long_testcase
  */
-class img_alt_is_too_long_test extends all_checks {
+final class img_alt_is_too_long_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'img_alt_is_too_long';
 

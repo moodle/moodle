@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @covers \core_date
  * @coversDefaultClass \core_date
  */
-class date_test extends advanced_testcase {
+final class date_test extends advanced_testcase {
     /**
      * @covers ::get_default_php_timezone
      */

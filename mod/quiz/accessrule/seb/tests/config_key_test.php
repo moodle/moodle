@@ -24,7 +24,7 @@ namespace quizaccess_seb;
  * @copyright 2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class config_key_test extends \advanced_testcase {
+final class config_key_test extends \advanced_testcase {
 
     /**
      * Test that trying to generate the hash key with bad xml will result in an error.

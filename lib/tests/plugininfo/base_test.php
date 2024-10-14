@@ -28,7 +28,7 @@ use testable_plugininfo_base;
  * @copyright 2019 Andrew Nicols
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class base_test extends \advanced_testcase {
+final class base_test extends \advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.

@@ -25,8 +25,7 @@ use stdClass;
  * @covers \core_user\devicekey
  * @requires extension sodium
  */
-class devicekey_test extends \advanced_testcase {
-
+final class devicekey_test extends \advanced_testcase {
     /**
      * Helper to create a device record.
      *

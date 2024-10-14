@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/mod/choice/lib.php');
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
     /** @var choice_object */
     protected $choice;
 

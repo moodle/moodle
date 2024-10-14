@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/scorm/lib.php');
  * @copyright  2013 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /** @var stdClass store course object */
     protected $eventcourse;

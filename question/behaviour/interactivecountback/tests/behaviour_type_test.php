@@ -33,7 +33,7 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
  * @copyright  2015 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behaviour_type_test extends \basic_testcase {
+final class behaviour_type_test extends \basic_testcase {
 
     /** @var qbehaviour_interactivecountback_type */
     protected $behaviourtype;

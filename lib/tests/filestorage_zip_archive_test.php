@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/filestorage/zip_archive.php');
  * @copyright 2020 Université Rennes 2 {@link https://www.univ-rennes2.fr}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filestorage_zip_archive_test extends \advanced_testcase {
+final class filestorage_zip_archive_test extends \advanced_testcase {
     /**
      * Test mangle_pathname() method.
      *

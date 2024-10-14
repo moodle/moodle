@@ -28,7 +28,7 @@ use context_system;
  * @copyright  2022 Mikhail Golenkov <mikhailgolenkov@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class stored_file_test extends advanced_testcase {
+final class stored_file_test extends advanced_testcase {
 
     /**
      * Test that the rotate_image() method does not rotate

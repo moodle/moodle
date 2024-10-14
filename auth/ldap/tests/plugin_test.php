@@ -33,8 +33,7 @@ namespace auth_ldap;
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plugin_test extends \advanced_testcase {
-
+final class plugin_test extends \advanced_testcase {
     /**
      * Data provider for auth_ldap tests
      *

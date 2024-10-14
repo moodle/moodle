@@ -27,7 +27,7 @@ use mod_h5pactivity\local\manager;
  * @copyright  2023 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class result_test extends \advanced_testcase {
+final class result_test extends \advanced_testcase {
     /**
      * Data provider for result export_options test
      *

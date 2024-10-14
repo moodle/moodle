@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/../fixtures/event_fixtures.php');
 
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Test set up.

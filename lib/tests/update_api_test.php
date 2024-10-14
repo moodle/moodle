@@ -34,7 +34,7 @@ require_once(__DIR__.'/fixtures/testable_update_api.php');
  * @copyright 2015 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class update_api_test extends \advanced_testcase {
+final class update_api_test extends \advanced_testcase {
 
     /**
      * Make sure the $CFG->branch is mapped correctly to the format used by the API.

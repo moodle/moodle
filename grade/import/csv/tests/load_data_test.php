@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/grade/tests/fixtures/lib.php');
  * @copyright  2014 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class load_data_test extends \grade_base_testcase {
+final class load_data_test extends \grade_base_testcase {
 
     /** @var string $oktext Text to be imported. This data should have no issues being imported. */
     protected $oktext = '"First name","Last name","ID number",Institution,Department,"Email address","Assignment: Assignment for grape group", "Feedback: Assignment for grape group","Assignment: Second new grade item","Course total"

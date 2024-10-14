@@ -24,7 +24,7 @@ namespace core;
  * @author     Andrew Nicols
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class grouplib_test extends \advanced_testcase {
+final class grouplib_test extends \advanced_testcase {
 
     public function test_groups_get_group_by_idnumber() {
         $this->resetAfterTest(true);

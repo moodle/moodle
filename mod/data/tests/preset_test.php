@@ -29,7 +29,7 @@ use zip_archive;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_data\preset
  */
-class preset_test extends \advanced_testcase {
+final class preset_test extends \advanced_testcase {
 
     /**
      * Test for static create_from_plugin method.

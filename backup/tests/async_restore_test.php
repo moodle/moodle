@@ -35,7 +35,7 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright  2018 Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class async_restore_test extends \advanced_testcase {
+final class async_restore_test extends \advanced_testcase {
 
     /**
      * Tests the asynchronous backup.

@@ -36,7 +36,7 @@ use core_userkey\privacy\provider;
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
     /**
      * Export for a user with no keys in the specified instance will not have any data exported.
      */

@@ -26,7 +26,7 @@ use tool_brickfield\local\tool\filter;
  * @author     Jay Churchward (jay@brickfieldlabs.ie)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class accessibility_test extends \advanced_testcase {
+final class accessibility_test extends \advanced_testcase {
 
     /**
      * Test get_title().

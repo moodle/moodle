@@ -33,8 +33,8 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/openclosedate/rule.php');
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class rule_test extends \basic_testcase {
-    public function test_no_dates() {
+final class rule_test extends \basic_testcase {
+    public function test_no_dates(): void {
         $quiz = new \stdClass();
         $quiz->timeopen = 0;
         $quiz->timeclose = 0;

@@ -28,7 +28,7 @@ require_once(__DIR__ . '/fixtures/mock_block_area.php');
  * @copyright 2017 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class base_block_test extends \advanced_testcase {
+final class base_block_test extends \advanced_testcase {
     /**
      * Tests getting the name out of the class name.
      */

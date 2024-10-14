@@ -43,7 +43,7 @@ require_once(__DIR__ . '/../test_helper_trait.php');
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
     use \quizaccess_seb_test_helper_trait;
 
     /**

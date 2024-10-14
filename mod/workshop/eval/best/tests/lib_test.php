@@ -38,7 +38,7 @@ require_once($CFG->libdir . '/gradelib.php');
 /**
  * Unit tests for grading evaluation lib.php
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     /** workshop instance emulation */
     protected $workshop;

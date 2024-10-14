@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright  2020 Ilya Tregubov <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_restore_decode_links_test extends \advanced_testcase {
+final class quiz_restore_decode_links_test extends \advanced_testcase {
 
     /**
      * Test restore_decode_rule class

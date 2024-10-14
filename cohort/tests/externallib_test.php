@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/cohort/externallib.php');
  * @copyright  MediaTouch 2000 srl
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class externallib_test extends externallib_advanced_testcase {
+final class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test create_cohorts

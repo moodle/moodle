@@ -55,8 +55,8 @@ class testable_qformat extends qformat_default {
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class importexport_test extends \advanced_testcase {
-    public function test_assemble_category_path() {
+final class importexport_test extends \advanced_testcase {
+    public function test_assemble_category_path(): void {
         $format = new testable_qformat();
         $pathsections = [
             '$course$',

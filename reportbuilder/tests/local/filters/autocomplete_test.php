@@ -30,7 +30,7 @@ use core_reportbuilder\local\report\filter;
  * @copyright   2022 Nathan Nguyen <nathannguyen@catalyst-au.net>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class autocomplete_test extends advanced_testcase {
+final class autocomplete_test extends advanced_testcase {
 
     /**
      * Data provider for {@see test_get_sql_filter}

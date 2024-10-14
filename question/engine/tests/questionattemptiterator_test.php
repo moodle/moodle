@@ -32,7 +32,7 @@ require_once(__DIR__ . '/helpers.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class questionattemptiterator_test extends \advanced_testcase {
+final class questionattemptiterator_test extends \advanced_testcase {
     private $quba;
     private $qas = array();
     private $iterator;

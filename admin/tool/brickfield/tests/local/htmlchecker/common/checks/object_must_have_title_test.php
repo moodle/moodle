@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class object_must_have_title_test
  */
-class object_must_have_title_test extends all_checks {
+final class object_must_have_title_test extends all_checks {
     /** @var string Check type */
     public $checktype = 'object_must_have_title';
 

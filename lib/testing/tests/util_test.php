@@ -24,7 +24,7 @@ namespace core\testing;
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class util_test extends \advanced_testcase {
+final class util_test extends \advanced_testcase {
     /**
      * Note: This test is required for the other two parts because the first time
      * a table is written to it may not have had the initial value reset.

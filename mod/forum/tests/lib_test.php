@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/rating/lib.php');
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     public function setUp(): void {
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other

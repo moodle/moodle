@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
  * @copyright 2018 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class migrate_message_data_test extends \advanced_testcase {
+final class migrate_message_data_test extends \advanced_testcase {
 
     /**
      * Test set up.

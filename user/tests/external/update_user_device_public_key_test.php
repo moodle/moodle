@@ -31,7 +31,7 @@ use stdClass;
  * @covers \core_user\external\update_user_device_public_key
  * @requires extension sodium
  */
-class update_user_device_public_key_test extends \advanced_testcase {
+final class update_user_device_public_key_test extends \advanced_testcase {
     /**
      * Helper to create a device record.
      *

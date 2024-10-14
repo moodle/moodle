@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/edit_ddimageortext_fo
  * @copyright  2019 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class edit_form_test extends \advanced_testcase {
+final class edit_form_test extends \advanced_testcase {
     /**
      * Helper method.
      *

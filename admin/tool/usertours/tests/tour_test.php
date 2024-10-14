@@ -28,8 +28,7 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tour_test extends \advanced_testcase {
-
+final class tour_test extends \advanced_testcase {
     /**
      * @var moodle_database
      */

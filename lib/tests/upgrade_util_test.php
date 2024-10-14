@@ -28,7 +28,7 @@ defined('CURL_SSLVERSION_TLSv1_2') || define('CURL_SSLVERSION_TLSv1_2', 6);
  * @copyright 2016 Cameron Ball <cameron@cameron1729.xyz>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class upgrade_util_test extends \advanced_testcase {
+final class upgrade_util_test extends \advanced_testcase {
 
     /**
      * The value of PHP_ZTS when thread safety is enabled.

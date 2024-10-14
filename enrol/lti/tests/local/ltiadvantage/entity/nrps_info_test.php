@@ -24,7 +24,7 @@ namespace enrol_lti\local\ltiadvantage\entity;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\entity\nrps_info
  */
-class nrps_info_test extends \advanced_testcase {
+final class nrps_info_test extends \advanced_testcase {
 
     /**
      * Test creation of the object instances.

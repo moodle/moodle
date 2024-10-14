@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizobj_test extends \basic_testcase {
+final class quizobj_test extends \basic_testcase {
     public function test_cannot_review_message() {
         $quiz = new \stdClass();
         $quiz->reviewattempt = 0x10010;

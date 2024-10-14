@@ -33,7 +33,7 @@ namespace core_notes\event;
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /** @var  stdClass A note object. */
     private $eventnote;

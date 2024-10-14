@@ -24,7 +24,7 @@ namespace enrol_lti\local\ltiadvantage\entity;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\entity\deployment
  */
-class deployment_test extends \advanced_testcase {
+final class deployment_test extends \advanced_testcase {
 
     /**
      * Test creation of the object instances.

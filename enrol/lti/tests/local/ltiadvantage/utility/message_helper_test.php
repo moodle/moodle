@@ -24,7 +24,7 @@ namespace enrol_lti\local\ltiadvantage\utility;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\utility\message_helper
  */
-class message_helper_test extends \base_testcase {
+final class message_helper_test extends \base_testcase {
 
     /**
      * Test the static helper is_instructor_launch.

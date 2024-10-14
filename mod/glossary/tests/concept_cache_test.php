@@ -24,7 +24,7 @@ namespace mod_glossary;
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class concept_cache_test extends \advanced_testcase {
+final class concept_cache_test extends \advanced_testcase {
     /**
      * Test convect fetching.
      */

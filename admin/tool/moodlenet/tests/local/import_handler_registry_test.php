@@ -31,7 +31,7 @@ use tool_moodlenet\local\url;
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class import_handler_registry_test extends \advanced_testcase {
+final class import_handler_registry_test extends \advanced_testcase {
 
     /**
      * Test confirming the behaviour of get_resource_handlers_for_strategy with different params.

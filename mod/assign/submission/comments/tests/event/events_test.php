@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/comment/lib.php');
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     // Use the generator helper.
     use mod_assign_test_generator;

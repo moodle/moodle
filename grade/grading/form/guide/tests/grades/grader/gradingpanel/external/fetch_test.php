@@ -33,11 +33,12 @@ use moodle_exception;
  * @copyright 2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class fetch_test extends advanced_testcase {
-
+final class fetch_test extends advanced_testcase {
     public static function setupBeforeClass(): void {
         global $CFG;
         require_once("{$CFG->libdir}/externallib.php");
+
+        parent::setUpBeforeClass();
     }
 
     /**

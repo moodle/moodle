@@ -34,7 +34,7 @@ use core_privacy\local\request\approved_userlist;
  * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
 
     protected function create_portfolio_data($plugin, $name, $user, $preference, $value) {
         global $DB;

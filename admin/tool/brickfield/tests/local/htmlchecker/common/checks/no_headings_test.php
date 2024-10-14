@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class no_headings_test
  */
-class no_headings_test extends all_checks {
+final class no_headings_test extends all_checks {
     /** @var string Check type */
     public $checktype = 'no_headings';
 

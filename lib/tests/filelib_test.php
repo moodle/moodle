@@ -43,8 +43,8 @@ require_once($CFG->dirroot . '/repository/lib.php');
  * @copyright 2009 Jerome Mouneyrac
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filelib_test extends \advanced_testcase {
-    public function test_format_postdata_for_curlcall() {
+final class filelib_test extends \advanced_testcase {
+    public function test_format_postdata_for_curlcall(): void {
 
         // POST params with just simple types.
         $postdatatoconvert = array( 'userid' => 1, 'roleid' => 22, 'name' => 'john');

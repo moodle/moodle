@@ -33,7 +33,7 @@ use Sabberworm\CSS\OutputFormat;
 /**
  * Class rtlcss_test.
  */
-class rtlcss_test extends basic_testcase {
+final class rtlcss_test extends basic_testcase {
     /**
      * Data provider.
      * @return array

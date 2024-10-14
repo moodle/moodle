@@ -42,7 +42,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2020 Ferran Recio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class handler_test extends advanced_testcase {
+final class handler_test extends advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.

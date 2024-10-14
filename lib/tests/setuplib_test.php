@@ -24,7 +24,7 @@ namespace core;
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class setuplib_test extends \advanced_testcase {
+final class setuplib_test extends \advanced_testcase {
 
     /**
      * Test get_docs_url_standard in the normal case when we should link to Moodle docs.

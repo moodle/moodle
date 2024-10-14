@@ -688,8 +688,7 @@ class externallib_test extends \advanced_testcase {
 /*
  * Just a wrapper to access protected apis for testing
  */
-class test_exernal_api extends \external_api {
-
+final class test_exernal_api extends \external_api {
     public static function get_context_wrapper($params) {
         return self::get_context_from_params($params);
     }

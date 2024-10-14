@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/mod/quiz/lib.php');
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
     public function test_quiz_has_grades() {
         $quiz = new \stdClass();
         $quiz->grade = '100.0000';

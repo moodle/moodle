@@ -25,7 +25,7 @@
 
 namespace mod_folder\event;
 
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Tests set up.

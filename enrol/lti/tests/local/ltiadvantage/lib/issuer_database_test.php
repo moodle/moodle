@@ -30,7 +30,7 @@ use Packback\Lti1p3\LtiRegistration;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\lib\issuer_database
  */
-class issuer_database_test extends \advanced_testcase {
+final class issuer_database_test extends \advanced_testcase {
 
     /**
      * Test the Moodle implementation of the library database method test_find_registration_by_issuer().

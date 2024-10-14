@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class blink_is_not_used_testcase
  */
-class blink_is_not_used_test extends all_checks {
+final class blink_is_not_used_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'blink_is_not_used';
 

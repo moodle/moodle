@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/filestorage/file_progress.php');
  * @copyright 2012 Petr Skoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class zip_packer_test extends \advanced_testcase implements file_progress {
+final class zip_packer_test extends \advanced_testcase implements file_progress {
     protected $testfile;
     protected $files;
 

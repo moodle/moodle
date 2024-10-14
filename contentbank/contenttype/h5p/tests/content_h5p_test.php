@@ -25,7 +25,7 @@ namespace contenttype_h5p;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \contenttype_h5p\content
  */
-class content_h5p_test extends \advanced_testcase {
+final class content_h5p_test extends \advanced_testcase {
 
     /**
      * Tests for uploaded file.

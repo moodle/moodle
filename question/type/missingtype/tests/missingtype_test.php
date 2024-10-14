@@ -41,7 +41,7 @@ require_once($CFG->dirroot . '/question/type/missingtype/questiontype.php');
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class missingtype_test extends \question_testcase {
+final class missingtype_test extends \question_testcase {
 
     protected function get_unknown_questiondata() {
         $questiondata = new \stdClass();

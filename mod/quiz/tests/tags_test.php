@@ -28,8 +28,8 @@ use quiz;
  * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tags_test extends \advanced_testcase {
-    public function test_restore_random_question_by_tag() {
+final class tags_test extends \advanced_testcase {
+    public function test_restore_random_question_by_tag(): void {
         global $CFG, $USER, $DB;
 
         require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');

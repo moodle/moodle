@@ -30,7 +30,7 @@ require_once($CFG->libdir . '/badgeslib.php');
  * @copyright   2021 onwards Peter Dias
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manage_badge_action_bar_test extends \advanced_testcase {
+final class manage_badge_action_bar_test extends \advanced_testcase {
     /**
      * Data provider for test_generate_badge_navigation
      *

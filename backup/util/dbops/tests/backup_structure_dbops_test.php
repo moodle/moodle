@@ -27,7 +27,7 @@ use backup_structure_dbops;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \backup_structure_dbops
  */
-class backup_structure_dbops_test extends \advanced_testcase {
+final class backup_structure_dbops_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         parent::setUpBeforeClass();

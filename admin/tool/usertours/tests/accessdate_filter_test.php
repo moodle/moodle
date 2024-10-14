@@ -25,8 +25,7 @@ use tool_usertours\local\filter\accessdate;
  * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class accessdate_filter_test extends \advanced_testcase {
-
+final class accessdate_filter_test extends \advanced_testcase {
     public function setUp(): void {
         $this->resetAfterTest(true);
     }

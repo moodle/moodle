@@ -41,7 +41,7 @@ require_once(__DIR__ . '/local/ltiadvantage/lti_advantage_testcase.php');
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \lti_advantage_testcase {
+final class lib_test extends \lti_advantage_testcase {
 
     /**
      * Test set up.

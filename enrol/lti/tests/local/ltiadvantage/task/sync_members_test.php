@@ -33,7 +33,7 @@ require_once(__DIR__ . '/../lti_advantage_testcase.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\task\sync_members
  */
-class sync_members_test extends \lti_advantage_testcase {
+final class sync_members_test extends \lti_advantage_testcase {
 
     /**
      * Verify the user's profile picture has been set, which is useful to verify picture syncs.

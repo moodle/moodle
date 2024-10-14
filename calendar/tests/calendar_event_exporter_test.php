@@ -29,7 +29,7 @@ require_once(__DIR__ . '/helpers.php');
  * @copyright 2017 Ryan Wyllie <ryan@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class calendar_event_exporter_test extends \advanced_testcase {
+final class calendar_event_exporter_test extends \advanced_testcase {
     /**
      * Data provider for the timestamp min limit test case to confirm
      * that the minimum time limit is set correctly on the boundary cases.

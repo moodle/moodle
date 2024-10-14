@@ -27,7 +27,7 @@ use tool_moodlenet\local\url;
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class remote_resource_test extends \advanced_testcase {
+final class remote_resource_test extends \advanced_testcase {
 
     /**
      * Test getters.

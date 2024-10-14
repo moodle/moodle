@@ -33,7 +33,7 @@ require_once(__DIR__ . '/fixtures/testable_block_manager.php');
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class blocklib_test extends \advanced_testcase {
+final class blocklib_test extends \advanced_testcase {
     protected $testpage;
     protected $blockmanager;
     protected $isediting = null;

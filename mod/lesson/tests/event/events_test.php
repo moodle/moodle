@@ -33,7 +33,7 @@ global $CFG;
 
 require_once($CFG->dirroot.'/mod/lesson/locallib.php');
 
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /** @var stdClass the course used for testing */
     private $course;

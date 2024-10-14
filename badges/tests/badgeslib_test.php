@@ -14,26 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use core_badges\helper;
+use core_badges\tests\badges_testcase;
+use core\task\manager;
+
 /**
  * Unit tests for badges
  *
- * @package    core
- * @subpackage badges
+ * @package    core_badges
  * @copyright  2013 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/badgeslib.php');
-require_once($CFG->dirroot . '/badges/lib.php');
-
-use core_badges\helper;
-use core\task\manager;
-
-class badgeslib_test extends advanced_testcase {
+final class badgeslib_test extends badges_testcase {
     protected $badgeid;
     protected $course;
     protected $user;
@@ -163,7 +156,7 @@ class badgeslib_test extends advanced_testcase {
             '"@context":"https:\/\/w3id.org\/openbadges\/v2","id":"%s","type":"Issuer"}';
     }
 
-    public function test_create_badge() {
+    public function test_create_badge(): void {
         $badge = new badge($this->badgeid);
 
         $this->assertInstanceOf('badge', $badge);
@@ -1585,6 +1578,7 @@ class badgeslib_test extends advanced_testcase {
      * @return array
      */
     public static function badges_change_sortorder_backpacks_provider(): array {
+        static::load_requirements();
         return [
             "Test up" => [
                 'backpacktomove' => 1,
@@ -1639,6 +1633,8 @@ class badgeslib_test extends advanced_testcase {
      * @return array
      */
     public static function badgr_open_url_generator(): array {
+        static::load_requirements();
+
         return [
             'Badgr Assertion URL test' => [
                 OPEN_BADGES_V2_TYPE_ASSERTION, "https://api.ca.badgr.io/public/assertions/123455"

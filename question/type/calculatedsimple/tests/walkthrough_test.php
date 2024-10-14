@@ -32,8 +32,8 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class walkthrough_test extends \qbehaviour_walkthrough_test_base {
-    public function test_interactive() {
+final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
+    public function test_interactive(): void {
 
         // Create a gapselect question.
         $q = \test_question_maker::make_question('calculatedsimple');

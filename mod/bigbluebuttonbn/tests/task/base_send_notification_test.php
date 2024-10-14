@@ -27,7 +27,7 @@ use advanced_testcase;
  * @covers \mod_bigbluebuttonbn\task\base_send_notification
  * @coversDefaultClass \mod_bigbluebuttonbn\task\base_send_notification
  */
-class base_send_notification_test extends advanced_testcase {
+final class base_send_notification_test extends advanced_testcase {
     /**
      * Check if set instance ID works correctly
      *

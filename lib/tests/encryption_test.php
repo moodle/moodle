@@ -31,8 +31,7 @@ namespace core;
  * @copyright 2020 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class encryption_test extends \basic_testcase {
-
+final class encryption_test extends \advanced_testcase {
     /**
      * Clear junk created by tests.
      */

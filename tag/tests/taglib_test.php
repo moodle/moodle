@@ -28,7 +28,7 @@ use core_tag_tag;
  * @copyright 2014 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class taglib_test extends \advanced_testcase {
+final class taglib_test extends \advanced_testcase {
 
     /**
      * Test set up.

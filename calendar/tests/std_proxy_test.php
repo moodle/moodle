@@ -25,7 +25,7 @@ use core_calendar\local\event\proxies\std_proxy;
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class std_proxy_test extends \advanced_testcase {
+final class std_proxy_test extends \advanced_testcase {
     /**
      * @var \stdClass[] $objects Array of objects to proxy.
      */

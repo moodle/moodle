@@ -24,7 +24,7 @@ namespace core\event;
  * @copyright  2013 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class deprecated_test extends \advanced_testcase {
+final class deprecated_test extends \advanced_testcase {
 
     /**
      * Test event properties and methods.

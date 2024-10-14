@@ -28,7 +28,7 @@ require_once('data_privacy_testcase.php');
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manager_observer_test extends data_privacy_testcase {
+final class manager_observer_test extends data_privacy_testcase {
     /**
      * Ensure that when users are configured as DPO, they are sent an message upon failure.
      */

@@ -37,7 +37,7 @@ require_once($CFG->dirroot.'/mod/scorm/locallib.php');
  * @copyright 2021 Michael Hawkins <michaelh@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class custom_completion_test extends advanced_testcase {
+final class custom_completion_test extends advanced_testcase {
 
     /**
      * Data provider for get_state().

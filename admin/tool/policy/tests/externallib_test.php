@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/user/externallib.php');
  * @copyright 2018 Sara Arjona <sara@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class externallib_test extends externallib_advanced_testcase {
+final class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Setup function- we will create some policy docs.

@@ -61,7 +61,7 @@ class grade_report_mock extends grade_report {
 /**
  * Tests grade_report, the parent class for all grade reports.
  */
-class reportlib_test extends advanced_testcase {
+final class reportlib_test extends advanced_testcase {
 
     /**
      * Tests grade_report::blank_hidden_total_and_adjust_bounds()

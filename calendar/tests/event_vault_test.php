@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/calendar/tests/helpers.php');
  * @copyright 2017 Ryan Wyllie <ryan@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class event_vault_test extends \advanced_testcase {
+final class event_vault_test extends \advanced_testcase {
 
     /**
      * Test that get_action_events_by_timesort returns events after the

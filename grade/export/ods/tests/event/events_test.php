@@ -23,7 +23,7 @@ namespace gradeexport_ods\event;
  * @copyright  2016 Zane Karl zkarl@oid.ucla.edu
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Setup is called before calling test case.

@@ -46,7 +46,7 @@ require_once($CFG->libdir . '/behat/form_field/behat_form_text.php');
  * @covers \behat_form_text
  * @covers \behat_form_field
  */
-class behat_form_text_test extends \basic_testcase {
+final class behat_form_text_test extends \basic_testcase {
 
     /**
      * Data provider for the test_set_get_value() method.

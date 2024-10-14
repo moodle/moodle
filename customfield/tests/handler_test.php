@@ -30,7 +30,7 @@ use moodle_exception;
  * @copyright   2023 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class handler_test extends advanced_testcase {
+final class handler_test extends advanced_testcase {
 
     /**
      * Test retrieving handler for given component/area

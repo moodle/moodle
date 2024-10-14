@@ -40,7 +40,7 @@ require_once($CFG->dirroot . '/backup/converter/moodle1/lib.php');
  * @copyright  2011 Mark Nielsen <mark@moodlerooms.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle1_converter_test extends \advanced_testcase {
+final class moodle1_converter_test extends \advanced_testcase {
 
     /** @var string the name of the directory containing the unpacked Moodle 1.9 backup */
     protected $tempdir;

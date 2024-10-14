@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/calendar/tests/helpers.php');
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class raw_event_retrieval_strategy_test extends \advanced_testcase {
+final class raw_event_retrieval_strategy_test extends \advanced_testcase {
     /**
      * Test retrieval strategy when module is disabled.
      */

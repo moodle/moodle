@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/question/editlib.php');
  * @copyright  2018 Jean-Michel vedrine)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qformat_aiken_export_test extends advanced_testcase {
+final class qformat_aiken_export_test extends advanced_testcase {
     /**
      * Assert that 2 strings are the same, ignoring ends of line.
      * We need to override this function because we don't want any output

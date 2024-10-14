@@ -42,7 +42,7 @@ use externallib_advanced_testcase;
  * @copyright  2020 Ilya Tregubov <ilya@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_user_attempts_test extends externallib_advanced_testcase {
+final class get_user_attempts_test extends externallib_advanced_testcase {
 
     /**
      * Test the behaviour of get_user_attempts getting more than one user at once.

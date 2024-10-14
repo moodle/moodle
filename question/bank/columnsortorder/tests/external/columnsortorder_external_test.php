@@ -33,8 +33,7 @@ require_once($CFG->dirroot . '/question/classes/external.php');
  * @author     2021, Ghaly Marc-Alexandre <marc-alexandreghaly@catalyst-ca.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class columnsortorder_external_test extends advanced_testcase {
-
+final class columnsortorder_external_test extends advanced_testcase {
     /**
      * Test that external call core_question_external::set_columnbank_order($oldorder) sets proper
      * data in config_plugins table.

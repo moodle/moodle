@@ -24,8 +24,8 @@ namespace core;
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class testing_generator_test extends \advanced_testcase {
-    public function test_get_plugin_generator_good_case() {
+final class testing_generator_test extends \advanced_testcase {
+    public function test_get_plugin_generator_good_case(): void {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $this->assertInstanceOf('core_question_generator', $generator);
     }

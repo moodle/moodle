@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/repository/googledocs/lib.php');
  * @copyright  2021 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class helper_test extends \repository_googledocs_testcase {
+final class helper_test extends \repository_googledocs_testcase {
 
     /**
      * Test build_node_path().

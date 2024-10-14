@@ -27,7 +27,7 @@ use context_user;
  * @copyright  2021 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class content_notification_task_test extends \advanced_testcase {
+final class content_notification_task_test extends \advanced_testcase {
 
     /**
      * Test execution of task

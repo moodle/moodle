@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class table_td_should_not_merge_test
  */
-class table_td_should_not_merge_test extends all_checks {
+final class table_td_should_not_merge_test extends all_checks {
     /** @var string Check type */
     public $checktype = 'table_td_should_not_merge';
 

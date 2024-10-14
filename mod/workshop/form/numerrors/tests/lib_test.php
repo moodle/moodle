@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/workshop/form/numerrors/lib.php');
 /**
  * Unit tests for Number of errors grading lib.php
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     /** workshop instance emulation */
     protected $workshop;

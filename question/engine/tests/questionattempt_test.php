@@ -37,7 +37,7 @@ require_once(__DIR__ . '/helpers.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class questionattempt_test extends \advanced_testcase {
+final class questionattempt_test extends \advanced_testcase {
     /** @var question_definition a question that can be used in the tests. */
     private $question;
     /** @var int fake question_usage id used in some tests. */
