@@ -48,12 +48,13 @@
             aria-controls="{{$region}}{{/region}}-target-{{uniqid}}"
         >
             <span class="collapsed-icon-container">
-                {{#pix}} t/collapsedcaret, core {{/pix}}
+                <span class="dir-rtl-hide">{{#pix}} t/collapsed, core {{/pix}}</span>
+                <span class="dir-ltr-hide">{{#pix}} t/collapsed_rtl, core {{/pix}}</span>
             </span>
             <span class="expanded-icon-container">
                 {{#pix}} t/expanded, core {{/pix}}
             </span>
-            <span class="font-weight-bold">{{$title}}{{/title}}</span>
+            <span class="font-weight-bold ms-1">{{$title}}{{/title}}</span>
             <small
                 class="hidden ms-1"
                 data-region="section-total-count-container" aria-labelledby="{{$region}}{{/region}}-total-count-label"
