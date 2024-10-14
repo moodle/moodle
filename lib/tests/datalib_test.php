@@ -24,7 +24,7 @@ namespace core;
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class datalib_test extends \advanced_testcase {
+final class datalib_test extends \advanced_testcase {
     protected function normalise_sql($sort) {
         return preg_replace('~\s+~', ' ', $sort);
     }

@@ -34,7 +34,7 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \qbehaviour_informationitem
  */
-class walkthrough_test extends \qbehaviour_walkthrough_test_base {
+final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     public function test_informationitem_feedback_description(): void {
 
         // Create a true-false question with correct answer true.

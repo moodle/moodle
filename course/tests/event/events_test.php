@@ -31,7 +31,7 @@ namespace core_course\event;
  * @copyright  2016 Stephen Bourget
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Tests set up

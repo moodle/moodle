@@ -24,7 +24,7 @@ namespace core;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \core\cron
  */
-class cron_test extends \advanced_testcase {
+final class cron_test extends \advanced_testcase {
     /**
      * Reset relevant caches between tests.
      */

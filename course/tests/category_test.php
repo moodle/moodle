@@ -26,7 +26,7 @@ use core_course_category;
  * @copyright  2013 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class category_test extends \advanced_testcase {
+final class category_test extends \advanced_testcase {
 
     protected $roles;
 

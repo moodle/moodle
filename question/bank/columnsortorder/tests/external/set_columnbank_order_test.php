@@ -31,7 +31,7 @@ use qbank_columnsortorder\tests\external_function_testcase;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \qbank_columnsortorder\external\set_columnbank_order
  */
-class set_columnbank_order_test extends external_function_testcase {
+final class set_columnbank_order_test extends external_function_testcase {
 
     /**
      * @var string Fully-qualified external function class to test.

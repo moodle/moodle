@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/enrol/imsenterprise/lib.php');
  *
  * @covers \enrol_imsenterprise_plugin
  */
-class imsenterprise_unenrol_test extends \advanced_testcase {
+final class imsenterprise_unenrol_test extends \advanced_testcase {
 
     /**
      * @var $imsplugin enrol_imsenterprise_plugin IMS plugin instance.

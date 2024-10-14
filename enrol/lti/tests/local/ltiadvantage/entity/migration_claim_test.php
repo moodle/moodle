@@ -26,7 +26,7 @@ use enrol_lti\local\ltiadvantage\repository\legacy_consumer_repository;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\entity\migration_claim
  */
-class migration_claim_test extends \advanced_testcase {
+final class migration_claim_test extends \advanced_testcase {
     /**
      * Setup run for each test case.
      */

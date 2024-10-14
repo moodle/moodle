@@ -26,8 +26,7 @@ namespace core;
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class html2text_test extends \basic_testcase {
-
+final class html2text_test extends \basic_testcase {
     /**
      * ALT as image replacements.
      */

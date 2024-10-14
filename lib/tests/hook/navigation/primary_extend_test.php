@@ -26,7 +26,7 @@ namespace core\hook\navigation;
  * @copyright 2023 Open LMS
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class primary_extend_test extends \advanced_testcase {
+final class primary_extend_test extends \advanced_testcase {
     /**
      * Test stoppable_trait.
      * @covers ::stop_propagation

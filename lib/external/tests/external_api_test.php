@@ -25,7 +25,7 @@ namespace core_external;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @covers      \core_external\external_api
  */
-class external_api_test extends \advanced_testcase {
+final class external_api_test extends \advanced_testcase {
     /**
      * Test the validate_parameters method.
      *

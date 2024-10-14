@@ -41,7 +41,7 @@ require_once($CFG->dirroot . '/group/lib.php');
  * @since Moodle 2.4
  * @covers \core_group_external
  */
-class externallib_test extends externallib_advanced_testcase {
+final class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Create group custom field for testing.

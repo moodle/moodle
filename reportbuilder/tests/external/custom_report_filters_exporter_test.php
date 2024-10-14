@@ -32,7 +32,7 @@ use core_course\reportbuilder\datasource\courses;
  * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class custom_report_filters_exporter_test extends advanced_testcase {
+final class custom_report_filters_exporter_test extends advanced_testcase {
 
     /**
      * Test exported data structure

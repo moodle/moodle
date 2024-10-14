@@ -38,7 +38,7 @@ use RedisClusterException;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass    \core\session\redis
  */
-class session_redis_cluster_test extends \advanced_testcase {
+final class session_redis_cluster_test extends \advanced_testcase {
 
     /**
      * Set up the test environment.

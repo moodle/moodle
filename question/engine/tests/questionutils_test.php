@@ -31,7 +31,7 @@ require_once(__DIR__ . '/../lib.php');
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class questionutils_test extends \advanced_testcase {
+final class questionutils_test extends \advanced_testcase {
     public function test_arrays_have_same_keys_and_values(): void {
         $this->assertTrue(question_utils::arrays_have_same_keys_and_values(
                 array(),

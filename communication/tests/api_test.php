@@ -38,7 +38,7 @@ require_once(__DIR__ . '/communication_test_helper_trait.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core_communication\api
  */
-class api_test extends \advanced_testcase {
+final class api_test extends \advanced_testcase {
     use matrix_test_helper_trait;
     use communication_test_helper_trait;
 

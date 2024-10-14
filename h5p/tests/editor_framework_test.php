@@ -37,7 +37,7 @@ use core_h5p\local\library\autoloader;
  *
  * @runTestsInSeparateProcesses
  */
-class editor_framework_test extends \advanced_testcase {
+final class editor_framework_test extends \advanced_testcase {
 
     /** @var editor_framework H5P editor_framework instance */
     protected $editorframework;

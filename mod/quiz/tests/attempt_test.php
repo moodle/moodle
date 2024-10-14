@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_quiz\quiz_attempt
  */
-class attempt_test extends \advanced_testcase {
+final class attempt_test extends \advanced_testcase {
 
     /**
      * Create quiz and attempt data with layout.

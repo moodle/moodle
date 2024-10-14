@@ -43,7 +43,7 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class custom_fields_test extends core_reportbuilder_testcase {
+final class custom_fields_test extends core_reportbuilder_testcase {
 
     /**
      * Generate custom fields, one of each type

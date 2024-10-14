@@ -38,7 +38,7 @@ use TypeError;
  * @copyright 2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class integer_filter_test extends advanced_testcase {
+final class integer_filter_test extends advanced_testcase {
     /**
      * Ensure that the add_filter_value function works as expected with valid values.
      */

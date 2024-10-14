@@ -27,7 +27,7 @@ use advanced_testcase;
  * @covers \mod_bigbluebuttonbn\task\send_notification
  * @coversDefaultClass \mod_bigbluebuttonbn\task\send_notification
  */
-class send_notification_test extends advanced_testcase {
+final class send_notification_test extends advanced_testcase {
     /**
      * Test that the debug message is correctly output.
      *

@@ -24,7 +24,7 @@ namespace tool_generator\local\testscenario;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \tool_generator\local\testscenario\parsedfeature
  */
-class parsedfeature_test extends \advanced_testcase {
+final class parsedfeature_test extends \advanced_testcase {
     /**
      * Get a parsed feature from a content.
      * @param string $content the feature content.

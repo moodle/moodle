@@ -23,7 +23,7 @@ namespace mod_lti\event;
  * @copyright  Copyright (c) 2012 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class unknown_service_api_called_test extends \advanced_testcase {
+final class unknown_service_api_called_test extends \advanced_testcase {
     /*
      * Ensure create event works.
      */

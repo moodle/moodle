@@ -26,7 +26,7 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_courseformat\output\activitybadge
  */
-class activitybadge_test extends \advanced_testcase {
+final class activitybadge_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of create_instance() and export_for_template() attributes.

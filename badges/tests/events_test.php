@@ -13,16 +13,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-/**
- * Badge events tests.
- *
- * @package    core_badges
- * @copyright  2015 onwards Simey Lameze <simey@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-require_once($CFG->dirroot . '/badges/tests/badgeslib_test.php');
+
+use core_badges\tests\badges_testcase;
 
 /**
  * Badge events tests class.
@@ -31,13 +23,11 @@ require_once($CFG->dirroot . '/badges/tests/badgeslib_test.php');
  * @copyright  2015 onwards Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends badgeslib_test {
-
+final class events_test extends badges_testcase {
     /**
      * Test badge awarded event.
      */
     public function test_badge_awarded(): void {
-
         $systemcontext = context_system::instance();
 
         $sink = $this->redirectEvents();
@@ -63,7 +53,6 @@ class events_test extends badgeslib_test {
      * create and trigger the event and ensure data is returned as expected.
      */
     public function test_badge_created(): void {
-
         $badge = new badge($this->badgeid);
         // Trigger an event: badge created.
         $eventparams = array(
@@ -85,7 +74,6 @@ class events_test extends badgeslib_test {
         $this->assertEquals($badge->id, $event->objectid);
         $this->assertDebuggingNotCalled();
         $sink->close();
-
     }
 
     /**
@@ -107,9 +95,7 @@ class events_test extends badgeslib_test {
         $this->assertEquals($badge->id, $event->objectid);
         $this->assertDebuggingNotCalled();
         $sink->close();
-
     }
-
 
     /**
      * Test the badge updated event.
@@ -130,8 +116,8 @@ class events_test extends badgeslib_test {
         $this->assertEquals($badge->id, $event->objectid);
         $this->assertDebuggingNotCalled();
         $sink->close();
-
     }
+
     /**
      * Test the badge deleted event.
      */
@@ -150,7 +136,6 @@ class events_test extends badgeslib_test {
         $this->assertEquals($badge->id, $event->objectid);
         $this->assertDebuggingNotCalled();
         $sink->close();
-
     }
 
     /**
@@ -172,7 +157,6 @@ class events_test extends badgeslib_test {
         $this->assertEquals($newid, $event->objectid);
         $this->assertDebuggingNotCalled();
         $sink->close();
-
     }
 
     /**
@@ -195,7 +179,6 @@ class events_test extends badgeslib_test {
         $this->assertEquals($badge->id, $event->objectid);
         $this->assertDebuggingNotCalled();
         $sink->close();
-
     }
 
     /**
@@ -218,7 +201,6 @@ class events_test extends badgeslib_test {
         $this->assertEquals($badge->id, $event->objectid);
         $this->assertDebuggingNotCalled();
         $sink->close();
-
     }
 
     /**
@@ -228,7 +210,6 @@ class events_test extends badgeslib_test {
      * create and trigger the event and ensure data is returned as expected.
      */
     public function test_badge_criteria_created(): void {
-
         $badge = new badge($this->badgeid);
 
         // Trigger and capture the event.
@@ -248,7 +229,6 @@ class events_test extends badgeslib_test {
         $this->assertEquals($criteriaprofile->badgeid, $event->other['badgeid']);
         $this->assertDebuggingNotCalled();
         $sink->close();
-
     }
 
     /**
@@ -258,7 +238,6 @@ class events_test extends badgeslib_test {
      * create and trigger the event and ensure data is returned as expected.
      */
     public function test_badge_criteria_updated(): void {
-
         $criteriaoverall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $this->badgeid));
         $criteriaoverall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL));
         $criteriaprofile = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_PROFILE, 'badgeid' => $this->badgeid));
@@ -281,7 +260,6 @@ class events_test extends badgeslib_test {
         $this->assertEquals($this->badgeid, $event->other['badgeid']);
         $this->assertDebuggingNotCalled();
         $sink->close();
-
     }
 
     /**
@@ -291,7 +269,6 @@ class events_test extends badgeslib_test {
      * create and trigger the event and ensure data is returned as expected.
      */
     public function test_badge_criteria_deleted(): void {
-
         $criteriaoverall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $this->badgeid));
         $criteriaoverall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL));
         $badge = new badge($this->badgeid);
@@ -308,7 +285,6 @@ class events_test extends badgeslib_test {
         $this->assertEquals($criteriaoverall->badgeid, $event->other['badgeid']);
         $this->assertDebuggingNotCalled();
         $sink->close();
-
     }
 
     /**
@@ -318,7 +294,6 @@ class events_test extends badgeslib_test {
      * create and trigger the event and ensure data is returned as expected.
      */
     public function test_badge_viewed(): void {
-
         $badge = new badge($this->badgeid);
         // Trigger an event: badge viewed.
         $other = array('badgeid' => $badge->id, 'badgehash' => '12345678');
@@ -340,7 +315,6 @@ class events_test extends badgeslib_test {
         $this->assertEquals($badge->id, $event->other['badgeid']);
         $this->assertDebuggingNotCalled();
         $sink->close();
-
     }
 
     /**
@@ -350,7 +324,6 @@ class events_test extends badgeslib_test {
      * create and trigger the event and ensure data is returned as expected.
      */
     public function test_badge_listing_viewed(): void {
-
         // Trigger an event: badge listing viewed.
         $context = context_system::instance();
         $eventparams = array(
@@ -370,6 +343,5 @@ class events_test extends badgeslib_test {
         $this->assertEquals(BADGE_TYPE_SITE, $event->other['badgetype']);
         $this->assertDebuggingNotCalled();
         $sink->close();
-
     }
 }

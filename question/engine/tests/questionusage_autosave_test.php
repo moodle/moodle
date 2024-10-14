@@ -33,7 +33,7 @@ require_once(__DIR__ . '/helpers.php');
  * @copyright 2013 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class questionusage_autosave_test extends \qbehaviour_walkthrough_test_base {
+final class questionusage_autosave_test extends \qbehaviour_walkthrough_test_base {
 
     public function test_autosave_then_display(): void {
         $this->resetAfterTest();

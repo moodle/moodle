@@ -33,7 +33,7 @@ namespace report_completion\event;
  * @copyright  2014 onwards Ankit Agarwal<ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Setup testcase.

@@ -25,7 +25,7 @@ namespace factor_sms;
  * @copyright   2023 Raquel Ortega <raquel.ortega@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class factor_test extends \advanced_testcase {
+final class factor_test extends \advanced_testcase {
 
     /**
      * Data provider for test_format_number().

@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/question/type/shortanswer/question.php');
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_test extends \advanced_testcase {
+final class question_test extends \advanced_testcase {
     public function test_compare_string_with_wildcard(): void {
         // Test case sensitive literal matches.
         $this->assertTrue((bool)qtype_shortanswer_question::compare_string_with_wildcard(

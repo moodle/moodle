@@ -65,7 +65,7 @@ require_once($CFG->dirroot . '/mod/lti/tests/mod_lti_testcase.php');
  * @copyright  Copyright (c) 2012 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class locallib_test extends mod_lti_testcase {
+final class locallib_test extends mod_lti_testcase {
 
     /**
      * @covers ::lti_split_parameters()

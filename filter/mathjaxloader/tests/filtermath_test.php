@@ -30,7 +30,7 @@ require_once($CFG->dirroot.'/filter/mathjaxloader/filter.php');
  * @copyright 2018 Markku Riekkinen
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filtermath_test extends \advanced_testcase {
+final class filtermath_test extends \advanced_testcase {
 
     /**
      * Test the functionality of {@link filter_mathjaxloader::filter()}.

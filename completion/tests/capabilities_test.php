@@ -24,7 +24,7 @@ namespace core_completion;
  * @author     Neill Magill <neill.magill@nottingham.ac.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class capabilities_test extends \advanced_testcase {
+final class capabilities_test extends \advanced_testcase {
     /**
      * A user who does not have capabilities to add events to the calendar should be able to create activities.
      */

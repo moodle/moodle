@@ -31,7 +31,7 @@ use core_reportbuilder\local\filters\text;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_test extends advanced_testcase {
+final class filter_test extends advanced_testcase {
 
     /**
      * Test getting filter class

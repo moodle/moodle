@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/outputlib.php');
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class xhtml_container_stack_test extends \advanced_testcase {
+final class xhtml_container_stack_test extends \advanced_testcase {
     public function test_push_then_pop(): void {
         // Set up.
         $stack = new xhtml_container_stack();

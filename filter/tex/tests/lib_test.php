@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/filter/tex/lib.php');
  * @copyright 2021 Shamim Rezaie <shamim@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends advanced_testcase {
+final class lib_test extends advanced_testcase {
     /**
      * Data provider for test_filter_tex_sanitize_formula.
      *

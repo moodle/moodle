@@ -23,7 +23,7 @@ namespace core_availability;
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tree_test extends \advanced_testcase {
+final class tree_test extends \advanced_testcase {
     public function setUp(): void {
         // Load the mock classes so they can be used.
         require_once(__DIR__ . '/fixtures/mock_condition.php');

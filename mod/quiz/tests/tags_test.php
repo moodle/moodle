@@ -28,7 +28,7 @@ use mod_quiz\quiz_settings;
  * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tags_test extends \advanced_testcase {
+final class tags_test extends \advanced_testcase {
     public function test_restore_random_question_by_tag(): void {
         global $CFG, $USER, $DB;
 

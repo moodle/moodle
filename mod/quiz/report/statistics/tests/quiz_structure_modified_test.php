@@ -33,7 +33,7 @@ use mod_quiz\quiz_settings;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \quiz_statistics\quiz_structure_modified
  */
-class quiz_structure_modified_test extends \advanced_testcase {
+final class quiz_structure_modified_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
 
     /**

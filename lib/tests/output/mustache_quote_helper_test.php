@@ -27,7 +27,7 @@ namespace core\output;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\output\mustache_quote_helper
  */
-class mustache_quote_helper_test extends \basic_testcase {
+final class mustache_quote_helper_test extends \basic_testcase {
 
     /**
      * Tests the quote helper

@@ -36,7 +36,7 @@ use org\bovigo\vfs\vfsStream;
  *
  * @coversDefaultClass \phpunit_dataset
  */
-class phpunit_dataset_test extends advanced_testcase {
+final class phpunit_dataset_test extends advanced_testcase {
 
 
     /**

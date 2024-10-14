@@ -32,8 +32,7 @@ use customfield_textarea;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \core_customfield\field_controller
  */
-class field_controller_test extends \advanced_testcase {
-
+final class field_controller_test extends \advanced_testcase {
     /**
      * Get generator.
      *

@@ -23,7 +23,7 @@ namespace core_files;
  * @copyright  2017 Andrew nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class conversion_test extends \advanced_testcase {
+final class conversion_test extends \advanced_testcase {
 
     /**
      * Helper to create a stored file object with the given supplied content.

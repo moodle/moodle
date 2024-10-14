@@ -24,7 +24,7 @@ namespace core;
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \core\param
  */
-class param_test extends \advanced_testcase {
+final class param_test extends \advanced_testcase {
     /**
      * Test that the Moodle `from_type` method provides canonicalised parameter values.
      *

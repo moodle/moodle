@@ -38,8 +38,7 @@ require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class administration_helper_test extends \advanced_testcase {
-
+final class administration_helper_test extends \advanced_testcase {
     /**
      * Set things back to the default before each test.
      */

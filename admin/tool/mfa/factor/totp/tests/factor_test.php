@@ -40,7 +40,7 @@ require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Base32.php');
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class factor_test extends \advanced_testcase {
+final class factor_test extends \advanced_testcase {
 
     /**
      * Test code validation of the TOTP factor

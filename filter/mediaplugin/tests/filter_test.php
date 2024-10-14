@@ -33,7 +33,7 @@ global $CFG;
 require_once($CFG->dirroot . '/filter/mediaplugin/filter.php'); // Include the code to test
 
 
-class filter_test extends \advanced_testcase {
+final class filter_test extends \advanced_testcase {
 
     function test_filter_mediaplugin_link(): void {
         $this->resetAfterTest(true);

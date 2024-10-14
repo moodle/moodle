@@ -23,7 +23,7 @@ namespace core_cache;
  * @copyright 2021 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class store_test extends \advanced_testcase {
+final class store_test extends \advanced_testcase {
 
     /**
      * Tests the default implementation of cache_size_details, which does some

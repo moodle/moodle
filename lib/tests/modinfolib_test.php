@@ -36,7 +36,7 @@ use Exception;
  * @copyright  2012 Andrew Davis
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class modinfolib_test extends advanced_testcase {
+final class modinfolib_test extends advanced_testcase {
     /**
      * Setup to ensure that fixtures are loaded.
      */

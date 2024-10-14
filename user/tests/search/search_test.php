@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/search/tests/fixtures/testable_core_search.php');
  * @copyright   2016 Devang Gaur {@link http://www.davidmonllao.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class search_test extends \advanced_testcase {
+final class search_test extends \advanced_testcase {
 
     /**
      * @var string Area id

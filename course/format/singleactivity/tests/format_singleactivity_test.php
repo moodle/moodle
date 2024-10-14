@@ -24,7 +24,7 @@ namespace format_singleactivity;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \format_singleactivity
  */
-class format_singleactivity_test extends \advanced_testcase {
+final class format_singleactivity_test extends \advanced_testcase {
 
     /**
      * Test for get_view_url().

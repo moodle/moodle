@@ -44,7 +44,7 @@ require_once($CFG->dirroot . '/filter/algebra/filter.php');
  * @copyright  2012 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_test extends \basic_testcase {
+final class filter_test extends \basic_testcase {
 
     protected $filter;
 

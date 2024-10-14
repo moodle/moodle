@@ -31,7 +31,7 @@ require_once($CFG->dirroot.'/course/lib.php');
  * @copyright  2012 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class courserequest_test extends \advanced_testcase {
+final class courserequest_test extends \advanced_testcase {
 
     public function test_create_request(): void {
         global $DB, $USER;

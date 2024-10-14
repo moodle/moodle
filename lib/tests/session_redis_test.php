@@ -35,8 +35,7 @@ use RedisException;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @runClassInSeparateProcess
  */
-class session_redis_test extends \advanced_testcase {
-
+final class session_redis_test extends \advanced_testcase {
     /** @var $keyprefix This key prefix used when testing Redis */
     protected $keyprefix = null;
     /** @var $redis The current testing redis connection */

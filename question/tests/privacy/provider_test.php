@@ -42,7 +42,7 @@ require_once(__DIR__ . '/../../engine/tests/helpers.php');
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
 
     // Include the privacy helper which has assertions on it.
     use \core_question_privacy_helper;

@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/backup/util/factories/backup_factory.class.php');
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class factories_test extends \advanced_testcase {
+final class factories_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $CFG;

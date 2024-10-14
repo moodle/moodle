@@ -39,7 +39,7 @@ require_once($CFG->libdir . '/navigationlib.php');
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later (5)
  */
-class navigationlib_test extends \advanced_testcase {
+final class navigationlib_test extends \advanced_testcase {
     /**
      * @var navigation_node
      */

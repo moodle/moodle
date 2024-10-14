@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/statistics/statistics_table.php')
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class statistics_table_test extends \advanced_testcase {
+final class statistics_table_test extends \advanced_testcase {
 
     public function test_format_percentage(): void {
         $table = new quiz_statistics_table();

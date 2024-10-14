@@ -34,7 +34,7 @@ namespace core\aws;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \core\aws\admin_settings_aws_region
  */
-class admin_settings_aws_region_test extends \advanced_testcase {
+final class admin_settings_aws_region_test extends \advanced_testcase {
 
     /**
      * Cleanup after all tests are executed.

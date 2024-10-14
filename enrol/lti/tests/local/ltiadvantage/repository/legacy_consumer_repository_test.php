@@ -28,7 +28,7 @@ require_once(__DIR__ . '/../lti_advantage_testcase.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\repository\legacy_consumer_repository
  */
-class legacy_consumer_repository_test extends \lti_advantage_testcase {
+final class legacy_consumer_repository_test extends \lti_advantage_testcase {
     /**
      * Test the get_consumer_secrets repository method.
      *

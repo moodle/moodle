@@ -41,7 +41,7 @@ defined('MOODLE_INTERNAL') || die;
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class action_event_test extends \advanced_testcase {
+final class action_event_test extends \advanced_testcase {
     /**
      * Test event class getters.
      *

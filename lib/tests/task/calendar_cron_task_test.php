@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/calendar/lib.php');
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class calendar_cron_task_test extends \advanced_testcase {
+final class calendar_cron_task_test extends \advanced_testcase {
 
     /**
      * Tests set up

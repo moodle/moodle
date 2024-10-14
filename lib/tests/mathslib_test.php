@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/mathslib.php');
  * @copyright  2007 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mathslib_test extends \basic_testcase {
+final class mathslib_test extends \basic_testcase {
 
     /**
      * Tests the basic formula evaluation.

@@ -27,7 +27,7 @@ use test_component\courseformat\sectiondelegate as testsectiondelegate;
  * @covers     \core_courseformat\sectiondelegate
  * @coversDefaultClass \core_courseformat\sectiondelegate
  */
-class sectiondelegate_test extends \advanced_testcase {
+final class sectiondelegate_test extends \advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.

@@ -28,7 +28,7 @@ require_once(__DIR__.'/..//fixtures/event_fixtures.php');
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class base_test extends \advanced_testcase {
+final class base_test extends \advanced_testcase {
 
     const DEBUGGING_MSG = 'Events API using $handlers array has been deprecated in favour of Events 2 API, please use it instead.';
 

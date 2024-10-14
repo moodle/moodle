@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/backup/util/helper/convert_helper.class.php');
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class converterhelper_test extends \basic_testcase {
+final class converterhelper_test extends \basic_testcase {
 
     public function test_choose_conversion_path(): void {
 

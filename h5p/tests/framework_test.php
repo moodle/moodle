@@ -33,7 +33,7 @@ use Moodle\H5PDisplayOptionBehaviour;
  * @covers     \core_h5p\framework
  * @runTestsInSeparateProcesses
  */
-class framework_test extends \advanced_testcase {
+final class framework_test extends \advanced_testcase {
 
     /** @var \core_h5p\framework */
     private $framework;
