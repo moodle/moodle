@@ -19,14 +19,6 @@ namespace quiz_responses;
 use question_bank;
 use quiz_attempt;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/quiz/tests/attempt_walkthrough_from_csv_test.php');
-require_once($CFG->dirroot . '/mod/quiz/report/default.php');
-require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
-require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
-
 /**
  * Quiz attempt walk through using data from csv file.
  *
@@ -36,13 +28,21 @@ require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class responses_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthrough_from_csv_test {
-    protected function get_full_path_of_csv_file(string $setname, string $test): string {
-        // Overridden here so that __DIR__ points to the path of this file.
-        return  __DIR__."/fixtures/{$setname}{$test}.csv";
+final class responses_from_steps_walkthrough_test extends \mod_quiz\tests\attempt_walkthrough_testcase {
+    #[\Override]
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+
+        parent::setUpBeforeClass();
+
+        require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
+        require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
     }
 
-    protected $files = array('questions', 'steps', 'responses');
+    #[\Override]
+    protected static function get_test_files(): array {
+        return ['questions', 'steps', 'responses'];
+    }
 
     /**
      * Create a quiz add questions to it, walk through quiz attempts and then check results.
@@ -51,8 +51,7 @@ class responses_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthroug
      * @param array $csvdata of data read from csv file "questionsXX.csv", "stepsXX.csv" and "responsesXX.csv".
      * @dataProvider get_data_for_walkthrough
      */
-    public function test_walkthrough_from_csv($quizsettings, $csvdata) {
-
+    public function test_walkthrough_from_csv($quizsettings, $csvdata): void {
         $this->resetAfterTest(true);
         question_bank::get_qtype('random')->clear_caches_before_testing();
 
@@ -70,7 +69,14 @@ class responses_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthroug
         }
     }
 
-    protected function assert_response_test($quizattemptid, $responses) {
+    /**
+     * Helper to assert a response.
+     *
+     * @param mixed $quizattemptid
+     * @param mixed $responses
+     * @throws \coding_exception
+     */
+    protected function assert_response_test($quizattemptid, $responses): void {
         $quizattempt = quiz_attempt::create($quizattemptid);
 
         foreach ($responses['slot'] as $slot => $tests) {

@@ -36,8 +36,7 @@ use ReflectionMethod;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core_question\local\statistics\statistics_bulk_loader
  */
-class statistics_bulk_loader_test extends advanced_testcase {
-
+final class statistics_bulk_loader_test extends advanced_testcase {
     /** @var float Delta used when comparing statistics values out-of 1. */
     protected const DELTA = 0.00005;
 
