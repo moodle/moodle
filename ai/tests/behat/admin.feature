@@ -34,7 +34,6 @@ Feature: An administrator can manage AI subsystem settings
     And I should see "OpenAI API Provider enabled."
     And the following config values are set as admin:
       | apikey | 123 | aiprovider_openai |
-      | orgid  | abc | aiprovider_openai |
     And I navigate to "AI > AI placements" in site administration
     And I click on the "Settings" link in the table row containing "HTML Text Editor Placement"
     Then I should not see "This action is unavailable."
@@ -57,7 +56,6 @@ Feature: An administrator can manage AI subsystem settings
     And I should see "OpenAI API Provider enabled."
     And the following config values are set as admin:
       | apikey | 123 | aiprovider_openai |
-      | orgid  | abc | aiprovider_openai |
     And I click on the "Settings" link in the table row containing "OpenAI API Provider"
     And I toggle the "Generate text" admin switch "off"
     And I navigate to "AI > AI placements" in site administration

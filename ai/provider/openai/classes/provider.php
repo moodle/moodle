@@ -214,6 +214,6 @@ class provider extends \core_ai\provider {
      * @return bool Return true if configured.
      */
     public function is_provider_configured(): bool {
-        return !empty($this->apikey) && !empty($this->orgid);
+        return !empty($this->apikey);
     }
 }
