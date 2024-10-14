@@ -16,8 +16,6 @@
 
 namespace core_question\local\statistics;
 
-defined('MOODLE_INTERNAL') || die();
-
 use advanced_testcase;
 use context;
 use context_module;
@@ -30,9 +28,6 @@ use mod_quiz\quiz_settings;
 use question_engine;
 use ReflectionMethod;
 
-global $CFG;
-require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.php');
-
 /**
  * Tests for question statistics.
  *
@@ -41,9 +36,8 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core_question\local\statistics\statistics_bulk_loader
  */
-class statistics_bulk_loader_test extends advanced_testcase {
-
-    use \quiz_question_helper_test_trait;
+final class statistics_bulk_loader_test extends advanced_testcase {
+    use \mod_quiz\tests\question_helper_test_trait;
 
     /** @var float Delta used when comparing statistics values out-of 1. */
     protected const DELTA = 0.00005;
