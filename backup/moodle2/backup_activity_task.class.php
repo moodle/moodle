@@ -286,10 +286,6 @@ abstract class backup_activity_task extends backup_task {
         // All these are common settings to be shared by all activities.
         $activityincluded = $this->add_activity_included_setting($settingprefix);
 
-        if (question_module_uses_questions($this->modulename)) {
-            $questionbank = $this->plan->get_setting('questionbank');
-            $questionbank->add_dependency($activityincluded);
-        }
 
         $this->add_activity_userinfo_setting($settingprefix, $activityincluded);
 

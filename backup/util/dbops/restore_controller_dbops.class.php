@@ -156,7 +156,6 @@ abstract class restore_controller_dbops extends restore_dbops {
             'restore_general_userscompletion'    => 'userscompletion',
             'restore_general_logs'               => 'logs',
             'restore_general_histories'          => 'grade_histories',
-            'restore_general_questionbank'       => 'questionbank',
             'restore_general_groups'             => 'groups',
             'restore_general_competencies'       => 'competencies',
             'restore_general_contentbankcontent' => 'contentbankcontent',
@@ -195,7 +194,6 @@ abstract class restore_controller_dbops extends restore_dbops {
                     'activities',
                     'blocks',
                     'filters',
-                    'questionbank'
             );
             self::force_enable_settings($controller, $settings);
         };

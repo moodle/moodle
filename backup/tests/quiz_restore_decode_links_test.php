@@ -49,11 +49,12 @@ class quiz_restore_decode_links_test extends \advanced_testcase {
             array('createsections' => true));
         $quiz = $generator->create_module('quiz', array(
             'course' => $course->id));
+        $qbank = $this->getDataGenerator()->create_module('qbank', ['course' => $course->id]);
 
         // Create questions.
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $context = \context_course::instance($course->id);
+        $context = \context_module::instance($qbank->cmid);
         $cat = $questiongenerator->create_question_category(array('contextid' => $context->id));
         $question = $questiongenerator->create_question('multichoice', null, array('category' => $cat->id));
 

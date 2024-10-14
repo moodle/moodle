@@ -134,7 +134,6 @@ $string['configgeneralfiles'] = 'Sets the default for including files in a backu
 $string['configgeneralfilters'] = 'Sets the default for including filters in a backup.';
 $string['configgeneralhistories'] = 'Sets the default for including user history within a backup.';
 $string['configgenerallogs'] = 'If enabled logs will be included in backups by default.';
-$string['configgeneralquestionbank'] = 'If enabled the question bank will be included in backups by default. PLEASE NOTE: Disabling this setting will disable the backup of activities which use the question bank, such as the quiz.';
 $string['configgeneralgroups'] = 'Sets the default for including groups and groupings in a backup.';
 $string['configgeneralroleassignments'] = 'If enabled by default roles assignments will also be backed up.';
 $string['configgeneralpermissions'] = 'If enabled the role permissions will be imported. This may override existing permissions for enrolled users.';
@@ -236,7 +235,6 @@ $string['generalhistories'] = 'Include histories';
 $string['generalgradehistories'] = 'Include histories';
 $string['generallegacyfiles'] = 'Include legacy course files';
 $string['generallogs'] = 'Include logs';
-$string['generalquestionbank'] = 'Include question bank';
 $string['generalgroups'] = 'Include groups and groupings';
 $string['generalrestoredefaults'] = 'General restore defaults';
 $string['mergerestoredefaults'] = 'Restore defaults when merging into another course';
@@ -314,9 +312,9 @@ $string['privacy:metadata:backup_controllers:operation'] = 'The operation that w
 $string['privacy:metadata:backup_controllers:timecreated'] = 'The time when the action was created';
 $string['privacy:metadata:backup_controllers:timemodified'] = 'The time when the action was modified';
 $string['privacy:metadata:backup_controllers:type'] = 'The type of the item being operated on, eg. activity.';
-$string['qcategory2coursefallback'] = 'The questions category "{$a->name}", originally at system/course category context in backup file, will be created at course context by restore';
+$string['qcategory2coursefallback'] = 'The questions category "{$a->name}", originally at system|course|course_category context in backup file, will be created at a question bank module context by restore';
 $string['qcategorycannotberestored'] = 'The questions category "{$a->name}" cannot be created by restore';
-$string['question2coursefallback'] = 'The questions category "{$a->name}", originally at system/course category context in backup file, will be created at course context by restore';
+$string['question2coursefallback'] = 'The questions category "{$a->name}", originally at system|course|course_category in backup file, will be created at a question bank module context by restore';
 $string['questioncannotberestored'] = 'The questions "{$a->name}" cannot be created by restore';
 $string['restoreactivity'] = 'Restore activity';
 $string['restorecourse'] = 'Restore course';
@@ -437,3 +435,7 @@ $string['recyclebin_desc'] = 'Note that these settings will also be used for the
 // Deprecated since Moodle 4.4.
 $string['copycourseheading'] = 'Copy a course';
 $string['backupcourse'] = 'Backup course: {$a}';
+
+// Deprecated since Moodle 5.0.
+$string['configgeneralquestionbank'] = 'If enabled the question bank will be included in backups by default. PLEASE NOTE: Disabling this setting will disable the backup of activities which use the question bank, such as the quiz.';
+$string['generalquestionbank'] = 'Include question bank';

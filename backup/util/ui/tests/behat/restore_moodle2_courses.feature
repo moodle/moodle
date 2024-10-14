@@ -275,7 +275,6 @@ Feature: Restore Moodle 2 course backups
       | Initial      | Include files                    | 0                   |
       | Initial      | Include filters                  | 0                   |
       | Initial      | Include calendar events          | 0                   |
-      | Initial      | Include question bank            | 0                   |
       | Initial      | Include groups and groupings     | 0                   |
       | Initial      | Include competencies             | 0                   |
       | Initial      | Include custom fields            | 0                   |

@@ -368,6 +368,7 @@ $string['contexterror'] = 'You shouldn\'t have got here if you\'re not moving a 
 $string['correct'] = 'Correct';
 $string['correctfeedback'] = 'For any correct response';
 $string['correctfeedbackdefault'] = 'Your answer is correct.';
+$string['courserestore'] = 'Course restore';
 $string['decimalplacesingrades'] = 'Decimal places in grades';
 $string['defaultmark'] = 'Default mark';
 $string['errorsavingflags'] = 'Error saving the flag state.';

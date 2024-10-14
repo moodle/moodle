@@ -71,7 +71,8 @@ class core_question_generator extends component_generator_base {
             if (isset($record['parent'])) {
                 $record['contextid'] = $DB->get_field('question_categories', 'contextid', ['id' => $record['parent']]);
             } else {
-                $record['contextid'] = context_system::instance()->id;
+                $qbank = $this->datagenerator->create_module('qbank', ['course' => SITEID]);
+                $record['contextid'] = context_module::instance($qbank->cmid)->id;
             }
         }
         if (!isset($record['parent'])) {
@@ -162,33 +163,20 @@ class core_question_generator extends component_generator_base {
     }
 
     /**
-     * Setup a course category, course, a question category, and 2 questions
-     * for testing.
+     * Set up a course category, a course, a mod_qbank instance, a question category for the mod_qbank instance,
+     * and 2 questions for testing.
      *
-     * @param string $type The type of question category to create.
-     * @return array The created data objects
+     * @return array of the data objects mentioned above
      */
-    public function setup_course_and_questions($type = 'course') {
+    public function setup_course_and_questions() {
         $datagenerator = $this->datagenerator;
         $category = $datagenerator->create_category();
         $course = $datagenerator->create_course([
             'numsections' => 5,
             'category' => $category->id
         ]);
-
-        switch ($type) {
-            case 'category':
-                $context = context_coursecat::instance($category->id);
-                break;
-
-            case 'system':
-                $context = context_system::instance();
-                break;
-
-            default:
-                $context = context_course::instance($course->id);
-                break;
-        }
+        $qbank = $datagenerator->create_module('qbank', ['course' => $course->id]);
+        $context = context_module::instance($qbank->cmid);
 
         $qcat = $this->create_question_category(['contextid' => $context->id]);
 
@@ -197,7 +185,7 @@ class core_question_generator extends component_generator_base {
                 $this->create_question('shortanswer', null, ['category' => $qcat->id]),
         ];
 
-        return [$category, $course, $qcat, $questions];
+        return [$category, $course, $qcat, $questions, $qbank];
     }
 
     /**

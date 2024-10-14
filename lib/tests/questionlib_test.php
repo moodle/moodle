@@ -16,6 +16,7 @@
 
 namespace core;
 
+use core_question\local\bank\question_bank_helper;
 use question_bank;
 
 defined('MOODLE_INTERNAL') || die();
@@ -162,83 +163,65 @@ class questionlib_test extends \advanced_testcase {
         // Set to admin user.
         $this->setAdminUser();
 
-        // Create two course categories - we are going to delete one of these later and will expect
-        // all the questions belonging to the course in the deleted category to be moved.
+        // Create 2 qbank instances - we are going to delete one of these later and will expect
+        // all the questions belonging to the deleted module to be moved.
         $coursecat1 = $this->getDataGenerator()->create_category();
+        $course1 = $this->getDataGenerator()->create_course(['category' => $coursecat1->id]);
+        $modqbank1 = $this->getDataGenerator()->create_module('qbank', ['course' => $course1->id]);
         $coursecat2 = $this->getDataGenerator()->create_category();
+        $course2 = $this->getDataGenerator()->create_course(['category' => $coursecat2->id]);
+        $modqbank2 = $this->getDataGenerator()->create_module('qbank', ['course' => $course2->id]);
 
         // Create a couple of categories and questions.
-        $context1 = \context_coursecat::instance($coursecat1->id);
-        $context2 = \context_coursecat::instance($coursecat2->id);
+        $context1 = \context_module::instance($modqbank1->cmid);
+        $context2 = \context_module::instance($modqbank2->cmid);
         /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $questioncat1 = $questiongenerator->create_question_category(array('contextid' =>
-            $context1->id));
-        $questioncat2 = $questiongenerator->create_question_category(array('contextid' =>
-            $context2->id));
-        $question1 = $questiongenerator->create_question('shortanswer', null, array('category' => $questioncat1->id));
-        $question2 = $questiongenerator->create_question('shortanswer', null, array('category' => $questioncat1->id));
-        $question3 = $questiongenerator->create_question('shortanswer', null, array('category' => $questioncat2->id));
-        $question4 = $questiongenerator->create_question('shortanswer', null, array('category' => $questioncat2->id));
+        $questioncat1 = $questiongenerator->create_question_category(['contextid' =>
+            $context1->id]);
+        $questioncat2 = $questiongenerator->create_question_category(['contextid' =>
+            $context2->id]);
+        $question1 = $questiongenerator->create_question('shortanswer', null, ['category' => $questioncat1->id]);
+        $question2 = $questiongenerator->create_question('shortanswer', null, ['category' => $questioncat1->id]);
+        $question3 = $questiongenerator->create_question('shortanswer', null, ['category' => $questioncat2->id]);
+        $question4 = $questiongenerator->create_question('shortanswer', null, ['category' => $questioncat2->id]);
 
         // Now lets tag these questions.
-        \core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $context1, array('tag 1', 'tag 2'));
-        \core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $context1, array('tag 3', 'tag 4'));
-        \core_tag_tag::set_item_tags('core_question', 'question', $question3->id, $context2, array('tag 5', 'tag 6'));
-        \core_tag_tag::set_item_tags('core_question', 'question', $question4->id, $context2, array('tag 7', 'tag 8'));
+        \core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $context1, ['tag 1', 'tag 2']);
+        \core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $context1, ['tag 3', 'tag 4']);
+        \core_tag_tag::set_item_tags('core_question', 'question', $question3->id, $context2, ['tag 5', 'tag 6']);
+        \core_tag_tag::set_item_tags('core_question', 'question', $question4->id, $context2, ['tag 7', 'tag 8']);
 
-        // Test moving the questions to another category.
-        question_move_questions_to_category(array($question1->id, $question2->id), $questioncat2->id);
-
-        // Test that all tag_instances belong to one context.
-        $this->assertEquals(8, $DB->count_records('tag_instance', array('component' => 'core_question',
-            'contextid' => $questioncat2->contextid)));
-
-        // Test moving them back.
-        question_move_questions_to_category(array($question1->id, $question2->id), $questioncat1->id);
-
-        // Test that all tag_instances are now reset to how they were initially.
-        $this->assertEquals(4, $DB->count_records('tag_instance', array('component' => 'core_question',
-            'contextid' => $questioncat1->contextid)));
-        $this->assertEquals(4, $DB->count_records('tag_instance', array('component' => 'core_question',
-            'contextid' => $questioncat2->contextid)));
-
-        // Now test moving a whole question category to another context.
+        // Test moving a whole question category to another context.
         question_move_category_to_context($questioncat1->id, $questioncat1->contextid, $questioncat2->contextid);
 
         // Test that all tag_instances belong to one context.
-        $this->assertEquals(8, $DB->count_records('tag_instance', array('component' => 'core_question',
-            'contextid' => $questioncat2->contextid)));
+        $this->assertEquals(8, $DB->count_records('tag_instance', ['component' => 'core_question',
+            'contextid' => $questioncat2->contextid]));
 
         // Now test moving them back.
         question_move_category_to_context($questioncat1->id, $questioncat2->contextid,
-            \context_coursecat::instance($coursecat1->id)->id);
+            \context_module::instance($modqbank1->cmid)->id);
 
         // Test that all tag_instances are now reset to how they were initially.
-        $this->assertEquals(4, $DB->count_records('tag_instance', array('component' => 'core_question',
-            'contextid' => $questioncat1->contextid)));
-        $this->assertEquals(4, $DB->count_records('tag_instance', array('component' => 'core_question',
-            'contextid' => $questioncat2->contextid)));
-
-        // Now we want to test deleting the course category and moving the questions to another category.
-        question_delete_course_category($coursecat1, $coursecat2);
-
-        // Test that all tag_instances belong to one context.
-        $this->assertEquals(8, $DB->count_records('tag_instance', array('component' => 'core_question',
-            'contextid' => $questioncat2->contextid)));
+        $this->assertEquals(4, $DB->count_records('tag_instance', ['component' => 'core_question',
+            'contextid' => $questioncat1->contextid]));
+        $this->assertEquals(4, $DB->count_records('tag_instance', ['component' => 'core_question',
+            'contextid' => $questioncat2->contextid]));
 
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
+        $modqbank3 = $this->getDataGenerator()->create_module('qbank', ['course' => $course->id]);
 
         // Create some question categories and questions in this course.
-        $coursecontext = \context_course::instance($course->id);
-        $questioncat = $questiongenerator->create_question_category(array('contextid' => $coursecontext->id));
-        $question1 = $questiongenerator->create_question('shortanswer', null, array('category' => $questioncat->id));
-        $question2 = $questiongenerator->create_question('shortanswer', null, array('category' => $questioncat->id));
+        $modcontext = \context_module::instance($modqbank3->cmid);
+        $questioncat = $questiongenerator->create_question_category(['contextid' => $modcontext->id]);
+        $question1 = $questiongenerator->create_question('shortanswer', null, ['category' => $questioncat->id]);
+        $question2 = $questiongenerator->create_question('shortanswer', null, ['category' => $questioncat->id]);
 
         // Add some tags to these questions.
-        \core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, array('tag 1', 'tag 2'));
-        \core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, array('tag 1', 'tag 2'));
+        \core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $modcontext, ['tag 1', 'tag 2']);
+        \core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $modcontext, ['tag 1', 'tag 2']);
 
         // Create a course that we are going to restore the other course to.
         $course2 = $this->getDataGenerator()->create_course();
@@ -260,9 +243,21 @@ class questionlib_test extends \advanced_testcase {
         $rc->execute_precheck();
         $rc->execute_plan();
 
+        $modinfo = get_fast_modinfo($course2);
+        $qbanks = $modinfo->get_instances_of('qbank');
+        $qbankids = array_column($qbanks, 'instance');
+        $qbankrecords = $DB->get_records_list('qbank', 'id', $qbankids, '', 'id, type');
+        $qbanks = array_filter($qbanks, static function($bank) use ($qbankrecords) {
+            if (isset($qbankrecords[$bank->instance])) {
+                return $qbankrecords[$bank->instance]->type === question_bank_helper::TYPE_STANDARD;
+            }
+            return false;
+        });
+        $qbank = reset($qbanks);
+
         // Get the created question category.
         $restoredcategory = $DB->get_record_select('question_categories', 'contextid = ? AND parent <> 0',
-                array(\context_course::instance($course2->id)->id), '*', MUST_EXIST);
+                [$qbank->context->id, '*', MUST_EXIST]);
 
         // Check that there are two questions in the restored to course's context.
         $this->assertEquals(2, $DB->get_record_sql('SELECT COUNT(q.id) as questioncount

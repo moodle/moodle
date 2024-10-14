@@ -60,7 +60,11 @@ class restore_qbank_activity_task extends restore_activity_task {
      * @return restore_decode_rule[].
      */
     public static function define_decode_rules(): array {
-        return [];
+        $rules = [];
+
+        $rules[] = new restore_decode_rule('QBANKVIEWBYID', '/mod/qbank/view.php?id=$1', 'course_module');
+
+        return $rules;
     }
 
     /**

@@ -56,21 +56,21 @@ class quiz_question_restore_test extends \advanced_testcase {
     }
 
     /**
-     * Test a quiz backup and restore in a different course without attempts for course question bank.
      *
      * @covers \mod_quiz\question\bank\qbank_helper::get_question_structure
      */
-    public function test_quiz_restore_in_a_different_course_using_course_question_bank(): void {
+    public function test_quiz_restore_in_a_different_course_using_question_bank(): void {
         $this->resetAfterTest();
 
         // Create the test quiz.
         $quiz = $this->create_test_quiz($this->course);
         $oldquizcontext = \context_module::instance($quiz->cmid);
+        $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $this->course]);
+        $qbankcontext = \context_module::instance($qbank->cmid);
         // Test for questions from a different context.
-        $coursecontext = \context_course::instance($this->course->id);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $this->add_two_regular_questions($questiongenerator, $quiz, ['contextid' => $coursecontext->id]);
-        $this->add_one_random_question($questiongenerator, $quiz, ['contextid' => $coursecontext->id]);
+        $this->add_two_regular_questions($questiongenerator, $quiz, ['contextid' => $qbankcontext->id]);
+        $this->add_one_random_question($questiongenerator, $quiz, ['contextid' => $qbankcontext->id]);
 
         // Make the backup.
         $backupid = $this->backup_quiz($quiz, $this->user);
@@ -303,12 +303,24 @@ class quiz_question_restore_test extends \advanced_testcase {
         $rc = new \restore_controller($backupid, $newcourseid, \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $USER->id,
             \backup::TARGET_NEW_COURSE);
 
-        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_precheck();
+        $results = $rc->get_precheck_results();
+        // Backup contains categories attached to deprecated contexts so the results should only contain warnings for these.
+        $this->assertCount(2, $results['warnings']);
+        foreach ($results['warnings'] as $warning) {
+            $this->assertStringContainsString('will be created at a question bank module context by restore', $warning);
+        }
+        $this->assertArrayNotHasKey('errors', $results);
+
         $rc->execute_plan();
         $rc->destroy();
 
         // Get the information about the resulting course and check that it is set up correctly.
         $modinfo = get_fast_modinfo($newcourseid);
+        $qbanks = $modinfo->get_instances_of('qbank');
+        $this->assertCount(1, $qbanks);
+        $qbank = reset($qbanks);
+        $this->assertEquals(get_string('systembank', 'question'), $qbank->name);
         $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
         $quizobj = \mod_quiz\quiz_settings::create($quiz->instance);
         $structure = structure::create_for_quiz($quizobj);
@@ -322,10 +334,9 @@ class quiz_question_restore_test extends \advanced_testcase {
         $questions = $quizobj->get_questions();
         $this->assertCount(1, $questions);
 
-        // Count the questions for course question bank.
-        $this->assertEquals(6, $this->question_count(\context_course::instance($newcourseid)->id));
-        $this->assertEquals(6, $this->question_count(\context_course::instance($newcourseid)->id,
-            "AND q.qtype <> 'random'"));
+        // Count the questions for new course mod_qbank question bank.
+        $this->assertEquals(6, $this->question_count(\context_module::instance($qbank->id)->id));
+        $this->assertEquals(6, $this->question_count(\context_module::instance($qbank->id)->id, "AND q.qtype <> 'random'"));
 
         // Count the questions in quiz qbank.
         $this->assertEquals(0, $this->question_count($quizobj->get_context()->id));
@@ -408,13 +419,20 @@ class quiz_question_restore_test extends \advanced_testcase {
         $rc = new \restore_controller($backupid, $newcourseid, \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $USER->id,
                 \backup::TARGET_NEW_COURSE);
 
-        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_precheck();
+        $results = $rc->get_precheck_results();
+        // Backup contains categories attached to deprecated contexts, so we should only have warnings for those.
+        $this->assertCount(1, $results['warnings']);
+        $this->assertStringContainsString('will be created at a question bank module context by restore', $results['warnings'][0]);
+        $this->assertArrayNotHasKey('errors', $results);
+
         $rc->execute_plan();
         $rc->destroy();
 
         // Get the information about the resulting course and check that it is set up correctly.
         // Each quiz should contain an instance of the random question.
         $modinfo = get_fast_modinfo($newcourseid);
+        $qbank = array_values($modinfo->get_instances_of('qbank'))[0];
         $quizzes = $modinfo->get_instances_of('quiz');
         $this->assertCount(2, $quizzes);
         foreach ($quizzes as $quiz) {
@@ -431,10 +449,10 @@ class quiz_question_restore_test extends \advanced_testcase {
             $this->assertCount(1, $questions);
         }
 
-        // Count the questions for course question bank.
+        // Count the questions for new course mod_qbank question bank.
         // We should have a single question, the random question should have been deleted after the restore.
-        $this->assertEquals(1, $this->question_count(\context_course::instance($newcourseid)->id));
-        $this->assertEquals(1, $this->question_count(\context_course::instance($newcourseid)->id,
+        $this->assertEquals(1, $this->question_count(\context_module::instance($qbank->id)->id));
+        $this->assertEquals(1, $this->question_count(\context_module::instance($qbank->id)->id,
                 "AND q.qtype <> 'random'"));
 
         // Count the questions in quiz qbank.

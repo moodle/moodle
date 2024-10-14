@@ -538,10 +538,11 @@ abstract class restore_dbops {
      * the target contexts where each bank will be restored and returning
      * warnings/errors as needed.
      *
-     * Some contextlevels (system, coursecat), will delegate process to
-     * course level if any problem is found (lack of permissions, non-matching
-     * target context...). Other contextlevels (course, module) will
-     * cause return error if some problem is found.
+     * Question categories at CONTEXT_SYSTEM, CONTEXT_COURSE, and CONTEXT_COURSECAT
+     * are now deprecated, but we still have to account for them in backup files
+     * made with pre-deprecated code. As such, any categories in backup files that used
+     * to target these contexts will now be attached to a 'fallback' qbank
+     * instance on the course being restored.
      *
      * At the end, if no errors were found, all the categories in backup_temp_ids
      * will be pointing (parentitemid) to the target context where they must be
@@ -570,13 +571,8 @@ abstract class restore_dbops {
         global $DB;
 
         // To return any errors and warnings found
-        $errors   = array();
-        $warnings = array();
-
-        // Specify which fallbacks must be performed
-        $fallbacks = array(
-            CONTEXT_SYSTEM => CONTEXT_COURSE,
-            CONTEXT_COURSECAT => CONTEXT_COURSE);
+        $errors = [];
+        $warnings = [];
 
         /** @var restore_controller $rc */
         $rc = restore_controller_dbops::load_controller($restoreid);
@@ -584,24 +580,22 @@ abstract class restore_dbops {
         $after35 = $plan->backup_release_compare('3.5', '>=') && $plan->backup_version_compare(20180205, '>');
         $rc->destroy(); // Always need to destroy.
 
-        // For any contextlevel, follow this process logic:
-        //
-        // 0) Iterate over each context (qbank)
-        // 1) Iterate over each qcat in the context, matching by stamp for the found target context
-        //     2a) No match, check if user can create qcat and q
-        //         3a) User can, mark the qcat and all dependent qs to be created in that target context
-        //         3b) User cannot, check if we are in some contextlevel with fallback
-        //             4a) There is fallback, move ALL the qcats to fallback, warn. End qcat loop
-        //             4b) No fallback, error. End qcat loop.
-        //     2b) Match, mark qcat to be mapped and iterate over each q, matching by stamp and version
-        //         5a) No match, check if user can add q
-        //             6a) User can, mark the q to be created
-        //             6b) User cannot, check if we are in some contextlevel with fallback
-        //                 7a) There is fallback, move ALL the qcats to fallback, warn. End qcat loop
-        //                 7b) No fallback, error. End qcat loop
-        //         5b) Random question, must always create new.
-        //         5c) Match, mark q to be mapped
-        // 8) Check if backup is from Moodle >= 3.5 and error if more than one top-level category in the context.
+        /*
+          For any contextlevel, follow this process logic:
+
+          0) Iterate over each context (qbank)
+          1) Iterate over each qcat in the context, matching by stamp for the found target context
+              2a) No match, check if user can create qcat and q
+                  3a) User can, mark the qcat and all dependent qs to be created in that target context
+                  3b) User cannot. Move ALL the qcats to a default qbank instance, warn. End qcat loop
+              2b) Match, mark qcat to be mapped and iterate over each q, matching by stamp and version
+                  4a) No match, check if user can add q
+                      5a) User can, mark the q to be created
+                      5b) User cannot. Move ALL the qcats to a default qbank instance, warn. End qcat loop
+                  4b) Random question, must always create new.
+                  4c) Match, mark q to be mapped
+          6) Check if backup is from Moodle >= 3.5 and error if more than one top-level category in the context.
+         */
 
         // Get all the contexts (question banks) in restore for the given contextlevel
         $contexts = self::restore_get_question_banks($restoreid, $contextlevel);
@@ -610,7 +604,7 @@ abstract class restore_dbops {
         foreach ($contexts as $contextid => $contextlevel) {
             // Init some perms
             $canmanagecategory = false;
-            $canadd            = false;
+            $canadd = false;
             // Top-level category counter.
             $topcats = 0;
             // get categories in context (bank)
@@ -619,7 +613,7 @@ abstract class restore_dbops {
             // cache permissions if $targetcontext is found
             if ($targetcontext = self::restore_find_best_target_context($categories, $courseid, $contextlevel)) {
                 $canmanagecategory = has_capability('moodle/question:managecategory', $targetcontext, $userid);
-                $canadd            = has_capability('moodle/question:add', $targetcontext, $userid);
+                $canadd = has_capability('moodle/question:add', $targetcontext, $userid);
             }
             // 1) Iterate over each qcat in the context, matching by stamp for the found target context
             foreach ($categories as $category) {
@@ -629,9 +623,10 @@ abstract class restore_dbops {
 
                 $matchcat = false;
                 if ($targetcontext) {
-                    $matchcat = $DB->get_record('question_categories', array(
-                                    'contextid' => $targetcontext->id,
-                                    'stamp' => $category->stamp));
+                    $matchcat = $DB->get_record('question_categories', [
+                            'contextid' => $targetcontext->id,
+                            'stamp' => $category->stamp,
+                    ]);
                 }
                 // 2a) No match, check if user can create qcat and q
                 if (!$matchcat) {
@@ -646,26 +641,29 @@ abstract class restore_dbops {
                         }
                         self::set_backup_ids_record($restoreid, 'question_category', $category->id, 0, $parentitemid);
                         // Nothing else to mark, newitemid = 0 means create
-
-                    // 3b) User cannot, check if we are in some contextlevel with fallback
                     } else {
-                        // 4a) There is fallback, move ALL the qcats to fallback, warn. End qcat loop
-                        if (array_key_exists($contextlevel, $fallbacks)) {
-                            foreach ($categories as $movedcat) {
-                                $movedcat->contextlevel = $fallbacks[$contextlevel];
-                                self::set_backup_ids_record($restoreid, 'question_category', $movedcat->id, 0, $contextid, $movedcat);
-                                // Warn about the performed fallback
-                                $warnings[] = get_string('qcategory2coursefallback', 'backup', $movedcat);
-                            }
-
-                        // 4b) No fallback, error. End qcat loop.
-                        } else {
-                            $errors[] = get_string('qcategorycannotberestored', 'backup', $category);
+                        // 3b) User cannot. Move ALL the qcats to the fallback i.e. a default qbank instance, warn. End qcat loop.
+                        $course = get_course($courseid);
+                        $course->fullname = get_string('courserestore', 'question');
+                        $module =
+                            core_question\local\bank\question_bank_helper::get_default_open_instance_system_type($course, true);
+                        $fallbackcontext = $module->context;
+                        foreach ($categories as $movedcat) {
+                            $movedcat->contextlevel = $contextlevel;
+                            self::set_backup_ids_record($restoreid,
+                                'question_category',
+                                $movedcat->id,
+                                0,
+                                $fallbackcontext->id,
+                                $movedcat
+                            );
+                            // Warn about the performed fallback.
+                            $warnings[] = get_string('qcategory2coursefallback', 'backup', $movedcat);
                         }
-                        break; // out from qcat loop (both 4a and 4b), we have decided about ALL categories in context (bank)
+                        break; // Out from qcat loop (both 3a and 3b), we have decided about ALL categories in context (bank).
                     }
 
-                // 2b) Match, mark qcat to be mapped and iterate over each q, matching by stamp and version
+                    // 2b) Match, mark qcat to be mapped and iterate over each q, matching by stamp and version
                 } else {
                     self::set_backup_ids_record($restoreid, 'question_category', $category->id, $matchcat->id, $targetcontext->id);
                     $questions = self::restore_get_questions($restoreid, $category->id);
@@ -687,35 +685,42 @@ abstract class restore_dbops {
                         } else {
                             $matchqid = false;
                         }
-                        // 5a) No match, check if user can add q
+                        // 4a) No match, check if user can add q
                         if (!$matchqid) {
-                            // 6a) User can, mark the q to be created
+                            // 5a) User can, mark the q to be created
                             if ($canadd) {
                                 // Nothing to mark, newitemid means create
-
-                             // 6b) User cannot, check if we are in some contextlevel with fallback
                             } else {
-                                // 7a) There is fallback, move ALL the qcats to fallback, warn. End qcat loo
-                                if (array_key_exists($contextlevel, $fallbacks)) {
-                                    foreach ($categories as $movedcat) {
-                                        $movedcat->contextlevel = $fallbacks[$contextlevel];
-                                        self::set_backup_ids_record($restoreid, 'question_category', $movedcat->id, 0, $contextid, $movedcat);
-                                        // Warn about the performed fallback
-                                        $warnings[] = get_string('question2coursefallback', 'backup', $movedcat);
-                                    }
-
-                                // 7b) No fallback, error. End qcat loop
-                                } else {
-                                    $errors[] = get_string('questioncannotberestored', 'backup', $question);
+                                // 5b) User cannot.
+                                // Move ALL the qcats to the fallback i.e. a default qbank instance, warn. End qcat loop.
+                                $course = get_course($courseid);
+                                $course->fullname = get_string('courserestore', 'question');
+                                $module = core_question\local\bank\question_bank_helper::get_default_open_instance_system_type(
+                                    $course,
+                                    true
+                                );
+                                $fallbackcontext = $module->context;
+                                foreach ($categories as $movedcat) {
+                                    $movedcat->contextlevel = $contextlevel;
+                                    self::set_backup_ids_record($restoreid,
+                                        'question_category',
+                                        $movedcat->id,
+                                        0,
+                                        $fallbackcontext->id,
+                                        $movedcat
+                                    );
+                                    // Warn about the performed fallback.
+                                    $warnings[] = get_string('question2coursefallback', 'backup', $movedcat);
                                 }
-                                break 2; // out from qcat loop (both 7a and 7b), we have decided about ALL categories in context (bank)
+                                // Out from qcat loop (both 5a and 5b), we have decided about ALL categories in context (bank).
+                                break 2;
                             }
 
-                        // 5b) Random questions must always be newly created.
+                            // 4b) Random questions must always be newly created.
                         } else if ($question->qtype == 'random') {
                             // Nothing to mark, newitemid means create
 
-                        // 5c) Match, mark q to be mapped.
+                            // 4c) Match, mark q to be mapped.
                         } else {
                             self::set_backup_ids_record($restoreid, 'question', $question->id, $matchqid);
                         }
@@ -723,14 +728,14 @@ abstract class restore_dbops {
                 }
             }
 
-            // 8) Check if backup is made on Moodle >= 3.5 and there are more than one top-level category in the context.
+            // 6) Check if backup is made on Moodle >= 3.5 and there are more than one top-level category in the context.
             if ($after35 && $topcats > 1) {
                 $errors[] = get_string('restoremultipletopcats', 'question', $contextid);
             }
 
         }
 
-        return array($errors, $warnings);
+        return [$errors, $warnings];
     }
 
     /**
@@ -798,80 +803,57 @@ abstract class restore_dbops {
     }
 
     /**
-     * Calculates the best context found to restore one collection of qcats,
-     * al them belonging to the same context (question bank), returning the
-     * target context found (object) or false
+     * Calculates the best existing context to restore one collection of qcats.
+     * Uses the backup category stamp to match the target category stamp
+     * and categories must all belong to the same context (question bank).
+     *
+     * @param array $categories categories to find target context for
+     * @param int $courseid course to restore to
+     * @param int $contextlevel contextlevel to search for the target context
+     * @return bool|\core\context target context or false if no target context found
      */
     public static function restore_find_best_target_context($categories, $courseid, $contextlevel) {
         global $DB;
 
         $targetcontext = false;
 
-        // Depending of $contextlevel, we perform different actions
-        switch ($contextlevel) {
-             // For system is easy, the best context is the system context
-             case CONTEXT_SYSTEM:
-                 $targetcontext = context_system::instance();
-                 break;
+        // If context module we need to find any existing module instances with categories matching the category stamps
+        // from the backup. If multiple matches are found, that means that there is some annoying
+        // qbank "fragmentation" in the categories, so we'll fall back
+        // to creating a qbank instance at course level and putting the categories there.
+        if ($contextlevel == CONTEXT_MODULE) {
+            $stamps = [];
+            foreach ($categories as $category) {
+                $stamps[] = $category->stamp;
+            }
+            $modinfo = get_fast_modinfo($courseid);
 
-             // For coursecat, we are going to look for stamps in all the
-             // course categories between CONTEXT_SYSTEM and CONTEXT_COURSE
-             // (i.e. in all the course categories in the path)
-             //
-             // And only will return one "best" target context if all the
-             // matches belong to ONE and ONLY ONE context. If multiple
-             // matches are found, that means that there is some annoying
-             // qbank "fragmentation" in the categories, so we'll fallback
-             // to create the qbank at course level
-             case CONTEXT_COURSECAT:
-                 // Build the array of stamps we are going to match
-                 $stamps = array();
-                 foreach ($categories as $category) {
-                     $stamps[] = $category->stamp;
-                 }
-                 $contexts = array();
-                 // Build the array of contexts we are going to look
-                 $systemctx = context_system::instance();
-                 $coursectx = context_course::instance($courseid);
-                 $parentctxs = $coursectx->get_parent_context_ids();
-                 foreach ($parentctxs as $parentctx) {
-                     // Exclude system context
-                     if ($parentctx == $systemctx->id) {
-                         continue;
-                     }
-                     $contexts[] = $parentctx;
-                 }
-                 if (!empty($stamps) && !empty($contexts)) {
-                     // Prepare the query
-                     list($stamp_sql, $stamp_params) = $DB->get_in_or_equal($stamps);
-                     list($context_sql, $context_params) = $DB->get_in_or_equal($contexts);
-                     $sql = "SELECT DISTINCT contextid
-                               FROM {question_categories}
-                              WHERE stamp $stamp_sql
-                                AND contextid $context_sql";
-                     $params = array_merge($stamp_params, $context_params);
-                     $matchingcontexts = $DB->get_records_sql($sql, $params);
-                     // Only if ONE and ONLY ONE context is found, use it as valid target
-                     if (count($matchingcontexts) == 1) {
-                         $targetcontext = context::instance_by_id(reset($matchingcontexts)->contextid);
-                     }
-                 }
-                 break;
+            // Get contextids of modules from the course that support publishing questions.
+            $supportedcontextids = [];
+            foreach ($modinfo->get_cms() as $cm) {
+                if (plugin_supports('mod', $cm->modname, FEATURE_PUBLISHES_QUESTIONS, false)) {
+                    $supportedcontextids[] = $cm->context->id;
+                }
+            }
 
-             // For course is easy, the best context is the course context
-             case CONTEXT_COURSE:
-                 $targetcontext = context_course::instance($courseid);
-                 break;
-
-             // For module is easy, there is not best context, as far as the
-             // activity hasn't been created yet. So we return context course
-             // for them, so permission checks and friends will work. Note this
-             // case is handled by {@link prechek_precheck_qbanks_by_level}
-             // in an special way
-             case CONTEXT_MODULE:
-                 $targetcontext = context_course::instance($courseid);
-                 break;
+            if (!empty($stamps) && !empty($supportedcontextids)) {
+                [$stampsql, $stampparams] = $DB->get_in_or_equal($stamps);
+                [$contextsql, $contextparams] = $DB->get_in_or_equal($supportedcontextids);
+                $sql = "SELECT DISTINCT contextid
+                          FROM {question_categories}
+                         WHERE stamp {$stampsql}
+                           AND contextid {$contextsql}";
+                $params = array_merge($stampparams, $contextparams);
+                $matchingcontexts = $DB->get_records_sql($sql, $params);
+                // Only if ONE and ONLY ONE context is found, use it as valid target.
+                if (count($matchingcontexts) === 1) {
+                    $targetcontext = context::instance_by_id(reset($matchingcontexts)->contextid);
+                }
+            }
+            // We don't have a target so set as course context until the module is created and then assign to the module context.
+            $targetcontext = $targetcontext ?: context_course::instance($courseid);
         }
+
         return $targetcontext;
     }
 
