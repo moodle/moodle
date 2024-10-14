@@ -26,7 +26,7 @@ use backup;
  * @covers \backup_module_structure_step
  * @covers \restore_module_structure_step
  */
-class backup_restore_activity_test extends \advanced_testcase {
+final class backup_restore_activity_test extends \advanced_testcase {
     /**
      * Load the backup and restore classes.
      */

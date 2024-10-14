@@ -38,7 +38,7 @@ use mod_assign\privacy\assign_plugin_request_data;
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \mod_assign\privacy\provider_test {
+final class provider_test extends \mod_assign\privacy\provider_test {
 
     public function setUp(): void {
         // Skip this test if ghostscript is not supported.

@@ -29,7 +29,7 @@ namespace mod_quiz;
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class privacy_legacy_quizaccess_polyfill_test extends \advanced_testcase {
+final class privacy_legacy_quizaccess_polyfill_test extends \advanced_testcase {
     /**
      * Test that the core_quizaccess\privacy\legacy_polyfill works and that the static _export_quizaccess_user_data can
      * be called.

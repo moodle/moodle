@@ -28,7 +28,7 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David  (laurent.david [at] call-learning [dt] fr)
  */
-class recording_row_playback_test extends \advanced_testcase {
+final class recording_row_playback_test extends \advanced_testcase {
     use testcase_helper_trait;
 
     /**

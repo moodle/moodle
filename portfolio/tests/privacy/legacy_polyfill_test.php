@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright   2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class legacy_polyfill_test extends \advanced_testcase {
+final class legacy_polyfill_test extends \advanced_testcase {
     /**
      * Test that the core_portfolio\privacy\legacy_polyfill works and that the static _export_portfolio_user_data can be called.
      */

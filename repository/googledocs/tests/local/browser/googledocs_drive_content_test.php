@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/repository/googledocs/lib.php');
  * @copyright  2021 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class googledocs_drive_content_test extends \googledocs_content_testcase {
+final class googledocs_drive_content_test extends \googledocs_content_testcase {
 
     /**
      * Test get_content_nodes().

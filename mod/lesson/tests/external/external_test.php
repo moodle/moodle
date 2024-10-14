@@ -72,7 +72,7 @@ class testable_mod_lesson_external extends mod_lesson_external {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.3
  */
-class external_test extends externallib_advanced_testcase {
+final class external_test extends externallib_advanced_testcase {
 
     /** @var \stdClass course record. */
     protected \stdClass $course;

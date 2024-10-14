@@ -32,7 +32,7 @@ use Psr\Http\Message\ResponseInterface;
  * @copyright 2023 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class auth_server_config_reader_test extends \advanced_testcase {
+final class auth_server_config_reader_test extends \advanced_testcase {
 
     /**
      * Test reading the config for an auth server.

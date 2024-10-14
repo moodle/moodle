@@ -47,7 +47,7 @@ require_once($CFG->dirroot . '/calendar/lib.php');
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class event_mapper_test extends \advanced_testcase {
+final class event_mapper_test extends \advanced_testcase {
     /**
      * Test legacy event -> event.
      */

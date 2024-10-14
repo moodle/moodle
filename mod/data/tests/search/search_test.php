@@ -45,7 +45,7 @@ require_once($CFG->dirroot . '/mod/data/tests/generator/lib.php');
  * @copyright  2012 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class search_test extends \advanced_testcase {
+final class search_test extends \advanced_testcase {
     /**
      * @var stdObject $recorddata An object that holds information from the table data.
      */

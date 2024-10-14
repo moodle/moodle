@@ -85,7 +85,7 @@ class testable_mod_quiz_external extends mod_quiz_external {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.1
  */
-class external_test extends externallib_advanced_testcase {
+final class external_test extends externallib_advanced_testcase {
 
     use \quiz_question_helper_test_trait;
 

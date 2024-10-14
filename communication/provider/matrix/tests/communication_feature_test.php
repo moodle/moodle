@@ -37,7 +37,7 @@ require_once(__DIR__ . '/../../../tests/communication_test_helper_trait.php');
  * @covers \communication_matrix\communication_feature
  * @coversDefaultClass \communication_matrix\communication_feature
  */
-class communication_feature_test extends \advanced_testcase {
+final class communication_feature_test extends \advanced_testcase {
     use matrix_test_helper_trait;
     use communication_test_helper_trait;
 

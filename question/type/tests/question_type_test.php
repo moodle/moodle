@@ -33,8 +33,8 @@ require_once($CFG->dirroot . '/question/type/questiontypebase.php');
  *
  * @covers \question_type
  */
-class question_type_test extends \advanced_testcase {
-    public function test_save_question_name() {
+final class question_type_test extends \advanced_testcase {
+    public function test_save_question_name(): void {
         $this->resetAfterTest();
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');

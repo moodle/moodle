@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @since     Moodle 4.3
  * @covers \core_my\external\view_page
  */
-class view_page_test extends externallib_advanced_testcase {
+final class view_page_test extends externallib_advanced_testcase {
 
     /**
      * Set up for every test.

@@ -26,7 +26,7 @@ use core_user;
  * @copyright  2024 onwards Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class table_log_test extends advanced_testcase {
+final class table_log_test extends advanced_testcase {
     /**
      * @var int The course with separate groups.
      */

@@ -41,7 +41,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class decode_test extends \basic_testcase {
+final class decode_test extends \basic_testcase {
 
     /**
      * test restore_decode_rule class

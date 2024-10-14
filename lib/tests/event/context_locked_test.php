@@ -25,7 +25,7 @@ namespace core\event;
  * @author     Neill Magill <neill.magill@nottingham.ac.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class context_locked_test extends \advanced_testcase {
+final class context_locked_test extends \advanced_testcase {
     /**
      * Locks an unlocked context and checks that a core\event\context_locked event is created.
      *

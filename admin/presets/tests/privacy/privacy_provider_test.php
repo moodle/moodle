@@ -30,7 +30,7 @@ use core_privacy\tests\provider_testcase;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_adminpresets\privacy\provider
  */
-class privacy_provider_test extends provider_testcase {
+final class privacy_provider_test extends provider_testcase {
 
     /**
      * Test for provider::get_metadata().

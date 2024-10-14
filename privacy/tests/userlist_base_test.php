@@ -36,7 +36,7 @@ use \core_privacy\local\request\userlist_base;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\request\userlist_base
  */
-class userlist_base_test extends advanced_testcase {
+final class userlist_base_test extends advanced_testcase {
     /**
      * Ensure that get_userids returns the list of unique userids.
      *

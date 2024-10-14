@@ -28,7 +28,7 @@ use tool_moodlenet\local\import_strategy_file;
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class import_handler_info_test extends \advanced_testcase {
+final class import_handler_info_test extends \advanced_testcase {
 
     /**
      * Test init and the getters.

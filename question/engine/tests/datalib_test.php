@@ -42,7 +42,7 @@ require_once(__DIR__ . '/helpers.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \question_engine_data_mapper
  */
-class datalib_test extends \qbehaviour_walkthrough_test_base {
+final class datalib_test extends \qbehaviour_walkthrough_test_base {
 
     /**
      * We create two usages, each with two questions, a short-answer marked

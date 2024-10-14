@@ -38,7 +38,7 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @coversDefaultClass \mod_bigbluebuttonbn\local\helpers\reset
  * @covers \mod_bigbluebuttonbn\local\helpers\reset
  */
-class reset_test extends \advanced_testcase {
+final class reset_test extends \advanced_testcase {
     use testcase_helper_trait;
     /**
      * Reset course item test

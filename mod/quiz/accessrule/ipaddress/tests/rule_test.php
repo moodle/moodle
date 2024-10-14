@@ -33,8 +33,8 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/ipaddress/rule.php');
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class rule_test extends \basic_testcase {
-    public function test_ipaddress_access_rule() {
+final class rule_test extends \basic_testcase {
+    public function test_ipaddress_access_rule(): void {
         $quiz = new \stdClass();
         $attempt = new \stdClass();
         $cm = new \stdClass();

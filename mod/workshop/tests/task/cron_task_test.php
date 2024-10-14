@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/mod/workshop/lib.php');
  * @copyright 2019 David Mudrák <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cron_task_test extends \advanced_testcase {
+final class cron_task_test extends \advanced_testcase {
 
     /**
      * Test that the phase is automatically switched after the submissions deadline.

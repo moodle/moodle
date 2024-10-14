@@ -26,7 +26,7 @@ namespace core;
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\context_helper
  */
-class context_helper_test extends \advanced_testcase {
+final class context_helper_test extends \advanced_testcase {
     /**
      * Tests covered method.
      * @covers ::parse_external_level

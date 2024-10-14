@@ -23,7 +23,7 @@ namespace mod_lti;
  * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class service_exception_handler_test extends \advanced_testcase {
+final class service_exception_handler_test extends \advanced_testcase {
     /**
      * Testing service error handling.
      */

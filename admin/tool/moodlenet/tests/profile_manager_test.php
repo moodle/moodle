@@ -24,7 +24,7 @@ namespace tool_moodlenet;
  * @copyright  2020 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class profile_manager_test extends \advanced_testcase {
+final class profile_manager_test extends \advanced_testcase {
 
     /**
      * Test that on this site we use the user table to hold moodle net profile information.

@@ -23,8 +23,7 @@ namespace tool_usertours;
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class theme_filter_test extends \advanced_testcase {
-
+final class theme_filter_test extends \advanced_testcase {
     /**
      * Data Provider for filter_matches function.
      *

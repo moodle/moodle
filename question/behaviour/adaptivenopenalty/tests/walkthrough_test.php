@@ -32,7 +32,7 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class walkthrough_test extends \qbehaviour_walkthrough_test_base {
+final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     protected function get_does_not_contain_gradingdetails_expectation() {
         return new \question_no_pattern_expectation('/class="gradingdetails"/');

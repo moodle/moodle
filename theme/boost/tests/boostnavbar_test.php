@@ -24,7 +24,7 @@ namespace theme_boost;
  * @copyright  2021 Peter Dias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class boostnavbar_test extends \advanced_testcase {
+final class boostnavbar_test extends \advanced_testcase {
     /**
      * Provider for test_remove_no_link_items
      * The setup and expected arrays are defined as an array of 'nodekey' => $hasaction

@@ -30,7 +30,7 @@ require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
  * @copyright  2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_date_test extends \restore_date_testcase {
+final class restore_date_test extends \restore_date_testcase {
 
     /**
      * Creates an attempt for the given userwith a correct or incorrect answer and optionally finishes it.

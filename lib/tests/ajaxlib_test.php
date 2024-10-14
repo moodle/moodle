@@ -26,7 +26,7 @@ namespace core;
  * @covers ::ajax_capture_output
  * @covers ::ajax_check_captured_output
  */
-class ajaxlib_test extends \advanced_testcase {
+final class ajaxlib_test extends \advanced_testcase {
     /** @var string Original error log */
     protected $oldlog;
 

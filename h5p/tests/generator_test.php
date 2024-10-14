@@ -28,7 +28,7 @@ use core_h5p\local\library\autoloader;
  * @runTestsInSeparateProcesses
  * @covers     \core_h5p_generator
 */
-class generator_test extends \advanced_testcase {
+final class generator_test extends \advanced_testcase {
 
     /**
      * Tests set up.

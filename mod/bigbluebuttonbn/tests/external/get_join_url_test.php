@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @author    Laurent David (laurent@call-learning.fr)
  * @covers \mod_bigbluebuttonbn\external\get_join_url
  */
-class get_join_url_test extends \externallib_advanced_testcase {
+final class get_join_url_test extends \externallib_advanced_testcase {
     use testcase_helper_trait;
 
     /**

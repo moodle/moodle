@@ -36,7 +36,7 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @covers  \mod_bigbluebuttonbn\local\proxy\proxy_base
  * @coversDefaultClass \mod_bigbluebuttonbn\local\proxy\proxy_base
  */
-class proxy_base_test extends \advanced_testcase {
+final class proxy_base_test extends \advanced_testcase {
     use testcase_helper_trait;
 
     /**

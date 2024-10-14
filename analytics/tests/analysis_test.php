@@ -23,7 +23,7 @@ namespace core_analytics;
  * @copyright 2019 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class analysis_test extends \advanced_testcase {
+final class analysis_test extends \advanced_testcase {
 
     /**
      * Test fill_firstanalyses_cache.

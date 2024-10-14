@@ -23,7 +23,7 @@ namespace core_availability;
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class capability_checker_test extends \advanced_testcase {
+final class capability_checker_test extends \advanced_testcase {
     /**
      * Tests loading a class from /availability/classes.
      */

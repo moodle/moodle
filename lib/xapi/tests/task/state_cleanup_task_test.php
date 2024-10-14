@@ -29,7 +29,7 @@ use core_xapi\test_helper;
  * @copyright  2023 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class state_cleanup_task_test extends advanced_testcase {
+final class state_cleanup_task_test extends advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.

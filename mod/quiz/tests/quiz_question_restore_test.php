@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_question_restore_test extends \advanced_testcase {
+final class quiz_question_restore_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
 
     /**

@@ -29,8 +29,8 @@ require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
  * @copyright 2008 Jamie Pratt me@jamiep.org
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class reportlib_test extends \advanced_testcase {
-    public function test_quiz_report_index_by_keys() {
+final class reportlib_test extends \advanced_testcase {
+    public function test_quiz_report_index_by_keys(): void {
         $datum = [];
         $object = new \stdClass();
         $object->qid = 3;

@@ -38,7 +38,7 @@ require_once($CFG->libdir . '/webdavlib.php');
  * @copyright  2017 Project seminar (Learnweb, University of Münster)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     /** @var null|\repository_nextcloud the repository_nextcloud object, which the tests are run on. */
     private $repo = null;

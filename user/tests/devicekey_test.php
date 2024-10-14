@@ -24,7 +24,7 @@ use stdClass;
  * @package core_user
  * @covers \core_user\devicekey
  */
-class devicekey_test extends \advanced_testcase {
+final class devicekey_test extends \advanced_testcase {
     /**
      * Helper to create a device record.
      *

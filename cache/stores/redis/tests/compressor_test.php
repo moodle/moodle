@@ -36,7 +36,7 @@ require_once(__DIR__.'/../lib.php');
  * @copyright 2018 Catalyst IT Australia {@link http://www.catalyst-au.net}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class compressor_test extends \advanced_testcase {
+final class compressor_test extends \advanced_testcase {
 
     /**
      * Test set up

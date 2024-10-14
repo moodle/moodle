@@ -29,7 +29,7 @@ use mod_data\local\exporter\utils;
  * @author     Philipp Memmel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class entries_export_test extends \advanced_testcase {
+final class entries_export_test extends \advanced_testcase {
 
     /**
      * Get the test data.

@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/calendar/tests/externallib_test.php');
  * @copyright 2014 Ankit Agarwal <ankit.agrr@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * The test user.

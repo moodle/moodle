@@ -31,7 +31,7 @@ global $CFG;
 
 require_once($CFG->dirroot . '/mnet/lib.php');
 
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /** @var stdClass the mnet host we are using to test */
     protected $mnethost;

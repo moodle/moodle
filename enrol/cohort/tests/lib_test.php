@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/group/lib.php');
  * @copyright 2015 Adrian Greeve <adrian@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     /**
      * Test that a new group with the name of the cohort is created.

@@ -29,7 +29,7 @@ use stdClass;
  * @copyright  2017 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class file_browser_test extends \advanced_testcase {
+final class file_browser_test extends \advanced_testcase {
 
     /** @var int */
     protected $initialnonempty;

@@ -36,8 +36,8 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright 2008 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_test extends \advanced_testcase {
-    public function test_is_complete_response() {
+final class question_test extends \advanced_testcase {
+    public function test_is_complete_response(): void {
         $question = \test_question_maker::make_question('numerical');
 
         $this->assertFalse($question->is_complete_response(array()));

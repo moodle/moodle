@@ -30,7 +30,7 @@ use core\moodlenet\share_recorder;
  * @copyright  2023 David Woloszyn <david.woloszyn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /**
      * Check that a user context is returned if there is any user data for this user.

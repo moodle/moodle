@@ -34,7 +34,7 @@ require_once(__DIR__ . '/fixtures/inbound_fixtures.php');
  * @copyright  2014 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class inbound_test extends \advanced_testcase {
+final class inbound_test extends \advanced_testcase {
 
     /**
      * Perform setup tasks generic to each test.

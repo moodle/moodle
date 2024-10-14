@@ -43,7 +43,7 @@ require_once(__DIR__ . '/../fixtures/test_target_course_users.php');
  * @copyright 2018 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
 
     /** @var \core_analytics\model Store Model 1. */
     protected $model1;

@@ -36,7 +36,7 @@ use core_contentbank\contentbank;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\event\contentbank_content_uploaded
  */
-class contentbank_content_uploaded_test extends \advanced_testcase {
+final class contentbank_content_uploaded_test extends \advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.

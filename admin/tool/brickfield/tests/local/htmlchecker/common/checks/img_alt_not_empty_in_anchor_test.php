@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class img_alt_not_empty_in_anchor_testcase
  */
-class img_alt_not_empty_in_anchor_test extends all_checks {
+final class img_alt_not_empty_in_anchor_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'img_alt_not_empty_in_anchor';
 

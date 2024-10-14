@@ -40,7 +40,7 @@ use stdClass;
  * @copyright 2021 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcase {
+final class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcase {
     /** @var stdClass $course Test course to contain quiz. */
     protected stdClass $course;
 

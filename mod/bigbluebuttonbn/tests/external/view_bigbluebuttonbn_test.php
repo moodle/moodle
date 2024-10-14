@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @author    Laurent David (laurent@call-learning.fr)
  * @covers \mod_bigbluebuttonbn\external\view_bigbluebuttonbn
  */
-class view_bigbluebuttonbn_test extends \externallib_advanced_testcase {
+final class view_bigbluebuttonbn_test extends \externallib_advanced_testcase {
     use testcase_helper_trait;
 
     /**

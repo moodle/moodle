@@ -30,7 +30,7 @@ use core_user\reportbuilder\datasource\users;
  * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admins_test extends advanced_testcase {
+final class admins_test extends advanced_testcase {
 
     /**
      * Test whether user can add this audience

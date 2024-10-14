@@ -39,7 +39,7 @@ require_once(__DIR__ . '/helpers.php');
  * @copyright 2013 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class datalib_reporting_queries_test extends \qbehaviour_walkthrough_test_base {
+final class datalib_reporting_queries_test extends \qbehaviour_walkthrough_test_base {
 
     /** @var question_engine_data_mapper */
     protected $dm;

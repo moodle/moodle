@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  * @coversDefaultClass \core_text
  *
  */
-class text_test extends advanced_testcase {
+final class text_test extends advanced_testcase {
 
     /**
      * Tests the static parse charset method.

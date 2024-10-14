@@ -27,7 +27,7 @@ use moodle_exception;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \communication_matrix\matrix_user_manager
  */
-class matrix_user_manager_test extends \advanced_testcase {
+final class matrix_user_manager_test extends \advanced_testcase {
     /**
      * Test fetcihing a users matrix userid from Moodle.
      */

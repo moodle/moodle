@@ -31,7 +31,7 @@ use tool_dataprivacy\task\initiate_data_request_task;
  * @copyright  2018 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class api_test extends \advanced_testcase {
+final class api_test extends \advanced_testcase {
 
     /**
      * Ensure that the check_can_manage_data_registry function fails cap testing when a user without capabilities is

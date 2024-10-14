@@ -40,7 +40,7 @@ require_once($CFG->dirroot.'/mod/lesson/locallib.php');
  * @copyright  2016 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class locallib_test extends \advanced_testcase {
+final class locallib_test extends \advanced_testcase {
 
     /**
      * Test duplicating a lesson page element.

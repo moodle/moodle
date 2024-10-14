@@ -47,7 +47,7 @@ require_once($CFG->libdir . '/badgeslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.1
  */
-class external_test extends externallib_advanced_testcase {
+final class external_test extends externallib_advanced_testcase {
 
     /** @var stdClass $course */
     private $course;

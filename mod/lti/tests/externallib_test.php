@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/lti/tests/mod_lti_testcase.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
-class externallib_test extends mod_lti_testcase {
+final class externallib_test extends mod_lti_testcase {
 
     /**
      * Set up for every test

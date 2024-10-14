@@ -46,7 +46,7 @@ require_once($CFG->dirroot . '/mod/bigbluebuttonbn/lib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
     use testcase_helper_trait;
 
     /**

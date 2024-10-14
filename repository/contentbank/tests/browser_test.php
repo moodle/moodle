@@ -29,7 +29,7 @@ require_once("$CFG->dirroot/repository/lib.php");
  * @copyright  2020 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class browser_test extends \advanced_testcase {
+final class browser_test extends \advanced_testcase {
 
     /**
      * Test get_content() in the system context with users that have capability to access/view content bank content

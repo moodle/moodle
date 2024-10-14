@@ -29,7 +29,7 @@ use context_course;
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_summary_exporter_test extends \advanced_testcase {
+final class course_summary_exporter_test extends \advanced_testcase {
 
     /**
      * Test that if no course overview images uploaded get_course_image returns false.

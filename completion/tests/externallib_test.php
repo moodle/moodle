@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @since      Moodle 2.9
  * @coversDefaultClass \core_completion_external
  */
-class externallib_test extends externallib_advanced_testcase {
+final class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test update_activity_completion_status_manually

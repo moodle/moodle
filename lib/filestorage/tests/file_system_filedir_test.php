@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/filestorage/file_system_filedir.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \file_system_filedir
  */
-class file_system_filedir_test extends \advanced_testcase {
+final class file_system_filedir_test extends \advanced_testcase {
 
     /**
      * Shared test setUp.

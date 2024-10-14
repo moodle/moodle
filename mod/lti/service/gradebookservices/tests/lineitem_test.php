@@ -28,7 +28,7 @@ use ltiservice_gradebookservices\local\service\gradebookservices;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_lti\service\gradebookservices\local\resources\lineitem
  */
-class lineitem_test extends \advanced_testcase {
+final class lineitem_test extends \advanced_testcase {
 
     /**
      * @covers ::execute

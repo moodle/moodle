@@ -26,7 +26,7 @@ use core\context\user;
  * @copyright 2023 Michael Hawkins <michaelh@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class activity_packager_test extends \advanced_testcase {
+final class activity_packager_test extends \advanced_testcase {
 
     /**
      * Test fetching and overriding a backup task setting.

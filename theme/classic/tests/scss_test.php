@@ -24,7 +24,7 @@ namespace theme_classic;
  * @copyright 2019 Michael Hawkins
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class scss_test extends \advanced_testcase {
+final class scss_test extends \advanced_testcase {
     /**
      * Test that classic can be compiled using SassC (the defacto implemention).
      */

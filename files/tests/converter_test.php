@@ -36,7 +36,7 @@ use core_files\converter;
  * @copyright  2017 Andrew nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class converter_test extends advanced_testcase {
+final class converter_test extends advanced_testcase {
 
     /**
      * Get a testable mock of the abstract files_converter class.

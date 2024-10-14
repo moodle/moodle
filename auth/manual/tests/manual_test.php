@@ -31,7 +31,7 @@ require_once($CFG->dirroot.'/auth/manual/auth.php');
  * @copyright  2014 Gilles-Philippe Leblanc <gilles-philippe.leblanc@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manual_test extends \advanced_testcase {
+final class manual_test extends \advanced_testcase {
 
     /** @var auth_plugin_manual Keeps the authentication plugin. */
     protected $authplugin;

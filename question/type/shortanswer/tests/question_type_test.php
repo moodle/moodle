@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/question/type/shortanswer/edit_shortanswer_form.p
  * @covers \question_type
  * @covers \qtype_shortanswer
  */
-class question_type_test extends \advanced_testcase {
+final class question_type_test extends \advanced_testcase {
     protected $qtype;
 
     protected function setUp(): void {

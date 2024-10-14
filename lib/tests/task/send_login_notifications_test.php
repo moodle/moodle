@@ -26,7 +26,7 @@ use moodle_url;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \core\task\send_login_notifications
  */
-class send_login_notifications_test extends \advanced_testcase {
+final class send_login_notifications_test extends \advanced_testcase {
 
     /**
      * Test new login notification.

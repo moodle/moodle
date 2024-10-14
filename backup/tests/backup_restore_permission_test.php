@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @copyright Tomo Tsuyuki <tomotsuyuki@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_restore_permission_test extends core_backup_backup_restore_base_testcase {
+final class backup_restore_permission_test extends core_backup_backup_restore_base_testcase {
 
     /** @var stdClass A test course which is restored/imported from. */
     protected $course1;

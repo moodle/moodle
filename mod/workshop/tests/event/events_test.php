@@ -38,7 +38,7 @@ require_once(__DIR__ . '/../fixtures/testable.php');
 /**
  * Test cases for the internal workshop api
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /** @var \stdClass $workshop Basic workshop data stored in an object. */
     protected $workshop;

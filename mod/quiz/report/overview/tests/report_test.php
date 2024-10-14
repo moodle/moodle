@@ -44,7 +44,7 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  * @copyright  2014 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_test extends \advanced_testcase {
+final class report_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
 
     /**

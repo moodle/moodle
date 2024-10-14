@@ -25,7 +25,7 @@ namespace core_external;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @covers      \core_external\external_files
  */
-class external_files_test extends \advanced_testcase {
+final class external_files_test extends \advanced_testcase {
     /**
      * Text external files structure.
      *

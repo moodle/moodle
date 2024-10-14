@@ -23,7 +23,7 @@ namespace core_user;
  * @copyright 2014 The Open University
  * @licensehttp://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class profilelib_test extends \advanced_testcase {
+final class profilelib_test extends \advanced_testcase {
 
     /**
      * Load required test libraries

@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
  * @covers \qtype_ddmarker_renderer
  * @covers \question_hint_ddmarker
  */
-class walkthrough_test extends \qbehaviour_walkthrough_test_base {
+final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     /**
      * Get an expectation that the output contains a marker.

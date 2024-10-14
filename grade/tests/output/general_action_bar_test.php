@@ -28,7 +28,7 @@ use moodle_url;
  * @copyright  2021 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class general_action_bar_test extends advanced_testcase {
+final class general_action_bar_test extends advanced_testcase {
 
     /**
      * Load required test libraries

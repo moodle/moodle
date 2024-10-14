@@ -48,7 +48,7 @@ require_once($CFG->dirroot . '/backup/util/xml/parser/processors/grouped_parser_
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class parser_test extends \advanced_testcase {
+final class parser_test extends \advanced_testcase {
 
     /*
      * test progressive_parser public methods

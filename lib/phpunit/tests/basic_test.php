@@ -26,7 +26,7 @@ use phpunit_util;
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class basic_test extends \basic_testcase {
+final class basic_test extends \basic_testcase {
     protected $testassertexecuted = false;
 
     protected function setUp(): void {

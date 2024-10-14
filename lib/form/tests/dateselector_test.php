@@ -46,7 +46,7 @@ require_once($CFG->libdir.'/formslib.php');
  * @copyright  2012 Rajesh Taneja
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class dateselector_test extends \advanced_testcase {
+final class dateselector_test extends \advanced_testcase {
     /** @var \MoodleQuickForm Keeps reference of dummy form object */
     private $mform;
     /** @var array test fixtures */

@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/grade/grading/form/guide/lib.php');
  * @copyright  2015 Nikita Kalinin <nixorv@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class guide_test extends \advanced_testcase {
+final class guide_test extends \advanced_testcase {
     /**
      * Unit test to get draft instance and create new instance.
      */

@@ -26,7 +26,7 @@ use backup_activity_task;
  * @copyright  2023 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_partial_packager_test extends \advanced_testcase {
+final class course_partial_packager_test extends \advanced_testcase {
 
     /**
      * Test fetching task settings.

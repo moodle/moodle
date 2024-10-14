@@ -22,7 +22,7 @@ namespace core_search;
  * @copyright  2018 Dmitrii Metelkin <dmitriim@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class area_category_test extends \advanced_testcase {
+final class area_category_test extends \advanced_testcase {
 
     /**
      * A helper function to get a mocked search area.

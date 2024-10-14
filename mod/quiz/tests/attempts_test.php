@@ -35,7 +35,7 @@ require_once($CFG->dirroot.'/group/lib.php');
  * @copyright  2012 Matt Petro
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class attempts_test extends \advanced_testcase {
+final class attempts_test extends \advanced_testcase {
 
     /**
      * Test the functions quiz_update_open_attempts(), get_list_of_overdue_attempts() and

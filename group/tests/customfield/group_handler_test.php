@@ -31,7 +31,7 @@ use core_customfield\field_controller;
  * @copyright 2023 Catalyst IT Pty Ltd
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class group_handler_test extends advanced_testcase {
+final class group_handler_test extends advanced_testcase {
     /**
      * Test custom field handler.
      * @var group_handler

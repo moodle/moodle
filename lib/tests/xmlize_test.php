@@ -29,7 +29,7 @@ require_once($CFG->libdir . '/xmlize.php');
  * @copyright  2017 Kilian Singer {@link http://quantumtechnology.info}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class xmlize_test extends \basic_testcase {
+final class xmlize_test extends \basic_testcase {
     /**
      * Test an XML import using a valid XML file.
      *

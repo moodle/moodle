@@ -45,7 +45,7 @@ require_once($CFG->libdir . '/form/duration.php');
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class duration_test extends \basic_testcase {
+final class duration_test extends \basic_testcase {
 
     /**
      * Get a form that can be used for testing.

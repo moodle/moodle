@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
 
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     // Use the generator helper.
     use mod_assign_test_generator;

@@ -32,8 +32,8 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_test extends \advanced_testcase {
-    public function test_get_question_summary() {
+final class question_test extends \advanced_testcase {
+    public function test_get_question_summary(): void {
         $essay = \test_question_maker::make_an_essay_question();
         $essay->questiontext = 'Hello <img src="http://example.com/globe.png" alt="world" />';
         $this->assertEquals('Hello [world]', $essay->get_question_summary());

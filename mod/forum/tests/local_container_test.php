@@ -24,7 +24,7 @@ namespace mod_forum;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_forum\local\container
  */
-class local_container_test extends \advanced_testcase {
+final class local_container_test extends \advanced_testcase {
     /**
      * Ensure that a renderer factory is returned.
      *

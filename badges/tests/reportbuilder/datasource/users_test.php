@@ -37,7 +37,7 @@ require_once("{$CFG->libdir}/badgeslib.php");
  * @copyright   2023 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class users_test extends core_reportbuilder_testcase {
+final class users_test extends core_reportbuilder_testcase {
 
     /**
      * Test default datasource

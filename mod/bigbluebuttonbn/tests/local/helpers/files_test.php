@@ -43,7 +43,7 @@ use stored_file;
  * @covers \mod_bigbluebuttonbn\local\helpers\files
  * @coversDefaultClass \mod_bigbluebuttonbn\local\helpers\files
  */
-class files_test extends \advanced_testcase {
+final class files_test extends \advanced_testcase {
     use testcase_helper_trait;
 
     /** @var string Filename used for the presentation */

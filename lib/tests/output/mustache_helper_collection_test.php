@@ -24,7 +24,7 @@ namespace core\output;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \core\output\mustache_helper_collection
  */
-class mustache_helper_collection_test extends \advanced_testcase {
+final class mustache_helper_collection_test extends \advanced_testcase {
 
     /**
      * Test cases to confirm that disallowed helpers are stripped from the source

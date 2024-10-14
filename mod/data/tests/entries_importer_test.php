@@ -35,7 +35,7 @@ use zip_archive;
  * @author     Philipp Memmel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class entries_importer_test extends \advanced_testcase {
+final class entries_importer_test extends \advanced_testcase {
 
     /**
      * Set up function.

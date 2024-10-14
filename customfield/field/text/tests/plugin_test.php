@@ -26,7 +26,7 @@ use core_customfield_test_instance_form;
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plugin_test extends \advanced_testcase {
+final class plugin_test extends \advanced_testcase {
 
     /** @var stdClass[]  */
     private $courses = [];

@@ -24,7 +24,7 @@ namespace core;
  * @copyright  2013 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lock_test extends \advanced_testcase {
+final class lock_test extends \advanced_testcase {
 
     /**
      * Some lock types will store data in the database.

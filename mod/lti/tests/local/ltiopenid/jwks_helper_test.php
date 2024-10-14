@@ -42,7 +42,7 @@ namespace mod_lti\local\ltiopenid;
  * @copyright  2023 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class jwks_helper_test extends \basic_testcase {
+final class jwks_helper_test extends \basic_testcase {
 
     /**
      * Test the fix_jwks_alg method with a range of inputs.

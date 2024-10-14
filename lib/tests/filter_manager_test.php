@@ -26,7 +26,7 @@ use filter_manager;
  * @copyright 2015 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class filter_manager_test extends \advanced_testcase {
+final class filter_manager_test extends \advanced_testcase {
 
     /**
      * Helper method to apply filters to some text and return the result.

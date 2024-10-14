@@ -25,7 +25,7 @@ namespace core;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_renderer
  */
-class outputrenderers_test extends \advanced_testcase {
+final class outputrenderers_test extends \advanced_testcase {
     /**
      * Test generated url from course image.
      *

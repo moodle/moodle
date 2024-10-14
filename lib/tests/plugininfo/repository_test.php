@@ -28,7 +28,7 @@ namespace core\plugininfo;
 /**
  * Tests of the repository plugin manager.
  */
-class repository_test extends \advanced_testcase {
+final class repository_test extends \advanced_testcase {
 
     /**
      * Test the enable_plugin function to check that it enables and disables repository plugins properly.

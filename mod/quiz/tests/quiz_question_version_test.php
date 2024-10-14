@@ -34,7 +34,7 @@ require_once(__DIR__ . '/quiz_question_helper_test_trait.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_quiz\question\bank\qbank_helper
  */
-class quiz_question_version_test extends \advanced_testcase {
+final class quiz_question_version_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
 
     /** @var \stdClass user record. */

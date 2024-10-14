@@ -31,7 +31,7 @@ use core_xapi\test_helper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \core_xapi\privacy\provider
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.

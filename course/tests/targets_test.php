@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/lib/grade/constants.php');
  * @copyright 2019 Victor Deniz <victor@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class targets_test extends \advanced_testcase {
+final class targets_test extends \advanced_testcase {
 
     /**
      * Provides course params for the {@link self::test_core_target_course_completion_analysable()} method.

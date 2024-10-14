@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/files/externallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.6
  */
-class externallib_test extends \advanced_testcase {
+final class externallib_test extends \advanced_testcase {
 
     /*
      * Test core_files_external::upload().

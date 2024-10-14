@@ -24,7 +24,7 @@ use tool_filetypes\utils;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \tool_filetypes\utils
  */
-class tool_filetypes_test extends advanced_testcase {
+final class tool_filetypes_test extends advanced_testcase {
     /**
      * Tests is_extension_invalid() function.
      *

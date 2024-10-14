@@ -31,7 +31,7 @@ use core_course\cache\course_image;
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_image_cache_test extends \advanced_testcase {
+final class course_image_cache_test extends \advanced_testcase {
 
     /**
      * Initial setup.

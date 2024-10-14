@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/webservice/soap/classes/wsdl.php');
  * @copyright  2016 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class wsdl_test extends \advanced_testcase {
+final class wsdl_test extends \advanced_testcase {
 
     /**
      * Test generated WSDL with no added complex types nor functions.

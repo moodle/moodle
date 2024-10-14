@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @author    Laurent David (laurent@call-learning.fr)
  * @covers \mod_bigbluebuttonbn\external\completion_validate
  */
-class completion_validate_test extends \externallib_advanced_testcase {
+final class completion_validate_test extends \externallib_advanced_testcase {
     use testcase_helper_trait;
 
     /**

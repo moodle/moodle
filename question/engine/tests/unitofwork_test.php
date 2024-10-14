@@ -36,7 +36,7 @@ require_once(__DIR__ . '/helpers.php');
  * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class unitofwork_test extends \data_loading_method_test_base {
+final class unitofwork_test extends \data_loading_method_test_base {
     /** @var question_usage_by_activity the test question usage. */
     protected $quba;
 

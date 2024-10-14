@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/course/lib.php');
  * @copyright  2015 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_topics_test extends \advanced_testcase {
+final class format_topics_test extends \advanced_testcase {
 
     /**
      * Tests for format_topics::get_section_name method with default section names.

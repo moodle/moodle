@@ -23,7 +23,7 @@ namespace tool_dataprivacy;
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class data_registry_test extends \advanced_testcase {
+final class data_registry_test extends \advanced_testcase {
 
     /**
      * Ensure that the get_effective_context_value only errors if provided an inappropriate element.

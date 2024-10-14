@@ -25,7 +25,7 @@ use mod_forum\output\forum_post_email;
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class output_email_test extends \advanced_testcase {
+final class output_email_test extends \advanced_testcase {
     /**
      * Data provider for the postdate function tests.
      */

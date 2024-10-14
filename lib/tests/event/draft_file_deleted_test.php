@@ -34,7 +34,7 @@ namespace core\event;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \core\event\draft_file_deleted
  */
-class draft_file_deleted_test extends \advanced_testcase {
+final class draft_file_deleted_test extends \advanced_testcase {
     /**
      * Test draft file deleted event.
      */

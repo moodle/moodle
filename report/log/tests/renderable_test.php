@@ -26,7 +26,7 @@ use core_user;
  * @copyright  2023 Stephan Robotta <stephan.robotta@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class renderable_test extends \advanced_testcase {
+final class renderable_test extends \advanced_testcase {
     /**
      * @var int The course with separate groups.
      */

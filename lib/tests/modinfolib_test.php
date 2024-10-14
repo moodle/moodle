@@ -35,8 +35,8 @@ use Exception;
  * @copyright  2012 Andrew Davis
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class modinfolib_test extends advanced_testcase {
-    public function test_section_info_properties() {
+final class modinfolib_test extends advanced_testcase {
+    public function test_section_info_properties(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest();

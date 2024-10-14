@@ -26,7 +26,7 @@ use enrol_lti\local\ltiadvantage\entity\user;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\repository\user_repository
  */
-class user_repository_test extends \advanced_testcase {
+final class user_repository_test extends \advanced_testcase {
     /**
      * Helper to generate a new user instance.
      *

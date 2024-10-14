@@ -26,7 +26,7 @@ use enrol_lti\helper;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\repository\published_resource_repository
  */
-class published_resource_repository_test extends \advanced_testcase {
+final class published_resource_repository_test extends \advanced_testcase {
     /**
      * Get a list of published resources for testing.
      *

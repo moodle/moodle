@@ -24,7 +24,7 @@ namespace core\lock;
  * @copyright 2022 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class timing_wrapper_lock_factory_test extends \advanced_testcase {
+final class timing_wrapper_lock_factory_test extends \advanced_testcase {
 
     /**
      * Tests lock timing wrapper class.

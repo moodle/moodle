@@ -24,7 +24,7 @@ namespace factor_grace;
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class factor_test extends \advanced_testcase {
+final class factor_test extends \advanced_testcase {
 
     /**
      * Test affecting factors

@@ -31,8 +31,8 @@ require_once($CFG->dirroot . '/grade/grading/lib.php'); // Include the code to t
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class grading_manager_test extends \advanced_testcase {
-    public function test_basic_instantiation() {
+final class grading_manager_test extends \advanced_testcase {
+    public function test_basic_instantiation(): void {
         $manager1 = get_grading_manager();
 
         $fakecontext = (object)array(

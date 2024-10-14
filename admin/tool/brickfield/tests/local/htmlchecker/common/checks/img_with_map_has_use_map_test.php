@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class img_with_map_has_use_map_test
  */
-class img_with_map_has_use_map_test extends all_checks {
+final class img_with_map_has_use_map_test extends all_checks {
     /** @var string Check type */
     public $checktype = 'img_with_map_has_use_map';
 

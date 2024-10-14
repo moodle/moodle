@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @since      Moodle 2.9
  * @coversDefaultClass \mod_data_external
  */
-class externallib_test extends externallib_advanced_testcase {
+final class externallib_test extends externallib_advanced_testcase {
 
     /** @var stdClass Test module context. */
     protected $context;

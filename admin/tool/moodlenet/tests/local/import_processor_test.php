@@ -31,7 +31,7 @@ use tool_moodlenet\local\url;
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class import_processor_test extends \advanced_testcase {
+final class import_processor_test extends \advanced_testcase {
 
     /**
      * An integration test, this confirms the ability to construct an import processor and run the import for the current user.

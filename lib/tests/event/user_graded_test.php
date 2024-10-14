@@ -30,7 +30,7 @@ require_once($CFG->libdir . '/mathslib.php');
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_graded_test extends \advanced_testcase {
+final class user_graded_test extends \advanced_testcase {
 
     /**
      * Tests set up.

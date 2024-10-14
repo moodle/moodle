@@ -41,7 +41,7 @@ defined('MOODLE_INTERNAL') || die();
  * @author     Brent Boghosian (brent.boghosian@remote-learner.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class customcontext_test extends \advanced_testcase {
+final class customcontext_test extends \advanced_testcase {
 
     /**
      * Perform setup before every test. This tells Moodle's phpunit to reset the database after every test.

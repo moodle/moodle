@@ -38,7 +38,7 @@ use core_course\local\entity\string_title;
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class content_item_test extends \advanced_testcase {
+final class content_item_test extends \advanced_testcase {
 
     /**
      * Test the content_item class.

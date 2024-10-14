@@ -31,7 +31,7 @@ require_once(__DIR__ . '/fixtures/stats_events.php');
  * @copyright  2012 Tyler Bannister
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class statslib_test extends \advanced_testcase {
+final class statslib_test extends \advanced_testcase {
     /** The day to use for testing **/
     const DAY = 1272672000;
 

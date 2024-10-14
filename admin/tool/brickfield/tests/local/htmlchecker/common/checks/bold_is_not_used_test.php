@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class bold_is_not_used_testcase
  */
-class bold_is_not_used_test extends all_checks {
+final class bold_is_not_used_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'bold_is_not_used';
 

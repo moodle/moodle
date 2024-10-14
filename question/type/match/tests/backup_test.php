@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/course/externallib.php');
  * @copyright 2020 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class backup_test extends \advanced_testcase {
+final class backup_test extends \advanced_testcase {
 
     /**
      * Duplicate quiz with a matching question, and check it worked.

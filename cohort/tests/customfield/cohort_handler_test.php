@@ -30,7 +30,7 @@ use core_customfield\field_controller;
  * @copyright  2022 Dmitrii Metelkin <dmitriim@catalys-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cohort_handler_test extends advanced_testcase {
+final class cohort_handler_test extends advanced_testcase {
     /**
      * Test custom field handler.
      * @var \core_customfield\handler

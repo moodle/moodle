@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
     /**
      * Test enrol migration function used when uninstalling enrol plugins.
      */

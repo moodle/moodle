@@ -28,7 +28,7 @@ use testing_data_generator;
  * @copyright 2023 Huong Nguyen <huongnv13@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class utilities_test extends \advanced_testcase {
+final class utilities_test extends \advanced_testcase {
 
     /** @var testing_data_generator Data generator. */
     private testing_data_generator $generator;

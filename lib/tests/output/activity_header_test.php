@@ -25,7 +25,7 @@ namespace core\output;
  * @copyright 2021 Peter
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class activity_header_test extends \advanced_testcase {
+final class activity_header_test extends \advanced_testcase {
 
     /**
      * Test the title setter

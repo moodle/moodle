@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/calendar/lib.php');
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class container_test extends \advanced_testcase {
+final class container_test extends \advanced_testcase {
 
     /**
      * Test setup.

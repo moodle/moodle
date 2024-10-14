@@ -25,7 +25,7 @@ use core_calendar\local\event\proxies\cm_info_proxy;
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cm_info_proxy_test extends \advanced_testcase {
+final class cm_info_proxy_test extends \advanced_testcase {
 
     /**
      * Test creating cm_info_std_proxy, using getter and setter.

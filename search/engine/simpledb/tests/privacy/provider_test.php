@@ -40,7 +40,7 @@ require_once($CFG->dirroot . '/search/tests/fixtures/mock_search_area.php');
  * @copyright 2018 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
 
     /** @var \search_simpledb\engine database engine. */
     protected $engine;

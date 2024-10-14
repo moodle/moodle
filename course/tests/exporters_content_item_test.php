@@ -35,7 +35,7 @@ use core_course\local\repository\content_item_readonly_repository;
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class exporters_content_item_test extends \advanced_testcase {
+final class exporters_content_item_test extends \advanced_testcase {
 
     /**
      * Test confirming a content_item can be exported for a course.

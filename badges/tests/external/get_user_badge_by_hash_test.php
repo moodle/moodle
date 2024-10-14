@@ -35,7 +35,7 @@ require_once($CFG->libdir . '/badgeslib.php');
  * @since      Moodle 4.3
  * @coversDefaultClass \core_badges\external\get_user_badge_by_hash
  */
-class get_user_badge_by_hash_test extends externallib_advanced_testcase {
+final class get_user_badge_by_hash_test extends externallib_advanced_testcase {
 
     /**
      * Prepare the test.

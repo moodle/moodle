@@ -43,7 +43,7 @@ require_once("$CFG->dirroot/backup/backup.class.php");
  * @copyright 2012 Frédéric Massart <fred@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cronhelper_test extends \advanced_testcase {
+final class cronhelper_test extends \advanced_testcase {
     /**
      * Test {@link backup_cron_automated_helper::calculate_next_automated_backup}.
      */

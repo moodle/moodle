@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \repository_filesystem
  */
-class repository_filesystem_test extends \advanced_testcase {
+final class repository_filesystem_test extends \advanced_testcase {
     public function test_get_listing(): void {
         global $CFG;
 

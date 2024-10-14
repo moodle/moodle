@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/completion/tests/fixtures/completion_creation.php
  * @copyright   2018 Adrian Greeve <adriangreeve.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
 
     use \completion_creation;
 

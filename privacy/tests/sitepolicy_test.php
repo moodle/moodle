@@ -35,7 +35,7 @@ global $CFG;
  * @copyright   2018 Marina Glancy
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sitepolicy_test extends advanced_testcase {
+final class sitepolicy_test extends advanced_testcase {
 
 
     /**

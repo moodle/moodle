@@ -25,8 +25,8 @@ namespace core;
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class authlib_test extends \advanced_testcase {
-    public function test_lockout() {
+final class authlib_test extends \advanced_testcase {
+    public function test_lockout(): void {
         global $CFG;
         require_once("$CFG->libdir/authlib.php");
 

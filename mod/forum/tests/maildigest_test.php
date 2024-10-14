@@ -33,7 +33,7 @@ require_once(__DIR__ . '/generator_trait.php');
  * @copyright  2013 Andrew Nicols
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class maildigest_test extends \advanced_testcase {
+final class maildigest_test extends \advanced_testcase {
 
     // Make use of the cron tester trait.
     use mod_forum_tests_cron_trait;

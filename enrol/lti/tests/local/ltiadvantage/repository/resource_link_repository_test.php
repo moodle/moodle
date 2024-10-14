@@ -26,7 +26,7 @@ use enrol_lti\local\ltiadvantage\entity\application_registration;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\repository\resource_link_repository
  */
-class resource_link_repository_test extends \advanced_testcase {
+final class resource_link_repository_test extends \advanced_testcase {
     /**
      * Helper to generate a new resource_link instance.
      *

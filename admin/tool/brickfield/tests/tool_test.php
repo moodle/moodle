@@ -27,7 +27,7 @@ use tool_brickfield\local\tool\tool;
  * @author     Jay Churchward (jay.churchward@poetopensource.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_test extends \advanced_testcase {
+final class tool_test extends \advanced_testcase {
 
     /** @var string base 64 image */
     protected static string $base64img = <<<EOF

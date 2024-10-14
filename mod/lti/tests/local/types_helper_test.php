@@ -50,7 +50,7 @@ require_once($CFG->dirroot . '/mod/lti/tests/mod_lti_testcase.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_lti\local\types_helper
  */
-class types_helper_test extends mod_lti_testcase {
+final class types_helper_test extends mod_lti_testcase {
 
     /**
      * Test fetching tool types for a given course and user.
