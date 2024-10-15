@@ -79,7 +79,7 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
 
         // For each condition, we need to ensure their values are always accounted for in the report.
         $conditionvalues = $this->report->get_condition_values();
-        foreach ($this->report->get_active_conditions() as $condition) {
+        foreach ($this->report->get_active_conditions(false) as $condition) {
             [$conditionsql, $conditionparams] = $this->get_filter_sql($condition, $conditionvalues, 'c' . $conditionindex++);
             if ($conditionsql !== '') {
                 $joins = array_merge($joins, $condition->get_joins());
