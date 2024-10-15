@@ -380,7 +380,8 @@ abstract class restore_qtype_plugin extends restore_plugin {
      *
      * Only common stuff to all plugins, in this case:
      * - question: text and feedback
-     * - question_answers: text and feedbak
+     * - question_answers: text and feedback
+     * - question_hints: hint
      *
      * Note each qtype will have, if needed, its own define_decode_contents method
      */
@@ -388,8 +389,9 @@ abstract class restore_qtype_plugin extends restore_plugin {
 
         $contents = array();
 
-        $contents[] = new restore_decode_content('question', array('questiontext', 'generalfeedback'), 'question_created');
-        $contents[] = new restore_decode_content('question_answers', array('answer', 'feedback'), 'question_answer');
+        $contents[] = new restore_decode_content('question', ['questiontext', 'generalfeedback'], 'question_created');
+        $contents[] = new restore_decode_content('question_answers', ['answer', 'feedback'], 'question_answer');
+        $contents[] = new restore_decode_content('question_hints', ['hint'], 'question_hint');
 
         return $contents;
     }
