@@ -1,6 +1,11 @@
 This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
+=== 4.4.5 ===
+
+* The `get_active_conditions` method of the base report class has a new `$checkavailable` parameter to determine whether to check
+  the returned conditions availability
+
 === 4.4.1 ===
 
 * New database helper method `sql_replace_parameters` to help ensure uniqueness of parameters within a SQL expression

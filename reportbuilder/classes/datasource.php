@@ -264,8 +264,7 @@ abstract class datasource extends base {
                         " {$instance->get_is_deprecated_message()}", DEBUG_DEVELOPER);
                 }
 
-                $this->activefilters['values'][$instance->get_unique_identifier()] =
-                    $instance->set_persistent($filter);
+                $this->activefilters['values'][$instance->get_unique_identifier()] = $instance->set_persistent($filter);
             }
         }
 
@@ -347,9 +346,10 @@ abstract class datasource extends base {
      * Override parent method, returning only those conditions specifically added to the custom report (rather than all that are
      * available)
      *
+     * @param bool $checkavailable
      * @return filter[]
      */
-    public function get_active_conditions(): array {
+    public function get_active_conditions(bool $checkavailable = true): array {
         $reportid = $this->get_report_persistent()->get('id');
 
         // Determine whether we already retrieved the conditions since the report was last modified.
@@ -364,15 +364,14 @@ abstract class datasource extends base {
         foreach ($activeconditions as $condition) {
             $instance = $this->get_condition($condition->get('uniqueidentifier'));
 
-            // Ensure the condition is still present and available.
-            if ($instance !== null && $instance->get_is_available()) {
+            // Ensure the condition is still present and available (if checking available status).
+            if ($instance !== null && (!$checkavailable || $instance->get_is_available())) {
                 if ($instance->get_is_deprecated()) {
                     debugging("The condition '{$instance->get_unique_identifier()}' is deprecated, please do not use it any more." .
                         " {$instance->get_is_deprecated_message()}", DEBUG_DEVELOPER);
                 }
 
-                $this->activeconditions['values'][$instance->get_unique_identifier()] =
-                    $instance->set_persistent($condition);
+                $this->activeconditions['values'][$instance->get_unique_identifier()] = $instance->set_persistent($condition);
             }
         }
 
