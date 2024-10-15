@@ -2115,6 +2115,38 @@ class accesslib_test extends advanced_testcase {
     }
 
     /**
+     * Test get_deprecated_capability_info() with an invalid component.
+     *
+     * @covers get_deprecated_capability_info
+     */
+    public function test_get_deprecated_capability_info_invalid_component(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Set up a fake plugin.
+        $this->setup_fake_plugin('access');
+
+        // Add a plugin for an unrelated fake component.
+        $DB->insert_record('capabilities', [
+            'name' => 'mod/fake:addinstance',
+            'captype' => 'write',
+            'contextlevel' => CONTEXT_COURSE,
+            'component' => 'mod_fake',
+            'riskbitmask' => 4,
+        ]);
+
+        // Purge the cache.
+        cache::make('core', 'capabilities')->purge();
+
+        // For now we have deprecated fake/access:fakecapability.
+        $this->assertNotEmpty($DB->get_record('capabilities', ['component' => 'mod_fake']));
+        $info = get_deprecated_capability_info('fake/access:fakecapability');
+        $this->assertIsArray($info);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
      * Test that assigning a fake cap does not return.
      *
      * @covers ::get_users_by_capability
