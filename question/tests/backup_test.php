@@ -16,6 +16,10 @@
 
 namespace core_question;
 
+use context_course;
+use moodle_url;
+use question_bank;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -29,6 +33,8 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @category   test
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \restore_qtype_plugin
+ * @covers     \restore_create_categories_and_questions
  */
 class backup_test extends \advanced_testcase {
 
@@ -116,7 +122,7 @@ class backup_test extends \advanced_testcase {
 
         // Tag the questions with 2 question tags and 2 course level question tags.
         $qcontext = \context::instance_by_id($qcat->contextid);
-        $coursecontext = \context_course::instance($course->id);
+        $coursecontext = context_course::instance($course->id);
         \core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['qtag1', 'qtag2']);
         \core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['qtag3', 'qtag4']);
         \core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, ['ctag1', 'ctag2']);
@@ -160,7 +166,7 @@ class backup_test extends \advanced_testcase {
 
             foreach ($tags as $tag) {
                 if (in_array($tag->name, ['ctag1', 'ctag2', 'ctag3', 'ctag4'])) {
-                    $expected = \context_course::instance($courseid2)->id;
+                    $expected = context_course::instance($courseid2)->id;
                 } else if (in_array($tag->name, ['qtag1', 'qtag2', 'qtag3', 'qtag4'])) {
                     $expected = $qcontext->id;
                 }
@@ -189,7 +195,7 @@ class backup_test extends \advanced_testcase {
 
         // Restore to a new course in the new course category.
         $courseid3 = $this->restore_course($backupid2, $coursefullname, $courseshortname . '_3', $category2->id, $expectedwarnings);
-        $coursecontext3 = \context_course::instance($courseid3);
+        $coursecontext3 = context_course::instance($courseid3);
 
         // The questions should have been moved to a question category that belongs to a course context.
         $questions = $DB->get_records_sql("SELECT q.*
@@ -389,5 +395,71 @@ class backup_test extends \advanced_testcase {
         $question = array_shift($questions);
         $this->assertEquals($USER->id, $question->createdby);
         $this->assertEquals($USER->id, $question->modifiedby);
+    }
+
+    public function test_backup_and_restore_recodes_links_in_questions(): void {
+        global $DB, $USER, $CFG;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course and a category.
+        $course = $this->getDataGenerator()->create_course();
+        $category = $this->getDataGenerator()->create_category();
+
+        // Create a question with links in all the places that should be recoded.
+        $testlink = new moodle_url('/course/view.php', ['id' => $course->id]);
+        $testcontent = 'Look at <a href="' . $testlink . '">the course</a>.';
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $questioncategory = $questiongenerator->create_question_category(
+            ['contextid' => context_course::instance($course->id)->id]);
+        $question = $questiongenerator->create_question('multichoice', null, [
+            'name' => 'Test question',
+            'category' => $questioncategory->id,
+            'questiontext' => ['text' => 'This is the question. ' . $testcontent],
+            'generalfeedback' => ['text' => 'Why is this right? ' . $testcontent],
+            'answer' => [
+                '0' => ['text' => 'Choose me! ' . $testcontent],
+            ],
+            'feedback' => [
+                '0' => ['text' => 'The reason: ' . $testcontent],
+            ],
+            'hint' => [
+                '0' => ['text' => 'Hint: ' . $testcontent],
+            ],
+        ]);
+
+        // Create a quiz and add the question.
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        quiz_add_quiz_question($question->id, $quiz);
+
+        // Backup and restore the course.
+        $backupid = $this->backup_course($course);
+        $newcourseid = $this->restore_course($backupid, 'New course', 'C2', $category->id);
+
+        // Get the question from the restored course - we are expecting just one, but that is not the real test here.
+        $restoredquestions = $DB->get_records_sql("
+                SELECT q.id, q.name
+                  FROM {question} q
+                  JOIN {question_versions} qv ON qv.questionid = q.id
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                  JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                 WHERE qc.contextid = ?
+            ", [context_course::instance($newcourseid)->id]);
+        $this->assertCount(1, $restoredquestions);
+        $questionid = array_key_first($restoredquestions);
+        $this->assertEquals('Test question', $restoredquestions[$questionid]->name);
+
+        // Verify the links have been recoded.
+        $restoredquestion = question_bank::load_question_data($questionid);
+        $recodedlink = new moodle_url('/course/view.php', ['id' => $newcourseid]);
+        $recodedcontent = 'Look at <a href="' . $recodedlink . '">the course</a>.';
+        $firstanswerid = array_key_first($restoredquestion->options->answers);
+        $firsthintid = array_key_first($restoredquestion->hints);
+
+        $this->assertEquals('This is the question. ' . $recodedcontent, $restoredquestion->questiontext);
+        $this->assertEquals('Why is this right? ' . $recodedcontent, $restoredquestion->generalfeedback);
+        $this->assertEquals('Choose me! ' . $recodedcontent, $restoredquestion->options->answers[$firstanswerid]->answer);
+        $this->assertEquals('The reason: ' . $recodedcontent, $restoredquestion->options->answers[$firstanswerid]->feedback);
+        $this->assertEquals('Hint: ' . $recodedcontent, $restoredquestion->hints[$firsthintid]->hint);
     }
 }
