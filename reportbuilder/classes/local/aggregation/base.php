@@ -18,7 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\aggregation;
 
-use lang_string;
+use core\lang_string;
 use core_reportbuilder\local\report\column;
 
 /**
@@ -117,6 +117,16 @@ abstract class base {
      * @return string
      */
     abstract public static function get_field_sql(string $field, int $columntype): string;
+
+    /**
+     * Whether the aggregation method is applied to a column, this method determines whether the report table should
+     * group by the column fields or not
+     *
+     * @return bool
+     */
+    public static function column_groupby(): bool {
+        return false;
+    }
 
     /**
      * Return formatted value for column when applying aggregation, by default executing all callbacks on the value

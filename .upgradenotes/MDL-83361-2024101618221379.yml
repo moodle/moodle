@@ -1,0 +1,12 @@
+issueNumber: MDL-83361
+notes:
+  core_reportbuilder:
+    - message: >-
+        The base aggregation class has a new `column_groupby` method, to be
+        implemented in aggregation types to determime whether report tables
+        should group by the fields of the aggregated column
+      type: improved
+    - message: >-
+        There is a new `date` aggregation type, that can be applied in custom
+        and system reports
+      type: improved

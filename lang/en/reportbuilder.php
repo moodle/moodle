@@ -31,6 +31,7 @@ $string['aggregatecolumn'] = 'Aggregate column \'{$a}\'';
 $string['aggregationavg'] = 'Average';
 $string['aggregationcount'] = 'Count';
 $string['aggregationcountdistinct'] = 'Count distinct';
+$string['aggregationdate'] = 'Date';
 $string['aggregationgroupconcat'] = 'Comma separated values';
 $string['aggregationgroupconcatdistinct'] = 'Comma separated distinct values';
 $string['aggregationmax'] = 'Maximum';
