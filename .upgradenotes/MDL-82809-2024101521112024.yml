@@ -1,0 +1,8 @@
+issueNumber: MDL-82809
+notes:
+  core_reportbuilder:
+    - message: >-
+        The `get_active_conditions` method of the base report class has a new
+        `$checkavailable` parameter to determine whether to check the returned
+        conditions availability
+      type: changed
