@@ -32,7 +32,7 @@ require_once('all_checks.php');
  * Class test_css_text_has_contrast_test
  * @covers \tool_brickfield\local\htmlchecker\brickfield_accessibility
  */
-class css_text_has_contrast_test extends all_checks {
+final class css_text_has_contrast_test extends all_checks {
     /** @var string The check type. */
     protected $checktype = 'css_text_has_contrast';
 
@@ -224,6 +224,18 @@ EOD;
     /** @var string HTML with px18 colour values. */
     private $largerboldpass = <<<EOD
     <body><p style="color:#FF5C5C; background-color:white; font-size: larger; font-weight: bold;">
+    This is contrasty enough.</p></body>
+EOD;
+
+    /** @var string HTML with calculated size colour values. */
+    private $calculatedfail = <<<EOD
+    <body><p style="color:#EF0000; background-color:white; font-size: calc(0.90375rem + 0.045vw)">
+    This is not contrasty enough.</p></body>
+EOD;
+
+    /** @var string HTML with calculated size colour values. */
+    private $calculatedpass = <<<EOD
+    <body><p style="color:#E60000; background-color:white; font-size: calc(0.90375rem + 0.045vw);">
     This is contrasty enough.</p></body>
 EOD;
 
@@ -456,6 +468,22 @@ EOD;
         $html = '<body><p style="color:rgba(255, 255, 255, 0.75); background:fixed rgba(0, 0, 0, 0.75) center;">
             This is contrasty enough.</p></body>';
         $results = $this->get_checker_results($html);
+        $this->assertEmpty($results);
+    }
+
+    /**
+     * Test for calculated (12pt) text with insufficient contrast of 4.49.
+     */
+    public function test_check_for_calculated_fail(): void {
+        $results = $this->get_checker_results($this->calculatedfail);
+        $this->assertTrue($results[0]->element->tagName == 'p');
+    }
+
+    /**
+     * Test for calculated (12pt) text with sufficient contrast of 4.81.
+     */
+    public function test_check_for_calculated_pass(): void {
+        $results = $this->get_checker_results($this->calculatedpass);
         $this->assertEmpty($results);
     }
 }
