@@ -1,0 +1,19 @@
+issueNumber: MDL-81308
+notes:
+  core:
+    - message: >
+        All uses of the following PHPUnit methods have been removed as these
+        methods are
+
+        deprecated upstream without direct replacement:
+
+
+        - `withConsecutive`
+
+        - `willReturnConsecutive`
+
+        - `onConsecutive`
+
+
+        Any plugin using these methods must update their uses.
+      type: changed
