@@ -16,6 +16,8 @@
 
 namespace core;
 
+use core_phpunit\exception\test_exception;
+
 /**
  * Test advanced_testcase extra features.
  *
@@ -216,28 +218,29 @@ final class advanced_test extends \advanced_testcase {
         // Database change.
         $this->assertEquals(1, $DB->get_field('user', 'confirmed', array('id'=>2)));
         $DB->set_field('user', 'confirmed', 0, array('id'=>2));
+
         try {
             self::resetAllData(true);
-        } catch (\Exception $e) {
-            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
+        } catch (test_exception $e) {
+            $this->assertStringContainsString('unexpected database modification', $e->getMessage());
         }
-        $this->assertEquals(1, $DB->get_field('user', 'confirmed', array('id'=>2)));
 
+        $this->assertEquals(1, $DB->get_field('user', 'confirmed', array('id'=>2)));
         // Config change.
         $CFG->xx = 'yy';
         unset($CFG->admin);
         $CFG->rolesactive = 0;
+
         try {
             self::resetAllData(true);
-        } catch (\Exception $e) {
-            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
+        } catch (test_exception $e) {
             $this->assertStringContainsString('xx', $e->getMessage());
             $this->assertStringContainsString('admin', $e->getMessage());
             $this->assertStringContainsString('rolesactive', $e->getMessage());
+            $this->assertFalse(isset($CFG->xx));
+            $this->assertTrue(isset($CFG->admin));
+            $this->assertEquals(1, $CFG->rolesactive);
         }
-        $this->assertFalse(isset($CFG->xx));
-        $this->assertTrue(isset($CFG->admin));
-        $this->assertEquals(1, $CFG->rolesactive);
 
         // _GET change.
         $_GET['__somethingthatwillnotnormallybepresent__'] = 'yy';
@@ -269,23 +272,28 @@ final class advanced_test extends \advanced_testcase {
         $SITE->id = 10;
         $COURSE = new \stdClass();
         $COURSE->id = 7;
+
         try {
             self::resetAllData(true);
-        } catch (\Exception $e) {
-            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
-            $this->assertEquals(1, $SITE->id);
-            $this->assertSame($SITE, $COURSE);
-            $this->assertSame($SITE, $COURSE);
+        } catch (test_exception $e) {
+            $this->assertStringContainsString('unexpected change of $COURSE', $e->getMessage());
         }
+
+        $this->assertEquals(1, $SITE->id);
+        $this->assertSame($SITE, $COURSE);
+        $this->assertSame($SITE, $COURSE);
 
         // USER change.
         $this->setUser(2);
+
         try {
             self::resetAllData(true);
-        } catch (\Exception $e) {
-            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
-            $this->assertEquals(0, $USER->id);
+        } catch (test_exception $e) {
+            $this->assertStringContainsString('unexpected change of $USER', $e->getMessage());
         }
+
+        $this->assertEquals(0, $USER->id);
+
     }
 
     public function test_getDataGenerator(): void {
@@ -642,8 +650,8 @@ final class advanced_test extends \advanced_testcase {
 
         try {
             self::resetAllData(true);
-        } catch (\Exception $e) {
-            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
+        } catch (test_exception $e) {
+            $this->assertStringContainsString('unexpected change of locale', $e->getMessage());
         }
 
         if ($CFG->ostype === 'WINDOWS') {

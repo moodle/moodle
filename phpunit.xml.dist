@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="lib/phpunit/phpunit.xsd"
-    bootstrap="lib/phpunit/bootstrap.php"
-    convertErrorsToExceptions="true"
-    convertNoticesToExceptions="true"
-    convertWarningsToExceptions="true"
-    processIsolation="false"
-    backupGlobals="false"
-    backupStaticAttributes="false"
-    cacheResult="false"
-    stopOnError="false"
-    stopOnFailure="false"
-    stopOnIncomplete="false"
-    stopOnSkipped="false"
-    beStrictAboutTestsThatDoNotTestAnything="false"
-    beStrictAboutOutputDuringTests="true"
-    >
+  xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+  bootstrap="lib/phpunit/bootstrap.php"
+  processIsolation="false"
+  backupGlobals="false"
+  cacheResult="false"
+  stopOnError="false"
+  stopOnFailure="false"
+  stopOnIncomplete="false"
+  stopOnSkipped="false"
+  beStrictAboutTestsThatDoNotTestAnything="false"
+  beStrictAboutOutputDuringTests="true"
+  cacheDirectory=".phpunit.cache"
+  backupStaticProperties="false"
+>
 
   <php>
     <!--<const name="PHPUNIT_LONGTEST" value="1"/> uncomment to execute also slow or otherwise expensive tests-->
@@ -305,8 +303,8 @@
 <!--@plugin_suites_end@-->
   </testsuites>
 
-  <coverage>
+  <source>
 <!--@coveragelist@-->
-  </coverage>
+  </source>
 
 </phpunit>

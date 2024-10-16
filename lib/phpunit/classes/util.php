@@ -314,7 +314,7 @@ class phpunit_util extends testing_util {
 
         if ($warnings) {
             $warnings = implode("\n", $warnings);
-            trigger_error($warnings, E_USER_WARNING);
+            throw new \core_phpunit\exception\test_exception($warnings);
         }
     }
 

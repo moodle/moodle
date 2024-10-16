@@ -379,8 +379,8 @@ final class event_factory_test extends \advanced_testcase {
                 'bailoutcheck' => function() {
                     return false;
                 },
-                event_interface::class,
-                'Hello'
+                'expectedclass' => event_interface::class,
+                'expectedattributevalue' => 'Hello'
             ],
             'Sample event record with event hidden' => [
                 'dbrow' => (object)[
@@ -413,8 +413,8 @@ final class event_factory_test extends \advanced_testcase {
                 'bailoutcheck' => function() {
                     return false;
                 },
-                null,
-                null
+                'expectedclass' => null,
+                'expectedattributevalue' => null
             ],
             'Sample event record with early bail' => [
                 'dbrow' => (object)[
@@ -447,8 +447,8 @@ final class event_factory_test extends \advanced_testcase {
                 'bailoutcheck' => function() {
                     return true;
                 },
-                null,
-                null
+                'expectedclass' => null,
+                'expectedattributevalue' => null
             ]
         ];
     }

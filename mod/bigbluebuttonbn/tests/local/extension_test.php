@@ -428,12 +428,12 @@ final class extension_test extends \advanced_testcase {
             'mod_instance_helper with plugin disabled' => [
                 'bbbenabled' => false,
                 'apiclass' => mod_instance_helper::class,
-                'result' => [],
+                'extensionclasses' => [],
             ],
             'mod_instance_helper with plugin enabled' => [
                 'bbbenabled' => true,
                 'apiclass' => mod_instance_helper::class,
-                'result' => [
+                'extensionclasses' => [
                     'bbbext_simple\\bigbluebuttonbn\\mod_instance_helper',
                 ],
             ],

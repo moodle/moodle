@@ -741,31 +741,31 @@ final class manager_test extends \advanced_testcase {
         return [
             // User presets.
             'listtemplate' => [
-                'templatename' => 'listtemplate',
+                'templatetoreset' => 'listtemplate',
                 'expected' => ['listtemplate', 'listtemplateheader', 'listtemplatefooter'],
             ],
             'singletemplate' => [
-                'templatename' => 'singletemplate',
+                'templatetoreset' => 'singletemplate',
                 'expected' => ['singletemplate'],
             ],
             'asearchtemplate' => [
-                'templatename' => 'asearchtemplate',
+                'templatetoreset' => 'asearchtemplate',
                 'expected' => ['asearchtemplate'],
             ],
             'addtemplate' => [
-                'templatename' => 'addtemplate',
+                'templatetoreset' => 'addtemplate',
                 'expected' => ['addtemplate'],
             ],
             'rsstemplate' => [
-                'templatename' => 'rsstemplate',
+                'templatetoreset' => 'rsstemplate',
                 'expected' => ['rsstemplate', 'rsstitletemplate'],
             ],
             'csstemplate' => [
-                'templatename' => 'csstemplate',
+                'templatetoreset' => 'csstemplate',
                 'expected' => ['csstemplate'],
             ],
             'jstemplate' => [
-                'templatename' => 'jstemplate',
+                'templatetoreset' => 'jstemplate',
                 'expected' => ['jstemplate'],
             ],
         ];

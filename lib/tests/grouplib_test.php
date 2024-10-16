@@ -501,7 +501,7 @@ final class grouplib_test extends \advanced_testcase {
                 'userid' => $user2->id,
                 'groupnames' => $group1->name,
             ],
-        ], $records);
+        ], array_values($records));
     }
 
     public function test_groups_get_group_by_name(): void {
@@ -1158,7 +1158,7 @@ final class grouplib_test extends \advanced_testcase {
         $this->assertEquals([$c1group1->id], array_keys($groups));
         $this->assertEqualsCanonicalizing(
                 [$c1user1->id, $c12user1->id],
-                $groups[$c1group1->id]->members
+                array_values($groups[$c1group1->id]->members),
         );
     }
 

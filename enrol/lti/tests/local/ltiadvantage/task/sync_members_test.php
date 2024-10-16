@@ -800,7 +800,7 @@ final class sync_members_test extends \lti_advantage_testcase {
         require_once($CFG->dirroot . '/auth/lti/auth.php');
         return [
             'Migrated tool, user ids changed, new and existing users present in sync' => [
-                'legacy_data' => [
+                'legacydata' => [
                     'users' => [
                         ['user_id' => '1'],
                         ['user_id' => '2'],
@@ -811,8 +811,8 @@ final class sync_members_test extends \lti_advantage_testcase {
                         ['secret' => 'toolsecret2'],
                     ]
                 ],
-                'resource_config' => null,
-                'launch_data' => [
+                'resourceconfig' => null,
+                'launchdata' => [
                     'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => [
                         'consumer_key' => 'CONSUMER_1',
@@ -823,7 +823,7 @@ final class sync_members_test extends \lti_advantage_testcase {
                         'resource_link_id' => '4b6fa'
                     ],
                 ],
-                'sync_members_data' => [
+                'syncmembers' => [
                     self::get_mock_members_with_ids(['1p3_1'], ['1'])[0],
                     self::get_mock_members_with_ids(['1p3_2'], ['2'])[0],
                     self::get_mock_members_with_ids(['1p3_3'], ['3'])[0],
@@ -851,7 +851,7 @@ final class sync_members_test extends \lti_advantage_testcase {
                 ]
             ],
             'Migrated tool, no change in user ids, new and existing users present in sync' => [
-                'legacy_data' => [
+                'legacydata' => [
                     'users' => [
                         ['user_id' => '1'],
                         ['user_id' => '2'],
@@ -862,8 +862,8 @@ final class sync_members_test extends \lti_advantage_testcase {
                         ['secret' => 'toolsecret2'],
                     ]
                 ],
-                'resource_config' => null,
-                'launch_data' => [
+                'resourceconfig' => null,
+                'launchdata' => [
                     'user' => self::get_mock_launch_users_with_ids(['1'])[0],
                     'launch_migration_claim' => [
                         'consumer_key' => 'CONSUMER_1',
@@ -873,7 +873,7 @@ final class sync_members_test extends \lti_advantage_testcase {
                         'resource_link_id' => '4b6fa'
                     ],
                 ],
-                'sync_members_data' => [
+                'syncmembers' => [
                     self::get_mock_members_with_ids(['1'], null)[0],
                     self::get_mock_members_with_ids(['2'], null)[0],
                     self::get_mock_members_with_ids(['3'], null)[0],
@@ -901,7 +901,7 @@ final class sync_members_test extends \lti_advantage_testcase {
                 ]
             ],
             'New tool, no launch migration claim, change in user ids, new and existing users present in sync' => [
-                'legacy_data' => [
+                'legacydata' => [
                     'users' => [
                         ['user_id' => '1'],
                         ['user_id' => '2'],
@@ -912,12 +912,12 @@ final class sync_members_test extends \lti_advantage_testcase {
                         ['secret' => 'toolsecret2'],
                     ]
                 ],
-                'resource_config' => null,
-                'launch_data' => [
+                'resourceconfig' => null,
+                'launchdata' => [
                     'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => null,
                 ],
-                'sync_members_data' => [
+                'syncmembers' => [
                     self::get_mock_members_with_ids(['1p3_1'], null)[0],
                     self::get_mock_members_with_ids(['1p3_2'], null)[0],
                     self::get_mock_members_with_ids(['1p3_3'], null)[0],
@@ -945,7 +945,7 @@ final class sync_members_test extends \lti_advantage_testcase {
                 ]
             ],
             'New tool, no launch migration claim, no change in user ids, new and existing users present in sync' => [
-                'legacy_data' => [
+                'legacydata' => [
                     'users' => [
                         ['user_id' => '1'],
                         ['user_id' => '2'],
@@ -956,12 +956,12 @@ final class sync_members_test extends \lti_advantage_testcase {
                         ['secret' => 'toolsecret2'],
                     ]
                 ],
-                'resource_config' => null,
-                'launch_data' => [
+                'resourceconfig' => null,
+                'launchdata' => [
                     'user' => self::get_mock_launch_users_with_ids(['1'])[0],
                     'launch_migration_claim' => null,
                 ],
-                'sync_members_data' => [
+                'syncmembers' => [
                     self::get_mock_members_with_ids(['1'], null)[0],
                     self::get_mock_members_with_ids(['2'], null)[0],
                     self::get_mock_members_with_ids(['3'], null)[0],
@@ -989,7 +989,7 @@ final class sync_members_test extends \lti_advantage_testcase {
                 ]
             ],
             'New tool, migration only via member sync, no launch claim, new and existing users present in sync' => [
-                'legacy_data' => [
+                'legacydata' => [
                     'users' => [
                         ['user_id' => '1'],
                         ['user_id' => '2'],
@@ -1000,12 +1000,12 @@ final class sync_members_test extends \lti_advantage_testcase {
                         ['secret' => 'toolsecret2'],
                     ]
                 ],
-                'resource_config' => null,
-                'launch_data' => [
+                'resourceconfig' => null,
+                'launchdata' => [
                     'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => null,
                 ],
-                'sync_members_data' => [
+                'syncmembers' => [
                     self::get_mock_members_with_ids(['1p3_1'], ['1'])[0],
                     self::get_mock_members_with_ids(['1p3_2'], ['2'])[0],
                     self::get_mock_members_with_ids(['1p3_3'], ['3'])[0],
@@ -1033,16 +1033,16 @@ final class sync_members_test extends \lti_advantage_testcase {
                 ]
             ],
             'Default provisioning modes, mixed bag of users and roles' => [
-                'legacy_data' => null,
-                'resource_config' => [
+                'legacydata' => null,
+                'resourceconfig' => [
                     'provisioningmodelearner' => \auth_plugin_lti::PROVISIONING_MODE_AUTO_ONLY,
                     'provisioningmodeinstructor' => \auth_plugin_lti::PROVISIONING_MODE_PROMPT_NEW_EXISTING
                 ],
-                'launch_data' => [
+                'launchdata' => [
                     'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => null,
                 ],
-                'sync_members_data' => [
+                'syncmembers' => [
                     // This user is just an instructor but is also the user who is already linked, via the launch above.
                     self::get_mock_members_with_ids(['1p3_1'], null, true, true, true, false, [
                         'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor',
@@ -1083,16 +1083,16 @@ final class sync_members_test extends \lti_advantage_testcase {
                 ]
             ],
             'All automatic provisioning, mixed bag of users and roles' => [
-                'legacy_data' => null,
-                'resource_config' => [
+                'legacydata' => null,
+                'resourceconfig' => [
                     'provisioningmodelearner' => \auth_plugin_lti::PROVISIONING_MODE_AUTO_ONLY,
                     'provisioningmodeinstructor' => \auth_plugin_lti::PROVISIONING_MODE_AUTO_ONLY
                 ],
-                'launch_data' => [
+                'launchdata' => [
                     'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => null,
                 ],
-                'sync_members_data' => [
+                'syncmembers' => [
                     // This user is just an instructor but is also the user who is already linked, via the launch above.
                     self::get_mock_members_with_ids(['1p3_1'], null, true, true, true, false, [
                         'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor',
@@ -1133,16 +1133,16 @@ final class sync_members_test extends \lti_advantage_testcase {
                 ]
             ],
             'All prompt provisioning, mixed bag of users and roles' => [
-                'legacy_data' => null,
-                'resource_config' => [
+                'legacydata' => null,
+                'resourceconfig' => [
                     'provisioningmodelearner' => \auth_plugin_lti::PROVISIONING_MODE_PROMPT_NEW_EXISTING,
                     'provisioningmodeinstructor' => \auth_plugin_lti::PROVISIONING_MODE_PROMPT_NEW_EXISTING
                 ],
-                'launch_data' => [
+                'launchdata' => [
                     'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => null,
                 ],
-                'sync_members_data' => [
+                'syncmembers' => [
                     // This user is just an instructor but is also the user who is already linked, via the launch above.
                     self::get_mock_members_with_ids(['1p3_1'], null, true, true, true, false, [
                         'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor',
@@ -1183,7 +1183,7 @@ final class sync_members_test extends \lti_advantage_testcase {
                 ]
             ],
             'All automatic provisioning, with legacy data and migration claim, mixed bag of users and roles' => [
-                'legacy_data' => [
+                'legacydata' => [
                     'users' => [
                         ['user_id' => '2'],
                         ['user_id' => '3'],
@@ -1196,11 +1196,11 @@ final class sync_members_test extends \lti_advantage_testcase {
                         ['secret' => 'toolsecret2'],
                     ]
                 ],
-                'resource_config' => [
+                'resourceconfig' => [
                     'provisioningmodelearner' => \auth_plugin_lti::PROVISIONING_MODE_AUTO_ONLY,
                     'provisioningmodeinstructor' => \auth_plugin_lti::PROVISIONING_MODE_AUTO_ONLY
                 ],
-                'launch_data' => [
+                'launchdata' => [
                     'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => [
                         'consumer_key' => 'CONSUMER_1',
@@ -1210,7 +1210,7 @@ final class sync_members_test extends \lti_advantage_testcase {
                         'resource_link_id' => '4b6fa'
                     ],
                 ],
-                'sync_members_data' => [
+                'syncmembers' => [
                     // This user is just an instructor but is also the user who is already linked, via the launch above.
                     self::get_mock_members_with_ids(['1p3_1'], null, true, true, true, false, [
                         'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor',

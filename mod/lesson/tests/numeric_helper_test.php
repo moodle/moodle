@@ -66,7 +66,7 @@ final class numeric_helper_test extends \advanced_testcase {
         return [
             "Using a decimal as a separator" => [
                 "decsep" => ".",
-                "test" => [
+                "tests" => [
                     ["2.1", 2.1],
                     ["1:4.2", "1:4.2"],
                     ["2,1", 2],
@@ -76,7 +76,7 @@ final class numeric_helper_test extends \advanced_testcase {
             ],
             "Using a comma as a separator" => [
                 "decsep" => ",",
-                "test" => [
+                "tests" => [
                     ["2,1", 2.1],
                     ["1:4,2", "1:4.2"],
                     ["2.1", 2.1],
@@ -85,7 +85,7 @@ final class numeric_helper_test extends \advanced_testcase {
             ],
             "Using a X as a separator" => [
                 "decsep" => "X",
-                "test" => [
+                "tests" => [
                     ["2X1", 2.1],
                     ["1:4X2", "1:4.2"],
                     ["2.1", 2.1],
@@ -104,7 +104,7 @@ final class numeric_helper_test extends \advanced_testcase {
         return [
             "Using a decimal as a separator" => [
                 "decsep" => ".",
-                "test" => [
+                "tests" => [
                     ["2.1", 2.1],
                     ["1:4.2", "1:4.2"],
                     ["2,1", "2,1"],
@@ -113,7 +113,7 @@ final class numeric_helper_test extends \advanced_testcase {
             ],
             "Using a comma as a separator" => [
                 "decsep" => ",",
-                "test" => [
+                "tests" => [
                     ["2,1", "2,1"],
                     ["1:4,2", "1:4,2"],
                     ["2.1", "2,1"],
@@ -123,7 +123,7 @@ final class numeric_helper_test extends \advanced_testcase {
             ],
             "Using a X as a separator" => [
                 "decsep" => "X",
-                "test" => [
+                "tests" => [
                     ["2X1", "2X1"],
                     ["1:4X2", "1:4X2"],
                     ["2.1", "2X1"],

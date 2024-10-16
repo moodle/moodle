@@ -948,17 +948,17 @@ XML;
      *
      * @dataProvider sync_reference_provider
      * @param array $storedfileargs
-     * @param array $storedfilemethodsmock
+     * @param array $mockfunctions
      * @param bool $expectedresult
      * @return void
      */
-    public function test_sync_reference(array $storedfileargs, $storedfilemethodsmock, bool $expectedresult): void {
+    public function test_sync_reference(array $storedfileargs, $mockfunctions, bool $expectedresult): void {
         $this->resetAfterTest(true);
 
-        if (isset($storedfilemethodsmock[0])) {
+        if (isset($mockfunctions[0])) {
             $storedfile = $this->createMock(\stored_file::class);
 
-            if ($storedfilemethodsmock[0] === 'get_referencelastsync') {
+            if ($mockfunctions[0] === 'get_referencelastsync') {
                 if (!$expectedresult) {
                     $storedfile->method('get_referencelastsync')->willReturn(DAYSECS + time());
                 }

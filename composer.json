@@ -20,6 +20,10 @@
     "autoload-dev": {
         "psr-0": {
             "Moodle\\BehatExtension": "lib/behat/extension/"
+        },
+        "psr-4": {
+            "core_testing\\": "lib/testing/classes/",
+            "core_phpunit\\": "lib/phpunit/classes/"
         }
     },
     "minimum-stability": "dev",

@@ -60,31 +60,31 @@ final class validate_quiz_access_test extends \advanced_testcase {
                 'cmid' => null,
                 'url' => null,
                 'configkey' => null,
-                '/Invalid parameter value detected \(Missing required key in single structure: cmid\)/'
+                'messageregex' => '/Invalid parameter value detected \(Missing required key in single structure: cmid\)/'
             ],
             'no course module id' => [
                 'cmid' => null,
                 'url' => 'https://www.example.com/moodle',
                 'configkey' => hash('sha256', 'configkey'),
-                '/Invalid parameter value detected \(Missing required key in single structure: cmid\)/'
+                'messageregex' => '/Invalid parameter value detected \(Missing required key in single structure: cmid\)/'
             ],
             'no url' => [
                 'cmid' => 123,
                 'url' => null,
                 'configkey' => hash('sha256', 'configkey'),
-                '/Invalid parameter value detected \(Missing required key in single structure: url\)/'
+                'messageregex' => '/Invalid parameter value detected \(Missing required key in single structure: url\)/'
             ],
             'cmid is not an int' => [
                 'cmid' => 'test',
                 'url' => 'https://www.example.com/moodle',
                 'configkey' => null,
-                '/Invalid external api parameter: the value is "test", the server was expecting "int" type/'
+                'messageregex' => '/Invalid external api parameter: the value is "test", the server was expecting "int" type/'
             ],
             'url is not a url' => [
                 'cmid' => 123,
                 'url' => 123,
                 'configkey' => hash('sha256', 'configkey'),
-                '/Invalid external api parameter: the value is "123", the server was expecting "url" type/'
+                'messageregex' => '/Invalid external api parameter: the value is "123", the server was expecting "url" type/'
             ],
         ];
     }

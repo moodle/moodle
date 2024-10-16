@@ -1,5 +1,4 @@
 <?php
-use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,6 +24,7 @@ use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
 
 /**
  * Base class for PHPUnit test cases customised for Moodle
@@ -605,7 +605,42 @@ abstract class base_testcase extends PHPUnit\Framework\TestCase {
      * @return int
      */
     protected static function getInvocationCount(InvocationOrder $counter): int {
+        if (method_exists($counter, 'numberOfInvocations')) {
+            return $counter->numberOfInvocations();
+        }
+
         return $counter->getInvocationCount();
     }
     // phpcs:enable
+
+    /**
+     * Get an invokable object for testing.
+     *
+     * This is a helper method to create an invokable object for testing which can be used to
+     * track invocations, including arguments provided.
+     *
+     * This can be useful for modifications to the error handler.
+     *
+     * @return object
+     */
+    protected static function get_invokable() {
+        return new class {
+            private array $invocations = [];
+            public function __invoke(...$args) {
+                $this->invocations[] = $args;
+            }
+
+            public function get_invocations(): array {
+                return $this->invocations;
+            }
+
+            public function get_invocation_count(): int {
+                return count($this->invocations);
+            }
+
+            public function reset(): void {
+                $this->invocations = [];
+            }
+        };
+    }
 }

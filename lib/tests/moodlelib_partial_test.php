@@ -44,6 +44,26 @@ final class moodlelib_partial_test extends \advanced_testcase {
         $this->assertEquals($expected, partial($callable, ...$initialargs)(...$calledargs));
     }
 
+    public function test_partial_args_intance_methods(): void {
+        // Using named args on initial args only - instance method.
+        $this->assertEquals(
+            'foo/bar/baz/bum',
+            partial(
+                [$this, 'example_instance_method'],
+                ...['foo' => 'foo']
+            )(...['bar', 'baz', 'bum']),
+        );
+
+        // Using named args on called args only - instance method.
+        $this->assertEquals(
+            'foo/bar/baz/bum',
+            partial(
+                [$this, 'example_instance_method'],
+                ...['foo' => 'foo']
+            )(...['bar' => 'bar', 'baz' => 'baz', 'bum' => 'bum']),
+        );
+    }
+
     /**
      * An example static method as part of the testcase.
      *
@@ -108,18 +128,6 @@ final class moodlelib_partial_test extends \advanced_testcase {
                 ['foobar'],
                 ['needle' => 'foo'],
                 true,
-            ],
-            'Using named args on initial args only - instance method' => [
-                [new self(), 'example_instance_method'],
-                ['foo' => 'foo'],
-                ['bar', 'baz', 'bum'],
-                'foo/bar/baz/bum',
-            ],
-            'Using named args on called args only - instance method' => [
-                [new self(), 'example_instance_method'],
-                ['foo'],
-                ['bar' => 'bar', 'baz' => 'baz', 'bum' => 'bum'],
-                'foo/bar/baz/bum',
             ],
             'Using named args on initial args only - static method' => [
                 [self::class, 'example_static_method'],

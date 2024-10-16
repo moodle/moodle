@@ -194,27 +194,27 @@ final class stateactions_test extends \advanced_testcase {
     public static function basic_role_provider(): array {
         return [
             'admin' => [
-                'role' => 'admin',
+                'rolename' => 'admin',
                 'expectedexception' => false,
             ],
             'editingteacher' => [
-                'role' => 'editingteacher',
+                'rolename' => 'editingteacher',
                 'expectedexception' => false,
             ],
             'teacher' => [
-                'role' => 'teacher',
+                'rolename' => 'teacher',
                 'expectedexception' => true,
             ],
             'student' => [
-                'role' => 'student',
+                'rolename' => 'student',
                 'expectedexception' => true,
             ],
             'guest' => [
-                'role' => 'guest',
+                'rolename' => 'guest',
                 'expectedexception' => true,
             ],
             'unenroled' => [
-                'role' => 'unenroled',
+                'rolename' => 'unenroled',
                 'expectedexception' => true,
             ],
         ];

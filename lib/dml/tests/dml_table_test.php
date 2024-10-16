@@ -45,7 +45,7 @@ final class dml_table_test extends \database_driver_testcase {
                 'primarykey' => 'id',
                 'fieldprefix' => 'ban',
                 'tablealias' => 'banana',
-                'banana.id AS banid',
+                'expected' => 'banana.id AS banid',
             ],
             'multiple fields' => [
                 'tablename' => 'test_table_multiple',
@@ -57,7 +57,7 @@ final class dml_table_test extends \database_driver_testcase {
                 'primarykey' => 'id',
                 'fieldprefix' => 'ban',
                 'tablealias' => 'banana',
-                'banana.id AS banid, banana.course AS bancourse, banana.name AS banname',
+                'expected' => 'banana.id AS banid, banana.course AS bancourse, banana.name AS banname',
             ],
         ];
     }

@@ -126,8 +126,8 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
     public static function user_launch_provider(): array {
         return [
             'New tool: no legacy data, no migration claim sent' => [
-                'legacy_data' => null,
-                'launch_data' => [
+                'legacydata' => null,
+                'launchdata' => [
                     'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => null,
                 ],
@@ -136,14 +136,14 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
                 ]
             ],
             'Migrated tool: Legacy data exists, no change in user_id so omitted from claim' => [
-                'legacy_data' => [
+                'legacydata' => [
                     'consumer_key' => 'CONSUMER_1',
                     'tools' => [
                         ['secret' => 'toolsecret1'],
                         ['secret' => 'toolsecret2'],
                     ]
                 ],
-                'launch_data' => [
+                'launchdata' => [
                     'user' => self::get_mock_launch_users_with_ids(['1'])[0],
                     'launch_migration_claim' => [
                         'consumer_key' => 'CONSUMER_1',
@@ -159,14 +159,14 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
             ],
 
             'Migrated tool: Legacy data exists, platform signs with different valid secret' => [
-                'legacy_data' => [
+                'legacydata' => [
                     'consumer_key' => 'CONSUMER_1',
                     'tools' => [
                         ['secret' => 'toolsecret1'],
                         ['secret' => 'toolsecret2'],
                     ]
                 ],
-                'launch_data' => [
+                'launchdata' => [
                     'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => [
                         'consumer_key' => 'CONSUMER_1',
@@ -181,14 +181,14 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
                 ]
             ],
             'Migrated tool: Legacy data exists, no migration claim sent' => [
-                'legacy_data' => [
+                'legacydata' => [
                     'consumer_key' => 'CONSUMER_1',
                     'tools' => [
                         ['secret' => 'toolsecret1'],
                         ['secret' => 'toolsecret2'],
                     ]
                 ],
-                'launch_data' => [
+                'launchdata' => [
                     'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => null,
                 ],
@@ -197,14 +197,14 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
                 ]
             ],
             'Migrated tool: Legacy data exists, migration claim signature generated using invalid secret' => [
-                'legacy_data' => [
+                'legacydata' => [
                     'consumer_key' => 'CONSUMER_1',
                     'tools' => [
                         ['secret' => 'toolsecret1'],
                         ['secret' => 'toolsecret2'],
                     ]
                 ],
-                'launch_data' => [
+                'launchdata' => [
                     'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => [
                         'consumer_key' => 'CONSUMER_1',
@@ -221,14 +221,14 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
                 ]
             ],
             'Migrated tool: Legacy data exists, migration claim signature omitted' => [
-                'legacy_data' => [
+                'legacydata' => [
                     'consumer_key' => 'CONSUMER_1',
                     'tools' => [
                         ['secret' => 'toolsecret1'],
                         ['secret' => 'toolsecret2'],
                     ]
                 ],
-                'launch_data' => [
+                'launchdata' => [
                     'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => [
                         'consumer_key' => 'CONSUMER_1',
@@ -244,14 +244,14 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
                 ]
             ],
             'Migrated tool: Legacy data exists, migration claim missing oauth_consumer_key' => [
-                'legacy_data' => [
+                'legacydata' => [
                     'consumer_key' => 'CONSUMER_1',
                     'tools' => [
                         ['secret' => 'toolsecret1'],
                         ['secret' => 'toolsecret2'],
                     ]
                 ],
-                'launch_data' => [
+                'launchdata' => [
                     'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => [
                         'user_id' => 'user-id-123',

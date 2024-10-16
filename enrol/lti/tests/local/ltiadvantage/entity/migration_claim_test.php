@@ -49,7 +49,7 @@ final class migration_claim_test extends \advanced_testcase {
      * Test instantiation and getters of the migration_claim.
      *
      * @dataProvider migration_claim_provider
-     * @param array $migrationclaimdata the lti1p1 migration claim.
+     * @param array $lti1p1migrationclaim the lti1p1 migration claim.
      * @param string $deploymentid string id of the tool deployment.
      * @param string $platform string url of the issuer.
      * @param string $clientid string id of the client.
@@ -60,7 +60,7 @@ final class migration_claim_test extends \advanced_testcase {
      * @covers ::__construct
      */
     public function test_migration_claim(
-        array $migrationclaimdata,
+        array $lti1p1migrationclaim,
         string $deploymentid,
         string $platform,
         string $clientid,
@@ -79,7 +79,7 @@ final class migration_claim_test extends \advanced_testcase {
             $this->expectException($expected['exception']);
             $this->expectExceptionMessage($expected['exceptionmessage']);
             new migration_claim(
-                $migrationclaimdata,
+                $lti1p1migrationclaim,
                 $deploymentid,
                 $platform,
                 $clientid,
@@ -89,7 +89,7 @@ final class migration_claim_test extends \advanced_testcase {
             );
         } else {
             $migrationclaim = new migration_claim(
-                $migrationclaimdata,
+                $lti1p1migrationclaim,
                 $deploymentid,
                 $platform,
                 $clientid,
