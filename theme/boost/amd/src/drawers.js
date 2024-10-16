@@ -722,7 +722,7 @@ const registerListeners = () => {
         }
     };
 
-    window.addEventListener('resize', debounce(closeOnResizeListener, 400));
+    window.addEventListener('resize', debounce(closeOnResizeListener, 400, {pending: true}));
 };
 
 scroller();
