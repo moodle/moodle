@@ -293,7 +293,7 @@ function block_iomad_company_admin_render_navbar_output(\renderer_base $renderer
     global $USER, $CFG;
 
     // Early bail out conditions.
-    if (!isloggedin() || isguestuser() || \core_user::awaiting_action()) {
+    if (!isloggedin() || isguestuser() || \core_user::awaiting_action() || !$CFG->iomad_showcompanydropdown) {
         return '';
     }
 
