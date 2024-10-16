@@ -57,5 +57,8 @@
     </div>
 </div>
 {{#js}}
-require(['theme_boost/drawers']);
+M.util.js_pending('theme_boost/drawers:load');
+require(['theme_boost/drawers'], function() {
+    M.util.js_complete('theme_boost/drawers:load');
+});
 {{/js}}
