@@ -1009,10 +1009,11 @@ class microlearning {
                                                    AND mtu.timecompleted IS NULL
                                                    AND mtu.reminder1_delivered = 0
                                                    AND mtu.reminder1_date IS NOT NULL
+                                                   AND mtu.reminder1_date < mtu.due_date
                                                    AND mtu.reminder1_date < :runtime",
                                                    array('runtime' => $runtime))) {
             foreach ($reminder1users as $reminder1user) {
-                $reminder1user->reminder1_delivered = 1;
+                $reminder1user->reminder1_delivered = true;
 
                 if ($user = $DB->get_record('user', array('id' => $reminder1user->userid, 'suspended' => 0, 'deleted' => 0))) {
                     // Get the email payload.
@@ -1023,7 +1024,6 @@ class microlearning {
                         $nugget->url = new moodle_url('/blocks/iomad_microlearning/land.php', array('nuggetid' => $nugget->id, 'userid' => $user->id, 'accesskey' =>$reminder1user->accesskey));
                         // Fire the email.
                         EmailTemplate::send('microlearning_nugget_reminder1', array('user' => $user, 'company' => $company, 'nugget' => $nugget));
-                        $DB->set_field('microlearning_thread_user', 'reminder1_delivered', true, array('id' => $scheduleuser->id));
                     }
                 }
                 $DB->update_record('microlearning_thread_user', $reminder1user);
@@ -1040,10 +1040,12 @@ class microlearning {
                                                    AND mtu.timecompleted IS NULL
                                                    AND mtu.reminder2_delivered = 0
                                                    AND mtu.reminder2_date IS NOT NULL
+                                                   AND mtu.reminder2_date < mtu.due_date
                                                    AND mtu.reminder2_date < :runtime",
                                                    array('runtime' => $runtime))) {
             foreach ($reminder2users as $reminder2user) {
-                $reminder2user->reminder2_delivered = 1;
+                $reminder2user->reminder2_delivered = true;
+                $reminder2user->reminder1_delivered = true;
 
                 if ($user = $DB->get_record('user', array('id' => $reminder2user->userid, 'suspended' => 0, 'deleted' => 0))) {
                     // Get the email payload.
@@ -1054,7 +1056,6 @@ class microlearning {
                         $nugget->url = new moodle_url('/blocks/iomad_microlearning/land.php', array('nuggetid' => $nugget->id, 'userid' => $user->id, 'accesskey' =>$reminder2user->accesskey));
                         // Fire the email.
                         EmailTemplate::send('microlearning_nugget_reminder2', array('user' => $user, 'company' => $company, 'nugget' => $nugget));
-                        $DB->set_field('microlearning_thread_user', 'reminder1_delivered', true, array('id' => $scheduleuser->id));
                     }
                 }
                 $DB->update_record('microlearning_thread_user', $reminder2user);
