@@ -685,8 +685,8 @@ abstract class advanced_testcase extends base_testcase {
             $params['userid'] = $matchuserid;
         }
 
-        $lock = $this->createMock(\core\lock\lock::class);
-        $cronlock = $this->createMock(\core\lock\lock::class);
+        $lock = $this->createStub(\core\lock\lock::class);
+        $cronlock = $this->createStub(\core\lock\lock::class);
 
         $tasks = $DB->get_recordset('task_adhoc', $params);
         foreach ($tasks as $record) {
