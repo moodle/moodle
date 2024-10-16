@@ -56,8 +56,8 @@ $PAGE->set_heading(format_string($course->fullname, true, ['context' => $coursec
 if ($createdefault) {
     require_sesskey();
     question_bank_helper::create_default_open_instance(
-            $course,
-            get_string('defaultbank', 'core_question', ['coursename' => $course->fullname])
+        $course,
+        get_string('defaultbank', 'core_question', ['coursename' => $course->fullname])
     );
     \core\notification::add(get_string('defaultcreated', 'question'), \core\notification::SUCCESS);
     redirect($pageurl);

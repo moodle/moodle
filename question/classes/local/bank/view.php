@@ -1169,6 +1169,7 @@ class view {
         echo \html_writer::start_tag('form', ['action' => $this->baseurl, 'method' => 'post', 'id' => 'questionsubmit']);
         echo \html_writer::start_tag('fieldset', ['class' => 'invisiblefieldset', 'style' => "display: block;"]);
         echo \html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
+        echo \html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'addonpage']);
         echo \html_writer::input_hidden_params($this->baseurl);
 
         $filtercondition = json_encode($this->get_pagevars());

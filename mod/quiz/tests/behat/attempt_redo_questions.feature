@@ -18,16 +18,17 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
       | student | C1     | student        |
       | teacher | C1     | teacher        |
       | editor  | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity | name    | intro              | course | idnumber | preferredbehaviour | canredoquestions |
+      | quiz     | Quiz 1  | Quiz 1 description | C1     | quiz1    | immediatefeedback  | 1                |
+      | qbank    | Qbank 1 |                    | C1     | qbank1   |                    |                  |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference    | name           |
+      | Activity module | qbank1       | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name | questiontext    |
       | Test questions   | truefalse | TF1  | First question  |
       | Test questions   | truefalse | TF2  | Second question |
-    And the following "activities" exist:
-      | activity | name   | intro              | course | idnumber | preferredbehaviour | canredoquestions |
-      | quiz     | Quiz 1 | Quiz 1 description | C1     | quiz1    | immediatefeedback  | 1                |
     And quiz "Quiz 1" contains the following questions:
       | question | page | maxmark |
       | TF1      | 1    | 2       |
@@ -193,6 +194,8 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I am on the "Quiz 2" "mod_quiz > Edit" page logged in as "admin"
     And I open the "last" add to quiz menu
     And I follow "a random question"
+    And I click on "Switch bank" "button"
+    And I click on "Qbank 1" "link" in the "Select question bank" "dialogue"
     And I press "Add random question"
     And user "student" has started an attempt at quiz "Quiz 2" randomised as follows:
       | slot | actualquestion |

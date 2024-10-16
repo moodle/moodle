@@ -1176,20 +1176,48 @@ function sort_categories_by_tree(&$categories, $id = 0, $level = 1): array {
 }
 
 /**
- * Get the default category for the context.
+ * Get the default category for the context. Optionally create one if it does not exist.
  *
- * @param integer $contextid a context id.
- * @return object|bool the default question category for that context, or false if none.
+ * @param int $contextid a context id.
+ * @param bool $createifnotexists create the default catagory if it does not exist.
+ * @return stdClass|bool the default question category for that context, or false if none.
  */
-function question_get_default_category($contextid) {
+function question_get_default_category($contextid, bool $createifnotexists = false) {
     global $DB;
-    $category = $DB->get_records_select('question_categories', 'contextid = ? AND parent <> 0',
-                                        [$contextid], 'id', '*', 0, 1);
-    if (!empty($category)) {
-        return reset($category);
-    } else {
+
+    $context = \core\context::instance_by_id($contextid);
+    if ($context->contextlevel !== CONTEXT_MODULE) {
+        debugging(
+            "Invalid context level {$context->contextlevel} for default category. Please use CONTEXT_MODULE",
+            DEBUG_DEVELOPER
+        );
         return false;
     }
+
+    $defaultcats = $DB->get_records_select('question_categories', 'contextid = ? AND parent <> 0', [$contextid], 'id', '*', 0, 1);
+
+    $defaultcat = reset($defaultcats);
+
+    if (empty($defaultcat) && $createifnotexists) {
+
+        // We need to make a top category first if it doesn't exist.
+        $topcategory = question_get_top_category($context->id, true);
+
+        // We don't have one, so we need to make one.
+        $defaultcat = new stdClass();
+        $contextname = $context->get_context_name(false, true);
+        // Max length of name field is 255.
+        $defaultcat->name = shorten_text(get_string('defaultfor', 'question', $contextname), 255);
+        $defaultcat->info = get_string('defaultinfofor', 'question', $contextname);
+        $defaultcat->contextid = $context->id;
+        $defaultcat->parent = $topcategory->id;
+        // By default, all categories get this number, and are sorted alphabetically.
+        $defaultcat->sortorder = 999;
+        $defaultcat->stamp = make_unique_id_code();
+        $defaultcat->id = $DB->insert_record('question_categories', $defaultcat);
+    }
+
+    return $defaultcat;
 }
 
 /**
@@ -1238,60 +1266,6 @@ function question_get_top_categories_for_contexts($contextids): array {
     $topcategories = $DB->get_fieldset_sql($sql, $params);
 
     return $topcategories;
-}
-
-/**
- * Gets the default category in the most specific context.
- * If no categories exist yet then default ones are created in all contexts.
- *
- * @param array $contexts  The context objects for this context and all parent contexts.
- * @return object The default category - the category in the course context
- */
-function question_make_default_categories($contexts): object {
-    global $DB;
-    static $preferredlevels = array(
-        CONTEXT_COURSE => 4,
-        CONTEXT_MODULE => 3,
-        CONTEXT_COURSECAT => 2,
-        CONTEXT_SYSTEM => 1,
-    );
-
-    $toreturn = null;
-    $preferredness = 0;
-    // If it already exists, just return it.
-    foreach ($contexts as $key => $context) {
-        $topcategory = question_get_top_category($context->id, true);
-        if (!$exists = $DB->record_exists("question_categories",
-                array('contextid' => $context->id, 'parent' => $topcategory->id))) {
-            // Otherwise, we need to make one.
-            $category = new stdClass();
-            $contextname = $context->get_context_name(false, true);
-            // Max length of name field is 255.
-            $category->name = shorten_text(get_string('defaultfor', 'question', $contextname), 255);
-            $category->info = get_string('defaultinfofor', 'question', $contextname);
-            $category->contextid = $context->id;
-            $category->parent = $topcategory->id;
-            // By default, all categories get this number, and are sorted alphabetically.
-            $category->sortorder = 999;
-            $category->stamp = make_unique_id_code();
-            $category->id = $DB->insert_record('question_categories', $category);
-        } else {
-            $category = question_get_default_category($context->id);
-        }
-        $thispreferredness = $preferredlevels[$context->contextlevel];
-        if (has_any_capability(array('moodle/question:usemine', 'moodle/question:useall'), $context)) {
-            $thispreferredness += 10;
-        }
-        if ($thispreferredness > $preferredness) {
-            $toreturn = $category;
-            $preferredness = $thispreferredness;
-        }
-    }
-
-    if (!is_null($toreturn)) {
-        $toreturn = clone($toreturn);
-    }
-    return $toreturn;
 }
 
 /**
@@ -1512,7 +1486,7 @@ function question_edit_url($context) {
         return false;
     }
     $baseurl = $CFG->wwwroot . '/question/edit.php?';
-    $defaultcategory = question_get_default_category($context->id);
+    $defaultcategory = question_get_default_category($context->id, true);
     if ($defaultcategory) {
         $baseurl .= 'cat=' . $defaultcategory->id . ',' . $context->id . '&amp;';
     }

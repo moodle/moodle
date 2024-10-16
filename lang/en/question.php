@@ -98,6 +98,7 @@ will have their sharing status changed to the same sharing status as the categor
 on upgrading to Moodle 1.9. The following categories will have their sharing status changed. Questions which are
 affected will continue to work in all existing quizzes until you remove them from these quizzes.</p>';
 $string['cwrqpfsnoprob'] = 'No question categories in your site are affected by the \'Random questions selecting questions from sub categories\' issue.';
+$string['defaultbank'] = '{$a->coursename} course question bank';
 $string['defaultcreated'] = 'Default course question bank created';
 $string['defaultfor'] = 'Default for {$a}';
 $string['defaultinfofor'] = 'The default category for questions shared in context \'{$a}\'.';
@@ -272,6 +273,7 @@ $string['novirtualquestiontype'] = 'No virtual question type for question type {
 $string['numqas'] = 'No. question attempts';
 $string['numquestions'] = 'No. questions';
 $string['numquestionsandhidden'] = '{$a->numquestions} (+{$a->numhidden} hidden +{$a->numdraft} draft)';
+$string['otherquestionbank'] = 'Other question banks';
 $string['page-question-x'] = 'Any question page';
 $string['page-question-edit'] = 'Question editing page';
 $string['page-question-category'] = 'Question category page';
@@ -313,6 +315,8 @@ $string['questiontags'] = 'Question tags';
 $string['questiontype'] = 'Question type';
 $string['questionuse'] = 'Use question in this activity';
 $string['questionvariant'] = 'Question variant';
+$string['quizquestionbank'] = "This quiz question bank";
+$string['recentlyviewedquestionbanks'] = 'Recently viewed question banks';
 $string['reviewresponse'] = 'Review response';
 $string['save'] = 'Save';
 $string['savechangesandcontinueediting'] = 'Save changes and continue editing';
@@ -324,6 +328,7 @@ $string['selectquestionsforbulk'] = 'Select questions for bulk actions';
 $string['shareincontext'] = 'Share in context for {$a}';
 $string['stoponerror'] = 'Stop on error';
 $string['stoponerror_help'] = 'This setting determines whether the import process stops when an error is detected, resulting in no questions being imported, or whether any questions containing errors are ignored and any valid questions are imported.';
+$string['switchbank'] = 'Switch bank';
 $string['tofilecategory'] = 'Write category to file';
 $string['tofilecontext'] = 'Write context to file';
 $string['topfor'] = 'Top for {$a}';

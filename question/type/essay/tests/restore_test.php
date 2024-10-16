@@ -45,7 +45,7 @@ class restore_test extends \restore_date_testcase {
         $course = $generator->create_course();
         $qbank = $generator->create_module('qbank', ['course' => $course->id]);
         $context = \context_module::instance($qbank->cmid);
-        $category = question_make_default_categories([$context]);
+        $category = question_get_default_category($context->id, true);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $essay = $questiongenerator->create_question('essay', null, array('category' => $category->id));
 
@@ -63,7 +63,7 @@ class restore_test extends \restore_date_testcase {
         $newqbank = reset($newqbanks);
 
         // Verify that the restored question has options.
-        $newcategory = question_make_default_categories([\context_module::instance($newqbank->id)]);
+        $newcategory = question_make_default_category(\context_module::instance($newqbank->id));
         $newessay = $DB->get_record_sql('SELECT q.*
                                               FROM {question} q
                                               JOIN {question_versions} qv ON qv.questionid = q.id

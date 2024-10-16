@@ -60,11 +60,12 @@ class helper_test extends \advanced_testcase {
         $questiongenerator = $generator->get_plugin_generator('core_question');
         // Create a course.
         $course = $generator->create_course();
+        $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $course->id]);
         $this->courseid = $course->id;
-        $this->context = \context_course::instance($course->id);
+        $this->context = \context_module::instance($qbank->cmid);
         // Create a question in the default category.
         $contexts = new \core_question\local\bank\question_edit_contexts($this->context);
-        $cat = question_make_default_categories($contexts->all());
+        $cat = question_get_default_category($contexts->lowest()->id, true);
         $question = $questiongenerator->create_question('numerical', null,
             ['name' => 'Example question', 'category' => $cat->id]);
         $this->questiondata = question_bank::load_question($question->id);

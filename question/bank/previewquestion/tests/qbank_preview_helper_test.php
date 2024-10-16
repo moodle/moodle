@@ -73,10 +73,12 @@ class qbank_preview_helper_test extends \advanced_testcase {
         $questiongenerator = $generator->get_plugin_generator('core_question');
         // Create a course.
         $course = $generator->create_course();
+        $qbank = $generator->create_module('qbank', ['course' => $course->id]);
+        $qbankcontext = \context_module::instance($qbank->cmid);
         $this->context = context_course::instance($course->id);
         // Create a question in the default category.
-        $contexts = new \core_question\local\bank\question_edit_contexts($this->context);
-        $cat = question_make_default_categories($contexts->all());
+        $contexts = new \core_question\local\bank\question_edit_contexts($qbankcontext);
+        $cat = question_get_default_category($contexts->lowest()->id, true);
         $this->questiondata = $questiongenerator->create_question('numerical', null,
                 ['name' => 'Example question', 'category' => $cat->id]);
         $this->quba = question_engine::make_questions_usage_by_activity('core_question_preview',

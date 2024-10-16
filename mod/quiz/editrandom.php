@@ -31,6 +31,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
 
 $slotid = required_param('slotid', PARAM_INT);
+$bankcmid = required_param('bankcmid', PARAM_INT);
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 
 // Get the quiz slot.
@@ -60,11 +61,13 @@ $filterconditions = json_decode($setreference->filtercondition, true);
 $params = $filterconditions;
 $params['cmid'] = $cm->id;
 $extraparams['view'] = random_question_view::class;
+$extraparams['requirebankswitch'] = false;
+$extraparams['quizcmid'] = $quizobj->get_cm()->id;
 
 // Build required parameters.
 [$contexts, $thispageurl, $cm, $pagevars, $extraparams] = build_required_parameters_for_custom_view($params, $extraparams);
 
-$thiscontext = $quizobj->get_context();
+$thiscontext = context_module::instance($bankcmid);
 $contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
 
 // Create the editing form.

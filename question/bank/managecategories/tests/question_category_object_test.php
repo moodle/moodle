@@ -88,26 +88,30 @@ class question_category_object_test extends \advanced_testcase {
         parent::setUp();
         self::setAdminUser();
         $this->resetAfterTest();
-        $this->context = context_course::instance(SITEID);
-        $contexts = new question_edit_contexts($this->context);
-        $this->topcat = question_get_top_category($this->context->id, true);
+
+        // Set up tests in a quiz context.
+        $this->course = $this->getDataGenerator()->create_course();
+        $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $this->course->id]);
+        $qbankcontext = context_module::instance($qbank->cmid);
+        $this->quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
+        $this->qcontexts = new question_edit_contexts(context_module::instance($this->quiz->cmid));
+
+        $contexts = new question_edit_contexts($qbankcontext);
+        $this->topcat = question_get_top_category($qbankcontext->id, true);
         $this->resetDebugging();
         $this->qcobject = new question_category_object(null,
-            new moodle_url('/question/bank/managecategories/category.php', ['courseid' => SITEID]),
+            new moodle_url('/question/bank/managecategories/category.php', ['cmid' => $qbank->cmid]),
             $contexts->having_one_edit_tab_cap('categories'), 0, null, 0,
-            $contexts->having_cap('moodle/question:add'));
+            $contexts->having_cap('moodle/question:add')
+        );
         $this->assertDebuggingCalled(
             'Deprecation: qbank_managecategories\question_category_object::__construct has been deprecated since 4.5. ' .
                 'API properly divided between qbank_managecategories and core_question. ' .
                 'Use \qbank_managecategories\question_categories or \core_question\category_manager instead. ' .
                 'See MDL-72397 for more information.',
         );
-        // Set up tests in a quiz context.
-        $this->course = $this->getDataGenerator()->create_course();
-        $this->quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
-        $this->qcontexts = new question_edit_contexts(context_module::instance($this->quiz->cmid));
 
-        $this->defaultcategoryobj = question_make_default_categories([$this->qcontexts->lowest()]);
+        $this->defaultcategoryobj = question_get_default_category($this->qcontexts->lowest()->id, true);
         $this->defaultcategory = $this->defaultcategoryobj->id . ',' . $this->defaultcategoryobj->contextid;
 
         $this->resetDebugging();

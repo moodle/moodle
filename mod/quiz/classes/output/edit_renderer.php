@@ -52,8 +52,14 @@ class edit_renderer extends \plugin_renderer_base {
      * @param array $pagevars the variables from {@link question_edit_setup()}.
      * @return string HTML to output.
      */
-    public function edit_page(\mod_quiz\quiz_settings $quizobj, structure $structure,
-        \core_question\local\bank\question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars) {
+    public function edit_page(
+        \mod_quiz\quiz_settings $quizobj,
+        structure $structure,
+        \core_question\local\bank\question_edit_contexts $contexts,
+        \moodle_url $pageurl,
+        array $pagevars,
+    ) {
+
         $output = '';
 
         // Page title.
@@ -111,11 +117,14 @@ class edit_renderer extends \plugin_renderer_base {
         if ($structure->can_be_edited()) {
             $thiscontext = $contexts->lowest();
             $this->page->requires->js_call_amd('mod_quiz/modal_quiz_question_bank', 'init', [
-                $thiscontext->id
+                $thiscontext->id,
+                $quizobj->get_cm()->id,
+                $quizobj->get_cm()->id,
             ]);
 
             $this->page->requires->js_call_amd('mod_quiz/modal_add_random_question', 'init', [
                 $thiscontext->id,
+                $quizobj->get_cm()->id,
                 $pagevars['cat'],
                 $pageurl->out_as_local_url(true),
                 $pageurl->param('cmid'),
@@ -1060,9 +1069,10 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function random_question(structure $structure, $slotnumber, $pageurl) {
         $question = $structure->get_question_in_slot($slotnumber);
+        $bankcontext = \context::instance_by_id($question->contextid);
         $slot = $structure->get_slot_by_number($slotnumber);
         $editurl = new \moodle_url('/mod/quiz/editrandom.php',
-                ['returnurl' => $pageurl->out_as_local_url(), 'slotid' => $slot->id]);
+                ['returnurl' => $pageurl->out_as_local_url(), 'slotid' => $slot->id, 'bankcmid' => $bankcontext->instanceid]);
 
         $temp = clone($question);
         $temp->questiontext = '';

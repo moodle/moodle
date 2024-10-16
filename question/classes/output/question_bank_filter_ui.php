@@ -131,6 +131,7 @@ class question_bank_filter_ui extends datafilter {
             'categoryid' => $defaultcategory->id,
             'perpage' => $this->additionalparams['perpage'] ?? 0,
             'contextid' => $this->context->id,
+            'quizcmid' => $this->extraparams['quizcmid'] ?? $this->cmid,
             'component' => $this->component,
             'callback' => $this->callback,
             'view' => str_replace('\\', '\\\\', $this->view),

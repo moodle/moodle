@@ -8,18 +8,18 @@ Feature: Backup and restore of quizzes
     Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
+    And the following "activities" exist:
+      | activity   | name   | intro              | course | idnumber |
+      | quiz       | Quiz 1 | For testing backup | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
     And the following config values are set as admin:
       | enableasyncbackup | 0 |
     And I log in as "admin"
 
   @javascript
   Scenario: Duplicate a quiz with two questions
-    Given the following "activities" exist:
-      | activity   | name   | intro              | course | idnumber |
-      | quiz       | Quiz 1 | For testing backup | C1     | quiz1    |
     And the following "questions" exist:
       | questioncategory | qtype       | name | questiontext    |
       | Test questions   | truefalse   | TF1  | First question  |
@@ -37,9 +37,6 @@ Feature: Backup and restore of quizzes
 
   @javascript
   Scenario: Backup and restore a course containing a quiz with user data.
-    Given the following "activities" exist:
-      | activity   | name   | intro              | course | idnumber |
-      | quiz       | Quiz 1 | For testing backup | C1     | quiz1    |
     And the following "questions" exist:
       | questioncategory | qtype       | name | questiontext    |
       | Test questions   | truefalse   | TF1  | First question  |

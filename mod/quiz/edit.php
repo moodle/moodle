@@ -64,7 +64,7 @@ $quizobj = new quiz_settings($quiz, $cm, $course);
 $structure = $quizobj->get_structure();
 $gradecalculator = $quizobj->get_grade_calculator();
 
-$defaultcategoryobj = question_make_default_categories($contexts->all());
+$defaultcategoryobj = question_get_default_category($contexts->lowest()->id, true);
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
 $quizhasattempts = quiz_has_attempts($quiz->id);

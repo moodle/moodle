@@ -47,8 +47,9 @@ class column_manager_test extends advanced_testcase {
      */
     protected static function get_question_bank(): view {
         $course = self::getDataGenerator()->create_course();
+        $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $course->id]);
         $questionbank = new view(
-            new question_edit_contexts(context_course::instance($course->id)),
+            new question_edit_contexts(\context_module::instance($qbank->cmid)),
             new moodle_url('/'),
             $course
         );
