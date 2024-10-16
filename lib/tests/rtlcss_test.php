@@ -40,7 +40,7 @@ final class rtlcss_test extends basic_testcase {
      */
     public static function background_image_provider(): array {
         return [
-            /* Not supported by MoodleHQ/RTLCSS yet.
+            // Not supported by MoodleHQ/RTLCSS yet.
             [[
                 'should' => 'Should process string map in url (processUrls:true)',
                 'expected' => 'div { background-image: url(images/rtl.png), url(images/right.png);}',
@@ -70,7 +70,6 @@ final class rtlcss_test extends basic_testcase {
                 'reversable' => true,
                 'skip' => true
             ]]
-            */
         ];
     }
 
@@ -421,7 +420,7 @@ final class rtlcss_test extends basic_testcase {
      */
     public static function special_provider(): array {
         return [
-            /* Not supported by MoodleHQ/RTLCSS yet.
+            // Not supported by MoodleHQ/RTLCSS yet.
             [[
                 'should' => 'Should not negate tokens',
                 'expected' => 'div { box-shadow: rgba(0, 128, 128, .98) inset -5em 1em 0;}',
@@ -429,7 +428,6 @@ final class rtlcss_test extends basic_testcase {
                 'reversable' => true,
                 'skip' => true,
             ]]
-            */
         ];
     }
 
@@ -614,7 +612,7 @@ final class rtlcss_test extends basic_testcase {
      */
     public static function transforms_provider(): array {
         return [
-            /* Not supported by MoodleHQ/RTLCSS yet.
+            // Not supported by MoodleHQ/RTLCSS yet.
             [[
                 'should' => 'Should mirror transform : matrix',
                 'expected' => 'div { transform: matrix(2, 0.1, 20.75, 2, 2, 2); }',
@@ -888,7 +886,6 @@ final class rtlcss_test extends basic_testcase {
                 'reversable' => false,
                 'skip' => true
             ]]
-            */
         ];
     }
 
