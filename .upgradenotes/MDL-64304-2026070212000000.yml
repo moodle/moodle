@@ -1,0 +1,8 @@
+issueNumber: MDL-64304
+notes:
+  gradereport_user:
+    - message: >-
+        The external function `gradereport_user_get_grade_items` now includes
+        the optional `parentcategoryid` field in its response for category
+        grade items.
+      type: changed
