@@ -157,6 +157,7 @@ class report_helper {
         } else {
             $joins[] = "userid = :userid";
             $params['userid'] = $filterparams->userid;
+            $useridfilter[$filterparams->userid] = true;
         }
 
         return [
