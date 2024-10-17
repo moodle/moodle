@@ -106,8 +106,8 @@ final class attempt_walkthrough_test extends \advanced_testcase {
             3 => [
                 'frog' => 'amphibian',
                 'cat' => 'mammal',
-                'newt' => ''
-            ]
+                'newt' => '',
+            ],
         ];
 
         $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
@@ -118,8 +118,8 @@ final class attempt_walkthrough_test extends \advanced_testcase {
             3 => [
                 'frog' => 'amphibian',
                 'cat' => 'mammal',
-                'newt' => 'amphibian'
-            ]
+                'newt' => 'amphibian',
+            ],
         ];
 
         $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
@@ -155,14 +155,26 @@ final class attempt_walkthrough_test extends \advanced_testcase {
         $this->assertEquals(100, $gradebookgrade->grade);
 
         // Update question in quiz.
-        $newsa = $questiongenerator->update_question($saq, null,
-            ['name' => 'This is the second version of shortanswer']);
-        $newnumbq = $questiongenerator->update_question($numq, null,
-            ['name' => 'This is the second version of numerical']);
-        $newmatch = $questiongenerator->update_question($matchq, null,
-            ['name' => 'This is the second version of match']);
-        $newdescription = $questiongenerator->update_question($description, null,
-            ['name' => 'This is the second version of description']);
+        $newsa = $questiongenerator->update_question(
+            $saq,
+            null,
+            ['name' => 'This is the second version of shortanswer']
+        );
+        $newnumbq = $questiongenerator->update_question(
+            $numq,
+            null,
+            ['name' => 'This is the second version of numerical']
+        );
+        $newmatch = $questiongenerator->update_question(
+            $matchq,
+            null,
+            ['name' => 'This is the second version of match']
+        );
+        $newdescription = $questiongenerator->update_question(
+            $description,
+            null,
+            ['name' => 'This is the second version of description']
+        );
 
         // Update the attempt to use this questions.
         // Would not normally be done for a non-preview, but this is just a unit test.
@@ -220,8 +232,10 @@ final class attempt_walkthrough_test extends \advanced_testcase {
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
 
         $quiz = $quizgenerator->create_instance(
-                ['course' => $SITE->id, 'timeclose' => $timeclose,
-                        'overduehandling' => $overduehandling, 'graceperiod' => HOURSECS]);
+            ['course' => $SITE->id, 'timeclose' => $timeclose,
+            'overduehandling' => $overduehandling,
+            'graceperiod' => HOURSECS]
+        );
 
         // Create a question.
         /** @var \core_question_generator $questiongenerator */
@@ -425,11 +439,16 @@ final class attempt_walkthrough_test extends \advanced_testcase {
         }
     }
 
-
+    /**
+     * Get the correct response for variants.
+     *
+     * @return array
+     */
     public static function get_correct_response_for_variants(): array {
         return [[1, 9.9], [2, 8.5], [5, 14.2], [10, 6.8, true]];
     }
 
+    /** @var ?\quiz A quiz with variants */
     protected $quizwithvariants = null;
 
     /**
@@ -563,8 +582,10 @@ final class attempt_walkthrough_test extends \advanced_testcase {
         $this->assertEquals(quiz_attempt::IN_PROGRESS, $attemptobj->get_state());
         $this->assertEquals(0, $attemptobj->get_submitted_date());
         $this->assertEquals($user->id, $attemptobj->get_userid());
-        $this->assertEquals($overriddentimeclose,
-                $attemptobj->get_access_manager($reopentime)->get_end_time($attemptobj->get_attempt()));
+        $this->assertEquals(
+            $overriddentimeclose,
+            $attemptobj->get_access_manager($reopentime)->get_end_time($attemptobj->get_attempt())
+        );
 
         // Verify this was logged correctly.
         $events = $sink->get_events();
@@ -573,8 +594,10 @@ final class attempt_walkthrough_test extends \advanced_testcase {
         $reopenedevent = array_shift($events);
         $this->assertInstanceOf('\mod_quiz\event\attempt_reopened', $reopenedevent);
         $this->assertEquals($attemptobj->get_context(), $reopenedevent->get_context());
-        $this->assertEquals(new moodle_url('/mod/quiz/review.php', ['attempt' => $attemptobj->get_attemptid()]),
-                $reopenedevent->get_url());
+        $this->assertEquals(
+            new moodle_url('/mod/quiz/review.php', ['attempt' => $attemptobj->get_attemptid()]),
+            $reopenedevent->get_url()
+        );
     }
 
     public function test_quiz_attempt_walkthrough_abandoned_attempt_reopened_after_close_time(): void {
@@ -623,13 +646,17 @@ final class attempt_walkthrough_test extends \advanced_testcase {
         $reopenedevent = array_shift($events);
         $this->assertInstanceOf('\mod_quiz\event\attempt_reopened', $reopenedevent);
         $this->assertEquals($attemptobj->get_context(), $reopenedevent->get_context());
-        $this->assertEquals(new moodle_url('/mod/quiz/review.php', ['attempt' => $attemptobj->get_attemptid()]),
-                $reopenedevent->get_url());
+        $this->assertEquals(
+            new moodle_url('/mod/quiz/review.php', ['attempt' => $attemptobj->get_attemptid()]),
+            $reopenedevent->get_url()
+        );
 
         $submittedevent = array_pop($events);
         $this->assertInstanceOf('\mod_quiz\event\attempt_submitted', $submittedevent);
         $this->assertEquals($attemptobj->get_context(), $submittedevent->get_context());
-        $this->assertEquals(new moodle_url('/mod/quiz/review.php', ['attempt' => $attemptobj->get_attemptid()]),
-                $submittedevent->get_url());
+        $this->assertEquals(
+            new moodle_url('/mod/quiz/review.php', ['attempt' => $attemptobj->get_attemptid()]),
+            $submittedevent->get_url()
+        );
     }
 }

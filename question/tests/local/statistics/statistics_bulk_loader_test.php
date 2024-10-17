@@ -65,21 +65,21 @@ final class statistics_bulk_loader_test extends advanced_testcase {
         $quiz1 = $quizgenerator->create_instance([
             'course' => $course->id,
             'grade' => 100.0, 'sumgrades' => 2,
-            'layout' => '1,2,0'
+            'layout' => '1,2,0',
         ]);
         $quiz1context = context_module::instance($quiz1->cmid);
 
         $quiz2 = $quizgenerator->create_instance([
             'course' => $course->id,
             'grade' => 100.0, 'sumgrades' => 2,
-            'layout' => '1,2,0'
+            'layout' => '1,2,0',
         ]);
         $quiz2context = context_module::instance($quiz2->cmid);
 
         $quiz3 = $quizgenerator->create_instance([
             'course' => $course->id,
             'grade' => 100.0, 'sumgrades' => 2,
-            'layout' => '1,2,0'
+            'layout' => '1,2,0',
         ]);
         $quiz3context = context_module::instance($quiz3->cmid);
 
@@ -154,13 +154,13 @@ final class statistics_bulk_loader_test extends advanced_testcase {
         $quiz1 = $quizgenerator->create_instance([
             'course' => $course->id,
             'grade' => 100.0, 'sumgrades' => 2,
-            'layout' => $layout
+            'layout' => $layout,
         ]);
 
         $quiz2 = $quizgenerator->create_instance([
             'course' => $course->id,
             'grade' => 100.0, 'sumgrades' => 2,
-            'layout' => $layout
+            'layout' => $layout,
         ]);
 
         /** @var core_question_generator $questiongenerator */
@@ -238,7 +238,7 @@ final class statistics_bulk_loader_test extends advanced_testcase {
      * @return array
      */
     private function prepare_and_submit_quizzes(array $quiz1attempts, array $quiz2attempts): array {
-        list($quiz1, $quiz2, $questions) = $this->prepare_quizzes();
+        [$quiz1, $quiz2, $questions] = $this->prepare_quizzes();
         // Submit attempts of quiz1.
         foreach ($quiz1attempts as $attempt) {
             $this->submit_quiz($quiz1, $attempt);
@@ -263,8 +263,11 @@ final class statistics_bulk_loader_test extends advanced_testcase {
      * @param string $item one of the field names in all_calculated_for_qubaid_condition, e.g. 'facility'.
      * @return float|null the required value.
      */
-    private function extract_item_value(all_calculated_for_qubaid_condition $statistics,
-                                        int $questionid, string $item): ?float {
+    private function extract_item_value(
+        all_calculated_for_qubaid_condition $statistics,
+        int $questionid,
+        string $item
+    ): ?float {
         $rcm = new ReflectionMethod(statistics_bulk_loader::class, 'extract_item_value');
         return $rcm->invoke(null, $statistics, $questionid, $item);
     }
@@ -336,7 +339,7 @@ final class statistics_bulk_loader_test extends advanced_testcase {
     ): void {
         $this->resetAfterTest();
 
-        list($quiz1, $quiz2, $questions) = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);
+        [$quiz1, $quiz2, $questions] = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);
 
         // Quiz 1 facilities.
         $stats = $this->load_quiz_statistics_for_place(context_module::instance($quiz1->cmid));
@@ -368,14 +371,26 @@ final class statistics_bulk_loader_test extends advanced_testcase {
             ['facility']
         );
 
-        $this->assertEqualsWithDelta($expectedaveragefacilities[0],
-            $stats[$questions[1]->id]['facility'], self::DELTA);
-        $this->assertEqualsWithDelta($expectedaveragefacilities[1],
-            $stats[$questions[2]->id]['facility'], self::DELTA);
-        $this->assertEqualsWithDelta($expectedaveragefacilities[2],
-            $stats[$questions[3]->id]['facility'], self::DELTA);
-        $this->assertEqualsWithDelta($expectedaveragefacilities[3],
-            $stats[$questions[4]->id]['facility'], self::DELTA);
+        $this->assertEqualsWithDelta(
+            $expectedaveragefacilities[0],
+            $stats[$questions[1]->id]['facility'],
+            self::DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedaveragefacilities[1],
+            $stats[$questions[2]->id]['facility'],
+            self::DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedaveragefacilities[2],
+            $stats[$questions[3]->id]['facility'],
+            self::DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedaveragefacilities[3],
+            $stats[$questions[4]->id]['facility'],
+            self::DELTA
+        );
     }
 
     /**
@@ -422,7 +437,7 @@ final class statistics_bulk_loader_test extends advanced_testcase {
     ): void {
         $this->resetAfterTest();
 
-        list($quiz1, $quiz2, $questions) = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);
+        [$quiz1, $quiz2, $questions] = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);
 
         // Quiz 1 discriminative efficiency.
         $stats = $this->load_quiz_statistics_for_place(context_module::instance($quiz1->cmid));
@@ -431,14 +446,26 @@ final class statistics_bulk_loader_test extends advanced_testcase {
         $discriminativeefficiency3 = $this->extract_item_value($stats, $questions[3]->id, 'discriminativeefficiency');
         $discriminativeefficiency4 = $this->extract_item_value($stats, $questions[4]->id, 'discriminativeefficiency');
 
-        $this->assertEqualsWithDelta($expectedquiz1discriminativeefficiency[0],
-                $discriminativeefficiency1, self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedquiz1discriminativeefficiency[1],
-                $discriminativeefficiency2, self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedquiz1discriminativeefficiency[2],
-                $discriminativeefficiency3, self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedquiz1discriminativeefficiency[3],
-                $discriminativeefficiency4, self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta(
+            $expectedquiz1discriminativeefficiency[0],
+            $discriminativeefficiency1,
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedquiz1discriminativeefficiency[1],
+            $discriminativeefficiency2,
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedquiz1discriminativeefficiency[2],
+            $discriminativeefficiency3,
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedquiz1discriminativeefficiency[3],
+            $discriminativeefficiency4,
+            self::PERCENT_DELTA
+        );
 
         // Quiz 2 discriminative efficiency.
         $stats = $this->load_quiz_statistics_for_place(context_module::instance($quiz2->cmid));
@@ -447,14 +474,26 @@ final class statistics_bulk_loader_test extends advanced_testcase {
         $discriminativeefficiency3 = $this->extract_item_value($stats, $questions[3]->id, 'discriminativeefficiency');
         $discriminativeefficiency4 = $this->extract_item_value($stats, $questions[4]->id, 'discriminativeefficiency');
 
-        $this->assertEqualsWithDelta($expectedquiz2discriminativeefficiency[0],
-                $discriminativeefficiency1, self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedquiz2discriminativeefficiency[1],
-                $discriminativeefficiency2, self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedquiz2discriminativeefficiency[2],
-                $discriminativeefficiency3, self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedquiz2discriminativeefficiency[3],
-                $discriminativeefficiency4, self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta(
+            $expectedquiz2discriminativeefficiency[0],
+            $discriminativeefficiency1,
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedquiz2discriminativeefficiency[1],
+            $discriminativeefficiency2,
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedquiz2discriminativeefficiency[2],
+            $discriminativeefficiency3,
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedquiz2discriminativeefficiency[3],
+            $discriminativeefficiency4,
+            self::PERCENT_DELTA
+        );
 
         // Average question discriminative efficiency.
         $stats = statistics_bulk_loader::load_aggregate_statistics(
@@ -462,14 +501,26 @@ final class statistics_bulk_loader_test extends advanced_testcase {
             ['discriminativeefficiency']
         );
 
-        $this->assertEqualsWithDelta($expectedaveragediscriminativeefficiency[0],
-            $stats[$questions[1]->id]['discriminativeefficiency'], self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedaveragediscriminativeefficiency[1],
-            $stats[$questions[2]->id]['discriminativeefficiency'], self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedaveragediscriminativeefficiency[2],
-            $stats[$questions[3]->id]['discriminativeefficiency'], self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedaveragediscriminativeefficiency[3],
-            $stats[$questions[4]->id]['discriminativeefficiency'], self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta(
+            $expectedaveragediscriminativeefficiency[0],
+            $stats[$questions[1]->id]['discriminativeefficiency'],
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedaveragediscriminativeefficiency[1],
+            $stats[$questions[2]->id]['discriminativeefficiency'],
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedaveragediscriminativeefficiency[2],
+            $stats[$questions[3]->id]['discriminativeefficiency'],
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedaveragediscriminativeefficiency[3],
+            $stats[$questions[4]->id]['discriminativeefficiency'],
+            self::PERCENT_DELTA
+        );
     }
 
     /**
@@ -516,7 +567,7 @@ final class statistics_bulk_loader_test extends advanced_testcase {
     ): void {
         $this->resetAfterTest();
 
-        list($quiz1, $quiz2, $questions) = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);
+        [$quiz1, $quiz2, $questions] = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);
 
         // Quiz 1 discrimination index.
         $stats = $this->load_quiz_statistics_for_place(context_module::instance($quiz1->cmid));
@@ -525,14 +576,26 @@ final class statistics_bulk_loader_test extends advanced_testcase {
         $discriminationindex3 = $this->extract_item_value($stats, $questions[3]->id, 'discriminationindex');
         $discriminationindex4 = $this->extract_item_value($stats, $questions[4]->id, 'discriminationindex');
 
-        $this->assertEqualsWithDelta($expectedquiz1discriminationindex[0],
-            $discriminationindex1, self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedquiz1discriminationindex[1],
-            $discriminationindex2, self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedquiz1discriminationindex[2],
-            $discriminationindex3, self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedquiz1discriminationindex[3],
-            $discriminationindex4, self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta(
+            $expectedquiz1discriminationindex[0],
+            $discriminationindex1,
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedquiz1discriminationindex[1],
+            $discriminationindex2,
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedquiz1discriminationindex[2],
+            $discriminationindex3,
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedquiz1discriminationindex[3],
+            $discriminationindex4,
+            self::PERCENT_DELTA
+        );
 
         // Quiz 2 discrimination index.
         $stats = $this->load_quiz_statistics_for_place(context_module::instance($quiz2->cmid));
@@ -541,14 +604,26 @@ final class statistics_bulk_loader_test extends advanced_testcase {
         $discriminationindex3 = $this->extract_item_value($stats, $questions[3]->id, 'discriminationindex');
         $discriminationindex4 = $this->extract_item_value($stats, $questions[4]->id, 'discriminationindex');
 
-        $this->assertEqualsWithDelta($expectedquiz2discriminationindex[0],
-            $discriminationindex1, self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedquiz2discriminationindex[1],
-            $discriminationindex2, self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedquiz2discriminationindex[2],
-            $discriminationindex3, self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedquiz2discriminationindex[3],
-            $discriminationindex4, self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta(
+            $expectedquiz2discriminationindex[0],
+            $discriminationindex1,
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedquiz2discriminationindex[1],
+            $discriminationindex2,
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedquiz2discriminationindex[2],
+            $discriminationindex3,
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedquiz2discriminationindex[3],
+            $discriminationindex4,
+            self::PERCENT_DELTA
+        );
 
         // Average question discrimination index.
         $stats = statistics_bulk_loader::load_aggregate_statistics(
@@ -556,14 +631,26 @@ final class statistics_bulk_loader_test extends advanced_testcase {
             ['discriminationindex']
         );
 
-        $this->assertEqualsWithDelta($expectedaveragediscriminationindex[0],
-            $stats[$questions[1]->id]['discriminationindex'], self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedaveragediscriminationindex[1],
-            $stats[$questions[2]->id]['discriminationindex'], self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedaveragediscriminationindex[2],
-            $stats[$questions[3]->id]['discriminationindex'], self::PERCENT_DELTA);
-        $this->assertEqualsWithDelta($expectedaveragediscriminationindex[3],
-            $stats[$questions[4]->id]['discriminationindex'], self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta(
+            $expectedaveragediscriminationindex[0],
+            $stats[$questions[1]->id]['discriminationindex'],
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedaveragediscriminationindex[1],
+            $stats[$questions[2]->id]['discriminationindex'],
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedaveragediscriminationindex[2],
+            $stats[$questions[3]->id]['discriminationindex'],
+            self::PERCENT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $expectedaveragediscriminationindex[3],
+            $stats[$questions[4]->id]['discriminationindex'],
+            self::PERCENT_DELTA
+        );
     }
 
     /**

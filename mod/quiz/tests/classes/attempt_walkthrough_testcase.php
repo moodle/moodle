@@ -64,7 +64,8 @@ abstract class attempt_walkthrough_testcase extends \advanced_testcase {
         }
 
         // Otherwise we have to assume that the test name is correctly frankenstyle named.
-        return implode('_',
+        return implode(
+            '_',
             array_slice(
                 explode('_', static::class, 3),
                 0,
@@ -90,15 +91,22 @@ abstract class attempt_walkthrough_testcase extends \advanced_testcase {
      *
      * @param array $quizsettings of settings read from csv file quizzes.csv
      * @param array $csvdata of data read from csv file "questionsXX.csv", "stepsXX.csv" and "resultsXX.csv".
+     * // phpcs:ignore moodle.Commenting.ValidTags.Invalid
      * @dataProvider get_data_for_walkthrough
      */
     public function test_walkthrough_from_csv($quizsettings, $csvdata): void {
-        // CSV data files for these tests were generated using :
-        // https://github.com/jamiepratt/moodle-quiz-tools/tree/master/responsegenerator
+        // CSV data files for these tests were generated using:
+        // https://github.com/jamiepratt/moodle-quiz-tools/tree/master/responsegenerator.
 
         $this->create_quiz_simulate_attempts_and_check_results($quizsettings, $csvdata);
     }
 
+    /**
+     * Create a quiz, add questions to it, and simulate attempts on it.
+     *
+     * @param array $quizsettings Quiz overrides for this quiz.
+     * @param array $csvdata Data loaded from csv files for this test.
+     */
     public function create_quiz($quizsettings, $qs) {
         global $SITE, $DB;
         $this->setAdminUser();
@@ -137,7 +145,7 @@ abstract class attempt_walkthrough_testcase extends \advanced_testcase {
                     $qidsbycat[$q['cat']] = [];
                 }
                 if (!empty($q['which'])) {
-                    $name = $q['type'].'_'.$q['which'];
+                    $name = $q['type'] . '_' . $q['which'];
                 } else {
                     $name = $q['type'];
                 }
@@ -251,6 +259,8 @@ abstract class attempt_walkthrough_testcase extends \advanced_testcase {
     }
 
     /**
+     * Helper to walk through attempts.
+     *
      * @param array $steps the step data from the csv file.
      * @return array attempt no as in csv file => the id of the quiz_attempt as stored in the db.
      */
@@ -258,7 +268,6 @@ abstract class attempt_walkthrough_testcase extends \advanced_testcase {
         global $DB;
         $attemptids = [];
         foreach ($steps as $steprow) {
-
             $step = $this->explode_dot_separated_keys_to_make_subindexs($steprow);
             // Find existing user or make a new user to do the quiz.
             $username = ['firstname' => $step['firstname'],
@@ -312,6 +321,8 @@ abstract class attempt_walkthrough_testcase extends \advanced_testcase {
     }
 
     /**
+     * Assertion helper to check attempt results.
+     *
      * @param array $results the results data from the csv file.
      * @param array $attemptids attempt no as in csv file => the id of the quiz_attempt as stored in the db.
      */
@@ -336,51 +347,60 @@ abstract class attempt_walkthrough_testcase extends \advanced_testcase {
                 $value = null;
             }
             switch ($fieldname) {
-                case 'quizattempt' :
+                case 'quizattempt':
                     break;
-                case 'attemptnumber' :
+                case 'attemptnumber':
                     $this->assertEquals($value, $attemptobj->get_attempt_number());
                     break;
-                case 'slots' :
+                case 'slots':
                     foreach ($value as $slotno => $slottests) {
                         foreach ($slottests as $slotfieldname => $slotvalue) {
                             switch ($slotfieldname) {
-                                case 'mark' :
-                                    $this->assertEquals(round($slotvalue, 2), $attemptobj->get_question_mark($slotno),
-                                                        "Mark for slot $slotno of attempt {$result['quizattempt']}.");
+                                case 'mark':
+                                    $this->assertEquals(
+                                        round($slotvalue, 2),
+                                        $attemptobj->get_question_mark($slotno),
+                                        "Mark for slot $slotno of attempt {$result['quizattempt']}."
+                                    );
                                     break;
-                                default :
+                                default:
                                     throw new \coding_exception('Unknown slots sub field column in csv file '
-                                                               .s($slotfieldname));
+                                                               . s($slotfieldname));
                             }
                         }
                     }
                     break;
-                case 'finished' :
+                case 'finished':
                     $this->assertEquals((bool)$value, $attemptobj->is_finished());
                     break;
-                case 'summarks' :
-                    $this->assertEquals((float)$value, $attemptobj->get_sum_marks(),
-                        "Sum of marks of attempt {$result['quizattempt']}.");
+                case 'summarks':
+                    $this->assertEquals(
+                        (float)$value,
+                        $attemptobj->get_sum_marks(),
+                        "Sum of marks of attempt {$result['quizattempt']}."
+                    );
                     break;
-                case 'quizgrade' :
+                case 'quizgrade':
                     // Check quiz grades.
                     $grades = quiz_get_user_grades($attemptobj->get_quiz(), $attemptobj->get_userid());
                     $grade = array_shift($grades);
                     $this->assertEquals($value, $grade->rawgrade, "Quiz grade for attempt {$result['quizattempt']}.");
                     break;
-                case 'gradebookgrade' :
+                case 'gradebookgrade':
                     // Check grade book.
-                    $gradebookgrades = grade_get_grades($attemptobj->get_courseid(),
-                                                        'mod', 'quiz',
-                                                        $attemptobj->get_quizid(),
-                                                        $attemptobj->get_userid());
+                    $gradebookgrades = grade_get_grades(
+                        $attemptobj->get_courseid(),
+                        'mod',
+                        'quiz',
+                        $attemptobj->get_quizid(),
+                        $attemptobj->get_userid()
+                    );
                     $gradebookitem = array_shift($gradebookgrades->items);
                     $gradebookgrade = array_shift($gradebookitem->grades);
                     $this->assertEquals($value, $gradebookgrade->grade, "Gradebook grade for attempt {$result['quizattempt']}.");
                     break;
-                default :
-                    throw new \coding_exception('Unknown column in csv file '.s($fieldname));
+                default:
+                    throw new \coding_exception('Unknown column in csv file ' . s($fieldname));
             }
         }
     }

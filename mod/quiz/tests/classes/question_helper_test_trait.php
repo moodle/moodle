@@ -177,8 +177,14 @@ trait question_helper_test_trait {
      * @param stdClass $user
      */
     protected function restore_quiz(string $backupid, stdClass $course, stdClass $user): void {
-        $rc = new restore_controller($backupid, $course->id,
-            backup::INTERACTIVE_NO, backup::MODE_GENERAL, $user->id, backup::TARGET_CURRENT_ADDING);
+        $rc = new restore_controller(
+            $backupid,
+            $course->id,
+            backup::INTERACTIVE_NO,
+            backup::MODE_GENERAL,
+            $user->id,
+            backup::TARGET_CURRENT_ADDING
+        );
         $this->assertTrue($rc->execute_precheck());
         $rc->execute_plan();
         $rc->destroy();

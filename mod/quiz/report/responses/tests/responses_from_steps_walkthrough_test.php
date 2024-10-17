@@ -49,6 +49,7 @@ final class responses_from_steps_walkthrough_test extends \mod_quiz\tests\attemp
      *
      * @param array $quizsettings settings to override default settings for quiz created by generator. Taken from quizzes.csv.
      * @param array $csvdata of data read from csv file "questionsXX.csv", "stepsXX.csv" and "responsesXX.csv".
+     * // phpcs:ignore moodle.PHPUnit.TestCaseProvider.dataProviderSyntaxMethodNotFound
      * @dataProvider get_data_for_walkthrough
      */
     public function test_walkthrough_from_csv($quizsettings, $csvdata): void {
@@ -93,16 +94,16 @@ final class responses_from_steps_walkthrough_test extends \mod_quiz\tests\attemp
             $stepswithsubmit = $qa->get_steps_with_submitted_response_iterator();
             $step = $stepswithsubmit[$responses['submittedstepno']];
             if (null === $step) {
-                throw new \coding_exception("There is no step no {$responses['submittedstepno']} ".
+                throw new \coding_exception("There is no step no {$responses['submittedstepno']} " .
                                            "for slot $slot in quizattempt {$responses['quizattempt']}!");
             }
             foreach (['responsesummary', 'fraction', 'state'] as $column) {
                 if (isset($tests[$column]) && $tests[$column] != '') {
-                    switch($column) {
-                        case 'responsesummary' :
+                    switch ($column) {
+                        case 'responsesummary':
                             $actual = $qa->get_question()->summarise_response($step->get_qt_data());
                             break;
-                        case 'fraction' :
+                        case 'fraction':
                             if (count($stepswithsubmit) == $responses['submittedstepno']) {
                                 // If this is the last step then we need to look at the fraction after the question has been
                                 // finished.
@@ -110,8 +111,8 @@ final class responses_from_steps_walkthrough_test extends \mod_quiz\tests\attemp
                             } else {
                                 $actual = $step->get_fraction();
                             }
-                           break;
-                        case 'state' :
+                            break;
+                        case 'state':
                             if (count($stepswithsubmit) == $responses['submittedstepno']) {
                                 // If this is the last step then we need to look at the state after the question has been
                                 // finished.
@@ -122,7 +123,7 @@ final class responses_from_steps_walkthrough_test extends \mod_quiz\tests\attemp
                             $actual = substr(get_class($state), strlen('question_state_'));
                     }
                     $expected = $tests[$column];
-                    $failuremessage = "Error in  quizattempt {$responses['quizattempt']} in $column, slot $slot, ".
+                    $failuremessage = "Error in  quizattempt {$responses['quizattempt']} in $column, slot $slot, " .
                     "submittedstepno {$responses['submittedstepno']}";
                     $this->assertEquals($expected, $actual, $failuremessage);
                 }
