@@ -431,13 +431,13 @@ class helper {
         if (empty($provider)) {
             $provider = $coursecommunication->get_provider();
         }
-        $roomnameidenfier = $provider . 'roomname';
+        $roomnameidentifier = $provider . 'roomname';
 
         // Determine the communication room name if none was provided and add it to the course data.
-        if (empty($course->$roomnameidenfier)) {
-            $course->$roomnameidenfier = $coursecommunication->get_room_name();
-            if (empty($course->$roomnameidenfier)) {
-                $course->$roomnameidenfier = $course->fullname ?? get_course($course->id)->fullname;
+        if (empty($course->$roomnameidentifier)) {
+            $course->$roomnameidentifier = $coursecommunication->get_room_name();
+            if (empty($course->$roomnameidentifier)) {
+                $course->$roomnameidentifier = $course->fullname ?? get_course($course->id)->fullname;
             }
         }
 
@@ -470,7 +470,7 @@ class helper {
             $communication->configure_room_and_membership_by_provider(
                 provider: $provider,
                 instance: $course,
-                communicationroomname: $course->$roomnameidenfier,
+                communicationroomname: $course->$roomnameidentifier,
                 users: $enrolledusers,
                 instanceimage: $courseimage,
             );
@@ -491,7 +491,7 @@ class helper {
             $communication->configure_room_and_membership_by_provider(
                 provider: $provider,
                 instance: $course,
-                communicationroomname: $course->$roomnameidenfier,
+                communicationroomname: $course->$roomnameidentifier,
                 users: $enrolledusers,
                 instanceimage: $courseimage,
                 queue: false,
@@ -542,9 +542,9 @@ class helper {
                 context: $coursecontext,
             );
 
-            $roomnameidenfier = $provider . 'roomname';
+            $roomnameidentifier = $provider . 'roomname';
             $communicationroomname = self::format_group_room_name(
-                baseroomname: $course->$roomnameidenfier,
+                baseroomname: $course->$roomnameidentifier,
                 groupname: $coursegroup->name,
             );
 
