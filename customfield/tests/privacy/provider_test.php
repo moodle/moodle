@@ -117,9 +117,13 @@ final class provider_test extends provider_testcase {
         list($sql, $params) = $DB->get_in_or_equal([$courses[1]->id, $courses[2]->id], SQL_PARAMS_NAMED);
         $r = provider::get_customfields_data_contexts('core_course', 'course', '=0',
             $sql, $params);
-        $this->assertEqualsCanonicalizing([\context_course::instance($courses[1]->id)->id,
-            \context_course::instance($courses[2]->id)->id],
-            $r->get_contextids());
+        $this->assertEqualsCanonicalizing(
+            [
+                \context_course::instance($courses[1]->id)->id,
+                \context_course::instance($courses[2]->id)->id,
+            ],
+            array_values($r->get_contextids()),
+        );
     }
 
     /**

@@ -226,7 +226,11 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
                 $expectedcontext->id,
                 $otherexpectedcontext->id,
             ];
-        $this->assertEqualsCanonicalizing($expectedcontexts, $contextlist->get_contextids(), 'Contexts not equal');
+        $this->assertEqualsCanonicalizing(
+            $expectedcontexts,
+            array_values($contextlist->get_contextids()),
+            'Contexts not equal',
+        );
 
         // Run the export_user_Data as the test user.
         $this->setUser($user);

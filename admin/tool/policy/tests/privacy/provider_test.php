@@ -24,14 +24,11 @@
  */
 namespace tool_policy\privacy;
 
-use core_privacy\local\metadata\collection;
-use tool_policy\privacy\provider;
-use tool_policy\api;
-use tool_policy\policy_version;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\writer;
-
-defined('MOODLE_INTERNAL') || die();
+use tool_policy\api;
+use tool_policy\policy_version;
+use tool_policy\privacy\provider;
 
 /**
  * Privacy provider tests class.
@@ -278,7 +275,7 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         $this->assertCount(3, $contextlist);
         $this->assertEqualsCanonicalizing(
             [$managercontext->id, $usercontext->id, $systemcontext->id],
-            $contextlist->get_contextids()
+            array_values($contextlist->get_contextids()),
         );
 
         $approvedcontextlist = new approved_contextlist($this->user, 'tool_policy', [$usercontext->id]);

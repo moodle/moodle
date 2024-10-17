@@ -48,8 +48,10 @@ final class generator_test extends advanced_testcase {
         $report = $generator->create_report(['name' => 'My report', 'source' => users::class, 'tags' => ['cat', 'dog']]);
 
         $this->assertTrue(report::record_exists($report->get('id')));
-        $this->assertEqualsCanonicalizing(['cat', 'dog'],
-            core_tag_tag::get_item_tags_array('core_reportbuilder', 'reportbuilder_report', $report->get('id')));
+        $this->assertEqualsCanonicalizing(
+            ['cat', 'dog'],
+            array_values(core_tag_tag::get_item_tags_array('core_reportbuilder', 'reportbuilder_report', $report->get('id'))),
+        );
     }
 
     /**

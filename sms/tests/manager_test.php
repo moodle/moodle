@@ -409,7 +409,7 @@ final class manager_test extends \advanced_testcase {
         $manager = \core\di::get(\core_sms\manager::class);
 
         $this->expectException(\coding_exception::class);
-        $this->getExpectedExceptionMessage('Sensitive messages cannot be sent asynchronously');
+        $this->expectExceptionMessage('Sensitive messages cannot be sent asynchronously');
         $manager->send(
             recipientnumber: '+447123456789',
             content: 'Hello, world!',
@@ -427,7 +427,7 @@ final class manager_test extends \advanced_testcase {
         $manager = \core\di::get(\core_sms\manager::class);
 
         $this->expectException(\coding_exception::class);
-        $this->getExpectedExceptionMessage('Asynchronous sending is not yet implemented');
+        $this->expectExceptionMessage('Asynchronous sending is not yet implemented');
         $manager->send(
             recipientnumber: '+447123456789',
             content: 'Hello, world!',
