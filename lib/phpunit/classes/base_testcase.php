@@ -55,10 +55,55 @@ abstract class base_testcase extends PHPUnit\Framework\TestCase {
      * @deprecated 3.0
      */
     public static function assertTag($matcher, $actual, $message = '', $ishtml = true) {
-        $dom = (new PHPUnit\Util\Xml\Loader)->load($actual, $ishtml);
+        if ($ishtml) {
+            $dom = self::loadHTML($actual);
+        } else {
+            $dom = (new PHPUnit\Util\Xml\Loader)->load($actual);
+        }
         $tags = self::findNodes($dom, $matcher, $ishtml);
         $matched = (is_array($tags) && count($tags) > 0) && $tags[0] instanceof DOMNode;
         self::assertTrue($matched, $message);
+    }
+
+    /**
+     * Load HTML into a DomDocument.
+     *
+     * Note: THis is a replacement for functionality removed from PHPUnit 10.
+     *
+     * @param string $actual
+     * @throws \PHPUnit\Util\Xml\XmlException
+     * @return DOMDocument
+     */
+    public static function loadHTML(string $actual): DOMDocument {
+        if ($actual === '') {
+            throw new \PHPUnit\Util\Xml\XmlException('Could not load XML from empty string');
+        }
+
+        $document = new DOMDocument;
+        $document->preserveWhiteSpace = false;
+
+        $internal  = libxml_use_internal_errors(true);
+        $message   = '';
+        $reporting = error_reporting(0);
+
+        $loaded = $document->loadHTML($actual);
+
+        foreach (libxml_get_errors() as $error) {
+            $message .= "\n" . $error->message;
+        }
+
+        libxml_use_internal_errors($internal);
+        error_reporting($reporting);
+
+        if ($loaded === false) {
+            if ($message === '') {
+                $message = 'Could not load XML for unknown reason';
+            }
+
+            throw new \PHPUnit\Util\Xml\XmlException($message);
+        }
+
+        return $document;
     }
 
     /**
@@ -73,7 +118,11 @@ abstract class base_testcase extends PHPUnit\Framework\TestCase {
      * @deprecated 3.0
      */
     public static function assertNotTag($matcher, $actual, $message = '', $ishtml = true) {
-        $dom = (new PHPUnit\Util\Xml\Loader)->load($actual, $ishtml);
+        if ($ishtml) {
+            $dom = self::loadHTML($actual);
+        } else {
+            $dom = (new PHPUnit\Util\Xml\Loader)->load($actual);
+        }
         $tags = self::findNodes($dom, $matcher, $ishtml);
         $matched = (is_array($tags) && count($tags) > 0) && $tags[0] instanceof DOMNode;
         self::assertFalse($matched, $message);
