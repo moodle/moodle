@@ -551,7 +551,7 @@ class converter_test extends advanced_testcase {
         $converter
             ->expects($getinvocations)
             ->method('get_next_converter')
-            ->willReturnCallback(fn (): string => match ($getinvocations->getInvocationCount()) {
+            ->willReturnCallback(fn (): string => match (self::getInvocationCount($getinvocations)) {
                 1 => get_class($converterinstance),
                 default => get_class($converterinstance2),
             });
@@ -573,7 +573,7 @@ class converter_test extends advanced_testcase {
         $conversion
             ->expects($statusinvocations)
             ->method('get_status')
-            ->willReturnCallback(fn (): int => match ($statusinvocations->getInvocationCount()) {
+            ->willReturnCallback(fn (): int => match (self::getInvocationCount($statusinvocations)) {
                 // Initial status check.
                 1 => conversion::STATUS_PENDING,
                 // Second check to make sure it's still pending after polling.
@@ -590,7 +590,7 @@ class converter_test extends advanced_testcase {
         $conversion
             ->expects($instanceinvocations)
             ->method('get_converter_instance')
-            ->willReturnCallback(fn (): object => match ($instanceinvocations->getInvocationCount()) {
+            ->willReturnCallback(fn (): object => match (self::getInvocationCount($instanceinvocations)) {
                 1 => $converterinstance,
                 default => $converterinstance2,
             });

@@ -117,7 +117,7 @@ class activity_custom_completion_test extends advanced_testcase {
             $stub->expects($stateinvocations)
                 ->method('get_state')
                 ->willReturnCallback(function ($rule) use ($stateinvocations, $rules, $rulestates) {
-                    $index = $stateinvocations->getInvocationCount() - 1;
+                    $index = self::getInvocationCount($stateinvocations) - 1;
                     $this->assertEquals($rules[$index], $rule);
                     return $rulestates[$index];
                 });
