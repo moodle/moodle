@@ -407,7 +407,7 @@ class api_test extends \advanced_testcase {
         $mock->expects($requestinvocations)
             ->method('request')
             ->willReturnCallback(function () use ($requestinvocations): string {
-                return match ($requestinvocations->getInvocationCount()) {
+                return match (self::getInvocationCount($requestinvocations)) {
                     1 => json_encode(['has_more' => true, 'cursor' => 'Example', 'matches' => ['foo', 'bar']]),
                     2 => json_encode(['has_more' => true, 'cursor' => 'Example', 'matches' => ['baz']]),
                     3 => json_encode(['has_more' => false, 'cursor' => '', 'matches' => ['bum']]),
@@ -420,7 +420,7 @@ class api_test extends \advanced_testcase {
         $mock->expects($apiinvocations)
             ->method('get_api_endpoint')
             ->willReturnCallback(function ($endpoint) use ($apiinvocations): string {
-                switch ($apiinvocations->getInvocationCount()) {
+                switch (self::getInvocationCount($apiinvocations)) {
                     case 1:
                         $this->assertEquals('testEndpoint', $endpoint);
                         return 'https://example.com/api/2/testEndpoint';
@@ -484,7 +484,7 @@ class api_test extends \advanced_testcase {
         $mock->expects($headerinvocations)
             ->method('setHeader')
             ->willReturnCallback(function ($header) use ($data, $headerinvocations): void {
-                switch ($headerinvocations->getInvocationCount()) {
+                switch (self::getInvocationCount($headerinvocations)) {
                     case 1:
                         $this->assertEquals('Content-Type: ', $header);
                         break;
@@ -571,7 +571,7 @@ class api_test extends \advanced_testcase {
         $mock->expects($fetchinvocations)
             ->method('fetch_dropbox_data')
             ->willReturnCallback(function ($path, $values) use ($fetchinvocations, $id, $file): object {
-                switch ($fetchinvocations->getInvocationCount()) {
+                switch (self::getInvocationCount($fetchinvocations)) {
                     case 1:
                         $this->assertEquals('sharing/list_shared_links', $path);
                         $this->assertEquals(['path' => $id], $values);

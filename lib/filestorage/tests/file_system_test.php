@@ -1222,7 +1222,7 @@ class file_system_test extends \advanced_testcase {
         $fs
             ->expects($getinvocations)
             ->method('get_local_path_from_hash')
-            ->willReturnCallback(fn () => match ($getinvocations->getInvocationCount()) {
+            ->willReturnCallback(fn () => match (self::getInvocationCount($getinvocations)) {
                 1 => '/path/to/remote/file',
                 2 => $filepath,
             });

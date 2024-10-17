@@ -252,7 +252,7 @@ class completionlib_test extends advanced_testcase {
             ->method('get_data')
             ->with($cm, false, 100)
             ->willReturnCallback(function () use ($getinvocations, $current1, $current2) {
-                return match ($getinvocations->getInvocationCount()) {
+                return match (self::getInvocationCount($getinvocations)) {
                     1 => $current1,
                     2 => $current2,
                     default => $this->fail('Unexpected invocation count'),
@@ -279,7 +279,7 @@ class completionlib_test extends advanced_testcase {
                 $comparewith1,
                 $comparewith2
             ): void {
-                switch ($setinvocations->getInvocationCount()) {
+                switch (self::getInvocationCount($setinvocations)) {
                     case 1:
                         $this->assertEquals($cm, $comparecm);
                         $comparewith1->evaluate($comparewith);
@@ -714,7 +714,7 @@ class completionlib_test extends advanced_testcase {
             ->willReturnCallback(function ($comparecm, $state, $userid) use ($updateinvocations, $cm): void {
                 $this->assertEquals($cm, $comparecm);
                 $this->assertEquals(COMPLETION_UNKNOWN, $state);
-                switch ($updateinvocations->getInvocationCount()) {
+                switch (self::getInvocationCount($updateinvocations)) {
                     case 1:
                         $this->assertEquals(100, $userid);
                         break;
@@ -1218,7 +1218,7 @@ class completionlib_test extends advanced_testcase {
         $DB->expects($inorequalsinvocations)
             ->method('get_in_or_equal')
             ->willReturnCallback(function ($paramids) use ($inorequalsinvocations, $ids) {
-                switch ($inorequalsinvocations->getInvocationCount()) {
+                switch (self::getInvocationCount($inorequalsinvocations)) {
                     case 1:
                         $this->assertEquals(array_slice($ids, 0, 1000), $paramids);
                         return [' IN whatever', []];
@@ -1233,7 +1233,7 @@ class completionlib_test extends advanced_testcase {
         $DB->expects($getinvocations)
             ->method('get_recordset_sql')
             ->willReturnCallback(function () use ($getinvocations, $progress) {
-                return match ($getinvocations->getInvocationCount()) {
+                return match (self::getInvocationCount($getinvocations)) {
                     1 => new core_completionlib_fake_recordset(array_slice($progress, 0, 1000)),
                     2 => new core_completionlib_fake_recordset(array_slice($progress, 1000)),
                     default => $this->fail('Unexpected invocation count'),
