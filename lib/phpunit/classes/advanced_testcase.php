@@ -49,7 +49,7 @@ abstract class advanced_testcase extends base_testcase {
      *
      * @param string $name
      */
-    final public function __construct(string $name = null) {
+    final public function __construct(string $name) {
         parent::__construct($name);
 
         $this->setBackupGlobals(false);
