@@ -99,7 +99,7 @@ Feature: A course welcome message will be sent to the user when they auto-enrol 
     And I should see "Your email address: first@example.com"
     And I should see "Your first name: First"
     And I should see "Your last name: User"
-    And I should see "Your course role: student"
+    And I should see "Your course role: Student"
     # Login as second user and check the notification.
     And I log in as "user2"
     And I am on "Course 1" course homepage
@@ -112,4 +112,4 @@ Feature: A course welcome message will be sent to the user when they auto-enrol 
     And I should see "Your email address: second@example.com"
     And I should see "Your first name: Second"
     And I should see "Your last name: User"
-    And I should see "Your course role: student"
+    And I should see "Your course role: Student"
