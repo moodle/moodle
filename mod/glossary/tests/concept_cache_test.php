@@ -68,13 +68,13 @@ class concept_cache_test extends \advanced_testcase {
 
         $concepts1 = \mod_glossary\local\concept_cache::get_concepts($course1->id);
         $this->assertCount(3, $concepts1[0]);
-        $this->arrayHasKey($concepts1[0], $glossary1a->id);
-        $this->arrayHasKey($concepts1[0], $glossary1b->id);
-        $this->arrayHasKey($concepts1[0], $glossary3->id);
+        $this->assertArrayHasKey($glossary1a->id, $concepts1[0]);
+        $this->assertArrayHasKey($glossary1b->id, $concepts1[0]);
+        $this->assertArrayHasKey($glossary3->id, $concepts1[0]);
         $this->assertCount(3, $concepts1[1]);
-        $this->arrayHasKey($concepts1[1], $glossary1a->id);
-        $this->arrayHasKey($concepts1[1], $glossary1b->id);
-        $this->arrayHasKey($concepts1[0], $glossary3->id);
+        $this->assertArrayHasKey($glossary1a->id, $concepts1[1]);
+        $this->assertArrayHasKey($glossary1b->id, $concepts1[1]);
+        $this->assertArrayHasKey($glossary3->id, $concepts1[1]);
         $this->assertCount(5, $concepts1[1][$glossary1a->id]);
         foreach($concepts1[1][$glossary1a->id] as $concept) {
             $this->assertSame(array('id', 'glossaryid', 'concept', 'casesensitive', 'category', 'fullmatch'), array_keys((array)$concept));
@@ -131,9 +131,9 @@ class concept_cache_test extends \advanced_testcase {
 
         $concepts3 = \mod_glossary\local\concept_cache::get_concepts($site->id);
         $this->assertCount(1, $concepts3[0]);
-        $this->arrayHasKey($concepts3[0], $glossary3->id);
+        $this->assertArrayHasKey($glossary3->id, $concepts3[0]);
         $this->assertCount(1, $concepts3[1]);
-        $this->arrayHasKey($concepts3[0], $glossary3->id);
+        $this->assertArrayHasKey($glossary3->id, $concepts3[1]);
         foreach($concepts3[1][$glossary3->id] as $concept) {
             $this->assertSame(array('id', 'glossaryid', 'concept', 'casesensitive', 'category', 'fullmatch'), array_keys((array)$concept));
             if ($concept->concept === 'global') {
