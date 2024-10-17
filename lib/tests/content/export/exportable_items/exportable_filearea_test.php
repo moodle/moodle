@@ -244,7 +244,7 @@ class exportable_filearea_test extends advanced_testcase {
         $archive->expects($invocations)
             ->method('add_file_from_stored_file')
             ->willReturnCallback(function (...$args) use ($invocations, $storedfileargs) {
-                $this->assertEquals($storedfileargs[$invocations->getInvocationCount() - 1], $args);
+                $this->assertEquals($storedfileargs[self::getInvocationCount($invocations) - 1], $args);
             });
 
         return $exportable->add_to_archive($archive);

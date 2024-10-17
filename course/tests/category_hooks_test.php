@@ -189,7 +189,7 @@ class category_hooks_test extends \advanced_testcase {
         $mockcategory2->expects($callbackinvocations)
             ->method('get_plugins_callback_function')
             ->willReturnCallback(function ($method) use ($callbackinvocations): array {
-                switch ($callbackinvocations->getInvocationCount()) {
+                switch (self::getInvocationCount($callbackinvocations)) {
                     case 1:
                         $this->assertEquals('can_course_category_delete', $method);
                         return ['tool_unittest_can_course_category_delete'];

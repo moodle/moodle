@@ -528,7 +528,7 @@ class tour_test extends \advanced_testcase {
         $DB->expects($deleteinvocations)
             ->method('delete_records')
             ->willReturnCallback(function ($table, $conditions) use ($deleteinvocations, $id) {
-                switch ($deleteinvocations->getInvocationCount()) {
+                switch (self::getInvocationCount($deleteinvocations)) {
                     case 1:
                         $this->assertEquals('tool_usertours_tours', $table);
                         $this->assertEquals(['id' => $id], $conditions);
@@ -583,7 +583,7 @@ class tour_test extends \advanced_testcase {
                 $setfieldinvocations,
                 $expectations,
             ): void {
-                $expectation = $expectations[$setfieldinvocations->getInvocationCount() - 1];
+                $expectation = $expectations[self::getInvocationCount($setfieldinvocations) - 1];
                 $this->assertEquals('tool_usertours_steps', $table);
                 $this->assertEquals('sortorder', $field);
                 $this->assertEquals($expectation[0], $value);
@@ -791,7 +791,7 @@ class tour_test extends \advanced_testcase {
             $tour->expects($getinvocations)
                 ->method('get_config')
                 ->willReturnCallback(function () use ($getinvocations, $getconfig) {
-                    return $getconfig[$getinvocations->getInvocationCount() - 1];
+                    return $getconfig[self::getInvocationCount($getinvocations) - 1];
                 });
         }
 

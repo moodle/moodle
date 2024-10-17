@@ -1378,7 +1378,7 @@ class expired_contexts_test extends \advanced_testcase {
                 $blockcontext,
                 $usercontext,
             ): void {
-                match ($deleteinvocations->getInvocationCount()) {
+                match (self::getInvocationCount($deleteinvocations)) {
                     1 => $this->assertEquals($blockcontext, $context),
                     2 => $this->assertEquals($usercontext, $context),
                     default => $this->fail('Unexpected invocation count'),
@@ -1604,7 +1604,7 @@ class expired_contexts_test extends \advanced_testcase {
                 $blockcontext,
                 $usercontext,
             ): void {
-                match ($deleteinvocations->getInvocationCount()) {
+                match (self::getInvocationCount($deleteinvocations)) {
                     1 => $this->assertEquals($blockcontext, $context),
                     2 => $this->assertEquals($usercontext, $context),
                     default => $this->fail('Unexpected invocation count'),
@@ -1665,7 +1665,7 @@ class expired_contexts_test extends \advanced_testcase {
                 $blockcontext,
                 $usercontext,
             ): void {
-                match ($deleteinvocations->getInvocationCount()) {
+                match (self::getInvocationCount($deleteinvocations)) {
                     1 => $this->assertEquals($blockcontext, $context),
                     2 => $this->assertEquals($usercontext, $context),
                     default => $this->fail('Unexpected invocation count'),
@@ -1892,7 +1892,7 @@ class expired_contexts_test extends \advanced_testcase {
                 $forumcontext,
                 $coursecontext,
             ): void {
-                match ($deleteinvocations->getInvocationCount()) {
+                match (self::getInvocationCount($deleteinvocations)) {
                     1 => $this->assertEquals($forumcontext, $context),
                     2 => $this->assertEquals($coursecontext, $context),
                     default => $this->fail('Unexpected invocation count'),

@@ -73,7 +73,7 @@ class googledocs_search_content_test extends \googledocs_content_testcase {
                 $searccontents,
                 $searchparams,
             ) {
-                switch ($callinvocations->getInvocationCount()) {
+                switch (self::getInvocationCount($callinvocations)) {
                     case 1:
                         $this->assertEquals('shared_drives_list', $method);
 

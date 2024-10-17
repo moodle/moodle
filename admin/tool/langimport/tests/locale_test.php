@@ -59,7 +59,7 @@ final class locale_test extends \advanced_testcase {
         $setinvocations = $this->exactly(2);
         $mock
             ->expects($setinvocations)
-            ->method('set_locale')->willReturnCallback(fn () => match ($setinvocations->getInvocationCount()) {
+            ->method('set_locale')->willReturnCallback(fn () => match (self::getInvocationCount($setinvocations)) {
                 1 => 'es',
                 2 => 'en',
             });
@@ -82,7 +82,7 @@ final class locale_test extends \advanced_testcase {
         $setinvocations = $this->exactly(2);
         $mock
             ->expects($setinvocations)
-            ->method('set_locale')->willReturnCallback(fn () => match ($setinvocations->getInvocationCount()) {
+            ->method('set_locale')->willReturnCallback(fn () => match (self::getInvocationCount($setinvocations)) {
                 1 => false,
                 2 => 'en',
             });
