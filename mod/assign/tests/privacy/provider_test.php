@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Base class for unit tests for mod_assign.
- *
- * @package    mod_assign
- * @copyright  2018 Adrian Greeve <adrian@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_assign\privacy;
 
 use core_privacy\local\request\writer;
@@ -32,10 +24,12 @@ use mod_assign\tests\provider_testcase;
 /**
  * Unit tests for mod/assign/classes/privacy/
  *
+ * @package    mod_assign
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \mod_assign\privacy\provider
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
     /**
      * Test that getting the contexts for a user works.
      */
