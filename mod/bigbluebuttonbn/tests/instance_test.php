@@ -373,7 +373,7 @@ final class instance_test extends advanced_testcase {
      */
     public function test_user_must_wait_to_join(bool $isadmin, bool $ismoderator, bool $haswaitingroom, bool $expected): void {
         $stub = $this->getMockBuilder(instance::class)
-            ->setMethods([
+            ->onlyMethods([
                 'get_instance_var',
                 'is_admin',
                 'is_moderator',
@@ -419,7 +419,7 @@ final class instance_test extends advanced_testcase {
         bool $expected
     ): void {
         $stub = $this->getMockBuilder(instance::class)
-            ->setMethods([
+            ->onlyMethods([
                 'is_admin',
                 'is_moderator',
             ])
@@ -456,7 +456,7 @@ final class instance_test extends advanced_testcase {
      */
     public function test_get_current_user_password(bool $isadmin, bool $ismoderator, bool $expectedmodpassword): void {
         $stub = $this->getMockBuilder(instance::class)
-            ->setMethods([
+            ->onlyMethods([
                 'is_admin',
                 'is_moderator',
                 'get_moderator_password',
@@ -501,7 +501,7 @@ final class instance_test extends advanced_testcase {
      */
     public function test_get_current_user_role(bool $isadmin, bool $ismoderator, bool $expectedmodrole): void {
         $stub = $this->getMockBuilder(instance::class)
-            ->setMethods([
+            ->onlyMethods([
                 'is_admin',
                 'is_moderator',
             ])
@@ -546,7 +546,7 @@ final class instance_test extends advanced_testcase {
         bool $expected
     ): void {
         $stub = $this->getMockBuilder(instance::class)
-            ->setMethods([
+            ->onlyMethods([
                 'is_recorded',
                 'should_show_recording_button',
             ])
