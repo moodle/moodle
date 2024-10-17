@@ -50,4 +50,14 @@ abstract class basic_testcase extends base_testcase {
 
         phpunit_util::reset_all_data(true);
     }
+
+    /**
+     * Get the name of the test.
+     *
+     * Replaces the original PHPUnit method.
+     * @return string
+     */
+    final public function getName(): string {
+        return $this->name();
+    }
 }
