@@ -255,16 +255,17 @@ abstract class handler {
         \core_php_time_limit::raise();
 
         if ($max_lifetime === 0) {
-            $max_lifetime = $CFG->sessiontimeout;
+            $max_lifetime = (int) $CFG->sessiontimeout;
         }
 
         try {
-            // Delete expired sessions for guest user account, give them larger timeout, there is no security risk here.
-            $purgebefore = di::get(clock::class)->time() - ($max_lifetime * 5);
+            // Calculate the timestamp before which sessions are considered expired.
+            $purgebefore = di::get(clock::class)->time() - $max_lifetime;
+
+            // Delete expired sessions for guest user account.
             $this->destroy_expired_user_sessions($purgebefore, $CFG->siteguest);
 
             // Delete expired sessions for userid = 0 (not logged in), better kill them asap to release memory.
-            $purgebefore = di::get(clock::class)->time() - $max_lifetime;
             $this->destroy_expired_user_sessions($purgebefore, 0);
 
             // Clean up expired sessions for real users only.
