@@ -30,6 +30,8 @@ require_once('all_checks.php');
 
 /**
  * Class table_data_should_have_th_test
+ *
+ * @covers \tool_brickfield\local\htmlchecker\common\checks\table_data_should_have_th
  */
 class table_data_should_have_th_test extends all_checks {
     /** @var string Check type */
@@ -114,6 +116,117 @@ EOD;
     </body>
 </html>
 EOD;
+
+    /** @var string HTML that should not get flagged. */
+    private $htmlpass3 = <<<EOD
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Table should have at least one th - pass</title>
+    </head>
+    <body>
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        This is table heading
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        This is a tables data
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>
+EOD;
+
+    /** @var string HTML that should not get flagged. */
+    private $htmlpass4 = <<<EOD
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Table should have at least one th - pass</title>
+    </head>
+    <body>
+        <table>
+            <tr>
+                <th>
+                    This is table heading
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    This is a tables data
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
+EOD;
+
+    /** @var string HTML that should not get flagged. */
+    private $htmlpass5 = <<<EOD
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Table should have at least one th - pass</title>
+    </head>
+    <body>
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        This is table heading
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>
+                        This is a table heading in table data
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        This is a tables data
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>
+EOD;
+
+    /** @var string HTML that should not get flagged. */
+    private $htmlpass6 = <<<EOD
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Table should have at least one th - pass</title>
+    </head>
+    <body>
+        <table>
+            <tbody>
+                <tr>
+                    <th>
+                        This is a table heading in table data
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        This is a tables data
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>
+EOD;
     /**
      * Test that th does not exist
      */
@@ -133,6 +246,18 @@ EOD;
         $this->assertEmpty($results);
 
         $results = $this->get_checker_results($this->htmlpass2);
+        $this->assertEmpty($results);
+
+        $results = $this->get_checker_results($this->htmlpass3);
+        $this->assertEmpty($results);
+
+        $results = $this->get_checker_results($this->htmlpass4);
+        $this->assertEmpty($results);
+
+        $results = $this->get_checker_results($this->htmlpass5);
+        $this->assertEmpty($results);
+
+        $results = $this->get_checker_results($this->htmlpass6);
         $this->assertEmpty($results);
     }
 }
