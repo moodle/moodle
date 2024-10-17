@@ -1492,7 +1492,7 @@ class manager {
         global $CFG;
 
         if (!empty($CFG->pathtophp) && is_executable(trim($CFG->pathtophp))) {
-            return $CFG->pathtophp;
+            return trim($CFG->pathtophp);
         }
 
         return false;
