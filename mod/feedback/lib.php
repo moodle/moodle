@@ -975,7 +975,7 @@ function feedback_get_incomplete_users(cm_info $cm,
                                             $group,
                                             '',
                                             true)) {
-        return false;
+        return [];
     }
     // Filter users that are not in the correct group/grouping.
     $info = new \core_availability\info_module($cm);
