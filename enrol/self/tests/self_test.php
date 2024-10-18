@@ -34,7 +34,7 @@ require_once($CFG->dirroot.'/enrol/self/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_self_plugin
  */
-class self_test extends \advanced_testcase {
+final class self_test extends \advanced_testcase {
 
     public function test_basics(): void {
         $this->assertTrue(enrol_is_enabled('self'));
@@ -987,9 +987,11 @@ class self_test extends \advanced_testcase {
     }
 
     /**
-     * Test get_welcome_email_contact().
+     * Test getting welcome message contact
+     *
+     * @covers \enrol_plugin::get_welcome_message_contact
      */
-    public function test_get_welcome_email_contact(): void {
+    public function test_get_welcome_message_contact(): void {
         global $DB;
         self::resetAfterTest(true);
 
