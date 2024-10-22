@@ -16,6 +16,8 @@
 
 namespace core_course\output;
 
+use action_menu;
+use action_menu_link_secondary;
 use context_coursecat;
 use core_course_category;
 use course_request;
@@ -161,10 +163,26 @@ class category_action_bar extends manage_categories_action_bar {
      *              - additionaloptions Additional actions that can be performed in a category
      */
     public function export_for_template(\renderer_base $output): array {
+        $additionaloptions = $this->get_additional_category_options();
+        // Generate the action menu if there are additional options.
+        if (!empty($additionaloptions)) {
+            $actionmenu = new action_menu();
+            $actionmenu->set_kebab_trigger(get_string('moreactions'));
+            $actionmenu->set_additional_classes('ms-auto');
+            foreach ($additionaloptions['options'] as $option) {
+                $actionmenu->add(new action_menu_link_secondary(
+                    $option['url'],
+                    null,
+                    $option['string']
+                ));
+            }
+            $actionmenucontent = $output->render($actionmenu);
+        }
+
         return [
             'categoryselect' => $this->get_category_select($output),
             'search' => $this->get_search_form(),
-            'additionaloptions' => $this->get_additional_category_options()
+            'additionaloptions' => $actionmenucontent ?? '',
         ];
     }
 
