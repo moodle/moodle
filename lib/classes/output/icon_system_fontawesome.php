@@ -383,7 +383,6 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/collapsed_empty' => 'fa-chevron-right',
             'core:t/collapsed_rtl' => 'fa-chevron-left',
             'core:t/collapsed' => 'fa-chevron-right',
-            'core:t/collapsedcaret' => 'fa-caret-down',
             'core:t/collapsedchevron' => 'fa-chevron-right',
             'core:t/collapsedchevron_rtl' => 'fa-chevron-left',
             'core:t/collapsedchevron_up' => 'fa-chevron-up',
@@ -462,6 +461,18 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/user' => 'fa-user',
             'core:t/viewdetails' => 'fa-magnifying-glass-plus',
         ];
+    }
+
+    #[\Override]
+    public function get_deprecated_icons(): array {
+        // Add deprecated core icons to parent deprecated icons.
+        return array_merge(
+            parent::get_deprecated_icons(),
+            [
+                // Deprecated since Moodle 5.0.
+                'core:t/collapsedcaret',
+            ],
+        );
     }
 
     /**
