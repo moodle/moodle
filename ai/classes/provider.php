@@ -73,6 +73,14 @@ abstract class provider {
     }
 
     /**
+     * Check if the request is allowed by the rate limiter.
+     *
+     * @param aiactions\base $action The action to check.
+     * @return array|bool True on success, array of error details on failure.
+     */
+    abstract public function is_request_allowed(aiactions\base $action): array|bool;
+
+    /**
      * Check if a provider has the minimal configuration to work.
      *
      * @return bool Return true if configured.

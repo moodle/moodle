@@ -1530,4 +1530,22 @@ final class provider_test extends \advanced_testcase {
 
         $this->assertEquals(get_string('pluginname', 'aiprovider_openai'), $provider->get_name());
     }
+
+    /**
+     * Test the is_request_allowed method of the provider abstract class.
+     */
+    public function test_is_request_allowed(): void {
+
+        $stub = $this->getMockBuilder(\core_ai\provider::class)
+            ->onlyMethods(['is_request_allowed'])
+            ->getMockForAbstractClass();
+
+        $stub->expects($this->once())
+            ->method('is_request_allowed')
+            ->willReturn(true);
+
+        $actionmock = $this->createMock(\core_ai\aiactions\base::class);
+
+        $this->assertTrue($stub->is_request_allowed($actionmock));
+    }
 }
