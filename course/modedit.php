@@ -56,11 +56,17 @@ if (!empty($showonly)) {
 }
 
 if (!empty($add)) {
-    $section = required_param('section', PARAM_INT);
     $course  = required_param('course', PARAM_INT);
 
+    $sectionid = optional_param('sectionid', null, PARAM_INT);
+    if (empty($sectionid)) {
+        $sectionnum = required_param('section', PARAM_INT);
+    } else {
+        $sectionnum = get_fast_modinfo($course)->get_section_info_by_id($sectionid, MUST_EXIST)->sectionnum;
+    }
+
     $url->param('add', $add);
-    $url->param('section', $section);
+    $url->param('section', $sectionnum);
     $url->param('course', $course);
     $PAGE->set_url($url);
 
@@ -70,18 +76,18 @@ if (!empty($add)) {
     // There is no page for this in the navigation. The closest we'll have is the course section.
     // If the course section isn't displayed on the navigation this will fall back to the course which
     // will be the closest match we have.
-    navigation_node::override_active_url(course_get_url($course, $section));
+    navigation_node::override_active_url(course_get_url($course, $sectionnum));
 
-    // MDL-69431 Validate that $section (url param) does not exceed the maximum for this course / format.
+    // MDL-69431 Validate that $sectionnum (from url param) does not exceed the maximum for this course / format.
     // If too high (e.g. section *id* not number) non-sequential sections inserted in course_sections table.
     // Then on import, backup fills 'gap' with empty sections (see restore_rebuild_course_cache). Avoid this.
     $courseformat = course_get_format($course);
     $maxsections = $courseformat->get_max_sections();
-    if ($section > $maxsections) {
+    if ($sectionnum > $maxsections) {
         throw new \moodle_exception('maxsectionslimit', 'moodle', '', $maxsections);
     }
 
-    list($module, $context, $cw, $cm, $data) = prepare_new_moduleinfo_data($course, $add, $section);
+    [$module, $context, $cw, $cm, $data] = prepare_new_moduleinfo_data($course, $add, $sectionnum);
     $data->return = 0;
     if (!is_null($sectionreturn)) {
         $data->sr = $sectionreturn;
