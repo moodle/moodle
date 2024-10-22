@@ -39,6 +39,8 @@ final class report_progress_helper_test extends advanced_testcase {
     public function setUp(): void {
         global $CFG;
 
+        parent::setUp();
+
         $CFG->enablecompletion = true;
         $this->setAdminUser();
         $this->resetAfterTest();
@@ -48,7 +50,7 @@ final class report_progress_helper_test extends advanced_testcase {
     /**
      * Test process_activities_by_filter_options function.
      */
-    public function test_sort_activities() {
+    public function test_sort_activities(): void {
         $expectedactivitytypes = ['all' => 'All activities and resources', 'assign' => 'Assignments', 'quiz' => 'Quizzes'];
 
         // Generate test data.
@@ -74,7 +76,7 @@ final class report_progress_helper_test extends advanced_testcase {
     /**
      * Test filtering by section.
      */
-    public function test_filter_activities_by_section() {
+    public function test_filter_activities_by_section(): void {
         $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
         $this->generator->create_module('quiz', ['course' => $course->id, 'name' => 'Quiz 2', 'section' => 1],
                 ['completion' => 1]);

@@ -39,7 +39,7 @@ final class course_module_instance_list_viewed_test extends advanced_testcase {
     /**
      * Test event properties and methods.
      */
-    public function test_event_attributes() {
+    public function test_event_attributes(): void {
 
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -65,7 +65,7 @@ final class course_module_instance_list_viewed_test extends advanced_testcase {
     /**
      * Test custom validations of the event.
      */
-    public function test_event_validations() {
+    public function test_event_validations(): void {
         try {
             \mod_unittests\event\course_module_instance_list_viewed::create(array('context' => context_system::instance()));
             $this->fail('Event validation should not allow course_module_instance_list_viewed event to be triggered without outside
