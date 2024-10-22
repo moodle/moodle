@@ -50,7 +50,7 @@ final class community_of_inquiry_activities_completed_by_test extends advanced_t
      * @param string $availabilitylevel
      * @return void
      */
-    public function test_get_activities_with_availability($availabilitylevel) {
+    public function test_get_activities_with_availability($availabilitylevel): void {
 
         list($course, $stu1) = $this->setup_course();
 
@@ -113,7 +113,7 @@ final class community_of_inquiry_activities_completed_by_test extends advanced_t
      *
      * @return void
      */
-    public function test_get_activities_with_weeks() {
+    public function test_get_activities_with_weeks(): void {
 
         $startdate = gmmktime('0', '0', '0', 10, 24, 2015);
         $record = array(
@@ -156,7 +156,7 @@ final class community_of_inquiry_activities_completed_by_test extends advanced_t
      *
      * @return void
      */
-    public function test_get_activities_by_section() {
+    public function test_get_activities_by_section(): void {
 
         // This makes debugging easier, sorry WA's +8 :).
         $this->setTimezone('UTC');
@@ -226,7 +226,7 @@ final class community_of_inquiry_activities_completed_by_test extends advanced_t
      *
      * @return void
      */
-    public function test_get_activities_with_specific_restrictions() {
+    public function test_get_activities_with_specific_restrictions(): void {
 
         list($course, $stu1) = $this->setup_course();
 
