@@ -135,6 +135,7 @@ filterbothactive,core_grades
 filterbyname,core_grades
 filterfirstactive,core_grades
 filterlastactive,core_grades
+privacy:metadata:preference:reportfilter,core_reportbuilder
 noreplybouncemessage,core
 noreplybouncesubject,core
 configgeneralquestionbank,core_backup

@@ -18,35 +18,17 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\helpers;
 
+use core_reportbuilder\local\models\user_filter;
 use core_text;
 
 /**
  * This class handles the setting and retrieving of a users' filter values for given reports
- *
- * It is currently using the user preference API as a storage mechanism
  *
  * @package     core_reportbuilder
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_filter_manager {
-
-    /** @var int The size of each chunk, matching the maximum length of a single user preference */
-    private const PREFERENCE_CHUNK_SIZE = 1333;
-
-    /** @var string The prefix used to name the stored user preferences */
-    private const PREFERENCE_NAME_PREFIX = 'reportbuilder-report-';
-
-    /**
-     * Generate user preference name for given report
-     *
-     * @param int $reportid
-     * @param int $index
-     * @return string
-     */
-    private static function user_preference_name(int $reportid, int $index): string {
-        return static::PREFERENCE_NAME_PREFIX . "{$reportid}-{$index}";
-    }
 
     /**
      * Set user filters for given report
@@ -57,16 +39,20 @@ class user_filter_manager {
      * @return bool
      */
     public static function set(int $reportid, array $values, ?int $userid = null): bool {
-        $jsonvalues = json_encode($values);
+        global $USER;
 
-        $jsonchunks = str_split($jsonvalues, static::PREFERENCE_CHUNK_SIZE);
-        foreach ($jsonchunks as $index => $jsonchunk) {
-            $userpreference = static::user_preference_name($reportid, $index);
-            set_user_preference($userpreference, $jsonchunk, $userid);
+        $userid ??= $USER->id;
+
+        $userfilter = user_filter::get_record(['reportid' => $reportid, 'usercreated' => $userid]);
+        if ($userfilter === false) {
+            $userfilter = new user_filter(0, (object) [
+                'reportid' => $reportid,
+                'usercreated' => $userid,
+            ]);
         }
 
-        // Ensure any subsequent preferences are reset (to account for number of chunks decreasing).
-        static::reset_all($reportid, $userid, $index + 1);
+        $userfilter->set('filterdata', json_encode($values))
+            ->save();
 
         return true;
     }
@@ -79,17 +65,16 @@ class user_filter_manager {
      * @return array
      */
     public static function get(int $reportid, ?int $userid = null): array {
-        $jsonvalues = '';
-        $index = 0;
+        global $USER;
 
-        // We'll repeatedly append chunks to our JSON string, until we hit one that is below the maximum length.
-        do {
-            $userpreference = static::user_preference_name($reportid, $index++);
-            $jsonchunk = get_user_preferences($userpreference, '', $userid);
-            $jsonvalues .= $jsonchunk;
-        } while (core_text::strlen($jsonchunk) === static::PREFERENCE_CHUNK_SIZE);
+        $userid ??= $USER->id;
 
-        return (array) json_decode($jsonvalues);
+        $userfilter = user_filter::get_record(['reportid' => $reportid, 'usercreated' => $userid]);
+        if ($userfilter === false) {
+            return [];
+        }
+
+        return (array) json_decode($userfilter->get('filterdata'));
     }
 
     /**
@@ -111,18 +96,15 @@ class user_filter_manager {
      *
      * @param int $reportid
      * @param int|null $userid
-     * @param int $index If specified, then preferences will be reset starting from this index
+     * @param int $index Unused
      * @return bool
      */
     public static function reset_all(int $reportid, ?int $userid = null, int $index = 0): bool {
-        // We'll repeatedly retrieve and reset preferences, until we hit one that is below the maximum length.
-        do {
-            $userpreference = static::user_preference_name($reportid, $index++);
-            $jsonchunk = get_user_preferences($userpreference, '', $userid);
-            unset_user_preference($userpreference, $userid);
-        } while (core_text::strlen($jsonchunk) === static::PREFERENCE_CHUNK_SIZE);
+        global $DB, $USER;
 
-        return true;
+        $userid ??= $USER->id;
+
+        return $DB->delete_records(user_filter::TABLE, ['reportid' => $reportid, 'usercreated' => $userid]);
     }
 
     /**
@@ -147,27 +129,21 @@ class user_filter_manager {
     /**
      * Get all report filters for given user
      *
-     * This is primarily designed for the privacy provider, and allows us to preserve all the preference logic within this class.
-     *
      * @param int $userid
      * @return array
+     *
+     * @deprecated since Moodle 5.0 - please do not use this function any more
      */
+    #[\core\attribute\deprecated(null, reason: 'It is no longer used', mdl: 'MDL-83345', since: '5.0')]
     public static function get_all_for_user(int $userid): array {
-        global $DB;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+
         $prefs = [];
 
-        // We need to locate the first preference chunk of all report filters.
-        $select = 'userid = :userid AND ' . $DB->sql_like('name', ':namelike');
-        $params = [
-            'userid' => $userid,
-            'namelike' => $DB->sql_like_escape(static::PREFERENCE_NAME_PREFIX) . '%-0',
-        ];
-        $preferences = $DB->get_fieldset_select('user_preferences', 'name', $select, $params);
-
         // Retrieve all found filters.
+        $preferences = user_filter::get_records(['usercreated' => $userid]);
         foreach ($preferences as $preference) {
-            preg_match('/^' . static::PREFERENCE_NAME_PREFIX . '(?<reportid>\d+)\-/', $preference, $matches);
-            $prefs[static::PREFERENCE_NAME_PREFIX . $matches['reportid']] = static::get((int) $matches['reportid'], $userid);
+            $prefs['reportbuilder-report-' . $preference->get('reportid')] = (array) json_decode($preference->get('filterdata'));
         }
 
         return $prefs;

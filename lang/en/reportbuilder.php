@@ -200,7 +200,6 @@ $string['privacy:metadata:filter'] = 'Report filter definitions';
 $string['privacy:metadata:filter:uniqueidentifier'] = 'Unique identifier of the filter';
 $string['privacy:metadata:filter:usercreated'] = 'The ID of the user who created the filter';
 $string['privacy:metadata:filter:usermodified'] = 'The ID of the user who last modified the filter';
-$string['privacy:metadata:preference:reportfilter'] = 'Stored report filter values';
 $string['privacy:metadata:report'] = 'Report definitions';
 $string['privacy:metadata:report:conditiondata'] = 'Configuration data for the report conditions';
 $string['privacy:metadata:report:name'] = 'The name of the report';
@@ -226,6 +225,10 @@ $string['privacy:metadata:schedule:timescheduled'] = 'The time the schedule will
 $string['privacy:metadata:schedule:usercreated'] = 'The ID of the user who created the schedule';
 $string['privacy:metadata:schedule:usermodified'] = 'The ID of the user who last modified the schedule';
 $string['privacy:metadata:schedule:userviewas'] = 'The ID of the user who the schedule will be viewed as';
+$string['privacy:metadata:user_filter'] = 'Report user filter definitions';
+$string['privacy:metadata:user_filter:filterdata'] = 'Configuration data for the report filters';
+$string['privacy:metadata:user_filter:timecreated'] = 'The time when the user filter was created';
+$string['privacy:metadata:user_filter:timemodified'] = 'The time when the user filter was last modified';
 $string['recurrence'] = 'Recurrence';
 $string['recurrenceannually'] = 'Annually';
 $string['recurrencedaily'] = 'Daily';
@@ -295,3 +298,6 @@ $string['filterdurationunit'] = '{$a} unit';
 // Deprecated since Moodle 4.5.
 $string['filterdatefrom'] = 'Date from';
 $string['filterdateto'] = 'Date to';
+
+// Deprecated since Moodle 5.0.
+$string['privacy:metadata:preference:reportfilter'] = 'Stored report filter values';
