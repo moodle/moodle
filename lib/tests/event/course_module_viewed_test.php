@@ -39,7 +39,7 @@ final class course_module_viewed_test extends advanced_testcase {
     /**
      * Test event properties and methods.
      */
-    public function test_event_attributes() {
+    public function test_event_attributes(): void {
 
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -71,7 +71,7 @@ final class course_module_viewed_test extends advanced_testcase {
     /**
      * Test custom validations of the event.
      */
-    public function test_event_validations() {
+    public function test_event_validations(): void {
 
         // Make sure objecttable and object id is always set.
         try {

@@ -43,7 +43,7 @@ final class update_entry_test extends externallib_advanced_testcase {
     /**
      * test_update_entry_without_optional_settings
      */
-    public function test_update_entry_without_optional_settings() {
+    public function test_update_entry_without_optional_settings(): void {
         global $CFG, $DB;
         $this->resetAfterTest(true);
 
@@ -78,7 +78,7 @@ final class update_entry_test extends externallib_advanced_testcase {
     /**
      * test_update_entry_duplicated
      */
-    public function test_update_entry_duplicated() {
+    public function test_update_entry_duplicated(): void {
         global $CFG, $DB;
         $this->resetAfterTest(true);
 
@@ -115,7 +115,7 @@ final class update_entry_test extends externallib_advanced_testcase {
     /**
      * test_update_entry_with_aliases
      */
-    public function test_update_entry_with_aliases() {
+    public function test_update_entry_with_aliases(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -152,7 +152,7 @@ final class update_entry_test extends externallib_advanced_testcase {
     /**
      * test_update_entry_in_categories
      */
-    public function test_update_entry_in_categories() {
+    public function test_update_entry_in_categories(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -193,7 +193,7 @@ final class update_entry_test extends externallib_advanced_testcase {
     /**
      * test_update_entry_with_attachments
      */
-    public function test_update_entry_with_attachments() {
+    public function test_update_entry_with_attachments(): void {
         global $DB, $USER;
         $this->resetAfterTest(true);
 
