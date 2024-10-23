@@ -55,8 +55,14 @@ final class locale_test extends \advanced_testcase {
                 'set_locale',
             ])
             ->getMock();
-        $mock->method('get_locale')->will($this->onConsecutiveCalls('en'));
-        $mock->method('set_locale')->will($this->onConsecutiveCalls('es', 'en'));
+        $mock->method('get_locale')->will($this->returnValue('en'));
+        $setinvocations = $this->exactly(2);
+        $mock
+            ->expects($setinvocations)
+            ->method('set_locale')->willReturnCallback(fn () => match (self::getInvocationCount($setinvocations)) {
+                1 => 'es',
+                2 => 'en',
+            });
 
         // Test what happen when locale is available on system.
         $result = $mock->check_locale_availability('en');
@@ -72,8 +78,14 @@ final class locale_test extends \advanced_testcase {
                 'set_locale',
             ])
             ->getMock();
-        $mock->method('get_locale')->will($this->onConsecutiveCalls('en'));
-        $mock->method('set_locale')->will($this->onConsecutiveCalls(false, 'en'));
+        $mock->expects($this->exactly(1))->method('get_locale')->will($this->returnValue('en'));
+        $setinvocations = $this->exactly(2);
+        $mock
+            ->expects($setinvocations)
+            ->method('set_locale')->willReturnCallback(fn () => match (self::getInvocationCount($setinvocations)) {
+                1 => false,
+                2 => 'en',
+            });
 
         // Test what happen when locale is not available on system.
         $result = $mock->check_locale_availability('en');

@@ -234,15 +234,18 @@ class exportable_filearea_test extends advanced_testcase {
             $filepathinzip = $subdir . '/' . $file->get_filearea() . '/' . $file->get_filepath() . $file->get_filename();
             $filepathinzip = ltrim(preg_replace('#/+#', '/', $filepathinzip), '/');
             $storedfileargs[] = [
-                $this->equalTo($context),
-                $this->equalTo($filepathinzip),
-                $this->equalTo($file),
+                $context,
+                $filepathinzip,
+                $file,
             ];
         }
 
-        $archive->expects($this->exactly(count($expectedfiles)))
+        $invocations = $this->exactly(count($expectedfiles));
+        $archive->expects($invocations)
             ->method('add_file_from_stored_file')
-            ->withConsecutive(...$storedfileargs);
+            ->willReturnCallback(function (...$args) use ($invocations, $storedfileargs) {
+                $this->assertEquals($storedfileargs[self::getInvocationCount($invocations) - 1], $args);
+            });
 
         return $exportable->add_to_archive($archive);
     }
