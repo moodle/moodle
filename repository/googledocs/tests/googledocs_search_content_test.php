@@ -64,28 +64,34 @@ class googledocs_search_content_test extends \googledocs_content_testcase {
         // instance it is being called to fetch the shared drives (shared_drives_list), while in the second instance
         // to fetch the relevant drive contents (list) that match the search criteria. Also, define the returned
         // data objects by these calls.
-        $servicemock->expects($this->exactly(2))
+        $callinvocations = $this->exactly(2);
+        $servicemock->expects($callinvocations)
             ->method('call')
-            ->withConsecutive(
-                [
-                    'shared_drives_list',
-                    [],
-                ],
-                [
-                    'list',
-                    $searchparams,
-                ]
-            )
-            ->willReturnOnConsecutiveCalls(
-                (object)[
-                    'kind' => 'drive#driveList',
-                    'nextPageToken' => 'd838181f30b0f5',
-                    'drives' => $shareddrives,
-                ],
-                (object)[
-                    'files' => $searccontents,
-                ]
-            );
+            ->willReturnCallback(function(string $method, array $params) use (
+                $callinvocations,
+                $shareddrives,
+                $searccontents,
+                $searchparams,
+            ) {
+                switch (self::getInvocationCount($callinvocations)) {
+                    case 1:
+                        $this->assertEquals('shared_drives_list', $method);
+
+                        $this->assertEmpty($params);
+                        return (object) [
+                            'kind' => 'drive#driveList',
+                            'nextPageToken' => 'd838181f30b0f5',
+                            'drives' => $shareddrives,
+                        ];
+                    case 2:
+                        $this->assertEquals('list', $method);
+                        $this->assertEquals($searchparams, $params);
+
+                        return (object) [
+                            'files' => $searccontents,
+                        ];
+                }
+            });
 
         // Construct the node path.
         $path = \repository_googledocs::REPOSITORY_ROOT_ID . '|' . urlencode('Google Drive') . '/' .

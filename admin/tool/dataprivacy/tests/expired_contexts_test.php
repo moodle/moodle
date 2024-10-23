@@ -1370,12 +1370,20 @@ class expired_contexts_test extends \advanced_testcase {
             ])
             ->getMock();
         $mockprivacymanager->expects($this->atLeastOnce())->method('delete_data_for_user');
-        $mockprivacymanager->expects($this->exactly(2))
+        $deleteinvocations = $this->exactly(2);
+        $mockprivacymanager->expects($deleteinvocations)
             ->method('delete_data_for_all_users_in_context')
-            ->withConsecutive(
-                [$blockcontext],
-                [$usercontext]
-            );
+            ->willReturnCallback(function ($context) use (
+                $deleteinvocations,
+                $blockcontext,
+                $usercontext,
+            ): void {
+                match (self::getInvocationCount($deleteinvocations)) {
+                    1 => $this->assertEquals($blockcontext, $context),
+                    2 => $this->assertEquals($usercontext, $context),
+                    default => $this->fail('Unexpected invocation count'),
+                };
+            });
 
         $manager = $this->getMockBuilder(\tool_dataprivacy\expired_contexts_manager::class)
             ->onlyMethods(['get_privacy_manager'])
@@ -1588,12 +1596,20 @@ class expired_contexts_test extends \advanced_testcase {
             ])
             ->getMock();
         $mockprivacymanager->expects($this->atLeastOnce())->method('delete_data_for_user');
-        $mockprivacymanager->expects($this->exactly(2))
+        $deleteinvocations = $this->exactly(2);
+        $mockprivacymanager->expects($deleteinvocations)
             ->method('delete_data_for_all_users_in_context')
-            ->withConsecutive(
-                [$blockcontext],
-                [$usercontext]
-            );
+            ->willReturnCallback(function ($context) use (
+                $deleteinvocations,
+                $blockcontext,
+                $usercontext,
+            ): void {
+                match (self::getInvocationCount($deleteinvocations)) {
+                    1 => $this->assertEquals($blockcontext, $context),
+                    2 => $this->assertEquals($usercontext, $context),
+                    default => $this->fail('Unexpected invocation count'),
+                };
+            });
 
         $manager = $this->getMockBuilder(\tool_dataprivacy\expired_contexts_manager::class)
             ->onlyMethods(['get_privacy_manager'])
@@ -1641,12 +1657,20 @@ class expired_contexts_test extends \advanced_testcase {
             ])
             ->getMock();
         $mockprivacymanager->expects($this->atLeastOnce())->method('delete_data_for_user');
-        $mockprivacymanager->expects($this->exactly(2))
+        $deleteinvocations = $this->exactly(2);
+        $mockprivacymanager->expects($deleteinvocations)
             ->method('delete_data_for_all_users_in_context')
-            ->withConsecutive(
-                [$blockcontext],
-                [$usercontext]
-            );
+            ->willReturnCallback(function ($context) use (
+                $deleteinvocations,
+                $blockcontext,
+                $usercontext,
+            ): void {
+                match (self::getInvocationCount($deleteinvocations)) {
+                    1 => $this->assertEquals($blockcontext, $context),
+                    2 => $this->assertEquals($usercontext, $context),
+                    default => $this->fail('Unexpected invocation count'),
+                };
+            });
 
         $manager = $this->getMockBuilder(\tool_dataprivacy\expired_contexts_manager::class)
             ->onlyMethods(['get_privacy_manager'])
@@ -1860,12 +1884,20 @@ class expired_contexts_test extends \advanced_testcase {
             ])
             ->getMock();
         $mockprivacymanager->expects($this->never())->method('delete_data_for_user');
-        $mockprivacymanager->expects($this->exactly(2))
+        $deleteinvocations = $this->exactly(2);
+        $mockprivacymanager->expects($deleteinvocations)
             ->method('delete_data_for_all_users_in_context')
-            ->withConsecutive(
-                [$forumcontext],
-                [$coursecontext]
-            );
+            ->willReturnCallback(function ($context) use (
+                $deleteinvocations,
+                $forumcontext,
+                $coursecontext,
+            ): void {
+                match (self::getInvocationCount($deleteinvocations)) {
+                    1 => $this->assertEquals($forumcontext, $context),
+                    2 => $this->assertEquals($coursecontext, $context),
+                    default => $this->fail('Unexpected invocation count'),
+                };
+            });
 
         $manager = $this->getMockBuilder(\tool_dataprivacy\expired_contexts_manager::class)
             ->onlyMethods(['get_privacy_manager'])

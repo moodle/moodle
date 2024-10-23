@@ -1218,7 +1218,14 @@ class file_system_test extends \advanced_testcase {
         ]);
 
         $fs->method('is_file_readable_locally_by_hash')->willReturn(false);
-        $fs->method('get_local_path_from_hash')->will($this->onConsecutiveCalls('/path/to/remote/file', $filepath));
+        $getinvocations = $this->exactly(2);
+        $fs
+            ->expects($getinvocations)
+            ->method('get_local_path_from_hash')
+            ->willReturnCallback(fn () => match (self::getInvocationCount($getinvocations)) {
+                1 => '/path/to/remote/file',
+                2 => $filepath,
+            });
 
         $file = $this->get_stored_file('example content');
 

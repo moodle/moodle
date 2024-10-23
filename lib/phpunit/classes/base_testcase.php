@@ -1,4 +1,5 @@
 <?php
+use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -593,6 +594,18 @@ abstract class base_testcase extends PHPUnit\Framework\TestCase {
         }
 
         return str_replace('  ', ' ', $result);
+    }
+
+    /**
+     * Helper to get the count of invocation.
+     *
+     * This is required because the method to use changed names in PHPUnit 10.0 in a breaking change.
+     *
+     * @param \PHPUnit\Framework\MockObject\Rule\InvocationOrder $counter
+     * @return int
+     */
+    protected static function getInvocationCount(InvocationOrder $counter): int {
+        return $counter->getInvocationCount();
     }
     // phpcs:enable
 }
