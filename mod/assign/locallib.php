@@ -3280,7 +3280,7 @@ class assign {
         $modinfo = get_fast_modinfo($course);
 
         if ($usesections) {
-            $strsectionname = get_string('sectionname', 'format_'.$course->format);
+            $strsectionname = course_get_format($course)->get_generic_section_name();
             $sections = $modinfo->get_section_info_all();
         }
         $courseindexsummary = new assign_course_index_summary($usesections, $strsectionname);

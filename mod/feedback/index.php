@@ -77,7 +77,7 @@ $strresponses = get_string('responses', 'feedback');
 $table = new html_table();
 
 if ($usesections) {
-    $strsectionname = get_string('sectionname', 'format_'.$course->format);
+    $strsectionname = course_get_format($course)->get_generic_section_name();
     if (has_capability('mod/feedback:viewreports', $context)) {
         $table->head  = array ($strsectionname, $strname, $strresponses);
         $table->align = array ("center", "left", 'center');

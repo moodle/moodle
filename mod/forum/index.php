@@ -349,7 +349,7 @@ if ($show_rss = (($showsubscriptioncolumns || $course->id == SITEID) &&
 // Now let's process the learning forums.
 if ($course->id != SITEID) {    // Only real courses have learning forums
     // 'format_.'$course->format only applicable when not SITEID (format_site is not a format)
-    $strsectionname  = get_string('sectionname', 'format_'.$course->format);
+    $strsectionname  = course_get_format($course)->get_generic_section_name();
     // Add extra field for section number, at the front
     array_unshift($learningtable->head, $strsectionname);
     array_unshift($learningtable->align, 'center');
