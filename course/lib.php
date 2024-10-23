@@ -1353,13 +1353,24 @@ function moveto_module($mod, $section, $beforemod=NULL) {
 /**
  * Returns the list of all editing actions that current user can perform on the module
  *
+ * @deprecated since Moodle 5.0
+ * @todo Remove this method in Moodle 6.0 (MDL-83530).
+ *
  * @param cm_info $mod The module to produce editing buttons for
  * @param int $indent The current indenting (default -1 means no move left-right actions)
  * @param int $sr The section to link back to (used for creating the links)
  * @return array array of action_link or pix_icon objects
  */
+#[\core\attribute\deprecated(
+    replacement: 'core_courseformat\output\local\content\cm\controlmenu',
+    since: '5.0',
+    mdl: 'MDL-83527',
+    reason: 'Replaced by an output class equivalent.',
+)]
 function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     global $COURSE, $SITE, $CFG;
+
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
 
     static $str;
 

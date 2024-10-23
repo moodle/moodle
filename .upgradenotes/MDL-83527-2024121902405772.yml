@@ -1,0 +1,10 @@
+issueNumber: MDL-83527
+notes:
+  core_courseformat:
+    - message: >-
+        Using arrays to define course menu items is deprecated. All course
+        formats that extend the section or activity control menus
+        (format_NAME\output\courseformat\content\section\controlmenu or
+        format_NAME\output\courseformat\cm\section\controlmenu) should return
+        standard action_menu_link objects instead.
+      type: deprecated
