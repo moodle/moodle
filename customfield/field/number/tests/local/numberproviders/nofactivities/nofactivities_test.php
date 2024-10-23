@@ -113,4 +113,83 @@ final class nofactivities_test extends advanced_testcase {
         $course1customfield = $DB->get_field('customfield_data', 'decvalue', ['instanceid' => $course1->id]);
         $this->assertEquals(3.0000, $course1customfield);
     }
+
+    /**
+     * Test that the data record is updated/deleted when the value is recalculated
+     *
+     * Also test that export_value() is correct
+     *
+     * @return void
+     */
+    public function test_recalculate_change_value(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course with one activity.
+        $course1 = $this->getDataGenerator()->create_course();
+        $assigngenerator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $assign1 = $assigngenerator->create_instance(['course' => $course1->id, 'visible' => 1]);
+
+        /** @var \core_customfield_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_customfield');
+
+        // Create a category and two fields, one with displaywhenzero, another one without.
+        $category = $generator->create_category();
+        $field1 = $generator->create_field([
+            'categoryid' => $category->get('id'),
+            'type' => 'number',
+            'configdata' => [
+                'fieldtype' => nofactivities::class,
+                'activitytypes' => ['assign'],
+                'displaywhenzero' => '0',
+            ],
+        ]);
+        $field2 = $generator->create_field([
+            'categoryid' => $category->get('id'),
+            'type' => 'number',
+            'configdata' => [
+                'fieldtype' => nofactivities::class,
+                'activitytypes' => ['assign'],
+                'displaywhenzero' => '',
+            ],
+        ]);
+        $getdata = fn(\customfield_number\field_controller $field): \customfield_number\data_controller =>
+            \core_customfield\api::get_instance_fields_data([$field->get('id') => $field], (int)$course1->id)[$field->get('id')];
+
+        // Recalculate the value of the field and assert it is set to 1 (one activity in the course).
+        (new \customfield_number\task\cron())->execute();
+        $data = $getdata($field1);
+        $this->assertEquals(1, $data->get('decvalue'));
+        $this->assertSame('1', $data->export_value());
+        $data = $getdata($field2);
+        $this->assertEquals(1, $data->get('decvalue'));
+        $this->assertSame('1', $data->export_value());
+
+        // Add another module, recalculate and assert the value of the field is set to 2 (two activities in the course).
+        $assign2 = $assigngenerator->create_instance(['course' => $course1->id, 'visible' => 1]);
+        (new \customfield_number\task\cron())->execute();
+        $data = $getdata($field1);
+        $this->assertEquals(2, $data->get('decvalue'));
+        $this->assertSame('2', $data->export_value());
+        $data = $getdata($field2);
+        $this->assertEquals(2, $data->get('decvalue'));
+        $this->assertSame('2', $data->export_value());
+
+        // Delete both modules, recalculate.
+        course_delete_module($assign1->cmid);
+        course_delete_module($assign2->cmid);
+        (new \customfield_number\task\cron())->execute();
+        // Field1 (displaywhenzero='0') has the value zero.
+        $data = $getdata($field1);
+        $this->assertNotEmpty($data->get('id'));
+        $this->assertEquals(0, $data->get('decvalue'));
+        $this->assertSame('0', $data->export_value());
+        // Field2 (displaywhenzero='') no longer has a data record and it is not displayed.
+        $data = $getdata($field2);
+        $this->assertEmpty($data->get('id'));
+        $this->assertEquals(null, $data->get('decvalue'));
+        $this->assertSame(null, $data->export_value());
+    }
 }

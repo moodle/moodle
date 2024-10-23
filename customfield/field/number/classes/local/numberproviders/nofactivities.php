@@ -67,8 +67,7 @@ class nofactivities extends provider_base {
         // Define the label for the autocomplete element.
         $valuelabel = get_string('activitytypes', 'customfield_number');
         // Add autocomplete element.
-        $mform->addElement('autocomplete', 'configdata[activitytypes]', $valuelabel, $options, ['multiple' => true])
-            ->setHiddenLabel(true);
+        $mform->addElement('autocomplete', 'configdata[activitytypes]', $valuelabel, $options, ['multiple' => true]);
         $mform->hideIf('configdata[activitytypes]', 'configdata[fieldtype]', 'ne', get_class($this));
         $mform->hideIf('configdata[decimalplaces]', 'configdata[fieldtype]', 'eq', get_class($this));
         $mform->hideIf('configdata[display]', 'configdata[fieldtype]', 'eq', get_class($this));
@@ -124,10 +123,10 @@ class nofactivities extends provider_base {
         $records = $DB->get_records_sql($sql, $params + ['siteid' => SITEID]);
         foreach ($records as $record) {
             $value = (int)$record->cnt;
-            if (!isset($displaywhenzero) && !$value) {
+            if ((string)$displaywhenzero === '' && !$value) {
                 // Do not display the field when the number of activities is zero.
                 if ($record->dataid) {
-                    (new data_controller((int)$record->dataid, (object)['id' => $record->dataid]))->delete();
+                    (new data_controller(0, (object)['id' => $record->dataid]))->delete();
                 }
             } else if (empty($record->dataid) || (int)$record->decvalue != $value) {
                 // Stored value is out of date.
@@ -158,13 +157,20 @@ class nofactivities extends provider_base {
     /**
      * Preparation for export for number of activities provider.
      *
-     * @param mixed $value String or float
+     * @param mixed $value String or float or null if the value is not present in the database for this instance
      * @param \context|null $context Context
      * @return ?string
      */
     public function prepare_export_value(mixed $value, ?\context $context = null): ?string {
-        if (trim((string)$value) === '') {
+        if ($value === null) {
             return null;
+        } else if (round((float)$value) == 0) {
+            $whenzero = $this->field->get_configdata_property('displaywhenzero');
+            if ((string) $whenzero === '') {
+                return null;
+            } else {
+                return format_string($whenzero, true, ['context' => $context ?? \core\context\system::instance()]);
+            }
         } else {
             return format_float((float)$value, 0);
         }
