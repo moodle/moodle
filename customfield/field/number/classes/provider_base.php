@@ -80,14 +80,34 @@ abstract class provider_base {
     }
 
     /**
-     * Provider specific value preparation for export.
+     * How the field should be displayed
+     *
+     * Called from {@see field_controller::prepare_field_for_display()}
+     * The return value may contain safe HTML but all user input must be passed through
+     * format_string/format_text functions
      *
      * @param mixed $value String or float
      * @param context|null $context Context
-     * @return ?string
+     * @return ?string null if the field should not be displayed or string representation of the field
      */
     public function prepare_export_value(mixed $value, ?\context $context = null): ?string {
-        return $value;
+        if ($value === null) {
+            return null;
+        }
+
+        // By default assumes that configuration 'decimalplaces' and 'displaywhenzero' are
+        // present. If they are not used in this provider, override the method.
+        $decimalplaces = (int) $this->field->get_configdata_property('decimalplaces');
+        if (round((float) $value, $decimalplaces) == 0) {
+            $result = $this->field->get_configdata_property('displaywhenzero');
+            if ((string) $result === '') {
+                return null;
+            } else {
+                return format_string($result, true, ['context' => $context ?? \core\context\system::instance()]);
+            }
+        } else {
+            return format_float((float)$value, $decimalplaces);
+        }
     }
 
     /**
