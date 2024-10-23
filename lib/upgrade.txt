@@ -1,6 +1,14 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.4.5 ===
+
+* All uses of the following PHPUnit methods have been removed as these methods are deprecated upstream without direct replacement:
+    - `withConsecutive`
+    - `willReturnConsecutive`
+    - `onConsecutive`
+  Any plugin using these methods must update their uses.
+
 === 4.4.4 ===
 
 * The `navigation_cache` class now uses the Moodle Universal Cache (MUC) to store the navigation cache data instead of storing

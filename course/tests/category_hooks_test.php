@@ -185,16 +185,21 @@ class category_hooks_test extends \advanced_testcase {
         $mockcategory2 = $this->get_mock_category($category2);
 
         // Define get_plugins_callback_function use in the mock, it is called twice for different callback in the form.
-        $mockcategory2->expects($this->exactly(2))
+        $callbackinvocations = $this->exactly(2);
+        $mockcategory2->expects($callbackinvocations)
             ->method('get_plugins_callback_function')
-            ->withConsecutive(
-                [$this->equalTo('can_course_category_delete')],
-                [$this->equalTo('get_course_category_contents')]
-            )
-            ->willReturn(
-                ['tool_unittest_can_course_category_delete'],
-                ['tool_unittest_get_course_category_contents']
-            );
+            ->willReturnCallback(function ($method) use ($callbackinvocations): array {
+                switch (self::getInvocationCount($callbackinvocations)) {
+                    case 1:
+                        $this->assertEquals('can_course_category_delete', $method);
+                        return ['tool_unittest_can_course_category_delete'];
+                    case 2:
+                        $this->assertEquals('get_course_category_contents', $method);
+                        return ['tool_unittest_get_course_category_contents'];
+                    default:
+                        $this->fail('Unexpected callback invocation');
+                }
+            });
 
         // Now configure fixture to return string for the callback.
         $content = 'Bunch of test artefacts';

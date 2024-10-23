@@ -524,14 +524,30 @@ class tour_test extends \advanced_testcase {
         // Mock the database.
         $DB = $this->mock_database();
 
-        $DB->expects($this->exactly(3))
+        $deleteinvocations = $this->exactly(3);
+        $DB->expects($deleteinvocations)
             ->method('delete_records')
-            ->withConsecutive(
-                [$this->equalTo('tool_usertours_tours'), $this->equalTo(['id' => $id])],
-                [$this->equalTo('user_preferences'), $this->equalTo(['name' => tour::TOUR_LAST_COMPLETED_BY_USER . $id])],
-                [$this->equalTo('user_preferences'), $this->equalTo(['name' => tour::TOUR_REQUESTED_BY_USER . $id])]
-            )
-            ->willReturn(null);
+            ->willReturnCallback(function ($table, $conditions) use ($deleteinvocations, $id) {
+                switch (self::getInvocationCount($deleteinvocations)) {
+                    case 1:
+                        $this->assertEquals('tool_usertours_tours', $table);
+                        $this->assertEquals(['id' => $id], $conditions);
+                        return null;
+                        break;
+                    case 2:
+                        $this->assertEquals('user_preferences', $table);
+                        $this->assertEquals(['name' => tour::TOUR_LAST_COMPLETED_BY_USER . $id], $conditions);
+                        return null;
+                        break;
+                    case 3:
+                        $this->assertEquals('user_preferences', $table);
+                        $this->assertEquals(['name' => tour::TOUR_REQUESTED_BY_USER . $id], $conditions);
+                        return null;
+                        break;
+                    default:
+                        $this->fail('Unexpected call to delete_records');
+                }
+            });
 
         $DB->expects($this->once())
             ->method('get_records')
@@ -551,7 +567,7 @@ class tour_test extends \advanced_testcase {
         for ($i = 4; $i >= 0; $i--) {
             $id = rand($i * 10, ($i * 10) + 9);
             $mockdata[] = (object) ['id' => $id];
-            $expectations[] = [$this->equalTo('tool_usertours_steps'), $this->equalTo('sortorder'), 4 - $i, ['id' => $id]];
+            $expectations[] = [4 - $i, ['id' => $id]];
         }
 
         // Mock the database.
@@ -560,9 +576,19 @@ class tour_test extends \advanced_testcase {
             ->method('get_records')
             ->willReturn($mockdata);
 
-        $setfield = $DB->expects($this->exactly(5))
-            ->method('set_field');
-        call_user_func_array([$setfield, 'withConsecutive'], $expectations);
+        $setfieldinvocations = $this->exactly(5);
+        $DB->expects($setfieldinvocations)
+            ->method('set_field')
+            ->willReturnCallback(function ($table, $field, $value, $conditions) use (
+                $setfieldinvocations,
+                $expectations,
+            ): void {
+                $expectation = $expectations[self::getInvocationCount($setfieldinvocations) - 1];
+                $this->assertEquals('tool_usertours_steps', $table);
+                $this->assertEquals('sortorder', $field);
+                $this->assertEquals($expectation[0], $value);
+                $this->assertEquals($expectation[1], $conditions);
+            });
 
         $tour->reset_step_sortorder();
     }
@@ -761,9 +787,12 @@ class tour_test extends \advanced_testcase {
             ->getMock();
 
         if ($getconfig) {
-            $tour->expects($this->exactly(count($getconfig)))
+            $getinvocations = $this->exactly(count($getconfig));
+            $tour->expects($getinvocations)
                 ->method('get_config')
-                ->will(call_user_func_array([$this, 'onConsecutiveCalls'], $getconfig));
+                ->willReturnCallback(function () use ($getinvocations, $getconfig) {
+                    return $getconfig[self::getInvocationCount($getinvocations) - 1];
+                });
         }
 
         if ($setconfig) {
