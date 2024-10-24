@@ -2,134 +2,9 @@
  * Course page styles.
  */
 
-.section {
-    .side {
-        &.left {
-            float: left;
-        }
-
-        &.right {
-            float: right;
-            clear: right;
-        }
-        margin-top: 0.5rem;
-    }
-
-    .spinner {
-        height: 16px;
-        width: 16px;
-    }
-
-    .activity {
-        .spinner {
-            left: 100%;
-            position: absolute;
-        }
-
-        /* The command block for each activity */
-        .actions {
-            position: absolute;
-            right: 0;
-            top: 0;
-            display: flex;
-        }
-
-        .contentwithoutlink,
-        .activityinstance {
-            min-width: 40%;
-
-            > a {
-                display: inline-flex;
-                align-items: center;
-            }
-
-            .dimmed {
-                .activityicon {
-                    opacity: .5;
-                }
-            }
-        }
-
-        .stealth {
-            color: $text-muted;
-        }
-        a.stealth,
-        a.stealth:hover {
-            color: lighten($link-color, 25%) !important; /* stylelint-disable-line declaration-no-important */
-        }
-
-        &.indented {
-            .activity-item {
-                margin-left: map-get($spacers, 3);
-            }
-        }
-    }
-
-    .label {
-        .contentwithoutlink,
-        .activityinstance {
-            padding-right: 32px;
-            display: block;
-            height: inherit;
-        }
-        @include media-breakpoint-up(sm) {
-            .mod-indent-outer {
-                padding-left: 24px;
-                display: block;
-            }
-        }
-    }
-
-    .filler {
-        // This must be sized like an icon to fill the space.
-        width: 16px;
-        height: 16px;
-        padding: 0;
-        margin: 0 ($spacer * 0.5);
-        display: inline-block;
-    }
-
-    .activity.editor_displayed {
-        a.editing_title,
-        .moodle-actionmenu {
-            display: none;
-        }
-
-        div.activityinstance {
-            padding-right: initial;
-
-            input {
-                margin-bottom: initial;
-                padding-top: initial;
-                padding-bottom: initial;
-                vertical-align: text-bottom;
-            }
-        }
-    }
-}
-
-.section .activity .activityinstance {
-    display: inline-flex;
-    align-items: center;
-    margin-bottom: 1rem;
-}
+/* Spinners */
 
 .editing {
-    .section {
-        .activity {
-            .contentwithoutlink,
-            .activityinstance {
-                padding-right: 200px;
-            }
-            .mod-indent-outer {
-                /**
-                 * Add appropriate padding such that nothing overlaps the
-                 * absolute positioned move icon.
-                 */
-                padding-left: 2rem;
-            }
-        }
-    }
     // Remove old spinners if the reactive state is ready.
     .course-content .stateready .section .spinner {
         display: none;
@@ -186,52 +61,7 @@
     }
 }
 
-.editing_show + .editing_assign,
-.editing_hide + .editing_assign {
-    // if roles icon missing, add space
-    margin-left: 20px;
-}
-
-.section .activity .commands {
-    white-space: nowrap;
-    display: inline-block;
-}
-
-.section .activity.modtype_label.label {
-    font-weight: normal;
-
-    // Remove min-height for labels so top and bottom paddings can be displayed more consistently.
-    .contentwithoutlink {
-        min-height: 0;
-    }
-
-    // When activity information is shown remove the bottom margin for the last p/i elements.
-    &.hasinfo {
-        p:last-child,
-        i:last-child {
-            margin-bottom: 0;
-        }
-    }
-}
-
-// The activity-wrapper class ensures these styles are not used when the new activity styles
-// from MDL-71691 are not affected. As soons as MDL-72656 is integrated and these styles
-// are removed the core_courseformat/local/content/cm template no longer needs this class.
-.section li.activity:not(.activity-wrapper) {
-    padding: 0.2em;
-    clear: both;
-
-    &.hasinfo {
-        border-bottom: $border-width solid $table-border-color;
-        padding-top: map-get($spacers, 3);
-        padding-bottom: map-get($spacers, 3);
-
-        &:last-child {
-            border-bottom: 0;
-            padding-bottom: 0;
-        }
-    }
-}
+/* Drag and drop */
 
 // Compensate for the border widths when dropzones are displayed.
 .course-content .section.dropready {
@@ -266,27 +96,8 @@
     }
 }
 
-.section .activity .activityinstance .groupinglabel {
-    padding-left: 30px;
-}
-
-.section.main:not(.course-section) .activity .availabilityinfo,
-.section.main:not(.course-section) .activity .contentafterlink {
-    margin-top: 0.5em;
-    margin-left: 30px;
-}
-
-.section .activity .contentafterlink p {
-    margin: .5em 0;
-}
-
-.editing .section.main:not(.course-section) {
-    .activity:hover,
-    .activity.action-menu-shown,
-    .sectionname:hover {
-        background-color: $table-accent-bg;
-    }
-}
+/* Highlight current section */
+// TODO: Move to "Section" block.
 
 .course-content .current {
     position: relative;
@@ -300,203 +111,6 @@
     position: absolute;
     top: 0;
 }
-
-.course-content ul li.section.hidden:not(.course-section) {
-    .sectionname > span,
-    .content > div.summary,
-    .activity .activityinstance {
-        color: $text-muted;
-    }
-}
-
-.course-content ul.topics,
-.course-content ul.weeks {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-
-    li.section {
-        .content {
-            margin: 0;
-            padding: 0;
-        }
-
-        @include media-breakpoint-up(sm) {
-            .summary,
-            .content > .availabilityinfo {
-                margin-left: 25px;
-            }
-        }
-
-        .left,
-        .right {
-            padding: 0 6px 0;
-            text-align: right;
-            width: auto;
-        }
-    }
-}
-
-.course-content .single-section ul.topics li.section,
-.course-content .single-section ul.weeks li.section {
-    padding-top: 0;
-}
-
-@include media-breakpoint-down(sm) {
-    body:not(.editing) {
-        .course-content ul.topics,
-        .course-content ul.weeks {
-            li.section {
-                .left,
-                .right {
-                    display: none;
-                }
-            }
-        }
-    }
-}
-
-.course-content {
-    margin-top: 0;
-}
-
-.course-content .hidden {
-    display: none;
-}
-
-.course-content li {
-    &.section:not(.course-section) {
-        @include media-breakpoint-down(sm) {
-            ul {
-                padding-left: 0;
-            }
-        }
-        ul {
-            list-style: disc;
-
-            ul {
-                list-style: circle;
-
-                ul {
-                    list-style: square;
-                }
-            }
-        }
-
-        li {
-            &.activity {
-                ul {
-                    list-style: disc;
-
-                    ul {
-                        list-style: circle;
-
-                        ul {
-                            list-style: square;
-                        }
-                    }
-                }
-            }
-        }
-
-        .right {
-            > .icon:first-child {
-                /* Remove the spacer icon. */
-                display: none;
-            }
-        }
-    }
-}
-
-.path-course-view.editing #region-main > .card-block {
-    padding-bottom: 13rem;
-}
-
-.path-course-view .completionprogress {
-    margin-left: 25px;
-}
-
-.path-course-view .completionprogress {
-    display: block;
-    float: right;
-    height: 20px;
-    position: relative;
-}
-
-#page-site-index .subscribelink {
-    text-align: right;
-}
-
-#site-news-forum h2,
-#frontpage-course-list h2,
-#frontpage-category-names h2,
-#frontpage-category-combo h2 {
-    margin-bottom: 9px;
-}
-
-.path-course-view a.reduce-sections {
-    padding-left: 0.2em;
-}
-
-.path-course-view .subscribelink {
-    text-align: right;
-}
-
-.path-course-view .unread {
-    margin-left: 30px;
-}
-
-.path-course-view .block.drag .header {
-    cursor: move;
-}
-
-.path-course-view .completionprogress {
-    text-align: right;
-}
-
-.path-course-view .single-section .completionprogress {
-    margin-right: 5px;
-}
-
-.path-course-view li.activity span.autocompletion img {
-    vertical-align: text-bottom;
-    margin-left: 0;
-}
-
-.path-course-view {
-    &.editing {
-        li.activity span.autocompletion img {
-            /* Use the same spacing as the filler. */
-            margin-right: $spacer * 0.5;
-            margin-left: $spacer * 0.5;
-        }
-    }
-}
-
-li.section.hidden span.commands a.editing_hide,
-li.section.hidden span.commands a.editing_show {
-    cursor: default;
-}
-
-.single-section-page .header-action {
-    display: inline-block;
-}
-
-input.titleeditor {
-    width: 330px;
-    vertical-align: text-bottom;
-}
-
-.automatic-completion-conditions {
-    .badge {
-        font-size: 100%;
-    }
-}
-
-// These are the new styles for the renewed course UI in isssue MDL-71691
-// once the old course renderers are removed in MDL-72656, all css related
-// to activities and sections above this commend needs to be reviewed an
-// possibly removed.
 
 /* Variables definition*/
 
@@ -553,6 +167,12 @@ $divider-hover-color: $primary !default;
             display: block;
         }
     }
+}
+
+/* Course content */
+
+.course-content ul.section-list {
+    padding: 0;
 }
 
 /* Course section */
@@ -707,8 +327,18 @@ $divider-hover-color: $primary !default;
     }
 }
 
+.single-section-page .header-action {
+    display: inline-block;
+}
+
+.course-content .single-section ul.topics li.section,
+.course-content .single-section ul.weeks li.section {
+    padding-top: 0;
+}
+
 /* Re-style ordered list in course content */
-.course-content .activity-altcontent {
+.course-content .section-item,
+.course-content .section-item .activity-item {
     ul {
         list-style: disc;
         ul {
@@ -727,6 +357,11 @@ $divider-hover-color: $primary !default;
     padding-top: map-get($spacers, 1);
     margin-top: map-get($spacers, 1);
     border-top: $border-width solid $border-color;
+    &.indented {
+        .activity-item {
+            margin-left: map-get($spacers, 3);
+        }
+    }
     // Custom styles for activity while editing and for the first activity card in the section.
     .editing &,
     .section &:first-child {
@@ -1171,13 +806,25 @@ $divider-hover-color: $primary !default;
 /* Home page course specific styles */
 
 .sitetopic {
-    // Hide the first activity top border.
-    .activity:first-of-type hr {
-        display: none;
-    }
     .section-item {
         margin-bottom: map-get($spacers, 4);
         @include border-radius();
+    }
+}
+
+#page-site-index .subscribelink {
+    text-align: right;
+}
+
+.path-course-view {
+    .subscribelink {
+        text-align: right;
+    }
+    .unread {
+        margin-left: 30px;
+    }
+    .block.drag .header {
+        cursor: move;
     }
 }
 

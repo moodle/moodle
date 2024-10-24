@@ -28128,106 +28128,7 @@ table.calendartable caption {
 /*
  * Course page styles.
  */
-.section .side {
-  margin-top: 0.5rem;
-}
-.section .side.left {
-  float: left;
-}
-.section .side.right {
-  float: right;
-  clear: right;
-}
-.section .spinner {
-  height: 16px;
-  width: 16px;
-}
-.section .activity {
-  /* The command block for each activity */
-}
-.section .activity .spinner {
-  left: 100%;
-  position: absolute;
-}
-.section .activity .actions {
-  position: absolute;
-  right: 0;
-  top: 0;
-  display: flex;
-}
-.section .activity .contentwithoutlink,
-.section .activity .activityinstance {
-  min-width: 40%;
-}
-.section .activity .contentwithoutlink > a,
-.section .activity .activityinstance > a {
-  display: inline-flex;
-  align-items: center;
-}
-.section .activity .contentwithoutlink .dimmed .activityicon,
-.section .activity .activityinstance .dimmed .activityicon {
-  opacity: 0.5;
-}
-.section .activity .stealth {
-  color: #6a737b;
-}
-.section .activity a.stealth,
-.section .activity a.stealth:hover {
-  color: #5babf2 !important; /* stylelint-disable-line declaration-no-important */
-}
-.section .activity.indented .activity-item {
-  margin-left: 1rem;
-}
-.section .label .contentwithoutlink,
-.section .label .activityinstance {
-  padding-right: 32px;
-  display: block;
-  height: inherit;
-}
-@media (min-width: 576px) {
-  .section .label .mod-indent-outer {
-    padding-left: 24px;
-    display: block;
-  }
-}
-.section .filler {
-  width: 16px;
-  height: 16px;
-  padding: 0;
-  margin: 0 0.5rem;
-  display: inline-block;
-}
-.section .activity.editor_displayed a.editing_title,
-.section .activity.editor_displayed .moodle-actionmenu {
-  display: none;
-}
-.section .activity.editor_displayed div.activityinstance {
-  padding-right: initial;
-}
-.section .activity.editor_displayed div.activityinstance input {
-  margin-bottom: initial;
-  padding-top: initial;
-  padding-bottom: initial;
-  vertical-align: text-bottom;
-}
-
-.section .activity .activityinstance {
-  display: inline-flex;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.editing .section .activity .contentwithoutlink,
-.editing .section .activity .activityinstance {
-  padding-right: 200px;
-}
-.editing .section .activity .mod-indent-outer {
-  /**
-   * Add appropriate padding such that nothing overlaps the
-   * absolute positioned move icon.
-   */
-  padding-left: 2rem;
-}
+/* Spinners */
 .editing .course-content .stateready .section .spinner {
   display: none;
 }
@@ -28272,41 +28173,7 @@ table.calendartable caption {
     transform: rotate(359deg);
   }
 }
-.editing_show + .editing_assign,
-.editing_hide + .editing_assign {
-  margin-left: 20px;
-}
-
-.section .activity .commands {
-  white-space: nowrap;
-  display: inline-block;
-}
-
-.section .activity.modtype_label.label {
-  font-weight: normal;
-}
-.section .activity.modtype_label.label .contentwithoutlink {
-  min-height: 0;
-}
-.section .activity.modtype_label.label.hasinfo p:last-child,
-.section .activity.modtype_label.label.hasinfo i:last-child {
-  margin-bottom: 0;
-}
-
-.section li.activity:not(.activity-wrapper) {
-  padding: 0.2em;
-  clear: both;
-}
-.section li.activity:not(.activity-wrapper).hasinfo {
-  border-bottom: 1px solid #dee2e6;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
-.section li.activity:not(.activity-wrapper).hasinfo:last-child {
-  border-bottom: 0;
-  padding-bottom: 0;
-}
-
+/* Drag and drop */
 .course-content .section.dropready.main.drop-down {
   border-bottom: 1px solid #1d2125;
 }
@@ -28328,26 +28195,7 @@ table.calendartable caption {
   margin-top: -1px;
 }
 
-.section .activity .activityinstance .groupinglabel {
-  padding-left: 30px;
-}
-
-.section.main:not(.course-section) .activity .availabilityinfo,
-.section.main:not(.course-section) .activity .contentafterlink {
-  margin-top: 0.5em;
-  margin-left: 30px;
-}
-
-.section .activity .contentafterlink p {
-  margin: 0.5em 0;
-}
-
-.editing .section.main:not(.course-section) .activity:hover,
-.editing .section.main:not(.course-section) .activity.action-menu-shown,
-.editing .section.main:not(.course-section) .sectionname:hover {
-  background-color: rgba(0, 0, 0, 0.03);
-}
-
+/* Highlight current section */
 .course-content .current {
   position: relative;
 }
@@ -28359,168 +28207,6 @@ table.calendartable caption {
   left: -8px;
   position: absolute;
   top: 0;
-}
-
-.course-content ul li.section.hidden:not(.course-section) .sectionname > span,
-.course-content ul li.section.hidden:not(.course-section) .content > div.summary,
-.course-content ul li.section.hidden:not(.course-section) .activity .activityinstance {
-  color: #6a737b;
-}
-
-.course-content ul.topics,
-.course-content ul.weeks {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-.course-content ul.topics li.section .content,
-.course-content ul.weeks li.section .content {
-  margin: 0;
-  padding: 0;
-}
-@media (min-width: 576px) {
-  .course-content ul.topics li.section .summary,
-  .course-content ul.topics li.section .content > .availabilityinfo,
-  .course-content ul.weeks li.section .summary,
-  .course-content ul.weeks li.section .content > .availabilityinfo {
-    margin-left: 25px;
-  }
-}
-.course-content ul.topics li.section .left,
-.course-content ul.topics li.section .right,
-.course-content ul.weeks li.section .left,
-.course-content ul.weeks li.section .right {
-  padding: 0 6px 0;
-  text-align: right;
-  width: auto;
-}
-
-.course-content .single-section ul.topics li.section,
-.course-content .single-section ul.weeks li.section {
-  padding-top: 0;
-}
-
-@media (max-width: 767.98px) {
-  body:not(.editing) .course-content ul.topics li.section .left,
-  body:not(.editing) .course-content ul.topics li.section .right,
-  body:not(.editing) .course-content ul.weeks li.section .left,
-  body:not(.editing) .course-content ul.weeks li.section .right {
-    display: none;
-  }
-}
-.course-content {
-  margin-top: 0;
-}
-
-.course-content .hidden {
-  display: none;
-}
-
-@media (max-width: 767.98px) {
-  .course-content li.section:not(.course-section) ul {
-    padding-left: 0;
-  }
-}
-.course-content li.section:not(.course-section) ul {
-  list-style: disc;
-}
-.course-content li.section:not(.course-section) ul ul {
-  list-style: circle;
-}
-.course-content li.section:not(.course-section) ul ul ul {
-  list-style: square;
-}
-.course-content li.section:not(.course-section) li.activity ul {
-  list-style: disc;
-}
-.course-content li.section:not(.course-section) li.activity ul ul {
-  list-style: circle;
-}
-.course-content li.section:not(.course-section) li.activity ul ul ul {
-  list-style: square;
-}
-.course-content li.section:not(.course-section) .right > .icon:first-child {
-  /* Remove the spacer icon. */
-  display: none;
-}
-
-.path-course-view.editing #region-main > .card-block {
-  padding-bottom: 13rem;
-}
-
-.path-course-view .completionprogress {
-  margin-left: 25px;
-}
-
-.path-course-view .completionprogress {
-  display: block;
-  float: right;
-  height: 20px;
-  position: relative;
-}
-
-#page-site-index .subscribelink {
-  text-align: right;
-}
-
-#site-news-forum h2,
-#frontpage-course-list h2,
-#frontpage-category-names h2,
-#frontpage-category-combo h2 {
-  margin-bottom: 9px;
-}
-
-.path-course-view a.reduce-sections {
-  padding-left: 0.2em;
-}
-
-.path-course-view .subscribelink {
-  text-align: right;
-}
-
-.path-course-view .unread {
-  margin-left: 30px;
-}
-
-.path-course-view .block.drag .header {
-  cursor: move;
-}
-
-.path-course-view .completionprogress {
-  text-align: right;
-}
-
-.path-course-view .single-section .completionprogress {
-  margin-right: 5px;
-}
-
-.path-course-view li.activity span.autocompletion img {
-  vertical-align: text-bottom;
-  margin-left: 0;
-}
-
-.path-course-view.editing li.activity span.autocompletion img {
-  /* Use the same spacing as the filler. */
-  margin-right: 0.5rem;
-  margin-left: 0.5rem;
-}
-
-li.section.hidden span.commands a.editing_hide,
-li.section.hidden span.commands a.editing_show {
-  cursor: default;
-}
-
-.single-section-page .header-action {
-  display: inline-block;
-}
-
-input.titleeditor {
-  width: 330px;
-  vertical-align: text-bottom;
-}
-
-.automatic-completion-conditions .badge {
-  font-size: 100%;
 }
 
 /* Variables definition*/
@@ -28537,6 +28223,11 @@ input.titleeditor {
 }
 .section-collapsemenu.collapsed .expandall {
   display: block;
+}
+
+/* Course content */
+.course-content ul.section-list {
+  padding: 0;
 }
 
 /* Course section */
@@ -28651,14 +28342,26 @@ input.titleeditor {
   border: none;
 }
 
+.single-section-page .header-action {
+  display: inline-block;
+}
+
+.course-content .single-section ul.topics li.section,
+.course-content .single-section ul.weeks li.section {
+  padding-top: 0;
+}
+
 /* Re-style ordered list in course content */
-.course-content .activity-altcontent ul {
+.course-content .section-item ul,
+.course-content .section-item .activity-item ul {
   list-style: disc;
 }
-.course-content .activity-altcontent ul ul {
+.course-content .section-item ul ul,
+.course-content .section-item .activity-item ul ul {
   list-style: circle;
 }
-.course-content .activity-altcontent ul ul ul {
+.course-content .section-item ul ul ul,
+.course-content .section-item .activity-item ul ul ul {
   list-style: square;
 }
 
@@ -28668,6 +28371,9 @@ input.titleeditor {
   padding-top: 0.25rem;
   margin-top: 0.25rem;
   border-top: 1px solid #dee2e6;
+}
+.activity.indented .activity-item {
+  margin-left: 1rem;
 }
 .editing .activity, .section .activity:first-child {
   padding-top: 0;
@@ -29450,12 +29156,23 @@ input.titleeditor {
 }
 
 /* Home page course specific styles */
-.sitetopic .activity:first-of-type hr {
-  display: none;
-}
 .sitetopic .section-item {
   margin-bottom: 1.5rem;
   border-radius: 0.5rem;
+}
+
+#page-site-index .subscribelink {
+  text-align: right;
+}
+
+.path-course-view .subscribelink {
+  text-align: right;
+}
+.path-course-view .unread {
+  margin-left: 30px;
+}
+.path-course-view .block.drag .header {
+  cursor: move;
 }
 
 /* Styles for the Move activity and Move section modals */
