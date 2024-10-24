@@ -102,11 +102,16 @@ export default class Component extends DndCmItem {
         }
         // Add anchor logic if the element is not user visible or the element hasn't URL.
         if (!cm.uservisible || !cm.url) {
+            const element = this.getElement(this.selectors.CM_NAME);
             this.addEventListener(
-                this.getElement(this.selectors.CM_NAME),
+                element,
                 'click',
                 this._activityAnchor,
             );
+            // If the element is not user visible we also need to update the anchor link including the section page.
+            if (!document.getElementById(cm.anchor)) {
+                element.setAttribute('href', this._getActivitySectionURL(cm));
+            }
         }
     }
 
@@ -206,13 +211,28 @@ export default class Component extends DndCmItem {
             return;
         }
         // If the element is not present in the page we need to go to the specific section.
-        const course = this.reactive.get('course');
-        const section = this.reactive.get('section', cm.sectionid);
-        if (!section) {
-            return;
-        }
-        const url = `${course.baseurl}&section=${section.number}#${cm.anchor}`;
         event.preventDefault();
-        window.location = url;
+        window.location = this._getActivitySectionURL(cm);
+    }
+
+    /**
+     * Get the anchor link in section page for the cm.
+     *
+     * @param {Object} cm the course module data.
+     * @return {String} the anchor link.
+     */
+    _getActivitySectionURL(cm) {
+        let section = this.reactive.get('section', cm.sectionid);
+
+        // If the section is delegated get its parent section if it has one.
+        if (section.component && section.parentsectionid) {
+            section = this.reactive.get('section', section.parentsectionid);
+        }
+
+        if (!section) {
+            return '#';
+        }
+
+        return `${section.sectionurl}#${cm.anchor}`;
     }
 }
