@@ -2045,6 +2045,19 @@ dd:after {
             left: 0;
             right: auto;
             white-space: nowrap;
+            position: absolute;
+            top: 0;
+            font-size: $font-size-sm;
+            padding: .1em .4em;
+            text-decoration: none;
+            z-index: 9999;
+            border: $alert-border-width solid transparent;
+            width: fit-content;
+            @include alert-variant(
+                shift-color($info, $alert-bg-scale),
+                shift-color($info, $alert-border-scale),
+                shift-color($info, $alert-color-scale)
+            );
         }
         @include media-breakpoint-up(sm) {
             input {

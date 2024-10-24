@@ -1,6 +1,9 @@
 // Import Boost Core moodle CSS
 @import "../../boost/scss/moodle";
 
+// Import Specific Classic theme moodle CSS
+@import "classic/course.scss";
+
 img.userpicture {
     margin-right: 0.5rem;
 }
