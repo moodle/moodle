@@ -1268,5 +1268,40 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024112900.01);
     }
 
+    if ($oldversion < 2024112900.02) {
+
+        // Structure to collect current user filter preferences.
+        $userfilterdata = [];
+
+        $select = $DB->sql_like('name', '?');
+        $params = [$DB->sql_like_escape('reportbuilder-report-') . '%'];
+
+        $preferences = $DB->get_records_select('user_preferences', $select, $params, 'userid, name');
+        foreach ($preferences as $preference) {
+            preg_match('/^reportbuilder-report-(?<reportid>\d+)-/', $preference->name, $matches);
+            $userfilterdata[$preference->userid][$matches['reportid']][] = $preference->value;
+        }
+
+        // Migrate user filter preferences to new schema (combining previously chunked values due to size limitation).
+        foreach ($userfilterdata as $userid => $reportfilterdata) {
+            foreach ($reportfilterdata as $reportid => $filterdata) {
+                $DB->insert_record('reportbuilder_user_filter', (object) [
+                    'reportid' => $reportid,
+                    'filterdata' => implode('', $filterdata),
+                    'usercreated' => $userid,
+                    'usermodified' => $userid,
+                    'timecreated' => time(),
+                    'timemodified' => time(),
+                ]);
+            }
+        }
+
+        // Clean up old user filter preferences.
+        $DB->delete_records_select('user_preferences', $select, $params);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024112900.02);
+    }
+
     return true;
 }
