@@ -49,7 +49,7 @@ class cm implements named_templatable, renderable {
     protected $format;
 
     /** @var section_info the section object */
-    private $section;
+    protected $section;
 
     /** @var cm_info the course module instance */
     protected $mod;
