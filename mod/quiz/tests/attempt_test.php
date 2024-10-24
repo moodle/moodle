@@ -308,7 +308,7 @@ class attempt_test extends \advanced_testcase {
         $this->assertEquals(true, $quizobj->is_participant($USER->id),
             'Admin is enrolled and can participate');
 
-        $this->getDataGenerator()->enrol_user(2, $course->id, [], 'manual', 0, 0, ENROL_USER_SUSPENDED);
+        $this->getDataGenerator()->enrol_user(2, $course->id, null, 'manual', 0, 0, ENROL_USER_SUSPENDED);
         $this->assertEquals(true, $quizobj->is_participant($USER->id),
             'Admin is enrolled, suspended and can participate');
     }
