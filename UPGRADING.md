@@ -6,6 +6,33 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
+## 4.5+
+
+### core
+
+#### Changed
+
+- All uses of the following PHPUnit methods have been removed as these methods are
+  deprecated upstream without direct replacement:
+
+  - `withConsecutive`
+  - `willReturnConsecutive`
+  - `onConsecutive`
+
+  Any plugin using these methods must update their uses.
+
+  For more information see [MDL-81308](https://tracker.moodle.org/browse/MDL-81308)
+
+### core_enrol
+
+#### Changed
+
+- The `after_user_enrolled` hook now contains a `roleid` property to allow for listeners to determine which role was assigned during user enrolment (if any)
+
+  The base enrolment `enrol_plugin::send_course_welcome_message_to_user` method also now accepts a `$roleid` parameter in order to correctly populate the `courserole` placeholder
+
+  For more information see [MDL-83432](https://tracker.moodle.org/browse/MDL-83432)
+
 ## 4.5
 
 ### core

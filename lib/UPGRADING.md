@@ -1,5 +1,20 @@
 # core (subsystem) Upgrade notes
 
+## 4.5+
+
+### Changed
+
+- All uses of the following PHPUnit methods have been removed as these methods are
+  deprecated upstream without direct replacement:
+
+  - `withConsecutive`
+  - `willReturnConsecutive`
+  - `onConsecutive`
+
+  Any plugin using these methods must update their uses.
+
+  For more information see [MDL-81308](https://tracker.moodle.org/browse/MDL-81308)
+
 ## 4.5
 
 ### Added
