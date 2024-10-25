@@ -442,13 +442,21 @@ class repository_onedrive extends repository {
 
         $base = 'https://graph.microsoft.com/v1.0/';
 
-        $sourceurl = new moodle_url($base . 'me/drive/items/' . $sourceinfo->id . '/content');
-        $source = $sourceurl->out(false);
+        // Fetch the item info.
+        $infourl = (new moodle_url($base . 'me/drive/items/' . $sourceinfo->id))->out(false);
+        $response = $client->get($infourl);
+        if (!$response) {
+            throw new repository_exception('cannotdownload', 'repository');
+        }
+        $response = json_decode($response, true);
+        $downloadurl = $response['@microsoft.graph.downloadUrl'];
 
         // We use download_one and not the rest API because it has special timeouts etc.
         $path = $this->prepare_file($filename);
         $options = ['filepath' => $path, 'timeout' => 15, 'followlocation' => true, 'maxredirs' => 5];
-        $result = $client->download_one($source, null, $options);
+        // We cannot send authorization headers in the direct download request, it will fail.
+        $c = new curl();
+        $result = $c->download_one($downloadurl, null, $options);
 
         if ($result) {
             @chmod($path, $CFG->filepermissions);
@@ -870,16 +878,25 @@ class repository_onedrive extends repository {
 
         $systemservice = new repository_onedrive\rest($systemauth);
 
+        $base = 'https://graph.microsoft.com/v1.0/';
+
+        // Fetch the item info.
+        $infourl = (new moodle_url($base . 'me/drive/items/' . $source->id))->out(false);
+        $response = $userauth->get($infourl);
+        if (!$response) {
+            throw new repository_exception('cannotdownload', 'repository');
+        }
+        $response = json_decode($response, true);
+        $downloadurl = $response['@microsoft.graph.downloadUrl'];
+
         // Download the file.
         $tmpfilename = clean_param($source->id, PARAM_PATH);
         $temppath = make_request_directory() . $tmpfilename;
 
+        // We cannot send authorization headers in the direct download request, it will fail.
+        $c = new curl();
         $options = ['filepath' => $temppath, 'timeout' => 60, 'followlocation' => true, 'maxredirs' => 5];
-        $base = 'https://graph.microsoft.com/v1.0/';
-        $sourceurl = new moodle_url($base . 'me/drive/items/' . $source->id . '/content');
-        $sourceurl = $sourceurl->out(false);
-
-        $result = $userauth->download_one($sourceurl, null, $options);
+        $result = $c->download_one($downloadurl, null, $options);
 
         if (!$result) {
             throw new repository_exception('cannotdownload', 'repository');
