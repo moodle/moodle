@@ -54,6 +54,14 @@ class block_iomad_html extends block_base {
         if (!empty($this->config->companies)) {
             // Check the user's company against this.
             $companyid = iomad::get_my_companyid(context_system::instance(), false);
+
+            // is the companyid valid?
+            if ($companyid < 1) {
+                // No company.
+                return;
+            }
+
+            // Get the company context.
             $companycontext = \core\context\company::instance($companyid);
             if (!iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)) {
                 if (!in_array($companyid, $this->config->companies)) {
