@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\external;
 
 use advanced_testcase;
+use core_customfield_generator;
 use core_reportbuilder_generator;
 use core_user\reportbuilder\datasource\users;
 
@@ -39,13 +40,26 @@ final class custom_report_details_exporter_test extends advanced_testcase {
         global $PAGE;
 
         $this->resetAfterTest();
+        $this->setAdminUser();
 
-        $user = $this->getDataGenerator()->create_user();
-        $this->setUser($user);
+        /** @var core_customfield_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_customfield');
+        $category = $generator->create_category(['component' => 'core_reportbuilder', 'area' => 'report']);
+        $generator->create_field([
+            'categoryid' => $category->get('id'),
+            'name' => 'My field',
+            'shortname' => 'myfield',
+            'type' => 'number',
+        ]);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
-        $report = $generator->create_report(['name' => 'My report', 'source' => users::class, 'tags' => ['cat', 'dog']]);
+        $report = $generator->create_report([
+            'name' => 'My report',
+            'source' => users::class,
+            'tags' => ['cat', 'dog'],
+            'customfield_myfield' => 42,
+        ]);
 
         $exporter = new custom_report_details_exporter($report);
         $export = $exporter->export($PAGE->get_renderer('core_reportbuilder'));
@@ -62,8 +76,12 @@ final class custom_report_details_exporter_test extends advanced_testcase {
         $this->assertObjectHasProperty('tags', $export);
         $this->assertEquals(['cat', 'dog'], array_column($export->tags, 'name'));
 
+        // We use the custom field exporter for report custom fields.
+        $this->assertObjectHasProperty('customfields', $export);
+        $this->assertEquals(['42'], array_column($export->customfields->data, 'value'));
+
         // We use the user exporter for the modifier of the report.
         $this->assertObjectHasProperty('modifiedby', $export);
-        $this->assertEquals(fullname($user), $export->modifiedby->fullname);
+        $this->assertEquals('Admin User', $export->modifiedby->fullname);
     }
 }

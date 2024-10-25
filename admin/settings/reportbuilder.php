@@ -64,3 +64,15 @@ $settings->add(new admin_setting_configcheckbox(
     new lang_string('customreportsliveediting_desc', 'core_reportbuilder'), 1));
 
 $ADMIN->add('reportbuilder', $settings);
+
+$ADMIN->add(
+    'reportbuilder', new accesscallback(
+        'reportbuildercustomfields',
+        get_string('reportbuildercustomfields', 'core_reportbuilder'),
+        (new moodle_url('/reportbuilder/customfield.php'))->out(),
+        static function(): bool {
+            return has_capability('moodle/reportbuilder:configurecustomfields', context_system::instance());
+        },
+        empty($CFG->enablecustomreports)
+    )
+);

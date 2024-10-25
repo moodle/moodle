@@ -19,11 +19,11 @@ declare(strict_types=1);
 namespace core_reportbuilder\external\reports;
 
 use context_system;
+use core_customfield_generator;
 use core_reportbuilder_generator;
 use core_external\external_api;
 use externallib_advanced_testcase;
 use core_reportbuilder\exception\report_access_exception;
-use core_reportbuilder\local\models\report;
 use core_user\reportbuilder\datasource\users;
 
 defined('MOODLE_INTERNAL') || die();
@@ -48,11 +48,26 @@ final class listing_test extends externallib_advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
+        /** @var core_customfield_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_customfield');
+        $category = $generator->create_category(['component' => 'core_reportbuilder', 'area' => 'report']);
+        $generator->create_field([
+            'categoryid' => $category->get('id'),
+            'name' => 'My field',
+            'shortname' => 'myfield',
+            'type' => 'number',
+        ]);
+
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
 
         // Create three reports.
-        $reportone = $generator->create_report(['name' => 'Report one', 'source' => users::class, 'tags' => ['cat', 'dog']]);
+        $reportone = $generator->create_report([
+            'name' => 'Report one',
+            'source' => users::class,
+            'tags' => ['cat', 'dog'],
+            'customfield_myfield' => 42,
+        ]);
         $reporttwo = $generator->create_report(['name' => 'Report two', 'source' => users::class]);
         $reportthree = $generator->create_report(['name' => 'Report three', 'source' => users::class]);
 
@@ -75,6 +90,12 @@ final class listing_test extends externallib_advanced_testcase {
             ['cat', 'dog'],
             [],
         ], array_map(fn(array $tags) => array_column($tags, 'name'), $tagscolumn));
+
+        $customfieldscolumn = array_column($result['reports'], 'customfields');
+        $this->assertEquals([
+            ['42'],
+            [null],
+        ], array_map(fn(array $customfields) => array_column($customfields['data'], 'value'), $customfieldscolumn));
 
         $this->assertEmpty($result['warnings']);
     }
