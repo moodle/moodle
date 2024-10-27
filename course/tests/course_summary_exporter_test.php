@@ -61,7 +61,7 @@ class course_summary_exporter_test extends \advanced_testcase {
             'filepath' => '/',
         ];
         $fs = get_file_storage();
-        $fs->create_file_from_string($filerecord, file_get_contents(__DIR__ . '/fixtures/image.jpg'));
+        $fs->create_file_from_string($filerecord, file_get_contents(self::get_fixture_path(__NAMESPACE__, 'image.jpg')));
         $course = $this->getDataGenerator()->create_course(['overviewfiles_filemanager' => $draftid]);
         $coursecontext = context_course::instance($course->id);
 

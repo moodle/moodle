@@ -967,8 +967,14 @@ class course_test extends \advanced_testcase {
         // Restore from a file, checking that the file takes priority over the templatecourse.
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
         $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
-        $data = array('shortname' => 'A1', 'backupfile' => __DIR__ . '/fixtures/backup.mbz',
-            'summary' => 'A', 'category' => 1, 'fullname' => 'A1', 'templatecourse' => $c1->shortname);
+        $data = [
+            'shortname' => 'A1',
+            'backupfile' => self::get_fixture_path(__NAMESPACE__, 'backup.mbz'),
+            'summary' => 'A',
+            'category' => 1,
+            'fullname' => 'A1',
+            'templatecourse' => $c1->shortname,
+        ];
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
         $this->assertTrue($co->prepare());
         $co->proceed();
@@ -986,8 +992,13 @@ class course_test extends \advanced_testcase {
         $this->assertTrue($found);
 
         // Restoring twice from the same file should work.
-        $data = array('shortname' => 'B1', 'backupfile' => __DIR__ . '/fixtures/backup.mbz',
-            'summary' => 'B', 'category' => 1, 'fullname' => 'B1');
+        $data = [
+            'shortname' => 'B1',
+            'backupfile' => self::get_fixture_path(__NAMESPACE__, 'backup.mbz'),
+            'summary' => 'B',
+            'category' => 1,
+            'fullname' => 'B1',
+        ];
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
         $this->assertTrue($co->prepare());
         $co->proceed();
@@ -1020,8 +1031,14 @@ class course_test extends \advanced_testcase {
 
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
         $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
-        $data = array('shortname' => 'A1', 'backupfile' => __DIR__ . '/fixtures/backup.mbz',
-            'summary' => 'A', 'category' => 1, 'fullname' => 'A1', 'templatecourse' => $c1->shortname);
+        $data = [
+            'shortname' => 'A1',
+            'backupfile' => self::get_fixture_path(__NAMESPACE__, 'backup.mbz'),
+            'summary' => 'A',
+            'category' => 1,
+            'fullname' => 'A1',
+            'templatecourse' => $c1->shortname,
+        ];
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
         $this->assertTrue($co->prepare());
         $co->proceed();

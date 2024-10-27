@@ -171,7 +171,7 @@ class template_test extends \advanced_testcase {
         $data->name = 'Test name';
         $data->description = 'Test description';
         $data->enabled = 1;
-        $data->content = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
+        $data->content = file_get_contents(self::get_fixture_path(__NAMESPACE__, 'unencrypted.seb'));
         $template = new template(0, $data);
         $template->save();
 
