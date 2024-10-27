@@ -48,7 +48,7 @@ class user_search_form extends moodleform {
     protected $validonly;
 
     public function definition() {
-        global $CFG, $DB, $USER, $SESSION;
+        global $CFG, $DB, $USER, $SESSION, $companycontext;
 
         if (!empty($this->_customdata['useshowall'])) {
             $useshowall = true;
@@ -190,7 +190,7 @@ class user_search_form extends moodleform {
             $mform->addElement('select', 'usertype', get_string('usertype', 'block_iomad_company_admin'), $usertypearray);
         }
 
-        if (iomad::has_capability('block/iomad_company_admin:viewsuspendedusers', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:viewsuspendedusers', $companycontext)) {
             $mform->addElement('checkbox', 'showsuspended', get_string('show_suspended_users', 'local_iomad'));
         } else {
             $mform->addElement('hidden', 'showsuspended');
