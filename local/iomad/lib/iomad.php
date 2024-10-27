@@ -880,14 +880,18 @@ class iomad {
                 $paramarray = array();
                 if ($fields[$id]->datatype == "menu" ) {
                     $paramarray = explode("\n", $fields[$id]->param1);
+                    if (${$fieldname} == "-1") {
+                        // Ignore this and continue;
+                        continue;
+                    }
                     if (!empty($paramarray[${$fieldname}])) {
                         ${$fieldname} = $paramarray[${$fieldname}];
                     }
                 }
                 if (!empty(${$fieldname}) ) {
                     $idlist[0] = "We found no one";
-                    $fieldsql = $DB->sql_compare_text('data')." like '%".${$fieldname}."%' AND fieldid = $id";
-                    if ($idfields = $DB->get_records_sql("SELECT userid from {user_info_data} WHERE $fieldsql")) {
+                    $fieldsql = $DB->sql_like('data', ':fieldname')." AND fieldid = :fieldid";
+                    if ($idfields = $DB->get_records_sql("SELECT userid from {user_info_data} WHERE $fieldsql", ['fieldname' => '%'.${$fieldname} . '%', 'fieldid' => $id])) {
                         $fieldids[] = $idfields;
                     }
                     if (!empty($paramarray)) {

@@ -428,13 +428,16 @@ if (!$table->is_downloading()) {
             $options['adddodownload'] = false;
             $options['emailfromraw'] = $emailfrom;
             $options['emailtoraw'] = $emailto;
-            $mform = new iomad_user_filter_form(null, $options);
+            $mform = new \local_iomad\forms\user_search_form(null, $options);
             $mform->set_data(array('departmentid' => $departmentid));
             $mform->set_data($options);
             $mform->get_data();
 
             // Display the user filter form.
+            echo html_writer::start_tag('div', ['class' => 'iomadusersearchform']);
             $mform->display();
+            echo html_writer::end_tag('div');
+            echo html_writer::start_tag('div', array('class' => 'iomadclear'));
         }
     }
 }

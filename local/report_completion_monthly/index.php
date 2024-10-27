@@ -33,6 +33,7 @@ $page         = optional_param('page', 0, PARAM_INT);
 // How many per page.
 $perpage      = optional_param('perpage', 30, PARAM_INT);
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
+$coursesearch = optional_param('coursesearch', '', PARAM_CLEAN);// Search string.
 $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $courseid    = optional_param('courseid', 1, PARAM_INTEGER);
 $fromraw = optional_param_array('compfromraw', null, PARAM_INT);
@@ -56,6 +57,9 @@ if ($perpage) {
 }
 if ($search) {
     $params['search'] = $search;
+}
+if ($coursesearch) {
+    $params['coursesearch'] = $coursesearch;
 }
 if ($departmentid) {
     $params['deptid'] = $departmentid;
@@ -119,6 +123,21 @@ if (!empty($yearfrom)) {
 }
 
 require_login();
+// Get course customfields.
+$usedfields = [];
+$customfields = $DB->get_records_sql("SELECT cff.* FROM
+                                      {customfield_field} cff 
+                                      JOIN {customfield_category} cfc ON (cff.categoryid = cfc.id)
+                                      WHERE cfc.area = 'course'
+                                      AND cfc.component = 'core_course'
+                                      ORDER BY cfc.sortorder, cff.sortorder");
+foreach ($customfields as $customfield) {
+    ${'customfield_' . $customfield->shortname} = optional_param('customfield_' . $customfield->shortname, null, PARAM_ALPHANUMEXT);
+    if (!empty(${'customfield_' . $customfield->shortname})) {
+        $params['customfield_' . $customfield->shortname] = ${'customfield_' . $customfield->shortname};
+        $usedfields[$customfield->id] = ${'customfield_' . $customfield->shortname};
+    }
+}
 
 $systemcontext = context_system::instance();
 
@@ -225,52 +244,90 @@ if ($courseid == 1) {
     $searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, false, false);
 }
 
-$companycourselist = $company->get_menu_courses(true, false, false, false);
-$courselist = array(1 => get_string('all')) + $companycourselist;
+$allcompanycourses = $company->get_menu_courses(true, false, false, false, false);
+$courselistsql = "";
+$coursesearchparams = [];
+if (!empty($allcompanycourses)) {
+    $courselistsql = " AND ic.courseid IN (" . implode(',', array_keys($allcompanycourses)) . ")";
+}
 
-$selectparams = $params;
-$selecturl = new moodle_url('/local/report_completion_monthly/index.php', $selectparams);
-$select = new single_select($selecturl, 'courseid', $courselist, $courseid);
-$select->label = get_string('course');
-$select->formid = 'shoosecourse';
-$courseselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_course_selector'));
+// Course name search.
+if (!empty($coursesearch)) {
+    $courselistsql .= " AND " . $DB->sql_like('c.fullname', ':coursename', false, false);
+    $coursesearchparams['coursename'] = "%" . $coursesearch . "%";
+}
 
-// Set up the filter form.
+// Deal with any custom course field searches.
+$fieldcourseids = [];
+if (!empty($usedfields)) {
+    $foundfields = [];
+    foreach ($usedfields as $fieldid => $fieldsearchvalue) {
+        if ($customfields[$fieldid]->type == 'text' || $customfields[$fieldid]->type == 'text' ) {
+            $fieldsql = "fieldid = :fieldid AND " . $DB->sql_like('value', ':fieldsearchvalue');
+            $fieldsearchvalue = '%' . $fieldsearchvalue . '%';
+        } else {
+            $fieldsql = "value = :fieldsearchvalue AND fieldid = :fieldid";
+        }
+        $foundfields[] = $DB->get_records_sql("SELECT instanceid FROM {customfield_data} WHERE $fieldsql", ['fieldsearchvalue' => $fieldsearchvalue, 'fieldid' => $fieldid]);
+    }
+
+    // Sort the keys to be unique.
+    $fieldcourseids = array_pop($foundfields);
+    if (!empty($foundfields)) {
+        foreach ($foundfields as $foundfield) {
+            $fieldcourseids = array_intersect_key($fieldcourseids, $foundfield);
+            if (empty($fieldcourseids)) {
+                break;
+            }
+        }
+    }
+    if (empty($fieldcourseids)) {
+        $fieldcourseids[0] = "We didn't find any courses";
+    }
+    $courselistsql .= " AND c.id IN (" . join(',', array_keys($fieldcourseids)) . ")"; 
+}
+
+$courselist = $DB->get_records_sql("SELECT ic.courseid, c.fullname FROM {iomad_courses} ic
+                                    JOIN {course} c ON (ic.courseid = c.id)
+                                    WHERE 1=1 $courselistsql
+                                    ORDER BY c.fullname", $coursesearchparams);
+
+
+// Set up the filter forms
 $params['yearonly'] = true;
-$mform = new iomad_date_filter_form($baseurl, $params);
+$mform = new \local_iomad\forms\date_search_form($baseurl, $params);
 $mform->set_data(array('departmentid' => $departmentid));
 $options = $params;
 $options['compfromraw'] = $from;
 $options['comptoraw'] = $to;
 $mform->set_data($options);
 $mform->get_data();
+$coursesform = new \local_iomad\forms\course_search_form($baseurl, $params);
+
 
 // Display the tree selector thing.
 echo $output->display_tree_selector($company, $parentlevel, $linkurl, $params, $departmentid);
-echo html_writer::start_tag('div', array('class' => 'iomadclear', 'style' => 'padding-top: 5px;'));
+echo html_writer::start_tag('div', array('class' => 'iomadclear controlitems', 'style' => 'padding-top: 5px;'));
 
-echo html_writer::start_tag('div', array('class' => 'iomadclear controlitems'));
-
-if (empty($courselist)) {
+// Display the course selector.
+echo html_writer::start_tag('div', array('class' => 'iomadcoursesearchform'));
+$coursesform->display();
 echo html_writer::end_tag('div');
-    echo get_string('nocourses', 'block_iomad_company_admin');
+
+// Display the user filter form.
+echo html_writer::start_tag('div', array('class' => 'iomaddatesearchform'));
+$mform->display();
+echo html_writer::end_tag('div');
+
+// Are there any courses?
+if (empty($courselist)) {
+    echo html_writer::end_tag('div');
+    echo html_writer::tag('div', get_string('nocourses', 'block_iomad_company_admin'), ['class' => 'chart-area']);
     echo $output->footer();
     die;
 }
 
-// Display the course selector.
-echo $courseselectoutput;
-
-// Display the user filter form.
-$mform->display();
 echo html_writer::end_tag('div');
-echo html_writer::end_tag('div');
-
-if (empty($CFG->loginhttps)) {
-    $securewwwroot = $CFG->wwwroot;
-} else {
-    $securewwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
-}
 
 $returnurl = $CFG->wwwroot."/local/report_completion_monthly/index.php";
 

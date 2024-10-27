@@ -171,6 +171,22 @@ $params['showpercentage'] = $showpercentage;
 $params['validonly'] = $validonly;
 $params['userid'] = $userid;
 
+// Get course customfields.
+$usedfields = [];
+$customfields = $DB->get_records_sql("SELECT cff.* FROM
+                                      {customfield_field} cff 
+                                      JOIN {customfield_category} cfc ON (cff.categoryid = cfc.id)
+                                      WHERE cfc.area = 'course'
+                                      AND cfc.component = 'core_course'
+                                      ORDER BY cfc.sortorder, cff.sortorder");
+foreach ($customfields as $customfield) {
+    ${'customfield_' . $customfield->shortname} = optional_param('customfield_' . $customfield->shortname, null, PARAM_ALPHANUMEXT);
+    if (!empty(${'customfield_' . $customfield->shortname})) {
+        $params['customfield_' . $customfield->shortname] = ${'customfield_' . $customfield->shortname};
+        $usedfields[$customfield->id] = ${'customfield_' . $customfield->shortname};
+    }
+}
+
 // Deal with edit buttons.
 if ($edit != -1) {
     $USER->editing = $edit;
@@ -636,11 +652,11 @@ if (empty($courseid)) {
         $showchartslink = new moodle_url($url, $showchartsparams);
         $buttons = $buttons ."&nbsp" . $output->single_button($showchartslink, $showchartsstring);
 
-        $mform = new iomad_course_search_form($url, $params);
+        $mform = new \local_iomad\forms\course_search_form($url, $params);
         $mform->set_data($params);
 
         // Set up the date filter form.
-        $datemform = new iomad_date_filter_form($url, $params);
+        $datemform = new \local_iomad\forms\date_search_form($url, $params);
         $datemform->set_data(array('departmentid' => $departmentid));
         $options = $params;
         $options['compfromraw'] = $from;
@@ -658,11 +674,11 @@ if (empty($courseid)) {
         // Display the department selector.
         $selectorparams['showsummary'] = false;
         echo $output->display_tree_selector($company, $parentlevel, $selecturl, $selectparams, $departmentid, $viewchildren);
-        echo html_writer::start_tag('div', array('class' => 'reporttablecontrols', 'style' => 'padding-left: 15px'));
-        echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
+        echo html_writer::start_tag('div', array('class' => 'completion_search_forms', 'style' => 'padding-left: 15px'));
+        echo html_writer::start_tag('div', array('class' => 'iomadcoursesearchform'));
         $mform->display();
         echo html_writer::end_tag('div');
-        echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol', 'style' => 'padding-left: 30px'));
+        echo html_writer::start_tag('div', array('class' => 'iomaddatesearchform', 'style' => 'padding-left: 30px'));
         $datemform->display();
         echo html_writer::end_tag('div');
         echo html_writer::end_tag('div');
@@ -675,6 +691,36 @@ if (empty($courseid)) {
         $searchparams['coursename'] = "%" . $coursesearch . "%";
     } else {
         $coursesearchsql = " AND courseid IN (" . join(',', array_keys($company->get_menu_courses(true))) . ") ";
+    }
+
+    // Deal with any custom field searches.
+    $fieldcourseids = [];
+    if (!empty($usedfields)) {
+        $foundfields = [];
+        foreach ($usedfields as $fieldid => $fieldsearchvalue) {
+            if ($customfields[$fieldid]->type == 'text' || $customfields[$fieldid]->type == 'text' ) {
+                $fieldsql = "fieldid = :fieldid AND " . $DB->sql_like('value', ':fieldsearchvalue');
+                $fieldsearchvalue = '%' . $fieldsearchvalue . '%';
+            } else {
+                $fieldsql = "value = :fieldsearchvalue AND fieldid = :fieldid";
+            }
+            $foundfields[] = $DB->get_records_sql("SELECT instanceid FROM {customfield_data} WHERE $fieldsql", ['fieldsearchvalue' => $fieldsearchvalue, 'fieldid' => $fieldid]);
+        }
+
+        // Sort the keys to be unique.
+        $fieldcourseids = array_pop($foundfields);
+        if (!empty($foundfields)) {
+            foreach ($foundfields as $foundfield) {
+                $fieldcourseids = array_intersect_key($fieldcourseids, $foundfield);
+                if (empty($fieldcourseids)) {
+                    break;
+                }
+            }
+        }
+        if (empty($fieldcourseids)) {
+            $fieldcourseids[0] = "We didn't find any courses";
+        }
+        $coursesearchsql .= " AND courseid IN (" . join(',', array_keys($fieldcourseids)) . ")"; 
     }
 
     // Set up the SQL for the table.
@@ -1050,7 +1096,7 @@ if (empty($courseid)) {
                 $options['compfromraw'] = $from;
                 $options['comptoraw'] = $to;
                 $options['addvalidonly'] = true;
-                $mform = new iomad_user_filter_form(null, $options);
+                $mform = new \local\iomad\forms\user_search_form(null, $options);
                 $mform->set_data(array('departmentid' => $departmentid, 'validonly' => $validonly));
                 $mform->set_data($options);
                 $mform->get_data();

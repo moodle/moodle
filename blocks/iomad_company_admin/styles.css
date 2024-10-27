@@ -108,7 +108,7 @@ border-radius: 10px;
     padding-top: 31px;
 }
 
-.reporttablecontrolscontrol > .searchcourseform {
+.reporttablecontrolscontrol > .iomadcoursesearchform {
     padding-left: 25px;
 }
 
@@ -404,3 +404,42 @@ border-radius: 10px;
     height: 100%;
 }
 
+#page-blocks-iomad_company_admin-iomad_courses_form .iomadcoursesearchform {
+    padding-top: 5px;
+}
+
+.iomadcoursesearchform,
+.iomaddatesearchform,
+.iomadusersearchform {
+    margin-right: 10px;
+    float: left;
+}
+
+.iomadcoursesearchform .icons-collapse-expand.collapsed .expanded-icon,
+.iomadcoursesearchform .icons-collapse-expand.collapsed .collapsed-icon,
+.iomaddatesearchform  .icons-collapse-expand.collapsed .expanded-icon,
+.iomaddatesearchform .icons-collapse-expand.collapsed .collapsed-icon,
+.iomadusersearchform  .icons-collapse-expand.collapsed .expanded-icon,
+.iomadusersearchform .icons-collapse-expand.collapsed .collapsed-icon {
+    font-size: small;
+}
+
+.iomadcoursesearchform h3,
+.iomaddatesearchform h3,
+.iomadusersearchform h3 {
+    font-size: medium;
+}
+
+.iomadcoursesearchform .mform .form-inline .form-control,
+.iomadcoursesearchform .mform .form-inline .custom-select,
+.iomaddatesearchform .mform .form-inline .form-control,
+.iomaddatesearchform .mform .form-inline .custom-select,
+.iomadusersearchform .mform .form-inline .form-control,
+.iomadusersearchform .mform .form-inline .custom-select {
+    max-width:75%;
+}
+
+#page-blocks-iomad_company_admin-iomad_courses_form #iomad_company_selector {
+    float: left;
+    margin-right: 10px;
+}

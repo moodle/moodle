@@ -173,9 +173,9 @@ if (!(iomad::has_capability('block/iomad_company_admin:editusers', $companyconte
 
 // Set up the filter form.
 if (iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)) {
-    $mform = new iomad_user_filter_form(null, array('companyid' => $selectedcompanyid, 'useshowall' => true, 'addusertype' => true));
+    $mform = new \local_iomad\forms\user_search_form(null, array('companyid' => $selectedcompanyid, 'useshowall' => true, 'addusertype' => true));
 } else {
-    $mform = new iomad_user_filter_form(null, array('companyid' => $selectedcompanyid, 'addusertype' => true));
+    $mform = new \local_iomad\forms\user_search_form(null, array('companyid' => $selectedcompanyid, 'addusertype' => true));
 }
 $mform->set_data(array('departmentid' => $departmentid, 'usertype' => $usertype));
 $mform->set_data($params);
@@ -481,7 +481,11 @@ if (!$showall) {
 }
 
 // Display the user filter form.
+echo html_writer::start_tag('div', array('class' => 'reporttablecontrols', 'style' => 'padding-left: 15px'));
+echo html_writer::start_tag('div', array('class' => 'iomadusersearchform'));
 $mform->display();
+echo html_writer::end_tag('div');
+echo html_writer::end_tag('div');
 
 // Build the table.
 // Do we have any additional reporting fields?

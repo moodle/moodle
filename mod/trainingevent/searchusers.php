@@ -131,7 +131,7 @@ if ($departmentid == 0 ) {
 }
 
 // Set up the filter form..
-$mform = new iomad_user_filter_form(null, array('companyid' => $company->id));
+$mform = new \local_iomad\forms\user_search_form(null, array('companyid' => $company->id));
 $mform->set_data(array('departmentid' => $departmentid, 'eventid' => $eventid));
 $mform->set_data($params);
 $mform->get_data();
@@ -141,7 +141,11 @@ echo $output->display_tree_selector($company, $parentlevel, $baseurl, $params, $
 echo html_writer::start_tag('div', array('class' => 'iomadclear', 'style' => 'padding-top: 5px;'));
 
 // Display the user filter form.
+echo html_writer::start_tag('div', ['class' => 'iomadusersearchform']);
 $mform->display();
+echo html_writer::end_tag('div');
+echo html_writer::end_tag('div');
+echo html_writer::start_tag('div', array('class' => 'iomadclear'));
 
 // Deal with the user optional profile search.
 $fieldnames= array();

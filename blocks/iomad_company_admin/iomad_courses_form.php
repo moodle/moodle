@@ -55,6 +55,22 @@ if ($courseid) {
     $params['courseid'] = $courseid;
 }
 
+// Get course customfields.
+$usedfields = [];
+$customfields = $DB->get_records_sql("SELECT cff.* FROM
+                                      {customfield_field} cff 
+                                      JOIN {customfield_category} cfc ON (cff.categoryid = cfc.id)
+                                      WHERE cfc.area = 'course'
+                                      AND cfc.component = 'core_course'
+                                      ORDER BY cfc.sortorder, cff.sortorder");
+foreach ($customfields as $customfield) {
+    ${'customfield_' . $customfield->shortname} = optional_param('customfield_' . $customfield->shortname, null, PARAM_ALPHANUMEXT);
+    if (!empty(${'customfield_' . $customfield->shortname})) {
+        $params['customfield_' . $customfield->shortname] = ${'customfield_' . $customfield->shortname};
+        $usedfields[$customfield->id] = ${'customfield_' . $customfield->shortname};
+    }
+}
+
 // Deal with edit buttons.
 if ($edit != -1) {
     $USER->editing = $edit;
@@ -208,10 +224,39 @@ if(!empty($showid) && iomad::has_capability('block/iomad_company_admin:managecou
     }
 }
 
+// Deal with any custom field searches.
+$fieldcourseids = [];
+if (!empty($usedfields)) {
+    $foundfields = [];
+    foreach ($usedfields as $fieldid => $fieldsearchvalue) {
+        if ($customfields[$fieldid]->type == 'text' || $customfields[$fieldid]->type == 'text' ) {
+            $fieldsql = "fieldid = :fieldid AND " . $DB->sql_like('value', ':fieldsearchvalue');
+            $fieldsearchvalue = '%' . $fieldsearchvalue . '%';
+        } else {
+            $fieldsql = "value = :fieldsearchvalue AND fieldid = :fieldid";
+        }
+        $foundfields[] = $DB->get_records_sql("SELECT instanceid FROM {customfield_data} WHERE $fieldsql", ['fieldsearchvalue' => $fieldsearchvalue, 'fieldid' => $fieldid]);
+    }
+
+    // Sort the keys to be unique.
+    $fieldcourseids = array_pop($foundfields);
+    if (!empty($foundfields)) {
+        foreach ($foundfields as $foundfield) {
+            $fieldcourseids = array_intersect_key($fieldcourseids, $foundfield);
+            if (empty($fieldcourseids)) {
+                break;
+            }
+        }
+    }
+    if (empty($fieldcourseids)) {
+        $fieldcourseids[0] = "We didn't find any courses";
+    }
+}
+
 $baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;
 
-$mform = new iomad_course_search_form($baseurl, $params);
+$mform = new \local_iomad\forms\course_search_form($baseurl, $params);
 $mform->set_data($params);
 
 echo $OUTPUT->header();
@@ -227,11 +272,11 @@ if ($caneditall) {
 
 $companyselect = new single_select($linkurl, 'companyid', $companyids, $companyid);
 $companyselect->label = get_string('filtercompany', 'block_iomad_company_admin');
-echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
+echo html_writer::start_tag('div', array('class' => 'iomadclear controlitems'));
 if ($canedit) {
-    echo html_writer::tag('div', $OUTPUT->render($companyselect), array('id' => 'iomad_company_selector')).'<br>';
+    echo html_writer::tag('div', $OUTPUT->render($companyselect), array('id' => 'iomad_company_selector'));
 }
-echo html_writer::start_tag('div', array('class' => 'searchcourseform'));
+echo html_writer::start_tag('div', array('class' => 'iomadcoursesearchform'));
 $mform->display();
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
@@ -267,6 +312,9 @@ if (!empty($coursesearch)) {
     $searchsql .= $DB->sql_like('c.fullname', ':coursesearch', false, false);
     $params['coursesearch'] = "%" . $params['coursesearch'] ."%";
     $params['coursesearchtext'] = $coursesearch;
+}
+if (!empty($fieldcourseids)) {
+    $searchsql .= " AND c.id IN (" . implode(',', array_keys($fieldcourseids)) . ")";
 }
 
 // Set up the SQL for the table.

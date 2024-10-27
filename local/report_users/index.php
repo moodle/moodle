@@ -227,7 +227,7 @@ $baseurl = new moodle_url(basename(__FILE__), $urlparams);
 $returnurl = $baseurl;
 
 // Set up the filter form.
-$mform = new iomad_user_filter_form(null, array('companyid' => $selectedcompanyid));
+$mform = new \local_iomad\forms\user_search_form(null, array('companyid' => $selectedcompanyid));
 $mform->set_data(array('departmentid' => $departmentid));
 $mform->set_data($params);
 $mform->get_data();
@@ -237,8 +237,11 @@ echo $output->display_tree_selector($company, $parentlevel, $baseurl, $params, $
 echo html_writer::start_tag('div', array('class' => 'iomadclear', 'style' => 'padding-top: 5px;'));
 
 // Display the user filter form.
+echo html_writer::start_tag('div', ['class' => 'iomadusersearchform']);
 $mform->display();
 echo html_writer::end_tag('div');
+echo html_writer::end_tag('div');
+echo html_writer::start_tag('div', array('class' => 'iomadclear'));
 
 $stredit   = get_string('edit');
 $strdelete = get_string('delete');
