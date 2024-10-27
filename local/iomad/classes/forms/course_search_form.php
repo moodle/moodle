@@ -103,6 +103,9 @@ class course_search_form extends moodleform {
             }
         }
 
-        $this->add_action_buttons(false, get_string('userfilter', 'local_iomad'));
+        // Add the button(s).
+        $buttonarray=[];
+        $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('userfilter', 'local_iomad'));
+        $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
     }
 }

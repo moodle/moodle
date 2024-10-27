@@ -245,13 +245,13 @@ class user_search_form extends moodleform {
             $mform->addElement('select', 'licenseusage', get_string('licenseuseage', 'block_iomad_company_admin'), $licenseusagearray);
         }
 
-        $buttonarray=array();
+        // Add the button(s).
+        $buttonarray=[];
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('userfilter', 'local_iomad'));
         if (!empty($this->_customdata['adddodownload'])) {
             $buttonarray[] = $mform->createElement('submit', 'dodownload', get_string("downloadcsv", 'local_report_completion'));
         }
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
-        $mform->closeHeaderBefore('buttonar');
     }
 
     public function validation($data, $files) {

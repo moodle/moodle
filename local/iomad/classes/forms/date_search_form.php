@@ -62,7 +62,6 @@ class date_search_form extends moodleform {
             $dategroup[] = $mform->createElement('html', '&nbsp');
             $dategroup[] = $mform->createElement('date_selector', 'comptoraw', get_string('comptoraw', 'block_iomad_company_admin'), ['optional' => 'yes']);
             $mform->addGroup($dategroup);
-            $this->add_action_buttons(false, get_string('datefilter', 'block_iomad_company_admin'));
         } else {
             // Get the calendar type used - see MDL-18375.
             $calendartype = \core_calendar\type_factory::get_calendar_instance();
@@ -95,8 +94,11 @@ class date_search_form extends moodleform {
             }
             $mform->disabledIf('fromarray', 'fromarray[yearfromoptional]');
             $mform->disabledIf('toarray', 'toarray[yeartooptional]');
-            $this->add_action_buttons(false, get_string('datefilter', 'block_iomad_company_admin'));
         }
-    }
 
+        // Add the button(s).
+        $buttonarray=[];
+        $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('datefilter', 'block_iomad_company_admin'));
+        $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
+    }
 }
