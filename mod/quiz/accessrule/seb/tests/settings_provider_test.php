@@ -911,7 +911,7 @@ class settings_provider_test extends \advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
+        $xml = file_get_contents(self::get_fixture_path(__NAMESPACE__, 'unencrypted.seb'));
         $itemid = $this->create_test_draftarea_file($xml);
         $file = settings_provider::get_current_user_draft_file($itemid);
         $content = $file->get_content();
@@ -929,7 +929,7 @@ class settings_provider_test extends \advanced_testcase {
         $this->context = \context_module::instance($this->quiz->cmid);
         $this->set_up_user_and_role();
 
-        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
+        $xml = file_get_contents(self::get_fixture_path(__NAMESPACE__, 'unencrypted.seb'));
 
         $draftitemid = $this->create_test_draftarea_file($xml);
 
@@ -951,7 +951,7 @@ class settings_provider_test extends \advanced_testcase {
         $this->context = \context_module::instance($this->quiz->cmid);
         $this->set_up_user_and_role();
 
-        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
+        $xml = file_get_contents(self::get_fixture_path(__NAMESPACE__, 'unencrypted.seb'));
         $draftitemid = $this->create_test_draftarea_file($xml);
 
         settings_provider::save_filemanager_sebconfigfile_draftarea($draftitemid, $this->quiz->cmid);
@@ -980,7 +980,7 @@ class settings_provider_test extends \advanced_testcase {
 
         $this->set_up_user_and_role();
 
-        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
+        $xml = file_get_contents(self::get_fixture_path(__NAMESPACE__, 'unencrypted.seb'));
         $draftitemid = $this->create_test_draftarea_file($xml);
 
         $fs = get_file_storage();
@@ -1194,7 +1194,7 @@ class settings_provider_test extends \advanced_testcase {
         $this->context = \context_module::instance($this->quiz->cmid);
 
         // Save file.
-        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
+        $xml = file_get_contents(self::get_fixture_path(__NAMESPACE__, 'unencrypted.seb'));
         $draftitemid = $this->create_test_draftarea_file($xml);
         settings_provider::save_filemanager_sebconfigfile_draftarea($draftitemid, $this->quiz->cmid);
         $settings = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);

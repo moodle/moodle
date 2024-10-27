@@ -30,7 +30,7 @@ class analysis_test extends \advanced_testcase {
      * @return null
      */
     public function test_fill_firstanalyses_cache(): void {
-        require_once(__DIR__ . '/fixtures/test_timesplitting_upcoming_seconds.php');
+        require_once(self::get_fixture_path(__NAMESPACE__, 'test_timesplitting_upcoming_seconds.php'));
         $this->resetAfterTest();
 
         $modelid = 1;

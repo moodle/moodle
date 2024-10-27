@@ -53,7 +53,7 @@ class restore_attempt_test extends \advanced_testcase {
         // Contains a quiz with four attempts from different users. The users are as follows (user ID -> user):
         // 3 -> User 01, 4 -> User 02, 5 -> User 03, 6 -> User 04.
         // The user details for User 02 and User 03 have been removed from the backup file.
-        $testfixture = __DIR__ . '/fixtures/question_attempts_missing_users.mbz';
+        $testfixture = self::get_fixture_path(__NAMESPACE__, 'question_attempts_missing_users.mbz');
 
         // Extract our test fixture, ready to be restored.
         $backuptempdir = 'aaa';

@@ -287,7 +287,7 @@ class api_test extends \advanced_testcase {
 
         // Create the H5P data.
         $filename = 'find-the-words.h5p';
-        $path = __DIR__ . '/fixtures/' . $filename;
+        $path = self::get_fixture_path(__NAMESPACE__, $filename);
         $fakefile = helper::create_fake_stored_file_from_path($path);
         $config = (object)[
             'frame' => 1,
@@ -350,7 +350,7 @@ class api_test extends \advanced_testcase {
 
         // Create the original file.
         $filename = 'greeting-card.h5p';
-        $path = __DIR__ . '/fixtures/' . $filename;
+        $path = self::get_fixture_path(__NAMESPACE__, $filename);
         $originalfile = helper::create_fake_stored_file_from_path($path);
         $originalfilerecord = [
             'contextid' => $originalfile->get_contextid(),
@@ -492,7 +492,7 @@ class api_test extends \advanced_testcase {
 
         // Create the file.
         $filename = 'greeting-card.h5p';
-        $path = __DIR__ . '/fixtures/' . $filename;
+        $path = self::get_fixture_path(__NAMESPACE__, $filename);
         if ($filecomponent === 'contentbank') {
             $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
             $contents = $generator->generate_contentbank_data(
@@ -754,7 +754,7 @@ class api_test extends \advanced_testcase {
 
         // Create the H5P data.
         $filename = 'find-the-words.h5p';
-        $path = __DIR__ . '/fixtures/' . $filename;
+        $path = self::get_fixture_path(__NAMESPACE__, $filename);
         $fakefile = helper::create_fake_stored_file_from_path($path);
         $config = (object)[
             'frame' => 1,
@@ -812,7 +812,7 @@ class api_test extends \advanced_testcase {
 
         // Create the H5P data.
         $filename = 'find-the-words.h5p';
-        $path = __DIR__ . '/fixtures/' . $filename;
+        $path = self::get_fixture_path(__NAMESPACE__, $filename);
         $fakefile = helper::create_fake_stored_file_from_path($path);
         $config = (object)[
             'frame' => 1,

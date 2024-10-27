@@ -206,7 +206,7 @@ class tool_provider_test extends \advanced_testcase {
         $consumer->consumerVersion = 'TEST CONSUMER INFO VERSION';
         $consumer->enabled = true;
         $consumer->protected = true;
-        $profilejson = file_get_contents(__DIR__ . '/fixtures/tool_consumer_profile.json');
+        $profilejson = file_get_contents(self::get_fixture_path(__NAMESPACE__, 'tool_consumer_profile.json'));
         $consumer->profile = json_decode($profilejson);
         $consumer->save();
 
@@ -239,7 +239,7 @@ class tool_provider_test extends \advanced_testcase {
         $consumer->consumerVersion = 'TEST CONSUMER INFO VERSION';
         $consumer->enabled = true;
         $consumer->protected = true;
-        $profilejson = file_get_contents(__DIR__ . '/fixtures/tool_consumer_profile.json');
+        $profilejson = file_get_contents(self::get_fixture_path(__NAMESPACE__, 'tool_consumer_profile.json'));
         $consumer->profile = json_decode($profilejson);
         $consumer->save();
 

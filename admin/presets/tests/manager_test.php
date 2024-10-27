@@ -537,19 +537,25 @@ class manager_test extends \advanced_testcase {
                 'expectedpreset' => false,
             ],
             'Import settings and plugins from a valid XML file' => [
-                'filecontents' => file_get_contents(__DIR__ . '/fixtures/import_settings_plugins.xml'),
+                'filecontents' => file_get_contents(
+                    filename: self::get_fixture_path(__NAMESPACE__, 'import_settings_plugins.xml')
+                ),
                 'expectedpreset' => true,
                 'expectedsettings' => true,
                 'expectedplugins' => true,
             ],
             'Import only settings from a valid XML file' => [
-                'filecontents' => file_get_contents(__DIR__ . '/fixtures/import_settings.xml'),
+                'filecontents' => file_get_contents(
+                    filename: self::get_fixture_path(__NAMESPACE__, 'import_settings.xml')
+                ),
                 'expectedpreset' => true,
                 'expectedsettings' => true,
                 'expectedplugins' => false,
             ],
             'Import settings and plugins from a valid XML file with Starter name, which will be marked as non-core' => [
-                'filecontents' => file_get_contents(__DIR__ . '/fixtures/import_starter_name.xml'),
+                'filecontents' => file_get_contents(
+                    filename: self::get_fixture_path(__NAMESPACE__, 'import_starter_name.xml')
+                ),
                 'expectedpreset' => true,
                 'expectedsettings' => true,
                 'expectedplugins' => true,
@@ -558,7 +564,9 @@ class manager_test extends \advanced_testcase {
                 'expectedpresetname' => 'Starter',
             ],
             'Import settings from an invalid XML file' => [
-                'filecontents' => file_get_contents(__DIR__ . '/fixtures/invalid_xml_file.xml'),
+                'filecontents' => file_get_contents(
+                    filename: self::get_fixture_path(__NAMESPACE__, 'invalid_xml_file.xml')
+                ),
                 'expectedpreset' => false,
                 'expectedsettings' => false,
                 'expectedplugins' => false,
@@ -566,20 +574,26 @@ class manager_test extends \advanced_testcase {
                 'expectedexception' => \Exception::class,
             ],
             'Import unexisting settings category' => [
-                'filecontents' => file_get_contents(__DIR__ . '/fixtures/unexisting_category.xml'),
+                'filecontents' => file_get_contents(
+                    filename: self::get_fixture_path(__NAMESPACE__, 'unexisting_category.xml')
+                ),
                 'expectedpreset' => false,
                 'expectedsettings' => false,
                 'expectedplugins' => false,
             ],
             'Import unexisting setting' => [
-                'filecontents' => file_get_contents(__DIR__ . '/fixtures/unexisting_setting.xml'),
+                'filecontents' => file_get_contents(
+                    filename: self::get_fixture_path(__NAMESPACE__, 'unexisting_setting.xml')
+                ),
                 'expectedpreset' => false,
                 'expectedsettings' => false,
                 'expectedplugins' => false,
                 'expecteddebugging' => true,
             ],
             'Import valid settings with one unexisting setting too' => [
-                'filecontents' => file_get_contents(__DIR__ . '/fixtures/import_settings_with_unexisting_setting.xml'),
+                'filecontents' => file_get_contents(
+                    filename: self::get_fixture_path(__NAMESPACE__, 'import_settings_with_unexisting_setting.xml'),
+                ),
                 'expectedpreset' => true,
                 'expectedsettings' => false,
                 'expectedplugins' => false,
