@@ -106,7 +106,7 @@ final class helper_test extends \advanced_testcase {
         \core\di::set(
             \core\hook\manager::class,
             \core\hook\manager::phpunit_get_instance([
-                'test_plugin1' => __DIR__ . '/fixtures/invalid_serverside_hook_fixture.php',
+                'test_plugin1' => self::get_fixture_path(__NAMESPACE__, 'invalid_serverside_hook_fixture.php'),
             ]),
         );
 
@@ -118,7 +118,7 @@ final class helper_test extends \advanced_testcase {
         \core\di::set(
             \core\hook\manager::class,
             \core\hook\manager::phpunit_get_instance([
-                'test_plugin1' => __DIR__ . '/fixtures/clientside_filter_for_serverside_hook.php',
+                'test_plugin1' => self::get_fixture_path(__NAMESPACE__, 'clientside_filter_for_serverside_hook.php'),
             ]),
         );
 
@@ -130,7 +130,7 @@ final class helper_test extends \advanced_testcase {
         \core\di::set(
             \core\hook\manager::class,
             \core\hook\manager::phpunit_get_instance([
-                'test_plugin1' => __DIR__ . '/fixtures/serverside_filter_for_clientside_hook.php',
+                'test_plugin1' => self::get_fixture_path(__NAMESPACE__, 'serverside_filter_for_clientside_hook.php'),
             ]),
         );
 
@@ -142,7 +142,7 @@ final class helper_test extends \advanced_testcase {
         \core\di::set(
             \core\hook\manager::class,
             \core\hook\manager::phpunit_get_instance([
-                'test_plugin1' => __DIR__ . '/fixtures/hook_fixtures.php',
+                'test_plugin1' => self::get_fixture_path(__NAMESPACE__, 'hook_fixtures.php'),
             ]),
         );
 
@@ -175,7 +175,7 @@ final class helper_test extends \advanced_testcase {
         \core\di::set(
             \core\hook\manager::class,
             \core\hook\manager::phpunit_get_instance([
-                'test_plugin1' => __DIR__ . '/fixtures/invalid_clientside_hook_fixture.php',
+                'test_plugin1' => self::get_fixture_path(__NAMESPACE__, 'invalid_clientside_hook_fixture.php'),
             ]),
         );
 

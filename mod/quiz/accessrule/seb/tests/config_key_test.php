@@ -53,7 +53,7 @@ class config_key_test extends \advanced_testcase {
      * @dataProvider real_ck_hash_provider
      */
     public function test_config_key_hash_is_derived_correctly($config, $hash): void {
-        $xml = file_get_contents(__DIR__ . '/fixtures/' . $config);
+        $xml = file_get_contents(self::get_fixture_path(__NAMESPACE__, $config));
         $derivedhash = config_key::generate($xml)->get_hash();
         $this->assertEquals($hash, $derivedhash);
     }
@@ -62,8 +62,8 @@ class config_key_test extends \advanced_testcase {
      * Check that the Config Key hash is not altered if the originatorVersion is present in the XML or not.
      */
     public function test_presence_of_originator_version_does_not_effect_hash(): void {
-        $xmlwithoriginatorversion = file_get_contents(__DIR__ . '/fixtures/simpleunencrypted.seb');
-        $xmlwithoutoriginatorversion = file_get_contents(__DIR__ . '/fixtures/simpleunencryptedwithoutoriginator.seb');
+        $xmlwithoriginatorversion = file_get_contents(self::get_fixture_path(__NAMESPACE__, 'simpleunencrypted.seb'));
+        $xmlwithoutoriginatorversion = file_get_contents(self::get_fixture_path(__NAMESPACE__, 'simpleunencryptedwithoutoriginator.seb'));
         $hashwithorigver = config_key::generate($xmlwithoriginatorversion)->get_hash();
         $hashwithoutorigver = config_key::generate($xmlwithoutoriginatorversion)->get_hash();
         $this->assertEquals($hashwithorigver, $hashwithoutorigver);
