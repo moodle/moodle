@@ -65,7 +65,7 @@ class targets_test extends \advanced_testcase {
             'coursenosections' => [
                 'params' => [
                     'enablecompletion' => 1,
-                    'format' => 'social',
+                    'format' => 'singleactivity',
                     'students' => true
                 ],
                 'isvalid' => get_string('nocoursesections', 'course')
