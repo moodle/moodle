@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tiny_recordrtc;
+
 /**
- * Tiny media plugin version details.
+ * Constants for Tiny RecordRTC plugin.
  *
  * @package    tiny_recordrtc
- * @copyright  2022 Stevani Andolo <stevani@hotmail.com.au>
+ * @copyright  Meirza <meirza.arson@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2024042201;
-$plugin->requires  = 2024041600;
-$plugin->component = 'tiny_recordrtc';
+class constants {
+    /** @var array TINYRECORDRTC_AUDIO_BITRATE The audio bitrate options. */
+    public const TINYRECORDRTC_AUDIO_BITRATES = [24000, 32000, 48000, 64000, 96000, 128000, 160000, 192000, 256000, 320000];
+}

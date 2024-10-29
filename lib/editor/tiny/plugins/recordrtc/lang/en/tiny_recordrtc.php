@@ -53,6 +53,7 @@ $string['gumtype'] = 'Tried to get stream from the webcam/microphone, but no con
 $string['gumtype_title'] = 'No constraints specified';
 $string['insecurealert'] = 'Your browser might not allow this plugin to work unless it is used either over HTTPS or from localhost.';
 $string['insecurealert_title'] = 'Insecure connection!';
+$string['kbrate'] = '{$a} kb/s';
 $string['maxfilesizehit'] = 'You have reached the maximum size limit for file uploads.';
 $string['maxfilesizehit_title'] = 'Recording stopped';
 $string['norecordingfound'] = 'Something has gone wrong. Nothing has been recorded.';
