@@ -203,7 +203,7 @@ class request_helper_test extends advanced_testcase {
             'filename'  => 'logo.png',
         );
 
-        $content = file_get_contents(__DIR__ . '/fixtures/logo.png');
+        $content = file_get_contents(self::get_fixture_path('core_privacy', 'logo.png'));
 
         // Store the file.
         $fs = get_file_storage();

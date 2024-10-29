@@ -476,7 +476,7 @@ class file_storage_test extends \advanced_testcase {
     public function test_saveFileFromZip(): void {
 
         $ziparchive = new zip_archive();
-        $path = __DIR__ . '/fixtures/h5ptest.zip';
+        $path = self::get_fixture_path(__NAMESPACE__, 'h5ptest.zip');
         $result = $ziparchive->open($path, file_archive::OPEN);
 
         $files = $ziparchive->list_files();
@@ -563,7 +563,7 @@ class file_storage_test extends \advanced_testcase {
         $admin = get_admin();
 
         // Prepare a valid .H5P file.
-        $path = __DIR__ . '/fixtures/'.$filename;
+        $path = self::get_fixture_path(__NAMESPACE__, $filename);
 
         // Libraries can be updated when the file has been created by admin, even when the current user is not the admin.
         $this->setUser($admin);

@@ -507,7 +507,7 @@ class moodle_content_writer_test extends advanced_testcase {
                 0,
                 '/',
                 'logo.png',
-                file_get_contents(__DIR__ . '/fixtures/logo.png'),
+                file_get_contents(self::get_fixture_path('core_privacy', 'logo.png')),
             ],
             'UTF8' => [
                 'submission_content',
