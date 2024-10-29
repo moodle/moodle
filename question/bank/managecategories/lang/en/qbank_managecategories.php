@@ -24,4 +24,6 @@
  */
 
 $string['pluginname'] = 'Manage categories';
-$string['privacy:metadata'] = 'The Manage categories question bank plugin does not store any personal data.';
+$string['privacy:preference:includesubcategories_filter_default'] = 'Indicates whether or not the "Also show questions from subcategories" filter option is enabled by default when the user views the question bank.';
+$string['questionsubcategoriesdisplayed'] = 'When selecting categories in the question bank, the "Also show questions from subcategories" option is used and are automatically included in the filter results.';
+$string['questionsubcategoriesnotdisplayed'] = 'When selecting categories in the question bank, the "Also show questions from subcategories" option is not used, so questions from subcategories are not included in the filter results.';

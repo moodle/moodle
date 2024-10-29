@@ -24,6 +24,7 @@
 
 import GenericFilter from 'core/datafilter/filtertype';
 import Templates from 'core/templates';
+import {getUserPreference, setUserPreference} from 'core_user/repository';
 
 export default class extends GenericFilter {
 
@@ -45,10 +46,15 @@ export default class extends GenericFilter {
         this.addSubcategoryCheckbox(filterOptions.includesubcategories);
     }
 
-    async addSubcategoryCheckbox(checked = false) {
+    async addSubcategoryCheckbox(checked = null) {
         const filterValueNode = this.getFilterValueNode();
+        if (checked === null || checked === undefined) {
+            checked = await getUserPreference('qbank_managecategories_includesubcategories_filter_default');
+        } else {
+            setUserPreference('qbank_managecategories_includesubcategories_filter_default', checked);
+        }
         const {html} = await Templates.renderForPromise('qbank_managecategories/include_subcategories_checkbox', {
-            checked: checked,
+            checked: checked && checked !== '0',
         });
         filterValueNode.insertAdjacentHTML('afterend', html);
     }
