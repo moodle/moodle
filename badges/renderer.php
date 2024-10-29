@@ -690,7 +690,9 @@ class core_badges_renderer extends plugin_renderer_base {
             }
         }
 
-        return $overalldescr . $condition . html_writer::alist($items, array(), 'ul');;
+        $criteriadesc = count($items) > 1 ? html_writer::alist($items, [], 'ul') : reset($items);
+
+        return $overalldescr . $condition . $criteriadesc;
     }
 
     /**
