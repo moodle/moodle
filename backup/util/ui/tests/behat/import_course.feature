@@ -74,6 +74,6 @@ Feature: Import course's contents into another course
     And I should see "Unpublished course badge"
     And I should see "Unpublished without criteria course badge"
     # Badges exist and the criteria have been restored too.
-    And I should not see "Criteria for this badge have not been set up yet" in the "Published course badge" "table_row"
-    And I should not see "Criteria for this badge have not been set up yet" in the "Unpublished course badge" "table_row"
-    And I should see "Criteria for this badge have not been set up yet" in the "Unpublished without criteria course badge" "table_row"
+    And ".no-criteria-set" "css_element" should not exist in the "Published course badge" "table_row"
+    And ".no-criteria-set" "css_element" should not exist in the "Unpublished course badge" "table_row"
+    And ".no-criteria-set" "css_element" should exist in the "Unpublished without criteria course badge" "table_row"

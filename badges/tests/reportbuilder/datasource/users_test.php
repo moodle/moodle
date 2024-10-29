@@ -193,7 +193,7 @@ class users_test extends core_reportbuilder_testcase {
         $this->assertEquals(fullname($user), $fullname);
         $this->assertEquals($badgecourse->name, $badgename);
         $this->assertEquals($expectedbadgecourselink, $namewithlink);
-        $this->assertEquals('Criteria for this badge have not been set up yet.', $criteria);
+        $this->assertStringContainsString('no-criteria-set', $criteria);
         $this->assertStringContainsString('Image caption', $image);
         $this->assertEquals('English', $language);
         $this->assertEquals(2, $version);

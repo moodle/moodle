@@ -189,7 +189,7 @@ final class badges_test extends core_reportbuilder_testcase {
         $this->assertEquals($badgetwo->name, $badgename);
         $this->assertEmpty($fullname);
         $this->assertEquals($expectedbadgetwolink, $namewithlink);
-        $this->assertEquals('Criteria for this badge have not been set up yet.', $criteria);
+        $this->assertStringContainsString('no-criteria-set', $criteria);
         $this->assertStringContainsString('Image caption', $image);
         $this->assertEquals('English', $language);
         $this->assertEquals(2, $version);
