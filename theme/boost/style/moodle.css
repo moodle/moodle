@@ -23229,18 +23229,6 @@ button.btn-close:focus:hover,
   padding: 0;
 }
 
-.section li.movehere a {
-  display: block;
-  width: 100%;
-  height: 2rem;
-  border: 2px dashed #343a40;
-}
-
-.editing .course-content .hidden.sectionname {
-  visibility: hidden;
-  display: initial;
-}
-
 .inline,
 .inline-list li {
   display: inline;
@@ -24074,77 +24062,6 @@ tr.flagged-tag a {
   left: 50%;
 }
 
-.mod-indent-outer {
-  display: table;
-}
-
-.mod-indent {
-  display: table-cell;
-}
-
-.label .mod-indent {
-  float: left;
-  padding-top: 20px;
-}
-
-.activity.label.modtype_label .mod-indent {
-  float: none;
-}
-
-@media (min-width: 576px) {
-  /* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
-  .mod-indent-1 {
-    width: 30px;
-  }
-  .mod-indent-2 {
-    width: 60px;
-  }
-  .mod-indent-3 {
-    width: 90px;
-  }
-  .mod-indent-4 {
-    width: 120px;
-  }
-  .mod-indent-5 {
-    width: 150px;
-  }
-  .mod-indent-6 {
-    width: 180px;
-  }
-  .mod-indent-7 {
-    width: 210px;
-  }
-  .mod-indent-8 {
-    width: 240px;
-  }
-  .mod-indent-9 {
-    width: 270px;
-  }
-  .mod-indent-10 {
-    width: 300px;
-  }
-  .mod-indent-11 {
-    width: 330px;
-  }
-  .mod-indent-12 {
-    width: 360px;
-  }
-  .mod-indent-13 {
-    width: 390px;
-  }
-  .mod-indent-14 {
-    width: 420px;
-  }
-  .mod-indent-15 {
-    width: 450px;
-  }
-  .mod-indent-16 {
-    width: 480px;
-  }
-  .mod-indent-huge {
-    width: 480px;
-  }
-}
 /* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
 .resourcecontent .mediaplugin_mp3 object {
   height: 25px;
@@ -25130,10 +25047,6 @@ dd:after {
 }
 .inplaceeditable.inplaceeditable-autocomplete {
   display: block;
-}
-
-h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
-  margin-top: -20px;
 }
 
 /** Chart area. */
@@ -28128,90 +28041,25 @@ table.calendartable caption {
 /*
  * Course page styles.
  */
-/* Spinners */
-.editing .course-content .stateready .section .spinner {
-  display: none;
-}
-.editing .editinprogress {
-  position: relative;
-}
-.editing .editinprogress > * {
-  opacity: 0.4;
-}
-.editing .editinprogress .corelightbox,
-.editing .editinprogress .lightbox {
-  display: none;
-}
-.editing .editinprogress:after {
-  position: absolute;
-  font-size: 20px;
-  color: #6a737b;
-  content: "\f110";
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 30px;
-  height: 30px;
-  left: calc(50% - 15px);
-  top: calc(50% - 15px);
-  animation: editinprogress-rotation 2s infinite linear;
-}
-.editing .editinprogress .editinprogress:after {
-  display: none;
+/* Course content */
+.course-content ul.section-list {
+  padding: 0;
+  margin: 0;
 }
 
-@keyframes editinprogress-rotation {
-  0% {
-    opacity: 0;
-    transform: rotate(0deg);
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: rotate(359deg);
-  }
+.course-content .section-item ul,
+.course-content .section-item .activity-item ul {
+  list-style: disc;
 }
-/* Drag and drop */
-.course-content .section.dropready.main.drop-down {
-  border-bottom: 1px solid #1d2125;
+.course-content .section-item ul ul,
+.course-content .section-item .activity-item ul ul {
+  list-style: circle;
 }
-.course-content .section.dropready .course-section-header.dropready.drop-zone {
-  margin-top: -2px;
-}
-.course-content .section.dropready li.activity.dropready.drop-down {
-  border-bottom: 1px solid #1d2125;
-  margin-bottom: -1px;
-}
-.course-content .section.dropready li.activity.dropready.drop-up {
-  border-top: 1px solid #1d2125;
-  margin-top: -1px;
-}
-.course-content .section.dropready [data-for=sectioninfo] {
-  min-height: 1px;
-}
-.course-content .section.dropready [data-for=sectioninfo].drop-down {
-  margin-top: -1px;
+.course-content .section-item ul ul ul,
+.course-content .section-item .activity-item ul ul ul {
+  list-style: square;
 }
 
-/* Highlight current section */
-.course-content .current {
-  position: relative;
-}
-
-.course-content .current::before {
-  border-left: #0f6cbf 3px solid;
-  bottom: 0;
-  content: "";
-  left: -8px;
-  position: absolute;
-  top: 0;
-}
-
-/* Variables definition*/
-/* Functions/Mixins definition */
-/* Section Expand all/Collapse all */
 .section-collapsemenu .collapseall {
   display: block;
 }
@@ -28225,12 +28073,27 @@ table.calendartable caption {
   display: block;
 }
 
-/* Course content */
-.course-content ul.section-list {
-  padding: 0;
+.btn.add-section {
+  border-radius: 1rem;
+  border: 2px dashed #dee2e6;
+  color: #0f6cbf;
+  font-size: 0.8203125rem;
+  font-weight: bold;
+}
+.btn.add-section:hover, .btn.add-section:focus {
+  background-color: #e7f0f9;
+  border: 2px solid #0f6cbf;
+  color: #0f6cbf;
 }
 
-/* Course section */
+.max-section-alert {
+  border-top: 2px dashed #dee2e6;
+  font-size: 0.8203125rem;
+  font-weight: normal;
+  color: #6a737b;
+}
+
+/* Sections */
 .course-section {
   list-style: none;
   margin-top: 1rem;
@@ -28245,6 +28108,17 @@ table.calendartable caption {
 }
 .course-section.hidden .section-item, .course-section.orphaned .section-item {
   background-color: #f8f9fa;
+}
+.course-section.current > .section-item {
+  position: relative;
+}
+.course-section.current > .section-item::before {
+  border-left: #0f6cbf 3px solid;
+  bottom: 0;
+  content: "";
+  left: -8px;
+  position: absolute;
+  top: 0;
 }
 .course-section .sectionname > a {
   color: #1d2125;
@@ -28313,59 +28187,14 @@ table.calendartable caption {
   z-index: 5;
 }
 
-.btn.add-section {
-  border-radius: 1rem;
-  border: 2px dashed #dee2e6;
-  color: #0f6cbf;
-  font-size: 0.8203125rem;
-  font-weight: bold;
-}
-.btn.add-section:hover, .btn.add-section:focus {
-  background-color: #e7f0f9;
-  border: 2px solid #0f6cbf;
-  color: #0f6cbf;
+.section li.movehere a {
+  display: block;
+  width: 100%;
+  height: 2rem;
+  border: 2px dashed #343a40;
 }
 
-.max-section-alert {
-  border-top: 2px dashed #dee2e6;
-  font-size: 0.8203125rem;
-  font-weight: normal;
-  color: #6a737b;
-}
-
-/* Single section page specific styles */
-.single-section > ul > .course-section.hidden .section-item {
-  background-color: inherit;
-}
-.single-section > ul > .course-section .section-item {
-  padding: 0;
-  border: none;
-}
-
-.single-section-page .header-action {
-  display: inline-block;
-}
-
-.course-content .single-section ul.topics li.section,
-.course-content .single-section ul.weeks li.section {
-  padding-top: 0;
-}
-
-/* Re-style ordered list in course content */
-.course-content .section-item ul,
-.course-content .section-item .activity-item ul {
-  list-style: disc;
-}
-.course-content .section-item ul ul,
-.course-content .section-item .activity-item ul ul {
-  list-style: circle;
-}
-.course-content .section-item ul ul ul,
-.course-content .section-item .activity-item ul ul ul {
-  list-style: square;
-}
-
-/* Activity cards */
+/* Activities */
 .activity {
   list-style: none;
   padding-top: 0.25rem;
@@ -29001,47 +28830,47 @@ table.calendartable caption {
 }
 
 /* Dividers */
-.divider {
+.course-content .divider {
   position: relative;
 }
-.divider hr {
+.course-content .divider hr {
   width: 100%;
   margin: 0.5rem 0.25rem;
   border-top: 2px dashed #dee2e6;
 }
-.changenumsections.disabled .divider hr {
+.changenumsections.disabled .course-content .divider hr {
   border-top: 2px dashed #dee2e6;
 }
-.divider .divider-content {
+.course-content .divider .divider-content {
   opacity: 0;
   visibility: hidden;
   transition: visibility 0.1s;
   position: absolute;
   background: linear-gradient(transparent 40%, #fff 40%, #fff 60%, transparent 60%);
 }
-.section.hidden .divider .divider-content {
+.section.hidden .course-content .divider .divider-content {
   background: linear-gradient(transparent 40%, #f8f9fa 40%, #f8f9fa 60%, transparent 60%);
 }
-.divider.always-visible .divider-content {
+.course-content .divider.always-visible .divider-content {
   opacity: 1;
   visibility: visible;
 }
-.divider.always-hidden hr {
+.course-content .divider.always-hidden hr {
   opacity: 0;
   visibility: hidden;
 }
-.divider:hover .divider-content, .divider:focus .divider-content, .divider:focus-within .divider-content {
+.course-content .divider:hover .divider-content, .course-content .divider:focus .divider-content, .course-content .divider:focus-within .divider-content {
   opacity: 1;
   visibility: visible;
 }
-.divider:hover hr, .divider:focus hr, .divider:focus-within hr {
+.course-content .divider:hover hr, .course-content .divider:focus hr, .course-content .divider:focus-within hr {
   opacity: 1;
   visibility: visible;
 }
-.divider:has(.btn.add-content:hover) hr {
+.course-content .divider:has(.btn.add-content:hover) hr {
   border-color: #0f6cbf;
 }
-.changenumsections.disabled .divider:has(.btn.add-content:hover) hr {
+.changenumsections.disabled .course-content .divider:has(.btn.add-content:hover) hr {
   border-color: #e9ecef;
 }
 
@@ -29056,7 +28885,7 @@ table.calendartable caption {
   display: none;
 }
 
-.btn.add-content {
+.course-content .divider .btn.add-content {
   position: relative;
   z-index: 1;
   border-radius: 0.5rem;
@@ -29065,23 +28894,23 @@ table.calendartable caption {
   color: #083660;
   background-color: #cfe2f2;
 }
-.btn.add-content:hover, .btn.add-content:focus {
+.course-content .divider .btn.add-content:hover, .course-content .divider .btn.add-content:focus {
   color: #fff;
   background-color: #0f6cbf;
 }
-.btn.add-content .icon {
+.course-content .divider .btn.add-content .icon {
   width: 14px;
   height: 14px;
   font-size: 14px;
 }
-.changenumsections.disabled .btn.add-content {
+.changenumsections.disabled .course-content .divider .btn.add-content {
   color: #8f959e;
   background-color: #e9ecef;
   outline: none;
   box-shadow: none;
   pointer-events: auto;
 }
-.changenumsections.disabled .btn.add-content:hover, .changenumsections.disabled .btn.add-content:focus {
+.changenumsections.disabled .course-content .divider .btn.add-content:hover, .changenumsections.disabled .course-content .divider .btn.add-content:focus {
   color: #8f959e;
   background-color: #e9ecef;
   outline: none;
@@ -29145,7 +28974,20 @@ table.calendartable caption {
   }
 }
 
-/* Activity completion */
+/* Single section page */
+.single-section > ul > .course-section.hidden .section-item {
+  background-color: inherit;
+}
+.single-section > ul > .course-section .section-item {
+  padding: 0;
+  border: none;
+}
+
+.single-section-page .header-action {
+  display: inline-block;
+}
+
+/* Default activity completion page */
 .defaultactivitycompletion-item a {
   color: #000;
   text-decoration: none;
@@ -29155,27 +28997,13 @@ table.calendartable caption {
   height: 32px;
 }
 
-/* Home page course specific styles */
+/* Home page course */
 .sitetopic .section-item {
   margin-bottom: 1.5rem;
   border-radius: 0.5rem;
 }
 
-#page-site-index .subscribelink {
-  text-align: right;
-}
-
-.path-course-view .subscribelink {
-  text-align: right;
-}
-.path-course-view .unread {
-  margin-left: 30px;
-}
-.path-course-view .block.drag .header {
-  cursor: move;
-}
-
-/* Styles for the Move activity and Move section modals */
+/* Move activity and Move section modals */
 .move-activity-tree .collapse-list-item {
   border-radius: 0.5rem;
 }
@@ -29204,7 +29032,7 @@ table.calendartable caption {
   font-weight: bold;
 }
 
-/* Subsection specific styles */
+/* Subsections */
 .activity.subsection {
   border-top: none;
 }
@@ -29247,6 +29075,142 @@ table.calendartable caption {
   visibility: hidden;
 }
 
+/* Spinners */
+@keyframes editinprogress-rotation {
+  0% {
+    opacity: 0;
+    transform: rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(359deg);
+  }
+}
+.editing .editinprogress {
+  position: relative;
+}
+.editing .editinprogress > * {
+  opacity: 0.4;
+}
+.editing .editinprogress .corelightbox,
+.editing .editinprogress .lightbox {
+  display: none;
+}
+.editing .editinprogress:after {
+  position: absolute;
+  font-size: 20px;
+  color: #6a737b;
+  content: "\f110";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  left: calc(50% - 15px);
+  top: calc(50% - 15px);
+  animation: editinprogress-rotation 2s infinite linear;
+}
+.editing .editinprogress .editinprogress:after {
+  display: none;
+}
+
+/* Drag and drop */
+.course-content .section.dropready.main.drop-down {
+  border-bottom: 1px solid #1d2125;
+}
+.course-content .section.dropready .course-section-header.dropready.drop-zone {
+  margin-top: -2px;
+}
+.course-content .section.dropready li.activity.dropready.drop-down {
+  border-bottom: 1px solid #1d2125;
+  margin-bottom: -1px;
+}
+.course-content .section.dropready li.activity.dropready.drop-up {
+  border-top: 1px solid #1d2125;
+  margin-top: -1px;
+}
+.course-content .section.dropready [data-for=sectioninfo] {
+  min-height: 1px;
+}
+.course-content .section.dropready [data-for=sectioninfo].drop-down {
+  margin-top: -1px;
+}
+
+/* Old indentation styles */
+.mod-indent-outer {
+  display: table;
+}
+
+.mod-indent {
+  display: table-cell;
+}
+
+.label .mod-indent {
+  float: left;
+  padding-top: 20px;
+}
+
+.activity.label.modtype_label .mod-indent {
+  float: none;
+}
+
+@media (min-width: 576px) {
+  /* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
+  .mod-indent-1 {
+    width: 30px;
+  }
+  .mod-indent-2 {
+    width: 60px;
+  }
+  .mod-indent-3 {
+    width: 90px;
+  }
+  .mod-indent-4 {
+    width: 120px;
+  }
+  .mod-indent-5 {
+    width: 150px;
+  }
+  .mod-indent-6 {
+    width: 180px;
+  }
+  .mod-indent-7 {
+    width: 210px;
+  }
+  .mod-indent-8 {
+    width: 240px;
+  }
+  .mod-indent-9 {
+    width: 270px;
+  }
+  .mod-indent-10 {
+    width: 300px;
+  }
+  .mod-indent-11 {
+    width: 330px;
+  }
+  .mod-indent-12 {
+    width: 360px;
+  }
+  .mod-indent-13 {
+    width: 390px;
+  }
+  .mod-indent-14 {
+    width: 420px;
+  }
+  .mod-indent-15 {
+    width: 450px;
+  }
+  .mod-indent-16 {
+    width: 480px;
+  }
+  .mod-indent-huge {
+    width: 480px;
+  }
+}
 /*
  * Course management page styles.
  */
@@ -38931,6 +38895,25 @@ body.behat-site .path-course-view li.activity form.togglecompletion::before,
 
 .path-course-view li.activity form.togglecompletion img {
   max-width: none; /* The width is 0 so ensure we don't end up with a relative max-width */
+}
+
+.course-content .stateready .section .spinner {
+  /* stylelint-disable declaration-no-important */
+  /* stylelint-enable */
+  display: none;
+}
+body.behat-site .course-content .stateready .section .spinner,
+.course-content .stateready .section .spinner body.behat-site.course-content .stateready .section .spinner, body.themedesignermode .course-content .stateready .section .spinner,
+.course-content .stateready .section .spinner body.themedesignermode.course-content .stateready .section .spinner {
+  outline: 3px dotted #ca3120 !important;
+  background-color: #fceeed !important;
+}
+body.behat-site .course-content .stateready .section .spinner::before,
+.course-content .stateready .section .spinner body.behat-site.course-content .stateready .section .spinner::before, body.themedesignermode .course-content .stateready .section .spinner::before,
+.course-content .stateready .section .spinner body.themedesignermode.course-content .stateready .section .spinner::before {
+  content: "Deprecated style in use" !important;
+  color: #ca3120 !important;
+  font-size: smaller !important;
 }
 
 body {

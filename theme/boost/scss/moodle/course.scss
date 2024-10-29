@@ -2,118 +2,7 @@
  * Course page styles.
  */
 
-/* Spinners */
-
-.editing {
-    // Remove old spinners if the reactive state is ready.
-    .course-content .stateready .section .spinner {
-        display: none;
-    }
-    // New editing in progress spinners.
-    .editinprogress {
-        position: relative;
-
-        & > * {
-            opacity: .4;
-        }
-
-        .corelightbox,
-        .lightbox {
-            display: none;
-        }
-
-        &:after {
-            @extend .fa-solid;
-            position: absolute;
-            font-size: 20px;
-            color: $gray-600;
-            content: fa-content($fa-var-spinner);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 30px;
-            height: 30px;
-            left: calc(50% - 15px);
-            top: calc(50% - 15px);
-            animation: editinprogress-rotation 2s infinite linear;
-        }
-
-        // Prevent inner editingprogress.
-        .editinprogress {
-            &:after {
-                display: none;
-            }
-        }
-    }
-}
-
-@keyframes editinprogress-rotation {
-    0% {
-        opacity: 0;
-        transform: rotate(0deg);
-    }
-    50% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-        transform: rotate(359deg);
-    }
-}
-
-/* Drag and drop */
-
-// Compensate for the border widths when dropzones are displayed.
-.course-content .section.dropready {
-
-    &.main.drop-down {
-        border-bottom: 1px solid $dropzone-border;
-    }
-
-    .course-section-header.dropready.drop-zone {
-        margin-top: -2px;
-    }
-
-    li.activity.dropready.drop-down {
-        border-bottom: 1px solid $dropzone-border;
-        margin-bottom: -1px;
-    }
-
-    li.activity.dropready.drop-up {
-        border-top: 1px solid $dropzone-border;
-        margin-top: -1px;
-    }
-
-    [data-for="sectioninfo"] {
-        // When a section is empty, the activity dropzone indicator is below
-        // the section info. This ensures the dropzone will not displace the content
-        // even if the section has no restrictions or info to display.
-        min-height: 1px;
-    }
-
-    [data-for="sectioninfo"].drop-down {
-        margin-top: -1px;
-    }
-}
-
-/* Highlight current section */
-// TODO: Move to "Section" block.
-
-.course-content .current {
-    position: relative;
-}
-
-.course-content .current::before {
-    border-left: $primary 3px solid;
-    bottom: 0;
-    content: "";
-    left: -8px;
-    position: absolute;
-    top: 0;
-}
-
-/* Variables definition*/
-
+// Variables.
 $activity-item-padding: 0.75rem !default;
 $activity-border-radius: 1rem !default;
 $activity-border-width: 2px !default;
@@ -122,9 +11,7 @@ $divider-color: $gray-300 !default;
 $divider-width: 2px !default;
 $divider-hover-color: $primary !default;
 
-/* Functions/Mixins definition */
-
-// Activity completion button custom styling mixin.
+// Mixins.
 @mixin completion-button() {
     &.btn {
         @include button-variant($white, $gray-400, $gray-600);
@@ -147,8 +34,28 @@ $divider-hover-color: $primary !default;
     }
 }
 
-/* Section Expand all/Collapse all */
+/* Course content */
 
+.course-content ul.section-list {
+    padding: 0;
+    margin: 0;
+}
+
+// Re-style ordered list in course content.
+.course-content .section-item,
+.course-content .section-item .activity-item {
+    ul {
+        list-style: disc;
+        ul {
+            list-style: circle;
+            ul {
+                list-style: square;
+            }
+        }
+    }
+}
+
+// Expand all/Collapse all.
 .section-collapsemenu {
     .collapseall {
         display: block;
@@ -169,13 +76,30 @@ $divider-hover-color: $primary !default;
     }
 }
 
-/* Course content */
-
-.course-content ul.section-list {
-    padding: 0;
+// Course 'add section' button.
+.btn.add-section {
+    @include border-radius($activity-border-radius);
+    border: $divider-width dashed $border-color;
+    color: $primary;
+    font-size: $font-size-sm;
+    font-weight: bold;
+    &:hover,
+    &:focus {
+        background-color: $primary-light-background;
+        border: $divider-width solid $primary;
+        color: $primary;
+    }
 }
 
-/* Course section */
+// Max sections reached alert.
+.max-section-alert {
+    border-top: $divider-width dashed $border-color;
+    font-size: $font-size-sm;
+    font-weight: normal;
+    color: $gray-600;
+}
+
+/* Sections */
 
 .course-section {
     list-style: none;
@@ -195,6 +119,21 @@ $divider-hover-color: $primary !default;
     &.orphaned {
         .section-item {
             background-color: $gray-100;
+        }
+    }
+
+    // Highlighted section.
+    &.current {
+        > .section-item {
+            position: relative;
+            &::before {
+                border-left: $primary 3px solid;
+                bottom: 0;
+                content: "";
+                left: -8px;
+                position: absolute;
+                top: 0;
+            }
         }
     }
 
@@ -290,67 +229,15 @@ $divider-hover-color: $primary !default;
     }
 }
 
-// Course 'add section' button.
-.btn.add-section {
-    @include border-radius($activity-border-radius);
-    border: $divider-width dashed $border-color;
-    color: $primary;
-    font-size: $font-size-sm;
-    font-weight: bold;
-    &:hover,
-    &:focus {
-        background-color: $primary-light-background;
-        border: $divider-width solid $primary;
-        color: $primary;
-    }
+// Old movehere link styles.
+.section li.movehere a {
+    display: block;
+    width: 100%;
+    height: 2rem;
+    border: 2px dashed $gray-800;
 }
 
-.max-section-alert {
-    border-top: $divider-width dashed $border-color;
-    font-size: $font-size-sm;
-    font-weight: normal;
-    color: $gray-600;
-}
-
-/* Single section page specific styles */
-
-.single-section {
-    // Revert main section's styles.
-    > ul > .course-section {
-        &.hidden .section-item {
-            background-color: inherit;
-        }
-        .section-item {
-            padding: 0;
-            border: none;
-        }
-    }
-}
-
-.single-section-page .header-action {
-    display: inline-block;
-}
-
-.course-content .single-section ul.topics li.section,
-.course-content .single-section ul.weeks li.section {
-    padding-top: 0;
-}
-
-/* Re-style ordered list in course content */
-.course-content .section-item,
-.course-content .section-item .activity-item {
-    ul {
-        list-style: disc;
-        ul {
-            list-style: circle;
-            ul {
-                list-style: square;
-            }
-        }
-    }
-}
-
-/* Activity cards */
+/* Activities */
 
 .activity {
     list-style: none;
@@ -622,7 +509,7 @@ $divider-hover-color: $primary !default;
 
 /* Dividers */
 
-.divider {
+.course-content .divider {
     position: relative;
     hr {
         width: 100%;
@@ -692,7 +579,7 @@ $divider-hover-color: $primary !default;
 }
 
 // Custom buttons for dividers.
-.btn.add-content {
+.course-content .divider .btn.add-content {
     position: relative;
     z-index: 1;
     @include border-radius();
@@ -790,7 +677,26 @@ $divider-hover-color: $primary !default;
     }
 }
 
-/* Activity completion */
+/* Single section page */
+
+.single-section {
+    // Revert main section's styles.
+    > ul > .course-section {
+        &.hidden .section-item {
+            background-color: inherit;
+        }
+        .section-item {
+            padding: 0;
+            border: none;
+        }
+    }
+}
+
+.single-section-page .header-action {
+    display: inline-block;
+}
+
+/* Default activity completion page */
 
 .defaultactivitycompletion-item {
     a {
@@ -803,7 +709,7 @@ $divider-hover-color: $primary !default;
     }
 }
 
-/* Home page course specific styles */
+/* Home page course */
 
 .sitetopic {
     .section-item {
@@ -812,23 +718,7 @@ $divider-hover-color: $primary !default;
     }
 }
 
-#page-site-index .subscribelink {
-    text-align: right;
-}
-
-.path-course-view {
-    .subscribelink {
-        text-align: right;
-    }
-    .unread {
-        margin-left: 30px;
-    }
-    .block.drag .header {
-        cursor: move;
-    }
-}
-
-/* Styles for the Move activity and Move section modals */
+/* Move activity and Move section modals */
 
 .move-activity-tree {
     .collapse-list-item {
@@ -870,7 +760,7 @@ $divider-hover-color: $primary !default;
     }
 }
 
-/* Subsection specific styles */
+/* Subsections */
 
 .activity.subsection {
     border-top: none;
@@ -915,5 +805,132 @@ $divider-hover-color: $primary !default;
     .focus-control:hover .focus-control .v-parent-focus {
         opacity: 0;
         visibility: hidden;
+    }
+}
+
+/* Spinners */
+
+// Edit in progress spinner animation.
+@keyframes editinprogress-rotation {
+    0% {
+        opacity: 0;
+        transform: rotate(0deg);
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: rotate(359deg);
+    }
+}
+
+.editing {
+    // New editing in progress spinners.
+    .editinprogress {
+        position: relative;
+
+        & > * {
+            opacity: .4;
+        }
+
+        .corelightbox,
+        .lightbox {
+            display: none;
+        }
+
+        &:after {
+            @extend .fa-solid;
+            position: absolute;
+            font-size: 20px;
+            color: $gray-600;
+            content: fa-content($fa-var-spinner);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            left: calc(50% - 15px);
+            top: calc(50% - 15px);
+            animation: editinprogress-rotation 2s infinite linear;
+        }
+
+        // Prevent inner editingprogress.
+        .editinprogress {
+            &:after {
+                display: none;
+            }
+        }
+    }
+}
+
+/* Drag and drop */
+
+// Compensate for the border widths when dropzones are displayed.
+.course-content .section.dropready {
+
+    &.main.drop-down {
+        border-bottom: 1px solid $dropzone-border;
+    }
+
+    .course-section-header.dropready.drop-zone {
+        margin-top: -2px;
+    }
+
+    li.activity.dropready.drop-down {
+        border-bottom: 1px solid $dropzone-border;
+        margin-bottom: -1px;
+    }
+
+    li.activity.dropready.drop-up {
+        border-top: 1px solid $dropzone-border;
+        margin-top: -1px;
+    }
+
+    [data-for="sectioninfo"] {
+        // When a section is empty, the activity dropzone indicator is below
+        // the section info. This ensures the dropzone will not displace the content
+        // even if the section has no restrictions or info to display.
+        min-height: 1px;
+    }
+
+    [data-for="sectioninfo"].drop-down {
+        margin-top: -1px;
+    }
+}
+
+/* Old indentation styles */
+
+.mod-indent-outer {
+    display: table;
+}
+
+.mod-indent {
+    display: table-cell;
+}
+
+.label .mod-indent {
+    float: left;
+    padding-top: 20px;
+}
+
+.activity.label.modtype_label .mod-indent {
+    float: none;
+}
+
+@include media-breakpoint-up(sm) {
+    $mod-indent-size: 30px;
+    /* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
+
+    @for $i from 1 through 16 {
+        $width: ($i * $mod-indent-size);
+
+        .mod-indent-#{$i} {
+            width: $width;
+        }
+    }
+
+    .mod-indent-huge {
+        width: (16 * $mod-indent-size);
     }
 }
