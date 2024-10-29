@@ -36,7 +36,7 @@ final class ai_image_test extends \advanced_testcase {
         $height = 20;
 
         // Test for black image.
-        $imagepath = __DIR__ . '/fixtures/black.png'; // Get the test image from the fixtures file.
+        $imagepath = self::get_fixture_path(__NAMESPACE__, 'black.png'); // Get the test image from the fixtures file.
         $image = new ai_image($imagepath);
         // We're working with a private method here, so we need to use reflection.
         $method = new \ReflectionMethod($image, 'get_predominant_color');
@@ -47,7 +47,7 @@ final class ai_image_test extends \advanced_testcase {
         $this->assertEquals(0, $color['blue']);
 
         // Test for white image.
-        $imagepath = __DIR__ . '/fixtures/white.png';
+        $imagepath = self::get_fixture_path(__NAMESPACE__, 'white.png');
         $image = new ai_image($imagepath);
         // We're working with a private method here, so we need to use reflection.
         $method = new \ReflectionMethod($image, 'get_predominant_color');
@@ -58,7 +58,7 @@ final class ai_image_test extends \advanced_testcase {
         $this->assertEquals(255, $color['blue']);
 
         // Test for grey image.
-        $imagepath = __DIR__ . '/fixtures/grey.png';
+        $imagepath = self::get_fixture_path(__NAMESPACE__, 'grey.png');
         $image = new ai_image($imagepath);
         // We're working with a private method here, so we need to use reflection.
         $method = new \ReflectionMethod($image, 'get_predominant_color');
@@ -75,7 +75,7 @@ final class ai_image_test extends \advanced_testcase {
     public function test_is_color_dark(): void {
         // Load an image as it is required for class instantiation.
         // The color of the image is not important for this test.
-        $imagepath = __DIR__ . '/fixtures/black.png';
+        $imagepath = self::get_fixture_path(__NAMESPACE__, 'black.png');
         $image = new ai_image($imagepath);
         // We're working with a private method here, so we need to use reflection.
         $method = new \ReflectionMethod($image, 'is_color_dark');
@@ -92,7 +92,7 @@ final class ai_image_test extends \advanced_testcase {
 
         $this->assertFalse($result);
 
-        $imagepath = __DIR__ . '/fixtures/grey.png';
+        $imagepath = self::get_fixture_path(__NAMESPACE__, 'grey.png');
         $image = new ai_image($imagepath);
         // We're working with a private method here, so we need to use reflection.
         $method = new \ReflectionMethod($image, 'is_color_dark');

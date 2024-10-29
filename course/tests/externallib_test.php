@@ -2976,7 +2976,7 @@ final class externallib_test extends externallib_advanced_testcase {
             'filepath' => '/',
         ];
         $fs = get_file_storage();
-        $fs->create_file_from_pathname($filerecord, __DIR__ . '/fixtures/image.jpg');
+        $fs->create_file_from_pathname($filerecord, self::get_fixture_path('core_course', 'image.jpg'));
         $course2 = self::getDataGenerator()->create_course([
             'visible' => 0,
             'category' => $category2->id,

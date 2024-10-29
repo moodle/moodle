@@ -66,7 +66,7 @@ class update_code_manager_test extends \advanced_testcase {
 
     public function test_unzip_plugin_file(): void {
         $codeman = new \core\update\testable_code_manager();
-        $zipfilepath = __DIR__.'/fixtures/update_validator/zips/invalidroot.zip';
+        $zipfilepath = self::get_fixture_path(__NAMESPACE__, 'update_validator/zips/invalidroot.zip');
         $targetdir = make_request_directory();
         mkdir($targetdir.'/aaa_another');
 
@@ -102,13 +102,13 @@ class update_code_manager_test extends \advanced_testcase {
             }
         }
 
-        $zipfilepath = __DIR__.'/fixtures/update_validator/zips/bar.zip';
+        $zipfilepath = self::get_fixture_path(__NAMESPACE__, 'update_validator/zips/bar.zip');
         $files = $codeman->unzip_plugin_file($zipfilepath, $targetdir, 'bar');
     }
 
     public function test_unzip_plugin_file_multidir(): void {
         $codeman = new \core\update\testable_code_manager();
-        $zipfilepath = __DIR__.'/fixtures/update_validator/zips/multidir.zip';
+        $zipfilepath = self::get_fixture_path(__NAMESPACE__, 'update_validator/zips/multidir.zip');
         $targetdir = make_request_directory();
         // Attempting to rename the root folder if there are multiple ones should lead to exception.
         $this->expectException(\moodle_exception::class);
@@ -118,18 +118,18 @@ class update_code_manager_test extends \advanced_testcase {
     public function test_get_plugin_zip_root_dir(): void {
         $codeman = new \core\update\testable_code_manager();
 
-        $zipfilepath = __DIR__.'/fixtures/update_validator/zips/invalidroot.zip';
+        $zipfilepath = self::get_fixture_path(__NAMESPACE__, 'update_validator/zips/invalidroot.zip');
         $this->assertEquals('invalid-root', $codeman->get_plugin_zip_root_dir($zipfilepath));
 
-        $zipfilepath = __DIR__.'/fixtures/update_validator/zips/bar.zip';
+        $zipfilepath = self::get_fixture_path(__NAMESPACE__, 'update_validator/zips/bar.zip');
         $this->assertEquals('bar', $codeman->get_plugin_zip_root_dir($zipfilepath));
 
-        $zipfilepath = __DIR__.'/fixtures/update_validator/zips/multidir.zip';
+        $zipfilepath = self::get_fixture_path(__NAMESPACE__, 'update_validator/zips/multidir.zip');
         $this->assertSame(false, $codeman->get_plugin_zip_root_dir($zipfilepath));
     }
 
     public function test_list_plugin_folder_files(): void {
-        $fixtures = __DIR__.'/fixtures/update_validator/plugindir';
+        $fixtures = self::get_fixture_path(__NAMESPACE__, 'update_validator/plugindir');
         $codeman = new \core\update\testable_code_manager();
         $files = $codeman->list_plugin_folder_files($fixtures.'/foobar');
         $this->assertIsArray($files);
@@ -140,7 +140,7 @@ class update_code_manager_test extends \advanced_testcase {
     }
 
     public function test_zip_plugin_folder(): void {
-        $fixtures = __DIR__.'/fixtures/update_validator/plugindir';
+        $fixtures = self::get_fixture_path(__NAMESPACE__, 'update_validator/plugindir');
         $storage = make_request_directory();
         $codeman = new \core\update\testable_code_manager();
         $codeman->zip_plugin_folder($fixtures.'/foobar', $storage.'/foobar.zip');
@@ -159,7 +159,7 @@ class update_code_manager_test extends \advanced_testcase {
     }
 
     public function test_archiving_plugin_version(): void {
-        $fixtures = __DIR__.'/fixtures/update_validator/plugindir';
+        $fixtures = self::get_fixture_path(__NAMESPACE__, 'update_validator/plugindir');
         $codeman = new \core\update\testable_code_manager();
 
         $this->assertFalse($codeman->archive_plugin_version($fixtures.'/foobar', 'local_foobar', 0));

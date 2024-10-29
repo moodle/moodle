@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 class multianswerformat_test extends \question_testcase {
 
     public function test_import(): void {
-        $lines = file(__DIR__ . '/fixtures/questions.multianswer.txt');
+        $lines = file(self::get_fixture_path(__NAMESPACE__, 'questions.multianswer.txt'));
 
         $importer = new qformat_multianswer();
         $qs = $importer->readquestions($lines);
@@ -73,7 +73,7 @@ The capital of France is {#5}.
     }
 
     public function test_read_brokencloze_1(): void {
-        $lines = file(__DIR__ . '/fixtures/broken_multianswer_1.txt');
+        $lines = file(self::get_fixture_path(__NAMESPACE__, 'broken_multianswer_1.txt'));
         $importer = new qformat_multianswer();
 
         // The importer echoes some errors, so we need to capture and check that.
@@ -92,7 +92,7 @@ The capital of France is {#5}.
     }
 
     public function test_read_brokencloze_2(): void {
-        $lines = file(__DIR__ . '/fixtures/broken_multianswer_2.txt');
+        $lines = file(self::get_fixture_path(__NAMESPACE__, 'broken_multianswer_2.txt'));
         $importer = new qformat_multianswer();
 
         // The importer echoes some errors, so we need to capture and check that.
@@ -112,7 +112,7 @@ The capital of France is {#5}.
     }
 
     public function test_read_brokencloze_3(): void {
-        $lines = file(__DIR__ . '/fixtures/broken_multianswer_3.txt');
+        $lines = file(self::get_fixture_path(__NAMESPACE__, 'broken_multianswer_3.txt'));
         $importer = new qformat_multianswer();
 
         // The importer echoes some errors, so we need to capture and check that.
@@ -131,7 +131,7 @@ The capital of France is {#5}.
     }
 
     public function test_read_brokencloze_4(): void {
-        $lines = file(__DIR__ . '/fixtures/broken_multianswer_4.txt');
+        $lines = file(self::get_fixture_path(__NAMESPACE__, 'broken_multianswer_4.txt'));
         $importer = new qformat_multianswer();
 
         // The importer echoes some errors, so we need to capture and check that.

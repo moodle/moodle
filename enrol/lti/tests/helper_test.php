@@ -480,11 +480,11 @@ class helper_test extends \advanced_testcase {
         $function = $helper->getMethod('set_xpath');
 
         $document = new \DOMDocument();
-        $document->load(realpath(__DIR__ . '/fixtures/input.xml'));
+        $document->load(realpath(self::get_fixture_path(__NAMESPACE__, 'input.xml')));
         $xpath = new \DOMXpath($document);
         $function->invokeArgs(null, [$xpath, $parameters]);
         $result = $document->saveXML();
-        $expected = file_get_contents(realpath(__DIR__ . '/fixtures/' . $expected));
+        $expected = file_get_contents(realpath(self::get_fixture_path(__NAMESPACE__, $expected)));
         $this->assertEquals($expected, $result);
     }
 
@@ -504,7 +504,7 @@ class helper_test extends \advanced_testcase {
         $function = $helper->getMethod('set_xpath');
 
         $document = new \DOMDocument();
-        $document->load(realpath(__DIR__ . '/fixtures/input.xml'));
+        $document->load(realpath(self::get_fixture_path(__NAMESPACE__, 'input.xml')));
         $xpath = new \DOMXpath($document);
 
         $this->expectException('coding_exception');

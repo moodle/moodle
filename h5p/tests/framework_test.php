@@ -804,7 +804,7 @@ class framework_test extends \advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
 
         // Create the .h5p file.
-        $path = __DIR__ . '/fixtures/h5ptest.zip';
+        $path = self::get_fixture_path(__NAMESPACE__, 'h5ptest.zip');
 
         // Admin and manager should have permission to update libraries.
         $file = helper::create_fake_stored_file_from_path($path, $admin->id, $contextsys);
@@ -861,7 +861,7 @@ class framework_test extends \advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
 
         // The H5P file.
-        $path = __DIR__ . '/fixtures/h5ptest.zip';
+        $path = self::get_fixture_path(__NAMESPACE__, 'h5ptest.zip');
 
         // An error should be raised when it's called before initialitzing it.
         $this->expectException('coding_exception');

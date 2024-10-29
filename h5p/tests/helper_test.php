@@ -138,7 +138,7 @@ class helper_test extends \advanced_testcase {
         $this->setUser($user);
 
         // This is a valid .H5P file.
-        $path = __DIR__ . '/fixtures/greeting-card.h5p';
+        $path = self::get_fixture_path(__NAMESPACE__, 'greeting-card.h5p');
         $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
         $factory->get_framework()->set_file($file);
 
@@ -174,7 +174,7 @@ class helper_test extends \advanced_testcase {
         $this->setUser($user);
 
         // This is a valid .H5P file.
-        $path = __DIR__ . '/fixtures/greeting-card.h5p';
+        $path = self::get_fixture_path(__NAMESPACE__, 'greeting-card.h5p');
         $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
         $factory->get_framework()->set_file($file);
 
@@ -217,7 +217,7 @@ class helper_test extends \advanced_testcase {
         $this->setUser($user);
 
         // This is a valid .H5P file.
-        $path = __DIR__ . '/fixtures/guess-the-answer.h5p';
+        $path = self::get_fixture_path(__NAMESPACE__, 'guess-the-answer.h5p');
         $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
         $factory->get_framework()->set_file($file);
 
@@ -263,7 +263,7 @@ class helper_test extends \advanced_testcase {
         $this->setUser($user);
 
         // Prepare an invalid .H5P file.
-        $path = __DIR__ . '/fixtures/h5ptest.zip';
+        $path = self::get_fixture_path(__NAMESPACE__, 'h5ptest.zip');
         $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
         $factory->get_framework()->set_file($file);
         $config = (object)[
@@ -297,7 +297,7 @@ class helper_test extends \advanced_testcase {
         $admin = get_admin();
 
         // Prepare a valid .H5P file.
-        $path = __DIR__ . '/fixtures/greeting-card.h5p';
+        $path = self::get_fixture_path(__NAMESPACE__, 'greeting-card.h5p');
 
         // Files created by users can't be deployed.
         $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
@@ -335,7 +335,7 @@ class helper_test extends \advanced_testcase {
         $admin = get_admin();
 
         // Prepare a valid .H5P file.
-        $path = __DIR__ . '/fixtures/greeting-card.h5p';
+        $path = self::get_fixture_path(__NAMESPACE__, 'greeting-card.h5p');
 
         // Libraries can't be updated when the file has been created by users.
         $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
@@ -385,7 +385,7 @@ class helper_test extends \advanced_testcase {
         $this->assertCount(2, $messages->info);
 
         // When saving an invalid .h5p file, 6 errors should be raised.
-        $path = __DIR__ . '/fixtures/h5ptest.zip';
+        $path = self::get_fixture_path(__NAMESPACE__, 'h5ptest.zip');
         $file = helper::create_fake_stored_file_from_path($path);
         $factory->get_framework()->set_file($file);
         $config = (object)[
