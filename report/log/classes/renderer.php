@@ -95,29 +95,7 @@ class report_log_renderer extends plugin_renderer_base {
 
         $selectedcourseid = empty($reportlog->course) ? 0 : $reportlog->course->id;
 
-        // Add course selector.
-        $sitecontext = context_system::instance();
-        $courses = $reportlog->get_course_list();
-        if (!empty($courses) && $reportlog->showcourses) {
-            echo html_writer::label(get_string('selectacourse'), 'menuid', false, array('class' => 'accesshide'));
-            echo html_writer::select($courses, "id", $selectedcourseid, null, ['class' => 'me-2 mb-2']);
-        } else {
-            $courses = array();
-            $courses[$selectedcourseid] = get_course_display_name_for_list($reportlog->course) . (($selectedcourseid == SITEID) ?
-                ' (' . get_string('site') . ') ' : '');
-            echo html_writer::label(get_string('selectacourse'), 'menuid', false, array('class' => 'accesshide'));
-            echo html_writer::select($courses, "id", $selectedcourseid, false, ['class' => 'me-2 mb-2']);
-            // Check if user is admin and this came because of limitation on number of courses to show in dropdown.
-            if (has_capability('report/log:view', $sitecontext)) {
-                $a = new stdClass();
-                $a->url = new moodle_url('/report/log/index.php', array('chooselog' => 0,
-                    'group' => $reportlog->get_selected_group(), 'user' => $reportlog->userid,
-                    'id' => $selectedcourseid, 'date' => $reportlog->date, 'modid' => $reportlog->modid,
-                    'showcourses' => 1, 'showusers' => $reportlog->showusers));
-                $a->url = $a->url->out(false);
-                print_string('logtoomanycourses', 'moodle', $a);
-            }
-        }
+        echo $this->get_course_selector_field($reportlog, $selectedcourseid);
 
         // Add group selector.
         $groups = $reportlog->get_group_list();
@@ -161,10 +139,7 @@ class report_log_renderer extends plugin_renderer_base {
             ['class' => 'me-2 mb-2']);
 
         // Add activity selector.
-        [$activities, $disabled] = $reportlog->get_activities_list();
-        echo html_writer::label(get_string('activities'), 'menumodid', false, array('class' => 'accesshide'));
-        echo html_writer::select($activities, "modid", $reportlog->modid, get_string("allactivities"),
-            ['class' => 'me-2 mb-2'], $disabled);
+        echo $this->get_activity_selector_field($reportlog);
 
         // Add actions selector.
         echo html_writer::label(get_string('actions'), 'menumodaction', false, array('class' => 'accesshide'));
@@ -203,5 +178,99 @@ class report_log_renderer extends plugin_renderer_base {
         echo html_writer::end_div();
         echo html_writer::end_tag('form');
     }
-}
 
+    /**
+     * Generates the course selector field for the log report.
+     *
+     * @param report_log_renderable $reportlog The output instance.
+     * @param int $selectedcourseid
+     * @return string
+     */
+    private function get_course_selector_field(report_log_renderable $reportlog, int $selectedcourseid): string {
+        // When the log report is accessed vie an activity, we do not need a course selector.
+        if ($reportlog->isactivitypage) {
+            return html_writer::empty_tag(
+                'input',
+                ['type' => 'hidden', 'name' => 'id', 'value' => $selectedcourseid]
+            );
+        }
+
+        $result = '';
+        $sitecontext = context_system::instance();
+        $courses = $reportlog->get_course_list();
+
+        if (!empty($courses) && $reportlog->showcourses) {
+            $result .= html_writer::label(get_string('selectacourse'), 'menuid', false, ['class' => 'accesshide']);
+            $result .= html_writer::select($courses, "id", $selectedcourseid, null, ['class' => 'me-2 mb-2']);
+            return $result;
+        }
+
+        $courses = [];
+        $courseinfo = ($selectedcourseid == SITEID) ? ' (' . get_string('site') . ') ' : '';
+        $courses[$selectedcourseid] = get_course_display_name_for_list($reportlog->course) . $courseinfo;
+
+        $result .= html_writer::label(get_string('selectacourse'), 'menuid', false, ['class' => 'accesshide']);
+        $result .= html_writer::select($courses, "id", $selectedcourseid, false, ['class' => 'me-2 mb-2']);
+
+        // Check if user is admin and this came because of limitation on number of courses to show in dropdown.
+        if (has_capability('report/log:view', $sitecontext)) {
+            $a = new stdClass();
+            $a->url = new moodle_url(
+                '/report/log/index.php',
+                [
+                    'chooselog' => 0,
+                    'group' => $reportlog->get_selected_group(),
+                    'user' => $reportlog->userid,
+                    'id' => $selectedcourseid,
+                    'date' => $reportlog->date,
+                    'modid' => $reportlog->modid,
+                    'showcourses' => 1, 'showusers' => $reportlog->showusers,
+                ]
+            );
+            $a->url = $a->url->out(false);
+            $result .= get_string('logtoomanycourses', 'moodle', $a);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Generates the activity selector field for the log report.
+     *
+     * @param report_log_renderable $reportlog The output instance.
+     * @return string
+     */
+    private function get_activity_selector_field(report_log_renderable $reportlog): string {
+        $result = '';
+        // When the log report is accessed vie an activity, we do not need an activity selector.
+        if ($reportlog->isactivitypage) {
+            $result .= html_writer::empty_tag(
+                'input',
+                ['type' => 'hidden', 'name' => 'isactivitypage', 'value' => $reportlog->isactivitypage]
+            );
+            $result .= html_writer::empty_tag(
+                'input',
+                ['type' => 'hidden', 'name' => 'modid', 'value' => $reportlog->modid]
+            );
+            return $result;
+        }
+
+        [$activities, $disabled] = $reportlog->get_activities_list();
+
+        $result .= html_writer::label(
+            text: get_string('activities'),
+            for: 'menumodid',
+            colonize: false,
+            attributes: ['class' => 'accesshide'],
+        );
+        $result .= html_writer::select(
+            options: $activities,
+            name: "modid",
+            selected: $reportlog->modid,
+            nothing: get_string("allactivities"),
+            attributes: ['class' => 'me-2 mb-2'],
+            disabled: $disabled,
+        );
+        return $result;
+    }
+}
