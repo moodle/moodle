@@ -364,7 +364,7 @@ class helper_test extends \advanced_testcase {
                 'preset' => 'unexisting',
             ],
             'Valid XML file' => [
-                'preset' => __DIR__ . '/fixtures/import_settings_plugins.xml',
+                'preset' => self::get_fixture_path(__NAMESPACE__, 'import_settings_plugins.xml'),
                 'settings' => [
                     'allowemojipicker' => 1,
                     'enableportfolios' => 1,
@@ -377,7 +377,7 @@ class helper_test extends \advanced_testcase {
                 ],
             ],
             'Invalid XML file' => [
-                'preset' => __DIR__ . '/fixtures/invalid_xml_file.xml',
+                'preset' => self::get_fixture_path(__NAMESPACE__, 'invalid_xml_file.xml'),
             ],
             'Unexisting XML file' => [
                 'preset' => __DIR__ . '/fixtures/unexisting.xml',

@@ -126,7 +126,7 @@ class date_test extends advanced_testcase {
      * @covers ::normalise_timezone
      */
     public function test_windows_conversion(): void {
-        $file = __DIR__ . '/fixtures/timezonewindows.xml';
+        $file = self::get_fixture_path('core', 'timezonewindows.xml');
 
         $contents = file_get_contents($file);
         preg_match_all('/<mapZone other="([^"]+)" territory="001" type="([^"]+)"\/>/', $contents, $matches, PREG_SET_ORDER);

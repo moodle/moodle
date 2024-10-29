@@ -104,7 +104,7 @@ final class entries_import_test extends \advanced_testcase {
             'teacher' => $teacher,
         ] = $this->get_test_data();
 
-        $importer = new csv_entries_importer(__DIR__ . '/fixtures/test_data_import.csv',
+        $importer = new csv_entries_importer(self::get_fixture_path(__NAMESPACE__, 'test_data_import.csv'),
             'test_data_import.csv');
         $importer->import_csv($cm, $data, 'UTF-8', 'comma');
 
@@ -136,7 +136,7 @@ final class entries_import_test extends \advanced_testcase {
             'student' => $student,
         ] = $this->get_test_data();
 
-        $importer = new csv_entries_importer(__DIR__ . '/fixtures/test_data_import_with_userdata.csv',
+        $importer = new csv_entries_importer(self::get_fixture_path(__NAMESPACE__, 'test_data_import_with_userdata.csv'),
             'test_data_import_with_userdata.csv');
         $importer->import_csv($cm, $data, 'UTF-8', 'comma');
 
@@ -177,7 +177,7 @@ final class entries_import_test extends \advanced_testcase {
         $fieldrecord->type = 'text';
         $generator->create_field($fieldrecord, $data);
 
-        $importer = new csv_entries_importer(__DIR__ . '/fixtures/test_data_import_with_field_username.csv',
+        $importer = new csv_entries_importer(self::get_fixture_path(__NAMESPACE__, 'test_data_import_with_field_username.csv'),
             'test_data_import_with_field_username.csv');
         $importer->import_csv($cm, $data, 'UTF-8', 'comma');
 
@@ -239,7 +239,7 @@ final class entries_import_test extends \advanced_testcase {
         $fieldrecord->type = 'text';
         $generator->create_field($fieldrecord, $data);
 
-        $importer = new csv_entries_importer(__DIR__ . '/fixtures/test_data_import_with_userdata.csv',
+        $importer = new csv_entries_importer(self::get_fixture_path(__NAMESPACE__, 'test_data_import_with_userdata.csv'),
             'test_data_import_with_userdata.csv');
         $importer->import_csv($cm, $data, 'UTF-8', 'comma');
 
@@ -298,7 +298,7 @@ final class entries_import_test extends \advanced_testcase {
 
         $this->setUser($testdata[$user]);
 
-        $importer = new csv_entries_importer(__DIR__ . '/fixtures/test_data_import.csv', 'test_data_import.csv');
+        $importer = new csv_entries_importer(self::get_fixture_path(__NAMESPACE__, 'test_data_import.csv'), 'test_data_import.csv');
         $importer->import_csv($cm, $data, 'UTF-8', 'comma');
 
         $records = $this->get_data_records($data->id);
@@ -331,7 +331,7 @@ final class entries_import_test extends \advanced_testcase {
 
         $this->setUser($testdata[$user]);
 
-        $importer = new csv_entries_importer(__DIR__ . '/fixtures/test_data_import_with_approved.csv',
+        $importer = new csv_entries_importer(self::get_fixture_path(__NAMESPACE__, 'test_data_import_with_approved.csv'),
             'test_data_import_with_approved.csv');
         $importer->import_csv($cm, $data, 'UTF-8', 'comma');
 
@@ -348,13 +348,13 @@ final class entries_import_test extends \advanced_testcase {
             'cm' => $cm,
         ] = $this->get_test_data();
 
-        $importer = new csv_entries_importer(__DIR__ . '/fixtures/test_data_import_with_files.zip',
+        $importer = new csv_entries_importer(self::get_fixture_path(__NAMESPACE__, 'test_data_import_with_files.zip'),
             'test_data_import_with_files.zip');
         $importer->import_csv($cm, $data, 'UTF-8', 'comma');
 
         $records = $this->get_data_records($data->id);
         $ziparchive = new zip_archive();
-        $ziparchive->open(__DIR__ . '/fixtures/test_data_import_with_files.zip');
+        $ziparchive->open(self::get_fixture_path(__NAMESPACE__, 'test_data_import_with_files.zip'));
 
         $importedcontent = array_values($records)[0]->items;
         $this->assertEquals(17, $importedcontent['ID']->content);
@@ -395,13 +395,13 @@ final class entries_import_test extends \advanced_testcase {
             'cm' => $cm,
         ] = $this->get_test_data();
 
-        $importer = new csv_entries_importer(__DIR__ . '/fixtures/test_data_import_with_files_missing_file.zip',
+        $importer = new csv_entries_importer(self::get_fixture_path(__NAMESPACE__, 'test_data_import_with_files_missing_file.zip'),
             'test_data_import_with_files_missing_file.zip');
         $importer->import_csv($cm, $data, 'UTF-8', 'comma');
 
         $records = $this->get_data_records($data->id);
         $ziparchive = new zip_archive();
-        $ziparchive->open(__DIR__ . '/fixtures/test_data_import_with_files_missing_file.zip');
+        $ziparchive->open(self::get_fixture_path(__NAMESPACE__, 'test_data_import_with_files_missing_file.zip'));
 
         $importedcontent = array_values($records)[0]->items;
         $this->assertEquals(17, $importedcontent['ID']->content);

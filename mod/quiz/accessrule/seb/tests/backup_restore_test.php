@@ -201,7 +201,7 @@ class backup_restore_test extends \advanced_testcase {
 
         $expected = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $expected->set('requiresafeexambrowser', settings_provider::USE_SEB_UPLOAD_CONFIG);
-        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
+        $xml = file_get_contents(self::get_fixture_path(__NAMESPACE__, 'unencrypted.seb'));
         $this->create_module_test_file($xml, $this->quiz->cmid);
         $expected->save();
 

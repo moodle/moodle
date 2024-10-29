@@ -110,11 +110,11 @@ class processor_test extends \advanced_testcase {
         $cir->load_csv_content($content, 'utf-8', 'comma');
         $cir->init();
 
-        $options = array(
+        $options = [
             'mode' => tool_uploadcourse_processor::MODE_CREATE_NEW,
-            'restorefile' => __DIR__ . '/fixtures/backup.mbz',
-            'templatecourse' => 'DoesNotExist'  // Restorefile takes priority.
-        );
+            'restorefile' => self::get_fixture_path(__NAMESPACE__, 'backup.mbz'),
+            'templatecourse' => 'DoesNotExist',  // Restorefile takes priority.
+        ];
         $defaults = array('category' => '1');
 
         $p = new tool_uploadcourse_processor($cir, $options, $defaults);

@@ -295,7 +295,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
                 'penalty' => '1']);
         $qformat->setCategory($category);
 
-        $expectedxml = file_get_contents(__DIR__ . '/fixtures/export_category.xml');
+        $expectedxml = file_get_contents(self::get_fixture_path('qformat_xml', 'export_category.xml'));
         $this->assert_same_xml($expectedxml, $qformat->exportprocess());
     }
 
@@ -459,7 +459,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
                 'penalty' => '1']);
         $qformat->setCategory($categoryiota);
 
-        $expectedxml = file_get_contents(__DIR__ . '/fixtures/nested_categories_with_questions.xml');
+        $expectedxml = file_get_contents(self::get_fixture_path('qformat_xml', 'nested_categories_with_questions.xml'));
         $this->assert_same_xml($expectedxml, $qformat->exportprocess());
     }
 
@@ -498,7 +498,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
                 'penalty' => '1']);
         $qformat->setCategory($category);
 
-        $expectedxml = file_get_contents(__DIR__ . '/fixtures/html_chars_in_idnumbers.xml');
+        $expectedxml = file_get_contents(self::get_fixture_path('qformat_xml', 'html_chars_in_idnumbers.xml'));
         $this->assert_same_xml($expectedxml, $qformat->exportprocess());
     }
 
@@ -506,7 +506,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
      * Test that bad multianswer questions are not imported.
      */
     public function test_import_broken_multianswer_questions(): void {
-        $lines = file(__DIR__ . '/fixtures/broken_cloze_questions.xml');
+        $lines = file(self::get_fixture_path('qformat_xml', 'broken_cloze_questions.xml'));
         $importer = $qformat = new qformat_xml();
 
         // The importer echoes some errors, so we need to capture and check that.
