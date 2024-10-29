@@ -1646,6 +1646,26 @@ $popout-header-height: 4rem;
         }
     }
 
+    // Templates page.
+    &#page-mod-feedback-manage_templates {
+        .coursetemplates,
+        .publictemplates {
+            .no-overflow {
+                overflow: visible;
+            }
+            .action-menu .menubar {
+                justify-content: end;
+            }
+        }
+    }
+    &#page-mod-feedback-manage_templates,
+    &#page-mod-feedback-use_templ {
+        .dropdown-item:hover a.text-danger {
+            color: $dropdown-link-hover-color !important;/* stylelint-disable-line declaration-no-important */
+            text-decoration: none;
+        }
+    }
+
     // Analysis page.
     table.analysis {
         width: 100%;

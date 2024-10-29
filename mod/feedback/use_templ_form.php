@@ -32,7 +32,14 @@ require_once($CFG->libdir.'/formslib.php');
  * The mod_feedback_use_templ_form
  *
  * @deprecated since 4.0. New dynamic forms have been created instead.
+ * @todo       MDL-83522 This class will be deleted in Moodle 6.0.
  */
+#[\core\attribute\deprecated(
+    replacement: 'mod_feedback\form\use_template_form',
+    since: '4.0',
+    mdl: 'MDL-71914',
+    reason: 'New dynamic forms have been created instead.'
+)]
 class mod_feedback_use_templ_form extends moodleform {
     public function __construct($action = null, $customdata = null, $method = 'post', $target = '',
             $attributes = null, $editable = true, $ajaxformdata = null) {

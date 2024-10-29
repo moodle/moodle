@@ -29,39 +29,51 @@ const selectors = {
     modaltrigger: '[data-action="usetemplate"]',
 };
 
+let initialized = false;
+
 /**
  * Initialize module
  */
 export const init = () => {
-    const trigger = document.querySelector(selectors.modaltrigger);
 
-    trigger.addEventListener('click', event => {
-        event.preventDefault();
+    if (initialized) {
+        // We already added the event listeners (can be called multiple times).
+        return;
+    }
 
-        const modalForm = new ModalForm({
-            modalConfig: {
-                title: getString('use_this_template', 'mod_feedback'),
-            },
-            formClass: 'mod_feedback\\form\\use_template_form',
-            args: {
-                id: trigger.getAttribute('data-dataid'),
-                templateid: trigger.getAttribute('data-templateid')
-            },
-            saveButtonText: getString('save', 'core')
-        });
+    document.addEventListener('click', event => {
+        // Use the template.
+        const trigger = event.target.closest(selectors.modaltrigger);
+        if (trigger) {
+            event.preventDefault();
 
-        // Show a toast notification when the form is submitted.
-        modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, event => {
-            if (event.detail.result) {
-                window.location.assign(event.detail.url);
-            } else {
-                Notification.addNotification({
-                    type: 'error',
-                    message:  getString('saving_failed', 'mod_feedback')
-                });
-            }
-        });
+            const modalForm = new ModalForm({
+                modalConfig: {
+                    title: getString('use_this_template', 'mod_feedback'),
+                },
+                formClass: 'mod_feedback\\form\\use_template_form',
+                args: {
+                    id: trigger.getAttribute('data-dataid'),
+                    templateid: trigger.getAttribute('data-templateid')
+                },
+                saveButtonText: getString('save', 'core')
+            });
 
-        modalForm.show();
+            // Show a toast notification when the form is submitted.
+            modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, event => {
+                if (event.detail.result) {
+                    window.location.assign(event.detail.url);
+                } else {
+                    Notification.addNotification({
+                        type: 'error',
+                        message:  getString('saving_failed', 'mod_feedback')
+                    });
+                }
+            });
+
+            modalForm.show();
+        }
     });
+
+    initialized = true;
 };

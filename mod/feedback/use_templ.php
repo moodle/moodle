@@ -27,11 +27,11 @@ require_once("lib.php");
 
 $id = required_param('id', PARAM_INT);
 $templateid = optional_param('templateid', false, PARAM_INT);
-$mode = optional_param('mode', '', PARAM_ALPHA);
 
 if (!$templateid) {
     redirect('edit.php?id='.$id);
 }
+$template = $DB->get_record('feedback_template', ['id' => $templateid], '*', MUST_EXIST);
 
 $url = new moodle_url('/mod/feedback/use_templ.php', array('id'=>$id, 'templateid'=>$templateid));
 $PAGE->set_url($url);
@@ -51,21 +51,22 @@ $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
 $params = ['id' => $id];
-$params += ($mode ? ['mode' => $mode] : []);
 $activeurl = new moodle_url('/mod/feedback/manage_templates.php', $params);
 $PAGE->set_url($activeurl);
 
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
+$PAGE->add_body_class('limitedwidth');
 $PAGE->activityheader->set_attrs([
     "hidecompletion" => true,
     "description" => ''
 ]);
-$actionbar = new \mod_feedback\output\edit_template_action_bar($cm->id, $templateid, $mode);
+$actionbar = new \mod_feedback\output\edit_template_action_bar($cm->id, $templateid);
 /** @var \mod_feedback\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('mod_feedback');
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('previewtemplate', 'mod_feedback', $template->name), 3);
 echo $renderer->main_action_bar($actionbar);
 
 $form = new mod_feedback_complete_form(mod_feedback_complete_form::MODE_VIEW_TEMPLATE,

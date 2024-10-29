@@ -124,29 +124,6 @@
                 "labelattributes": [],
                 "helpicon": false
             }
-        },
-        "usetemplate": {
-            "id": 1,
-            "templateid": 2
-        },
-        "export": {
-            "disabled": false,
-            "url": "#",
-            "id": "test-id",
-            "classes": "btn btn-link",
-            "attributes": [
-                {
-                    "name": "title",
-                    "value": "Action link's title"
-                }
-            ],
-            "icon": {
-                "attributes": [
-                    {"name": "src", "value": "https://raw.githubusercontent.com/moodle/moodle/master/pix/t/check.png"},
-                    {"name": "alt", "value": "Action link's icon"}
-                ]
-            },
-            "text": "This is an action link"
         }
     }
 }}
@@ -174,11 +151,6 @@
                 {{> core/action_menu }}
             </div>
         {{/addselect}}
-        {{#usetemplate }}
-            <div class="navitem">
-                {{> mod_feedback/use_template }}
-            </div>
-        {{/usetemplate}}
         {{#actionsselect}}
             <div class="navitem ms-sm-auto">
                 {{> core/action_menu }}

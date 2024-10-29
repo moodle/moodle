@@ -40,14 +40,12 @@ Feature: Saving, using and deleting feedback templates
     When I am on the "Learning experience course 1" "feedback activity" page logged in as teacher
     And I navigate to "Templates" in current page administration
     Then I should see "No templates available yet"
-    And "Use a template" "field" should not exist
-    And "Public" "field" should not exist
     # Save as a course template
     And I navigate to "Feedback" in current page administration
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I press "Actions"
-    And I choose "Save as new template" in the open action menu
-    And I should see "Save as new template" in the ".modal-title" "css_element"
+    And I choose "Save as template" in the open action menu
+    And I should see "Save as template" in the ".modal-title" "css_element"
     And I should see "Name" in the ".modal-body" "css_element"
     And I set the field "Name" to "My first template"
     And I click on "Save" "button" in the ".modal-dialog" "css_element"
@@ -57,15 +55,19 @@ Feature: Saving, using and deleting feedback templates
     # Create a feedback from this template in the same course
     And I am on the "Another feedback in course 1" "feedback activity" page
     And I navigate to "Templates" in current page administration
-    And I follow "My first template"
-    And I should see "this is a multiple choice 1"
-    And I press "Use this template"
-    And I click on "Save" "button" in the ".modal-dialog" "css_element"
+    And I open the action menu in "My first template" "table_row"
+    And I choose "Use template" in the open action menu
+    And I click on "Save" "button" in the "Use template" "dialogue"
     And I should see "this is a multiple choice 1"
     # Make sure this template is not available in another course
     And I am on the "Learning experience course 2" "feedback activity" page
     And I navigate to "Templates" in current page administration
     And I should see "No templates available yet"
+    # Make sure Template cannot be created without questions
+    And I am on the "Learning experience course 2" "feedback activity" page
+    And I navigate to "Questions" in current page administration
+    And I press "Actions"
+    And I should not see "Save as template"
 
   @javascript
   Scenario: Teacher can append template to existing questions or remove them
@@ -73,13 +75,13 @@ Feature: Saving, using and deleting feedback templates
     When I am on the "Learning experience course 1" "feedback activity" page logged in as teacher
     And I navigate to "Questions" in current page administration
     And I press "Actions"
-    And I choose "Save as new template" in the open action menu
-    And I should see "Save as new template" in the ".modal-title" "css_element"
+    And I choose "Save as template" in the open action menu
+    And I should see "Save as template" in the ".modal-title" "css_element"
     And I should see "Name" in the ".modal-body" "css_element"
     And I set the field "Name" to "My first template"
     And I click on "Save" "button" in the ".modal-dialog" "css_element"
     And I press "Actions"
-    And I choose "Save as new template" in the open action menu
+    And I choose "Save as template" in the open action menu
     # Add questions to another feedback
     And I am on the "Another feedback in course 1" "feedback activity" page
     And I navigate to "Questions" in current page administration
@@ -90,17 +92,19 @@ Feature: Saving, using and deleting feedback templates
       | Multiple choice values | Maths\bScience\nEnglish\nOther  |
     # Import template appending items
     And I navigate to "Templates" in current page administration
-    And I follow "My first template"
-    And I press "Use this template"
-    And I set the field "Append new items" to "1"
-    And I click on "Save" "button" in the ".modal-dialog" "css_element"
+    And I open the action menu in "My first template" "table_row"
+    And I choose "Use template" in the open action menu
+    And I set the field "Keep existing questions and add new questions at the end" to "1"
+    And I click on "Save" "button" in the "Use template" "dialogue"
     Then "What is your favourite subject" "text" should appear before "this is a multiple choice 1" "text"
-    # Import template replacing items
+    # Import template replacing items (through Preview page)
     And I navigate to "Templates" in current page administration
-    And I follow "My first template"
-    And I press "Use this template"
-    And I set the field "Delete old items" to "1"
-    And I click on "Save" "button" in the ".modal-dialog" "css_element"
+    And I open the action menu in "My first template" "table_row"
+    And I choose "Preview" in the open action menu
+    And I press "Actions"
+    And I choose "Use template" in the open action menu
+    And I set the field "Override existing questions" to "1"
+    And I click on "Save" "button" in the "Use template" "dialogue"
     And I should see "this is a multiple choice 1"
     And I should not see "What is your favourite subject"
     And I should see "this is a multiple choice 1"
@@ -110,18 +114,17 @@ Feature: Saving, using and deleting feedback templates
     When I am on the "Learning experience course 1" "feedback activity" page logged in as manager
     And I navigate to "Questions" in current page administration
     And I press "Actions"
-    And I choose "Save as new template" in the open action menu
+    And I choose "Save as template" in the open action menu
     And I set the field "Name" to "My first template"
-    And I set the field "Public" to "1"
+    And I set the field "Available for all courses" to "1"
     And I click on "Save" "button" in the ".modal-dialog" "css_element"
     And I log out
     And I am on the "Learning experience course 2" "feedback activity" page logged in as teacher
     And I navigate to "Templates" in current page administration
-    And I follow "My first template"
-    And I should see "this is a multiple choice 1"
-    And I press "Use this template"
-    And I set the field "Delete old items" to "1"
-    And I click on "Save" "button" in the ".modal-dialog" "css_element"
+    And I open the action menu in "My first template" "table_row"
+    And I choose "Use template" in the open action menu
+    And I set the field "Override existing questions" to "1"
+    And I click on "Save" "button" in the "Use template" "dialogue"
     Then I should see "this is a multiple choice 1"
 
   @javascript
@@ -130,23 +133,27 @@ Feature: Saving, using and deleting feedback templates
     When I am on the "Learning experience course 1" "feedback activity" page logged in as manager
     And I navigate to "Questions" in current page administration
     And I press "Actions"
-    And I choose "Save as new template" in the open action menu
+    And I choose "Save as template" in the open action menu
     And I set the field "Name" to "My public template"
-    And I set the field "Public" to "1"
+    And I set the field "Available for all courses" to "1"
     And I click on "Save" "button" in the ".modal-dialog" "css_element"
     And I press "Actions"
-    And I choose "Save as new template" in the open action menu
+    And I choose "Save as template" in the open action menu
     And I set the field "Name" to "My course template"
     And I click on "Save" "button" in the ".modal-dialog" "css_element"
     And I log out
     # Login as teacher and try to delete templates
     And I am on the "Another feedback in course 1" "feedback activity" page logged in as teacher
     And I navigate to "Templates" in current page administration
-    And I follow "My public template"
+    And I open the action menu in "My public template" "table_row"
     Then I should not see "Delete"
+    And I choose "Preview" in the open action menu
+    And I press "Actions"
+    And I should not see "Delete"
     And I click on "Back" "link" in the ".tertiary-navigation" "css_element"
     And "My course template" "text" should exist in the ".coursetemplates" "css_element"
-    And I click on "Delete template" "link" in the "My course template" "table_row"
+    And I open the action menu in "My course template" "table_row"
+    And I choose "Delete" in the open action menu
     And I click on "Yes" "button"
     And I should see "Template deleted"
     And "My course template" "text" should not exist in the ".coursetemplates" "css_element"
@@ -158,29 +165,32 @@ Feature: Saving, using and deleting feedback templates
     When I am on the "Learning experience course 1" "feedback activity" page logged in as manager
     And I navigate to "Questions" in current page administration
     And I press "Actions"
-    And I choose "Save as new template" in the open action menu
+    And I choose "Save as template" in the open action menu
     And I set the field "Name" to "My public template"
-    And I set the field "Public" to "1"
+    And I set the field "Available for all courses" to "1"
     And I click on "Save" "button" in the ".modal-dialog" "css_element"
     And I press "Actions"
-    And I choose "Save as new template" in the open action menu
+    And I choose "Save as template" in the open action menu
     And I set the field "Name" to "My course template"
     And I click on "Save" "button" in the ".modal-dialog" "css_element"
     # Delete course template
     And I navigate to "Templates" in current page administration
-    Then "My public template" "text" should exist in the ".publictemplates" "css_element"
     And "My course template" "text" should exist in the ".coursetemplates" "css_element"
-    And I click on "Delete template" "link" in the "My course template" "table_row"
+    And I open the action menu in "My course template" "table_row"
+    And I choose "Delete" in the open action menu
     And I should see "Are you sure you want to delete this template?"
     And I press "Yes"
-    And I should see "Template deleted"
+    Then I should see "Template deleted"
     And "My course template" "text" should not exist in the ".coursetemplates" "css_element"
     And "No templates available yet" "text" should exist in the ".coursetemplates" "css_element"
     And "My public template" "text" should exist in the ".publictemplates" "css_element"
-    And I click on "Delete template" "link" in the "My public template" "table_row"
+    # Delete course template (through Preview page)
+    And I open the action menu in "My public template" "table_row"
+    And I choose "Preview" in the open action menu
+    And I press "Actions"
+    And I choose "Delete" in the open action menu
     And I should see "Are you sure you want to delete this template?"
     And I press "Yes"
     And I should see "Template deleted"
     And "My public template" "text" should not exist in the ".publictemplates" "css_element"
     And "No templates available yet" "text" should exist in the ".publictemplates" "css_element"
-    And I should see "No templates available yet"

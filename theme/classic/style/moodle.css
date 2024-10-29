@@ -35118,6 +35118,18 @@ img.userpicture {
   width: 32px;
   height: 32px;
 }
+.path-mod-feedback#page-mod-feedback-manage_templates .coursetemplates .no-overflow,
+.path-mod-feedback#page-mod-feedback-manage_templates .publictemplates .no-overflow {
+  overflow: visible;
+}
+.path-mod-feedback#page-mod-feedback-manage_templates .coursetemplates .action-menu .menubar,
+.path-mod-feedback#page-mod-feedback-manage_templates .publictemplates .action-menu .menubar {
+  justify-content: end;
+}
+.path-mod-feedback#page-mod-feedback-manage_templates .dropdown-item:hover a.text-danger, .path-mod-feedback#page-mod-feedback-use_templ .dropdown-item:hover a.text-danger {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
+  text-decoration: none;
+}
 .path-mod-feedback table.analysis {
   width: 100%;
   border-top: 1px solid #dee2e6;
