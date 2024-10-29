@@ -68,7 +68,12 @@ class category_condition extends condition {
         $this->category = self::get_category_record($categoryid, $contextid);
 
         parent::__construct($qbank);
-        $this->includesubcategories = $this->filter['filteroptions']['includesubcategories'] ?? false;
+        if (isset($this->filter['filteroptions']['includesubcategories'])) {
+            set_user_preference('qbank_managecategories_includesubcategories_filter_default',
+                $this->filter['filteroptions']['includesubcategories']);
+        }
+        $this->includesubcategories = $this->filter['filteroptions']['includesubcategories'] ??
+            get_user_preferences('qbank_managecategories_includesubcategories_filter_default', false);
     }
 
     /**
