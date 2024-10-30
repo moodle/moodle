@@ -979,6 +979,7 @@ class microlearning {
                                                    ON (mtu.threadid = mt.id AND mt.send_message = 1)
                                                    AND mtu.message_delivered = 0
                                                    WHERE mtu.timecompleted IS NULL
+                                                   AND mt.active = 1
                                                    AND mtu.schedule_date < :runtime",
                                                    array('runtime' => $runtime))) {
             foreach ($scheduleusers as $scheduleuser) {
@@ -1006,6 +1007,7 @@ class microlearning {
                                                    JOIN {microlearning_thread} mt
                                                    ON (mtu.threadid = mt.id)
                                                    WHERE mt.send_reminder = 1
+                                                   AND mt.active = 1
                                                    AND mtu.timecompleted IS NULL
                                                    AND mtu.reminder1_delivered = 0
                                                    AND mtu.reminder1_date IS NOT NULL
@@ -1037,6 +1039,7 @@ class microlearning {
                                                    JOIN {microlearning_thread} mt
                                                    ON (mtu.threadid = mt.id)
                                                    WHERE mt.send_reminder = 1
+                                                   AND mt.active = 1
                                                    AND mtu.timecompleted IS NULL
                                                    AND mtu.reminder2_delivered = 0
                                                    AND mtu.reminder2_date IS NOT NULL
