@@ -5,14 +5,14 @@ Feature: Manage competencies linked to evidence of prior learning
   I need to link and unlink competencies from evidence of prior learning
 
   Background:
-    Given the following lp "frameworks" exist:
+    Given the following "core_competency > frameworks" exist:
       | shortname | idnumber |
       | Test-Framework | ID-FW1 |
-    And the following lp "competencies" exist:
-      | shortname | framework |
-      | Test-Comp1 | ID-FW1 |
-      | Test-Comp2 | ID-FW1 |
-    And the following lp "plans" exist:
+    And the following "core_competency > competencies" exist:
+      | shortname  | competencyframework |
+      | Test-Comp1 | ID-FW1              |
+      | Test-Comp2 | ID-FW1              |
+    And the following "core_competency > plans" exist:
       | name | user | description |
       | Test-Plan | admin | Plan description |
     And the following lp "plancompetencies" exist:

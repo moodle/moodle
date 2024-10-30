@@ -62,7 +62,7 @@ Feature: Manage plearning plan
     And I should see "Student 2"
 
   Scenario: Read a learning plan
-    Given the following lp "plans" exist:
+    Given the following "core_competency > plans" exist:
       | name | user | description |
       | Science plan Year-1 | admin | science plan description |
     And I follow "Learning plans"
@@ -72,16 +72,16 @@ Feature: Manage plearning plan
     And I should see "Learning plan competencies"
 
   Scenario: Manage a learning plan competencies
-    Given the following lp "plans" exist:
+    Given the following "core_competency > plans" exist:
       | name | user | description |
       | Science plan Year-manage | admin | science plan description |
-    And the following lp "frameworks" exist:
+    And the following "core_competency > frameworks" exist:
       | shortname | idnumber |
       | Framework 1 | sc-y-2 |
-    And the following lp "competencies" exist:
-      | shortname | framework |
-      | comp1 | sc-y-2 |
-      | comp2 | sc-y-2 |
+    And the following "core_competency > competencies" exist:
+      | shortname | competencyframework |
+      | comp1     | sc-y-2              |
+      | comp2     | sc-y-2              |
     And I follow "Learning plans"
     And I should see "Science plan Year-manage"
     And I follow "Science plan Year-manage"
@@ -98,7 +98,7 @@ Feature: Manage plearning plan
     And "comp1" "table_row" should not exist
 
   Scenario: Edit a learning plan
-    Given the following lp "plans" exist:
+    Given the following "core_competency > plans" exist:
       | name | user | description |
       | Science plan Year-2 | admin | science plan description |
       | Science plan Year-3 | admin | science plan description |
@@ -113,7 +113,7 @@ Feature: Manage plearning plan
     And I should see "Science plan Year-3 Edited"
 
   Scenario: Delete a learning plan
-    Given the following lp "plans" exist:
+    Given the following "core_competency > plans" exist:
       | name | user | description |
       | Science plan Year-4 | admin | science plan description |
     And I follow "Learning plans"
@@ -130,16 +130,16 @@ Feature: Manage plearning plan
     Then I should not see "Science plan Year-4"
 
   Scenario: See a learning plan from a course
-    Given the following lp "plans" exist:
+    Given the following "core_competency > plans" exist:
       | name | user | description |
       | Science plan Year-manage | admin | science plan description |
-    And the following lp "frameworks" exist:
+    And the following "core_competency > frameworks" exist:
       | shortname | idnumber |
       | Framework 1 | sc-y-2 |
-    And the following lp "competencies" exist:
-      | shortname | framework |
-      | comp1 | sc-y-2 |
-      | comp2 | sc-y-2 |
+    And the following "core_competency > competencies" exist:
+      | shortname | competencyframework |
+      | comp1     | sc-y-2              |
+      | comp2     | sc-y-2              |
     And I follow "Learning plans"
     And I should see "Science plan Year-manage"
     And I follow "Science plan Year-manage"
