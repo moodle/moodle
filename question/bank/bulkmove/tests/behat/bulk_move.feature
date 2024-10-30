@@ -3,18 +3,21 @@ Feature: Use the qbank plugin manager page for bulkmove
   In order to check the plugin behaviour with enable and disable
 
   Background:
-    Given the following "courses" exist:
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
       | Course 2 | C2        | 0        |
       | Course 3 | C3        | 0        |
-    And the following "users" exist:
-      | username | firstname | lastname | email                |
-      | teacher1 | Teacher   | 1        | teacher1@example.com |
     And the following "course enrolments" exist:
-      | user | course | role           |
-      | teacher1 | C1 | editingteacher |
-      | teacher1 | C2 | editingteacher |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | teacher1 | C2     | editingteacher |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
     And the following "activities" exist:
       | activity    | name            | course | idnumber  |
       | quiz        | Test quiz       | C1     | quiz1     |
@@ -29,6 +32,8 @@ Feature: Use the qbank plugin manager page for bulkmove
       | Activity module | qbank3     | Test questions 4  |
       | Activity module | qbank1     | Test questions 5  |
       | Activity module | quiz1      | Test questions 6  |
+      | Course          | C1         | Test questions    |
+      | Course          | C1         | Moved questions   |
     And the following "questions" exist:
       | questioncategory   | qtype     | name            | questiontext               |
       | Test questions 1   | truefalse | First question  | Answer the first question  |
@@ -93,3 +98,27 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I click on "Confirm" "button"
     And I wait until the page is ready
     Then I should see "Questions successfully moved"
+
+  @javascript
+  Scenario: Questions can be bulk moved from the question bank
+    Given the following "questions" exist:
+      | questioncategory | qtype       | name       | questiontext              |
+      | Test questions   | truefalse   | Question 1 | Answer the first question |
+      | Test questions   | missingtype | Question 2 | Write something           |
+      | Test questions   | essay       | Question 3 | frog                      |
+    And I am on the "Course 1" "core_question > course question bank" page logged in as teacher1
+    # Select questions to be moved.
+    And I click on "Question 1" "checkbox"
+    And I click on "Question 2" "checkbox"
+    And I click on "With selected" "button"
+    When I press "Move to"
+    # Select a different category to move the questions into.
+    And I open the autocomplete suggestions list in the ".search-categories" "css_element"
+    And I click on "Moved questions" item in the autocomplete list
+    And I press "Move questions"
+    And I click on "Confirm" "button"
+    # Confirm that selected questions are moved to selected category while unselected questions are not moved.
+    Then I should see "Moved questions"
+    And I should see "Question 1"
+    And I should see "Question 2"
+    And I should not see "Question 3"
