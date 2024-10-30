@@ -239,6 +239,40 @@ final class datasource_test extends advanced_testcase {
     }
 
     /**
+     * Test getting active conditions
+     *
+     * @covers ::get_active_conditions
+     */
+    public function test_get_active_conditions(): void {
+        $instance = $this->get_datasource_test_source();
+
+        $method = (new ReflectionClass($instance))->getMethod('add_conditions_from_entity');
+        $method->invoke($instance, 'datasource_test_entity');
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+
+        $reportid = $instance->get_report_persistent()->get('id');
+        $generator->create_condition(['reportid' => $reportid, 'uniqueidentifier' => 'datasource_test_entity:first']);
+        $generator->create_condition(['reportid' => $reportid, 'uniqueidentifier' => 'datasource_test_entity:second']);
+
+        // Set the second condition as unavailable.
+        $instance->get_condition('datasource_test_entity:second')->set_is_available(false);
+
+        $this->assertEquals([
+            'datasource_test_entity:first',
+        ], array_keys($instance->get_active_conditions(true)));
+
+        // Ensure report elements are reloaded.
+        $instance::report_elements_modified($reportid);
+
+        $this->assertEquals([
+            'datasource_test_entity:first',
+            'datasource_test_entity:second',
+        ], array_keys($instance->get_active_conditions(false)));
+    }
+
+    /**
      * Create and return our test datasource instance
      *
      * @return datasource_test_source

@@ -67,8 +67,10 @@ class custom_fields_test extends core_reportbuilder_testcase {
         $generator->create_field(
             ['categoryid' => $category->get('id'), 'type' => 'textarea', 'name' => 'Textarea', 'shortname' => 'textarea']);
 
+        // This field is available only to course teachers.
         $generator->create_field(
-            ['categoryid' => $category->get('id'), 'type' => 'checkbox', 'name' => 'Checkbox', 'shortname' => 'checkbox']);
+            ['categoryid' => $category->get('id'), 'type' => 'checkbox', 'name' => 'Checkbox', 'shortname' => 'checkbox',
+                'configdata' => ['visibility' => 1]]);
 
         $generator->create_field(
             ['categoryid' => $category->get('id'), 'type' => 'date', 'name' => 'Date', 'shortname' => 'date']);
@@ -90,10 +92,11 @@ class custom_fields_test extends core_reportbuilder_testcase {
      */
     public function test_get_columns(): void {
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         $customfields = $this->generate_customfields();
-        $columns = $customfields->get_columns();
 
+        $columns = $customfields->get_columns();
         $this->assertCount(5, $columns);
         $this->assertContainsOnlyInstancesOf(column::class, $columns);
 
@@ -113,6 +116,19 @@ class custom_fields_test extends core_reportbuilder_testcase {
         $this->assertEquals(
             [true, false, true, true, true],
             array_map(fn(column $column) => $column->get_is_sortable(), $columns)
+        );
+
+        // Column available.
+        $this->assertEquals(
+            [true, true, true, true, true],
+            array_map(fn(column $column) => $column->get_is_available(), $columns),
+        );
+
+        // Column available, for non-privileged user.
+        $this->setUser(null);
+        $this->assertEquals(
+            [true, true, false, true, true],
+            array_map(fn(column $column) => $column->get_is_available(), $customfields->get_columns()),
         );
     }
 
@@ -167,17 +183,31 @@ class custom_fields_test extends core_reportbuilder_testcase {
      */
     public function test_get_filters(): void {
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         $customfields = $this->generate_customfields();
-        $filters = $customfields->get_filters();
 
+        $filters = $customfields->get_filters();
         $this->assertCount(5, $filters);
         $this->assertContainsOnlyInstancesOf(filter::class, $filters);
 
-        // Filter titles.
+        // Filter headers.
         $this->assertEquals(
             ['Text', 'Textarea', 'Checkbox', 'Date', 'Select'],
             array_map(fn(filter $filter) => $filter->get_header(), $filters)
+        );
+
+        // Filter available.
+        $this->assertEquals(
+            [true, true, true, true, true],
+            array_map(fn(filter $filter) => $filter->get_is_available(), $filters),
+        );
+
+        // Filter available, for non-privileged user.
+        $this->setUser(null);
+        $this->assertEquals(
+            [true, true, false, true, true],
+            array_map(fn(filter $filter) => $filter->get_is_available(), $customfields->get_filters()),
         );
     }
 
@@ -186,6 +216,7 @@ class custom_fields_test extends core_reportbuilder_testcase {
      */
     public function test_custom_report_content(): void {
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         $this->generate_customfields();
 
@@ -308,6 +339,7 @@ class custom_fields_test extends core_reportbuilder_testcase {
      */
     public function test_custom_report_filter(string $filtername, array $filtervalues, bool $expectmatch): void {
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         $this->generate_customfields();
 

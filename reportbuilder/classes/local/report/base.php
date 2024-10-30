@@ -518,9 +518,10 @@ abstract class base {
     /**
      * Return all active report conditions (by default, all available conditions)
      *
+     * @param bool $checkavailable
      * @return filter[]
      */
-    public function get_active_conditions(): array {
+    public function get_active_conditions(bool $checkavailable = true): array {
         $conditions = $this->get_conditions();
         foreach ($conditions as $condition) {
             if ($condition->get_is_deprecated()) {
