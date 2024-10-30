@@ -5973,7 +5973,7 @@ function generate_email_signoff() {
         $signoff .= $CFG->supportname."\n";
     }
 
-    $supportemail = $OUTPUT->supportemail(['class' => 'font-weight-bold']);
+    $supportemail = $OUTPUT->supportemail(['class' => 'fw-bold']);
 
     if ($supportemail) {
         $signoff .= "\n" . $supportemail . "\n";

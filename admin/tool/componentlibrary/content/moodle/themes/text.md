@@ -47,9 +47,9 @@ tip: you can use heading classes to style a native heading tag differently.
 {{< example >}}
 <p class="text-lowercase">Lowercased text.</p>
 <p class="text-uppercase">Uppercased text.</p>
-<p class="font-weight-bold">Bold text.</p>
-<p class="font-weight-normal">Normal weight text.</p>
-<p class="font-italic">Italic text.</p>
+<p class="fw-bold">Bold text.</p>
+<p class="fw-normal">Normal weight text.</p>
+<p class="fst-italic">Italic text.</p>
 
 <p class="text-muted">
     Muted text with a <a href="#" class="text-reset">reset link</a>.

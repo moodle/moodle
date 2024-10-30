@@ -36,7 +36,7 @@
         <div id="bigbluebuttonbn-status-bar" class="text-wrap">
             {{#statusrunning}}
                 <div>
-                    <span class="font-weight-bold">{{#str}}view_message_session_started_at, mod_bigbluebuttonbn{{/str}}:</span>
+                    <span class="fw-bold">{{#str}}view_message_session_started_at, mod_bigbluebuttonbn{{/str}}:</span>
                     <span>{{#userdate}} {{startedat}}, {{#str}} strftimetime, core_langconfig{{/str}} {{/userdate}}.</span>
                     <span class="status-message">{{statusmessage}}</span>
                 </div>
@@ -47,27 +47,27 @@
             <div class="conf-opening-time">
                 {{#openingtime}}
                     <span class="conf-opening">
-                        <span class="font-weight-bold">{{#str}}mod_form_field_openingtime, bigbluebuttonbn{{/str}}:</span>
+                        <span class="fw-bold">{{#str}}mod_form_field_openingtime, bigbluebuttonbn{{/str}}:</span>
                         {{#userdate}} {{.}}, {{#str}} strftimedaydatetime, langconfig {{/str}} {{/userdate}}
                   </span>
                 {{/openingtime}}
                 {{#closingtime}}
                     <div class="conf-closing">
-                        <span class="font-weight-bold">{{#str}}mod_form_field_closingtime, bigbluebuttonbn{{/str}}:</span>
+                        <span class="fw-bold">{{#str}}mod_form_field_closingtime, bigbluebuttonbn{{/str}}:</span>
                         {{#userdate}} {{.}}, {{#str}} strftimedaydatetime, langconfig {{/str}} {{/userdate}}
                     </div>
                 {{/closingtime}}
             </div>
             {{#statusrunning}}
                 <div>
-                        <span class="font-weight-bold">
+                        <span class="fw-bold">
                             {{#moderatorplural}}{{#str}}view_message_moderators, mod_bigbluebuttonbn{{/str}}{{/moderatorplural}}
                             {{^moderatorplural}}{{#str}}view_message_moderator, mod_bigbluebuttonbn{{/str}}{{/moderatorplural}}:
                         </span>
                     <span>{{moderatorcount}}</span>
                 </div>
                 <div>
-                        <span class="font-weight-bold">
+                        <span class="fw-bold">
                         {{#viewerplural}}{{#str}}view_message_viewers, mod_bigbluebuttonbn{{/str}}{{/viewerplural}}
                             {{^viewerplural}}{{#str}}view_message_viewer, mod_bigbluebuttonbn{{/str}}{{/viewerplural}}:
                         </span>

@@ -131,7 +131,7 @@ class page_nopermission implements renderable, templatable {
         $data = (object) [
             'pluginbaseurl' => (new moodle_url('/admin/tool/policy'))->out(false),
             'haspermissionagreedocs' => $this->haspermissionagreedocs,
-            'supportemail' => $OUTPUT->supportemail(['class' => 'font-weight-bold'])
+            'supportemail' => $OUTPUT->supportemail(['class' => 'fw-bold'])
         ];
 
         // Get the messages to display.

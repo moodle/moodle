@@ -90,7 +90,7 @@ export default class extends BaseComponent {
         // Component css classes.
         this.classes = {
             DISABLED: `disabled`,
-            ITALIC: `font-italic`,
+            ITALIC: `fst-italic`,
             DISPLAYNONE: `d-none`,
         };
     }

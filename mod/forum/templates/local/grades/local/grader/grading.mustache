@@ -94,13 +94,13 @@
             </div>
             <div class="body-container position-relative d-flex flex-column" data-region="body-container">
                 <div class="grader-grading-panel-display pt-3" data-region="grading-panel-container">
-                    <h4 class="mb-0 h5 px-3 font-weight-normal">
+                    <h4 class="mb-0 h5 px-3 fw-normal">
                         {{#pix}} i/grading, core {{/pix}}{{#str}} gradingmodulename, core_grades, {{moduleName}} {{/str}}
                     </h4>
                     <div data-region="grade" class="pt-3 px-3">
                         {{> mod_forum/local/grades/local/grader/grade_placeholder }}
                     </div>
-                    <h4 id="send-student-notifications-setting" class="mb-0 h5 px-3 font-weight-normal">
+                    <h4 id="send-student-notifications-setting" class="mb-0 h5 px-3 fw-normal">
                         {{#pix}} i/gradingnotifications, core {{/pix}}{{#str}}notifications, core{{/str}}
                     </h4>
                     <div data-region="notification" class="pt-3 px-3" role="radiogroup" aria-labelledby="send-student-notifications-setting">

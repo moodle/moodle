@@ -152,7 +152,7 @@ class renderer extends plugin_renderer_base {
 
                 if (!$ch->subchapter) {
                     $toc .= html_writer::link(new moodle_url('#ch' . $ch->id), $title,
-                            array('title' => s($title), 'class' => 'font-weight-bold text-decoration-none'));
+                            array('title' => s($title), 'class' => 'fw-bold text-decoration-none'));
                     $toc .= html_writer::start_tag('ul');
                 } else {
                     $toc .= html_writer::link(new moodle_url('#ch' . $ch->id), $title,

@@ -580,7 +580,7 @@ class core_course_renderer extends plugin_renderer_base {
                 $rolenames = array_map(function ($role) {
                     return $role->displayname;
                 }, $coursecontact['roles']);
-                $name = html_writer::tag('span', implode(", ", $rolenames).': ', ['class' => 'font-weight-bold']);
+                $name = html_writer::tag('span', implode(", ", $rolenames).': ', ['class' => 'fw-bold']);
                 $name .= html_writer::link(
                    \core_user::get_profile_url($coursecontact['user'], context_system::instance()),
                    $coursecontact['username']
@@ -636,7 +636,7 @@ class core_course_renderer extends plugin_renderer_base {
         if ($chelper->get_show_courses() == self::COURSECAT_SHOW_COURSES_EXPANDED_WITH_CAT) {
             if ($cat = core_course_category::get($course->category, IGNORE_MISSING)) {
                 $content .= html_writer::start_tag('div', ['class' => 'coursecat']);
-                $content .= html_writer::tag('span', get_string('category').': ', ['class' => 'font-weight-bold']);
+                $content .= html_writer::tag('span', get_string('category').': ', ['class' => 'fw-bold']);
                 $content .= html_writer::link(new moodle_url('/course/index.php', ['categoryid' => $cat->id]),
                         $cat->get_formatted_name(), ['class' => $cat->visible ? '' : 'dimmed']);
                 $content .= html_writer::end_tag('div');

@@ -37,11 +37,11 @@
     {{#discussions}}
         <div class="discussion-container">
             <div class="p-4">
-                <h3 class="d-inline-block m-0 h6 font-weight-bold">{{#str}} discussionstartedby, mod_forum, {{authorfullname}} {{/str}}</h3>
-                <p class="d-inline-block m-0 h6 font-weight-normal text-muted ms-1">
+                <h3 class="d-inline-block m-0 h6 fw-bold">{{#str}} discussionstartedby, mod_forum, {{authorfullname}} {{/str}}</h3>
+                <p class="d-inline-block m-0 h6 fw-normal text-muted ms-1">
                     {{#userdate}} {{timecreated}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}
                 </p>
-                <h2 class="mb-4 font-weight-bold">{{name}}</h2>
+                <h2 class="mb-4 fw-bold">{{name}}</h2>
 
                 {{#posts}}
                     <div class="posts-container">
@@ -89,7 +89,7 @@
     {{^discussions}}
         <div class="no-post-container text-center p-5">
             {{#pix}} no-posts, mod_forum {{/pix}}
-            <h2 class="mt-3 font-weight-bold">{{#str}} noposts, mod_forum {{/str}}</h2>
+            <h2 class="mt-3 fw-bold">{{#str}} noposts, mod_forum {{/str}}</h2>
         </div>
     {{/discussions}}
 </div>

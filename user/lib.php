@@ -895,7 +895,7 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
 
                 // Get login failures string.
                 $a = new stdClass();
-                $a->attempts = html_writer::tag('span', $count, array('class' => 'value me-1 font-weight-bold'));
+                $a->attempts = html_writer::tag('span', $count, array('class' => 'value me-1 fw-bold'));
                 $returnobject->metadata['userloginfail'] =
                     get_string('failedloginattempts', '', $a);
 

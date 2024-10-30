@@ -27,23 +27,23 @@ See them in action and compare them in our [Grid example]({{< docsref "/examples
       <th></th>
       <th>
         Extra small<br>
-        <span class="font-weight-normal">&lt;576px</span>
+        <span class="fw-normal">&lt;576px</span>
       </th>
       <th>
         Small<br>
-        <span class="font-weight-normal">&ge;576px</span>
+        <span class="fw-normal">&ge;576px</span>
       </th>
       <th>
         Medium<br>
-        <span class="font-weight-normal">&ge;768px</span>
+        <span class="fw-normal">&ge;768px</span>
       </th>
       <th>
         Large<br>
-        <span class="font-weight-normal">&ge;992px</span>
+        <span class="fw-normal">&ge;992px</span>
       </th>
       <th>
         Extra large<br>
-        <span class="font-weight-normal">&ge;1200px</span>
+        <span class="fw-normal">&ge;1200px</span>
       </th>
     </tr>
   </thead>

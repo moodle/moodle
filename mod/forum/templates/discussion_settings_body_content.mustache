@@ -35,7 +35,7 @@
 }}
 
 <div class="p-2 discussion-settings-container" data-container="discussion-tools">
-    <h3 class="mb-2 mt-2 h6 font-weight-bold">{{#str}} general, core {{/str}}</h3>
+    <h3 class="mb-2 mt-2 h6 fw-bold">{{#str}} general, core {{/str}}</h3>
     {{#capabilities.subscribe}}
         {{< mod_forum/setting_switch}}
             {{$switchid}}subscription-toggle-{{uniqid}}{{/switchid}}
@@ -103,12 +103,12 @@
     {{/capabilities.manage}}
 
     {{#movediscussion}}
-        <h3 class="h6 mt-4 font-weight-bold">{{#str}} move, core {{/str}}</h3>
+        <h3 class="h6 mt-4 fw-bold">{{#str}} move, core {{/str}}</h3>
         {{{.}}}
     {{/movediscussion}}
 
     {{#exportdiscussion}}
-        <h3 class="h6 mt-4 font-weight-bold">{{#str}} portfolio, portfolio {{/str}}</h3>
+        <h3 class="h6 mt-4 fw-bold">{{#str}} portfolio, portfolio {{/str}}</h3>
         {{{.}}}
     {{/exportdiscussion}}
 </div>
