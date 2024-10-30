@@ -97,11 +97,11 @@ class base_test extends advanced_testcase {
 
         // Remove the ignoreavailabilityrestrictions from the teacher role.
         role_change_permission($roleids['teacher'], context_system::instance(0),
-                'moodle/course:ignoreavailabilityrestrictions', CAP_PREVENT);
+            'moodle/course:ignoreavailabilityrestrictions', CAP_PREVENT);
 
         // Allow the courseoverview role to ingore available restriction.
         role_change_permission($roleids['courseoverview'], context_system::instance(0),
-                'moodle/course:ignoreavailabilityrestrictions', CAP_ALLOW);
+            'moodle/course:ignoreavailabilityrestrictions', CAP_ALLOW);
 
         // Make sure that initially both sections and both modules are available and visible for a student.
         $modinfostudent = get_fast_modinfo($course1, $student->id);
@@ -965,8 +965,85 @@ class base_test extends advanced_testcase {
         $format = course_get_format($course);
         $this->assertTrue($format->can_sections_be_removed_from_navigation());
     }
-}
 
+    /**
+     * Test can_sections_be_removed_from_navigation().
+     *
+     * @covers ::session_cache
+     * @covers ::session_cache_reset
+     * @covers ::session_cache_reset_all
+     * @covers ::invalidate_all_session_caches_for_course
+     */
+    public function test_session_caches_methods(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        $course1 = $generator->create_course(['format' => 'topics']);
+        $course2 = $generator->create_course(['format' => 'topics']);
+
+        // Force some cacherev to the course.
+        $course1->cacherev = 12345;
+        $course2->cacherev = 67890;
+        $DB->set_field('course', 'cacherev', $course1->cacherev, ['id' => $course1->id]);
+        $DB->set_field('course', 'cacherev', $course2->cacherev, ['id' => $course2->id]);
+
+        $teacher = $generator->create_and_enrol($course1, 'editingteacher');
+        $generator->enrol_user($teacher->id, $course2->id, 'editingteacher');
+        $this->setUser($teacher);
+
+        // The cache key uses time() as hash. To not wait a second between calls we fake an initial value.
+        $statecache = cache::make('core', 'courseeditorstate');
+        $statecache->set($course1->id, $course1->cacherev . '_11111');
+        $statecache->set($course2->id, $course2->cacherev . '_22222');
+
+        $course1cachekey = \core_courseformat\base::session_cache($course1);
+
+        // Validate the method returns the same value when called twice.
+        $course1cachekeyagain = \core_courseformat\base::session_cache($course1);
+        $this->assertEquals($course1cachekey, $course1cachekeyagain);
+
+        // Validate other course has a diferent cache key.
+        $course2cachekey = \core_courseformat\base::session_cache($course2);
+        $this->assertNotEquals($course1cachekey, $course2cachekey);
+
+        // Reset the specific course cache.
+        \core_courseformat\base::session_cache_reset($course1);
+
+        $resetcachekey = \core_courseformat\base::session_cache($course1);
+        $this->assertNotEquals($course1cachekey, $resetcachekey);
+
+        $reset2cachekey = \core_courseformat\base::session_cache($course2);
+        $this->assertEquals($course2cachekey, $reset2cachekey);
+
+        // Return to the initial value.
+        $statecache->set($course1->id, $course1->cacherev . '_11111');
+        $statecache->set($course2->id, $course2->cacherev . '_22222');
+
+        // Reset all user course caches.
+        \core_courseformat\base::session_cache_reset_all();
+
+        $resetallcachekey = \core_courseformat\base::session_cache($course1);
+        $this->assertNotEquals($course1cachekey, $resetallcachekey);
+
+        $resetall2cachekey = \core_courseformat\base::session_cache($course2);
+        $this->assertNotEquals($course2cachekey, $resetall2cachekey);
+
+        // Return to the initial value.
+        $statecache->set($course1->id, $course1->cacherev . '_11111');
+        $statecache->set($course2->id, $course2->cacherev . '_22222');
+
+        // Invalidate cache on course 1.
+        \core_courseformat\base::invalidate_all_session_caches_for_course($course1);
+
+        $invalidatecachekey = \core_courseformat\base::session_cache($course1);
+        $this->assertNotEquals($course1cachekey, $invalidatecachekey);
+
+        $invalidate2cachekey = \core_courseformat\base::session_cache($course2);
+        $this->assertEquals($course2cachekey, $invalidate2cachekey);
+    }
+}
 /**
  * Class format_testformat.
  *
