@@ -36668,9 +36668,6 @@ body {
   .pagelayout-standard .stickyfooter .sticky-footer-content, body.limitedwidth.uses-drawers .stickyfooter .sticky-footer-content {
     max-width: 830px;
   }
-  body.mediumwidth.uses-drawers .stickyfooter .sticky-footer-content {
-    max-width: 1120px;
-  }
 }
 .stickyfooter .sticky-footer-content-wrapper {
   transition: 0.2s;
@@ -37382,15 +37379,6 @@ body.tox-fullscreen .tox.tox-tinymce-aux {
   .pagelayout-standard #page.drawers .footer-popover,
   body.limitedwidth #page.drawers .footer-popover {
     max-width: 830px;
-    width: 100%;
-    margin: 0 auto;
-    border-radius: 0.5rem;
-  }
-  body.mediumwidth #page.drawers .main-inner {
-    max-width: 1120px;
-  }
-  body.mediumwidth #page.drawers .footer-popover {
-    max-width: 1120px;
     width: 100%;
     margin: 0 auto;
     border-radius: 0.5rem;

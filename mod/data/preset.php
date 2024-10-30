@@ -70,7 +70,7 @@ require_capability('mod/data:managetemplates', $context);
 
 $url = new moodle_url('/mod/data/preset.php', array('d' => $data->id));
 
-$PAGE->add_body_class('mediumwidth');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_url($url);
 $titleparts = [
     get_string('presets', 'data'),

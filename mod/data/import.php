@@ -78,7 +78,7 @@ if ($form->is_cancelled()) {
 /// Print the page header
 $pagename = get_string('uploadrecords', 'data');
 $PAGE->navbar->add($pagename);
-$PAGE->add_body_class('mediumwidth');
+$PAGE->add_body_class('limitedwidth');
 $titleparts = [
     $pagename,
     format_string($data->name),

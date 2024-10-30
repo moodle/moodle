@@ -123,7 +123,7 @@ if ($mform->is_cancelled()) {
 }
 
 // Build header to match the rest of the UI.
-$PAGE->add_body_class('mediumwidth');
+$PAGE->add_body_class('limitedwidth');
 $pagename = get_string('exportentries', 'data');
 $titleparts = [
     $pagename,
