@@ -74,30 +74,27 @@ class course extends base {
     }
 
     /**
-     * Get custom fields helper
-     *
-     * @return custom_fields
-     */
-    protected function get_custom_fields(): custom_fields {
-        $customfields = new custom_fields($this->get_table_alias('course') . '.id', $this->get_entity_name(),
-            'core_course', 'course');
-        $customfields->add_joins($this->get_joins());
-        return $customfields;
-    }
-
-    /**
-     * Initialise the entity, adding all course and custom course fields
+     * Initialise the entity
      *
      * @return base
      */
     public function initialise(): base {
-        $customfields = $this->get_custom_fields();
+        $tablealias = $this->get_table_alias('course');
+
+        $customfields = (new custom_fields(
+            "{$tablealias}.id",
+            $this->get_entity_name(),
+            'core_course',
+            'course',
+        ))
+            ->add_joins($this->get_joins());
 
         $columns = array_merge($this->get_all_columns(), $customfields->get_columns());
         foreach ($columns as $column) {
             $this->add_column($column);
         }
 
+        // All the filters defined by the entity can also be used as conditions.
         $filters = array_merge($this->get_all_filters(), $customfields->get_filters());
         foreach ($filters as $filter) {
             $this
