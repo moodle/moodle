@@ -257,13 +257,12 @@ class custom_fields {
                     $customdataparams,
                 ))
                     ->add_joins($this->get_joins())
-                    ->add_join($this->get_table_join($field));
+                    ->add_join($this->get_table_join($field))
+                    ->set_is_available($this->handler->can_view($field, 0));
 
-                // Options are stored inside configdata json string and we need to convert it to array.
-                if ($field->get('type') === 'select') {
-                    $filter->set_options_callback(static function() use ($field): array {
-                        return $field->get_options();
-                    });
+                // If using a select filter, then populate the options.
+                if ($filter->get_filter_class() === select::class) {
+                    $filter->set_options_callback(fn(): array => $field->get_options());
                 }
 
                 $filters[] = $filter;
