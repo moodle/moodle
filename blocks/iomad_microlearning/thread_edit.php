@@ -118,7 +118,8 @@ if ($editform->is_cancelled()) {
         // We are editing a current thread.
         $createdata->message_time = $createdata->hour * 3600 + $createdata->minute * 60;
 
-        $threadid = $DB->update_record('microlearning_thread', $createdata);
+        $DB->update_record('microlearning_thread', $createdata);
+        $threadid = $createdata->id;
         $redirectmessage = get_string('threadupdatedok', 'block_iomad_microlearning');
 
         // Fire an Event for this.
