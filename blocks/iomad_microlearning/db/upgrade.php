@@ -117,5 +117,67 @@ function xmldb_block_iomad_microlearning_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2021102500, 'iomad_microlearning');
     }
 
+    if ($oldversion < 2024103000) {
+
+        // Changing type of field send_message on table microlearning_thread to int.
+        $table = new xmldb_table('microlearning_thread');
+        $field = new xmldb_field('send_message', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, 'name');
+
+        // Launch change of type for field send_message.
+        $dbman->change_field_type($table, $field);
+
+        // Changing type of field send_reminder on table microlearning_thread to int.
+        $table = new xmldb_table('microlearning_thread');
+        $field = new xmldb_field('send_reminder', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, 'message_time');
+
+        // Launch change of type for field send_reminder.
+        $dbman->change_field_type($table, $field);
+
+        // Changing type of field halt_until_fulfilled on table microlearning_thread to int.
+        $table = new xmldb_table('microlearning_thread');
+        $field = new xmldb_field('halt_until_fulfilled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, 'send_reminder');
+
+        // Launch change of type for field halt_until_fulfilled.
+        $dbman->change_field_type($table, $field);
+
+        // Changing type of field active on table microlearning_thread to int.
+        $table = new xmldb_table('microlearning_thread');
+        $field = new xmldb_field('active', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, 'reminder2');
+
+        // Launch change of type for field active.
+        $dbman->change_field_type($table, $field);
+
+        // Define field halt_until_fulfilled to be added to microlearning_nugget.
+        $table = new xmldb_table('microlearning_nugget');
+        $field = new xmldb_field('halt_until_fulfilled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, 'cmid');
+
+        // Launch change of type for field halt_until_fulfilled.
+        $dbman->change_field_type($table, $field);
+
+        // Changing type of field message_delivered on table microlearning_thread_user to int.
+        $table = new xmldb_table('microlearning_thread_user');
+        $field = new xmldb_field('message_delivered', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, 'message_time');
+
+        // Launch change of type for field message_delivered.
+        $dbman->change_field_type($table, $field);
+
+        // Changing type of field reminder1_delivered on table microlearning_thread_user to int.
+        $table = new xmldb_table('microlearning_thread_user');
+        $field = new xmldb_field('reminder1_delivered', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, 'message_delivered');
+
+        // Launch change of type for field reminder1_delivered.
+        $dbman->change_field_type($table, $field);
+
+        // Changing type of field reminder2_delivered on table microlearning_thread_user to int.
+        $table = new xmldb_table('microlearning_thread_user');
+        $field = new xmldb_field('reminder2_delivered', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, 'reminder1_delivered');
+
+        // Launch change of type for field reminder2_delivered.
+        $dbman->change_field_type($table, $field);
+
+        // Iomad_microlearning savepoint reached.
+        upgrade_block_savepoint(true, 2024103000, 'iomad_microlearning');
+    }
+
     return $result;
 }
