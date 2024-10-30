@@ -29,7 +29,7 @@ Feature: Manage competency frameworks
     And I should see "Science Year-1"
 
   Scenario: Read a framework
-    Given the following lp "frameworks" exist:
+    Given the following "core_competency > frameworks" exist:
       | shortname | idnumber |
       | Science Year-2 | sc-y-2 |
     And I navigate to "Competencies > Competency frameworks" in site administration
@@ -38,7 +38,7 @@ Feature: Manage competency frameworks
     Then I should see "Science Year-2"
 
   Scenario: Edit a framework
-    Given the following lp "frameworks" exist:
+    Given the following "core_competency > frameworks" exist:
       | shortname | idnumber |
       | Science Year-3 | sc-y-3 |
     And I navigate to "Competencies > Competency frameworks" in site administration
@@ -52,7 +52,7 @@ Feature: Manage competency frameworks
     And I should see "sc-y-3"
 
   Scenario: Delete a framework
-    Given the following lp "frameworks" exist:
+    Given the following "core_competency > frameworks" exist:
       | shortname | idnumber |
       | Science Year-4 | sc-y-4 |
     And I navigate to "Competencies > Competency frameworks" in site administration
@@ -70,14 +70,14 @@ Feature: Manage competency frameworks
     And I should not see "sc-y-4"
 
   Scenario: Edit a framework with competencies in user competency
-    Given the following lp "frameworks" exist:
+    Given the following "core_competency > frameworks" exist:
       | shortname | idnumber |
       | Science Year-5 | sc-y-5 |
-    And the following lp "competencies" exist:
-      | shortname | framework |
-      | Comp1 | sc-y-5 |
-      | Comp2 | sc-y-5 |
-    And the following lp "plans" exist:
+    And the following "core_competency > competencies" exist:
+      | shortname | competencyframework |
+      | Comp1     | sc-y-5              |
+      | Comp2     | sc-y-5              |
+    And the following "core_competency > plans" exist:
       | name | user | description |
       | Plan Science-5 | admin | Plan description |
     And the following lp "plancompetencies" exist:
@@ -100,14 +100,14 @@ Feature: Manage competency frameworks
     And I should see "sc-y-5"
 
   Scenario: Edit a framework with competencies in user competency plan
-    Given the following lp "frameworks" exist:
+    Given the following "core_competency > frameworks" exist:
       | shortname | idnumber |
       | Science Year-6 | sc-y-6 |
-    And the following lp "competencies" exist:
-      | shortname | framework |
-      | Comp1 | sc-y-6 |
-      | Comp2 | sc-y-6 |
-    And the following lp "plans" exist:
+    And the following "core_competency > competencies" exist:
+      | shortname | competencyframework |
+      | Comp1     | sc-y-6              |
+      | Comp2     | sc-y-6              |
+    And the following "core_competency > plans" exist:
       | name | user | description |
       | Plan Science-6 | admin | Plan description |
     And the following lp "plancompetencies" exist:
@@ -130,12 +130,12 @@ Feature: Manage competency frameworks
     And I should see "sc-y-6"
 
   Scenario: Duplicate a competency framework
-    Given the following lp "frameworks" exist:
+    Given the following "core_competency > frameworks" exist:
       | shortname | idnumber |
       | CF1       | CF1      |
-    And the following lp "competencies" exist:
-      | shortname | framework |
-      | C1        | CF1       |
+    And the following "core_competency > competencies" exist:
+      | shortname | competencyframework |
+      | C1        | CF1                 |
     And I navigate to "Competencies > Competency frameworks" in site administration
     # Duplicate the selected competency framework
     When I click on "Duplicate" of edit menu in the "CF1" row
