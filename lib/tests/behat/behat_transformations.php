@@ -152,6 +152,18 @@ class behat_transformations extends behat_base {
     }
 
     /**
+     * Convert #dirroot# to the dirroot config value, so it is
+     * possible to reference files (e.g. fixtures) with an absolute path.
+     *
+     * @Transform /^((.*)#dirroot#(.*))$/
+     * @param string $string
+     * @return string
+     */
+    public function arg_insert_dirroot(string $string): string {
+        return $this->replace_dirroot($string);
+    }
+
+    /**
      * Replaces $NASTYSTRING vars for a nasty string.
      *
      * Method reused by TableNode tranformation.
@@ -204,5 +216,16 @@ class behat_transformations extends behat_base {
     protected function replace_wwwroot(string $string): string {
         global $CFG;
         return str_replace('#wwwroot#', $CFG->wwwroot, $string);
+    }
+
+    /**
+     * Replace #dirroot# with the actual dirroot config value.
+     *
+     * @param string $string String to attempt the replacement in.
+     * @return string
+     */
+    protected function replace_dirroot(string $string): string {
+        global $CFG;
+        return str_replace('#dirroot#', $CFG->dirroot, $string);
     }
 }
