@@ -241,7 +241,11 @@ class controlmenu extends basecontrolmenu {
             return null;
         }
 
-        $url = new url($this->basemodurl, ['id' => $this->mod->id, 'indent' => 1]);
+        $url = $this->format->get_update_url(
+            action: 'cm_moveright',
+            ids: [$this->mod->id],
+            returnurl: $this->baseurl,
+        );
 
         $icon = (right_to_left()) ? 't/left' : 't/right';
 
@@ -269,7 +273,11 @@ class controlmenu extends basecontrolmenu {
             return null;
         }
 
-        $url = new url($this->basemodurl, ['id' => $this->mod->id, 'indent' => -1]);
+        $url = $this->format->get_update_url(
+            action: 'cm_moveleft',
+            ids: [$this->mod->id],
+            returnurl: $this->baseurl,
+        );
 
         $icon = (right_to_left()) ? 't/right' : 't/left';
 
@@ -319,7 +327,11 @@ class controlmenu extends basecontrolmenu {
                 return null;
         }
 
-        $url = new url($this->basemodurl, ['duplicate' => $this->mod->id]);
+        $url = $this->format->get_update_url(
+            action: 'cm_duplicate',
+            ids: [$this->mod->id],
+            returnurl: $this->baseurl,
+        );
 
         return new link_secondary(
             url: $url,
@@ -392,7 +404,11 @@ class controlmenu extends basecontrolmenu {
             return null;
         }
 
-        $url = new url($this->basemodurl, ['delete' => $this->mod->id]);
+        $url = $this->format->get_update_url(
+            action: 'cm_delete',
+            ids: [$this->mod->id],
+            returnurl: $this->baseurl,
+        );
 
         return new link_secondary(
             url: $url,

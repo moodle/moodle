@@ -198,13 +198,11 @@ class controlmenu extends basecontrolmenu {
         }
         $sectionreturn = $this->format->get_sectionnum();
 
-        $url = new url($this->baseurl, ['sesskey' => sesskey()]);
-
         $strhide = get_string('hide');
         $strshow = get_string('show');
 
         if ($this->section->visible) {
-            $url->param('hide', $this->section->sectionnum);
+            $stateaction = 'section_hide';
             $icon = 'i/show';
             $name = $strhide;
             $attributes = [
@@ -217,7 +215,7 @@ class controlmenu extends basecontrolmenu {
                 'data-swapicon' => 'i/hide',
             ];
         } else {
-            $url->param('show', $this->section->sectionnum);
+            $stateaction = 'section_show';
             $icon = 'i/hide';
             $name = $strshow;
             $attributes = [
@@ -230,6 +228,12 @@ class controlmenu extends basecontrolmenu {
                 'data-swapicon' => 'i/show',
             ];
         }
+
+        $url = $this->format->get_update_url(
+            action: $stateaction,
+            ids: [$this->section->id],
+            returnurl: $this->baseurl,
+        );
 
         return new link_secondary(
                 url: $url,
@@ -400,16 +404,10 @@ class controlmenu extends basecontrolmenu {
             return null;
         }
 
-        $params = [
-            'id' => $this->section->id,
-            'delete' => 1,
-            'sesskey' => sesskey(),
-        ];
-        $params['sr'] ??= $this->format->get_sectionnum();
-
-        $url = new url(
-            '/course/editsection.php',
-            $params,
+        $url = $this->format->get_update_url(
+            action: 'section_delete',
+            ids: [$this->section->id],
+            returnurl: $this->baseurl,
         );
         return new link_secondary(
             url: $url,

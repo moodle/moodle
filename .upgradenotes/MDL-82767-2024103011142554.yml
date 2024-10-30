@@ -1,0 +1,9 @@
+issueNumber: MDL-82767
+notes:
+  format_topics:
+    - message: >-
+        In format topics, the section controlmenu class deprecates the
+        get_course_url method. This may affect formats extending the topics
+        format and adding extra items to the section menu. Use
+        $this->format->get_update_url instead.
+      type: deprecated

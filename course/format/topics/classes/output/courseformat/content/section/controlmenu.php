@@ -72,7 +72,13 @@ class controlmenu extends controlmenu_base {
      *
      * @return url
      */
+    #[\core\attribute\deprecated(
+        since: '5.0',
+        mdl: 'MDL-82767',
+        reason: 'Not used anymore, use $this->format->get_update_url instead',
+    )]
     protected function get_course_url(): url {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
         $format = $this->format;
         $section = $this->section;
         $course = $format->get_course();
@@ -97,10 +103,6 @@ class controlmenu extends controlmenu_base {
         $section = $this->section;
         $course = $format->get_course();
         $sectionreturn = $format->get_sectionnum();
-        $url = $this->get_course_url();
-        if (!is_null($sectionreturn)) {
-            $url->param('sectionid', $format->get_sectionid());
-        }
 
         $highlightoff = get_string('highlightoff');
         $highlightofficon = 'i/marked';
@@ -109,7 +111,7 @@ class controlmenu extends controlmenu_base {
         $highlightonicon = 'i/marker';
 
         if ($course->marker == $section->sectionnum) {  // Show the "light globe" on/off.
-            $url->param('marker', 0);
+            $action = 'section_unhighlight';
             $icon = $highlightofficon;
             $name = $highlightoff;
             $attributes = [
@@ -122,7 +124,7 @@ class controlmenu extends controlmenu_base {
                 'data-swapicon' => $highlightonicon,
             ];
         } else {
-            $url->param('marker', $section->section);
+            $action = 'section_highlight';
             $icon = $highlightonicon;
             $name = $highlighton;
             $attributes = [
@@ -135,6 +137,13 @@ class controlmenu extends controlmenu_base {
                 'data-swapicon' => $highlightofficon,
             ];
         }
+
+        $url = $this->format->get_update_url(
+            action: $action,
+            ids: [$section->id],
+            returnurl: $this->baseurl,
+        );
+
         return new action_menu_link_secondary(
                 url: $url,
                 icon: new pix_icon($icon, ''),

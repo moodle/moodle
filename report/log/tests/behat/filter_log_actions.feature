@@ -26,6 +26,7 @@ Feature: In a report, admin can filter log data by action
     # Delete Action.
     And I delete "Test assignment 1" activity
     And I log out
+    And I trigger cron
 
   Scenario: View only create actions.
     Given I log in as "admin"
