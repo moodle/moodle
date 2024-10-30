@@ -458,6 +458,12 @@ class microlearning {
                 if (empty($scheduledata->reminder2array[$nuggetid])) {
                     $scheduledata->reminder2array[$nuggetid] = 0;
                 }
+                if (empty($scheduledata->threadinfo->send_message)) {
+                    $scheduledata->threadinfo->send_message = 0;
+                }
+                if (empty($scheduledata->threadinfo->send_reminder)) {
+                    $scheduledata->threadinfo->send_reminder = 0;
+                }
                 $DB->insert_record('microlearning_nugget_sched', array('scheduledate' => $scheduledata->schedulearray[$nuggetid],
                                                                        'nuggetid' => $nuggetid,
                                                                        'timecreated' => time(),
