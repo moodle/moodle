@@ -239,6 +239,9 @@ $definitions = array(
         'mode' => cache_store::MODE_SESSION,
         'simplekeys' => true,
         'simpledata' => true,
+        'invalidationevents' => [
+            'changesincoursestate',
+        ],
     ],
     // Course actions instances cache.
     'courseactionsinstances' => [
