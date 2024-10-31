@@ -330,6 +330,10 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
     $temp->add(new admin_setting_configcheckbox('logininfoinsecurelayout',
         new lang_string('logininfoinsecurelayout', 'admin'),
         new lang_string('logininfoinsecurelayout_desc', 'admin'), 0));
+    // Process primary navigation (custom menu) through Moodle filters.
+    $temp->add(new admin_setting_configcheckbox('navfilter',
+        new lang_string('navfilter', 'admin'),
+        new lang_string('navfilter_desc', 'admin'), 0));
     $temp->add(new admin_setting_configtextarea('custommenuitems', new lang_string('custommenuitems', 'admin'),
         new lang_string('configcustommenuitems', 'admin'), '', PARAM_RAW, '50', '10'));
     $defaultsettingcustomusermenuitems = [
