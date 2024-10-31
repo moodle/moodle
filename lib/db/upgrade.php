@@ -1312,5 +1312,14 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2024120500.01);
     }
+
+    // Remove chat.
+    if ($oldversion < 2024120500.02) {
+        if (!file_exists($CFG->dirroot . "/mod/chat/version.php")) {
+            uninstall_plugin('mod', 'chat');
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024120500.02);
+    }
     return true;
 }
