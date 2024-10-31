@@ -38,7 +38,7 @@ Feature: Manage BigBlueButton session timings
     And I <upcomingeventvisibility> see "BBB 1" in the "Upcoming events" "block"
 
     Examples:
-      | openingtime    | closingtime             | calendarvisibility | buttonvisibility | upcomingeventvisibility |
-      | ##tomorrow##   | ##tomorrow 10:00##      | should             | should not       | should                  |
-      | ##1 hour ago## | ##+2 hours##            | should             | should           | should not              |
-      | ##yesterday##  | ##yesterday +3 hours##  | should not         | should not       | should not              |
+      | openingtime       | closingtime            | calendarvisibility | buttonvisibility | upcomingeventvisibility |
+      | ##now +1 minute## | ##now +5 minutes##     | should             | should not       | should                  |
+      | ##1 hour ago##    | ##+2 hours##           | should             | should           | should not              |
+      | ##yesterday##     | ##yesterday +3 hours## | should not         | should not       | should not              |
