@@ -19,7 +19,7 @@
 # Temporary files including undo
 *~
 #
-/config.php
+# /config.php
 /tags
 /TAGS
 /cscope.*
