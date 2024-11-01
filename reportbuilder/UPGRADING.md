@@ -1,5 +1,36 @@
 # core_reportbuilder (subsystem) Upgrade notes
 
+## 5.0dev
+
+### Added
+
+- New `get_deprecated_tables` method in base entity, to be overridden when an entity no longer uses a table (due to column/filter re-factoring, etc) in order to avoid breaking third-party reports
+
+  For more information see [MDL-78118](https://tracker.moodle.org/browse/MDL-78118)
+
+### Changed
+
+- The `get_active_conditions` method of the base report class has a new `$checkavailable` parameter to determine whether to check the returned conditions availability
+
+  For more information see [MDL-82809](https://tracker.moodle.org/browse/MDL-82809)
+
+### Removed
+
+- The following deprecated report entity elements have been removed:
+
+  - `comment:context`
+  - `comment:contexturl`
+  - `enrolment:method` (plus enrolment formatter `enrolment_name` method)
+  - 'enrolment:role`
+  - `file:context`
+  - `file:contexturl`
+  - `instance:context` (tag)
+  - `instance:contexturl` (tag)
+
+  Use of the `context` table is also deprecated in the `file` and `instance` (tag) entities
+
+  For more information see [MDL-78118](https://tracker.moodle.org/browse/MDL-78118)
+
 ## 4.5
 
 ### Added

@@ -15,6 +15,12 @@
 
   For more information see [MDL-81308](https://tracker.moodle.org/browse/MDL-81308)
 
+### Removed
+
+- moodle_process_email() has been deprecated with the removal of the unused and non-functioning admin/process_email.php.
+
+  For more information see [MDL-61232](https://tracker.moodle.org/browse/MDL-61232)
+
 ## 4.5
 
 ### Added

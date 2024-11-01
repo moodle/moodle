@@ -9,4 +9,3 @@
   The base enrolment `enrol_plugin::send_course_welcome_message_to_user` method also now accepts a `$roleid` parameter in order to correctly populate the `courserole` placeholder
 
   For more information see [MDL-83432](https://tracker.moodle.org/browse/MDL-83432)
-
