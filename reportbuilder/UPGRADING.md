@@ -1,5 +1,13 @@
 # core_reportbuilder (subsystem) Upgrade notes
 
+## 4.5+
+
+### Changed
+
+- The `get_active_conditions` method of the base report class has a new `$checkavailable` parameter to determine whether to check the returned conditions availability
+
+  For more information see [MDL-82809](https://tracker.moodle.org/browse/MDL-82809)
+
 ## 4.5
 
 ### Added

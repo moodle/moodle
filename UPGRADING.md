@@ -33,6 +33,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-83432](https://tracker.moodle.org/browse/MDL-83432)
 
+### core_reportbuilder
+
+#### Changed
+
+- The `get_active_conditions` method of the base report class has a new `$checkavailable` parameter to determine whether to check the returned conditions availability
+
+  For more information see [MDL-82809](https://tracker.moodle.org/browse/MDL-82809)
+
 ## 4.5
 
 ### core
