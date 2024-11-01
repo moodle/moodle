@@ -39,3 +39,5 @@ $string['cliunknowoption'] = 'Uotiones non recognoscite:
  {$a}
 Per favor usa le option --help.';
 $string['cliyesnoprompt'] = 'typa s (significa si) o n (significa no)';
+$string['environmentrequireinstall'] = 'debe esser installate e habilitate';
+$string['environmentrequireversion'] = 'version {$a->needed}  es requirite e tu es executante {$a->current}';
