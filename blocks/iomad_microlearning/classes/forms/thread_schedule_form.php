@@ -74,11 +74,6 @@ class thread_schedule_form extends \moodleform {
                 $mform->addElement('date_time_selector', "reminder1array[$nugget->id]", '', array('optional' => true));
                 $mform->addElement('html', '</td><td class="cell c4" style="text-align:left;">');
                 $mform->addElement('date_time_selector', "reminder2array[$nugget->id]", '', array('optional' => true));
-            } else {
-                $mform->addElement('hidden', "reminder1array[$nugget->id]");
-                $mform->addElement('hidden', "reminder2array[$nugget->id]");
-                $mform->setType("reminder1array[$nugget->id]", PARAM_INT);
-                $mform->setType("reminder2array[$nugget->id]", PARAM_INT);
             }
             $mform->addElement('html', '</td></tr>');
         }
@@ -104,15 +99,22 @@ class thread_schedule_form extends \moodleform {
                 $errors['duedatearray'][$nugget->id] = get_string('duedatebeforescheduledate', 'block_iomad_microlearning');
             }
 
-            if (!empty($data['reminder1array'][$nugget->id]) && $data['reminder1array'][$nugget->id] < $data['schedulearray'][$nugget->id]) {
+            if (!empty($this->threadinfo->send_reminder) &&
+                !empty($data['reminder1array'][$nugget->id]) &&
+                $data['reminder1array'][$nugget->id] < $data['schedulearray'][$nugget->id]) {
                 $errors['reminder1array'][$nugget->id] = get_string('reminderdatebeforescheduledate', 'block_iomad_microlearning');
             }
 
-            if (!empty($data['reminder2array'][$nugget->id]) && $data['reminder2array'][$nugget->id] < $data['schedulearray'][$nugget->id]) {
+            if (!empty($this->threadinfo->send_reminder) &&
+                !empty($data['reminder2array'][$nugget->id]) &&
+                $data['reminder2array'][$nugget->id] < $data['schedulearray'][$nugget->id]) {
                 $errors['reminder2array'][$nugget->id] = get_string('reminderdatebeforescheduledate', 'block_iomad_microlearning');
             }
 
-            if (!empty($data['reminder2array'][$nugget->id]) && !empty($data['reminder1array'][$nugget->id]) && $data['reminder2array'][$nugget->id] < $data['reminder1array'][$nugget->id]) {
+            if (!empty($this->threadinfo->send_reminder) &&
+                !empty($data['reminder2array'][$nugget->id]) &&
+                !empty($data['reminder1array'][$nugget->id]) &&
+                $data['reminder2array'][$nugget->id] < $data['reminder1array'][$nugget->id]) {
                 $errors['reminder2array'][$nugget->id] = get_string('reminderdatesoutoforder', 'block_iomad_microlearning');
             }
 

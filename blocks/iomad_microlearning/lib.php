@@ -445,7 +445,13 @@ class microlearning {
                 // Update the stored nugget schedules.
                 $DB->set_field('microlearning_nugget_sched', 'scheduledate', $scheduledata->schedulearray[$nuggetid], array('nuggetid' => $nuggetid));
                 $DB->set_field('microlearning_nugget_sched', 'due_date', $scheduledata->duedatearray[$nuggetid], array('nuggetid' => $nuggetid));
+                if (empty($scheduledata->reminder1array[$nuggetid])) {
+                    $scheduledata->reminder1array[$nuggetid] = 0;
+                }
                 $DB->set_field('microlearning_nugget_sched', 'reminder1_date', $scheduledata->reminder1array[$nuggetid], array('nuggetid' => $nuggetid));
+                if (empty($scheduledata->reminder2array[$nuggetid])) {
+                    $scheduledata->reminder2array[$nuggetid] = 0;
+                }
                 $DB->set_field('microlearning_nugget_sched', 'reminder2_date', $scheduledata->reminder2array[$nuggetid], array('nuggetid' => $nuggetid));
             } else {
                 // Make sure we have all the defaults.
