@@ -270,6 +270,19 @@ abstract class base_task implements checksumable, executable, loggable {
         }
     }
 
+    /**
+     * Add a setting to the task.
+     *
+     * @param base_setting $setting
+     * @return void
+     */
+    public function add_setting($setting) {
+        if (! $setting instanceof base_setting) {
+            throw new base_setting_exception('wrong_base_setting_specified');
+        }
+        $this->settings[] = $setting;
+    }
+
 // Protected API starts here
 
     /**
@@ -278,13 +291,6 @@ abstract class base_task implements checksumable, executable, loggable {
      * in the task.
      */
     abstract protected function define_settings();
-
-    protected function add_setting($setting) {
-        if (! $setting instanceof base_setting) {
-            throw new base_setting_exception('wrong_base_setting_specified');
-        }
-        $this->settings[] = $setting;
-    }
 }
 
 /*

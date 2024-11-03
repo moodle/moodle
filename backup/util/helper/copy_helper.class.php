@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use core\di;
+use core\hook\manager;
+use core_backup\hook\copy_helper_process_formdata;
+
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
@@ -39,12 +43,17 @@ final class copy_helper {
             'fullname', // Fullname of the destination course.
             'shortname', // Shortname of the destination course.
             'category', // Category integer ID that contains the destination course.
-            'visible', // Integer to detrmine of the copied course will be visible.
+            'visible', // Integer to determine of the copied course will be visible.
             'startdate', // Integer timestamp of the start of the destination course.
             'enddate', // Integer timestamp of the end of the destination course.
             'idnumber', // ID of the destination course.
             'userdata', // Integer to determine if the copied course will contain user data.
         ];
+
+        // Use hook to expand field list.
+        $hook = new copy_helper_process_formdata();
+        di::get(manager::class)->dispatch($hook);
+        $requiredfields = array_merge($requiredfields, $hook->get_extrafields());
 
         $missingfields = array_diff($requiredfields, array_keys((array)$formdata));
         if ($missingfields) {

@@ -26,6 +26,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use core\di;
+use core\hook\manager;
+use core_backup\hook\after_restore_root_define_settings;
+
 /**
  * Start task that provides all the settings common to all restores and other initial steps
  *
@@ -343,5 +347,9 @@ class restore_root_task extends restore_task {
         $legacyfiles->set_ui(new backup_setting_ui_checkbox($legacyfiles, get_string('rootsettinglegacyfiles', 'backup')));
         $legacyfiles->get_ui()->set_changeable($changeable);
         $this->add_setting($legacyfiles);
+
+        // Create and dispatch a hook to allow plugins to add other settings for the restore process.
+        $hook = new after_restore_root_define_settings($this);
+        di::get(manager::class)->dispatch($hook);
     }
 }

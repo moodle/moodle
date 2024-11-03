@@ -25,6 +25,10 @@
 
 namespace core_backup\output;
 
+use core\di;
+use core\hook\manager;
+use core_backup\hook\after_copy_form_definition;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/formslib.php");
@@ -196,6 +200,10 @@ class copy_form extends \moodleform {
             $mform->addHelpButton('rolearray', 'keptroles', 'backup');
             $this->add_checkbox_controller(2);
         }
+
+        // Dispatch hook to allow more elements to be added to the form.
+        $hook = new after_copy_form_definition($mform);
+        di::get(manager::class)->dispatch($hook);
 
         $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'submitreturn', get_string('copyreturn', 'backup'));

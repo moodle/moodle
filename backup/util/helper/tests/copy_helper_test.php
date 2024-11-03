@@ -17,6 +17,9 @@
 namespace core_backup;
 
 use backup;
+use core\di;
+use copy_helper;
+use core\hook\manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -835,5 +838,44 @@ final class copy_helper_test extends \advanced_testcase {
         $this->expectException(\moodle_exception::class);
         $copydata = \copy_helper::process_formdata($formdata);
         \copy_helper::create_copy($copydata);
+    }
+
+    /**
+     * Test copy_helper_process_formdata hook.
+     *
+     * @covers \core_backup\hook\copy_helper_process_formdata
+     */
+    public function test_copy_helper_process_formdata_hook(): void {
+        // Load the callback classes.
+        require_once(__DIR__ . '/fixtures/helper_hooks.php');
+
+        // Replace the version of the manager in the DI container with a phpunit one.
+        di::set(
+            manager::class,
+            manager::phpunit_get_instance([
+                // Load a list of hooks for `test_plugin1` from the fixture file.
+                'test_plugin1' => __DIR__ .
+                    '/fixtures/helper_hooks.php',
+            ]),
+        );
+
+        $formdata = (object) [
+            'courseid' => 4,
+            'fullname' => 'Name',
+            'shortname' => 'name',
+            'category' => 12,
+            'visible' => 1,
+            'startdate' => '123456789',
+            'enddate' => '123456789',
+            'idnumber' => 'dnum',
+            'userdata' => false,
+            'extra' => 13,
+        ];
+
+        $processed = copy_helper::process_formdata($formdata);
+
+        // Check that the extra fields are present.
+        $this->assertTrue(isset($processed->extra));
+        $this->assertEquals(13, $processed->extra);
     }
 }
