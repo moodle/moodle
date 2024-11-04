@@ -716,7 +716,7 @@ function message_provider_uninstall($component) {
     $transaction = $DB->start_delegated_transaction();
     $DB->delete_records('message_providers', array('component' => $component));
     $DB->delete_records_select('config_plugins', "plugin = 'message' AND ".$DB->sql_like('name', '?', false), array("%_provider_{$component}_%"));
-    $DB->delete_records_select('user_preferences', $DB->sql_like('name', '?', false), array("message_provider_{$component}_%"));
+    $DB->delete_records_select('user_preferences', $DB->sql_like('name', '?'), ["message_provider_{$component}_%"]);
     $transaction->allow_commit();
     // Purge all messaging settings from the caches. They are stored by plugin so we have to clear all message settings.
     cache_helper::invalidate_by_definition('core', 'config', array(), 'message');
