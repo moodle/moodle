@@ -29,6 +29,7 @@ import {BaseComponent} from 'core/reactive';
 import Modal from 'core/modal';
 import ModalSaveCancel from 'core/modal_save_cancel';
 import ModalDeleteCancel from 'core/modal_delete_cancel';
+import ModalCopyToClipboard from 'core/modal_copy_to_clipboard';
 import ModalEvents from 'core/modal_events';
 import Templates from 'core/templates';
 import {prefetchStrings} from 'core/prefetch';
@@ -573,6 +574,23 @@ export default class extends BaseComponent {
         } else {
             this.reactive.dispatch(mutationName, [target.dataset.id]);
         }
+    }
+
+    /**
+     * Handle a course permalink modal request.
+     *
+     * @param {Element} target the dispatch action element
+     * @param {Event} event the triggered event
+     */
+    _requestPermalink(target, event) {
+        event.preventDefault();
+        ModalCopyToClipboard.create(
+            {
+                text: target.getAttribute('href'),
+            },
+            getString('sectionlink', 'course')
+        );
+        return;
     }
 
     /**
