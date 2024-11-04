@@ -154,7 +154,7 @@ class import_test extends \advanced_testcase {
                             'activity_modules' => 1,
                         ],
                         'mod' => [
-                            'chat' => 0,
+                            'page' => 0,
                             'data' => 0,
                             'lesson' => 1,
                         ],

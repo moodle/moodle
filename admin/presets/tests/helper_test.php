@@ -331,7 +331,7 @@ class helper_test extends \advanced_testcase {
                 ],
                 'plugins' => [
                     'assign' => 1,
-                    'chat' => 0,
+                    'wiki' => 0,
                     'data' => 0,
                     'lesson' => 0,
                 ],
@@ -371,7 +371,7 @@ class helper_test extends \advanced_testcase {
                 ],
                 'plugins' => [
                     'assign' => 1,
-                    'chat' => 0,
+                    'page' => 0,
                     'data' => 0,
                     'lesson' => 1,
                 ],
