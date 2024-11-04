@@ -184,9 +184,15 @@ class send_user_notifications extends \core\task\adhoc_task {
             }
         }
 
-        if ($errorcount > 0 and $sentcount === 0) {
+        if ($errorcount > 0 && $sentcount === 0) {
             // All messages errored. So fail.
-            throw new \moodle_exception('Error sending posts.');
+            // Checking if the task failed because of empty email address so that it doesn't get rescheduled.
+            if (!empty($this->recipient->email)) {
+                throw new \moodle_exception('Error sending posts.');
+            } else {
+                mtrace("Failed to send emails for the user with ID ".
+                    $this->recipient->id ." due to an empty email address. Skipping re-queuing of the task.");
+            }
         } else if ($errorcount > 0) {
             // Requeue failed messages as a new task.
             $task = new send_user_notifications();
