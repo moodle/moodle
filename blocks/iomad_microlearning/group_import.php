@@ -128,6 +128,8 @@ if (!empty($fileimport)) {
                             $grouperrors++;
                             $errornum++;
                             $erroredgroups[] = $line;
+                            $grouprec->thread = get_string('listnoitem', 'error');
+                            $grouprec->threadid = 0;
                             continue;
                         } else {
                             $grouprec->threadid = $threadrec->id;
@@ -162,6 +164,8 @@ if (!empty($fileimport)) {
                                 $grouperrors++;
                                 $errornum++;
                                 $erroredgroups[] = $line;
+                                $grouprec->groupname = get_string('listnoitem', 'error');
+                                $grouprec->groupid = 0;
                                 continue;
                             } else {
                                 $grouprec->groupid = $groupinfo->id;
@@ -187,7 +191,7 @@ if (!empty($fileimport)) {
                     $DB->set_field('microlearning_thread_user', 'groupid', $grouprec->groupid, ['threadid' => $grouprec->threadid, 'userid' => $grouprec->userid]);
                     $upt->track('status', get_string('ok'));
                 } else {
-                    $upt->track('status', get_string('failed'));
+                    $upt->track('status', get_string('error'));
                 }
             }
 
@@ -201,7 +205,7 @@ if (!empty($fileimport)) {
             if (!empty($erroredgroups)) {
                 echo get_string('erroredgroups', 'block_iomad_microlearning');
                 $erroredtable = new html_table();
-                foreach ($erroredgroups as $erroredgroupr) {
+                foreach ($erroredgroups as $erroredgroup) {
                     $erroredtable->data[] = $erroredgroup;
                 }
                 echo html_writer::table($erroredtable);
