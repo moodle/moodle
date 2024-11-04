@@ -349,7 +349,7 @@ class company {
             }
             // Show the hierarchy if required.
             if (!empty($CFG->iomad_show_company_structure)) {
-                $companies = $DB->get_records_sql_menu("SELECT DISTINCT c.id, CASE WHEN c.suspended=0 THEN c.name ELSE concat(c.name, ' (S)')) AS name, cu.lastused
+                $companies = $DB->get_records_sql_menu("SELECT DISTINCT c.id, CASE WHEN c.suspended=0 THEN c.name ELSE concat(c.name, ' (S)') AS name, cu.lastused
                                                         FROM {company} c
                                                         JOIN {company_users} cu ON (c.id = cu.companyid)
                                                         WHERE cu.userid = :userid
@@ -359,7 +359,7 @@ class company {
                                                         ORDER BY $sort",
                                                         $companiesparams);
             } else {
-                $companies = $DB->get_records_sql_menu("SELECT DISTINCT c.id, CASE WHEN c.suspended=0 THEN c.name ELSE concat(c.name, ' (S)')) AS name, cu.lastused
+                $companies = $DB->get_records_sql_menu("SELECT DISTINCT c.id, CASE WHEN c.suspended=0 THEN c.name ELSE concat(c.name, ' (S)') AS name, cu.lastused
                                                         FROM {company} c
                                                         JOIN {company_users} cu ON (c.id = cu.companyid)
                                                         WHERE cu.userid = :userid
