@@ -27842,41 +27842,41 @@ table.calendartable caption {
   }
 }
 @media (min-width: 768px) {
-  section:not(#region-main) .block.block_calendar_month .maincalendar div.header {
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar div.header {
     visibility: hidden;
     height: 0;
   }
-  section:not(#region-main) .block.block_calendar_month .maincalendar .calendarwrapper .current {
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendarwrapper .current {
     width: 40%;
     font-size: inherit;
     line-height: inherit;
   }
-  section:not(#region-main) .block.block_calendar_month .maincalendar .calendarwrapper .previous,
-  section:not(#region-main) .block.block_calendar_month .maincalendar .calendarwrapper .next {
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendarwrapper .previous,
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendarwrapper .next {
     width: 30%;
   }
-  section:not(#region-main) .block.block_calendar_month .maincalendar .calendarwrapper .previous .arrow_text,
-  section:not(#region-main) .block.block_calendar_month .maincalendar .calendarwrapper .next .arrow_text {
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendarwrapper .previous .arrow_text,
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendarwrapper .next .arrow_text {
     display: none;
   }
-  section:not(#region-main) .block.block_calendar_month .maincalendar .calendartable.calendarmonth th,
-  section:not(#region-main) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td {
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendartable.calendarmonth th,
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td {
     border: none;
     text-align: center !important;
     padding: 0;
   }
-  section:not(#region-main) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td {
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td {
     height: auto;
     font-size: 0.8em;
   }
-  section:not(#region-main) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td.hasevent [data-region=day-content] {
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td.hasevent [data-region=day-content] {
     display: none;
   }
-  section:not(#region-main) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td.hasevent .day-number {
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td.hasevent .day-number {
     display: inline-block;
     position: relative;
   }
-  section:not(#region-main) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td.hasevent .day-number:before {
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td.hasevent .day-number:before {
     content: ".";
     display: inline-block;
     position: absolute;
@@ -27887,19 +27887,19 @@ table.calendartable caption {
     font-size: 3em;
     color: inherit;
   }
-  section:not(#region-main) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td:after {
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td:after {
     content: "";
     display: block;
     margin-top: calc(100% - 26px);
   }
-  section:not(#region-main) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td.clickable:hover {
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td.clickable:hover {
     background-color: inherit;
   }
-  section:not(#region-main) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td.clickable:not(.today):hover .day-number-circle {
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td.clickable:not(.today):hover .day-number-circle {
     border-radius: 50%;
     background-color: #ededed;
   }
-  section:not(#region-main) .block.block_calendar_month .bottom {
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .bottom {
     border-top: 1px solid rgba(0, 0, 0, 0.125);
     padding-top: 0.5rem;
   }
