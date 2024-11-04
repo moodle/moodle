@@ -1,0 +1,8 @@
+issueNumber: MDL-82342
+notes:
+  core_course:
+    - message: >-
+        The core_course_get_module external function is now deprecated. Use
+        fragment API using component core_courseformat and fragment cmitem
+        instead
+      type: deprecated

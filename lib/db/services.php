@@ -570,11 +570,14 @@ $functions = array(
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    // Todo Remove this entry in Moodle 6.0 (MDL-83530).
     'core_course_get_module' => array(
         'classname'   => 'core_course_external',
         'methodname'  => 'get_module',
         'classpath'   => 'course/externallib.php',
-        'description' => 'Returns html with one activity module on course page',
+        'description' => '** DEPRECATED ** Please do not call this function any more (will be removed in Moodle 6.0).'
+            . 'Returns html with one activity module on course page.'
+            . 'Use fragment API using component core_courseformat and fragment cmitem instead.',
         'type'        => 'read',
         'ajax'        => true,
     ),
@@ -606,19 +609,25 @@ $functions = array(
         'ajax'          => true,
         'capabilities'  => 'moodle/course:manageactivities',
     ],
+    // Todo Remove this entry in Moodle 6.0 (MDL-83530).
     'core_course_edit_module' => array(
         'classname'   => 'core_course_external',
         'methodname'  => 'edit_module',
         'classpath'   => 'course/externallib.php',
-        'description' => 'Performs an action on course module (change visibility, duplicate, delete, etc.)',
+        'description' => '** DEPRECATED ** Please do not call this function any more (will be removed in Moodle 6.0).'
+            . ' Performs an action on course module (change visibility, duplicate, delete, etc.)'
+            . ' Use core_courseformat_update_course instead.',
         'type'        => 'write',
         'ajax'        => true,
     ),
+    // Todo Remove this entry in Moodle 6.0 (MDL-83530).
     'core_course_edit_section' => array(
         'classname'   => 'core_course_external',
         'methodname'  => 'edit_section',
         'classpath'   => 'course/externallib.php',
-        'description' => 'Performs an action on course section (change visibility, set marker, delete)',
+        'description' => '** DEPRECATED ** Please do not call this function any more (will be removed in Moodle 6.0).'
+            . 'Performs an action on course section (change visibility, set marker, delete)'
+            . ' Use core_courseformat_update_course instead.',
         'type'        => 'write',
         'ajax'        => true,
     ),

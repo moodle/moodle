@@ -1,0 +1,8 @@
+issueNumber: MDL-82342
+notes:
+  core_course:
+    - message: >-
+        The core_course_edit_module and core_course_edit_section external
+        functions are now deprecated. Use core_courseformat_update_course
+        instead
+      type: deprecated
