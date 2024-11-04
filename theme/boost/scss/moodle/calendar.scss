@@ -609,7 +609,7 @@ table.calendartable caption {
 }
 
 @media (min-width: 768px) {
-    section:not(#region-main) {
+    [data-blockregion]:not([data-blockregion="content"]) {
         .block {
             &.block_calendar_month {
                 .maincalendar {
