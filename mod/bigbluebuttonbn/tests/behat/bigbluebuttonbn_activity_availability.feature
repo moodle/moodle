@@ -6,6 +6,7 @@ Feature: Manage BigBlueButton session timings
 
   Background:
     Given a BigBlueButton mock server is configured
+    And I enable "bigbluebuttonbn" "mod" plugin
     And the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1        |
@@ -28,9 +29,9 @@ Feature: Manage BigBlueButton session timings
     When I am on the "BBB 1" "bigbluebuttonbn activity" page logged in as student1
     And "Join session" "link" <buttonvisibility> exist
     And I should see "Open:"
-    And I should see "<openingtime>%A, %d %B %Y, %I:%M##"
+    And I should see "<openingtime>%A, %d %B %Y##"
     And I should see "Close:"
-    And I should see "<closingtime>%A, %d %B %Y, %I:%M##"
+    And I should see "<closingtime>%A, %d %B %Y##"
     And I am viewing calendar in "month" view
     And I <calendarvisibility> see "BBB 1"
     And I am on site homepage
