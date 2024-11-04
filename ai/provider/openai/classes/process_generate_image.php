@@ -115,6 +115,7 @@ class process_generate_image extends abstract_processor {
             'success' => true,
             'sourceurl' => $bodyobj->data[0]->url,
             'revisedprompt' => $bodyobj->data[0]->revised_prompt,
+            'model' => $this->get_model(), // There is no model in the response, use config.
         ];
     }
 

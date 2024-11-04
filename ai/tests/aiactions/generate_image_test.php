@@ -85,6 +85,7 @@ final class generate_image_test extends \advanced_testcase {
         $body = [
             'revisedprompt' => 'This is a revised prompt',
             'sourceurl' => 'https://example.com/image.png',
+            'model' => 'dall-e-3',
         ];
         $actionresponse = new response_generate_image(
             success: true,

@@ -1447,5 +1447,20 @@ function xmldb_main_upgrade($oldversion) {
     // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2024110400.00) {
+
+        // Define field model to be added to ai_action_register.
+        $table = new xmldb_table('ai_action_register');
+        $field = new xmldb_field('model', XMLDB_TYPE_CHAR, '50', null, null, null, null, null);
+
+        // Conditionally launch add field model.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024110400.00);
+    }
+
     return true;
 }

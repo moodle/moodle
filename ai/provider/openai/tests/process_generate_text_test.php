@@ -150,7 +150,7 @@ final class process_generate_text_test extends \advanced_testcase {
         $this->assertEquals('stop', $result['finishreason']);
         $this->assertEquals('11', $result['prompttokens']);
         $this->assertEquals('568', $result['completiontokens']);
-
+        $this->assertEquals('gpt-4o-2024-05-13', $result['model']);
     }
 
     /**
@@ -178,6 +178,7 @@ final class process_generate_text_test extends \advanced_testcase {
         $this->assertEquals('stop', $result['finishreason']);
         $this->assertEquals('11', $result['prompttokens']);
         $this->assertEquals('568', $result['completiontokens']);
+        $this->assertEquals('gpt-4o-2024-05-13', $result['model']);
     }
 
     /**
@@ -197,6 +198,7 @@ final class process_generate_text_test extends \advanced_testcase {
             'finishreason' => 'stop',
             'prompttokens' => '11',
             'completiontokens' => '568',
+            'model' => 'gpt-4o',
         ];
 
         $result = $method->invoke($processor, $response);
@@ -206,6 +208,7 @@ final class process_generate_text_test extends \advanced_testcase {
         $this->assertEquals('generate_text', $result->get_actionname());
         $this->assertEquals($response['success'], $result->get_success());
         $this->assertEquals($response['generatedcontent'], $result->get_response_data()['generatedcontent']);
+        $this->assertEquals($response['model'], $result->get_response_data()['model']);
     }
 
     /**

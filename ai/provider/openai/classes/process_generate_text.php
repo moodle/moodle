@@ -96,6 +96,7 @@ class process_generate_text extends abstract_processor {
             'finishreason' => $bodyobj->choices[0]->finish_reason,
             'prompttokens' => $bodyobj->usage->prompt_tokens,
             'completiontokens' => $bodyobj->usage->completion_tokens,
+            'model' => $bodyobj->model ?? $this->get_model(), // Fallback to config model.
         ];
     }
 }

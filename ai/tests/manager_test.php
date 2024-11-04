@@ -304,6 +304,7 @@ final class manager_test extends \advanced_testcase {
         $body = [
             'revisedprompt' => 'This is a revised prompt',
             'imageurl' => 'https://example.com/image.png',
+            'model' => 'dall-e-3',
         ];
         $actionresponse = new response_generate_image(
             success: true,
@@ -327,6 +328,7 @@ final class manager_test extends \advanced_testcase {
         $this->assertEquals($actionresponse->get_errormessage(), $record->errormessage);
         $this->assertEquals($action->get_configuration('timecreated'), $record->timecreated);
         $this->assertEquals($actionresponse->get_timecreated(), $record->timecompleted);
+        $this->assertEquals($actionresponse->get_model_used(), $record->model);
     }
 
     /**

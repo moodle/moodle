@@ -85,6 +85,7 @@ $string['privacy:metadata:ai_action_generate_text:responseid'] = 'The ID of the 
 $string['privacy:metadata:ai_action_register'] = 'A table storing the action requests made by users.';
 $string['privacy:metadata:ai_action_register:actionid'] = 'The ID of the action request.';
 $string['privacy:metadata:ai_action_register:actionname'] = 'The action name of the request.';
+$string['privacy:metadata:ai_action_register:model'] = 'The model used to generate the response.';
 $string['privacy:metadata:ai_action_register:provider'] = 'The name of the provider that handled the request.';
 $string['privacy:metadata:ai_action_register:success'] = 'The state of the action request.';
 $string['privacy:metadata:ai_action_register:timecompleted'] = 'The completed time of the request.';

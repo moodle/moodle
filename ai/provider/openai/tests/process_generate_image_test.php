@@ -165,6 +165,7 @@ final class process_generate_image_test extends \advanced_testcase {
 
         $this->stringContains('An image that represents the concept of a \'test\'.', $result['revisedprompt']);
         $this->stringContains('oaidalleapiprodscus.blob.core.windows.net', $result['sourceurl']);
+        $this->assertEquals('dall-e-3', $result['model']);
     }
 
     /**
@@ -210,6 +211,7 @@ final class process_generate_image_test extends \advanced_testcase {
 
         $this->stringContains('An image that represents the concept of a \'test\'.', $result['revisedprompt']);
         $this->stringContains('oaidalleapiprodscus.blob.core.windows.net', $result['sourceurl']);
+        $this->assertEquals('dall-e-3', $result['model']);
     }
 
     /**
@@ -225,6 +227,7 @@ final class process_generate_image_test extends \advanced_testcase {
             'success' => true,
             'revisedprompt' => 'An image that represents the concept of a \'test\'.',
             'imageurl' => 'oaidalleapiprodscus.blob.core.windows.net',
+            'model' => 'dall-e-3',
         ];
 
         $result = $method->invoke($processor, $response);
@@ -234,6 +237,7 @@ final class process_generate_image_test extends \advanced_testcase {
         $this->assertEquals('generate_image', $result->get_actionname());
         $this->assertEquals($response['success'], $result->get_success());
         $this->assertEquals($response['revisedprompt'], $result->get_response_data()['revisedprompt']);
+        $this->assertEquals($response['model'], $result->get_response_data()['model']);
     }
 
     /**
