@@ -27,6 +27,7 @@ require_once(dirname('__FILE__').'/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/user/filters/lib.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
+require_once($CFG->dirroot.'/course/lib.php');
 
 $companyid    = optional_param('companyid', 0, PARAM_INTEGER);
 $coursesearch      = optional_param('coursesearch', '', PARAM_CLEAN);// Search string.
@@ -208,9 +209,9 @@ if(!empty($hideid) && iomad::has_capability('block/iomad_company_admin:managecou
         throw new moodle_exception('invalidcourse');
     }
     if (confirm_sesskey()) {
-    	  $record = get_course($hideid);
+        $record = get_course($hideid);
         $course = new core_course_list_element($record);
-        \core_course\management\helper::action_course_hide($course);
+        course_change_visibility($course->id, false);
     }
 }
 if(!empty($showid) && iomad::has_capability('block/iomad_company_admin:managecourses', $companycontext)) {
@@ -218,9 +219,9 @@ if(!empty($showid) && iomad::has_capability('block/iomad_company_admin:managecou
         throw new moodle_exception('invalidcourse');
     } 
     if (confirm_sesskey()) {
-    	  $record = get_course($showid);
+        $record = get_course($showid);
         $course = new core_course_list_element($record);
-        \core_course\management\helper::action_course_show($course);
+        course_change_visibility($course->id, true);
     }
 }
 
