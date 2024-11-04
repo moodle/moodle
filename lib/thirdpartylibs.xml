@@ -746,7 +746,7 @@ All rights reserved.</copyright>
     <repository>https://github.com/Kevinrob/guzzle-cache-middleware</repository>
   </library>
   <library>
-      <location>webauthn/src</location>
+      <location>webauthn</location>
       <name>WebAuthn</name>
       <version>2.1.1</version>
       <license>MIT</license>
@@ -794,7 +794,7 @@ All rights reserved.</copyright>
       <repository>https://github.com/php-di/invoker</repository>
   </library>
   <library>
-      <location>slim</location>
+      <location>slim/slim</location>
       <name>Slim Framework</name>
       <version>4.13.0</version>
       <license>MIT</license>

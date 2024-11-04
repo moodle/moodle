@@ -1,0 +1,76 @@
+{
+    "name": "openspout/openspout",
+    "description": "PHP Library to read and write spreadsheet files (CSV, XLSX and ODS), in a fast and scalable way",
+    "license": "MIT",
+    "type": "library",
+    "keywords": [
+        "php",
+        "read",
+        "write",
+        "csv",
+        "xlsx",
+        "ods",
+        "odf",
+        "open",
+        "office",
+        "excel",
+        "spreadsheet",
+        "scale",
+        "memory",
+        "stream",
+        "ooxml"
+    ],
+    "authors": [
+        {
+            "name": "Adrien Loison",
+            "email": "adrien@box.com"
+        }
+    ],
+    "homepage": "https://github.com/openspout/openspout",
+    "require": {
+        "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
+        "ext-dom": "*",
+        "ext-fileinfo": "*",
+        "ext-filter": "*",
+        "ext-libxml": "*",
+        "ext-xmlreader": "*",
+        "ext-zip": "*"
+    },
+    "require-dev": {
+        "ext-zlib": "*",
+        "friendsofphp/php-cs-fixer": "^3.46.0",
+        "infection/infection": "^0.27.9",
+        "phpbench/phpbench": "^1.2.15",
+        "phpstan/phpstan": "^1.10.55",
+        "phpstan/phpstan-phpunit": "^1.3.15",
+        "phpstan/phpstan-strict-rules": "^1.5.2",
+        "phpunit/phpunit": "^10.5.5"
+    },
+    "suggest": {
+        "ext-iconv": "To handle non UTF-8 CSV files (if \"php-mbstring\" is not already installed or is too limited)",
+        "ext-mbstring": "To handle non UTF-8 CSV files (if \"iconv\" is not already installed)"
+    },
+    "autoload": {
+        "psr-4": {
+            "OpenSpout\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "OpenSpout\\Benchmarks\\": "benchmarks/"
+        },
+        "classmap": [
+            "tests/"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "infection/extension-installer": true
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.3.x-dev"
+        }
+    }
+}

@@ -1,0 +1,37 @@
+{
+    "name": "phpxmlrpc/phpxmlrpc",
+    "description": "A php library for building xmlrpc clients and servers",
+    "license": "BSD-3-Clause",
+    "homepage": "https://gggeek.github.io/phpxmlrpc/",
+    "keywords": [ "xmlrpc", "xml-rpc","webservices" ],
+    "require": {
+        "php": "^5.4.0 || ^7.0 || ^8.0",
+        "ext-xml": "*"
+    },
+    "require-dev": {
+        "ext-curl": "*",
+        "ext-dom": "*",
+        "ext-mbstring": "*",
+        "phpunit/phpunit": "^4.8 || ^5.0 || ^8.5.14",
+        "phpunit/phpunit-selenium": "*",
+        "yoast/phpunit-polyfills": "*"
+    },
+    "suggest": {
+        "ext-curl": "Needed for HTTPS, HTTP2 and HTTP 1.1 support, NTLM Auth etc...",
+        "ext-zlib": "Needed for sending compressed requests and receiving compressed responses, if cURL is not available",
+        "ext-mbstring": "Needed to allow reception of requests/responses in character sets other than ASCII,LATIN-1,UTF-8",
+        "phpxmlrpc/extras": "Adds more featured Server classes, including self-documenting and ajax-enabled servers",
+        "phpxmlrpc/jsonrpc": "Adds support for the JSON-RPC protocol"
+    },
+    "scripts": {
+        "setup-git-hooks": "if ln -s -f $(pwd)/.githooks/pre-push.sh .git/hooks/pre-push; then echo hooks installed; else echo fail; fi"
+    },
+    "_comment::conflict": "Within the extras package, only the XMLRPC extension emulation is not compatible... the JSONRPC part should be ok. Both have been moved to different packages anyway",
+    "conflict": {
+        "phpxmlrpc/extras": "<= 1.0.0-beta2",
+        "phpxmlrpc/jsonrpc": "<= 1.0.0-beta1"
+    },
+    "autoload": {
+        "psr-4": {"PhpXmlRpc\\": "src/"}
+    }
+}
