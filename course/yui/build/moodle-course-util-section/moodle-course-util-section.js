@@ -3,11 +3,14 @@ YUI.add('moodle-course-util-section', function (Y, NAME) {
 /**
  * A collection of utility classes for use with course sections.
  *
+ * TODO: remove this module as part of MDL-83627.
+ *
  * @module moodle-course-util
  * @submodule moodle-course-util-section
  */
 
 Y.namespace('Moodle.core_course.util.section');
+
 
 /**
  * A collection of utility classes for use with course sections.

@@ -2,6 +2,8 @@
  * The coursebase class to provide shared functionality to Modules within
  * Moodle.
  *
+ * TODO: remove this module as part of MDL-83627.
+ *
  * @module moodle-course-coursebase
  */
 var COURSEBASENAME = 'course-coursebase';
@@ -9,6 +11,12 @@ var COURSEBASENAME = 'course-coursebase';
 var COURSEBASE = function() {
     COURSEBASE.superclass.constructor.apply(this, arguments);
 };
+
+Y.log(
+    'YUI moodle-course-coursebase is deprecated. Please, add support_components to your course format.',
+    'warn',
+    'moodle-course-coursebase'
+);
 
 /**
  * The coursebase class to provide shared functionality to Modules within

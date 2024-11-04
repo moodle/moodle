@@ -1,6 +1,8 @@
 /**
  * Resource drag and drop.
  *
+ * TODO: remove this module as part of MDL-83627.
+ *
  * @class M.course.dragdrop.resource
  * @constructor
  * @extends M.core.dragdrop
@@ -8,6 +10,13 @@
 var DRAGRESOURCE = function() {
     DRAGRESOURCE.superclass.constructor.apply(this, arguments);
 };
+
+Y.log(
+    'YUI M.course.dragdrop.resource is deprecated. Please, add support_components to your course format.',
+    'warn',
+    'moodle-course-coursebase'
+);
+
 Y.extend(DRAGRESOURCE, M.core.dragdrop, {
     initializer: function() {
         // Set group for parent class

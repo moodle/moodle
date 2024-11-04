@@ -2788,20 +2788,26 @@ function course_ajax_enabled($course) {
  *          * pageparams    Additional parameters to pass through in the post
  * @return bool
  */
-function include_course_ajax($course, $usedmodules = array(), $enabledmodules = null, $config = null) {
+function include_course_ajax($course, $usedmodules = [], $enabledmodules = null, $config = null) {
     global $CFG, $PAGE, $SITE;
 
     // Init the course editor module to support UI components.
     $format = course_get_format($course);
     include_course_editor($format);
 
+    // TODO remove this if as part of MDL-83627.
     // Ensure that ajax should be included
     if (!course_ajax_enabled($course)) {
         return false;
     }
 
+    // TODO remove this if as part of MDL-83627.
     // Component based formats don't use YUI drag and drop anymore.
     if (!$format->supports_components() && course_format_uses_sections($course->format)) {
+        debugging(
+            'The old course editor will be removed in Moodle 6.0. Ensure your format return true to supports_components',
+            DEBUG_DEVELOPER
+        );
 
         if (!$config) {
             $config = new stdClass();
@@ -2877,9 +2883,9 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
         // Load drag and drop upload AJAX.
         require_once($CFG->dirroot.'/course/dnduploadlib.php');
         dndupload_add_to_course($course, $enabledmodules);
-    }
 
-    $PAGE->requires->js_call_amd('core_course/actions', 'initCoursePage', array($course->format));
+        $PAGE->requires->js_call_amd('core_course/actions', 'initCoursePage', [$course->format]);
+    }
 
     return true;
 }

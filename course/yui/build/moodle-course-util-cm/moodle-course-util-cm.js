@@ -3,11 +3,14 @@ YUI.add('moodle-course-util-cm', function (Y, NAME) {
 /**
  * A collection of utility classes for use with course modules.
  *
+ * TODO: remove this module as part of MDL-83627.
+ *
  * @module moodle-course-util
  * @submodule moodle-course-util-cm
  */
 
 Y.namespace('Moodle.core_course.util.cm');
+
 
 /**
  * A collection of utility classes for use with course modules.

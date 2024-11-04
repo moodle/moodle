@@ -1,0 +1,9 @@
+issueNumber: MDL-82341
+notes:
+  core_courseformat:
+    - message: >-
+        All course editing YUI modules are now deprecated. All course formats
+        not using components must migrate before 6.0. Follow the devdocs guide
+        https://moodledev.io/docs/5.0/apis/plugintypes/format/migration to
+        know how to proceed.
+      type: deprecated
