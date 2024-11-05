@@ -85,7 +85,7 @@ Feature: View activity completion in the assignment activity
     And I toggle the manual completion state of "Music history"
     And the manual completion button of "Music history" is displayed as "Done"
 
-  Scenario: View automatic completion items as a teacher
+  Scenario: Verify that the assignment completion conditions are displayed to teachers
     Given I am on the "Music history" "assign activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the following fields to these values:
@@ -99,7 +99,7 @@ Feature: View activity completion in the assignment activity
     And "Music history" should have the "Receive a grade" completion condition
 
   @javascript
-  Scenario: View automatic completion items as a student
+  Scenario: Verify that students can complete an assignment activity by achieving a passing grade
     Given I am on the "Music history" "assign activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the following fields to these values:

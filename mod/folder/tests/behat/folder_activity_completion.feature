@@ -19,7 +19,7 @@ Feature: View activity completion information in the folder activity
       | teacher1 | C1 | editingteacher |
       | student1 | C2 | student        |
 
-  Scenario: View automatic completion items
+  Scenario: A folder is automatically completed when a student views it
     Given the following "activity" exists:
       | activity       | folder        |
       | course         | C1            |
