@@ -114,3 +114,11 @@ $alert-color-scale: 50% !default;
 .rounded-end {
     @extend .rounded-right;
 }
+
+// Generate sized rounded classes.
+.rounded-1 {
+    @extend .rounded-sm;
+}
+.rounded-3 {
+    @extend .rounded-lg;
+}
