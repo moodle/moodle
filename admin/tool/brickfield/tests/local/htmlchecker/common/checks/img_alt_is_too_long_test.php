@@ -30,49 +30,73 @@ require_once('all_checks.php');
 
 /**
  * Class img_alt_is_too_long_testcase
+ *
+ * @covers \tool_brickfield\local\htmlchecker\common\checks\img_alt_is_too_long
  */
 final class img_alt_is_too_long_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'img_alt_is_too_long';
 
-    /** @var string Html fail */
-    private $htmlfail = <<<EOD
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+    /**
+     * Get test HTML with an image tag.
+     *
+     * @param string $alttext
+     * @return string
+     */
+    protected function get_test_html(string $alttext): string {
+        return <<<EOD
+<!DOCTYPE HTML>
+<html lang="en">
     <head>
         <title>Image alt attributes must not be too long</title>
     </head>
     <body>
-    <img src="rex.jpg" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent accumsan, ante varius viverra aliquam,
-     dolor risus scelerisque massa, ut lacinia ipsum felis id est. Nullam convallis odio ante, in commodo elit fermentum sed.
-     Vivamus ullamcorper tincidunt sagittis. Sed et semper sapien. Quisque malesuada lacus nec libero cursus, aliquam malesuada
-     neque ultricies. Cras sit amet enim vel orci tristique porttitor a vitae urna. Suspendisse mi leo, hendrerit et eleifend a,
-     mollis at ex. Maecenas eget magna nec sem dignissim pharetra vel nec ex. Donec in porta lectus. Aenean porttitor euismod
-     lectus, sodales eleifend ex egestas in. Donec sed metus sodales, lobortis velit quis, dictum arcu.">
+    <img src="rex.jpg" alt="$alttext">
     </body>
 </html>
 EOD;
+    }
 
-    /** @var string Html pass */
-    private $htmlpass = <<<EOD
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-    <head>
-        <title>Image alt attributes must not be too long</title>
-    </head>
-    <body>
-    <img src="rex.jpg" alt="this is an image of rex">
-    </body>
-</html>
-EOD;
+    /**
+     * Image alt text data provider.
+     *
+     * @return array
+     */
+    public static function img_alt_text_provider(): array {
+        return [
+            'Alt text <= 125 characters' => [
+                true,
+                str_repeat("Hello world!", 10),
+            ],
+            'Alt text > 125 characters' => [
+                false,
+                str_repeat("Hello world!", 25),
+            ],
+            'Multi-byte alt text <= 125 characters' => [
+                true,
+                str_repeat('こんにちは、世界！', 13),
+            ],
+            'Multi-byte alt text > 125 characters' => [
+                false,
+                str_repeat('こんにちは、世界！', 30),
+            ],
+        ];
+    }
+
     /**
      * Test for image alt attributes being too long
+     *
+     * @dataProvider img_alt_text_provider
+     * @param bool $expectedpass Whether the test is expected to pass or fail.
+     * @param string $alttext The alt text to test.
      */
-    public function test_check(): void {
-        $results = $this->get_checker_results($this->htmlfail);
-        $this->assertTrue($results[0]->element->tagName == 'img');
-
-        $results = $this->get_checker_results($this->htmlpass);
-        $this->assertEmpty($results);
+    public function test_check(bool $expectedpass, string $alttext): void {
+        $html = $this->get_test_html($alttext);
+        $results = $this->get_checker_results($html);
+        if ($expectedpass) {
+            $this->assertEmpty($results);
+        } else {
+            $this->assertTrue($results[0]->element->tagName === 'img');
+        }
     }
 }
