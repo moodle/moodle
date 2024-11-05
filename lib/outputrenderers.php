@@ -1995,7 +1995,7 @@ class core_renderer extends renderer_base {
         foreach ($items as $key => $string) {
             $item = html_writer::start_tag('li', array('class' => 'r' . $row));
             if (!empty($icons[$key])) { //test if the content has an assigned icon
-                $item .= html_writer::tag('div', $icons[$key], array('class' => 'icon column c0'));
+                $item .= html_writer::tag('div', $icons[$key], ['class' => 'column c0 icon-size-3']);
             }
             $item .= html_writer::tag('div', $string, array('class' => 'column c1'));
             $item .= html_writer::end_tag('li');
