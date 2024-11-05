@@ -295,7 +295,6 @@ class core_admin_renderer extends plugin_renderer_base {
 
         $output .= $this->header();
         $output .= $this->output->heading(get_string('notifications', 'admin'));
-        $output .= $this->upgrade_news_message();
         $output .= $this->maturity_info($maturity);
         $output .= empty($CFG->disableupdatenotifications) ? $this->available_updates($availableupdates, $availableupdatesfetch) : '';
         $output .= $this->insecure_dataroot_warning($insecuredataroot);
@@ -753,22 +752,6 @@ class core_admin_renderer extends plugin_renderer_base {
         //////////////////////////////////////////////////////////////////////////////////////////////////
 
         return $this->box($copyrighttext, 'copyright');
-    }
-
-    /**
-     * Display a transient notification for important upgrades messages for
-     * specific releases.
-     *
-     * @return string HTML to output.
-     */
-    protected function upgrade_news_message() {
-        return $this->notification(
-            get_string('importantupdates_content', 'admin'),
-            'info',
-            false,
-            get_string('importantupdates_title', 'admin'),
-            'i/circleinfo, core'
-        );
     }
 
     /**

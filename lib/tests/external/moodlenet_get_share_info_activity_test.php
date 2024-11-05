@@ -50,7 +50,7 @@ class moodlenet_get_share_info_activity_test extends externallib_advanced_testca
 
         // Generate course and activities.
         $course = $this->getDataGenerator()->create_course();
-        $activity1 = $this->getDataGenerator()->create_module('chat', ['course' => $course->id, 'name' => 'Chat activity']);
+        $activity1 = $this->getDataGenerator()->create_module('page', ['course' => $course->id, 'name' => 'Page activity']);
         $activity2 = $this->getDataGenerator()->create_module('assign', ['course' => $course->id, 'name' => 'Assign activity']);
         $activity3 = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id, 'name' => 'Quiz activity']);
 
@@ -98,7 +98,7 @@ class moodlenet_get_share_info_activity_test extends externallib_advanced_testca
         $result = external_api::clean_returnvalue(moodlenet_get_share_info_activity::execute_returns(), $result);
         $this->assertTrue($result['status']);
         $this->assertEquals($activity1->name, $result['name']);
-        $this->assertEquals(get_string('modulename', 'mod_chat'), $result['type']);
+        $this->assertEquals(get_string('modulename', 'mod_page'), $result['type']);
         $this->assertEquals($issuer->get_display_name(), $result['server']);
         $this->assertEquals($expectedsupporturl, $result['supportpageurl']);
 

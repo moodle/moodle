@@ -137,7 +137,6 @@ class publicpaths extends check {
                 '404'       => [
                     'mod/README.txt',
                     'mod/book/README.md',
-                    'mod/chat/README.txt',
                 ],
             ],
             [

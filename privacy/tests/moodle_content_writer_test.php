@@ -1342,7 +1342,7 @@ class moodle_content_writer_test extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $misccoursecxt = \context_coursecat::instance($course->category);
         $coursecontext = \context_course::instance($course->id);
-        $cm = $this->getDataGenerator()->create_module('chat', ['course' => $course->id]);
+        $cm = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
         $modulecontext = \context_module::instance($cm->cmid);
 
         $writer->set_context($modulecontext)->export_data([], $data);
@@ -1382,7 +1382,7 @@ class moodle_content_writer_test extends advanced_testcase {
                 'paper' => 'data.json',
                 'Category Category 1 _.' . $misccoursecxt->id => [
                     'Course Test course 1 _.' . $coursecontext->id => [
-                        'Chat Chat 1 _.' . $modulecontext->id => 'data.json',
+                        'Assignment Assignment 1 _.' . $modulecontext->id => 'data.json',
                         'grades' => 'data.json'
                     ]
                 ],
@@ -1401,7 +1401,7 @@ class moodle_content_writer_test extends advanced_testcase {
             'System _.1/data.json' => 'data_file_1',
             'System _.1/paper/data.json' => 'data_file_2',
             'System _.1/Category Category 1 _.' . $misccoursecxt->id . '/Course Test course 1 _.' .
-                    $coursecontext->id . '/Chat Chat 1 _.' . $modulecontext->id . '/data.json'   => 'data_file_3',
+                    $coursecontext->id . '/Assignment Assignment 1 _.' . $modulecontext->id . '/data.json'   => 'data_file_3',
             'System _.1/Category Category 1 _.' . $misccoursecxt->id . '/Course Test course 1 _.' .
                     $coursecontext->id . '/grades/data.json'   => 'data_file_4',
             'System _.1/Category Course category 1 _.' . $categorycontext->id . '/data.json' => 'data_file_5',
@@ -1414,7 +1414,7 @@ class moodle_content_writer_test extends advanced_testcase {
             'data_file_1' => 'System _.1/data.js',
             'data_file_2' => 'System _.1/paper/data.js',
             'data_file_3' => 'System _.1/Category Category 1 _.' . $misccoursecxt->id . '/Course Test course 1 _.' .
-                    $coursecontext->id . '/Chat Chat 1 _.' . $modulecontext->id . '/data.js',
+                    $coursecontext->id . '/Assignment Assignment 1 _.' . $modulecontext->id . '/data.js',
             'data_file_4' => 'System _.1/Category Category 1 _.' . $misccoursecxt->id . '/Course Test course 1 _.' .
                     $coursecontext->id . '/grades/data.js',
             'data_file_5' => 'System _.1/Category Course category 1 _.' . $categorycontext->id . '/data.js',
@@ -1458,9 +1458,9 @@ class moodle_content_writer_test extends advanced_testcase {
                                 'name' => 'Course Test course 1 ',
                                 'context' => $coursecontext,
                                 'children' => [
-                                    'Chat Chat 1 _.' . $modulecontext->id => (object) [
+                                    'Assignment Assignment 1 _.' . $modulecontext->id => (object) [
                                         'itemtype' => 'treeitem',
-                                        'name' => 'Chat Chat 1 ',
+                                        'name' => 'Assignment Assignment 1 ',
                                         'context' => $modulecontext,
                                         'children' => [
                                             'data.json' => (object) [
@@ -1562,9 +1562,9 @@ class moodle_content_writer_test extends advanced_testcase {
                                 'name' => 'Course Test course 1 ',
                                 'context' => $coursecontext,
                                 'children' => [
-                                    'Chat Chat 1 _.' . $modulecontext->id => (object) [
+                                    'Assignment Assignment 1 _.' . $modulecontext->id => (object) [
                                         'itemtype' => 'treeitem',
-                                        'name' => 'Chat Chat 1 ',
+                                        'name' => 'Assignment Assignment 1 ',
                                         'context' => $modulecontext,
                                         'children' => [
                                             'data.json' => (object) [

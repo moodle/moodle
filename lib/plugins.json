@@ -312,7 +312,6 @@
             "assign",
             "bigbluebuttonbn",
             "book",
-            "chat",
             "choice",
             "data",
             "feedback",
@@ -330,7 +329,6 @@
             "resource",
             "scorm",
             "subsection",
-            "survey",
             "url",
             "wiki",
             "workshop"
@@ -622,7 +620,9 @@
             "jabber"
         ],
         "mod": [
-            "assignment"
+            "assignment",
+            "chat",
+            "survey"
         ],
         "portfolio": [
             "boxnet",

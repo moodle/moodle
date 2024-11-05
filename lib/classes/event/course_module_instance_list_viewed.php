@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Example:
  *
- *     \mod_chat\event\course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed
+ *     \mod_assign\event\course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed
  *
  * @package    core
  * @since      Moodle 2.7

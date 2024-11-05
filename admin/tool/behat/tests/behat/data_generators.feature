@@ -150,13 +150,10 @@ Feature: Set up contextual data for tests
     Given the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1 |
-    And I enable "chat" "mod" plugin
-    And I enable "survey" "mod" plugin
     And the following "activities" exist:
       | activity   | name                   | intro                         | course | idnumber    |
       | assign     | Test assignment name   | Test assignment description   | C1     | assign1     |
       | book       | Test book name         | Test book description         | C1     | book1       |
-      | chat       | Test chat name         | Test chat description         | C1     | chat1       |
       | choice     | Test choice name       | Test choice description       | C1     | choice1     |
       | data       | Test database name     | Test database description     | C1     | data1       |
       | feedback   | Test feedback name     | Test feedback description     | C1     | feedback1   |
@@ -171,7 +168,6 @@ Feature: Set up contextual data for tests
       | quiz       | Test quiz name         | Test quiz description         | C1     | quiz1       |
       | resource   | Test resource name     | Test resource description     | C1     | resource1   |
       | scorm      | Test scorm name        | Test scorm description        | C1     | scorm1      |
-      | survey     | Test survey name       | Test survey description       | C1     | survey1     |
       | url        | Test url name          | Test url description          | C1     | url1        |
       | wiki       | Test wiki name         | Test wiki description         | C1     | wiki1       |
       | workshop   | Test workshop name     | Test workshop description     | C1     | workshop1   |
@@ -186,7 +182,6 @@ Feature: Set up contextual data for tests
     # Assignment 2.2 module type is disabled by default
     # And I should see "Test assignment22 name"
     And I should see "Test book name"
-    And I should see "Test chat name"
     And I should see "Test choice name"
     And I should see "Test database name"
     # Feedback module type is disabled by default
@@ -203,7 +198,6 @@ Feature: Set up contextual data for tests
     And I should see "Test quiz name"
     And I should see "Test resource name"
     And I should see "Test scorm name"
-    And I should see "Test survey name"
     And I should see "Test url name"
     And I should see "Test wiki name"
     And I should see "Test workshop name"
