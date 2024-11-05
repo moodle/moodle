@@ -62,7 +62,7 @@ class user_edit_form extends \moodleform {
             $userlevels = array($parentlevel->id => $parentlevel->id);
         } else {
             $userlevels = $company->get_userlevel($USER);
-            $userhierarchylevel = key($userlevel);
+            $userhierarchylevel = key($userlevelS);
         }
         foreach ($userlevels as $userlevelid => $userlevel) {
             $this->subhierarchieslist = $this->subhierarchieslist + \company::get_all_subdepartments($userlevelid);
