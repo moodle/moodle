@@ -26,6 +26,7 @@
  */
 
 import {BaseComponent} from 'core/reactive';
+import {eventTypes} from 'core/local/inplace_editable/events';
 import Modal from 'core/modal';
 import ModalSaveCancel from 'core/modal_save_cancel';
 import ModalDeleteCancel from 'core/modal_delete_cancel';
@@ -131,6 +132,12 @@ export default class extends BaseComponent {
             CourseEvents.sectionRefreshed,
             () => this._checkSectionlist({state})
         );
+        // Any inplace editable update needs state refresh.
+        this.addEventListener(
+            this.element,
+            eventTypes.elementUpdated,
+            this._inplaceEditableHandler
+        );
     }
 
     /**
@@ -189,6 +196,30 @@ export default class extends BaseComponent {
     _checkSectionlist({state}) {
         // Disable "add section" actions if the course max sections has been exceeded.
         this._setAddSectionLocked(state.course.sectionlist.length > state.course.maxsections);
+    }
+
+    /**
+     * Handle inplace editable updates.
+     *
+     * @param {Event} event the triggered event
+     * @private
+     */
+    _inplaceEditableHandler(event) {
+        const itemtype = event.detail?.ajaxreturn?.itemtype;
+        const itemid = parseInt(event.detail?.ajaxreturn?.itemid);
+        if (!Number.isFinite(itemid) || !itemtype) {
+            return;
+        }
+
+        if (itemtype === 'activityname') {
+            this.reactive.dispatch('cmState', [itemid]);
+            return;
+        }
+        // Sections uses sectionname for normal sections and sectionnamenl for the no link sections.
+        if (itemtype === 'sectionname' || itemtype === 'sectionnamenl') {
+            this.reactive.dispatch('sectionState', [itemid]);
+            return;
+        }
     }
 
     /**
