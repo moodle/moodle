@@ -26,7 +26,7 @@ Feature: View activity completion information in the Wiki activity
     And I am on the "Music history" "wiki activity" page logged in as teacher1
     And I click on "Create page" "button"
 
-  Scenario: View automatic completion items as a teacher and confirm all tabs display conditions
+  Scenario: View automatic wiki completion conditions as a teacher and confirm all tabs display conditions
     When I am on the "Music history" "wiki activity" page logged in as teacher1
     Then "Music history" should have the "View" completion condition
     And I select "Edit" from the "jump" singleselect
@@ -40,7 +40,7 @@ Feature: View activity completion information in the Wiki activity
     And I select "Administration" from the "jump" singleselect
     And "Music history" should have the "View" completion condition
 
-  Scenario: View automatic completion items as a student
+  Scenario: A students can complete a wiki activity by viewing it
     When I am on the "Music history" "wiki activity" page logged in as student1
     Then the "View" completion condition of "Music history" is displayed as "done"
 

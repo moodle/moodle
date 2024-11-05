@@ -41,7 +41,7 @@ Feature: View activity completion in the quiz activity
       | question       | page |
       | First question | 1    |
 
-  Scenario Outline: View automatic completion items as a student
+  Scenario Outline: A student can complete a quiz activity by achieving a passing grade
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test quiz name"
