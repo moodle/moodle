@@ -503,8 +503,8 @@ class api {
         $availablemods = core_plugin_manager::instance()->get_plugins_of_type('mod');
         $coursemodules = array();
         $appsupportedmodules = array(
-            'assign', 'bigbluebuttonbn', 'book', 'chat', 'choice', 'data', 'feedback', 'folder', 'forum', 'glossary', 'h5pactivity',
-            'imscp', 'label', 'lesson', 'lti', 'page', 'quiz', 'resource', 'scorm', 'survey', 'url', 'wiki', 'workshop');
+            'assign', 'bigbluebuttonbn', 'book', 'choice', 'data', 'feedback', 'folder', 'forum', 'glossary', 'h5pactivity',
+            'imscp', 'label', 'lesson', 'lti', 'page', 'quiz', 'resource', 'scorm', 'url', 'wiki', 'workshop');
 
         foreach ($availablemods as $mod) {
             if (in_array($mod->name, $appsupportedmodules)) {
