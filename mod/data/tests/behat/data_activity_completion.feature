@@ -39,7 +39,7 @@ Feature: View activity completion in the database activity
       | Field name | Instrument types |
     And I log out
 
-  Scenario: View automatic completion items as a teacher
+  Scenario: Database activity displays completion conditions to teachers
     Given I am on the "Music history" "data activity" page logged in as teacher1
 #   We add an entry to let the user change to a different view.
     When I add an entry to "Music history" database with:
@@ -53,7 +53,7 @@ Feature: View activity completion in the database activity
     And "Music history" should have the "Make entries: 2" completion condition
     And "Music history" should have the "Receive a grade" completion condition
 
-  Scenario: View automatic completion items as a student
+  Scenario: A student can complete an database activity by achieving a passing grade
     Given I am on the "Music history" "data activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Make entries: 2" completion condition of "Music history" is displayed as "todo"

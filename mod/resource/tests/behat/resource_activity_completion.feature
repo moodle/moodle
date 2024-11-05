@@ -68,7 +68,7 @@ Feature: View activity completion information for file resources
     And the manual completion button of "Myfile" is displayed as "Done"
 
   @javascript
-  Scenario: View automatic completion items
+  Scenario: A student can complete a resource activity by viewing it
     Given the following "activities" exist:
       | activity | course | name   | display | defaultfilename                            | uploaded |
       | resource | C1     | Myfile | 1       | mod/resource/tests/fixtures/samplefile.txt | 1        |
