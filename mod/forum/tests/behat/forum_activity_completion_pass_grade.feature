@@ -39,7 +39,7 @@ Feature: Completion pass grade  view activity completion in the forum activity
       | completionreplies                     | 1           |
     And I press "Save and display"
 
-  Scenario: View automatic completion items as a teacher
+  Scenario: Forum module displays completion conditions to teachers
     Given I am on the "Music history" "forum activity" page logged in as teacher1
     Then "Music history" should have the "View" completion condition
     And "Music history" should have the "Start discussions: 1" completion condition
@@ -49,7 +49,7 @@ Feature: Completion pass grade  view activity completion in the forum activity
     And "Music history" should have the "Receive a passing grade" completion condition
 
   @javascript
-  Scenario: View automatic completion items as a failing student
+  Scenario: Student cannot complete a forum activity if one of the conditions are not met
     Given I am on the "Music history" "forum activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Start discussions: 1" completion condition of "Music history" is displayed as "todo"
@@ -93,7 +93,7 @@ Feature: Completion pass grade  view activity completion in the forum activity
     And the "Receive a passing grade" completion condition of "Music history" is displayed as "failed"
 
   @javascript
-  Scenario: View automatic completion items as a passing student
+  Scenario: Student can complete a forum activity when all conditions are met
     Given I am on the "Music history" "forum activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Start discussions: 1" completion condition of "Music history" is displayed as "todo"
