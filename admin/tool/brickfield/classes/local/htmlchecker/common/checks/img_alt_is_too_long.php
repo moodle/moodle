@@ -37,7 +37,7 @@ class img_alt_is_too_long extends brickfield_accessibility_test {
         global $alttextlengthlimit;
 
         foreach ($this->get_all_elements('img') as $img) {
-            $alttextlengthlimit = 125;
+            $alttextlengthlimit = 750;
             if ($img->hasAttribute('alt') && core_text::strlen($img->getAttribute('alt')) > $alttextlengthlimit) {
                 $this->add_report($img);
             }

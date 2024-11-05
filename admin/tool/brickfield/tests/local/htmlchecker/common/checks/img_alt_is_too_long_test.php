@@ -64,21 +64,21 @@ EOD;
      */
     public static function img_alt_text_provider(): array {
         return [
-            'Alt text <= 125 characters' => [
+            'Alt text <= 750 characters' => [
                 true,
-                str_repeat("Hello world!", 10),
+                str_repeat("Hello world!", 60),
             ],
-            'Alt text > 125 characters' => [
+            'Alt text > 750 characters' => [
                 false,
-                str_repeat("Hello world!", 25),
+                str_repeat("Hello world!", 65),
             ],
-            'Multi-byte alt text <= 125 characters' => [
+            'Multi-byte alt text <= 750 characters' => [
                 true,
-                str_repeat('こんにちは、世界！', 13),
+                str_repeat('こんにちは、世界！', 83),
             ],
-            'Multi-byte alt text > 125 characters' => [
+            'Multi-byte alt text > 750 characters' => [
                 false,
-                str_repeat('こんにちは、世界！', 30),
+                str_repeat('こんにちは、世界！', 90),
             ],
         ];
     }
@@ -96,7 +96,7 @@ EOD;
         if ($expectedpass) {
             $this->assertEmpty($results);
         } else {
-            $this->assertTrue($results[0]->element->tagName === 'img');
+            $this->assertEquals('img', $results[0]->element->tagName);
         }
     }
 }
