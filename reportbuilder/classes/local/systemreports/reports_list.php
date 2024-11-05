@@ -27,15 +27,9 @@ use core_reportbuilder\datasource;
 use core_reportbuilder\manager;
 use core_reportbuilder\system_report;
 use core_reportbuilder\local\entities\user;
-use core_reportbuilder\local\filters\date;
-use core_reportbuilder\local\filters\tags;
-use core_reportbuilder\local\filters\text;
-use core_reportbuilder\local\filters\select;
-use core_reportbuilder\local\helpers\audience;
-use core_reportbuilder\local\helpers\format;
-use core_reportbuilder\local\report\action;
-use core_reportbuilder\local\report\column;
-use core_reportbuilder\local\report\filter;
+use core_reportbuilder\local\filters\{boolean_select, date, tags, text, select};
+use core_reportbuilder\local\helpers\{audience, format};
+use core_reportbuilder\local\report\{action, column, filter};
 use core_reportbuilder\output\report_name_editable;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\permission;
@@ -231,6 +225,15 @@ class reports_list extends system_report {
                 return manager::get_report_datasources();
             })
         );
+
+        // Schedules filter.
+        $this->add_filter((new filter(
+            boolean_select::class,
+            'schedules',
+            new lang_string('schedules', 'core_reportbuilder'),
+            $this->get_report_entity_name(),
+            "CASE WHEN EXISTS (SELECT 1 FROM {reportbuilder_schedule} WHERE reportid = {$tablealias}.id) THEN 1 ELSE 0 END"
+        )));
 
         // Tags filter.
         $this->add_filter((new filter(

@@ -272,6 +272,7 @@ $string['timeadded'] = 'Time added';
 $string['timecreated'] = 'Time created';
 $string['timelastsent'] = 'Time last sent';
 $string['timemodified'] = 'Time modified';
+$string['timenextsend'] = 'Time next send';
 $string['uniquerows'] = 'Remove any duplicate rows';
 $string['uniquerows_help'] = 'If the report source contains duplicate rows, should these be removed from this report? This setting has no effect if report columns are aggregated.';
 $string['userany'] = 'Any user';
