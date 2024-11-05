@@ -30,10 +30,6 @@ use tool_brickfield\local\htmlchecker\common\brickfield_accessibility_test;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class img_alt_is_too_long extends brickfield_accessibility_test {
-
-    /** @var int The default severity code for this test. */
-    public $defaultseverity = \tool_brickfield\local\htmlchecker\brickfield_accessibility::BA_TEST_SEVERE;
-
     /**
      * The main check function. This is called by the parent class to actually check content.
      */
