@@ -29,7 +29,8 @@
         "customStyle": "",
         "sizecustomhelpicon": {
             "text": "Help text"
-        }
+        },
+        "maxlengthalt": 750
     }
 
 }}
@@ -51,11 +52,12 @@
                 <!-- Row 2: Image description -->
                 <div class="form-group mt-3">
                     <label for="{{elementid}}_tiny_image_altentry">{{#str}} enteralt, tiny_media {{/str}}</label>
-                    <textarea class="tiny_image_altentry form-control fullwidth" id="{{elementid}}_tiny_image_altentry" name="altentry" maxlength="125">{{alt}}</textarea>
+                    <textarea class="tiny_image_altentry form-control fullwidth" id="{{elementid}}_tiny_image_altentry" name="altentry" maxlength="{{maxlengthalt}}">{{alt}}</textarea>
                     <!-- Character counter -->
                     <div id="the-count" class="d-flex justify-content-end small">
                         <span id="currentcount">0</span>
-                        <span id="maximumcount"> / 125</span>
+                        <span class="mx-1">/</span>
+                        <span id="maximumcount">{{maxlengthalt}}</span>
                     </div>
                 </div>
             </div>
