@@ -22,8 +22,7 @@ use advanced_testcase;
 use core_reportbuilder_generator;
 use invalid_parameter_exception;
 use core_reportbuilder\datasource;
-use core_reportbuilder\local\models\column;
-use core_reportbuilder\local\models\filter;
+use core_reportbuilder\local\models\{audience, column, filter, schedule};
 use core_tag_tag;
 use core_user\reportbuilder\datasource\users;
 
@@ -35,7 +34,7 @@ use core_user\reportbuilder\datasource\users;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_test extends advanced_testcase {
+final class report_test extends advanced_testcase {
 
     /**
      * Test creation report
@@ -99,6 +98,91 @@ class report_test extends advanced_testcase {
         $this->assertTrue($reportupdated->get('uniquerows'));
         $this->assertEqualsCanonicalizing(['cat', 'dog'],
             core_tag_tag::get_item_tags_array('core_reportbuilder', 'reportbuilder_report', $reportupdated->get('id')));
+    }
+
+    /**
+     * Test duplicate report
+     */
+    public function test_duplicate_report(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+
+        // Create custom report containing single column, condition and filter..
+        $report = $generator->create_report(['name' => 'Report 1', 'source' => users::class, 'default' => 0]);
+        $column = $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:lastname']);
+        $condition = $generator->create_condition(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname']);
+        $filter = $generator->create_filter(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:email']);
+
+        // Add an audience and schedule.
+        $audience = $generator->create_audience(['reportid' => $report->get('id'), 'configdata' => []]);
+        $schedule = $generator->create_schedule([
+            'reportid' => $report->get('id'),
+            'name' => 'My schedule',
+            'audiences' => json_encode([
+                $audience->get_persistent()->get('id'),
+            ]),
+        ]);
+
+        // Duplicate report with audiences and schedules.
+        $newreport = report::duplicate_report($report, 'Report 1 copy', true, true);
+        $this->assertNotEquals($report->get('id'), $newreport->get('id'));
+        $this->assertEquals('Report 1 copy', $newreport->get('name'));
+        $this->assertEquals(users::class, $newreport->get('source'));
+
+        // Assert new report columns.
+        $newcolumns = column::get_records(['reportid' => $newreport->get('id')]);
+        $this->assertCount(1, $newcolumns);
+        [$newcolumn] = $newcolumns;
+        $this->assertNotEquals($column->get('id'), $newcolumn->get('id'));
+        $this->assertEquals('user:lastname', $newcolumn->get('uniqueidentifier'));
+
+        // Assert new report conditions.
+        $newconditions = filter::get_condition_records($newreport->get('id'));
+        $this->assertCount(1, $newconditions);
+        [$newcondition] = $newconditions;
+        $this->assertNotEquals($condition->get('id'), $newcondition->get('id'));
+        $this->assertEquals('user:firstname', $newcondition->get('uniqueidentifier'));
+
+        // Assert new report filters.
+        $newfilters = filter::get_filter_records($newreport->get('id'));
+        $this->assertCount(1, $newfilters);
+        [$newfilter] = $newfilters;
+        $this->assertNotEquals($filter->get('id'), $newfilter->get('id'));
+        $this->assertEquals('user:email', $newfilter->get('uniqueidentifier'));
+
+        // Assert new report audiences.
+        $newaudiences = audience::get_records(['reportid' => $newreport->get('id')]);
+        $this->assertCount(1, $newaudiences);
+        [$newaudience] = $newaudiences;
+        $this->assertNotEquals($audience->get_persistent()->get('id'), $newaudience->get('id'));
+
+         // Assert new report schedules.
+        $newschedules = schedule::get_records(['reportid' => $newreport->get('id')]);
+        $this->assertCount(1, $newschedules);
+        [$newschedule] = $newschedules;
+        $this->assertNotEquals($schedule->get('id'), $newschedule->get('id'));
+        $this->assertEquals([
+            $newaudience->get('id'),
+        ], (array) json_decode($newschedule->get('audiences')));
+
+        // Duplicate report without schedules.
+        $newreporttwo = report::duplicate_report($report, 'Report 1 copy #2', true, false);
+        $this->assertEquals(1, column::count_records(['reportid' => $newreporttwo->get('id')]));
+        $this->assertEquals(1, filter::count_records(['reportid' => $newreporttwo->get('id'), 'iscondition' => 1]));
+        $this->assertEquals(1, filter::count_records(['reportid' => $newreporttwo->get('id'), 'iscondition' => 0]));
+        $this->assertEquals(1, audience::count_records(['reportid' => $newreporttwo->get('id')]));
+        $this->assertEquals(0, schedule::count_records(['reportid' => $newreporttwo->get('id')]));
+
+        // Duplicate report without audiences or schedules.
+        $newreportthree = report::duplicate_report($report, 'Report 1 copy #3', false, false);
+        $this->assertEquals(1, column::count_records(['reportid' => $newreportthree->get('id')]));
+        $this->assertEquals(1, filter::count_records(['reportid' => $newreportthree->get('id'), 'iscondition' => 1]));
+        $this->assertEquals(1, filter::count_records(['reportid' => $newreportthree->get('id'), 'iscondition' => 0]));
+        $this->assertEquals(0, audience::count_records(['reportid' => $newreportthree->get('id')]));
+        $this->assertEquals(0, schedule::count_records(['reportid' => $newreportthree->get('id')]));
     }
 
     /**

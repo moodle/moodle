@@ -32,7 +32,7 @@ import {add as addToast} from 'core/toast';
 import * as reportEvents from 'core_reportbuilder/local/events';
 import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {deleteReport} from 'core_reportbuilder/local/repository/reports';
-import {createReportModal} from 'core_reportbuilder/local/repository/modals';
+import {createDuplicateReportModal, createReportModal} from 'core_reportbuilder/local/repository/modals';
 
 /**
  * Initialise module
@@ -41,6 +41,7 @@ export const init = () => {
     prefetchStrings('core_reportbuilder', [
         'deletereport',
         'deletereportconfirm',
+        'duplicatereport',
         'editreportdetails',
         'newreport',
         'reportdeleted',
@@ -84,6 +85,21 @@ export const init = () => {
                         return;
                     })
                     .catch(Notification.exception);
+            });
+
+            reportModal.show();
+        }
+
+        const reportDuplicate = event.target.closest(reportSelectors.actions.reportDuplicate);
+        if (reportDuplicate) {
+            event.preventDefault();
+
+            const strDuplicateReport = getString('duplicatereport', 'core_reportbuilder');
+            const {reportId, reportName} = reportDuplicate.dataset;
+
+            const reportModal = createDuplicateReportModal(event.target, strDuplicateReport, reportId, reportName);
+            reportModal.addEventListener(reportModal.events.FORM_SUBMITTED, event => {
+                window.location.href = event.detail;
             });
 
             reportModal.show();

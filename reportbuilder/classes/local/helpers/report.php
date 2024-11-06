@@ -23,9 +23,7 @@ use invalid_parameter_exception;
 use core\persistent;
 use core_reportbuilder\datasource;
 use core_reportbuilder\manager;
-use core_reportbuilder\local\models\column;
-use core_reportbuilder\local\models\filter;
-use core_reportbuilder\local\models\report as report_model;
+use core_reportbuilder\local\models\{audience as audience_model, column, filter, report as report_model, schedule};
 use core_tag_tag;
 
 /**
@@ -95,6 +93,90 @@ class report {
         }
 
         return $report;
+    }
+
+
+    /**
+     * Duplicate custom report
+     *
+     * @param report_model $report The report to duplicate.
+     * @param string $reportname
+     * @param bool $duplicateaudiences
+     * @param bool $duplicateschedules
+     * @return report_model The duplicated report.
+     */
+    public static function duplicate_report(
+        report_model $report,
+        string $reportname,
+        bool $duplicateaudiences,
+        bool $duplicateschedules,
+    ): report_model {
+        $reportinstance = manager::get_report_from_persistent($report);
+
+        // Copy the original report, removing properties to be re-created when duplicating.
+        $record = $report->to_record();
+        unset($record->id, $record->usercreated);
+
+        // Create new report.
+        $record->name = $reportname;
+        $record->tags = core_tag_tag::get_item_tags_array('core_reportbuilder', 'reportbuilder_report', $report->get('id'));
+        $newreport = static::create_report($record, false);
+
+        // Duplicate report content.
+        $columns = array_map(fn($column) => $column->get_persistent(), $reportinstance->get_active_columns());
+        static::duplicate_report_content($columns, $newreport->get('id'));
+
+        $conditions = array_map(fn($condition) => $condition->get_persistent(), $reportinstance->get_active_conditions());
+        static::duplicate_report_content($conditions, $newreport->get('id'));
+
+        $filters = array_map(fn($filter) => $filter->get_persistent(), $reportinstance->get_active_filters());
+        static::duplicate_report_content($filters, $newreport->get('id'));
+
+        // Duplicate audiences.
+        if ($duplicateaudiences) {
+            $audiencemap = [];
+
+            foreach (audience::get_base_records($report->get('id')) as $audienceinstance) {
+
+                // If user can't edit the current audience then do not copy it.
+                if (!$audienceinstance->user_can_edit()) {
+                    continue;
+                }
+
+                $audiencerecord = $audienceinstance->get_persistent()->to_record();
+                $audiencerecordid = $audiencerecord->id;
+                unset($audiencerecord->id, $audiencerecord->usercreated);
+
+                $newaudience = (new audience_model(0, $audiencerecord))
+                    ->set('reportid', $newreport->get('id'))
+                    ->create();
+
+                $audiencemap[$audiencerecordid] = $newaudience->get('id');
+            }
+
+            // Duplicate schedules and map them to the new audience ids.
+            if ($duplicateschedules) {
+                foreach (schedule::get_records(['reportid' => $report->get('id')]) as $schedule) {
+                    $schedulerecord = $schedule->to_record();
+                    unset($schedulerecord->id, $schedulerecord->usercreated);
+
+                    // Map new audience ids with the old ones.
+                    $audiences = array_map(
+                        fn($audienceid) => $audiencemap[$audienceid] ?? 0,
+                        (array) json_decode($schedulerecord->audiences),
+                    );
+
+                    (new schedule(0, $schedulerecord))
+                        ->set_many([
+                            'reportid' => $newreport->get('id'),
+                            'audiences' => json_encode($audiences),
+                        ])
+                        ->create();
+                }
+            }
+        }
+
+        return $newreport;
     }
 
     /**
@@ -421,6 +503,26 @@ class report {
     #[\core\attribute\deprecated('custom_report_column_cards_exporter', since: '4.1', final: true)]
     public static function get_available_columns() {
         \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+    }
+
+    /**
+     * Duplicate report content to given report ID
+     *
+     * @param persistent[] $persistents
+     * @param int $reportid
+     */
+    private static function duplicate_report_content(array $persistents, int $reportid): void {
+        foreach ($persistents as $persistent) {
+            $record = $persistent->to_record();
+            unset($record->id, $record->usercreated);
+
+            /** @var persistent $persistentclass */
+            $persistentclass = get_class($persistent);
+
+            (new $persistentclass(0, $record))
+                ->set('reportid', $reportid)
+                ->create();
+        }
     }
 
     /**
