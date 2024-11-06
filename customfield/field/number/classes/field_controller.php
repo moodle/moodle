@@ -113,6 +113,7 @@ class field_controller  extends \core_customfield\field_controller {
         $options = ['' => get_string('genericfield', 'customfield_number')];
         $options = array_merge($options, $autooptions);
         $mform->addElement('select', 'configdata[fieldtype]', get_string('fieldtype', 'customfield_number'), $options);
+        $mform->addHelpButton('configdata[fieldtype]', 'fieldtype', 'customfield_number');
     }
 
     /**

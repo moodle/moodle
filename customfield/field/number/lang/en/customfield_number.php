@@ -41,6 +41,7 @@ $string['displaywhenzero_help'] = 'How to display the field value when the value
 
 Leave empty if you do not want to display anything at all when the value is set to "0".';
 $string['fieldtype'] = 'Field type';
+$string['fieldtype_help'] = 'Select the type of numeric field to be set. Some options require manual input in the course settings page, while others will automatically populate values, such as with the number of specified activities in a course.';
 $string['genericfield'] = 'Generic field for any numeric data';
 $string['headerdisplaysettings'] = 'Display format';
 $string['invalidprovider'] = 'Incorrect provider';
