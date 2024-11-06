@@ -56,6 +56,6 @@ Feature: Frozen clock in Behat
     When I am on the "TestForum" "forum activity" page logged in as admin
     Then I should see "1 Mar 2024" in the "Subject1" "table_row"
     # The time should be the real current time, not the frozen time for this entry.
-    Then I should see "## today ##%d %b %Y##" in the "Subject2" "table_row"
+    And I should see "## today ##%d %b %Y##" in the "Subject2" "table_row"
     And I am on the "Fixture" "url activity" page
     And I should see "Behat time is the same as real time"
