@@ -1,5 +1,8 @@
-@mod @mod_h5pactivity @core_h5p @_file_upload @_switch_iframe @javascript @core_completion
-Feature: Pass grade activity completion information in the h5p activity
+@mod @mod_h5pactivity @core_h5p @_switch_iframe @core_completion
+Feature: Completion of H5P activity by achieving a passing grade
+  In order to complete an H5P activity
+  As a student
+  I need to be able to complete the h5p activity to receive a grade
 
   Background:
     Given the following "users" exist:
@@ -28,23 +31,36 @@ Feature: Pass grade activity completion information in the h5p activity
       | gradepass           | 25                                   |
       | packagefilepath     | h5p/tests/fixtures/filltheblanks.h5p |
 
-  Scenario: View automatic completion items
-    # Teacher view.
+  Scenario: Verify that the h5p completion conditions are displayed to teachers
     Given I change window size to "large"
     And I am on the "Music history" "h5pactivity activity" page logged in as teacher1
-    And "Music history" should have the "View" completion condition
+    Then "Music history" should have the "View" completion condition
     And "Music history" should have the "Receive a grade" completion condition
     And "Music history" should have the "Receive a passing grade" completion condition
-    And I log out
-    # Student view.
-    When I am on the "Music history" "h5pactivity activity" page logged in as student1
+
+  @javascript
+  Scenario: Verify that students can complete an H5P activity by achieving a passing grade
+    # Student 1 attempt the H5P and fills the blanks with the wrong answers... needs more geography lessons!
+    Given I am on the "Music history" "h5pactivity activity" page logged in as student1
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
+    And I should see "Of which countries are Berlin, Washington, Beijing, Canberra and Brasilia the capitals?"
+    And I set the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" to "Rio de Janeiro"
+    And I set the field with xpath "//input[contains(@aria-label,\"Blank input 2 of 4\")]" to "New York"
+    And I set the field with xpath "//input[contains(@aria-label,\"Blank input 3 of 4\")]" to "Hamburg"
+    And I set the field with xpath "//input[contains(@aria-label,\"Blank input 4 of 4\")]" to "Sydney"
     And I click on "Check" "button" in the ".h5p-question-buttons" "css_element"
+    And I switch to the main frame
     And I reload the page
+    And the "View" completion condition of "Music history" is displayed as "done"
+    And the "Receive a grade" completion condition of "Music history" is displayed as "done"
+    And the "Receive a passing grade" completion condition of "Music history" is displayed as "failed"
+
+    # Student 2 attempts the H5P and fills the blanks with the correct answers.
     And I am on the "Music history" "h5pactivity activity" page logged in as student2
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
+    And I should see "Of which countries are Berlin, Washington, Beijing, Canberra and Brasilia the capitals?"
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" to "Brasilia"
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 2 of 4\")]" to "Washington"
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 3 of 4\")]" to "Berlin"
@@ -52,15 +68,12 @@ Feature: Pass grade activity completion information in the h5p activity
     And I click on "Check" "button" in the ".h5p-question-buttons" "css_element"
     And I switch to the main frame
     And I reload the page
-    Then the "View" completion condition of "Music history" is displayed as "done"
-    And the "Receive a grade" completion condition of "Music history" is displayed as "done"
-    And the "Receive a passing grade" completion condition of "Music history" is displayed as "done"
-    And I log out
-    And I am on the "Music history" "h5pactivity activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "done"
-    And the "Receive a passing grade" completion condition of "Music history" is displayed as "failed"
-    And I am on the "Course 1" "course" page logged in as "teacher1"
-    And "Vinnie Student1" user has completed "Music history" activity
+    And the "Receive a passing grade" completion condition of "Music history" is displayed as "done"
+
+    # Teacher confirms which students have completed the H5P activity.
+    When I am on the "Course 1" "course" page logged in as "teacher1"
+    Then "Vinnie Student1" user has completed "Music history" activity
     And "Vinnie Student2" user has completed "Music history" activity
     And "Vinnie Student3" user has not completed "Music history" activity
