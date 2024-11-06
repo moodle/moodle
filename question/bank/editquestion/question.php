@@ -328,6 +328,14 @@ if ($mform->is_cancelled()) {
                 $returnurl->param('sesskey', sesskey());
                 $returnurl->param('cmid', $cmid);
             }
+            // Update the filter param to the updated category if the return have any.
+            if (!empty($returnurl->param('filter'))) {
+                $filter = json_decode($returnurl->param('filter'), true);
+                if (isset($filter['category']['values'])) {
+                    $filter['category']['values'][0] = $question->category;
+                    $returnurl->param('filter', json_encode($filter));
+                }
+            }
             redirect($returnurl);
         }
 
@@ -348,6 +356,14 @@ if ($mform->is_cancelled()) {
             $nexturl->param('cmid', $cmid);
         } else {
             $nexturl->param('courseid', $COURSE->id);
+        }
+        // Update the filter param to the updated category if the return url have any.
+        if (!empty($nexturl->param('filter'))) {
+            $filter = json_decode($nexturl->param('filter'), true);
+            if (isset($filter['category']['values'])) {
+                $filter['category']['values'][0] = $question->category;
+                $nexturl->param('filter', json_encode($filter));
+            }
         }
         redirect($nexturl);
     }
