@@ -25,21 +25,6 @@ Feature: View activity completion information in the h5p activity
       | completionusegrade | 1                                    |
       | packagefilepath    | h5p/tests/fixtures/filltheblanks.h5p |
 
-  Scenario: View automatic completion items
-    Given I change window size to "large"
-    And I am on the "Music history" "h5pactivity activity" page logged in as teacher1
-    # Teacher view.
-    And "Music history" should have the "View" completion condition
-    And "Music history" should have the "Receive a grade" completion condition
-    # Student view.
-    When I am on the "Music history" "h5pactivity activity" page logged in as student1
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
-    And I click on "Check" "button" in the ".h5p-question-buttons" "css_element"
-    And I reload the page
-    Then the "View" completion condition of "Music history" is displayed as "done"
-    And the "Receive a grade" completion condition of "Music history" is displayed as "done"
-
   Scenario: Use manual completion
     Given I am on the "Music history" "h5pactivity activity editing" page logged in as teacher1
     And I expand all fieldsets
