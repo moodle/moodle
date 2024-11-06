@@ -111,7 +111,7 @@ class user_departments_editable extends \core\output\inplace_editable {
 
         foreach ($viewabledepartmentids as $id) {
             // If this is a student, we only show a subset of the departments.
-            if ($this->editable || array_key_exists($id, $this->profiledepartments)) {
+            if ($this->editable || array_key_exists($id, $this->departments)) {
                 $listofdepartments[] = format_string($this->assignabledepartments[$id], true, ['context' => $this->context]);
             }
         }
