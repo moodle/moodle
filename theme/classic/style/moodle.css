@@ -13302,7 +13302,7 @@ readers do not read off random characters that represent icons */
   --blue: #0f6cbf;
   --indigo: #6610f2;
   --purple: #613d7c;
-  --pink: #e83e8c;
+  --pink: #db1a74;
   --red: #ca3120;
   --orange: #f0ad4e;
   --yellow: #ff7518;
@@ -13858,7 +13858,7 @@ mark,
 
 code {
   font-size: 87.5%;
-  color: #e83e8c;
+  color: #db1a74;
   word-wrap: break-word;
 }
 a > code {
