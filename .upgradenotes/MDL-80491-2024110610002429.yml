@@ -1,0 +1,5 @@
+issueNumber: MDL-80491
+notes:
+  core_enrol:
+    - message: Final removal of base `enrol_plugin` class method `update_communication`
+      type: removed
