@@ -28,6 +28,7 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->libdir.'/csvlib.class.php');
+require_once(dirname(__FILE__) . '/lib.php');
 
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $completions = optional_param('completions', 0, PARAM_BOOL);
@@ -191,7 +192,11 @@ if (!empty($fileimport)) {
                     $DB->set_field('microlearning_thread_user', 'groupid', $grouprec->groupid, ['threadid' => $grouprec->threadid, 'userid' => $grouprec->userid]);
                     $upt->track('status', get_string('ok'));
                 } else {
-                    $upt->track('status', get_string('error'));
+                    if (!microlearning::add_user_to_thread($grouprec->threadid, $grouprec->userid, $grouprec->groupid)) {
+                        $upt->track('status', get_string('error'));
+                    } else {
+                        $upt->track('status', get_string('ok'));
+                    }
                 }
             }
 
