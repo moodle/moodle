@@ -1096,7 +1096,7 @@ if (empty($courseid)) {
                 $options['compfromraw'] = $from;
                 $options['comptoraw'] = $to;
                 $options['addvalidonly'] = true;
-                $mform = new \local\iomad\forms\user_search_form(null, $options);
+                $mform = new \local_iomad\forms\user_search_form(null, $options);
                 $mform->set_data(array('departmentid' => $departmentid, 'validonly' => $validonly));
                 $mform->set_data($options);
                 $mform->get_data();
