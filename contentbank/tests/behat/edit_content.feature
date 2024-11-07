@@ -56,6 +56,7 @@ Feature: Content bank use editor feature
     Then I click on "Edit" "link"
     And I switch to "h5p-editor-iframe" class iframe
     And I switch to the main frame
+    And I change viewport size to "800x1400"
     And I click on "Cancel" "button"
     And "filltheblanks.h5p" "heading" should exist
 
