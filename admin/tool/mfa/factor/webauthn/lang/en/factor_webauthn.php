@@ -42,6 +42,7 @@ $string['logintitle'] = 'Verify it\'s you by security key';
 $string['pluginname'] = 'Security key';
 $string['privacy:metadata'] = 'The Security key factor plugin does not store any personal data.';
 $string['register'] = 'Register security key';
+$string['registersuccess'] = 'Registered security key';
 $string['replacefactor'] = 'Replace security key';
 $string['replacefactorconfirmation'] = 'Replace \'{$a}\' security key?';
 $string['revokefactorconfirmation'] = 'Remove \'{$a}\' security key?';

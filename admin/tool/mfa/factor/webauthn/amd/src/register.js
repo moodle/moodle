@@ -22,7 +22,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['factor_webauthn/utils', 'core/log'], function(utils, Log) {
+define([
+    'factor_webauthn/utils',
+    'core/log',
+    'core/prefetch',
+    'core/str',
+    'core/toast',
+], function(
+    utils,
+    Log,
+    Prefetch,
+    Str,
+    Toast,
+) {
+
     /**
      * Register the security key.
      *
@@ -47,6 +60,10 @@ define(['factor_webauthn/utils', 'core/log'], function(utils, Log) {
                 attestationObject: cred.response.attestationObject ?
                     utils.arrayBufferToBase64(cred.response.attestationObject) : null,
             };
+
+            const registerSuccess = await Str.getString('registersuccess', 'factor_webauthn');
+            await Toast.add(registerSuccess, {type: 'success'});
+
             document.getElementById('id_response_input').value = JSON.stringify(authenticatorResponse);
             // Enable the submit button so that we can proceed.
             document.getElementById('id_submitbutton').disabled = false;
@@ -59,8 +76,13 @@ define(['factor_webauthn/utils', 'core/log'], function(utils, Log) {
         init: function(createArgs) {
             // Disable the submit button until we have registered a security key.
             document.getElementById('id_submitbutton').disabled = true;
-            createArgs = JSON.parse(createArgs);
+
+            Prefetch.prefetchStrings('factor_webauthn', [
+                'registersuccess',
+            ]);
+
             // Register event listeners.
+            createArgs = JSON.parse(createArgs);
             document.getElementById('factor_webauthn-register').addEventListener('click', function() {
                 registerSecurityKey(createArgs);
             });
