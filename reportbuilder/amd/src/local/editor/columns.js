@@ -23,7 +23,6 @@
 
 "use strict";
 
-import $ from 'jquery';
 import {dispatchEvent} from 'core/event_dispatcher';
 import 'core/inplace_editable';
 import {eventTypes as inplaceEditableEvents} from 'core/local/inplace_editable/events';
@@ -114,36 +113,44 @@ export const init = initialized => {
         }
     });
 
-    // Initialize sortable list to handle column moving (note JQuery dependency, see MDL-72293 for resolution).
-    var columnSortableList = new SortableList(`${reportSelectors.regions.reportTable} thead tr`, {isHorizontal: true});
-    columnSortableList.getElementName = element => Promise.resolve(element.data('columnName'));
+    // Initialize sortable list to handle column moving.
+    const columnHeadingSelector = `${reportSelectors.regions.reportTable} thead tr`;
+    const columnHeadingSortableList = new SortableList(columnHeadingSelector, {isHorizontal: true});
+    columnHeadingSortableList.getElementName = element => Promise.resolve(element.data('columnName'));
 
-    $(document).on(SortableList.EVENTS.DRAG, `${reportSelectors.regions.report} th[data-column-id]`, (event, info) => {
-        const reportElement = event.target.closest(reportSelectors.regions.report);
-        const columnPosition = info.element.data('columnPosition');
-        const targetColumnPosition = info.targetNextElement.data('columnPosition');
+    document.addEventListener(SortableList.EVENTS.elementDrag, event => {
+        const reportOrderColumn = event.target.closest(`${columnHeadingSelector} ${reportSelectors.regions.columnHeader}`);
+        if (reportOrderColumn) {
+            const reportElement = event.target.closest(reportSelectors.regions.report);
+            const {columnPosition} = reportOrderColumn.dataset;
 
-        $(reportElement).find('tbody tr').each(function() {
-            const cell = $(this).children(`td.c${columnPosition - 1}`)[0];
-            if (targetColumnPosition) {
-                var beforeCell = $(this).children(`td.c${targetColumnPosition - 1}`)[0];
-                this.insertBefore(cell, beforeCell);
-            } else {
-                this.appendChild(cell);
-            }
-        });
+            // Select target position, shift table columns to match.
+            const targetColumnPosition = event.detail.targetNextElement.data('columnPosition');
+
+            const reportTableRows = reportElement.querySelectorAll(`${reportSelectors.regions.reportTable} tbody tr`);
+            reportTableRows.forEach(reportTableRow => {
+                const reportTableRowCell = reportTableRow.querySelector(`td.c${columnPosition - 1}`);
+                if (targetColumnPosition) {
+                    const reportTableRowCellTarget = reportTableRow.querySelector(`td.c${targetColumnPosition - 1}`);
+                    reportTableRow.insertBefore(reportTableRowCell, reportTableRowCellTarget);
+                } else {
+                    reportTableRow.appendChild(reportTableRowCell);
+                }
+            });
+        }
     });
 
-    $(document).on(SortableList.EVENTS.DROP, `${reportSelectors.regions.report} th[data-column-id]`, (event, info) => {
-        if (info.positionChanged) {
+    document.addEventListener(SortableList.EVENTS.elementDrop, event => {
+        const reportOrderColumn = event.target.closest(`${columnHeadingSelector} ${reportSelectors.regions.columnHeader}`);
+        if (reportOrderColumn && event.detail.positionChanged) {
             const pendingPromise = new Pending('core_reportbuilder/columns:reorder');
-            const reportElement = event.target.closest(reportSelectors.regions.report);
-            const columnId = info.element.data('columnId');
-            const columnName = info.element.data('columnName');
-            const columnPosition = info.element.data('columnPosition');
+
+            const reportElement = reportOrderColumn.closest(reportSelectors.regions.report);
+            const {columnId, columnPosition, columnName} = reportOrderColumn.dataset;
 
             // Select target position, if moving to the end then count number of element siblings.
-            let targetColumnPosition = info.targetNextElement.data('columnPosition') || info.element.siblings().length + 2;
+            let targetColumnPosition = event.detail.targetNextElement.data('columnPosition')
+                || event.detail.element.siblings().length + 2;
             if (targetColumnPosition > columnPosition) {
                 targetColumnPosition--;
             }
@@ -163,7 +170,6 @@ export const init = initialized => {
 
     // Initialize inplace editable listeners for column aggregation.
     document.addEventListener(inplaceEditableEvents.elementUpdated, event => {
-
         const columnAggregation = event.target.closest('[data-itemtype="columnaggregation"]');
         if (columnAggregation) {
             const pendingPromise = new Pending('core_reportbuilder/columns:aggregate');

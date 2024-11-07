@@ -23,7 +23,6 @@
 
 "use strict";
 
-import $ from 'jquery';
 import AutoComplete from 'core/form-autocomplete';
 import 'core/inplace_editable';
 import Notification from 'core/notification';
@@ -151,19 +150,22 @@ export const init = initialized => {
         }
     });
 
-    // Initialize sortable list to handle active filters moving (note JQuery dependency, see MDL-72293 for resolution).
-    var activeFiltersSortableList = new SortableList(`${reportSelectors.regions.activeFilters} ul`, {isHorizontal: false});
+    // Initialize sortable list to handle active filters moving.
+    const activeFiltersSelector = `${reportSelectors.regions.activeFilters} ul`;
+    const activeFiltersSortableList = new SortableList(activeFiltersSelector, {isHorizontal: false});
     activeFiltersSortableList.getElementName = element => Promise.resolve(element.data('filterName'));
 
-    $(document).on(SortableList.EVENTS.DROP, `${reportSelectors.regions.report} li[data-filter-id]`, (event, info) => {
-        if (info.positionChanged) {
+    document.addEventListener(SortableList.EVENTS.elementDrop, event => {
+        const reportOrderFilter = event.target.closest(`${activeFiltersSelector} ${reportSelectors.regions.activeFilter}`);
+        if (reportOrderFilter && event.detail.positionChanged) {
             const pendingPromise = new Pending('core_reportbuilder/filters:reorder');
-            const reportElement = event.target.closest(reportSelectors.regions.report);
-            const filterId = info.element.data('filterId');
-            const filterPosition = info.element.data('filterPosition');
+
+            const reportElement = reportOrderFilter.closest(reportSelectors.regions.report);
+            const {filterId, filterPosition, filterName} = reportOrderFilter.dataset;
 
             // Select target position, if moving to the end then count number of element siblings.
-            let targetFilterPosition = info.targetNextElement.data('filterPosition') || info.element.siblings().length + 2;
+            let targetFilterPosition = event.detail.targetNextElement.data('filterPosition')
+                || event.detail.element.siblings().length + 2;
             if (targetFilterPosition > filterPosition) {
                 targetFilterPosition--;
             }
@@ -172,7 +174,7 @@ export const init = initialized => {
             const reorderPromise = reorderFilter(reportElement.dataset.reportId, filterId, targetFilterPosition);
             Promise.all([reorderPromise, new Promise(resolve => setTimeout(resolve, 1000))])
                 .then(([data]) => reloadSettingsFiltersRegion(reportElement, data))
-                .then(() => getString('filtermoved', 'core_reportbuilder', info.element.data('filterName')))
+                .then(() => getString('filtermoved', 'core_reportbuilder', filterName))
                 .then(addToast)
                 .then(() => pendingPromise.resolve())
                 .catch(Notification.exception);
