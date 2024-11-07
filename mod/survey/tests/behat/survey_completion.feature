@@ -51,7 +51,7 @@ Feature: A teacher can use activity completion to track a student progress
     And I follow "Test survey name"
     And the "Submit answers" completion condition of "Test survey name" is displayed as "done"
 
-  Scenario: Use manual completion
+  Scenario: A student can manually mark the survey activity as done but a teacher cannot
     Given the following "activities" exist:
       | activity   | name                   | course | idnumber    | completion |
       | survey     | Test survey name       | C1     | survey1     | 1          |

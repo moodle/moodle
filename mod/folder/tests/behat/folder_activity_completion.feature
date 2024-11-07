@@ -37,7 +37,7 @@ Feature: View activity completion information in the folder activity
     Then the "View" completion condition of "Music history" is displayed as "done"
 
   @javascript
-  Scenario: Use manual completion
+  Scenario: A student can manually mark the folder activity as done but a teacher cannot
     Given the following "activity" exists:
       | activity       | folder        |
       | course         | C1            |

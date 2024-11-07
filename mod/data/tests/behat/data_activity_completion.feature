@@ -97,7 +97,7 @@ Feature: View activity completion in the database activity
     And "Vinnie Student1" user has completed "Music history" activity
 
   @javascript
-  Scenario: Use manual completion
+  Scenario: A student can manually mark the data activity as done but a teacher cannot
     Given I am on the "Music history" "data activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "Students must manually mark the activity as done" to "1"
