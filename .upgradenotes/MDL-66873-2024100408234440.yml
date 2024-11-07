@@ -1,0 +1,5 @@
+issueNumber: MDL-66873
+notes:
+  core_backup:
+    - message: Remove all MODE_HUB related code.
+      type: removed
