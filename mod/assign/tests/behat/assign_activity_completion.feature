@@ -70,7 +70,7 @@ Feature: View activity completion in the assignment activity
     And the manual completion button for "Music history" should exist
 
   @javascript
-  Scenario: Use manual completion from the activity page
+  Scenario: A student can manually mark the assign activity as done but a teacher cannot
     Given I am on the "Music history" "assign activity" page logged in as teacher1
     # Teacher view.
     And the manual completion button for "Music history" should be disabled
