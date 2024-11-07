@@ -35,7 +35,10 @@ class frozen_clock implements \core\clock {
         ?int $time = null,
     ) {
         if ($time) {
-            $this->time = new \DateTimeImmutable("@{$time}");
+            // Note that the constructor with time zone does not work when specifying a timestamp,
+            // so we have to set timezone separately afterward.
+            $this->time = (new \DateTimeImmutable("@{$time}"))
+                ->setTimezone(\core_date::get_server_timezone_object());
         } else {
             $this->time = new \DateTimeImmutable();
         }
@@ -55,7 +58,8 @@ class frozen_clock implements \core\clock {
      * @param int $time
      */
     public function set_to(int $time): void {
-        $this->time = new \DateTimeImmutable("@{$time}");
+        $this->time = (new \DateTimeImmutable("@{$time}"))
+            ->setTimezone(\core_date::get_server_timezone_object());
     }
 
     /**
