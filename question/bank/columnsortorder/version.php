@@ -26,6 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qbank_columnsortorder';
-$plugin->version   = 2024042202;
+$plugin->version   = 2024042203;
 $plugin->requires  = 2024041600;
 $plugin->maturity  = MATURITY_STABLE;
