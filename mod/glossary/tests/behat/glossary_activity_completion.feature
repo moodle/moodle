@@ -66,7 +66,7 @@ Feature: View activity completion in the glossary activity
     And the "Receive a grade" completion condition of "Music history" is displayed as "done"
 
   @javascript
-  Scenario: Use manual completion
+  Scenario: A student can manually mark the glossary activity as done but a teacher cannot
     Given I am on the "Music history" "glossary activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
