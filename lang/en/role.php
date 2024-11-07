@@ -25,6 +25,7 @@
 $string['ai:acceptpolicy'] = 'Set a users AI policy acceptance';
 $string['ai:fetchanyuserpolicystatus'] = 'Get a users AI policy acceptance';
 $string['ai:fetchpolicy'] = 'Get a users AI policy acceptance';
+$string['ai:viewaipolicyacceptancereport'] = 'View AI policy acceptance report';
 $string['addinganewrole'] = 'Adding a new role';
 $string['addrole'] = 'Add a new role';
 $string['advancedoverride'] = 'Advanced role override';

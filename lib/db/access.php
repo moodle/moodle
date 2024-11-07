@@ -2810,4 +2810,13 @@ $capabilities = array(
             'user' => CAP_ALLOW,
         ],
     ],
+    // Allow managers to view the AI policy acceptance report.
+    'moodle/ai:viewaipolicyacceptancereport' => [
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 );
