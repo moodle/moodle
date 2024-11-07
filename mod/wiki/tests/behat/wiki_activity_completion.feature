@@ -45,7 +45,7 @@ Feature: View activity completion information in the Wiki activity
     Then the "View" completion condition of "Music history" is displayed as "done"
 
   @javascript
-  Scenario: Use manual completion
+  Scenario: A student can manually mark the wiki activity as done but a teacher cannot
     Given I am on the "Music history" "wiki activity" page logged in as teacher1
     And I am on the "Music history" "wiki activity editing" page
     And I expand all fieldsets
