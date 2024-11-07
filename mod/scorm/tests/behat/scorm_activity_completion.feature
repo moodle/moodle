@@ -117,7 +117,7 @@ Feature: View activity completion in the SCORM activity
     And the "Complete or pass the activity" completion condition of "Music history" is displayed as "done"
 
   @javascript
-  Scenario: Use manual completion
+  Scenario: A student can manually mark the scorm activity as done but a teacher cannot
     Given I am on the "Music history" "scorm activity" page logged in as teacher1
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
