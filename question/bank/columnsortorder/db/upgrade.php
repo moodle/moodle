@@ -80,7 +80,7 @@ function xmldb_qbank_columnsortorder_upgrade(int $oldversion): bool {
     if ($oldversion < 2024042203) {
         // When upgrading to version 2024042201, if there were any values for colsize in qbank_columnsortorder plugin,
         // they were getting incorrectly updated, resulting in corrupted colsize value,
-        // e.g., '"width":"30"}-"width":"30"},"width":"180"}-"width":"180"} and thus breaking the question bank page.
+        // e.g., '"width":"30"}-"width":"30"},"width":"180"}-"width":"180"}' and thus breaking the question bank page.
         $pluginconfig = $DB->get_record('config_plugins', ['plugin' => 'qbank_columnsortorder', 'name' => 'colsize']);
         $pattern = '/"width":"[^"]*"}-"width":"[^"]*"}/';
         if ($pluginconfig && preg_match($pattern, $pluginconfig->value)) {
