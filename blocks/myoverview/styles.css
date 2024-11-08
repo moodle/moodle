@@ -3,3 +3,135 @@
 .block_myoverview button#groupingdropdown + .dropdown-menu li:first-of-type.dropdown-divider:first-of-type {
     display: none;
 }
+
+.progress-text {
+    font-size: 14px;
+    /*font-weight: bold;*/
+    margin-bottom: 5px; /* Space between text and bar */
+}
+
+.progress-container {
+    width: 100%;
+    background-color: #e0e0e0; /* Light gray background */
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 10px; /*default 20*/
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    line-height: 20px;
+    border-radius: 10px 0 0 10px /* 5 0 0 5 */
+}
+
+.progress-bar[style*="width: 0%"],
+.progress-bar[style*="width: 1%"],
+.progress-bar[style*="width: 2%"],
+.progress-bar[style*="width: 3%"],
+.progress-bar[style*="width: 4%"],
+.progress-bar[style*="width: 5%"],
+.progress-bar[style*="width: 6%"],
+.progress-bar[style*="width: 7%"],
+.progress-bar[style*="width: 8%"],
+.progress-bar[style*="width: 9%"],
+.progress-bar[style*="width: 10%"],
+.progress-bar[style*="width: 11%"],
+.progress-bar[style*="width: 12%"],
+.progress-bar[style*="width: 13%"],
+.progress-bar[style*="width: 14%"],
+.progress-bar[style*="width: 15%"],
+.progress-bar[style*="width: 16%"],
+.progress-bar[style*="width: 17%"],
+.progress-bar[style*="width: 18%"],
+.progress-bar[style*="width: 19%"],
+.progress-bar[style*="width: 20%"],
+.progress-bar[style*="width: 21%"],
+.progress-bar[style*="width: 22%"],
+.progress-bar[style*="width: 23%"],
+.progress-bar[style*="width: 24%"],
+.progress-bar[style*="width: 25%"],
+.progress-bar[style*="width: 26%"],
+.progress-bar[style*="width: 27%"],
+.progress-bar[style*="width: 28%"],
+.progress-bar[style*="width: 29%"],
+.progress-bar[style*="width: 30%"],
+.progress-bar[style*="width: 31%"],
+.progress-bar[style*="width: 32%"],
+.progress-bar[style*="width: 33%"] {
+    background-color: #e74c3c; /* Red for 0%-33% progress */
+}
+
+.progress-bar[style*="width: 34%"],
+.progress-bar[style*="width: 35%"],
+.progress-bar[style*="width: 36%"],
+.progress-bar[style*="width: 37%"],
+.progress-bar[style*="width: 38%"],
+.progress-bar[style*="width: 39%"],
+.progress-bar[style*="width: 40%"],
+.progress-bar[style*="width: 41%"],
+.progress-bar[style*="width: 42%"],
+.progress-bar[style*="width: 43%"],
+.progress-bar[style*="width: 44%"],
+.progress-bar[style*="width: 45%"],
+.progress-bar[style*="width: 46%"],
+.progress-bar[style*="width: 47%"],
+.progress-bar[style*="width: 48%"],
+.progress-bar[style*="width: 49%"],
+.progress-bar[style*="width: 50%"],
+.progress-bar[style*="width: 51%"],
+.progress-bar[style*="width: 52%"],
+.progress-bar[style*="width: 53%"],
+.progress-bar[style*="width: 54%"],
+.progress-bar[style*="width: 55%"],
+.progress-bar[style*="width: 56%"],
+.progress-bar[style*="width: 57%"],
+.progress-bar[style*="width: 58%"],
+.progress-bar[style*="width: 59%"],
+.progress-bar[style*="width: 60%"],
+.progress-bar[style*="width: 61%"],
+.progress-bar[style*="width: 62%"],
+.progress-bar[style*="width: 63%"],
+.progress-bar[style*="width: 64%"],
+.progress-bar[style*="width: 65%"],
+.progress-bar[style*="width: 66%"] {
+    background-color: #f1c40f; /* Yellow for 34%-66% progress */
+}
+
+.progress-bar[style*="width: 67%"],
+.progress-bar[style*="width: 68%"],
+.progress-bar[style*="width: 69%"],
+.progress-bar[style*="width: 70%"],
+.progress-bar[style*="width: 71%"],
+.progress-bar[style*="width: 72%"],
+.progress-bar[style*="width: 73%"],
+.progress-bar[style*="width: 74%"],
+.progress-bar[style*="width: 75%"],
+.progress-bar[style*="width: 76%"],
+.progress-bar[style*="width: 77%"],
+.progress-bar[style*="width: 78%"],
+.progress-bar[style*="width: 79%"],
+.progress-bar[style*="width: 80%"],
+.progress-bar[style*="width: 81%"],
+.progress-bar[style*="width: 82%"],
+.progress-bar[style*="width: 83%"],
+.progress-bar[style*="width: 84%"],
+.progress-bar[style*="width: 85%"],
+.progress-bar[style*="width: 86%"],
+.progress-bar[style*="width: 87%"],
+.progress-bar[style*="width: 88%"],
+.progress-bar[style*="width: 89%"],
+.progress-bar[style*="width: 90%"],
+.progress-bar[style*="width: 91%"],
+.progress-bar[style*="width: 92%"],
+.progress-bar[style*="width: 93%"],
+.progress-bar[style*="width: 94%"],
+.progress-bar[style*="width: 95%"],
+.progress-bar[style*="width: 96%"],
+.progress-bar[style*="width: 97%"],
+.progress-bar[style*="width: 98%"],
+.progress-bar[style*="width: 99%"],
+.progress-bar[style*="width: 100%"] {
+    background-color: #2ecc71; /* Green for 67%-100% progress */
+}
