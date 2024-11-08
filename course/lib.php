@@ -1031,8 +1031,11 @@ function course_module_bulk_update_calendar_events($modulename, $courseid = 0) {
  * @since  Moodle 3.3.4
  */
 function course_module_calendar_event_update_process($instance, $cm) {
+    global $CFG;
+
     // We need to call *_refresh_events() first because some modules delete 'old' events at the end of the code which
     // will remove the completion events.
+    include_once("$CFG->dirroot/mod/$cm->modname/lib.php");
     $refresheventsfunction = $cm->modname . '_refresh_events';
     if (function_exists($refresheventsfunction)) {
         call_user_func($refresheventsfunction, $cm->course, $instance, $cm);
