@@ -43,6 +43,15 @@ if ($ADMIN->fulltree) {
     );
 
     $settings->add($setting);
+
+    $setting = new admin_setting_configtext(
+        'editor_tiny/extended_valid_elements',
+        new lang_string('extended_valid_elements', 'editor_tiny'),
+        new lang_string('extended_valid_elements_desc', 'editor_tiny'),
+        'script[*],p[*],i[*]'
+    );
+
+    $settings->add($setting);
 }
 
 // Note: We add editortiny to the settings page here manually rather than deferring to the plugininfo class.
