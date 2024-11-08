@@ -1,0 +1,7 @@
+issueNumber: MDL-81825
+notes:
+  core:
+    - message: >-
+        The 'core_renderer::sr_text()' function has been deprecated, use
+        'core_renderer::visually_hidden_text()' instead.
+      type: deprecated

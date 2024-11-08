@@ -134,7 +134,7 @@ class visibility implements named_templatable, renderable {
         \renderer_base $output,
         choicelist $choice,
     ): stdClass {
-        $badgetext = $output->sr_text(get_string('availability'));
+        $badgetext = $output->visually_hidden_text(get_string('availability'));
 
         if (!$this->mod->visible) {
             $badgetext .= get_string('hiddenfromstudents');

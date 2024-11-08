@@ -2953,12 +2953,26 @@ EOD;
      *
      * @param string $contents The contents of the paragraph
      * @return string the HTML to output.
+     * @deprecated since 5.0. Use visually_hidden_text() instead.
+     * @todo Final deprecation in Moodle 6.0. See MDL-83671.
      */
+    #[\core\attribute\deprecated('core_renderer::visually_hidden_text()', since: '5.0', mdl: 'MDL-81825')]
     public function sr_text(string $contents): string {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        return $this->visually_hidden_text($contents);
+    }
+
+    /**
+     * Outputs a visually hidden inline text (but accessible to assistive technologies).
+     *
+     * @param string $contents The contents of the paragraph
+     * @return string the HTML to output.
+     */
+    public function visually_hidden_text(string $contents): string {
         return html_writer::tag(
             'span',
             $contents,
-            ['class' => 'sr-only']
+            ['class' => 'visually-hidden']
         ) . ' ';
     }
 
