@@ -10,6 +10,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### core
 
+#### Added
+
+- The `core/sortable_list` Javascript module now emits native events, removing the jQuery dependency from calling code that wants to listen for the events. Backwards compatibility with existing code using jQuery is preserved
+
+  For more information see [MDL-72293](https://tracker.moodle.org/browse/MDL-72293)
+
 #### Changed
 
 - All uses of the following PHPUnit methods have been removed as these methods are
@@ -28,6 +34,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - moodle_process_email() has been deprecated with the removal of the unused and non-functioning admin/process_email.php.
 
   For more information see [MDL-61232](https://tracker.moodle.org/browse/MDL-61232)
+
+### core_backup
+
+#### Removed
+
+- Remove all MODE_HUB related code.
+
+  For more information see [MDL-66873](https://tracker.moodle.org/browse/MDL-66873)
 
 ### core_enrol
 

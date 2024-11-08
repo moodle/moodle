@@ -1,5 +1,13 @@
 # core_backup (subsystem) Upgrade notes
 
+## 5.0dev
+
+### Removed
+
+- Remove all MODE_HUB related code.
+
+  For more information see [MDL-66873](https://tracker.moodle.org/browse/MDL-66873)
+
 ## 4.5
 
 ### Removed

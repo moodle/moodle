@@ -2,6 +2,12 @@
 
 ## 5.0dev
 
+### Added
+
+- The `core/sortable_list` Javascript module now emits native events, removing the jQuery dependency from calling code that wants to listen for the events. Backwards compatibility with existing code using jQuery is preserved
+
+  For more information see [MDL-72293](https://tracker.moodle.org/browse/MDL-72293)
+
 ### Changed
 
 - All uses of the following PHPUnit methods have been removed as these methods are
