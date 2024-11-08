@@ -22,8 +22,8 @@
             "Moodle\\BehatExtension": "lib/behat/extension/"
         },
         "psr-4": {
-            "core_testing\\": "lib/testing/classes/",
-            "core_phpunit\\": "lib/phpunit/classes/"
+            "core_testing\\": "public/lib/testing/classes/",
+            "core_phpunit\\": "public/lib/phpunit/classes/"
         }
     },
     "minimum-stability": "dev",

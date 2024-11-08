@@ -148,7 +148,7 @@ final class component_test extends \advanced_testcase {
         $plugintypes = component::get_plugin_types();
 
         foreach ($plugintypes as $plugintype => $fulldir) {
-            $this->assertStringStartsWith("$CFG->dirroot/", $fulldir);
+            $this->assertStringStartsWith("$CFG->root/", $fulldir);
         }
     }
 
@@ -170,7 +170,7 @@ final class component_test extends \advanced_testcase {
         $this->resetDebugging();
 
         foreach ($plugintypes as $plugintype => $fulldir) {
-            $this->assertSame($fulldir, $CFG->dirroot . '/' . $realplugintypes[$plugintype]);
+            $this->assertSame($fulldir, $CFG->root . '/' . $realplugintypes[$plugintype]);
         }
     }
 
@@ -747,12 +747,12 @@ final class component_test extends \advanced_testcase {
         $directory = str_replace('\\', '/', $CFG->dirroot) . "/lib/tests/fixtures/component/";
 
         $psr0 = [
-          'psr0'      => 'lib/tests/fixtures/component/psr0',
-          'overlap'   => 'lib/tests/fixtures/component/overlap',
+          'psr0'      => 'public/lib/tests/fixtures/component/psr0',
+          'overlap'   => 'public/lib/tests/fixtures/component/overlap',
         ];
         $psr4 = [
-          'psr4'      => 'lib/tests/fixtures/component/psr4',
-          'overlap'   => 'lib/tests/fixtures/component/overlap',
+          'psr4'      => 'public/lib/tests/fixtures/component/psr4',
+          'overlap'   => 'public/lib/tests/fixtures/component/overlap',
         ];
         return [
             'PSR-0 Classloading - Root' => [
@@ -1038,21 +1038,21 @@ final class component_test extends \advanced_testcase {
               'prefix' => "Test",
               'path' => 'test/src',
               'separators' => ['_'],
-              'result' => $CFG->dirroot . "/test/src/With/Underscores.php",
+              'result' => $CFG->root . "/test/src/With/Underscores.php",
           ],
           'Getting a file with slashes' => [
               'classname' => 'Test\\With\\Slashes',
               'prefix' => "Test",
               'path' => 'test/src',
               'separators' => ['\\'],
-              'result' => $CFG->dirroot . "/test/src/With/Slashes.php",
+              'result' => $CFG->root . "/test/src/With/Slashes.php",
           ],
           'Getting a file with multiple namespaces' => [
               'classname' => 'Test\\With\\Multiple\\Namespaces',
               'prefix' => "Test\\With",
               'path' => 'test/src',
               'separators' => ['\\'],
-              'result' => $CFG->dirroot . "/test/src/Multiple/Namespaces.php",
+              'result' => $CFG->root . "/test/src/Multiple/Namespaces.php",
           ],
           'Getting a file with multiple namespaces (non-existent)' => [
               'classname' => 'Nonexistent\\Namespace\\Test',
@@ -1287,7 +1287,7 @@ final class component_test extends \advanced_testcase {
         foreach ($xml as $lib) {
             $base = realpath(dirname($xmlpath));
             $fullpath = "{$base}/{$lib->location}";
-            $relativepath = substr($fullpath, strlen($CFG->dirroot));
+            $relativepath = substr($fullpath, strlen($CFG->root));
 
             $libs[$relativepath] = [
                 'name' => (string) $lib->name,
@@ -1421,23 +1421,26 @@ final class component_test extends \advanced_testcase {
 
         $this->resetAfterTest();
         $vfileroot = \org\bovigo\vfs\vfsStream::setup('root', null, [
-            'plugintype' => [
-                'exampleplugin' => [
-                    'db' => [
-                        'subplugins.json' => json_encode([
-                            'subplugintypes' => [
-                                'exampleplugina' => 'apples',
-                            ],
-                        ]),
-                        'subplugins.php' => '',
+            'public' => [
+                'plugintype' => [
+                    'exampleplugin' => [
+                        'db' => [
+                            'subplugins.json' => json_encode([
+                                'subplugintypes' => [
+                                    'exampleplugina' => 'apples',
+                                ],
+                            ]),
+                            'subplugins.php' => '',
+                        ],
+                        'apples' => [],
                     ],
-                    'apples' => [],
                 ],
             ],
         ]);
 
-        $CFG->dirroot = $vfileroot->url();
-        $pluginroot = $vfileroot->getChild('plugintype/exampleplugin');
+        $CFG->root = $vfileroot->url();
+        $CFG->dirroot = $vfileroot->getChild('public')->url();
+        $pluginroot = $vfileroot->getChild('public/plugintype/exampleplugin');
 
         $rcm = new \ReflectionMethod(\core\component::class, 'fetch_subtypes');
         $subplugins = $rcm->invoke(null, $pluginroot->url());
@@ -1457,23 +1460,26 @@ final class component_test extends \advanced_testcase {
 
         $this->resetAfterTest();
         $vfileroot = \org\bovigo\vfs\vfsStream::setup('root', null, [
-            'plugintype' => [
-                'exampleplugin' => [
-                    'db' => [
-                        'subplugins.json' => json_encode([
-                            'plugintypes' => [
-                                'exampleplugina' => 'plugintype/exampleplugin/apples',
-                            ],
-                        ]),
-                        'subplugins.php' => '',
+            'public' => [
+                'plugintype' => [
+                    'exampleplugin' => [
+                        'db' => [
+                            'subplugins.json' => json_encode([
+                                'plugintypes' => [
+                                    'exampleplugina' => 'plugintype/exampleplugin/apples',
+                                ],
+                            ]),
+                            'subplugins.php' => '',
+                        ],
+                        'apples' => [],
                     ],
-                    'apples' => [],
                 ],
             ],
         ]);
 
-        $CFG->dirroot = $vfileroot->url();
-        $pluginroot = $vfileroot->getChild('plugintype/exampleplugin');
+        $CFG->root = $vfileroot->url();
+        $CFG->dirroot = $vfileroot->getchild('public')->url();
+        $pluginroot = $vfileroot->getChild('public/plugintype/exampleplugin');
 
         $logdir = make_request_directory();
         $logfile = "{$logdir}/error.log";
@@ -1643,7 +1649,7 @@ final class component_test extends \advanced_testcase {
         // Inject the 'fake' plugin type.
         $this->add_full_mocked_plugintype(
             plugintype: 'fake',
-            path: 'lib/tests/fixtures/fakeplugins/fake'
+            path: 'public/lib/tests/fixtures/fakeplugins/fake',
         );
 
         $componenthashbefore = component::get_all_component_hash();
@@ -1715,7 +1721,7 @@ final class component_test extends \advanced_testcase {
         // Inject the 'fake' plugin type.
         $this->add_full_mocked_plugintype(
             plugintype: 'fake',
-            path: 'lib/tests/fixtures/fakeplugins/fake',
+            path: 'public/lib/tests/fixtures/fakeplugins/fake',
         );
 
         // Delete the fake plugintype via mocking component sources.
@@ -1766,7 +1772,7 @@ final class component_test extends \advanced_testcase {
         // 3. fulldeletedsubtype_demo: a deleted subplugin type.
         $this->add_full_mocked_plugintype(
             plugintype: 'fake',
-            path: 'lib/tests/fixtures/fakeplugins/fake',
+            path: 'public/lib/tests/fixtures/fakeplugins/fake',
             subpluginsupport: true
         );
         $this->assert_deprecation_apis_subplugins();
@@ -1787,7 +1793,7 @@ final class component_test extends \advanced_testcase {
         // 3. fulldeletedsubtype_demo: a deleted subplugin type.
         $this->add_full_mocked_plugintype(
             plugintype: 'fake',
-            path: 'lib/tests/fixtures/fakeplugins/fake',
+            path: 'public/lib/tests/fixtures/fakeplugins/fake',
             subpluginsupport: true
         );
 
@@ -1816,7 +1822,7 @@ final class component_test extends \advanced_testcase {
         // 3. fulldeletedsubtype_demo: a deleted subplugin type.
         $this->add_full_mocked_plugintype(
             plugintype: 'fake',
-            path: 'lib/tests/fixtures/fakeplugins/fake',
+            path: 'public/lib/tests/fixtures/fakeplugins/fake',
             subpluginsupport: true
         );
 

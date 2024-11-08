@@ -347,7 +347,7 @@ class plugin_manager {
      */
     protected static function load_standard_plugins(): stdClass {
         if (static::$standardplugincache === null) {
-            $data = file_get_contents(dirname(__DIR__) . '/plugins.json');
+            $data = file_get_contents(dirname(__DIR__, 3) . '/lib/plugins.json');
             static::$standardplugincache = json_decode($data, false);
         }
 

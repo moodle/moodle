@@ -90,11 +90,11 @@ function get_plugin_types($fullpaths = true) {
 
     debugging('Short paths are deprecated when using get_plugin_types(), please fix the code to use fullpaths instead.', DEBUG_DEVELOPER);
 
-    $dlength = strlen($CFG->dirroot);
+    $dlength = strlen($CFG->root);
 
     foreach ($types as $k => $v) {
         if ($k === 'theme') {
-            $types[$k] = 'theme';
+            $types[$k] = 'public/theme';
             continue;
         }
         $types[$k] = substr($v, $dlength+1);

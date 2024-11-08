@@ -27,13 +27,16 @@ module.exports = grunt => {
         sass: {
             dist: {
                 files: {
-                    "theme/boost/style/moodle.css": "theme/boost/scss/preset/default.scss",
-                    "theme/classic/style/moodle.css": "theme/classic/scss/classicgrunt.scss"
+                    "public/theme/boost/style/moodle.css": "public/theme/boost/scss/preset/default.scss",
+                    "public/theme/classic/style/moodle.css": "public/theme/classic/scss/classicgrunt.scss"
                 }
             },
             options: {
                 implementation: require('sass'),
-                includePaths: ["theme/boost/scss/", "theme/classic/scss/"]
+                includePaths: [
+                    "public/theme/boost/scss/",
+                    "public/theme/classic/scss/",
+                ]
             }
         },
     });

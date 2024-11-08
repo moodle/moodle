@@ -110,64 +110,64 @@ class component {
     protected static $filestomap = ['lib.php', 'settings.php'];
     /** @var array associative array of PSR-0 namespaces and corresponding paths. */
     protected static $psr0namespaces = [
-        'Mustache' => 'lib/mustache/src/Mustache',
+        'Mustache' => 'public/lib/mustache/src/Mustache',
     ];
     /** @var array<string|array<string>> associative array of PRS-4 namespaces and corresponding paths. */
     protected static $psr4namespaces = [
-        \Aws::class => 'lib/aws-sdk/src',
-        \CFPropertyList::class => 'lib/plist/src/CFPropertyList',
-        \Complex::class => 'lib/phpspreadsheet/markbaker/complex/classes/src',
-        \Composer\Pcre::class => 'lib/composer/pcre/src',
-        \DI::class => 'lib/php-di/php-di/src',
-        \GeoIp2::class => 'lib/maxmind/GeoIp2/src',
-        \FastRoute::class => 'lib/nikic/fast-route/src',
-        \Firebase\JWT::class => 'lib/php-jwt/src',
-        \GuzzleHttp::class => 'lib/guzzlehttp/guzzle/src',
-        \GuzzleHttp\Promise::class => 'lib/guzzlehttp/promises/src',
-        \GuzzleHttp\Psr7::class => 'lib/guzzlehttp/psr7/src',
-        \Html2Text::class => 'lib/html2text/src',
-        \IMSGlobal\LTI::class => 'lib/ltiprovider/src',
-        \Invoker::class => 'lib/php-di/invoker/src',
-        \JmesPath::class => 'lib/jmespath/src',
-        \Kevinrob\GuzzleCache::class => 'lib/guzzlehttp/kevinrob/guzzlecache/src',
-        \Laravel\SerializableClosure::class => 'lib/laravel/serializable-closure/src',
-        \lbuchs\WebAuthn::class => 'lib/webauthn/src',
-        \libphonenumber::class => 'lib/giggsey/libphonenumber-for-php-lite/src',
-        \Matrix::class => 'lib/phpspreadsheet/markbaker/matrix/classes/src',
-        \MatthiasMullie\Minify::class => 'lib/minify/matthiasmullie-minify/src',
-        \MatthiasMullie\PathConverter::class => 'lib/minify/matthiasmullie-pathconverter/src',
-        \MaxMind\Db::class => 'lib/maxmind/MaxMind/src/MaxMind/Db',
-        \Michelf::class => 'lib/markdown/Michelf',
+        \Aws::class => 'public/lib/aws-sdk/src',
+        \CFPropertyList::class => 'public/lib/plist/src/CFPropertyList',
+        \Complex::class => 'public/lib/phpspreadsheet/markbaker/complex/classes/src',
+        \Composer\Pcre::class => 'public/lib/composer/pcre/src',
+        \DI::class => 'public/lib/php-di/php-di/src',
+        \GeoIp2::class => 'public/lib/maxmind/GeoIp2/src',
+        \FastRoute::class => 'public/lib/nikic/fast-route/src',
+        \Firebase\JWT::class => 'public/lib/php-jwt/src',
+        \GuzzleHttp::class => 'public/lib/guzzlehttp/guzzle/src',
+        \GuzzleHttp\Promise::class => 'public/lib/guzzlehttp/promises/src',
+        \GuzzleHttp\Psr7::class => 'public/lib/guzzlehttp/psr7/src',
+        \Html2Text::class => 'public/lib/html2text/src',
+        \IMSGlobal\LTI::class => 'public/lib/ltiprovider/src',
+        \Invoker::class => 'public/lib/php-di/invoker/src',
+        \JmesPath::class => 'public/lib/jmespath/src',
+        \Kevinrob\GuzzleCache::class => 'public/lib/guzzlehttp/kevinrob/guzzlecache/src',
+        \Laravel\SerializableClosure::class => 'public/lib/laravel/serializable-closure/src',
+        \lbuchs\WebAuthn::class => 'public/lib/webauthn/src',
+        \libphonenumber::class => 'public/lib/giggsey/libphonenumber-for-php-lite/src',
+        \Matrix::class => 'public/lib/phpspreadsheet/markbaker/matrix/classes/src',
+        \MatthiasMullie\Minify::class => 'public/lib/minify/matthiasmullie-minify/src',
+        \MatthiasMullie\PathConverter::class => 'public/lib/minify/matthiasmullie-pathconverter/src',
+        \MaxMind\Db::class => 'public/lib/maxmind/MaxMind/src/MaxMind/Db',
+        \Michelf::class => 'public/lib/markdown/Michelf',
         \MoodleHQ::class => [
-            'lib/rtlcss/src/MoodleHQ',
+            'public/lib/rtlcss/src/MoodleHQ',
         ],
-        \OpenSpout::class => 'lib/openspout/src',
-        \Packback\Lti1p3::class => 'lib/lti1p3/src',
-        \PHPMailer\PHPMailer::class => 'lib/phpmailer/src',
-        \PhpOffice\PhpSpreadsheet::class => 'lib/phpspreadsheet/phpspreadsheet/src/PhpSpreadsheet',
-        \PhpXmlRpc::class => 'lib/phpxmlrpc/src',
-        \Phpml::class => 'lib/mlbackend/php/phpml/src/Phpml',
-        \Psr\Clock::class => 'lib/psr/clock/src',
-        \Psr\Container::class => 'lib/psr/container/src',
-        \Psr\EventDispatcher::class => 'lib/psr/event-dispatcher/src',
-        \Psr\Http\Client::class => 'lib/psr/http-client/src',
+        \OpenSpout::class => 'public/lib/openspout/src',
+        \Packback\Lti1p3::class => 'public/lib/lti1p3/src',
+        \PHPMailer\PHPMailer::class => 'public/lib/phpmailer/src',
+        \PhpOffice\PhpSpreadsheet::class => 'public/lib/phpspreadsheet/phpspreadsheet/src/PhpSpreadsheet',
+        \PhpXmlRpc::class => 'public/lib/phpxmlrpc/src',
+        \Phpml::class => 'public/lib/mlbackend/php/phpml/src/Phpml',
+        \Psr\Clock::class => 'public/lib/psr/clock/src',
+        \Psr\Container::class => 'public/lib/psr/container/src',
+        \Psr\EventDispatcher::class => 'public/lib/psr/event-dispatcher/src',
+        \Psr\Http\Client::class => 'public/lib/psr/http-client/src',
         \Psr\Http\Message::class => [
-            'lib/psr/http-factory/src',
-            'lib/psr/http-message/src',
+            'public/lib/psr/http-factory/src',
+            'public/lib/psr/http-message/src',
         ],
         \Psr\Http\Server::class => [
-            "lib/psr/http-server-handler/src",
-            "lib/psr/http-server-middleware/src",
+            "public/lib/psr/http-server-handler/src",
+            "public/lib/psr/http-server-middleware/src",
         ],
-        \Psr\Log::class => "lib/psr/log/src",
-        \Psr\SimpleCache::class => 'lib/psr/simple-cache/src',
-        \RedeyeVentures::class => 'lib/geopattern-php/src',
-        \Sabberworm\CSS::class => 'lib/php-css-parser/src',
-        \ScssPhp\ScssPhp::class => 'lib/scssphp/src',
-        \SimplePie::class => 'lib/simplepie/src',
-        \Slim::class => 'lib/slim/slim/Slim',
-        \Spatie\Cloneable::class => 'lib/spatie/php-cloneable/src',
-        \ZipStream::class => 'lib/zipstream/src',
+        \Psr\Log::class => "public/lib/psr/log/src",
+        \Psr\SimpleCache::class => 'public/lib/psr/simple-cache/src',
+        \RedeyeVentures::class => 'public/lib/geopattern-php/src',
+        \Sabberworm\CSS::class => 'public/lib/php-css-parser/src',
+        \ScssPhp\ScssPhp::class => 'public/lib/scssphp/src',
+        \SimplePie::class => 'public/lib/simplepie/src',
+        \Slim::class => 'public/lib/slim/slim/Slim',
+        \Spatie\Cloneable::class => 'public/lib/spatie/php-cloneable/src',
+        \ZipStream::class => 'public/lib/zipstream/src',
     ];
 
     /**
@@ -180,13 +180,13 @@ class component {
      * @var array<string>
      */
     protected static $composerautoloadfiles = [
-        'lib/aws-sdk/src/functions.php',
-        'lib/guzzlehttp/guzzle/src/functions_include.php',
-        'lib/jmespath/src/JmesPath.php',
-        'lib/nikic/fast-route/src/functions.php',
-        'lib/php-di/php-di/src/functions.php',
-        'lib/ralouphie/getallheaders/src/getallheaders.php',
-        'lib/symfony/deprecation-contracts/function.php',
+        'public/lib/aws-sdk/src/functions.php',
+        'public/lib/guzzlehttp/guzzle/src/functions_include.php',
+        'public/lib/jmespath/src/JmesPath.php',
+        'public/lib/nikic/fast-route/src/functions.php',
+        'public/lib/php-di/php-di/src/functions.php',
+        'public/lib/ralouphie/getallheaders/src/getallheaders.php',
+        'public/lib/symfony/deprecation-contracts/function.php',
     ];
 
     /**
@@ -202,7 +202,7 @@ class component {
         // Load any composer-driven autoload files.
         // This is intended to mimic the behaviour of the standard Composer Autoloader.
         foreach (static::$composerautoloadfiles as $file) {
-            $path = dirname(__DIR__, 2) . '/' . $file;
+            $path = dirname(__DIR__, 3) . '/' . $file;
             if (file_exists($path)) {
                 require_once($path);
             }
@@ -341,7 +341,8 @@ class component {
             // No, move to the next prefix.
             return false;
         }
-        $path = $CFG->dirroot . '/' . $path;
+
+        $path = $CFG->root . '/' . $path;
 
         // Get the relative class name.
         $relativeclass = substr($class, $len);
@@ -700,7 +701,7 @@ $cache = ' . var_export($cache, true) . ';
                 }
             }
 
-            $info[$subsystem] = empty($path) ? null : "{$CFG->dirroot}/{$path}";
+            $info[$subsystem] = empty($path) ? null : "{$CFG->root}/{$path}";
         }
 
         return $info;
@@ -743,7 +744,7 @@ $cache = ' . var_export($cache, true) . ';
                 if ($CFG->admin !== 'admin' && strpos($path, 'admin/') === 0) {
                     $path = $CFG->admin . substr($path, 5);
                 }
-                $plugintypesmap[$sourcekey][$plugintype] = "{$CFG->dirroot}/{$path}";
+                $plugintypesmap[$sourcekey][$plugintype] = "{$CFG->root}/{$path}";
             }
         }
 
@@ -863,7 +864,7 @@ $cache = ' . var_export($cache, true) . ';
      */
     protected static function fetch_component_source(string $key) {
         if (null === self::$componentsource) {
-            self::$componentsource = (array) json_decode(file_get_contents(__DIR__ . '/../components.json'));
+            self::$componentsource = (array) json_decode(file_get_contents(dirname(__DIR__, 3) . '/lib/components.json'));
         }
 
         return !empty(self::$componentsource[$key]) ? (array) self::$componentsource[$key] : [];
@@ -879,8 +880,8 @@ $cache = ' . var_export($cache, true) . ';
 
         $types = [];
         $subplugins = [];
-        if (str_contains($ownerdir, $CFG->dirroot)) {
-            $plugindir = substr($ownerdir, strlen($CFG->dirroot) + 1);
+        if (str_contains($ownerdir, $CFG->root)) {
+            $plugindir = substr($ownerdir, strlen($CFG->root) + 1);
         } else {
             $realownerdir = realpath($ownerdir);
             $realroot = realpath(dirname(__DIR__, 2));
@@ -908,6 +909,10 @@ $cache = ' . var_export($cache, true) . ';
                         "See MDL-83705 for further information.",
                     );
                     $subplugins = (array) $subpluginsjson->plugintypes;
+                    array_walk(
+                        $subplugins,
+                        fn (string &$path): string  => $path = str_starts_with($path, 'public/') ? $path : "public/{$path}",
+                    );
                 } else if (empty($subpluginjson->deprecatedplugintypes) && empty($subpluginsjson->deletedplugintypes)) {
                     error_log("No plugintypes defined in $ownerdir/db/subplugins.json");
                 }
@@ -932,6 +937,10 @@ $cache = ' . var_export($cache, true) . ';
                 if (property_exists($subpluginsjson, 'subplugintypes') && property_exists($subpluginsjson, 'plugintypes')) {
                     $subplugintypes = (array) $subpluginsjson->subplugintypes;
                     $plugintypes = (array) $subpluginsjson->plugintypes;
+                    array_walk(
+                        $plugintypes,
+                        fn (string &$path): string  => $path = str_starts_with($path, 'public/') ? $path : "public/{$path}",
+                    );
                     if (count($subplugintypes) !== count(($plugintypes))) {
                         error_log("Subplugintypes and plugintypes are not in sync in $ownerdir/db/subplugins.json");
                     }
@@ -968,11 +977,11 @@ $cache = ' . var_export($cache, true) . ';
                 if ($CFG->admin !== 'admin' && strpos($dir, 'admin/') === 0) {
                     $dir = preg_replace('|^admin/|', "$CFG->admin/", $dir);
                 }
-                if (!is_dir("$CFG->dirroot/$dir")) {
+                if (!is_dir("$CFG->root/$dir")) {
                     error_log("Invalid subtype directory '$dir' detected in '$ownerdir'.");
                     continue;
                 }
-                $types[$key][$subtype] = "$CFG->dirroot/$dir";
+                $types[$key][$subtype] = "$CFG->root/$dir";
             }
         }
 
