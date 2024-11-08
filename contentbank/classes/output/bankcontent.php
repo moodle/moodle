@@ -165,7 +165,7 @@ class bankcontent implements renderable, templatable {
                 $this->context->id,
                 $strchoosecontext
             );
-            $singleselect->set_label($strchoosecontext, ['class' => 'sr-only']);
+            $singleselect->set_label($strchoosecontext, ['class' => 'visually-hidden']);
             $data->allowedcontexts = $singleselect->export_for_template($output);
         }
 

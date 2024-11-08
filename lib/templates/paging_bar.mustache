@@ -56,7 +56,7 @@
                 <li class="page-item" data-page-number="{{page}}">
                     <a href="{{url}}" class="page-link">
                         <span aria-hidden="true">&laquo;</span>
-                        <span class="sr-only">{{#str}}previouspage, moodle{{/str}}</span>
+                        <span class="visually-hidden">{{#str}}previouspage, moodle{{/str}}</span>
                     </a>
                 </li>
             {{/previous}}
@@ -64,7 +64,7 @@
                 <li class="page-item" data-page-number="{{page}}">
                     <a href="{{url}}" class="page-link">
                         <span aria-hidden="true">{{page}}</span>
-                        <span class="sr-only">{{#str}}pagea, moodle, {{page}}{{/str}}</span>
+                        <span class="visually-hidden">{{#str}}pagea, moodle, {{page}}{{/str}}</span>
                     </a>
                 </li>
                 <li class="page-item disabled" data-page-number="{{page}}">
@@ -75,7 +75,7 @@
                 <li class="page-item {{#active}}active{{/active}}" data-page-number="{{page}}">
                     <a href="{{#url}}{{.}}{{/url}}{{^url}}#{{/url}}" class="page-link" {{#active}}aria-current="page"{{/active}}>
                         <span aria-hidden="true">{{page}}</span>
-                        <span class="sr-only">{{#str}}pagea, moodle, {{page}}{{/str}}</span>
+                        <span class="visually-hidden">{{#str}}pagea, moodle, {{page}}{{/str}}</span>
                     </a>
                 </li>
             {{/pages}}
@@ -86,7 +86,7 @@
                 <li class="page-item" data-page-number="{{page}}">
                     <a href="{{url}}" class="page-link">
                         <span aria-hidden="true">{{page}}</span>
-                        <span class="sr-only">{{#str}}pagea, moodle, {{page}}{{/str}}</span>
+                        <span class="visually-hidden">{{#str}}pagea, moodle, {{page}}{{/str}}</span>
                     </a>
                 </li>
             {{/last}}
@@ -94,7 +94,7 @@
                 <li class="page-item" data-page-number="{{page}}">
                     <a href="{{url}}" class="page-link">
                         <span aria-hidden="true">&raquo;</span>
-                        <span class="sr-only">{{#str}}nextpage, moodle{{/str}}</span>
+                        <span class="visually-hidden">{{#str}}nextpage, moodle{{/str}}</span>
                     </a>
                 </li>
             {{/next}}

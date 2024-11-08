@@ -105,7 +105,7 @@ class qtype_truefalse_renderer extends qtype_renderer {
             $legendclass = '';
             $questionnumber = $options->add_question_identifier_to_label(get_string('selectone', 'qtype_truefalse'), true, true);
         } else {
-            $legendclass = 'sr-only';
+            $legendclass = 'visually-hidden';
             $questionnumber = $options->add_question_identifier_to_label(get_string('answer'), true, true);
         }
         $result .= html_writer::tag('legend', $questionnumber,

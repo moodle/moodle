@@ -52,7 +52,7 @@
     }
 }}
 <form method="post" action="{{action}}" class="mb-1" role="search">
-    <label for="unified-filters" class="sr-only">{{#str}}filters , tool_policy{{/str}}</label>
+    <label for="unified-filters" class="visually-hidden">{{#str}}filters , tool_policy{{/str}}</label>
     <select name="unified-filters[]" id="unified-filters" multiple="multiple" data-originaloptionsjson="{{originaloptionsjson}}" class="form-autocomplete-original-select">
         {{#filteroptions}}
             <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{{label}}}</option>

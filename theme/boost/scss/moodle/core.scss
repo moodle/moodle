@@ -145,7 +145,7 @@ input[type="checkbox"],
 input[type="radio"],
 input[type="file"],
 input[type="image"],
-.sr-only-focusable,
+.visually-hidden-focusable,
 a.dropdown-toggle,
 .moodle-dialogue-base .closebutton,
 button.btn-close,
@@ -413,7 +413,7 @@ form.popupform div {
 .no-overflow,
 .table-responsive {
     .generaltable {
-        .sr-only,
+        .visually-hidden,
         .accesshide {
             position: relative;
             display: block;
@@ -425,7 +425,7 @@ form.popupform div {
 
 // Accessibility: text 'seen' by screen readers but not visual users.
 .accesshide {
-    @include sr-only();
+    @include visually-hidden();
 }
 
 span.hide,
@@ -2275,12 +2275,12 @@ $footer-link-color: $bg-inverse-link-color !default;
     }
 }
 
-.sr-only-focusable {
+.visually-hidden-focusable {
     &:active,
     &:focus {
         z-index: 1031;
         position: fixed;
-        background: $sr-only-active-bg;
+        background: $visually-hidden-active-bg;
         padding: 7px;
         left: 0;
         top: 0;
@@ -2831,14 +2831,14 @@ body.dragging {
         }
     }
 
-    .dropzone-sr-only-focusable {
+    .dropzone-visually-hidden-focusable {
         &:active,
         &:focus {
             outline: 0;
             box-shadow: $input-btn-focus-box-shadow;
             z-index: $zindex-popover;
             position: relative;
-            background: $sr-only-active-bg;
+            background: $visually-hidden-active-bg;
             padding: 7px;
         }
     }

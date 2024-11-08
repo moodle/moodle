@@ -96,7 +96,7 @@
         <div class="position-relative">
             <div class="no-overflow">
                 <table class="table discussion-list generaltable">
-                    <caption id="discussion-table-description-{{uniqid}}" class="sr-only">
+                    <caption id="discussion-table-description-{{uniqid}}" class="visually-hidden">
                         {{#str}} showingcountoftotaldiscussions, mod_forum, {"count": "{{visiblediscussioncount}}", "total":"{{totaldiscussioncount}}"} {{/str}}
                     </caption>
                     {{$discussion_list_header}}
@@ -328,7 +328,7 @@
                                                     {{#userstate.subscribed}}data-targetstate="0" checked{{/userstate.subscribed}}
                                                     {{^userstate.subscribed}}data-targetstate="1"{{/userstate.subscribed}}>
                                                 <label class="custom-control-label" for="subscription-toggle-{{id}}">
-                                                    <span class="sr-only">
+                                                    <span class="visually-hidden">
                                                         {{#userstate.subscribed}}
                                                             {{#str}}unsubscribediscussion, forum{{/str}}
                                                         {{/userstate.subscribed}}

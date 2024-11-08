@@ -52,7 +52,7 @@
     }
 }}
 <form method="post" action="{{action}}" class="mb-1" role="search" id="request_filter_form">
-    <label for="request-filters" class="sr-only">{{#str}}filters{{/str}}</label>
+    <label for="request-filters" class="visually-hidden">{{#str}}filters{{/str}}</label>
     <select name="request-filters[]" id="request-filters" multiple="multiple" class="form-autocomplete-original-select">
         {{#filteroptions}}
             <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{{label}}}</option>

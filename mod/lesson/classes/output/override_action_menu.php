@@ -71,7 +71,7 @@ class override_action_menu implements templatable, renderable {
         ];
         $selectmenu = new \url_select($menu, $this->currenturl->out(false), null, 'mod_lesson_override_select');
         $selectmenu->label = get_string('manageoverrides', 'mod_lesson');
-        $selectmenu->labelattributes = ['class' => 'sr-only'];
+        $selectmenu->labelattributes = ['class' => 'visually-hidden'];
         return $selectmenu;
     }
 

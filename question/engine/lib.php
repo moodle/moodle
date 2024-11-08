@@ -703,7 +703,7 @@ class question_display_options {
      * Helper to add the question identify (if there is one) to the label of an input field in a question.
      *
      * @param string $label The plain field label. E.g. 'Answer 1'
-     * @param bool $sridentifier If true, the question identifier, if added, will be wrapped in a sr-only span. Default false.
+     * @param bool $sridentifier If true, the question identifier, if added, will be wrapped in a visually-hidden. Default false.
      * @param bool $addbefore If true, the question identifier will be added before the label.
      * @return string The amended label. For example 'Answer 1, Question 1'.
      */
@@ -713,7 +713,7 @@ class question_display_options {
         }
         $identifier = $this->questionidentifier;
         if ($sridentifier) {
-            $identifier = html_writer::span($identifier, 'sr-only');
+            $identifier = html_writer::span($identifier, 'visually-hidden');
         }
         $fieldlang = 'fieldinquestion';
         if ($addbefore) {

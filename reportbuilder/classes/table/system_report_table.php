@@ -153,7 +153,7 @@ class system_report_table extends base_report_table {
         // If the report has any actions then append appropriate column, note that actions are excluded during download.
         if ($this->report->has_actions() && !$this->is_downloading()) {
             $columnheaders['actions'] = html_writer::tag('span', get_string('actions', 'core_reportbuilder'), [
-                'class' => 'sr-only',
+                'class' => 'visually-hidden',
             ]);
             $this->no_sorting('actions');
         }

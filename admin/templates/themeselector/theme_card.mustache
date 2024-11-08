@@ -52,7 +52,7 @@
                     data-choose="{{choose}}"
                     data-sesskey="{{sesskey}}">
                     <i class="icon fa fa-info-circle m-0" aria-hidden="true"></i>
-                    <span class="sr-only">{{#str}}previewthemename, moodle, {{name}}{{/str}}</span>
+                    <span class="visually-hidden">{{#str}}previewthemename, moodle, {{name}}{{/str}}</span>
                 </button>
                 {{#reporturl}}
                     <a
@@ -61,7 +61,7 @@
                         class="btn btn-link p-0 ms-2"
                         title="{{#str}}themeusagereportname, admin, {{name}}{{/str}}">
                         <i class="icon fa fa-area-chart m-0" aria-hidden="true"></i>
-                        <span class="sr-only">{{#str}}themeusagereportname, admin, {{name}}{{/str}}</span>
+                        <span class="visually-hidden">{{#str}}themeusagereportname, admin, {{name}}{{/str}}</span>
                     </a>
                 {{/reporturl}}
                 {{#settingsurl}}
@@ -71,7 +71,7 @@
                         class="btn btn-link p-0 ms-2"
                         title="{{#str}}themeeditsettingsname, admin, {{name}}{{/str}}">
                         <i class="icon fa fa-cog m-0" aria-hidden="true"></i>
-                        <span class="sr-only">{{#str}}themeeditsettingsname, admin, {{name}}{{/str}}</span>
+                        <span class="visually-hidden">{{#str}}themeeditsettingsname, admin, {{name}}{{/str}}</span>
                     </a>
                 {{/settingsurl}}
             </div>
@@ -91,7 +91,7 @@
                     <input type="hidden" name="choose" value="{{choose}}">
                     <button type="submit" class="btn btn-primary">
                         <span aria-hidden="true">{{#str}}selecttheme, moodle{{/str}}</span>
-                        <span class="sr-only">{{#str}}selectthemename, moodle, {{name}}{{/str}}</span>
+                        <span class="visually-hidden">{{#str}}selectthemename, moodle, {{name}}{{/str}}</span>
                     </button>
                 </form>
             {{/actionurl}}

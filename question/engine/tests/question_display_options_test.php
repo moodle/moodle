@@ -66,7 +66,13 @@ class question_display_options_test extends \advanced_testcase {
             'Empty string identifier' => ['Hello', '', false, false, "Hello"],
             'Null identifier' => ['Hello', null, false, false, "Hello"],
             'With identifier' => ['Hello', 'World', false, false, "Hello World"],
-            'With identifier, sr-only' => ['Hello', 'World', true, false, 'Hello <span class="sr-only">World</span>'],
+            'With identifier, visually-hidden' => [
+                'Hello',
+                'World',
+                true,
+                false,
+                'Hello <span class="visually-hidden">World</span>',
+            ],
             'With identifier, prepend' => ['Hello', 'World', false, true, "World Hello"],
         ];
     }
@@ -78,7 +84,7 @@ class question_display_options_test extends \advanced_testcase {
      * @dataProvider add_question_identifier_to_label_provider
      * @param string $label The label string.
      * @param string|null $identifier The question identifier.
-     * @param bool $sronly Whether to render the question identifier in a sr-only container
+     * @param bool $sronly Whether to render the question identifier in a visually-hidden container
      * @param bool $addbefore Whether to render the question identifier before the label.
      * @param string $expected The expected return value.
      * @return void

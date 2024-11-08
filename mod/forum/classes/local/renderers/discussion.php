@@ -353,7 +353,7 @@ class discussion {
                         ['/mod/forum/discuss.php?d=' . $discussion->get_id() => get_string("movethisdiscussionto", "forum")],
                         'forummenu', $movebutton);
                 $select->set_label(get_string('movethisdiscussionlabel', 'mod_forum'), [
-                    'class' => 'sr-only',
+                    'class' => 'visually-hidden',
                 ]);
                 $html .= $this->renderer->render($select);
                 $html .= "</div>";

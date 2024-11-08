@@ -47,7 +47,7 @@
             <tr>
                 {{# daynames }}
                 <th class="header text-xs-center">
-                    <span class="sr-only">{{fullname}}</span>
+                    <span class="visually-hidden">{{fullname}}</span>
                     <span aria-hidden="true">{{shortname}}</span>
                 </th>
                 {{/ daynames }}
@@ -75,7 +75,7 @@
                         data-new-event-timestamp="{{neweventtimestamp}}"{{#istoday}} title="{{#str}} today, core_calendar {{/str}}"{{/istoday}}
                         {{#hasevents}} data-title="{{viewdaylinktitle}}"{{/hasevents}}>
                         <div class="d-none d-md-block hidden-phone text-xs-center">
-                            <span class="sr-only">{{daytitle}}</span>
+                            <span class="visually-hidden">{{daytitle}}</span>
                             {{#hasevents}}
                                 <a data-action="view-day-link" href="#" class="aalink day" aria-label="{{viewdaylinktitle}}"
                                     data-year="{{date.year}}" data-month="{{date.mon}}" data-day="{{mday}}"
@@ -147,7 +147,7 @@
                             {{/hasevents}}
                         </div>
                         <div class="d-md-none hidden-desktop hidden-tablet">
-                            <span class="sr-only">{{daytitle}}</span>
+                            <span class="visually-hidden">{{daytitle}}</span>
                             {{#hasevents}}
                                 <a data-action="view-day-link" href="#" class="day aalink" aria-label="{{viewdaylinktitle}}"
                                     data-year="{{date.year}}" data-month="{{date.mon}}" data-day="{{mday}}"

@@ -46,13 +46,13 @@
 }}
 <div class="form-time defaultsnext">
     <div class="d-flex flex-wrap align-items-center text-ltr">
-        <label class="sr-only" for="{{id}}h">{{#str}}hours{{/str}}</label>
+        <label class="visually-hidden" for="{{id}}h">{{#str}}hours{{/str}}</label>
         <select id="{{id}}h" name="{{name}}[h]" class="custom-select" {{#readonly}}disabled{{/readonly}}>
             {{#hours}}
                 <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
             {{/hours}}
         </select>:
-        <label class="sr-only" for="{{id}}m">{{#str}}minutes{{/str}}</label>
+        <label class="visually-hidden" for="{{id}}m">{{#str}}minutes{{/str}}</label>
         <select id="{{id}}m" name="{{name}}[m]" class="custom-select" {{#readonly}}disabled{{/readonly}}>
             {{#minutes}}
                 <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>

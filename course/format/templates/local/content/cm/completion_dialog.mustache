@@ -51,7 +51,7 @@
                     <div class="d-flex mt-2 text-success" role="listitem" {{#accessibledescription}}title="{{.}}" aria-label="{{.}}"{{/accessibledescription}}>
                         <div>
                             {{#pix}}i/checked{{/pix}}
-                            <span class="sr-only">{{#str}}completion_automatic:done, core_course{{/str}}</span>
+                            <span class="visually-hidden">{{#str}}completion_automatic:done, core_course{{/str}}</span>
                         </div>
                         <span>{{description}}</span>
                     </div>
@@ -60,7 +60,7 @@
                     <div class="d-flex mt-2 text-danger" role="listitem" {{#accessibledescription}}title="{{.}}" aria-label="{{.}}"{{/accessibledescription}}>
                         <div>
                             {{#pix}}e/cancel{{/pix}}
-                            <span class="sr-only">{{#str}}completion_automatic:failed, core_course{{/str}}</span>
+                            <span class="visually-hidden">{{#str}}completion_automatic:failed, core_course{{/str}}</span>
                         </div>
                         <span>{{description}}</span>
                     </div>
@@ -69,7 +69,7 @@
                     <div class="d-flex mt-2" role="listitem" {{#accessibledescription}}title="{{.}}" aria-label="{{.}}"{{/accessibledescription}}>
                         <div>
                             {{#pix}}i/dot{{/pix}}
-                            <span class="sr-only">{{#str}}completion_automatic:todo, core_course{{/str}}</span>
+                            <span class="visually-hidden">{{#str}}completion_automatic:todo, core_course{{/str}}</span>
                         </div>
                         <span>{{description}}</span>
                     </div>

@@ -129,7 +129,7 @@ class participants extends \table_sql implements dynamic_table {
             'id' => 'select-all-participants',
             'name' => 'select-all-participants',
             'label' => get_string('selectall'),
-            'labelclasses' => 'sr-only',
+            'labelclasses' => 'visually-hidden',
             'classes' => 'm-1',
             'checked' => false,
         ]);

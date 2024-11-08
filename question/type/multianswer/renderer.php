@@ -532,7 +532,7 @@ class qtype_multianswer_multichoice_vertical_renderer extends qtype_multianswer_
     protected function all_choices_wrapper_start() {
         $wrapperstart = html_writer::start_tag('fieldset', array('class' => 'answer'));
         $legendtext = $this->get_answer_label('multichoicex', 'qtype_multianswer');
-        $wrapperstart .= html_writer::tag('legend', $legendtext, ['class' => 'sr-only']);
+        $wrapperstart .= html_writer::tag('legend', $legendtext, ['class' => 'visually-hidden']);
         return $wrapperstart;
     }
 
@@ -566,7 +566,7 @@ class qtype_multianswer_multichoice_horizontal_renderer
     protected function all_choices_wrapper_start() {
         $wrapperstart = html_writer::start_tag('fieldset', ['class' => 'answer']);
         $captiontext = $this->get_answer_label('multichoicex', 'qtype_multianswer');
-        $wrapperstart .= html_writer::tag('legend', $captiontext, ['class' => 'sr-only']);
+        $wrapperstart .= html_writer::tag('legend', $captiontext, ['class' => 'visually-hidden']);
         return $wrapperstart;
     }
 

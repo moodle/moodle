@@ -69,7 +69,7 @@
                         <input id="toggle-sort-{{id}}" title="{{{sortenabledtitle}}}" data-action="report-toggle-column-sorting" type="checkbox" {{#sortenabled}}checked{{/sortenabled}}>
                         <label for="toggle-sort-{{id}}" class="mb-0">
                             <span class="ms-2 text-dark {{^sortenabled}}text-muted{{/sortenabled}}">{{{heading}}}</span>
-                            <span class="sr-only">{{{sortenabledtitle}}}</span>
+                            <span class="visually-hidden">{{{sortenabledtitle}}}</span>
                         </label>
                     </li>
                 {{/sortablecolumns}}

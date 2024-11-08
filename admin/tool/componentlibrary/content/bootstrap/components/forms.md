@@ -137,11 +137,11 @@ If you want to have `<input readonly>` elements in your form styled as plain tex
 {{< example >}}
 <form class="form-inline">
   <div class="form-group mb-2">
-    <label for="staticEmail2" class="sr-only">Email</label>
+    <label for="staticEmail2" class="visually-hidden">Email</label>
     <input type="text" readonly class="form-control-plaintext" id="staticEmail2" value="email@example.com">
   </div>
   <div class="form-group mx-sm-3 mb-2">
-    <label for="inputPassword2" class="sr-only">Password</label>
+    <label for="inputPassword2" class="visually-hidden">Password</label>
     <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
   </div>
   <button type="submit" class="btn btn-primary mb-2">Confirm identity</button>
@@ -478,11 +478,11 @@ The example below uses a flexbox utility to vertically center the contents and c
 <form>
   <div class="form-row align-items-center">
     <div class="col-auto">
-      <label class="sr-only" for="inlineFormInput">Name</label>
+      <label class="visually-hidden" for="inlineFormInput">Name</label>
       <input type="text" class="form-control mb-2" id="inlineFormInput" placeholder="Jane Doe">
     </div>
     <div class="col-auto">
-      <label class="sr-only" for="inlineFormInputGroup">Username</label>
+      <label class="visually-hidden" for="inlineFormInputGroup">Username</label>
       <div class="input-group mb-2">
         <div class="input-group-prepend">
           <div class="input-group-text">@</div>
@@ -511,11 +511,11 @@ You can then remix that once again with size-specific column classes.
 <form>
   <div class="form-row align-items-center">
     <div class="col-sm-3 my-1">
-      <label class="sr-only" for="inlineFormInputName">Name</label>
+      <label class="visually-hidden" for="inlineFormInputName">Name</label>
       <input type="text" class="form-control" id="inlineFormInputName" placeholder="Jane Doe">
     </div>
     <div class="col-sm-3 my-1">
-      <label class="sr-only" for="inlineFormInputGroupUsername">Username</label>
+      <label class="visually-hidden" for="inlineFormInputGroupUsername">Username</label>
       <div class="input-group">
         <div class="input-group-prepend">
           <div class="input-group-text">@</div>
@@ -544,7 +544,7 @@ And of course [custom form controls](#custom-forms) are supported.
 <form>
   <div class="form-row align-items-center">
     <div class="col-auto my-1">
-      <label class="me-sm-2 sr-only" for="inlineFormCustomSelect">Preference</label>
+      <label class="me-sm-2 visually-hidden" for="inlineFormCustomSelect">Preference</label>
       <select class="custom-select me-sm-2" id="inlineFormCustomSelect">
         <option selected>Choose...</option>
         <option value="1">One</option>
@@ -573,14 +573,14 @@ Use the `.form-inline` class to display a series of labels, form controls, and b
 - Controls and input groups receive `width: auto` to override the Bootstrap default `width: 100%`.
 - Controls **only appear inline in viewports that are at least 576px wide** to account for narrow viewports on mobile devices.
 
-You may need to manually address the width and alignment of individual form controls with [spacing utilities]({{< docsref "/utilities/spacing" >}}) (as shown below). Lastly, be sure to always include a `<label>` with each form control, even if you need to hide it from non-screenreader visitors with `.sr-only`.
+You may need to manually address the width and alignment of individual form controls with [spacing utilities]({{< docsref "/utilities/spacing" >}}) (as shown below). Lastly, be sure to always include a `<label>` with each form control, even if you need to hide it from non-screenreader visitors with `.visually-hidden`.
 
 {{< example >}}
 <form class="form-inline">
-  <label class="sr-only" for="inlineFormInputName2">Name</label>
+  <label class="visually-hidden" for="inlineFormInputName2">Name</label>
   <input type="text" class="form-control mb-2 me-sm-2" id="inlineFormInputName2" placeholder="Jane Doe">
 
-  <label class="sr-only" for="inlineFormInputGroupUsername2">Username</label>
+  <label class="visually-hidden" for="inlineFormInputGroupUsername2">Username</label>
   <div class="input-group mb-2 me-sm-2">
     <div class="input-group-prepend">
       <div class="input-group-text">@</div>
@@ -622,7 +622,7 @@ Custom form controls and selects are also supported.
 
 {{< callout warning >}}
 ##### Alternatives to hidden labels
-Assistive technologies such as screen readers will have trouble with your forms if you don't include a label for every input. For these inline forms, you can hide the labels using the `.sr-only` class. There are further alternative methods of providing a label for assistive technologies, such as the `aria-label`, `aria-labelledby` or `title` attribute. If none of these are present, assistive technologies may resort to using the `placeholder` attribute, if present, but note that use of `placeholder` as a replacement for other labelling methods is not advised.
+Assistive technologies such as screen readers will have trouble with your forms if you don't include a label for every input. For these inline forms, you can hide the labels using the `.visually-hidden` class. There are further alternative methods of providing a label for assistive technologies, such as the `aria-label`, `aria-labelledby` or `title` attribute. If none of these are present, assistive technologies may resort to using the `placeholder` attribute, if present, but note that use of `placeholder` as a replacement for other labelling methods is not advised.
 {{< /callout >}}
 
 ## Help text

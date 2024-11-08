@@ -52,7 +52,7 @@
     {{/hiddenfields}}
     <div class="input-group">
         <label for="searchinput-{{uniqid}}">
-            <span class="sr-only">{{{ searchstring }}}</span>
+            <span class="visually-hidden">{{{ searchstring }}}</span>
         </label>
         <input type="text"
            id="searchinput-{{uniqid}}"
@@ -70,7 +70,7 @@
                 {{#buttonattributes}}{{ key }}="{{ value }}" {{/buttonattributes}}
             >
                 {{#pix}} a/search, core {{/pix}}
-                <span class="sr-only">{{ searchstring }}</span>
+                <span class="visually-hidden">{{ searchstring }}</span>
             </button>
         </div>
 

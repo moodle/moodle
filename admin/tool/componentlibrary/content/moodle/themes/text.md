@@ -58,8 +58,8 @@ tip: you can use heading classes to style a native heading tag differently.
 
 ## For screenreaders
 
-<h2 class="sr-only">Title for screen readers</h2>
-<a class="sr-only-focusable" href="#content">Skip to main content</a>
+<h2 class="visually-hidden">Title for screen readers</h2>
+<a class="visually-hidden-focusable" href="#content">Skip to main content</a>
 
 ## Text truncation
 

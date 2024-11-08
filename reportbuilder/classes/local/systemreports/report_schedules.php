@@ -138,7 +138,7 @@ class report_schedules extends system_report {
                     'checked' => $row->enabled,
                     'dataattributes' => $attributes,
                     'label' => $label,
-                    'labelclasses' => 'sr-only'
+                    'labelclasses' => 'visually-hidden',
                 ]);
             })
         );

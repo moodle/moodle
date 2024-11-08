@@ -70,7 +70,7 @@ class report_action_menu implements templatable, renderable {
         ];
         $reportselect = new \url_select($menu, $this->url->out(false), null, 'lesson-report-select');
         $reportselect->label = get_string('selectreport', 'mod_lesson');
-        $reportselect->labelattributes = ['class' => 'sr-only'];
+        $reportselect->labelattributes = ['class' => 'visually-hidden'];
 
         $data = [
             'reportselect' => $reportselect->export_for_template($output),

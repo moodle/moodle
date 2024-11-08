@@ -255,7 +255,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         $labelattributes = [];
         if (empty($label)) {
             $label = get_string('listofcourses');
-            $labelattributes['class'] = 'sr-only';
+            $labelattributes['class'] = 'visually-hidden';
         }
 
         $filterid = 'calendar-course-filter';

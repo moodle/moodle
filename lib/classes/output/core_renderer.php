@@ -3812,10 +3812,10 @@ EOD;
             'data-droptarget' => '1',
         ];
         if ($this->page->blocks->region_has_content($displayregion, $this)) {
-            $content = html_writer::tag('h2', get_string('blocks'), ['class' => 'sr-only']) .
+            $content = html_writer::tag('h2', get_string('blocks'), ['class' => 'visually-hidden']) .
                 $this->blocks_for_region($displayregion, $fakeblocksonly);
         } else {
-            $content = html_writer::tag('h2', get_string('blocks'), ['class' => 'sr-only']);
+            $content = html_writer::tag('h2', get_string('blocks'), ['class' => 'visually-hidden']);
         }
         return html_writer::tag($tag, $content, $attributes);
     }
@@ -4222,9 +4222,10 @@ EOD;
             }
         }
 
-        // Return the heading wrapped in an sr-only element so it is only visible to screen-readers for nocontextheader layouts.
+        // Return the heading wrapped in an visually-hidden element so it is only visible to screen-readers
+        // for nocontextheader layouts.
         if (!empty($this->page->layout_options['nocontextheader'])) {
-            return html_writer::div($heading, 'sr-only');
+            return html_writer::div($heading, 'visually-hidden');
         }
 
         $contextheader = new context_header($heading, $headinglevel, $imagedata, $userbuttons);

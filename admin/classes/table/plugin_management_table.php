@@ -322,7 +322,7 @@ abstract class plugin_management_table extends flexible_table implements dynamic
             ],
             'title' => $labelstr,
             'label' => $labelstr,
-            'labelclasses' => 'sr-only',
+            'labelclasses' => 'visually-hidden',
         ];
 
         return $OUTPUT->render_from_template('core_admin/setting_configtoggle', $params);

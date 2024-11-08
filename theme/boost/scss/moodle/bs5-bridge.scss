@@ -34,6 +34,15 @@ $alert-color-scale: 50% !default;
     @return if($weight > 0, shade-color($color, $weight), tint-color($color, -$weight));
 }
 
+// Visually hidden mixins
+@mixin visually-hidden() {
+    @include sr-only();
+}
+
+@mixin visually-hidden-focusable() {
+    @include sr-only-focusable();
+}
+
 /* These classes are used to bridge the gap between Bootstrap 4 and Bootstrap 5. */
 /* This file should be removed as part of MDL-75669. */
 .g-0 {
@@ -141,4 +150,12 @@ $alert-color-scale: 50% !default;
 }
 .fst-italic {
     @extend .font-italic;
+}
+
+// Generate visually-hidden classes.
+.visually-hidden {
+    @extend .sr-only;
+}
+.visually-hidden-focusable {
+    @extend .sr-only-focusable;
 }

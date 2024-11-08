@@ -162,7 +162,7 @@ class aiprovider_action_management_table extends flexible_table implements dynam
             ],
             'title' => $labelstr,
             'label' => $labelstr,
-            'labelclasses' => 'sr-only',
+            'labelclasses' => 'visually-hidden',
         ];
 
         return $OUTPUT->render_from_template('core_admin/setting_configtoggle', $params);

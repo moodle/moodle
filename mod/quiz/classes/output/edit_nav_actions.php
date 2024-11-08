@@ -69,7 +69,7 @@ class edit_nav_actions implements renderable, templatable {
             $this->whichpage === self::SUMMARY ? $questionsurl->out(false) : $gradeitemsetupurl->out(false),
             null
         );
-        $overridesnav->set_label(get_string('quizsetupnavigation', 'quiz'), ['class' => 'sr-only']);
+        $overridesnav->set_label(get_string('quizsetupnavigation', 'quiz'), ['class' => 'visually-hidden']);
 
         return [
             'navmenu' => $overridesnav->export_for_template($output),

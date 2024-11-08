@@ -328,7 +328,7 @@ $author-image-margin-sm: 8px;
 
     /** Don't show the discussion locked alert in this mode because it's already indicated with a badge. */
     .alert.discussionlocked {
-        @include sr-only();
+        @include visually-hidden();
     }
 
     /** Fix muted text contrast ratios for accessibility. */
@@ -347,7 +347,7 @@ $author-image-margin-sm: 8px;
 
     /** Make the tag list text screen reader visible only */
     .tag_list > b {
-        @include sr-only();
+        @include visually-hidden();
     }
 
     :target > .focus-target {

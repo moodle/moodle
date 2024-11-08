@@ -223,7 +223,7 @@ const handleGradeItemEditStart = (e) => {
         .then((instructions) => {
             const uniqueId = 'gi-edit-input-' + editableSpan.closest('tr').dataset.quizGradeItemId;
             editableSpan.innerHTML = '<span class="editinstructions">' + instructions + '</span>' +
-                    '<label class="sr-only" for="' + uniqueId + '">' + editableSpan.dataset.editLabel + '</label>' +
+                    '<label class="visually-hidden" for="' + uniqueId + '">' + editableSpan.dataset.editLabel + '</label>' +
                     '<input type="text" id="' + uniqueId + '" value="' + editableSpan.dataset.rawName +
                             '" class="ignoredirty form-control w-100">';
 

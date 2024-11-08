@@ -60,7 +60,7 @@
                 data-region="section-total-count-container" aria-labelledby="{{$region}}{{/region}}-total-count-label"
             >
                 (<span aria-hidden="true" data-region="section-total-count">{{count.total}}</span>)
-                <span class="sr-only" id="{{$region}}{{/region}}-total-count-label">
+                <span class="visually-hidden" id="{{$region}}{{/region}}-total-count-label">
                     {{#str}} totalconversations, core_message, {{count.total}} {{/str}}
                 </span>
             </small>
@@ -72,7 +72,7 @@
                 data-region="section-unread-count-container" aria-labelledby="{{$region}}{{/region}}-unread-count-label"
             >
                 <span aria-hidden="true" data-region="section-unread-count">{{count.unread}}</span>
-                <span class="sr-only" id="{{$region}}{{/region}}-unread-count-label">
+                <span class="visually-hidden" id="{{$region}}{{/region}}-unread-count-label">
                     {{#str}} unreadconversations, core_message, {{count.unread}} {{/str}}
                 </span>
             </span>

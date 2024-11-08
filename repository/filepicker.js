@@ -347,7 +347,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
 
             var checkboxLabel = Y.Node.create('<label>')
                 .setHTML("Select file '" + o.data.fullname + "'")
-                .addClass('sr-only')
+                .addClass('visually-hidden')
                 .setAttrs({
                     for: checkbox.generateID(),
                 });
@@ -392,7 +392,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
 
             var checkboxLabel = Y.Node.create('<label>')
                 .setHTML(M.util.get_string('selectallornone', 'form'))
-                .addClass('sr-only')
+                .addClass('visually-hidden')
                 .setAttrs({
                     for: checkbox.generateID(),
                 });
