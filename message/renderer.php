@@ -53,15 +53,15 @@ class core_message_renderer extends plugin_renderer_base {
         $output .= $this->heading(get_string('messageoutputs', 'message'));
         $output .= $this->manage_messageoutputs($allprocessors);
 
-        // Add active message output processors settings.
-        $output .= $this->manage_defaultmessageoutputs($processors, $providers, $preferences);
-
-        $output .= html_writer::start_tag('div', array('class' => 'form-buttons'));
+        $output .= html_writer::start_tag('div', ['class' => 'form-buttons mb-3']);
         $output .= html_writer::empty_tag('input',
             array('type' => 'submit', 'value' => get_string('savechanges', 'admin'), 'class' => 'form-submit btn btn-primary')
         );
         $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('form');
+
+        // Add active message output processors settings.
+        $output .= $this->manage_defaultmessageoutputs($processors, $providers, $preferences);
 
         return $output;
     }
