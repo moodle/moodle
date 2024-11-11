@@ -121,7 +121,10 @@ if (!is_callable([$actions, $action])) {
 // Execute the action.
 $actions->$action($updates, $course, $ids, $targetsectionid, $targetcmid);
 
-// Any state action mark the state cache as dirty.
-course_format::session_cache_reset($course);
+// Dispatch the hook for post course content update.
+$hook = new \core_courseformat\hook\after_course_content_updated(
+    course: $course,
+);
+\core\di::get(\core\hook\manager::class)->dispatch($hook);
 
 redirect($returnurl);

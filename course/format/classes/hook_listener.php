@@ -16,6 +16,7 @@
 
 namespace core_courseformat;
 
+use core_courseformat\hook\after_course_content_updated;
 use core_course\hook\before_course_viewed;
 use core_group\hook\after_group_membership_added;
 use core_group\hook\after_group_membership_removed;
@@ -69,5 +70,16 @@ class hook_listener {
                 }
             }
         }
+    }
+
+    /**
+     * Reset cache for the current user in a course when a course content is updated.
+     *
+     * @param after_course_content_updated $hook The course module created hook.
+     */
+    public static function course_content_updated(
+        after_course_content_updated $hook,
+    ): void {
+        base::session_cache_reset($hook->course);
     }
 }

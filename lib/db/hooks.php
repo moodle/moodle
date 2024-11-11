@@ -54,6 +54,10 @@ $callbacks = [
         'callback' => \core_courseformat\hook_listener::class . '::remove_members_from_group',
     ],
     [
+        'hook' => \core_courseformat\hook\after_course_content_updated::class,
+        'callback' => \core_courseformat\hook_listener::class . '::course_content_updated',
+    ],
+    [
         'hook' => \core_course\hook\after_course_created::class,
         'callback' => \core_communication\hook_listener::class . '::create_course_communication',
     ],

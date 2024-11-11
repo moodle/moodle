@@ -1,0 +1,7 @@
+issueNumber: MDL-83542
+notes:
+  core_courseformat:
+    - message: >-
+        Add after_course_content_updated hook triggered when a course content is
+        updated (module modified, ...) through edition.
+      type: improved
