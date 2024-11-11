@@ -815,12 +815,20 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
         return $headercell;
     }
 
+    /**
+     * Return category cell content
+     *
+     * @param grade_category $category
+     * @param string $levelclass
+     * @param array $params Parameters required to build the category cell content (must contain 'name', 'level' and 'eid' keys)
+     */
     public function get_category_cell($category, $levelclass, $params) {
         global $OUTPUT;
 
-        if (empty($params['name']) || empty($params['level'])) {
+        if (!array_key_exists('name', $params) || !array_key_exists('level', $params)) {
             throw new Exception('Array key (name or level) missing from 3rd param of grade_edit_tree_column_name::get_category_cell($category, $levelclass, $params)');
         }
+
         $visibilitytoggle = $OUTPUT->render_from_template('core_grades/grade_category_visibility_toggle', [
             'category' => $params['eid']
         ]);
