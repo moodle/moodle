@@ -58,6 +58,10 @@ $callbacks = [
         'callback' => \core_courseformat\hook_listener::class . '::course_content_updated',
     ],
     [
+        'hook' => core\hook\access\after_role_switched::class,
+        'callback' => \core_courseformat\hook_listener::class . '::after_role_switched',
+    ],
+    [
         'hook' => \core_course\hook\after_course_created::class,
         'callback' => \core_communication\hook_listener::class . '::create_course_communication',
     ],

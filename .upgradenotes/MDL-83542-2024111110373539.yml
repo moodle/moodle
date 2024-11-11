@@ -1,0 +1,7 @@
+issueNumber: MDL-83542
+notes:
+  core:
+    - message: >-
+        Add after_role_switched hook that is triggered when we switch role to a
+        new role in a course.
+      type: improved

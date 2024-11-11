@@ -82,4 +82,17 @@ class hook_listener {
     ): void {
         base::session_cache_reset($hook->course);
     }
+
+    /**
+     * Reset cache for the current user in a course when a role is switched.
+     *
+     * @param \core\hook\access\after_role_switched $hook The role switched hook.
+     */
+    public static function after_role_switched(
+        \core\hook\access\after_role_switched $hook,
+    ): void {
+        if ($coursecontext = $hook->context->get_course_context()) {
+            base::session_cache_reset(get_course($coursecontext->instanceid));
+        }
+    }
 }
