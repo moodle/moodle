@@ -95,4 +95,19 @@ class hook_listener {
             base::session_cache_reset(get_course($coursecontext->instanceid));
         }
     }
+
+    /**
+     * Reset cache for the current user when the course completion has been updated.
+     *
+     * @param \core_completion\hook\after_cm_completion_updated $hook The role switched hook.
+     */
+    public static function after_cm_completion_updated(
+        \core_completion\hook\after_cm_completion_updated $hook,
+    ): void {
+        // The activity completion alters the course state cache for this particular user.
+        $course = get_course($hook->cm->course);
+        if ($course) {
+            base::session_cache_reset($course);
+        }
+    }
 }
