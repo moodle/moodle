@@ -20,10 +20,12 @@ use context_system;
 use core_admin\reportbuilder\local\entities\task_log;
 use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\report\action;
+use core_reportbuilder\system_report;
+use html_writer;
 use lang_string;
 use moodle_url;
 use pix_icon;
-use core_reportbuilder\system_report;
+use stdClass;
 
 /**
  * Task logs system report class implementation
@@ -89,7 +91,9 @@ class task_logs extends system_report {
      * unique identifier
      */
     public function add_columns(): void {
-        $columns = [
+        $entitymainalias = $this->get_entity('task_log')->get_table_alias('task_log');
+
+        $this->add_columns_from_entities([
             'task_log:name',
             'task_log:type',
             'user:fullname',
@@ -99,14 +103,18 @@ class task_logs extends system_report {
             'task_log:pid',
             'task_log:database',
             'task_log:result',
-        ];
+        ]);
 
-        $this->add_columns_from_entities($columns);
+        // Wrap the task name in a link.
+        $this->get_column('task_log:name')
+            ->add_field("{$entitymainalias}.id")
+            ->add_callback(static function(string $output, stdClass $row): string {
+                return html_writer::link(new moodle_url('/admin/tasklogs.php', ['logid' => $row->id]), $output);
+            });
 
-        // It's possible to override the display name of a column, if you don't want to use the value provided by the entity.
-        if ($column = $this->get_column('user:fullname')) {
-            $column->set_title(new lang_string('user', 'admin'));
-        }
+        // Rename the user fullname column.
+        $this->get_column('user:fullname')
+            ->set_title(new lang_string('user', 'admin'));
 
         // It's possible to set a default initial sort direction for one column.
         $this->set_initial_sort_column('task_log:starttime', SORT_DESC);
@@ -119,16 +127,14 @@ class task_logs extends system_report {
      * unique identifier
      */
     protected function add_filters(): void {
-        $filters = [
+        $this->add_filters_from_entities([
             'task_log:name',
             'task_log:type',
             'task_log:output',
             'task_log:result',
             'task_log:timestart',
             'task_log:duration',
-        ];
-
-        $this->add_filters_from_entities($filters);
+        ]);
     }
 
     /**
