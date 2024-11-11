@@ -1,8 +1,9 @@
 <?php
+declare(strict_types=1);
 namespace ParagonIE\ConstantTime;
 
 /**
- *  Copyright (c) 2016 - 2017 Paragon Initiative Enterprises.
+ *  Copyright (c) 2016 - 2022 Paragon Initiative Enterprises.
  *  Copyright (c) 2014 Steve "Sc00bz" Thomas (steve at tobtu dot com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,17 +35,18 @@ interface EncoderInterface
      * Convert a binary string into a hexadecimal string without cache-timing
      * leaks
      *
-     * @param string $bin_string (raw binary)
+     * @param string $binString (raw binary)
      * @return string
      */
-    public static function encode($bin_string);
+    public static function encode(string $binString): string;
 
     /**
      * Convert a binary string into a hexadecimal string without cache-timing
      * leaks
      *
-     * @param string $encoded_string
+     * @param string $encodedString
+     * @param bool $strictPadding Error on invalid padding
      * @return string (raw binary)
      */
-    public static function decode($encoded_string);
+    public static function decode(string $encodedString, bool $strictPadding = false): string;
 }
