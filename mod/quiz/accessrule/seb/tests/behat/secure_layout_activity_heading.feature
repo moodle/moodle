@@ -35,4 +35,5 @@ Feature: View the activity header when Safe Exam Browser is required
   Scenario: Quiz description is displayed when Safe Exam Browser is required
     When I am on the "Test quiz name" "quiz activity" page logged in as student1
     Then I should see "Launch Safe Exam Browser"
+    And "Test quiz name" "heading" should exist
     And I should see "Test quiz description"
