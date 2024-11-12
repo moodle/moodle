@@ -616,7 +616,7 @@ class moodle_page {
      */
     protected function magic_get_layout_options() {
         if (!is_array($this->_layout_options)) {
-            $this->_layout_options = $this->_theme->pagelayout_options($this->pagelayout);
+            $this->_layout_options = $this->theme->pagelayout_options($this->pagelayout);
         }
         return $this->_layout_options;
     }
