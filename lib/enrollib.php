@@ -3608,14 +3608,15 @@ abstract class enrol_plugin {
             $rusers = [];
             if (!empty($CFG->coursecontact)) {
                 $croles = explode(',', $CFG->coursecontact);
-                [$sort, $sortparams] = users_order_by_sql('u');
+                [$sort] = users_order_by_sql('u');
                 // We only use the first user.
                 $i = 0;
                 do {
                     $userfieldsapi = \core_user\fields::for_name();
                     $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-                    $rusers = get_role_users($croles[$i], $context, true, 'u.id,  u.confirmed, u.username, '. $allnames . ',
-                    u.email, r.sortorder, ra.id AS raid', 'r.sortorder, ra.id ASC, ' . $sort, null, '', '', '', '', $sortparams);
+                    $rusers = get_role_users($croles[$i], $context, true,
+                        "u.id, u.confirmed, u.username, {$allnames}, u.email, u.maildisplay, r.sortorder, ra.id AS raid",
+                        "r.sortorder, ra.id ASC, {$sort}");
                     $i++;
                 } while (empty($rusers) && !empty($croles[$i]));
             }
