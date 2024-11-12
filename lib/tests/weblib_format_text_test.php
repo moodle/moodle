@@ -262,6 +262,11 @@ class weblib_format_text_test extends \advanced_testcase {
                 '<img src=x onerror="&#0000106&#0000097&#0000118&#0000097&#0000115&#0000099&#0000083&#0000083&#0000039&#0000041">',
                 '<img src="x" alt="x" />',
             ],
+            'IMG border-radius' => [
+                '<img src=x style="border-radius: 10px;">',
+                '<img src=x style="border-radius: 10px;">',
+                '<img src="x" style="border-radius:10px;" alt="x" />',
+            ],
             'DIV background-image' => [
                 '<DIV STYLE="background-image: url(javascript:alert(\'XSS\'))">',
                 '<DIV STYLE="background-image: url(javascript:alert(\'XSS\'))">',
