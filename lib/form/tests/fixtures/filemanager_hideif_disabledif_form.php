@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(__DIR__ . '/../../../../../config.php');
+require_once(__DIR__ . '/../../../../config.php');
 
 defined('BEHAT_SITE_RUNNING') || die();
 
 global $CFG, $PAGE, $OUTPUT;
 require_once($CFG->libdir . '/formslib.php');
-$PAGE->set_url('/lib/form/tests/behat/fixtures/filemanager_hideif_disabledif_form.php');
+$PAGE->set_url('/lib/form/tests/fixtures/filemanager_hideif_disabledif_form.php');
 $PAGE->add_body_class('limitedwidth');
 require_login();
 $PAGE->set_context(core\context\system::instance());

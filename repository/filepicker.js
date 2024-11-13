@@ -688,13 +688,30 @@ M.core_filepicker.init = function(Y, options) {
                         }
                         // error checking
                         if (data && data.error) {
-                            Y.use('moodle-core-notification-ajaxexception', function () {
-                                return new M.core.ajaxException(data);
-                            });
-                            this.fpnode.one('.fp-content').setContent('');
+                            if (data.errorcode === 'invalidfiletype') {
+                                // File type errors are not really errors, so report them less scarily.
+                                Y.use('moodle-core-notification-alert', function() {
+                                    return new M.core.alert({
+                                        title: M.util.get_string('error', 'moodle'),
+                                        message: data.error,
+                                    });
+                                });
+                            } else {
+                                Y.use('moodle-core-notification-ajaxexception', function() {
+                                    return new M.core.ajaxException(data);
+                                });
+                            }
+                            if (args.onerror) {
+                                args.onerror(id, data, p);
+                            } else {
+                                // Don't know what to do, so blank the dialogue to ensure it is not left in an inconsistent state.
+                                // This is not great. The user needs to re-click 'Upload file' to reset the display.
+                                this.fpnode.one('.fp-content').setContent('');
+                            }
                             return;
                         } else {
                             if (data.msg) {
+                                // As far as I can tell, msg will never be set by any PHP code. -- Tim Oct 2024.
                                 scope.print_msg(data.msg, 'info');
                             }
                             // cache result if applicable
