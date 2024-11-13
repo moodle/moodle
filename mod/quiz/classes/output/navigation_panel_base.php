@@ -171,13 +171,16 @@ abstract class navigation_panel_base {
      * @return user_picture|null
      */
     public function user_picture() {
-        global $DB;
+        global $DB, $PAGE;
         if ($this->attemptobj->get_quiz()->showuserpicture == QUIZ_SHOWIMAGE_NONE) {
             return null;
         }
         $user = $DB->get_record('user', ['id' => $this->attemptobj->get_userid()]);
         $userpicture = new user_picture($user);
         $userpicture->courseid = $this->attemptobj->get_courseid();
+        if ($PAGE->pagelayout === 'secure') {
+            $userpicture->link = false;
+        }
         if ($this->attemptobj->get_quiz()->showuserpicture == QUIZ_SHOWIMAGE_LARGE) {
             $userpicture->size = true;
         }
