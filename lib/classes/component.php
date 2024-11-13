@@ -754,9 +754,10 @@ $cache = ' . var_export($cache, true) . ';
                 error_log("$ownerdir/db/subplugins.json is invalid ($jsonerror)");
             }
         } else if (file_exists("$ownerdir/db/subplugins.php")) {
-            error_log('Use of subplugins.php has been deprecated. ' .
-                "Please update your '$ownerdir' plugin to provide a subplugins.json file instead.");
-            include("$ownerdir/db/subplugins.php");
+            throw new coding_exception(
+                'Use of subplugins.php has been deprecated and is no longer supported. ' .
+                "Please update your '$ownerdir' plugin to provide a subplugins.json file instead.",
+            );
         }
 
         foreach ($subplugins as $subtype => $dir) {

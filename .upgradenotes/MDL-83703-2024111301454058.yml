@@ -1,0 +1,7 @@
+issueNumber: MDL-83703
+notes:
+  core:
+    - message: >
+        Support for `subplugins.php` files has been removed. All subplugin
+        metadata must be created in a `subplugins.json` file.
+      type: removed

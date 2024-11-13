@@ -1386,6 +1386,29 @@ final class component_test extends \advanced_testcase {
     }
 
     /**
+     * Test that fetching of subtype data throws an exception when a subplugins.php is present without a json equivalent.
+     */
+    public function test_fetch_subtypes_php_only(): void {
+        $vfileroot = \org\bovigo\vfs\vfsStream::setup('root', null, [
+            'plugintype' => [
+                'exampleplugin' => [
+                    'db' => [
+                        'subplugins.php' => '',
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->expectException(coding_exception::class);
+        $this->expectExceptionMessageMatches('/Use of subplugins.php has been deprecated and is no longer supported/');
+
+        $pluginroot = $vfileroot->getChild('plugintype/exampleplugin');
+
+        $rcm = new \ReflectionMethod(\core\component::class, 'fetch_subtypes');
+        $rcm->invoke(null, $pluginroot->url());
+    }
+
+    /**
      * Test that fetching of subtype data does not throw an exception when a subplugins.php is present
      * with a json file equivalent.
      *
