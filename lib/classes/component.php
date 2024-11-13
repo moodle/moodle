@@ -740,11 +740,27 @@ $cache = ' . var_export($cache, true) . ';
 
         $types = [];
         $subplugins = [];
+        if (str_contains($ownerdir, $CFG->dirroot)) {
+            $plugindir = substr($ownerdir, strlen($CFG->dirroot) + 1);
+        } else {
+            $realownerdir = realpath($ownerdir);
+            $realroot = realpath(dirname(__DIR__, 2));
+            $plugindir = substr($realownerdir, strlen($realroot) + 1);
+        }
         if (file_exists("$ownerdir/db/subplugins.json")) {
             $subplugins = [];
             $subpluginsjson = json_decode(file_get_contents("$ownerdir/db/subplugins.json"));
             if (json_last_error() === JSON_ERROR_NONE) {
-                if (!empty($subpluginsjson->plugintypes)) {
+                if (!empty($subpluginsjson->subplugintypes)) {
+                    // If the newer subplugintypes is defined, use it.
+                    // The value here is relative to the plugin's owner directory.
+                    $subplugins = array_map(fn (string $value) => "{$plugindir}/{$value}", (array) $subpluginsjson->subplugintypes);
+                } else if (!empty($subpluginsjson->plugintypes)) {
+                    error_log(
+                        "No subplugintypes defined in $ownerdir/db/subplugins.json. " .
+                        "Falling back to deprecated plugintypes value. " .
+                        "See MDL-83705 for further information.",
+                    );
                     $subplugins = (array) $subpluginsjson->plugintypes;
                 } else {
                     error_log("No plugintypes defined in $ownerdir/db/subplugins.json");
@@ -752,6 +768,27 @@ $cache = ' . var_export($cache, true) . ';
             } else {
                 $jsonerror = json_last_error_msg();
                 error_log("$ownerdir/db/subplugins.json is invalid ($jsonerror)");
+            }
+
+            if (function_exists('debugging') && debugging()) {
+                if (property_exists($subpluginsjson, 'subplugintypes') && property_exists($subpluginsjson, 'plugintypes')) {
+                    $subplugintypes = (array) $subpluginsjson->subplugintypes;
+                    $plugintypes = (array) $subpluginsjson->plugintypes;
+                    if (count($subplugintypes) !== count(($plugintypes))) {
+                        error_log("Subplugintypes and plugintypes are not in sync in $ownerdir/db/subplugins.json");
+                    }
+                    foreach ($subplugintypes as $type => $path) {
+                        if (!isset($plugintypes[$type])) {
+                            error_log("Subplugintypes and plugintypes are not in sync for '$type' in $ownerdir/db/subplugins.json");
+
+                            continue;
+                        }
+
+                        if ($plugintypes[$type] !== $subplugins[$type]) {
+                            error_log("Subplugintypes and plugintypes are not in sync for '$type' in $ownerdir/db/subplugins.json");
+                        }
+                    }
+                }
             }
         } else if (file_exists("$ownerdir/db/subplugins.php")) {
             throw new coding_exception(

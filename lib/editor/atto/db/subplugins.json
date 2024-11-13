@@ -1,5 +1,8 @@
 {
+    "subplugintypes": {
+        "atto": "plugins"
+    },
     "plugintypes": {
-        "atto": "lib\/editor\/atto\/plugins"
+        "atto": "lib/editor/atto/plugins"
     }
 }

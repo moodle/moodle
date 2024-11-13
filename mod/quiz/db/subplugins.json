@@ -1,6 +1,10 @@
 {
+    "subplugintypes": {
+        "quiz": "report",
+        "quizaccess": "accessrule"
+    },
     "plugintypes": {
-        "quiz": "mod\/quiz\/report",
-        "quizaccess": "mod\/quiz\/accessrule"
+        "quiz": "mod/quiz/report",
+        "quizaccess": "mod/quiz/accessrule"
     }
 }

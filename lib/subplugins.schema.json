@@ -1,0 +1,29 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://moodle.org/subplugins.schema.json",
+    "title": "Subplugins",
+    "description": "Moodle Subplugin types",
+    "type": "object",
+    "patternProperties": {
+        "plugintypes": {
+            "type": "object",
+            "properties": {
+                "^[a-z][a-z0-9]+$": {
+                    "description": "The path to the subplugin type relative to the Moodle public directory root",
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false
+        },
+        "subplugintypes": {
+            "type": "object",
+            "properties": {
+                "^[a-z][a-z0-9]+$": {
+                    "description": "The path to the subplugin type relative to the plugin's directory root",
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false
+        }
+    }
+}

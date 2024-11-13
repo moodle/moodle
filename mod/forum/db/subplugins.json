@@ -1,5 +1,8 @@
 {
+    "subplugintypes": {
+        "forumreport": "report"
+    },
     "plugintypes": {
-        "forumreport": "mod\/forum\/report"
+        "forumreport": "mod/forum/report"
     }
 }

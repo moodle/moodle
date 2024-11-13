@@ -1,5 +1,8 @@
 {
+    "subplugintypes": {
+        "logstore": "store"
+    },
     "plugintypes": {
-        "logstore": "admin\/tool\/log\/store"
+        "logstore": "admin/tool/log/store"
     }
 }

@@ -1,4 +1,7 @@
 {
+    "subplugintypes": {
+        "tiny": "plugins"
+    },
     "plugintypes": {
         "tiny": "lib/editor/tiny/plugins"
     }

@@ -1,5 +1,8 @@
 {
+    "subplugintypes": {
+        "booktool": "tool"
+    },
     "plugintypes": {
-        "booktool": "mod\/book\/tool"
+        "booktool": "mod/book/tool"
     }
 }

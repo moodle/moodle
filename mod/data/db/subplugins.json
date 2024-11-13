@@ -1,6 +1,10 @@
 {
+    "subplugintypes": {
+        "datafield": "field",
+        "datapreset": "preset"
+    },
     "plugintypes": {
-        "datafield": "mod\/data\/field",
-        "datapreset": "mod\/data\/preset"
+        "datafield": "mod/data/field",
+        "datapreset": "mod/data/preset"
     }
 }

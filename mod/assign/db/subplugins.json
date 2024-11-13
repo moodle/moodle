@@ -1,6 +1,10 @@
 {
+    "subplugintypes": {
+        "assignsubmission": "submission",
+        "assignfeedback": "feedback"
+    },
     "plugintypes": {
-        "assignsubmission": "mod\/assign\/submission",
-        "assignfeedback": "mod\/assign\/feedback"
+        "assignsubmission": "mod/assign/submission",
+        "assignfeedback": "mod/assign/feedback"
     }
 }

@@ -1,5 +1,8 @@
 {
+    "subplugintypes": {
+        "scormreport": "report"
+    },
     "plugintypes": {
-        "scormreport": "mod\/scorm\/report"
+        "scormreport": "mod/scorm/report"
     }
 }

@@ -1,0 +1,29 @@
+issueNumber: MDL-83705
+notes:
+  core:
+    - message: >
+        The Moodle subplugins.json format has been updated to accept a new
+        `subplugintypes` object.
+
+
+        This should have the same format as the current `plugintypes` format,
+        except that the paths should be relative to the _plugin_ root instead of
+        the Moodle document root.
+
+
+        Both options can co-exist, but if both are present they must be kept in-sync.
+
+
+        ```json
+
+        {
+            "subplugintypes": {
+                "tiny": "plugins"
+            },
+            "plugintypes": {
+                "tiny": "lib/editor/tiny/plugins"
+            }
+        }
+
+        ```
+      type: changed

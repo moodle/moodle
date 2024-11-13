@@ -1,7 +1,12 @@
 {
+    "subplugintypes": {
+        "workshopform": "form",
+        "workshopallocation": "allocation",
+        "workshopeval": "eval"
+    },
     "plugintypes": {
-        "workshopform": "mod\/workshop\/form",
-        "workshopallocation": "mod\/workshop\/allocation",
-        "workshopeval": "mod\/workshop\/eval"
+        "workshopform": "mod/workshop/form",
+        "workshopallocation": "mod/workshop/allocation",
+        "workshopeval": "mod/workshop/eval"
     }
 }

@@ -1,5 +1,8 @@
 {
+  "subplugintypes": {
+    "bbbext": "extension"
+  },
   "plugintypes": {
-    "bbbext": "mod\/bigbluebuttonbn\/extension"
+    "bbbext": "mod/bigbluebuttonbn/extension"
   }
 }

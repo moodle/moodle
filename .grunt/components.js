@@ -69,6 +69,17 @@ const fetchComponentData = () => {
         // The list of components includes the list of subsystems.
         componentData.components = {...componentData.subsystems};
 
+        const subpluginAdder = (subpluginType, subpluginTypePath) => {
+            glob.sync(`${subpluginTypePath}/*/version.php`).forEach(versionPath => {
+                const componentPath = fs.realpathSync(path.dirname(versionPath));
+                const componentName = path.basename(componentPath);
+                const frankenstyleName = `${subpluginType}_${componentName}`;
+
+                componentData.components[`${subpluginTypePath}/${componentName}`] = frankenstyleName;
+                componentData.pathList.push(componentPath);
+            });
+        };
+
         // Go through each of the plugintypes.
         Object.entries(components.plugintypes).forEach(([pluginType, pluginTypePath]) => {
             // We don't allow any code in this place..?
@@ -84,16 +95,18 @@ const fetchComponentData = () => {
                 if (fs.existsSync(subPluginConfigurationFile)) {
                     const subpluginList = JSON.parse(fs.readFileSync(fs.realpathSync(subPluginConfigurationFile)));
 
-                    Object.entries(subpluginList.plugintypes).forEach(([subpluginType, subpluginTypePath]) => {
-                        glob.sync(`${subpluginTypePath}/*/version.php`).forEach(versionPath => {
-                            const componentPath = fs.realpathSync(path.dirname(versionPath));
-                            const componentName = path.basename(componentPath);
-                            const frankenstyleName = `${subpluginType}_${componentName}`;
-
-                            componentData.components[`${subpluginTypePath}/${componentName}`] = frankenstyleName;
-                            componentData.pathList.push(componentPath);
+                    if (subpluginList.subplugintypes) {
+                        Object.entries(subpluginList.subplugintypes).forEach(([subpluginType, subpluginTypePath]) => {
+                            subpluginAdder(
+                                subpluginType,
+                                `${pluginTypePath}/${componentName}/${subpluginTypePath}`
+                            );
                         });
-                    });
+                    } else if (subpluginList.plugintypes) {
+                        Object.entries(subpluginList.plugintypes).forEach(([subpluginType, subpluginTypePath]) => {
+                            subpluginAdder(subpluginType, subpluginTypePath);
+                        });
+                    }
                 }
             });
         });
