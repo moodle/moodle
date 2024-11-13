@@ -284,6 +284,20 @@ abstract class base {
     }
 
     /**
+     * Prune a course state cache for all open sessions.
+     *
+     * Most course edits does not require to invalidate the cache for all users
+     * because the cache relies on the course cacherev value. However, there are
+     * actions like editing the groups that do not change the course cacherev.
+     *
+     * @param \stdClass $course
+     * @return void
+     */
+    public static function invalidate_all_session_caches_for_course(stdClass $course): void {
+        \cache_helper::invalidate_by_event('changesincoursestate', [$course->id]);
+    }
+
+    /**
      * Returns the format name used by this course
      *
      * @return string
