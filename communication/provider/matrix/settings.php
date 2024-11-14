@@ -30,6 +30,11 @@ if ($hassiteconfig) {
     $desc = new lang_string('matrixhomeserverurl_desc', 'communication_matrix');
     $settings->add(new admin_setting_configtext('communication_matrix/matrixhomeserverurl', $name, $desc, ''));
 
+    // Home server name.
+    $name = new lang_string('matrixhomeservername', 'communication_matrix');
+    $desc = new lang_string('matrixhomeservername_desc', 'communication_matrix');
+    $settings->add(new admin_setting_configtext('communication_matrix/matrixhomeservername', $name, $desc, ''));
+
     // Access token.
     $name = new lang_string('matrixaccesstoken', 'communication_matrix');
     $desc = new lang_string('matrixaccesstoken_desc', 'communication_matrix');
