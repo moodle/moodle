@@ -45,7 +45,13 @@ class send_new_user_passwords_task extends scheduled_task {
         global $DB;
 
         // Generate new password emails for users - ppl expect these generated asap.
-        if ($DB->count_records('user_preferences', array('name' => 'create_password', 'value' => '1'))) {
+        if (
+            $DB->record_exists_select(
+                'user_preferences',
+                'name = ? AND ' . $DB->sql_compare_text('value', 2) . ' = ?',
+                ['create_password', '1']
+            )
+        ) {
             mtrace('Creating passwords for new users...');
             $userfieldsapi = \core_user\fields::for_name();
             $usernamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
@@ -54,10 +60,13 @@ class send_new_user_passwords_task extends scheduled_task {
                                                      $usernamefields, u.username, u.lang,
                                                      p.id as prefid
                                                 FROM {user} u
-                                                JOIN {user_preferences} p ON u.id=p.userid
-                                               WHERE p.name='create_password' AND p.value='1' AND
-                                                     u.email !='' AND u.suspended = 0 AND
-                                                     u.auth != 'nologin' AND u.deleted = 0");
+                                                JOIN {user_preferences} p ON u.id = p.userid
+                                               WHERE p.name = 'create_password'
+                                                 AND " . $DB->sql_compare_text('p.value', 2) . " = '1'
+                                                 AND u.email <> ''
+                                                 AND u.suspended = 0
+                                                 AND u.auth <> 'nologin'
+                                                 AND u.deleted = 0");
 
             // Note: we can not send emails to suspended accounts.
             foreach ($newusers as $newuser) {

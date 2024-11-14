@@ -1495,14 +1495,14 @@ final class moodlelib_test extends \advanced_testcase {
         $this->assertEquals($longvalue,
             $DB->get_field('user_preferences', 'value', array('userid' => $USER->id, 'name' => '_test_long_user_preference')));
 
-        // Test > 1333 char values, coding_exception expected.
-        $longvalue = str_repeat('a', 1334);
-        try {
-            set_user_preference('_test_long_user_preference', $longvalue);
-            $this->fail('Exception expected - longer than 1333 chars not allowed as preference value');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        }
+        // Larger preference values are allowed as of MDL-46739.
+        $longervalue = str_repeat('a', 1334);
+        set_user_preference('_test_long_user_preference', $longervalue);
+        $this->assertEquals($longervalue, get_user_preferences('_test_long_user_preference'));
+        $this->assertEquals(
+            $longervalue,
+            $DB->get_field('user_preferences', 'value', ['userid' => $USER->id, 'name' => '_test_long_user_preference'])
+        );
 
         // Test invalid params.
         try {
