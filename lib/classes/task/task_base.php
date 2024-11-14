@@ -116,39 +116,31 @@ abstract class task_base {
     }
 
     /**
-     * Setter for $blocking.
-     *
-     * Please note that task blocking is no longer supported.
-     * If you are using it in older versions of Moodle you are strongly advised to rewrite your code
-     * as has a detrimental impact upon performance.
-     *
      * @deprecated since Moodle 4.4 See MDL-67667
-     * @todo Remove in MDL-81509
      */
     #[\core\attribute\deprecated(
         replacement: null,
         since: '4.4',
+        mdl: 'MDL-67667',
         reason: 'Blocking tasks are no longer supported',
+        final: true,
     )]
-    public function set_blocking($blocking) {
+    public function set_blocking() {
         \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
     }
 
     /**
-     * Getter for $blocking.
-     *
-     * @return bool
      * @deprecated since Moodle 4.4 See MDL-67667
-     * @todo Remove in MDL-81509
      */
     #[\core\attribute\deprecated(
         replacement: null,
         since: '4.4',
+        mdl: 'MDL-67667',
         reason: 'Blocking tasks are no longer supported',
+        final: true,
     )]
     public function is_blocking() {
         \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
-        return false;
     }
 
     /**
