@@ -49,6 +49,8 @@ $string['replacefactorconfirmation'] = 'Replace \'{$a}\' security key?';
 $string['revokefactorconfirmation'] = 'Remove \'{$a}\' security key?';
 $string['settings:authenticatortypes'] = 'Types of authenticator';
 $string['settings:authenticatortypes_help'] = 'Toggle certain types of authenticators';
+$string['settings:description'] = '<p>Users authenticate using a physical security key, such as a USB or NFC token, or a biometric method like a fingerprint. During login, they must physically use their security key to verify their identity.</p>
+<p>Users will need to set up their own security keys first.</p>';
 $string['settings:shortdescription'] = 'Require users to use a security key, like a USB or NFC token, or a biometric method, during login.';
 $string['settings:userverification'] = 'User verification';
 $string['settings:userverification_help'] = 'Serves to ensure the person authenticating is in fact who they say they are. User verification can take various forms, such as password, PIN, fingerprint, etc.';

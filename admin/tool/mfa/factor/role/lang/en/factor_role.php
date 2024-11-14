@@ -23,8 +23,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Role';
-$string['privacy:metadata'] = 'The Role factor plugin does not store any personal data.';
+$string['pluginname'] = 'Roles';
+$string['privacy:metadata'] = 'The Roles factor plugin does not store any personal data.';
+$string['settings:description'] = 'Select the roles that must use additional factors to authenticate. If this factor is not turned on, all roles will be required to use an additional factor.';
 $string['settings:roles'] = 'Non-passing roles';
 $string['settings:roles_help'] = 'Select the roles that will not pass this factor. This allows you to force these roles to use other factors to authenticate.';
 $string['settings:shortdescription'] = 'Specify which users must use other factors to authenticate, based on their role. Must be combined with other factors.';

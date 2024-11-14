@@ -45,16 +45,14 @@ $string['notification:smsgatewaymigration'] = 'SMS settings have moved';
 $string['notification:smsgatewaymigrationinfo'] = 'A new SMS subsystem is now available for managing and configuring all SMS-related functions. Your existing SMS configurations have been migrated to the page <a href="{$a}">SMS gateways</a>.';
 $string['logintitle'] = 'Enter the verification code sent to your mobile';
 $string['phonehelp'] = 'Enter your mobile number (including country code) to receive a verification code.';
-$string['pluginname'] = 'SMS mobile phone';
-$string['privacy:metadata'] = 'The SMS mobile phone factor plugin does not store any personal data.';
+$string['pluginname'] = 'SMS';
+$string['privacy:metadata'] = 'The SMS factor plugin does not store any personal data.';
 $string['revokefactorconfirmation'] = 'Remove \'{$a}\' SMS?';
 $string['settings:duration'] = 'Validity duration';
 $string['settings:duration_help'] = 'The period of time that the code is valid.';
 $string['settings:gateway'] = 'SMS gateway';
 $string['settings:gateway_help'] = 'The SMS provider you wish to send messages via';
-$string['settings:heading'] = 'Users will receive an SMS with 6-digit code during login, which they must enter to complete the login process.
-
-Users will need to register their mobile phone number first.';
+$string['settings:heading'] = 'Users will receive a 6-digit verification code via SMS, which they must enter to complete the login process. Users will need to register their mobile phone number first.';
 $string['settings:setupdesc'] = '<br><br>To use SMS as an authentication factor, you first need to <a href="{$a}">set up an SMS gateway</a>.';
 $string['settings:shortdescription'] = 'Require users to enter a code received via SMS during login.';
 $string['settings:smsgateway'] = 'SMS gateway';

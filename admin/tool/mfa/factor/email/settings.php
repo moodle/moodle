@@ -25,6 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$settings->add(new admin_setting_heading('factor_email/description', '', new lang_string('settings:description', 'factor_email')));
+$settings->add(new admin_setting_heading('factor_email/settings', new lang_string('settings', 'moodle'), ''));
+
 $enabled = new admin_setting_configcheckbox('factor_email/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
     new lang_string('settings:enablefactor_help', 'tool_mfa'), 1);

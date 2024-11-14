@@ -50,6 +50,7 @@ $settings->add(
         ),
     ),
 );
+$settings->add(new admin_setting_heading('factor_sms/settings', new lang_string('settings', 'moodle'), ''));
 
 if (count($gatewayrecords) > 0) {
     $gateways = [0 => new lang_string('none')];

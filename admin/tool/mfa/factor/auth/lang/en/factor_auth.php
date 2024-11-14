@@ -26,6 +26,7 @@
 $string['info'] = 'Check the type of authentication used to log in as an MFA factor.';
 $string['pluginname'] = 'Authentication type';
 $string['privacy:metadata'] = 'The Authentication type factor plugin does not store any personal data.';
+$string['settings:description'] = 'Automatically verify users based on their authentication type.';
 $string['settings:goodauth'] = 'Factor authentication types';
 $string['settings:goodauth_help'] = 'Select all authentication types to use as a factor for MFA. Any types not selected will not be treated as a FAIL in MFA.';
 $string['settings:shortdescription'] = 'Allow users to bypass extra authentication steps based on their authentication type.';

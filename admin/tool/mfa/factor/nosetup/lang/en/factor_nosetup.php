@@ -23,9 +23,10 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['deleteunusablefactors'] = 'Delete unusable Nosetup factors';
+$string['deleteunusablefactors'] = 'Delete unusable Optional MFA factors';
 $string['info'] = 'This factor passes if the user has no other factors set up.';
 $string['pluginname'] = 'No other factors';
 $string['privacy:metadata'] = 'The No other factors plugin does not store any personal data';
+$string['settings:description'] = 'Allow users who haven\'t set up any other authentication factors to bypass MFA until another factor is added.';
 $string['settings:shortdescription'] = 'Allow users to bypass MFA if they have not set up any other authentication factor.';
 $string['summarycondition'] = 'has no other factors set up';
