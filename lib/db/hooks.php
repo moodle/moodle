@@ -122,4 +122,9 @@ $callbacks = [
         'hook' => \core_files\hook\before_file_created::class,
         'callback' => [\core_files\redactor\hook_listener::class, 'file_redaction_handler'],
     ],
+    [
+        'hook' => \core_course\hook\before_course_viewed::class,
+        'callback' => [\core_courseformat\hook_listener::class, 'before_course_viewed'],
+        'priority' => 999,
+    ],
 ];
