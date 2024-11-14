@@ -3376,7 +3376,7 @@ class core_message_external extends external_api {
         bool $includecontactrequests = false,
         bool $includeprivacyinfo = false
     ) {
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
 
         // All the business logic checks that really shouldn't be in here.
         if (empty($CFG->messaging)) {
@@ -3396,9 +3396,19 @@ class core_message_external extends external_api {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
+        // Filter the user IDs, removing the IDs of the users that the current user cannot view.
+        require_once($CFG->dirroot . '/user/lib.php');
+        $userfieldsapi = \core_user\fields::for_userpic()->including('username', 'deleted');
+        $userfields = $userfieldsapi->get_sql('', false, '', '', false)->selects;
+        $users = $DB->get_records_list('user', 'id', $userids, '', $userfields, 0, 100);
+        $filteredids = array_filter($params['userids'], function($userid) use ($users) {
+            $targetuser = $users[$userid];
+            return user_can_view_profile($targetuser);
+        });
+
         return \core_message\helper::get_member_info(
             $params['referenceuserid'],
-            $params['userids'],
+            $filteredids ?? [],
             $params['includecontactrequests'],
             $params['includeprivacyinfo']
         );
