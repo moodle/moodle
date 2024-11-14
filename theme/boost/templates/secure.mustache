@@ -63,6 +63,9 @@
                 <section id="region-main" {{#hasblocks}}class="has-blocks"{{/hasblocks}} aria-label="{{#str}}content{{/str}}">
 
                     {{{ output.course_content_header }}}
+                    {{#headercontent}}
+                        {{> core/activity_header }}
+                    {{/headercontent}}
                     {{{ output.main_content }}}
                     {{{ output.course_content_footer }}}
 
