@@ -289,12 +289,28 @@ final class url_test extends \advanced_testcase {
                         4 => ['name' => 'param3', 'value' => '3'],
                     ],
                 ],
+                'multi level array embedded with other params' => [
+                    'url' => "@{$baseurl}/?param1=1&tags[0][0]=123&tags[0][1]=456&param2=2&param3=3",
+                    'expected' => [
+                        0 => ['name' => 'param1', 'value' => '1'],
+                        1 => ['name' => 'tags[0][0]', 'value' => '123'],
+                        2 => ['name' => 'tags[0][1]', 'value' => '456'],
+                        3 => ['name' => 'param2', 'value' => '2'],
+                        4 => ['name' => 'param3', 'value' => '3'],
+                    ],
+                ],
                 'params with array at the end' => [
                     'url' => "@{$baseurl}/?param1=1&tags[]=123&tags[]=456",
                     'expected' => [
                         0 => ['name' => 'param1', 'value' => '1'],
                         1 => ['name' => 'tags[0]', 'value' => '123'],
                         2 => ['name' => 'tags[1]', 'value' => '456'],
+                    ],
+                ],
+                'equals sign encoded in a string in params' => [
+                    'url' => "@{$baseurl}/?param1=https://example.moodle.net?test=2",
+                    'expected' => [
+                        0 => ['name' => 'param1', 'value' => 'https://example.moodle.net?test=2'],
                     ],
                 ],
         ];
@@ -685,5 +701,79 @@ final class url_test extends \advanced_testcase {
         $CFG->routerconfigured = true;
         $url = url::routed_path('/example');
         $this->assertSame('/example', $url->out_as_local_url(false));
+    }
+
+    /**
+     * Provides various urls with multi level array query parameters
+     *
+     * @return array
+     */
+    public static function multi_level_query_params_provider(): array {
+        return [
+            'multi level with integer values' => [
+                'url' => 'https://example.moodle.net?test[0][0]=1&test[0][1]=0',
+                'extraparams' => [],
+                'expectedparams' => ['test' => [0 => ['1', '0']]],
+                'expectedurlout' => 'https://example.moodle.net?test%5B0%5D%5B0%5D=1&test%5B0%5D%5B1%5D=0',
+            ],
+            'multi level with bool-looking string values' => [
+                'url' => 'https://example.moodle.net?test[0][0]=true&test[0][1]=false',
+                'extraparams' => [],
+                // These are actually strings, and should be interpreted as such,
+                // even if they look like booleans.
+                'expectedparams' => ['test' => [0 => ['true', 'false']]],
+                'expectedurlout' => 'https://example.moodle.net?test%5B0%5D%5B0%5D=true&test%5B0%5D%5B1%5D=false',
+            ],
+            'multi level with bool params values' => [
+                'url' => 'https://example.moodle.net',
+                'extraparams' => ['test' => [0 => [true, false]]],
+                'expectedparams' => ['test' => [0 => ['1', '']]],
+                // Bool values get stringified. This means true = 1 and false = ''.
+                'expectedurlout' => 'https://example.moodle.net?test%5B0%5D%5B0%5D=1&test%5B0%5D%5B1%5D',
+            ],
+            'triple level array with string values' => [
+                'url' => 'https://example.moodle.net?test[0][0][0]=abc&test[0][0][1]=xyz',
+                'extraparams' => [],
+                'expectedparams' => ['test' => [0 => [0 => ['abc', 'xyz']]]],
+                'expectedurlout' => 'https://example.moodle.net?test%5B0%5D%5B0%5D%5B0%5D=abc&test%5B0%5D%5B0%5D%5B1%5D=xyz',
+            ],
+            'multi level params with empty arrays as values' => [
+                'url' => 'https://example.moodle.net',
+                'extraparams' => ['test' => [[[]], [[], []]]],
+                'expectedparams' => ['test' => [[[]], [[], []]]],
+                // Empty arrays don't hold any data; they are just containers.
+                // So this should not have the param present in the query params.
+                'expectedurlout' => 'https://example.moodle.net',
+            ],
+            'multi level params with non sequential arrays keys' => [
+                'url' => 'https://example.moodle.net?test[2]=a&test[0]=b',
+                'extraparams' => [],
+                'expectedparams' => ['test' => [2 => 'a', 0 => 'b']],
+                'expectedurlout' => 'https://example.moodle.net?test%5B2%5D=a&test%5B0%5D=b',
+            ],
+            'multi level params with string numbers as keys' => [
+                'url' => 'https://example.moodle.net?test[2]=a&test[0]=b',
+                'extraparams' => [],
+                'expectedparams' => ['test' => ['2' => 'a', '0' => 'b']],
+                'expectedurlout' => 'https://example.moodle.net?test%5B2%5D=a&test%5B0%5D=b',
+            ],
+        ];
+    }
+
+    /**
+     * Tests url parameter handling where multi level arrays are involved.
+     *
+     * @param string $url url string to parse.
+     * @param array $extraparams extra parameters to pass directly to ->params() function.
+     * @param array $expectedparams php array of expected parameters expected to be parsed.
+     * @param string $expectedurlout unescaped url string that is expected when calling ->out() on the url object.
+     * @dataProvider multi_level_query_params_provider
+     */
+    public function test_multi_level_array_query_params(string $url, array $extraparams, array $expectedparams,
+        string $expectedurlout): void {
+        $url = new url($url);
+        $url->params($extraparams);
+        $this->assertSame($expectedparams, $url->params());
+        $this->assertSame($expectedurlout, $url->out(false));
     }
 }
