@@ -1,5 +1,13 @@
 # core_courseformat (subsystem / plugintype) Upgrade notes
 
+## 4.5+
+
+### Added
+
+- Add core_courseformat\base::invalidate_all_session_caches to reset course editor cache for all users when course is changed. This method can be used as an alternative to core_courseformat\base::session_cache_reset for resetting the cache for the current user  in case the change in the course should be reflected for all users.
+
+  For more information see [MDL-83185](https://tracker.moodle.org/browse/MDL-83185)
+
 ## 4.5
 
 ### Added
