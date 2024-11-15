@@ -15,13 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @deprecated since Moodle 5.0
+    @template core/checkbox-toggleall-toggler
 
-    Please use core/checkbox-toggleall-toggler instead.
-
-    @template core/checkbox-toggleall-master
-
-    Template for a toggler checkbox in a toggle group. The toggler checkbox toggles the checked states of the target checkboxes.
+    Template for a toggler checkbox in a toggle group. The toggler checkbox toggles the checked states of the slave checkboxes.
 
     Data attributes required for JS:
     * data-action
@@ -41,7 +37,7 @@
         "labelclasses": "badge bg-info text-white"
     }
 }}
-<div class="form-check p-0">
+<div class="form-check">
     <input id="{{id}}" name="{{name}}" type="checkbox" class="{{classes}}" value="{{value}}"
            aria-labelledby="{{id}}-label"
            data-action="toggle"

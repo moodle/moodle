@@ -1,0 +1,43 @@
+issueNumber: MDL-79756
+notes:
+  core:
+    - message: >
+        Changes were implemented to make `checkbox-toggleall` output component
+        more inclusive:
+
+
+        * Replace the references to `master` checkboxes with `toggler`.
+
+        * Replace the references to `slave` checkboxes with `target`.
+      type: changed
+    - message: >+
+        The following `core/checkbox-toggleall` templates have been deprecated:
+
+
+        - `core/checkbox-toggleall-master-button` - This is replaced with
+        `core/checkbox-toggleall-toggler-button`
+
+        - `core/checkbox-toggleall-master` - This is replaced with
+        `core/checkbox-toggleall-toggler`
+
+        - `core/checkbox-toggleall-slave` - This is replaced with
+        `core/checkbox-toggleall-target`
+
+
+        The following items in the `core/checkbox-toggleall` JS module have been
+        deprecated:
+
+
+        - Method:
+            - `updateSlavesFromMasterState()` - This is replaced with `updateTargetsFromTogglerState()`.
+
+        - Usage of the following selectors:
+            - `data-toggle=master` - This is replaced with `data-toggle=toggler`.
+            - `data-toggle=slave` - This is replaced with `data-toggle=target`.
+
+        The usage of these selectors will continue to be supported until they
+        are removed by final deprecation. In the meantime, a deprecation warning
+        in the JavaScript console will be shown if usage of these selectors is
+        detected.
+
+      type: deprecated
