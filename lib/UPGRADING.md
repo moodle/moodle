@@ -10,6 +10,9 @@
 
 ### Changed
 
+- The {user_preferences}.value database field is now TEXT instead of CHAR. This means that any queries with a condition on this field in a WHERE or JOIN statement will need updating to use `$DB->sql_compare_text()`. See the `$newusers` query in `\core\task\send_new_users_password_task::execute` for an example.
+
+  For more information see [MDL-46739](https://tracker.moodle.org/browse/MDL-46739)
 - All uses of the following PHPUnit methods have been removed as these methods are
   deprecated upstream without direct replacement:
 
@@ -26,6 +29,9 @@
 - moodle_process_email() has been deprecated with the removal of the unused and non-functioning admin/process_email.php.
 
   For more information see [MDL-61232](https://tracker.moodle.org/browse/MDL-61232)
+- Final deprecation of methods `task_base::is_blocking` and `task_base::set_blocking`.
+
+  For more information see [MDL-81509](https://tracker.moodle.org/browse/MDL-81509)
 
 ## 4.5
 

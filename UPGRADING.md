@@ -18,6 +18,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Changed
 
+- The {user_preferences}.value database field is now TEXT instead of CHAR. This means that any queries with a condition on this field in a WHERE or JOIN statement will need updating to use `$DB->sql_compare_text()`. See the `$newusers` query in `\core\task\send_new_users_password_task::execute` for an example.
+
+  For more information see [MDL-46739](https://tracker.moodle.org/browse/MDL-46739)
 - All uses of the following PHPUnit methods have been removed as these methods are
   deprecated upstream without direct replacement:
 
@@ -34,6 +37,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - moodle_process_email() has been deprecated with the removal of the unused and non-functioning admin/process_email.php.
 
   For more information see [MDL-61232](https://tracker.moodle.org/browse/MDL-61232)
+- Final deprecation of methods `task_base::is_blocking` and `task_base::set_blocking`.
+
+  For more information see [MDL-81509](https://tracker.moodle.org/browse/MDL-81509)
 
 ### core_backup
 
@@ -42,6 +48,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Remove all MODE_HUB related code.
 
   For more information see [MDL-66873](https://tracker.moodle.org/browse/MDL-66873)
+
+### core_courseformat
+
+#### Added
+
+- Add core_courseformat\base::invalidate_all_session_caches to reset course editor cache for all users when course is changed. This method can be used as an alternative to core_courseformat\base::session_cache_reset for resetting the cache for the current user  in case the change in the course should be reflected for all users.
+
+  For more information see [MDL-83185](https://tracker.moodle.org/browse/MDL-83185)
 
 ### core_enrol
 
@@ -83,6 +97,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   Use of the `context` table is also deprecated in the `file` and `instance` (tag) entities
 
   For more information see [MDL-78118](https://tracker.moodle.org/browse/MDL-78118)
+
+### gradereport_grader
+
+#### Deprecated
+
+- The method `gradereport_grader::get_right_avg_row()` has been finally deprecated and will now throw an exception if called.
+
+  For more information see [MDL-78890](https://tracker.moodle.org/browse/MDL-78890)
 
 ### mod_feedback
 
