@@ -521,8 +521,11 @@ abstract class handler {
      * @param int $oldid The original ID of the custom field data before backup.
      */
     public function restore_define_structure(\restore_structure_step $step, int $newid, int $oldid): void {
-        $datacontrollers = $this->get_instance_data($newid);
 
+        // Retrieve the 'instanceid' of the new custom field data.
+        $instanceid = (new data($newid))->get('instanceid');
+
+        $datacontrollers = $this->get_instance_data($instanceid);
         foreach ($datacontrollers as $controller) {
             $controller->restore_define_structure($step, $newid, $oldid);
         }
