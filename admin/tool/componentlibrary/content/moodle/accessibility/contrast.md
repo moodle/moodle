@@ -36,14 +36,14 @@ This table with links should show no colour contrast issues.
   </thead>
   <tbody>
     <tr >
-      <th scope="row"><input type="checkbox" class="m-1" value="" data-action="toggle" data-toggle="master" data-togglegroup="participants-table" data-toggle-selectall="Select all" data-toggle-deselectall="Deselect all"></th>
+      <th scope="row"><input type="checkbox" class="m-1" value="" data-action="toggle" data-toggle="toggler" data-togglegroup="participants-table" data-toggle-selectall="Select all" data-toggle-deselectall="Deselect all"></th>
       <td><a href="#">Bas Brands</a></td>
       <td>bas@example.com</td>
       <td>
       </td>
     </tr>
     <tr>
-      <th scope="row"><input type="checkbox" class="m-1" value="" data-action="toggle" data-toggle="master" data-togglegroup="participants-table" data-toggle-selectall="Select all" data-toggle-deselectall="Deselect all"></th>
+      <th scope="row"><input type="checkbox" class="m-1" value="" data-action="toggle" data-toggle="toggler" data-togglegroup="participants-table" data-toggle-selectall="Select all" data-toggle-deselectall="Deselect all"></th>
       <td><a href="#">Chris Cross</a></td>
       <td>chris@example.com</td>
       <td>
@@ -51,7 +51,7 @@ This table with links should show no colour contrast issues.
         </td>
     </tr>
     <tr >
-      <th scope="row"><input type="checkbox" class="m-1" value="" data-action="toggle" data-toggle="master" data-togglegroup="participants-table" data-toggle-selectall="Select all" data-toggle-deselectall="Deselect all"></th>
+      <th scope="row"><input type="checkbox" class="m-1" value="" data-action="toggle" data-toggle="toggler" data-togglegroup="participants-table" data-toggle-selectall="Select all" data-toggle-deselectall="Deselect all"></th>
       <td>
         <a class="linktest-1" href="#">Irene Ipsum</a><br>
         </td>

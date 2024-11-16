@@ -144,7 +144,7 @@ class summary_table extends table_sql {
         $columnheaders = [];
 
         if ($allowbulkoperations) {
-            $mastercheckbox = new \core\output\checkbox_toggleall('summaryreport-table', true, [
+            $togglercheckbox = new \core\output\checkbox_toggleall('summaryreport-table', true, [
                 'id' => 'select-all-users',
                 'name' => 'select-all-users',
                 'label' => get_string('selectall'),
@@ -152,7 +152,7 @@ class summary_table extends table_sql {
                 'classes' => 'm-1',
                 'checked' => false
             ]);
-            $columnheaders['select'] = $OUTPUT->render($mastercheckbox);
+            $columnheaders['select'] = $OUTPUT->render($togglercheckbox);
         }
 
         $columnheaders += [

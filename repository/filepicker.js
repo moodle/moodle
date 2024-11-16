@@ -330,7 +330,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
         }
 
         /**
-         * Generate slave checkboxes based on toggleall's specification
+         * Generate target checkboxes based on toggleall's specification
          * @param {object} o An object reprsenting the record for the current row.
          * @return {html} The checkbox html
          */
@@ -342,7 +342,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 .setAttribute('data-fieldtype', 'checkbox')
                 .setAttribute('data-fullname', o.data.fullname)
                 .setAttribute('data-action', 'toggle')
-                .setAttribute('data-toggle', 'slave')
+                .setAttribute('data-toggle', 'target')
                 .setAttribute('data-togglegroup', 'file-selections-' + parentid);
 
             var checkboxLabel = Y.Node.create('<label>')
@@ -387,7 +387,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 .setAttribute('type', 'checkbox')
                 // .setAttribute('title', M.util.get_string('selectallornone', 'form'))
                 .setAttribute('data-action', 'toggle')
-                .setAttribute('data-toggle', 'master')
+                .setAttribute('data-toggle', 'toggler')
                 .setAttribute('data-togglegroup', 'file-selections-' + parentid);
 
             var checkboxLabel = Y.Node.create('<label>')

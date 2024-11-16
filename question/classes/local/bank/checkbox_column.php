@@ -42,7 +42,7 @@ class checkbox_column extends column_base {
     public function get_title() {
         global $OUTPUT;
 
-        $mastercheckbox = new checkbox_toggleall('qbank', true, [
+        $togglercheckbox = new checkbox_toggleall('qbank', true, [
             'id' => 'qbheadercheckbox',
             'name' => 'qbheadercheckbox',
             'value' => '1',
@@ -50,7 +50,7 @@ class checkbox_column extends column_base {
             'labelclasses' => 'accesshide',
         ]);
 
-        return $OUTPUT->render($mastercheckbox);
+        return $OUTPUT->render($togglercheckbox);
     }
 
     public function get_title_tip() {

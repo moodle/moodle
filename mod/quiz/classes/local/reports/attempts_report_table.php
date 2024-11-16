@@ -816,7 +816,7 @@ abstract class attempts_report_table extends \table_sql {
     /**
      * Generates the contents for the checkbox column header.
      *
-     * It returns the HTML for a master \core\output\checkbox_toggleall component that selects/deselects all quiz attempts.
+     * It returns the HTML for a toggler \core\output\checkbox_toggleall component that selects/deselects all quiz attempts.
      *
      * @param string $columnname The name of the checkbox column.
      * @return string
@@ -831,7 +831,7 @@ abstract class attempts_report_table extends \table_sql {
         $selectallid = $this->uniqueid . '-selectall-attempts';
         $selectalltext = get_string('selectall', 'quiz');
         $deselectalltext = get_string('selectnone', 'quiz');
-        $mastercheckbox = new \core\output\checkbox_toggleall($this->togglegroup, true, [
+        $togglercheckbox = new \core\output\checkbox_toggleall($this->togglegroup, true, [
             'id' => $selectallid,
             'name' => $selectallid,
             'value' => 1,
@@ -841,6 +841,6 @@ abstract class attempts_report_table extends \table_sql {
             'deselectall' => $deselectalltext,
         ]);
 
-        return $OUTPUT->render($mastercheckbox);
+        return $OUTPUT->render($togglercheckbox);
     }
 }

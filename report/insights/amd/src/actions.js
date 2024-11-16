@@ -96,7 +96,7 @@ export const initBulk = (rootNode) => {
         const actionVisibleName = action.textContent.trim();
 
         const predictionContainers = Array.from(document.querySelectorAll(
-            '.insights-list input[data-togglegroup^="insight-bulk-action-"][data-toggle="slave"]:checked',
+            '.insights-list input[data-togglegroup^="insight-bulk-action-"][data-toggle="target"]:checked',
         )).map((checkbox) => checkbox.closest('tr[data-prediction-id]'));
         const predictionIds = predictionContainers.map((el) => el.dataset.predictionId);
 

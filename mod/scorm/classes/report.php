@@ -66,7 +66,7 @@ class report {
         // Build the select/deselect all control.
         $selectalltext = get_string('selectall', 'scorm');
         $deselectalltext = get_string('selectnone', 'scorm');
-        $mastercheckbox = new \core\output\checkbox_toggleall('scorm-attempts', true, [
+        $togglercheckbox = new \core\output\checkbox_toggleall('scorm-attempts', true, [
             'name' => 'scorm-selectall-attempts',
             'value' => 1,
             'label' => $selectalltext,
@@ -75,7 +75,7 @@ class report {
             'deselectall' => $deselectalltext,
         ]);
 
-        return $OUTPUT->render($mastercheckbox);
+        return $OUTPUT->render($togglercheckbox);
     }
 
     /**

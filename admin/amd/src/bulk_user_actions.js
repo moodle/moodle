@@ -30,9 +30,9 @@ import jQuery from 'jquery';
 const Selectors = {
     bulkActionsForm: 'form#user-bulk-action-form',
     userReportWrapper: '[data-region="report-user-list-wrapper"]',
-    checkbox: 'input[type="checkbox"][data-togglegroup="report-select-all"][data-toggle="slave"]',
-    masterCheckbox: 'input[type="checkbox"][data-togglegroup="report-select-all"][data-toggle="master"]',
-    checkedRows: '[data-togglegroup="report-select-all"][data-toggle="slave"]:checked',
+    checkbox: 'input[type="checkbox"][data-togglegroup="report-select-all"][data-toggle="target"]',
+    togglerCheckbox: 'input[type="checkbox"][data-togglegroup="report-select-all"][data-toggle="toggler"]',
+    checkedRows: '[data-togglegroup="report-select-all"][data-toggle="target"]:checked',
 };
 
 /**
@@ -81,8 +81,8 @@ export const init = () => {
     updateUserIds();
 
     document.addEventListener('change', event => {
-        // When checkboxes are checked next to individual users or the master toggle (Select all/none).
-        if ((event.target.matches(Selectors.checkbox) || event.target.matches(Selectors.masterCheckbox))
+        // When checkboxes are checked next to individual users or the toggler toggle (Select all/none).
+        if ((event.target.matches(Selectors.checkbox) || event.target.matches(Selectors.togglerCheckbox))
                 && userReport.contains(event.target)) {
             updateUserIds();
         }
