@@ -169,8 +169,10 @@ class container {
                         return true;
                     }
 
+                    // IOMAD - we want to see training events - even if we are not enrolled on the course.
                     if (!has_capability('moodle/course:view', $coursecontext, $requestinguserid) &&
-                            !is_enrolled($coursecontext, $requestinguserid)) {
+                            !is_enrolled($coursecontext, $requestinguserid) &&
+                            $dbrow->modulename != 'trainingevent') {
                         return true;
                     }
 

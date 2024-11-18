@@ -1,0 +1,153 @@
+// Bootstrap variables
+$white:    #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #8f959e !default;
+$gray-600: #6a737b !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #1d2125 !default;
+$black:    #000 !default;
+
+$blue:    #0f6cbf !default;
+$indigo:  #6610f2 !default;
+$purple:  #613d7c !default;
+$pink:    #e83e8c !default;
+$red:     #ca3120 !default;
+$orange:  #f0ad4e !default;
+$yellow:  #ff7518 !default;
+$green:   #357a32 !default;
+$teal:    #20c997 !default;
+$cyan:    #008196 !default;
+
+$primary:       $blue !default;
+$success:       $green !default;
+$info:          $cyan !default;
+$warning:       $orange !default;
+$danger:        $red !default;
+$secondary:     $gray-400 !default;
+
+$info-outline:    #1f7e9a;
+$warning-outline: #a6670e;
+
+// Tables
+$table-accent-bg:             rgba($black, .03) !default;
+
+// Options
+$enable-responsive-font-sizes: true !default;
+
+// Body
+$body-color:    $gray-900 !default;
+
+// Fonts
+$font-size-base: 0.9375rem !default;
+$rfs-base-font-size: 0.9rem !default;
+$headings-font-weight:   700 !default;
+
+// Navbar
+$navbar-dark-hover-color:           rgba($white, 1) !default;
+$navbar-light-color:                rgba($black, 0.6) !default;
+$navbar-light-hover-color:          rgba($black, .9) !default;
+
+// Breadcrumbs
+$breadcrumb-padding-y:              .5rem !default;
+$breadcrumb-padding-x:              0 !default;
+$breadcrumb-item-padding:           .5rem !default;
+$breadcrumb-margin-bottom:          0 !default;
+$breadcrumb-bg:                     transparent !default;
+$breadcrumb-divider: "/" !default;
+$breadcrumb-divider-rtl: "/" !default;
+
+// Alerts
+$alert-border-width:                0 !default;
+
+$card-group-margin: .25rem;
+
+// Toasts
+$toast-color:                       $white !default;
+$toast-background-color:            rgba($gray-900, .95) !default;
+$toast-header-color:                $gray-100 !default;
+$toast-header-background-color:     rgba($white, .1) !default;
+
+// Custom control size
+$custom-control-indicator-size: 1.25rem;
+
+$input-btn-focus-color: rgba($primary, .75) !default;
+
+$input-border-color: $gray-500 !default;
+
+$dropdown-link-hover-color: $white;
+$dropdown-link-hover-bg: $primary;
+
+$popover-max-width: 300px !default;
+
+$border-radius: .5rem !default;
+$border-radius-lg: .6rem !default;
+
+// stylelint-disable
+$theme-colors: () !default;
+$theme-colors: map-merge((
+    primary: $primary,
+    secondary: $secondary,
+    success: $success,
+    info: $info,
+    warning: $warning,
+    danger: $danger,
+), $theme-colors);
+// stylelint-enable
+
+$spacer: 1rem !default;
+$spacers: (
+    0: 0,
+    1: ($spacer * .25),
+    2: ($spacer * .5),
+    3: $spacer,
+    4: ($spacer * 1.5),
+    5: ($spacer * 2),
+    6: ($spacer * 3)
+) !default;
+
+// Import FontAwesome.
+@import "fontawesome";
+
+// Import All of Bootstrap
+@import "bootstrap";
+
+// Import Core moodle CSS
+@import "moodle";
+
+// Preset CSS
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .08);
+}
+
+// Rounded user pictures
+.userpicture {
+    border-radius: 50%;
+}
+
+// Reset the default styling back to the bootstrap defaults for
+// the secondary outline button because gray-200 is much too light
+// for an outline button.
+.btn-outline-secondary {
+    @include button-outline-variant($gray-600);
+    border-color: $gray-600;
+}
+
+.btn-outline-info {
+    @include button-outline-variant($info-outline);
+}
+
+.btn-outline-warning {
+    @include button-outline-variant($warning-outline);
+}
+
+@include bg-variant(".bg-gray", $gray-200, true);

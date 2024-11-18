@@ -1,0 +1,24 @@
+{% extends "base.twig" %}
+
+{% block content %}
+
+<h2>{% trans 'Your certificate is about to expire.' %}</h2>
+<form action="{{ target | escape }}">
+
+    {% for name, value in data -%}
+    <input type="hidden" name="{{ name }}" value="{{ value }}">
+    {%- endfor %}
+
+    <p>{% trans %}Your certificate will expire in {{ daysleft }} days.{% endtrans %}</p>
+
+    {% if renewurl -%}
+    <p>{% trans %}Please <a href="{{ renewurl }}">renew your certificate</a> in time.{% endtrans %}</p>
+    {% else -%}
+    <p>{% trans 'Please renew your certificate in time.' %}</p>
+    {% endif -%}
+
+    <p><input type="submit" name="proceed" id="proceedbutton" value="{% trans 'Proceed' %}" autofocus></p>
+
+</form>
+
+{% endblock %}

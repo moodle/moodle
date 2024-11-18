@@ -1,0 +1,45 @@
+#trainingeventattendancetable {
+   overflow-x: scroll;
+   padding-top: 10px;
+   padding-bottom: 10px;
+}
+
+input[name=usergrade] {
+    width: 3em;
+}
+
+table.trainingeventdetails {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.iomadcoursesearchform,
+.iomaddatesearchform,
+.iomadusersearchform {
+    margin-right: 10px;
+    float: left;
+}
+
+.iomadcoursesearchform .icons-collapse-expand.collapsed .expanded-icon,
+.iomadcoursesearchform .icons-collapse-expand.collapsed .collapsed-icon,
+.iomaddatesearchform  .icons-collapse-expand.collapsed .expanded-icon,
+.iomaddatesearchform .icons-collapse-expand.collapsed .collapsed-icon,
+.iomadusersearchform  .icons-collapse-expand.collapsed .expanded-icon,
+.iomadusersearchform .icons-collapse-expand.collapsed .collapsed-icon {
+    font-size: small;
+}
+
+.iomadcoursesearchform h3,
+.iomaddatesearchform h3,
+.iomadusersearchform h3 {
+    font-size: medium;
+}
+
+.iomadcoursesearchform .mform .form-inline .form-control,
+.iomadcoursesearchform .mform .form-inline .custom-select,
+.iomaddatesearchform .mform .form-inline .form-control,
+.iomaddatesearchform .mform .form-inline .custom-select,
+.iomadusersearchform .mform .form-inline .form-control,
+.iomadusersearchform .mform .form-inline .custom-select {
+    max-width:75%;
+}

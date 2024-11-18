@@ -1,0 +1,51 @@
+{
+    "name": "gettext/languages",
+    "description": "gettext languages with plural rules",
+    "keywords": [
+        "localization",
+        "l10n",
+        "internationalization",
+        "i18n",
+        "translations",
+        "translate",
+        "php",
+        "unicode",
+        "cldr",
+        "language",
+        "languages",
+        "plural",
+        "plurals",
+        "plural rules"
+    ],
+    "homepage": "https://github.com/php-gettext/Languages",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michele Locati",
+            "email": "mlocati@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Gettext\\Languages\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Gettext\\Languages\\Test\\": "tests/test/"
+        }
+    },
+    "require": {
+        "php": ">=5.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8 || ^5.7 || ^6.5 || ^7.5 || ^8.4"
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "bin": [
+        "bin/export-plural-rules"
+    ]
+}

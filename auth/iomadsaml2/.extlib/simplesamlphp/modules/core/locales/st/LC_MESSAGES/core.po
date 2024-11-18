@@ -1,0 +1,192 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2019-12-12 12:32+0200\n"
+"PO-Revision-Date: 2019-12-12 12:32+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.3\n"
+
+msgid "{core:no_metadata:config_problem}"
+msgstr ""
+"Bona ke bothata bo ka kgonahalang ka ho fetisisa ho mofani wa tshebeletso"
+" kapa mofani wa tshebeletso."
+
+msgid "{core:no_state:description}"
+msgstr ""
+"Ha re kgone ho fumana tlhahisoleseding ka provenseng bakeng sa kopo ya ha"
+" jwale."
+
+msgid "{core:no_metadata:suggestion_user_link}"
+msgstr ""
+"Haeba o le mosebedisi ya fumaneng phoso ena kamora ho latela lehokela le "
+"setsing, o tlameha ho tlaleha phoso ena ho monga setsi."
+
+msgid "Metadata not found"
+msgstr "Metadata ha e a fumanwa"
+
+msgid "{core:cardinality:cardinality_text}"
+msgstr ""
+"E le nngwe kapa ho feta ya makgabane a fanweng ke wena ke mofani wa "
+"boitsebiso wa hao ha e na lenane le nepahetseng la dipalo."
+
+msgid "This error may be caused by:"
+msgstr "Phoso ena e ka bakwa ke:"
+
+msgid "We were unable to locate the state information for the current request."
+msgstr ""
+"Ha re kgone ho fumana tlhahisoleseding ka provenseng bakeng sa kopo ya ha"
+" jwale."
+
+msgid "Using the back and forward buttons in the web browser."
+msgstr "Ho sebedisa dikonopo tsa pele le morao sebading sa webo."
+
+msgid "{core:no_state:causes}"
+msgstr "Phoso ena e ka bakwa ke:"
+
+msgid ""
+"This is most likely a configuration problem on either the service "
+"provider or identity provider."
+msgstr ""
+"Bona ke bothata bo ka kgonahalang ka ho fetisisa ho mofani wa tshebeletso"
+" kapa mofani wa tshebeletso."
+
+msgid "Opened the web browser with tabs saved from the previous session."
+msgstr "O butse sebadi sa webe ka di-tab tse bolokilweng sesheneng e fetileng."
+
+#, python-format
+msgid "got %GOT% values, want %WANT%"
+msgstr "o fumane dipalo tse %GOT%, o batla tse %WANT%"
+
+msgid ""
+"If you are an user who received this error after following a link on a "
+"site, you should report this error to the owner of that site."
+msgstr ""
+"Haeba o le mosebedisi ya fumaneng phoso ena kamora ho latela lehokela le "
+"setsing, o tlameha ho tlaleha phoso ena ho monga setsi."
+
+msgid "{core:no_state:cause_openbrowser}"
+msgstr "O butse sebadi sa webe ka di-tab tse bolokilweng sesheneng e fetileng."
+
+msgid "{core:no_cookie:description}"
+msgstr ""
+"O bonahala o kwetse dikhukhi sebading sa hao. Ka kopo hlahloba disetting "
+"sebading sa hao."
+
+msgid "{core:no_metadata:not_found_for}"
+msgstr "Ha re a kgona ho fumana metadata bakeng sa setheo:"
+
+msgid "{core:cardinality:cardinality_header}"
+msgstr "Makgabane a Fosahetseng"
+
+msgid "{core:no_state:report_text}"
+msgstr "Haeba bothata bona bo phehella, o ka bo tlaleha ho batsamaisi ba sistimi."
+
+msgid "The problematic attribute(s) are:"
+msgstr "Makgabane a nang le mathata ke:"
+
+msgid "{core:no_state:suggestion_goback}"
+msgstr "Kgutlela leqepheng le fetileng ebe o leka hape."
+
+msgid "Report this error"
+msgstr "Tlaleha phoso ena"
+
+msgid ""
+"You appear to have disabled cookies in your browser. Please check the "
+"settings in your browser, and try again."
+msgstr ""
+"O bonahala o kwetse dikhukhi sebading sa hao. Ka kopo hlahloba disetting "
+"sebading sa hao."
+
+msgid "If this problem persists, you can report it to the system administrators."
+msgstr "Haeba bothata bona bo phehella, o ka bo tlaleha ho batsamaisi ba sistimi."
+
+msgid "{core:no_state:report_header}"
+msgstr "Tlaleha phoso ena"
+
+msgid "{core:no_cookie:header}"
+msgstr "Khukhi e siyo"
+
+msgid "{core:no_metadata:suggestion_developer}"
+msgstr ""
+"Haeba o mohlahisi ya sebedisang tharollo ya ho saena hang, o na le "
+"bothata ka phetolo ya metadata. Netefatsa hore metadata e hlophiswe ka ho"
+" nepahala ho bobedi mofani wa boitsebiso le mofani wa tshebeletso."
+
+msgid "State information lost"
+msgstr "Tlhahisoleseding ya provense e lahlehile"
+
+msgid "{core:no_state:suggestion_closebrowser}"
+msgstr "Kwala sebadi sa webe, ebe o leka hape."
+
+msgid "Incorrect Attributes"
+msgstr "Makgabane a Fosahetseng"
+
+msgid "{core:no_metadata:header}"
+msgstr "Metadata ha e a fumanwa"
+
+msgid "{core:no_state:cause_nocookie}"
+msgstr "Dikhuki di ka nna tsa kwalwa sebading sa webe."
+
+msgid "Close the web browser, and try again."
+msgstr "Kwala sebadi sa webe, ebe o leka hape."
+
+msgid "Go back to the previous page and try again."
+msgstr "Kgutlela leqepheng le fetileng ebe o leka hape."
+
+msgid "{core:no_cookie:retry}"
+msgstr "Khukhi e siyo"
+
+msgid "{core:cardinality:problematic_attributes}"
+msgstr "Makgabane a nang le mathata ke:"
+
+msgid ""
+"If you are a developer who is deploying a single sign-on solution, you "
+"have a problem with the metadata configuration. Verify that metadata is "
+"configured correctly on both the identity provider and service provider."
+msgstr ""
+"Haeba o mohlahisi ya sebedisang tharollo ya ho saena hang, o na le "
+"bothata ka phetolo ya metadata. Netefatsa hore metadata e hlophiswe ka ho"
+" nepahala ho bobedi mofani wa boitsebiso le mofani wa tshebeletso."
+
+msgid "{core:cardinality:got_want}"
+msgstr "o fumane dipalo tse %GOT%, o batla tse %WANT%"
+
+msgid "Retry"
+msgstr "Khukhi e siyo"
+
+msgid "{core:no_state:suggestions}"
+msgstr "Ditlhahiso bakeng sa ho rarolla bothata bona:"
+
+msgid "{core:no_state:cause_backforward}"
+msgstr "Ho sebedisa dikonopo tsa pele le morao sebading sa webo."
+
+msgid "Cookies may be disabled in the web browser."
+msgstr "Dikhuki di ka nna tsa kwalwa sebading sa webe."
+
+msgid "We were unable to locate the metadata for the entity:"
+msgstr "Ha re a kgona ho fumana metadata bakeng sa setheo:"
+
+msgid "{core:no_state:header}"
+msgstr "Tlhahisoleseding ya provense e lahlehile"
+
+msgid "Missing cookie"
+msgstr "Khukhi e siyo"
+
+msgid ""
+"One or more of the attributes supplied by your identity provider did not "
+"contain the expected number of values."
+msgstr ""
+"E le nngwe kapa ho feta ya makgabane a fanweng ke wena ke mofani wa "
+"boitsebiso wa hao ha e na lenane le nepahetseng la dipalo."
+
+msgid "Suggestions for resolving this problem:"
+msgstr "Ditlhahiso bakeng sa ho rarolla bothata bona:"
+

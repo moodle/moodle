@@ -1,0 +1,132 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: sl\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 "
+"|| n%100==4 ? 2 : 3)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{memcacheMonitor:memcachestat:total_connections}"
+msgstr "Skupno število povezav"
+
+msgid "{memcacheMonitor:memcachestat:version}"
+msgstr "Različica"
+
+msgid "{memcacheMonitor:memcachestat:get_hits}"
+msgstr "Skupno število uspešnih zahtevkov GET "
+
+msgid "{memcacheMonitor:memcachestat:curr_items}"
+msgstr "Trenutno število elementov"
+
+msgid "{memcacheMonitor:memcachestat:uptime}"
+msgstr "Neprekinjeno delovanje"
+
+msgid "{memcacheMonitor:memcachestat:limit_maxbytes}"
+msgstr "Razpoložljiv prostor skupno:"
+
+msgid "{memcacheMonitor:memcachestat:curr_connections}"
+msgstr "Trenutno odprtih povezav"
+
+msgid "{memcacheMonitor:memcachestat:rusage_system}"
+msgstr "CPE sekunde (sistem)"
+
+msgid "{memcacheMonitor:memcachestat:rusage_user}"
+msgstr "CPE sekunde (uporabnik)"
+
+msgid "{memcacheMonitor:memcachestat:pid}"
+msgstr "ID procesa"
+
+msgid "{memcacheMonitor:memcachestat:cmd_get}"
+msgstr "Skupno število zahtevkov GET "
+
+msgid "{memcacheMonitor:memcachestat:bytes_read}"
+msgstr "Prenešenih bajtov v smeri strežnika"
+
+msgid "{memcacheMonitor:memcachestat:time}"
+msgstr "Točen čas"
+
+msgid "{memcacheMonitor:memcachestat:get_misses}"
+msgstr "Skupno število neuspešnih zahtevkov GET "
+
+msgid "{memcacheMonitor:memcachestat:bytes_written}"
+msgstr "Bajtov zapisanih na strežniku"
+
+msgid "{memcacheMonitor:memcachestat:connection_structures}"
+msgstr "Struktura povezav"
+
+msgid "{memcacheMonitor:memcachestat:cmd_set}"
+msgstr "Skupno število zahtevkov SET "
+
+msgid "{memcacheMonitor:memcachestat:total_items}"
+msgstr "Vseh elementov skupaj"
+
+msgid "{memcacheMonitor:memcachestat:bytes}"
+msgstr "Skupno v uporabi bajtov"
+
+msgid "Current time"
+msgstr "Točen čas"
+
+msgid "Total items ever"
+msgstr "Vseh elementov skupaj"
+
+msgid "Bytes written by the server"
+msgstr "Bajtov zapisanih na strežniku"
+
+msgid "Uptime"
+msgstr "Neprekinjeno delovanje"
+
+msgid "Current open connections"
+msgstr "Trenutno odprtih povezav"
+
+msgid "Total storage avail"
+msgstr "Razpoložljiv prostor skupno:"
+
+msgid "Version"
+msgstr "Različica"
+
+msgid "Total GET commands (failed)"
+msgstr "Skupno število neuspešnih zahtevkov GET "
+
+msgid "Total SET commands"
+msgstr "Skupno število zahtevkov SET "
+
+msgid "Connection structures"
+msgstr "Struktura povezav"
+
+msgid "Total GET commands (success)"
+msgstr "Skupno število uspešnih zahtevkov GET "
+
+msgid "Total bytes in use currently"
+msgstr "Skupno v uporabi bajtov"
+
+msgid "Total GET commands"
+msgstr "Skupno število zahtevkov GET "
+
+msgid "Bytes in to the server"
+msgstr "Prenešenih bajtov v smeri strežnika"
+
+msgid "Process ID"
+msgstr "ID procesa"
+
+msgid "Currently number of items"
+msgstr "Trenutno število elementov"
+
+msgid "CPU Seconds (User)"
+msgstr "CPE sekunde (uporabnik)"
+
+msgid "CPU Seconds (System)"
+msgstr "CPE sekunde (sistem)"
+
+msgid "Total connections"
+msgstr "Skupno število povezav"
+

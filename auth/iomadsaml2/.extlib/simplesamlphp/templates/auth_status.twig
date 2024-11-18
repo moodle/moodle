@@ -1,0 +1,115 @@
+{% set pagetitle = 'Authentication status'|trans %}
+{% extends 'base.twig' %}
+
+{% block content %}
+<h2>{{ pagetitle }}</h2>
+
+    <p>{% trans %}Hi, this is the status page of SimpleSAMLphp. Here you can see if your session is timed out, how long it lasts until it times out and all the attributes that are attached to your session.{% endtrans %}</p>
+
+{% if remaining %}
+    <p>{% trans %}Your session is valid for {{ remaining }} seconds from now.{% endtrans %}</p>
+{% endif %}
+
+
+<h2>{{ 'Your attributes'|trans }}</h2>
+    {% set items = attributes %}
+
+{% embed '_table.twig' -%}
+
+    {% block namecol -%}
+    {% set translated = name|trans %}
+    <td class="attrname">{% if translated != name %} {{ translated }} <br>{% endif %} <samp>{{ name }}</samp></td>
+    {% endblock %}
+
+
+    {% block value -%}
+    {% if name =='jpegPhoto'-%}
+        <img src="data:image/jpeg;base64,{{ value }}" />
+    {% else %}{{ value }}{% endif -%}
+    {% endblock %}
+
+{%- endembed %}
+
+
+{% if nameid %}
+    <h2>{{ 'SAML Subject'|trans }}</h2>
+
+    {%  set items = {'NameId' : nameid.value} %}
+
+    {% if not nameid.value %}
+        {%  set items = items|merge({'NameID' : 'not set'|trans}) %}
+    {% endif %}
+
+    {% if nameid.Format %}
+        {% set items = items|merge({('Format'|trans) : nameid.Format}) %}
+    {% endif %}
+
+    {% if nameid.NameQualifier %}
+        {% set items = items|merge({'NameQualifier' : nameid.NameQualifier}) %}
+    {% endif %}
+
+    {% if nameid.SPNameQualifier %}
+        {% set items = items|merge({'SPNameQualifier' : nameid.SPNameQualifier}) %}
+    {% endif %}
+
+    {% if nameid.SPProvidedID %}
+        {% set items = items|merge({'SPProvidedID' : nameid.SPProvidedID}) %}
+    {% endif %}
+
+    <table id="table_with_attributes"  class="attributes pure-table pure-table-striped pure-table-attributes" summary="attribute overview">
+        {% for name, value in items %}
+            <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                <td class="attrname">{{ name }}</td>
+                <td class="attrvalue">{{ value }}</td>
+            </tr>
+        {% endfor %}
+    </table><br>
+
+{% endif %}
+
+    <dl>
+      <dt>{% trans %}Debug information to be used by your support staff{% endtrans %}</dt>
+      {%- embed "includes/expander.twig" %}
+        {%- block content %}
+
+        <dl>
+          <dd>{% trans %}Tracking number{% endtrans %}</dd>
+          <dd class="code-box hljs">
+            <div class="pure-button-group top-right-corner">
+              <a class="pure-button copy hljs" data-clipboard-target="#trackid"
+                 title="{% trans %}Copy to clipboard{% endtrans %}"><span class="fa fa-copy"></span></a>
+            </div>
+            <code id="trackid" class="code-box-content">{{ trackid }}</code>
+          </dd>
+          {%- if authData %}
+
+          <dd>{% trans %}Information about your current session{% endtrans %}</dd>
+          <dd class="code-box hljs">
+            <div class="pure-button-group top-right-corner">
+              <a class="pure-button copy hljs" data-clipboard-target="#authdata"
+                 title="{% trans %}Copy to clipboard{% endtrans %}"><span class="fa fa-copy"></span></a>
+            </div>
+            <div id="authdata" class="code-box-content php">
+              {{- authData|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_PRETTY_PRINT')) |raw -}}
+            </div>
+          </dd>
+          {%- endif %}
+
+        </dl>
+        {%- endblock content %}
+      {%- endembed %}
+
+    </dl>
+    <br>
+
+{% if logout is defined %}
+    <h2>{% trans %}Logout{% endtrans %}</h2>
+    <p> {{ logout }}</p>
+{% endif %}
+
+{% if logouturl is defined %}
+    <div class="center">
+        <a class="pure-button pure-button-red" href="{{ logouturl }}">{{ 'Logout'|trans }}</a>
+    </div>
+{% endif %}
+{% endblock %}

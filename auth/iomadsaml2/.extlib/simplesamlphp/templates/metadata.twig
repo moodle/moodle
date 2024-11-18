@@ -1,0 +1,62 @@
+{% set pagetile = 'SimpleSAMLphp Show Metadata'|trans %}
+{% extends 'base.twig' %}
+{% block content %}
+  <h2>{% trans %}Metadata{% endtrans %}</h2>
+  <dl>
+    <dd>{{ '{admin:metadata_intro}'|trans }}</dd>
+
+  {% if metaurl is defined %}
+    <dd>{% trans %}You can get the metadata xml on a dedicated URL:{% endtrans %}</dd>
+    <dd class="code-box hljs">
+      <div class="pure-button-group top-right-corner">
+        <a class="pure-button copy hljs" data-clipboard-target="#url"
+           title="{% trans %}Copy to clipboard{% endtrans %}"><span class="fa fa-copy"></span></a>
+        <a class="pure-button hljs" href="{{ metaurl }}">
+          <span class="fa fa-external-link-square"></span>
+        </a>
+      </div>
+      <code id="url" class="code-box-content">{{ metaurl }}</code>
+    </dd>
+  {% endif %}
+
+    <dt>{% trans %}SAML Metadata{% endtrans %}</dt>
+    <dd>{% trans %}In SAML 2.0 Metadata XML format:{% endtrans %}</dd>
+    <dd class="code-box hljs">
+      <div class="pure-button-group top-right-corner">
+        <a class="pure-button copy hljs" data-clipboard-target="#xml-metadata"
+           title="{% trans %}Copy to clipboard{% endtrans %}"><span class="fa fa-copy"></span></a>
+      </div>
+      <div id="xml-metadata" class="code-box-content xml">{{ metadata|raw }}</div>
+    </dd>
+    <dt>{% trans %}SimpleSAMLphp Metadata{% endtrans %}</dt>
+    <dd>{% trans %}Use this if you are using a SimpleSAMLphp entity on
+              {#- #} the other side:{% endtrans %}</dd>
+    <dd class="code-box hljs">
+      <div class="pure-button-group top-right-corner">
+        <a class="pure-button copy hljs" data-clipboard-target="#php-metadata"
+           title="{% trans %}Copy to clipboard{% endtrans %}"><span class="fa fa-copy"></span></a>
+      </div>
+      <div id="php-metadata" class="code-box-content php">
+        {#- #}{{ metadataflat|raw }}{# -#}
+      </div>
+    </dd>
+  {% if certdata is defined %}
+    <dt>{% trans %}Certificates{% endtrans %}</dt>
+    <p>{% trans %}Download the X509 certificates as PEM-encoded files.{% endtrans %}</p>
+
+    <ul>
+      {% for cert in certdata %}
+
+        <li>
+          <a href="{{ cert.url }}"><i class="fa fa-download"></i>{{ cert.name }}
+          {#- #}{% if cert.signing is defined %}-signing{% endif %}
+          {#- #}{% if cert.encryption is defined %}-encryption{% endif %}.pem
+          {#- #}{% if cert.prefix is defined %} ({% trans %}new{% endtrans %}){% endif %}</a> {{ cert.comment }}
+        </li>
+      {% endfor %}
+
+    </ul>
+  {% endif %}
+
+  </dl>
+{% endblock content %}

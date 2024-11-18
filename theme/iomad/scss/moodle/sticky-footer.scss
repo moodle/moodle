@@ -1,0 +1,73 @@
+/**
+ * This file contains the styles required to make the footer sticky.
+ */
+
+html,
+body {
+    height: 100%;
+}
+
+.stickyfooter {
+    position: fixed;
+    right: 0;
+    left: 0;
+    height: $stickyfooter-height;
+    bottom: calc(#{$stickyfooter-height} * -1);
+    transition: bottom .5s;
+    z-index: $zindex-fixed;
+    overflow: hidden;
+    box-shadow: 0 0 1rem rgba($black, .15);
+    font-size: calc(#{$font-size-base} * 1.10);
+}
+
+.hasstickyfooter .stickyfooter {
+    bottom: 0;
+}
+
+/* Standard components fixes for sticky footer. */
+
+.stickyfooter ul.pagination {
+    margin-bottom: map-get($spacers, 1);
+}
+
+.stickyfooter .btn {
+    font-size: calc(#{$font-size-base} * 1.10);
+}
+
+/* Breakpoints fixes. */
+
+@include media-breakpoint-up(sm) {
+    #page-wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        #page {
+            &:not(.drawers) {
+                flex: 1 0 auto;
+            }
+            display: flex;
+            flex-direction: column;
+            #page-content {
+                flex: 1 0 auto;
+            }
+        }
+        #page-footer {
+            flex-shrink: 0;
+        }
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    #page-wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        #page {
+            &:not(.drawers) {
+                flex: 1 0 auto;
+            }
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}

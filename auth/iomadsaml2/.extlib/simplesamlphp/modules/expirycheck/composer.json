@@ -1,0 +1,44 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-expirycheck",
+    "description": "The expirycheck module validates user's expiry date",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "expirycheck"],
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Alex Mihičinac",
+            "email": "alexm@arnes.si"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        },
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\expirycheck\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+        "simplesamlphp/composer-module-installer": "~1.1"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "phpunit/phpunit": "~5.7"
+    },
+    "support": {
+        "issues": "https://github.com/tvdijen/simplesamlphp-module-expirycheck/issues",
+        "source": "https://github.com/tvdijen/simplesamlphp-module-expirycheck"
+    }
+}

@@ -1,0 +1,81 @@
+/**
+ * @package   block_mycourses
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+.block_course_overview, section.block_myoverview {
+    display:none;
+}
+
+html.yui3-js-enabled body#page-my-index.format-site.path-my.gecko.dir-ltr.lang-en.yui-skin-sam.yui3-skin-sam.www-sola3-co-uk--SOLA3System.pagelayout-mydashboard.course-1.context-1.has-region-content.used-region-content.has-region-side-pre.used-region-side-pre.has-region-side-post.used-region-side-post.layout-option-langmenu.jsenabled div#page.container-fluid header#page-header.clearfix div#page-navbar.clearfix div.breadcrumb-button div.singlebutton {
+    display: none;
+}
+
+.dashboard-list-img {
+    width: 7rem!important;
+}
+
+.block_mycourses .mycourselisting .courseimage {
+    width: 10%;
+    float:left;
+    padding-right: 10px;
+}
+
+.block_mycourses .mycourselisting .mycoursedetails {
+    float: right;
+    width: 90%;
+}
+
+.block_mycourses .imgresponsive {
+    max-width: 100%;
+    height: auto;
+    width: auto;
+}
+
+.block_mycourses hr, .block_mycourses .mycourselisting, .block_mycourses .tab-content .tab-content{
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.block_mycourses .tab-content {
+    overflow: visible;
+    display: inline-block;
+    width: 100%;
+}
+
+.coursearchivebutton {
+    clear: both;
+    padding-top: 10px;
+}
+
+.block_mycourses .finalresults {
+    font-weight: bold;
+    padding-top: 10px;
+}
+
+.block_mycourses .empty-placeholder-image-lg {
+    width: 100px;
+    height: 100px;
+}
+
+.block_mycourses .ml-auto.mt-auto.w-50.p-t-1 {
+    float: left;
+}
+.block_mycourses .certificatediv {
+    clear: both;
+}
+
+.progress {
+    background-color: #666;
+    width: 50%;
+}
+
+.progress-bar {
+    background-color: green;
+}
+
+.block-mycourses .nav-tabs {
+    padding-top: 15px;
+}

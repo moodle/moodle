@@ -1,0 +1,51 @@
+{{!
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ }}
+
+    <div class="card">
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+                <div class="card-block p-b-0">
+                    {{# available}}
+                        <p class="coursetitle m-b-0"><strong>{{ fullname }}</strong></p>
+                    {{/ available}}
+                    {{^ available}}
+                        <p class="coursetitle m-b-0"><dimmed>{{ fullname }}</dimmed></p>
+                    {{/ available}}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 my-auto">
+                <div class="card-block">
+                    <img class="img-responsive my-auto" src="{{{ imageurl }}}" />
+                    {{# available}}
+                        <p class="card-text p-t-1"><a href="{{ link }}" class="btn btn-primary" data-id="{{ id }}">{{# str }}entercourse, block_iomad_learningpath{{/ str }}</a></p>
+                    {{/ available}}
+                </div>
+            </div>
+            <div class="col-md-8 px-3">
+                <div class="card-block">
+                    {{{ summary }}}
+                    {{# hasprogress }}
+                        <div class="progress m-t-1">
+                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ progresspercent}}%;" 
+                                aria-valuenow="{{ progresspercent }}" aria-valuemin="0" aria-valuemax="100">{{ progresspercent }}%</div>
+                        </div>
+                    {{/ hasprogress }}
+                    {{^ hasprogress }}
+                        {{# available}}
+                            <div class="alert alert-warning">{{# str }}nocompletion, block_iomad_learningpath{{/ str }}</div>
+                        {{/ available}}
+                        {{^ available}}
+                            <p class="card-text p-t-1 alert alert-warning">{{# str }}coursedepends, block_iomad_learningpath, {{ prerequisite }}{{/ str }}</p>
+                        {{/ available}}
+                    {{/ hasprogress }} 
+                </div>
+            </div>
+        </div>
+    </div>

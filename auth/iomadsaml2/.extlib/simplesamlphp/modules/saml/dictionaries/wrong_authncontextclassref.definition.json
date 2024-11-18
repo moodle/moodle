@@ -1,0 +1,8 @@
+{
+	"header": {
+		"en": "Wrong authentication context"
+	},
+	"description": {
+		"en": "Your authentication context is not accepted at this service. Probably too weak or not two-factor."
+	}
+}

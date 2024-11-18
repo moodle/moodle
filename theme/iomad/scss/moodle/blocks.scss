@@ -1,0 +1,392 @@
+.blockmovetarget .accesshide {
+    position: relative;
+    left: initial;
+}
+
+.block:target {
+    padding-top: 0 !important; /* stylelint-disable declaration-no-important */
+    margin-top: 0 !important;
+}
+
+.block_search_forums .searchform {
+    /* Override plugin's default. */
+    text-align: left;
+}
+
+.block.block_navigation .block_tree ul,
+.block_settings .block_tree ul {
+    margin-left: 0;
+}
+
+.block .block-controls {
+    .dropdown-toggle {
+        /* So that the caret takes the colour of the icon. */
+        color: $body-color;
+    }
+}
+
+$blocks-column-width: 360px !default;
+
+[data-region="blocks-column"] {
+    width: $blocks-column-width;
+    float: right;
+}
+
+$blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width * 0.5 );
+
+/* We put an absolutely positioned div in a relatively positioned div so it takes up no space */
+@include media-breakpoint-up(sm) {
+    #region-main-settings-menu {
+        position: relative;
+        float: left;
+        width: 100%;
+    }
+
+    #region-main-settings-menu > div {
+        position: absolute;
+        right: 0;
+        z-index: 100;
+        margin: 1rem;
+    }
+
+    .region_main_settings_menu_proxy {
+        width: 4rem;
+        height: 2rem;
+        background-color: $body-bg;
+        margin-left: $card-spacer-x * 0.5;
+        margin-bottom: $card-spacer-x * 0.5;
+        border-bottom-left-radius: 0.5rem;
+        float: right;
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    #region-main-settings-menu .menubar {
+        justify-content: flex-end;
+    }
+}
+
+// Required for IE11 to prevent blocks being pushed under the content.
+#region-main.has-blocks {
+    display: inline-block;
+    width: calc(100% - #{$blocks-plus-gutter});
+    @include media-breakpoint-down(lg) {
+        width: 100%;
+        /* MDL-63102 - Remove extra space at bottom.
+        If modifying make sure block-region is horizontally stacked when in full screen */
+        display: block;
+    }
+}
+
+.header-action {
+    #region-main-settings-menu {
+        position: unset;
+        float: none;
+        width: auto;
+
+        & > div {
+            position: unset;
+            right: auto;
+            margin: 0;
+        }
+    }
+}
+
+[data-region="blocks-column"] {
+    @include media-breakpoint-down(lg) {
+        width: 100%;
+    }
+}
+
+$card-gutter : $card-deck-margin * 2;
+
+.block .empty-placeholder-image-lg {
+    height: 5rem;
+}
+
+.block {
+    .searchbar {
+        .icon {
+            margin-right: 0;
+        }
+    }
+}
+
+.block .block-cards {
+    .course-info-container {
+        padding: 0.8rem;
+    }
+    .progress {
+        height: 0.5rem;
+    }
+    .course-summaryitem {
+        border: $border-width solid $border-color;
+        background-color: $body-bg;
+    }
+    .icon {
+        margin-right: 0;
+    }
+    .card .coursemenubtn {
+        margin-top: -0.5rem;
+    }
+    span.categoryname,
+    .btn-link {
+        color: $gray-900;
+    }
+    .progress-text {
+        color: $gray-600;
+    }
+    .multiline {
+        white-space: normal;
+    }
+    .btn.btn-link.btn-icon {
+        height: 36px;
+        width: 36px;
+        padding: 0;
+        border-radius: 50%;
+
+        @include hover-focus {
+            background-color: $gray-200;
+        }
+    }
+}
+
+.dashboard-card-deck.one-row {
+    flex-flow: nowrap;
+    overflow-x: scroll;
+}
+
+.summaryimage {
+    height: 5rem;
+    width: 5rem;
+    background-position: center;
+    background-size: cover;
+}
+.dashboard-list-img {
+    height: 5rem;
+    width: 20rem;
+    background-position: center;
+    background-size: cover;
+    @include media-breakpoint-down(lg) {
+        width: 100%;
+    }
+}
+
+.dashboard-card-deck {
+    .dashboard-card {
+        margin-bottom: $card-gutter;
+        flex-basis: auto;
+        width: 100%;
+        flex-grow: 0;
+        flex-shrink: 0;
+        .dashboard-card-img {
+            height: 7rem;
+            background-position: center;
+            background-size: cover;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        .dashboard-card-footer {
+            padding: 0.8rem;
+        }
+    }
+    @include media-breakpoint-up(sm) {
+        &.fixed-width-cards {
+            .dashboard-card {
+                width: 300px;
+                max-width: 100%;
+            }
+        }
+    }
+}
+
+.dashboard-card-deck:not(.fixed-width-cards) {
+    @media (min-width: 576px) {
+        .dashboard-card {
+            width: calc(50% - #{$card-gutter});
+        }
+    }
+    @media (min-width: 840px) {
+        .dashboard-card {
+            width: calc(33.33% - #{$card-gutter});
+        }
+    }
+}
+
+#block-region-side-pre {
+    .dashboard-card-deck:not(.fixed-width-cards) {
+        margin-left: 0;
+        margin-right: 0;
+        .dashboard-card {
+            width: calc(100% - #{$card-gutter}) !important;
+        }
+    }
+}
+
+.block_recentlyaccessedcourses {
+    .paging-bar-container {
+        margin-top: -2.4rem;
+        padding-right: 0.5rem;
+        justify-content: flex-end;
+    }
+
+    @include media-breakpoint-down(xs) {
+        .paging-bar-container {
+            margin-top: 0;
+        }
+    }
+}
+
+#block-region-side-pre {
+    .block_recentlyaccessedcourses {
+        .paging-bar-container {
+            margin-top: 0;
+        }
+    }
+}
+
+.block_recentlyaccesseditems {
+    .activityiconcontainer {
+        width: 40px;
+        height: 40px;
+    }
+
+    aside[id^="block-region-side-"] & .dashboard-card-deck.one-row {
+        flex-flow: wrap;
+        overflow-x: hidden;
+    }
+
+    aside[id^="block-region-side-"] & .dashboard-card-deck .card:nth-of-type(n+4) {
+        display: none;
+    }
+
+    #block-region-content & [data-region="more-items-button-container"] {
+        display: none;
+    }
+
+    a.dashboard-card {
+        @include hover-focus {
+            text-decoration: none;
+            h6 {
+                text-decoration: underline;
+            }
+        }
+        small {
+            color: $body-color;
+        }
+    }
+}
+
+.block_myoverview {
+    .content {
+        min-height: 19.35rem;
+    }
+    .paged-content-page-container {
+        min-height: 13rem;
+    }
+}
+
+.block_timeline {
+    .paged-content-page-container {
+        background-color: $list-group-bg;
+    }
+}
+
+.block_timeline {
+    .event-action {
+        padding-left: 5.55em;
+    }
+}
+
+// Show expand collapse with font-awesome.
+.block_settings .block_tree [aria-expanded="true"],
+.block_settings .block_tree [aria-expanded="true"].emptybranch,
+.block_settings .block_tree [aria-expanded="false"],
+.block_navigation .block_tree [aria-expanded="true"],
+.block_navigation .block_tree [aria-expanded="true"].emptybranch,
+.block_navigation .block_tree [aria-expanded="false"] {
+    background-image: none;
+}
+.block_settings .block_tree [aria-expanded="true"] > p:before,
+.block_navigation .block_tree [aria-expanded="true"] > p:before {
+    @extend .fa-solid;
+    content: fa-content($fa-var-angle-down);
+    margin-right: 0;
+    font-size: 16px;
+    width: 16px;
+}
+
+.block_settings .block_tree [aria-expanded="false"] > p:before,
+.block_navigation .block_tree [aria-expanded="false"] > p:before {
+    @extend .fa-solid;
+    content: fa-content($fa-var-angle-right);
+    margin-right: 0;
+    font-size: 16px;
+    width: 16px;
+}
+.dir-rtl {
+    .block_settings .block_tree [aria-expanded="false"] > p:before,
+    .block_navigation .block_tree [aria-expanded="false"] > p:before {
+        @extend .fa-solid;
+        content: fa-content($fa-var-angle-left);
+    }
+}
+
+.block_navigation .block_tree p.hasicon,
+.block_settings .block_tree p.hasicon {
+    text-indent: -3px;
+
+    .icon {
+        margin-right: 2px;
+    }
+}
+
+.block.invisibleblock .card-title {
+    color: $text-muted;
+}
+
+@include media-breakpoint-down(sm) {
+    .block.card {
+        border-left: 0;
+        border-right: 0;
+    }
+}
+
+.block_social_activities li a.movehere,
+.block_site_main_menu li a.movehere {
+    display: block;
+    width: 100%;
+    height: 2rem;
+    border: 2px dashed $gray-800;
+    margin: 4px 0;
+}
+
+.pagelayout-embedded {
+    .has-fake-blocks {
+        padding: 1rem;
+        display: flex;
+    }
+
+    .has-fake-blocks .embedded-main {
+        order: 0;
+        width: calc(100% - #{$blocks-column-width});
+        margin-right: 1rem;
+    }
+
+    .embedded-blocks {
+        order: 1;
+        width: $blocks-column-width;
+    }
+
+    @media (max-width: 767.98px) {
+        .has-fake-blocks {
+            display: block;
+        }
+        .has-fake-blocks .embedded-main {
+            width: 100%;
+        }
+        .embedded-blocks {
+            width: 100%;
+        }
+    }
+}

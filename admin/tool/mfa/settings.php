@@ -25,6 +25,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// IOMAD
+require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+$companyid = iomad::get_my_companyid(context_system::instance(), false);
+if (!empty($companyid)) {
+    $postfix = "_$companyid";
+} else {
+    $postfix = "";
+}
+
 if ($hassiteconfig) {
     $ADMIN->add('tools', new admin_category('toolmfafolder', new lang_string('pluginname', 'tool_mfa'), false));
     $ADMIN->add('toolmfafolder', new admin_externalpage('tool_mfa_resetfactor',
@@ -38,31 +47,31 @@ if ($hassiteconfig) {
     $settings->add(new admin_setting_heading('tool_mfa/settings', $heading, ''));
 
     $name = new lang_string('settings:enabled', 'tool_mfa');
-    $settings->add(new admin_setting_configcheckbox('tool_mfa/enabled', $name, '', false));
+    $settings->add(new admin_setting_configcheckbox('tool_mfa/enabled' . $postfix, $name, '', false));
 
     $name = new lang_string('settings:lockout', 'tool_mfa');
     $description = new lang_string('settings:lockout_help', 'tool_mfa');
-    $settings->add(new admin_setting_configtext('tool_mfa/lockout', $name, $description, 10, PARAM_INT));
+    $settings->add(new admin_setting_configtext('tool_mfa/lockout' . $postfix, $name, $description, 10, PARAM_INT));
 
     $name = new lang_string('settings:debugmode', 'tool_mfa');
     $description = new lang_string('settings:debugmode_help', 'tool_mfa');
-    $settings->add(new admin_setting_configcheckbox('tool_mfa/debugmode', $name, $description, false));
+    $settings->add(new admin_setting_configcheckbox('tool_mfa/debugmode' . $postfix, $name, $description, false));
 
     $name = new lang_string('settings:redir_exclusions', 'tool_mfa');
     $description = new lang_string('settings:redir_exclusions_help', 'tool_mfa');
-    $settings->add(new admin_setting_configtextarea('tool_mfa/redir_exclusions', $name, $description, ''));
+    $settings->add(new admin_setting_configtextarea('tool_mfa/redir_exclusions' . $postfix, $name, $description, ''));
 
     $name = new lang_string('settings:guidancecheck', 'tool_mfa');
     $description = new lang_string('settings:guidancecheck_help', 'tool_mfa');
-    $settings->add(new admin_setting_configcheckbox('tool_mfa/guidance', $name, $description, false));
+    $settings->add(new admin_setting_configcheckbox('tool_mfa/guidance' . $postfix, $name, $description, false));
 
     $name = new lang_string('settings:guidancepage', 'tool_mfa');
     $description = new lang_string('settings:guidancepage_help', 'tool_mfa');
-    $settings->add(new admin_setting_confightmleditor('tool_mfa/guidancecontent', $name, $description, '', PARAM_RAW));
+    $settings->add(new admin_setting_confightmleditor('tool_mfa/guidancecontent' . $postfix, $name, $description, '', PARAM_RAW));
 
     $name = new lang_string('settings:guidancefiles', 'tool_mfa');
     $description = new lang_string('settings:guidancefiles_help', 'tool_mfa');
-    $settings->add(new admin_setting_configstoredfile('tool_mfa/guidancefiles', $name, $description, 'guidance', 0, [
+    $settings->add(new admin_setting_configstoredfile('tool_mfa/guidancefiles' . $postfix, $name, $description, 'guidance', 0, [
         'maxfiles' => -1,
             ]));
 

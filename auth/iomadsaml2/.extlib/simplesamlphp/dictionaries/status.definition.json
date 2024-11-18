@@ -1,0 +1,44 @@
+{
+	"header_saml20_sp": {
+		"en": "SAML 2.0 SP Demo Example"
+	},
+	"header_shib": {
+		"en": "Shibboleth demo"
+	},
+	"header_diagnostics": {
+		"en": "SimpleSAMLphp Diagnostics"
+	},
+	"some_error_occurred": {
+		"en": "Some error occurred"
+	},
+	"intro": {
+		"en": "Hi, this is the status page of SimpleSAMLphp. Here you can see if your session is timed out, how long it lasts until it times out and all the attributes that are attached to your session."
+	},
+	"validfor": {
+		"en": "Your session is valid for %SECONDS% seconds from now."
+	},
+	"sessionsize": {
+		"en": "Session size: %SIZE%"
+	},
+	"subject_header": {
+		"en": "SAML Subject"
+	},
+	"subject_notset": {
+		"en": "not set"
+	},
+	"subject_format": {
+		"en": "Format"
+	},
+	"attributes_header": {
+		"en": "Your attributes"
+	},
+	"logout": {
+		"en": "Logout"
+	},
+	"authData_header": {
+		"en": "AuthData"
+	},
+	"authData_summary": {
+		"en": "Click to view AuthData"
+	}
+}

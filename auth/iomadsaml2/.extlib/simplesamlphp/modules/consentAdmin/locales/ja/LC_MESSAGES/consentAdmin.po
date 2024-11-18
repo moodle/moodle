@@ -1,0 +1,158 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: ja\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consentAdmin:consentadmin:status_header}"
+msgstr "承認ステータス"
+
+msgid "{consentAdmin:consentadmin:attributes_text}"
+msgstr "属性"
+
+msgid "{consentAdmin:consentadmin:service_provider_header}"
+msgstr "サービスプロバイダ"
+
+msgid "{consentAdmin:consentadmin:removed}"
+msgstr "承認が削除されました"
+
+msgid "{consentAdmin:consentadmin:consentadmin_header}"
+msgstr "承認管理"
+
+msgid "{consentAdmin:consentadmin:show}"
+msgstr "表示"
+
+msgid "{consentAdmin:consentadmin:attribute_org}"
+msgstr "組織"
+
+msgid "{consentAdmin:consentadmin:attribute_injected}"
+msgstr "挿入された属性"
+
+msgid "{consentAdmin:consentadmin:show_hide_attributes}"
+msgstr "表示/非表示属性"
+
+msgid "{consentAdmin:consentadmin:consentadmin_purpose}"
+msgstr "サービスの目的: "
+
+msgid "{consentAdmin:consentadmin:hide}"
+msgstr "非表示"
+
+msgid "{consentAdmin:consentadmin:sp_empty_description}"
+msgstr "(記述無し)"
+
+msgid "{consentAdmin:consentadmin:service_providers_for}"
+msgstr "サービスプロバイダ - "
+
+msgid "{consentAdmin:consentadmin:consentadmin_description2}"
+msgstr ""
+"<h3>承認の削除方法</h3> 該当するサービスプロバイダのチェックを外します。<h3>リンク</h3> <ul> <li><a "
+"href=\"https://www.wayf.dk\">Start</a> </li> <li><a "
+"href=\"https://www.wayf.dk/index.php/en/about-wayf/faq-frequently-asked-"
+"questions\">FAQ</a> </li> </ul> "
+
+msgid "{consentAdmin:consentadmin:login}"
+msgstr "ログイン"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description1}"
+msgstr "ここは、サービスプロバイダの承認を表示したり編集することが出来ます。"
+
+msgid "{consentAdmin:consentadmin:updated}"
+msgstr "承認が更新されました"
+
+msgid "{consentAdmin:consentadmin:unknown}"
+msgstr "不明…"
+
+msgid "{consentAdmin:consentadmin:added}"
+msgstr "承認が追加されました"
+
+msgid "{consentAdmin:consentadmin:attribute_id}"
+msgstr "識別子"
+
+msgid "Injected attribut"
+msgstr "挿入された属性"
+
+msgid "Show"
+msgstr "表示"
+
+msgid "Consent Added"
+msgstr "承認が追加されました"
+
+msgid "Consent Administration"
+msgstr "承認管理"
+
+msgid "Here you can view and edit your consent for the Service Providers."
+msgstr "ここは、サービスプロバイダの承認を表示したり編集することが出来ます。"
+
+msgid "Unknown ..."
+msgstr "不明…"
+
+msgid "Identity"
+msgstr "識別子"
+
+msgid "The purpose of the service is"
+msgstr "サービスの目的: "
+
+msgid "Hide"
+msgstr "非表示"
+
+msgid "Service Provider"
+msgstr "サービスプロバイダ"
+
+msgid "Service Providers for"
+msgstr "サービスプロバイダ - "
+
+msgid "login"
+msgstr "ログイン"
+
+msgid "(name not specified)"
+msgstr "(名前無し)"
+
+msgid "Consent Updated"
+msgstr "承認が更新されました"
+
+msgid "Consent status"
+msgstr "承認ステータス"
+
+msgid "(no description)"
+msgstr "(記述無し)"
+
+msgid "attributes"
+msgstr "属性"
+
+msgid ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+msgstr ""
+"<h3>承認の削除方法</h3> 該当するサービスプロバイダのチェックを外します。<h3>リンク</h3> <ul> <li><a "
+"href=\"https://www.wayf.dk\">Start</a> </li> <li><a "
+"href=\"https://www.wayf.dk/index.php/en/about-wayf/faq-frequently-asked-"
+"questions\">FAQ</a> </li> </ul> "
+
+msgid "Consent Removed"
+msgstr "承認が削除されました"
+
+msgid "show/hide attributes"
+msgstr "表示/非表示属性"
+
+msgid "Organisation"
+msgstr "組織"
+

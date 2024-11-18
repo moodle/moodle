@@ -1,0 +1,7 @@
+preprodwarning-main:
+    path:       /warning
+    defaults:   { _controller: 'SimpleSAML\Module\preprodwarning\Controller\PreProdWarning::main' }
+
+preprodwarning-main-legacy:
+    path:       /showwarning.php
+    defaults:   { _controller: 'SimpleSAML\Module\preprodwarning\Controller\PreProdWarning::main' }

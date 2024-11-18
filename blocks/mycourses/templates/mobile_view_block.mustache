@@ -1,0 +1,89 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+ * @package   block_mycourses
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+{{!
+    @template block_mycourses/main
+
+    This template renders the main content area for the mycourses block.
+
+    Example context (json):
+    {
+        "pages": [
+            {
+                "value": "inprogress",
+                "selected": 1,
+                "label": "In progress"
+            }
+        ],
+        "pagecontent": {
+            "courses": [
+                {
+                    "url": "http://something",
+                    "image": "http://something",
+                    "fullname": "Course one",
+                    "progress": 24
+                }
+            ]
+        }
+    }
+}}
+{{=<% %>=}}
+<div>
+    <ion-item-divider class="item item-divider item-md item-divider-md">
+        <ion-label class="label">
+            <h2>{{ 'plugin.block_mycourses.pluginname' | translate }}</h2>
+        </ion-label>
+    </ion-item-divider>
+    <ion-card>
+        <ion-list>
+            <ion-select (ionChange)="updateContent({page: $event})" interface="popover" class="mycourseselector">
+                <%#pages%>
+                <ion-option value="<%value%>"<%#selected%> selected<%/selected%>><%label%></ion-option>
+                <%/pages%>
+            </ion-select>
+            <%#pagecontent.courses%>
+            <%#availablepage%>
+            <ion-item>
+                <img item-start src="<% image %>" class="mycourseimage" />
+                <button ion-item core-site-plugins-call-ws-new-content name="enrol_license_enrol_user"
+                        [params]="{courseid: <%id%>}" confirmMessage="{{ 'plugin.block_mycourses.startcourse' | translate }}"
+                        samePage="true" (onSuccess)="CoreCourseHelperProvider.getAndOpenCourse(undefined, <%id%>)">
+                    <%fullname%>
+                </button>
+            </ion-item>
+            <%/availablepage%>
+            <%^availablepage%>
+            <ion-item>
+                <a ion-item href="<%url%>" core-link capture="true">
+                    <img item-start src="<% image %>" class="mycourseimage" />
+                    <%fullname%><%#progress%> <ion-badge item-end><%progress%>%</ion-badge><%/progress%>
+                </a>
+            </ion-item>
+            <%/availablepage%>
+            <%/pagecontent.courses%>
+            <%^pagecontent.courses%>
+            <ion-item>
+                <%nocourses%>
+            </ion-item>
+            <%/pagecontent.courses%>
+        </ion-list>
+    </ion-card>
+</div>

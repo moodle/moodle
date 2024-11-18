@@ -1,0 +1,35 @@
+{% set pagetitle = 'Cron result page'|trans %}
+{% extends "base.twig" %}
+
+{% block content %}
+
+<p>
+{{ 'Here are the result for the cron job execution:'|trans }}
+</p>
+
+<div class="code-box code-box-content">
+<h2>{{ 'Cron report'|trans }}</h2>
+
+<code>
+{{ 'Cron ran at'|trans }} {{ time }}
+<p>
+URL: {{ url }}
+</p>
+<p>
+Tag: {{ tag }}
+</p>
+<p><ul>
+{% for sum in summary %}
+        <li> {{ sum }}</li>
+{% endfor %}
+</ul>
+</p><br />
+</code>
+</div>
+
+{% if mail_required == true and mail_sent == false %}
+<div class="message-box error">
+Cron-report was not emailed due to an error.
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,844 @@
+@import "../../node_modules/reset-css/sass/_reset.scss";
+@import "../../node_modules/purecss/build/pure.css";
+$fa-font-path: '../fonts/';
+@import "../../node_modules/\@fortawesome/fontawesome-free/scss/fontawesome";
+@import "../../node_modules/\@fortawesome/fontawesome-free/scss/solid";
+@import "../../node_modules/highlight.js/styles/zenburn.css";
+
+/*************
+ * VARIABLES *
+ *************/
+
+$lighYellow: "#fffdbf";
+
+/************************************************************
+ * GENERAL
+ ************************************************************/
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: sans-serif;
+  line-height: 1.5;
+  min-height: 100%;
+}
+
+.wrap {
+  width: 80%;
+  max-width: 1100px;
+  margin: auto;
+  position: relative;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.center {
+  padding: auto;
+  text-align: center;
+}
+
+.v-center { /*specify a height to center vertically*/
+  display: table-cell;
+  vertical-align: middle;
+}
+
+i {
+  font-style: italic;
+}
+
+h1 {
+  margin: 1em 0;
+  font-size: 2em;
+  font-weight: 900;
+}
+
+h2 {
+  margin: 1em 0;
+  font-size: 1.5em;
+  font-weight: 700;
+  color: #1c1c1c;
+  border-bottom: solid 1px #bbb;
+}
+
+h3 {
+  font-weight: 500;
+  color: #2e3436;
+  padding: 0;
+  margin-top: 0;
+}
+
+p {
+  padding: 0.5em 0;
+  margin-bottom: 1em;
+}
+
+a {
+  color: midnightblue;
+  &:hover,
+  &:focus,
+  &.pure-menu-link:hover,
+  &.pure-menu-link:focus,
+  .pure-menu-selected &.pure-menu-link:hover,
+  .pure-menu-selected &.pure-menu-link:focus {
+    color: white;
+    background-color: #444444;
+    padding: .5em 1em;
+  }
+  &:hover,
+  &:focus {
+    padding: .15rem;
+  }
+}
+
+.overflow {
+  overflow: hidden;
+}
+
+ul {
+  padding-left: 1.5em;
+}
+
+strong, b {
+  font-weight: bold;
+}
+
+pre, code, kbd, samp, tt {
+  font-family: monospace, monospace;
+  font-size: .9rem;
+  //background-color: rgba(0, 0, 0, .1);
+  padding: 0 .2rem;
+}
+.xmldata {
+  font-family: monospace;
+}
+
+/************************************************************
+ * BUTTONS
+ ************************************************************/
+.code-box-title .clipboard-btn {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  position: absolute;
+  right: 0;
+  height: inherit;
+  margin-top: -2em;
+  margin-right: 4px;
+}
+
+.pure-button {
+  &:hover, &:focus {
+    background-color: #555;
+    padding: .5em 1em;
+    color: #fff;
+  }
+}
+
+.pure-button-red {
+  background-color: rgb(219, 1, 0);
+  color: #fff;
+  &:hover, &:focus {
+    background-color: #555;
+    padding: .5em 1em;
+  }
+}
+
+.pure-button.hollow {
+  background-color: #FFFFFF;
+  color: #6f6f6f;
+  border: solid 1px #E6E6E6;
+}
+
+.pure-button.hollow:hover {
+  background-image: none;
+}
+
+.pure-button.hollow[disabled] {
+  cursor: auto;
+  opacity: initial;
+  pointer-events: auto;
+  -webkit-user-drag: auto;
+  -webkit-user-select: auto;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+.pure-button.hljs {
+  display: inline-block;
+  border: 0;
+  background-color: transparent;
+  &:hover, &:focus {
+    background-color: #f0f0f0;
+    color: black;
+  }
+}
+
+.pure-button-group .pure-button:first-child,
+.pure-button-group .pure-button:last-child {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+
+.pure-button-group.two-elements .pure-button {
+  margin: 0;
+  line-height: unset;
+  border: 1px solid #E6E6E6;
+}
+
+.pure-button-group.two-elements form {
+  display: inline;
+}
+
+.pure-button-group.two-elements .pure-button:first-child {
+  border-right: none;
+}
+
+.pure-button-group.two-elements .pure-button:last-child {
+  border-right: 1px solid #E6E6E6;
+}
+
+.pure-button-group .pure-button.show-files {
+  max-width: 450px;
+  overflow: hidden;
+}
+
+.top-right-corner {
+  position: absolute;
+  right: 1.75em;
+
+}
+
+/* ***********************************************************
+SLIDING SIDE-MENU FOR SMALL SCREENS
+************************************************************ */
+/*
+Add transition to containers so they can push in and out.
+*/
+#layout,
+#menu,
+#foot,
+.menu-link {
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  -ms-transition: all 0.2s ease-out;
+  -o-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
+
+/*
+This is the parent `<div>` that contains the menu and the content area.
+*/
+#layout.active #menu {
+  right: 11em;
+  width: 11em;
+}
+
+/*
+The `#menu` `<div>` is the parent `<div>` that contains the `.pure-menu` that
+appears on the left side of the page.
+*/
+#menu {
+  margin-right: -11em; /* "#menu" width */
+  width: 11em;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000; /* so the menu or its navicon stays above all content */
+  background: $secondaryBackground;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/*
+All anchors inside the menu should be styled like this.
+*/
+#menu a {
+  color: #ffffff;
+  border: none;
+  padding: 0.6em 0 0.6em 0.6em;
+}
+
+/*
+Remove all background/borders, since we are applying them to #menu.
+*/
+#menu .pure-menu,
+#menu .pure-menu ul {
+  border: none;
+  background: transparent;
+}
+
+/*
+Add that light border to separate items into groups.
+*/
+#menu .pure-menu ul,
+#menu .pure-menu .menu-item-divided {
+  border-top: 1px solid $transitionBackground;
+}
+
+/*
+This styles the selected menu item `<li>`.
+*/
+#menu .pure-menu-selected,
+#menu .pure-menu-heading {
+  background: $primaryBackground;
+  color: black;
+}
+
+/*
+This styles a link within a selected menu item `<li>`.
+*/
+#menu .pure-menu-selected a {
+  color: #fff;
+}
+
+/*
+This styles the menu heading.
+*/
+#menu .pure-menu-heading {
+  font-size: 110%;
+  color: #fff;
+  margin: 0;
+  text-transform: none;
+}
+
+.frontpage-menu .pure-menu-item {
+  border-bottom: 1px solid lightgrey;
+}
+
+.frontpage-menu .pure-menu-selected {
+  border-bottom: 1px solid black;
+  font-weight: bold;
+}
+
+/* -- Dynamic Button For Responsive Menu -------------------------------------*/
+
+/*
+The button to open/close the Menu is custom-made and not part of Pure. Here's
+how it works:
+*/
+
+/*
+`.menu-link` represents the responsive menu toggle that shows/hides on
+small screens.
+*/
+.menu-link {
+  position: relative;
+  display: block; /* show this only on small screens */
+  top: 0;
+  right: 0; /* "#menu width" */
+  background: transparent;
+  z-index: 10;
+  height: 2rem;
+  padding: 2rem 0;
+  text-decoration: none;
+  &:hover, &:focus {
+    padding: 2rem 0;
+    background: none !important;
+  }
+}
+
+.menu-link span:hover,
+.menu-link span:focus {
+  color: rgba(1, 1, 1, 0.8);
+}
+
+.menu-link span {
+  position: relative;
+  display: block;
+  color: #FFFFFF;
+}
+
+.menu-link span,
+.menu-link span:before,
+.menu-link span:after {
+  background-color: transparent;
+}
+
+/* -- Responsive Styles (Media Queries) ------------------------------------- */
+
+@media screen and (max-width: 40em) {
+  #layout.active {
+    position: relative;
+    right: 11em;
+    /* moves to right as many ems as the one used by the menu */
+  }
+  #menuLink.menu-link.active {
+    position: fixed;
+    right: 13em;
+  }
+  #foot.active {
+    margin-right: 11em;
+  }
+}
+
+/* ***********************************************************
+HEADER
+************************************************************ */
+#header {
+  height: 6rem;
+  background: linear-gradient(141deg, $primaryBackground 0%, $transitionBackground 51%, $secondaryBackground 75%)
+}
+
+.logo-header {
+  min-width: 8em;
+  height: 6rem;
+  max-width: 70%;
+}
+
+#logo {
+  font-family: sans-serif;
+  font-size: 2.5em;
+  color: white;
+  text-shadow: 0 3px 2px rgba(83, 41, 0, 1);
+}
+
+.simple {
+  font-weight: 300;
+}
+
+.saml {
+  font-family: Verdana;
+  letter-spacing: -0.12em;
+  font-weight: 600;
+  margin-left: -0.05em;
+}
+
+.language-menu {
+  font-family: "Font Awesome 5 Free", sans-serif;
+  font-weight: 400;
+  min-width: 10rem;
+}
+
+.language-bar {
+  height: 6rem;
+}
+
+/* ***********************************************************
+CONTENT
+************************************************************ */
+#layout {
+  right: 0;
+  padding-right: 0;
+}
+
+#content {
+  padding-top: 2em;
+  padding-bottom: 2rem;
+}
+
+.message-box {
+  background-color: #f4f4f4;
+  border-left-color: #444444;
+  border-left-style: solid;
+  border-left-width: 0.3125rem;
+  box-shadow: 0 5px 8px -6px rgba(0, 0, 0, 0.2);
+  margin: 1rem 0;
+  padding: 1.3rem;
+  position: relative;
+}
+
+.message-box.error {
+  background-color: #f7e4e1;
+  border-left-color: #cc4b37;
+}
+
+.message-box.warning {
+  background-color: $lighYellow;
+  border-left-color: #f9f56b;
+}
+
+.message-box.success {
+  background-color: #daf7e6;
+  border-left-color: #46cc48;
+}
+
+.auth_methods {
+  margin-top: 2em;
+  width: 35%;
+}
+
+.code-box {
+  margin-bottom: 1em;
+  border: 1px solid #ccc;
+  a {
+    padding: .5em;
+  }
+}
+
+.code-box-content {
+  font-size: 1em;
+  line-height: 1.15;
+  padding: 0.5em 1em;
+  display: inline-block;
+  min-height: 1em;
+  width: 100%;
+  height: 100%;
+  white-space: pre-wrap;
+  font-family: monospace;
+  &::selection {
+    color: black;
+    background: $lighYellow;
+  }
+}
+
+.code-box-title {
+  border-bottom: 1px solid #ccc;
+  background-color: #e0e0e0;
+  padding: 0.5em 0 0.5em 0.5em;
+}
+
+pre#xmlmetadata {
+  width: 98%;
+}
+
+/* ***********************************************************
+FOOTER
+************************************************************ */
+#layout {
+  min-height: 100%;
+  margin: 0 auto -6rem auto; /*negative margin = footer height + padding-top + padding-bottom*/
+}
+
+#bottom, #push {
+  height: 6rem;
+}
+
+#footer {
+  width: 100%;
+  background: linear-gradient(141deg, $primaryBackground 0%, $transitionBackground 51%, $secondaryBackground 75%);
+  height: 4rem;
+  padding: 2rem 0 0;
+  text-align: center;
+  color: white;
+
+  a, a:visited {
+    color: white;
+    &:hover, &:focus {
+      background-color: white;
+      color: black;
+      padding: .15rem;
+      margin-left: -.15rem;
+      margin-top: -.15rem;
+      text-decoration: none;
+    }
+  }
+}
+
+.copyrights {
+  padding-top: .5rem;
+  height: 3.5rem;
+  font-size: .8rem;
+}
+
+.logo-footer-right {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+.logo-footer {
+  height: 4rem;
+}
+
+/* ***********************************************************
+FORMS
+************************************************************ */
+.text-area {
+  margin-top: .5em;
+  width: 100%;
+  font-size: 0.9em;
+  line-height: 1.15;
+}
+
+.file-upload input[type="url"][disabled] {
+  cursor: pointer;
+  color: inherit;
+}
+
+input[type="file"] {
+  color: black;
+}
+
+.form-align {
+  position: relative;
+}
+
+.center-form {
+  display: inline-block;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.v-center-right {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+/* PURE */
+.pure-button,
+.pure-form input.edge,
+.pure-form textarea.edge {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+
+.pure-form-aligned .pure-controls {
+  margin: 0 0 0 11em;
+}
+
+.pure-select {
+  float: right;
+}
+
+div .item {
+  float: left;
+}
+
+/* ***********************************************************
+IMAGES
+************************************************************ */
+.fa {
+  font-family: "Font Awesome 5 Free" !important;
+  font-weight: 400;
+}
+
+span.fa, i.fa {
+  padding: 0 0.5em;
+}
+
+.message-box span.fa,
+.message-box i.fa {
+  padding: 0;
+}
+
+/* ***********************************************************
+TABLES
+************************************************************ */
+.pure-table-attributes {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.attrname {
+  text-align: right;
+}
+
+.attrvalue {
+  overflow-wrap: break-word;
+}
+
+table.attributes ul {
+  padding: inherit;
+}
+
+/* ***********************************************************
+MEDIA QUERIES
+************************************************************ */
+
+@media screen and (max-width: 40em) {
+  .pure-form .pure-input-sm-1-1 {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 40em) {
+  .wrap {
+    width: 90%;
+  }
+  .pure-form-aligned .pure-controls {
+    margin: 0.5em 0 0;
+    float: left;
+  }
+  #layout {
+    padding-top: 0;
+    margin-bottom: -4rem;
+  }
+  .auth_methods {
+    width: 60%;
+  }
+  #logo {
+    font-size: 1.8em;
+  }
+  #footer {
+    height: 2.5rem;
+    padding-top: 1.5rem;
+    .copyrights {
+      height: 1rem;
+      padding-top: 0;
+    }
+  }
+}
+
+@media screen and (max-width: 0em), screen and (min-width: 40em) {
+  .show-for-small-only {
+    display: none !important;
+  }
+  .input-sm-placeholder {
+    display: inline-block;
+  }
+}
+
+@media screen and (min-width: 40em) {
+  .hide-for-large {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 40em) {
+  .show-for-large {
+    display: none !important;
+  }
+}
+
+/*************************************************
+ * Specifics for modules/core/frontpage*
+ ************************************************/
+
+.float-r {
+  float: right;
+}
+
+.enablebox table {
+  border: 1px solid #eee;
+
+  margin-left: 1em;
+}
+
+.enablebox.mini table {
+  float: right;
+}
+
+.enablebox tr td {
+  padding: .5px 1em 1px .5em;
+  margin: 0;
+}
+
+.enablebox {
+  font-size: 85%;
+}
+
+.enablebox tr.enabled td {
+  background: #eee;
+}
+
+.enablebox tr.disabled td {
+  background: #ccc;
+}
+
+fieldset.fancyfieldset {
+  padding-left: 1.5em;
+  //margin: 2em 1em 1em 0;
+  //border: 1px solid #bbb;
+}
+
+fieldset.fancyfieldset legend {
+  //margin-left: 2em;
+  padding: 3px 2em 3px 0;
+  //border: 1px solid #bbb;
+  width: 100%;
+}
+
+dt {
+  font-weight: bold;
+}
+
+.frontpage-menu {
+  margin-bottom: 1em;
+}
+
+.entity-name, .entity-deprecated, .entity-expired {
+  font-weight: bold;
+}
+
+.entity-expired {
+  color: #500;
+}
+
+div.preferredidp {
+  border: 1px dashed #ccc;
+  background: #eee;
+  padding: 2px 2em 2px 2em;
+}
+
+
+/*********
+ * Utils *
+ *********/
+
+.clear {
+  clear: both;
+}
+
+.breathe-top {
+  margin-top: 1em;
+}
+
+.expandable {
+  border: solid 1px #bbb;
+  width: 100%;
+
+  .general {
+    padding: 1em;
+  }
+  .content {
+    display: none;
+    padding: 1em;
+  }
+  .expander {
+    cursor: pointer;
+    text-align: center;
+    padding: .25em;
+    display: block;
+    color: black;
+    background-color: #f4f4f4;
+    border-top: solid 1px #bbb;
+    &:focus, &:hover {
+      background-color: #555;
+      color: white;
+    }
+    &:after {
+      content: "\f078";
+      font-family: "Font Awesome 5 Free";
+      font-weight: 400;
+    }
+  }
+
+  &.expanded {
+    .content {
+      display: block;
+      border-left: solid .25em #555;
+      border-right: solid .25em #555;
+    }
+    .expander {
+      border-bottom: none;
+      border-top: solid 1px #bbb;
+      border-left: solid .25em #555;
+      border-right: solid .25em #555;
+      &:after {
+        content: "\f077";
+      }
+    }
+  }
+}
+
+.hidden {
+  display: none;
+}

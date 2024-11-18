@@ -1,0 +1,65 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: de\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{cron:cron:cron_report_title}"
+msgstr "Cron-Bericht"
+
+msgid "{cron:cron:ran_text}"
+msgstr "Cron ausgeführt um"
+
+msgid "{cron:cron:cron_suggestion}"
+msgstr "Hier ist ein Vorschlag für eine crontab-Datei:"
+
+msgid "{cron:cron:run_text}"
+msgstr "Führe cron aus:"
+
+msgid "{cron:cron:cron_execution}"
+msgstr "Klicken Sie hier um die cron-jobs auszuführen:"
+
+msgid "{cron:cron:cron_info}"
+msgstr "Cron ist ein Weg, Dinge regelmäßig auf Unix-Systemen auszuführen."
+
+msgid "{cron:cron:cron_result_title}"
+msgstr "Hier sind die Ergebnisse für die Ausführung des cron-jobs:"
+
+msgid "{cron:cron:cron_header}"
+msgstr "Cron Ergebnisseite"
+
+msgid "Cron is a way to run things regularly on unix systems."
+msgstr "Cron ist ein Weg, Dinge regelmäßig auf Unix-Systemen auszuführen."
+
+msgid "Run cron:"
+msgstr "Führe cron aus:"
+
+msgid "Cron ran at"
+msgstr "Cron ausgeführt um"
+
+msgid "Cron report"
+msgstr "Cron-Bericht"
+
+msgid "Here is a suggestion for a crontab file:"
+msgstr "Hier ist ein Vorschlag für eine crontab-Datei:"
+
+msgid "Click here to run the cron jobs:"
+msgstr "Klicken Sie hier um die cron-jobs auszuführen:"
+
+msgid "Here are the result for the cron job execution:"
+msgstr "Hier sind die Ergebnisse für die Ausführung des cron-jobs:"
+
+msgid "Cron result page"
+msgstr "Cron Ergebnisseite"
+

@@ -799,8 +799,16 @@ class core_course_renderer extends plugin_renderer_base {
         $subcategories = array();
         if (!$chelper->get_categories_display_option('nodisplay')) {
             $subcategories = $coursecat->get_children($chelper->get_categories_display_options());
+            $subcategories = $coursecat->get_children();
         }
-        $totalcount = $coursecat->get_children_count();
+
+        // IOMAD:  Filter out unwanted categories
+        if (!is_siteadmin()) {
+            $subcategories = iomad::iomad_filter_categories($subcategories);
+        }
+
+        //$totalcount = $coursecat->get_children_count();
+        $totalcount = count($subcategories);
         if (!$totalcount) {
             // Note that we call core_course_category::get_children_count() AFTER core_course_category::get_children()
             // to avoid extra DB requests.
@@ -935,7 +943,9 @@ class core_course_renderer extends plugin_renderer_base {
         if (empty($coursecat->visible)) {
             $classes[] = 'dimmed_category';
         }
-        if ($chelper->get_subcat_depth() > 0 && $depth >= $chelper->get_subcat_depth()) {
+
+        // IOMAD - changing the way categories get loaded as otherwise it results in a _lot_ of DB calls on the front page.
+        //if ($chelper->get_subcat_depth() > 0 && $depth >= $chelper->get_subcat_depth()) {
             // do not load content
             $categorycontent = '';
             $classes[] = 'notloaded';
@@ -944,16 +954,16 @@ class core_course_renderer extends plugin_renderer_base {
                 $classes[] = 'with_children';
                 $classes[] = 'collapsed';
             }
-        } else {
-            // load category content
-            $categorycontent = $this->coursecat_category_content($chelper, $coursecat, $depth);
-            $classes[] = 'loaded';
-            if (!empty($categorycontent)) {
-                $classes[] = 'with_children';
-                // Category content loaded with children.
-                $this->categoryexpandedonload = true;
-            }
-        }
+        //} else {
+            //// load category content
+            //$categorycontent = $this->coursecat_category_content($chelper, $coursecat, $depth);
+            //$classes[] = 'loaded';
+            //if (!empty($categorycontent)) {
+                //$classes[] = 'with_children';
+                //// Category content loaded with children.
+                //$this->categoryexpandedonload = true;
+            //}
+        //}
 
         // Make sure JS file to expand category content is included.
         $this->coursecat_include_js();
@@ -1004,7 +1014,6 @@ class core_course_renderer extends plugin_renderer_base {
         if (empty($categorycontent)) {
             return '';
         }
-
         // Start content generation
         $content = '';
         $attributes = $chelper->get_and_erase_attributes('course_category_tree clearfix');
@@ -1367,6 +1376,9 @@ class core_course_renderer extends plugin_renderer_base {
             $rcourses = get_my_remotecourses($USER->id);
             $rhosts   = get_my_remotehosts();
         }
+
+        //  IOMAD - deal with licensed courses
+        iomad::iomad_add_license_courses($courses);
 
         if (!empty($courses) || !empty($rcourses) || !empty($rhosts)) {
 

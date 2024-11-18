@@ -1,0 +1,13 @@
+# execute from the root directory
+# ./vendor/bin/apigen generate
+source:         src
+
+destination:    ../docs/riak-php-client
+
+templateTheme:  bootstrap
+
+title:          Official Riak Client for PHP
+
+tree:           true
+
+baseUrl:       https://basho.github.io/riak-php-client/

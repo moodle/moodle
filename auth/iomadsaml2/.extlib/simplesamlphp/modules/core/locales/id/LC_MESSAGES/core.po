@@ -1,0 +1,534 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: id\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{core:frontpage:link_phpinfo}"
+msgstr "PHP info"
+
+msgid "{core:no_state:report_text}"
+msgstr ""
+"Jika masalah ini tetap terjadi, anda dapat melaporkannnya ke system "
+"administrator."
+
+msgid "{core:no_state:cause_backforward}"
+msgstr "Menggunakan tombol back dan forward pada browser web."
+
+msgid "{core:no_metadata:not_found_for}"
+msgstr "Kita tidak dapat menemukan metadata untuk entity"
+
+msgid "{core:frontpage:link_shib13example}"
+msgstr "Contoh Shibboleth 1.3 SP  - Tes login melalui IdP Shib Anda"
+
+msgid "{core:no_state:suggestions}"
+msgstr "Saran untuk memperbaiki masalah ini:"
+
+msgid "{core:frontpage:login_as_admin}"
+msgstr "Login sebagai administrator"
+
+msgid "{core:short_sso_interval:warning}"
+msgstr ""
+"Kami telah mendeteksi kalau beberapa detik yang lalu sejak autentifikasi "
+"yang anda lakukan pada service provider ini, dan oleh karena itu "
+"diasumsikan ada masalah dengan SP ini"
+
+msgid "{core:frontpage:link_doc_sp}"
+msgstr "Menggunakan SimpleSAMLphp sebagai Service Provider"
+
+msgid "{core:frontpage:link_meta_saml2sphosted}"
+msgstr "Metadata Service Provider SAML 2.0 Hosted (secara otomatis digenerate)"
+
+msgid "{core:frontpage:link_openidprovider}"
+msgstr "Situs Provider OpenID - Versi Alpa (Kode untuk tes)"
+
+msgid "{core:frontpage:link_doc_install}"
+msgstr "Instalasi SimpleSAMLphp"
+
+msgid "{core:frontpage:link_diagnostics}"
+msgstr "Diagnostik pada hostname, port dan protokol"
+
+msgid "{core:no_state:suggestion_goback}"
+msgstr "Kembali ke halaman sebelumnya dan coba lagi."
+
+msgid "{core:no_state:causes}"
+msgstr "Error ini mungkin disebabkan oleh:"
+
+msgid "{core:frontpage:link_meta_saml2idphosted}"
+msgstr "Metadata Identity Provider SAML 2.0 Hosted (secara otomatis digenerate)"
+
+msgid "{core:frontpage:optional}"
+msgstr "Opsional"
+
+msgid "{core:frontpage:link_meta_shib13sphosted}"
+msgstr ""
+"Metadata Service Provider Shibboleth 1.3  Hosted (secara otomatis "
+"digenerate)"
+
+msgid "{core:frontpage:doc_header}"
+msgstr "Dokumentasi"
+
+msgid "{core:frontpage:link_doc_advanced}"
+msgstr "Fitur Lanjutan SimpleSAMLphp"
+
+msgid "{core:frontpage:required_ldap}"
+msgstr "Diperlukan untuk LDAP"
+
+msgid "{core:frontpage:authtest}"
+msgstr "Memerika sumber autentifikasi yang telah dikonfigurasi"
+
+msgid "{core:frontpage:link_meta_overview}"
+msgstr "Ringkasan Metadata dari instalasi Anda. Memeriksa file metadata Anda"
+
+msgid "{core:frontpage:configuration}"
+msgstr "Konfigurasi"
+
+msgid "{core:frontpage:welcome}"
+msgstr "Selamat Datang"
+
+msgid "{core:frontpage:link_doc_shibsp}"
+msgstr "Mengkonfigurasi Shibboleth 1.3 SP untuk bekerja dengan SimpleSAMLphp IdP"
+
+msgid "{core:no_state:header}"
+msgstr "Informasi kondisi/state hilang"
+
+msgid "{core:frontpage:metadata_header}"
+msgstr "Metadata"
+
+msgid "{core:frontpage:link_doc_maintenance}"
+msgstr "Konfigurasi dan Pemeliharaan SimpleSAMLphp"
+
+msgid "{core:frontpage:link_configcheck}"
+msgstr "Pemeriksaan konfigurasi SimpleSAMLphp"
+
+msgid "{core:frontpage:page_title}"
+msgstr "Halaman instalasi SimpleSAMLphp"
+
+msgid "{core:no_cookie:header}"
+msgstr "Cookie hilang"
+
+msgid "{core:frontpage:warnings}"
+msgstr "Peringatan-Peringatan"
+
+msgid "{core:frontpage:link_xmlconvert}"
+msgstr "Konverter XML ke metadata SimpleSAMLphp"
+
+msgid "{core:frontpage:link_cleardiscochoices}"
+msgstr "Hapus pilihan IdP saya di IdP penemuan layanan"
+
+msgid "{core:frontpage:loggedin_as_admin}"
+msgstr "Anda login sebagai administrator"
+
+msgid "{core:frontpage:auth}"
+msgstr "Autentifikasi"
+
+msgid "{core:no_metadata:suggestion_user_link}"
+msgstr ""
+"Jika adalah user yang menerika error ini setelah mengklik link pada "
+"sebuah situs, anda harus melaporkan error ini kepada pemilik situs "
+"tersebut"
+
+msgid "{core:no_state:description}"
+msgstr "Kita tidak dapat menemukan informasi kondisi/state dari request saat ini."
+
+msgid "{core:frontpage:show_metadata}"
+msgstr "Perlihatkan metadata"
+
+msgid "{core:no_state:suggestion_closebrowser}"
+msgstr "Tutup browser, dan coba lagi."
+
+msgid "{core:short_sso_interval:warning_header}"
+msgstr "Interval yang terlalu pendek antara event single sign on."
+
+msgid "{core:frontpage:intro}"
+msgstr ""
+"<strong>Selamat</strong>, Anda telah berhasil melakukan instalasi "
+"SimpleSAMLphp. Ini adalah halaman awal instalasi Anda, dimana Anda akan "
+"menemukan link ke contoh-contoh tes, diagnostik, metadata dan bahkan link"
+" ke dokumentasi terkait."
+
+msgid "{core:no_metadata:header}"
+msgstr "Metadata tidak ditemukan"
+
+msgid "{core:frontpage:link_meta_shib13idphosted}"
+msgstr ""
+"Metadata Identity Provider Shibboleth 1.3 Hosted (secara otomatis "
+"digenerate)"
+
+msgid "{core:frontpage:required}"
+msgstr "Diperlukan"
+
+msgid "{core:no_metadata:config_problem}"
+msgstr ""
+"Sepertinya ini terjadi karena ada kesalahan konfigurasi baik pada service"
+" provider maupun pada identity provider"
+
+msgid "{core:frontpage:warnings_suhosin_url_length}"
+msgstr ""
+"Panjang parameter quert dibatasi oleh ekstensi Suhosin PHP. Tolong "
+"tingkatkan opsi suhosin.get.max_value_length setidaknya menjadi 2048 "
+"byte. "
+
+msgid "{core:frontpage:warnings_https}"
+msgstr ""
+"<strong>Anda tidak menggunakan HTTPS</strong> - komunikasi yang "
+"dienkripsi dengan user. HTTP bekerja baik-baik saja untuk tujuan "
+"pengetesan , tapi dalam lingkungan produksi, Anda sebaiknya menggunakan "
+"HTTPS. [ <a href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-maintenance"
+"\">Baca lebih lanjut tentang proses pemeliraan "
+"SimpleSAMLphp.</a> ]"
+
+msgid "{core:frontpage:federation}"
+msgstr "Federasi"
+
+msgid "{core:frontpage:required_radius}"
+msgstr "Diperlukan untuk Radius"
+
+msgid "{core:no_state:cause_openbrowser}"
+msgstr ""
+"Membuka web browser dengan tab-tab yang telah disimpan dari session "
+"sebelumnya."
+
+msgid "{core:frontpage:checkphp}"
+msgstr "Memerika instalasi PHP Anda"
+
+msgid "{core:frontpage:link_doc_idp}"
+msgstr "Menggunakan SimpleSAMLphp sebagai Identity Provider"
+
+msgid "{core:no_state:report_header}"
+msgstr "Laporkan error ini"
+
+msgid "{core:frontpage:link_saml2example}"
+msgstr "Contoh SAML 2.0 SP - Tes login melalui Idp Anda"
+
+msgid "{core:no_state:cause_nocookie}"
+msgstr "Cookie mungkin dinonaktifkan pada web browser ini."
+
+msgid "{core:frontpage:about_header}"
+msgstr "Tentang SimpleSAMLphp"
+
+msgid "{core:frontpage:about_text}"
+msgstr ""
+"SimpleSAMLphp sangat menarik, dimana Saya bisa membaca lebih jauh tentang"
+" hal ini ? Anda dapat mencari informasi lebih jauh tentang <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">SimpleSAMLphp pada blog Feide "
+"RnD</a> ke arah <a href=\"http://uninett.no\">UNINETT</a>."
+
+msgid "{core:no_metadata:suggestion_developer}"
+msgstr ""
+"Jika anda adalah pengembang yang mendeploy solusi sing-on, anda memiliki "
+"masalah dengan konfigurasi metadata.  Periksalah kalau metadata telah "
+"dikonfigurasi dengan benar baik pada sisi identity provider dan pada sisi"
+" service provider."
+
+msgid "{core:no_cookie:retry}"
+msgstr "Coba lagi"
+
+msgid "{core:frontpage:useful_links_header}"
+msgstr "Link-Link yang bermanfaat untuk membantu proses instalasi Anda"
+
+msgid "{core:frontpage:metadata}"
+msgstr "Metadata"
+
+msgid "{core:frontpage:recommended}"
+msgstr "Direkomendasikan"
+
+msgid "{core:frontpage:link_doc_googleapps}"
+msgstr "SimpleSAMLphp sebagai IdP untuk Google Apps for Education"
+
+msgid "{core:frontpage:tools}"
+msgstr "Peralatan"
+
+msgid "{core:short_sso_interval:retry}"
+msgstr "Coba login kembali"
+
+msgid "{core:no_cookie:description}"
+msgstr ""
+"Anda sepertinya menonaktifkan cookie di browser anda. Silahkan periksa  "
+"pengaturan pada browser anda, dan coba lagi."
+
+msgid "{core:frontpage:deprecated}"
+msgstr "Usang"
+
+msgid "You are logged in as administrator"
+msgstr "Anda login sebagai administrator"
+
+msgid "Go back to the previous page and try again."
+msgstr "Kembali ke halaman sebelumnya dan coba lagi."
+
+msgid "If this problem persists, you can report it to the system administrators."
+msgstr ""
+"Jika masalah ini tetap terjadi, anda dapat melaporkannnya ke system "
+"administrator."
+
+msgid "Welcome"
+msgstr "Selamat Datang"
+
+msgid "SimpleSAMLphp configuration check"
+msgstr "Pemeriksaan konfigurasi SimpleSAMLphp"
+
+msgid "Metadata overview for your installation. Diagnose your metadata files"
+msgstr "Ringkasan Metadata dari instalasi Anda. Memeriksa file metadata Anda"
+
+msgid "XML to SimpleSAMLphp metadata converter"
+msgstr "Konverter XML ke metadata SimpleSAMLphp"
+
+msgid "Required"
+msgstr "Diperlukan"
+
+msgid "Warnings"
+msgstr "Peringatan-Peringatan"
+
+msgid "Documentation"
+msgstr "Dokumentasi"
+
+msgid "Hosted Shibboleth 1.3 Service Provider Metadata (automatically generated)"
+msgstr ""
+"Metadata Service Provider Shibboleth 1.3  Hosted (secara otomatis "
+"digenerate)"
+
+msgid "PHP info"
+msgstr "PHP info"
+
+msgid "About SimpleSAMLphp"
+msgstr "Tentang SimpleSAMLphp"
+
+msgid "Hosted SAML 2.0 Service Provider Metadata (automatically generated)"
+msgstr "Metadata Service Provider SAML 2.0 Hosted (secara otomatis digenerate)"
+
+msgid "Retry login"
+msgstr "Coba login kembali"
+
+msgid "Required for LDAP"
+msgstr "Diperlukan untuk LDAP"
+
+msgid "Close the web browser, and try again."
+msgstr "Tutup browser, dan coba lagi."
+
+msgid "Federation"
+msgstr "Federasi"
+
+msgid "We were unable to locate the state information for the current request."
+msgstr "Kita tidak dapat menemukan informasi kondisi/state dari request saat ini."
+
+msgid "Delete my choices of IdP in the IdP discovery services"
+msgstr "Hapus pilihan IdP saya di IdP penemuan layanan"
+
+msgid ""
+"This is most likely a configuration problem on either the service "
+"provider or identity provider."
+msgstr ""
+"Sepertinya ini terjadi karena ada kesalahan konfigurasi baik pada service"
+" provider maupun pada identity provider"
+
+msgid "Configure Shibboleth 1.3 SP to work with SimpleSAMLphp IdP"
+msgstr "Mengkonfigurasi Shibboleth 1.3 SP untuk bekerja dengan SimpleSAMLphp IdP"
+
+msgid "Using the back and forward buttons in the web browser."
+msgstr "Menggunakan tombol back dan forward pada browser web."
+
+msgid "Metadata not found"
+msgstr "Metadata tidak ditemukan"
+
+msgid "Missing cookie"
+msgstr "Cookie hilang"
+
+msgid "Cookies may be disabled in the web browser."
+msgstr "Cookie mungkin dinonaktifkan pada web browser ini."
+
+msgid "Opened the web browser with tabs saved from the previous session."
+msgstr ""
+"Membuka web browser dengan tab-tab yang telah disimpan dari session "
+"sebelumnya."
+
+msgid "Tools"
+msgstr "Peralatan"
+
+msgid "Test configured authentication sources "
+msgstr "Memerika sumber autentifikasi yang telah dikonfigurasi"
+
+msgid ""
+"You appear to have disabled cookies in your browser. Please check the "
+"settings in your browser, and try again."
+msgstr ""
+"Anda sepertinya menonaktifkan cookie di browser anda. Silahkan periksa  "
+"pengaturan pada browser anda, dan coba lagi."
+
+msgid "Installing SimpleSAMLphp"
+msgstr "Instalasi SimpleSAMLphp"
+
+msgid "Deprecated"
+msgstr "Usang"
+
+msgid ""
+"<strong>Congratulations</strong>, you have successfully installed "
+"SimpleSAMLphp. This is the start page of your installation, where you "
+"will find links to test examples, diagnostics, metadata and even links to"
+" relevant documentation."
+msgstr ""
+"<strong>Selamat</strong>, Anda telah berhasil melakukan instalasi "
+"SimpleSAMLphp. Ini adalah halaman awal instalasi Anda, dimana Anda akan "
+"menemukan link ke contoh-contoh tes, diagnostik, metadata dan bahkan link"
+" ke dokumentasi terkait."
+
+msgid "This error may be caused by:"
+msgstr "Error ini mungkin disebabkan oleh:"
+
+msgid ""
+"<strong>You are not using HTTPS</strong> - encrypted communication with "
+"the user. HTTP works fine for test purposes, but in a production "
+"environment, you should use HTTPS. [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-"
+"maintenance\">Read more about SimpleSAMLphp maintenance</a> ]"
+msgstr ""
+"<strong>Anda tidak menggunakan HTTPS</strong> - komunikasi yang "
+"dienkripsi dengan user. HTTP bekerja baik-baik saja untuk tujuan "
+"pengetesan , tapi dalam lingkungan produksi, Anda sebaiknya menggunakan "
+"HTTPS. [ <a href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-maintenance"
+"\">Baca lebih lanjut tentang proses pemeliraan "
+"SimpleSAMLphp.</a> ]"
+
+msgid "Metadata"
+msgstr "Metadata"
+
+msgid "Retry"
+msgstr "Coba lagi"
+
+msgid "SimpleSAMLphp Maintenance and Configuration"
+msgstr "Konfigurasi dan Pemeliharaan SimpleSAMLphp"
+
+msgid "Diagnostics on hostname, port and protocol"
+msgstr "Diagnostik pada hostname, port dan protokol"
+
+msgid ""
+"If you are an user who received this error after following a link on a "
+"site, you should report this error to the owner of that site."
+msgstr ""
+"Jika adalah user yang menerika error ini setelah mengklik link pada "
+"sebuah situs, anda harus melaporkan error ini kepada pemilik situs "
+"tersebut"
+
+msgid "Using SimpleSAMLphp as an Identity Provider"
+msgstr "Menggunakan SimpleSAMLphp sebagai Identity Provider"
+
+msgid "Optional"
+msgstr "Opsional"
+
+msgid "Suggestions for resolving this problem:"
+msgstr "Saran untuk memperbaiki masalah ini:"
+
+msgid ""
+"This SimpleSAMLphp thing is pretty cool, where can I read more about it? "
+"You can find more information about it at the <a "
+"href=\"https://simplesamlphp.org/\">SimpleSAMLphp web page </a> over at "
+"<a href=\"http://uninett.no\">UNINETT</a>."
+msgstr ""
+"SimpleSAMLphp sangat menarik, dimana Saya bisa membaca lebih jauh tentang"
+" hal ini ? Anda dapat mencari informasi lebih jauh tentang <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">SimpleSAMLphp pada blog Feide "
+"RnD</a> ke arah <a href=\"http://uninett.no\">UNINETT</a>."
+
+msgid "Shibboleth 1.3 SP example - test logging in through your Shib IdP"
+msgstr "Contoh Shibboleth 1.3 SP  - Tes login melalui IdP Shib Anda"
+
+msgid "Authentication"
+msgstr "Autentifikasi"
+
+msgid "SimpleSAMLphp installation page"
+msgstr "Halaman instalasi SimpleSAMLphp"
+
+msgid "Show metadata"
+msgstr "Perlihatkan metadata"
+
+msgid "SimpleSAMLphp as an IdP for Google Apps for Education"
+msgstr "SimpleSAMLphp sebagai IdP untuk Google Apps for Education"
+
+msgid "State information lost"
+msgstr "Informasi kondisi/state hilang"
+
+msgid "Hosted SAML 2.0 Identity Provider Metadata (automatically generated)"
+msgstr "Metadata Identity Provider SAML 2.0 Hosted (secara otomatis digenerate)"
+
+msgid "OpenID Provider site - Alpha version (test code)"
+msgstr "Situs Provider OpenID - Versi Alpa (Kode untuk tes)"
+
+msgid "Required for Radius"
+msgstr "Diperlukan untuk Radius"
+
+msgid "We were unable to locate the metadata for the entity:"
+msgstr "Kita tidak dapat menemukan metadata untuk entity"
+
+msgid "SAML 2.0 SP example - test logging in through your IdP"
+msgstr "Contoh SAML 2.0 SP - Tes login melalui Idp Anda"
+
+msgid "Using SimpleSAMLphp as a Service Provider"
+msgstr "Menggunakan SimpleSAMLphp sebagai Service Provider"
+
+msgid ""
+"We have detected that there is only a few seconds since you last "
+"authenticated with this service provider, and therefore assume that there"
+" is a problem with this SP."
+msgstr ""
+"Kami telah mendeteksi kalau beberapa detik yang lalu sejak autentifikasi "
+"yang anda lakukan pada service provider ini, dan oleh karena itu "
+"diasumsikan ada masalah dengan SP ini"
+
+msgid "Recommended"
+msgstr "Direkomendasikan"
+
+msgid ""
+"If you are a developer who is deploying a single sign-on solution, you "
+"have a problem with the metadata configuration. Verify that metadata is "
+"configured correctly on both the identity provider and service provider."
+msgstr ""
+"Jika anda adalah pengembang yang mendeploy solusi sing-on, anda memiliki "
+"masalah dengan konfigurasi metadata.  Periksalah kalau metadata telah "
+"dikonfigurasi dengan benar baik pada sisi identity provider dan pada sisi"
+" service provider."
+
+msgid "SimpleSAMLphp Advanced Features"
+msgstr "Fitur Lanjutan SimpleSAMLphp"
+
+msgid "Too short interval between single sign on events."
+msgstr "Interval yang terlalu pendek antara event single sign on."
+
+msgid "Checking your PHP installation"
+msgstr "Memerika instalasi PHP Anda"
+
+msgid ""
+"The length of query parameters is limited by the PHP Suhosin extension. "
+"Please increase the suhosin.get.max_value_length option to at least 2048 "
+"bytes."
+msgstr ""
+"Panjang parameter quert dibatasi oleh ekstensi Suhosin PHP. Tolong "
+"tingkatkan opsi suhosin.get.max_value_length setidaknya menjadi 2048 "
+"byte. "
+
+msgid "Useful links for your installation"
+msgstr "Link-Link yang bermanfaat untuk membantu proses instalasi Anda"
+
+msgid "Configuration"
+msgstr "Konfigurasi"
+
+msgid "Hosted Shibboleth 1.3 Identity Provider Metadata (automatically generated)"
+msgstr ""
+"Metadata Identity Provider Shibboleth 1.3 Hosted (secara otomatis "
+"digenerate)"
+
+msgid "Login as administrator"
+msgstr "Login sebagai administrator"
+
+msgid "Report this error"
+msgstr "Laporkan error ini"
+

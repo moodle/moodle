@@ -1,0 +1,19 @@
+{% set pagetitle = 'X509 certificate authentication'|trans %}
+{% extends "base.twig" %}
+{% block content %}
+
+{% if errorcode -%}
+<h2>{% trans 'Error' %}</h2>
+<h3>{% trans errortitle %}</h3>
+<p>{% trans errordescr %}</p>
+{% endif -%}
+
+<h2>{% trans 'X509 certificate authentication' %}</h2>
+
+<p>{% trans 'X509 certificate authentication is required to access this service.' %}</p>
+
+<a href="{{ loginurl }}">
+{% trans 'Login' %}
+</a>
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% set pagetitle = 'SimpleSAMLphp'|trans %}
+{% extends "base.twig" %}
+
+{% block preload %}
+    <link href="{{ baseurlpath }}assets/css/oauth.css" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+    <h1>OAuth Client Registry</h1>
+    <p>Here you can register new OAuth Clients. You are successfully logged in as {{ userid|escape('html') }}</p>
+    <h2>Your clients</h2>
+
+    <table class="metalist" style="width: 100%;">
+    {% for key, entryc in entries.mine %}
+        {% if loop.index0 is even %}
+            {% set class = 'even' %}
+        {% else %}
+            {% set class = 'odd' %}
+        {% endif %}
+        {% set entry = entryc.value %}
+        <tr class="{{ class }}">
+            <td>{{ entry.name|escape('html') }}</td>
+            <td><kbd>{{ entry.key|escape('html') }}</kbd></td>
+            <td>
+                <a href="registry.edit.php?editkey={{ entry.key|escape('url') }}">edit</a>
+                <a href="registry.php?delete={{ entry.key|escape('url') }}">delete</a>
+            </td>
+        </tr>
+    {% else %}
+        <tr><td colspan="3">No entries registered</td></tr>
+    {% endfor %}
+    </table>
+
+    <p><a href="registry.edit.php">Add new client</a></p>
+    <h2>Other clients</h2>
+
+    <table class="metalist" style="width: 100%">
+    {% for key, entryc in entries.others %}
+        {% if loop.index0 is even %}
+            {% set class = 'even' %}
+        {% else %}
+            {% set class = 'odd' %}
+        {% endif %}
+        {% set entry = entryc.value %}
+        <tr class="{{ class }}">
+            <td>{{ entry.name|escape('html') }}</td>
+            <td><kbd>{{ entry.key|escape('html') }}</kbd></td>
+            {% if eentry.owner is defined %}}
+            <td>{{ entry.owner|escape('html') }}</td>
+            {% else %}
+            <td>No owner</td>
+            {% endif %}
+        </tr>
+    {% else %}
+        <tr><td colspan="3">No entries registered</td></tr>
+    {% endfor %}
+    </table>
+{% endblock%}

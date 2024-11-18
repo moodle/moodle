@@ -174,6 +174,16 @@ class renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render the template learningpaths page.
+     *
+     * @param  renderable $page
+     * @return string
+     */
+    public function render_template_learningpaths_page(renderable $page) {
+        return $page->table->out(50, true);
+    }
+
+    /**
      * Defer to template.
      *
      * @param user_evidence_page $page

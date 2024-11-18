@@ -1,0 +1,123 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: af\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{core:no_metadata:not_found_for}"
+msgstr "Ons was nie in staat om die metadata vir die entiteit op te spoor nie:"
+
+msgid "{core:short_sso_interval:warning}"
+msgstr ""
+"Ons het ontdek dat daar slegs 'n paar sekondes was sedert jy laas "
+"geverifieer het met die diensverskaffer en neem dus aan dat daar 'n "
+"probleem is met hierdie SP."
+
+msgid "{core:no_cookie:header}"
+msgstr "Verlore cookie"
+
+msgid "{core:no_metadata:suggestion_user_link}"
+msgstr ""
+"As jy 'n gebruiker is wat na aanleiding van 'n skakel op 'n webwerf "
+"hierdie fout ontvang het, moet jy hierdie fout aan die eienaar van die "
+"webwerf aan stuur."
+
+msgid "{core:short_sso_interval:warning_header}"
+msgstr "Te kort interval tussen enkel aanmeldings(single sign on) op die gebeure."
+
+msgid "{core:no_metadata:header}"
+msgstr "Metadata nie gevind nie"
+
+msgid "{core:no_metadata:config_problem}"
+msgstr ""
+"Dié is waarskynlik 'n probleem met die konfigurasie by die "
+"diensverskaffer óf die identiteit verskaffer."
+
+msgid "{core:no_metadata:suggestion_developer}"
+msgstr ""
+"As jy 'n programmeerder is wat die 'single sign-on' oplossing "
+"implementeer, het jy 'n probleem met die metadata opset. Bevestig dat die"
+" metadata korrek ingestel is op beide die identiteit verskaffer en "
+"diensverskaffer."
+
+msgid "{core:no_cookie:retry}"
+msgstr "Probeer weer"
+
+msgid "{core:short_sso_interval:retry}"
+msgstr "Probeer weer aanmeld"
+
+msgid "{core:no_cookie:description}"
+msgstr ""
+"Dit blyk dat jy cookies in jou webblaaier af geskakel het. Gaan asseblief"
+" die stellings in jou webblaaier na en probeer weer."
+
+msgid "Retry login"
+msgstr "Probeer weer aanmeld"
+
+msgid ""
+"This is most likely a configuration problem on either the service "
+"provider or identity provider."
+msgstr ""
+"Dié is waarskynlik 'n probleem met die konfigurasie by die "
+"diensverskaffer óf die identiteit verskaffer."
+
+msgid "Metadata not found"
+msgstr "Metadata nie gevind nie"
+
+msgid "Missing cookie"
+msgstr "Verlore cookie"
+
+msgid ""
+"You appear to have disabled cookies in your browser. Please check the "
+"settings in your browser, and try again."
+msgstr ""
+"Dit blyk dat jy cookies in jou webblaaier af geskakel het. Gaan asseblief"
+" die stellings in jou webblaaier na en probeer weer."
+
+msgid "Retry"
+msgstr "Probeer weer"
+
+msgid ""
+"If you are an user who received this error after following a link on a "
+"site, you should report this error to the owner of that site."
+msgstr ""
+"As jy 'n gebruiker is wat na aanleiding van 'n skakel op 'n webwerf "
+"hierdie fout ontvang het, moet jy hierdie fout aan die eienaar van die "
+"webwerf aan stuur."
+
+msgid "We were unable to locate the metadata for the entity:"
+msgstr "Ons was nie in staat om die metadata vir die entiteit op te spoor nie:"
+
+msgid ""
+"We have detected that there is only a few seconds since you last "
+"authenticated with this service provider, and therefore assume that there"
+" is a problem with this SP."
+msgstr ""
+"Ons het ontdek dat daar slegs 'n paar sekondes was sedert jy laas "
+"geverifieer het met die diensverskaffer en neem dus aan dat daar 'n "
+"probleem is met hierdie SP."
+
+msgid ""
+"If you are a developer who is deploying a single sign-on solution, you "
+"have a problem with the metadata configuration. Verify that metadata is "
+"configured correctly on both the identity provider and service provider."
+msgstr ""
+"As jy 'n programmeerder is wat die 'single sign-on' oplossing "
+"implementeer, het jy 'n probleem met die metadata opset. Bevestig dat die"
+" metadata korrek ingestel is op beide die identiteit verskaffer en "
+"diensverskaffer."
+
+msgid "Too short interval between single sign on events."
+msgstr "Te kort interval tussen enkel aanmeldings(single sign on) op die gebeure."
+

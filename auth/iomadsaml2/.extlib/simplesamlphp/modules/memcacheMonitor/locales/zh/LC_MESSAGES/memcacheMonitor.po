@@ -1,0 +1,131 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: zh\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{memcacheMonitor:memcachestat:total_connections}"
+msgstr "全部连接"
+
+msgid "{memcacheMonitor:memcachestat:version}"
+msgstr "版本"
+
+msgid "{memcacheMonitor:memcachestat:get_hits}"
+msgstr "全部的GET指令（成功的）"
+
+msgid "{memcacheMonitor:memcachestat:curr_items}"
+msgstr "当前的条目数量"
+
+msgid "{memcacheMonitor:memcachestat:uptime}"
+msgstr "正常运行时间"
+
+msgid "{memcacheMonitor:memcachestat:limit_maxbytes}"
+msgstr "全部的存储利用"
+
+msgid "{memcacheMonitor:memcachestat:curr_connections}"
+msgstr "当前打开的连接"
+
+msgid "{memcacheMonitor:memcachestat:rusage_system}"
+msgstr "CPU 秒数（系统）"
+
+msgid "{memcacheMonitor:memcachestat:rusage_user}"
+msgstr "CPU 秒数（用户）"
+
+msgid "{memcacheMonitor:memcachestat:pid}"
+msgstr "Process ID"
+
+msgid "{memcacheMonitor:memcachestat:cmd_get}"
+msgstr "全部的GET指令"
+
+msgid "{memcacheMonitor:memcachestat:bytes_read}"
+msgstr "进入服务器的字节"
+
+msgid "{memcacheMonitor:memcachestat:time}"
+msgstr "当前时间"
+
+msgid "{memcacheMonitor:memcachestat:get_misses}"
+msgstr "全部的GET指令（失败的）"
+
+msgid "{memcacheMonitor:memcachestat:bytes_written}"
+msgstr "服务器写入的字节"
+
+msgid "{memcacheMonitor:memcachestat:connection_structures}"
+msgstr "连接结构"
+
+msgid "{memcacheMonitor:memcachestat:cmd_set}"
+msgstr "全部的SET指令"
+
+msgid "{memcacheMonitor:memcachestat:total_items}"
+msgstr "以往条目"
+
+msgid "{memcacheMonitor:memcachestat:bytes}"
+msgstr "目前使用的字节数"
+
+msgid "Current time"
+msgstr "当前时间"
+
+msgid "Total items ever"
+msgstr "以往条目"
+
+msgid "Bytes written by the server"
+msgstr "服务器写入的字节"
+
+msgid "Uptime"
+msgstr "正常运行时间"
+
+msgid "Current open connections"
+msgstr "当前打开的连接"
+
+msgid "Total storage avail"
+msgstr "全部的存储利用"
+
+msgid "Version"
+msgstr "版本"
+
+msgid "Total GET commands (failed)"
+msgstr "全部的GET指令（失败的）"
+
+msgid "Total SET commands"
+msgstr "全部的SET指令"
+
+msgid "Connection structures"
+msgstr "连接结构"
+
+msgid "Total GET commands (success)"
+msgstr "全部的GET指令（成功的）"
+
+msgid "Total bytes in use currently"
+msgstr "目前使用的字节数"
+
+msgid "Total GET commands"
+msgstr "全部的GET指令"
+
+msgid "Bytes in to the server"
+msgstr "进入服务器的字节"
+
+msgid "Process ID"
+msgstr "Process ID"
+
+msgid "Currently number of items"
+msgstr "当前的条目数量"
+
+msgid "CPU Seconds (User)"
+msgstr "CPU 秒数（用户）"
+
+msgid "CPU Seconds (System)"
+msgstr "CPU 秒数（系统）"
+
+msgid "Total connections"
+msgstr "全部连接"
+

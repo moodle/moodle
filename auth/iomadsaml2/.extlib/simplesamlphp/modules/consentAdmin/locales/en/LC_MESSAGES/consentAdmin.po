@@ -1,0 +1,173 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: en\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consentAdmin:consentadmin:status_header}"
+msgstr "Consent status"
+
+msgid "{consentAdmin:consentadmin:attributes_text}"
+msgstr "attributes"
+
+msgid "{consentAdmin:consentadmin:service_provider_header}"
+msgstr "Service Provider"
+
+msgid "{consentAdmin:consentadmin:removed}"
+msgstr "Consent Removed"
+
+msgid "{consentAdmin:consentadmin:consentadmin_header}"
+msgstr "Consent Administration"
+
+msgid "{consentAdmin:consentadmin:show}"
+msgstr "Show"
+
+msgid "{consentAdmin:consentadmin:attribute_org}"
+msgstr "Organisation"
+
+msgid "{consentAdmin:consentadmin:attribute_injected}"
+msgstr "Injected attribut"
+
+msgid "{consentAdmin:consentadmin:show_hide_attributes}"
+msgstr "show/hide attributes"
+
+msgid "{consentAdmin:consentadmin:consentadmin_purpose}"
+msgstr "The purpose of the service is"
+
+msgid "{consentAdmin:consentadmin:hide}"
+msgstr "Hide"
+
+msgid "{consentAdmin:consentadmin:sp_empty_description}"
+msgstr "(no description)"
+
+msgid "{consentAdmin:consentadmin:service_providers_for}"
+msgstr "Service Providers for"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description2}"
+msgstr ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+
+msgid "{consentAdmin:consentadmin:login}"
+msgstr "login"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description1}"
+msgstr "Here you can view and edit your consent for the Service Providers."
+
+msgid "{consentAdmin:consentadmin:updated}"
+msgstr "Consent Updated"
+
+msgid "{consentAdmin:consentadmin:unknown}"
+msgstr "Unknown ..."
+
+msgid "{consentAdmin:consentadmin:added}"
+msgstr "Consent Added"
+
+msgid "{consentAdmin:consentadmin:attribute_id}"
+msgstr "Identity"
+
+msgid "Injected attribut"
+msgstr "Injected attribut"
+
+msgid "Show"
+msgstr "Show"
+
+msgid "Consent Added"
+msgstr "Consent Added"
+
+msgid "Consent Administration"
+msgstr "Consent Administration"
+
+msgid "Here you can view and edit your consent for the Service Providers."
+msgstr "Here you can view and edit your consent for the Service Providers."
+
+msgid "Unknown ..."
+msgstr "Unknown ..."
+
+msgid "Identity"
+msgstr "Identity"
+
+msgid "The purpose of the service is"
+msgstr "The purpose of the service is"
+
+msgid "Hide"
+msgstr "Hide"
+
+msgid "Service Provider"
+msgstr "Service Provider"
+
+msgid "Service Providers for"
+msgstr "Service Providers for"
+
+msgid "login"
+msgstr "login"
+
+msgid "(name not specified)"
+msgstr "(name not specified)"
+
+msgid "Consent Updated"
+msgstr "Consent Updated"
+
+msgid "Consent status"
+msgstr "Consent status"
+
+msgid "(no description)"
+msgstr "(no description)"
+
+msgid "attributes"
+msgstr "attributes"
+
+msgid ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+msgstr ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+
+msgid "Consent Removed"
+msgstr "Consent Removed"
+
+msgid "show/hide attributes"
+msgstr "show/hide attributes"
+
+msgid "Organisation"
+msgstr "Organisation"
+
+msgid "Consent administration"
+msgstr "Consent administration"
+

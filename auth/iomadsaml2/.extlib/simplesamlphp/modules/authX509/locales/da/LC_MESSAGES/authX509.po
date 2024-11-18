@@ -1,0 +1,61 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: da\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{authX509:X509warning:proceed}"
+msgstr "Fortsæt"
+
+msgid "{authX509:X509warning:renew}"
+msgstr "Forny venligst dit certifikat i tide."
+
+msgid "{authX509:X509error:certificate_text}"
+msgstr "X509 certifikat-authentifikation er påkrævet til denne service."
+
+msgid "{authX509:X509warning:renew_url}"
+msgstr "<a href='%renewurl%'>Forny</a>, venligst dit certifikat før det udløber."
+
+msgid "{authX509:X509warning:warning_header}"
+msgstr "Dit certifikat udløber om kort tid"
+
+msgid "{authX509:X509error:certificate_header}"
+msgstr "X509 certifikat authentifikation"
+
+msgid "{authX509:X509warning:warning}"
+msgstr "Dit certifikat udløber om %daysleft% dage."
+
+msgid "Please renew your certificate in time."
+msgstr "Forny venligst dit certifikat i tide."
+
+#, python-format
+msgid "Your certificate will expire in %daysleft% days."
+msgstr "Dit certifikat udløber om %daysleft% dage."
+
+msgid "X509 certificate authentication"
+msgstr "X509 certifikat authentifikation"
+
+#, python-format
+msgid "Please <a href='%renewurl%'>renew your certificate</a> in time."
+msgstr "<a href='%renewurl%'>Forny</a>, venligst dit certifikat før det udløber."
+
+msgid "Proceed"
+msgstr "Fortsæt"
+
+msgid "X509 certificate authentication is required to access this service."
+msgstr "X509 certifikat-authentifikation er påkrævet til denne service."
+
+msgid "Your certificate is about to expire."
+msgstr "Dit certifikat udløber om kort tid"
+

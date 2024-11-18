@@ -1,0 +1,132 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: lt\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"(n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{memcacheMonitor:memcachestat:total_connections}"
+msgstr "Viso sujungimų"
+
+msgid "{memcacheMonitor:memcachestat:version}"
+msgstr "Versija"
+
+msgid "{memcacheMonitor:memcachestat:get_hits}"
+msgstr "Viso GET užklausų (sėkmingų)"
+
+msgid "{memcacheMonitor:memcachestat:curr_items}"
+msgstr "Šiuo metu elementų skaičius"
+
+msgid "{memcacheMonitor:memcachestat:uptime}"
+msgstr "Veikimo laikas"
+
+msgid "{memcacheMonitor:memcachestat:limit_maxbytes}"
+msgstr "Viso atminties"
+
+msgid "{memcacheMonitor:memcachestat:curr_connections}"
+msgstr "Šiuo metu atidarytų sujungimų"
+
+msgid "{memcacheMonitor:memcachestat:rusage_system}"
+msgstr "CPU sekundės (sistema)"
+
+msgid "{memcacheMonitor:memcachestat:rusage_user}"
+msgstr "CPU sekundės (vartotojas)"
+
+msgid "{memcacheMonitor:memcachestat:pid}"
+msgstr "Proceso ID"
+
+msgid "{memcacheMonitor:memcachestat:cmd_get}"
+msgstr "Viso GET užklausų"
+
+msgid "{memcacheMonitor:memcachestat:bytes_read}"
+msgstr "Nuskaityta baitų į serverį"
+
+msgid "{memcacheMonitor:memcachestat:time}"
+msgstr "Laikas"
+
+msgid "{memcacheMonitor:memcachestat:get_misses}"
+msgstr "Viso GET užklausų (nesėkmingų)"
+
+msgid "{memcacheMonitor:memcachestat:bytes_written}"
+msgstr "Įrašyta baitų į serverį"
+
+msgid "{memcacheMonitor:memcachestat:connection_structures}"
+msgstr "Sujungimų struktūra"
+
+msgid "{memcacheMonitor:memcachestat:cmd_set}"
+msgstr "Viso SET užklausų"
+
+msgid "{memcacheMonitor:memcachestat:total_items}"
+msgstr "Viso elementų"
+
+msgid "{memcacheMonitor:memcachestat:bytes}"
+msgstr "Viso šiuo metu naudojama baitų"
+
+msgid "Current time"
+msgstr "Laikas"
+
+msgid "Total items ever"
+msgstr "Viso elementų"
+
+msgid "Bytes written by the server"
+msgstr "Įrašyta baitų į serverį"
+
+msgid "Uptime"
+msgstr "Veikimo laikas"
+
+msgid "Current open connections"
+msgstr "Šiuo metu atidarytų sujungimų"
+
+msgid "Total storage avail"
+msgstr "Viso atminties"
+
+msgid "Version"
+msgstr "Versija"
+
+msgid "Total GET commands (failed)"
+msgstr "Viso GET užklausų (nesėkmingų)"
+
+msgid "Total SET commands"
+msgstr "Viso SET užklausų"
+
+msgid "Connection structures"
+msgstr "Sujungimų struktūra"
+
+msgid "Total GET commands (success)"
+msgstr "Viso GET užklausų (sėkmingų)"
+
+msgid "Total bytes in use currently"
+msgstr "Viso šiuo metu naudojama baitų"
+
+msgid "Total GET commands"
+msgstr "Viso GET užklausų"
+
+msgid "Bytes in to the server"
+msgstr "Nuskaityta baitų į serverį"
+
+msgid "Process ID"
+msgstr "Proceso ID"
+
+msgid "Currently number of items"
+msgstr "Šiuo metu elementų skaičius"
+
+msgid "CPU Seconds (User)"
+msgstr "CPU sekundės (vartotojas)"
+
+msgid "CPU Seconds (System)"
+msgstr "CPU sekundės (sistema)"
+
+msgid "Total connections"
+msgstr "Viso sujungimų"
+

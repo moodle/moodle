@@ -184,7 +184,15 @@ class factor extends object_factor_base {
         $qrcode = $this->generate_qrcode($secret);
 
         $html = \html_writer::tag('p', $qrcode);
-        $mform->addElement('static', 'scan', '', $html);
+        $xssallowedelements[] = $mform->addElement('static', 'scan', get_string('setupfactor:scan', 'factor_totp'), $html);
+
+        // Link.
+        if (get_config('factor_totp', 'totplink' . $this->postfix)) {
+            $uri = $this->generate_totp_uri($secret);
+            $html = $OUTPUT->action_link($uri, get_string('setupfactor:linklabel', 'factor_totp'));
+            $xssallowedelements[] = $mform->addElement('static', 'link', get_string('setupfactor:link', 'factor_totp'), $html);
+            $mform->addHelpButton('link', 'setupfactor:link', 'factor_totp');
+        }
 
         // Enter manually.
         $secret = wordwrap($secret, 4, ' ', true) . '</code>';
@@ -280,11 +288,11 @@ class factor extends object_factor_base {
         global $USER;
         $factors = $this->get_active_user_factors($USER);
         $result = ['verificationcode' => get_string('error:wrongverification', 'factor_totp')];
-        $window = get_config('factor_totp', 'window');
+        $windowconfig = get_config('factor_totp', 'window' . $this->postfix);
 
         foreach ($factors as $factor) {
             $totp = TOTP::create($factor->secret, clock: $this->clock);
-            $factorresult = $this->validate_code($data['verificationcode'], $window, $totp, $factor);
+            $factorresult = $this->validate_code($data['verificationcode'], $windowconfig, $totp, $factor);
             $time = userdate($this->clock->time(), get_string('systimeformat', 'factor_totp'));
 
             switch ($factorresult) {

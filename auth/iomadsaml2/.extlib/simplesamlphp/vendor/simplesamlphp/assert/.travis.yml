@@ -1,0 +1,127 @@
+language: php
+
+stages:
+  - pre-conditions
+  - test
+  - quality
+
+################
+#  Test stage  #
+################
+
+php:
+  - 7.2
+  - 7.3
+  - 7.4
+
+env:
+  - COMMAND="composer install"
+  - COMMAND="composer update"
+
+before_script:
+  - ${COMMAND}
+
+script:
+  - php vendor/bin/phpunit --no-coverage
+
+jobs:
+  fast_finish: true
+
+  allow_failures:
+    - php: 7.3
+      env: Security check (composer install)
+    - php: 7.3
+      env: Security check (composer update)
+    - php: 7.3
+      env: Psalm
+    - php: 7.3
+      env: PHP Codesniffer
+
+  include:
+
+    ##########################
+    #  Pre-conditions stage  #
+    ##########################
+
+    - stage: pre-conditions
+      env: Syntax check PHP
+      php: 7.2
+      before_script:
+        - composer install
+      script:
+        - vendor/bin/check-syntax-php.sh
+
+    - stage: pre-conditions
+      env: Syntax check PHP
+      php: 7.3
+      before_script:
+        - composer install
+      script:
+        - vendor/bin/check-syntax-php.sh
+
+    - stage: pre-conditions
+      env: Syntax check PHP
+      php: 7.4
+      before_script:
+        - composer install
+      script:
+        - vendor/bin/check-syntax-php.sh
+
+    - stage: pre-conditions
+      env: Syntax check YAML / XML / JSON
+      before_script:
+        - composer require simplesamlphp/simplesamlphp-test-framework --dev
+      script:
+        - vendor/simplesamlphp/simplesamlphp-test-framework/bin/check-syntax-json.sh
+        - vendor/simplesamlphp/simplesamlphp-test-framework/bin/check-syntax-xml.sh
+        - vendor/simplesamlphp/simplesamlphp-test-framework/bin/check-syntax-yaml.sh
+
+    ###################
+    #  Quality stage  #
+    ###################
+
+    - stage: quality
+      php: 7.3
+      env: Security check (composer install)
+      before_script:
+        - composer install
+      script:
+        - vendor/bin/security-checker security:check
+
+    - stage: quality
+      php: 7.3
+      env: Security check (composer update)
+      before_script:
+        - composer update
+      script:
+        - vendor/bin/security-checker security:check
+
+    - stage: quality
+      php: 7.3
+      env: Codecov
+      before_script:
+        - composer update
+        - php vendor/bin/phpunit
+      script:
+        - bash <(curl -s https://codecov.io/bash)
+
+    - stage: quality
+      php: 7.3
+      env: Psalm
+      before_script:
+        - composer update
+      script:
+        - vendor/bin/psalm
+        - vendor/bin/psalter --issues=UnnecessaryVarAnnotation --dry-run
+
+    - stage: quality
+      php: 7.3
+      env: PHP Codesniffer
+      before_script:
+        - composer update
+      script:
+        - vendor/bin/phpcs src/
+
+notifications:
+  slack:
+    secure: jgkeIXi7Hzkc907ZKGpuJZ9va+KjHNV0LZoWc22skkDqNIu2wshvqx4wOMFK8CXtRcRgCambtXxyTio17Q4B4mFu1uf7qVN6x18QyLNhfypB/d808kLoJCzlmGB7477jrw5xvgSVOMxWmic8QTjkcMOWSiG4fJE86zIthZP0OOY=

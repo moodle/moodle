@@ -1,0 +1,17 @@
+{
+	"header": {
+		"en": "Metadata not found"
+	},
+	"not_found_for": {
+		"en": "We were unable to locate the metadata for the entity:"
+	},
+	"config_problem": {
+		"en": "This is most likely a configuration problem on either the service provider or identity provider."
+	},
+	"suggestion_user_link": {
+		"en": "If you are an user who received this error after following a link on a site, you should report this error to the owner of that site."
+	},
+	"suggestion_developer": {
+		"en": "If you are a developer who is deploying a single sign-on solution, you have a problem with the metadata configuration. Verify that metadata is configured correctly on both the identity provider and service provider."
+	}
+}

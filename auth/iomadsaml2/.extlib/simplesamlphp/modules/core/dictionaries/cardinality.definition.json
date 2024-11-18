@@ -1,0 +1,14 @@
+{
+    "cardinality_header": {
+        "en": "Incorrect Attributes"
+    },
+    "cardinality_text": {
+        "en": "One or more of the attributes supplied by your identity provider did not contain the expected number of values."
+    },
+    "problematic_attributes": {
+        "en": "The problematic attribute(s) are:"
+    },
+    "got_want": {
+        "en": "got %GOT% values, want %WANT%"
+    }
+}

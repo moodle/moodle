@@ -1,0 +1,84 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: en\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{expirycheck:expwarning:access_denied}"
+msgstr "You do not have access to this service"
+
+msgid "{expirycheck:expwarning:warning_today}"
+msgstr "Warning, your account %NETID% will expire today!"
+
+msgid "{expirycheck:expwarning:warning}"
+msgstr "Warning, your account %NETID% will expire in %DAYSLEFT% %DAYS%!"
+
+msgid "{expirycheck:expwarning:day}"
+msgstr "day"
+
+msgid "{expirycheck:expwarning:days}"
+msgstr "days"
+
+msgid "{expirycheck:expwarning:no_access_to}"
+msgstr "Your account %NETID% has expired, access denied!"
+
+msgid "{expirycheck:expwarning:contact_home}"
+msgstr ""
+"Access to services is controlled by your home organization. Please "
+"contact your local IT support for questions."
+
+msgid "{expirycheck:expwarning:expiry_date_text}"
+msgstr "Expiration date:"
+
+msgid "{expirycheck:expwarning:warning_header}"
+msgstr "Warning, your account %NETID% will expire in %DAYSLEFT% %DAYS%!"
+
+msgid "{expirycheck:expwarning:btn_continue}"
+msgstr "I am aware of this, continue..."
+
+msgid "{expirycheck:expwarning:warning_header_today}"
+msgstr "Warning, your account %NETID% will expire today!"
+
+msgid "Expiration date:"
+msgstr "Expiration date:"
+
+#, python-format
+msgid "Warning, your account %NETID% will expire in %DAYSLEFT% %DAYS%!"
+msgstr "Warning, your account %NETID% will expire in %DAYSLEFT% %DAYS%!"
+
+msgid "Your account %NETID% has expired, access denied!"
+msgstr "Your account %NETID% has expired, access denied!"
+
+msgid "Warning, your account %NETID% will expire today!"
+msgstr "Warning, your account %NETID% will expire today!"
+
+msgid "I am aware of this, continue..."
+msgstr "I am aware of this, continue..."
+
+msgid "days"
+msgstr "days"
+
+msgid "day"
+msgstr "day"
+
+msgid ""
+"Access to services is controlled by your home organization. Please "
+"contact your local IT support for questions."
+msgstr ""
+"Access to services is controlled by your home organization. Please "
+"contact your local IT support for questions."
+
+msgid "You do not have access to this service"
+msgstr "You do not have access to this service"
+

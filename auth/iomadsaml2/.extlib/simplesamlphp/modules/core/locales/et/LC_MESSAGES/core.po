@@ -1,0 +1,522 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: et\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{core:frontpage:link_phpinfo}"
+msgstr "Teave PHP kohta"
+
+msgid "{core:no_state:report_text}"
+msgstr "Kui probleem ei kao, siis teavita sellest süsteemi administraatoreid."
+
+msgid "{core:no_state:cause_backforward}"
+msgstr "brauseri edasi-tagasi nuppude kasutamisest"
+
+msgid "{core:no_metadata:not_found_for}"
+msgstr "Ei suudetud leida olemi metaandmeid:"
+
+msgid "{core:frontpage:link_shib13example}"
+msgstr "Shibboleth 1.3 SP näide - sisselogimine sinu Shib IdP kaudu"
+
+msgid "{core:no_state:suggestions}"
+msgstr "Nõuanded selle probleemi lahendamiseks:"
+
+msgid "{core:frontpage:login_as_admin}"
+msgstr "Logi sisse administraatorina"
+
+msgid "{core:short_sso_interval:warning}"
+msgstr ""
+"Tuvastasime, et sinu viimasest autentimisest selle teenusepakkujaga on "
+"möödunud ainult mõned sekundid ja seepärast arvame, et sellega "
+"teenusepakkujaga on probleeme."
+
+msgid "{core:frontpage:link_doc_sp}"
+msgstr "SimpleSAMLphp kasutamine teenusepakkujana"
+
+msgid "{core:frontpage:link_meta_saml2sphosted}"
+msgstr "Hostitud SAML 2.0. teenusepakkuja metaandmed (automaatselt genereeritud)"
+
+msgid "{core:frontpage:link_openidprovider}"
+msgstr "OpenID pakkuja lehekülg - alfaversioon (testkood)"
+
+msgid "{core:frontpage:link_doc_install}"
+msgstr "SimpleSAMLphp paigaldamine"
+
+msgid "{core:frontpage:link_diagnostics}"
+msgstr "Serverinime, pordi ja protokolli diagnostika"
+
+msgid "{core:no_state:suggestion_goback}"
+msgstr "Mine tagasi eelmisele leheküljele ja proovi uuesti."
+
+msgid "{core:no_state:causes}"
+msgstr "See tõrge võib olla põhjustatud:"
+
+msgid "{core:frontpage:link_meta_saml2idphosted}"
+msgstr ""
+"Hostitud SAML 2.0 identiteedipakkuja metaandmed (automaatselt "
+"genereeritud) "
+
+msgid "{core:frontpage:optional}"
+msgstr "Vabatahtlik"
+
+msgid "{core:frontpage:link_meta_shib13sphosted}"
+msgstr ""
+"Hostitud Shibboleth 1.3 identiteedipakkuja metaandmed (automaatselt "
+"genereeritud) "
+
+msgid "{core:frontpage:doc_header}"
+msgstr "Dokumentatsioon"
+
+msgid "{core:frontpage:link_doc_advanced}"
+msgstr "SimpleSAMLphp lisafunktsioonid"
+
+msgid "{core:frontpage:required_ldap}"
+msgstr "Nõutav LDAP-ile"
+
+msgid "{core:frontpage:authtest}"
+msgstr "Testi seadistatud autentimisallikaid"
+
+msgid "{core:frontpage:link_meta_overview}"
+msgstr "Ülevaade sinu paigalduse metaandmetest. Diagnoosi oma metaandmete faile"
+
+msgid "{core:frontpage:configuration}"
+msgstr "Seadistamine"
+
+msgid "{core:frontpage:welcome}"
+msgstr "Tere tulemast"
+
+msgid "{core:frontpage:link_doc_shibsp}"
+msgstr "Shibboleth 1.3 SP seadistamine koostööks SimpleSAMLphp IdP-ga"
+
+msgid "{core:no_state:header}"
+msgstr "Olekuinfo on kadunud"
+
+msgid "{core:frontpage:metadata_header}"
+msgstr "Metaandmed"
+
+msgid "{core:frontpage:link_doc_maintenance}"
+msgstr "SimpleSAMLphp hooldus ja seadistamine"
+
+msgid "{core:frontpage:link_configcheck}"
+msgstr "SimpleSAMLphp seadistuste kontroll"
+
+msgid "{core:frontpage:page_title}"
+msgstr "SimpleSAMLphp paigalduslehekülg"
+
+msgid "{core:no_cookie:header}"
+msgstr "Küpsis puudub"
+
+msgid "{core:frontpage:warnings}"
+msgstr "Hoiatused"
+
+msgid "{core:frontpage:link_xmlconvert}"
+msgstr "XML-ist SimpleSAMLphp metaandmeteks teisendaja"
+
+msgid "{core:frontpage:link_cleardiscochoices}"
+msgstr "Eemalda mu eelistused IdP tuvastusteenustes"
+
+msgid "{core:frontpage:loggedin_as_admin}"
+msgstr "Oled sisselogitud administraatorina"
+
+msgid "{core:frontpage:auth}"
+msgstr "Autentimine"
+
+msgid "{core:no_metadata:suggestion_user_link}"
+msgstr ""
+"Kui sa oled kasutaja, kes sai selle veateate veebilehel linki klõpsates, "
+"siis peaksid sellest tõrkest veebilehe omanikku teavitama."
+
+msgid "{core:no_state:description}"
+msgstr "Aktiivse päringu olekuinfo leidmine ei õnnestunud."
+
+msgid "{core:frontpage:show_metadata}"
+msgstr "Näita metaandmeid"
+
+msgid "{core:no_state:suggestion_closebrowser}"
+msgstr "Sulge brauser ja proovi uuesti."
+
+msgid "{core:short_sso_interval:warning_header}"
+msgstr "Liiga lühike intervall ühekordse sisselogimise sündmuste vahel."
+
+msgid "{core:frontpage:intro}"
+msgstr ""
+"<strong>Palju õnne!</strong> Oled edukalt paigaldanud SimpleSAMLphp. See "
+"on sinu paigalduse avaleht, millelt leiad viited nii testnäidetele, "
+"diagnostikalehe, metaandmete kui ka vajaliku dokumentatsiooni juurde."
+
+msgid "{core:no_metadata:header}"
+msgstr "Metaandmeid ei leitud"
+
+msgid "{core:frontpage:link_meta_shib13idphosted}"
+msgstr ""
+"Hostitud Shibboleth 2.0 identiteedipakkuja metaandmed (automaatselt "
+"genereeritud) "
+
+msgid "{core:frontpage:required}"
+msgstr "Nõutav"
+
+msgid "{core:no_metadata:config_problem}"
+msgstr ""
+"Tõenäoliselt on tegemist probleemiga kas teenusepakkuja või "
+"identiteedipakkuja seadistustes."
+
+msgid "{core:frontpage:warnings_suhosin_url_length}"
+msgstr ""
+"Päringuparameetrite arv on piiratud PHP Suhosin laienduse poolt. Palun "
+"suurenda suhosin.get.max_value_length väärtust vähemalt 2048 baidini."
+
+msgid "{core:frontpage:warnings_https}"
+msgstr ""
+"<strong>Sa ei kasuta andmete vahetamiseks HTTPS krüpteeritud "
+"sidet</strong>. HTTP sobib testimiseks hästi, kuid toodangus peaksid "
+"kindlasti HTTPS-i kasutama. [ <a href=\"http://rnd.feide.no/content"
+"/simplesamlphp-maintenance-and-configuration\">Loe täpsemalt "
+"SimpleSAMLphp hooldamisest</a> ]"
+
+msgid "{core:frontpage:federation}"
+msgstr "Federeerimine"
+
+msgid "{core:frontpage:required_radius}"
+msgstr "Nõutav Radiusele"
+
+msgid "{core:no_state:cause_openbrowser}"
+msgstr "brauseri avamisest eelmisel kasutuskorral salvestatud kaartidega"
+
+msgid "{core:frontpage:checkphp}"
+msgstr "PHP paigalduse kontrollimine"
+
+msgid "{core:frontpage:link_doc_idp}"
+msgstr "SimpleSAMLphp kasutamine identiteedipakkujana"
+
+msgid "{core:no_state:report_header}"
+msgstr "Teavita sellest tõrkest"
+
+msgid "{core:frontpage:link_saml2example}"
+msgstr "SAML 2.0 SP näide - sisselogimine sinu IdP kaudu"
+
+msgid "{core:no_state:cause_nocookie}"
+msgstr "küpsiste keelamisest brauseris"
+
+msgid "{core:frontpage:about_header}"
+msgstr "Teave SimpleSAMLphp kohta"
+
+msgid "{core:frontpage:about_text}"
+msgstr ""
+"See SimpleSAMLphp on päris äge! Kust ma saaks selle kohta täpsemalt "
+"lugeda? Rohkem infot leiad <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">SimpleSAMLphp blogist</a>, mis"
+" asub <a href=\"http://uninett.no\">UNINETT</a>-is."
+
+msgid "{core:no_metadata:suggestion_developer}"
+msgstr ""
+"Kui sa oled arendaja, kes juurutab ühekordse sisselogimise lahendust, "
+"siis on probleemi põhjuseks metaandmete seadistused. Kontrolli, et "
+"metaandmed oleks seadistatud korrektselt nii identiteedipakkuja kui "
+"teenusepakkuja poolel."
+
+msgid "{core:no_cookie:retry}"
+msgstr "Proovi uuesti"
+
+msgid "{core:frontpage:useful_links_header}"
+msgstr "Kasulikud viited"
+
+msgid "{core:frontpage:metadata}"
+msgstr "Metaandmed"
+
+msgid "{core:frontpage:recommended}"
+msgstr "Soovitatav"
+
+msgid "{core:frontpage:link_doc_googleapps}"
+msgstr "SimpleSAMLphp IdP-na Google Apps for Educationis"
+
+msgid "{core:frontpage:tools}"
+msgstr "Tööriistad"
+
+msgid "{core:short_sso_interval:retry}"
+msgstr "Proovi uuesti logida"
+
+msgid "{core:no_cookie:description}"
+msgstr ""
+"Paistab, et sinu brauseris on küpsised keelatud. Palun kontrolli brauseri"
+" seadistusi ja proovi seejärel uuesti."
+
+msgid "{core:frontpage:deprecated}"
+msgstr "Vananenud"
+
+msgid "You are logged in as administrator"
+msgstr "Oled sisselogitud administraatorina"
+
+msgid "Go back to the previous page and try again."
+msgstr "Mine tagasi eelmisele leheküljele ja proovi uuesti."
+
+msgid "If this problem persists, you can report it to the system administrators."
+msgstr "Kui probleem ei kao, siis teavita sellest süsteemi administraatoreid."
+
+msgid "Welcome"
+msgstr "Tere tulemast"
+
+msgid "SimpleSAMLphp configuration check"
+msgstr "SimpleSAMLphp seadistuste kontroll"
+
+msgid "Metadata overview for your installation. Diagnose your metadata files"
+msgstr "Ülevaade sinu paigalduse metaandmetest. Diagnoosi oma metaandmete faile"
+
+msgid "XML to SimpleSAMLphp metadata converter"
+msgstr "XML-ist SimpleSAMLphp metaandmeteks teisendaja"
+
+msgid "Required"
+msgstr "Nõutav"
+
+msgid "Warnings"
+msgstr "Hoiatused"
+
+msgid "Documentation"
+msgstr "Dokumentatsioon"
+
+msgid "Hosted Shibboleth 1.3 Service Provider Metadata (automatically generated)"
+msgstr ""
+"Hostitud Shibboleth 1.3 identiteedipakkuja metaandmed (automaatselt "
+"genereeritud) "
+
+msgid "PHP info"
+msgstr "Teave PHP kohta"
+
+msgid "About SimpleSAMLphp"
+msgstr "Teave SimpleSAMLphp kohta"
+
+msgid "Hosted SAML 2.0 Service Provider Metadata (automatically generated)"
+msgstr "Hostitud SAML 2.0. teenusepakkuja metaandmed (automaatselt genereeritud)"
+
+msgid "Retry login"
+msgstr "Proovi uuesti logida"
+
+msgid "Required for LDAP"
+msgstr "Nõutav LDAP-ile"
+
+msgid "Close the web browser, and try again."
+msgstr "Sulge brauser ja proovi uuesti."
+
+msgid "Federation"
+msgstr "Federeerimine"
+
+msgid "We were unable to locate the state information for the current request."
+msgstr "Aktiivse päringu olekuinfo leidmine ei õnnestunud."
+
+msgid "Delete my choices of IdP in the IdP discovery services"
+msgstr "Eemalda mu eelistused IdP tuvastusteenustes"
+
+msgid ""
+"This is most likely a configuration problem on either the service "
+"provider or identity provider."
+msgstr ""
+"Tõenäoliselt on tegemist probleemiga kas teenusepakkuja või "
+"identiteedipakkuja seadistustes."
+
+msgid "Configure Shibboleth 1.3 SP to work with SimpleSAMLphp IdP"
+msgstr "Shibboleth 1.3 SP seadistamine koostööks SimpleSAMLphp IdP-ga"
+
+msgid "Using the back and forward buttons in the web browser."
+msgstr "brauseri edasi-tagasi nuppude kasutamisest"
+
+msgid "Metadata not found"
+msgstr "Metaandmeid ei leitud"
+
+msgid "Missing cookie"
+msgstr "Küpsis puudub"
+
+msgid "Cookies may be disabled in the web browser."
+msgstr "küpsiste keelamisest brauseris"
+
+msgid "Opened the web browser with tabs saved from the previous session."
+msgstr "brauseri avamisest eelmisel kasutuskorral salvestatud kaartidega"
+
+msgid "Tools"
+msgstr "Tööriistad"
+
+msgid "Test configured authentication sources "
+msgstr "Testi seadistatud autentimisallikaid"
+
+msgid ""
+"You appear to have disabled cookies in your browser. Please check the "
+"settings in your browser, and try again."
+msgstr ""
+"Paistab, et sinu brauseris on küpsised keelatud. Palun kontrolli brauseri"
+" seadistusi ja proovi seejärel uuesti."
+
+msgid "Installing SimpleSAMLphp"
+msgstr "SimpleSAMLphp paigaldamine"
+
+msgid "Deprecated"
+msgstr "Vananenud"
+
+msgid ""
+"<strong>Congratulations</strong>, you have successfully installed "
+"SimpleSAMLphp. This is the start page of your installation, where you "
+"will find links to test examples, diagnostics, metadata and even links to"
+" relevant documentation."
+msgstr ""
+"<strong>Palju õnne!</strong> Oled edukalt paigaldanud SimpleSAMLphp. See "
+"on sinu paigalduse avaleht, millelt leiad viited nii testnäidetele, "
+"diagnostikalehe, metaandmete kui ka vajaliku dokumentatsiooni juurde."
+
+msgid "This error may be caused by:"
+msgstr "See tõrge võib olla põhjustatud:"
+
+msgid ""
+"<strong>You are not using HTTPS</strong> - encrypted communication with "
+"the user. HTTP works fine for test purposes, but in a production "
+"environment, you should use HTTPS. [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-"
+"maintenance\">Read more about SimpleSAMLphp maintenance</a> ]"
+msgstr ""
+"<strong>Sa ei kasuta andmete vahetamiseks HTTPS krüpteeritud "
+"sidet</strong>. HTTP sobib testimiseks hästi, kuid toodangus peaksid "
+"kindlasti HTTPS-i kasutama. [ <a href=\"http://rnd.feide.no/content"
+"/simplesamlphp-maintenance-and-configuration\">Loe täpsemalt "
+"SimpleSAMLphp hooldamisest</a> ]"
+
+msgid "Metadata"
+msgstr "Metaandmed"
+
+msgid "Retry"
+msgstr "Proovi uuesti"
+
+msgid "SimpleSAMLphp Maintenance and Configuration"
+msgstr "SimpleSAMLphp hooldus ja seadistamine"
+
+msgid "Diagnostics on hostname, port and protocol"
+msgstr "Serverinime, pordi ja protokolli diagnostika"
+
+msgid ""
+"If you are an user who received this error after following a link on a "
+"site, you should report this error to the owner of that site."
+msgstr ""
+"Kui sa oled kasutaja, kes sai selle veateate veebilehel linki klõpsates, "
+"siis peaksid sellest tõrkest veebilehe omanikku teavitama."
+
+msgid "Using SimpleSAMLphp as an Identity Provider"
+msgstr "SimpleSAMLphp kasutamine identiteedipakkujana"
+
+msgid "Optional"
+msgstr "Vabatahtlik"
+
+msgid "Suggestions for resolving this problem:"
+msgstr "Nõuanded selle probleemi lahendamiseks:"
+
+msgid ""
+"This SimpleSAMLphp thing is pretty cool, where can I read more about it? "
+"You can find more information about it at the <a "
+"href=\"https://simplesamlphp.org/\">SimpleSAMLphp web page </a> over at "
+"<a href=\"http://uninett.no\">UNINETT</a>."
+msgstr ""
+"See SimpleSAMLphp on päris äge! Kust ma saaks selle kohta täpsemalt "
+"lugeda? Rohkem infot leiad <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">SimpleSAMLphp blogist</a>, mis"
+" asub <a href=\"http://uninett.no\">UNINETT</a>-is."
+
+msgid "Shibboleth 1.3 SP example - test logging in through your Shib IdP"
+msgstr "Shibboleth 1.3 SP näide - sisselogimine sinu Shib IdP kaudu"
+
+msgid "Authentication"
+msgstr "Autentimine"
+
+msgid "SimpleSAMLphp installation page"
+msgstr "SimpleSAMLphp paigalduslehekülg"
+
+msgid "Show metadata"
+msgstr "Näita metaandmeid"
+
+msgid "SimpleSAMLphp as an IdP for Google Apps for Education"
+msgstr "SimpleSAMLphp IdP-na Google Apps for Educationis"
+
+msgid "State information lost"
+msgstr "Olekuinfo on kadunud"
+
+msgid "Hosted SAML 2.0 Identity Provider Metadata (automatically generated)"
+msgstr ""
+"Hostitud SAML 2.0 identiteedipakkuja metaandmed (automaatselt "
+"genereeritud) "
+
+msgid "OpenID Provider site - Alpha version (test code)"
+msgstr "OpenID pakkuja lehekülg - alfaversioon (testkood)"
+
+msgid "Required for Radius"
+msgstr "Nõutav Radiusele"
+
+msgid "We were unable to locate the metadata for the entity:"
+msgstr "Ei suudetud leida olemi metaandmeid:"
+
+msgid "SAML 2.0 SP example - test logging in through your IdP"
+msgstr "SAML 2.0 SP näide - sisselogimine sinu IdP kaudu"
+
+msgid "Using SimpleSAMLphp as a Service Provider"
+msgstr "SimpleSAMLphp kasutamine teenusepakkujana"
+
+msgid ""
+"We have detected that there is only a few seconds since you last "
+"authenticated with this service provider, and therefore assume that there"
+" is a problem with this SP."
+msgstr ""
+"Tuvastasime, et sinu viimasest autentimisest selle teenusepakkujaga on "
+"möödunud ainult mõned sekundid ja seepärast arvame, et sellega "
+"teenusepakkujaga on probleeme."
+
+msgid "Recommended"
+msgstr "Soovitatav"
+
+msgid ""
+"If you are a developer who is deploying a single sign-on solution, you "
+"have a problem with the metadata configuration. Verify that metadata is "
+"configured correctly on both the identity provider and service provider."
+msgstr ""
+"Kui sa oled arendaja, kes juurutab ühekordse sisselogimise lahendust, "
+"siis on probleemi põhjuseks metaandmete seadistused. Kontrolli, et "
+"metaandmed oleks seadistatud korrektselt nii identiteedipakkuja kui "
+"teenusepakkuja poolel."
+
+msgid "SimpleSAMLphp Advanced Features"
+msgstr "SimpleSAMLphp lisafunktsioonid"
+
+msgid "Too short interval between single sign on events."
+msgstr "Liiga lühike intervall ühekordse sisselogimise sündmuste vahel."
+
+msgid "Checking your PHP installation"
+msgstr "PHP paigalduse kontrollimine"
+
+msgid ""
+"The length of query parameters is limited by the PHP Suhosin extension. "
+"Please increase the suhosin.get.max_value_length option to at least 2048 "
+"bytes."
+msgstr ""
+"Päringuparameetrite arv on piiratud PHP Suhosin laienduse poolt. Palun "
+"suurenda suhosin.get.max_value_length väärtust vähemalt 2048 baidini."
+
+msgid "Useful links for your installation"
+msgstr "Kasulikud viited"
+
+msgid "Configuration"
+msgstr "Seadistamine"
+
+msgid "Hosted Shibboleth 1.3 Identity Provider Metadata (automatically generated)"
+msgstr ""
+"Hostitud Shibboleth 2.0 identiteedipakkuja metaandmed (automaatselt "
+"genereeritud) "
+
+msgid "Login as administrator"
+msgstr "Logi sisse administraatorina"
+
+msgid "Report this error"
+msgstr "Teavita sellest tõrkest"
+

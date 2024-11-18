@@ -1,0 +1,473 @@
+/* these styles are in the head of this page because this is a unique page */
+
+/* THE BIG GUYS */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    text-align: center;
+    padding: 10px 0;
+    background: #1c1c1c;
+/*    background-image: url(icons/ssplogo-fish.png); */
+/*    background-repeat: no-repeat; */
+    color: #333;
+    font: 83%/1.5 arial,tahoma,verdana,sans-serif;
+}
+
+.body-embed {
+    padding: 0;
+    background: #ffffff;
+    font: 83%/1.5 arial,tahoma,verdana,sans-serif;
+}
+
+img {
+    border: none;
+    display: block;
+}
+
+hr {
+    margin: 1em 0;
+    background: #eee;
+    height: 1px;
+    color: #eee;
+    border: none;
+    clear: both;
+}
+
+/* LINKS */
+a, a:link, a:link, a:link, a:hover {
+    text-decoration: none;
+    color: #777;
+    border-bottom: 1px dotted #ccc;
+    font-weight: normal;
+}
+
+a:link, a:visited {
+    text-decoration: none;
+    color: #777;
+    border-bottom: 1px dotted #ccc;
+    font-weight: normal;
+}
+.ui-tabs-nav a {
+    border: none ! important;
+    text-decoration: none;
+}
+a:visited {
+    color: #999;
+}
+
+a:hover, a:active {
+    color: #069;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #333;
+}
+
+#header a {
+    color: #fff;
+    text-decoration: none;
+}
+
+/* LISTS */
+ul {
+    margin: .3em 0 1.5em 2em;
+}
+
+ul.related {
+    margin-top: -1em;
+}
+
+li {
+    margin-left: 2em;
+}
+
+dt {
+    font-weight: bold;
+}
+
+#wrap {
+    background: #fff;
+
+    border: 1px solid #fff;
+    position: relative;
+    text-align: left;
+
+    margin: 20px 75px 2em 75px;
+    max-width: 950px;
+}
+
+#languagebar {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+#languagebar a:link, #languagebar a:visited {
+    text-decoration: none;
+    color: #777;
+    border-bottom: 1px dotted #ccc;
+    font-weight: normal;
+}
+#languagebar a:hover {
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #333;
+}
+
+#header {
+    background: #666 url("header-bkg.png") repeat-x 0 100%;
+    margin: 0px;
+    padding: 0 0 8px;
+}
+
+#header h1 {
+    color: #fff;
+    font-size: 145%;
+    padding: 20px 20px 12px;
+}
+
+#content, #footer {
+    padding: 0 20px;
+}
+
+/* TYPOGRAPHY */
+p, ul, ol {
+    margin: 0 0 1.5em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -1px;
+    font-family: arial,verdana,sans-serif;
+    margin: 1.2em 0 .3em;
+    color: #000;
+    border-bottom: 1px solid #eee;
+    padding-bottom: .1em;
+}
+
+h1 {
+    font-size: 196%;
+    margin-top: 0;
+    border: none;
+}
+
+h2 {
+    font-size: 136%;
+}
+
+h3 {
+    font-size: 126%;
+}
+
+h4 {
+    font-size: 116%;
+    font-weight: bold;
+}
+
+h5 {
+    font-size: 106%;
+}
+
+h6 {
+    font-size: 96%;
+}
+
+input {
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 5px;
+    line-height: 1.5em;
+}
+
+h1 a {
+    text-decoration: none;
+    border: none ! important;
+    color: white;
+}
+
+h1 a:hover {
+    border-bottom: 1px dotted #eee;
+}
+
+#content {
+    margin-top: 2em;
+}
+
+.old {
+    text-decoration: line-through;
+}
+
+dl dt {
+    color: #333;
+}
+
+dl dd {
+    color: #666;
+    margin-left: 3em;
+/*    font-family: monospace; */
+}
+
+.efieldlist {
+    padding: .4em;
+    margin: .8em;
+    border-top: 1px solid #e6e6e6;
+    border-left: 1px solid #e6e6e6;
+}
+
+.efieldlist.warning {
+    background-color: #922;
+    border: 1px solid #333;
+    color: white;
+}
+
+.efieldlist.warning h5 {
+    color: white;
+}
+
+.efieldlist h5 {
+    font-weight: bold;
+    color: #200;
+    margin: .3em;
+}
+
+.trackidtext {
+    border: 1px dashed #aaa;
+    background: #eaeaea;
+    padding: .6em;
+    margin: .4em;
+}
+
+.trackidtext .trackid {
+    border: 1px solid #ccc;
+    background: #eee;
+    margin: .4em;
+    padding: .4em;
+    font-family: monospace;
+    font-size: large;
+}
+
+div.caution {
+    background-color:  #FF9;
+    background-image: url('icons/experience/gtk-dialog-warning.48x48.png');
+    background-repeat: no-repeat;
+    border: thin solid #444;
+    padding: .2em .2em .2em 60px;
+    margin: 1em 0px 1em 0px;
+}
+
+th.rowtitle {
+    text-align: left;
+}
+.youareadmin {
+    border: 1px solid #aaa;
+    margin-left: 1em;
+    padding: 5px;
+}
+.enablebox table {
+    border: 1px solid #eee;
+    margin-left: 1em;
+}
+.enablebox.mini table {
+    float: right;
+}
+.enablebox tr td {
+    padding: .5px 1em 1px .5em;
+    margin: 0px;
+}
+.enablebox {
+    font-size: 85%;
+}
+.enablebox tr.enabled td {
+    background: #eee;
+}
+.enablebox tr.disabled td {
+    background: #ccc;
+}
+
+.metadatabox {
+    overflow: scroll;
+    border: 1px solid #eee;
+    padding: 0.5em;
+    border-radius: 3px;
+}
+div.preferredidp {
+    border: 1px dashed #ccc;
+    background: #eee;
+    padding: 2px 2em 2px 2em;
+}
+
+table.modules {
+    border-collapse: collapse;
+}
+table.modules tr td {
+    border-bottom: 1px solid #ddd;
+}
+table.modules tr.even td {
+    background: #f0f0f0;
+}
+
+/* Attribute presentation in example page */
+table.attributes {
+    width: 100%;
+    margin: 0px;
+    border: 1px solid #bbb;
+    border-collapse: collapse;
+}
+
+table.attributes td.attrname {
+    text-align: right;
+}
+
+table.attributes tr.even td {
+    background: #eee;
+}
+
+table.attributes tr td {
+    border-bottom: 1px solid #bbb;
+    border-left: 0px;
+    border-right: 0px;
+    background: #fff;
+    padding-top: 5px;
+    padding-left: 1em;
+    padding-right: 1em;
+    vertical-align: top;
+}
+
+.attrvalue {
+    word-break: break-all;
+    word-wrap: break-word;
+}
+
+table#table_with_attributes tr:last-child td {
+    border-bottom: none;
+}
+
+fieldset.fancyfieldset {
+    margin: 2em 1em 1em 0px;
+    border: 1px solid #bbb;
+}
+fieldset.fancyfieldset legend {
+    margin-left: 2em;
+    padding: 3px 2em 3px 2em;
+    border: 1px solid #bbb;
+}
+
+div#confirmation input {
+    margin-top: .5em;
+    margin-bottom: .5em;
+}
+div#confirmation {
+    border: 1px solid #aaa;
+    background: #eee;
+    padding: .6em 1em .1em 1em;
+}
+
+caption {
+    display: none;
+}
+
+/* Left-to-Right CSS for RTL (Right to Left Support) */
+.float-r {
+    float: right;
+}
+.float-l {
+    float: left;
+}
+
+#mobile_remember_username, #mobile_remember_me {
+    display: none;
+}
+
+@media handheld, only screen and (max-width: 480px), only screen and (max-device-width: 480px) {
+    #header, #languagebar, #footer, .erroricon, .loginicon, .logintext,
+    #regular_remember_username, #regular_remember_me {
+        display: none;
+    }
+    body {
+        font-size: 20px;
+    }
+    #wrap {
+        margin: 0;
+    }
+    h1,h2,h3,h4 {
+        font-size: 110%;
+    }
+
+    #content {
+        margin-bottom: 10px;
+        padding: 0;
+        padding-left: 5px;
+    }
+    input[type="text"], input[type="password"] {
+        height: 1.5em;
+        font-size: 1em;
+    }
+    .youareadmin {
+        font-size: 50%;
+    }
+    #mobilesubmit, #mobile_remember_username, #mobile_remember_me {
+        display: table-row;
+    }
+}
+
+.btn, .btnaddonright {
+    color: #000000;
+    border: 1px solid #eee;
+    border-radius: 3px;
+    background-color: #eee;
+    background-image: linear-gradient(#fcfcfc, #eee);
+    text-align: center;
+    padding: 5px;
+    cursor: hand;
+}
+
+.btn:hover, .btnaddonright:hover {
+    border-color: #ccc;
+    background-color: #ddd;
+    background-image: linear-gradient(#eee, #ddd);
+}
+
+.btn img,
+.btnaddonright img {
+    max-height: 15px;
+    max-width: 15px;
+}
+
+.topright {
+    position: absolute;
+    right: 2em;
+}
+
+.input-group {
+    display: table;
+}
+
+.input-group pre {
+    background: white;
+    position: relative;
+    width: 100%;
+    vertical-align: middle;
+    border: 1px solid #eee;
+    padding: 0.5em;
+    display: table-cell;
+}
+
+.input-group .btnaddonright {
+    position: relative;
+    display: inline-block;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 3px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 3px;
+    border-left: none;
+}
+
+.input-group .btnaddonright:hover {
+    border-left: 1px solid #ccc;
+}
+
+.input-group .input-left {
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 0;
+}

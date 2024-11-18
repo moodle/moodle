@@ -1,0 +1,43 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-statistics",
+    "description": "The SimpleSAMLphp statistics module",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "statistics"],
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Andreas Åkre Solberg",
+            "email": "andreas.solberg@uninett.no"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\statistics\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+        "simplesamlphp/composer-module-installer": "~1.1",
+        "webmozart/assert": "^1.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.7",
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "simplesamlphp/simplesamlphp-test-framework": "^0.0.12"
+    },
+    "support": {
+        "issues": "https://github.com/simplesamlphp/simplesamlphp-module-statistics/issues",
+        "source": "https://github.com/simplesamlphp/simplesamlphp-module-statistics"
+    }
+}

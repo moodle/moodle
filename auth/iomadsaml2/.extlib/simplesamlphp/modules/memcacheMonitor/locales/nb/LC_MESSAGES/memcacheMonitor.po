@@ -1,0 +1,136 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: nb_NO\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{memcacheMonitor:memcachestat:total_connections}"
+msgstr "Totalt antall forbindelser"
+
+msgid "{memcacheMonitor:memcachestat:version}"
+msgstr "Versjon"
+
+msgid "{memcacheMonitor:memcachestat:get_hits}"
+msgstr "Totalt antall GET kommandoer (OK)"
+
+msgid "{memcacheMonitor:memcachestat:curr_items}"
+msgstr "Nåværende antall elementer"
+
+msgid "{memcacheMonitor:memcachestat:uptime}"
+msgstr "Oppetid"
+
+msgid "{memcacheMonitor:memcachestat:limit_maxbytes}"
+msgstr "Total lagring tilgjengelig"
+
+msgid "{memcacheMonitor:memcachestat:curr_connections}"
+msgstr "Antall åpne forbindelser nå"
+
+msgid "{memcacheMonitor:memcachestat:rusage_system}"
+msgstr "CPU Sekunder (system)"
+
+msgid "{memcacheMonitor:memcachestat:rusage_user}"
+msgstr "CPU Sekunder (bruker)"
+
+msgid "{memcacheMonitor:memcachestat:pid}"
+msgstr "Prosess ID"
+
+msgid "{memcacheMonitor:memcachestat:cmd_get}"
+msgstr "Totalt antall GET kommandoer"
+
+msgid "{memcacheMonitor:memcachestat:bytes_read}"
+msgstr "Antall bytes inn til tjeneren"
+
+msgid "{memcacheMonitor:memcachestat:time}"
+msgstr "Tid nå"
+
+msgid "{memcacheMonitor:memcachestat:get_misses}"
+msgstr "Totalt antall GET kommandoer (feilet)"
+
+msgid "{memcacheMonitor:memcachestat:bytes_written}"
+msgstr "Antall bytes skrevet av tjeneren"
+
+msgid "{memcacheMonitor:memcachestat:connection_structures}"
+msgstr "Tilkoblings-strukturer"
+
+msgid "{memcacheMonitor:memcachestat:cmd_set}"
+msgstr "Totalt antall SET kommandoer"
+
+msgid "{memcacheMonitor:memcachestat:total_items}"
+msgstr "Antall elementer for alltid"
+
+msgid "{memcacheMonitor:memcachestat:bytes}"
+msgstr "Totalt antall bytes i bruk nå"
+
+msgid "Current time"
+msgstr "Tid nå"
+
+msgid "Total items ever"
+msgstr "Antall elementer for alltid"
+
+msgid "Bytes written by the server"
+msgstr "Antall bytes skrevet av tjeneren"
+
+msgid "Uptime"
+msgstr "Oppetid"
+
+msgid "Current open connections"
+msgstr "Antall åpne forbindelser nå"
+
+msgid "Total storage avail"
+msgstr "Total lagring tilgjengelig"
+
+msgid "Version"
+msgstr "Versjon"
+
+msgid "Total GET commands (failed)"
+msgstr "Totalt antall GET kommandoer (feilet)"
+
+msgid "Total SET commands"
+msgstr "Totalt antall SET kommandoer"
+
+msgid "Connection structures"
+msgstr "Tilkoblings-strukturer"
+
+msgid "Total GET commands (success)"
+msgstr "Totalt antall GET kommandoer (OK)"
+
+msgid "Total bytes in use currently"
+msgstr "Totalt antall bytes i bruk nå"
+
+msgid "Total GET commands"
+msgstr "Totalt antall GET kommandoer"
+
+msgid "Bytes in to the server"
+msgstr "Antall bytes inn til tjeneren"
+
+msgid "Process ID"
+msgstr "Prosess ID"
+
+msgid "Currently number of items"
+msgstr "Nåværende antall elementer"
+
+msgid "CPU Seconds (User)"
+msgstr "CPU Sekunder (bruker)"
+
+msgid "CPU Seconds (System)"
+msgstr "CPU Sekunder (system)"
+
+msgid "Total connections"
+msgstr "Totalt antall forbindelser"
+
+msgid "{memcacheMonitor:memcachestat:link_memcacheMonitor}"
+msgstr "Memcache statistikker"
+
+msgid "Memcache statistics"
+msgstr "Memcache statistikker"

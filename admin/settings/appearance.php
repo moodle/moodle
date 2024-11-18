@@ -35,6 +35,33 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
     $setting->set_updatedcallback('theme_reset_all_caches');
     $temp->add($setting);
 
+    // IOMAD Company logo file setting.
+    global $SESSION;
+    if (!empty($SESSION->currenteditingcompany)) {
+        $title = get_string('companylogo', 'block_iomad_company_admin');
+        $description = get_string('companylogo_desc', 'block_iomad_company_admin');
+        $setting = new admin_setting_configstoredfile('core_admin/logo'.$SESSION->currenteditingcompany, $title, $description, 'logo'.$SESSION->currenteditingcompany, 0,
+            ['maxfiles' => 1, 'accepted_types' => ['.jpg', '.png']]);
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $temp->add($setting);
+
+        // Small logo file setting.
+        $title = get_string('companylogocompact', 'block_iomad_company_admin');
+        $description = get_string('companylogocompact_desc', 'block_iomad_company_admin');
+        $setting = new admin_setting_configstoredfile('core_admin/logocompact'.$SESSION->currenteditingcompany, $title, $description, 'logocompact'.$SESSION->currenteditingcompany, 0,
+            ['maxfiles' => 1, 'accepted_types' => ['.jpg', '.png']]);
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $temp->add($setting);
+
+        // Favicon file setting.
+        $title = get_string('companyfavicon', 'block_iomad_company_admin');
+        $description = get_string('companyfavicon_desc', 'block_iomad_company_admin');
+        $setting = new admin_setting_configstoredfile('core_admin/favicon'.$SESSION->currenteditingcompany, $title, $description, 'favicon'.$SESSION->currenteditingcompany, 0,
+            ['maxfiles' => 1, 'accepted_types' => ['image']]);
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $temp->add($setting);
+    }
+
     $ADMIN->add('appearance', $temp);
 
     // Course colours section.

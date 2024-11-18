@@ -1,0 +1,33 @@
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        public: false
+
+    request_stack:
+        class: Symfony\Component\HttpFoundation\RequestStack
+        public: true
+
+    Symfony\Component\HttpFoundation\RequestStack:
+        alias: request_stack
+
+    file_locator:
+        class: Symfony\Component\Config\FileLocator
+
+    dispatcher:
+        class: Symfony\Component\EventDispatcher\EventDispatcher
+        calls:
+            - method: addSubscriber
+              arguments:
+                  - '@router_listener'
+            - method: addSubscriber
+              arguments:
+                  - '@response_listener'
+
+    http_kernel:
+        class: Symfony\Component\HttpKernel\HttpKernel
+        public: true
+        arguments:
+            - '@dispatcher'
+            - '@controller_resolver'
+            - '@request_stack'
+            - '@argument_resolver'

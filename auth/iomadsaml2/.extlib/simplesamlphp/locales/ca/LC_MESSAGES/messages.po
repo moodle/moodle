@@ -1,0 +1,156 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: ca\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "Person's principal name at home organization"
+msgstr "Identificador únic de la persona a la seva organització d'origen"
+
+msgid "Mobile"
+msgstr "Telèfon mòbil"
+
+msgid "Display name"
+msgstr "Nom de visualització"
+
+msgid "Home telephone"
+msgstr "Telèfon del domicili"
+
+msgid "Locality"
+msgstr "Localitat"
+
+msgid "Organizational number"
+msgstr "Número de l'organització"
+
+msgid "Post office box"
+msgstr "Apartat de correus"
+
+msgid "Distinguished name (DN) of the person's home organizational unit"
+msgstr ""
+"Nom distingit (DN) de la Unitat Organitzativa (OU) de l'organització "
+"d'origen"
+
+msgid "Mail"
+msgstr "Correu electrònic"
+
+msgid "Distinguished name (DN) of person's primary Organizational Unit"
+msgstr ""
+"Nom distingit (DN) de l'entrada del directori que representa "
+"l'identificador"
+
+msgid "Home postal address"
+msgstr "Adreça del domicili"
+
+msgid "Given name"
+msgstr "Nom"
+
+msgid "Identity assurance profile"
+msgstr "Identificador del perfil de garantia"
+
+msgid "Organization name"
+msgstr "Nom de l'organització"
+
+msgid "Home organization domain name"
+msgstr "Identificador únic de l'organització d'origen"
+
+msgid "Common name"
+msgstr "Nom comú (CN)"
+
+msgid "Identity number assigned by public authorities"
+msgstr "Número de la Seguretat Social"
+
+msgid "Persistent pseudonymous ID"
+msgstr "Identificador pseudònim persistent"
+
+msgid "Domain component (DC)"
+msgstr "Component de domini (DC)"
+
+msgid "Nickname"
+msgstr "Àlies"
+
+msgid "Date of birth"
+msgstr "Data de naixement"
+
+msgid "Private information elements"
+msgstr "Elements d'informació privada"
+
+msgid "Affiliation"
+msgstr "Afiliació"
+
+msgid "Preferred language"
+msgstr "Idioma preferit"
+
+msgid "Surname"
+msgstr "Cognoms"
+
+msgid "User ID"
+msgstr "Identificador d'usuari"
+
+msgid "JPEG Photo"
+msgstr "Fotografia en JPEG"
+
+msgid "Postal address"
+msgstr "Adreça postal"
+
+msgid "Labeled URI"
+msgstr "URI etiquetat"
+
+msgid "Postal code"
+msgstr "Codi postal"
+
+msgid "Primary affiliation"
+msgstr "Afiliació primària"
+
+msgid "Telephone number"
+msgstr "Número de telèfon"
+
+msgid "Entitlement regarding the service"
+msgstr "Dret relatiu al servei"
+
+msgid "Distinguished name (DN) of person's home organization"
+msgstr "Nom distingit (DN) de l'organització d'origen"
+
+msgid "Organizational unit"
+msgstr "Unitat organitzativa"
+
+msgid "Local identity number"
+msgstr "Número d'identificació local"
+
+msgid "User's password hash"
+msgstr "Clau o contrasenya i mètode d'encriptació usat"
+
+msgid "Organization's legal name"
+msgstr "Nom legal de l'organització"
+
+msgid "Street"
+msgstr "Carrer"
+
+msgid "Legal name"
+msgstr "Nom legal"
+
+msgid "Fax number"
+msgstr "Número de fax"
+
+msgid "Title"
+msgstr "Tractament"
+
+msgid "Manager"
+msgstr "Gestor"
+
+msgid "Affiliation at home organization"
+msgstr "Afiliació a l'organització d'origen"
+
+msgid "Organizational homepage"
+msgstr "Pàgina inicial de l'organització"
+

@@ -201,12 +201,15 @@ class block_activity_results extends block_base {
             return $this->content;
         }
 
+        // IOMAD - Get the user's company details.
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
         // Get the grades for this activity.
         $sql = 'SELECT * FROM {grade_grades}
                  WHERE itemid = ? AND finalgrade is not NULL
+                 AND userid IN (SELECT userid FROM {company_users} WHERE companyid = ?)
                  ORDER BY finalgrade, timemodified DESC';
 
-        $grades = $DB->get_records_sql($sql, array( $activitygradeitemid));
+        $grades = $DB->get_records_sql($sql, array( $activitygradeitemid, $companyid));
 
         if (empty($grades) || $activity->hidden) {
             // No grades available, The block will hide itself in this case.
@@ -264,11 +267,13 @@ class block_activity_results extends block_base {
                 // Now find which groups these users belong in.
                 list($usertest, $params) = $DB->get_in_or_equal($userids);
                 $params[] = $courseid;
+                $params[] = $company->id;
                 $usergroups = $DB->get_records_sql('
                         SELECT gm.id, gm.userid, gm.groupid, g.name
                         FROM {groups} g
                         LEFT JOIN {groups_members} gm ON g.id = gm.groupid
-                        WHERE gm.userid ' . $usertest . ' AND g.courseid = ?', $params);
+                        WHERE gm.userid ' . $usertest . ' AND g.courseid = ?
+                        AND gm.userid IN (SELECT userid FROM {company_users} WHERE companyid = ?', $params);
 
                 // Now, iterate the grades again and sum them up for each group.
                 $groupgrades = array();
@@ -468,8 +473,10 @@ class block_activity_results extends block_base {
 
                 // Get users from the same groups as me.
                 list($grouptest, $params) = $DB->get_in_or_equal(array_keys($mygroups));
+                $params[] = $company->id;
                 $mygroupsusers = $DB->get_records_sql_menu(
-                        'SELECT DISTINCT userid, 1 FROM {groups_members} WHERE groupid ' . $grouptest,
+                        'SELECT DISTINCT userid, 1 FROM {groups_members} WHERE groupid ' . $grouptest
+                        . ' AND userid IN (SELECT userid FROM {company_users} WHERE companyid = ?',
                         $params);
 
                 // Filter out the grades belonging to other users, and proceed as if there were no groups.

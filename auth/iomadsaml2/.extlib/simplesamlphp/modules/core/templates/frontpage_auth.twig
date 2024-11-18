@@ -1,0 +1,18 @@
+{% set pagetitle = '{core:frontpage:page_title}'|trans %}
+{% set frontpage_section = 'auth' %}
+{% extends "base.twig" %}
+
+{% block content %}
+    {% include "@core/_frontpage_menu.twig" %}
+
+    <ul>
+    {% for key, link in links_auth %}
+        <li>
+            <a href="{{ link.href }}">{{ link.text|trans|escape('html') }}</a>
+            {% if link.deprecated is defined and link.deprecated is not empty %}
+            <strong>{{ '{core:frontpage:deprecated}'|trans }}</strong>
+            {% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}

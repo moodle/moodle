@@ -1,0 +1,52 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-negotiate",
+    "description": "The Negotiate module implements Microsofts Kerberos SPNEGO mechanism",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "negotiate"],
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Olav Morken",
+            "email": "olavmrk@gmail.com"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        },
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\negotiate\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+        "simplesamlphp/composer-module-installer": "~1.1",
+        "simplesamlphp/simplesamlphp-module-ldap": "^0.9",
+        "webmozart/assert": "~1.4"
+    },
+    "require-dev": {
+        "sensiolabs/security-checker": "^5.0.3",
+        "simplesamlphp/simplesamlphp": "dev-testing-1.18",
+        "simplesamlphp/simplesamlphp-test-framework": "^0.0.14",
+        "squizlabs/php_codesniffer": "^3.5",
+        "phpunit/phpunit": "~5.7"
+    },
+    "suggest": {
+        "ext-krb5": "Needed in case the SimpleSAMLphp negotiate module is used"
+    },
+    "support": {
+        "issues": "https://github.com/simplesamlphp/simplesamlphp-module-negotiate/issues",
+        "source": "https://github.com/simplesamlphp/simplesamlphp-module-negotiate"
+    }
+}

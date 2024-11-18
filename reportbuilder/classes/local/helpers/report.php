@@ -129,7 +129,7 @@ class report {
 
         // Ensure column is available.
         if (!array_key_exists($uniqueidentifier, $report->get_columns())) {
-            throw new invalid_parameter_exception('Invalid column');
+            throw new invalid_parameter_exception('Invalid column ' . $uniqueidentifier);
         }
 
         $column = new column(0, (object) [

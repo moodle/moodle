@@ -1,0 +1,13 @@
+.auth_iomadoidc_ucp_indicator h4 {
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.auth_iomadoidc_ucp_indicator h5 {
+    display: inline-block;
+    margin-left: 0.5rem;
+}
+
+.auth_iomadoidc_ucp_indicator h5 + span {
+    display: block;
+}

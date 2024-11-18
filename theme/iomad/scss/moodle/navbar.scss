@@ -1,0 +1,176 @@
+@mixin hover-navbar {
+    border-color: transparent;
+    background-color: $gray-100;
+}
+
+.navbar.fixed-top {
+    padding-top: 0;
+    padding-bottom: 0;
+    box-shadow: none;
+    border-bottom: $gray-300 1px solid;
+    align-items: stretch;
+    height: $navbar-height + 1px;
+
+    .navbar-brand {
+        .logo {
+            max-height: calc(#{$navbar-height} - (#{$primary-nav-padding-y} * 2));
+        }
+    }
+    .nav-link {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+    .divider {
+        width: 1px;
+        background-color: $gray-300;
+    }
+
+    #usernavigation .nav-link {
+        padding: 0 $primary-nav-padding-x;
+    }
+    .login {
+        display: flex;
+        align-items: center;
+    }
+    .usermenu {
+        display: flex;
+        .action-menu {
+            display: flex;
+            align-items: center;
+        }
+        .dropdown {
+            display: flex;
+            align-items: center;
+            .dropdown-toggle {
+                padding-top: 0;
+                padding-bottom: 0;
+                border-radius: 0;
+                display: flex;
+                align-items: center;
+                height: 100%;
+            }
+        }
+        .dropdown-menu {
+            min-width: 235px;
+            .carousel-navigation-link {
+                > * {
+                    pointer-events: none;
+                }
+            }
+            .dropdown-item {
+                padding: .25rem 1.75rem .25rem .75rem;
+                &.carousel-navigation-link::after {
+                    @extend .fa-solid;
+                    content: fa-content($fa-var-caret-right);
+                    font-size: 1rem;
+                    right: .75rem;
+                    position: absolute;
+                }
+            }
+            .submenu {
+                .header {
+                    padding: .25rem .75rem;
+                    font-size: .975rem;
+                    .icon {
+                        font-size: 20px;
+                        height: 20px;
+                        width: 20px;
+                        margin: 0;
+                    }
+                }
+                .items {
+                    .dropdown-item {
+                        &[aria-current="true"]::before {
+                            @extend .fa-solid;
+                            content: fa-content($fa-var-check);
+                            font-size: 0.75rem;
+                            padding-left: .25rem;
+                        }
+                    }
+                }
+            }
+        }
+        .login {
+            display: flex;
+            align-items: center;
+        }
+    }
+    .usermenu,
+    .langmenu {
+        .dropdown {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            .dropdown-toggle {
+                padding-top: 0;
+                padding-bottom: 0;
+                border-radius: 0;
+                display: flex;
+                align-items: center;
+                height: 100%;
+            }
+        }
+    }
+    .langmenu {
+        .dropdown-menu {
+            .dropdown-item {
+                &[aria-current="true"]::before {
+                    content: "\f00c";
+                    font-size: 0.75rem;
+                    padding-left: .25rem;
+                }
+            }
+        }
+        @include media-breakpoint-down(sm) {
+            .langbutton {
+                display: none;
+            }
+        }
+    }
+    .moodle-actionmenu .menubar,
+    .action-menu-trigger .dropdown {
+        height: 100%;
+        display: flex;
+    }
+}
+.dir-rtl .navbar.fixed-top {
+    .usermenu {
+        .dropdown-menu {
+            .dropdown-item {
+                &.carousel-navigation-link::after {
+                    @extend .fa-solid;
+                    content: fa-content($fa-var-caret-left);
+                }
+            }
+            .carousel {
+                .carousel-inner {
+                    .carousel-item-prev.carousel-item-right,
+                    .carousel-item-next.carousel-item-left {
+                        transform: translateX(0);
+                    }
+                    .carousel-item-next,
+                    .carousel-item-right.active {
+                        transform: translateX(-100%);
+                    }
+                    .carousel-item-prev,
+                    .carousel-item-left.active {
+                        transform: translateX(100%);
+                    }
+                }
+            }
+        }
+    }
+}
+#page {
+    margin-top: $navbar-height;
+}
+.pagelayout-embedded #page {
+    margin-top: 0;
+}
+
+// Make navbar height available for non-sass use.
+:root {
+    --navbar-height: #{$navbar-height};
+}

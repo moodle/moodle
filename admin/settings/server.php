@@ -461,6 +461,13 @@ if ($hassiteconfig) {
     // Email.
     $ADMIN->add('server', new admin_category('email', new lang_string('categoryemail', 'admin')));
 
+    // IOMAD - Do we have the per company settings?
+    $havecompany = false;
+    if (!during_initial_install() &&
+        $companyid = iomad::get_my_companyid(context_system::instance(), false)) {
+        $havecompany = true;
+    }
+
     // Outgoing mail configuration.
     $temp = new admin_settingpage('outgoingmailconfig', new lang_string('outgoingmailconfig', 'admin'));
 
@@ -476,6 +483,14 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configtext('smtphosts', new lang_string('smtphosts', 'admin'),
         new lang_string('configsmtphosts', 'admin'), '', PARAM_RAW));
 
+    // IOMAD
+    if ($havecompany) {
+        $temp->add(new admin_setting_configtext('smtphosts'.$companyid, new lang_string('company', 'block_iomad_company_admin') . ' ' .
+            new lang_string('smtphosts', 'admin'),
+            new lang_string('configsmtphosts', 'admin'), '', PARAM_RAW));
+    }
+
+
     $options = [
         '' => new lang_string('none', 'admin'),
         'ssl' => 'SSL',
@@ -484,6 +499,13 @@ if ($hassiteconfig) {
 
     $temp->add(new admin_setting_configselect('smtpsecure', new lang_string('smtpsecure', 'admin'),
         new lang_string('configsmtpsecure', 'admin'), '', $options));
+
+    // IOMAD
+    if ($havecompany) {
+        $temp->add(new admin_setting_configselect('smtpsecure'.$companyid, new lang_string('company', 'block_iomad_company_admin') . ' ' .
+            new lang_string('smtpsecure', 'admin'),
+            new lang_string('configsmtpsecure', 'admin'), '', $options));
+    }
 
     $authtypeoptions = [
         'LOGIN' => 'LOGIN',
@@ -509,6 +531,13 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configselect('smtpauthtype', new lang_string('smtpauthtype', 'admin'),
         new lang_string('configsmtpauthtype', 'admin'), 'LOGIN', $authtypeoptions));
 
+    // IOMAD
+    if ($havecompany) {
+        $temp->add(new admin_setting_configselect('smtpauthtype'.$companyid, new lang_string('company', 'block_iomad_company_admin') . ' ' .
+            new lang_string('smtpauthtype', 'admin'),
+            new lang_string('configsmtpauthtype', 'admin'), 'LOGIN', $authtypeoptions));
+    }
+
     if (count($enabledissuers) > 0) {
         $oauth2services = [
             '' => new lang_string('none', 'admin'),
@@ -519,16 +548,44 @@ if ($hassiteconfig) {
 
         $temp->add(new admin_setting_configselect('smtpoauthservice', new lang_string('issuer', 'auth_oauth2'),
             new lang_string('configsmtpoauthservice', 'admin'), '', $oauth2services));
+
+        // IOMAD
+        if ($havecompany) {
+            $temp->add(new admin_setting_configselect('smtpoauthservice'.$companyid, new lang_string('company', 'block_iomad_company_admin') . ' ' .
+                new lang_string('issuer', 'auth_oauth2'),
+                new lang_string('configsmtpoauthservice', 'admin'), '', $oauth2services));
+        }
     }
 
     $temp->add(new admin_setting_configtext('smtpuser', new lang_string('smtpuser', 'admin'),
         new lang_string('configsmtpuser', 'admin'), '', PARAM_NOTAGS));
 
+    // IOMAD
+    if ($havecompany) {
+        $temp->add(new admin_setting_configtext('smtpuser'.$companyid, new lang_string('company', 'block_iomad_company_admin') . ' ' .
+            new lang_string('smtpuser', 'admin'),
+            new lang_string('configsmtpuser', 'admin'), '', PARAM_NOTAGS));
+    }
+
     $temp->add(new admin_setting_configpasswordunmask('smtppass', new lang_string('smtppass', 'admin'),
         new lang_string('configsmtpuser', 'admin'), ''));
 
+    // IOMAD
+    if ($havecompany) {
+        $temp->add(new admin_setting_configpasswordunmask('smtppass'.$companyid, new lang_string('company', 'block_iomad_company_admin') . ' ' .
+            new lang_string('smtppass', 'admin'),
+            new lang_string('configsmtpuser', 'admin'), ''));
+    }
+
     $temp->add(new admin_setting_configtext('smtpmaxbulk', new lang_string('smtpmaxbulk', 'admin'),
         new lang_string('configsmtpmaxbulk', 'admin'), 1, PARAM_INT));
+
+    // IOMAD
+    if ($havecompany) {
+        $temp->add(new admin_setting_configtext('smtpmaxbulk'.$companyid, new lang_string('company', 'block_iomad_company_admin') . ' ' .
+            new lang_string('smtpmaxbulk', 'admin'),
+            new lang_string('configsmtpmaxbulk', 'admin'), 1, PARAM_INT));
+    }
 
     $temp->add(new admin_setting_heading('noreplydomainheading', new lang_string('noreplydomain', 'admin'),
         new lang_string('noreplydomaindetail', 'admin')));
@@ -539,6 +596,13 @@ if ($hassiteconfig) {
     }
     $temp->add(new admin_setting_configtext('noreplyaddress', new lang_string('noreplyaddress', 'admin'),
         new lang_string('confignoreplyaddress', 'admin'), $default, PARAM_EMAIL));
+
+    // IOMAD
+    if ($havecompany) {
+        $temp->add(new admin_setting_configtext('noreplyaddress'.$companyid, new lang_string('company', 'block_iomad_company_admin') . ' ' .
+            new lang_string('noreplyaddress', 'admin'),
+            new lang_string('confignoreplyaddress', 'admin'), 'noreply@' . get_host_from_url($CFG->wwwroot), PARAM_EMAIL));
+    }
 
     $temp->add(new admin_setting_configtextarea('allowedemaildomains',
         new lang_string('allowedemaildomains', 'admin'),
@@ -564,6 +628,13 @@ if ($hassiteconfig) {
         new lang_string('emaildkiminfo', 'admin', ['path' => $pempath, 'docs' => \get_docs_url('Mail_configuration#DKIM')])));
     $temp->add(new admin_setting_configtext('emaildkimselector', new lang_string('emaildkimselector', 'admin'),
         new lang_string('configemaildkimselector', 'admin'), '', PARAM_FILE));
+
+    // IOMAD
+    if ($havecompany) {
+        $temp->add(new admin_setting_configtext('emaildkimselector'.$companyid, new lang_string('company', 'block_iomad_company_admin') . ' ' .
+            new lang_string('emaildkimselector', 'admin'),
+            new lang_string('configemaildkimselector', 'admin'), '', PARAM_FILE));
+    }
 
     $url = new moodle_url('/admin/testoutgoingmailconf.php');
     $link = html_writer::link($url, get_string('testoutgoingmailconf', 'admin'));

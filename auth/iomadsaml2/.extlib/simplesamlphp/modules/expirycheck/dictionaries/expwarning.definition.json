@@ -1,0 +1,35 @@
+{
+	"access_denied": {
+		"en": "You do not have access to this service"
+	},
+	"no_access_to": {
+		"en": "Your account %NETID% has expired, access denied!"
+	},
+	"contact_home": {
+		"en": "Access to services is controlled by your home organization. Please contact your local IT support for questions."
+	},
+	"expiry_date_text": {
+		"en": "Expiration date:"
+	},
+	"warning_header": {
+		"en": "Warning, your account %NETID% will expire in %DAYSLEFT% %DAYS%!"
+	},
+	"warning_header_today": {
+		"en": "Warning, your account %NETID% will expire today!"
+	},
+	"warning": {
+		"en": "Warning, your account %NETID% will expire in %DAYSLEFT% %DAYS%!"
+	},
+	"warning_today": {
+		"en": "Warning, your account %NETID% will expire today!"
+	},
+	"day": {
+		"en": "day"
+	},
+	"days": {
+		"en": "days"
+	},
+	"btn_continue": {
+		"en": "I am aware of this, continue..."
+	}
+}

@@ -1,0 +1,15 @@
+{% extends "base.twig" %}
+
+{% block content %}
+  <h1>{% trans %}{authorize:Authorize:403_header}{% endtrans %}</h1>
+{% if reject_msg is defined %}
+  <p>{{ reject_msg|translateFromArray }}</p>
+{% else %}
+  <p>{% trans %}{authorize:Authorize:403_text}{% endtrans %}</p>
+{% endif %}
+  {% if logoutURL is defined %}
+  <p>
+      <a href="{{ logoutURL }}">{% trans %}{status:logout}{% endtrans %}</a>
+  </p>
+  {% endif %}
+{% endblock%}

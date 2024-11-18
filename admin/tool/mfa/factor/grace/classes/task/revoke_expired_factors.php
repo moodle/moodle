@@ -57,22 +57,52 @@ class revoke_expired_factors extends \core\task\scheduled_task {
     private function revoke_factors(): void {
         global $DB;
 
+        $runtime = time();
+        // IOMAD
+        // Get all of the tenants
+        $configuredtenants = [];
+        $alltenants = $DB->get_records("SELECT id FROM {company} WHERE suspended = 0");
+        foreach ($alltenants as $tenantid) {
+            // If config is not set, pull out.
+            $duration = get_config('factor_grace', 'graceperiod_' . $tenantid);
+            if ($duration) {
+                $configuredtenants[$tenantid] = $tenantid;
+                $revoketime = $runtime - $duration;
+
+                // Single query implementation.
+                $sql = "UPDATE {tool_mfa}
+                            SET revoked = 1,
+                                timemodified = :timemodified
+                            WHERE timecreated < :revoketime
+                            AND factor = :factor
+                            AND userid IN (
+                                SELECT userid FROM {company_users}
+                                 WHERE companyid = :companyid)";
+                $DB->execute($sql, ['timemodified' => time(), 'revoketime' => $revoketime, 'factor' => 'grace', 'companyid' => $tenantid]);
+            }
+        }
         // If config is not set, pull out.
         $duration = get_config('factor_grace', 'graceperiod');
         if (!$duration) {
             mtrace('Gracemode duration is not set. Exiting...');
             return;
         }
-        $revoketime = time() - $duration;
+        $revoketime = $runtime - $duration;
 
         // Single query implementation.
-        $sql = "UPDATE {tool_mfa}
-                    SET revoked = 1,
-                        timemodified = :timemodified
-                    WHERE timecreated < :revoketime
-                    AND factor = :factor";
-        $DB->execute($sql, ['timemodified' => time(), 'revoketime' => $revoketime, 'factor' => 'grace']);
-
+        $tenantsql = "";
+        if (!empty($configuredtenants)) {
+            $tenantsql = " AND userid NOT IN (
+                              SELECT userid FROM {company_users}
+                              WHERE companyid NOT IN (" . implode(',', array_keys($configuredtenants)) . "))";
+            $sql = "UPDATE {tool_mfa}
+                        SET revoked = 1,
+                            timemodified = :timemodified
+                        WHERE timecreated < :revoketime
+                        AND factor = :factor
+                        $tenantsql";
+            $DB->execute($sql, ['timemodified' => time(), 'revoketime' => $revoketime, 'factor' => 'grace']);
+        }
         mtrace('Finished revoking expired Grace factors');
     }
 }

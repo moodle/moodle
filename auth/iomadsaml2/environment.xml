@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<COMPATIBILITY_MATRIX>
+  <PLUGIN name="auth_iomadsaml2">
+    <PHP version="7.2" level="required" />
+    <PHP_EXTENSIONS>
+      <!-- Extension prerequisites for SimpleSAMLphp https://simplesamlphp.org/docs/stable/simplesamlphp-install#section_3 -->
+      <PHP_EXTENSION name="date" level="required" />
+      <PHP_EXTENSION name="dom" level="required" />
+      <PHP_EXTENSION name="hash" level="required" />
+      <PHP_EXTENSION name="libxml" level="required" />
+      <PHP_EXTENSION name="openssl" level="required" />
+      <PHP_EXTENSION name="pcre" level="required" />
+      <PHP_EXTENSION name="spl" level="required" />
+      <PHP_EXTENSION name="zlib" level="required" />
+    </PHP_EXTENSIONS>
+  </PLUGIN>
+</COMPATIBILITY_MATRIX>

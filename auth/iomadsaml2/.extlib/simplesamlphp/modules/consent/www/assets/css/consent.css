@@ -1,0 +1,54 @@
+fieldset {
+    padding: 0px;
+}
+
+fieldset legend {
+    background: #eee;
+}
+
+h3#attributeheader {
+    margin: 1.5em 0em 0.5em 0em;
+}
+
+table#table_with_attributes .attrname {
+    text-align: right;
+    font-weight: bold;
+}
+
+table#table_with_attributes .attrvalue {
+    padding-left: 1em;
+    margin: 0.5em 0em;
+}
+
+table#table_with_attributes tr:last-child td {
+    border-bottom: none;
+}
+
+table#table_with_attributes img {
+    border: 1px solid #777;
+    margin: 4px;
+}
+
+table#table_with_attributes ul {
+    margin: 0px;
+    padding-left: 1em;
+}
+
+form#consent_yes {
+    display: inline;
+    margin: 0px;
+    padding: 0px;
+}
+
+form#consent_no {
+    display: inline;
+    margin-left: .5em;
+}
+
+.hidden {
+    display: none;
+}
+
+td.td_odd {
+    padding: 2em;
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>amd/src/jquery-eu-cookie-law-popup.js</location>
+    <name>jQuery EU Cookie Law popups</name>
+    <license>MIT</license>
+    <version>1.1.3</version>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>

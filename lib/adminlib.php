@@ -1961,7 +1961,20 @@ abstract class admin_setting {
         global $CFG;
         if (!empty($this->plugin)) {
             $value = get_config($this->plugin, $name);
-            return $value === false ? NULL : $value;
+            // IOMAD - had to change this one.
+            if ($value === false) {
+                if (is_array($this->defaultsetting)) {
+                    if (!empty($this->defaultsetting)) {
+                        return $this->defaultsetting[array_key_first($this->defaultsetting)];
+                    } else {
+                        return NULL;
+                    }
+                } else {
+                    return $this->defaultsetting;
+                }
+            } else {
+                return $value;
+            }
 
         } else {
             if (isset($CFG->$name)) {
@@ -9118,6 +9131,12 @@ function admin_search_settings_html($query) {
                 } else {
                     $data = $setting->get_setting();
                 // do not use defaults if settings not available - upgradesettings handles the defaults!
+                // IOMAD - Except.....  If it's had the companyid added as a postfix then we need to.
+                    if (preg_match('/_\d+$/', $fullname)) {
+                        if (empty($data)) {
+                            $data = $setting->get_defaultsetting();
+                        }
+                    }
                 }
                 $sectionsettings[] = $setting->output_html($data, $query);
             }

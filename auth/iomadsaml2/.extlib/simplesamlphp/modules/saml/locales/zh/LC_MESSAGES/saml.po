@@ -1,0 +1,31 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: zh\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{saml:wrong_authncontextclassref:description}"
+msgstr "此服务不接受您的验证上下文。可能因为验证太弱或非双因素验证。"
+
+msgid "{saml:wrong_authncontextclassref:header}"
+msgstr "错误的验证上下文"
+
+msgid ""
+"Your authentication context is not accepted at this service. Probably too"
+" weak or not two-factor."
+msgstr "此服务不接受您的验证上下文。可能因为验证太弱或非双因素验证。"
+
+msgid "Wrong authentication context"
+msgstr "错误的验证上下文"
+

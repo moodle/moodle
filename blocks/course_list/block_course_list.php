@@ -84,6 +84,14 @@ class block_course_list extends block_list {
         $topcategory = core_course_category::top();
         if ($topcategory->is_uservisible() && ($categories = $topcategory->get_children())) { // Check we have categories.
             if (count($categories) > 1 || (count($categories) == 1 && $DB->count_records('course') > 200)) {     // Just print top level category links
+
+                // IOMAD - filter out categories.
+                if (!is_siteadmin()) {
+                    $categories = iomad::iomad_filter_categories($categories);
+                } else {
+                    $categories = $categories;
+                }
+
                 foreach ($categories as $category) {
                     $categoryname = $category->get_formatted_name();
                     $linkcss = $category->visible ? "" : " class=\"dimmed\" ";

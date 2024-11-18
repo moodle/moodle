@@ -1,0 +1,82 @@
+{% set pagetitle = '{consentAdmin:consentadmin:consentadmin_header}'|trans %}
+{% extends "base.twig" %}
+
+{% block preload %}
+<link rel="stylesheet" href="/{{ baseurlpath }}module.php/consentAdmin/assets/css/consentAdmin.css">
+{% endblock %}
+
+{% block postload %}
+<script src="/{{ baseurlpath }}module.php/consentAdmin/assets/js/consentAdmin.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<h2>{{ '{consentAdmin:consentadmin:consentadmin_header}'|trans }}</h2>
+<p>{{ '{consentAdmin:consentadmin:consentadmin_description1}'|trans }}</p>
+
+<table>
+    <tr>
+        <th colspan="2" width="80%">{{ '{consentAdmin:consentadmin:service_provider_header}'|trans }}</th>
+        <th width="140">{{ '{consentAdmin:consentadmin:status_header}'|trans }}</th>
+    </tr>
+
+{% for spName, spValues in spList %}
+
+    {% if loop.index0 % 2 == 0 %}
+        {% set rowClass = 'row0' %}
+    {% else %}
+        {% set rowClass = 'row1' %}
+    {% endif %}
+
+    <tr class="{{ rowClass }}">
+        <td>
+            <span class='caSPName'>
+                <span title='{{ spValues.description|escape('html') }}'>
+                {% if spValues.serviceurl is defined %}
+                    {{ spValues.name|escape('html') }}
+                {% else %}
+                    <a class="serviceUrl" href="{{ spValues.serviceurl }}">{{ spValues.name|escape('html') }}</a>
+                {% endif %}
+                </span>
+                <span class="show_hide" id="show_hide_{{ loop.index0 }}">
+                    <span id="showing_{{ loop.index0 }}">{{ '{consentAdmin:consentadmin:show}'|trans }}</span>
+                    <span id="hiding_{{ loop.index0 }}">{{ '{consentAdmin:consentadmin:hide}'|trans }}</span>
+                    {{ '{consentAdmin:consentadmin:attributes_text}'|trans }}
+                </span>
+            </span>
+        </td>
+        <td class="caAttributes">
+            <div id="attributes_{{ loop.index0 }}">
+            {% if showDescription %}
+                <p>{{ '{consentAdmin:consentadmin:consentadmin_purpose}'|trans }}{{ spValues.description|escape('html') }}</p>
+            {% endif %}
+                <ul>
+                {% for attrName, attrValue in spValues.attributes_by_sp %}
+                {% if attrValue|length > 1 %}
+                    <li>{{ attrName|escape('html') }}:
+                        <ul>
+                        {% for valKey, value in attrValue %}
+                            <li>{{ value|escape('html') }}</li>
+                        {% endfor %}
+                        </ul>
+                    </li>
+                {% else %}
+                    <li>{{ attrName|escape('html') }}: {{ attrValue|first|escape('html') }}</li>
+                {% endif %}
+                {% endfor %}
+                </ul>
+            </div>
+        </td>
+        <td class="caAllowed">
+            <input class="checkbox" id="checkbox_{{ loop.index0 }}" value='{{ spValues.consentValue }}' type='checkbox'{% if spValues.consentStatus == 'ok'%} checked="checked"{% endif %} /><span id="consentText_{{ loop.index0 }}">{% if spValues.consentStatus == 'changed' %}attributes has changed{% endif %}</span>
+        </td>
+    </tr>
+{% endfor %}
+</table>
+
+<p>{{ '{consentAdmin:consentadmin:consentadmin_description2}'|trans|raw }}</p>
+
+<h2>Logout</h2>
+<p><a href="/{{ baseurlpath }}module.php/consentAdmin/consentAdmin.php?logout=1">Logout</a></p>
+
+{% endblock %}

@@ -1,0 +1,6 @@
+cron-croninfo:
+    path:       /info
+    defaults:   { _controller: 'SimpleSAML\Module\cron\Controller\Cron::info' }
+cron-run:
+    path:       /run/{tag}/{key}/{output}
+    defaults:   { _controller: 'SimpleSAML\Module\cron\Controller\Cron::run', output: null }

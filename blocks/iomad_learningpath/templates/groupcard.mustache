@@ -1,0 +1,38 @@
+{{!
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ }}
+
+    <div class="card card-primary card-ouline-primary">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card-block p-b-0">
+                    <h4>{{ name }}</h4>
+                </div>
+            </div>
+            <div class="col-md-6 px-3">
+                <div class="card-block">
+                    {{# progress }}
+                        <div class="progress m-t-1">
+                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ progress}}%;" 
+                                aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ progress }}%</div>
+                        </div>
+                    {{/ progress }}
+                    {{^ progress }}
+                        <div class="alert alert-warning">{{# str }}nocompletion, block_iomad_learningpath{{/ str }}</div>
+                    {{/ progress }} 
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-11">
+                {{# courses }}
+                    {{> block_iomad_learningpath/coursecard }}
+                {{/ courses }}
+            </div>
+        </div>
+    </div>

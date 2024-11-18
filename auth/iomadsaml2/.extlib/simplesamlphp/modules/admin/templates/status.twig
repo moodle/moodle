@@ -1,0 +1,80 @@
+{% set pagetitle = 'SimpleSAMLphp installation page'|trans %}
+{% set frontpage_section = 'test' %}
+{% extends "base.twig" %}
+
+{% block content %}
+    {%- include "@admin/includes/menu.twig" %}
+
+    <p>{% trans %}Hi, this is the status page of SimpleSAMLphp. Here you can see if your session is timed out, how long
+     it lasts until it times out and all the attributes that are attached to your session.{% endtrans %}</p>
+
+    <h2>{{ '{status:attributes_header}'|trans }}</h2>
+
+    {{ attributesHtml|raw }}
+
+    {%- if nameid or authData %}
+
+    <h2>{% trans %}Technical information{% endtrans %}</h2>
+    {% endif %}
+    {%- if nameid %}
+
+    <h3>{% trans %}SAML Subject{% endtrans %}</h3>
+      {%  set items = {'NameId' : nameid.value} %}
+
+      {% if not nameid.value %}
+        {%  set items = items|merge({'NameID' : 'not set'|trans}) %}
+      {% endif %}
+
+      {% if nameid.Format %}
+        {% set items = items|merge({('Format'|trans) : nameid.Format}) %}
+      {% endif %}
+
+      {% if nameid.NameQualifier %}
+        {% set items = items|merge({'NameQualifier' : nameid.NameQualifier}) %}
+      {% endif %}
+
+      {% if nameid.SPNameQualifier %}
+        {% set items = items|merge({'SPNameQualifier' : nameid.SPNameQualifier}) %}
+      {% endif %}
+
+      {% if nameid.SPProvidedID %}
+        {% set items = items|merge({'SPProvidedID' : nameid.SPProvidedID}) %}
+      {%- endif %}
+
+    <table id="table_with_attributes"  class="attributes pure-table pure-table-striped pure-table-attributes"
+           summary="{% trans %}SAML Subject{% endtrans %}">
+      {%- for name, value in items %}
+
+      <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+        <td class="attrname">{{ name }}</td>
+        <td class="attrvalue">{{ value }}</td>
+      </tr>
+      {%- endfor %}
+
+    </table>
+    <br/>
+    {% endif %}
+
+    {% if authData %}
+    <details>
+    <summary>{% trans %}Authentication data{% endtrans %}</summary>
+    <div class="code-box hljs">
+      <div class="pure-button-group top-right-corner">
+        <a class="pure-button copy hljs" data-clipboard-target="#auth-data"
+           title="{% trans %}Copy to clipboard{% endtrans %}"><span class="fa fa-copy"></span></a>
+      </div>
+      <code id="auth-data" class="code-box-content json">
+        {{- authData|json_encode(constant("JSON_PRETTY_PRINT") b-or constant("JSON_UNESCAPED_SLASHES")) }}
+      </code>
+    </div>
+    </details>
+    <br/>
+    {% endif %}
+
+    {%- if logouturl %}
+
+    <div class="center">
+      <a class="pure-button pure-button-red" href="{{ logouturl }}">{{ '{status:logout}'|trans }}</a>
+    </div>
+    {%- endif %}
+{% endblock %}

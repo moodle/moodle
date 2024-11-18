@@ -1,0 +1,31 @@
+{
+  "name": "simplesamlphp/simplesamlphp-module-memcookie",
+  "description": "A SimpleSAMLphp module that allows integration with Auth MemCookie, allowing web applications written in other languages than PHP to integrate with SimpleSAMLphp.",
+  "type": "simplesamlphp-module",
+  "keywords": [ "SimpleSAMLphp", "Auth MemCookie", "apache", "cookies"],
+  "homepage": "https://simplesamlphp.org/",
+  "license": "LGPL-2.1",
+  "authors": [
+    {
+      "name": "Olav Morken",
+      "email": "olav.morken@uninett.no"
+    },
+    {
+      "name": "Jaime Perez Crespo",
+      "email": "jaime.perez@uninett.no"
+    }
+  ],
+  "require": {
+    "php": ">=5.6",
+    "simplesamlphp/composer-module-installer": ">=1.1.6"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~5.7",
+    "simplesamlphp/simplesamlphp": "^1.17",
+    "simplesamlphp/simplesamlphp-test-framework": "^0.0.6"
+  },
+  "support": {
+    "issues": "https://github.com/simplesamlphp/simplesamlphp-module-memcookie/issues",
+    "source": "https://github.com/simplesamlphp/simplesamlphp-module-memcookie/"
+  }
+}

@@ -1,0 +1,1 @@
+a:4:{s:8:"entityid";s:7:"entityB";s:4:"name";a:1:{s:2:"en";s:23:"entityB SP from source2";}s:12:"metadata-set";s:16:"saml20-sp-remote";s:24:"AssertionConsumerService";a:1:{i:0;a:4:{s:7:"Binding";s:46:"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST";s:8:"Location";s:53:"https://entityB.example.org/Shibboleth.sso/SAML2/POST";s:5:"index";i:1;s:9:"isDefault";b:1;}}}

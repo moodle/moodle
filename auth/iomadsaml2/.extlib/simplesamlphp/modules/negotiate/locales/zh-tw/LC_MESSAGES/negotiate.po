@@ -1,0 +1,64 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: zh_Hant_TW\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{negotiate:negotiate:info_post}"
+msgstr ""
+"<h3>什麼是自動登入？</h3><p>自動登入允許您登入時不需要再次輸入帳號密碼：<ul><li>如果電腦已加入 Kerberos "
+"網域</li><li>使用支援的瀏覽器(IE 或其他支援的瀏覽器)</li><li>於支援的作業系統(Windows, "
+"Mac)</li></ul></p>"
+
+msgid "{negotiate:negotiate:disable_title}"
+msgstr "嘗試於瀏覽器關閉自動登入功能"
+
+msgid "{negotiate:negotiate:enable_title}"
+msgstr "嘗試於瀏覽器開啟自動登入"
+
+msgid "{negotiate:negotiate:disable_info_pre}"
+msgstr "<p>當存取此頁時，您已經於瀏覽器關閉自動登入。</p><p>如要再度開啟，請造訪<a href='%URL%'>此頁</a>。</p>"
+
+msgid "{negotiate:negotiate:enable_info_pre}"
+msgstr "<p>當存取此頁時，您已經開啟瀏覽器自動登入。</p><p>如要再次關閉，請造訪<a href='%URL%'>此頁</a>。</p>"
+
+msgid ""
+"<h3>What is automatic login</h3><p>Automatic login allows you to log in "
+"without being asked for username and password:<ul><li>if the computer is "
+"in the Kerberos domain</li><li>using a supported browser (IE and some "
+"others depending on installation options)</li><li>on a supported "
+"operating system (Windows, Mac)</li></ul></p>"
+msgstr ""
+"<h3>什麼是自動登入？</h3><p>自動登入允許您登入時不需要再次輸入帳號密碼：<ul><li>如果電腦已加入 Kerberos "
+"網域</li><li>使用支援的瀏覽器(IE 或其他支援的瀏覽器)</li><li>於支援的作業系統(Windows, "
+"Mac)</li></ul></p>"
+
+msgid ""
+"<p>By accessing this page, you have turned on the ability to use "
+"automatic login for this browser.</p><p>To turn it off again, please "
+"visit <a href='%URL%'>this page</a>.</p>"
+msgstr "<p>當存取此頁時，您已經開啟瀏覽器自動登入。</p><p>如要再次關閉，請造訪<a href='%URL%'>此頁</a>。</p>"
+
+msgid "Turned off ability to use automatic login for this browser"
+msgstr "嘗試於瀏覽器關閉自動登入功能"
+
+msgid "Turned on the ability to use automatic login for this browser"
+msgstr "嘗試於瀏覽器開啟自動登入"
+
+msgid ""
+"<p>By accessing this page, you have turned off the ability to use "
+"automatic login for this browser.</p><p>To turn it on again, please visit"
+" <a href='%URL%'>this page</a>.</p>"
+msgstr "<p>當存取此頁時，您已經於瀏覽器關閉自動登入。</p><p>如要再度開啟，請造訪<a href='%URL%'>此頁</a>。</p>"
+

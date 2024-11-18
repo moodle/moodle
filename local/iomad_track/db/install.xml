@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/iomad_track/db" VERSION="20200928" COMMENT="XMLDB file for Moodle local/iomad_track"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_iomad_track" COMMENT="Default comment for local_iomad_track, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="id of completed course"/>
+        <FIELD NAME="coursename" TYPE="char" LENGTH="254" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="ID of user completing"/>
+        <FIELD NAME="timecompleted" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="Time when course was completed"/>
+        <FIELD NAME="timeenrolled" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timestarted" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timeexpires" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="finalscore" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="companyid" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="licenseid" TYPE="int" LENGTH="20" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="licensename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="licenseallocated" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="expirysent" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="notstartedstop" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="completedstop" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="expiredstop" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="coursecleared" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="flag to say if the user enrolment/course has been cleared down."/>
+        <FIELD NAME="modifiedtime" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="companycourse" UNIQUE="false" FIELDS="companyid, courseid"/>
+        <INDEX NAME="usercourseenrol" UNIQUE="false" FIELDS="userid, courseid, timeenrolled"/>
+        <INDEX NAME="usercourselicense" UNIQUE="false" FIELDS="userid, courseid, licenseid, licenseallocated"/>
+        <INDEX NAME="usercourseexpire" UNIQUE="false" FIELDS="userid, courseid, timeexpires"/>
+        <INDEX NAME="usercoursecomplete" UNIQUE="false" FIELDS="userid, courseid, timecompleted"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="local_iomad_track_certs" COMMENT="Record certificates issued">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="trackid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="link to local_iomad_track(id)"/>
+        <FIELD NAME="filename" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="trackid" UNIQUE="false" FIELDS="trackid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

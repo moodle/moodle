@@ -1,0 +1,139 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: tr\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consent:consent:service_providers_for}"
+msgstr "için Servis Sağlayıcılar"
+
+msgid "{consent:consent:remember}"
+msgstr "Hatırla"
+
+msgid "{consent:consent:login}"
+msgstr "Giriş"
+
+msgid "{consent:consent:consent_purpose}"
+msgstr "SPNAME'in amacı SPDESC'tir"
+
+msgid "{consent:consent:noconsent_goto_about}"
+msgstr "Servis için bilgi sayfasına git"
+
+msgid "{consent:consent:consent_header}"
+msgstr "Kişisel bilgilerin verilmesi hakkında onay"
+
+msgid "{consent:consent:show_hide_attributes}"
+msgstr "bilgileri göster/gizle "
+
+msgid "{consent:consent:table_caption}"
+msgstr "Kullanıcı bilgisi"
+
+msgid "{consent:consent:status_header}"
+msgstr "Onay durumu"
+
+msgid "{consent:consent:noconsent_title}"
+msgstr "Onay verilmemiş"
+
+msgid "{consent:consent:consent_accept}"
+msgstr "SPNAME aşağıdaki bilgilerin gönderilmesine ihtiyaç duyuyor."
+
+msgid "{consent:consent:table_summary}"
+msgstr "Girmek istediğiniz servise gönderilecek bilginizi listeleyin"
+
+msgid "{consent:consent:service_provider_header}"
+msgstr "Servis Sağlayıcı"
+
+msgid "{consent:consent:show_attributes}"
+msgstr "Özellikleri göster"
+
+msgid "{consent:consent:no}"
+msgstr "Hayır, iptal et"
+
+msgid "{consent:consent:consent_privacypolicy}"
+msgstr "Servis için gizlilik politikası"
+
+msgid "{consent:consent:noconsent_text}"
+msgstr "Bilgilerinizin servis sağlayıcıya gönderilmesi için onay vermediniz."
+
+msgid "{consent:consent:noconsent_return}"
+msgstr "Onay sayfasına geri dön"
+
+msgid "{consent:consent:yes}"
+msgstr "Evet, devam et"
+
+msgid "{consent:consent:consent_attributes_header}"
+msgstr "SPNAME'e gönderilecek bilgiler"
+
+msgid "Service Providers for"
+msgstr "için Servis Sağlayıcılar"
+
+msgid "Yes, continue"
+msgstr "Evet, devam et"
+
+msgid "Return to consent page"
+msgstr "Onay sayfasına geri dön"
+
+msgid "Consent status"
+msgstr "Onay durumu"
+
+msgid "Go to information page for the service"
+msgstr "Servis için bilgi sayfasına git"
+
+msgid "Service Provider"
+msgstr "Servis Sağlayıcı"
+
+msgid "show/hide attributes"
+msgstr "bilgileri göster/gizle "
+
+msgid "The purpose of SPNAME is SPDESC"
+msgstr "SPNAME'in amacı SPDESC'tir"
+
+msgid ""
+"List the information about you that is about to be transmitted to the "
+"service you are going to login to"
+msgstr "Girmek istediğiniz servise gönderilecek bilginizi listeleyin"
+
+msgid "Consent about releasing personal information"
+msgstr "Kişisel bilgilerin verilmesi hakkında onay"
+
+msgid "No consent given"
+msgstr "Onay verilmemiş"
+
+msgid "login"
+msgstr "Giriş"
+
+msgid "You did not give consent for transfering your attributes to SPNAME."
+msgstr "Bilgilerinizin servis sağlayıcıya gönderilmesi için onay vermediniz."
+
+msgid "Remember"
+msgstr "Hatırla"
+
+msgid "SPNAME requires that the information below is transferred."
+msgstr "SPNAME aşağıdaki bilgilerin gönderilmesine ihtiyaç duyuyor."
+
+msgid "Privacypolicy for the service"
+msgstr "Servis için gizlilik politikası"
+
+msgid "No, cancel"
+msgstr "Hayır, iptal et"
+
+msgid "Show attributes"
+msgstr "Özellikleri göster"
+
+msgid "User information"
+msgstr "Kullanıcı bilgisi"
+
+msgid "Information that will be sent to SPNAME"
+msgstr "SPNAME'e gönderilecek bilgiler"
+

@@ -1,0 +1,20 @@
+{
+  "yes": {
+    "en": "Yes, continue"
+  },
+  "no": {
+    "en": "No, cancel"
+  },
+  "remember": {
+    "en": "Remember"
+  },
+  "yes_continue": {
+    "en": "Yes, continue"
+  },
+  "no_cancel": {
+    "en": "No, cancel"
+  },
+  "service_provider": {
+    "en": "Service Provider"
+  }
+}

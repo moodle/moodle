@@ -1,0 +1,128 @@
+.action-menu .dropdown-toggle {
+    text-decoration: none;
+    display: inline-block;
+}
+
+.action-menu {
+    white-space: nowrap;
+    display: inline;
+
+    // Kebab action menus do no show chevrons or extra dropdown icons.
+    .dropdown-toggle.no-caret {
+        &::after {
+            display: none;
+        }
+
+        &::before {
+            display: none;
+        }
+    }
+
+    .dropdown.downleft .dropdown-subpanel-content {
+        right: 0;
+        left: auto;
+    }
+
+    .dropdown-subpanel.content-displayed {
+        background-color: $gray-200;
+    }
+
+    .dropdown-subpanel-content {
+        max-width: $modal-sm;
+        box-shadow: 0 0 1rem rgba($black, .15);
+    }
+
+    .dropdown-subpanel-content.show {
+        @include optional-animation(0.15s animate-pop);
+    }
+
+    // Chevrons in sub panel items are always to end.
+    .dropdown-subpanel .dropdown-item {
+        &::after {
+            border: 0;
+            @extend .fa-solid;
+            content: fa-content($fa-var-chevron-right);
+        }
+
+        &::before {
+            display: none;
+        }
+    }
+}
+
+@keyframes animate-pop {
+    0% {
+        transform: scale(0.90, 0.90);
+    }
+
+    100% {
+        transform: scale(1, 1);
+    }
+}
+
+.dir-rtl .action-menu {
+
+    // Chevrons in subpanels items are always to end.
+    .dropdown-subpanel .dropdown-item {
+        &::after {
+            border: 0;
+            @extend .fa-solid;
+            content: fa-content($fa-var-chevron-left);
+        }
+
+        &::before {
+            display: none;
+        }
+    }
+}
+
+// Make links in a menu clickable anywhere in the row.
+.dropdown-item {
+    a {
+        display: block;
+        width: 100%;
+        color: $body-color;
+    }
+
+    &.active,
+    &:active,
+    &:hover,
+    &:focus,
+    &:focus-within {
+        outline: 0;
+        background-color: $dropdown-link-active-bg;
+        color: $dropdown-link-active-color;
+
+        a {
+            color: $dropdown-link-active-color;
+        }
+    }
+
+    &[aria-current="true"],
+    &[aria-selected="true"] {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        &:before {
+            @extend .fa-solid;
+            content: fa-content($fa-var-check);
+            position: absolute;
+            left: 0.4rem;
+            font-size: 0.7rem;
+        }
+    }
+}
+
+.dropdown-item-outline {
+
+    &:focus,
+    &:focus-within {
+        outline: solid $dropdown-link-active-bg;
+    }
+
+    a:focus,
+    a:focus-visible {
+        outline: 0;
+    }
+}

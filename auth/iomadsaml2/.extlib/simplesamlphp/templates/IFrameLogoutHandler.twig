@@ -1,0 +1,16 @@
+{% set data = {}|merge({ "spid": spId }) %}
+{% if errorMsg is defined %}
+    {% set data = data|merge({ "error": errorMsg }) %}
+{% endif %}
+{% extends "base.twig" %}
+{% block header %}{% endblock header %}
+{% block footer %}{% endblock footer %}
+{% block content %}
+
+          <i id="data"{% for k,v in data %} data-{{ k }}="{{ v }}"{% endfor %}></i>
+{% endblock content %}
+{% block postload %}
+
+    <script src="{{ asset('js/logout.js') }}"></script>
+{% endblock postload %}
+

@@ -1079,10 +1079,11 @@ class secondary extends view {
         // Create 'Course' navigation node.
         $coursesecondarynode = navigation_node::create(get_string('course'), null, self::TYPE_COURSE, null, 'course');
         $this->load_course_navigation($coursesecondarynode);
-        // Remove the unnecessary 'Course' child node generated in load_course_navigation().
-        $coursehomenode = $coursesecondarynode->find('coursehome', self::TYPE_COURSE);
-        if (!empty($coursehomenode)) {
-            $coursehomenode->remove();
+
+        //  IOMAD - Only remove it if it exists in the navigation node.
+        if ($coursesecondarynode->find('coursename', self::TYPE_COURSE)) {
+            // Remove the unnecessary 'Course' child node generated in load_course_navigation().
+            $coursesecondarynode->find('coursehome', self::TYPE_COURSE)->remove();
         }
 
         // Add the 'Course' node to the secondary navigation only if this node has children nodes.

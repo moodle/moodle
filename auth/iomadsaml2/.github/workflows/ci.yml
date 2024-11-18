@@ -1,0 +1,10 @@
+# .github/workflows/ci.yml
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    uses: catalyst/catalyst-moodle-workflows/.github/workflows/ci.yml@main
+    secrets:
+      moodle_org_token: ${{ secrets.MOODLE_ORG_TOKEN }}

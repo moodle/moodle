@@ -35,6 +35,14 @@ $loginredirect = optional_param('loginredirect', 1, PARAM_BOOL);   // Used to by
 
 $resendconfirmemail = optional_param('resendconfirmemail', false, PARAM_BOOL);
 
+// IOMAD - deal with any passed company parameters so we can set the theme and other good stuff.
+$wantedcompanyid = optional_param('id', 0, PARAM_INT);
+if (!empty($wantedcompanyid)) {
+    $wantedcompanyshort = required_param('code', PARAM_CLEAN);
+} else {
+    $wantedcompanyshort = '';
+}
+
 // It might be safe to do this for non-Behat sites, or there might
 // be a security risk. For now we only allow it on Behat sites.
 // If you wants to do the analysis, you may be able to remove the
@@ -43,6 +51,30 @@ if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
     $wantsurl    = optional_param('wantsurl', '', PARAM_LOCALURL);   // Overrides $SESSION->wantsurl if given.
     if ($wantsurl !== '') {
         $SESSION->wantsurl = (new moodle_url($wantsurl))->out(false);
+    }
+} else {
+    $wantsurl = optional_param('wantsurl', '', PARAM_RAW);    // Used to set a URL to go to.
+    if (!empty($wantsurl)) {
+        $SESSION->wantsurl = urldecode($wantsurl);
+    }
+}
+
+// Redirect if they are currently logged in and there is a wantsurl.
+if (isloggedin() && !isguestuser() && !empty($SESSION->wantsurl)) {
+    redirect($SESSION->wantsurl);
+}
+
+// Check if the company being passed is valid.
+if (!empty($wantedcompanyid) && !$company = $DB->get_record('company', array('id'=> $wantedcompanyid, 'shortname'=>$wantedcompanyshort))) {
+    throw new moodle_exception(get_string('unknown_company', 'local_iomad_signup'));
+} else if (!empty($wantedcompanyid)) {
+    // Set the page theme.
+    $SESSION->currenteditingcompany = $company->id;
+    $SESSION->theme = $company->theme;
+    $SESSION->company = $company;
+    if (empty($SESSION->companysetlang)) {
+        $SESSION->lang = $company->lang;
+        $SESSION->companysetlang = true;
     }
 }
 
@@ -55,6 +87,24 @@ $PAGE->set_pagelayout('login');
 $errormsg = '';
 $infomsg = '';
 $errorcode = 0;
+
+// IOMAD - Set the theme if the server hostname matches one of ours.
+$postfix = "";
+if ($DB->get_manager()->table_exists('company') &&
+    $company = $DB->get_record('company', array('hostname' => $_SERVER["SERVER_NAME"]))) {
+    $hascompanybyurl = true;
+    // set the current editing company to be this.
+    $SESSION->currenteditingcompany = $company->id;
+    // Set the page theme.
+    $SESSION->theme = $company->theme;
+    $SESSION->company = $company;
+    $wantedcompanyid = $company->id;
+    $wantedcompanyshort = $company->shortname;
+    $postfix = "_" . $wantedcompanyid;
+} else {
+    $hascompanybyurl = false;
+    $postfix = "_" . $wantedcompanyid;
+}
 
 // login page requested session test
 if ($testsession) {
@@ -77,6 +127,10 @@ if ($testsession) {
 if (!empty($SESSION->has_timed_out)) {
     $session_has_timed_out = true;
     unset($SESSION->has_timed_out);
+    if (!$hascompanybyurl) {
+        unset($SESSION->currenteditingcompany);
+        unset($SESSION->theme);
+    }
 } else {
     $session_has_timed_out = false;
 }
@@ -210,10 +264,44 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
             die;
         }
 
+        // Check if the company in the session is still correct.
+        if ($DB->get_manager()->table_exists('company') &&
+            !has_capability('block/iomad_company_admin:company_view_all', context_system::instance()) &&
+            !empty($SESSION->currenteditingcompany)) {
+            $currenteditingcompany = $SESSION->currenteditingcompany;
+            $currentcompany = $SESSION->company;
+            if (!company::check_valid_user($currenteditingcompany, $user->id)) {
+                if ($mycompany = company::by_userid($user->id, true)) {
+                    if ($currenteditingcompany != $mycompany->id) {
+                        $mycompanyrec = $DB->get_record('company', array('id' => $mycompany->id));
+                        if ($mycompanyrec->hostname != $currentcompany->hostname) {
+                            if (empty($mycompanyrec->hostname)) {
+                                $companyurl = $CFG->wwwrootdefault;
+                            } else {
+                                $companyurl = $_SERVER['REQUEST_SCHEME'] . "://" . $mycompanyrec->hostname;
+                            }
+                        }
+                        $SESSION->currenteditingcompany = $mycompany->id;
+                        $SESSION->company = $mycompanyrec;
+                        $SESSION->theme = $mycompanyrec->theme;
+
+                        redirect ($companyurl . '/login/index.php');
+                    }
+                }
+            }
+        }
+
     /// Let's get them all set up.
         complete_user_login($user);
 
         \core\session\manager::apply_concurrent_login_limit($user->id, session_id());
+
+        // IOMAD
+        // Update the company for the user if there is one.
+        if ($DB->get_manager()->table_exists('company') &&
+            !empty($SESSION->currenteditingcompany)) {
+            $DB->set_field('company_users', 'lastused', time(), ['userid' => $user->id, 'companyid' => $SESSION->currenteditingcompany]);
+        }
 
         // sets the username cookie
         if (!empty($CFG->nolastloggedin)) {
@@ -324,8 +412,9 @@ if ($errorcode && isset($SESSION->loginredirect)) {
 $SESSION->loginredirect = $loginredirect;
 
 /// Redirect to alternative login URL if needed
-if (!empty($CFG->alternateloginurl) && $loginredirect) {
-    $loginurl = new moodle_url($CFG->alternateloginurl);
+$alternateloginurl = "alternateloginurl" . $postfix;
+if (!empty($CFG->$alternateloginurl)) {
+    $loginurl = new moodle_url($CFG->$alternateloginurl);
 
     $loginurlstr = $loginurl->out(false);
 
@@ -357,6 +446,18 @@ if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 518
     }
 
     $frm->password = "";
+}
+
+// IOMAD - changes to display the instructions.
+$auth_instructions = "auth_instructions" . $postfix;
+if (!empty($CFG->registerauth) or is_enabled_auth('none') or !empty($CFG->$auth_instructions)) {
+    if (!empty($CFG->local_iomad_signup_showinstructions)) {
+        $show_instructions = true;
+    } else {
+        $show_instructions = false;
+    }
+} else {
+    $show_instructions = false;
 }
 
 if (!empty($SESSION->loginerrormsg) || !empty($SESSION->logininfomsg)) {

@@ -1,0 +1,11 @@
+{
+	"warning": {
+		"en": "You are now accessing a pre-production system. This authentication setup is for testing and pre-production verification only. If someone sent you a link that pointed you here, and you are not <i>a tester<\/i> you probably got the wrong link, and should <b>not be here<\/b>."
+	},
+	"warning_header": {
+		"en": "Warning about accessing a pre-production system"
+	},
+	"yes": {
+		"en": "Yes, I know I am accessing a pre-production system"
+	}
+}

@@ -1,0 +1,61 @@
+{{!
+ * @package   local_report_companies
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+
+{{# companies }}
+    <div class="card mb-2 {{# parent }}ml-5{{/ parent }}">
+        <div class="card-body">
+            <div class="alert alert-primary">
+                <h4 class="card-title"><b>{{ name }}</b></h5>
+            </div>
+            {{# parent }}
+                <div class="alert alert-success">
+                    {{# str }}childcompany, local_report_companies, {{{ parent }}}{{/ str }}
+                </div>
+            {{/ parent }}
+            {{# nomanagers }}
+                <div class="alert alert-warning">{{# str }}nomanagers, local_report_companies{{/ str }}</div>
+            {{/ nomanagers }}
+            {{^ nomanagers }}
+                <h5 class="card-subtitle mt-2">{{# str }}coursemanagers, local_report_companies{{/ str }}</h5>
+                <p class="text-muted">{{# str }}totalusercount, local_report_companies, {{ companymanagerscount }}{{/ str }}</p>
+                <div>
+                    <ul class="list-unstyled">
+                    {{# companymanagers }}
+                            {{> local_report_companies/userlist }}
+                    {{/ companymanagers }}
+                    </ul>
+                </div>
+                
+                <h5 class="card-subtitle mt-2">{{# str }}departmentmanagers, local_report_companies{{/ str }}</h5>
+                <p class="text-muted">{{# str }}totalusercount, local_report_companies, {{ departmentmanagerscount }}{{/ str }}</p>
+                <div>
+                    <ul class="list-unstyled">
+                    {{# departmentmanagers }}
+                            {{> local_report_companies/userlist }}
+                    {{/ departmentmanagers }}
+                    </ul>
+                </div>
+            {{/ nomanagers }}
+
+            {{# nousers }}
+                <div class="alert alert-warning">{{# str }}nousers, local_report_companies{{/ str }}</div>
+            {{/ nousers }}
+            {{^ nousers }}
+                <h5 class="card-subtitle mt-2">{{# str }}courseusers, local_report_companies{{/ str }}</h5>
+                <p class="text-muted">{{# str }}totalusercount, local_report_companies, {{ userscount }}{{/ str }}</p>
+            {{/ nousers }}
+
+            {{# nocourses }}
+                <div class="alert alert-warning">{{# str }}nocourses, local_report_companies{{/ str }}</div>
+            {{/ nocourses }}
+            {{^ nocourses }}
+                <h5 class="card-subtitle mt-2">{{# str }}courses, local_report_companies{{/ str }}</h5>
+                <p class="text-muted">{{# str }}totalcoursecount, local_report_companies, {{ coursescount }}{{/ str }}</p>
+            {{/ nocourses }}
+        </div>
+    </div>
+{{/ companies }}

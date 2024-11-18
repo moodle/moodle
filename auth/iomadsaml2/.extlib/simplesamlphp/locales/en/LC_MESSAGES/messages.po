@@ -1,0 +1,1568 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: Jaime Pérez <jaime.perez@uninett.no>\n"
+"Language: en\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{admin:metadata_saml20-idp}"
+msgstr "SAML 2.0 IdP Metadata"
+
+msgid "{errors:descr_WRONGUSERPASS}"
+msgstr ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+
+msgid "{logout:failed}"
+msgstr "Logout failed"
+
+msgid "{status:attributes_header}"
+msgstr "Your attributes"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-remote}"
+msgstr "SAML 2.0 Service Provider (Remote)"
+
+msgid "{errors:descr_NOCERT}"
+msgstr "Authentication failed: your browser did not send any certificate"
+
+msgid "{errors:title_PROCESSASSERTION}"
+msgstr "Error processing response from Identity Provider"
+
+msgid "{errors:title_NOSTATE}"
+msgstr "State information lost"
+
+msgid "{login:username}"
+msgstr "Username"
+
+msgid "Back"
+msgstr "Back"
+
+msgid "{errors:title_METADATA}"
+msgstr "Error loading metadata"
+
+msgid "{admin:metaconv_title}"
+msgstr "Metadata parser"
+
+msgid "{admin:cfg_check_noerrors}"
+msgstr "No errors found."
+
+msgid "{errors:descr_LOGOUTINFOLOST}"
+msgstr ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+
+msgid "{disco:previous_auth}"
+msgstr "You have previously chosen to authenticate at"
+
+msgid "{admin:cfg_check_back}"
+msgstr "Go back to the file list"
+
+msgid "{errors:report_trackid}"
+msgstr ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+
+msgid "{login:change_home_org_title}"
+msgstr "Change your home organization"
+
+msgid "{errors:descr_METADATANOTFOUND}"
+msgstr "Unable to locate metadata for %ENTITYID%"
+
+msgid "{admin:metadata_metadata}"
+msgstr "Metadata"
+
+msgid "{errors:report_text}"
+msgstr ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+
+msgid "{errors:report_header}"
+msgstr "Report errors"
+
+msgid "{login:change_home_org_text}"
+msgstr ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+
+msgid "{errors:title_PROCESSAUTHNREQUEST}"
+msgstr "Error processing request from Service Provider"
+
+msgid "{errors:descr_PROCESSASSERTION}"
+msgstr "We did not accept the response sent from the Identity Provider."
+
+msgid "{errors:debuginfo_header}"
+msgstr "Debug information"
+
+msgid "{admin:debug_sending_message_msg_text}"
+msgstr ""
+"As you are in debug mode, you get to see the content of the message you "
+"are sending:"
+
+msgid "{errors:descr_RESPONSESTATUSNOSUCCESS}"
+msgstr ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+
+msgid "{admin:metadata_shib13-idp}"
+msgstr "Shib 1.3 IdP Metadata"
+
+msgid "{login:help_text}"
+msgstr ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+
+msgid "{logout:default_link_text}"
+msgstr "Go back to SimpleSAMLphp installation page"
+
+msgid "{errors:error_header}"
+msgstr "SimpleSAMLphp error"
+
+msgid "{login:help_header}"
+msgstr "Help! I don't remember my password."
+
+msgid "{errors:descr_LDAPERROR}"
+msgstr ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+
+msgid "{errors:descr_METADATA}"
+msgstr ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+
+msgid "{errors:title_BADREQUEST}"
+msgstr "Bad request received"
+
+msgid "{status:sessionsize}"
+msgstr "Session size: %SIZE%"
+
+msgid "{logout:title}"
+msgstr "Logged out"
+
+msgid "{admin:metaover_group_metadata.adfs-sp-remote}"
+msgstr "ADFS Service Provider (Remote)"
+
+msgid "{admin:metaconv_xmlmetadata}"
+msgstr "XML metadata"
+
+msgid "{status:subject_format}"
+msgstr "Format"
+
+msgid "{admin:metaover_unknown_found}"
+msgstr "The following fields was not recognized"
+
+msgid "{errors:title_AUTHSOURCEERROR}"
+msgstr "Authentication source error"
+
+msgid "{login:select_home_org}"
+msgstr "Choose your home organization"
+
+msgid "{logout:hold}"
+msgstr "On hold"
+
+msgid "{admin:cfg_check_header}"
+msgstr "Configuration check"
+
+msgid "{admin:debug_sending_message_send}"
+msgstr "Submit message"
+
+msgid "{status:logout}"
+msgstr "Logout"
+
+msgid "{errors:descr_DISCOPARAMS}"
+msgstr ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+
+msgid "{errors:descr_CREATEREQUEST}"
+msgstr "An error occurred when trying to create the SAML request."
+
+msgid "{admin:metaover_optional_found}"
+msgstr "Optional fields"
+
+msgid "{logout:return}"
+msgstr "Return to service"
+
+msgid "{admin:metadata_xmlurl}"
+msgstr "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL</a>:"
+
+msgid "{logout:logout_all}"
+msgstr "Yes, all services"
+
+msgid "{admin:debug_disable_debug_mode}"
+msgstr ""
+"You can turn off debug mode in the global SimpleSAMLphp configuration "
+"file <tt>config/config.php</tt>."
+
+msgid "{disco:select}"
+msgstr "Select"
+
+msgid "{logout:also_from}"
+msgstr "You are also logged in on these services:"
+
+msgid "{login:login_button}"
+msgstr "Login"
+
+msgid "{logout:progress}"
+msgstr "Logging out..."
+
+msgid "{login:error_wrongpassword}"
+msgstr "Incorrect username or password."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-remote}"
+msgstr "Shib 1.3 Service Provider (Remote)"
+
+msgid "{login:remember_username}"
+msgstr "Remember my username"
+
+msgid "{errors:descr_PROCESSAUTHNREQUEST}"
+msgstr ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+
+msgid "{logout:logout_all_question}"
+msgstr "Do you want to logout from all the services above?"
+
+msgid "{errors:title_NOACCESS}"
+msgstr "No access"
+
+msgid "{login:error_nopassword}"
+msgstr ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+
+msgid "{errors:title_NORELAYSTATE}"
+msgstr "No RelayState"
+
+msgid "{errors:descr_NOSTATE}"
+msgstr "State information lost, and no way to restart the request"
+
+msgid "{login:password}"
+msgstr "Password"
+
+msgid "{errors:debuginfo_text}"
+msgstr ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+
+msgid "{admin:cfg_check_missing}"
+msgstr "Options missing from config file"
+
+msgid "{errors:descr_UNHANDLEDEXCEPTION}"
+msgstr "An unhandled exception was thrown."
+
+msgid "{general:yes}"
+msgstr "Yes, continue"
+
+msgid "{errors:title_CONFIG}"
+msgstr "Configuration error"
+
+msgid "{errors:title_LOGOUTREQUEST}"
+msgstr "Error processing the Logout Request"
+
+msgid "{admin:metaover_errorentry}"
+msgstr "Error in this metadata entry"
+
+msgid "{errors:title_METADATANOTFOUND}"
+msgstr "Metadata not found"
+
+msgid "{login:contact_info}"
+msgstr "Contact information:"
+
+msgid "{errors:title_UNHANDLEDEXCEPTION}"
+msgstr "Unhandled exception"
+
+msgid "{status:header_saml20_sp}"
+msgstr "SAML 2.0 SP Demo Example"
+
+msgid "{login:error_header}"
+msgstr "Error"
+
+msgid "{errors:title_USERABORTED}"
+msgstr "Authentication aborted"
+
+msgid "{logout:incapablesps}"
+msgstr ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+
+msgid "{admin:metadata_xmlformat}"
+msgstr "In SAML 2.0 Metadata XML format:"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-remote}"
+msgstr "SAML 2.0 Identity Provider (Remote)"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-hosted}"
+msgstr "SAML 2.0 Identity Provider (Hosted)"
+
+msgid "{status:subject_notset}"
+msgstr "not set"
+
+msgid "{admin:metaover_required_found}"
+msgstr "Required fields"
+
+msgid "{admin:cfg_check_select_file}"
+msgstr "Select configuration file to check:"
+
+msgid "{errors:descr_UNKNOWNCERT}"
+msgstr "Authentication failed: the certificate your browser sent is unknown"
+
+msgid "{logout:logging_out_from}"
+msgstr "Logging out of the following services:"
+
+msgid "{logout:loggedoutfrom}"
+msgstr "You are now successfully logged out from %SP%."
+
+msgid "{errors:errorreport_text}"
+msgstr "The error report has been sent to the administrators."
+
+msgid "{status:subject_header}"
+msgstr "SAML Subject"
+
+msgid "{errors:descr_LOGOUTREQUEST}"
+msgstr "An error occurred when trying to process the Logout Request."
+
+msgid "{logout:success}"
+msgstr "You have successfully logged out from all services listed above."
+
+msgid "{admin:cfg_check_notices}"
+msgstr "Notices"
+
+msgid "{errors:descr_USERABORTED}"
+msgstr "The authentication was aborted by the user"
+
+msgid "{errors:descr_CASERROR}"
+msgstr "Error when communicating with the CAS server."
+
+msgid "{general:no}"
+msgstr "No, cancel"
+
+msgid "{admin:metadata_saml20-sp}"
+msgstr "SAML 2.0 SP Metadata"
+
+msgid "{admin:metaconv_converted}"
+msgstr "Converted metadata"
+
+msgid "{logout:completed}"
+msgstr "Completed"
+
+msgid "{errors:descr_NOTSET}"
+msgstr ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+
+msgid "{general:service_provider}"
+msgstr "Service Provider"
+
+msgid "{errors:descr_BADREQUEST}"
+msgstr "There is an error in the request to this page. The reason was: %REASON%"
+
+msgid "{logout:no}"
+msgstr "No"
+
+msgid "{disco:icon_prefered_idp}"
+msgstr "[Preferred choice]"
+
+msgid "{general:no_cancel}"
+msgstr "No, cancel"
+
+msgid "{login:user_pass_header}"
+msgstr "Enter your username and password"
+
+msgid "{errors:report_explain}"
+msgstr "Explain what you did when this error occurred..."
+
+msgid "{errors:title_ACSPARAMS}"
+msgstr "No SAML response provided"
+
+msgid "{errors:descr_SLOSERVICEPARAMS}"
+msgstr ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+
+msgid "{login:organization}"
+msgstr "Organization"
+
+msgid "{errors:title_WRONGUSERPASS}"
+msgstr "Incorrect username or password"
+
+msgid "{admin:metaover_required_not_found}"
+msgstr "The following required fields was not found"
+
+msgid "{errors:descr_NOACCESS}"
+msgstr ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+
+msgid "{errors:title_SLOSERVICEPARAMS}"
+msgstr "No SAML message provided"
+
+msgid "{errors:descr_ACSPARAMS}"
+msgstr ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+
+msgid "{admin:debug_sending_message_text_link}"
+msgstr "You are about to send a message. Hit the submit message link to continue."
+
+msgid "{errors:descr_AUTHSOURCEERROR}"
+msgstr "Authentication error in source %AUTHSOURCE%. The reason was: %REASON%"
+
+msgid "{status:some_error_occurred}"
+msgstr "Some error occurred"
+
+msgid "{login:change_home_org_button}"
+msgstr "Choose home organization"
+
+msgid "{admin:cfg_check_superfluous}"
+msgstr "Superfluous options in config file"
+
+msgid "{errors:report_email}"
+msgstr "E-mail address:"
+
+msgid "{errors:howto_header}"
+msgstr "How to get help"
+
+msgid "{errors:title_NOTSET}"
+msgstr "Password not set"
+
+msgid "{errors:descr_NORELAYSTATE}"
+msgstr ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+
+msgid "{status:header_diagnostics}"
+msgstr "SimpleSAMLphp Diagnostics"
+
+msgid "{status:intro}"
+msgstr ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+
+msgid "{errors:title_NOTFOUNDREASON}"
+msgstr "Page not found"
+
+msgid "{admin:debug_sending_message_title}"
+msgstr "Sending message"
+
+msgid "{errors:title_RESPONSESTATUSNOSUCCESS}"
+msgstr "Error received from Identity Provider"
+
+msgid "{admin:metadata_shib13-sp}"
+msgstr "Shib 1.3 SP Metadata"
+
+msgid "{admin:metaover_intro}"
+msgstr ""
+"To look at the details for an SAML entity, click on the SAML entity "
+"header."
+
+msgid "{errors:title_NOTVALIDCERT}"
+msgstr "Invalid certificate"
+
+msgid "{general:remember}"
+msgstr "Remember"
+
+msgid "{disco:selectidp}"
+msgstr "Select your identity provider"
+
+msgid "{login:help_desk_email}"
+msgstr "Send e-mail to help desk"
+
+msgid "{login:help_desk_link}"
+msgstr "Help desk homepage"
+
+msgid "{login:remember_me}"
+msgstr "Remember me"
+
+msgid "{errors:title_CASERROR}"
+msgstr "CAS Error"
+
+msgid "{login:user_pass_text}"
+msgstr ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+
+msgid "{errors:title_DISCOPARAMS}"
+msgstr "Bad request to discovery service"
+
+msgid "{general:yes_continue}"
+msgstr "Yes, continue"
+
+msgid "{disco:remember}"
+msgstr "Remember my choice"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-hosted}"
+msgstr "SAML 2.0 Service Provider (Hosted)"
+
+msgid "{admin:metadata_simplesamlformat}"
+msgstr ""
+"In SimpleSAMLphp flat file format - use this if you are using a "
+"SimpleSAMLphp entity on the other side:"
+
+msgid "{admin:metadata_adfs-sp}"
+msgstr "ADFS SP Metadata"
+
+msgid "{disco:login_at}"
+msgstr "Login at"
+
+msgid "{errors:title_GENERATEAUTHNRESPONSE}"
+msgstr "Could not create authentication response"
+
+msgid "{errors:errorreport_header}"
+msgstr "Error report sent"
+
+msgid "{errors:title_CREATEREQUEST}"
+msgstr "Error creating request"
+
+msgid "{admin:metaover_header}"
+msgstr "Metadata overview"
+
+msgid "{errors:report_submit}"
+msgstr "Send error report"
+
+msgid "{errors:title_INVALIDCERT}"
+msgstr "Invalid certificate"
+
+msgid "{errors:title_NOTFOUND}"
+msgstr "Page not found"
+
+msgid "{logout:logged_out_text}"
+msgstr "You have been logged out."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-hosted}"
+msgstr "Shib 1.3 Service Provider (Hosted)"
+
+msgid "{admin:metadata_cert_intro}"
+msgstr "Download the X509 certificates as PEM-encoded files."
+
+msgid "{admin:debug_sending_message_msg_title}"
+msgstr "Message"
+
+msgid "{admin:metaover_group_metadata.adfs-idp-hosted}"
+msgstr "ADFS Identity Provider (Hosted)"
+
+msgid "{errors:title_UNKNOWNCERT}"
+msgstr "Unknown certificate"
+
+msgid "{errors:title_LDAPERROR}"
+msgstr "LDAP Error"
+
+msgid "{logout:failedsps}"
+msgstr ""
+"Unable to log out of one or more services. To ensure that all your "
+"sessions are closed, you are encouraged to <i>close your webbrowser</i>."
+
+msgid "{errors:descr_NOTFOUND}"
+msgstr "The given page was not found. The URL was: %URL%"
+
+msgid "{errors:howto_text}"
+msgstr ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+
+msgid "{admin:metadata_adfs-idp}"
+msgstr "ADFS IdP Metadata"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-hosted}"
+msgstr "Shib 1.3 Identity Provider (Hosted)"
+
+msgid "{errors:descr_NOTVALIDCERT}"
+msgstr "You did not present a valid certificate."
+
+msgid "{admin:debug_sending_message_text_button}"
+msgstr ""
+"You are about to send a message. Hit the submit message button to "
+"continue."
+
+msgid "{admin:metaover_optional_not_found}"
+msgstr "The following optional fields was not found"
+
+msgid "{logout:logout_only}"
+msgstr "No, only %SP%"
+
+msgid "{login:next}"
+msgstr "Next"
+
+msgid "{errors:descr_GENERATEAUTHNRESPONSE}"
+msgstr ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+
+msgid "{disco:selectidp_full}"
+msgstr "Please select the identity provider where you want to authenticate:"
+
+msgid "{errors:descr_NOTFOUNDREASON}"
+msgstr "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+
+msgid "{errors:title_NOCERT}"
+msgstr "No certificate"
+
+msgid "{errors:title_LOGOUTINFOLOST}"
+msgstr "Logout information lost"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-remote}"
+msgstr "Shib 1.3 Identity Provider (Remote)"
+
+msgid "{errors:descr_CONFIG}"
+msgstr "SimpleSAMLphp appears to be misconfigured."
+
+msgid "{errors:descr_MEMCACHEDOWN}"
+msgstr ""
+"Your session data cannot be retrieved right now due to technical "
+"difficulties. Please try again in a few minutes."
+
+msgid "{admin:metadata_intro}"
+msgstr ""
+"Here is the metadata that SimpleSAMLphp has generated for you. You may "
+"send this metadata document to trusted partners to setup a trusted "
+"federation."
+
+msgid "{admin:metadata_cert}"
+msgstr "Certificates"
+
+msgid "{errors:descr_INVALIDCERT}"
+msgstr ""
+"Authentication failed: the certificate your browser sent is invalid or "
+"cannot be read"
+
+msgid "{status:header_shib}"
+msgstr "Shibboleth demo"
+
+msgid "{admin:metaconv_parse}"
+msgstr "Parse"
+
+msgid "Hello, Untranslated World!"
+msgstr "Hello, Translated World!"
+
+msgid "Hello, %who%!"
+msgstr "Hello, %who%!"
+
+msgid "World"
+msgstr "World"
+
+msgid "Person's principal name at home organization"
+msgstr "Person's principal name at home organization"
+
+msgid "Superfluous options in config file"
+msgstr "Superfluous options in config file"
+
+msgid "Mobile"
+msgstr "Mobile"
+
+msgid "Shib 1.3 Service Provider (Hosted)"
+msgstr "Shib 1.3 Service Provider (Hosted)"
+
+msgid ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+msgstr ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+
+msgid ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+msgstr ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+
+msgid "Display name"
+msgstr "Display name"
+
+msgid "Remember my choice"
+msgstr "Remember my choice"
+
+msgid "Format"
+msgstr "Format"
+
+msgid "SAML 2.0 SP Metadata"
+msgstr "SAML 2.0 SP Metadata"
+
+msgid "ADFS IdP Metadata"
+msgstr "ADFS IdP Metadata"
+
+msgid "Notices"
+msgstr "Notices"
+
+msgid "Home telephone"
+msgstr "Home telephone"
+
+msgid ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+msgstr ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+
+msgid "Explain what you did when this error occurred..."
+msgstr "Explain what you did when this error occurred..."
+
+msgid "An unhandled exception was thrown."
+msgstr "An unhandled exception was thrown."
+
+msgid "Invalid certificate"
+msgstr "Invalid certificate"
+
+msgid "Service Provider"
+msgstr "Service Provider"
+
+msgid "Incorrect username or password."
+msgstr "Incorrect username or password."
+
+msgid "There is an error in the request to this page. The reason was: %REASON%"
+msgstr "There is an error in the request to this page. The reason was: %REASON%"
+
+msgid "E-mail address:"
+msgstr "E-mail address:"
+
+msgid "Submit message"
+msgstr "Submit message"
+
+msgid "No RelayState"
+msgstr "No RelayState"
+
+msgid "Error creating request"
+msgstr "Error creating request"
+
+msgid "Locality"
+msgstr "Locality"
+
+msgid "Unhandled exception"
+msgstr "Unhandled exception"
+
+msgid "The following required fields was not found"
+msgstr "The following required fields was not found"
+
+msgid "Download the X509 certificates as PEM-encoded files."
+msgstr "Download the X509 certificates as PEM-encoded files."
+
+#, python-format
+msgid "Unable to locate metadata for %ENTITYID%"
+msgstr "Unable to locate metadata for %ENTITYID%"
+
+msgid "Organizational number"
+msgstr "Organizational number"
+
+msgid "Password not set"
+msgstr "Password not set"
+
+msgid "SAML 2.0 IdP Metadata"
+msgstr "SAML 2.0 IdP Metadata"
+
+msgid "Post office box"
+msgstr "Post office box"
+
+msgid ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+msgstr ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+
+msgid "CAS Error"
+msgstr "CAS Error"
+
+msgid ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+msgstr ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+
+msgid ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+msgstr ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+
+msgid "Error"
+msgstr "Error"
+
+msgid "Next"
+msgstr "Next"
+
+msgid "Distinguished name (DN) of the person's home organizational unit"
+msgstr "Distinguished name (DN) of the person's home organizational unit"
+
+msgid "State information lost"
+msgstr "State information lost"
+
+msgid ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+msgstr ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+
+msgid "Converted metadata"
+msgstr "Converted metadata"
+
+msgid "Mail"
+msgstr "Mail"
+
+msgid "No, cancel"
+msgstr "No, cancel"
+
+msgid ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+msgstr ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+
+msgid "Error processing request from Service Provider"
+msgstr "Error processing request from Service Provider"
+
+msgid "Distinguished name (DN) of person's primary Organizational Unit"
+msgstr "Distinguished name (DN) of person's primary Organizational Unit"
+
+msgid ""
+"To look at the details for an SAML entity, click on the SAML entity "
+"header."
+msgstr ""
+"To look at the details for an SAML entity, click on the SAML entity "
+"header."
+
+msgid "Enter your username and password"
+msgstr "Enter your username and password"
+
+msgid "Login at"
+msgstr "Login at"
+
+msgid "No"
+msgstr "No"
+
+msgid "Home postal address"
+msgstr "Home postal address"
+
+msgid "WS-Fed SP Demo Example"
+msgstr "WS-Fed SP Demo Example"
+
+msgid "SAML 2.0 Identity Provider (Remote)"
+msgstr "SAML 2.0 Identity Provider (Remote)"
+
+msgid "Error processing the Logout Request"
+msgstr "Error processing the Logout Request"
+
+msgid "Do you want to logout from all the services above?"
+msgstr "Do you want to logout from all the services above?"
+
+msgid "Select"
+msgstr "Select"
+
+msgid "The authentication was aborted by the user"
+msgstr "The authentication was aborted by the user"
+
+msgid "Your attributes"
+msgstr "Your attributes"
+
+msgid "Given name"
+msgstr "Given name"
+
+msgid "Identity assurance profile"
+msgstr "Identity assurance profile"
+
+msgid "SAML 2.0 SP Demo Example"
+msgstr "SAML 2.0 SP Demo Example"
+
+msgid "Logout information lost"
+msgstr "Logout information lost"
+
+msgid "Organization name"
+msgstr "Organization name"
+
+msgid "Authentication failed: the certificate your browser sent is unknown"
+msgstr "Authentication failed: the certificate your browser sent is unknown"
+
+msgid ""
+"You are about to send a message. Hit the submit message button to "
+"continue."
+msgstr ""
+"You are about to send a message. Hit the submit message button to "
+"continue."
+
+msgid "Home organization domain name"
+msgstr "Home organization domain name"
+
+msgid "Go back to the file list"
+msgstr "Go back to the file list"
+
+msgid "SAML Subject"
+msgstr "SAML Subject"
+
+msgid "Error report sent"
+msgstr "Error report sent"
+
+msgid "Common name"
+msgstr "Common name"
+
+msgid "Please select the identity provider where you want to authenticate:"
+msgstr "Please select the identity provider where you want to authenticate:"
+
+msgid "Logout failed"
+msgstr "Logout failed"
+
+msgid "Identity number assigned by public authorities"
+msgstr "Identity number assigned by public authorities"
+
+msgid "WS-Federation Identity Provider (Remote)"
+msgstr "WS-Federation Identity Provider (Remote)"
+
+msgid "Error received from Identity Provider"
+msgstr "Error received from Identity Provider"
+
+msgid "LDAP Error"
+msgstr "LDAP Error"
+
+msgid ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+msgstr ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+
+msgid "No SAML request provided"
+msgstr "No SAML request provided"
+
+msgid "Some error occurred"
+msgstr "Some error occurred"
+
+msgid "Organization"
+msgstr "Organization"
+
+msgid ""
+"You accessed the Single Sign On Service interface, but did not provide a "
+"SAML Authentication Request. Please note that this endpoint is not "
+"intended to be accessed directly."
+msgstr ""
+"You accessed the Single Sign On Service interface, but did not provide a "
+"SAML Authentication Request. Please note that this endpoint is not "
+"intended to be accessed directly."
+
+msgid "No certificate"
+msgstr "No certificate"
+
+msgid "Choose home organization"
+msgstr "Choose home organization"
+
+msgid "Cannot retrieve session data"
+msgstr "Cannot retrieve session data"
+
+msgid "Persistent pseudonymous ID"
+msgstr "Persistent pseudonymous ID"
+
+msgid "No SAML response provided"
+msgstr "No SAML response provided"
+
+msgid "No errors found."
+msgstr "No errors found."
+
+msgid "SAML 2.0 Service Provider (Hosted)"
+msgstr "SAML 2.0 Service Provider (Hosted)"
+
+msgid "The given page was not found. The URL was: %URL%"
+msgstr "The given page was not found. The URL was: %URL%"
+
+msgid "Configuration error"
+msgstr "Configuration error"
+
+msgid "Required fields"
+msgstr "Required fields"
+
+msgid "An error occurred when trying to create the SAML request."
+msgstr "An error occurred when trying to create the SAML request."
+
+msgid ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+msgstr ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+
+#, python-format
+msgid "Your session is valid for %remaining% seconds from now."
+msgstr "Your session is valid for %remaining% seconds from now."
+
+msgid "Domain component (DC)"
+msgstr "Domain component (DC)"
+
+msgid "Shib 1.3 Service Provider (Remote)"
+msgstr "Shib 1.3 Service Provider (Remote)"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "ORCID researcher identifiers"
+msgstr "ORCID researcher identifiers"
+
+msgid "Nickname"
+msgstr "Nickname"
+
+msgid "Send error report"
+msgstr "Send error report"
+
+msgid ""
+"Authentication failed: the certificate your browser sent is invalid or "
+"cannot be read"
+msgstr ""
+"Authentication failed: the certificate your browser sent is invalid or "
+"cannot be read"
+
+msgid "The error report has been sent to the administrators."
+msgstr "The error report has been sent to the administrators."
+
+msgid "Date of birth"
+msgstr "Date of birth"
+
+msgid "Private information elements"
+msgstr "Private information elements"
+
+msgid "Person's non-reassignable, persistent pseudonymous ID at home organization"
+msgstr "Person's non-reassignable, persistent pseudonymous ID at home organization"
+
+msgid "You are also logged in on these services:"
+msgstr "You are also logged in on these services:"
+
+msgid "SimpleSAMLphp Diagnostics"
+msgstr "SimpleSAMLphp Diagnostics"
+
+msgid "Debug information"
+msgstr "Debug information"
+
+msgid "No, only %SP%"
+msgstr "No, only %SP%"
+
+msgid "Username"
+msgstr "Username"
+
+msgid "Go back to SimpleSAMLphp installation page"
+msgstr "Go back to SimpleSAMLphp installation page"
+
+msgid "You have successfully logged out from all services listed above."
+msgstr "You have successfully logged out from all services listed above."
+
+msgid "You are now successfully logged out from %SP%."
+msgstr "You are now successfully logged out from %SP%."
+
+msgid "Affiliation"
+msgstr "Affiliation"
+
+msgid "You have been logged out."
+msgstr "You have been logged out."
+
+msgid "Return to service"
+msgstr "Return to service"
+
+msgid "Logout"
+msgstr "Logout"
+
+msgid "State information lost, and no way to restart the request"
+msgstr "State information lost, and no way to restart the request"
+
+msgid "Error processing response from Identity Provider"
+msgstr "Error processing response from Identity Provider"
+
+msgid "WS-Federation Service Provider (Hosted)"
+msgstr "WS-Federation Service Provider (Hosted)"
+
+msgid "Remember my username"
+msgstr "Remember my username"
+
+msgid "Preferred language"
+msgstr "Preferred language"
+
+msgid "SAML 2.0 Service Provider (Remote)"
+msgstr "SAML 2.0 Service Provider (Remote)"
+
+msgid "Surname"
+msgstr "Surname"
+
+msgid "No access"
+msgstr "No access"
+
+msgid "The following fields was not recognized"
+msgstr "The following fields was not recognized"
+
+msgid "Authentication error in source %AUTHSOURCE%. The reason was: %REASON%"
+msgstr "Authentication error in source %AUTHSOURCE%. The reason was: %REASON%"
+
+msgid "Bad request received"
+msgstr "Bad request received"
+
+msgid "User ID"
+msgstr "User ID"
+
+msgid "JPEG Photo"
+msgstr "JPEG Photo"
+
+msgid "Postal address"
+msgstr "Postal address"
+
+msgid ""
+"Your session data cannot be retrieved right now due to technical "
+"difficulties. Please try again in a few minutes."
+msgstr ""
+"Your session data cannot be retrieved right now due to technical "
+"difficulties. Please try again in a few minutes."
+
+msgid "An error occurred when trying to process the Logout Request."
+msgstr "An error occurred when trying to process the Logout Request."
+
+msgid "ADFS SP Metadata"
+msgstr "ADFS SP Metadata"
+
+msgid "Sending message"
+msgstr "Sending message"
+
+msgid "In SAML 2.0 Metadata XML format:"
+msgstr "In SAML 2.0 Metadata XML format:"
+
+msgid "Logging out of the following services:"
+msgstr "Logging out of the following services:"
+
+msgid ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+msgstr ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+
+msgid "Could not create authentication response"
+msgstr "Could not create authentication response"
+
+msgid "Labeled URI"
+msgstr "Labeled URI"
+
+msgid "SimpleSAMLphp appears to be misconfigured."
+msgstr "SimpleSAMLphp appears to be misconfigured."
+
+msgid "Shib 1.3 Identity Provider (Hosted)"
+msgstr "Shib 1.3 Identity Provider (Hosted)"
+
+msgid "Metadata"
+msgstr "Metadata"
+
+msgid "Login"
+msgstr "Login"
+
+msgid ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+msgstr ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+
+msgid "Yes, all services"
+msgstr "Yes, all services"
+
+msgid "Logged out"
+msgstr "Logged out"
+
+msgid "Postal code"
+msgstr "Postal code"
+
+msgid "Logging out..."
+msgstr "Logging out..."
+
+msgid "not set"
+msgstr "not set"
+
+msgid "Metadata not found"
+msgstr "Metadata not found"
+
+msgid "SAML 2.0 Identity Provider (Hosted)"
+msgstr "SAML 2.0 Identity Provider (Hosted)"
+
+msgid "Primary affiliation"
+msgstr "Primary affiliation"
+
+msgid ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+msgstr ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+
+msgid "XML metadata"
+msgstr "XML metadata"
+
+msgid ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+msgstr ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+
+msgid "Telephone number"
+msgstr "Telephone number"
+
+msgid ""
+"Unable to log out of one or more services. To ensure that all your "
+"sessions are closed, you are encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Unable to log out of one or more services. To ensure that all your "
+"sessions are closed, you are encouraged to <i>close your webbrowser</i>."
+
+msgid "Bad request to discovery service"
+msgstr "Bad request to discovery service"
+
+msgid "Select your identity provider"
+msgstr "Select your identity provider"
+
+msgid "Group membership"
+msgstr "Group membership"
+
+msgid "Entitlement regarding the service"
+msgstr "Entitlement regarding the service"
+
+msgid "Shib 1.3 SP Metadata"
+msgstr "Shib 1.3 SP Metadata"
+
+msgid ""
+"As you are in debug mode, you get to see the content of the message you "
+"are sending:"
+msgstr ""
+"As you are in debug mode, you get to see the content of the message you "
+"are sending:"
+
+msgid "Certificates"
+msgstr "Certificates"
+
+msgid "Remember"
+msgstr "Remember"
+
+msgid "Distinguished name (DN) of person's home organization"
+msgstr "Distinguished name (DN) of person's home organization"
+
+msgid "You are about to send a message. Hit the submit message link to continue."
+msgstr "You are about to send a message. Hit the submit message link to continue."
+
+msgid "Organizational unit"
+msgstr "Organizational unit"
+
+msgid "Authentication aborted"
+msgstr "Authentication aborted"
+
+msgid "Local identity number"
+msgstr "Local identity number"
+
+msgid "Report errors"
+msgstr "Report errors"
+
+msgid "Page not found"
+msgstr "Page not found"
+
+msgid "Shib 1.3 IdP Metadata"
+msgstr "Shib 1.3 IdP Metadata"
+
+msgid "Change your home organization"
+msgstr "Change your home organization"
+
+msgid "User's password hash"
+msgstr "User's password hash"
+
+msgid ""
+"In SimpleSAMLphp flat file format - use this if you are using a "
+"SimpleSAMLphp entity on the other side:"
+msgstr ""
+"In SimpleSAMLphp flat file format - use this if you are using a "
+"SimpleSAMLphp entity on the other side:"
+
+msgid "Yes, continue"
+msgstr "Yes, continue"
+
+msgid "Completed"
+msgstr "Completed"
+
+msgid ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+msgstr ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+
+msgid "Error loading metadata"
+msgstr "Error loading metadata"
+
+msgid "Select configuration file to check:"
+msgstr "Select configuration file to check:"
+
+msgid "On hold"
+msgstr "On hold"
+
+msgid "ADFS Identity Provider (Hosted)"
+msgstr "ADFS Identity Provider (Hosted)"
+
+msgid "Error when communicating with the CAS server."
+msgstr "Error when communicating with the CAS server."
+
+msgid "No SAML message provided"
+msgstr "No SAML message provided"
+
+msgid "Help! I don't remember my password."
+msgstr "Help! I don't remember my password."
+
+msgid ""
+"You can turn off debug mode in the global SimpleSAMLphp configuration "
+"file <tt>config/config.php</tt>."
+msgstr ""
+"You can turn off debug mode in the global SimpleSAMLphp configuration "
+"file <tt>config/config.php</tt>."
+
+msgid "How to get help"
+msgstr "How to get help"
+
+msgid ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+msgstr ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+
+msgid "SimpleSAMLphp error"
+msgstr "SimpleSAMLphp error"
+
+msgid ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+
+msgid "or select a file:"
+msgstr "or select a file:"
+
+msgid "Remember me"
+msgstr "Remember me"
+
+msgid "Organization's legal name"
+msgstr "Organization's legal name"
+
+msgid "Options missing from config file"
+msgstr "Options missing from config file"
+
+msgid "The following optional fields was not found"
+msgstr "The following optional fields was not found"
+
+msgid "Authentication failed: your browser did not send any certificate"
+msgstr "Authentication failed: your browser did not send any certificate"
+
+msgid ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+msgstr ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+
+msgid "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL</a>:"
+msgstr "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL</a>:"
+
+msgid "Street"
+msgstr "Street"
+
+msgid ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+msgstr ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+
+msgid "Incorrect username or password"
+msgstr "Incorrect username or password"
+
+msgid "Message"
+msgstr "Message"
+
+msgid "Contact information:"
+msgstr "Contact information:"
+
+msgid "Unknown certificate"
+msgstr "Unknown certificate"
+
+msgid "Legal name"
+msgstr "Legal name"
+
+msgid "Optional fields"
+msgstr "Optional fields"
+
+msgid ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+msgstr ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+
+msgid "You have previously chosen to authenticate at"
+msgstr "You have previously chosen to authenticate at"
+
+msgid ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+msgstr ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+
+msgid "Fax number"
+msgstr "Fax number"
+
+msgid "Shibboleth demo"
+msgstr "Shibboleth demo"
+
+msgid "Error in this metadata entry"
+msgstr "Error in this metadata entry"
+
+msgid "Session size: %SIZE%"
+msgstr "Session size: %SIZE%"
+
+msgid "Parse"
+msgstr "Parse"
+
+msgid ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+msgstr ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+
+msgid "Metadata parser"
+msgstr "Metadata parser"
+
+msgid "ADFS Service Provider (Remote)"
+msgstr "ADFS Service Provider (Remote)"
+
+msgid "Choose your home organization"
+msgstr "Choose your home organization"
+
+msgid "Send e-mail to help desk"
+msgstr "Send e-mail to help desk"
+
+msgid "Metadata overview"
+msgstr "Metadata overview"
+
+msgid "Title"
+msgstr "Title"
+
+msgid "Manager"
+msgstr "Manager"
+
+msgid "You did not present a valid certificate."
+msgstr "You did not present a valid certificate."
+
+msgid "Authentication source error"
+msgstr "Authentication source error"
+
+msgid "Affiliation at home organization"
+msgstr "Affiliation at home organization"
+
+msgid "Help desk homepage"
+msgstr "Help desk homepage"
+
+msgid "Configuration check"
+msgstr "Configuration check"
+
+msgid "We did not accept the response sent from the Identity Provider."
+msgstr "We did not accept the response sent from the Identity Provider."
+
+msgid ""
+"You accessed the Artifact Resolution Service interface, but did not "
+"provide a SAML ArtifactResolve message. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr ""
+"You accessed the Artifact Resolution Service interface, but did not "
+"provide a SAML ArtifactResolve message. Please note that this endpoint is"
+" not intended to be accessed directly."
+
+msgid "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+msgstr "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+
+msgid "Shib 1.3 Identity Provider (Remote)"
+msgstr "Shib 1.3 Identity Provider (Remote)"
+
+msgid ""
+"Here is the metadata that SimpleSAMLphp has generated for you. You may "
+"send this metadata document to trusted partners to setup a trusted "
+"federation."
+msgstr ""
+"Here is the metadata that SimpleSAMLphp has generated for you. You may "
+"send this metadata document to trusted partners to setup a trusted "
+"federation."
+
+msgid "[Preferred choice]"
+msgstr "[Preferred choice]"
+
+msgid "Organizational homepage"
+msgstr "Organizational homepage"
+
+msgid "Processing..."
+msgstr "Processing..."
+
+msgid ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."

@@ -24,6 +24,15 @@
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 
+// IOMAD
+require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+$companyid = iomad::get_my_companyid(context_system::instance(), false);
+if (!empty($companyid) && $companyid > 0) {
+    $postfix = "_$companyid";
+} else {
+    $postfix = "";
+}
+
 if ($hassiteconfig) {
     /* @var admin_root $ADMIN */
     $ADMIN->locate('modules')->set_sorting(true);
@@ -100,13 +109,11 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configselect('limitconcurrentlogins',
         new lang_string('limitconcurrentlogins', 'core_auth'),
         new lang_string('limitconcurrentlogins_desc', 'core_auth'), 0, $options));
-    $temp->add(new admin_setting_configtext('alternateloginurl', new lang_string('alternateloginurl', 'auth'),
+    $temp->add(new admin_setting_configtext('alternateloginurl'.$postfix, new lang_string('alternateloginurl', 'auth'),
                                             new lang_string('alternatelogin', 'auth', htmlspecialchars(get_login_url(), ENT_COMPAT)), ''));
-    $temp->add(new admin_setting_configcheckbox('showloginform', new lang_string('showloginform', 'core_auth'),
-                                                new lang_string('showloginform_desc', 'core_auth'), 1));
-    $temp->add(new admin_setting_configtext('forgottenpasswordurl', new lang_string('forgottenpasswordurl', 'auth'),
+    $temp->add(new admin_setting_configtext('forgottenpasswordurl'.$postfix, new lang_string('forgottenpasswordurl', 'auth'),
                                             new lang_string('forgottenpassword', 'auth'), '', PARAM_URL));
-    $temp->add(new admin_setting_confightmleditor('auth_instructions', new lang_string('instructions', 'auth'),
+    $temp->add(new admin_setting_confightmleditor('auth_instructions'.$postfix, new lang_string('instructions', 'auth'),
                                                 new lang_string('authinstructions', 'auth'), ''));
     $setting = new admin_setting_configtext('allowemailaddresses', new lang_string('allowemailaddresses', 'admin'),
         new lang_string('configallowemailaddresses', 'admin'), '', PARAM_NOTAGS);

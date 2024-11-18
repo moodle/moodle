@@ -1,0 +1,34 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-oauth",
+    "description": "A SimpleSAMLphp module that allows integration with OAuth1,",
+    "type": "simplesamlphp-module",
+    "keywords": [ "SimpleSAMLphp", "OAuth1"],
+    "homepage": "https://simplesamlphp.org/",
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Olav Morken",
+            "email": "olav.morken@uninett.no"
+        },
+        {
+            "name": "Jaime Perez Crespo",
+            "email": "jaime.perez@uninett.no"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\oauth\\": "lib/"
+        }
+    },
+    "require": {
+      "simplesamlphp/composer-module-installer": ">=1.1.6"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "phpunit/phpunit": "~4.8.36"
+    },
+    "support": {
+        "issues": "https://github.com/simplesamlphp/simplesamlphp-module-oauth/issues",
+        "source": "https://github.com/simplesamlphp/simplesamlphp-module-oauth/"
+    }
+}

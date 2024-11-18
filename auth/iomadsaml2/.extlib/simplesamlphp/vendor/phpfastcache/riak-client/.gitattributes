@@ -1,0 +1,11 @@
+* text=auto
+
+*.php text eol=lf
+*.yml text eol=lf
+*.xml text eol=lf
+*.md  text eol=lf
+
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary

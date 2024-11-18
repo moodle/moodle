@@ -1,0 +1,25 @@
+<style type="text/css">
+body {
+    font-family: sans-serif;
+}
+ul {
+    list-style: none;
+    padding-left: 1em;
+}
+p {
+    white-space: pre-line;
+}
+</style>
+<h1>{{ subject }}</h1>
+
+<p>{{ text }}</p>
+
+{% for name, values in data %}
+<h2>{{ name }}</h2>
+<ul>
+{% for value in values %}
+    <li><pre>{{ value }}</pre></li>
+{% endfor %}
+</ul>
+
+{% endfor %}

@@ -1,0 +1,142 @@
+language: php
+
+# Stage order
+stages:
+  - pre-conditions
+  - test
+  - quality
+
+
+################
+#  Test stage  #
+################
+
+php:
+  - 7.0
+  - 7.1
+  - 7.2
+  - 7.3
+
+env:
+  - COMMAND="composer install"
+  - COMMAND="composer update"
+
+before_install:
+  - printf "\n" | pecl install krb5
+
+before_script:
+  - ${COMMAND}
+
+script:
+  - php vendor/bin/phpunit --no-coverage
+
+jobs:
+  fast_finish: true
+  allow_failures:
+    - php: 7.3
+      env: Psalm
+    - php: 7.3
+      env: Security check (composer install)
+    - php: 7.3
+      env: Security check (composer update)
+    - php: 7.3
+      env: PHP Codesniffer
+
+  include:
+
+    ##########################
+    #  Pre-conditions stage  #
+    ##########################
+
+    - stage: pre-conditions
+      php: 7.0
+      env: Syntax check PHP
+      before_script:
+        - composer install
+      script:
+        - vendor/bin/check-syntax-php.sh
+
+    - stage: pre-conditions
+      php: 7.1
+      env: Syntax check PHP
+      before_script:
+        - composer install
+      script:
+        - vendor/bin/check-syntax-php.sh
+
+    - stage: pre-conditions
+      php: 7.2
+      env: Syntax check PHP
+      before_script:
+        - composer install
+      script:
+        - vendor/bin/check-syntax-php.sh
+
+    - stage: pre-conditions
+      php: 7.3
+      env: Syntax check PHP
+      before_script:
+        - composer install
+      script:
+        - vendor/bin/check-syntax-php.sh
+
+    - stage: pre-conditions
+      php: 7.3
+      env: Syntax check YAML / XML / JSON
+      before_script:
+        - composer update
+      script:
+        - vendor/bin/check-syntax-yaml.sh
+        - vendor/bin/check-syntax-xml.sh
+        - vendor/bin/check-syntax-json.sh
+
+
+    ###################
+    #  Quality stage  #
+    ###################
+
+    - stage: quality
+      php: 7.3
+      env: Security check (composer install)
+      before_script:
+        - composer install
+      script:
+        - vendor/bin/security-checker security:check
+
+    - stage: quality
+      php: 7.3
+      env: Security check (composer update)
+      before_script:
+        - composer update
+      script:
+        - vendor/bin/security-checker security:check
+
+    - stage: quality
+      php: 7.3
+      env: Codecov
+      before_script:
+        - composer update
+        - php vendor/bin/phpunit
+      script:
+        - bash <(curl -s https://codecov.io/bash)
+
+    - stage: quality
+      php: 7.3
+      env: Psalm
+      before_script:
+        - composer update
+      script:
+        - vendor/bin/psalm
+        - vendor/bin/psalter --issues=UnnecessaryVarAnnotation --dry-run
+
+    - stage: quality
+      php: 7.3
+      env: PHP Codesniffer
+      before_script:
+        - composer update
+      script:
+        - vendor/bin/phpcs
+
+notifications:
+  slack:
+    secure: h5YiO7tAk5bzAQBkUZ3crnOFAOBkNqHp0nc2cxvGauogVfCLE9K8bME512uTeu9QWMht2D30uyTOHFKQ7sPEW4omHNF4qYl4p9L037oQFfEwZPBzJFo9QUzviT3mvKHTN4HSQOkq/08ZoMhh1i3p/OhyFS56J28IDJWDqGZkEUE=

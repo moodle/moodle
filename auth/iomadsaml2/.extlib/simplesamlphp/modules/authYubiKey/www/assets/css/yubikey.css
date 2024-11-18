@@ -1,0 +1,7 @@
+input#otp {
+    border: 1px solid #ccc;
+    background: #eee; padding: .5em;
+    font-size: medium;
+    width: 70%;
+    color: #aaa;
+}

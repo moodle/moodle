@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/iomad_settings/db" VERSION="20111019" COMMENT="XMLDB file for Moodle blocks/iomad_settings"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="certificate_serialnumber" COMMENT="Serialnumbers for issued certificates">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="certificateid"/>
+        <FIELD NAME="certificateid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="issued_certificate"/>
+        <FIELD NAME="issued_certificate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="certificateid" NEXT="prefix"/>
+        <FIELD NAME="prefix" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="issued_certificate" NEXT="sequenceno"/>
+        <FIELD NAME="sequenceno" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="prefix" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="sequenceno" NEXT="sequence"/>
+        <FIELD NAME="sequence" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="certificate_sequence_sequenceno_unique" UNIQUE="true" FIELDS="certificateid, sequence, sequenceno"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

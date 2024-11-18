@@ -1,0 +1,72 @@
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        public: false
+
+    routing.resolver:
+        class: Symfony\Component\Config\Loader\LoaderResolver
+
+    routing.loader.xml:
+        class: Symfony\Component\Routing\Loader\XmlFileLoader
+        arguments:
+            - '@file_locator'
+        tags: ['routing.loader']
+
+    routing.loader.yaml:
+        class: Symfony\Component\Routing\Loader\YamlFileLoader
+        arguments:
+            - '@file_locator'
+        tags: ['routing.loader']
+
+    routing.loader.php:
+        class: Symfony\Component\Routing\Loader\PhpFileLoader
+        arguments:
+            - '@file_locator'
+        tags: ['routing.loader']
+
+    routing.loader.glob:
+        class: Symfony\Component\Routing\Loader\GlobFileLoader
+        arguments:
+            - '@file_locator'
+        tags: ['routing.loader']
+
+    routing.loader.directory:
+        class: Symfony\Component\Routing\Loader\DirectoryLoader
+        arguments:
+            - '@file_locator'
+        tags: ['routing.loader']
+
+    routing.loader.service:
+        class: Symfony\Component\Routing\Loader\ContainerLoader
+        arguments:
+            - '@service_container'
+        tags: ['routing.loader']
+
+    routing.loader:
+        public: true
+        class: Symfony\Component\Config\Loader\DelegatingLoader
+        arguments:
+            - '@routing.resolver'
+            - {}
+
+    router.default:
+        class: Symfony\Component\Routing\Router
+        arguments:
+            - '@routing.loader'
+            - 'kernel::loadRoutes'
+            - { resource_type: 'service' }
+            - '@?router.request_context'
+
+    router:
+        alias: router.default
+        public: true
+
+    router.request_context:
+        class: Symfony\Component\Routing\RequestContext
+
+    router.router_listener:
+        class: Symfony\Component\HttpKernel\EventListener\RouterListener
+        arguments:
+            - '@router'
+            - '@request_stack'
+            - '@?router.request_context'

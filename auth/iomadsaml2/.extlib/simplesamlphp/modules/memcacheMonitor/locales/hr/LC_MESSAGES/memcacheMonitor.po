@@ -1,0 +1,132 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: hr\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{memcacheMonitor:memcachestat:total_connections}"
+msgstr "Ukupno konekcija"
+
+msgid "{memcacheMonitor:memcachestat:version}"
+msgstr "Verzija"
+
+msgid "{memcacheMonitor:memcachestat:get_hits}"
+msgstr "Ukupno GET naredbi (uspješno izvršenih)"
+
+msgid "{memcacheMonitor:memcachestat:curr_items}"
+msgstr "Trenutni broj elemenata"
+
+msgid "{memcacheMonitor:memcachestat:uptime}"
+msgstr "Ukupno vrijeme rada"
+
+msgid "{memcacheMonitor:memcachestat:limit_maxbytes}"
+msgstr "Ukupno raspoloživo memorijskog prostora"
+
+msgid "{memcacheMonitor:memcachestat:curr_connections}"
+msgstr "Trenutno otvorene konekcije"
+
+msgid "{memcacheMonitor:memcachestat:rusage_system}"
+msgstr "CPU sekundi (sustav)"
+
+msgid "{memcacheMonitor:memcachestat:rusage_user}"
+msgstr "CPU sekundi (korisnik)"
+
+msgid "{memcacheMonitor:memcachestat:pid}"
+msgstr "Identifikator procesa"
+
+msgid "{memcacheMonitor:memcachestat:cmd_get}"
+msgstr "Ukupno GET naredbi"
+
+msgid "{memcacheMonitor:memcachestat:bytes_read}"
+msgstr "Bajtova poslanih poslužitelju"
+
+msgid "{memcacheMonitor:memcachestat:time}"
+msgstr "Trenutno vrijeme"
+
+msgid "{memcacheMonitor:memcachestat:get_misses}"
+msgstr "Ukupno GET naredbi (neuspješnih)"
+
+msgid "{memcacheMonitor:memcachestat:bytes_written}"
+msgstr "Bajtova zapisanih od strane poslužitelja"
+
+msgid "{memcacheMonitor:memcachestat:connection_structures}"
+msgstr "Struktura konekcija"
+
+msgid "{memcacheMonitor:memcachestat:cmd_set}"
+msgstr "Ukupno SET naredbi"
+
+msgid "{memcacheMonitor:memcachestat:total_items}"
+msgstr "Ukupno elemenata od početka"
+
+msgid "{memcacheMonitor:memcachestat:bytes}"
+msgstr "Trenutno ukupno korišteno bajtova"
+
+msgid "Current time"
+msgstr "Trenutno vrijeme"
+
+msgid "Total items ever"
+msgstr "Ukupno elemenata od početka"
+
+msgid "Bytes written by the server"
+msgstr "Bajtova zapisanih od strane poslužitelja"
+
+msgid "Uptime"
+msgstr "Ukupno vrijeme rada"
+
+msgid "Current open connections"
+msgstr "Trenutno otvorene konekcije"
+
+msgid "Total storage avail"
+msgstr "Ukupno raspoloživo memorijskog prostora"
+
+msgid "Version"
+msgstr "Verzija"
+
+msgid "Total GET commands (failed)"
+msgstr "Ukupno GET naredbi (neuspješnih)"
+
+msgid "Total SET commands"
+msgstr "Ukupno SET naredbi"
+
+msgid "Connection structures"
+msgstr "Struktura konekcija"
+
+msgid "Total GET commands (success)"
+msgstr "Ukupno GET naredbi (uspješno izvršenih)"
+
+msgid "Total bytes in use currently"
+msgstr "Trenutno ukupno korišteno bajtova"
+
+msgid "Total GET commands"
+msgstr "Ukupno GET naredbi"
+
+msgid "Bytes in to the server"
+msgstr "Bajtova poslanih poslužitelju"
+
+msgid "Process ID"
+msgstr "Identifikator procesa"
+
+msgid "Currently number of items"
+msgstr "Trenutni broj elemenata"
+
+msgid "CPU Seconds (User)"
+msgstr "CPU sekundi (korisnik)"
+
+msgid "CPU Seconds (System)"
+msgstr "CPU sekundi (sustav)"
+
+msgid "Total connections"
+msgstr "Ukupno konekcija"
+

@@ -94,7 +94,7 @@ class system extends context {
      * @return int[]
      */
     protected static function get_compatible_role_archetypes(): array {
-        return ['manager', 'coursecreator'];
+        return ['manager', 'coursecreator', 'companymanager', 'companydepartmentmanager', 'clientadministrator', 'clientreporter', 'companyreporter'];
     }
 
     /**

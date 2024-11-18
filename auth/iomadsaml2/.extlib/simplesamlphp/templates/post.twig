@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+    <link rel="icon" href="{{ asset("icons/favicon.ico") }}">
+    <title>{% trans %}Sending message{% endtrans %}</title>
+    <link rel="stylesheet" href="{{ asset("css/post.css") }}">
+    <script src="{{ asset("js/post.js") }}"></script>
+  </head>
+  <body>
+    <form method="post" action="{{ destination }}">
+      {#- We need to add this element and call the click method, because calling submit() on the form causes failed
+          submissions if the form has another element with name or id of submit. See:
+          https://developer.mozilla.org/en/DOM/form.submit#Specification
+       #}
+
+      <input type="submit" id="postLoginSubmitButton">
+      {%- for name, value in post %}
+        {%- if value is iterable %}
+          {%- for index, item in value %}
+
+      <input type="hidden" name="{{ name }}[{{ index }}]" value="{{ value }}">
+          {%- endfor %}
+        {%- else %}
+
+      <input type="hidden" name="{{ name }}" value="{{ value }}">
+        {%- endif %}
+      {%- endfor %}
+
+      <noscript>
+        <h2>{% trans %}Warning{% endtrans %}</h2>
+        <p>{% trans %}Since your browser does not support Javascript, you must press the button below to proceed.{%
+            endtrans %}</p>
+        <button type="submit">{% trans %}Yes, continue{% endtrans %}</button>
+      </noscript>
+    </form>
+  </body>
+</html>

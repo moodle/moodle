@@ -1,0 +1,89 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+ * @package   block_mycourses
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+{{!
+    @template block_mycourses/available-view
+
+    This template renders the available view for the mycourses block.
+
+    Example context (json):
+    {}
+}}
+<div id="available-view-{{uniqid}}" data-region="available-view">
+    <div class="tab-content">
+        <div class="tab-pane active " id="mycourses_available_view">
+            <div id="paged-content-container-{{uniqid}}" data-region="paged-content-container">
+                <div id="page-container-1" data-region="page-container" class="paged-content-page-container" aria-live="polite">
+                    <div id="paged-content-page" data-page="1">
+                        <ul class="list-group" id="{{uniqid}}">
+
+                            {{#availableview.courses}}
+                                <li class="list-group-item course-listitem border-left-0 border-right-0 border-top-0 px-2 rounded-0" data-region="course-content" data-course-id="5">
+                                    <div class="row">
+                                        <div class="col-md-2 d-flex align-items-center mb-sm-3 mb-md-0">
+                                            <a href="{{url}}" tabindex="-1">
+                                                <div class="card-img dashboard-list-img mw-100" style='background-image: url("{{{image}}}");'>
+                                                    <span class="sr-only">{{fullname}}</span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-md-9 d-flex flex-column">
+                                                <a href="{{url}}" class="aalink fullname mr-2 mb-1">
+                                                    {{> core_course/favouriteicon }}
+                                                    <span class="sr-only">
+                                                        {{#str}}aria:coursename, core_course{{/str}}
+                                                    </span>
+                                                    {{{fullname}}}
+                                                </a>
+                                                </br>
+                                                {{ summary}}
+                                        </div>
+                                    </div>
+                                </li>
+                            {{/availableview.courses}}
+                            {{^availableview.courses}}
+                                </br>
+                                <li class="list-group-item course-listitem border-left-0 border-right-0 border-top-0 px-2 rounded-0" data-region="course-content" data-course-id="5">
+                                    <div class="text-xs-center text-center m-t-3">
+                                        <img class="empty-placeholder-image-lg"
+                                            src="{{nocourses}}"
+                                            alt="{{#str}} noavailable, block_mycourses {{/str}}"
+                                            role="presentation">
+                                        <p class="text-muted m-t-1">{{#str}} noavailable, block_mycourses {{/str}}</p>
+                                    </div>
+                                </li>
+                            {{/availableview.courses}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{#js}}
+require(['jquery', 'core/custom_interaction_events'], function($, customEvents) {
+    var root = $('#available-view-{{uniqid}}');
+    customEvents.define(root, [customEvents.events.activate]);
+    root.on(customEvents.events.activate, '[data-toggle="btns"] > .btn', function() {
+        root.find('.btn.active').removeClass('active');
+    });
+});
+{{/js}}

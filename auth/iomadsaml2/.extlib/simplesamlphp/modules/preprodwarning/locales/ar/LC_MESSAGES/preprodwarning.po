@@ -1,0 +1,46 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: ar\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n>=3 "
+"&& n<=10 ? 3 : n>=11 && n<=99 ? 4 : 5)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{preprodwarning:warning:warning_header}"
+msgstr "تحذير دخول نظام مبدئي"
+
+msgid "{preprodwarning:warning:warning}"
+msgstr ""
+"لقد دخلت نظاماً مبدئياً. إعدادات التصديق هذه للاختبار فقط. اذا دخلت هنا "
+"بناء علي حصولك علي هذا الرابط من شخص ما و انت لست احد مختبري هذا النظام "
+"قم رجاءاً بالخروج"
+
+msgid "{preprodwarning:warning:yes}"
+msgstr "نعم، اعلم انني قد دخلت نظاماً مبدئياً"
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"لقد دخلت نظاماً مبدئياً. إعدادات التصديق هذه للاختبار فقط. اذا دخلت هنا "
+"بناء علي حصولك علي هذا الرابط من شخص ما و انت لست احد مختبري هذا النظام "
+"قم رجاءاً بالخروج"
+
+msgid "Warning about accessing a pre-production system"
+msgstr "تحذير دخول نظام مبدئي"
+
+msgid "Yes, I know I am accessing a pre-production system"
+msgstr "نعم، اعلم انني قد دخلت نظاماً مبدئياً"
+

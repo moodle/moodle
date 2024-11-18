@@ -1,0 +1,41 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-exampleattributeserver",
+    "description": "An example for SAML attributes queries",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "exampleattributeserver"],
+    "license": "LGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Olav Morken",
+            "email": "olavmrk@gmail.com"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\exampleattributeserver\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+        "simplesamlphp/composer-module-installer": "~1.1"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "phpunit/phpunit": "~5.7"
+    },
+    "support": {
+        "issues": "https://github.com/tvdijen/simplesamlphp-module-exampleattributeserver/issues",
+        "source": "https://github.com/tvdijen/simplesamlphp-module-exampleattributeserver"
+    }
+}

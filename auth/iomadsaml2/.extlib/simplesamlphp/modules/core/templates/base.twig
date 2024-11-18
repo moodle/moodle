@@ -1,0 +1,29 @@
+{% extends "base.twig" %}
+{% block contentwrapper %}
+
+<div id="portalmenu" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+
+    <ul class="tabset_tabs ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+
+    {% if links is defined %}
+    {% for name, link in links %}
+    {% if name == pageid %}
+        <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active">
+            <a href="#">{{ link.text|trans }}</a>
+        </li>
+    {% else %}
+        <li class="ui-state-default ui-corner-top">
+            <a href="{{ link.href }}">{{ link.text|trans }}</a>
+        </li>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    </ul>
+    <div id="portalcontent" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+
+{{ block('content') }}
+
+    </div>
+</div>
+{% endblock %}

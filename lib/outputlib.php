@@ -255,6 +255,9 @@ function theme_build_css_for_themes(
         }
     }
 
+    // Iomad - This can break our themes.
+    purge_caches();
+
     return $themescss;
 }
 

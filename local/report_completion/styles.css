@@ -1,0 +1,110 @@
+#page-local-report_completion-index .col-md-9 {
+    clear:both;
+}
+
+#page-local-report_completion-index #iomad_course_selector, #page-local-report_completion-index #iomad_license_selector {
+    float:left;
+}
+
+#page-local-report_completion-index #iomad_course_selector select, #page-local-report_completion-index #iomad_license_selector select {
+    background-color: #ddd;
+}
+
+#page-local-report_completion-index #iomad_course_selector, #page-local-report_completion-index #iomad_license_selector {
+    padding-top: 7px;
+    padding-bottom: 17px;
+    padding-right: 5px;
+}
+
+#page-local-report_completion-index #mform1, #page-local-report_completion-index #mform2 {
+    display: flex;
+    padding-top: 5px;
+}
+
+#page-local-report_completion-index .mform fieldset {
+    border-bottom: 0px;
+}
+
+#page-local-report_completion-index .no-overflow {
+    overflow: unset !important;
+}
+
+#page-local-report_completion-index .chart-image{
+    max-width: 200px;
+    max-height: 200px;
+}
+
+.reporttablecontrols {
+    display: inline-block;
+}
+
+.reporttablecontrolscontrol {
+    float: left;
+}
+
+.reporttablecontrolscontrol .singlebutton {
+    padding-top: 7px;
+    padding-right: 5px;
+}
+
+ .reporttablecontrolscontrol #id_searchbutton {
+    color: #212529;
+    background-color: #e9ecef;
+    border-color: #e9ecef;
+    padding-right: 3px;
+}
+
+ .reporttablecontrolscontrol div.col-md-9.form-inline.felement {
+     display: contents
+ }
+ 
+  .reporttablecontrolscontrol  div.col-md-3 {
+      display: none
+  }
+
+.progress {
+    background-color: #666;
+}
+
+.progress-bar {
+    background-color: green;
+}
+
+#page-local-report_completion-index .form-inline label {
+    display: inline-block!important;
+}
+
+.completion_search_forms {
+    display: inline-flex;
+}
+
+.iomadcoursesearchform,
+.iomaddatesearchform,
+.iomadusersearchform {
+    margin-right: 10px;
+    float: left;
+}
+
+.iomadcoursesearchform .icons-collapse-expand.collapsed .expanded-icon,
+.iomadcoursesearchform .icons-collapse-expand.collapsed .collapsed-icon,
+.iomaddatesearchform  .icons-collapse-expand.collapsed .expanded-icon,
+.iomaddatesearchform .icons-collapse-expand.collapsed .collapsed-icon,
+.iomadusersearchform  .icons-collapse-expand.collapsed .expanded-icon,
+.iomadusersearchform .icons-collapse-expand.collapsed .collapsed-icon {
+    font-size: small;
+}
+
+.iomadcoursesearchform h3,
+.iomaddatesearchform h3,
+.iomadusersearchform h3 {
+    font-size: medium;
+}
+
+.iomadcoursesearchform .mform .form-inline .form-control,
+.iomadcoursesearchform .mform .form-inline .custom-select,
+.iomaddatesearchform .mform .form-inline .form-control,
+.iomaddatesearchform .mform .form-inline .custom-select,
+.iomadusersearchform .mform .form-inline .form-control,
+.iomadusersearchform .mform .form-inline .custom-select {
+    max-width:75%;
+}

@@ -1,0 +1,11 @@
+msgid "These checks failed:"
+msgstr "De volgende controles zijn mislukt:"
+
+msgid "These checks succeeded:"
+msgstr "De volgende controles zijn geslaagd:"
+
+msgid "{sanitycheck:strings:link_sanitycheck}"
+msgstr "Sanity check van je SimpleSAMLphp setup"
+
+msgid "Sanity check of your SimpleSAMLphp setup"
+msgstr "Sanity check van je SimpleSAMLphp setup"

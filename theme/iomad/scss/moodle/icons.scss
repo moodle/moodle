@@ -1,0 +1,199 @@
+// The only class we need for icons is .icon
+// Standardize the size, padding and alignment for all icons in Moodle.
+
+// Size of default icons.
+$icon-width: 16px;
+$icon-height: 16px;
+// Size of big icons.
+$icon-medium-width: 24px;
+$icon-medium-height: 24px;
+// Size of big icons.
+$icon-big-width: 64px;
+$icon-big-height: 64px;
+// Size of icon boxes.
+$icon-box-width: 48px;
+$icon-box-height: 48px;
+
+// stylelint-disable
+$iconsizes: () !default;
+$iconsizes: map-merge((
+  0: 0,
+  1: ($icon-width * .25),
+  2: ($icon-width * .5),
+  3: $icon-width,
+  4: ($icon-width * 1.5),
+  5: ($icon-width * 2),
+  6: ($icon-width * 2.5),
+  7: ($icon-width * 3)
+), $iconsizes);
+// stylelint-enable
+
+.icon {
+    font-size: $icon-height;
+    width: $icon-width;
+    height: $icon-height;
+    margin: 0;
+    padding: 0;
+    box-sizing: content-box;
+    margin-right: 0.5rem;
+
+    &.spacer {
+        margin-right: 0;
+    }
+
+    &.iconsize-big {
+        width: $icon-big-width;
+        height: $icon-big-height;
+        font-size: $icon-big-height;
+    }
+}
+
+.navbar-dark a .icon {
+    color: $navbar-dark-color !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.action-menu-item a:first-of-type > .icon {
+    margin-left: 0.5rem;
+}
+
+// YUI 2 Tree View icons must not have a margin left.
+.ygtvcell .icon {
+    margin-left: 0 !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// In the navigation, tree icons should not have margins.
+.block_navigation,
+.block_settings {
+    .tree_item .icon {
+        margin-left: 0;
+    }
+}
+
+[data-action=toggle-drawer] .icon {
+    margin: 0;
+}
+
+// Apply in special cases where the default icons styles does not work properly. Eg file picker buttons.
+.icon-no-spacing a > .icon {
+    margin: 0;
+}
+
+.icon-no-margin {
+    .icon {
+        margin-left: 0;
+        margin-right: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+.icon-large > .icon {
+    width: ($icon-width * 2);
+    height: ($icon-height * 2);
+}
+
+@each $size, $length in $iconsizes {
+    .icon-size-#{$size} {
+        .icon {
+            height: $length !important; /* stylelint-disable-line declaration-no-important */
+            width: $length !important; /* stylelint-disable-line declaration-no-important */
+            font-size: $length !important; /* stylelint-disable-line declaration-no-important */
+        }
+    }
+}
+
+.helplink .icon {
+    margin-left: 0.5rem;
+}
+
+.icons-collapse-expand {
+    display: flex;
+    align-items: center;
+    .expanded-icon {
+        display: flex;
+        align-items: center;
+    }
+
+    .collapsed-icon {
+        display: none;
+    }
+
+    &.collapsed {
+        .expanded-icon {
+            display: none;
+        }
+
+        .collapsed-icon {
+            display: flex;
+            align-items: center;
+        }
+    }
+}
+
+// Revisit these styles when MDL-78284 lands with new icons.
+// Icon container will be removed and icons will be used directly.
+.activityiconcontainer {
+    width: $activity-iconcontainer-width;
+    height: $activity-iconcontainer-height;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $gray-100;
+    border-radius: 4px;
+    padding: 0.7rem;
+    .activityicon,
+    .icon {
+        margin: 0;
+        font-size: $icon-medium-width;
+        height: $icon-medium-width;
+        width: $icon-medium-height;
+    }
+    &.small {
+        width: $activity-iconcontainer-width - 10px;
+        height: $activity-iconcontainer-height - 10px;
+    }
+    &.smaller {
+        width: $activity-iconcontainer-width - 20px;
+        height: $activity-iconcontainer-width - 20px;
+        .activityicon {
+            width: $icon-medium-width;
+            height: $icon-medium-height;
+        }
+    }
+}
+
+@each $type, $value in $activity-icon-colors {
+    .activityiconcontainer.#{$type} {
+        background-color: $value;
+        .activityicon,
+        .icon {
+            &:not(.nofilter) {
+                filter: brightness(0) invert(1);
+            }
+        }
+    }
+}
+
+.icon-box {
+    width: $icon-box-width;
+    height: $icon-box-height;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $gray-100;
+    border-radius: 12px;
+    padding: 0.7rem;
+
+    .icon {
+        margin: 0;
+        height: $icon-medium-width;
+        width: $icon-medium-height;
+    }
+}
+
+// Make activtity colours available for custom modules.
+:root {
+    @each $type, $value in $activity-icon-colors {
+        --activity#{$type}: #{$value};
+    }
+}

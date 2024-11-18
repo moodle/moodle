@@ -1,0 +1,6 @@
+statistics-main:
+    path:       /
+    defaults:   { _controller: 'SimpleSAML\Module\statistics\StatisticsController::main' }
+statistics-metadata:
+    path:       /metadata
+    defaults:   { _controller: 'SimpleSAML\Module\statistics\StatisticsController::metadata' }

@@ -1,0 +1,20 @@
+{{!
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ }}
+
+<ul class="nav nav-tabs" role="tablist">
+    {{# tabs }}
+        <li class="nav-item">
+            <a 
+                class="nav-link {{# selected }}active{{/ selected }}"
+                href="#{{ category }}"
+                data-toggle="tab"
+                role="tab"
+                aria-selected="{{# selected }}true{{/ selected }}{{^ selected }}false{{/selected}}"
+                ><i class="fa {{ icon }}"></i> {{ label }}</a>
+        </li>
+    {{/ tabs }}
+</ul>

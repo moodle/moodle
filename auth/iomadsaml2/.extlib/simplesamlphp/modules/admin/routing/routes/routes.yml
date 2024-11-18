@@ -1,0 +1,24 @@
+admin-main:
+    path:       /
+    defaults:   { _controller: 'SimpleSAML\Module\admin\Controller\Config::main' }
+admin-diagnostics:
+    path:       /diagnostics
+    defaults:   { _controller: 'SimpleSAML\Module\admin\Controller\Config::diagnostics' }
+admin-phpinfo:
+    path:       /phpinfo
+    defaults:   { _controller: 'SimpleSAML\Module\admin\Controller\Config::phpinfo' }
+admin-test:
+    path:       /test/{as}
+    defaults:   { _controller: 'SimpleSAML\Module\admin\Controller\Test::main', as: null }
+admin-fed:
+    path:       /federation
+    defaults:   { _controller: 'SimpleSAML\Module\admin\Controller\Federation::main' }
+admin-fed-cert:
+    path:       /federation/cert
+    defaults:   { _controller: 'SimpleSAML\Module\admin\Controller\Federation::downloadCert' }
+admin-fed-show:
+    path:       /federation/show
+    defaults:   { _controller: 'SimpleSAML\Module\admin\Controller\Federation::showRemoteEntity' }
+admin-fed-converter:
+    path:       /federation/metadata-converter
+    defaults:   { _controller: 'SimpleSAML\Module\admin\Controller\Federation::metadataConverter' }

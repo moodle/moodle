@@ -1,0 +1,532 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: hu\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{core:frontpage:link_phpinfo}"
+msgstr "PHP futási információk"
+
+msgid "{core:no_state:report_text}"
+msgstr ""
+"Ha a probléma állandónak tűnik, kérjük, jelezze ezt az oldal "
+"adminisztrátorának."
+
+msgid "{core:no_state:cause_backforward}"
+msgstr "Használja a böngésző előre, ill. vissza gombjait"
+
+msgid "{core:no_metadata:not_found_for}"
+msgstr "Az következő entitáshoz nem található metaadat:"
+
+msgid "{core:frontpage:link_shib13example}"
+msgstr ""
+"Shibboleth 1.3 SP példa - teszt bejelentkezés saját Shibboleth 1.3 IdP "
+"keresztül"
+
+msgid "{core:no_state:suggestions}"
+msgstr "Javaslat a probléma elhárítására:"
+
+msgid "{core:frontpage:login_as_admin}"
+msgstr "Bejelentkezés adminisztrátorként"
+
+msgid "{core:short_sso_interval:warning}"
+msgstr ""
+"Mindössze néhány másodperc telt el az SP-hez történő, legutóbbi "
+"azonosítás óta. Ez nem normális működés, úgy tűnik, valami probléma "
+"lépett fel az SP-nél."
+
+msgid "{core:frontpage:link_doc_sp}"
+msgstr "SimpleSAMLphp használata mint alkalmazásszolgáltató(SP)"
+
+msgid "{core:frontpage:link_meta_saml2sphosted}"
+msgstr ""
+"Ezen a gépen futó (hosted) SAML 2.0 alkalmazásszolgáltató (SP) metaadat "
+"(automatikusan generált)"
+
+msgid "{core:frontpage:link_openidprovider}"
+msgstr "OpenID kiszolgáló oldal - Alpha verzió (teszt kód)"
+
+msgid "{core:frontpage:link_doc_install}"
+msgstr "SimpleSAMLphp telepítése"
+
+msgid "{core:frontpage:link_diagnostics}"
+msgstr "Port és protokoll diagnosztika"
+
+msgid "{core:no_state:suggestion_goback}"
+msgstr "Menjen vissza az előző oldalra, majd próbálja ismét."
+
+msgid "{core:no_state:causes}"
+msgstr "Az alábbi hibát okozhatta:"
+
+msgid "{core:frontpage:link_meta_saml2idphosted}"
+msgstr ""
+"Ezen a gépen futó (hosted) SAML 2.0 személyazonosság-szolgáltató (IdP) "
+"metaadat (automatikusan generált)"
+
+msgid "{core:frontpage:optional}"
+msgstr "Opcionális"
+
+msgid "{core:frontpage:link_meta_shib13sphosted}"
+msgstr ""
+"Ezen a gépen futó (hosted) Shibboleth 1.3 alkalmazásszolgáltató (SP) "
+"metaadat (automatikusan generált)"
+
+msgid "{core:frontpage:doc_header}"
+msgstr "Dokumentáció"
+
+msgid "{core:frontpage:link_doc_advanced}"
+msgstr "SimpleSAMLphp további tulajdonságai"
+
+msgid "{core:frontpage:required_ldap}"
+msgstr "Szükséges az LDAP támogatáshoz"
+
+msgid "{core:frontpage:authtest}"
+msgstr "Azonosítási (autentikációs) beállítások tesztelése"
+
+msgid "{core:frontpage:link_meta_overview}"
+msgstr "Metaadat áttekintés. Vizsgálja át metaadat állományait"
+
+msgid "{core:frontpage:configuration}"
+msgstr "Beállítások"
+
+msgid "{core:frontpage:welcome}"
+msgstr "Üdvözöljük"
+
+msgid "{core:frontpage:link_doc_shibsp}"
+msgstr "Shibboleth 1.3 SP beállítása, hogy együtt működjön a SimpleSAMLphp IdP-vel"
+
+msgid "{core:no_state:header}"
+msgstr "Elvezett az állapotinformácó"
+
+msgid "{core:frontpage:metadata_header}"
+msgstr "Metaadat"
+
+msgid "{core:frontpage:link_doc_maintenance}"
+msgstr "SimpleSAMLphp karbantartása és beállítása"
+
+msgid "{core:frontpage:link_configcheck}"
+msgstr "SimpleSAMLphp konfigurációjának ellenőrzése"
+
+msgid "{core:frontpage:page_title}"
+msgstr "SimpleSAMLphp adminisztrációs felület"
+
+msgid "{core:no_cookie:header}"
+msgstr "Hiányzó süti (cookie)"
+
+msgid "{core:frontpage:warnings}"
+msgstr "Figyelmeztetések"
+
+msgid "{core:frontpage:link_xmlconvert}"
+msgstr "Metaadatok konvertálása SAML2 XML-ből SimpleSAMLphp-ba "
+
+msgid "{core:frontpage:link_cleardiscochoices}"
+msgstr "Felejtse el a kiválasztott IdP-ket"
+
+msgid "{core:frontpage:loggedin_as_admin}"
+msgstr "Bejelentkezve adminisztrátorként"
+
+msgid "{core:frontpage:auth}"
+msgstr "Azonosítás (autentikáció)"
+
+msgid "{core:no_metadata:suggestion_user_link}"
+msgstr ""
+"Amennyiben ön, mint felhasználó keveredett erre az oldalra, úgy kérjük, a"
+" hibával keresse az oldal adminisztrátorát."
+
+msgid "{core:no_state:description}"
+msgstr "Nem lehet beazonosítani a kéréshez tartozó állapotinformációt."
+
+msgid "{core:frontpage:show_metadata}"
+msgstr "Mutasd a metaadatokat"
+
+msgid "{core:no_state:suggestion_closebrowser}"
+msgstr "Zárja be böngészőjét, majd próbálja újra."
+
+msgid "{core:short_sso_interval:warning_header}"
+msgstr "Túl kevés idő telt el a belépési kísérletek között."
+
+msgid "{core:frontpage:intro}"
+msgstr ""
+"<strong>Gratulálunk</strong>, a SimpleSAMLphp sikeresen települt. Ez a "
+"működő rendszer nyitóoldala, ahol teszt példák, diagnosztikai eszközök, "
+"metaadatok és dokumentációk találhatók"
+
+msgid "{core:no_metadata:header}"
+msgstr "Nem található használható metaadat"
+
+msgid "{core:frontpage:link_meta_shib13idphosted}"
+msgstr ""
+"Ezen a gépen futó (hosted) Shibboleth 1.3 személyazonosság-szolgáltató "
+"(IdP) metaadat (automatikusan generált)"
+
+msgid "{core:frontpage:required}"
+msgstr "Szükséges"
+
+msgid "{core:no_metadata:config_problem}"
+msgstr ""
+"Valószínűleg valamilyen konfigurációs probléma okozta hiba, amely lehet "
+"akár IdP-, akár SP-oldalon."
+
+msgid "{core:frontpage:warnings_suhosin_url_length}"
+msgstr ""
+"A http kérés paramétereinek hossza meghaladta a PHP Suhosin kiterjesztés "
+"határértékét. Növelje meg a suhosin.get.max_value_length opciót legalább "
+"2048 byte-ra."
+
+msgid "{core:frontpage:warnings_https}"
+msgstr ""
+"<strong>Nem HTTPS protokollt használ</strong> - nem titkosított a "
+"kommunikáció! HTTP jó megoldás lehet teszt rendszerek esetében, de az "
+"éles rendszerben lehetőség szerint használjon HTTPS-t! [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-maintenance"
+"\">Többet olvashat a SimpleSAMLphp beállításáról</a> ]"
+
+msgid "{core:frontpage:federation}"
+msgstr "Föderáció"
+
+msgid "{core:frontpage:required_radius}"
+msgstr "Szükséges a Radius támogatáshoz"
+
+msgid "{core:no_state:cause_openbrowser}"
+msgstr "A böngésző a legutóbb bezárt füleket újranyitva indult."
+
+msgid "{core:frontpage:checkphp}"
+msgstr "PHP beállítások ellenőrzése"
+
+msgid "{core:frontpage:link_doc_idp}"
+msgstr "SimpleSAMLphp használata mint személyazonosság-szolgáltató (IdP)"
+
+msgid "{core:no_state:report_header}"
+msgstr "A hiba jelentése"
+
+msgid "{core:frontpage:link_saml2example}"
+msgstr "SAML 2.0 SP példa - teszt bejelentkezés saját IdP keresztül"
+
+msgid "{core:no_state:cause_nocookie}"
+msgstr "Talán a böngészőben nincsenek engedélyezve a sütik (cookie)."
+
+msgid "{core:frontpage:about_header}"
+msgstr "A SimpleSAMLphp-ról bővebben"
+
+msgid "{core:frontpage:about_text}"
+msgstr ""
+"Ez a SimpleSAMLphp-dolog nagyon hasznos, hol olvashatnék többet róla? "
+"További információkat a <a href=\"http://rnd.feide.no/simplesamlphp\"> "
+"Feide RnD SimpleSAMLphp-ról szóló blogjában </a> találhat a <a "
+"href=\"http://uninett.no\">UNINETT-en</a>."
+
+msgid "{core:no_metadata:suggestion_developer}"
+msgstr ""
+"Ha ön az oldal üzemeltetője, úgy javasoljuk, ellenőrizze a metaadat "
+"beállításokat mint IdP-, mind SP oldalon."
+
+msgid "{core:no_cookie:retry}"
+msgstr "Újra"
+
+msgid "{core:frontpage:useful_links_header}"
+msgstr "Hasznos linkek"
+
+msgid "{core:frontpage:metadata}"
+msgstr "Metaadatok"
+
+msgid "{core:frontpage:recommended}"
+msgstr "Ajánlott"
+
+msgid "{core:frontpage:link_doc_googleapps}"
+msgstr "SimpleSAMLphp mint IdP a Google Apps for Education programok számára"
+
+msgid "{core:frontpage:tools}"
+msgstr "Eszközök"
+
+msgid "{core:short_sso_interval:retry}"
+msgstr "Újbóli belépés"
+
+msgid "{core:no_cookie:description}"
+msgstr ""
+"Úgy tűnik, az ön böngészőjében nincsenek engedélyezve a sütik (cookie) "
+"használata. Kérjük ellenőrizze beállításait, majd próbálja újra."
+
+msgid "{core:frontpage:deprecated}"
+msgstr "Kivezetés alatt álló opció - használata ellenjavallt"
+
+msgid "You are logged in as administrator"
+msgstr "Bejelentkezve adminisztrátorként"
+
+msgid "Go back to the previous page and try again."
+msgstr "Menjen vissza az előző oldalra, majd próbálja ismét."
+
+msgid "If this problem persists, you can report it to the system administrators."
+msgstr ""
+"Ha a probléma állandónak tűnik, kérjük, jelezze ezt az oldal "
+"adminisztrátorának."
+
+msgid "Welcome"
+msgstr "Üdvözöljük"
+
+msgid "SimpleSAMLphp configuration check"
+msgstr "SimpleSAMLphp konfigurációjának ellenőrzése"
+
+msgid "Metadata overview for your installation. Diagnose your metadata files"
+msgstr "Metaadat áttekintés. Vizsgálja át metaadat állományait"
+
+msgid "XML to SimpleSAMLphp metadata converter"
+msgstr "Metaadatok konvertálása SAML2 XML-ből SimpleSAMLphp-ba "
+
+msgid "Required"
+msgstr "Szükséges"
+
+msgid "Warnings"
+msgstr "Figyelmeztetések"
+
+msgid "Documentation"
+msgstr "Dokumentáció"
+
+msgid "Hosted Shibboleth 1.3 Service Provider Metadata (automatically generated)"
+msgstr ""
+"Ezen a gépen futó (hosted) Shibboleth 1.3 alkalmazásszolgáltató (SP) "
+"metaadat (automatikusan generált)"
+
+msgid "PHP info"
+msgstr "PHP futási információk"
+
+msgid "About SimpleSAMLphp"
+msgstr "A SimpleSAMLphp-ról bővebben"
+
+msgid "Hosted SAML 2.0 Service Provider Metadata (automatically generated)"
+msgstr ""
+"Ezen a gépen futó (hosted) SAML 2.0 alkalmazásszolgáltató (SP) metaadat "
+"(automatikusan generált)"
+
+msgid "Retry login"
+msgstr "Újbóli belépés"
+
+msgid "Required for LDAP"
+msgstr "Szükséges az LDAP támogatáshoz"
+
+msgid "Close the web browser, and try again."
+msgstr "Zárja be böngészőjét, majd próbálja újra."
+
+msgid "Federation"
+msgstr "Föderáció"
+
+msgid "We were unable to locate the state information for the current request."
+msgstr "Nem lehet beazonosítani a kéréshez tartozó állapotinformációt."
+
+msgid "Delete my choices of IdP in the IdP discovery services"
+msgstr "Felejtse el a kiválasztott IdP-ket"
+
+msgid ""
+"This is most likely a configuration problem on either the service "
+"provider or identity provider."
+msgstr ""
+"Valószínűleg valamilyen konfigurációs probléma okozta hiba, amely lehet "
+"akár IdP-, akár SP-oldalon."
+
+msgid "Configure Shibboleth 1.3 SP to work with SimpleSAMLphp IdP"
+msgstr "Shibboleth 1.3 SP beállítása, hogy együtt működjön a SimpleSAMLphp IdP-vel"
+
+msgid "Using the back and forward buttons in the web browser."
+msgstr "Használja a böngésző előre, ill. vissza gombjait"
+
+msgid "Metadata not found"
+msgstr "Nem található használható metaadat"
+
+msgid "Missing cookie"
+msgstr "Hiányzó süti (cookie)"
+
+msgid "Cookies may be disabled in the web browser."
+msgstr "Talán a böngészőben nincsenek engedélyezve a sütik (cookie)."
+
+msgid "Opened the web browser with tabs saved from the previous session."
+msgstr "A böngésző a legutóbb bezárt füleket újranyitva indult."
+
+msgid "Tools"
+msgstr "Eszközök"
+
+msgid "Test configured authentication sources "
+msgstr "Azonosítási (autentikációs) beállítások tesztelése"
+
+msgid ""
+"You appear to have disabled cookies in your browser. Please check the "
+"settings in your browser, and try again."
+msgstr ""
+"Úgy tűnik, az ön böngészőjében nincsenek engedélyezve a sütik (cookie) "
+"használata. Kérjük ellenőrizze beállításait, majd próbálja újra."
+
+msgid "Installing SimpleSAMLphp"
+msgstr "SimpleSAMLphp telepítése"
+
+msgid "Deprecated"
+msgstr "Kivezetés alatt álló opció - használata ellenjavallt"
+
+msgid ""
+"<strong>Congratulations</strong>, you have successfully installed "
+"SimpleSAMLphp. This is the start page of your installation, where you "
+"will find links to test examples, diagnostics, metadata and even links to"
+" relevant documentation."
+msgstr ""
+"<strong>Gratulálunk</strong>, a SimpleSAMLphp sikeresen települt. Ez a "
+"működő rendszer nyitóoldala, ahol teszt példák, diagnosztikai eszközök, "
+"metaadatok és dokumentációk találhatók"
+
+msgid "This error may be caused by:"
+msgstr "Az alábbi hibát okozhatta:"
+
+msgid ""
+"<strong>You are not using HTTPS</strong> - encrypted communication with "
+"the user. HTTP works fine for test purposes, but in a production "
+"environment, you should use HTTPS. [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-"
+"maintenance\">Read more about SimpleSAMLphp maintenance</a> ]"
+msgstr ""
+"<strong>Nem HTTPS protokollt használ</strong> - nem titkosított a "
+"kommunikáció! HTTP jó megoldás lehet teszt rendszerek esetében, de az "
+"éles rendszerben lehetőség szerint használjon HTTPS-t! [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-maintenance"
+"\">Többet olvashat a SimpleSAMLphp beállításáról</a> ]"
+
+msgid "Metadata"
+msgstr "Metaadat"
+
+msgid "Retry"
+msgstr "Újra"
+
+msgid "SimpleSAMLphp Maintenance and Configuration"
+msgstr "SimpleSAMLphp karbantartása és beállítása"
+
+msgid "Diagnostics on hostname, port and protocol"
+msgstr "Port és protokoll diagnosztika"
+
+msgid ""
+"If you are an user who received this error after following a link on a "
+"site, you should report this error to the owner of that site."
+msgstr ""
+"Amennyiben ön, mint felhasználó keveredett erre az oldalra, úgy kérjük, a"
+" hibával keresse az oldal adminisztrátorát."
+
+msgid "Using SimpleSAMLphp as an Identity Provider"
+msgstr "SimpleSAMLphp használata mint személyazonosság-szolgáltató (IdP)"
+
+msgid "Optional"
+msgstr "Opcionális"
+
+msgid "Suggestions for resolving this problem:"
+msgstr "Javaslat a probléma elhárítására:"
+
+msgid ""
+"This SimpleSAMLphp thing is pretty cool, where can I read more about it? "
+"You can find more information about it at the <a "
+"href=\"https://simplesamlphp.org/\">SimpleSAMLphp web page </a> over at "
+"<a href=\"http://uninett.no\">UNINETT</a>."
+msgstr ""
+"Ez a SimpleSAMLphp-dolog nagyon hasznos, hol olvashatnék többet róla? "
+"További információkat a <a href=\"http://rnd.feide.no/simplesamlphp\"> "
+"Feide RnD SimpleSAMLphp-ról szóló blogjában </a> találhat a <a "
+"href=\"http://uninett.no\">UNINETT-en</a>."
+
+msgid "Shibboleth 1.3 SP example - test logging in through your Shib IdP"
+msgstr ""
+"Shibboleth 1.3 SP példa - teszt bejelentkezés saját Shibboleth 1.3 IdP "
+"keresztül"
+
+msgid "Authentication"
+msgstr "Azonosítás (autentikáció)"
+
+msgid "SimpleSAMLphp installation page"
+msgstr "SimpleSAMLphp adminisztrációs felület"
+
+msgid "Show metadata"
+msgstr "Mutasd a metaadatokat"
+
+msgid "SimpleSAMLphp as an IdP for Google Apps for Education"
+msgstr "SimpleSAMLphp mint IdP a Google Apps for Education programok számára"
+
+msgid "State information lost"
+msgstr "Elvezett az állapotinformácó"
+
+msgid "Hosted SAML 2.0 Identity Provider Metadata (automatically generated)"
+msgstr ""
+"Ezen a gépen futó (hosted) SAML 2.0 személyazonosság-szolgáltató (IdP) "
+"metaadat (automatikusan generált)"
+
+msgid "OpenID Provider site - Alpha version (test code)"
+msgstr "OpenID kiszolgáló oldal - Alpha verzió (teszt kód)"
+
+msgid "Required for Radius"
+msgstr "Szükséges a Radius támogatáshoz"
+
+msgid "We were unable to locate the metadata for the entity:"
+msgstr "Az következő entitáshoz nem található metaadat:"
+
+msgid "SAML 2.0 SP example - test logging in through your IdP"
+msgstr "SAML 2.0 SP példa - teszt bejelentkezés saját IdP keresztül"
+
+msgid "Using SimpleSAMLphp as a Service Provider"
+msgstr "SimpleSAMLphp használata mint alkalmazásszolgáltató(SP)"
+
+msgid ""
+"We have detected that there is only a few seconds since you last "
+"authenticated with this service provider, and therefore assume that there"
+" is a problem with this SP."
+msgstr ""
+"Mindössze néhány másodperc telt el az SP-hez történő, legutóbbi "
+"azonosítás óta. Ez nem normális működés, úgy tűnik, valami probléma "
+"lépett fel az SP-nél."
+
+msgid "Recommended"
+msgstr "Ajánlott"
+
+msgid ""
+"If you are a developer who is deploying a single sign-on solution, you "
+"have a problem with the metadata configuration. Verify that metadata is "
+"configured correctly on both the identity provider and service provider."
+msgstr ""
+"Ha ön az oldal üzemeltetője, úgy javasoljuk, ellenőrizze a metaadat "
+"beállításokat mint IdP-, mind SP oldalon."
+
+msgid "SimpleSAMLphp Advanced Features"
+msgstr "SimpleSAMLphp további tulajdonságai"
+
+msgid "Too short interval between single sign on events."
+msgstr "Túl kevés idő telt el a belépési kísérletek között."
+
+msgid "Checking your PHP installation"
+msgstr "PHP beállítások ellenőrzése"
+
+msgid ""
+"The length of query parameters is limited by the PHP Suhosin extension. "
+"Please increase the suhosin.get.max_value_length option to at least 2048 "
+"bytes."
+msgstr ""
+"A http kérés paramétereinek hossza meghaladta a PHP Suhosin kiterjesztés "
+"határértékét. Növelje meg a suhosin.get.max_value_length opciót legalább "
+"2048 byte-ra."
+
+msgid "Useful links for your installation"
+msgstr "Hasznos linkek"
+
+msgid "Configuration"
+msgstr "Beállítások"
+
+msgid "Hosted Shibboleth 1.3 Identity Provider Metadata (automatically generated)"
+msgstr ""
+"Ezen a gépen futó (hosted) Shibboleth 1.3 személyazonosság-szolgáltató "
+"(IdP) metaadat (automatikusan generált)"
+
+msgid "Login as administrator"
+msgstr "Bejelentkezés adminisztrátorként"
+
+msgid "Report this error"
+msgstr "A hiba jelentése"
+

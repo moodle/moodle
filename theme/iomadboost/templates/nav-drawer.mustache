@@ -1,0 +1,10 @@
+{{!
+    @deprecated since 4.0
+    @template theme_iomadboost/nav-drawer
+
+
+    Example context (json): {}
+}}
+<div id="nav-drawer" data-region="drawer" class="d-print-none moodle-has-zindex {{^navdraweropen}}closed{{/navdraweropen}}" aria-hidden="{{#navdraweropen}}false{{/navdraweropen}}{{^navdraweropen}}true{{/navdraweropen}}" tabindex="-1">
+    {{> theme_iomadboost/flat_navigation }}
+</div>

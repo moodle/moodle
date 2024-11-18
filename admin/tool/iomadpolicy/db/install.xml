@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="admin/tool/iomadpolicy/db" VERSION="20220701" COMMENT="The plugin allows to manage various iomadpolicy documents that users have to accept to use the site."
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="tool_iomadpolicy" COMMENT="Contains the list of iomadpolicy documents defined on the site.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="999" SEQUENCE="false" COMMENT="Defines the order in which policies should be presented to users"/>
+        <FIELD NAME="currentversionid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="ID of the current iomadpolicy version that applies on the site, NULL if the iomadpolicy does not apply"/>
+        <FIELD NAME="companyid" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_currentversionid" TYPE="foreign" FIELDS="currentversionid" REFTABLE="tool_iomadpolicy_versions" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="tool_iomadpolicy_versions" COMMENT="Holds versions of the iomadpolicy documents">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="1333" NOTNULL="true" SEQUENCE="false" COMMENT="Name of the iomadpolicy document"/>
+        <FIELD NAME="type" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Type of the iomadpolicy: 0 - Site iomadpolicy, 1 - Privacy iomadpolicy, 2 - Third party iomadpolicy, 99 - Other"/>
+        <FIELD NAME="audience" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Who is this iomadpolicy targeted at: 0 - all users, 1 - logged in users only, 2 - guests only"/>
+        <FIELD NAME="archived" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should the version be considered as archived. All non-archived, non-current versions are considered to be drafts."/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the user who last edited this iomadpolicy document version."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp of when the iomadpolicy version was created."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp of when the iomadpolicy version was last modified."/>
+        <FIELD NAME="iomadpolicyid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the iomadpolicy document we are version of."/>
+        <FIELD NAME="agreementstyle" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="How this agreement should flow: 0 - on the consent page, 1 - on a separate page before reaching the consent page."/>
+        <FIELD NAME="optional" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 - the iomadpolicy must be accepted to use the site, 1 - accepting the iomadpolicy is optional"/>
+        <FIELD NAME="revision" TYPE="char" LENGTH="1333" NOTNULL="true" SEQUENCE="false" COMMENT="Human readable version of the iomadpolicy document"/>
+        <FIELD NAME="summary" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Policy text summary"/>
+        <FIELD NAME="summaryformat" TYPE="int" LENGTH="3" NOTNULL="true" SEQUENCE="false" COMMENT="Format of the summary field"/>
+        <FIELD NAME="content" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Full iomadpolicy text"/>
+        <FIELD NAME="contentformat" TYPE="int" LENGTH="3" NOTNULL="true" SEQUENCE="false" COMMENT="Format of the content field"/>
+        <FIELD NAME="companyid" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="fk_iomadpolicyid" TYPE="foreign" FIELDS="iomadpolicyid" REFTABLE="tool_iomadpolicy" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="tool_iomadpolicy_acceptances" COMMENT="Tracks users accepting the iomadpolicy versions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="iomadpolicyversionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the iomadpolicy document version"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the user this acceptance is relevant to"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Acceptance status: 1 - accepted, 0 - not accepted"/>
+        <FIELD NAME="lang" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="Code of the language the user had when the iomadpolicy document was displayed"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the user who last modified the acceptance record"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp of when the acceptance record was created"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp of when the acceptance record was last modified"/>
+        <FIELD NAME="note" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Plain text note describing how the actual consent has been obtained if the iomadpolicy has been accepted on other user's behalf."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_iomadpolicyversionid" TYPE="foreign" FIELDS="iomadpolicyversionid" REFTABLE="tool_iomadpolicy_versions" REFFIELDS="id"/>
+        <KEY NAME="fk_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="fk_usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="uq_versionuser" TYPE="unique" FIELDS="iomadpolicyversionid, userid" COMMENT="There cannot exist more records for given user and iomadpolicy document version."/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

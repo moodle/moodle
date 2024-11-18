@@ -1,0 +1,1509 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: ru\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{admin:metadata_saml20-idp}"
+msgstr "Метаданные провайдера идентификации SAML 2.0 IdP"
+
+msgid "{errors:descr_WRONGUSERPASS}"
+msgstr ""
+"Либо не существует пользователя с данным именем, либо неверный "
+"пароль.Пожалуйста, проверьте имя пользователя и пробуйте снова."
+
+msgid "{logout:failed}"
+msgstr "Выход завершен неудачно"
+
+msgid "{status:attributes_header}"
+msgstr "Ваши атрибуты"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-remote}"
+msgstr "Сервис провайдер SAML 2.0 (удаленное размещение)"
+
+msgid "{errors:descr_NOCERT}"
+msgstr "Ошибка при аутентификации: ваш браузер не выслал сертификат"
+
+msgid "{errors:title_PROCESSASSERTION}"
+msgstr "Ошибка при обработке отклика от провайдера идентификации"
+
+msgid "{errors:title_NOSTATE}"
+msgstr "Информация о состоянии утеряна"
+
+msgid "{login:username}"
+msgstr "Имя пользователя"
+
+msgid "{errors:title_METADATA}"
+msgstr "Ошибка загрузки метаданных"
+
+msgid "{admin:metaconv_title}"
+msgstr "Средство синтаксического анализа метаданных"
+
+msgid "{admin:cfg_check_noerrors}"
+msgstr "Ошибок не обнаружено."
+
+msgid "{errors:descr_LOGOUTINFOLOST}"
+msgstr ""
+"Информацию о текущей операции выхода была потеряна. Вы должны вернуться "
+"на службу, из которой вы пытались выйти и попытаться выйти снова. Эта "
+"ошибка может быть вызвана устареванием информации о выходе. Информация о "
+"выходе хранится в течение ограниченного отрезка времени - обычно до "
+"несколькоих часов. Это больше, чем потребуется для любой нормальной "
+"операции выхода, поэтому эта ошибка может означать некоторые другие "
+"ошибки конфигурации. Если проблема не устранена, обратитесь к сервис "
+"провайдеру."
+
+msgid "{disco:previous_auth}"
+msgstr "Вы уже выбрали для аутентификации в"
+
+msgid "{admin:cfg_check_back}"
+msgstr "Вернуться к списку файлов"
+
+msgid "{errors:report_trackid}"
+msgstr ""
+"При отправке сообщения об ошибке, пожалуйста, сообщите этот трекинговый "
+"номер (он позволит администратору найти информацию о вашей сессии в "
+"системных логах):"
+
+msgid "{login:change_home_org_title}"
+msgstr "Сменить домашнюю организацию"
+
+msgid "{errors:descr_METADATANOTFOUND}"
+msgstr "Невозможно найти метаданные для %ENTITYID%"
+
+msgid "{admin:metadata_metadata}"
+msgstr "Метаданные"
+
+msgid "{errors:report_text}"
+msgstr ""
+"Введите адрес вашей электронной почты, чтобы администратор мог связаться "
+"с вами для прояснения данной ситуации (необязательно):"
+
+msgid "{errors:report_header}"
+msgstr "Сообщение об ошибках"
+
+msgid "{login:change_home_org_text}"
+msgstr ""
+"Вы выбрали <b>%HOMEORG%</b> как вашу домашнюю организацию. Если вы "
+"ошиблись - вы можете выбрать другую."
+
+msgid "{errors:title_PROCESSAUTHNREQUEST}"
+msgstr "Ошибка при обработке запроса от сервис провайдера"
+
+msgid "{errors:descr_PROCESSASSERTION}"
+msgstr "Отклик от провайдера идентификации не получен."
+
+msgid "{errors:debuginfo_header}"
+msgstr "Отладочная информация"
+
+msgid "{admin:debug_sending_message_msg_text}"
+msgstr ""
+"Если вы находитесь в режиме отладки сообщения, вы сможете наблюдать "
+"содержимое сообщения."
+
+msgid "{errors:descr_RESPONSESTATUSNOSUCCESS}"
+msgstr ""
+"Провайдер идентификации сообщает об ошибке. (Код статус в отклике SAML "
+"сообщает о неуспешной попытке)"
+
+msgid "{admin:metadata_shib13-idp}"
+msgstr "Метаданные провайдера идентификации Shib 1.3 IdP"
+
+msgid "{login:help_text}"
+msgstr ""
+"Очень плохо! - Без ваших имени пользователя и пароля вы не можете "
+"подтвердить ваше право на доступ к службе. Может быть есть кто-нибудь, "
+"кто сможет помочь вам. Проконсультируйтесь со своей службой поддержки в "
+"вашем университете!"
+
+msgid "{logout:default_link_text}"
+msgstr "Вернуться на страницу установки SimpleSAMLphp"
+
+msgid "{errors:error_header}"
+msgstr "Ошибка SimpleSAMLphp"
+
+msgid "{login:help_header}"
+msgstr "Помогите! Я не помню свой пароль."
+
+msgid "{errors:descr_LDAPERROR}"
+msgstr ""
+"LDAP - это база данных пользователей, при вашей попытке входа в систему, "
+"нам необходимо связаться с базой данных LDAP. При этой попытке связаться "
+"с LDAP произошла ошибка. "
+
+msgid "{errors:descr_METADATA}"
+msgstr ""
+"Ваш SimpleSAMLphp содержит неправильные конфигурационные данные. Если вы "
+"являетесь администратором системы, проверьте конфигурацию метаданных."
+
+msgid "{errors:title_BADREQUEST}"
+msgstr "Получен неправильный отклик"
+
+msgid "{status:sessionsize}"
+msgstr "Размер сессии: %SIZE%"
+
+msgid "{logout:title}"
+msgstr "Успешный выход"
+
+msgid "{admin:metaover_group_metadata.adfs-sp-remote}"
+msgstr "Сервис провайдер ADFS (удаленное размещение)"
+
+msgid "{admin:metaconv_xmlmetadata}"
+msgstr "XML метаданные"
+
+msgid "{status:subject_format}"
+msgstr "Формат"
+
+msgid "{admin:metaover_unknown_found}"
+msgstr "Следующие поля не распознаны"
+
+msgid "{errors:title_AUTHSOURCEERROR}"
+msgstr "Ошибка источника аутентификации"
+
+msgid "{login:select_home_org}"
+msgstr "Выберите вашу домашнюю организацию"
+
+msgid "{logout:hold}"
+msgstr "В состоянии ожидания"
+
+msgid "{admin:cfg_check_header}"
+msgstr "Проверка конфигурации"
+
+msgid "{admin:debug_sending_message_send}"
+msgstr "Отправить сообщение"
+
+msgid "{status:logout}"
+msgstr "Выйти"
+
+msgid "{errors:descr_DISCOPARAMS}"
+msgstr ""
+"Параметры, отправленные в службу обнаружения, не соответствуют "
+"спецификации."
+
+msgid "{errors:descr_CREATEREQUEST}"
+msgstr "Произошла ошибка при попытке создать SAML запрос."
+
+msgid "{admin:metaover_optional_found}"
+msgstr "Необязательные поля"
+
+msgid "{logout:return}"
+msgstr "Вернуться к службе"
+
+msgid "{admin:metadata_xmlurl}"
+msgstr ""
+"Вы можете<a href=\"%METAURL%\"> получить xml файл с метаданными по "
+"следующему URL</a>:"
+
+msgid "{logout:logout_all}"
+msgstr "Да, для всех служб"
+
+msgid "{admin:debug_disable_debug_mode}"
+msgstr ""
+"Вы можете отключить режим отладки в файле конфигурации global "
+"SimpleSAMLphp -<tt>config/config.php</tt>. "
+
+msgid "{disco:select}"
+msgstr "Выбрать"
+
+msgid "{logout:also_from}"
+msgstr "Вы также подключены к следующим службам:"
+
+msgid "{login:login_button}"
+msgstr "Войти"
+
+msgid "{logout:progress}"
+msgstr "Выход из системы..."
+
+msgid "{login:error_wrongpassword}"
+msgstr "Неправильное имя пользователя или пароль."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-remote}"
+msgstr "Сервис провайдер Shib 1.3 (удаленное размещение)"
+
+msgid "{login:remember_username}"
+msgstr "Запомнить моё имя пользователя"
+
+msgid "{errors:descr_PROCESSAUTHNREQUEST}"
+msgstr ""
+"Провайдер идентификации получил запрос на аутентификацию от сервис "
+"провайдера, но произошла ошибка при обработке данного запроса."
+
+msgid "{logout:logout_all_question}"
+msgstr "Вы хотите выйти из всех служб, перечисленных выше?"
+
+msgid "{errors:title_NOACCESS}"
+msgstr "Отказ в доступе"
+
+msgid "{login:error_nopassword}"
+msgstr ""
+"Вы отправили информацию на страницу входа, но по каким-то причинам пароль"
+" не послан. Пожалуйста, попробуйте снова."
+
+msgid "{errors:title_NORELAYSTATE}"
+msgstr "Отсутствует параметр RelayState"
+
+msgid "{errors:descr_NOSTATE}"
+msgstr "Информация о состоянии утеряна, нет способа инициировать запрос заново"
+
+msgid "{login:password}"
+msgstr "Пароль"
+
+msgid "{errors:debuginfo_text}"
+msgstr "Нижеприведенная информация может быть полезна администратору системы:"
+
+msgid "{admin:cfg_check_missing}"
+msgstr "Параметры, отсутствующие в файле конфигурации"
+
+msgid "{errors:descr_UNHANDLEDEXCEPTION}"
+msgstr "Выдано необрабатываемое исключение."
+
+msgid "{general:yes}"
+msgstr "да"
+
+msgid "{errors:title_CONFIG}"
+msgstr "Ошибка конфигурации"
+
+msgid "{errors:title_LOGOUTREQUEST}"
+msgstr "Ошибка при обработке запроса на выход из системы "
+
+msgid "{admin:metaover_errorentry}"
+msgstr "Ошибка при вводе данной записи метаданных"
+
+msgid "{errors:title_METADATANOTFOUND}"
+msgstr "Метаданные не найдены"
+
+msgid "{login:contact_info}"
+msgstr "Контактная информация"
+
+msgid "{errors:title_UNHANDLEDEXCEPTION}"
+msgstr "Необрабатываемое исключение"
+
+msgid "{status:header_saml20_sp}"
+msgstr "Демо пример сервис провайдера SAML 2.0 SP"
+
+msgid "{login:error_header}"
+msgstr "Ошибка"
+
+msgid "{errors:title_USERABORTED}"
+msgstr "Аутентификация прервана"
+
+msgid "{logout:incapablesps}"
+msgstr ""
+"Некоторые службы, к которым вы подключены, <i>не поддеживают выход из "
+"системы</i>. Для обеспечения закрытия всех сессий, <i>закройте ваш "
+"браузер</i>."
+
+msgid "{admin:metadata_xmlformat}"
+msgstr "xml формат метаданных SAML 2.0:"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-remote}"
+msgstr "Провайдер идентификации SAML 2.0 (удаленное размещение)"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-hosted}"
+msgstr "Провайдер идентификации SAML 2.0 (локальное размещение)"
+
+msgid "{status:subject_notset}"
+msgstr "не установлен"
+
+msgid "{admin:metaover_required_found}"
+msgstr "Обязательные поля"
+
+msgid "{admin:cfg_check_select_file}"
+msgstr "Выберите файл конфигурации для проверки:"
+
+msgid "{errors:descr_UNKNOWNCERT}"
+msgstr "Ошибка при аутентификации: ваш браузер выслал неизвестный сертификат"
+
+msgid "{logout:logging_out_from}"
+msgstr "Выход из следующих служб:"
+
+msgid "{logout:loggedoutfrom}"
+msgstr "Вы успешно вышли из службы %SP%."
+
+msgid "{errors:errorreport_text}"
+msgstr "Сообщение об ошибке было отправлено администраторам."
+
+msgid "{status:subject_header}"
+msgstr "Тема SAML"
+
+msgid "{errors:descr_LOGOUTREQUEST}"
+msgstr "Ошибка произошла при попытке обработки запроса на выход из системы"
+
+msgid "{logout:success}"
+msgstr "Вы успешно вышли из всех служб перечисленных выше."
+
+msgid "{admin:cfg_check_notices}"
+msgstr "Уведомления"
+
+msgid "{errors:descr_USERABORTED}"
+msgstr "Аутентификация прервана пользователем"
+
+msgid "{errors:descr_CASERROR}"
+msgstr "Произошла ошибка при обмене данными с сервером CAS."
+
+msgid "{general:no}"
+msgstr "Нет"
+
+msgid "{admin:metadata_saml20-sp}"
+msgstr "Метаданные сервис провайдера SAML 2.0 SP"
+
+msgid "{admin:metaconv_converted}"
+msgstr "Преобразованные метаданные"
+
+msgid "{logout:completed}"
+msgstr "Выполнено"
+
+msgid "{errors:descr_NOTSET}"
+msgstr ""
+"Пароль в файле конфигурации (auth.adminpassword) не изменен от значения "
+"по умолчанию. Пожалуйста, отредактируйте файл конфигурации."
+
+msgid "{general:service_provider}"
+msgstr "Поставщик услуг"
+
+msgid "{errors:descr_BADREQUEST}"
+msgstr "Ошибка в запросе к этой странице. Причина: %REASON%"
+
+msgid "{logout:no}"
+msgstr "Нет"
+
+msgid "{disco:icon_prefered_idp}"
+msgstr "[Предпочтительный выбор]"
+
+msgid "{general:no_cancel}"
+msgstr "Нет, отменить"
+
+msgid "{login:user_pass_header}"
+msgstr "Введите имя пользователя и пароль"
+
+msgid "{errors:report_explain}"
+msgstr "Уточните ваши действия перед появлением ошибки... "
+
+msgid "{errors:title_ACSPARAMS}"
+msgstr "Отсутствует SAML отклик"
+
+msgid "{errors:descr_SLOSERVICEPARAMS}"
+msgstr ""
+"Вы получили доступ к интерфейсу SingleLogoutService, но не предоставили "
+"SAML LogoutRequest или LogoutResponse утверждения."
+
+msgid "{login:organization}"
+msgstr "Организация"
+
+msgid "{errors:title_WRONGUSERPASS}"
+msgstr "Неправильное имя пользователя или пароль"
+
+msgid "{admin:metaover_required_not_found}"
+msgstr "Следующие обязательные поля не найдены"
+
+msgid "{errors:descr_NOACCESS}"
+msgstr ""
+"Данная конечная точка не активирована. Проверьте опции в конфигурации "
+"вашего SimpleSAMLphp."
+
+msgid "{errors:title_SLOSERVICEPARAMS}"
+msgstr "Отсутствует утверждение SAML "
+
+msgid "{errors:descr_ACSPARAMS}"
+msgstr ""
+"Вы получили доступ к интерфейсу Assertion Consumer Service, но не "
+"предоставили отклик SAML аутентификации."
+
+msgid "{admin:debug_sending_message_text_link}"
+msgstr ""
+"Вы собираетесь отправить сообщение. Кликните ссылку отправки сообщения "
+"для продолжения."
+
+msgid "{errors:descr_AUTHSOURCEERROR}"
+msgstr "Ошибка источника аутентификации %AUTHSOURCE%. Причина: %REASON%"
+
+msgid "{status:some_error_occurred}"
+msgstr "Произошла ошибка"
+
+msgid "{login:change_home_org_button}"
+msgstr "Выберите домашнюю организацию"
+
+msgid "{admin:cfg_check_superfluous}"
+msgstr "Избыточные параметры в файле конфигурации"
+
+msgid "{errors:report_email}"
+msgstr "Адрес вашей электронной почты:"
+
+msgid "{errors:howto_header}"
+msgstr "Как получить помощь"
+
+msgid "{errors:title_NOTSET}"
+msgstr "Пароль не установлен"
+
+msgid "{errors:descr_NORELAYSTATE}"
+msgstr ""
+"Инициатор данного запроса не предоставил параметр RelayState с указанием "
+"следующей точки перехода."
+
+msgid "{status:header_diagnostics}"
+msgstr "Диагностика SimpleSAMLphp"
+
+msgid "{status:intro}"
+msgstr ""
+"Это страница со статусом SimpleSAMLphp. Можно обнаружить случаи окончания"
+" сессии, продолжительность сессии до истечения срока действия и все "
+"атрибуты в данной сессии."
+
+msgid "{errors:title_NOTFOUNDREASON}"
+msgstr "Страница не найдена"
+
+msgid "{admin:debug_sending_message_title}"
+msgstr "Отправка сообщения"
+
+msgid "{errors:title_RESPONSESTATUSNOSUCCESS}"
+msgstr "От провайдера идентификации получена ошибка"
+
+msgid "{admin:metadata_shib13-sp}"
+msgstr "Метаданные сервис провайдера Shib 1.3 SP"
+
+msgid "{admin:metaover_intro}"
+msgstr "Для просмотра подробностей записи SAML, кликните на заголовок записи SAML."
+
+msgid "{errors:title_NOTVALIDCERT}"
+msgstr "Недействительный сертификат"
+
+msgid "{general:remember}"
+msgstr "Запомнить"
+
+msgid "{disco:selectidp}"
+msgstr "Выберите вашего identity provider"
+
+msgid "{login:help_desk_email}"
+msgstr "Послать email в службу поддержки"
+
+msgid "{login:help_desk_link}"
+msgstr "Домашняя страница службы поддержки"
+
+msgid "{login:remember_me}"
+msgstr "Запомнить меня"
+
+msgid "{errors:title_CASERROR}"
+msgstr "Ошибка CAS"
+
+msgid "{login:user_pass_text}"
+msgstr ""
+"Служба запрашивает авторизацию. Пожалуйста, введите имя пользователя и "
+"пароль."
+
+msgid "{errors:title_DISCOPARAMS}"
+msgstr "Неправильный запрос к службе обнаружения"
+
+msgid "{general:yes_continue}"
+msgstr "Да, продолжить"
+
+msgid "{disco:remember}"
+msgstr "Запомнить мой выбор"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-hosted}"
+msgstr "Сервис провайдер SAML 2.0 (локальное размещение)"
+
+msgid "{admin:metadata_simplesamlformat}"
+msgstr "Формат простого SimpleSAMLphp файла"
+
+msgid "{admin:metadata_adfs-sp}"
+msgstr "Метаданные сервис провайдера ADFS"
+
+msgid "{disco:login_at}"
+msgstr "Войти в"
+
+msgid "{errors:title_GENERATEAUTHNRESPONSE}"
+msgstr "Невозможно создать ответ по аутентификации"
+
+msgid "{errors:errorreport_header}"
+msgstr "Сообщение об ошибке отправлено"
+
+msgid "{errors:title_CREATEREQUEST}"
+msgstr "Ошибка при создании запроса"
+
+msgid "{admin:metaover_header}"
+msgstr "Краткое описание метаданных"
+
+msgid "{errors:report_submit}"
+msgstr "Выслать сообщение об ошибке "
+
+msgid "{errors:title_INVALIDCERT}"
+msgstr "Недействительный сертификат"
+
+msgid "{errors:title_NOTFOUND}"
+msgstr "Страница не найдена"
+
+msgid "{logout:logged_out_text}"
+msgstr "Вы успешно вышли из системы"
+
+msgid "{admin:metaover_group_metadata.shib13-sp-hosted}"
+msgstr "Сервис провайдер Shib 1.3 (локальное размещение)"
+
+msgid "{admin:metadata_cert_intro}"
+msgstr "Скачать сертификаты X509 в формате PEM файлов."
+
+msgid "{admin:debug_sending_message_msg_title}"
+msgstr "Сообщение"
+
+msgid "{admin:metaover_group_metadata.adfs-idp-hosted}"
+msgstr "Провайдер идентификации ADFS (локальное размещение)"
+
+msgid "{errors:title_UNKNOWNCERT}"
+msgstr "Неизвестный сертификат"
+
+msgid "{errors:title_LDAPERROR}"
+msgstr "Ошибка LDAP"
+
+msgid "{logout:failedsps}"
+msgstr ""
+"Невозможно выйти из некоторых служб.  Для обеспечения закрытия всех "
+"сессий, <i>закройте ваш браузер</i>. "
+
+msgid "{errors:descr_NOTFOUND}"
+msgstr "Запрашиваемая страница не найдена. Ссылка была: %URL%"
+
+msgid "{errors:howto_text}"
+msgstr ""
+"Эта ошибка произошла, вероятно, из-за непредвиденной ситуации или "
+"неправильной конфигурации SimpleSAMLphp. Свяжитесь с администратором "
+"этого сервиса и отправьте ему вышеуказанное сообщение об ошибке."
+
+msgid "{admin:metadata_adfs-idp}"
+msgstr "Метаданные провайдера идентификации ADFS"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-hosted}"
+msgstr "Провайдер идентификации Shib 1.3 (локальное размещение)"
+
+msgid "{errors:descr_NOTVALIDCERT}"
+msgstr "Вы не предоставили действительный сертификат."
+
+msgid "{admin:debug_sending_message_text_button}"
+msgstr ""
+"Вы собираетесь отправить сообщение. Кликните клавишу отправки сообщения "
+"для продолжения."
+
+msgid "{admin:metaover_optional_not_found}"
+msgstr "Следующие необязательные поля не найдены"
+
+msgid "{logout:logout_only}"
+msgstr "Нет, только для службы %SP%"
+
+msgid "{login:next}"
+msgstr "Далее"
+
+msgid "{errors:descr_GENERATEAUTHNRESPONSE}"
+msgstr ""
+"При попытке провайдера идентификации создать ответ по аутентификации "
+"произошла ошибка."
+
+msgid "{disco:selectidp_full}"
+msgstr ""
+"Пожалуйста, выберите identity provider, с помощью которого вы хотите "
+"пройти аутентификацию:"
+
+msgid "{errors:descr_NOTFOUNDREASON}"
+msgstr "Запрашиваемая страница не найдена. Причина: %REASON%  Ссылка: %URL%"
+
+msgid "{errors:title_NOCERT}"
+msgstr "Сертификат отсутствует"
+
+msgid "{errors:title_LOGOUTINFOLOST}"
+msgstr "Потеряна информация о выходе."
+
+msgid "{admin:metaover_group_metadata.shib13-idp-remote}"
+msgstr "Провайдер идентификации Shib 1.3 (удаленное размещение)"
+
+msgid "{errors:descr_CONFIG}"
+msgstr "Видимо, SimpleSAMLphp сконфигурирован неправильно."
+
+msgid "{admin:metadata_intro}"
+msgstr ""
+"Метаданные, сгенерированные для вас с помощью SimpleSAMLphp. Вы можете "
+"отправить данный документ с метаданными доверенным партнерам для создания"
+" федерации."
+
+msgid "{admin:metadata_cert}"
+msgstr "Сертификаты"
+
+msgid "{errors:descr_INVALIDCERT}"
+msgstr ""
+"Ошибка при аутентификации: ваш браузер выслал недействительный или "
+"нечитаемый сертификат"
+
+msgid "{status:header_shib}"
+msgstr "Shibboleth демо"
+
+msgid "{admin:metaconv_parse}"
+msgstr "Выполнить синтаксический анализ"
+
+msgid "Person's principal name at home organization"
+msgstr "Имя руководителя в главной организации"
+
+msgid "Superfluous options in config file"
+msgstr "Избыточные параметры в файле конфигурации"
+
+msgid "Mobile"
+msgstr "Мобильный"
+
+msgid "Shib 1.3 Service Provider (Hosted)"
+msgstr "Сервис провайдер Shib 1.3 (локальное размещение)"
+
+msgid ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+msgstr ""
+"LDAP - это база данных пользователей, при вашей попытке входа в систему, "
+"нам необходимо связаться с базой данных LDAP. При этой попытке связаться "
+"с LDAP произошла ошибка. "
+
+msgid ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+msgstr ""
+"Введите адрес вашей электронной почты, чтобы администратор мог связаться "
+"с вами для прояснения данной ситуации (необязательно):"
+
+msgid "Display name"
+msgstr "Отображаемое имя"
+
+msgid "Remember my choice"
+msgstr "Запомнить мой выбор"
+
+msgid "Format"
+msgstr "Формат"
+
+msgid "SAML 2.0 SP Metadata"
+msgstr "Метаданные сервис провайдера SAML 2.0 SP"
+
+msgid "ADFS IdP Metadata"
+msgstr "Метаданные провайдера идентификации ADFS"
+
+msgid "Notices"
+msgstr "Уведомления"
+
+msgid "Home telephone"
+msgstr "Домашний телефон"
+
+msgid ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+msgstr ""
+"Это страница со статусом SimpleSAMLphp. Можно обнаружить случаи окончания"
+" сессии, продолжительность сессии до истечения срока действия и все "
+"атрибуты в данной сессии."
+
+msgid "Explain what you did when this error occurred..."
+msgstr "Уточните ваши действия перед появлением ошибки... "
+
+msgid "An unhandled exception was thrown."
+msgstr "Выдано необрабатываемое исключение."
+
+msgid "Invalid certificate"
+msgstr "Недействительный сертификат"
+
+msgid "Service Provider"
+msgstr "Поставщик услуг"
+
+msgid "Incorrect username or password."
+msgstr "Неправильное имя пользователя или пароль."
+
+msgid "There is an error in the request to this page. The reason was: %REASON%"
+msgstr "Ошибка в запросе к этой странице. Причина: %REASON%"
+
+msgid "E-mail address:"
+msgstr "Адрес вашей электронной почты:"
+
+msgid "Submit message"
+msgstr "Отправить сообщение"
+
+msgid "No RelayState"
+msgstr "Отсутствует параметр RelayState"
+
+msgid "Error creating request"
+msgstr "Ошибка при создании запроса"
+
+msgid "Locality"
+msgstr "Район"
+
+msgid "Unhandled exception"
+msgstr "Необрабатываемое исключение"
+
+msgid "The following required fields was not found"
+msgstr "Следующие обязательные поля не найдены"
+
+msgid "Download the X509 certificates as PEM-encoded files."
+msgstr "Скачать сертификаты X509 в формате PEM файлов."
+
+#, python-format
+msgid "Unable to locate metadata for %ENTITYID%"
+msgstr "Невозможно найти метаданные для %ENTITYID%"
+
+msgid "Organizational number"
+msgstr "Номер организации"
+
+msgid "Password not set"
+msgstr "Пароль не установлен"
+
+msgid "SAML 2.0 IdP Metadata"
+msgstr "Метаданные провайдера идентификации SAML 2.0 IdP"
+
+msgid "Post office box"
+msgstr "Абонементный почтовый ящик"
+
+msgid ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+msgstr ""
+"Служба запрашивает авторизацию. Пожалуйста, введите имя пользователя и "
+"пароль."
+
+msgid "CAS Error"
+msgstr "Ошибка CAS"
+
+msgid ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+msgstr "Нижеприведенная информация может быть полезна администратору системы:"
+
+msgid ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+msgstr ""
+"Либо не существует пользователя с данным именем, либо неверный "
+"пароль.Пожалуйста, проверьте имя пользователя и пробуйте снова."
+
+msgid "Error"
+msgstr "Ошибка"
+
+msgid "Next"
+msgstr "Далее"
+
+msgid "Distinguished name (DN) of the person's home organizational unit"
+msgstr "Отличительное имя (DN) человека подразделения домашней организации"
+
+msgid "State information lost"
+msgstr "Информация о состоянии утеряна"
+
+msgid ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+msgstr ""
+"Пароль в файле конфигурации (auth.adminpassword) не изменен от значения "
+"по умолчанию. Пожалуйста, отредактируйте файл конфигурации."
+
+msgid "Converted metadata"
+msgstr "Преобразованные метаданные"
+
+msgid "Mail"
+msgstr "Почта"
+
+msgid "No, cancel"
+msgstr "Нет"
+
+msgid ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+msgstr ""
+"Вы выбрали <b>%HOMEORG%</b> как вашу домашнюю организацию. Если вы "
+"ошиблись - вы можете выбрать другую."
+
+msgid "Error processing request from Service Provider"
+msgstr "Ошибка при обработке запроса от сервис провайдера"
+
+msgid "Distinguished name (DN) of person's primary Organizational Unit"
+msgstr "Отличительное имя (DN) человека основного подразделения организации"
+
+msgid ""
+"To look at the details for an SAML entity, click on the SAML entity "
+"header."
+msgstr "Для просмотра подробностей записи SAML, кликните на заголовок записи SAML."
+
+msgid "Enter your username and password"
+msgstr "Введите имя пользователя и пароль"
+
+msgid "Login at"
+msgstr "Войти в"
+
+msgid "No"
+msgstr "Нет"
+
+msgid "Home postal address"
+msgstr "Домашний почтовый адрес"
+
+msgid "WS-Fed SP Demo Example"
+msgstr "Демо пример сервис провайдера WS-Fed SP"
+
+msgid "SAML 2.0 Identity Provider (Remote)"
+msgstr "Провайдер идентификации SAML 2.0 (удаленное размещение)"
+
+msgid "Error processing the Logout Request"
+msgstr "Ошибка при обработке запроса на выход из системы "
+
+msgid "Do you want to logout from all the services above?"
+msgstr "Вы хотите выйти из всех служб, перечисленных выше?"
+
+msgid "Select"
+msgstr "Выбрать"
+
+msgid "The authentication was aborted by the user"
+msgstr "Аутентификация прервана пользователем"
+
+msgid "Your attributes"
+msgstr "Ваши атрибуты"
+
+msgid "Given name"
+msgstr "Имя"
+
+msgid "Identity assurance profile"
+msgstr "Идентификатор гарантированного профайла"
+
+msgid "SAML 2.0 SP Demo Example"
+msgstr "Демо пример сервис провайдера SAML 2.0 SP"
+
+msgid "Logout information lost"
+msgstr "Потеряна информация о выходе."
+
+msgid "Organization name"
+msgstr "Название организации"
+
+msgid "Authentication failed: the certificate your browser sent is unknown"
+msgstr "Ошибка при аутентификации: ваш браузер выслал неизвестный сертификат"
+
+msgid ""
+"You are about to send a message. Hit the submit message button to "
+"continue."
+msgstr ""
+"Вы собираетесь отправить сообщение. Кликните клавишу отправки сообщения "
+"для продолжения."
+
+msgid "Home organization domain name"
+msgstr "Доменное имя главной организации"
+
+msgid "Go back to the file list"
+msgstr "Вернуться к списку файлов"
+
+msgid "SAML Subject"
+msgstr "Тема SAML"
+
+msgid "Error report sent"
+msgstr "Сообщение об ошибке отправлено"
+
+msgid "Common name"
+msgstr "Полное имя"
+
+msgid "Please select the identity provider where you want to authenticate:"
+msgstr ""
+"Пожалуйста, выберите identity provider, с помощью которого вы хотите "
+"пройти аутентификацию:"
+
+msgid "Logout failed"
+msgstr "Выход завершен неудачно"
+
+msgid "Identity number assigned by public authorities"
+msgstr "Идентификационный номер, присваиваемый органами государственной власти"
+
+msgid "WS-Federation Identity Provider (Remote)"
+msgstr "Провайдер идентификации WS-Federation (удаленное размещение)"
+
+msgid "Error received from Identity Provider"
+msgstr "От провайдера идентификации получена ошибка"
+
+msgid "LDAP Error"
+msgstr "Ошибка LDAP"
+
+msgid ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+msgstr ""
+"Информацию о текущей операции выхода была потеряна. Вы должны вернуться "
+"на службу, из которой вы пытались выйти и попытаться выйти снова. Эта "
+"ошибка может быть вызвана устареванием информации о выходе. Информация о "
+"выходе хранится в течение ограниченного отрезка времени - обычно до "
+"несколькоих часов. Это больше, чем потребуется для любой нормальной "
+"операции выхода, поэтому эта ошибка может означать некоторые другие "
+"ошибки конфигурации. Если проблема не устранена, обратитесь к сервис "
+"провайдеру."
+
+msgid "Some error occurred"
+msgstr "Произошла ошибка"
+
+msgid "Organization"
+msgstr "Организация"
+
+msgid "No certificate"
+msgstr "Сертификат отсутствует"
+
+msgid "Choose home organization"
+msgstr "Выберите домашнюю организацию"
+
+msgid "Persistent pseudonymous ID"
+msgstr "ID постоянного псевдонима"
+
+msgid "No SAML response provided"
+msgstr "Отсутствует SAML отклик"
+
+msgid "No errors found."
+msgstr "Ошибок не обнаружено."
+
+msgid "SAML 2.0 Service Provider (Hosted)"
+msgstr "Сервис провайдер SAML 2.0 (локальное размещение)"
+
+msgid "The given page was not found. The URL was: %URL%"
+msgstr "Запрашиваемая страница не найдена. Ссылка была: %URL%"
+
+msgid "Configuration error"
+msgstr "Ошибка конфигурации"
+
+msgid "Required fields"
+msgstr "Обязательные поля"
+
+msgid "An error occurred when trying to create the SAML request."
+msgstr "Произошла ошибка при попытке создать SAML запрос."
+
+msgid ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+msgstr ""
+"Эта ошибка произошла, вероятно, из-за непредвиденной ситуации или "
+"неправильной конфигурации SimpleSAMLphp. Свяжитесь с администратором "
+"этого сервиса и отправьте ему вышеуказанное сообщение об ошибке."
+
+#, python-format
+msgid "Your session is valid for %remaining% seconds from now."
+msgstr "Ваша сессия действительна в течение следующих %remaining% секунд."
+
+msgid "Domain component (DC)"
+msgstr "Компонент домена (DC)"
+
+msgid "Shib 1.3 Service Provider (Remote)"
+msgstr "Сервис провайдер Shib 1.3 (удаленное размещение)"
+
+msgid "Password"
+msgstr "Пароль"
+
+msgid "Nickname"
+msgstr "Псевдоним"
+
+msgid "Send error report"
+msgstr "Выслать сообщение об ошибке "
+
+msgid ""
+"Authentication failed: the certificate your browser sent is invalid or "
+"cannot be read"
+msgstr ""
+"Ошибка при аутентификации: ваш браузер выслал недействительный или "
+"нечитаемый сертификат"
+
+msgid "The error report has been sent to the administrators."
+msgstr "Сообщение об ошибке было отправлено администраторам."
+
+msgid "Date of birth"
+msgstr "Дата рождения"
+
+msgid "Private information elements"
+msgstr "Элементы личной информации"
+
+msgid "You are also logged in on these services:"
+msgstr "Вы также подключены к следующим службам:"
+
+msgid "SimpleSAMLphp Diagnostics"
+msgstr "Диагностика SimpleSAMLphp"
+
+msgid "Debug information"
+msgstr "Отладочная информация"
+
+msgid "No, only %SP%"
+msgstr "Нет, только для службы %SP%"
+
+msgid "Username"
+msgstr "Имя пользователя"
+
+msgid "Go back to SimpleSAMLphp installation page"
+msgstr "Вернуться на страницу установки SimpleSAMLphp"
+
+msgid "You have successfully logged out from all services listed above."
+msgstr "Вы успешно вышли из всех служб перечисленных выше."
+
+msgid "You are now successfully logged out from %SP%."
+msgstr "Вы успешно вышли из службы %SP%."
+
+msgid "Affiliation"
+msgstr "Членство"
+
+msgid "You have been logged out."
+msgstr "Вы успешно вышли из системы"
+
+msgid "Return to service"
+msgstr "Вернуться к службе"
+
+msgid "Logout"
+msgstr "Выйти"
+
+msgid "State information lost, and no way to restart the request"
+msgstr "Информация о состоянии утеряна, нет способа инициировать запрос заново"
+
+msgid "Error processing response from Identity Provider"
+msgstr "Ошибка при обработке отклика от провайдера идентификации"
+
+msgid "WS-Federation Service Provider (Hosted)"
+msgstr "Сервис провайдер WS-Federation (локальное размещение)"
+
+msgid "Remember my username"
+msgstr "Запомнить моё имя пользователя"
+
+msgid "Preferred language"
+msgstr "Предпочитаемый язык"
+
+msgid "SAML 2.0 Service Provider (Remote)"
+msgstr "Сервис провайдер SAML 2.0 (удаленное размещение)"
+
+msgid "Surname"
+msgstr "Фамилия"
+
+msgid "No access"
+msgstr "Отказ в доступе"
+
+msgid "The following fields was not recognized"
+msgstr "Следующие поля не распознаны"
+
+msgid "Authentication error in source %AUTHSOURCE%. The reason was: %REASON%"
+msgstr "Ошибка источника аутентификации %AUTHSOURCE%. Причина: %REASON%"
+
+msgid "Bad request received"
+msgstr "Получен неправильный отклик"
+
+msgid "User ID"
+msgstr "ID пользователя"
+
+msgid "JPEG Photo"
+msgstr "Фотография в формате JPEG"
+
+msgid "Postal address"
+msgstr "Почтовый адрес"
+
+msgid "An error occurred when trying to process the Logout Request."
+msgstr "Ошибка произошла при попытке обработки запроса на выход из системы"
+
+msgid "ADFS SP Metadata"
+msgstr "Метаданные сервис провайдера ADFS"
+
+msgid "Sending message"
+msgstr "Отправка сообщения"
+
+msgid "In SAML 2.0 Metadata XML format:"
+msgstr "xml формат метаданных SAML 2.0:"
+
+msgid "Logging out of the following services:"
+msgstr "Выход из следующих служб:"
+
+msgid ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+msgstr ""
+"При попытке провайдера идентификации создать ответ по аутентификации "
+"произошла ошибка."
+
+msgid "Could not create authentication response"
+msgstr "Невозможно создать ответ по аутентификации"
+
+msgid "Labeled URI"
+msgstr "Маркированный URI (LabeledURI)"
+
+msgid "SimpleSAMLphp appears to be misconfigured."
+msgstr "Видимо, SimpleSAMLphp сконфигурирован неправильно."
+
+msgid "Shib 1.3 Identity Provider (Hosted)"
+msgstr "Провайдер идентификации Shib 1.3 (локальное размещение)"
+
+msgid "Metadata"
+msgstr "Метаданные"
+
+msgid "Login"
+msgstr "Войти"
+
+msgid ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+msgstr ""
+"Провайдер идентификации получил запрос на аутентификацию от сервис "
+"провайдера, но произошла ошибка при обработке данного запроса."
+
+msgid "Yes, all services"
+msgstr "Да, для всех служб"
+
+msgid "Logged out"
+msgstr "Успешный выход"
+
+msgid "Postal code"
+msgstr "Почтовый индекс"
+
+msgid "Logging out..."
+msgstr "Выход из системы..."
+
+msgid "not set"
+msgstr "не установлен"
+
+msgid "Metadata not found"
+msgstr "Метаданные не найдены"
+
+msgid "SAML 2.0 Identity Provider (Hosted)"
+msgstr "Провайдер идентификации SAML 2.0 (локальное размещение)"
+
+msgid "Primary affiliation"
+msgstr "Главное членство"
+
+msgid ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+msgstr ""
+"При отправке сообщения об ошибке, пожалуйста, сообщите этот трекинговый "
+"номер (он позволит администратору найти информацию о вашей сессии в "
+"системных логах):"
+
+msgid "XML metadata"
+msgstr "XML метаданные"
+
+msgid ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+msgstr ""
+"Параметры, отправленные в службу обнаружения, не соответствуют "
+"спецификации."
+
+msgid "Telephone number"
+msgstr "Номер телефона"
+
+msgid ""
+"Unable to log out of one or more services. To ensure that all your "
+"sessions are closed, you are encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Невозможно выйти из некоторых служб.  Для обеспечения закрытия всех "
+"сессий, <i>закройте ваш браузер</i>. "
+
+msgid "Bad request to discovery service"
+msgstr "Неправильный запрос к службе обнаружения"
+
+msgid "Select your identity provider"
+msgstr "Выберите вашего identity provider"
+
+msgid "Group membership"
+msgstr "Членство в группе"
+
+msgid "Entitlement regarding the service"
+msgstr "Право на предоставление услуг"
+
+msgid "Shib 1.3 SP Metadata"
+msgstr "Метаданные сервис провайдера Shib 1.3 SP"
+
+msgid ""
+"As you are in debug mode, you get to see the content of the message you "
+"are sending:"
+msgstr ""
+"Если вы находитесь в режиме отладки сообщения, вы сможете наблюдать "
+"содержимое сообщения."
+
+msgid "Certificates"
+msgstr "Сертификаты"
+
+msgid "Remember"
+msgstr "Запомнить"
+
+msgid "Distinguished name (DN) of person's home organization"
+msgstr "Отличительное имя (DN) человека домашней организации"
+
+msgid "You are about to send a message. Hit the submit message link to continue."
+msgstr ""
+"Вы собираетесь отправить сообщение. Кликните ссылку отправки сообщения "
+"для продолжения."
+
+msgid "Organizational unit"
+msgstr "Подразделение организации"
+
+msgid "Authentication aborted"
+msgstr "Аутентификация прервана"
+
+msgid "Local identity number"
+msgstr "Местный идентификационный номер"
+
+msgid "Report errors"
+msgstr "Сообщение об ошибках"
+
+msgid "Page not found"
+msgstr "Страница не найдена"
+
+msgid "Shib 1.3 IdP Metadata"
+msgstr "Метаданные провайдера идентификации Shib 1.3 IdP"
+
+msgid "Change your home organization"
+msgstr "Сменить домашнюю организацию"
+
+msgid "User's password hash"
+msgstr "Хэш пароля пользователя"
+
+msgid ""
+"In SimpleSAMLphp flat file format - use this if you are using a "
+"SimpleSAMLphp entity on the other side:"
+msgstr "Формат простого SimpleSAMLphp файла"
+
+msgid "Yes, continue"
+msgstr "Да, продолжить"
+
+msgid "Completed"
+msgstr "Выполнено"
+
+msgid ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+msgstr ""
+"Провайдер идентификации сообщает об ошибке. (Код статус в отклике SAML "
+"сообщает о неуспешной попытке)"
+
+msgid "Error loading metadata"
+msgstr "Ошибка загрузки метаданных"
+
+msgid "Select configuration file to check:"
+msgstr "Выберите файл конфигурации для проверки:"
+
+msgid "On hold"
+msgstr "В состоянии ожидания"
+
+msgid "ADFS Identity Provider (Hosted)"
+msgstr "Провайдер идентификации ADFS (локальное размещение)"
+
+msgid "Error when communicating with the CAS server."
+msgstr "Произошла ошибка при обмене данными с сервером CAS."
+
+msgid "No SAML message provided"
+msgstr "Отсутствует утверждение SAML "
+
+msgid "Help! I don't remember my password."
+msgstr "Помогите! Я не помню свой пароль."
+
+msgid ""
+"You can turn off debug mode in the global SimpleSAMLphp configuration "
+"file <tt>config/config.php</tt>."
+msgstr ""
+"Вы можете отключить режим отладки в файле конфигурации global "
+"SimpleSAMLphp -<tt>config/config.php</tt>. "
+
+msgid "How to get help"
+msgstr "Как получить помощь"
+
+msgid ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+msgstr ""
+"Вы получили доступ к интерфейсу SingleLogoutService, но не предоставили "
+"SAML LogoutRequest или LogoutResponse утверждения."
+
+msgid "SimpleSAMLphp error"
+msgstr "Ошибка SimpleSAMLphp"
+
+msgid ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Некоторые службы, к которым вы подключены, <i>не поддеживают выход из "
+"системы</i>. Для обеспечения закрытия всех сессий, <i>закройте ваш "
+"браузер</i>."
+
+msgid "Remember me"
+msgstr "Запомнить меня"
+
+msgid "Organization's legal name"
+msgstr "Юридическое название организации"
+
+msgid "Options missing from config file"
+msgstr "Параметры, отсутствующие в файле конфигурации"
+
+msgid "The following optional fields was not found"
+msgstr "Следующие необязательные поля не найдены"
+
+msgid "Authentication failed: your browser did not send any certificate"
+msgstr "Ошибка при аутентификации: ваш браузер не выслал сертификат"
+
+msgid ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+msgstr ""
+"Данная конечная точка не активирована. Проверьте опции в конфигурации "
+"вашего SimpleSAMLphp."
+
+msgid "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL</a>:"
+msgstr ""
+"Вы можете<a href=\"%METAURL%\"> получить xml файл с метаданными по "
+"следующему URL</a>:"
+
+msgid "Street"
+msgstr "Улица"
+
+msgid ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+msgstr ""
+"Ваш SimpleSAMLphp содержит неправильные конфигурационные данные. Если вы "
+"являетесь администратором системы, проверьте конфигурацию метаданных."
+
+msgid "Incorrect username or password"
+msgstr "Неправильное имя пользователя или пароль"
+
+msgid "Message"
+msgstr "Сообщение"
+
+msgid "Contact information:"
+msgstr "Контактная информация"
+
+msgid "Unknown certificate"
+msgstr "Неизвестный сертификат"
+
+msgid "Legal name"
+msgstr "Официальное название"
+
+msgid "Optional fields"
+msgstr "Необязательные поля"
+
+msgid ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+msgstr ""
+"Инициатор данного запроса не предоставил параметр RelayState с указанием "
+"следующей точки перехода."
+
+msgid "You have previously chosen to authenticate at"
+msgstr "Вы уже выбрали для аутентификации в"
+
+msgid ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+msgstr ""
+"Вы отправили информацию на страницу входа, но по каким-то причинам пароль"
+" не послан. Пожалуйста, попробуйте снова."
+
+msgid "Fax number"
+msgstr "Номер факса"
+
+msgid "Shibboleth demo"
+msgstr "Shibboleth демо"
+
+msgid "Error in this metadata entry"
+msgstr "Ошибка при вводе данной записи метаданных"
+
+msgid "Session size: %SIZE%"
+msgstr "Размер сессии: %SIZE%"
+
+msgid "Parse"
+msgstr "Выполнить синтаксический анализ"
+
+msgid ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+msgstr ""
+"Очень плохо! - Без ваших имени пользователя и пароля вы не можете "
+"подтвердить ваше право на доступ к службе. Может быть есть кто-нибудь, "
+"кто сможет помочь вам. Проконсультируйтесь со своей службой поддержки в "
+"вашем университете!"
+
+msgid "Metadata parser"
+msgstr "Средство синтаксического анализа метаданных"
+
+msgid "ADFS Service Provider (Remote)"
+msgstr "Сервис провайдер ADFS (удаленное размещение)"
+
+msgid "Choose your home organization"
+msgstr "Выберите вашу домашнюю организацию"
+
+msgid "Send e-mail to help desk"
+msgstr "Послать email в службу поддержки"
+
+msgid "Metadata overview"
+msgstr "Краткое описание метаданных"
+
+msgid "Title"
+msgstr "Заглавие"
+
+msgid "Manager"
+msgstr "Управляющий"
+
+msgid "You did not present a valid certificate."
+msgstr "Вы не предоставили действительный сертификат."
+
+msgid "Authentication source error"
+msgstr "Ошибка источника аутентификации"
+
+msgid "Affiliation at home organization"
+msgstr "Членство в главной организации"
+
+msgid "Help desk homepage"
+msgstr "Домашняя страница службы поддержки"
+
+msgid "Configuration check"
+msgstr "Проверка конфигурации"
+
+msgid "We did not accept the response sent from the Identity Provider."
+msgstr "Отклик от провайдера идентификации не получен."
+
+msgid "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+msgstr "Запрашиваемая страница не найдена. Причина: %REASON%  Ссылка: %URL%"
+
+msgid "Shib 1.3 Identity Provider (Remote)"
+msgstr "Провайдер идентификации Shib 1.3 (удаленное размещение)"
+
+msgid ""
+"Here is the metadata that SimpleSAMLphp has generated for you. You may "
+"send this metadata document to trusted partners to setup a trusted "
+"federation."
+msgstr ""
+"Метаданные, сгенерированные для вас с помощью SimpleSAMLphp. Вы можете "
+"отправить данный документ с метаданными доверенным партнерам для создания"
+" федерации."
+
+msgid "[Preferred choice]"
+msgstr "[Предпочтительный выбор]"
+
+msgid "Organizational homepage"
+msgstr "Домашняя страница организации"
+
+msgid ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr ""
+"Вы получили доступ к интерфейсу Assertion Consumer Service, но не "
+"предоставили отклик SAML аутентификации."
+
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"Сейчас вы имеете доступ к предварительной версии системы. Эта настройка "
+"аутентификации только для тестирования и проверки предварительной версии."
+" Если кто-то прислал вам ссылку, которую вы указали здесь, и вы не "
+"<i>тестер</i>, то вы, вероятно, получили неправильную ссылку, и <b>не "
+"должны быть здесь</b>."

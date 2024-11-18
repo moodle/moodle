@@ -1,0 +1,33 @@
+{% set pagetitle = "Select your identity provider"|trans %}
+{% extends "base.twig" %}
+
+{% block content %}
+    <h2>{{ pagetitle }}</h2>
+
+    <p>{{ "Please select the identity provider where you want to authenticate:" | trans }}</p>
+    <form method="get" action="{{ urlpattern }}" class="pure-form">
+        <input type="hidden" name="entityID" value="{{ entityID }}">
+        <input type="hidden" name="return" value="{{ return }}">
+        <input type="hidden" name="returnIDParam" value="{{ returnIDParam }}">
+        <div class="pure-control-group">
+        <select id="dropdownlist" name="idpentityid" autofocus>
+        {% for idpentry in idplist %}
+            <option value="{{ idpentry.entityid }}"
+            {% if idpentry.entityid == preferredidp %}
+                 selected
+            {% endif %}
+            >{{ idpentry.name }}</option>
+        {% endfor %}
+        </select>
+        <button class="btn pure-button" type="submit">{{ 'Select' | trans }}</button>
+        </div>
+        {% if rememberenabled %}
+        <div class="pure-control-group">
+            <label for="remember">
+                <input type="checkbox" name="remember" id="remember" value="1"{% if rememberchecked %} checked{% endif %}>
+                {{ 'Remember my choice' | trans }}
+            </label>
+        </div>
+        {% endif %}
+    </form>
+{% endblock %}

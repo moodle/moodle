@@ -522,6 +522,18 @@ class profile_field_base {
             return true;
         }
 
+        // IOMAD: is this a company manager and can they edit this user.
+        $companyid = iomad::get_my_companyid($systemcontext, false);
+        if (!empty($companyid)) {
+            $companycontext = \core\context\company::instance($companyid);
+        } else {
+            $companycontext = $systemcontext;
+        }
+
+        if ((company::check_can_manage($this->userid) || empty($this->userid)) && iomad::has_capability('block/iomad_company_admin:user_create', $companycontext)) {
+            return true;
+        }
+
         // Checking for mentors have capability to edit user's profile.
         if ($this->userid > 0) {
             $usercontext = context_user::instance($this->userid);
@@ -657,8 +669,21 @@ function profile_get_user_fields_with_data(int $userid): array {
     if ($userid > 0) {
         $sql .= 'LEFT JOIN {user_info_data} uind ON uif.id = uind.fieldid AND uind.userid = :userid ';
     }
+    $params = array('userid' => $userid);
+
+    // IOMAD - Filter the categories
+    if ($DB->get_manager()->table_exists('company')) {
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        $sql .= " WHERE (uif.categoryid IN (
+                  SELECT profileid FROM {company} where id = :companyid)
+                  OR uif.categoryid IN (
+                  SELECT id FROM {user_info_category} WHERE id NOT IN (SELECT profileid from {company}))) ";
+        $params['companyuserid'] = $userid;
+        $params['companyid'] = $companyid;
+    }
+
     $sql .= 'ORDER BY uic.sortorder ASC, uif.sortorder ASC ';
-    $fields = $DB->get_records_sql($sql, ['userid' => $userid]);
+    $fields = $DB->get_records_sql($sql, $params);
     $data = [];
     foreach ($fields as $field) {
         $field->hasuserdata = !empty($field->hasuserdata);
@@ -703,6 +728,10 @@ function profile_load_data(stdClass $user): void {
  */
 function profile_definition(MoodleQuickForm $mform, int $userid = 0): void {
     $categories = profile_get_user_fields_with_data_by_category($userid);
+
+    // IOMAD - Filter categories which only apply to this company.
+    $categories = iomad::iomad_filter_profile_categories($categories, $userid);
+
     foreach ($categories as $categoryid => $fields) {
         // Check first if *any* fields will be displayed.
         $fieldstodisplay = [];

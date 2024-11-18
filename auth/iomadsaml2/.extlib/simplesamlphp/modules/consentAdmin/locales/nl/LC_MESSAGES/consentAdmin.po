@@ -1,0 +1,164 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: nl\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consentAdmin:consentadmin:status_header}"
+msgstr "Toestemming Status"
+
+msgid "{consentAdmin:consentadmin:attributes_text}"
+msgstr "attributen"
+
+msgid "{consentAdmin:consentadmin:service_provider_header}"
+msgstr "Service Provider"
+
+msgid "{consentAdmin:consentadmin:removed}"
+msgstr "Toestemming Verwijderd"
+
+msgid "{consentAdmin:consentadmin:consentadmin_header}"
+msgstr "Toestemming Beheer"
+
+msgid "{consentAdmin:consentadmin:show}"
+msgstr "Bekijk"
+
+msgid "{consentAdmin:consentadmin:attribute_org}"
+msgstr "Organisatie"
+
+msgid "{consentAdmin:consentadmin:attribute_injected}"
+msgstr "Geïnjecteerd attibuut"
+
+msgid "{consentAdmin:consentadmin:show_hide_attributes}"
+msgstr "bekijk/verberg attributen"
+
+msgid "{consentAdmin:consentadmin:consentadmin_purpose}"
+msgstr "Het nut van de server is"
+
+msgid "{consentAdmin:consentadmin:hide}"
+msgstr "Verberg"
+
+msgid "{consentAdmin:consentadmin:sp_empty_description}"
+msgstr "(geen omschrijving)"
+
+msgid "{consentAdmin:consentadmin:service_providers_for}"
+msgstr "Service Providers voor"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description2}"
+msgstr ""
+"<h3>Hoe verwijdert u toestemmingen</h3> Vinkt u het vakje af dat "
+"overeenkomt met de dienstverlener <h3>Links</h3> <ul> <li><a "
+"href=\"https://www.wayf.dk\">Start</a> </li> <li><a "
+"href=\"https://www.wayf.dk/index.php/en/about-wayf/faq-frequently-asked-"
+"questions\">FAQ</a> </li> </ul>"
+
+msgid "{consentAdmin:consentadmin:login}"
+msgstr "login"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description1}"
+msgstr ""
+"Hier kunt u uw verleende toestemmingen voor dienstverleners bekijken en "
+"bewerken."
+
+msgid "{consentAdmin:consentadmin:updated}"
+msgstr "Toestemming Bijgewerkt"
+
+msgid "{consentAdmin:consentadmin:unknown}"
+msgstr "Onbekend..."
+
+msgid "{consentAdmin:consentadmin:added}"
+msgstr "Toestemming Toegevoegd"
+
+msgid "{consentAdmin:consentadmin:attribute_id}"
+msgstr "Identiteit"
+
+msgid "Injected attribut"
+msgstr "Geïnjecteerd attibuut"
+
+msgid "Show"
+msgstr "Bekijk"
+
+msgid "Consent Added"
+msgstr "Toestemming Toegevoegd"
+
+msgid "Consent Administration"
+msgstr "Toestemming Beheer"
+
+msgid "Here you can view and edit your consent for the Service Providers."
+msgstr ""
+"Hier kunt u uw verleende toestemmingen voor dienstverleners bekijken en "
+"bewerken."
+
+msgid "Unknown ..."
+msgstr "Onbekend..."
+
+msgid "Identity"
+msgstr "Identiteit"
+
+msgid "The purpose of the service is"
+msgstr "Het nut van de server is"
+
+msgid "Hide"
+msgstr "Verberg"
+
+msgid "Service Provider"
+msgstr "Service Provider"
+
+msgid "Service Providers for"
+msgstr "Service Providers voor"
+
+msgid "login"
+msgstr "login"
+
+msgid "(name not specified)"
+msgstr "(naam niet opgegeven)"
+
+msgid "Consent Updated"
+msgstr "Toestemming Bijgewerkt"
+
+msgid "Consent status"
+msgstr "Toestemming Status"
+
+msgid "(no description)"
+msgstr "(geen omschrijving)"
+
+msgid "attributes"
+msgstr "attributen"
+
+msgid ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+msgstr ""
+"<h3>Hoe verwijderdt u toestemmingen</h3> Vinkt u het vakje af dat "
+"overeenkomt met de dienstverlener <h3>Links</h3> <ul> <li><a "
+"href=\"https://www.wayf.dk\">Start</a> </li> <li><a "
+"href=\"https://www.wayf.dk/index.php/en/about-wayf/faq-frequently-asked-"
+"questions\">FAQ</a> </li> </ul>"
+
+msgid "Consent Removed"
+msgstr "Toestemming Verwijderd"
+
+msgid "show/hide attributes"
+msgstr "bekijk/verberg attributen"
+
+msgid "Organisation"
+msgstr "Organisatie"
+

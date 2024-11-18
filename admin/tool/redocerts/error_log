@@ -1,0 +1,2 @@
+[30-Oct-2018 17:13:47 Europe/London] PHP Fatal error:  Call to undefined function xmldb_local_iomad_track_record_certificates() in /home/portal/public_html/admin/tool/redocerts/lib.php on line 77
+[30-Oct-2018 17:24:06 Europe/London] PHP Fatal error:  Call to undefined function xmldb_local_iomad_track_record_certificates() in /home/portal/public_html/admin/tool/redocerts/lib.php on line 83

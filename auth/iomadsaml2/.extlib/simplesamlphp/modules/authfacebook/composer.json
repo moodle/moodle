@@ -1,0 +1,45 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-authfacebook",
+    "description": "A module that is able to authenticate against Facebook",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "facebook"],
+    "license": "LGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Andjelko Horvat",
+            "email": "comel@vingd.com"
+        },
+        {
+            "name": "Tim van Dijen",
+            "email": "tvdijen@gmail.com"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\authfacebook\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+        "simplesamlphp/composer-module-installer": "~1.1"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "simplesamlphp/simplesamlphp-test-framework": "^0.0.10"
+    },
+    "support": {
+        "issues": "https://github.com/simplesamlphp/simplesamlphp-module-authfacebook/issues",
+        "source": "https://github.com/simplesamlphp/simplesamlphp-module-authfacebook"
+    }
+}

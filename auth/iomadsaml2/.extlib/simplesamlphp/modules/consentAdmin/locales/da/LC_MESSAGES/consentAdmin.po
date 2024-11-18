@@ -1,0 +1,204 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: da\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consentAdmin:consentadmin:status_header}"
+msgstr "Samtykke status"
+
+msgid "{consentAdmin:consentadmin:attributes_text}"
+msgstr "attributter"
+
+msgid "{consentAdmin:consentadmin:service_provider_header}"
+msgstr "Service Provider"
+
+msgid "{consentAdmin:consentadmin:removed}"
+msgstr "Samtykke slettet"
+
+msgid "{consentAdmin:consentadmin:consentadmin_header}"
+msgstr "Administrer dine samtykker"
+
+msgid "{consentAdmin:consentadmin:show}"
+msgstr "Vis"
+
+msgid "{consentAdmin:consentadmin:attribute_org}"
+msgstr "Organisation"
+
+msgid "{consentAdmin:consentadmin:attribute_injected}"
+msgstr "Injiceret attribut"
+
+msgid "{consentAdmin:consentadmin:show_hide_attributes}"
+msgstr "vis/skjul attributter"
+
+msgid "{consentAdmin:consentadmin:consentadmin_purpose}"
+msgstr "Formålet med tjenesten er"
+
+msgid "{consentAdmin:consentadmin:hide}"
+msgstr "Skjul"
+
+msgid "{consentAdmin:consentadmin:sp_empty_description}"
+msgstr "(ingen beskrivelse)"
+
+msgid "{consentAdmin:consentadmin:service_providers_for}"
+msgstr "Service Providers for"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description2}"
+msgstr ""
+"<h3>Sådan sletter du et samtykke</h3>Fjern fluebenet ud for tjenesten, "
+"samtykket tilhører.<h3>Hvilke data gemmer WAYF om dig?</h3><ul><li>Når du"
+" giver dit samtykke, henter WAYF dine oplysninger fra din institution og "
+"sender de relevante videre til tjenesteudbyderen<li>Ingen af "
+"oplysningerne gemmes af WAYF<li>Hvis du har bedt WAYF huske dit samtykke,"
+" gemmes personhenførbare data heller ikke hos WAYF. Oplysningen om, at du"
+" har givet dit samtykke, gemmes på en ikke-personhenførbar "
+"måde</ul><h3>Hvilke rettigheder har du?</h3>Du har ret til at trække et "
+"samtykke tilbage.<h3>Hvor længe gemmes dine samtykker?</h3>Et samtykke "
+"slettes tre år efter, at du sidst har benyttet det.<h3>Hvordan beskyttes "
+"mine oplysninger?</h3>WAYF foretager behandlinger af personoplysninger i "
+"henhold til persondataloven (lov nr. 429 af 31. maj 2000 med senere "
+"ændringer). Du kan læse nærmere om registreredes rettigheder i "
+"persondatalovens afsnit III.<a "
+"href=\"http://www.datatilsynet.dk/lovgivning/persondataloven/\">Persondataloven</a><h3>Links</h3><ul><li><a"
+" href=\"https://www.wayf.dk\">Start</a> </li><li><a "
+"href=\"https://www.wayf.dk/index.php/da/om-wayf/faq-ofte-stillede-"
+"sporgsmal\">FAQ</a> </li></ul>"
+
+msgid "{consentAdmin:consentadmin:login}"
+msgstr "login"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description1}"
+msgstr ""
+"WAYF videregiver kun oplysninger til eksterne tjenester, hvis du giver "
+"dit samtykke til det. Hvilke oplysninger det drejer sig om, varierer alt "
+"efter hvad tjenesteudbyderen har behov for. Det kan for eksempel "
+"være:<ul><li>Dit navn<li>Din e-mail-adresse<li>Din "
+"institution<li>Etc.</ul>Hvis du sætter et flueben ud for <b>Husk dette "
+"samtykke</b>, vil du ikke blive spurgt, næste gang du besøger "
+"tjenesteudbyderen. Så husker WAYF, at du allerede har givet samtykke til "
+"at videregive oplysninger til tjenesteudbyderen. <p>Nedenfor er opført de"
+" tjenester, som du for øjeblikket har givet løbende samtykke til:</a>"
+
+msgid "{consentAdmin:consentadmin:updated}"
+msgstr "Samtykke Opdateret"
+
+msgid "{consentAdmin:consentadmin:unknown}"
+msgstr "Ukendt ..."
+
+msgid "{consentAdmin:consentadmin:added}"
+msgstr "Samtykke givet"
+
+msgid "{consentAdmin:consentadmin:attribute_id}"
+msgstr "Identitet"
+
+msgid "Injected attribut"
+msgstr "Injiceret attribut"
+
+msgid "Show"
+msgstr "Vis"
+
+msgid "Consent Added"
+msgstr "Samtykke givet"
+
+msgid "Consent Administration"
+msgstr "Administrer dine samtykker"
+
+msgid "Here you can view and edit your consent for the Service Providers."
+msgstr ""
+"WAYF videregiver kun oplysninger til eksterne tjenester, hvis du giver "
+"dit samtykke til det. Hvilke oplysninger det drejer sig om, varierer alt "
+"efter hvad tjenesteudbyderen har behov for. Det kan for eksempel "
+"være:<ul><li>Dit navn<li>Din e-mail-adresse<li>Din "
+"institution<li>Etc.</ul>Hvis du sætter et flueben ud for <b>Husk dette "
+"samtykke</b>, vil du ikke blive spurgt, næste gang du besøger "
+"tjenesteudbyderen. Så husker WAYF, at du allerede har givet samtykke til "
+"at videregive oplysninger til tjenesteudbyderen. <p>Nedenfor er opført de"
+" tjenester, som du for øjeblikket har givet løbende samtykke til:</a>"
+
+msgid "Unknown ..."
+msgstr "Ukendt ..."
+
+msgid "Identity"
+msgstr "Identitet"
+
+msgid "The purpose of the service is"
+msgstr "Formålet med tjenesten er"
+
+msgid "Hide"
+msgstr "Skjul"
+
+msgid "Service Provider"
+msgstr "Service Provider"
+
+msgid "Service Providers for"
+msgstr "Service Providers for"
+
+msgid "login"
+msgstr "login"
+
+msgid "(name not specified)"
+msgstr "(navn ikke angivet)"
+
+msgid "Consent Updated"
+msgstr "Samtykke Opdateret"
+
+msgid "Consent status"
+msgstr "Samtykke status"
+
+msgid "(no description)"
+msgstr "(ingen beskrivelse)"
+
+msgid "attributes"
+msgstr "attributter"
+
+msgid ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+msgstr ""
+"<h3>Sådan sletter du et samtykke</h3>Fjern fluebenet ud for tjenesten, "
+"samtykket tilhører.<h3>Hvilke data gemmer WAYF om dig?</h3><ul><li>Når du"
+" giver dit samtykke, henter WAYF dine oplysninger fra din institution og "
+"sender de relevante videre til tjenesteudbyderen<li>Ingen af "
+"oplysningerne gemmes af WAYF<li>Hvis du har bedt WAYF huske dit samtykke,"
+" gemmes personhenførbare data heller ikke hos WAYF. Oplysningen om, at du"
+" har givet dit samtykke, gemmes på en ikke-personhenførbar "
+"måde</ul><h3>Hvilke rettigheder har du?</h3>Du har ret til at trække et "
+"samtykke tilbage.<h3>Hvor længe gemmes dine samtykker?</h3>Et samtykke "
+"slettes tre år efter, at du sidst har benyttet det.<h3>Hvordan beskyttes "
+"mine oplysninger?</h3>WAYF foretager behandlinger af personoplysninger i "
+"henhold til persondataloven (lov nr. 429 af 31. maj 2000 med senere "
+"ændringer). Du kan læse nærmere om registreredes rettigheder i "
+"persondatalovens afsnit III.<a "
+"href=\"http://www.datatilsynet.dk/lovgivning/persondataloven/\">Persondataloven</a><h3>Links</h3><ul><li><a"
+" href=\"https://www.wayf.dk\">Start</a> </li><li><a "
+"href=\"https://www.wayf.dk/index.php/da/om-wayf/faq-ofte-stillede-"
+"sporgsmal\">FAQ</a> </li></ul>"
+
+msgid "Consent Removed"
+msgstr "Samtykke slettet"
+
+msgid "show/hide attributes"
+msgstr "vis/skjul attributter"
+
+msgid "Organisation"
+msgstr "Organisation"
+

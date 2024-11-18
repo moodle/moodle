@@ -1,0 +1,18 @@
+{% set pagetitle = 'Warning about accessing a pre-production system'|trans %}
+{% extends "base.twig" %}
+
+{% block content %}
+
+<form action="{{ yesTarget }}">
+
+        <p>{% trans %}You are now accessing a pre-production system. This authentication setup is for testing and pre-production verification only. If someone sent you a link that pointed you here, and you are not <i>a tester</i> you probably got the wrong link, and should <b>not be here</b>.{% endtrans %}</p><br />
+{% for name,value in yesData %}
+        <input type="hidden" name="{{ name }}" value="{{ value }}">
+{% endfor %}
+<p>
+        <input type="submit" name="yes" class="pure-button pure-button-red" value="{{'Yes, I know I am accessing a pre-production system'|trans}}" autofocus>
+</p>
+
+</form>
+
+{% endblock %}

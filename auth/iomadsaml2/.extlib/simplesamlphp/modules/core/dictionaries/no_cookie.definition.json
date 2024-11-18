@@ -1,0 +1,11 @@
+{
+	"header": {
+		"en": "Missing cookie"
+	},
+	"description": {
+		"en": "You appear to have disabled cookies in your browser. Please check the settings in your browser, and try again."
+	},
+	"retry": {
+		"en": "Retry"
+	}
+}

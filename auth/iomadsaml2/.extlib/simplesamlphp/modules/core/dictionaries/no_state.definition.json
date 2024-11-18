@@ -1,0 +1,41 @@
+{
+	"header": {
+		"en": "State information lost"
+	},
+	"description": {
+		"en": "We were unable to locate the state information for the current request."
+	},
+	"suggestions": {
+		"en": "Suggestions for resolving this problem:"
+	},
+	"suggestion_badlink": {
+		"en": "Check that the link you used to access the web site is correct."
+	},
+	"suggestion_goback": {
+		"en": "Go back to the previous page and try again."
+	},
+	"suggestion_closebrowser": {
+		"en": "Close the web browser, and try again."
+	},
+	"causes": {
+		"en": "This error may be caused by:"
+	},
+	"cause_badlink": {
+		"en": "The link used to get here was bad, perhaps a bookmark."
+	},
+	"cause_backforward": {
+		"en": "Using the back and forward buttons in the web browser."
+	},
+	"cause_openbrowser": {
+		"en": "Opened the web browser with tabs saved from the previous session."
+	},
+	"cause_nocookie": {
+		"en": "Cookies may be disabled in the web browser."
+	},
+	"report_header": {
+		"en": "Report this error"
+	},
+	"report_text": {
+		"en": "If this problem persists, you can report it to the system administrators."
+	}
+}

@@ -1,0 +1,18 @@
+{
+  "invalid_idp": {
+	"zh-tw": "\u7121\u6548\u7684\u9a57\u8b49\u63d0\u4f9b\u8005",
+	"es": "Proveedor de Identidad inválido",
+	"zu": "Umhlinzeki Kamazisi Ongalungile",
+	"xh": "Isiboneleli Sesazisi Esingasebenziyo",
+	"st": "Mofani wa Boitsebiso ha Nepahala",
+	"ca": "Proveïdor d’identitat no vàlid"
+  },
+  "invalid_idp_description": {
+	"zh-tw": "\u60a8\u5df2\u7d93\u64c1\u6709\u4e00\u500b\u9a57\u8b49\u63d0\u4f9b\u8005 (<em>%IDP%</em>) \u7684\u6709\u6548\u7684\u9023\u7dda\uff0c\u4f46\u8a72\u9023\u7dda\u7121\u6cd5\u88ab <em>%SP%</em> \u6240\u63a5\u53d7\u3002\u60a8\u662f\u5426\u60f3\u8981\u767b\u51fa\u65e2\u6709\u7684\u9023\u7dda\u4e26\u91cd\u65b0\u7531\u5176\u4ed6\u9a57\u8b49\u63d0\u4f9b\u8005\u9032\u884c\u767b\u5165\uff1f",
+	"es": "Ya existe una sesión válida con un proveedor de identidad (<em>%IDP%</em>) que <em>%SP%</em> no acepta. ¿Desea cerrar su sesión actual e iniciar una nueva con otro proveedor de identidad?",
+	"zu": "Kakade uneseshini evumelekile nomhlinzeki kamazisi (<em>%IDP%</em>) engamukelwa okuthi <em>%SP%</em>. Ungathanda ukuphuma kuseshini yakho ekhona kakade futhi uphinde ungene ngomunye umhlinzeki kamazisi?",
+	"xh": "Sele unayo iseshoni esebenzayo nomboneleli wesazisi (<em>%IDP%</em>) engamkelwanga yi-<em>%SP%</em>. Ingaba ungathanda ukuphuma kwiseshoni yakho esele ikho uze ungene kwakhona ngomnye umboneleli wesazisi?",
+	"st": "O se ntse o na le seshene e sebetsang ho mofani wa boitsebiso (<em>%IDP%</em>) ya sa amohelweng ke<em>%SP%</em>. Na o ka lakatsa ho tswa sesheneng ya hao e teng mme o kene ka mofani wa boitsebiso e mong?",
+	"ca": "Ja teniu una sessió vàlida amb un proveïdor d’identitats (<em>%IDP%</em>) que no es acceptada per <em>%SP%</em>. Voleu sortir de la sessió existent i tornar a iniciar sessió amb un altre proveïdor d’identitat?"
+  }
+}

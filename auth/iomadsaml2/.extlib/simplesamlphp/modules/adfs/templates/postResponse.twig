@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="{{ baseurlpath }}/assets/js/postResponse.js"></script>
+    </head>
+    <body>
+        <form method="post" action="{{ url }}">
+            <input type="hidden" name="wa" value="wsignin1.0">
+            <input type="hidden" name="wresult" value="{{ wresult|escape('html') }}">
+            <input type="hidden" name="wctx" value="{{ wctx|escape('html') }}">
+            <noscript>
+                <input type="submit" value="Continue">
+            </noscript>
+        </form>
+    </body>
+</html>

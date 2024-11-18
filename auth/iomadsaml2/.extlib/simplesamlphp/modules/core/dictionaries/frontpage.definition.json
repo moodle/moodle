@@ -1,0 +1,155 @@
+{
+	"page_title": {
+		"en": "SimpleSAMLphp installation page"
+	},
+	"intro": {
+		"en": "<strong>Congratulations<\/strong>, you have successfully installed SimpleSAMLphp. This is the start page of your installation, where you will find links to test examples, diagnostics, metadata and even links to relevant documentation."
+	},
+	"useful_links_header": {
+		"en": "Useful links for your installation"
+	},
+	"metadata_header": {
+		"en": "Metadata"
+	},
+	"doc_header": {
+		"en": "Documentation"
+	},
+	"checkphp": {
+		"en": "Checking your PHP installation"
+	},
+	"required": {
+		"en": "Required"
+	},
+	"required_ldap": {
+		"en": "Required for LDAP"
+	},
+	"required_radius": {
+		"en": "Required for Radius"
+	},
+	"optional": {
+		"en": "Optional"
+	},
+	"recommended": {
+		"en": "Recommended"
+	},
+	"warnings": {
+		"en": "Warnings"
+	},
+	"warnings_curlmissing": {
+		"en": "PHP cURL extension missing. Cannot check for SimpleSAMLphp updates."
+	},
+	"warnings_https": {
+		"en": "<strong>You are not using HTTPS<\/strong> - encrypted communication with the user. HTTP works fine for test purposes, but in a production environment, you should use HTTPS. [ <a href=\"https:\/\/simplesamlphp.org\/docs\/stable\/simplesamlphp-maintenance\">Read more about SimpleSAMLphp maintenance<\/a> ]"
+	},
+	"warnings_secretsalt": {
+		"en": "<strong>The configuration uses the default secret salt</strong> - make sure you modify the default 'secretsalt' option in the simpleSAML configuration in production environments. [<a href=\"https:\/\/simplesamlphp.org\/docs\/stable\/simplesamlphp-install\">Read more about SimpleSAMLphp configuration<\/a> ]"
+	},
+	"warnings_suhosin_url_length": {
+		"en": "The length of query parameters is limited by the PHP Suhosin extension. Please increase the suhosin.get.max_value_length option to at least 2048 bytes."
+	},
+	"warnings_outdated": {
+		"en": "You are running an outdated version of SimpleSAMLphp. Please update to <a href=\"%LATEST_URL%\">the latest version</a> as soon as possible."
+	},
+	"link_saml2example": {
+		"en": "SAML 2.0 SP example - test logging in through your IdP"
+	},
+	"link_shib13example": {
+		"en": "Shibboleth 1.3 SP example - test logging in through your Shib IdP"
+	},
+	"link_openidprovider": {
+		"en": "OpenID Provider site - Alpha version (test code)"
+	},
+	"link_diagnostics": {
+		"en": "Diagnostics on hostname, port and protocol"
+	},
+	"link_phpinfo": {
+		"en": "PHP info"
+	},
+	"link_meta_overview": {
+		"en": "Metadata overview for your installation. Diagnose your metadata files"
+	},
+	"link_meta_saml2sphosted": {
+		"en": "Hosted SAML 2.0 Service Provider Metadata (automatically generated)"
+	},
+	"link_meta_saml2idphosted": {
+		"en": "Hosted SAML 2.0 Identity Provider Metadata (automatically generated)"
+	},
+	"link_meta_shib13sphosted": {
+		"en": "Hosted Shibboleth 1.3 Service Provider Metadata (automatically generated)"
+	},
+	"link_meta_shib13idphosted": {
+		"en": "Hosted Shibboleth 1.3 Identity Provider Metadata (automatically generated)"
+	},
+	"link_xmlconvert": {
+		"en": "XML to SimpleSAMLphp metadata converter"
+	},
+	"link_doc_install": {
+		"en": "Installing SimpleSAMLphp"
+	},
+	"link_doc_sp": {
+		"en": "Using SimpleSAMLphp as a Service Provider"
+	},
+	"link_doc_idp": {
+		"en": "Using SimpleSAMLphp as an Identity Provider"
+	},
+	"link_doc_shibsp": {
+		"en": "Configure Shibboleth 1.3 SP to work with SimpleSAMLphp IdP"
+	},
+	"link_doc_googleapps": {
+		"en": "SimpleSAMLphp as an IdP for Google Apps for Education"
+	},
+	"link_doc_advanced": {
+		"en": "SimpleSAMLphp Advanced Features"
+	},
+	"link_doc_maintenance": {
+		"en": "SimpleSAMLphp Maintenance and Configuration"
+	},
+	"link_configcheck": {
+		"en": "SimpleSAMLphp configuration check"
+	},
+	"link_cleardiscochoices": {
+		"en": "Delete my choices of IdP in the IdP discovery services"
+	},
+	"link_oauth": {
+		"en": "OAuth Consumer Registry"
+	},
+	"link_metarefresh": {
+		"en": "Metarefresh: fetch metadata"
+	},
+	"welcome": {
+		"en": "Welcome"
+	},
+	"configuration": {
+		"en": "Configuration"
+	},
+	"metadata": {
+		"en": "Metadata"
+	},
+	"tools": {
+		"en": "Tools"
+	},
+	"show_metadata": {
+		"en": "Show metadata"
+	},
+	"login_as_admin": {
+		"en": "Login as administrator"
+	},
+	"loggedin_as_admin": {
+		"en": "You are logged in as administrator"
+	},
+	"logout": {
+		"en": "Logout"
+	},
+	"auth": {
+		"en": "Authentication"
+	},
+	"federation": {
+		"en": "Federation"
+	},
+	"authtest": {
+		"en": "Test configured authentication sources "
+	},
+	"deprecated": {
+		"en": "Deprecated"
+	}
+}

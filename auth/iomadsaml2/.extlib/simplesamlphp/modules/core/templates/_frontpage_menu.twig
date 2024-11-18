@@ -1,0 +1,31 @@
+<div class="pure-g frontpage-menu">
+    <div class="pure-u-2-3">
+        <div class="pure-menu pure-menu-horizontal">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item{% if frontpage_section == "welcome" %} pure-menu-selected{% endif %}">
+                    <a href="frontpage_welcome.php" class="pure-menu-link">Welcome</a>
+                </li>
+                <li class="pure-menu-item{% if frontpage_section == "config" %} pure-menu-selected{% endif %}">
+                    <a href="frontpage_config.php" class="pure-menu-link">Configuration</a>
+                </li>
+                <li class="pure-menu-item{% if frontpage_section == "auth" %} pure-menu-selected{% endif %}">
+                    <a href="frontpage_auth.php" class="pure-menu-link">Authentication</a>
+                </li>
+                <li class="pure-menu-item{% if frontpage_section == "federation" %} pure-menu-selected{% endif %}">
+                    <a href="frontpage_federation.php" class="pure-menu-link">Federation</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="pure-u-1-3">
+    {% if isadmin %}
+        <p class="float-r youareadmin">{{ '{core:frontpage:loggedin_as_admin}'|trans }}
+        <a href="{{ logouturl }}"><i class="fa fa-sign-out" title="{{ '{core:frontpage:logout}'|trans }}"></i></a>
+        </p>
+    {% else %}
+        <p class="float-r youareadmin">
+            <a href="{{ loginurl }}">{{ '{core:frontpage:login_as_admin}'|trans }}</a>
+        </p>
+    {% endif %}
+    </div>
+</div>

@@ -1,0 +1,133 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+ * @package   block_mycourses
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+{{!
+    @template block_mycourses/main
+
+    This template renders the main content area for the mycourses block.
+
+    Example context (json):
+    {}
+}}
+<div class="buttoncontrols" style="display:inline-flex;">
+  <div class="dropdown show" style='padding-right: 5px'>
+    <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="mycoursesdropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      {{#str}} sort {{/str}}
+    </a>
+
+    <div class="dropdown-menu" aria-labelledby="mycoursesdropdownMenuLink">
+      <a class="dropdown-item" href="{{sortnameurl}}">{{#str}} name {{/str}}</a>
+      <a class="dropdown-item" href="{{sortdateurl}}">{{#str}} date {{/str}}</a>
+    </div>
+  </div>
+  <div class="dropdown show" style='padding-right: 5px'>
+    <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="mycoursesdropdownMenuLinkorder" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      {{#str}} order {{/str}}
+    </a>
+
+    <div class="dropdown-menu" aria-labelledby="mycoursesdropdownMenuLinkorder">
+      <a class="dropdown-item" href="{{sortascurl}}">{{#str}} asc {{/str}}</a>
+      <a class="dropdown-item" href="{{sortdescurl}}">{{#str}} desc {{/str}}</a>
+    </div>
+  </div>
+  <div class="dropdown show">
+    <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="mycoursesdropdownMenuLinktype" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      {{#viewlist}}
+          {{#str}} list, block_myoverview {{/str}}
+      {{/viewlist}}
+      {{#viewcard}}
+          {{#str}} card, block_myoverview {{/str}}
+      {{/viewcard}}
+    </a>
+
+    <div class="dropdown-menu" aria-labelledby="mycoursesdropdownMenuLinktype">
+      <a class="dropdown-item" href="{{listviewurl}}">{{#str}} list, block_myoverview {{/str}}</a>
+      <a class="dropdown-item" href="{{cardviewurl}}">{{#str}} card, block_myoverview {{/str}}</a>
+    </div>
+  </div>
+</div>
+
+{{#downloadcerts}}
+  <a class="btn btn-outline-secondary float-right" role="button" id="downloadcourseslink" href="{{{downloadcertslink}}}">{{#str}}downloadcertificates, block_iomad_company_admin{{/str}}</a>
+{{/downloadcerts}}
+<div class="block-mycourses" data-region="mycourses">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link {{#viewingavailable}}active{{/viewingavailable}}"
+                      href="#mycourses_available_view"
+                      role="tab"
+                      data-toggle="tab"
+                      aria-selected="{{#viewingavailable}}true{{/viewingavailable}}{{^viewingavailable}}false{{/viewingavailable}}">
+                {{#str}} availableheader, block_mycourses {{/str}}
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{#viewinginprogress}}active{{/viewinginprogress}}"
+                      href="#mycourses_inprogress_view"
+                      role="tab"
+                      data-toggle="tab"
+                      aria-selected="{{#viewinginprogress}}true{{/viewinginprogress}}{{^viewinginprogress}}false{{/viewinginprogress}}">
+                {{#str}} inprogressheader, block_mycourses {{/str}}
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{#viewingcompleted}}active{{/viewingcompleted}}"
+                      href="#mycourses_completed_view"
+                      role="tab"
+                      data-toggle="tab"
+                      aria-selected="{{#viewingcompleted}}true{{/viewingcompleted}}{{^viewingcompleted}}false{{/viewingcompleted}}">
+                {{#str}} completedheader, block_mycourses {{/str}}
+            </a>
+        </li>
+    </ul>
+    <div class="tab-content content-centred">
+        <div role="tabpanel" class="tab-pane {{#viewingavailable}}active{{/viewingavailable}}" id="mycourses_available_view">
+            {{#viewlist}}
+                {{> block_mycourses/available-view }}
+            {{/viewlist}}
+            {{#viewcard}}
+                {{> block_mycourses/available-card-view }}
+            {{/viewcard}}
+        </div>
+        <div role="tabpanel" class="tab-pane {{#viewinginprogress}}active{{/viewinginprogress}}" id="mycourses_inprogress_view">
+            {{#viewlist}}
+                {{> block_mycourses/inprogress-view }}
+            {{/viewlist}}
+            {{#viewcard}}
+                {{> block_mycourses/inprogress-card-view }}
+            {{/viewcard}}
+        </div>
+        <div role="tabpanel" class="tab-pane {{#viewingcompleted}}active{{/viewingcompleted}}" id="mycourses_completed_view">
+            {{#viewlist}}
+                {{> block_mycourses/completed-view }}
+            {{/viewlist}}
+            {{#viewcard}}
+                {{> block_mycourses/completed-card-view }}
+            {{/viewcard}}
+        </div>
+    </div>
+</div>
+{{#js}}
+require(['jquery', 'block_mycourses/tab_preferences'], function($, TabPreferences) {
+    var root = $('#block-mycourses-view-choices-{{uniqid}}');
+    TabPreferences.registerEventListeners(root);
+});
+{{/js}}

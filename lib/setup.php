@@ -968,6 +968,32 @@ if (!empty($CFG->profilingenabled)) {
 // we need to do this after session init to have some basic DDoS protection.
 workaround_max_input_vars();
 
+// IOMAD - Set the theme if the server hostname matches one of ours.
+if(!CLI_SCRIPT && !during_initial_install()){
+    // Does this match a company hostname?
+    if ($DB->get_manager()->table_exists('company') &&
+        ($companyrec = $DB->get_record('company', array('hostname' => $_SERVER['SERVER_NAME'])))) {
+        try {
+            $themeconfig = theme_config::load($companyrec->theme);
+            // Makes sure the theme can be loaded without errors.
+            if ($themeconfig->name === $companyrec->theme) {
+                $SESSION->theme = $companyrec->theme;
+            } else {
+                unset($SESSION->theme);
+            }
+            if (empty($SESSION->currenteditingcompany)) {
+                $SESSION->currenteditingcompany = $companyrec->id;
+                $SESSION->company = $companyrec;
+            }
+            unset($themeconfig);
+            unset($urlthemename);
+            unset($companyrec);
+        } catch (Exception $e) {
+            debugging('Failed to set the theme from the company hostname setting.', DEBUG_DEVELOPER, $e->getTrace());
+        }
+    }
+}
+
 // Process theme change in the URL.
 if (!empty($CFG->allowthemechangeonurl) and !empty($_GET['theme'])) {
     // we have to use _GET directly because we do not want this to interfere with _POST

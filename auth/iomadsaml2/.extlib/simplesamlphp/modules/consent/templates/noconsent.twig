@@ -1,0 +1,16 @@
+{% set pagetitle = '{consent:consent:noconsent_title}'|trans %}
+{% extends "base.twig" %}
+{% block content %}
+    <h2>{{ header }}</h2>
+    <p>{{ noconsent_text }}</p>
+
+    {% if resumeFrom %}
+    <p><a href="{{ resumeFrom }}">{{ '{consent:consent:noconsent_return}'|trans }}</a></p>
+    {% endif %}
+
+    {% if aboutService %}
+    <p><a href="{{ aboutService }}">{{ '{consent:consent:noconsent_goto_about}'|trans }}</a></p>
+    {% endif %}
+
+    <p><a href="{{ logoutLink }}">{{ noconsent_abort }}</a></p>
+{% endblock %}

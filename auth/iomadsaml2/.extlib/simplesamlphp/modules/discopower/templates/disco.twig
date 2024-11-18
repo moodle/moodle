@@ -1,0 +1,57 @@
+{% set pagetitle = 'selectidp'|trans %}
+{% extends "base.twig" %}
+
+{% block preload %}
+    <link rel="stylesheet" media="screen" href="/{{ baseurlpath }}module.php/discopower/assets/css/uitheme1.12.1/jquery-ui.min.css">
+    <link rel="stylesheet" media="screen" href="/{{ baseurlpath }}module.php/discopower/assets/css/disco.css">
+{% endblock %}
+{% block postload %}
+    <script src="/{{ baseurlpath }}module.php/discopower/assets/js/jquery-ui-1.12.1.min.js"></script>
+    <script src="/{{ baseurlpath }}module.php/discopower/assets/js/jquery.livesearch.js"></script>
+    <script src="/{{ baseurlpath }}module.php/discopower/assets/js/{{ score }}.js"></script>
+    <script src="/{{ baseurlpath }}module.php/discopower/assets/js/tablist.js"></script>
+{% endblock %}
+
+{% block content %}
+    {% if faventry is not empty %}
+    <div class="favourite">{{ '{disco:previous_auth}'|trans }}
+        <strong>{{ faventry.translated|escape('html') }}</strong>
+        <form id="idpselectform" method="get" action="{{ urlpattern }}">
+            <input type="hidden" name="entityID" value="{{ entityID|escape('html') }}" />
+            <input type="hidden" name="return" value="{{ return|escape('html') }}" />
+            <input type="hidden" name="returnIDParam" value="{{ returnIDParam|escape('html') }}" />
+            <input type="hidden" name="idpentityid" value="{{ faventry.entityid|escape('html') }}" />
+            <input type="submit" name="formsubmit" id="favouritesubmit" value="{{ '{disco:login_at}'|trans }} {{ faventry.translated|escape('html') }}" />
+    </form>
+    </div>
+    {% endif %}
+
+    <div id="tabdiv">
+        <ul class="tabset_tabs">
+        {% for tab, idps in idplist %}
+            {% if idps is not empty %}
+            {# NOTE: pass through raw to allow HTML in tabNames, e.g. Belgi&euml; #}
+            <li class="tab-link{% if loop.first %}current{% endif %}" data-tab="{{ tab }}"><a href="#{{ tab }}"><span>{{ tabNames[tab]|trans|raw }}</span></a></li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+
+        {% for tab, idps in idplist %}
+        {% if idps is not empty %}
+          <div id="{{ tab }}" class="tabset_content{% if loop.first %} current{% endif %}">
+          <div class="inlinesearch">
+              <p>{{ '{discopower:tabs:incremental_search}'|trans }}</p>
+              <form id="idpselectform" method="get">
+                  <input class="inlinesearch" type="text" value="" name="query_{{ tab }}" id="query_{{ tab }}" />
+              </form>
+          </div>
+          <div class="metalist" id="list_{{ tab }}">
+          {% for entityid, entity in idps %}
+              {{ entity.html|raw }}
+          {% endfor %}
+          </div>
+          </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}

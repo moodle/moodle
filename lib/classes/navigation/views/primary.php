@@ -17,6 +17,7 @@
 namespace core\navigation\views;
 
 use navigation_node;
+use iomad;
 
 /**
  * Class primary.
@@ -83,6 +84,31 @@ class primary extends view {
         // Allow plugins to add nodes to the primary navigation.
         $hook = new \core\hook\navigation\primary_extend($this);
         \core\di::get(\core\hook\manager::class)->dispatch($hook);
+
+        // IOMAD.
+        $systemcontext = \context_system::instance();
+        $companyid = iomad::get_my_companyid($systemcontext, false);
+        if (!empty($companyid) && $companyid > 0) {
+            $companycontext = \core\context\company::instance($companyid);
+        } else {
+            $companycontext = $systemcontext;
+        }
+
+        if (\iomad::has_capability('block/iomad_company_admin:companymanagement_view', $companycontext) ||
+            \iomad::has_capability('block/iomad_company_admin:usermanagement_view', $companycontext) ||
+            \iomad::has_capability('block/iomad_company_admin:coursemanagement_view', $companycontext) ||
+            \iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $companycontext) ||
+            \iomad::has_capability('block/iomad_company_admin:competencymanagement_view', $companycontext) ||
+            \iomad::has_capability('block/iomad_commerce:admin_view', $companycontext) ||
+            \iomad::has_capability('block/iomad_microlearning:view', $companycontext) ||
+            \iomad::has_capability('block/iomad_reports:view', $companycontext)) {
+            $this->add(get_string('dashboard', 'block_iomad_company_admin'),
+                       new \moodle_url('/blocks/iomad_company_admin/index.php'),
+                       self::TYPE_SITE_ADMIN,
+                       null,
+                       'ioaddashboardnode',
+                       new \pix_icon('i/dashboard', ''));
+        }
 
         // Search and set the active node.
         $this->set_active_node();

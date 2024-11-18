@@ -1,0 +1,151 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: zh_Hant_TW\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consent:consent:service_providers_for}"
+msgstr "給服務提供者"
+
+msgid "{consent:consent:abort}"
+msgstr "關於登入至 SPNAME"
+
+msgid "{consent:consent:remember}"
+msgstr "記住"
+
+msgid "{consent:consent:login}"
+msgstr "登入"
+
+msgid "{consent:consent:consent_purpose}"
+msgstr "SPNAME 的目的地為 SPDESC"
+
+msgid "{consent:consent:noconsent_goto_about}"
+msgstr "至服務資訊頁面"
+
+msgid "{consent:consent:consent_header}"
+msgstr "同意有關於個人關係資訊"
+
+msgid "{consent:consent:show_hide_attributes}"
+msgstr "顯示/隱藏屬性"
+
+msgid "{consent:consent:table_caption}"
+msgstr "使用者資訊"
+
+msgid "{consent:consent:status_header}"
+msgstr "同意狀態"
+
+msgid "{consent:consent:noconsent_title}"
+msgstr "尚未同意"
+
+msgid "{consent:consent:consent_accept}"
+msgstr "SPNAME 要求該資訊於這個傳送。"
+
+msgid "{consent:consent:table_summary}"
+msgstr "將關於我傳送至您預計要登入的服務"
+
+msgid "{consent:consent:service_provider_header}"
+msgstr "服務提供者"
+
+msgid "{consent:consent:show_attributes}"
+msgstr "顯示屬性"
+
+msgid "{consent:consent:show_attribute}"
+msgstr "顯示內容"
+
+msgid "{consent:consent:no}"
+msgstr "不，取消"
+
+msgid "{consent:consent:consent_privacypolicy}"
+msgstr "服務隱私權政策"
+
+msgid "{consent:consent:noconsent_text}"
+msgstr "您不同意傳輸您的屬性至服務提供者。"
+
+msgid "{consent:consent:noconsent_return}"
+msgstr "回到同意頁面"
+
+msgid "{consent:consent:yes}"
+msgstr "是，繼續"
+
+msgid "{consent:consent:consent_attributes_header}"
+msgstr "資訊將被傳送至 SPNAME"
+
+msgid "Service Providers for"
+msgstr "給服務提供者"
+
+msgid "Yes, continue"
+msgstr "是，繼續"
+
+msgid "Return to consent page"
+msgstr "回到同意頁面"
+
+msgid "Consent status"
+msgstr "同意狀態"
+
+msgid "Go to information page for the service"
+msgstr "至服務資訊頁面"
+
+msgid "Service Provider"
+msgstr "服務提供者"
+
+msgid "Abort login to SPNAME"
+msgstr "關於登入至 SPNAME"
+
+msgid "show/hide attributes"
+msgstr "顯示/隱藏屬性"
+
+msgid "The purpose of SPNAME is SPDESC"
+msgstr "SPNAME 的目的地為 SPDESC"
+
+msgid ""
+"List the information about you that is about to be transmitted to the "
+"service you are going to login to"
+msgstr "將關於我傳送至您預計要登入的服務"
+
+msgid "Consent about releasing personal information"
+msgstr "同意有關於個人關係資訊"
+
+msgid "No consent given"
+msgstr "尚未同意"
+
+msgid "login"
+msgstr "登入"
+
+msgid "You did not give consent for transfering your attributes to SPNAME."
+msgstr "您不同意傳輸您的屬性至服務提供者。"
+
+msgid "Remember"
+msgstr "記住"
+
+msgid "Show content"
+msgstr "顯示內容"
+
+msgid "SPNAME requires that the information below is transferred."
+msgstr "SPNAME 要求該資訊於這個傳送。"
+
+msgid "Privacypolicy for the service"
+msgstr "服務隱私權政策"
+
+msgid "No, cancel"
+msgstr "不，取消"
+
+msgid "Show attributes"
+msgstr "顯示屬性"
+
+msgid "User information"
+msgstr "使用者資訊"
+
+msgid "Information that will be sent to SPNAME"
+msgstr "資訊將被傳送至 SPNAME"
+

@@ -76,7 +76,8 @@ if ((!$user = $DB->get_record('user', array('id' => $userid))) || ($user->delete
 $currentuser = ($user->id == $USER->id);
 $context = $usercontext = context_user::instance($userid, MUST_EXIST);
 
-if (!user_can_view_profile($user, null, $context)) {
+// IOMAD - Check the USER can manage the user.
+if (!user_can_view_profile($user, null, $context) || !company::check_can_manage($user->id)) {
 
     // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366).
     $struser = get_string('user');

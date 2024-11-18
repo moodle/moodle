@@ -1,0 +1,161 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: lv\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 :"
+" 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consentAdmin:consentadmin:status_header}"
+msgstr "Noteikumu statuss"
+
+msgid "{consentAdmin:consentadmin:attributes_text}"
+msgstr "atribūti"
+
+msgid "{consentAdmin:consentadmin:service_provider_header}"
+msgstr "Servisa piegādātājs"
+
+msgid "{consentAdmin:consentadmin:removed}"
+msgstr "Noņemtie noteikumi"
+
+msgid "{consentAdmin:consentadmin:consentadmin_header}"
+msgstr "Noteikumu administrators"
+
+msgid "{consentAdmin:consentadmin:show}"
+msgstr "Parādīt"
+
+msgid "{consentAdmin:consentadmin:attribute_org}"
+msgstr "Organizācija"
+
+msgid "{consentAdmin:consentadmin:attribute_injected}"
+msgstr "Ievietots atribūts"
+
+msgid "{consentAdmin:consentadmin:show_hide_attributes}"
+msgstr "rādīšanas/slēpšanas atribūti"
+
+msgid "{consentAdmin:consentadmin:consentadmin_purpose}"
+msgstr "Šī servisa nolūks ir"
+
+msgid "{consentAdmin:consentadmin:hide}"
+msgstr "Slēpt"
+
+msgid "{consentAdmin:consentadmin:sp_empty_description}"
+msgstr "(nav apraksta)"
+
+msgid "{consentAdmin:consentadmin:service_providers_for}"
+msgstr "Servisa piegādātāji priekš"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description2}"
+msgstr ""
+"<h3>Kā dzēst noteikumus</h3> Izņemiet ķeksīti pie atbilstošā servisa "
+"piegādātāja <h3>Saites</h3> <ul> <li><a "
+"href=\"https://www.wayf.dk\">Sākums</a> </li> <li><a "
+"href=\"https://www.wayf.dk/index.php/en/about-wayf/faq-frequently-asked-"
+"questions\">BUJ</a> </li> </ul> "
+
+msgid "{consentAdmin:consentadmin:login}"
+msgstr "pieslēgties"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description1}"
+msgstr "Šeit Jūs varat aplūkot un labot noteikumus priekš servisu piegādātājiem"
+
+msgid "{consentAdmin:consentadmin:updated}"
+msgstr "Uzlabotie noteikumi"
+
+msgid "{consentAdmin:consentadmin:unknown}"
+msgstr "Nezināms ..."
+
+msgid "{consentAdmin:consentadmin:added}"
+msgstr "Pievienotie noteikumi"
+
+msgid "{consentAdmin:consentadmin:attribute_id}"
+msgstr "Identitāte"
+
+msgid "Injected attribut"
+msgstr "Ievietots atribūts"
+
+msgid "Show"
+msgstr "Parādīt"
+
+msgid "Consent Added"
+msgstr "Pievienotie noteikumi"
+
+msgid "Consent Administration"
+msgstr "Noteikumu administrators"
+
+msgid "Here you can view and edit your consent for the Service Providers."
+msgstr "Šeit Jūs varat aplūkot un labot noteikumus priekš servisu piegādātājiem"
+
+msgid "Unknown ..."
+msgstr "Nezināms ..."
+
+msgid "Identity"
+msgstr "Identitāte"
+
+msgid "The purpose of the service is"
+msgstr "Šī servisa nolūks ir"
+
+msgid "Hide"
+msgstr "Slēpt"
+
+msgid "Service Provider"
+msgstr "Servisa piegādātājs"
+
+msgid "Service Providers for"
+msgstr "Servisa piegādātāji priekš"
+
+msgid "login"
+msgstr "pieslēgties"
+
+msgid "(name not specified)"
+msgstr "(vārds nav norādīts)"
+
+msgid "Consent Updated"
+msgstr "Uzlabotie noteikumi"
+
+msgid "Consent status"
+msgstr "Noteikumu statuss"
+
+msgid "(no description)"
+msgstr "(nav apraksta)"
+
+msgid "attributes"
+msgstr "atribūti"
+
+msgid ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+msgstr ""
+"<h3>Kā dzēst noteikumus</h3> Izņemiet ķeksīti pie atbilstošā servisa "
+"piegādātāja <h3>Saites</h3> <ul> <li><a "
+"href=\"https://www.wayf.dk\">Sākums</a> </li> <li><a "
+"href=\"https://www.wayf.dk/index.php/en/about-wayf/faq-frequently-asked-"
+"questions\">BUJ</a> </li> </ul> "
+
+msgid "Consent Removed"
+msgstr "Noņemtie noteikumi"
+
+msgid "show/hide attributes"
+msgstr "rādīšanas/slēpšanas atribūti"
+
+msgid "Organisation"
+msgstr "Organizācija"
+

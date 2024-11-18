@@ -1,0 +1,326 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: pl\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && "
+"(n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{core:frontpage:link_phpinfo}"
+msgstr "PHP info"
+
+msgid "{core:frontpage:link_shib13example}"
+msgstr "Shibboleth 1.3 SP - przykład - test logowania przez Twoje Shib IdP"
+
+msgid "{core:frontpage:login_as_admin}"
+msgstr "Zaloguj się jako administrator"
+
+msgid "{core:frontpage:link_doc_sp}"
+msgstr "Użycie SimpleSAMLphp jako Dostawca Serwisu"
+
+msgid "{core:frontpage:link_meta_saml2sphosted}"
+msgstr "Metadane - Lokalny SAML 2.0 Dostawca Serwisu (generowane automatycznie)"
+
+msgid "{core:frontpage:link_openidprovider}"
+msgstr "Strona Dostawcy OpenID - wersja Alpha (kod w fazie testów)"
+
+msgid "{core:frontpage:link_doc_install}"
+msgstr "Instalowanie SimpleSAMLphp"
+
+msgid "{core:frontpage:link_diagnostics}"
+msgstr "Diagnostyka na hoście, port i protokół"
+
+msgid "{core:frontpage:link_meta_saml2idphosted}"
+msgstr "Metadane - Lokalny SAML 2.0 Dostawca Tożsamości (generowane automatycznie)"
+
+msgid "{core:frontpage:optional}"
+msgstr "Opcjonalne"
+
+msgid "{core:frontpage:link_meta_shib13sphosted}"
+msgstr ""
+"Metadane - Lokalny Shibboleth 1.3 Dostawca Serwisu (generowane "
+"automatycznie)"
+
+msgid "{core:frontpage:doc_header}"
+msgstr "Dokumentacja"
+
+msgid "{core:frontpage:link_doc_advanced}"
+msgstr "Zaawansowane właściwości SimpleSAMLphp"
+
+msgid "{core:frontpage:required_ldap}"
+msgstr "Wymagane dla LDAP"
+
+msgid "{core:frontpage:link_meta_overview}"
+msgstr "Przegląd Metadanych dla Twojej instalacji. Diagnose your metadata files"
+
+msgid "{core:frontpage:configuration}"
+msgstr "Konfiguracja"
+
+msgid "{core:frontpage:welcome}"
+msgstr "Witaj"
+
+msgid "{core:frontpage:link_doc_shibsp}"
+msgstr "Konfiguruj Shibboleth 1.3 SP do współpracy z SimpleSAMLphp IdP"
+
+msgid "{core:frontpage:metadata_header}"
+msgstr "Metadane"
+
+msgid "{core:frontpage:link_doc_maintenance}"
+msgstr "Konfiguracja i Prace administracyjne "
+
+msgid "{core:frontpage:link_configcheck}"
+msgstr "sprawdzanie konfiguracji SimpleSAMLphp"
+
+msgid "{core:frontpage:warnings}"
+msgstr "Ostrzeżenia"
+
+msgid "{core:frontpage:link_xmlconvert}"
+msgstr "Konwerter metadanych z formatu XML do formatu SimpleSAMLphp"
+
+msgid "{core:frontpage:link_cleardiscochoices}"
+msgstr "Usuń mój wybór domyślnych IdP w Discovery Services"
+
+msgid "{core:frontpage:loggedin_as_admin}"
+msgstr "Jesteś zalogowany jako administrator"
+
+msgid "{core:frontpage:auth}"
+msgstr "Uwierzytelnianie"
+
+msgid "{core:frontpage:show_metadata}"
+msgstr "Wyświetl metadane"
+
+msgid "{core:frontpage:intro}"
+msgstr ""
+"<strong>Gratulacje</strong>, instalacja SimpleSAMLphp przebiegła "
+"pomyślnie. To jest strona startowa Twojej instalacji, na której "
+"znajdziesz odnośniki do przykładów, narzędzi do diagnozowania, metadane a"
+" nawet linki do dokumentacji."
+
+msgid "{core:frontpage:link_meta_shib13idphosted}"
+msgstr ""
+"Metadane - Lokalny Shibboleth 1.3 Dostawca Tożsamości (generowane "
+"automatycznie)"
+
+msgid "{core:frontpage:required}"
+msgstr "Wymagane"
+
+msgid "{core:frontpage:warnings_https}"
+msgstr ""
+"<strong>Nie używasz HTTPS</strong> - szyfrowana komunikacja z "
+"użytkownikiem. HTTP jest OK dla testów, ale na produkcji powinieneś "
+"używać tylko HTTPS. [ <a href=\"http://rnd.feide.no/content"
+"/simplesamlphp-maintenance-and-configuration\">Przeczytaj więcej o "
+"zarządzaniu SimpleSAMLphp</a> ]"
+
+msgid "{core:frontpage:federation}"
+msgstr "Federacja"
+
+msgid "{core:frontpage:required_radius}"
+msgstr "Wymagane dla Radius"
+
+msgid "{core:frontpage:checkphp}"
+msgstr "Sprawdzanie instalacji PHP"
+
+msgid "{core:frontpage:link_doc_idp}"
+msgstr "Użycie SimpleSAMLphp jako Dostawca Tożsamości"
+
+msgid "{core:frontpage:link_saml2example}"
+msgstr "SAML 2.0 SP - przykład - test logowania przez Twoje IdP"
+
+msgid "{core:frontpage:about_header}"
+msgstr "O SimpleSAMLphp"
+
+msgid "{core:frontpage:about_text}"
+msgstr ""
+"Ten SimpleSAMLphp jest niezły, gdzie mogę poczytać o tym? Możesz znaleźć "
+"więcej informacji o <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">SimpleSAMLphp na blogu Feide "
+"RnD</a> oraz na stronie <a href=\"http://uninett.no\">UNINETT</a>."
+
+msgid "{core:frontpage:useful_links_header}"
+msgstr "Przydatne linki dla Twojej instalacji"
+
+msgid "{core:frontpage:metadata}"
+msgstr "Metadane"
+
+msgid "{core:frontpage:recommended}"
+msgstr "Rekomendowane"
+
+msgid "{core:frontpage:link_doc_googleapps}"
+msgstr "SimpleSAMLphp jako Dostawca Tożsamości dla Google Apps dla szkolnictwa"
+
+msgid "{core:frontpage:tools}"
+msgstr "Narzędzia"
+
+msgid "{core:frontpage:deprecated}"
+msgstr "Przestarzałe"
+
+msgid "You are logged in as administrator"
+msgstr "Jesteś zalogowany jako administrator"
+
+msgid "Welcome"
+msgstr "Witaj"
+
+msgid "SimpleSAMLphp configuration check"
+msgstr "sprawdzanie konfiguracji SimpleSAMLphp"
+
+msgid "Metadata overview for your installation. Diagnose your metadata files"
+msgstr "Przegląd Metadanych dla Twojej instalacji. Diagnose your metadata files"
+
+msgid "XML to SimpleSAMLphp metadata converter"
+msgstr "Konwerter metadanych z formatu XML do formatu SimpleSAMLphp"
+
+msgid "Required"
+msgstr "Wymagane"
+
+msgid "Warnings"
+msgstr "Ostrzeżenia"
+
+msgid "Documentation"
+msgstr "Dokumentacja"
+
+msgid "Hosted Shibboleth 1.3 Service Provider Metadata (automatically generated)"
+msgstr ""
+"Metadane - Lokalny Shibboleth 1.3 Dostawca Serwisu (generowane "
+"automatycznie)"
+
+msgid "PHP info"
+msgstr "PHP info"
+
+msgid "About SimpleSAMLphp"
+msgstr "O SimpleSAMLphp"
+
+msgid "Hosted SAML 2.0 Service Provider Metadata (automatically generated)"
+msgstr "Metadane - Lokalny SAML 2.0 Dostawca Serwisu (generowane automatycznie)"
+
+msgid "Required for LDAP"
+msgstr "Wymagane dla LDAP"
+
+msgid "Federation"
+msgstr "Federacja"
+
+msgid "Delete my choices of IdP in the IdP discovery services"
+msgstr "Usuń mój wybór domyślnych IdP w Discovery Services"
+
+msgid "Configure Shibboleth 1.3 SP to work with SimpleSAMLphp IdP"
+msgstr "Konfiguruj Shibboleth 1.3 SP do współpracy z SimpleSAMLphp IdP"
+
+msgid "Tools"
+msgstr "Narzędzia"
+
+msgid "Installing SimpleSAMLphp"
+msgstr "Instalowanie SimpleSAMLphp"
+
+msgid "Deprecated"
+msgstr "Przestarzałe"
+
+msgid ""
+"<strong>Congratulations</strong>, you have successfully installed "
+"SimpleSAMLphp. This is the start page of your installation, where you "
+"will find links to test examples, diagnostics, metadata and even links to"
+" relevant documentation."
+msgstr ""
+"<strong>Gratulacje</strong>, instalacja SimpleSAMLphp przebiegła "
+"pomyślnie. To jest strona startowa Twojej instalacji, na której "
+"znajdziesz odnośniki do przykładów, narzędzi do diagnozowania, metadane a"
+" nawet linki do dokumentacji."
+
+msgid ""
+"<strong>You are not using HTTPS</strong> - encrypted communication with "
+"the user. HTTP works fine for test purposes, but in a production "
+"environment, you should use HTTPS. [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-"
+"maintenance\">Read more about SimpleSAMLphp maintenance</a> ]"
+msgstr ""
+"<strong>Nie używasz HTTPS</strong> - szyfrowana komunikacja z "
+"użytkownikiem. HTTP jest OK dla testów, ale na produkcji powinieneś "
+"używać tylko HTTPS. [ <a href=\"http://rnd.feide.no/content"
+"/simplesamlphp-maintenance-and-configuration\">Przeczytaj więcej o "
+"zarządzaniu SimpleSAMLphp</a> ]"
+
+msgid "Metadata"
+msgstr "Metadane"
+
+msgid "SimpleSAMLphp Maintenance and Configuration"
+msgstr "Konfiguracja i Prace administracyjne "
+
+msgid "Diagnostics on hostname, port and protocol"
+msgstr "Diagnostyka na hoście, port i protokół"
+
+msgid "Using SimpleSAMLphp as an Identity Provider"
+msgstr "Użycie SimpleSAMLphp jako Dostawca Tożsamości"
+
+msgid "Optional"
+msgstr "Opcjonalne"
+
+msgid ""
+"This SimpleSAMLphp thing is pretty cool, where can I read more about it? "
+"You can find more information about it at the <a "
+"href=\"https://simplesamlphp.org/\">SimpleSAMLphp web page </a> over at "
+"<a href=\"http://uninett.no\">UNINETT</a>."
+msgstr ""
+"Ten SimpleSAMLphp jest niezły, gdzie mogę poczytać o tym? Możesz znaleźć "
+"więcej informacji o <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">SimpleSAMLphp na blogu Feide "
+"RnD</a> oraz na stronie <a href=\"http://uninett.no\">UNINETT</a>."
+
+msgid "Shibboleth 1.3 SP example - test logging in through your Shib IdP"
+msgstr "Shibboleth 1.3 SP - przykład - test logowania przez Twoje Shib IdP"
+
+msgid "Authentication"
+msgstr "Uwierzytelnianie"
+
+msgid "Show metadata"
+msgstr "Wyświetl metadane"
+
+msgid "SimpleSAMLphp as an IdP for Google Apps for Education"
+msgstr "SimpleSAMLphp jako Dostawca Tożsamości dla Google Apps dla szkolnictwa"
+
+msgid "Hosted SAML 2.0 Identity Provider Metadata (automatically generated)"
+msgstr "Metadane - Lokalny SAML 2.0 Dostawca Tożsamości (generowane automatycznie)"
+
+msgid "OpenID Provider site - Alpha version (test code)"
+msgstr "Strona Dostawcy OpenID - wersja Alpha (kod w fazie testów)"
+
+msgid "Required for Radius"
+msgstr "Wymagane dla Radius"
+
+msgid "SAML 2.0 SP example - test logging in through your IdP"
+msgstr "SAML 2.0 SP - przykład - test logowania przez Twoje IdP"
+
+msgid "Using SimpleSAMLphp as a Service Provider"
+msgstr "Użycie SimpleSAMLphp jako Dostawca Serwisu"
+
+msgid "Recommended"
+msgstr "Rekomendowane"
+
+msgid "SimpleSAMLphp Advanced Features"
+msgstr "Zaawansowane właściwości SimpleSAMLphp"
+
+msgid "Checking your PHP installation"
+msgstr "Sprawdzanie instalacji PHP"
+
+msgid "Useful links for your installation"
+msgstr "Przydatne linki dla Twojej instalacji"
+
+msgid "Configuration"
+msgstr "Konfiguracja"
+
+msgid "Hosted Shibboleth 1.3 Identity Provider Metadata (automatically generated)"
+msgstr ""
+"Metadane - Lokalny Shibboleth 1.3 Dostawca Tożsamości (generowane "
+"automatycznie)"
+
+msgid "Login as administrator"
+msgstr "Zaloguj się jako administrator"
+

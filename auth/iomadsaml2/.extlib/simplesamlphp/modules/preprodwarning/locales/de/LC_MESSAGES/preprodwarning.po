@@ -1,0 +1,49 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: de\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{preprodwarning:warning:warning_header}"
+msgstr "Warnung beim Zugriff auf ein Pilotsystem"
+
+msgid "{preprodwarning:warning:warning}"
+msgstr ""
+"Sie greifen jetzt auf ein System im Pilotbetrieb zu. Diese "
+"Authentifizierungs-Konfiguration dient nur zum Testen und zur Überprüfung"
+" des Pilotbetriebes. Falls Ihnen jemand einen Link gesendet hat, der Sie "
+"hierher geführt hat und Sie sind kein <i>Tester</i>, so war der Link "
+"vermutlich falsch und Sie sollten <b>nicht hier sein</b>. "
+
+msgid "{preprodwarning:warning:yes}"
+msgstr "Ja, mir ist klar dass ich auf ein System im Pilotbetrieb zugreife"
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"Sie greifen jetzt auf ein System im Pilotbetrieb zu. Diese "
+"Authentifizierungs-Konfiguration dient nur zum Testen und zur Überprüfung"
+" des Pilotbetriebes. Falls Ihnen jemand einen Link gesendet hat, der Sie "
+"hierher geführt hat und Sie sind kein <i>Tester</i>, so war der Link "
+"vermutlich falsch und Sie sollten <b>nicht hier sein</b>. "
+
+msgid "Warning about accessing a pre-production system"
+msgstr "Warnung beim Zugriff auf ein Pilotsystem"
+
+msgid "Yes, I know I am accessing a pre-production system"
+msgstr "Ja, mir ist klar dass ich auf ein System im Pilotbetrieb zugreife"
+

@@ -1,0 +1,49 @@
+i{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_report_completion_overview/report_table
+
+    Report table template.
+
+    Context variables required for this template:
+    * bulkmoveoptions - array - Key-value pair array for the options of the the bulk move select menu element.
+
+    Example context (json):
+    {
+    }
+}}
+<div id="completion_overview_table">
+    <table id="report_completion_overview">
+        <thead>
+            <tr>
+                {{#tableheaders}}
+                    <th>{{name}}</th>
+                {{/tableheaders}}
+            </tr>
+        </thead>
+        <tbody>
+            {{#tabledata}}
+                <tr>
+                    {{#rowdata}}
+                        <td>{{value}}</td>
+                    {{/rowdata}}
+                </tr>
+            {{/tabledata}}
+        <tbody>
+    </table>
+</div>
+

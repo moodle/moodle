@@ -1,0 +1,163 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: ro\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100"
+" < 20)) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consentAdmin:consentadmin:status_header}"
+msgstr "Stare acord (consimțământ)"
+
+msgid "{consentAdmin:consentadmin:attributes_text}"
+msgstr "atribute"
+
+msgid "{consentAdmin:consentadmin:service_provider_header}"
+msgstr "Furnizor de servicii"
+
+msgid "{consentAdmin:consentadmin:removed}"
+msgstr "Acordul a fost înlăturat"
+
+msgid "{consentAdmin:consentadmin:consentadmin_header}"
+msgstr "Administrarea acordurilor (consimțămintelor)"
+
+msgid "{consentAdmin:consentadmin:show}"
+msgstr "Arată"
+
+msgid "{consentAdmin:consentadmin:attribute_org}"
+msgstr "Instituție"
+
+msgid "{consentAdmin:consentadmin:attribute_injected}"
+msgstr "Atribut introdus"
+
+msgid "{consentAdmin:consentadmin:show_hide_attributes}"
+msgstr "arată/ascunde atributele"
+
+msgid "{consentAdmin:consentadmin:consentadmin_purpose}"
+msgstr "Scopul acestui serviciu este"
+
+msgid "{consentAdmin:consentadmin:hide}"
+msgstr "Ascunde"
+
+msgid "{consentAdmin:consentadmin:sp_empty_description}"
+msgstr "(fără descriere)"
+
+msgid "{consentAdmin:consentadmin:service_providers_for}"
+msgstr "Furnizori de servicii pentru"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description2}"
+msgstr ""
+"<h3>Cum poate fi anulat acordul dumneavoastră</h3>Debifați căsuța "
+"corespunzătoare furnizorului de servicii <h3>Link-uri</h3><ul><li><a "
+"href=\"https://www.wayf.dk\">Start</a></li><li><a "
+"href=\"https://www.wayf.dk/FAQ\">FAQ</a></li></ul>"
+
+msgid "{consentAdmin:consentadmin:login}"
+msgstr "autentificare"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description1}"
+msgstr ""
+"Aici puteți edita acordul/consimțământul dumneavoastră pentru Furnizorii "
+"de servicii."
+
+msgid "{consentAdmin:consentadmin:updated}"
+msgstr "Acordul a fost actualizat"
+
+msgid "{consentAdmin:consentadmin:unknown}"
+msgstr "Necunoscut ..."
+
+msgid "{consentAdmin:consentadmin:added}"
+msgstr "Acordul a fost adăugat"
+
+msgid "{consentAdmin:consentadmin:attribute_id}"
+msgstr "Identitate"
+
+msgid "Injected attribut"
+msgstr "Atribut introdus"
+
+msgid "Show"
+msgstr "Arată"
+
+msgid "Consent Added"
+msgstr "Acordul a fost adăugat"
+
+msgid "Consent Administration"
+msgstr "Administrarea acordurilor (consimțămintelor)"
+
+msgid "Here you can view and edit your consent for the Service Providers."
+msgstr ""
+"Aici puteți edita acordul/consimțământul dumneavoastră pentru Furnizorii "
+"de servicii."
+
+msgid "Unknown ..."
+msgstr "Necunoscut ..."
+
+msgid "Identity"
+msgstr "Identitate"
+
+msgid "The purpose of the service is"
+msgstr "Scopul acestui serviciu este"
+
+msgid "Hide"
+msgstr "Ascunde"
+
+msgid "Service Provider"
+msgstr "Furnizor de servicii"
+
+msgid "Service Providers for"
+msgstr "Furnizori de servicii pentru"
+
+msgid "login"
+msgstr "autentificare"
+
+msgid "(name not specified)"
+msgstr "(nu a fost specificat numele)"
+
+msgid "Consent Updated"
+msgstr "Acordul a fost actualizat"
+
+msgid "Consent status"
+msgstr "Stare acord (consimțământ)"
+
+msgid "(no description)"
+msgstr "(fără descriere)"
+
+msgid "attributes"
+msgstr "atribute"
+
+msgid ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+msgstr ""
+"<h3>Cum poate fi anulat acordul dumneavoastră</h3>Debifați căsuța "
+"corespunzătoare furnizorului de servicii <h3>Link-uri</h3><ul><li><a "
+"href=\"https://www.wayf.dk\">Start</a></li><li><a "
+"href=\"https://www.wayf.dk/FAQ\">FAQ</a></li></ul>"
+
+msgid "Consent Removed"
+msgstr "Acordul a fost înlăturat"
+
+msgid "show/hide attributes"
+msgstr "arată/ascunde atributele"
+
+msgid "Organisation"
+msgstr "Instituție"
+

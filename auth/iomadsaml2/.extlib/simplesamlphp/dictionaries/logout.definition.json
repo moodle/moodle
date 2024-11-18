@@ -1,0 +1,56 @@
+{
+	"title": {
+		"en": "Logged out"
+	},
+	"logged_out_text": {
+		"en": "You have been logged out."
+	},
+	"default_link_text": {
+		"en": "Go back to SimpleSAMLphp installation page"
+	},
+	"hold": {
+		"en": "On hold"
+	},
+	"completed": {
+		"en": "Completed"
+	},
+	"progress": {
+		"en": "Logging out..."
+	},
+	"failed": {
+		"en": "Logout failed"
+	},
+	"return": {
+		"en": "Return to service"
+	},
+	"success": {
+		"en": "You have successfully logged out from all services listed above."
+	},
+	"loggedoutfrom": {
+		"en": "You are now successfully logged out from %SP%."
+	},
+	"also_from": {
+		"en": "You are also logged in on these services:"
+	},
+	"logout_all_question": {
+		"en": "Do you want to logout from all the services above?"
+	},
+	"logout_all": {
+		"en": "Yes, all services"
+	},
+	"logout_only": {
+		"en": "No, only %SP%"
+	},
+	"incapablesps": {
+		"en": "One or more of the services you are logged into <i>do not support logout<\/i>. To ensure that all your sessions are closed, you are encouraged to <i>close your web browser<\/i>."
+	},
+	"no": {
+		"en": "No"
+	},
+	"logging_out_from": {
+		"en": "Logging out of the following services:"
+	},
+	"failedsps": {
+		"en": "Unable to log out of one or more services. To ensure that all your sessions are closed, you are encouraged to <i>close your web browser<\/i>."
+	}
+}

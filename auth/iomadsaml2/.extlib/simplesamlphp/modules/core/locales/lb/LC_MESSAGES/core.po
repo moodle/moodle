@@ -1,0 +1,256 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: lb\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{core:frontpage:link_phpinfo}"
+msgstr "PHPinfo"
+
+msgid "{core:frontpage:link_shib13example}"
+msgstr "Shibboleth 1.3 SP Beispill - probeier dech iwer dain Shib IdP anzeloggen"
+
+msgid "{core:frontpage:link_doc_sp}"
+msgstr "SimpleSAMLphp als Service Provicer benotzen"
+
+msgid "{core:frontpage:link_meta_saml2sphosted}"
+msgstr "Hosted SAML 2.0 Service Provider Meta Données (automatesch erstallt)"
+
+msgid "{core:frontpage:link_openidprovider}"
+msgstr "OpenID Privider Sait - Alpha versioun (Test Code)"
+
+msgid "{core:frontpage:link_doc_install}"
+msgstr "SimpleSAMLphp installéiren"
+
+msgid "{core:frontpage:link_diagnostics}"
+msgstr "Diognose vum Hostname, Port an Protokoll"
+
+msgid "{core:frontpage:link_meta_saml2idphosted}"
+msgstr "Hosted SAML 2.0 Identity Provider Meta Données (automatesch erstallt)"
+
+msgid "{core:frontpage:optional}"
+msgstr "Optional"
+
+msgid "{core:frontpage:link_meta_shib13sphosted}"
+msgstr "Hosted Shibboleth 1.3 Service Provider Meta Données (automatesch erstallt)"
+
+msgid "{core:frontpage:doc_header}"
+msgstr "Dokumentatioun"
+
+msgid "{core:frontpage:link_doc_advanced}"
+msgstr "Erweidert Funktiounen vun SimpleSAMLphp "
+
+msgid "{core:frontpage:required_ldap}"
+msgstr "Néideg fir LDAP"
+
+msgid "{core:frontpage:link_meta_overview}"
+msgstr ""
+"Iwwersicht vun den Meta Données fir aer Installatioun. Diagnosizéiert aer"
+" Meta Données"
+
+msgid "{core:frontpage:link_doc_shibsp}"
+msgstr "Shibboleth 1.3 SP anstellen fir mam SimpleSAMLphp Idp ze funktionnéiren"
+
+msgid "{core:frontpage:metadata_header}"
+msgstr "Meta Données"
+
+msgid "{core:frontpage:link_doc_maintenance}"
+msgstr "SimpleSAMLphp Maintenance an Konfiguratioun"
+
+msgid "{core:frontpage:warnings}"
+msgstr "Warnungen"
+
+msgid "{core:frontpage:link_xmlconvert}"
+msgstr "XML zu SimpleSAMLphp Meta Données Emwandler"
+
+msgid "{core:frontpage:intro}"
+msgstr ""
+"<strong>Haerzleche Glëckwonsch</strong>, d'SimpleSAMLphp Installatioun "
+"wor en Succéss. Dest as d'Startsäit vun aerer Installatioun wou der "
+"Links, Beispiller, Diagnoseméiglechkeeten, Meta Données an Links op "
+"relevant Dokumenter fannt."
+
+msgid "{core:frontpage:link_meta_shib13idphosted}"
+msgstr ""
+"Hosted Shibboleth 1.3 Identity Provider Meta Données (automatesch "
+"erstallt)"
+
+msgid "{core:frontpage:required}"
+msgstr "Néideg"
+
+msgid "{core:frontpage:warnings_https}"
+msgstr ""
+"<strong>Der benotzt ken HTTPS</strong> - verschlësselt Kommunikatioun mat"
+" dem Benotzer. SimpleSAMLphp funktionéiert einwandfräi mat HTTP fir "
+"Testzwéecker mais an engem produktiven Emfeld sollt et besser mat HTTPS "
+"lafen. [ <a href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-maintenance"
+"\">Liest méi iwert Maintenance vun SimpleSAMLphp</a> ]"
+
+msgid "{core:frontpage:required_radius}"
+msgstr "Néideg fir RADIUS"
+
+msgid "{core:frontpage:checkphp}"
+msgstr "PHP Installatioun kontrolléiren"
+
+msgid "{core:frontpage:link_doc_idp}"
+msgstr "SimpleSAMLphp als Identity Provider benotzen"
+
+msgid "{core:frontpage:link_saml2example}"
+msgstr "SAML 2.0 SP Beispill - probeier dech iwert dain IdP anzeloggen"
+
+msgid "{core:frontpage:about_header}"
+msgstr "Iwwert SimpleSAMLphp"
+
+msgid "{core:frontpage:about_text}"
+msgstr ""
+"Desen SimpleSAMLphp system as nach ewëll dëcken Gas, wou kann ech méi "
+"doriwwer gewuer gin? Mei Informatiounen iwer <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">SimpleSAMLphp at the Feide RnD"
+" blog</a> op <a href=\"http://uninett.no\">UNINETT</a>"
+
+msgid "{core:frontpage:useful_links_header}"
+msgstr "Hëllefräich Links fir aer Installatioun"
+
+msgid "{core:frontpage:recommended}"
+msgstr "Recommendéiert"
+
+msgid "{core:frontpage:link_doc_googleapps}"
+msgstr "SimpleSAMLphp als IdP fir Google Apps for Education"
+
+msgid "Metadata overview for your installation. Diagnose your metadata files"
+msgstr ""
+"Iwwersicht vun den Meta Données fir aer Installatioun. Diagnosizéiert aer"
+" Meta Données"
+
+msgid "XML to SimpleSAMLphp metadata converter"
+msgstr "XML zu SimpleSAMLphp Meta Données Emwandler"
+
+msgid "Required"
+msgstr "Néideg"
+
+msgid "Warnings"
+msgstr "Warnungen"
+
+msgid "Documentation"
+msgstr "Dokumentatioun"
+
+msgid "Hosted Shibboleth 1.3 Service Provider Metadata (automatically generated)"
+msgstr "Hosted Shibboleth 1.3 Service Provider Meta Données (automatesch erstallt)"
+
+msgid "PHP info"
+msgstr "PHPinfo"
+
+msgid "About SimpleSAMLphp"
+msgstr "Iwwert SimpleSAMLphp"
+
+msgid "Hosted SAML 2.0 Service Provider Metadata (automatically generated)"
+msgstr "Hosted SAML 2.0 Service Provider Meta Données (automatesch erstallt)"
+
+msgid "Required for LDAP"
+msgstr "Néideg fir LDAP"
+
+msgid "Configure Shibboleth 1.3 SP to work with SimpleSAMLphp IdP"
+msgstr "Shibboleth 1.3 SP anstellen fir mam SimpleSAMLphp Idp ze funktionnéiren"
+
+msgid "Installing SimpleSAMLphp"
+msgstr "SimpleSAMLphp installéiren"
+
+msgid ""
+"<strong>Congratulations</strong>, you have successfully installed "
+"SimpleSAMLphp. This is the start page of your installation, where you "
+"will find links to test examples, diagnostics, metadata and even links to"
+" relevant documentation."
+msgstr ""
+"<strong>Haerzleche Glëckwonsch</strong>, d'SimpleSAMLphp Installatioun "
+"wor en Succéss. Dest as d'Startsäit vun aerer Installatioun wou der "
+"Links, Beispiller, Diagnoseméiglechkeeten, Meta Données an Links op "
+"relevant Dokumenter fannt."
+
+msgid ""
+"<strong>You are not using HTTPS</strong> - encrypted communication with "
+"the user. HTTP works fine for test purposes, but in a production "
+"environment, you should use HTTPS. [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-"
+"maintenance\">Read more about SimpleSAMLphp maintenance</a> ]"
+msgstr ""
+"<strong>Der benotzt ken HTTPS</strong> - verschlësselt Kommunikatioun mat"
+" dem Benotzer. SimpleSAMLphp funktionéiert einwandfräi mat HTTP fir "
+"Testzwéecker mais an engem produktiven Emfeld sollt et besser mat HTTPS "
+"lafen. [ <a href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-maintenance"
+"\">Liest méi iwert Maintenance vun SimpleSAMLphp</a> ]"
+
+msgid "Metadata"
+msgstr "Meta Données"
+
+msgid "SimpleSAMLphp Maintenance and Configuration"
+msgstr "SimpleSAMLphp Maintenance an Konfiguratioun"
+
+msgid "Diagnostics on hostname, port and protocol"
+msgstr "Diognose vum Hostname, Port an Protokoll"
+
+msgid "Using SimpleSAMLphp as an Identity Provider"
+msgstr "SimpleSAMLphp als Identity Provider benotzen"
+
+msgid "Optional"
+msgstr "Optional"
+
+msgid ""
+"This SimpleSAMLphp thing is pretty cool, where can I read more about it? "
+"You can find more information about it at the <a "
+"href=\"https://simplesamlphp.org/\">SimpleSAMLphp web page </a> over at "
+"<a href=\"http://uninett.no\">UNINETT</a>."
+msgstr ""
+"Desen SimpleSAMLphp system as nach ewëll dëcken Gas, wou kann ech méi "
+"doriwwer gewuer gin? Mei Informatiounen iwer <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">SimpleSAMLphp at the Feide RnD"
+" blog</a> op <a href=\"http://uninett.no\">UNINETT</a>"
+
+msgid "Shibboleth 1.3 SP example - test logging in through your Shib IdP"
+msgstr "Shibboleth 1.3 SP Beispill - probeier dech iwer dain Shib IdP anzeloggen"
+
+msgid "SimpleSAMLphp as an IdP for Google Apps for Education"
+msgstr "SimpleSAMLphp als IdP fir Google Apps for Education"
+
+msgid "Hosted SAML 2.0 Identity Provider Metadata (automatically generated)"
+msgstr "Hosted SAML 2.0 Identity Provider Meta Données (automatesch erstallt)"
+
+msgid "OpenID Provider site - Alpha version (test code)"
+msgstr "OpenID Privider Sait - Alpha versioun (Test Code)"
+
+msgid "Required for Radius"
+msgstr "Néideg fir RADIUS"
+
+msgid "SAML 2.0 SP example - test logging in through your IdP"
+msgstr "SAML 2.0 SP Beispill - probeier dech iwert dain IdP anzeloggen"
+
+msgid "Using SimpleSAMLphp as a Service Provider"
+msgstr "SimpleSAMLphp als Service Provicer benotzen"
+
+msgid "Recommended"
+msgstr "Recommendéiert"
+
+msgid "SimpleSAMLphp Advanced Features"
+msgstr "Erweidert Funktiounen vun SimpleSAMLphp "
+
+msgid "Checking your PHP installation"
+msgstr "PHP Installatioun kontrolléiren"
+
+msgid "Useful links for your installation"
+msgstr "Hëllefräich Links fir aer Installatioun"
+
+msgid "Hosted Shibboleth 1.3 Identity Provider Metadata (automatically generated)"
+msgstr ""
+"Hosted Shibboleth 1.3 Identity Provider Meta Données (automatesch "
+"erstallt)"
+

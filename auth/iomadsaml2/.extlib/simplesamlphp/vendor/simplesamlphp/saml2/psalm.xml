@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<psalm
+  name="SimpleSAMLphp"
+  useDocblockTypes="true"
+  totallyTyped="false"
+  hideExternalErrors="true"
+>
+  <projectFiles>
+    <directory name="src/SAML2" />
+    <ignoreFiles>
+      <directory name="vendor" />
+    </ignoreFiles>
+  </projectFiles>
+
+  <issueHandlers>
+    <LessSpecificReturnType errorLevel="info" />
+
+    <!-- level 3 issues - slightly lazy code writing, but probably low false-negatives -->
+    <DeprecatedMethod errorLevel="info" />
+
+    <MissingClosureReturnType errorLevel="info" />
+    <MissingReturnType errorLevel="info" />
+    <MissingPropertyType errorLevel="info" />
+    <InvalidDocblock errorLevel="info" />
+
+    <PropertyNotSetInConstructor errorLevel="info" />
+    <MissingConstructor errorLevel="info" />
+    <MissingClosureParamType errorLevel="info" />
+    <MissingParamType errorLevel="info" />
+    <UnusedClass errorLevel="info" />
+    <PossiblyUnusedMethod errorLevel="info" />
+    <PropertyNotSetInConstructor errorLevel="suppress" />
+    <MissingClosureReturnType errorLevel="suppress" />
+  </issueHandlers>
+</psalm>

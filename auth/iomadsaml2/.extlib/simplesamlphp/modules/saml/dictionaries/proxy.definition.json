@@ -1,0 +1,8 @@
+{
+  "invalid_idp": {
+    "en": "Invalid Identity Provider"
+  },
+  "invalid_idp_description": {
+    "en": "You already have a valid session with an identity provider (<em>%IDP%</em>) that is not accepted by <em>%SP%</em>. Would you like to log out from your existing session and log in again with another identity provider?"
+  }
+}

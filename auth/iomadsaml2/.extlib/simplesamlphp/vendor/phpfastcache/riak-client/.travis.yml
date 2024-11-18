@@ -1,0 +1,29 @@
+language: php
+php:
+- 5.4
+- 5.5
+- 5.6
+- 7.0
+- 7.1
+sudo: required
+dist: trusty
+addons:
+  hosts:
+    - riak-test
+env:
+  - RIAK_DOWNLOAD_URL=http://s3.amazonaws.com/downloads.basho.com/riak/2.0/2.0.7/ubuntu/trusty/riak_2.0.7-1_amd64.deb
+  - RIAK_DOWNLOAD_URL=http://s3.amazonaws.com/downloads.basho.com/riak/2.2/2.2.0/ubuntu/trusty/riak_2.2.0-1_amd64.deb
+before_script:
+  - phpenv config-rm xdebug.ini || echo 'xdebug.ini not installed'
+  - composer self-update
+  - composer install --prefer-source
+  - sudo ./tools/travis-ci/riak-install -d "$RIAK_DOWNLOAD_URL"
+  - sudo ./tools/setup-riak -s
+script:
+  - sudo riak-admin security disable
+  - make test
+  - sudo riak-admin security enable
+  - make security-test
+notifications:
+  slack:
+    secure: ZtgcjTxhTxrzWW6MIHLRtucW/BMm42RKS3nGRtSfgER9rx7oJ0Y9gOYkh1FM0GsM7Z11Q/iDhWs/8WTccAV0PrMZ6KHaq54wGmfYyqwPM4YreUwQ87PnOW4wZbl0TJTeWutasEwZvnVJ8VEyyQcS2PHt0zlsENn0XWvobvaZ+FM=

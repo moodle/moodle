@@ -1,0 +1,1409 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: cs\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{admin:metadata_saml20-idp}"
+msgstr "SAML 2.0 IdP Metadata"
+
+msgid "{errors:descr_WRONGUSERPASS}"
+msgstr ""
+"Uživatel buď nebyl nalezen, nebo jste zadal špatné heslo. Prosím "
+"zkontrolujte login a zkuste se přihlásit znovu."
+
+msgid "{logout:failed}"
+msgstr "Odhlášení selhalo"
+
+msgid "{status:attributes_header}"
+msgstr "Vaše atributy"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-remote}"
+msgstr "SAML 2.O Service Provider (Remote - vzdálený)"
+
+msgid "{errors:descr_NOCERT}"
+msgstr "Přihlášení neproběhlo: Váš prohlížeč neodeslal žádný certifikát"
+
+msgid "{errors:title_PROCESSASSERTION}"
+msgstr "Chyba zpracování odpovědi od poskytovatele identity"
+
+msgid "{errors:title_NOSTATE}"
+msgstr "Stavová informace ztracena"
+
+msgid "{login:username}"
+msgstr "Uživatel"
+
+msgid "{errors:title_METADATA}"
+msgstr "Chyba nahrávání metadat"
+
+msgid "{admin:metaconv_title}"
+msgstr "Metadata parser"
+
+msgid "{admin:cfg_check_noerrors}"
+msgstr "Nenalezeny žádné chyby"
+
+msgid "{errors:descr_LOGOUTINFOLOST}"
+msgstr ""
+"Informace o odhlašovací operaci byla ztracena. Můžete se vrátit do "
+"aplikace, ze které jste se odhlašovali a zkusit to znova. Tato chyba byla"
+" způsobena vypršením odhlašovacích informací. Ty jsou uloženy po omezený čas "
+"(jednotky hodin). To by mělo stačit na normální odhlášení a tato chyba "
+"může ukazovat na chyby v konfiguraci. Pokud problém přetrvává, "
+"kontaktujte administrátora."
+
+msgid "{disco:previous_auth}"
+msgstr "Dříve jste zvolil(a) ověření u"
+
+msgid "{admin:cfg_check_back}"
+msgstr "Zpátky na seznam souborů"
+
+msgid "{errors:report_trackid}"
+msgstr ""
+"Pokud budete reportovat tuto chybu, prosím zašlete také toto ID, které "
+"umožní najít vaši session v logu, který je dostupný systémovým "
+"administrátorem：  "
+
+msgid "{login:change_home_org_title}"
+msgstr "Změňte svou organizaci"
+
+msgid "{errors:descr_METADATANOTFOUND}"
+msgstr "Nebyla nalezena metadata pro %ENTITYID%"
+
+msgid "{admin:metadata_metadata}"
+msgstr "Metadata"
+
+msgid "{errors:report_text}"
+msgstr ""
+"Můžete uvést svou emailovou adresu, aby vás mohl administrátor "
+"kontaktovat:"
+
+msgid "{errors:report_header}"
+msgstr "Oznámit chyby"
+
+msgid "{login:change_home_org_text}"
+msgstr ""
+"Máte nastavenu <b>%HOMEORG%</b> jako domovskou organizaci. Pokud je to "
+"špatně, zvolte jinou."
+
+msgid "{errors:title_PROCESSAUTHNREQUEST}"
+msgstr "Chyba provádění žádosti poskytovatele služby"
+
+msgid "{errors:descr_PROCESSASSERTION}"
+msgstr "Neakceptujeme odpověď zaslanou poskytovatelem identity."
+
+msgid "{errors:debuginfo_header}"
+msgstr "Ladicí informace"
+
+msgid "{admin:debug_sending_message_msg_text}"
+msgstr "Pokud jste v debug módu, můžete vidět obsah zprávy, kterou posíláte:"
+
+msgid "{errors:descr_RESPONSESTATUSNOSUCCESS}"
+msgstr "Poskytovatel identity odpověděl chybou. (Stavový kód v SAML nebyl úspěšný)"
+
+msgid "{admin:metadata_shib13-idp}"
+msgstr "Shib 1.3 IdP Metadata"
+
+msgid "{login:help_text}"
+msgstr ""
+"Bez jména a hesla se nemůžete identifikovat. Zkuste "
+"kontaktovat helpdesk své organizace."
+
+msgid "{logout:default_link_text}"
+msgstr "Zpátky na SimpleSAMLphp instalační stránku"
+
+msgid "{errors:error_header}"
+msgstr "SimpleSAMLphp chyba"
+
+msgid "{login:help_header}"
+msgstr "Zapomněl jsem heslo."
+
+msgid "{errors:descr_LDAPERROR}"
+msgstr ""
+"LDAP je databáze uživatelů, a když se chcete přihlásit, je potřeba se "
+"přihlásit do LDAP databáze. Chyba nastala během připojování."
+
+msgid "{errors:descr_METADATA}"
+msgstr ""
+"Je zde chyba v konfiguraci SimpleSAMLphp. Pokud jste administrátorem "
+"služby, zkontrolujte metadata."
+
+msgid "{errors:title_BADREQUEST}"
+msgstr "Zaslán špatný požadavek"
+
+msgid "{status:sessionsize}"
+msgstr "Velikost sezeni: %SIZE%"
+
+msgid "{logout:title}"
+msgstr "Odhlášen"
+
+msgid "{admin:metaconv_xmlmetadata}"
+msgstr "XML Metadata"
+
+msgid "{admin:metaover_unknown_found}"
+msgstr "Následující pole nebyla rozpoznána"
+
+msgid "{errors:title_AUTHSOURCEERROR}"
+msgstr "Chyba autentizačního zdroje"
+
+msgid "{login:select_home_org}"
+msgstr "Zvolte svou organizaci"
+
+msgid "{logout:hold}"
+msgstr "Čekám"
+
+msgid "{admin:cfg_check_header}"
+msgstr "Verifikace konfigurace"
+
+msgid "{admin:debug_sending_message_send}"
+msgstr "Poslat zprávu"
+
+msgid "{status:logout}"
+msgstr "Odhlášení"
+
+msgid "{errors:descr_DISCOPARAMS}"
+msgstr "Parametr zaslaný vyhledávací službě neodpovídá specifikaci."
+
+msgid "{errors:descr_CREATEREQUEST}"
+msgstr "Chyba vznikla při vytváření SAML požadavku."
+
+msgid "{admin:metaover_optional_found}"
+msgstr "Volitelná pole"
+
+msgid "{logout:return}"
+msgstr "Zpátky na službu"
+
+msgid "{admin:metadata_xmlurl}"
+msgstr ""
+"<a href=\"%METAURL%\">Získejte metadata v XML formátu na dedikované "
+"adrese</a>"
+
+msgid "{logout:logout_all}"
+msgstr "Ano, všechny služby"
+
+msgid "{admin:debug_disable_debug_mode}"
+msgstr ""
+"Můžete vypnout debug mód v globální konfiguraci SimpleSAMLphp "
+"<tt>config/config.php</tt>."
+
+msgid "{disco:select}"
+msgstr "Zvolte"
+
+msgid "{logout:also_from}"
+msgstr "Jste ještě přihlášen(a) na tyto služby:"
+
+msgid "{login:login_button}"
+msgstr "Přihlásit"
+
+msgid "{logout:progress}"
+msgstr "Odhlašuji..."
+
+msgid "{login:error_wrongpassword}"
+msgstr "Nesprávné jméno nebo heslo."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-remote}"
+msgstr "Shib 1.3 Service Provider (Remote - vzdálený)"
+
+msgid "{errors:descr_PROCESSAUTHNREQUEST}"
+msgstr ""
+"Tento poskytovatel identity přijal požadavek od poskytovatele služby, ale"
+" při jeho provádění vznikla chyba."
+
+msgid "{logout:logout_all_question}"
+msgstr "Chcete se odhlásit ze všech těchto služeb?"
+
+msgid "{errors:title_NOACCESS}"
+msgstr "Nemáte přístup"
+
+msgid "{login:error_nopassword}"
+msgstr ""
+"Odeslal jste data do přihlašovací stránky, ale z nějakého důvodu nebylo "
+"odesláno heslo. Prosím zkuste to znovu."
+
+msgid "{errors:title_NORELAYSTATE}"
+msgstr "Nenalezen RelayState."
+
+msgid "{errors:descr_NOSTATE}"
+msgstr "Stavová informace "
+
+msgid "{login:password}"
+msgstr "Heslo"
+
+msgid "{errors:debuginfo_text}"
+msgstr "Následující ladicí informace může zajímat administrátora (helpdesk)"
+
+msgid "{admin:cfg_check_missing}"
+msgstr "Chybějící položky v konfiguračním souboru"
+
+msgid "{errors:descr_UNHANDLEDEXCEPTION}"
+msgstr "Vznikla neočekávaná výjimka."
+
+msgid "{general:yes}"
+msgstr "Ano"
+
+msgid "{errors:title_CONFIG}"
+msgstr "Chyba konfigurace"
+
+msgid "{errors:title_LOGOUTREQUEST}"
+msgstr "Chyba zpracování odhlašovacího požadavku"
+
+msgid "{admin:metaover_errorentry}"
+msgstr "Chyba v této položce metadat"
+
+msgid "{errors:title_METADATANOTFOUND}"
+msgstr "Metadata nenalezena"
+
+msgid "{login:contact_info}"
+msgstr "Kontaktní informace"
+
+msgid "{errors:title_UNHANDLEDEXCEPTION}"
+msgstr "Neočekávaná výjimka"
+
+msgid "{status:header_saml20_sp}"
+msgstr "SAML 2.0 SP Demo"
+
+msgid "{login:error_header}"
+msgstr "Chyba"
+
+msgid "{errors:title_USERABORTED}"
+msgstr "Přihlášení odmítnuto"
+
+msgid "{logout:incapablesps}"
+msgstr ""
+"Jedna nebo více služeb, do kterých jste přihlášen(a), nepodporuje "
+"odhlašení. Pokud se chcete odhlásit, musíte ukončit váš webový prohlížeč."
+
+msgid "{admin:metadata_xmlformat}"
+msgstr "V SAML 2.0 metadata XML formátu:"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-remote}"
+msgstr "SAML 2.0 Identity Provider (Remote - vzdálený)"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-hosted}"
+msgstr "SAML 2.0 Identity Provider (Hosted - lokální)"
+
+msgid "{admin:metaover_required_found}"
+msgstr "Požadovaná pole"
+
+msgid "{admin:cfg_check_select_file}"
+msgstr "Vyber konfiguračního souboru k verifikaci:"
+
+msgid "{errors:descr_UNKNOWNCERT}"
+msgstr "Přihlášení neproběhlo: certifikát který odeslal Váš prohlížeč je neznámý"
+
+msgid "{logout:logging_out_from}"
+msgstr "Odhlášení z následujících služeb:"
+
+msgid "{logout:loggedoutfrom}"
+msgstr ""
+"Zahájil jste <strong>globální odhlášení</strong> ze služby "
+"<strong>%REQUESTERNAME%</strong>. Globální odhlášení znamená, že budete "
+"odhlášen ze všech následující služeb."
+
+msgid "{errors:errorreport_text}"
+msgstr "Zpráva o chybě byla zaslána administrátorům."
+
+msgid "{errors:descr_LOGOUTREQUEST}"
+msgstr "Při procesu odhlášení vznikla chyba."
+
+msgid "{logout:success}"
+msgstr "Úspěšně jste se odhlásili z následujících služeb."
+
+msgid "{admin:cfg_check_notices}"
+msgstr "Poznámky"
+
+msgid "{errors:descr_USERABORTED}"
+msgstr "Přihlášení bylo přerušeno uživatelem"
+
+msgid "{errors:descr_CASERROR}"
+msgstr "Chyba při komunikaci s CAS serverem."
+
+msgid "{general:no}"
+msgstr "Ne"
+
+msgid "{admin:metadata_saml20-sp}"
+msgstr "SAML 2.0 SP Metadata"
+
+msgid "{admin:metaconv_converted}"
+msgstr "Konvertovaná metadata"
+
+msgid "{logout:completed}"
+msgstr "Dokončeno"
+
+msgid "{errors:descr_NOTSET}"
+msgstr ""
+"Heslo v konfiguraci (auth.adminpassword) není nastaveno. Prosím nastavte "
+"ho."
+
+msgid "{general:service_provider}"
+msgstr "Poskytovatel služby"
+
+msgid "{errors:descr_BADREQUEST}"
+msgstr "Chyba požadavku pro tuto stránku. Důvod je: %REASON%"
+
+msgid "{logout:no}"
+msgstr "Ne"
+
+msgid "{disco:icon_prefered_idp}"
+msgstr "[Preferovaná volba]"
+
+msgid "{general:no_cancel}"
+msgstr "Ne, neakceptuji"
+
+msgid "{login:user_pass_header}"
+msgstr "Vložte své jméno a heslo"
+
+msgid "{errors:report_explain}"
+msgstr "Vysvětlete, jak došlo k této chybě ..."
+
+msgid "{errors:title_ACSPARAMS}"
+msgstr "Nebyla zaslána SAML odpověď"
+
+msgid "{errors:descr_SLOSERVICEPARAMS}"
+msgstr ""
+"Přistupujete k SingleLogoutService rozhraní, ale nezadáváte SAML "
+"LogoutRequest ani LogoutResponse."
+
+msgid "{login:organization}"
+msgstr "Organizace"
+
+msgid "{errors:title_WRONGUSERPASS}"
+msgstr "Špatné jméno a heslo."
+
+msgid "{admin:metaover_required_not_found}"
+msgstr "Následující požadovaná pole nenalezena"
+
+msgid "{errors:descr_NOACCESS}"
+msgstr "Tento koncový bod není povolen. Zkontrolujte konfiguraci (zapněte volby)."
+
+msgid "{errors:title_SLOSERVICEPARAMS}"
+msgstr "Nebyla zaslána SAML zpráva"
+
+msgid "{errors:descr_ACSPARAMS}"
+msgstr ""
+"Přistupujete k Assertion Consumer Service rozhraní, ale neposíláte SAML"
+" Authentication Response."
+
+msgid "{admin:debug_sending_message_text_link}"
+msgstr "Můžete poslat zprávu. Klikněte na odkaz pro pokračování."
+
+msgid "{errors:descr_AUTHSOURCEERROR}"
+msgstr "Autentizační chyba ve zdroji %AUTHSOURCE%. Důvodem bylo: %REASON%"
+
+msgid "{status:some_error_occurred}"
+msgstr "Chyba"
+
+msgid "{login:change_home_org_button}"
+msgstr "Zvolte domovskou organizaci"
+
+msgid "{admin:cfg_check_superfluous}"
+msgstr "Nadbytečné položky v konfiguračním souboru"
+
+msgid "{errors:report_email}"
+msgstr "Email"
+
+msgid "{errors:howto_header}"
+msgstr "Jak získat pomoc"
+
+msgid "{errors:title_NOTSET}"
+msgstr "Heslo nebylo zadáno."
+
+msgid "{errors:descr_NORELAYSTATE}"
+msgstr "Původce této žádosti nezadal parametr RelayState, který určuje kam pokračovat."
+
+msgid "{status:header_diagnostics}"
+msgstr "SimpleSAMLphp diagnostika"
+
+msgid "{status:intro}"
+msgstr ""
+"Vítejte na informační stránce. Zde uvidíte, pokud vypršelo vaše sezení, "
+"jak dlouho jste pryč a všechny atributy připojené k vašemu sezení."
+
+msgid "{errors:title_NOTFOUNDREASON}"
+msgstr "Stránka nenalezena"
+
+msgid "{admin:debug_sending_message_title}"
+msgstr "Posílám zprávu"
+
+msgid "{errors:title_RESPONSESTATUSNOSUCCESS}"
+msgstr "Chyba přijatá od poskytovatele identity"
+
+msgid "{admin:metadata_shib13-sp}"
+msgstr "Shib 1.3 SP Metadata"
+
+msgid "{admin:metaover_intro}"
+msgstr "Pro zobrazení detailu SAML entity, klikni na hlavičku entity"
+
+msgid "{errors:title_NOTVALIDCERT}"
+msgstr "Špatný certifikát"
+
+msgid "{general:remember}"
+msgstr "Zapamatuj"
+
+msgid "{disco:selectidp}"
+msgstr "Zvol svého poskytovatele identity (IdP)"
+
+msgid "{login:help_desk_email}"
+msgstr "Email helpdesku zaslán."
+
+msgid "{login:help_desk_link}"
+msgstr "Help desk"
+
+msgid "{errors:title_CASERROR}"
+msgstr "CAS chyba"
+
+msgid "{login:user_pass_text}"
+msgstr "Služba požaduje vaši identifikaci. Prosím vložte své jméno a heslo."
+
+msgid "{errors:title_DISCOPARAMS}"
+msgstr "Špatný požadavek pro prohledávací službu"
+
+msgid "{general:yes_continue}"
+msgstr "Ano, akceptuji"
+
+msgid "{disco:remember}"
+msgstr "Zapamatuj moji volbu"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-hosted}"
+msgstr "SAML 2.0 Service Provider (Hosted - lokální)"
+
+msgid "{admin:metadata_simplesamlformat}"
+msgstr ""
+"V SimpleSAMLphp souborovém formátu (flat-file) - použijte, pokud "
+"potřebujete používat SimpleSAMLphp na druhé straně:"
+
+msgid "{disco:login_at}"
+msgstr "Přihlášení k"
+
+msgid "{errors:title_GENERATEAUTHNRESPONSE}"
+msgstr "Nelze vytvořit odpověď"
+
+msgid "{errors:errorreport_header}"
+msgstr "Zpráva o chybě odeslána"
+
+msgid "{errors:title_CREATEREQUEST}"
+msgstr "Chyba při vytváření požadavku"
+
+msgid "{admin:metaover_header}"
+msgstr "Přehled metadat"
+
+msgid "{errors:report_submit}"
+msgstr "Odeslat zprávu o chybě"
+
+msgid "{errors:title_INVALIDCERT}"
+msgstr "Nesprávný certifikát"
+
+msgid "{errors:title_NOTFOUND}"
+msgstr "Stránka nenalezena."
+
+msgid "{logout:logged_out_text}"
+msgstr "Jste odhlášen. Děkujeme za použití této služby."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-hosted}"
+msgstr "Shib 1.3 Service Provider (Hosted - lokální)"
+
+msgid "{admin:metadata_cert_intro}"
+msgstr "Stáhněte certifikát X509 jako PEM-encoded soubor"
+
+msgid "{admin:debug_sending_message_msg_title}"
+msgstr "Zpráva"
+
+msgid "{errors:title_UNKNOWNCERT}"
+msgstr "Neznámý certifikát"
+
+msgid "{errors:title_LDAPERROR}"
+msgstr "LDAP chyba"
+
+msgid "{logout:failedsps}"
+msgstr ""
+"Odhlášení z jedné nebo z více služeb se nezdařilo. Aby bylo zajištěno, že"
+" všechny vaše relace budou uzavřeny, doporučujeme <i>ukončit váš webový "
+"prohlížeč</i>."
+
+msgid "{errors:descr_NOTFOUND}"
+msgstr "Stránka nenalezena. URL je: %URL%"
+
+msgid "{errors:howto_text}"
+msgstr ""
+"Tato chyba pravděpodobně vznikla neočekávanou událostí, nebo chybou v "
+"konfiguraci. Kontaktujte administrátora této přihlašovací služby a "
+"zašlete mu tuto zprávu."
+
+msgid "{admin:metaover_group_metadata.shib13-idp-hosted}"
+msgstr "Shib 1.3 Identity Provider (Hosted - lokální)"
+
+msgid "{errors:descr_NOTVALIDCERT}"
+msgstr "Nepředložil jste validní certifikát."
+
+msgid "{admin:debug_sending_message_text_button}"
+msgstr "Můžete poslat zprávu. Požijte tlačítko k pokračování."
+
+msgid "{admin:metaover_optional_not_found}"
+msgstr "Následující volitelná pole nenalezena"
+
+msgid "{logout:logout_only}"
+msgstr "Ne, jen %SP%"
+
+msgid "{login:next}"
+msgstr "Další"
+
+msgid "{errors:descr_GENERATEAUTHNRESPONSE}"
+msgstr ""
+"Při vytváření přihlašovací odpovědi tímto poskytovatelem identity "
+"vznikla chyba."
+
+msgid "{disco:selectidp_full}"
+msgstr "Prosím zvolte svého poskytovatele identity, který vám dovolí se přihlásit"
+
+msgid "{errors:descr_NOTFOUNDREASON}"
+msgstr "Stránka nenalezena. Důvod je: %REASON%  URL je: %URL%"
+
+msgid "{errors:title_NOCERT}"
+msgstr "Chybí certifikát"
+
+msgid "{errors:title_LOGOUTINFOLOST}"
+msgstr "Odhlašovací informace ztracena"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-remote}"
+msgstr "Shib 1.3 Identity Provider (Remote - vzdálený)"
+
+msgid "{errors:descr_CONFIG}"
+msgstr "SimpleSAMLphp je špatně nakonfigurovaný"
+
+msgid "{admin:metadata_intro}"
+msgstr ""
+"Zde jsou metadata, která pro vás SimpleSAMLphp generuje. Můžete zaslat "
+"tento dokument svým důvěryhodným partnerům a založit tak federaci."
+
+msgid "{admin:metadata_cert}"
+msgstr "Certifikáty"
+
+msgid "{errors:descr_INVALIDCERT}"
+msgstr ""
+"Přihlášení neproběhlo: certifikát, který odeslal Váš prohlížeč, nemohl být "
+"přečten"
+
+msgid "{status:header_shib}"
+msgstr "Shibboleth demo"
+
+msgid "{admin:metaconv_parse}"
+msgstr "Analýza"
+
+msgid "Person's principal name at home organization"
+msgstr "Hlavní jméno osoby v organizaci"
+
+msgid "Superfluous options in config file"
+msgstr "Nadbytečné položky v konfiguračním souboru"
+
+msgid "Mobile"
+msgstr "Mobil"
+
+msgid "Shib 1.3 Service Provider (Hosted)"
+msgstr "Shib 1.3 Service Provider (Hosted - lokální)"
+
+msgid ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+msgstr ""
+"LDAP je databáze uživatelů, a když se chcete přihlásit, je potřeba se "
+"k ní připojit. Chyba nastala během připojování."
+
+msgid ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+msgstr ""
+"Můžete uvést svou emailovou adresu, aby vás mohl administrátor "
+"kontaktovat:"
+
+msgid "Display name"
+msgstr "Zobrazované jméno"
+
+msgid "Remember my choice"
+msgstr "Zapamatuj moji volbu"
+
+msgid "SAML 2.0 SP Metadata"
+msgstr "SAML 2.0 SP Metadata"
+
+msgid "Notices"
+msgstr "Poznámky"
+
+msgid "Home telephone"
+msgstr "Telefon domů"
+
+msgid ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+msgstr ""
+"Vítejte na informační stránce. Zde uvidíte, pokud vypršelo vaše sezení, "
+"jak dlouho jste pryč a všechny atributy připojené k vašemu sezení."
+
+msgid "Explain what you did when this error occurred..."
+msgstr "Vysvětlete, jak došlo k této chybě ..."
+
+msgid "An unhandled exception was thrown."
+msgstr "Vznikla neočekávaná výjimka."
+
+msgid "Invalid certificate"
+msgstr "Nesprávný certifikát"
+
+msgid "Service Provider"
+msgstr "Poskytovatel služby"
+
+msgid "Incorrect username or password."
+msgstr "Nesprávné jméno nebo heslo."
+
+msgid "There is an error in the request to this page. The reason was: %REASON%"
+msgstr "Chyba požadavku pro tuto stránku. Důvod je: %REASON%"
+
+msgid "E-mail address:"
+msgstr "Email"
+
+msgid "Submit message"
+msgstr "Poslat zprávu"
+
+msgid "No RelayState"
+msgstr "Nenalezen RelayState."
+
+msgid "Error creating request"
+msgstr "Chyba při vytváření požadavku"
+
+msgid "Locality"
+msgstr "Lokalita"
+
+msgid "Unhandled exception"
+msgstr "Neočekávaná výjimka"
+
+msgid "The following required fields was not found"
+msgstr "Následující požadovaná pole nenalezena"
+
+msgid "Download the X509 certificates as PEM-encoded files."
+msgstr "Stáhněte certifikát X509 jako PEM-encoded soubor"
+
+#, python-format
+msgid "Unable to locate metadata for %ENTITYID%"
+msgstr "Nebyla nalezena metadata pro %ENTITYID%"
+
+msgid "Organizational number"
+msgstr "Číslo organizace"
+
+msgid "Password not set"
+msgstr "Heslo nebylo zadáno."
+
+msgid "SAML 2.0 IdP Metadata"
+msgstr "SAML 2.0 IdP Metadata"
+
+msgid "Post office box"
+msgstr "Postbox"
+
+msgid ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+msgstr "Služba požaduje vaši identifikaci. Prosím vložte své jméno a heslo."
+
+msgid "CAS Error"
+msgstr "CAS chyba"
+
+msgid ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+msgstr "Následující ladicí informace může zajímat administrátora (helpdesk)"
+
+msgid ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+msgstr ""
+"Uživatel buď nebyl nalezen, nebo jste zadal špatné heslo. Prosím "
+"zkontrolujte login a zkuste se přihlásit znovu."
+
+msgid "Error"
+msgstr "Chyba"
+
+msgid "Next"
+msgstr "Další"
+
+msgid "Distinguished name (DN) of the person's home organizational unit"
+msgstr "Uživatelské jméno přidělené organizační jednotkou"
+
+msgid "State information lost"
+msgstr "Stavová informace ztracena"
+
+msgid ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+msgstr ""
+"Heslo v konfiguraci (auth.adminpassword) není nastaveno. Prosím nastavte "
+"ho."
+
+msgid "Converted metadata"
+msgstr "Konvertovaná metadata"
+
+msgid "Mail"
+msgstr "Email"
+
+msgid "No, cancel"
+msgstr "Ne"
+
+msgid ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+msgstr ""
+"Máte nastavenu <b>%HOMEORG%</b> jako domovskou organizaci. Pokud je to "
+"špatně, zvolte jinou."
+
+msgid "Error processing request from Service Provider"
+msgstr "Chyba provádění žádosti poskytovatele služby"
+
+msgid "Distinguished name (DN) of person's primary Organizational Unit"
+msgstr "Jméno hlavní organizační jednotky"
+
+msgid ""
+"To look at the details for an SAML entity, click on the SAML entity "
+"header."
+msgstr "Pro zobrazení detailu SAML entity klikni na hlavičku entity"
+
+msgid "Enter your username and password"
+msgstr "Vložte své jméno a heslo"
+
+msgid "Login at"
+msgstr "Přihlášení k"
+
+msgid "No"
+msgstr "Ne"
+
+msgid "Home postal address"
+msgstr "Adresa domů"
+
+msgid "WS-Fed SP Demo Example"
+msgstr "WS-Fed SP Demo"
+
+msgid "SAML 2.0 Identity Provider (Remote)"
+msgstr "SAML 2.0 Identity Provider (Remote - vzdálený)"
+
+msgid "Error processing the Logout Request"
+msgstr "Chyba zpracování odhlašovacího požadavku"
+
+msgid "Do you want to logout from all the services above?"
+msgstr "Chcete se odhlásit ze všech těchto služeb?"
+
+msgid "Select"
+msgstr "Zvolit"
+
+msgid "The authentication was aborted by the user"
+msgstr "Přihlášení bylo přerušeno uživatelem"
+
+msgid "Your attributes"
+msgstr "Vaše atributy"
+
+msgid "Given name"
+msgstr "Křestní jméno"
+
+msgid "Identity assurance profile"
+msgstr "Poskytovatel identifikačního profilu"
+
+msgid "SAML 2.0 SP Demo Example"
+msgstr "SAML 2.0 SP Demo"
+
+msgid "Logout information lost"
+msgstr "Odhlašovací informace ztracena"
+
+msgid "Organization name"
+msgstr "Jméno organizace"
+
+msgid "Authentication failed: the certificate your browser sent is unknown"
+msgstr "Přihlášení neproběhlo: certifikát, který odeslal Váš prohlížeč, je neznámý"
+
+msgid ""
+"You are about to send a message. Hit the submit message button to "
+"continue."
+msgstr "Můžete poslat zprávu. Požijte tlačítko k pokračování."
+
+msgid "Home organization domain name"
+msgstr "Doménové jméno organizace"
+
+msgid "Go back to the file list"
+msgstr "Zpátky na seznam souborů"
+
+msgid "Error report sent"
+msgstr "Zpráva o chybě odeslána"
+
+msgid "Common name"
+msgstr "Celé jméno"
+
+msgid "Please select the identity provider where you want to authenticate:"
+msgstr "Prosím zvolte svého poskytovatele identity, který vám dovolí se přihlásit"
+
+msgid "Logout failed"
+msgstr "Odhlášení selhalo"
+
+msgid "Identity number assigned by public authorities"
+msgstr "Identifikační kód přidělený veřejnou autoritou"
+
+msgid "WS-Federation Identity Provider (Remote)"
+msgstr "WS-Federation Identity Provider (Remote - vzdálený)"
+
+msgid "Error received from Identity Provider"
+msgstr "Chyba přijatá od poskytovatele identity"
+
+msgid "LDAP Error"
+msgstr "LDAP chyba"
+
+msgid ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+msgstr ""
+"Informace o odhlašovací operaci byla ztracena. Můžete se vrátit do "
+"aplikace, ze které jste se odhlašovali, a zkusit to znova. Tato chyba byla"
+" způsobena vypršením odhlašovacích informací. Ty jsou uloženy po omezený čas "
+"(jednotky hodin). To by mělo stačit na normální odhlášení a tato chyba "
+"může ukazovat na chyby v konfiguraci. Pokud problém přetrvává, "
+"kontaktujte administrátora."
+
+msgid "Some error occurred"
+msgstr "Nalezena chyba"
+
+msgid "Organization"
+msgstr "Organizace"
+
+msgid "No certificate"
+msgstr "Chybí certifikát"
+
+msgid "Choose home organization"
+msgstr "Zvolte domovskou organizaci"
+
+msgid "Persistent pseudonymous ID"
+msgstr "Perzistentní pseudoanonymní ID"
+
+msgid "No SAML response provided"
+msgstr "Nebyla zaslána SAML odpověď"
+
+msgid "No errors found."
+msgstr "Nenalezeny žádné chyby"
+
+msgid "SAML 2.0 Service Provider (Hosted)"
+msgstr "SAML 2.0 Service Provider (Hosted - lokální)"
+
+msgid "The given page was not found. The URL was: %URL%"
+msgstr "Stránka nenalezena. URL je: %URL%"
+
+msgid "Configuration error"
+msgstr "Chyba konfigurace"
+
+msgid "Required fields"
+msgstr "Požadovaná pole"
+
+msgid "An error occurred when trying to create the SAML request."
+msgstr "Chyba vznikla při vytváření SAML požadavku."
+
+msgid ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+msgstr ""
+"Tato chyba pravděpodobně vznikla neočekávanou událostí, nebo chybou v "
+"konfiguraci. Kontaktujte administrátora této přihlašovací služby a "
+"zašlete mu tuto zprávu."
+
+#, python-format
+msgid "Your session is valid for %remaining% seconds from now."
+msgstr "Vaše sezení je platné ještě %remaining% sekund."
+
+msgid "Domain component (DC)"
+msgstr "Doména (DC)"
+
+msgid "Shib 1.3 Service Provider (Remote)"
+msgstr "Shib 1.3 Service Provider (Remote - vzdálený)"
+
+msgid "Password"
+msgstr "Heslo"
+
+msgid "Nickname"
+msgstr "Přezdívka"
+
+msgid "Send error report"
+msgstr "Zaslat chybový report"
+
+msgid ""
+"Authentication failed: the certificate your browser sent is invalid or "
+"cannot be read"
+msgstr ""
+"Přihlášení neproběhlo: certifikát, který odeslal Váš prohlížeč, nemohl být "
+"přečten"
+
+msgid "The error report has been sent to the administrators."
+msgstr "Zpráva o chybě byla zaslána administrátorům."
+
+msgid "Date of birth"
+msgstr "Datum narozeni"
+
+msgid "Private information elements"
+msgstr "Privátní informační elementy"
+
+msgid "You are also logged in on these services:"
+msgstr "Jste ještě přihlášen k těmto službám:"
+
+msgid "SimpleSAMLphp Diagnostics"
+msgstr "SimpleSAMLphp diagnostika"
+
+msgid "Debug information"
+msgstr "Ladicí informace"
+
+msgid "No, only %SP%"
+msgstr "Ne, jen %SP%"
+
+msgid "Username"
+msgstr "Uživatel"
+
+msgid "Go back to SimpleSAMLphp installation page"
+msgstr "Zpátky na SimpleSAMLphp instalační stránku"
+
+msgid "You have successfully logged out from all services listed above."
+msgstr "Úspěšně jste se odhlásili z následujících služeb."
+
+msgid "You are now successfully logged out from %SP%."
+msgstr ""
+"Zahájil jste <strong>globální odhlášení</strong> ze služby "
+"<strong>%REQUESTERNAME%</strong>. Globální odhlášení znamená, že budete "
+"odhlášen ze všech následující služeb."
+
+msgid "Affiliation"
+msgstr "Vztah k organizaci"
+
+msgid "You have been logged out."
+msgstr "Jste odhlášen. Děkujeme za použití této služby."
+
+msgid "Return to service"
+msgstr "Zpátky na službu"
+
+msgid "Logout"
+msgstr "Odhlášení"
+
+msgid "State information lost, and no way to restart the request"
+msgstr "Stavová informace "
+
+msgid "Error processing response from Identity Provider"
+msgstr "Chyba zpracování odpovědi od poskytovatele identity"
+
+msgid "WS-Federation Service Provider (Hosted)"
+msgstr "WS-Federation Service Provider (Hosted - lokální)"
+
+msgid "Preferred language"
+msgstr "Preferovaný jazyk"
+
+msgid "SAML 2.0 Service Provider (Remote)"
+msgstr "SAML 2.O Service Provider (Remote - vzdálený)"
+
+msgid "Surname"
+msgstr "Příjmení"
+
+msgid "No access"
+msgstr "Nemáte přístup"
+
+msgid "The following fields was not recognized"
+msgstr "Následující pole nebyla rozpoznána"
+
+msgid "Authentication error in source %AUTHSOURCE%. The reason was: %REASON%"
+msgstr "Autentizační chyba ve zdroji %AUTHSOURCE%. Důvodem bylo: %REASON%"
+
+msgid "Bad request received"
+msgstr "Zaslán špatný požadavek"
+
+msgid "User ID"
+msgstr "Identifikátor (UID)"
+
+msgid "JPEG Photo"
+msgstr "Fotografie (JPEG)"
+
+msgid "Postal address"
+msgstr "Poštovní adresa"
+
+msgid "An error occurred when trying to process the Logout Request."
+msgstr "Při procesu odhlášení vznikla chyba."
+
+msgid "Sending message"
+msgstr "Posílám zprávu"
+
+msgid "In SAML 2.0 Metadata XML format:"
+msgstr "Ve formátu SAML 2.0 XML metadata:"
+
+msgid "Logging out of the following services:"
+msgstr "Odhlášení z následujících služeb:"
+
+msgid ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+msgstr ""
+"Při vytváření přihlašovací odpovědi tímto poskytovatelem identity, "
+"vznikla chyba."
+
+msgid "Could not create authentication response"
+msgstr "Nelze vytvořit odpověď"
+
+msgid "Labeled URI"
+msgstr "URI"
+
+msgid "SimpleSAMLphp appears to be misconfigured."
+msgstr "SimpleSAMLphp je špatně nakonfigurovaný"
+
+msgid "Shib 1.3 Identity Provider (Hosted)"
+msgstr "Shib 1.3 Identity Provider (Hosted - lokální)"
+
+msgid "Metadata"
+msgstr "Metadata"
+
+msgid "Login"
+msgstr "Přihlásit"
+
+msgid ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+msgstr ""
+"Tento poskytovatel identity přijal požadavek od poskytovatele služby, ale"
+" při jeho provádění vznikla chyba."
+
+msgid "Yes, all services"
+msgstr "Ano, všechny služby"
+
+msgid "Logged out"
+msgstr "Odhlášen"
+
+msgid "Postal code"
+msgstr "PSČ"
+
+msgid "Logging out..."
+msgstr "Odhlašuji..."
+
+msgid "Metadata not found"
+msgstr "Metadata nenalezena"
+
+msgid "SAML 2.0 Identity Provider (Hosted)"
+msgstr "SAML 2.0 Identity Provider (Hosted - lokální)"
+
+msgid "Primary affiliation"
+msgstr "Hlavní příslušnost"
+
+msgid ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+msgstr ""
+"Pokud budete reportovat tuto chybu, prosím zašlete také toto ID, toto "
+"umožní najít vaší session v logu, který je dostupný systmovým "
+"administrátorem：  "
+
+msgid "XML metadata"
+msgstr "XML metadata"
+
+msgid ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+msgstr "Parametr zaslaný vyhledávací službě neodpovídá specifikaci."
+
+msgid "Telephone number"
+msgstr "Telefon"
+
+msgid ""
+"Unable to log out of one or more services. To ensure that all your "
+"sessions are closed, you are encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Odhlášení z jedné nebo z více služeb se nezdařilo. Aby bylo zajištěno, že"
+" všechny vaše relace budou uzavřeny, doporučujeme <i>ukončit váš webový "
+"prohlížeč</i>."
+
+msgid "Bad request to discovery service"
+msgstr "Špatný požadavek pro prohledávací službu"
+
+msgid "Select your identity provider"
+msgstr "Zvol svého poskytovatele identity (IdP)"
+
+msgid "Entitlement regarding the service"
+msgstr "Právo ke službě"
+
+msgid "Shib 1.3 SP Metadata"
+msgstr "Shib 1.3 SP Metadata"
+
+msgid ""
+"As you are in debug mode, you get to see the content of the message you "
+"are sending:"
+msgstr "Pokud jste v debug módu, můžete vidět obsah zprávy, kterou posíláte:"
+
+msgid "Certificates"
+msgstr "Certifikáty"
+
+msgid "Remember"
+msgstr "Zapamatuj"
+
+msgid "Distinguished name (DN) of person's home organization"
+msgstr "Uživatelské jméno přidělené organizací"
+
+msgid "You are about to send a message. Hit the submit message link to continue."
+msgstr "Můžete poslat zprávu. Klikněte na odkaz pro pokračování."
+
+msgid "Organizational unit"
+msgstr "Organizační jednotka"
+
+msgid "Authentication aborted"
+msgstr "Přihlášení odmítnuto"
+
+msgid "Local identity number"
+msgstr "Lokální identifikační kód"
+
+msgid "Report errors"
+msgstr "Oznámit chyby"
+
+msgid "Page not found"
+msgstr "Stránka nenalezena."
+
+msgid "Shib 1.3 IdP Metadata"
+msgstr "Shib 1.3 IdP Metadata"
+
+msgid "Change your home organization"
+msgstr "Změňte svou organizaci"
+
+msgid "User's password hash"
+msgstr "Uživatelské heslo (hash)"
+
+msgid ""
+"In SimpleSAMLphp flat file format - use this if you are using a "
+"SimpleSAMLphp entity on the other side:"
+msgstr ""
+"V SimpleSAMLphp souborovém formátu (flat-file) - použijte, pokud "
+"potřebujete používat SimpleSAMLphp na druhé straně:"
+
+msgid "Yes, continue"
+msgstr "Ano, akceptuji"
+
+msgid "Completed"
+msgstr "Dokončeno"
+
+msgid ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+msgstr "Poskytovatel identity odpověděl chybou. (Stavový kód v SAML nebyl úspěšný)"
+
+msgid "Error loading metadata"
+msgstr "Chyba nahrávání metadat"
+
+msgid "Select configuration file to check:"
+msgstr "Vyber konfiguračního souboru k verifikaci:"
+
+msgid "On hold"
+msgstr "Čekám"
+
+msgid "Error when communicating with the CAS server."
+msgstr "Chyba při komunikaci s CAS serverem."
+
+msgid "No SAML message provided"
+msgstr "SAML zpráva nebyla zaslána"
+
+msgid "Help! I don't remember my password."
+msgstr "Zapomněl jsem heslo."
+
+msgid ""
+"You can turn off debug mode in the global SimpleSAMLphp configuration "
+"file <tt>config/config.php</tt>."
+msgstr ""
+"Můžete vypnout debug mód v globální konfiguraci SimpleSAMLphp "
+"<tt>config/config.php</tt>."
+
+msgid "How to get help"
+msgstr "Jak získat pomoc"
+
+msgid ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+msgstr ""
+"Přistupujete k SingleLogoutService rozhraní, ale nezadáváte SAML "
+"LogoutRequest ani LogoutResponse."
+
+msgid "SimpleSAMLphp error"
+msgstr "SimpleSAMLphp chyba"
+
+msgid ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Jedna nebo více služeb, do kterých jste přihlášen(a), nepodporuje "
+"odhlášení. Pokud se chcete odhlásit, musíte ukončit váš webový prohlížeč."
+
+msgid "Organization's legal name"
+msgstr "Oficiální jméno organizace"
+
+msgid "Options missing from config file"
+msgstr "Chybějící položky v konfiguračním souboru"
+
+msgid "The following optional fields was not found"
+msgstr "Následující volitelná pole nenalezena"
+
+msgid "Authentication failed: your browser did not send any certificate"
+msgstr "Přihlášení neproběhlo: Váš prohlížeč neodeslal žádný certifikát"
+
+msgid ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+msgstr "Tento koncový bod není povolen. Zkontrolujte konfiguraci (zapněte volby)."
+
+msgid "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL</a>:"
+msgstr ""
+"<a href=\"%METAURL%\">Získejte metadata v XML formátu na dedikované "
+"adrese</a>"
+
+msgid "Street"
+msgstr "Ulice"
+
+msgid ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+msgstr ""
+"Chyba v konfiguraci SimpleSAMLphp. Pokud jste administrátorem "
+"služby, zkontrolujte metadata."
+
+msgid "Incorrect username or password"
+msgstr "Špatné jméno a heslo."
+
+msgid "Message"
+msgstr "Zpráva"
+
+msgid "Contact information:"
+msgstr "Kontaktní informace"
+
+msgid "Unknown certificate"
+msgstr "Neznámý certifikát"
+
+msgid "Legal name"
+msgstr "Oficiální jméno"
+
+msgid "Optional fields"
+msgstr "Volitelná pole"
+
+msgid ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+msgstr "Původce této žádosti nezadal parametr RelayState, který určuje kam pokračovat."
+
+msgid "You have previously chosen to authenticate at"
+msgstr "Dříve jste zvolil(a) ověření u"
+
+msgid ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+msgstr ""
+"Odeslal jste data do přihlašovací stránky, ale z nějakého důvodu nebylo "
+"odesláno heslo. Prosím zkuste to znovu."
+
+msgid "Fax number"
+msgstr "Fax"
+
+msgid "Shibboleth demo"
+msgstr "Shibboleth demo"
+
+msgid "Error in this metadata entry"
+msgstr "Chyba v této položce metadat"
+
+msgid "Session size: %SIZE%"
+msgstr "Velikost sezeni: %SIZE%"
+
+msgid "Parse"
+msgstr "Analýza"
+
+msgid ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+msgstr ""
+"Bez jména a hesla se nemůžete identifikovat. Zkuste "
+"kontaktovat helpdesk své organizace."
+
+msgid "Metadata parser"
+msgstr "Metadata parser"
+
+msgid "Choose your home organization"
+msgstr "Zvolte svou organizaci"
+
+msgid "Send e-mail to help desk"
+msgstr "Email helpdesku zaslán."
+
+msgid "Metadata overview"
+msgstr "Přehled metadat"
+
+msgid "Title"
+msgstr "Nadpis"
+
+msgid "Manager"
+msgstr "Manažer"
+
+msgid "You did not present a valid certificate."
+msgstr "Nepředložil jste validní certifikát."
+
+msgid "Authentication source error"
+msgstr "Chyba autentizačního zdroje"
+
+msgid "Affiliation at home organization"
+msgstr "Vztah k domovské organizaci"
+
+msgid "Help desk homepage"
+msgstr "Help desk"
+
+msgid "Configuration check"
+msgstr "Verifikace konfigurace"
+
+msgid "We did not accept the response sent from the Identity Provider."
+msgstr "Neakceptujeme odpověď zaslanou poskytovatelem identity."
+
+msgid "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+msgstr "Stránka nenalezena. Důvod je: %REASON%  URL je: %URL%"
+
+msgid "Shib 1.3 Identity Provider (Remote)"
+msgstr "Shib 1.3 Identity Provider (Remote - vzdálený)"
+
+msgid ""
+"Here is the metadata that SimpleSAMLphp has generated for you. You may "
+"send this metadata document to trusted partners to setup a trusted "
+"federation."
+msgstr ""
+"Zde jsou metadata, která pro vás SimpleSAMLphp generuje. Můžete zaslat "
+"tento dokument svým důvěryhodným partnerům a založit tak federaci."
+
+msgid "[Preferred choice]"
+msgstr "[Preferovaná volba]"
+
+msgid "Organizational homepage"
+msgstr "URL organizace"
+
+msgid ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr ""
+"Přistupujete k Assertion Consumer Service rozhraní, ale neposíláte SAML"
+" Authentication Response."
+
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"Právě přistupujete k testovacímu systému. Pokud nejste administrátor, "
+"nebo tester, máte pravděpodobně špatný odkaz."

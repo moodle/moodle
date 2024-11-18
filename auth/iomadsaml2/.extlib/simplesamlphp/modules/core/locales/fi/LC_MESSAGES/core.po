@@ -1,0 +1,355 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: fi\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{core:frontpage:link_phpinfo}"
+msgstr "PHP info"
+
+msgid "{core:frontpage:link_shib13example}"
+msgstr "Shibboleth 1.3 SP esimerkki - testikirjautuminen Shib IdP:si kautta"
+
+msgid "{core:frontpage:login_as_admin}"
+msgstr "Kirjaudu ylläpitäjänä"
+
+msgid "{core:frontpage:link_doc_sp}"
+msgstr "SimpleSAMLphp palveluntarjoajana"
+
+msgid "{core:frontpage:link_meta_saml2sphosted}"
+msgstr "Isännöidyn SAML 2.0 palveluntarjoajan Metadata (automaattisesti luotu)"
+
+msgid "{core:frontpage:link_openidprovider}"
+msgstr "OpenID tarjoaja - Alpha versio (testikoodi)"
+
+msgid "{core:frontpage:link_doc_install}"
+msgstr "Asennetaan SimpleSAMLphp"
+
+msgid "{core:frontpage:link_diagnostics}"
+msgstr "Isäntänimen, portin ja protokollan diagnostiikka"
+
+msgid "{core:frontpage:link_meta_saml2idphosted}"
+msgstr "Isännöidyn SAML 2.0 identiteetintarjoajan Metadata (automaattisesti luotu)"
+
+msgid "{core:frontpage:optional}"
+msgstr "Valinnainen"
+
+msgid "{core:frontpage:link_meta_shib13sphosted}"
+msgstr ""
+"Isännöidyn Shibboleth 1.3 palveluntarjoajan Metadata (automaattisesti "
+"luotu)"
+
+msgid "{core:frontpage:doc_header}"
+msgstr "Dokumentaatio"
+
+msgid "{core:frontpage:link_doc_advanced}"
+msgstr "simpeSAMLphp:n pitkälle kehittyneet ominaisuudet"
+
+msgid "{core:frontpage:required_ldap}"
+msgstr "Pakollinen LDAP:ia varten"
+
+msgid "{core:frontpage:authtest}"
+msgstr "Testaa määritettyjä tunnistuslähteitä"
+
+msgid "{core:frontpage:link_meta_overview}"
+msgstr "Asennuksesi metadatan yleiskataus. Tarkasta metadatatiedostojasi"
+
+msgid "{core:frontpage:configuration}"
+msgstr "Asetukset"
+
+msgid "{core:frontpage:welcome}"
+msgstr "Tervetuloa"
+
+msgid "{core:frontpage:link_doc_shibsp}"
+msgstr ""
+"Määritä asetukset Shibboleth 1.3 palveluntarjoajaksi SimpleSAMLphp "
+"identiteetintarjoajan kanssa"
+
+msgid "{core:frontpage:metadata_header}"
+msgstr "Metadata"
+
+msgid "{core:frontpage:link_doc_maintenance}"
+msgstr "SimpleSAMLphp:n ylläpito ja asetusten määrittely"
+
+msgid "{core:frontpage:link_configcheck}"
+msgstr "SimpleSAMLphp asetusten tarkastus"
+
+msgid "{core:no_cookie:header}"
+msgstr "Puuttuva eväste"
+
+msgid "{core:frontpage:warnings}"
+msgstr "Varoituksia"
+
+msgid "{core:frontpage:link_xmlconvert}"
+msgstr "XML:stä SimpleSAMLphp metadata:aan kääntäjä"
+
+msgid "{core:frontpage:link_cleardiscochoices}"
+msgstr "Poista IdP valintani IdP discoverypalvelusta"
+
+msgid "{core:frontpage:loggedin_as_admin}"
+msgstr "Olet kirjautunut ylläpitäjänä"
+
+msgid "{core:frontpage:auth}"
+msgstr "Tunnistautuminen"
+
+msgid "{core:frontpage:show_metadata}"
+msgstr "Näytä metatiedot"
+
+msgid "{core:frontpage:intro}"
+msgstr ""
+"<strong>Onnittelut</strong>, olet onnistuneesti asentanut "
+"SimpleSAMLphp:n. Tämä on asennuksen lähtösivu, millä löydät linkkejä "
+"testiesimerkkeihin, diagnostiikkaan, metadataan ja dokumentaatioon."
+
+msgid "{core:frontpage:link_meta_shib13idphosted}"
+msgstr ""
+"Isännöidyn Shibboleth 1.3 identiteetintarjoajan Metadata (automaattisesti"
+" luotu)"
+
+msgid "{core:frontpage:required}"
+msgstr "Pakollinen"
+
+msgid "{core:frontpage:warnings_https}"
+msgstr ""
+"<strong>Et käytä HTTPS</strong> - vahvaa yhteystä käyttäjään. HTTP-"
+"protokolla on sopiva testeihin, mutta tuotantojärjestelmässä sinun tulee "
+"käyttää HTTPS:ää. [ <a href=\"http://rnd.feide.no/content/simplesamlphp-"
+"maintenance-and-configuration\">Lue SimpleSAMLphp ylläpidosta (eng)</a> ]"
+
+msgid "{core:frontpage:federation}"
+msgstr "Federaatio"
+
+msgid "{core:frontpage:required_radius}"
+msgstr "Pakollinen Radiusta varten"
+
+msgid "{core:frontpage:checkphp}"
+msgstr "Tarkastetaan PHP-asennuksesi"
+
+msgid "{core:frontpage:link_doc_idp}"
+msgstr "SimpleSAMLphp identiteetintarjoajana"
+
+msgid "{core:frontpage:link_saml2example}"
+msgstr "SAML 2.0 SP esimerkki - testikirjautuminen IdP:si kautta"
+
+msgid "{core:frontpage:about_header}"
+msgstr "SimpleSAMLphp:stä"
+
+msgid "{core:frontpage:about_text}"
+msgstr ""
+"Tää simpleSAMPphp on aiga magee, mutta mistä voin lukea enemmän asiasta? "
+"Löydät enemmän tietoa <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">SimpleSAMLphp blogista Feide "
+"RnD:llä</a> <a href=\"http://uninett.no\">UNINETT</a>issa."
+
+msgid "{core:no_cookie:retry}"
+msgstr "Uudestaan"
+
+msgid "{core:frontpage:useful_links_header}"
+msgstr "Asennuksesi käytännöllisiä linkkejä"
+
+msgid "{core:frontpage:metadata}"
+msgstr "Metatiedot"
+
+msgid "{core:frontpage:recommended}"
+msgstr "Suositellaan"
+
+msgid "{core:frontpage:link_doc_googleapps}"
+msgstr "SimpleSAMLphp Google Apps for Education identiteetintarjoajana"
+
+msgid "{core:frontpage:tools}"
+msgstr "Työkalut"
+
+msgid "{core:no_cookie:description}"
+msgstr ""
+"Näyttää, että olet kieltänyt evästeiden käytön selaimessasi. Ole hyvä ja "
+"salli evästeet selaimestasi ja yritä uudelleen."
+
+msgid "{core:frontpage:deprecated}"
+msgstr "Vanhentunut"
+
+msgid "You are logged in as administrator"
+msgstr "Olet kirjautunut ylläpitäjänä"
+
+msgid "Welcome"
+msgstr "Tervetuloa"
+
+msgid "SimpleSAMLphp configuration check"
+msgstr "SimpleSAMLphp asetusten tarkastus"
+
+msgid "Metadata overview for your installation. Diagnose your metadata files"
+msgstr "Asennuksesi metadatan yleiskataus. Tarkasta metadatatiedostojasi"
+
+msgid "XML to SimpleSAMLphp metadata converter"
+msgstr "XML:stä SimpleSAMLphp metadata:aan kääntäjä"
+
+msgid "Required"
+msgstr "Pakollinen"
+
+msgid "Warnings"
+msgstr "Varoituksia"
+
+msgid "Documentation"
+msgstr "Dokumentaatio"
+
+msgid "Hosted Shibboleth 1.3 Service Provider Metadata (automatically generated)"
+msgstr ""
+"Isännöidyn Shibboleth 1.3 palveluntarjoajan Metadata (automaattisesti "
+"luotu)"
+
+msgid "PHP info"
+msgstr "PHP info"
+
+msgid "About SimpleSAMLphp"
+msgstr "SimpleSAMLphp:stä"
+
+msgid "Hosted SAML 2.0 Service Provider Metadata (automatically generated)"
+msgstr "Isännöidyn SAML 2.0 palveluntarjoajan Metadata (automaattisesti luotu)"
+
+msgid "Required for LDAP"
+msgstr "Pakollinen LDAP:ia varten"
+
+msgid "Federation"
+msgstr "Federaatio"
+
+msgid "Delete my choices of IdP in the IdP discovery services"
+msgstr "Poista IdP valintani IdP discoverypalvelusta"
+
+msgid "Configure Shibboleth 1.3 SP to work with SimpleSAMLphp IdP"
+msgstr ""
+"Määritä asetukset Shibboleth 1.3 palveluntarjoajaksi SimpleSAMLphp "
+"identiteetintarjoajan kanssa"
+
+msgid "Missing cookie"
+msgstr "Puuttuva eväste"
+
+msgid "Tools"
+msgstr "Työkalut"
+
+msgid "Test configured authentication sources "
+msgstr "Testaa määritettyjä tunnistuslähteitä"
+
+msgid ""
+"You appear to have disabled cookies in your browser. Please check the "
+"settings in your browser, and try again."
+msgstr ""
+"Näyttää, että olet kieltänyt evästeiden käytön selaimessasi. Ole hyvä ja "
+"salli evästeet selaimestasi ja yritä uudelleen."
+
+msgid "Installing SimpleSAMLphp"
+msgstr "Asennetaan SimpleSAMLphp"
+
+msgid "Deprecated"
+msgstr "Vanhentunut"
+
+msgid ""
+"<strong>Congratulations</strong>, you have successfully installed "
+"SimpleSAMLphp. This is the start page of your installation, where you "
+"will find links to test examples, diagnostics, metadata and even links to"
+" relevant documentation."
+msgstr ""
+"<strong>Onnittelut</strong>, olet onnistuneesti asentanut "
+"SimpleSAMLphp:n. Tämä on asennuksen lähtösivu, millä löydät linkkejä "
+"testiesimerkkeihin, diagnostiikkaan, metadataan ja dokumentaatioon."
+
+msgid ""
+"<strong>You are not using HTTPS</strong> - encrypted communication with "
+"the user. HTTP works fine for test purposes, but in a production "
+"environment, you should use HTTPS. [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-"
+"maintenance\">Read more about SimpleSAMLphp maintenance</a> ]"
+msgstr ""
+"<strong>Et käytä HTTPS</strong> - vahvaa yhteystä käyttäjään. HTTP-"
+"protokolla on sopiva testeihin, mutta tuotantojärjestelmässä sinun tulee "
+"käyttää HTTPS:ää. [ <a href=\"http://rnd.feide.no/content/simplesamlphp-"
+"maintenance-and-configuration\">Lue SimpleSAMLphp ylläpidosta (eng)</a> ]"
+
+msgid "Metadata"
+msgstr "Metadata"
+
+msgid "Retry"
+msgstr "Uudestaan"
+
+msgid "SimpleSAMLphp Maintenance and Configuration"
+msgstr "SimpleSAMLphp:n ylläpito ja asetusten määrittely"
+
+msgid "Diagnostics on hostname, port and protocol"
+msgstr "Isäntänimen, portin ja protokollan diagnostiikka"
+
+msgid "Using SimpleSAMLphp as an Identity Provider"
+msgstr "SimpleSAMLphp identiteetintarjoajana"
+
+msgid "Optional"
+msgstr "Valinnainen"
+
+msgid ""
+"This SimpleSAMLphp thing is pretty cool, where can I read more about it? "
+"You can find more information about it at the <a "
+"href=\"https://simplesamlphp.org/\">SimpleSAMLphp web page </a> over at "
+"<a href=\"http://uninett.no\">UNINETT</a>."
+msgstr ""
+"Tää simpleSAMPphp on aiga magee, mutta mistä voin lukea enemmän asiasta? "
+"Löydät enemmän tietoa <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">SimpleSAMLphp blogista Feide "
+"RnD:llä</a> <a href=\"http://uninett.no\">UNINETT</a>issa."
+
+msgid "Shibboleth 1.3 SP example - test logging in through your Shib IdP"
+msgstr "Shibboleth 1.3 SP esimerkki - testikirjautuminen Shib IdP:si kautta"
+
+msgid "Authentication"
+msgstr "Tunnistautuminen"
+
+msgid "Show metadata"
+msgstr "Näytä metatiedot"
+
+msgid "SimpleSAMLphp as an IdP for Google Apps for Education"
+msgstr "SimpleSAMLphp Google Apps for Education identiteetintarjoajana"
+
+msgid "Hosted SAML 2.0 Identity Provider Metadata (automatically generated)"
+msgstr "Isännöidyn SAML 2.0 identiteetintarjoajan Metadata (automaattisesti luotu)"
+
+msgid "OpenID Provider site - Alpha version (test code)"
+msgstr "OpenID tarjoaja - Alpha versio (testikoodi)"
+
+msgid "Required for Radius"
+msgstr "Pakollinen Radiusta varten"
+
+msgid "SAML 2.0 SP example - test logging in through your IdP"
+msgstr "SAML 2.0 SP esimerkki - testikirjautuminen IdP:si kautta"
+
+msgid "Using SimpleSAMLphp as a Service Provider"
+msgstr "SimpleSAMLphp palveluntarjoajana"
+
+msgid "Recommended"
+msgstr "Suositellaan"
+
+msgid "SimpleSAMLphp Advanced Features"
+msgstr "simpeSAMLphp:n pitkälle kehittyneet ominaisuudet"
+
+msgid "Checking your PHP installation"
+msgstr "Tarkastetaan PHP-asennuksesi"
+
+msgid "Useful links for your installation"
+msgstr "Asennuksesi käytännöllisiä linkkejä"
+
+msgid "Configuration"
+msgstr "Asetukset"
+
+msgid "Hosted Shibboleth 1.3 Identity Provider Metadata (automatically generated)"
+msgstr ""
+"Isännöidyn Shibboleth 1.3 identiteetintarjoajan Metadata (automaattisesti"
+" luotu)"
+
+msgid "Login as administrator"
+msgstr "Kirjaudu ylläpitäjänä"
+

@@ -1,0 +1,24 @@
+core-account:
+    path:       /account/{as}
+    defaults:   { _controller: 'SimpleSAML\Module\core\Controller\Login:account' }
+core-account-disco-clearchoices:
+    path:       /account/disco/clearchoices
+    defaults:   { _controller: 'SimpleSAML\Module\core\Controller\Login:cleardiscochoices' }
+core-login:
+    path:       /login/{as}
+    defaults:   { _controller: 'SimpleSAML\Module\core\Controller\Login:login', as: null }
+core-logout:
+    path:       /logout/{as}
+    defaults:   { _controller: 'SimpleSAML\Module\core\Controller\Login:logout' }
+core-error-nocookie:
+    path:       /error/nocookie
+    defaults:   { _controller: 'SimpleSAML\Module\core\Controller\Exception:nocookie' }
+core-cardinality:
+    path:       /error/cardinality
+    defaults:   { _controller: 'SimpleSAML\Module\core\Controller\Exception:cardinality' }
+core-warning-shortssointerval:
+    path:       /warning/short_sso_interval
+    defaults:   { _controller: 'SimpleSAML\Module\core\Controller\Exception:shortSsoInterval' }
+core-post-redirect:
+    path:       /postredirect
+    defaults:   { _controller: 'SimpleSAML\Module\core\Controller\Redirection:postredirect' }

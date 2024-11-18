@@ -1,0 +1,33 @@
+{% extends "base.twig" %}
+{% block content %}
+    <div id="portalmenu" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+        <ul class="tabset_tabs ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+            <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#">Configuration</a></li>
+            <li class="ui-state-default ui-corner-top"><a href="/{{ baseurlpath }}module.php/core/frontpage_auth.php">Authentication</a></li>
+            <li class="ui-state-default ui-corner-top"><a href="/{{ baseurlpath }}module.php/core/frontpage_federation.php">Federation</a></li>
+        </ul>
+        <a class='float-r' href='{{ logouturl }}'>{{ '{core:frontpage:logout}'|trans }}</a>
+        <div id="portalcontent" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+
+        <div style="clear: both" class="enablebox mini">
+            <table>
+
+                <tr class="disabled"><td>SAML 2.0 IdP</td>
+                    <td><i class="fa fa-ban"></i></td></tr>
+
+                <tr class="disabled"><td>Shib 1.3 IdP</td>
+                    <td><i class="fa fa-ban"></i></td></tr>
+
+            </table>
+        </div>
+        <h2>Configuration</h2>
+        <ul>
+            {% for url, page in adminpages %}
+            <li>
+                <a href="{{ url }}">{{ page }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+        </div>
+    </div>
+{% endblock content %}

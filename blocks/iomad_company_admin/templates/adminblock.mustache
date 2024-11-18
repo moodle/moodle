@@ -1,0 +1,33 @@
+{{!
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ }}
+
+{{# companyselect.onecompany }}
+{{/ companyselect.onecompany }}
+{{^ companyselect.onecompany }}
+   <div class="row m-t-2 p-2 border border-secondary rounded">
+       <div class="col-lg-6 col-md-12">
+           {{{ companyselect.selectform }}}
+       </div>
+       <div class="col-lg-6 col-md-12">
+           {{{ companyselect.suspended }}}
+       </div>
+   </div>
+{{/ companyselect.onecompany }}
+
+<div class="m-t-2 iomad_company_admin ">
+    {{> block_iomad_company_admin/tabs }}
+    <div class="tab-content mt-3" id="iomadDashboardTabContent">
+        {{# panes }}
+            <div class="tab-pane {{# selected }}active{{/ selected }} iomadlink_container" id="{{ category }}" role="tabpanel">
+                {{> block_iomad_company_admin/menuitem }}
+                <div class="clearfix"></div>
+            </div>
+        {{/ panes }}
+    </div>
+</div>
+
+

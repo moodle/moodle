@@ -1,0 +1,111 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_course/coursecard
+
+    This template renders the a card for the course cards.
+
+    Example context (json):
+    {
+        "courses": [
+            {
+                "name": "Assignment due 1",
+                "viewurl": "https://moodlesite/course/view.php?id=2",
+                "courseimage": "https://moodlesite/pluginfile/123/course/overviewfiles/123.jpg",
+                "fullname": "course 3",
+                "hasprogress": true,
+                "progress": 10,
+                "visible": true
+            }
+        ]
+    }
+}}
+<div class="card dashboard-card" role="listitem"
+    data-region="course-content"
+    data-course-id="{{{id}}}">
+    {{^visible}}
+        <div class="dimmed_text">
+    {{/visible}}
+    {{#visible}}
+        <a href="{{url}}" tabindex="-1">
+    {{/visible}}
+        <div class="card-img dashboard-card-img" style='background-image: url("{{{image}}}");'>
+            {{#visible}}
+                <span class="sr-only">{{fullname}}</span>
+            {{/visible}}
+        </div>
+    {{#visible}}
+        </a>
+    {{/visible}}
+    <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
+        <div class="d-flex align-items-start">
+            <div class="w-100 text-truncate">
+                {{#visible}}
+                    <a href="{{url}}" class="aalink fullname mr-2 mb-1">
+                {{/visible}}
+                    {{> core_course/favouriteicon }}
+                    <span class="sr-only">
+                        {{#str}}aria:coursename, core_course{{/str}}
+                    </span>
+                    {{{fullname}}}
+                {{#visible}}
+                    </a>
+                {{/visible}}
+            </div>
+        </div>
+    </div>
+    <div class="d-flex align-items-start">
+        {{ summary}}
+    </div>
+    <div class="d-flex align-items-start">
+        <div class="progress bg-white border">
+            <div class="progress-bar bar" role="progressbar" aria-valuenow="{{progress}}" style="width: {{progress}}%" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+    <div class="small">
+        <span class="sr-only">{{#str}}aria:courseprogress, block_mycourses{{/str}}</span>
+        <strong>{{progress}}%</strong> {{#str}}complete, block_mycourses{{/str}}
+        <div class="d-flex align-items-start">
+            <strong>{{#str}} timecompleted, local_report_completion {{/str}}: </strong> {{ timecompleted }}
+        </div>
+        {{#timeexpires}}
+            <div class="d-flex align-items-start">
+                <strong>({{#str}} timeexpires, local_report_completion {{/str}}: </strong> {{ timeexpires }}) 
+            </div>
+        {{/timeexpires}}
+        {{#hasgrade}}
+            <div class="d-flex align-items-start">
+                <strong>{{#str}} finalscore, block_mycourses,  {{ finalscore }}</strong> {{/str}}
+            </div>
+        {{/hasgrade}}
+        {{^hasgrade}}
+            <div class="d-flex align-items-start">
+                <strong>{{#str}} result, block_mycourses,  {{ finalscore }}</strong> {{/str}}
+            </div>
+        {{/hasgrade}}
+        {{#certificates}}
+            <div class="d-flex align-items-start">
+                <div class = "certificatediv">
+                    <b>{{#str}} downloadcert, block_mycourses {{/str}}: </b><a href="{{ certificateurl }}" title="{{ certificatename }}"><img src="{{ certificateimage }}" alt="{{ certificatename }}" width="36"></a></p>
+                </div>
+            </div>
+        {{/certificates}}
+    </div>
+    {{^visible}}
+        </div>
+    {{/visible}}
+</div>

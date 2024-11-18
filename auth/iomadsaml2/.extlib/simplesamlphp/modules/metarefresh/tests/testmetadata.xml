@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<md:EntitiesDescriptor xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi" xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="54a61"><ds:Signature>
+  <ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+    <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+  <ds:Reference URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>AUPsWdEcgoYY+ykZD4Ns7dCtGPIgxH4shMd6CRNQ0r0=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue>meQHjxJn2zLgbWCzvvUil6FTwctrr/vEpUUkTFdKspkN8IVmNW1N5WvLZdk7mRrsl161I4BMDc0q+ndlYd+VTjsEf+dVQ4m0+RWRBp/+Q95oGn0ARq/scKH9fZiDNeIZCoRU/Q3mErzGYY0WasM8byZJinJo7WDyMKwhMddX/0k=</ds:SignatureValue>
+<ds:KeyInfo><ds:X509Data><ds:X509Certificate>MIIBrTCCARYCCQC8Ue6scWtEDTANBgkqhkiG9w0BAQsFADAbMQswCQYDVQQGEwJBUTEMMAoGA1UEAxMDTURYMB4XDTIwMDYxMDEzNTY1NFoXDTM3MDYwNjEzNTY1NFowGzELMAkGA1UEBhMCQVExDDAKBgNVBAMTA01EWDCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuvq7p0XbdVNDpb4sMhB+rPRDUR/K0htSa3yBrINsdOoBLW67foY0rkypFRwmDX/bpe1Ik+hmaJgtdYCnFmlhlAU3mbaByL/q3I9DVVY4OgbC0jjWoy+7+wP0/mf7onljzwSQO4jjcUWcx/upDVFYXci3UZjUhCTnu7RO1EAk6isCAwEAATANBgkqhkiG9w0BAQsFAAOBgQB3J1oskvJqXoDJzSoGJmahLoDacF01OkXOtxRPtcOcRvBfakZGC2FtjHLTdyqz+dpcJsfYupBwavFxNunG6K2+d093j387TH7PyA5AckfLrOTR1iS4akp0yX7wvV2WWYRIXodnVHFGC0f25ZumkbL1vAkUd7q28zNcWIds8O2p+g==</ds:X509Certificate></ds:X509Data></ds:KeyInfo></ds:Signature>
+  <md:EntityDescriptor entityID="https://idp.example.com/idp/shibboleth">
+   <md:Extensions>
+     <mdrpi:RegistrationInfo registrationAuthority="http://www.surfconext.nl/" registrationInstant="2013-11-18T00:00:00Z">
+       <mdrpi:RegistrationPolicy xml:lang="en">https://wiki.surfnet.nl/display/eduGAIN/EduGAIN</mdrpi:RegistrationPolicy>
+     </mdrpi:RegistrationInfo>
+     <mdattr:EntityAttributes>
+       <saml:Attribute Name="urn:oasis:names:tc:SAML:attribute:assurance-certification" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+         <saml:AttributeValue>https://refeds.org/sirtfi</saml:AttributeValue>
+       </saml:Attribute>
+       <saml:Attribute Name="http://macedir.org/entity-category-support" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+         <saml:AttributeValue>http://refeds.org/category/research-and-scholarship</saml:AttributeValue>
+       </saml:Attribute>
+     </mdattr:EntityAttributes>
+   </md:Extensions>
+    <md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+      <md:Extensions>
+        <shibmd:Scope regexp="false">example.com</shibmd:Scope>
+        <mdui:UIInfo>
+          <mdui:DisplayName xml:lang="en">DisplayName</mdui:DisplayName>
+          <mdui:Description xml:lang="en">Description</mdui:Description>
+        </mdui:UIInfo>
+      </md:Extensions>
+      <md:KeyDescriptor>
+        <ds:KeyInfo>
+          <ds:X509Data>
+            <ds:X509Certificate>
+              MIIB/zCCAWgCCQCyf41J62ta0jANBgkqhkiG9w0BAQsFADBEMQswCQYDVQQGEwJB
+              UTEbMBkGA1UECgwSRXhhbXBsZSBVbml2ZXJzaXR5MRgwFgYDVQQDDA9pZHAuZXhh
+              bXBsZS5jb20wHhcNMTkwMTA3MDYyNDAyWhcNMzcwMzI1MDYyNDAyWjBEMQswCQYD
+              VQQGEwJBUTEbMBkGA1UECgwSRXhhbXBsZSBVbml2ZXJzaXR5MRgwFgYDVQQDDA9p
+              ZHAuZXhhbXBsZS5jb20wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAMBwa9wB
+              mgxSbFFQzw7T3F84F+EhjQS3d/4KsD3bAgm5WXz8E0H1VV8YcRpAMjRntqaitZ8X
+              NyjPIq43rUfx9MlYWdjPUthhU5xxBW80Zr9bcmztea6LgelctXnH+OCY4MSOyvji
+              /0Y4BjBE0N5PZeRiO4snPMz6hneMjtv+Qei9AgMBAAEwDQYJKoZIhvcNAQELBQAD
+              gYEAipaiTLJwjYpAkaRa8ANXPUgD0hJh6Z/lkX6m+E/mlkVvxN7OfIyDatT2R9B6
+              F+Yj7ujHmubkrLmdXvCPMjXNOqSYAtBkf5qcZ5x1d6Xas5Uw8t4uJSk/Nh2nKcom
+              l+zR8IYmcdFeaTjSMbEhYGDaIou+0T4/+/f8fDwwj8hQLYw=
+            </ds:X509Certificate>
+          </ds:X509Data>
+        </ds:KeyInfo>
+      </md:KeyDescriptor>
+      <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://idp.example.com/idp/profile/SAML2/POST/SSO"/>
+    </md:IDPSSODescriptor>
+    <md:Organization>
+      <md:OrganizationName xml:lang="en">OrganizationName</md:OrganizationName>
+      <md:OrganizationDisplayName xml:lang="en">OrganizationDisplayName</md:OrganizationDisplayName>
+      <md:OrganizationURL xml:lang="en">https://example.com</md:OrganizationURL>
+    </md:Organization>
+    <md:ContactPerson contactType="technical">
+      <md:EmailAddress>mailto:technical.contact@example.com</md:EmailAddress>
+    </md:ContactPerson>
+  </md:EntityDescriptor>
+</md:EntitiesDescriptor>

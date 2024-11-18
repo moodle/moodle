@@ -1,0 +1,158 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: pt\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consentAdmin:consentadmin:status_header}"
+msgstr "Consentimento"
+
+msgid "{consentAdmin:consentadmin:attributes_text}"
+msgstr "atributos"
+
+msgid "{consentAdmin:consentadmin:service_provider_header}"
+msgstr "Fornecedor de Serviço"
+
+msgid "{consentAdmin:consentadmin:removed}"
+msgstr "Consentimento removido"
+
+msgid "{consentAdmin:consentadmin:consentadmin_header}"
+msgstr "Administração de Consentimento"
+
+msgid "{consentAdmin:consentadmin:show}"
+msgstr "Mostrar"
+
+msgid "{consentAdmin:consentadmin:attribute_org}"
+msgstr "Organização"
+
+msgid "{consentAdmin:consentadmin:attribute_injected}"
+msgstr "Atributo injectado"
+
+msgid "{consentAdmin:consentadmin:show_hide_attributes}"
+msgstr "mostrar/esconder atributos"
+
+msgid "{consentAdmin:consentadmin:consentadmin_purpose}"
+msgstr "Este serviço destina-se a"
+
+msgid "{consentAdmin:consentadmin:hide}"
+msgstr "Esconder"
+
+msgid "{consentAdmin:consentadmin:sp_empty_description}"
+msgstr "(sem descrição)"
+
+msgid "{consentAdmin:consentadmin:service_providers_for}"
+msgstr "Fornecedores de Serviços para"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description2}"
+msgstr ""
+"<h3>Como remover o seu consentimento</h3> Retire a marca correspondente "
+"ao fornecedor de serviço que pretende remover."
+
+msgid "{consentAdmin:consentadmin:login}"
+msgstr "Entrar"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description1}"
+msgstr ""
+"Nesta página pode ver e editar o seu consentimento dado aos Fornecedores "
+"de Serviços."
+
+msgid "{consentAdmin:consentadmin:updated}"
+msgstr "Consentimento actualizado"
+
+msgid "{consentAdmin:consentadmin:unknown}"
+msgstr "Desconhecido ..."
+
+msgid "{consentAdmin:consentadmin:added}"
+msgstr "Consentimento adicionado"
+
+msgid "{consentAdmin:consentadmin:attribute_id}"
+msgstr "Identidade"
+
+msgid "Injected attribut"
+msgstr "Atributo injectado"
+
+msgid "Show"
+msgstr "Mostrar"
+
+msgid "Consent Added"
+msgstr "Consentimento adicionado"
+
+msgid "Consent Administration"
+msgstr "Administração de Consentimento"
+
+msgid "Here you can view and edit your consent for the Service Providers."
+msgstr ""
+"Nesta página pode ver e editar o seu consentimento dado aos Fornecedores "
+"de Serviços."
+
+msgid "Unknown ..."
+msgstr "Desconhecido ..."
+
+msgid "Identity"
+msgstr "Identidade"
+
+msgid "The purpose of the service is"
+msgstr "Este serviço destina-se a"
+
+msgid "Hide"
+msgstr "Esconder"
+
+msgid "Service Provider"
+msgstr "Fornecedor de Serviço"
+
+msgid "Service Providers for"
+msgstr "Fornecedores de Serviços para"
+
+msgid "login"
+msgstr "Entrar"
+
+msgid "(name not specified)"
+msgstr "(nome não especificado)"
+
+msgid "Consent Updated"
+msgstr "Consentimento actualizado"
+
+msgid "Consent status"
+msgstr "Consentimento"
+
+msgid "(no description)"
+msgstr "(sem descrição)"
+
+msgid "attributes"
+msgstr "atributos"
+
+msgid ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+msgstr ""
+"<h3>Como remover o seu consentimento</h3> Retire a marca correspondente "
+"ao fornecedor de serviço que pretende remover."
+
+msgid "Consent Removed"
+msgstr "Consentimento removido"
+
+msgid "show/hide attributes"
+msgstr "mostrar/esconder atributos"
+
+msgid "Organisation"
+msgstr "Organização"
+

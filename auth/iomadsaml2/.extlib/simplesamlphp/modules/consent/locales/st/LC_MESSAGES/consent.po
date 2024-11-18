@@ -1,0 +1,148 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2019-12-12 08:47+0200\n"
+"PO-Revision-Date: 2019-12-12 08:47+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.3\n"
+
+msgid "Yes, continue"
+msgstr "E, tswela pele"
+
+msgid "{consent:consent:abort}"
+msgstr "Kgaotsa keno ho SPNAME"
+
+msgid "Show attributes"
+msgstr "Bontsha makgabane"
+
+msgid "{consent:consent:noconsent_return}"
+msgstr "Kgutlela leqepheng la tumello"
+
+msgid "{consent:consent:consent_header}"
+msgstr "Tumello e mabapi le tlhahisoleseding ya botho"
+
+msgid "{consent:consent:show_attributes}"
+msgstr "Bontsha makgabane"
+
+msgid "{consent:consent:consent_attributes_header}"
+msgstr "Tlhahisoleseding e tla romelwa ho SPNAME"
+
+msgid "{consent:consent:show_hide_attributes}"
+msgstr "bontsha/pata makgabane"
+
+msgid "The purpose of SPNAME is SPDESC"
+msgstr "Sepheo sa SPNAME ke SPDESC"
+
+msgid "You did not give consent for transfering your attributes to SPNAME."
+msgstr "Ha o a fana ka tumello bakeng sa ho fetisetsa makgabane a hao ho SPNAME."
+
+msgid ""
+"List the information about you that is about to be transmitted to the "
+"service you are going to login to"
+msgstr ""
+"Hlahlamisa tlhahisoleseding e mabapi le wena e haufi le ho fetisetswa "
+"tshebeletsong eo o tlo kena ho yona"
+
+msgid "Abort login to SPNAME"
+msgstr "Kgaotsa keno ho SPNAME"
+
+msgid "Privacy policy for the service"
+msgstr "Leano la sephiri bakeng sa tshebeletso"
+
+msgid "Consent about releasing personal information"
+msgstr "Tumello e mabapi le tlhahisoleseding ya botho"
+
+msgid "Service Provider"
+msgstr "Mofani wa Tshebeletso"
+
+msgid "{consent:consent:consent_accept}"
+msgstr "SPNAME e hloka hore tlhahisoleseding e ka tlase mona e fetiswe."
+
+msgid "{consent:consent:noconsent_text}"
+msgstr "Ha o a fana ka tumello bakeng sa ho fetisetsa makgabane a hao ho SPNAME."
+
+msgid "Return to consent page"
+msgstr "Kgutlela leqepheng la tumello"
+
+msgid "{consent:consent:service_provider_header}"
+msgstr "Mofani wa Tshebeletso"
+
+msgid "{consent:consent:table_caption}"
+msgstr "Tlhahisoleseding ya mosebedisi"
+
+msgid "{consent:consent:consent_privacypolicy}"
+msgstr "Leano la sephiri bakeng sa tshebeletso"
+
+msgid "{consent:consent:remember}"
+msgstr "Hopola"
+
+msgid "{consent:consent:login}"
+msgstr "keno"
+
+msgid "Service Providers for"
+msgstr "Bafani ba Tshebeletso bakeng sa"
+
+msgid "{consent:consent:consent_purpose}"
+msgstr "Sepheo sa SPNAME ke SPDESC"
+
+msgid "{consent:consent:no}"
+msgstr "Tjhe, hlakola"
+
+msgid "{consent:consent:table_summary}"
+msgstr ""
+"Hlahlamisa tlhahisoleseding e mabapi le wena e haufi le ho fetisetswa "
+"tshebeletsong eo o tlo kena ho yona"
+
+msgid "show/hide attributes"
+msgstr "bontsha/pata makgabane"
+
+msgid "{consent:consent:noconsent_goto_about}"
+msgstr "Eya leqepheng la tlhahisoleseding bakeng sa tshebeletso"
+
+msgid "No, cancel"
+msgstr "Tjhe, hlakola"
+
+msgid "{consent:consent:status_header}"
+msgstr "Boemo ba tumelo"
+
+msgid "No consent given"
+msgstr "Ha ho tumello e fanweng"
+
+msgid "User information"
+msgstr "Tlhahisoleseding ya mosebedisi"
+
+msgid "Consent status"
+msgstr "Boemo ba tumelo"
+
+msgid "Remember"
+msgstr "Hopola"
+
+msgid "login"
+msgstr "keno"
+
+msgid "SPNAME requires that the information below is transferred."
+msgstr "SPNAME e hloka hore tlhahisoleseding e ka tlase mona e fetiswe."
+
+msgid "{consent:consent:service_providers_for}"
+msgstr "Bafani ba Tshebeletso bakeng sa"
+
+msgid "Go to information page for the service"
+msgstr "Eya leqepheng la tlhahisoleseding bakeng sa tshebeletso"
+
+msgid "{consent:consent:noconsent_title}"
+msgstr "Ha ho tumello e fanweng"
+
+msgid "{consent:consent:yes}"
+msgstr "E, tswela pele"
+
+msgid "Information that will be sent to SPNAME"
+msgstr "Tlhahisoleseding e tla romelwa ho SPNAME"
+

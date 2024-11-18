@@ -1,0 +1,47 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-authwindowslive",
+    "description": "A module that is able to perform authentication against Windows Live",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "windowslive", "windows", "live"],
+    "license": "LGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Olav Morken",
+            "email": "olavmrk@gmail.com"
+        },
+        {
+            "name": "Tim van Dijen",
+            "email": "tvdijen@gmail.com"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\authwindowslive\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\SimpleSAML\\modules\\authwindowslive\\TestFiles\\": "tests/files",
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+        "simplesamlphp/composer-module-installer": "~1.1"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "phpunit/phpunit": "~5.7"
+    },
+    "support": {
+        "issues": "https://github.com/tvdijen/simplesamlphp-module-authwindowslive/issues",
+        "source": "https://github.com/tvdijen/simplesamlphp-module-authwindowslive"
+    }
+}
+

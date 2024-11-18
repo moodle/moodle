@@ -1,0 +1,44 @@
+{% extends "base.twig" %}
+{% block content %}
+    <h1>Sandbox</h1>
+    <p>This page serves as a demonstration of the <strong>new template and translation sub-systems</strong> in
+        SimpleSAMLphp. The page itself is written as a <em>Twig</em> template, which is very similar to other
+        templating languages, stored in the <code>templates</code> directory.</p>
+    <p>Twig templates allow you to print values of variables very easily. For example, the code <code>{{ '{{ ' }}
+            sometext }}</code>
+        will print the following text, contained in the variable <code>sometext</code>:
+    </p>
+    <p><em>{{ sometext }}</em></p>
+    <p>Twig supports setting your own variables, control structures like <code>if</code> clauses and loops.
+        Take a look at the <a href="http://twig.sensiolabs.org/doc/templates.html">Twig documentation for
+        template designers</a> if you want to know more.
+    </p>
+    <h2>Localization</h2>
+    {% set variable = 'Hello, Untranslated World!' %}
+    <p>This page is written in english only, but the examples used here are translated to several languages. The current
+        language is <strong>{{ currentLanguage }}</strong>. Change to other languages to see the examples change.</p>
+    <h4>Usage examples</h4>
+    <p>Twig allows you to translate strings in your templates. There are several ways to do that. If you want
+        to translate the following text: <em>Hello, Untranslated World!</em>, you can do it with:</p>
+    <ul>
+        <li><em>Inline trans tags</em>: using <code>{{ '{%' }} trans 'Hello, Untranslated World! %}</code> you would get
+            "{% trans 'Hello, Untranslated World!' %}".</li>
+        <li><em>Expanded trans tags</em>: using <code>{{ '{%' }} trans %}Hello, Untranslated World!{{ '{%' }} endtrans
+                %}</code> you would get "{% trans %}Hello, Untranslated World!{% endtrans %}".</li>
+        <li><em>Filters</em>: using <code>{{ '{{' }} variable|trans }}</code> you would get "{{ variable|trans }}".</li>
+    </ul>
+    <p>Translations support arguments too, so that you can replace parts of the translated string with the contents of
+        variables. Just use placeholders of the form <code>%variable%</code> in the place where the contents of the
+        variables should be placed, and pass an associative array to the <code>trans </code> filter.</p>
+    {% set variable = 'Hello, %who%!' %}
+    {% set world = 'World'|trans %}
+    {% set who = {'%who%': world} %}
+    <p>If you have a variable with the text "<code>Hello, %who%!</code>" The code <code>{{ '{{' }}
+        variable|trans({'%who%': 'World' }) }}</code> will print "{{ variable|trans({'%who%': 'World' }) }}". The array
+        can also be passed in a variable, so that  <code>{{ '{{' }} variable|trans(who) }}</code> will output
+        "{{ variable|trans(who) }}" when the variable <code>who</code> is defined as <code>{'%who%': world}</code> and
+        <code>world</code> is also a variable with the translation of the contents, for example, <code>{{ '{%' }}
+        set world = 'World'|trans %}</code>. Note that placeholders have names, so order is irrelevant, and can be
+        changed between translations.</p>
+
+{% endblock content %}

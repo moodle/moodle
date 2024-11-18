@@ -1,0 +1,12 @@
+
+// Style for template 3 columns auto.
+.columns-autoflow-1to1to1 {
+    column-count: 3;
+}
+
+@media (max-width: 767px) {
+    // Change to a single column for smaller screens.
+    .columns-autoflow-1to1to1 {
+        column-count: 1;
+    }
+}

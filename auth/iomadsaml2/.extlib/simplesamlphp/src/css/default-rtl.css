@@ -1,0 +1,167 @@
+/* these styles are in the head of this page because this is a unique page */
+
+/* THE BIG GUYS */
+html {
+    direction: rtl;
+}
+#header{
+    background: linear-gradient(-141deg, #b8002c 0%, #db0100 51%, #e8410c 75%);
+}
+#footer{
+    background: linear-gradient(-141deg, #b8002c 0%, #db0100 51%, #e8410c 75%);
+}
+/* LISTS */
+ul {
+    margin: .3em 2em 1.5em 0;
+}
+
+li {
+    margin-right: 2em;
+}
+
+/* TYPOGRAPHY */
+dl dd {
+    margin-right: 3em;
+}
+
+.efieldlist {
+    border-right: 1px solid #e6e6e6;
+}
+
+div.caution {
+    padding: .2em 60px .2em .2em;
+    background-position: right;
+}
+
+th.rowtitle {
+    text-align: right;
+}
+.enablebox table {
+    margin-right: 1em;
+}
+.enablebox.mini table {
+    float: left;
+}
+.enablebox tr td {
+    padding: .5px .5em 1px 1em;
+}
+
+/* Attribute presentation in example page */
+table.attributes td.attrname {
+    text-align: left;
+}
+
+fieldset.fancyfieldset {
+    margin: 2em 0px 1em 1em;
+}
+fieldset.fancyfieldset legend {
+    margin-right: 2em;
+}
+
+
+/* Reverse Float Left <-> Right */
+.right {
+    float: left;
+}
+.left {
+    float: right;
+}
+.v-center-right{
+    right: 0;
+}
+.logo-footer-right{
+    left:0;
+    right: auto;
+}
+.message-box {
+    border-left-style: initial;
+    order-left-width: 0;
+    border-left-color: none;
+    border-right-style: solid;
+    border-right-width: 0.3125rem;
+}
+.message-box.error{
+    border-right-color: #cc4b37;
+}
+.message-box.success{
+    border-right-color: #46cc48;
+}
+.code-box-title .clipboard-btn {
+    right: auto;
+    left: 0;
+    margin-left: 4px;
+    margin-right: auto;
+}
+
+div .item{
+    float: right;
+}
+
+/*purecss elements*/
+.pure-form-aligned .pure-control-group label {
+    text-align: left;
+    margin: 0 0 0 1em;
+}
+@media only screen and (max-width : 480px) {
+    .pure-form-aligned .pure-control-group label {
+        text-align: right;
+    }
+}
+.pure-form-aligned .pure-controls {
+    margin: 1.5em 11em 0 0;
+}
+.pure-form .pure-help-inline,
+.pure-form-message-inline {
+    padding-left: 0;
+    padding-right: 0.3em;
+}
+.pure-select{
+    float: left;
+}
+.pure-table-attributes ul{
+    margin:0;
+}
+.pure-table-attributes li{
+    margin:0;
+}
+
+/* language side menu on medium and small screens*/
+#layout.active #menu {
+    right: initial;
+    left: 11em;
+}
+#layout.active .menu-link {
+    right: initial;
+    left: 11em;
+}
+#menu {
+    right: initial;
+    margin-right: 0;
+    margin-left: -11em; /* "#menu" width */
+    left: 0;
+}
+#menu a {
+    padding: 0.6em 0.6em 0.6em 0em;
+}
+
+.menu-link {
+    right: initial;
+    left: 0; /* "#menu width" */
+}
+
+/* -- Responsive Styles (Media Queries) ------------------------------------- */
+
+@media screen and (max-width: 0em), screen and (min-width: 40em) {
+    #layout.active {
+        right: auto;
+        left: 11em;
+    }
+    #menuLink.menu-link.active {
+        right: auto;
+        left: 13em;
+    }
+    #foot.active {
+        margin-right: auto;
+        margin-left: 11em;
+    }
+}

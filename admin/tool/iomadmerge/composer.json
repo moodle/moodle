@@ -1,0 +1,10 @@
+{
+    "name": "ndunand/moodle-tool_iomadmerge",
+    "type": "moodle-tool",
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "extra": {
+        "installer-name": "iomadmerge"
+    }
+}

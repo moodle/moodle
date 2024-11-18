@@ -1,0 +1,36 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: ar\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n>=3 "
+"&& n<=10 ? 3 : n>=11 && n<=99 ? 4 : 5)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{saml:wrong_authncontextclassref:description}"
+msgstr ""
+"طريقة التحقق التي استخدمتها غير مقبولة لمقدم الخدمة, غالبا هي أقل من "
+"متطلبات مقدم الخدمة الذي قد يطلب تحققاأكثر تعقيدا"
+
+msgid "{saml:wrong_authncontextclassref:header}"
+msgstr "طريقة التحقق المستخدمة غير صحيحة"
+
+msgid ""
+"Your authentication context is not accepted at this service. Probably too"
+" weak or not two-factor."
+msgstr ""
+"طريقة التحقق التي استخدمتها غير مقبولة لمقدم الخدمة, غالبا هي أقل من "
+"متطلبات مقدم الخدمة الذي قد يطلب تحققاأكثر تعقيدا"
+
+msgid "Wrong authentication context"
+msgstr "طريقة التحقق المستخدمة غير صحيحة"
+

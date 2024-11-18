@@ -1,0 +1,6 @@
+authx509-main:
+    path:       /expiryWarning
+    defaults:   { _controller: 'SimpleSAML\Module\authX509\Controller\ExpiryWarning::main' }
+authx509-main-legacy:
+    path:       /expirywarning.php
+    defaults:   { _controller: 'SimpleSAML\Module\authX509\Controller\ExpiryWarning::main' }

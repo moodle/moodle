@@ -1,0 +1,71 @@
+{% set pagetitle = 'Metadata parser'|trans %}
+{% set frontpage_section = 'federation' %}
+{% extends "base.twig" %}
+
+{%  set i=1 %}
+{% block content %}
+    {%- include "@admin/includes/menu.twig" %}
+
+    <h2>{{ pagetitle }}</h2>
+    <form method="post" class="pure-form" enctype="multipart/form-data" action="#converted">
+        <h3> {% trans 'XML metadata' %}</h3>
+        <div class="pure-control-group">
+            <textarea name="xmldata" rows="20" class="text-area edge xmldata">{{ xmldata }}</textarea>
+        </div>
+        <br>
+        <div class="center">
+            <div class="pure-button-group two-elements" role="group">
+                <label class="pure-button">
+                    <span class="fa fa-folder-open"></span>{{ 'or select a file:'|trans }}
+                    <input type="file" name="xmlfile" class="hidden" id="file-input">
+                </label>
+                <label id="show-file" class="pure-button hollow show-files" disabled>{{ 'No file selected.'|trans }}</label>
+            </div>
+            <br>
+            <button class="pure-button pure-button-red pure-input-1-3">{{ 'Parse'|trans }}</button>
+        </div>
+    </form>
+
+    {% if output -%}
+    <br>
+    <h2 id="converted">{{ 'Converted metadata'|trans }}</h2>
+        {% for type, text in output if text -%}
+{# spaceless is to work around a clipboard.js bug that would add extra whitespace #}
+{% spaceless %}
+    <div class="code-box">
+        <div class="code-box-title">
+            <h3>{{ type }}</h3>
+            <button data-clipboard-target="#metadata{{ loop.index }}" id="btn{{ loop.index }}" class="pure-button right clipboard-btn copy">
+                <i class="fa fa-copy"></i>
+            </button>
+        </div>
+        <div class="code-box-content">
+            <pre id="metadata{{ loop.index }}">{{ text|escape }}</pre>
+        </div>
+    </div>
+{% endspaceless %}
+            <br><br>
+            {%- set i=i+1 %}
+        {%- endfor -%}
+    {% elseif error is not null %}
+    <br>
+    <h2 id="error">{{ 'An error occured'|trans }}</h2>
+    <div class="code-box">
+        <div class="code-box-content">
+            <pre id="error" class="fa fa-warning">&nbsp;&nbsp;{{ error }}</pre>
+        </div>
+    </div>
+    {% endif -%}
+{% endblock content -%}
+{% block postload %}
+<script>
+    $('body').on('change', '#file-input', function () {
+        var files = this.files;
+        var fileNames = [];
+        for (var i = 0; i < files.length; i++) {
+            fileNames.push(files.item(i).name);
+        }
+        $('#show-file').html(fileNames.join(", "));
+    });
+</script>
+{% endblock postload %}

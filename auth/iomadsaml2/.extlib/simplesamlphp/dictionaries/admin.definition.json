@@ -1,0 +1,152 @@
+{
+	"cfg_check_header": {
+		"en": "Configuration check"
+	},
+	"cfg_check_select_file": {
+		"en": "Select configuration file to check:"
+	},
+	"cfg_check_notices": {
+		"en": "Notices"
+	},
+	"cfg_check_missing": {
+		"en": "Options missing from config file"
+	},
+	"cfg_check_superfluous": {
+		"en": "Superfluous options in config file"
+	},
+	"cfg_check_noerrors": {
+		"en": "No errors found."
+	},
+	"cfg_check_back": {
+		"en": "Go back to the file list"
+	},
+	"metaover_header": {
+		"en": "Metadata overview"
+	},
+	"metaover_intro": {
+		"en": "To look at the details for an SAML entity, click on the SAML entity header."
+	},
+	"metaover_errorentry": {
+		"en": "Error in this metadata entry"
+	},
+	"metaover_required_found": {
+		"en": "Required fields"
+	},
+	"metaover_required_not_found": {
+		"en": "The following required fields was not found"
+	},
+	"metaover_optional_found": {
+		"en": "Optional fields"
+	},
+	"metaover_optional_not_found": {
+		"en": "The following optional fields was not found"
+	},
+	"metaover_unknown_found": {
+		"en": "The following fields was not recognized"
+	},
+	"metaover_group_metadata.saml20-sp-hosted": {
+		"en": "SAML 2.0 Service Provider (Hosted)"
+	},
+	"metaover_group_metadata.saml20-sp-remote": {
+		"en": "SAML 2.0 Service Provider (Remote)"
+	},
+	"metaover_group_metadata.saml20-idp-hosted": {
+		"en": "SAML 2.0 Identity Provider (Hosted)"
+	},
+	"metaover_group_metadata.saml20-idp-remote": {
+		"en": "SAML 2.0 Identity Provider (Remote)"
+	},
+	"metaover_group_metadata.shib13-sp-hosted": {
+		"en": "Shib 1.3 Service Provider (Hosted)"
+	},
+	"metaover_group_metadata.shib13-sp-remote": {
+		"en": "Shib 1.3 Service Provider (Remote)"
+	},
+	"metaover_group_metadata.shib13-idp-hosted": {
+		"en": "Shib 1.3 Identity Provider (Hosted)"
+	},
+	"metaover_group_metadata.shib13-idp-remote": {
+		"en": "Shib 1.3 Identity Provider (Remote)"
+	},
+        "metaover_group_metadata.adfs-sp-remote": {
+            "en": "ADFS Service Provider (Remote)"
+        },
+        "metaover_group_metadata.adfs-idp-hosted": {
+            "en": "ADFS Identity Provider (Hosted)"
+        },
+	"metaconv_title": {
+		"en": "Metadata parser"
+	},
+	"metaconv_selectfile": {
+		"en": "or select a file:"
+	},
+	"metaconv_parse": {
+		"en": "Parse"
+	},
+	"metaconv_converted": {
+		"en": "Converted metadata"
+	},
+	"metadata_saml20-sp": {
+		"en": "SAML 2.0 SP Metadata"
+	},
+	"metadata_saml20-idp": {
+		"en": "SAML 2.0 IdP Metadata"
+	},
+	"metadata_shib13-sp": {
+		"en": "Shib 1.3 SP Metadata"
+	},
+	"metadata_shib13-idp": {
+		"en": "Shib 1.3 IdP Metadata"
+	},
+    "metadata_adfs-sp": {
+        "en": "ADFS SP Metadata"
+    },
+    "metadata_adfs-idp": {
+        "en": "ADFS IdP Metadata"
+    },
+	"metadata_intro": {
+		"en": "Here is the metadata that SimpleSAMLphp has generated for you. You may send this metadata document to trusted partners to setup a trusted federation."
+	},
+	"metadata_xmlurl": {
+		"en": "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL<\/a>:"
+	},
+	"metadata_metadata": {
+		"en": "Metadata"
+	},
+	"metadata_cert": {
+		"en": "Certificates"
+	},
+	"metadata_cert_intro": {
+		"en": "Download the X509 certificates as PEM-encoded files."
+	},
+	"metadata_xmlformat": {
+		"en": "In SAML 2.0 Metadata XML format:"
+	},
+	"metadata_simplesamlformat": {
+		"en": "In SimpleSAMLphp flat file format - use this if you are using a SimpleSAMLphp entity on the other side:"
+	},
+	"debug_sending_message_title": {
+		"en": "Sending message"
+	},
+	"debug_sending_message_text_button": {
+		"en": "You are about to send a message. Hit the submit message button to continue."
+	},
+	"debug_sending_message_text_link": {
+		"en": "You are about to send a message. Hit the submit message link to continue."
+	},
+	"debug_sending_message_send": {
+		"en": "Submit message"
+	},
+	"debug_sending_message_msg_title": {
+		"en": "Message"
+	},
+	"debug_sending_message_msg_text": {
+		"en": "As you are in debug mode, you get to see the content of the message you are sending:"
+	},
+	"debug_disable_debug_mode": {
+		"en": "You can turn off debug mode in the global SimpleSAMLphp configuration file <tt>config\/config.php<\/tt>."
+	},
+	"metaconv_xmlmetadata": {
+		"en": "XML metadata"
+	}
+}

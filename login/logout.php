@@ -32,12 +32,13 @@ $PAGE->set_context(context_system::instance());
 $sesskey = optional_param('sesskey', '__notpresent__', PARAM_RAW); // we want not null default to prevent required sesskey warning
 $login   = optional_param('loginpage', 0, PARAM_BOOL);
 
-// can be overridden by auth plugins
-if ($login) {
-    $redirect = get_login_url();
+if (!empty($SESSION->currenteditingcompany)) {
+    $currentcompanyid = $SESSION->currenteditingcompany;
 } else {
-    $redirect = $CFG->wwwroot.'/';
+    $currentcompanyid = 0;
 }
+
+$redirect = get_login_url();
 
 if (!isloggedin()) {
     // no confirmation, user has already logged out
@@ -60,5 +61,11 @@ foreach($authsequence as $authname) {
 }
 
 require_logout();
+
+// IOMAD - We want the company/theme to persist.
+if (!empty($currentcompanyid)) {
+    $company = $DB->get_record('company', array('id' => $currentcompanyid));
+    $redirect .= "?id=" . $company->id . "&code=" . $company->shortname;
+}
 
 redirect($redirect);

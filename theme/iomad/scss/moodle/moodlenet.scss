@@ -1,0 +1,102 @@
+.moodlenet-share-dialog {
+    min-height: 500px;
+
+    .modal-header {
+        .moodlenet-share-moodlenetinfo {
+            align-items: baseline;
+
+            .moodlenet-logo {
+                display: flex;
+
+                .icon {
+                    width: auto;
+                    height: 1.3rem;
+                }
+            }
+
+            .moodlenet-title {
+                display: flex;
+                padding-left: 0.5em;
+            }
+        }
+
+        &.no-border {
+            border-bottom: none;
+        }
+
+        &.no-header-text {
+            .moodlenet-share-moodlenetinfo {
+                .moodlenet-title {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    .modal-body {
+        .moodlenet-share-activity-info {
+            @include border-radius();
+            @include alert-variant($primary-light-background, $primary-light-border, $body-color);
+            border-width: 1px;
+            border-style: solid;
+            padding: 0.6em 1.5em;
+            margin-bottom: 1rem;
+
+            .moodlenet-share-activity-info-hr {
+                border-bottom: 1px solid $gray-300;
+            }
+
+            .moodlenet-activity-type,
+            .moodlenet-activity-name {
+                display: block;
+            }
+        }
+
+        .moodlenet-share-notice {
+            background-color: $moodlenet-share-notice-bg;
+            padding: 1rem;
+        }
+
+        .moodlenet-share-modal-content {
+            .loading-icon {
+                .icon {
+                    width: 60px;
+                    height: 60px;
+                    font-size: 60px;
+                }
+            }
+
+            .moodlenet-circle-status {
+                height: 18rem;
+                margin: auto;
+
+                &.success {
+                    background: radial-gradient(circle, rgba(25, 143, 81, 0.1) 9rem, transparent 9rem);
+                }
+
+                &.fail {
+                    background: radial-gradient(circle, rgba(202, 49, 32, 0.1) 9rem, transparent 9rem);
+                }
+
+                span {
+                    display: block;
+                    margin: auto;
+
+                    &.status-icon {
+                        .icon {
+                            font-size: 8rem;
+                            width: auto;
+                            margin: 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .modal-footer {
+        .moodlenet-share-to {
+            margin-right: auto;
+        }
+    }
+}

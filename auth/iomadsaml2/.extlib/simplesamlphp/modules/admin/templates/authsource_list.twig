@@ -1,0 +1,14 @@
+{% set pagetitle = 'Test Authentication Sources'|trans %}
+{% set frontpage_section = 'test' %}
+{% extends "base.twig" %}
+
+{% block content %}
+    {%- include "@admin/includes/menu.twig" %}
+
+    <h2>{{ pagetitle }} </h2>
+    <ul>
+    {% for key, name in sources %}
+        <li><a href="{{ moduleURL('admin/test/' ~ name|escape('url')) }}">{{ name }}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}

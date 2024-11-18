@@ -1,0 +1,81 @@
+table#slostatustable {
+/*  width: 100%; */
+    border-collapse: collapse;
+    margin-bottom: 1em;
+}
+table#slostatustable tr td {
+/*  border-top: 1px solid #ccc; */
+    padding-left: 4px;
+    padding-right: 4px;
+}
+table#slostatustable tr td.statustext {
+    min-width: 5em;
+    padding-left: 0px;
+}
+
+table#slostatustable tr td.statustext span { display: none; }
+table#slostatustable tr.completed td.statustext span.completed { display: inline; }
+table#slostatustable tr.onhold td.statustext span.onhold { display: inline; }
+table#slostatustable tr.inprogress td.statustext span.inprogress { display: inline; }
+table#slostatustable tr.failed td.statustext span.failed { display: inline; }
+
+table#slostatustable tr td.icons img {
+/*  margin: 3px; */
+    display: none;
+}
+table#slostatustable tr.completed td.icons img.completed { display: inline; }
+table#slostatustable tr.onhold td.icons img.onhold { display: inline; }
+table#slostatustable tr.inprogress td.icons img.inprogress { display: inline; }
+table#slostatustable tr.failed td.icons img.failed { display: inline; }
+
+iframe.hiddeniframe {
+    display: none;
+}
+
+/* From old CSS
+
+div.allcompleted#interrupt {
+    display: none;
+}
+div#interrupt a:link {
+    color: #036;
+    border-bottom: 1px dotted #036;
+    text-decoration: none;
+}
+div#interrupt a:hover {
+    border-bottom: 1px solid #036;
+}
+div#interrupt {
+    display: block;
+    border: 3px solid #036;
+    background: #39F;
+    padding: 1em;
+    margin: .2em;
+}
+div#iscompleted {
+    display: none;
+    border: 3px solid #993;
+    background: #FF9;
+    padding: 1em;
+    margin: .2em;
+}
+div.allcompleted#iscompleted {
+    display: block ! important;
+}
+div.inprogress, div.loggedout {
+    background: #eee;
+    color: #444;
+    padding: .2em 1em;
+    margin: .2em;
+}
+div.inprogress {
+    border: 1px dotted #888;
+}
+div.loggedout {
+    border: 1px solid #888;
+    background: #9f9 ! important;
+}
+iframe.hiddeniframe {
+    display: none;
+}
+*/

@@ -1,0 +1,1486 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: ro\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100"
+" < 20)) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{admin:metadata_saml20-idp}"
+msgstr "Metadate furnizor de identitate (IdP) SAML 2.0"
+
+msgid "{errors:descr_WRONGUSERPASS}"
+msgstr ""
+"Nu a fost găsit niciun utilizator cu numele de utilizator specificat, sau"
+" parola introdusă este greșită. Vă rugăm să încercați din nou."
+
+msgid "{logout:failed}"
+msgstr "Deautentificarea a eșuat"
+
+msgid "{status:attributes_header}"
+msgstr "Atributele dumneavoastră"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-remote}"
+msgstr "Furnizor de servicii SAML 2.0 (distant)"
+
+msgid "{errors:descr_NOCERT}"
+msgstr ""
+"Autentificare eșuată: browser-ul dumneavoastră nu a trimis niciun "
+"certificat"
+
+msgid "{errors:title_PROCESSASSERTION}"
+msgstr "Eroare la procesarea răspunsului primit de la furnizorul de identitate"
+
+msgid "{errors:title_NOSTATE}"
+msgstr "Informația de stare a fost pierdută"
+
+msgid "{login:username}"
+msgstr "Nume de utilizator"
+
+msgid "{errors:title_METADATA}"
+msgstr "Eroare la încărcarea metadatelor"
+
+msgid "{admin:metaconv_title}"
+msgstr "Analizor de metadate"
+
+msgid "{admin:cfg_check_noerrors}"
+msgstr "Nu au fost depistate erori."
+
+msgid "{errors:descr_LOGOUTINFOLOST}"
+msgstr ""
+"Informația de deautentificare pentru această operațiune a fost pierdută. "
+"Vă rugăm să vă întoarceți la serviciul din care ați încercat să vă "
+"deautentificați și să încercați din nou. Această eroare poate fi cauzată "
+"de expirarea informației de deautentificare. Informația de "
+"deautentificare este stocată pentru un timp limitat, dar de obicei câteva"
+" ore, ceea ce eate mai mult decât poate dura în mod obișnuit o operațiune"
+" de deautentificare. Prin urmare, mesajul poate indica o altă eroare de "
+"configurare. Dacă problema persistă, vă rugăm să contactați furnizorul de"
+" servicii."
+
+msgid "{disco:previous_auth}"
+msgstr "Anterior ați ales să vă autentificați la"
+
+msgid "{admin:cfg_check_back}"
+msgstr "Mergeți înapoi la lista de fișiere"
+
+msgid "{errors:report_trackid}"
+msgstr ""
+"Dacă raportați această eroare, vă rugăm să includeți următorul număr de "
+"înregistrare care va permite localizarea sesiunii dumneavoastră în "
+"jurnalele de sistem:"
+
+msgid "{login:change_home_org_title}"
+msgstr "Modificați instituția de origine"
+
+msgid "{errors:descr_METADATANOTFOUND}"
+msgstr "Nu pot fi localizate metadatele pentru %ENTITYID%"
+
+msgid "{admin:metadata_metadata}"
+msgstr "Metadate"
+
+msgid "{errors:report_text}"
+msgstr ""
+"Opțional, treceți adresa dumneavoastră de e-mail. Administratorii de "
+"sistem vor putea să vă contacteze pentru eventuale informații "
+"suplimentare despre problema dumneavoastra:"
+
+msgid "{errors:report_header}"
+msgstr "Raportați erorile"
+
+msgid "{login:change_home_org_text}"
+msgstr ""
+"Ați ales ca instituție de origine<b>%HOMEORG%</b>. Dacă nu este corect vă"
+" rugăm să alegeți altă instituție."
+
+msgid "{errors:title_PROCESSAUTHNREQUEST}"
+msgstr "Eroare la procesarea răspunsului primit de la furnizorul de servicii"
+
+msgid "{errors:descr_PROCESSASSERTION}"
+msgstr "Răspunsul de la acest furnizor de identitate nu a fost acceptat."
+
+msgid "{errors:debuginfo_header}"
+msgstr "Informații de depanare"
+
+msgid "{admin:debug_sending_message_msg_text}"
+msgstr ""
+"Întrucât sunteți în modul depanare, veți vedea conținutul mesajului care "
+"va fi trimis:"
+
+msgid "{errors:descr_RESPONSESTATUSNOSUCCESS}"
+msgstr ""
+"Furnizorul de identitate a răspuns cu o eroare. (Codul de stare in "
+"răspunsul SAML a fost  încercare nereușită)"
+
+msgid "{admin:metadata_shib13-idp}"
+msgstr "Metadate furnizor de identitate (IdP) Shib 1.3"
+
+msgid "{login:help_text}"
+msgstr ""
+"Din păcate fără nume de utilizator și parolă nu vă puteți autentifica "
+"pentru accesul la acest serviciu. Contactați echipa de suport tehnic de "
+"la universitatea dumneavoastră."
+
+msgid "{logout:default_link_text}"
+msgstr "Mergeți înapoi la pagina de instalare a SimpleSAMLphp"
+
+msgid "{errors:error_header}"
+msgstr "Eroare SimpleSAMLphp"
+
+msgid "{login:help_header}"
+msgstr "Nu mai știu parola."
+
+msgid "{errors:descr_LDAPERROR}"
+msgstr ""
+"LDAP reprezintă o bază de date cu utilizatori. Când încercați să vă "
+"autentificați, trebuie contactată o bază de date LDAP. A apărut o eroare "
+"când s-a încercat această operațiune."
+
+msgid "{errors:descr_METADATA}"
+msgstr ""
+"Există o eroare în configurarea SimpleSAMLphp. Dacă sunteți "
+"administratorul acestui serviciu, verificați configurarea metadatelor."
+
+msgid "{errors:title_BADREQUEST}"
+msgstr "S-a primit o cerere incorectă"
+
+msgid "{status:sessionsize}"
+msgstr "Dimensiunea sesiunii: %SIZE%"
+
+msgid "{logout:title}"
+msgstr "Ieșire din sistem (deautentificare)"
+
+msgid "{admin:metaconv_xmlmetadata}"
+msgstr "Metadate XML"
+
+msgid "{admin:metaover_unknown_found}"
+msgstr "Următoarele câmpuri nu au fost recunoscute"
+
+msgid "{errors:title_AUTHSOURCEERROR}"
+msgstr "Eroare sursă de autentificare"
+
+msgid "{login:select_home_org}"
+msgstr "Alegeți instituția de origine"
+
+msgid "{logout:hold}"
+msgstr "În așteptare"
+
+msgid "{admin:cfg_check_header}"
+msgstr "Verificarea configurației"
+
+msgid "{admin:debug_sending_message_send}"
+msgstr "Trimite mesajul"
+
+msgid "{status:logout}"
+msgstr "Deautentificare"
+
+msgid "{errors:descr_DISCOPARAMS}"
+msgstr ""
+"Parametrii trimiși către serviciul de căutare nu sunt în conformitate cu "
+"specificațiile."
+
+msgid "{errors:descr_CREATEREQUEST}"
+msgstr "A apărut o eroare la crearea cererii SAML."
+
+msgid "{admin:metaover_optional_found}"
+msgstr "Câmpuri opționale"
+
+msgid "{logout:return}"
+msgstr "Întoarcere la serviciu"
+
+msgid "{admin:metadata_xmlurl}"
+msgstr ""
+"Puteți accesa <a href=\"%METAURL%\">metadatele xml de la un URL "
+"dedicat</a>:"
+
+msgid "{logout:logout_all}"
+msgstr "Da, toate serviciile"
+
+msgid "{admin:debug_disable_debug_mode}"
+msgstr ""
+"Se poate opri modul de depanare în fișierul de configurare SimpleSAMLphp "
+"<tt>config/config.php</tt>."
+
+msgid "{disco:select}"
+msgstr "Selectați"
+
+msgid "{logout:also_from}"
+msgstr "Sunteți autentificat și la următoarele servicii:"
+
+msgid "{login:login_button}"
+msgstr "Autentificare"
+
+msgid "{logout:progress}"
+msgstr "Deautentificare ..."
+
+msgid "{login:error_wrongpassword}"
+msgstr "Nume de utilizator incorect sau parola incorectă."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-remote}"
+msgstr "Furnizor de servicii Shib 1.3 (distant)"
+
+msgid "{errors:descr_PROCESSAUTHNREQUEST}"
+msgstr ""
+"Acest furnizor de identitate a primit o cerere de autentificare de la un "
+"furnizor de servicii, dar a apărut o eroare la procesarea cererii."
+
+msgid "{logout:logout_all_question}"
+msgstr "Doriți să vă deautentificați de la toate serviciile de mai sus ?"
+
+msgid "{errors:title_NOACCESS}"
+msgstr "Accesul este interzis"
+
+msgid "{login:error_nopassword}"
+msgstr ""
+"Ați trimis informații către pagina de autentificare dar din motive "
+"necunoscute parola nu a fost trimisă. Vă rugăm să încercați din nou."
+
+msgid "{errors:title_NORELAYSTATE}"
+msgstr "Nu există <i>RelayState</i>"
+
+msgid "{errors:descr_NOSTATE}"
+msgstr "Informația de stare a fost pierdută, cererea nu poate fi reluată"
+
+msgid "{login:password}"
+msgstr "Parola"
+
+msgid "{errors:debuginfo_text}"
+msgstr ""
+"Informațiile de depanare de mai jos pot fi importante pentru "
+"administratorul de sistem:"
+
+msgid "{admin:cfg_check_missing}"
+msgstr "Opțiuni care nu apar în fișierul de configurare"
+
+msgid "{errors:descr_UNHANDLEDEXCEPTION}"
+msgstr "A apărut o excepție netratată."
+
+msgid "{general:yes}"
+msgstr "Da"
+
+msgid "{errors:title_CONFIG}"
+msgstr "Eroare de configurare"
+
+msgid "{errors:title_LOGOUTREQUEST}"
+msgstr "Eroare la procesarea cererii de deautentificare"
+
+msgid "{admin:metaover_errorentry}"
+msgstr "Eroare în această metadată"
+
+msgid "{errors:title_METADATANOTFOUND}"
+msgstr "Metadatele nu au fost găsite"
+
+msgid "{login:contact_info}"
+msgstr "Informații de contact:"
+
+msgid "{errors:title_UNHANDLEDEXCEPTION}"
+msgstr "Excepție netratată"
+
+msgid "{status:header_saml20_sp}"
+msgstr "Exemplu demonstrativ de furnizor de servicii SAML 2.0"
+
+msgid "{login:error_header}"
+msgstr "Eroare"
+
+msgid "{errors:title_USERABORTED}"
+msgstr "Autentificare întreruptă"
+
+msgid "{logout:incapablesps}"
+msgstr ""
+"Unul sau mai multe servicii în care sunteți autentificat <i>nu suportă "
+"deautentificare</i>. Pentru a fi sigur că toate sesiunile sunt închise, "
+"vă rugăm să închideți <i>browser-ul</i>."
+
+msgid "{admin:metadata_xmlformat}"
+msgstr "În format metadate XML SAML 2.0:"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-remote}"
+msgstr "Furnizor de identitate SAML 2.0 (distant)"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-hosted}"
+msgstr "Furnizor de identitate SAML 2.0 (găzduit)"
+
+msgid "{admin:metaover_required_found}"
+msgstr "Câmpuri obligatorii"
+
+msgid "{admin:cfg_check_select_file}"
+msgstr "Alegeți fișierul de configurare care doriți să-l verificați:"
+
+msgid "{errors:descr_UNKNOWNCERT}"
+msgstr ""
+"Autentificare eșuată: certificatul trimis de browser-ul dumneavoastră nu "
+"este recunoscut"
+
+msgid "{logout:logging_out_from}"
+msgstr "Deautentificare din următoarele servicii:"
+
+msgid "{logout:loggedoutfrom}"
+msgstr "Ați fost deautentificat din %SP%."
+
+msgid "{errors:errorreport_text}"
+msgstr "Raportul cu erori a fost trimis către administratori."
+
+msgid "{errors:descr_LOGOUTREQUEST}"
+msgstr "A apărut o eroare la procesarea cererii de deautentificare."
+
+msgid "{logout:success}"
+msgstr "Ați fost deautentificat de la toate serviciile enumerate mai sus."
+
+msgid "{admin:cfg_check_notices}"
+msgstr "Note/Observații"
+
+msgid "{errors:descr_USERABORTED}"
+msgstr "Autentificarea a fost întreruptă de utilizator"
+
+msgid "{errors:descr_CASERROR}"
+msgstr "Eroare de comunicare cu serverul CAS."
+
+msgid "{general:no}"
+msgstr "Nu"
+
+msgid "{admin:metadata_saml20-sp}"
+msgstr "Metadate furnizor de servicii (SP) SAML 2.0"
+
+msgid "{admin:metaconv_converted}"
+msgstr "Metadate convertite"
+
+msgid "{logout:completed}"
+msgstr "Terminat"
+
+msgid "{errors:descr_NOTSET}"
+msgstr ""
+"Parola din configurare (<i>auth.adminpassword</i>) este cea implicită, vă"
+" rugăm să o modificați."
+
+msgid "{general:service_provider}"
+msgstr "Furnizor de servicii"
+
+msgid "{errors:descr_BADREQUEST}"
+msgstr "Există o eroare în cererea către această pagină. Motivul este: %REASON%"
+
+msgid "{logout:no}"
+msgstr "Nu"
+
+msgid "{disco:icon_prefered_idp}"
+msgstr "[Varianta preferată]"
+
+msgid "{general:no_cancel}"
+msgstr "Nu, renunț"
+
+msgid "{login:user_pass_header}"
+msgstr "Vă rugăm să completați numele de utilizator și parola"
+
+msgid "{errors:report_explain}"
+msgstr "Descrieți ce operațiuini executați când a apărut această eroare  ..."
+
+msgid "{errors:title_ACSPARAMS}"
+msgstr "Nu a fost furnizat răspunsul SAML"
+
+msgid "{errors:descr_SLOSERVICEPARAMS}"
+msgstr ""
+"Ați accesat interfața <i>SingleLogoutService</i>, dar nu ați furnizat o "
+"cerere de deautentificare sau un răspuns de deautentificare SAML."
+
+msgid "{login:organization}"
+msgstr "Instituție"
+
+msgid "{errors:title_WRONGUSERPASS}"
+msgstr "Nume de utilizator incorect sau parolă incorectă"
+
+msgid "{admin:metaover_required_not_found}"
+msgstr "Următoarele câmpuri obligatorii nu au fost găsite"
+
+msgid "{errors:descr_NOACCESS}"
+msgstr ""
+"Acest capăt/obiectiv nu este activat. Verificați opțiunile de activare în"
+" configurarea SimpleSAMLphp."
+
+msgid "{errors:title_SLOSERVICEPARAMS}"
+msgstr "Nu a fost furnizat mesajul SAML"
+
+msgid "{errors:descr_ACSPARAMS}"
+msgstr ""
+"Ați accesat interfața <i>Assertion Consumer Service</i> dar nu ați "
+"furnizat răspunsul de autentificare SAML."
+
+msgid "{admin:debug_sending_message_text_link}"
+msgstr ""
+"Mesajul este pregătit pentru a fi trimis. Apăsați link-ul de trimitere "
+"pentru a continua."
+
+msgid "{errors:descr_AUTHSOURCEERROR}"
+msgstr "Eroare de autentificare la sursa %AUTHSOURCE%. Motivul a fost: %REASON%"
+
+msgid "{status:some_error_occurred}"
+msgstr "A apărut o eroare"
+
+msgid "{login:change_home_org_button}"
+msgstr "Alegeți instituția de origine"
+
+msgid "{admin:cfg_check_superfluous}"
+msgstr "Opțiuni inutile în fișierul de configurare"
+
+msgid "{errors:report_email}"
+msgstr "Adresa e-mail:"
+
+msgid "{errors:howto_header}"
+msgstr "Cum obțineți ajutor/asistență"
+
+msgid "{errors:title_NOTSET}"
+msgstr "Parola nu este configurată"
+
+msgid "{errors:descr_NORELAYSTATE}"
+msgstr ""
+"Inițiatorul acestei cereri nu a furnizat parametrul <i>RelayState</i> "
+"care indică următorul pas."
+
+msgid "{status:header_diagnostics}"
+msgstr "Diagnostic SimpleSAMLphp"
+
+msgid "{status:intro}"
+msgstr ""
+"Aceasta este pagina de stare pentru SimpleSAMLphp. Aici puteți verifica "
+"dacă sesiunea dumneavoastră a expirat, cât timp mai este până la "
+"expirarea sesiunii precum și toate atributele atașate sesiunii "
+"dumneavoastră."
+
+msgid "{errors:title_NOTFOUNDREASON}"
+msgstr "Pagina nu a fost găsită"
+
+msgid "{admin:debug_sending_message_title}"
+msgstr "Se trimite mesajul"
+
+msgid "{errors:title_RESPONSESTATUSNOSUCCESS}"
+msgstr "Eroare primită de la furnizorul de identitate"
+
+msgid "{admin:metadata_shib13-sp}"
+msgstr "Metadate furnizor de servicii (SP) Shib 1.3"
+
+msgid "{admin:metaover_intro}"
+msgstr ""
+"Pentru a vizualiza detalii privind o entitate SAML, apăsați pe antetul "
+"entității SAML."
+
+msgid "{errors:title_NOTVALIDCERT}"
+msgstr "Certificat nevalid"
+
+msgid "{general:remember}"
+msgstr "Ține minte"
+
+msgid "{disco:selectidp}"
+msgstr "Alegeți furnizorul de identitate"
+
+msgid "{login:help_desk_email}"
+msgstr "Trimiteți un mesaj la echipa de suport tehnic"
+
+msgid "{login:help_desk_link}"
+msgstr "Pagina echipei de suport tehnic"
+
+msgid "{errors:title_CASERROR}"
+msgstr "Eroare CAS"
+
+msgid "{login:user_pass_text}"
+msgstr ""
+"Un serviciu a solicitat autentificarea dumneavoastră. Vă rugăm să "
+"completați numele de utilizator și parola în câmpurile de mai jos."
+
+msgid "{errors:title_DISCOPARAMS}"
+msgstr "Cerere eronată către serviciul de căutare"
+
+msgid "{general:yes_continue}"
+msgstr "Da, continuă"
+
+msgid "{disco:remember}"
+msgstr "Memorează alegerea făcută"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-hosted}"
+msgstr "Furnizor de servicii SAML 2.0 (găzduit)"
+
+msgid "{admin:metadata_simplesamlformat}"
+msgstr ""
+"În format fișier simplu SimpleSAMLphp - utilizați această variantă dacă "
+"în capătul celălalt folosiți o entitate SimpleSAMLphp:"
+
+msgid "{disco:login_at}"
+msgstr "Autentificare la"
+
+msgid "{errors:title_GENERATEAUTHNRESPONSE}"
+msgstr "Nu a fost posibilă crearea răspunsului de autentificare"
+
+msgid "{errors:errorreport_header}"
+msgstr "Raportul cu erori a fost trimis"
+
+msgid "{errors:title_CREATEREQUEST}"
+msgstr "Eroare la crearea cererii"
+
+msgid "{admin:metaover_header}"
+msgstr "Prezentare generală a metadatelor"
+
+msgid "{errors:report_submit}"
+msgstr "Trimiteți raportul cu erorile observate"
+
+msgid "{errors:title_INVALIDCERT}"
+msgstr "Certificat nevalid"
+
+msgid "{errors:title_NOTFOUND}"
+msgstr "Pagina nu a fost găsită"
+
+msgid "{logout:logged_out_text}"
+msgstr "Ați fost deautentificat"
+
+msgid "{admin:metaover_group_metadata.shib13-sp-hosted}"
+msgstr "Furnizor de servicii Shib 1.3 (găzduit)"
+
+msgid "{admin:metadata_cert_intro}"
+msgstr "Descărcați certificatele X509 ca fișiere PEM."
+
+msgid "{admin:debug_sending_message_msg_title}"
+msgstr "Mesaj"
+
+msgid "{errors:title_UNKNOWNCERT}"
+msgstr "Certificat necunoscut"
+
+msgid "{errors:title_LDAPERROR}"
+msgstr "Eroare LDAP"
+
+msgid "{logout:failedsps}"
+msgstr ""
+"Nu a fost posibilă deautentificarea pentru unul sau mai multe servicii. "
+"Pentru a fi sigur că toate sesiunile sunt închise, vă rugăm să închideți "
+"<i>browser-ul</i>."
+
+msgid "{errors:descr_NOTFOUND}"
+msgstr "Pagina nu a fost găsită, URL-ul a fost următorul: %URL%"
+
+msgid "{errors:howto_text}"
+msgstr ""
+"Această eroare a apărut probabil din cauza unui comportament neașteptat "
+"sau a erorilor de configurare a SimpleSAMLphp. Vă rugăm să contactați "
+"administratorul acestui serviciu și să-i furnizați mesajul de eroare de "
+"mai sus."
+
+msgid "{admin:metaover_group_metadata.shib13-idp-hosted}"
+msgstr "Furnizor de identitate Shib 1.3 (găzduit)"
+
+msgid "{errors:descr_NOTVALIDCERT}"
+msgstr "Nu ați oferit un certificat valid."
+
+msgid "{admin:debug_sending_message_text_button}"
+msgstr ""
+"Mesajul este pregătit pentru a fi trimis. Apăsați butonul de trimitere "
+"pentru a continua."
+
+msgid "{admin:metaover_optional_not_found}"
+msgstr "Următoarele câmpuri opționale nu au fost găsite"
+
+msgid "{logout:logout_only}"
+msgstr "Nu, doar %SP%"
+
+msgid "{login:next}"
+msgstr "Următorul pas"
+
+msgid "{errors:descr_GENERATEAUTHNRESPONSE}"
+msgstr ""
+"A apărut o eroare când furnizorul de identitate încerca să creeze un "
+"răspuns de autentificare."
+
+msgid "{disco:selectidp_full}"
+msgstr ""
+"Vă rugăm să alegeți furnizorul de identitate pe care doriți să-l folosiți"
+" pentru autentificarea dumneavoastră:"
+
+msgid "{errors:descr_NOTFOUNDREASON}"
+msgstr ""
+"Pagina nu a fost găsită, motivul a fost următorul: %REASON%, URL-ul a "
+"fost: %URL%"
+
+msgid "{errors:title_NOCERT}"
+msgstr "Lipsește certificatul"
+
+msgid "{errors:title_LOGOUTINFOLOST}"
+msgstr "Informația de deautentificare a fost pierdută"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-remote}"
+msgstr "Furnizor de identitate Shib 1.3 (distant)"
+
+msgid "{errors:descr_CONFIG}"
+msgstr "Probleme la configurarea SimpleSAMLphp."
+
+msgid "{admin:metadata_intro}"
+msgstr ""
+"Acestea sunt metadate generate de SimpleSAMLphp. Metadatele pot fi "
+"trimise către parteneri de încredere pentru a configura o federație de "
+"încredere."
+
+msgid "{admin:metadata_cert}"
+msgstr "Certificate"
+
+msgid "{errors:descr_INVALIDCERT}"
+msgstr ""
+"Autentificare eșuată: certificatul trimis de browser-ul dumneavoastră nu "
+"este valid sau nu poate fi citit"
+
+msgid "{status:header_shib}"
+msgstr "Demo Shibboleth"
+
+msgid "{admin:metaconv_parse}"
+msgstr "Analizează"
+
+msgid "Person's principal name at home organization"
+msgstr ""
+"Numele de identificare a persoanei la instituția de origine (de forma "
+"nume_utilizator@domeniu.ro)"
+
+msgid "Superfluous options in config file"
+msgstr "Opțiuni inutile în fișierul de configurare"
+
+msgid "Mobile"
+msgstr "Mobil"
+
+msgid "Shib 1.3 Service Provider (Hosted)"
+msgstr "Furnizor de servicii Shib 1.3 (găzduit)"
+
+msgid ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+msgstr ""
+"LDAP reprezintă o bază de date cu utilizatori. Când încercați să vă "
+"autentificați, trebuie contactată o bază de date LDAP. A apărut o eroare "
+"când s-a încercat această operațiune."
+
+msgid ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+msgstr ""
+"Opțional, treceți adresa dumneavoastră de e-mail. Administratorii de "
+"sistem vor putea să vă contacteze pentru eventuale informații "
+"suplimentare despre problema dumneavoastra:"
+
+msgid "Display name"
+msgstr "Nume afișat"
+
+msgid "Remember my choice"
+msgstr "Memorează alegerea făcută"
+
+msgid "SAML 2.0 SP Metadata"
+msgstr "Metadate furnizor de servicii (SP) SAML 2.0"
+
+msgid "Notices"
+msgstr "Note/Observații"
+
+msgid "Home telephone"
+msgstr "Telefon acasă"
+
+msgid ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+msgstr ""
+"Aceasta este pagina de stare pentru SimpleSAMLphp. Aici puteți verifica "
+"dacă sesiunea dumneavoastră a expirat, cât timp mai este până la "
+"expirarea sesiunii precum și toate atributele atașate sesiunii "
+"dumneavoastră."
+
+msgid "Explain what you did when this error occurred..."
+msgstr "Descrieți ce operațiuini executați când a apărut această eroare  ..."
+
+msgid "An unhandled exception was thrown."
+msgstr "A apărut o excepție netratată."
+
+msgid "Invalid certificate"
+msgstr "Certificat nevalid"
+
+msgid "Service Provider"
+msgstr "Furnizor de servicii"
+
+msgid "Incorrect username or password."
+msgstr "Nume de utilizator incorect sau parola incorectă."
+
+msgid "There is an error in the request to this page. The reason was: %REASON%"
+msgstr "Există o eroare în cererea către această pagină. Motivul este: %REASON%"
+
+msgid "E-mail address:"
+msgstr "Adresa e-mail:"
+
+msgid "Submit message"
+msgstr "Trimite mesajul"
+
+msgid "No RelayState"
+msgstr "Nu există <i>RelayState</i>"
+
+msgid "Error creating request"
+msgstr "Eroare la crearea cererii"
+
+msgid "Locality"
+msgstr "Localitate"
+
+msgid "Unhandled exception"
+msgstr "Excepție netratată"
+
+msgid "The following required fields was not found"
+msgstr "Următoarele câmpuri obligatorii nu au fost găsite"
+
+msgid "Download the X509 certificates as PEM-encoded files."
+msgstr "Descărcați certificatele X509 ca fișiere PEM."
+
+#, python-format
+msgid "Unable to locate metadata for %ENTITYID%"
+msgstr "Nu pot fi localizate metadatele pentru %ENTITYID%"
+
+msgid "Organizational number"
+msgstr "Număr organizațional"
+
+msgid "Password not set"
+msgstr "Parola nu este configurată"
+
+msgid "SAML 2.0 IdP Metadata"
+msgstr "Metadate furnizor de identitate (IdP) SAML 2.0"
+
+msgid "Post office box"
+msgstr "Cutie poștală"
+
+msgid ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+msgstr ""
+"Un serviciu a solicitat autentificarea dumneavoastră. Vă rugăm să "
+"completați numele de utilizator și parola în câmpurile de mai jos."
+
+msgid "CAS Error"
+msgstr "Eroare CAS"
+
+msgid ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+msgstr ""
+"Informațiile de depanare de mai jos pot fi importante pentru "
+"administratorul de sistem:"
+
+msgid ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+msgstr ""
+"Nu a fost găsit niciun utilizator cu numele de utilizator specificat, sau"
+" parola introdusă este greșită. Vă rugăm să încercați din nou."
+
+msgid "Error"
+msgstr "Eroare"
+
+msgid "Next"
+msgstr "Următorul pas"
+
+msgid "Distinguished name (DN) of the person's home organizational unit"
+msgstr "Nume distincitv (DN) al unității organizaționale de origine a persoanei"
+
+msgid "State information lost"
+msgstr "Informația de stare a fost pierdută"
+
+msgid ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+msgstr ""
+"Parola din configurare (<i>auth.adminpassword</i>) este cea implicită, vă"
+" rugăm să o modificați."
+
+msgid "Converted metadata"
+msgstr "Metadate convertite"
+
+msgid "Mail"
+msgstr "Mail"
+
+msgid "No, cancel"
+msgstr "Nu"
+
+msgid ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+msgstr ""
+"Ați ales ca instituție de origine<b>%HOMEORG%</b>. Dacă nu este corect vă"
+" rugăm să alegeți altă instituție."
+
+msgid "Error processing request from Service Provider"
+msgstr "Eroare la procesarea răspunsului primit de la furnizorul de servicii"
+
+msgid "Distinguished name (DN) of person's primary Organizational Unit"
+msgstr "Nume distincitv (DN) al unității organizaționale primare a persoanei"
+
+msgid ""
+"To look at the details for an SAML entity, click on the SAML entity "
+"header."
+msgstr ""
+"Pentru a vizualiza detalii privind o entitate SAML, apăsați pe antetul "
+"entității SAML."
+
+msgid "Enter your username and password"
+msgstr "Vă rugăm să completați numele de utilizator și parola"
+
+msgid "Login at"
+msgstr "Autentificare la"
+
+msgid "No"
+msgstr "Nu"
+
+msgid "Home postal address"
+msgstr "Adresa poștală de acasă"
+
+msgid "WS-Fed SP Demo Example"
+msgstr "Exemplu demonstrativ de WS-Fed"
+
+msgid "SAML 2.0 Identity Provider (Remote)"
+msgstr "Furnizor de identitate SAML 2.0 (distant)"
+
+msgid "Error processing the Logout Request"
+msgstr "Eroare la procesarea cererii de deautentificare"
+
+msgid "Do you want to logout from all the services above?"
+msgstr "Doriți să vă deautentificați de la toate serviciile de mai sus ?"
+
+msgid "Select"
+msgstr "Selectați"
+
+msgid "The authentication was aborted by the user"
+msgstr "Autentificarea a fost întreruptă de utilizator"
+
+msgid "Your attributes"
+msgstr "Atributele dumneavoastră"
+
+msgid "Given name"
+msgstr "Prenume"
+
+msgid "Identity assurance profile"
+msgstr "Profilul de asigurare a identității"
+
+msgid "SAML 2.0 SP Demo Example"
+msgstr "Exemplu demonstrativ de furnizor de servicii SAML 2.0"
+
+msgid "Logout information lost"
+msgstr "Informația de deautentificare a fost pierdută"
+
+msgid "Organization name"
+msgstr "Denumirea instituției"
+
+msgid "Authentication failed: the certificate your browser sent is unknown"
+msgstr ""
+"Autentificare eșuată: certificatul trimis de browser-ul dumneavoastră nu "
+"este recunoscut"
+
+msgid ""
+"You are about to send a message. Hit the submit message button to "
+"continue."
+msgstr ""
+"Mesajul este pregătit pentru a fi trimis. Apăsați butonul de trimitere "
+"pentru a continua."
+
+msgid "Home organization domain name"
+msgstr "Njumele de domeniu pentru instituția de origine"
+
+msgid "Go back to the file list"
+msgstr "Mergeți înapoi la lista de fișiere"
+
+msgid "Error report sent"
+msgstr "Raportul cu erori a fost trimis"
+
+msgid "Common name"
+msgstr "Nume comun"
+
+msgid "Please select the identity provider where you want to authenticate:"
+msgstr ""
+"Vă rugăm să alegeți furnizorul de identitate pe care doriți să-l folosiți"
+" pentru autentificarea dumneavoastră:"
+
+msgid "Logout failed"
+msgstr "Deautentificarea a eșuat"
+
+msgid "Identity number assigned by public authorities"
+msgstr "Număr de identitate atribuit de autorități publice"
+
+msgid "WS-Federation Identity Provider (Remote)"
+msgstr "Furnizor de servicii federație WS (distant)"
+
+msgid "Error received from Identity Provider"
+msgstr "Eroare primită de la furnizorul de identitate"
+
+msgid "LDAP Error"
+msgstr "Eroare LDAP"
+
+msgid ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+msgstr ""
+"Informația de deautentificare pentru această operațiune a fost pierdută. "
+"Vă rugăm să vă întoarceți la serviciul din care ați încercat să vă "
+"deautentificați și să încercați din nou. Această eroare poate fi cauzată "
+"de expirarea informației de deautentificare. Informația de "
+"deautentificare este stocată pentru un timp limitat, dar de obicei câteva"
+" ore, ceea ce eate mai mult decât poate dura în mod obișnuit o operațiune"
+" de deautentificare. Prin urmare, mesajul poate indica o altă eroare de "
+"configurare. Dacă problema persistă, vă rugăm să contactați furnizorul de"
+" servicii."
+
+msgid "Some error occurred"
+msgstr "A apărut o eroare"
+
+msgid "Organization"
+msgstr "Instituție"
+
+msgid "No certificate"
+msgstr "Lipsește certificatul"
+
+msgid "Choose home organization"
+msgstr "Alegeți instituția de origine"
+
+msgid "Persistent pseudonymous ID"
+msgstr "ID pseudonim persistent"
+
+msgid "No SAML response provided"
+msgstr "Nu a fost furnizat răspunsul SAML"
+
+msgid "No errors found."
+msgstr "Nu au fost depistate erori."
+
+msgid "SAML 2.0 Service Provider (Hosted)"
+msgstr "Furnizor de servicii SAML 2.0 (găzduit)"
+
+msgid "The given page was not found. The URL was: %URL%"
+msgstr "Pagina nu a fost găsită, URL-ul a fost următorul: %URL%"
+
+msgid "Configuration error"
+msgstr "Eroare de configurare"
+
+msgid "Required fields"
+msgstr "Câmpuri obligatorii"
+
+msgid "An error occurred when trying to create the SAML request."
+msgstr "A apărut o eroare la crearea cererii SAML."
+
+msgid ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+msgstr ""
+"Această eroare a apărut probabil din cauza unui comportament neașteptat "
+"sau a erorilor de configurare a SimpleSAMLphp. Vă rugăm să contactați "
+"administratorul acestui serviciu și să-i furnizați mesajul de eroare de "
+"mai sus."
+
+#, python-format
+msgid "Your session is valid for %remaining% seconds from now."
+msgstr "Sesiunea dumneavoastră mai este validă încă %remaining%."
+
+msgid "Domain component (DC)"
+msgstr "Componenta de domeniu (DC)"
+
+msgid "Shib 1.3 Service Provider (Remote)"
+msgstr "Furnizor de servicii Shib 1.3 (distant)"
+
+msgid "Password"
+msgstr "Parola"
+
+msgid "Nickname"
+msgstr "Poreclă"
+
+msgid "Send error report"
+msgstr "Trimiteți raportul cu erorile observate"
+
+msgid ""
+"Authentication failed: the certificate your browser sent is invalid or "
+"cannot be read"
+msgstr ""
+"Autentificare eșuată: certificatul trimis de browser-ul dumneavoastră nu "
+"este valid sau nu poate fi citit"
+
+msgid "The error report has been sent to the administrators."
+msgstr "Raportul cu erori a fost trimis către administratori."
+
+msgid "Date of birth"
+msgstr "Data nașterii"
+
+msgid "Private information elements"
+msgstr "Informații private"
+
+msgid "You are also logged in on these services:"
+msgstr "Sunteți autentificat și la următoarele servicii:"
+
+msgid "SimpleSAMLphp Diagnostics"
+msgstr "Diagnostic SimpleSAMLphp"
+
+msgid "Debug information"
+msgstr "Informații de depanare"
+
+msgid "No, only %SP%"
+msgstr "Nu, doar %SP%"
+
+msgid "Username"
+msgstr "Nume de utilizator"
+
+msgid "Go back to SimpleSAMLphp installation page"
+msgstr "Mergeți înapoi la pagina de instalare a SimpleSAMLphp"
+
+msgid "You have successfully logged out from all services listed above."
+msgstr "Ați fost deautentificat de la toate serviciile enumerate mai sus."
+
+msgid "You are now successfully logged out from %SP%."
+msgstr "Ați fost deautentificat din %SP%."
+
+msgid "Affiliation"
+msgstr "Afiliere"
+
+msgid "You have been logged out."
+msgstr "Ați fost deautentificat"
+
+msgid "Return to service"
+msgstr "Întoarcere la serviciu"
+
+msgid "Logout"
+msgstr "Deautentificare"
+
+msgid "State information lost, and no way to restart the request"
+msgstr "Informația de stare a fost pierdută, cererea nu poate fi reluată"
+
+msgid "Error processing response from Identity Provider"
+msgstr "Eroare la procesarea răspunsului primit de la furnizorul de identitate"
+
+msgid "WS-Federation Service Provider (Hosted)"
+msgstr "Furnizor de servicii federație WS (găzduit)"
+
+msgid "Preferred language"
+msgstr "Limba preferată"
+
+msgid "SAML 2.0 Service Provider (Remote)"
+msgstr "Furnizor de servicii SAML 2.0 (distant)"
+
+msgid "Surname"
+msgstr "Nume de familie"
+
+msgid "No access"
+msgstr "Accesul este interzis"
+
+msgid "The following fields was not recognized"
+msgstr "Următoarele câmpuri nu au fost recunoscute"
+
+msgid "Authentication error in source %AUTHSOURCE%. The reason was: %REASON%"
+msgstr "Eroare de autentificare la sursa %AUTHSOURCE%. Motivul a fost: %REASON%"
+
+msgid "Bad request received"
+msgstr "S-a primit o cerere incorectă"
+
+msgid "User ID"
+msgstr "ID utilizator"
+
+msgid "JPEG Photo"
+msgstr "Fotografie JPEG"
+
+msgid "Postal address"
+msgstr "Adresa poștală"
+
+msgid "An error occurred when trying to process the Logout Request."
+msgstr "A apărut o eroare la procesarea cererii de deautentificare."
+
+msgid "Sending message"
+msgstr "Se trimite mesajul"
+
+msgid "In SAML 2.0 Metadata XML format:"
+msgstr "În format metadate XML SAML 2.0:"
+
+msgid "Logging out of the following services:"
+msgstr "Deautentificare din următoarele servicii:"
+
+msgid ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+msgstr ""
+"A apărut o eroare când furnizorul de identitate încerca să creeze un "
+"răspuns de autentificare."
+
+msgid "Could not create authentication response"
+msgstr "Nu a fost posibilă crearea răspunsului de autentificare"
+
+msgid "Labeled URI"
+msgstr "URI etichetat"
+
+msgid "SimpleSAMLphp appears to be misconfigured."
+msgstr "Probleme la configurarea SimpleSAMLphp."
+
+msgid "Shib 1.3 Identity Provider (Hosted)"
+msgstr "Furnizor de identitate Shib 1.3 (găzduit)"
+
+msgid "Metadata"
+msgstr "Metadate"
+
+msgid "Login"
+msgstr "Autentificare"
+
+msgid ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+msgstr ""
+"Acest furnizor de identitate a primit o cerere de autentificare de la un "
+"furnizor de servicii, dar a apărut o eroare la procesarea cererii."
+
+msgid "Yes, all services"
+msgstr "Da, toate serviciile"
+
+msgid "Logged out"
+msgstr "Ieșire din sistem (deautentificare)"
+
+msgid "Postal code"
+msgstr "Cod poștal"
+
+msgid "Logging out..."
+msgstr "Deautentificare ..."
+
+msgid "Metadata not found"
+msgstr "Metadatele nu au fost găsite"
+
+msgid "SAML 2.0 Identity Provider (Hosted)"
+msgstr "Furnizor de identitate SAML 2.0 (găzduit)"
+
+msgid "Primary affiliation"
+msgstr "Afiliere primară"
+
+msgid ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+msgstr ""
+"Dacă raportați această eroare, vă rugăm să includeți următorul număr de "
+"înregistrare care va permite localizarea sesiunii dumneavoastră în "
+"jurnalele de sistem:"
+
+msgid "XML metadata"
+msgstr "Metadate XML"
+
+msgid ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+msgstr ""
+"Parametrii trimiși către serviciul de căutare nu sunt în conformitate cu "
+"specificațiile."
+
+msgid "Telephone number"
+msgstr "Număr de telefon"
+
+msgid ""
+"Unable to log out of one or more services. To ensure that all your "
+"sessions are closed, you are encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Nu a fost posibilă deautentificarea pentru unul sau mai multe servicii. "
+"Pentru a fi sigur că toate sesiunile sunt închise, vă rugăm să închideți "
+"<i>browser-ul</i>."
+
+msgid "Bad request to discovery service"
+msgstr "Cerere eronată către serviciul de căutare"
+
+msgid "Select your identity provider"
+msgstr "Alegeți furnizorul de identitate"
+
+msgid "Entitlement regarding the service"
+msgstr "Drepturi relativ la acest serviciu"
+
+msgid "Shib 1.3 SP Metadata"
+msgstr "Metadate furnizor de servicii (SP) Shib 1.3"
+
+msgid ""
+"As you are in debug mode, you get to see the content of the message you "
+"are sending:"
+msgstr ""
+"Întrucât sunteți în modul depanare, veți vedea conținutul mesajului care "
+"va fi trimis:"
+
+msgid "Certificates"
+msgstr "Certificate"
+
+msgid "Remember"
+msgstr "Ține minte"
+
+msgid "Distinguished name (DN) of person's home organization"
+msgstr "Nume distincitv (DN) al instituție de origine a persoanei"
+
+msgid "You are about to send a message. Hit the submit message link to continue."
+msgstr ""
+"Mesajul este pregătit pentru a fi trimis. Apăsați link-ul de trimitere "
+"pentru a continua."
+
+msgid "Organizational unit"
+msgstr "Unitate organizațională"
+
+msgid "Authentication aborted"
+msgstr "Autentificare întreruptă"
+
+msgid "Local identity number"
+msgstr "Număr de identificare local"
+
+msgid "Report errors"
+msgstr "Raportați erorile"
+
+msgid "Page not found"
+msgstr "Pagina nu a fost găsită"
+
+msgid "Shib 1.3 IdP Metadata"
+msgstr "Metadate furnizor de identitate (IdP) Shib 1.3"
+
+msgid "Change your home organization"
+msgstr "Modificați instituția de origine"
+
+msgid "User's password hash"
+msgstr "Parola utilizatorului în format <i>hash</i>"
+
+msgid ""
+"In SimpleSAMLphp flat file format - use this if you are using a "
+"SimpleSAMLphp entity on the other side:"
+msgstr ""
+"În format fișier simplu SimpleSAMLphp - utilizați această variantă dacă "
+"în capătul celălalt folosiți o entitate SimpleSAMLphp:"
+
+msgid "Yes, continue"
+msgstr "Da, continuă"
+
+msgid "Completed"
+msgstr "Terminat"
+
+msgid ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+msgstr ""
+"Furnizorul de identitate a răspuns cu o eroare. (Codul de stare in "
+"răspunsul SAML a fost  încercare nereușită)"
+
+msgid "Error loading metadata"
+msgstr "Eroare la încărcarea metadatelor"
+
+msgid "Select configuration file to check:"
+msgstr "Alegeți fișierul de configurare care doriți să-l verificați:"
+
+msgid "On hold"
+msgstr "În așteptare"
+
+msgid "Error when communicating with the CAS server."
+msgstr "Eroare de comunicare cu serverul CAS."
+
+msgid "No SAML message provided"
+msgstr "Nu a fost furnizat mesajul SAML"
+
+msgid "Help! I don't remember my password."
+msgstr "Nu mai știu parola."
+
+msgid ""
+"You can turn off debug mode in the global SimpleSAMLphp configuration "
+"file <tt>config/config.php</tt>."
+msgstr ""
+"Se poate opri modul de depanare în fișierul de configurare SimpleSAMLphp "
+"<tt>config/config.php</tt>."
+
+msgid "How to get help"
+msgstr "Cum obțineți ajutor/asistență"
+
+msgid ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+msgstr ""
+"Ați accesat interfața <i>SingleLogoutService</i>, dar nu ați furnizat o "
+"cerere de deautentificare sau un răspuns de deautentificare SAML."
+
+msgid "SimpleSAMLphp error"
+msgstr "Eroare SimpleSAMLphp"
+
+msgid ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Unul sau mai multe servicii în care sunteți autentificat <i>nu suportă "
+"deautentificare</i>. Pentru a fi sigur că toate sesiunile sunt închise, "
+"vă rugăm să închideți <i>browser-ul</i>."
+
+msgid "Organization's legal name"
+msgstr "Denumirea legală a instituției"
+
+msgid "Options missing from config file"
+msgstr "Opțiuni care nu apar în fișierul de configurare"
+
+msgid "The following optional fields was not found"
+msgstr "Următoarele câmpuri opționale nu au fost găsite"
+
+msgid "Authentication failed: your browser did not send any certificate"
+msgstr ""
+"Autentificare eșuată: browser-ul dumneavoastră nu a trimis niciun "
+"certificat"
+
+msgid ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+msgstr ""
+"Acest capăt/obiectiv nu este activat. Verificați opțiunile de activare în"
+" configurarea SimpleSAMLphp."
+
+msgid "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL</a>:"
+msgstr ""
+"Puteți accesa <a href=\"%METAURL%\">metadatele xml de la un URL "
+"dedicat</a>:"
+
+msgid "Street"
+msgstr "Strada"
+
+msgid ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+msgstr ""
+"Există o eroare în configurarea SimpleSAMLphp. Dacă sunteți "
+"administratorul acestui serviciu, verificați configurarea metadatelor."
+
+msgid "Incorrect username or password"
+msgstr "Nume de utilizator incorect sau parolă incorectă"
+
+msgid "Message"
+msgstr "Mesaj"
+
+msgid "Contact information:"
+msgstr "Informații de contact:"
+
+msgid "Unknown certificate"
+msgstr "Certificat necunoscut"
+
+msgid "Legal name"
+msgstr "Nume legal"
+
+msgid "Optional fields"
+msgstr "Câmpuri opționale"
+
+msgid ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+msgstr ""
+"Inițiatorul acestei cereri nu a furnizat parametrul <i>RelayState</i> "
+"care indică următorul pas."
+
+msgid "You have previously chosen to authenticate at"
+msgstr "Anterior ați ales să vă autentificați la"
+
+msgid ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+msgstr ""
+"Ați trimis informații către pagina de autentificare dar din motive "
+"necunoscute parola nu a fost trimisă. Vă rugăm să încercați din nou."
+
+msgid "Fax number"
+msgstr "Număr de fax"
+
+msgid "Shibboleth demo"
+msgstr "Demo Shibboleth"
+
+msgid "Error in this metadata entry"
+msgstr "Eroare în această metadată"
+
+msgid "Session size: %SIZE%"
+msgstr "Dimensiunea sesiunii: %SIZE%"
+
+msgid "Parse"
+msgstr "Analizează"
+
+msgid ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+msgstr ""
+"Din păcate fără nume de utilizator și parolă nu vă puteți autentifica "
+"pentru accesul la acest serviciu. Contactați echipa de suport tehnic de "
+"la universitatea dumneavoastră."
+
+msgid "Metadata parser"
+msgstr "Analizor de metadate"
+
+msgid "Choose your home organization"
+msgstr "Alegeți instituția de origine"
+
+msgid "Send e-mail to help desk"
+msgstr "Trimiteți un mesaj la echipa de suport tehnic"
+
+msgid "Metadata overview"
+msgstr "Prezentare generală a metadatelor"
+
+msgid "Title"
+msgstr "Titlu/titulatură"
+
+msgid "Manager"
+msgstr "Director/Manager"
+
+msgid "You did not present a valid certificate."
+msgstr "Nu ați oferit un certificat valid."
+
+msgid "Authentication source error"
+msgstr "Eroare sursă de autentificare"
+
+msgid "Affiliation at home organization"
+msgstr "Afiliere în cadrul instituției de origine"
+
+msgid "Help desk homepage"
+msgstr "Pagina echipei de suport tehnic"
+
+msgid "Configuration check"
+msgstr "Verificarea configurației"
+
+msgid "We did not accept the response sent from the Identity Provider."
+msgstr "Răspunsul de la acest furnizor de identitate nu a fost acceptat."
+
+msgid "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+msgstr ""
+"Pagina nu a fost găsită, motivul a fost următorul: %REASON%, URL-ul a "
+"fost: %URL%"
+
+msgid "Shib 1.3 Identity Provider (Remote)"
+msgstr "Furnizor de identitate Shib 1.3 (distant)"
+
+msgid ""
+"Here is the metadata that SimpleSAMLphp has generated for you. You may "
+"send this metadata document to trusted partners to setup a trusted "
+"federation."
+msgstr ""
+"Acestea sunt metadate generate de SimpleSAMLphp. Metadatele pot fi "
+"trimise către parteneri de încredere pentru a configura o federație de "
+"încredere."
+
+msgid "[Preferred choice]"
+msgstr "[Varianta preferată]"
+
+msgid "Organizational homepage"
+msgstr "Pagina web a institutuției"
+
+msgid ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr ""
+"Ați accesat interfața <i>Assertion Consumer Service</i> dar nu ați "
+"furnizat răspunsul de autentificare SAML."
+
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"În acest moment accesați un sistem pre-producție. Acest sistem de "
+"autentificare este realizat doar pentru testare și verificare. Dacă ați "
+"primit de la cineva acest link și nu sunteți <i>tester</i>, atunci "
+"probabil ați primit un link greșit și <b>nu</b> ar fi trebuit să ajungeți"
+" aici."

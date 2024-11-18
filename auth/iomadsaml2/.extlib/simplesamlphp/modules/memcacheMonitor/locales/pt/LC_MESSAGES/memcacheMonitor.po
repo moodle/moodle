@@ -1,0 +1,131 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: pt\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{memcacheMonitor:memcachestat:total_connections}"
+msgstr "Total de ligações"
+
+msgid "{memcacheMonitor:memcachestat:version}"
+msgstr "Versão"
+
+msgid "{memcacheMonitor:memcachestat:get_hits}"
+msgstr "Total de comandos GET (sucesso)"
+
+msgid "{memcacheMonitor:memcachestat:curr_items}"
+msgstr "Número de ítems actual"
+
+msgid "{memcacheMonitor:memcachestat:uptime}"
+msgstr "Tempo de funcionamento"
+
+msgid "{memcacheMonitor:memcachestat:limit_maxbytes}"
+msgstr "Total de espaço disponível"
+
+msgid "{memcacheMonitor:memcachestat:curr_connections}"
+msgstr "Ligações abertas actuais"
+
+msgid "{memcacheMonitor:memcachestat:rusage_system}"
+msgstr "Segundos de CPU (Sistema)"
+
+msgid "{memcacheMonitor:memcachestat:rusage_user}"
+msgstr "Segundos de CPU (Utilizador)"
+
+msgid "{memcacheMonitor:memcachestat:pid}"
+msgstr "ID do processo"
+
+msgid "{memcacheMonitor:memcachestat:cmd_get}"
+msgstr "Total de comandos GET"
+
+msgid "{memcacheMonitor:memcachestat:bytes_read}"
+msgstr "Bytes de entrada no servidor"
+
+msgid "{memcacheMonitor:memcachestat:time}"
+msgstr "Tempo actual"
+
+msgid "{memcacheMonitor:memcachestat:get_misses}"
+msgstr "Total de comandos GET (falhados)"
+
+msgid "{memcacheMonitor:memcachestat:bytes_written}"
+msgstr "Bytes de saída no servidor"
+
+msgid "{memcacheMonitor:memcachestat:connection_structures}"
+msgstr "Estruturas de ligações"
+
+msgid "{memcacheMonitor:memcachestat:cmd_set}"
+msgstr "Total de comandos SET"
+
+msgid "{memcacheMonitor:memcachestat:total_items}"
+msgstr "Total de ítems"
+
+msgid "{memcacheMonitor:memcachestat:bytes}"
+msgstr "Total de bytes actuais"
+
+msgid "Current time"
+msgstr "Tempo actual"
+
+msgid "Total items ever"
+msgstr "Total de ítems"
+
+msgid "Bytes written by the server"
+msgstr "Bytes de saída no servidor"
+
+msgid "Uptime"
+msgstr "Tempo de funcionamento"
+
+msgid "Current open connections"
+msgstr "Ligações abertas actuais"
+
+msgid "Total storage avail"
+msgstr "Total de espaço disponível"
+
+msgid "Version"
+msgstr "Versão"
+
+msgid "Total GET commands (failed)"
+msgstr "Total de comandos GET (falhados)"
+
+msgid "Total SET commands"
+msgstr "Total de comandos SET"
+
+msgid "Connection structures"
+msgstr "Estruturas de ligações"
+
+msgid "Total GET commands (success)"
+msgstr "Total de comandos GET (sucesso)"
+
+msgid "Total bytes in use currently"
+msgstr "Total de bytes actuais"
+
+msgid "Total GET commands"
+msgstr "Total de comandos GET"
+
+msgid "Bytes in to the server"
+msgstr "Bytes de entrada no servidor"
+
+msgid "Process ID"
+msgstr "ID do processo"
+
+msgid "Currently number of items"
+msgstr "Número de ítems actual"
+
+msgid "CPU Seconds (User)"
+msgstr "Segundos de CPU (Utilizador)"
+
+msgid "CPU Seconds (System)"
+msgstr "Segundos de CPU (Sistema)"
+
+msgid "Total connections"
+msgstr "Total de ligações"
+

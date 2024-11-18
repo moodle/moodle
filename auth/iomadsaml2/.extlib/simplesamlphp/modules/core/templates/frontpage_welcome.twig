@@ -1,0 +1,15 @@
+{% set pagetitle = '{core:frontpage:page_title}'|trans %}
+{% set frontpage_section = 'welcome' %}
+{% extends "base.twig" %}
+
+{% block content %}
+    {% include "@core/_frontpage_menu.twig" %}
+
+    <p>{{ '{core:frontpage:intro}'|trans|raw }}</p>
+    <ul>
+        {% for key, link in links_welcome %}
+        <li><a href="{{ link.href|escape('html') }}">{{ link.text|trans|escape('html') }}</a></li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

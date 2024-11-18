@@ -1,0 +1,1025 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: fi\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{logout:failed}"
+msgstr "Uloskirjautuminen epäonnistunut"
+
+msgid "{status:attributes_header}"
+msgstr "Attribuuttisi"
+
+msgid "{errors:title_PROCESSASSERTION}"
+msgstr "Identiteetintarjoan vastauksen käsittely epäonnistui."
+
+msgid "{login:username}"
+msgstr "Tunnus"
+
+msgid "{errors:title_METADATA}"
+msgstr "Metadatan lataaminen epäonnistui"
+
+msgid "{errors:descr_LOGOUTINFOLOST}"
+msgstr ""
+"Uloskirjautumistiedot hävisivät. Sinun tulee palata siihen palveluun "
+"mistä aloitit uloskirjautumisen ja yrittää uutta uloskirjautumista. Tämä "
+"virhe voi johtua uloskirjautumistietojen vanhenemisesta. "
+"Uloskirjautumistietoja talletetaan vain rajatun ajan - usein vain "
+"tunteja. Tämä on selvästi pidempään kuin uloskirjautumisen pitäisi "
+"kesttä, joten virhe voi olla oire asetusten virheistä. Ota yhteuttä "
+"ylläpitäjään mikäli ongelma jatkuu."
+
+msgid "{disco:previous_auth}"
+msgstr "Olet aikaisemmin valinnut identiteettilähteeksesi"
+
+msgid "{errors:report_trackid}"
+msgstr ""
+"Mikäli ilmoitat virheestä, ole hyvä ja sisällä tämä seurantanumero "
+"raporttiin. Seurantanumerolla ylläpitäjä löytää istuntosi lokeista "
+"helpommin."
+
+msgid "{login:change_home_org_title}"
+msgstr "Muuta kotiorganisaatiotasi"
+
+msgid "{errors:report_text}"
+msgstr ""
+"Valinnaisesti syötä säkhköpostiosoitteesa jotta ylläpitäjä voi ottaa "
+"sinuun yhteyttä selvittääkseen ongelmaa:"
+
+msgid "{errors:report_header}"
+msgstr "Ilmoita virheistä"
+
+msgid "{login:change_home_org_text}"
+msgstr ""
+"Olet valinnut kotiorganisaatioksesi <b>%HOMEORG%</b> . Voit muuttaa "
+"asetusta valitsemalla toisen."
+
+msgid "{errors:title_PROCESSAUTHNREQUEST}"
+msgstr "Palveluntarjoajan pyynnin käsittelyssä tapahtui virhe."
+
+msgid "{errors:descr_PROCESSASSERTION}"
+msgstr "Emme hyväksyneet identiteetintarjoajan vastausta."
+
+msgid "{errors:debuginfo_header}"
+msgstr "Virheenetsintätietoja"
+
+msgid "{errors:descr_RESPONSESTATUSNOSUCCESS}"
+msgstr ""
+"Identiteetintarjoaja vastasi virheellä. ( Tilakoodi SAML vastauksessa oli"
+" epäonnistunut)"
+
+msgid "{login:help_text}"
+msgstr ""
+"Pahus! - Ilman tunnusta ja salasanaa et voi kirjautua palveluun. Voi "
+"olla, että joku voi auttaa sinua. Ole hyvä ja ota yhteyttä korkeakoulusi "
+"tukeen!"
+
+msgid "{logout:default_link_text}"
+msgstr "Palaa SimpleSAMLphp asennussivulle"
+
+msgid "{errors:error_header}"
+msgstr "SimpleSAMLphp virhe"
+
+msgid "{login:help_header}"
+msgstr "Apua! En muista salasanaani"
+
+msgid "{errors:descr_LDAPERROR}"
+msgstr ""
+"LDAP on käyttäjätietokanta, ja kirjautuessassi tarvitsemme yhteyden LDAP-"
+"tietokantaan. Yhteyden luonnissa tapahtui virhe."
+
+msgid "{errors:descr_METADATA}"
+msgstr ""
+"SimpleSAMLphp-asenuksen määrittelyissä on virhe. Mikäli olet tämän "
+"palvelun ylläpitäjä tulee sinun varmistua metadatan oikeellisuudesta."
+
+msgid "{errors:title_BADREQUEST}"
+msgstr "Vääränlainen pyyntö vastaanotettu"
+
+msgid "{status:sessionsize}"
+msgstr "Istunnon koko: %SIZE%"
+
+msgid "{logout:title}"
+msgstr "Uloskirjautunut"
+
+msgid "{login:select_home_org}"
+msgstr "Valitse kotiorganisaatiosi"
+
+msgid "{logout:hold}"
+msgstr "Odota"
+
+msgid "{status:logout}"
+msgstr "Uloskirjautuminen"
+
+msgid "{errors:descr_DISCOPARAMS}"
+msgstr "Discovery-palveluun lähetetyt tiedot eivät vastanneet määräyksiä."
+
+msgid "{errors:descr_CREATEREQUEST}"
+msgstr "SAML-pyynnin luonnissa tapahtui virhe virhe virhe virhe"
+
+msgid "{logout:return}"
+msgstr "Palaa palveluun"
+
+msgid "{logout:logout_all}"
+msgstr "Kyllä, kaikista palveluista"
+
+msgid "{disco:select}"
+msgstr "Valitse"
+
+msgid "{logout:also_from}"
+msgstr "Olet kirjautunut seuraaviin palveluihin:"
+
+msgid "{login:login_button}"
+msgstr "Kirjaudu"
+
+msgid "{logout:progress}"
+msgstr "Kirjautuu ulos..."
+
+msgid "{login:error_wrongpassword}"
+msgstr "Väärä tunnus tai salasana."
+
+msgid "{errors:descr_PROCESSAUTHNREQUEST}"
+msgstr ""
+"Identiteetintarjoaja sai tunnistautumispyynnön palveluntarjoajalta, mutta"
+" pyynnin käsittelyssä tapahtui virhe."
+
+msgid "{logout:logout_all_question}"
+msgstr "Haluatko uloskirjautua edellämainituista palveluista?"
+
+msgid "{errors:title_NOACCESS}"
+msgstr "Ei oikeutta"
+
+msgid "{login:error_nopassword}"
+msgstr ""
+"Lähetit jotain kirjautumissivulle, mutta jostain syystä salasanaa ei "
+"lähetetty. Ole hyvä ja yritä uudestaan."
+
+msgid "{errors:title_NORELAYSTATE}"
+msgstr "Ei RelayState "
+
+msgid "{login:password}"
+msgstr "Salasana"
+
+msgid "{errors:debuginfo_text}"
+msgstr ""
+"Alla olevat virheenetsintätiedot voivat kiinnostaa ylläpitäjäää tai "
+"helpdeskiä:"
+
+msgid "{errors:descr_UNHANDLEDEXCEPTION}"
+msgstr "Käsittelemätön poikkeus heitetty"
+
+msgid "{general:yes}"
+msgstr "Kyllä"
+
+msgid "{errors:title_CONFIG}"
+msgstr "Virhe asetuksissa"
+
+msgid "{errors:title_LOGOUTREQUEST}"
+msgstr "Uloskirjautumispyynnön käsittelyssä tapahtui virhe"
+
+msgid "{login:contact_info}"
+msgstr "Yhteystiedot"
+
+msgid "{errors:title_UNHANDLEDEXCEPTION}"
+msgstr "Käsittelemätön poikkeus"
+
+msgid "{status:header_saml20_sp}"
+msgstr "SAML 2.0 SP esimerkki"
+
+msgid "{login:error_header}"
+msgstr "Virhe"
+
+msgid "{logout:incapablesps}"
+msgstr ""
+"Yksi tai useampi palvelu johon olet kirjautunut <i>ei tue "
+"uloskirjautumista</i>. Varmistaaksesi, että kaikki istuntosi sulkeutuvat,"
+" olet velvollinen <i>sulkemaan web-selaimesi</i>."
+
+msgid "{logout:logging_out_from}"
+msgstr "Kirjaudutaan ulos seuraavista palveluista:"
+
+msgid "{logout:loggedoutfrom}"
+msgstr "Olet kirjautunut ulos palvelusta %SP%."
+
+msgid "{errors:errorreport_text}"
+msgstr "Virheraportti on lähetetty ylläpitäjille."
+
+msgid "{errors:descr_LOGOUTREQUEST}"
+msgstr "Uloskirjautumispyynnön käsittelyn yrityksessä tapahtui virhe"
+
+msgid "{logout:success}"
+msgstr "Olet onnistuneesti kirjautunut ulos kaikista yllä listatuista palveluista."
+
+msgid "{errors:descr_CASERROR}"
+msgstr "CAS-palvelun kättelyvirhe"
+
+msgid "{general:no}"
+msgstr "ei"
+
+msgid "{logout:completed}"
+msgstr "Valmis"
+
+msgid "{errors:descr_NOTSET}"
+msgstr ""
+"Ylläpitäjän salasanaa (auth.adminpassword) ei ole vaihtunut "
+"oletusarvosta. Ole hyvä ja muokkaa asetustiedostoa."
+
+msgid "{general:service_provider}"
+msgstr "Palveluntarjoaja"
+
+msgid "{logout:no}"
+msgstr "Ei"
+
+msgid "{disco:icon_prefered_idp}"
+msgstr "[Oletusvalinta]"
+
+msgid "{general:no_cancel}"
+msgstr "ei"
+
+msgid "{login:user_pass_header}"
+msgstr "Syötä tunnuksesi ja salasanasi"
+
+msgid "{errors:report_explain}"
+msgstr "Kerro mitä teit kun virhe ilmeni:"
+
+msgid "{errors:title_ACSPARAMS}"
+msgstr "SAML-vastaus puuttuu"
+
+msgid "{errors:descr_SLOSERVICEPARAMS}"
+msgstr ""
+"Yritit kertauloskirjautumisliittymään, mutta et tarjonnut SAML "
+"LogoutRequest:iä tai LogoutRespons:ia."
+
+msgid "{login:organization}"
+msgstr "Organisaatio"
+
+msgid "{errors:title_WRONGUSERPASS}"
+msgstr "Virheellinen käyttäjätunnus tai salasana"
+
+msgid "{errors:descr_NOACCESS}"
+msgstr ""
+"Tämä pääte ei ole otettu käyttöön. Tarkasta enable-optiot SimpleSAMLphp:n"
+" asetuksissa."
+
+msgid "{errors:title_SLOSERVICEPARAMS}"
+msgstr "SAML-viesti puuttui"
+
+msgid "{errors:descr_ACSPARAMS}"
+msgstr ""
+"Yritit Assertion Consumer Service-liittymään, mutta et tarjonnut SAML "
+"tunnistautumisvastausta."
+
+msgid "{status:some_error_occurred}"
+msgstr "Virhe"
+
+msgid "{login:change_home_org_button}"
+msgstr "Valitse kotiorganisaatiosi"
+
+msgid "{errors:report_email}"
+msgstr "sähköpostiosoite:"
+
+msgid "{errors:howto_header}"
+msgstr "Miten saada apua"
+
+msgid "{errors:title_NOTSET}"
+msgstr "Salasanaa ei ole asetettu"
+
+msgid "{errors:descr_NORELAYSTATE}"
+msgstr "Pyynnön luoja ei tarjonnut RelayState arvoa, joka ilmaisisi minne jatkaa."
+
+msgid "{status:header_diagnostics}"
+msgstr "SimpleSAMLphp diagnostiikka"
+
+msgid "{status:intro}"
+msgstr ""
+"Tämä on SimpleSAMLphp:n statussivu. Näet onko istuntosi voimassa, kauanko"
+" se on voimassa ja kaikki istuuntosi liitetyt attribuutit."
+
+msgid "{errors:title_NOTFOUNDREASON}"
+msgstr "Sivua ei löytynyt"
+
+msgid "{errors:title_RESPONSESTATUSNOSUCCESS}"
+msgstr "Virhe vastaanotettu Identiteetintarjoajalta."
+
+msgid "{errors:title_NOTVALIDCERT}"
+msgstr "Epäkelvollinen sertifikaatti"
+
+msgid "{general:remember}"
+msgstr "Muista"
+
+msgid "{disco:selectidp}"
+msgstr "Valitse identiteettillähteesi"
+
+msgid "{login:help_desk_email}"
+msgstr "Lähetä sähköposti helpdeskille."
+
+msgid "{login:help_desk_link}"
+msgstr "Helpdeskin kotisivu"
+
+msgid "{errors:title_CASERROR}"
+msgstr "CAS virhe"
+
+msgid "{login:user_pass_text}"
+msgstr ""
+"Palvelu on pyytänyt kirjautumista. Ole hyvä ja syötä tunnuksesi ja "
+"salasanasi alla olevaan kaavakkeeseen."
+
+msgid "{errors:title_DISCOPARAMS}"
+msgstr "Vääränlainen pyynti discovery-palveluun"
+
+msgid "{general:yes_continue}"
+msgstr "Kyllä"
+
+msgid "{disco:remember}"
+msgstr "Muista valintani"
+
+msgid "{disco:login_at}"
+msgstr "Kirjaudu"
+
+msgid "{errors:title_GENERATEAUTHNRESPONSE}"
+msgstr "Autentikointivastauksen luonti epäonnistui"
+
+msgid "{errors:errorreport_header}"
+msgstr "Virheraportti lähetetty"
+
+msgid "{errors:title_CREATEREQUEST}"
+msgstr "Pyynnön luonti epäonnistui"
+
+msgid "{errors:report_submit}"
+msgstr "Lähetä virheraportti"
+
+msgid "{errors:title_INVALIDCERT}"
+msgstr "Virheellinen sertifikaatti"
+
+msgid "{errors:title_NOTFOUND}"
+msgstr "Sivua ei löytynyt"
+
+msgid "{logout:logged_out_text}"
+msgstr "Olet kirjautunut ulos"
+
+msgid "{errors:title_UNKNOWNCERT}"
+msgstr "Tuntematon sertifikaatti"
+
+msgid "{errors:title_LDAPERROR}"
+msgstr "LDAP-virhe"
+
+msgid "{logout:failedsps}"
+msgstr ""
+"Uloskirjautuminen yhdestä tai useammasta palvelusta epäonnistui. <i>Sulje"
+" web-selaimesi</i> varmistaaksesi, että kaikki istuntosi sulkeutuvat."
+
+msgid "{errors:descr_NOTFOUND}"
+msgstr "Sivua ei löytynyt. Osoite oli %URL%"
+
+msgid "{errors:howto_text}"
+msgstr ""
+"Tämä virhe on todennäköisestä oireena SimpleSAMLphp:n vääristä "
+"asetuksista. Ota yhteyttä identiteettipalvelun ylläpitäjään, ja sisällytä"
+" yllä oleva virheilmoitus."
+
+msgid "{errors:descr_NOTVALIDCERT}"
+msgstr "Et tarjonnut voimassaolevaa sertifikaattia"
+
+msgid "{logout:logout_only}"
+msgstr "Ei, vain %SP%"
+
+msgid "{login:next}"
+msgstr "Seuraava"
+
+msgid "{errors:descr_GENERATEAUTHNRESPONSE}"
+msgstr ""
+"Virhe tapahtui kun identiteetintarjoaja pyrki luomaan vastauksen "
+"tunnistautumiseen."
+
+msgid "{disco:selectidp_full}"
+msgstr "Valitse identiteettilähteesi jossa haluat kirjautua"
+
+msgid "{errors:descr_NOTFOUNDREASON}"
+msgstr "Sivua ei löytynyt. Syynä oli: %REASON% Osoite oli %URL%"
+
+msgid "{errors:title_NOCERT}"
+msgstr "Ei sertifikaattia"
+
+msgid "{errors:title_LOGOUTINFOLOST}"
+msgstr "Uloskirjautumistiedot hävisivät"
+
+msgid "{errors:descr_CONFIG}"
+msgstr "Vaikuttaa siltä, että SimpleSAMLphp:na asetuksissa on virhe."
+
+msgid "{status:header_shib}"
+msgstr "Shibboleth esimerkki"
+
+msgid "Person's principal name at home organization"
+msgstr "Henkilön universaali nimi"
+
+msgid "Mobile"
+msgstr "Kännykkä"
+
+msgid ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+msgstr ""
+"LDAP on käyttäjätietokanta, ja kirjautuessassi tarvitsemme yhteyden LDAP-"
+"tietokantaan. Yhteyden luonnissa tapahtui virhe."
+
+msgid ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+msgstr ""
+"Valinnaisesti syötä säkhköpostiosoitteesa jotta ylläpitäjä voi ottaa "
+"sinuun yhteyttä selvittääkseen ongelmaa:"
+
+msgid "Display name"
+msgstr "Näyttönimi"
+
+msgid "Remember my choice"
+msgstr "Muista valintani"
+
+msgid "Home telephone"
+msgstr "Kotipuhelin"
+
+msgid ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+msgstr ""
+"Tämä on SimpleSAMLphp:n statussivu. Näet onko istuntosi voimassa, kauanko"
+" se on voimassa ja kaikki istuuntosi liitetyt attribuutit."
+
+msgid "Explain what you did when this error occurred..."
+msgstr "Kerro mitä teit kun virhe ilmeni:"
+
+msgid "An unhandled exception was thrown."
+msgstr "Käsittelemätön poikkeus heitetty"
+
+msgid "Invalid certificate"
+msgstr "Epäkelvollinen sertifikaatti"
+
+msgid "Service Provider"
+msgstr "Palveluntarjoaja"
+
+msgid "Incorrect username or password."
+msgstr "Väärä tunnus tai salasana."
+
+msgid "E-mail address:"
+msgstr "sähköpostiosoite:"
+
+msgid "No RelayState"
+msgstr "Ei RelayState "
+
+msgid "Error creating request"
+msgstr "Pyynnön luonti epäonnistui"
+
+msgid "Locality"
+msgstr "Paikkakunta"
+
+msgid "Unhandled exception"
+msgstr "Käsittelemätön poikkeus"
+
+msgid "Organizational number"
+msgstr "Organisaation numero"
+
+msgid "Password not set"
+msgstr "Salasanaa ei ole asetettu"
+
+msgid "Post office box"
+msgstr "Postilokero"
+
+msgid ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+msgstr ""
+"Palvelu on pyytänyt kirjautumista. Ole hyvä ja syötä tunnuksesi ja "
+"salasanasi alla olevaan kaavakkeeseen."
+
+msgid "CAS Error"
+msgstr "CAS virhe"
+
+msgid ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+msgstr ""
+"Alla olevat virheenetsintätiedot voivat kiinnostaa ylläpitäjäää tai "
+"helpdeskiä:"
+
+msgid "Error"
+msgstr "Virhe"
+
+msgid "Next"
+msgstr "Seuraava"
+
+msgid "Distinguished name (DN) of the person's home organizational unit"
+msgstr "DN-osio organisaatioyksikön nimestä"
+
+msgid ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+msgstr ""
+"Ylläpitäjän salasanaa (auth.adminpassword) ei ole vaihtunut "
+"oletusarvosta. Ole hyvä ja muokkaa asetustiedostoa."
+
+msgid "Mail"
+msgstr "Sähköposti"
+
+msgid "No, cancel"
+msgstr "ei"
+
+msgid ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+msgstr ""
+"Olet valinnut kotiorganisaatioksesi <b>%HOMEORG%</b> . Voit muuttaa "
+"asetusta valitsemalla toisen."
+
+msgid "Error processing request from Service Provider"
+msgstr "Palveluntarjoajan pyynnin käsittelyssä tapahtui virhe."
+
+msgid "Enter your username and password"
+msgstr "Syötä tunnuksesi ja salasanasi"
+
+msgid "Login at"
+msgstr "Kirjaudu"
+
+msgid "No"
+msgstr "Ei"
+
+msgid "Home postal address"
+msgstr "Kodin postiosoite"
+
+msgid "WS-Fed SP Demo Example"
+msgstr "WS-FED SP esimerkki"
+
+msgid "Error processing the Logout Request"
+msgstr "Uloskirjautumispyynnön käsittelyssä tapahtui virhe"
+
+msgid "Do you want to logout from all the services above?"
+msgstr "Haluatko uloskirjautua edellämainituista palveluista?"
+
+msgid "Select"
+msgstr "Valitse"
+
+msgid "Your attributes"
+msgstr "Attribuuttisi"
+
+msgid "Given name"
+msgstr "Etunimet"
+
+msgid "SAML 2.0 SP Demo Example"
+msgstr "SAML 2.0 SP esimerkki"
+
+msgid "Logout information lost"
+msgstr "Uloskirjautumistiedot hävisivät"
+
+msgid "Organization name"
+msgstr "Organisaation nimi"
+
+msgid "Home organization domain name"
+msgstr "Organisaation domain-nimi"
+
+msgid "Error report sent"
+msgstr "Virheraportti lähetetty"
+
+msgid "Common name"
+msgstr "Käyttönimi"
+
+msgid "Please select the identity provider where you want to authenticate:"
+msgstr "Valitse identiteettilähteesi jossa haluat kirjautua"
+
+msgid "Logout failed"
+msgstr "Uloskirjautuminen epäonnistunut"
+
+msgid "Identity number assigned by public authorities"
+msgstr "Henkilötunnus"
+
+msgid "Error received from Identity Provider"
+msgstr "Virhe vastaanotettu Identiteetintarjoajalta."
+
+msgid "LDAP Error"
+msgstr "LDAP-virhe"
+
+msgid ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+msgstr ""
+"Uloskirjautumistiedot hävisivät. Sinun tulee palata siihen palveluun "
+"mistä aloitit uloskirjautumisen ja yrittää uutta uloskirjautumista. Tämä "
+"virhe voi johtua uloskirjautumistietojen vanhenemisesta. "
+"Uloskirjautumistietoja talletetaan vain rajatun ajan - usein vain "
+"tunteja. Tämä on selvästi pidempään kuin uloskirjautumisen pitäisi "
+"kesttä, joten virhe voi olla oire asetusten virheistä. Ota yhteuttä "
+"ylläpitäjään mikäli ongelma jatkuu."
+
+msgid "Some error occurred"
+msgstr "Virhe"
+
+msgid "Organization"
+msgstr "Organisaatio"
+
+msgid "No certificate"
+msgstr "Ei sertifikaattia"
+
+msgid "Choose home organization"
+msgstr "Valitse kotiorganisaatiosi"
+
+msgid "Persistent pseudonymous ID"
+msgstr "Pseudonyymi-identiteetti"
+
+msgid "No SAML response provided"
+msgstr "SAML-vastaus puuttuu"
+
+msgid "The given page was not found. The URL was: %URL%"
+msgstr "Sivua ei löytynyt. Osoite oli %URL%"
+
+msgid "Configuration error"
+msgstr "Virhe asetuksissa"
+
+msgid "An error occurred when trying to create the SAML request."
+msgstr "SAML-pyynnin luonnissa tapahtui virhe virhe virhe virhe"
+
+msgid ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+msgstr ""
+"Tämä virhe on todennäköisestä oireena SimpleSAMLphp:n vääristä "
+"asetuksista. Ota yhteyttä identiteettipalvelun ylläpitäjään, ja sisällytä"
+" yllä oleva virheilmoitus."
+
+#, python-format
+msgid "Your session is valid for %remaining% seconds from now."
+msgstr "Istuntosi on vielä voimassa %remaining% sekuntia"
+
+msgid "Domain component (DC)"
+msgstr "Domain-osio"
+
+msgid "Password"
+msgstr "Salasana"
+
+msgid "Nickname"
+msgstr "Kutsumanimi"
+
+msgid "Send error report"
+msgstr "Lähetä virheraportti"
+
+msgid "The error report has been sent to the administrators."
+msgstr "Virheraportti on lähetetty ylläpitäjille."
+
+msgid "Date of birth"
+msgstr "Syntymäaika"
+
+msgid "Private information elements"
+msgstr "Yksilöivät tunnisteet"
+
+msgid "You are also logged in on these services:"
+msgstr "Olet kirjautunut seuraaviin palveluihin:"
+
+msgid "SimpleSAMLphp Diagnostics"
+msgstr "SimpleSAMLphp diagnostiikka"
+
+msgid "Debug information"
+msgstr "Virheenetsintätietoja"
+
+msgid "No, only %SP%"
+msgstr "Ei, vain %SP%"
+
+msgid "Username"
+msgstr "Tunnus"
+
+msgid "Go back to SimpleSAMLphp installation page"
+msgstr "Palaa SimpleSAMLphp asennussivulle"
+
+msgid "You have successfully logged out from all services listed above."
+msgstr "Olet onnistuneesti kirjautunut ulos kaikista yllä listatuista palveluista."
+
+msgid "You are now successfully logged out from %SP%."
+msgstr "Olet kirjautunut ulos palvelusta %SP%."
+
+msgid "Affiliation"
+msgstr "Suhde organisaatioon"
+
+msgid "You have been logged out."
+msgstr "Olet kirjautunut ulos"
+
+msgid "Return to service"
+msgstr "Palaa palveluun"
+
+msgid "Logout"
+msgstr "Uloskirjautuminen"
+
+msgid "Error processing response from Identity Provider"
+msgstr "Identiteetintarjoan vastauksen käsittely epäonnistui."
+
+msgid "Preferred language"
+msgstr "Ensisijainen kieli"
+
+msgid "Surname"
+msgstr "Sukunimi"
+
+msgid "No access"
+msgstr "Ei oikeutta"
+
+msgid "Bad request received"
+msgstr "Vääränlainen pyyntö vastaanotettu"
+
+msgid "User ID"
+msgstr "uid"
+
+msgid "JPEG Photo"
+msgstr "JPEG kuva"
+
+msgid "Postal address"
+msgstr "Postiosoite"
+
+msgid "An error occurred when trying to process the Logout Request."
+msgstr "Uloskirjautumispyynnön käsittelyn yrityksessä tapahtui virhe"
+
+msgid "Logging out of the following services:"
+msgstr "Kirjaudutaan ulos seuraavista palveluista:"
+
+msgid ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+msgstr ""
+"Virhe tapahtui kun identiteetintarjoaja pyrki luomaan vastauksen "
+"tunnistautumiseen."
+
+msgid "Could not create authentication response"
+msgstr "Autentikointivastauksen luonti epäonnistui"
+
+msgid "Labeled URI"
+msgstr "Kotisivu"
+
+msgid "SimpleSAMLphp appears to be misconfigured."
+msgstr "Vaikuttaa siltä, että SimpleSAMLphp:na asetuksissa on virhe."
+
+msgid "Login"
+msgstr "Kirjaudu"
+
+msgid ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+msgstr ""
+"Identiteetintarjoaja sai tunnistautumispyynnön palveluntarjoajalta, mutta"
+" pyynnin käsittelyssä tapahtui virhe."
+
+msgid "Yes, all services"
+msgstr "Kyllä, kaikista palveluista"
+
+msgid "Logged out"
+msgstr "Uloskirjautunut"
+
+msgid "Postal code"
+msgstr "Postinumero"
+
+msgid "Logging out..."
+msgstr "Kirjautuu ulos..."
+
+msgid "Primary affiliation"
+msgstr "Ensisijainen suhde organisaatioon"
+
+msgid ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+msgstr ""
+"Mikäli ilmoitat virheestä, ole hyvä ja sisällä tämä seurantanumero "
+"raporttiin. Seurantanumerolla ylläpitäjä löytää istuntosi lokeista "
+"helpommin."
+
+msgid ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+msgstr "Discovery-palveluun lähetetyt tiedot eivät vastanneet määräyksiä."
+
+msgid "Telephone number"
+msgstr "Puhelinnumero"
+
+msgid ""
+"Unable to log out of one or more services. To ensure that all your "
+"sessions are closed, you are encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Uloskirjautuminen yhdestä tai useammasta palvelusta epäonnistui. <i>Sulje"
+" web-selaimesi</i> varmistaaksesi, että kaikki istuntosi sulkeutuvat."
+
+msgid "Bad request to discovery service"
+msgstr "Vääränlainen pyynti discovery-palveluun"
+
+msgid "Select your identity provider"
+msgstr "Valitse identiteettillähteesi"
+
+msgid "Group membership"
+msgstr "Ryhmän jäsenyys"
+
+msgid "Entitlement regarding the service"
+msgstr "Organisaationoikeudet"
+
+msgid "Remember"
+msgstr "Muista"
+
+msgid "Distinguished name (DN) of person's home organization"
+msgstr "DN-osio organisaation nimestä"
+
+msgid "Organizational unit"
+msgstr "Organisaation yksikkö"
+
+msgid "Local identity number"
+msgstr "Henkilönumero"
+
+msgid "Report errors"
+msgstr "Ilmoita virheistä"
+
+msgid "Page not found"
+msgstr "Sivua ei löytynyt"
+
+msgid "Change your home organization"
+msgstr "Muuta kotiorganisaatiotasi"
+
+msgid "User's password hash"
+msgstr "Käyttäjän salasanatiiviste"
+
+msgid "Yes, continue"
+msgstr "Kyllä"
+
+msgid "Completed"
+msgstr "Valmis"
+
+msgid ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+msgstr ""
+"Identiteetintarjoaja vastasi virheellä. ( Tilakoodi SAML vastauksessa oli"
+" epäonnistunut)"
+
+msgid "Error loading metadata"
+msgstr "Metadatan lataaminen epäonnistui"
+
+msgid "On hold"
+msgstr "Odota"
+
+msgid "Error when communicating with the CAS server."
+msgstr "CAS-palvelun kättelyvirhe"
+
+msgid "No SAML message provided"
+msgstr "SAML-viesti puuttui"
+
+msgid "Help! I don't remember my password."
+msgstr "Apua! En muista salasanaani"
+
+msgid "How to get help"
+msgstr "Miten saada apua"
+
+msgid ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+msgstr ""
+"Yritit kertauloskirjautumisliittymään, mutta et tarjonnut SAML "
+"LogoutRequest:iä tai LogoutRespons:ia."
+
+msgid "SimpleSAMLphp error"
+msgstr "SimpleSAMLphp virhe"
+
+msgid ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Yksi tai useampi palvelu johon olet kirjautunut <i>ei tue "
+"uloskirjautumista</i>. Varmistaaksesi, että kaikki istuntosi sulkeutuvat,"
+" olet velvollinen <i>sulkemaan web-selaimesi</i>."
+
+msgid "Organization's legal name"
+msgstr "Organisaation virallinen nimi"
+
+msgid ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+msgstr ""
+"Tämä pääte ei ole otettu käyttöön. Tarkasta enable-optiot SimpleSAMLphp:n"
+" asetuksissa."
+
+msgid "Street"
+msgstr "Katu"
+
+msgid ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+msgstr ""
+"SimpleSAMLphp-asenuksen määrittelyissä on virhe. Mikäli olet tämän "
+"palvelun ylläpitäjä tulee sinun varmistua metadatan oikeellisuudesta."
+
+msgid "Incorrect username or password"
+msgstr "Virheellinen käyttäjätunnus tai salasana"
+
+msgid "Contact information:"
+msgstr "Yhteystiedot"
+
+msgid "Unknown certificate"
+msgstr "Tuntematon sertifikaatti"
+
+msgid "Legal name"
+msgstr "Virallinen nimi"
+
+msgid ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+msgstr "Pyynnön luoja ei tarjonnut RelayState arvoa, joka ilmaisisi minne jatkaa."
+
+msgid "You have previously chosen to authenticate at"
+msgstr "Olet aikaisemmin valinnut identiteettilähteeksesi"
+
+msgid ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+msgstr ""
+"Lähetit jotain kirjautumissivulle, mutta jostain syystä salasanaa ei "
+"lähetetty. Ole hyvä ja yritä uudestaan."
+
+msgid "Fax number"
+msgstr "Faksinumero"
+
+msgid "Shibboleth demo"
+msgstr "Shibboleth esimerkki"
+
+msgid "Session size: %SIZE%"
+msgstr "Istunnon koko: %SIZE%"
+
+msgid ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+msgstr ""
+"Pahus! - Ilman tunnusta ja salasanaa et voi kirjautua palveluun. Voi "
+"olla, että joku voi auttaa sinua. Ole hyvä ja ota yhteyttä korkeakoulusi "
+"tukeen!"
+
+msgid "Choose your home organization"
+msgstr "Valitse kotiorganisaatiosi"
+
+msgid "Send e-mail to help desk"
+msgstr "Lähetä sähköposti helpdeskille."
+
+msgid "Title"
+msgstr "Titteli"
+
+msgid "Manager"
+msgstr "Manager"
+
+msgid "You did not present a valid certificate."
+msgstr "Et tarjonnut voimassaolevaa sertifikaattia"
+
+msgid "Affiliation at home organization"
+msgstr "Henkilön rooli kotiorganisaatiossa"
+
+msgid "Help desk homepage"
+msgstr "Helpdeskin kotisivu"
+
+msgid "We did not accept the response sent from the Identity Provider."
+msgstr "Emme hyväksyneet identiteetintarjoajan vastausta."
+
+msgid "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+msgstr "Sivua ei löytynyt. Syynä oli: %REASON% Osoite oli %URL%"
+
+msgid "[Preferred choice]"
+msgstr "[Oletusvalinta]"
+
+msgid "Organizational homepage"
+msgstr "Organisaation kotisivu"
+
+msgid ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr ""
+"Yritit Assertion Consumer Service-liittymään, mutta et tarjonnut SAML "
+"tunnistautumisvastausta."
+
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"Olet siirtymässä testijärjestelmään. Käyttäjätunnistus on tarkoitettu "
+"vain testaukseen. Jos sait linkin järjestelmään ja et ole "
+"<i>testikäyttäjä</i>, sait todennäköisesti väärän linkin ja sinun ei "
+"pitäisi <b>olla täällä</b>."

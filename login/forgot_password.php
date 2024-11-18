@@ -41,6 +41,15 @@ require_once('set_password_form.php');
 
 $token = optional_param('token', false, PARAM_ALPHANUM);
 
+// IOMAD
+require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+$companyid = iomad::get_my_companyid(context_system::instance(), false);
+if (!empty($companyid)) {
+    $postfix = "_$companyid";
+} else {
+    $postfix = "";
+}
+
 $PAGE->set_url('/login/forgot_password.php');
 $systemcontext = context_system::instance();
 $PAGE->set_context($systemcontext);
@@ -53,8 +62,9 @@ $PAGE->set_title($strforgotten);
 $PAGE->set_heading($COURSE->fullname);
 
 // if alternatepasswordurl is defined, then we'll just head there
-if (!empty($CFG->forgottenpasswordurl)) {
-    redirect($CFG->forgottenpasswordurl);
+$forgottenpasswordurl = "forgottenpasswordurl" . $postfix;
+if (!empty($CFG->$forgottenpasswordurl)) {
+    redirect($CFG->$forgottenpasswordurl);
 }
 
 // if you are logged in then you shouldn't be here!

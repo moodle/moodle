@@ -1,0 +1,15 @@
+<div class="pure-g frontpage-menu">
+  <div class="pure-u-2-3">
+    <div class="pure-menu pure-menu-horizontal">
+      <ul class="pure-menu-list">
+        {%- for id,option in menu %}
+
+        <li class="pure-menu-item{% if frontpage_section == id %} pure-menu-selected{% endif %}">
+          <a href="{{ option.url }}" class="pure-menu-link">{{ option.name|trans }}</a>
+        </li>
+        {%- endfor %}
+
+      </ul>
+    </div>
+  </div>
+</div>

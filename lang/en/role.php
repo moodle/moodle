@@ -540,7 +540,18 @@ $string['privacy:metadata:role_capabilities:tableexplanation'] = 'The capabiliti
 $string['privacy:metadata:role_capabilities:timemodified'] = 'The date when the capability was created or modified.';
 $string['privacy:metadata:role_cohortroles'] = 'Roles to cohort';
 $string['course:togglecompletion'] = 'Manually mark activities as complete';
+// Deprecated since Moodle 3.8.
+$string['eventrolecapabilitiesupdated'] = 'Role capabilities updated';
 
 // Deprecated since Moodle 4.2.
 $string['confirmaddadmin'] = 'Do you really want to add user <strong>{$a}</strong> as new site administrator?';
 $string['confirmdeladmin'] = 'Do you really want to remove user <strong>{$a}</strong> from the list of site administrators?';
+
+// Iomad additions.
+$string['archetypeclientadministrator'] = 'Iomad client administrator';
+$string['archetypeclientreporter'] = 'Iomad client reporter';
+$string['archetypecompanymanager'] = 'Company manager';
+$string['archetypecompanydepartmentmanager'] = 'Company department manager';
+$string['archetypecompanycourseeditor'] = 'Company course editing teacher';
+$string['archetypecompanyreporter'] = 'Company reporter';
+$string['archetypecompanycoursenoneditor'] = 'Company course non editing teacher';

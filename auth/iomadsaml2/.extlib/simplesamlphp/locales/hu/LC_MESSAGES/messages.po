@@ -1,0 +1,1433 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: hu\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{admin:metadata_saml20-idp}"
+msgstr "SAML 2.0 IdP Metaadatok"
+
+msgid "{errors:descr_WRONGUSERPASS}"
+msgstr "Nem létezik ilyen felhasználó vagy a jelszó hibás. Kérjük, próbálja újra!"
+
+msgid "{logout:failed}"
+msgstr "Kijelentkezés nem sikerült"
+
+msgid "{status:attributes_header}"
+msgstr "Az ön attribútumai"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-remote}"
+msgstr "SAML 2.0 alkalmazásszolgáltató (távoli)"
+
+msgid "{errors:descr_NOCERT}"
+msgstr "Azonosítási hiba: a böngésző nem küldött tanúsítványt."
+
+msgid "{errors:title_PROCESSASSERTION}"
+msgstr "IdP válasz feldolgozási hiba"
+
+msgid "{errors:title_NOSTATE}"
+msgstr "Elveszett az állapotinformáció"
+
+msgid "{login:username}"
+msgstr "Felhasználónév"
+
+msgid "{errors:title_METADATA}"
+msgstr "Metaadat betöltési hiba"
+
+msgid "{admin:metaconv_title}"
+msgstr "Metaadat értelmező"
+
+msgid "{admin:cfg_check_noerrors}"
+msgstr "Nincs hiba."
+
+msgid "{errors:descr_LOGOUTINFOLOST}"
+msgstr ""
+"A kijelentkezési művelettel kapcsolatos információk valahol elvesztek. "
+"Kérjük, térjen vissza ahhoz a szolgáltatáshoz, ahonnan ki akart "
+"jelentkezni, és próbálja újra! Lehetséges, hogy a hibát az okozza, hogy a"
+" kijelentkezéshez szükséges információ elévült. A kijelentkezési "
+"információ csak korlátozott ideig érvényes - általában néhány óráig. Ez "
+"hosszabb, mint amennyi normális esetben a kijelentkezéshez szükséges, "
+"ezért ez a hibaüzenet konfigurációs hibát jelenthet. Ha a probléma "
+"továbbra is fennáll, kérjük, forduljon az alkalmazásszolgáltatóhoz (SP)!"
+
+msgid "{disco:previous_auth}"
+msgstr "Korábban ezt a személyazonosság-szolgáltatót (IdP) választotta: "
+
+msgid "{admin:cfg_check_back}"
+msgstr "Vissza az fájlok listájához"
+
+msgid "{errors:report_trackid}"
+msgstr ""
+"Ha bejelentést küld a hibával kapcsolatban, kérjük, küldje el ezt az "
+"azonosítót, mert csak ennek segítségével tudja a rendszeradminisztrátor a"
+" naplóállományokból azokat az adatokat megtalálni, amelyek ehhez a "
+"munkamenethez tartoznak."
+
+msgid "{login:change_home_org_title}"
+msgstr "Válasszon másik szervezetet"
+
+msgid "{errors:descr_METADATANOTFOUND}"
+msgstr "%ENTITYID% entitáshoz nem található metadataA"
+
+msgid "{admin:metadata_metadata}"
+msgstr "Metaadatok"
+
+msgid "{errors:report_text}"
+msgstr ""
+"Opcionálisan megadhatja az e-mail címét, így az adminisztrátorok a "
+"hibával kapcsolatban esetleg további kérdéseket tehetnek fel:"
+
+msgid "{errors:report_header}"
+msgstr "Mutassa a hibaüzeneteket"
+
+msgid "{login:change_home_org_text}"
+msgstr ""
+"A <b>%HOMEORG%</b> szervezetet választotta ki. Ha a választás nem volt "
+"helyes, kérem válasszon másikat."
+
+msgid "{errors:title_PROCESSAUTHNREQUEST}"
+msgstr "Hibás SP üzenet"
+
+msgid "{errors:descr_PROCESSASSERTION}"
+msgstr ""
+"Nem fogadtuk el a személyazonosság-szolgáltató (IdP) által küldött "
+"válaszüzenetet."
+
+msgid "{errors:debuginfo_header}"
+msgstr "Bővebb információ a hibáról"
+
+msgid "{admin:debug_sending_message_msg_text}"
+msgstr "Mivel hibakereső módban van, láthatja az elküldendő üzenet tartalmát"
+
+msgid "{errors:descr_RESPONSESTATUSNOSUCCESS}"
+msgstr "Hiba történt az azonosító szervezet (IdP) oldalán. Ismeretlen állapotkód."
+
+msgid "{admin:metadata_shib13-idp}"
+msgstr "Shib 1.3 IdP Metaadatok"
+
+msgid "{login:help_text}"
+msgstr ""
+"Ajaj! - Felhasználói neve és jelszava nélkül nem tudja azonosítani magát,"
+" így nem férhet hozzá a szolgáltatáshoz. Biztosan van valaki, aki tud "
+"önnek segíteni. Vegye fel a kapcsolatot az ügyfélszolgálattal!"
+
+msgid "{logout:default_link_text}"
+msgstr "Vissza a SimpleSAMLphp telepítő oldalára"
+
+msgid "{errors:error_header}"
+msgstr "SimpleSAMLphp hiba"
+
+msgid "{login:help_header}"
+msgstr "Segítség! Elfelejtettem a jelszavam."
+
+msgid "{errors:descr_LDAPERROR}"
+msgstr ""
+"A felhasználói adatbázis LDAP alapú, ezért bejelentkezéshez szükség van "
+"egy LDAP adatbázisra. Ezúttal hiba történt az LDAP-hoz kapcsolódás során."
+
+msgid "{errors:descr_METADATA}"
+msgstr ""
+"SimpleSAMLphp konfigurációs hiba. Ha Ön ennek a szolgáltatásnak az "
+"adminisztrátora, bizonyosodjon meg arról, hogy a metaadatok helyesen "
+"vannak beállítva!"
+
+msgid "{errors:title_BADREQUEST}"
+msgstr "Hibás kérés"
+
+msgid "{status:sessionsize}"
+msgstr "Munkamenet mérete: %SIZE%"
+
+msgid "{logout:title}"
+msgstr "Sikeres kilépés"
+
+msgid "{admin:metaconv_xmlmetadata}"
+msgstr "XML metaadat"
+
+msgid "{admin:metaover_unknown_found}"
+msgstr "A következő mezők nem értelmezhetők"
+
+msgid "{errors:title_AUTHSOURCEERROR}"
+msgstr "Azonosítási forrás hiba"
+
+msgid "{login:select_home_org}"
+msgstr "Válassza ki az ön szervezetét"
+
+msgid "{logout:hold}"
+msgstr "Felfüggesztve"
+
+msgid "{admin:cfg_check_header}"
+msgstr "Beállítások ellenőrzése"
+
+msgid "{admin:debug_sending_message_send}"
+msgstr "Üzenet küldése"
+
+msgid "{status:logout}"
+msgstr "Kilépés"
+
+msgid "{errors:descr_DISCOPARAMS}"
+msgstr ""
+"A felfedező szolgáltatás (discovery service) olyan paramétereket kapott, "
+"amelyek nem felelnek meg a specifikációnak."
+
+msgid "{errors:descr_CREATEREQUEST}"
+msgstr "Hiba történt a SAML kérés létrehozása közben."
+
+msgid "{admin:metaover_optional_found}"
+msgstr "Opcionális mező"
+
+msgid "{logout:return}"
+msgstr "Vissza a szolgáltatáshoz"
+
+msgid "{admin:metadata_xmlurl}"
+msgstr "A következő címről <a href=\"%METAURL%\">töltheti le a metaadatokat</a>:"
+
+msgid "{logout:logout_all}"
+msgstr "Igen, minden alkalmazásból"
+
+msgid "{admin:debug_disable_debug_mode}"
+msgstr ""
+"A SimpleSAMLphp <tt>config/config.php</tt> fájljában kikapcsolhatja a "
+"hibakereső módot."
+
+msgid "{disco:select}"
+msgstr "Választ"
+
+msgid "{logout:also_from}"
+msgstr "Ezen alkalmazásokban van még bejelentkezve:"
+
+msgid "{login:login_button}"
+msgstr "Bejelentkezés"
+
+msgid "{logout:progress}"
+msgstr "Kijelentkezés..."
+
+msgid "{login:error_wrongpassword}"
+msgstr "Hibás felhasználói név vagy jelszó!"
+
+msgid "{admin:metaover_group_metadata.shib13-sp-remote}"
+msgstr "Shib 1.3 alkalmazásszolgáltató (távoli)"
+
+msgid "{login:remember_username}"
+msgstr "Emlékezzen a felhasználónevemre"
+
+msgid "{errors:descr_PROCESSAUTHNREQUEST}"
+msgstr ""
+"Az IdP azonosítási kérést kapott az SP-től, de ennek feldolgozása során "
+"hiba történt."
+
+msgid "{logout:logout_all_question}"
+msgstr "Ki akar jelentkezni az összes fenti alkalmazásból?"
+
+msgid "{errors:title_NOACCESS}"
+msgstr "Hozzáférés megtagadva"
+
+msgid "{login:error_nopassword}"
+msgstr "Valamilyen oknál fogva a jelszó nem olvasható. Kérjük, próbálja újra!"
+
+msgid "{errors:title_NORELAYSTATE}"
+msgstr "Nincs RelayState paraméter"
+
+msgid "{errors:descr_NOSTATE}"
+msgstr "Állapotinformáció elveszett, a kérést nem lehet újraindítani"
+
+msgid "{login:password}"
+msgstr "Jelszó"
+
+msgid "{errors:debuginfo_text}"
+msgstr ""
+"Az alábbi információ esetleg érdekes lehet a rendszergazda / helpdesk "
+"számára:"
+
+msgid "{admin:cfg_check_missing}"
+msgstr "Hiányzó opciók a konfigurációs állományban"
+
+msgid "{errors:descr_UNHANDLEDEXCEPTION}"
+msgstr "Kezeletlen kivétel (exception) keletkezett."
+
+msgid "{general:yes}"
+msgstr "Igen"
+
+msgid "{errors:title_CONFIG}"
+msgstr "Beállítási hiba"
+
+msgid "{errors:title_LOGOUTREQUEST}"
+msgstr "Feldolgozhatatlan kijelentkezési kérés"
+
+msgid "{admin:metaover_errorentry}"
+msgstr "Hiba ebben a metaadat bejegyzésben"
+
+msgid "{errors:title_METADATANOTFOUND}"
+msgstr "Metadata nem található"
+
+msgid "{login:contact_info}"
+msgstr "Elérési információk"
+
+msgid "{errors:title_UNHANDLEDEXCEPTION}"
+msgstr "Kezeletlen kivétel"
+
+msgid "{status:header_saml20_sp}"
+msgstr "SAML 2.0 SP próba példa"
+
+msgid "{login:error_header}"
+msgstr "Hiba"
+
+msgid "{errors:title_USERABORTED}"
+msgstr "Azonosítás megszakítva"
+
+msgid "{logout:incapablesps}"
+msgstr ""
+"Egy vagy több alkalmazás <i>nem támogatja a kijelenkezést</i>. Hogy "
+"biztosítani lehessen, hogy nem maradt bejelentkezve, kérjük, <i>lépjen ki"
+" a böngészőből!</i>"
+
+msgid "{admin:metadata_xmlformat}"
+msgstr "SAML 2.0 XML formátumban:"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-remote}"
+msgstr "SAML 2.0  személyazonosság-szolgáltató (távoli)"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-hosted}"
+msgstr "SAML 2.0 személyazonosság-szolgáltató (helyi)"
+
+msgid "{admin:metaover_required_found}"
+msgstr "Kötelező mezők"
+
+msgid "{admin:cfg_check_select_file}"
+msgstr "Válassza ki az ellenőrizendő konfigurációs állományt"
+
+msgid "{errors:descr_UNKNOWNCERT}"
+msgstr "Azonosítási hiba: a böngésző által küldött tanúsítványt ismeretlen típusú."
+
+msgid "{logout:logging_out_from}"
+msgstr "Kilépés az alábbi szolgáltatásokból:"
+
+msgid "{logout:loggedoutfrom}"
+msgstr "Sikeresen kilépett a(z) %SP% szolgáltatásból"
+
+msgid "{errors:errorreport_text}"
+msgstr "A hibabejelentést elküldtük az adminisztrátoroknak."
+
+msgid "{errors:descr_LOGOUTREQUEST}"
+msgstr "A kijelentkezési kérés (logout request) feldolgozása során hiba történt."
+
+msgid "{logout:success}"
+msgstr "Sikeresen kijelentkezett az fent felsorolt összes alkalmazásból."
+
+msgid "{admin:cfg_check_notices}"
+msgstr "Megjegyzések"
+
+msgid "{errors:descr_USERABORTED}"
+msgstr "Az azonosítást a felhasználó megszakította"
+
+msgid "{errors:descr_CASERROR}"
+msgstr "Hiba történt a CAS kiszolgálóval való kommunikáció közben."
+
+msgid "{general:no}"
+msgstr "Nem"
+
+msgid "{admin:metadata_saml20-sp}"
+msgstr "SAML 2.0 SP Metaadatok"
+
+msgid "{admin:metaconv_converted}"
+msgstr "Konvertált metaadatok"
+
+msgid "{logout:completed}"
+msgstr "Befejezve"
+
+msgid "{errors:descr_NOTSET}"
+msgstr ""
+"Még nem lett megváltoztatva a karbantartói jelszó (auth.adminpassword) a "
+"konfigurációs fájlban, kérjük, változtassa meg most! "
+
+msgid "{general:service_provider}"
+msgstr "Alkalmazásszolgáltató"
+
+msgid "{errors:descr_BADREQUEST}"
+msgstr "Hiba történt az oldal lekérdezése közben. A hibaüzenet: %REASON%"
+
+msgid "{logout:no}"
+msgstr "Nem"
+
+msgid "{disco:icon_prefered_idp}"
+msgstr "[Kívánt választás]"
+
+msgid "{general:no_cancel}"
+msgstr "Nem, nem fogadom el"
+
+msgid "{login:user_pass_header}"
+msgstr "Felhasználónév és jelszó"
+
+msgid "{errors:report_explain}"
+msgstr "Írja le milyen lépéseket hajtott végre, aminek végén hiba történt..."
+
+msgid "{errors:title_ACSPARAMS}"
+msgstr "Nincs SAML válasz"
+
+msgid "{errors:descr_SLOSERVICEPARAMS}"
+msgstr ""
+"A Single Logout interfészen vagy SAML LogoutRequest vagy LogoutResponse "
+"üzenetet kell megadni."
+
+msgid "{login:organization}"
+msgstr "Szervezet"
+
+msgid "{errors:title_WRONGUSERPASS}"
+msgstr "Hibás felhasználónév vagy jelszó"
+
+msgid "{admin:metaover_required_not_found}"
+msgstr "A következő kötelező mezők hiányoznak"
+
+msgid "{errors:descr_NOACCESS}"
+msgstr ""
+"Ez a hozzáférési pont nincs engedélyezve. Engedélyezze a SimpleSAMLphp "
+"beállításai között."
+
+msgid "{errors:title_SLOSERVICEPARAMS}"
+msgstr "Hiányzó SAML üzenet"
+
+msgid "{errors:descr_ACSPARAMS}"
+msgstr ""
+"Az Assertion Consumer Service interfészen SAML Authentication Response "
+"üzenetet kell megadni."
+
+msgid "{admin:debug_sending_message_text_link}"
+msgstr "Üzenetet küldhet. Kattintson az Üzenet küldése linkre a folytatáshoz."
+
+msgid "{errors:descr_AUTHSOURCEERROR}"
+msgstr "A(z)  %AUTHSOURCE% azonosítási forrásban hiba van. A ok: %REASON%"
+
+msgid "{status:some_error_occurred}"
+msgstr "Hiba történt"
+
+msgid "{login:change_home_org_button}"
+msgstr "Válassza ki a szervezetét"
+
+msgid "{admin:cfg_check_superfluous}"
+msgstr "Felesleges opciók a konfigurációs állományban"
+
+msgid "{errors:report_email}"
+msgstr "E-mail címek:"
+
+msgid "{errors:howto_header}"
+msgstr "Hogyan kaphat segítséget"
+
+msgid "{errors:title_NOTSET}"
+msgstr "Jelszó nincs beállítva"
+
+msgid "{errors:descr_NORELAYSTATE}"
+msgstr ""
+"A kérés összeállítója nem adta meg a RelayState paramétert, amely azt "
+"határozza meg, hogy hová irányítsuk tovább."
+
+msgid "{status:header_diagnostics}"
+msgstr "SimpleSAMLphp hibakeresés"
+
+msgid "{status:intro}"
+msgstr ""
+"Üdvözöljük, ez a SimpleSAMLphp státus oldala. Itt láthatja, ha lejárt a "
+"munkamenete, mikor lépett be utoljára és a munkamenethez tartozó "
+"attribútumokat."
+
+msgid "{errors:title_NOTFOUNDREASON}"
+msgstr "Oldal nem található"
+
+msgid "{admin:debug_sending_message_title}"
+msgstr "Üzenet küldése"
+
+msgid "{errors:title_RESPONSESTATUSNOSUCCESS}"
+msgstr "Hiba történt az azonosító szervezet (IdP) oldalán"
+
+msgid "{admin:metadata_shib13-sp}"
+msgstr "Shib 1.3 SP Metaadatok"
+
+msgid "{admin:metaover_intro}"
+msgstr "A SAML entitások részleteiért kattintson a SAML entitás fejlécére"
+
+msgid "{errors:title_NOTVALIDCERT}"
+msgstr "Érvénytelen tanúsítvány"
+
+msgid "{general:remember}"
+msgstr "Emlékezzen a hozzájárulásra"
+
+msgid "{disco:selectidp}"
+msgstr "Válasszon személyazonosság-szolgáltatót (IdP)"
+
+msgid "{login:help_desk_email}"
+msgstr "Küldjön e-mailt az ügyfélszolgálatnak"
+
+msgid "{login:help_desk_link}"
+msgstr "Ügyfélszolgálat weboldala"
+
+msgid "{login:remember_me}"
+msgstr "Emlékezzen rám"
+
+msgid "{errors:title_CASERROR}"
+msgstr "CAS hiba"
+
+msgid "{login:user_pass_text}"
+msgstr ""
+"Ez a szolgáltatás megköveteli, hogy azonosítsa magát. Kérjük, adja meg "
+"felhasználónevét és jelszavát az alábbi űrlapon."
+
+msgid "{errors:title_DISCOPARAMS}"
+msgstr "Érvénytelen kérés érkezett a felfedező szolgáltatáshoz (discovery service)"
+
+msgid "{general:yes_continue}"
+msgstr "Igen, elfogadom"
+
+msgid "{disco:remember}"
+msgstr "Emlékezzen erre"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-hosted}"
+msgstr "SAML 2.0 alkalmazásszolgáltató (helyi)"
+
+msgid "{admin:metadata_simplesamlformat}"
+msgstr ""
+"SimpleSAMLphp fájl formátumban - akkor használható, ha a másik oldalon "
+"SimpleSAMLphp van:"
+
+msgid "{disco:login_at}"
+msgstr "Belépés ide:"
+
+msgid "{errors:title_GENERATEAUTHNRESPONSE}"
+msgstr "Nem lehet az azonosítást végrehajtani"
+
+msgid "{errors:errorreport_header}"
+msgstr "Elküldött hibabejelentés"
+
+msgid "{errors:title_CREATEREQUEST}"
+msgstr "Hiba történt"
+
+msgid "{admin:metaover_header}"
+msgstr "Metaadat áttekintés"
+
+msgid "{errors:report_submit}"
+msgstr "Hibabejelentés küldése"
+
+msgid "{errors:title_INVALIDCERT}"
+msgstr "Hibás tanúsítvány."
+
+msgid "{errors:title_NOTFOUND}"
+msgstr "Oldal nem található"
+
+msgid "{logout:logged_out_text}"
+msgstr "Sikeresen kijelentkezett. Köszönjük, hogy használta a szolgáltatást."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-hosted}"
+msgstr "Shib 1.3 alkalmazásszolgálató (helyi)"
+
+msgid "{admin:metadata_cert_intro}"
+msgstr "PEM formátumú X509 tanúsítvány letöltése."
+
+msgid "{admin:debug_sending_message_msg_title}"
+msgstr "Üzenet"
+
+msgid "{errors:title_UNKNOWNCERT}"
+msgstr "Ismeretlen tanúsítvány"
+
+msgid "{errors:title_LDAPERROR}"
+msgstr "LDAP hiba"
+
+msgid "{logout:failedsps}"
+msgstr ""
+"Legalább egy szolgáltatásból nem sikerült kilépni. Ahhoz, hogy biztosan "
+"lezárja a megkezdett munkamenetet, kérjük, <i>zárja be böngészőjét</i>."
+
+msgid "{errors:descr_NOTFOUND}"
+msgstr "Az alábbi oldal nem található: %URL%"
+
+msgid "{errors:howto_text}"
+msgstr ""
+"Ez a hiba valószínűleg a SimpleSAMLphp nem várt működésével vagy "
+"félrekonfigurálásával kapcsolatos. Kérjük, keresse meg a bejelentkező "
+"szolgáltatás adminisztrátorát, és küldje el neki a fenti hibaüzenetet!"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-hosted}"
+msgstr "Shib 1.3 személyazonosság-szolgáltató (helyi)"
+
+msgid "{errors:descr_NOTVALIDCERT}"
+msgstr "Nem található hiteles tanúsítvány"
+
+msgid "{admin:debug_sending_message_text_button}"
+msgstr "Üzenetet küldhet. Kattintson az Üzenet küldése gombra a folytatáshoz."
+
+msgid "{admin:metaover_optional_not_found}"
+msgstr "A következő opcionális mezők nem találhatók"
+
+msgid "{logout:logout_only}"
+msgstr "Nem, csak innen: %SP%"
+
+msgid "{login:next}"
+msgstr "Következő"
+
+msgid "{errors:descr_GENERATEAUTHNRESPONSE}"
+msgstr "Hiba történt az azonosítási válaszüzenet összeállítása során."
+
+msgid "{disco:selectidp_full}"
+msgstr ""
+"Kérjük, válassza ki azt a személyazonosság-szolgáltatót (IdP), ahol "
+"azonosítani kívánja magát:"
+
+msgid "{errors:descr_NOTFOUNDREASON}"
+msgstr "%URL% oldal nem található, a következő ok miatt: %REASON% "
+
+msgid "{errors:title_NOCERT}"
+msgstr "Hiányzó tanúsítvány."
+
+msgid "{errors:title_LOGOUTINFOLOST}"
+msgstr "Elveszett kijelentkezési információk"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-remote}"
+msgstr "Shib 1.3 személyazonosság-szolgáltató (távoli)"
+
+msgid "{errors:descr_CONFIG}"
+msgstr "Valószínűleg helytelenül lett konfigurálva a SimpleSAMLphp"
+
+msgid "{admin:metadata_intro}"
+msgstr ""
+"Ezeket a metaadatokat a SimpleSAMLphp generálta. Ezt a dokumentumot "
+"küldheti el föderációs partnerei számára."
+
+msgid "{admin:metadata_cert}"
+msgstr "Tanúsítványok."
+
+msgid "{errors:descr_INVALIDCERT}"
+msgstr "Azonosítási hiba: a böngésző által küldött tanúsítvány hibás."
+
+msgid "{status:header_shib}"
+msgstr "Shibboleth próba"
+
+msgid "{admin:metaconv_parse}"
+msgstr "Értelmez"
+
+msgid "Person's principal name at home organization"
+msgstr "Állandó azonosító a saját intézményben"
+
+msgid "Superfluous options in config file"
+msgstr "Felesleges opciók a konfigurációs állományban"
+
+msgid "Mobile"
+msgstr "Mobil"
+
+msgid "Shib 1.3 Service Provider (Hosted)"
+msgstr "Shib 1.3 alkalmazásszolgálató (helyi)"
+
+msgid ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+msgstr ""
+"A felhasználói adatbázis LDAP alapú, ezért bejelentkezéshez szükség van "
+"egy LDAP adatbázisra. Ezúttal hiba történt az LDAP-hoz kapcsolódás során."
+
+msgid ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+msgstr ""
+"Opcionálisan megadhatja az e-mail címét, így az adminisztrátorok a "
+"hibával kapcsolatban esetleg további kérdéseket tehetnek fel:"
+
+msgid "Display name"
+msgstr "Megjeleníthető név"
+
+msgid "Remember my choice"
+msgstr "Emlékezzen erre"
+
+msgid "SAML 2.0 SP Metadata"
+msgstr "SAML 2.0 SP Metaadatok"
+
+msgid "Notices"
+msgstr "Megjegyzések"
+
+msgid "Home telephone"
+msgstr "Otthoni telefon"
+
+msgid ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+msgstr ""
+"Üdvözöljük, ez a SimpleSAMLphp státus oldala. Itt láthatja, ha lejárt a "
+"munkamenete, mikor lépett be utoljára és a munkamenethez tartozó "
+"attribútumokat."
+
+msgid "Explain what you did when this error occurred..."
+msgstr "Írja le milyen lépéseket hajtott végre, aminek végén hiba történt..."
+
+msgid "An unhandled exception was thrown."
+msgstr "Kezeletlen kivétel (exception) keletkezett."
+
+msgid "Invalid certificate"
+msgstr "Érvénytelen tanúsítvány"
+
+msgid "Service Provider"
+msgstr "Alkalmazásszolgáltató"
+
+msgid "Incorrect username or password."
+msgstr "Hibás felhasználói név vagy jelszó!"
+
+msgid "There is an error in the request to this page. The reason was: %REASON%"
+msgstr "Hiba történt az oldal lekérdezése közben. A hibaüzenet: %REASON%"
+
+msgid "E-mail address:"
+msgstr "E-mail címek:"
+
+msgid "Submit message"
+msgstr "Üzenet küldése"
+
+msgid "No RelayState"
+msgstr "Nincs RelayState paraméter"
+
+msgid "Error creating request"
+msgstr "Hiba történt"
+
+msgid "Locality"
+msgstr "Település"
+
+msgid "Unhandled exception"
+msgstr "Kezeletlen kivétel"
+
+msgid "The following required fields was not found"
+msgstr "A következő kötelező mezők hiányoznak"
+
+msgid "Download the X509 certificates as PEM-encoded files."
+msgstr "PEM formátumú X509 tanúsítvány letöltése."
+
+#, python-format
+msgid "Unable to locate metadata for %ENTITYID%"
+msgstr "%ENTITYID% entitáshoz nem található metadataA"
+
+msgid "Organizational number"
+msgstr "Szervezeti szám"
+
+msgid "Password not set"
+msgstr "Jelszó nincs beállítva"
+
+msgid "SAML 2.0 IdP Metadata"
+msgstr "SAML 2.0 IdP Metaadatok"
+
+msgid "Post office box"
+msgstr "Postafiók"
+
+msgid ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+msgstr ""
+"Ez a szolgáltatás megköveteli, hogy azonosítsa magát. Kérjük, adja meg "
+"felhasználónevét és jelszavát az alábbi űrlapon."
+
+msgid "CAS Error"
+msgstr "CAS hiba"
+
+msgid ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+msgstr ""
+"Az alábbi információ esetleg érdekes lehet a rendszergazda / helpdesk "
+"számára:"
+
+msgid ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+msgstr "Nem létezik ilyen felhasználó vagy a jelszó hibás. Kérjük, próbálja újra!"
+
+msgid "Error"
+msgstr "Hiba"
+
+msgid "Next"
+msgstr "Következő"
+
+msgid "Distinguished name (DN) of the person's home organizational unit"
+msgstr "A felhasználó szervezeti egység azonosító neve (DN-je)"
+
+msgid "State information lost"
+msgstr "Elveszett az állapotinformáció"
+
+msgid ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+msgstr ""
+"Még nem lett megváltoztatva a karbantartói jelszó (auth.adminpassword) a "
+"konfigurációs fájlban, kérjük, változtassa meg most! "
+
+msgid "Converted metadata"
+msgstr "Konvertált metaadatok"
+
+msgid "Mail"
+msgstr "E-mail"
+
+msgid "No, cancel"
+msgstr "Nem"
+
+msgid ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+msgstr ""
+"A <b>%HOMEORG%</b> szervezetet választotta ki. Ha a választás nem volt "
+"helyes, kérem válasszon másikat."
+
+msgid "Error processing request from Service Provider"
+msgstr "Hibás SP üzenet"
+
+msgid "Distinguished name (DN) of person's primary Organizational Unit"
+msgstr "A személy elsődleges szervezeti egységének azonosító neve (DN-je)"
+
+msgid ""
+"To look at the details for an SAML entity, click on the SAML entity "
+"header."
+msgstr "A SAML entitások részleteiért kattintson a SAML entitás fejlécére"
+
+msgid "Enter your username and password"
+msgstr "Felhasználónév és jelszó"
+
+msgid "Login at"
+msgstr "Belépés ide:"
+
+msgid "No"
+msgstr "Nem"
+
+msgid "Home postal address"
+msgstr "Otthoni levelezési cím"
+
+msgid "WS-Fed SP Demo Example"
+msgstr "WS-Fed SP próba példa"
+
+msgid "SAML 2.0 Identity Provider (Remote)"
+msgstr "SAML 2.0  személyazonosság-szolgáltató (távoli)"
+
+msgid "Error processing the Logout Request"
+msgstr "Feldolgozhatatlan kijelentkezési kérés"
+
+msgid "Do you want to logout from all the services above?"
+msgstr "Ki akar jelentkezni az összes fenti alkalmazásból?"
+
+msgid "Select"
+msgstr "Választ"
+
+msgid "The authentication was aborted by the user"
+msgstr "Az azonosítást a felhasználó megszakította"
+
+msgid "Your attributes"
+msgstr "Az ön attribútumai"
+
+msgid "Given name"
+msgstr "Keresztnév"
+
+msgid "SAML 2.0 SP Demo Example"
+msgstr "SAML 2.0 SP próba példa"
+
+msgid "Logout information lost"
+msgstr "Elveszett kijelentkezési információk"
+
+msgid "Organization name"
+msgstr "Szervezet neve"
+
+msgid "Authentication failed: the certificate your browser sent is unknown"
+msgstr "Azonosítási hiba: a böngésző által küldött tanúsítványt ismeretlen típusú."
+
+msgid ""
+"You are about to send a message. Hit the submit message button to "
+"continue."
+msgstr "Üzenetet küldhet. Kattintson az Üzenet küldése gombra a folytatáshoz."
+
+msgid "Home organization domain name"
+msgstr "Saját intézmény domain neve"
+
+msgid "Go back to the file list"
+msgstr "Vissza az fájlok listájához"
+
+msgid "Error report sent"
+msgstr "Elküldött hibabejelentés"
+
+msgid "Common name"
+msgstr "Teljes név"
+
+msgid "Please select the identity provider where you want to authenticate:"
+msgstr ""
+"Kérjük, válassza ki azt a személyazonosság-szolgáltatót (IdP), ahol "
+"azonosítani kívánja magát:"
+
+msgid "Logout failed"
+msgstr "Kijelentkezés nem sikerült"
+
+msgid "Identity number assigned by public authorities"
+msgstr "Társadalombiztosítási azonosító szám"
+
+msgid "WS-Federation Identity Provider (Remote)"
+msgstr "WS-Federation alkalmazásszolgáltató (távoli)"
+
+msgid "Error received from Identity Provider"
+msgstr "Hiba történt az azonosító szervezet (IdP) oldalán"
+
+msgid "LDAP Error"
+msgstr "LDAP hiba"
+
+msgid ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+msgstr ""
+"A kijelentkezési művelettel kapcsolatos információk valahol elvesztek. "
+"Kérjük, térjen vissza ahhoz a szolgáltatáshoz, ahonnan ki akart "
+"jelentkezni, és próbálja újra! Lehetséges, hogy a hibát az okozza, hogy a"
+" kijelentkezéshez szükséges információ elévült. A kijelentkezési "
+"információ csak korlátozott ideig érvényes - általában néhány óráig. Ez "
+"hosszabb, mint amennyi normális esetben a kijelentkezéshez szükséges, "
+"ezért ez a hibaüzenet konfigurációs hibát jelenthet. Ha a probléma "
+"továbbra is fennáll, kérjük, forduljon az alkalmazásszolgáltatóhoz (SP)!"
+
+msgid "Some error occurred"
+msgstr "Hiba történt"
+
+msgid "Organization"
+msgstr "Szervezet"
+
+msgid "No certificate"
+msgstr "Hiányzó tanúsítvány."
+
+msgid "Choose home organization"
+msgstr "Válassza ki a szervezetét"
+
+msgid "Persistent pseudonymous ID"
+msgstr "Állandó anonim azonosító"
+
+msgid "No SAML response provided"
+msgstr "Nincs SAML válasz"
+
+msgid "No errors found."
+msgstr "Nincs hiba."
+
+msgid "SAML 2.0 Service Provider (Hosted)"
+msgstr "SAML 2.0 alkalmazásszolgáltató (helyi)"
+
+msgid "The given page was not found. The URL was: %URL%"
+msgstr "Az alábbi oldal nem található: %URL%"
+
+msgid "Configuration error"
+msgstr "Beállítási hiba"
+
+msgid "Required fields"
+msgstr "Kötelező mezők"
+
+msgid "An error occurred when trying to create the SAML request."
+msgstr "Hiba történt a SAML kérés létrehozása közben."
+
+msgid ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+msgstr ""
+"Ez a hiba valószínűleg a SimpleSAMLphp nem várt működésével vagy "
+"félrekonfigurálásával kapcsolatos. Kérjük, keresse meg a bejelentkező "
+"szolgáltatás adminisztrátorát, és küldje el neki a fenti hibaüzenetet!"
+
+#, python-format
+msgid "Your session is valid for %remaining% seconds from now."
+msgstr "Az ön munkamenete még %remaining% másodpercig érvényes"
+
+msgid "Domain component (DC)"
+msgstr "Domain összetevő (DC)"
+
+msgid "Shib 1.3 Service Provider (Remote)"
+msgstr "Shib 1.3 alkalmazásszolgáltató (távoli)"
+
+msgid "Password"
+msgstr "Jelszó"
+
+msgid "Nickname"
+msgstr "Becenév"
+
+msgid "Send error report"
+msgstr "Hibabejelentés küldése"
+
+msgid ""
+"Authentication failed: the certificate your browser sent is invalid or "
+"cannot be read"
+msgstr "Azonosítási hiba: a böngésző által küldött tanúsítvány hibás."
+
+msgid "The error report has been sent to the administrators."
+msgstr "A hibabejelentést elküldtük az adminisztrátoroknak."
+
+msgid "Date of birth"
+msgstr "Születési dátum"
+
+msgid "Private information elements"
+msgstr "Védett adatokat tartalmazó attribútumok"
+
+msgid "You are also logged in on these services:"
+msgstr "Ezen alkalmazásokban van még bejelentkezve:"
+
+msgid "SimpleSAMLphp Diagnostics"
+msgstr "SimpleSAMLphp hibakeresés"
+
+msgid "Debug information"
+msgstr "Bővebb információ a hibáról"
+
+msgid "No, only %SP%"
+msgstr "Nem, csak innen: %SP%"
+
+msgid "Username"
+msgstr "Felhasználónév"
+
+msgid "Go back to SimpleSAMLphp installation page"
+msgstr "Vissza a SimpleSAMLphp telepítő oldalára"
+
+msgid "You have successfully logged out from all services listed above."
+msgstr "Sikeresen kijelentkezett az fent felsorolt összes alkalmazásból."
+
+msgid "You are now successfully logged out from %SP%."
+msgstr "Sikeresen kilépett a(z) %SP% szolgáltatásból"
+
+msgid "Affiliation"
+msgstr "Viszony"
+
+msgid "You have been logged out."
+msgstr "Sikeresen kijelentkezett. Köszönjük, hogy használta a szolgáltatást."
+
+msgid "Return to service"
+msgstr "Vissza a szolgáltatáshoz"
+
+msgid "Logout"
+msgstr "Kilépés"
+
+msgid "State information lost, and no way to restart the request"
+msgstr "Állapotinformáció elveszett, a kérést nem lehet újraindítani"
+
+msgid "Error processing response from Identity Provider"
+msgstr "IdP válasz feldolgozási hiba"
+
+msgid "WS-Federation Service Provider (Hosted)"
+msgstr "WS-Federation alkalmazásszolgáltató (helyi)"
+
+msgid "Remember my username"
+msgstr "Emlékezzen a felhasználónevemre"
+
+msgid "Preferred language"
+msgstr "Elsődleges nyelv"
+
+msgid "SAML 2.0 Service Provider (Remote)"
+msgstr "SAML 2.0 alkalmazásszolgáltató (távoli)"
+
+msgid "Surname"
+msgstr "Vezetéknév"
+
+msgid "No access"
+msgstr "Hozzáférés megtagadva"
+
+msgid "The following fields was not recognized"
+msgstr "A következő mezők nem értelmezhetők"
+
+msgid "Authentication error in source %AUTHSOURCE%. The reason was: %REASON%"
+msgstr "A(z)  %AUTHSOURCE% azonosítási forrásban hiba van. A ok: %REASON%"
+
+msgid "Bad request received"
+msgstr "Hibás kérés"
+
+msgid "User ID"
+msgstr "Felhasználói azonosító"
+
+msgid "JPEG Photo"
+msgstr "Fotó JPEG formátumban"
+
+msgid "Postal address"
+msgstr "Levelezési cím"
+
+msgid "An error occurred when trying to process the Logout Request."
+msgstr "A kijelentkezési kérés (logout request) feldolgozása során hiba történt."
+
+msgid "Sending message"
+msgstr "Üzenet küldése"
+
+msgid "In SAML 2.0 Metadata XML format:"
+msgstr "SAML 2.0 XML formátumban:"
+
+msgid "Logging out of the following services:"
+msgstr "Kilépés az alábbi szolgáltatásokból:"
+
+msgid ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+msgstr "Hiba történt az azonosítási válaszüzenet összeállítása során."
+
+msgid "Could not create authentication response"
+msgstr "Nem lehet az azonosítást végrehajtani"
+
+msgid "Labeled URI"
+msgstr "Honlap cím"
+
+msgid "SimpleSAMLphp appears to be misconfigured."
+msgstr "Valószínűleg helytelenül lett konfigurálva a SimpleSAMLphp"
+
+msgid "Shib 1.3 Identity Provider (Hosted)"
+msgstr "Shib 1.3 személyazonosság-szolgáltató (helyi)"
+
+msgid "Metadata"
+msgstr "Metaadatok"
+
+msgid "Login"
+msgstr "Bejelentkezés"
+
+msgid ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+msgstr ""
+"Az IdP azonosítási kérést kapott az SP-től, de ennek feldolgozása során "
+"hiba történt."
+
+msgid "Yes, all services"
+msgstr "Igen, minden alkalmazásból"
+
+msgid "Logged out"
+msgstr "Sikeres kilépés"
+
+msgid "Postal code"
+msgstr "Irányítószám"
+
+msgid "Logging out..."
+msgstr "Kijelentkezés..."
+
+msgid "Metadata not found"
+msgstr "Metadata nem található"
+
+msgid "SAML 2.0 Identity Provider (Hosted)"
+msgstr "SAML 2.0 személyazonosság-szolgáltató (helyi)"
+
+msgid "Primary affiliation"
+msgstr "Elsődleges viszony"
+
+msgid ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+msgstr ""
+"Ha bejelentést küld a hibával kapcsolatban, kérjük, küldje el ezt az "
+"azonosítót, mert csak ennek segítségével tudja a rendszeradminisztrátor a"
+" naplóállományokból azokat az adatokat megtalálni, amelyek ehhez a "
+"munkamenethez tartoznak."
+
+msgid "XML metadata"
+msgstr "XML metaadat"
+
+msgid ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+msgstr ""
+"A felfedező szolgáltatás (discovery service) olyan paramétereket kapott, "
+"amelyek nem felelnek meg a specifikációnak."
+
+msgid "Telephone number"
+msgstr "Telefonszám"
+
+msgid ""
+"Unable to log out of one or more services. To ensure that all your "
+"sessions are closed, you are encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Legalább egy szolgáltatásból nem sikerült kilépni. Ahhoz, hogy biztosan "
+"lezárja a megkezdett munkamenetet, kérjük, <i>zárja be böngészőjét</i>."
+
+msgid "Bad request to discovery service"
+msgstr "Érvénytelen kérés érkezett a felfedező szolgáltatáshoz (discovery service)"
+
+msgid "Select your identity provider"
+msgstr "Válasszon személyazonosság-szolgáltatót (IdP)"
+
+msgid "Entitlement regarding the service"
+msgstr "Ezekre a szolgáltatásokra jogosult"
+
+msgid "Shib 1.3 SP Metadata"
+msgstr "Shib 1.3 SP Metaadatok"
+
+msgid ""
+"As you are in debug mode, you get to see the content of the message you "
+"are sending:"
+msgstr "Mivel hibakereső módban van, láthatja az elküldendő üzenet tartalmát"
+
+msgid "Certificates"
+msgstr "Tanúsítványok."
+
+msgid "Remember"
+msgstr "Emlékezzen a hozzájárulásra"
+
+msgid "Distinguished name (DN) of person's home organization"
+msgstr "A felhasználó munkahelyének azonosító neve (DN-je)"
+
+msgid "You are about to send a message. Hit the submit message link to continue."
+msgstr "Üzenetet küldhet. Kattintson az Üzenet küldése linkre a folytatáshoz."
+
+msgid "Organizational unit"
+msgstr "Szervezeti egység"
+
+msgid "Authentication aborted"
+msgstr "Azonosítás megszakítva"
+
+msgid "Local identity number"
+msgstr "Helyi azonosító szám"
+
+msgid "Report errors"
+msgstr "Mutassa a hibaüzeneteket"
+
+msgid "Page not found"
+msgstr "Oldal nem található"
+
+msgid "Shib 1.3 IdP Metadata"
+msgstr "Shib 1.3 IdP Metaadatok"
+
+msgid "Change your home organization"
+msgstr "Válasszon másik szervezetet"
+
+msgid "User's password hash"
+msgstr "A felhasználó jelszava (kódolva)"
+
+msgid ""
+"In SimpleSAMLphp flat file format - use this if you are using a "
+"SimpleSAMLphp entity on the other side:"
+msgstr ""
+"SimpleSAMLphp fájl formátumban - akkor használható, ha a másik oldalon "
+"SimpleSAMLphp van:"
+
+msgid "Yes, continue"
+msgstr "Igen, elfogadom"
+
+msgid "Completed"
+msgstr "Befejezve"
+
+msgid ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+msgstr "Hiba történt az azonosító szervezet (IdP) oldalán. Ismeretlen állapotkód."
+
+msgid "Error loading metadata"
+msgstr "Metaadat betöltési hiba"
+
+msgid "Select configuration file to check:"
+msgstr "Válassza ki az ellenőrizendő konfigurációs állományt"
+
+msgid "On hold"
+msgstr "Felfüggesztve"
+
+msgid "Error when communicating with the CAS server."
+msgstr "Hiba történt a CAS kiszolgálóval való kommunikáció közben."
+
+msgid "No SAML message provided"
+msgstr "Hiányzó SAML üzenet"
+
+msgid "Help! I don't remember my password."
+msgstr "Segítség! Elfelejtettem a jelszavam."
+
+msgid ""
+"You can turn off debug mode in the global SimpleSAMLphp configuration "
+"file <tt>config/config.php</tt>."
+msgstr ""
+"A SimpleSAMLphp <tt>config/config.php</tt> fájljában kikapcsolhatja a "
+"hibakereső módot."
+
+msgid "How to get help"
+msgstr "Hogyan kaphat segítséget"
+
+msgid ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+msgstr ""
+"A Single Logout interfészen vagy SAML LogoutRequest vagy LogoutResponse "
+"üzenetet kell megadni."
+
+msgid "SimpleSAMLphp error"
+msgstr "SimpleSAMLphp hiba"
+
+msgid ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Egy vagy több alkalmazás <i>nem támogatja a kijelenkezést</i>. Hogy "
+"biztosítani lehessen, hogy nem maradt bejelentkezve, kérjük, <i>lépjen ki"
+" a böngészőből!</i>"
+
+msgid "Remember me"
+msgstr "Emlékezzen rám"
+
+msgid "Organization's legal name"
+msgstr "Szervezet hivatalos neve"
+
+msgid "Options missing from config file"
+msgstr "Hiányzó opciók a konfigurációs állományban"
+
+msgid "The following optional fields was not found"
+msgstr "A következő opcionális mezők nem találhatók"
+
+msgid "Authentication failed: your browser did not send any certificate"
+msgstr "Azonosítási hiba: a böngésző nem küldött tanúsítványt."
+
+msgid ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+msgstr ""
+"Ez a hozzáférési pont nincs engedélyezve. Engedélyezze a SimpleSAMLphp "
+"beállításai között."
+
+msgid "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL</a>:"
+msgstr "A következő címről <a href=\"%METAURL%\">töltheti le a metaadatokat</a>:"
+
+msgid "Street"
+msgstr "Utca"
+
+msgid ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+msgstr ""
+"SimpleSAMLphp konfigurációs hiba. Ha Ön ennek a szolgáltatásnak az "
+"adminisztrátora, bizonyosodjon meg arról, hogy a metaadatok helyesen "
+"vannak beállítva!"
+
+msgid "Incorrect username or password"
+msgstr "Hibás felhasználónév vagy jelszó"
+
+msgid "Message"
+msgstr "Üzenet"
+
+msgid "Contact information:"
+msgstr "Elérési információk"
+
+msgid "Unknown certificate"
+msgstr "Ismeretlen tanúsítvány"
+
+msgid "Legal name"
+msgstr "Hivatalos név (noreduperson)"
+
+msgid "Optional fields"
+msgstr "Opcionális mező"
+
+msgid ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+msgstr ""
+"A kérés összeállítója nem adta meg a RelayState paramétert, amely azt "
+"határozza meg, hogy hová irányítsuk tovább."
+
+msgid "You have previously chosen to authenticate at"
+msgstr "Korábban ezt a személyazonosság-szolgáltatót (IdP) választotta: "
+
+msgid ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+msgstr "Valamilyen oknál fogva a jelszó nem olvasható. Kérjük, próbálja újra!"
+
+msgid "Fax number"
+msgstr "Fax"
+
+msgid "Shibboleth demo"
+msgstr "Shibboleth próba"
+
+msgid "Error in this metadata entry"
+msgstr "Hiba ebben a metaadat bejegyzésben"
+
+msgid "Session size: %SIZE%"
+msgstr "Munkamenet mérete: %SIZE%"
+
+msgid "Parse"
+msgstr "Értelmez"
+
+msgid ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+msgstr ""
+"Ajaj! - Felhasználói neve és jelszava nélkül nem tudja azonosítani magát,"
+" így nem férhet hozzá a szolgáltatáshoz. Biztosan van valaki, aki tud "
+"önnek segíteni. Vegye fel a kapcsolatot az ügyfélszolgálattal!"
+
+msgid "Metadata parser"
+msgstr "Metaadat értelmező"
+
+msgid "Choose your home organization"
+msgstr "Válassza ki az ön szervezetét"
+
+msgid "Send e-mail to help desk"
+msgstr "Küldjön e-mailt az ügyfélszolgálatnak"
+
+msgid "Metadata overview"
+msgstr "Metaadat áttekintés"
+
+msgid "Title"
+msgstr "Cím"
+
+msgid "Manager"
+msgstr "Manager"
+
+msgid "You did not present a valid certificate."
+msgstr "Nem található hiteles tanúsítvány"
+
+msgid "Authentication source error"
+msgstr "Azonosítási forrás hiba"
+
+msgid "Affiliation at home organization"
+msgstr "Saját intézményhez való viszony"
+
+msgid "Help desk homepage"
+msgstr "Ügyfélszolgálat weboldala"
+
+msgid "Configuration check"
+msgstr "Beállítások ellenőrzése"
+
+msgid "We did not accept the response sent from the Identity Provider."
+msgstr ""
+"Nem fogadtuk el a személyazonosság-szolgáltató (IdP) által küldött "
+"válaszüzenetet."
+
+msgid "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+msgstr "%URL% oldal nem található, a következő ok miatt: %REASON% "
+
+msgid "Shib 1.3 Identity Provider (Remote)"
+msgstr "Shib 1.3 személyazonosság-szolgáltató (távoli)"
+
+msgid ""
+"Here is the metadata that SimpleSAMLphp has generated for you. You may "
+"send this metadata document to trusted partners to setup a trusted "
+"federation."
+msgstr ""
+"Ezeket a metaadatokat a SimpleSAMLphp generálta. Ezt a dokumentumot "
+"küldheti el föderációs partnerei számára."
+
+msgid "[Preferred choice]"
+msgstr "[Kívánt választás]"
+
+msgid "Organizational homepage"
+msgstr "Szervezet weboldala"
+
+msgid ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr ""
+"Az Assertion Consumer Service interfészen SAML Authentication Response "
+"üzenetet kell megadni."
+
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"Egy teszt, vagy fejlesztői oldalra jutottál. Az azonosítás csak próba "
+"miatt történik. Ha valaki olyan linket küldött, amire kattintva ide "
+"jutottál, és nem vagy <i>tesztelő</i>, valószínűleg elrontott valamit, és"
+" amit keresel, azt <b>itt nem találod</b>."

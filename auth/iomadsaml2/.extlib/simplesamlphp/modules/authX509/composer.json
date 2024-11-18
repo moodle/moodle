@@ -1,0 +1,53 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-authx509",
+    "description": "A module that is able to authenticate users based on X509 client certificates",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "X509"],
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Joost van Dijk",
+            "email": "Joost.vanDijk@surfnet.nl"
+        },
+        {
+            "name": "Tim van Dijen",
+            "email": "tvdijen@gmail.com"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        },
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "simplesamlphp/composer-module-installer": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\authX509\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.5",
+        "simplesamlphp/composer-module-installer": "~1.1",
+        "simplesamlphp/simplesamlphp-module-ldap": "^0.9"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "simplesamlphp/simplesamlphp-test-framework": "^0.0.15"
+    },
+    "extra": {
+        "ssp-mixedcase-module-name": "authX509"
+    },
+    "support": {
+        "issues": "https://github.com/tvdijen/simplesamlphp-module-authx509/issues",
+        "source": "https://github.com/tvdijen/simplesamlphp-module-authx509"
+    }
+}

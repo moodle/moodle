@@ -1,0 +1,30 @@
+.block_iomad_onlineusers .content .list li.listentry {
+    clear: both;
+}
+
+.block_iomad_onlineusers .content .list li.listentry:not(:first-child) {
+    padding-top: 3px;
+}
+
+.block_iomad_onlineusers .content .list li.listentry .user {
+    float: left;
+    position: relative;
+}
+
+.block_iomad_onlineusers .content .list li.listentry .otherusers {
+    margin-left: 1.5rem;
+}
+
+.block_iomad_onlineusers .content .list li.listentry .user .userpicture {
+    vertical-align: text-bottom;
+}
+
+.block_iomad_onlineusers .content .list li.listentry .message,
+.block_iomad_onlineusers .content .list li.listentry .uservisibility {
+    float: right;
+    margin-top: 3px;
+}
+
+.block_iomad_onlineusers .content .info {
+    text-align: center;
+}

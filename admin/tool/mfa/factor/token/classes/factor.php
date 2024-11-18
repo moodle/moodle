@@ -148,7 +148,7 @@ class factor extends object_factor_base {
         $nostate = $this->get_state() !== \tool_mfa\plugininfo\factor::STATE_PASS;
 
         if ($noproperty && $nostate) {
-            $expiry = get_config('factor_token', 'expiry');
+            $expiry = get_config('factor_token', 'expiry' . $this->postfix);
             $expirystring = format_time($expiry);
             $mform->addElement('advcheckbox', 'factor_token_trust', '', get_string('form:trust', 'factor_token', $expirystring));
             $mform->setType('factor_token_trust', PARAM_BOOL);
@@ -221,11 +221,11 @@ class factor extends object_factor_base {
 
         // Calculate the expiry time. This is provided by config,
         // But optionally might need to be rounded  to expire a few hours after 0000 server time.
-        $expiry = get_config('factor_token', 'expiry');
+        $expiry = get_config('factor_token', 'expiry' . $this->postfix);
         $expirytime = $basetime + $expiry;
 
         // If expiring overnight, it should expire at 2am the following morning, if required.
-        $expireovernight = get_config('factor_token', 'expireovernight');
+        $expireovernight = get_config('factor_token', 'expireovernight' . $this->postfix);
         if ($expireovernight) {
             // Find out what 2am the following morning time is.
             $datetime = new \DateTime();

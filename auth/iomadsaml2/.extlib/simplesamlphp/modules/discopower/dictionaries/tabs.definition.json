@@ -1,0 +1,44 @@
+{
+	"norway": {
+		"en": "Norway"
+	},
+	"kalmar": {
+		"en": "Kalmar"
+	},
+	"finland": {
+		"en": "Finland"
+	},
+	"sweden": {
+		"en": "Sweden"
+	},
+	"iceland": {
+		"en": "Iceland"
+	},
+	"denmark": {
+		"en": "Denmark"
+	},
+	"switzerland": {
+		"en": "Switzerland"
+	},
+	"greece": {
+		"en": "Greece"
+	},
+	"southafrica": {
+		"en": "South Africa"
+	},
+	"edugain": {
+		"en": "Europe (eduGAIN)"
+	},
+	"misc": {
+		"en": "Miscellaneous"
+	},
+	"incommon": {
+		"en": "InCommon"
+	},
+	"ukacessfederation": {
+		"en": "UK Access Federation"
+	},
+	"incremental_search": {
+		"en": "Incremental search..."
+	}
+}

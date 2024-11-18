@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php
+
+use SimpleSAML\Console\Application;
+use SimpleSAML\Kernel;
+use Symfony\Component\Console\Input\ArgvInput;
+
+umask(000);
+set_time_limit(0);
+
+require __DIR__.'/../vendor/autoload.php';
+
+$input = new ArgvInput();
+$module = $input->getParameterOption(['--modules', '-m'], 'core');
+$kernel = new Kernel($module);
+
+$application = new Application($kernel);
+$application->run($input);

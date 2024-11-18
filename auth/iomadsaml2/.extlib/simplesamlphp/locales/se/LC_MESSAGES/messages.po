@@ -1,0 +1,89 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: se\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{login:username}"
+msgstr "Geavahusnamma"
+
+msgid "{login:login_button}"
+msgstr "Mana sis"
+
+msgid "{login:error_wrongpassword}"
+msgstr "Boastu geavahusnamma, beassansátni dehe organisašuvdna."
+
+msgid "{login:password}"
+msgstr "Beassansátni"
+
+msgid "{login:organization}"
+msgstr "Organisašuvdna"
+
+msgid "{errors:report_email}"
+msgstr "Elektrovnnalaš poastačijuhus"
+
+msgid "Person's principal name at home organization"
+msgstr "Feide-namma"
+
+msgid "Mobile"
+msgstr "Mátketelefovdna"
+
+msgid "Incorrect username or password."
+msgstr "Boastu geavahusnamma, beassansátni dehe organisašuvdna."
+
+msgid "E-mail address:"
+msgstr "Elektrovnnalaš poastačijuhus"
+
+msgid "Mail"
+msgstr "Elektrovnnalaš poastačijuhus"
+
+msgid "Given name"
+msgstr "Ovdanamma"
+
+msgid "Common name"
+msgstr "Olles namma"
+
+msgid "Identity number assigned by public authorities"
+msgstr "Riegadannummir"
+
+msgid "Organization"
+msgstr "Organisašuvdna"
+
+msgid "Password"
+msgstr "Beassansátni"
+
+msgid "Username"
+msgstr "Geavahusnamma"
+
+msgid "Affiliation"
+msgstr "Du doaibma organisašuvnnas"
+
+msgid "Preferred language"
+msgstr "Vuosttašválljejuvvon giella dehe giellahápmi"
+
+msgid "Surname"
+msgstr "Goargu"
+
+msgid "User ID"
+msgstr "Namahus"
+
+msgid "Login"
+msgstr "Mana sis"
+
+msgid "Entitlement regarding the service"
+msgstr "URI mii čilge dihto vuoigatvuođa dihto ressurssaide"
+
+msgid "Affiliation at home organization"
+msgstr "Rolla diehto organisašuvnnas, dehe dihto domenas."
+

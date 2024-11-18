@@ -1,0 +1,271 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: en\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{memcacheMonitor:memcachestat:libevent}"
+msgstr "Libevent version"
+
+msgid "{memcacheMonitor:memcachestat:reserved_fds}"
+msgstr "Number of misc fds used internally"
+
+msgid "{memcacheMonitor:memcachestat:cmd_touch}"
+msgstr "Cumulative number of touch reqs"
+
+msgid "{memcacheMonitor:memcachestat:touch_hits}"
+msgstr "Number of keys that have been touched with a new expiration time"
+
+msgid "{memcacheMonitor:memcachestat:touch_misses}"
+msgstr "Number of items that have been touched and not found"
+
+msgid "{memcacheMonitor:memcachestat:hash_power_level}"
+msgstr "Current size multiplier for hash table"
+
+msgid "{memcacheMonitor:memcachestat:hash_bytes}"
+msgstr "Bytes currently used by hash tables"
+
+msgid "{memcacheMonitor:memcachestat:hash_is_expanding}"
+msgstr "Indicates if the hash table is being grown to a new size"
+
+msgid "{memcacheMonitor:memcachestat:expired_unfetched}"
+msgstr "Items pulled from LRU that were never touched before expiring"
+
+msgid "{memcacheMonitor:memcachestat:evicted_unfetched}"
+msgstr "Items pulled from LRU that were never touched"
+
+msgid "{memcacheMonitor:memcachestat:reclaimed}"
+msgstr "Number of times an entry was stored using memory from an expired entry"
+
+msgid "{memcacheMonitor:memcachestat:delete_misses}"
+msgstr "Total DELETE commands (failed)"
+
+msgid "{memcacheMonitor:memcachestat:total_connections}"
+msgstr "Total connections"
+
+msgid "{memcacheMonitor:memcachestat:evictions}"
+msgstr "Number of objects removed from cache (memory limit)"
+
+msgid "{memcacheMonitor:memcachestat:version}"
+msgstr "Version"
+
+msgid "{memcacheMonitor:memcachestat:incr_hits}"
+msgstr "Total INCR commands (success)"
+
+msgid "{memcacheMonitor:memcachestat:cas_badval}"
+msgstr "Total bad CAS identifiers"
+
+msgid "{memcacheMonitor:memcachestat:incr_misses}"
+msgstr "Total INCR commands (failed)"
+
+msgid "{memcacheMonitor:memcachestat:pointer_size}"
+msgstr "Pointer size (bits)"
+
+msgid "{memcacheMonitor:memcachestat:get_hits}"
+msgstr "Total GET commands (success)"
+
+msgid "{memcacheMonitor:memcachestat:auth_cmds}"
+msgstr "Total authentication commands processed"
+
+msgid "{memcacheMonitor:memcachestat:curr_items}"
+msgstr "Currently number of items"
+
+msgid "{memcacheMonitor:memcachestat:uptime}"
+msgstr "Uptime"
+
+msgid "{memcacheMonitor:memcachestat:conn_yields}"
+msgstr "Number of times the request limit was reached"
+
+msgid "{memcacheMonitor:memcachestat:limit_maxbytes}"
+msgstr "Total storage avail"
+
+msgid "{memcacheMonitor:memcachestat:threads}"
+msgstr "Number of available threads"
+
+msgid "{memcacheMonitor:memcachestat:curr_connections}"
+msgstr "Current open connections"
+
+msgid "{memcacheMonitor:memcachestat:rusage_system}"
+msgstr "CPU Seconds (System)"
+
+msgid "{memcacheMonitor:memcachestat:rusage_user}"
+msgstr "CPU Seconds (User)"
+
+msgid "{memcacheMonitor:memcachestat:pid}"
+msgstr "Process ID"
+
+msgid "{memcacheMonitor:memcachestat:cmd_get}"
+msgstr "Total GET commands"
+
+msgid "{memcacheMonitor:memcachestat:auth_errors}"
+msgstr "Total authentication commands failed"
+
+msgid "{memcacheMonitor:memcachestat:listen_disabled_num}"
+msgstr "Total number of denied connections (connection limit)"
+
+msgid "{memcacheMonitor:memcachestat:accepting_conns}"
+msgstr "Currently accepting new connections"
+
+msgid "{memcacheMonitor:memcachestat:decr_hits}"
+msgstr "Total DECR commands (success)"
+
+msgid "{memcacheMonitor:memcachestat:bytes_read}"
+msgstr "Bytes in to the server"
+
+msgid "{memcacheMonitor:memcachestat:time}"
+msgstr "Current time"
+
+msgid "{memcacheMonitor:memcachestat:cas_misses}"
+msgstr "Total CAS commands (failed)"
+
+msgid "{memcacheMonitor:memcachestat:decr_misses}"
+msgstr "Total DECR commands (failed)"
+
+msgid "{memcacheMonitor:memcachestat:get_misses}"
+msgstr "Total GET commands (failed)"
+
+msgid "{memcacheMonitor:memcachestat:bytes_written}"
+msgstr "Bytes written by the server"
+
+msgid "{memcacheMonitor:memcachestat:connection_structures}"
+msgstr "Connection structures"
+
+msgid "{memcacheMonitor:memcachestat:cmd_set}"
+msgstr "Total SET commands"
+
+msgid "{memcacheMonitor:memcachestat:cas_hits}"
+msgstr "Total CAS commands (success)"
+
+msgid "{memcacheMonitor:memcachestat:delete_hits}"
+msgstr "Total DELETE commands (success)"
+
+msgid "{memcacheMonitor:memcachestat:total_items}"
+msgstr "Total items ever"
+
+msgid "{memcacheMonitor:memcachestat:bytes}"
+msgstr "Total bytes in use currently"
+
+msgid "Current time"
+msgstr "Current time"
+
+msgid "Total items ever"
+msgstr "Total items ever"
+
+msgid "Total number of denied connections (connection limit)"
+msgstr "Total number of denied connections (connection limit)"
+
+msgid "Bytes written by the server"
+msgstr "Bytes written by the server"
+
+msgid "Number of times the request limit was reached"
+msgstr "Number of times the request limit was reached"
+
+msgid "Number of objects removed from cache (memory limit)"
+msgstr "Number of objects removed from cache (memory limit)"
+
+msgid "Total authentication commands failed"
+msgstr "Total authentication commands failed"
+
+msgid "Total INCR commands (success)"
+msgstr "Total INCR commands (success)"
+
+msgid "Uptime"
+msgstr "Uptime"
+
+msgid "Current open connections"
+msgstr "Current open connections"
+
+msgid "Total storage avail"
+msgstr "Total storage avail"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Number of available threads"
+msgstr "Number of available threads"
+
+msgid "Total authentication commands processed"
+msgstr "Total authentication commands processed"
+
+msgid "Total GET commands (failed)"
+msgstr "Total GET commands (failed)"
+
+msgid "Total DELETE commands (success)"
+msgstr "Total DELETE commands (success)"
+
+msgid "Total SET commands"
+msgstr "Total SET commands"
+
+msgid "Connection structures"
+msgstr "Connection structures"
+
+msgid "Total GET commands (success)"
+msgstr "Total GET commands (success)"
+
+msgid "Total bytes in use currently"
+msgstr "Total bytes in use currently"
+
+msgid "Pointer size (bits)"
+msgstr "Pointer size (bits)"
+
+msgid "Total bad CAS identifiers"
+msgstr "Total bad CAS identifiers"
+
+msgid "Total GET commands"
+msgstr "Total GET commands"
+
+msgid "Bytes in to the server"
+msgstr "Bytes in to the server"
+
+msgid "Total INCR commands (failed)"
+msgstr "Total INCR commands (failed)"
+
+msgid "Total DELETE commands (failed)"
+msgstr "Total DELETE commands (failed)"
+
+msgid "Total CAS commands (failed)"
+msgstr "Total CAS commands (failed)"
+
+msgid "Total DECR commands (failed)"
+msgstr "Total DECR commands (failed)"
+
+msgid "Currently accepting new connections"
+msgstr "Currently accepting new connections"
+
+msgid "Total DECR commands (success)"
+msgstr "Total DECR commands (success)"
+
+msgid "Process ID"
+msgstr "Process ID"
+
+msgid "Currently number of items"
+msgstr "Currently number of items"
+
+msgid "CPU Seconds (User)"
+msgstr "CPU Seconds (User)"
+
+msgid "Total CAS commands (success)"
+msgstr "Total CAS commands (success)"
+
+msgid "CPU Seconds (System)"
+msgstr "CPU Seconds (System)"
+
+msgid "Total connections"
+msgstr "Total connections"
+
+msgid "{memcacheMonitor:memcachestat:link_memcacheMonitor}"
+msgstr "Memcache statistics"
+
+msgid "Memcache statistics"
+msgstr "Memcache statistics"

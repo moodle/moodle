@@ -1,0 +1,57 @@
+#page-local-report_user_logins-index .col-md-9 {
+    clear:both;
+}
+
+#page-local-report_user_logins-index #iomad_course_selector, #page-local-report_user_logins-index #iomad_license_selector {
+    float:left;
+}
+
+#page-local-report_user_logins-index #iomad_course_selector select, #page-local-report_user_logins-index #iomad_license_selector select {
+    background-color: #ddd;
+}
+
+#page-local-report_user_logins-index #iomad_course_selector, #page-local-report_user_logins-index #iomad_license_selector {
+    padding-top: 7px;
+    padding-bottom: 17px;
+    padding-right: 5px;
+}
+
+#page-local-report_user_logins-index #mform1 {
+    display: flex;
+    padding-top: 5px;
+}
+
+#page-local-report_user_logins-index .mform fieldset {
+    border-bottom: 0px;
+}
+
+.iomadcoursesearchform,
+.iomaddatesearchform,
+.iomadusersearchform {
+    margin-right: 10px;
+    float: left;
+}
+
+.iomadcoursesearchform .icons-collapse-expand.collapsed .expanded-icon,
+.iomadcoursesearchform .icons-collapse-expand.collapsed .collapsed-icon,
+.iomaddatesearchform  .icons-collapse-expand.collapsed .expanded-icon,
+.iomaddatesearchform .icons-collapse-expand.collapsed .collapsed-icon,
+.iomadusersearchform  .icons-collapse-expand.collapsed .expanded-icon,
+.iomadusersearchform .icons-collapse-expand.collapsed .collapsed-icon {
+    font-size: small;
+}
+
+.iomadcoursesearchform h3,
+.iomaddatesearchform h3,
+.iomadusersearchform h3 {
+    font-size: medium;
+}
+
+.iomadcoursesearchform .mform .form-inline .form-control,
+.iomadcoursesearchform .mform .form-inline .custom-select,
+.iomaddatesearchform .mform .form-inline .form-control,
+.iomaddatesearchform .mform .form-inline .custom-select,
+.iomadusersearchform .mform .form-inline .form-control,
+.iomadusersearchform .mform .form-inline .custom-select {
+    max-width:75%;
+}

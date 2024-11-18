@@ -1,0 +1,58 @@
+
+{% set pagetitle = dictTitle | trans %}
+{% extends "base.twig" %}
+{% block content %}
+    <h2>{{ dictTitle | trans }}</h2>
+    {{ dictDescr | trans(parameters) }}
+
+    {# include optional information for error
+       Some exceptions set 'includeTemplate' to the name of a template to include.
+       e.g. "core:no_state.tpl.php". The format is "<module>:<template name>"
+    #}
+    {% if includeTemplate -%}
+        {% set parts = includeTemplate|replace({'.tpl.php':'.twig'})|split(':') %}
+        {% set namespacedTemplate = "@" ~ parts[0] ~ "/" ~ parts[1] %}
+        {% include(namespacedTemplate) %}
+    {%- endif %}
+
+    <div class="message-box">
+        <p>{{ '{errors:report_trackid}' | trans }}</p>
+        <div class="pure-button-group two-elements" role="group">
+            <label class="pure-button hollow" disabled><pre id="trackid">{{ error.trackId }}</pre></label>
+            <button data-clipboard-target="#trackid" id="btntrackid" class="pure-button clipboard-btn copy">
+                <i class="fa fa-copy"></i>
+            </button>
+        </div>
+    </div>
+
+    {# print out exception only if the exception is available #}
+    {% if showerrors -%}
+        <h2>{{'{errors:debuginfo_header}' | trans}}</h2>
+        <p>{{'{errors:debuginfo_text}' | trans}}</p>
+        <div class="code-box code-box-content">
+            <pre>{{ error.exceptionMsg }}<br />{{ error.exceptionTrace }}
+            </pre>
+        </div>
+    {%- endif %}
+
+    {# Add error report submit section if we have a valid technical contact. 'errorreportaddress' will only be set if
+       the technical contact email address has been set. #}
+    {% if errorReportAddress is defined -%}
+        <h2>{{ '{errors:report_header}' | trans }}</h2>
+        <form action="{{ errorReportAddress }}" class="pure-form" method="post">
+            <p>{{ '{errors:report_text}' | trans }}</p>
+            <label for="email">{{ '{errors:report_email}' | trans }}</label>
+                <input type="email" name="email" id="email" class="edge" value="{{ email }}" />
+
+            <textarea class="text-area edge" name="text" rows="6" cols="50" placeholder="{{ '{errors:report_explain}' | trans }}" required></textarea>
+        <p class="center">
+            <input type="hidden" name="reportId" value="{{ error.reportId }}" />
+            <input type="submit" name="send" class="pure-button pure-button-red" value="{{ '{errors:report_submit}' | trans }}" />
+        </p>
+        </form>
+    {%- endif %}
+
+    <h2>{{ '{errors:howto_header}' | trans }}</h2>
+    <p>{{ '{errors:howto_text}' | trans }}</p>
+
+{% endblock %}

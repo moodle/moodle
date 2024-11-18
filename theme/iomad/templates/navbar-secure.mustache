@@ -1,0 +1,50 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_iomad/navbar-secure
+
+    This template renders the top navbar.
+
+    Example context (json):
+    {
+        "output": {
+            "should_display_navbar_logo": "true",
+            "get_compact_logo_url": "http://example.com/image.png"
+        },
+        "sitename": "Moodle Site"
+    }
+}}
+<nav class="navbar fixed-top navbar-light bg-white navbar-expand" aria-label="{{#str}}sitemenubar, admin{{/str}}">
+    <div class="navbar-brand d-flex align-items-center m-0 p-0 aabtn">
+        {{# output.should_display_navbar_logo }}
+            <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
+        {{/ output.should_display_navbar_logo }}
+        {{{ sitename }}}
+    </div>
+
+    {{# output.secure_layout_language_menu }}
+    <ul class="nav navbar-nav language-menu my-1">
+        {{{ . }}}
+    </ul>
+    {{/ output.secure_layout_language_menu }}
+
+    {{# output.secure_layout_login_info }}
+    <div class="ml-auto nav-link">
+        {{{ . }}}
+    </div>
+    {{/ output.secure_layout_login_info }}
+</nav>

@@ -1,0 +1,17 @@
+{
+  "warning": {
+    "en": "Your certificate will expire in %daysleft% days."
+  },
+  "warning_header": {
+    "en": "Your certificate is about to expire."
+  },
+  "renew": {
+    "en": "Please renew your certificate in time."
+  },
+  "renew_url": {
+  "en": "Please  <a href='%renewurl%'>renew<\/a> your certificate in time."
+},
+  "proceed": {
+    "en": "Proceed"
+  }
+}

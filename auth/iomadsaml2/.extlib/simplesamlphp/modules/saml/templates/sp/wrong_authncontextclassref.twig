@@ -1,0 +1,7 @@
+{% set pagetitle = 'SimpleSAMLphp'|trans %}
+{% extends "base.twig" %}
+
+{% block content %}
+    <h2>{{ '{saml:wrong_authncontextclassref:header}'|trans|escape('html') }}</h2>
+    <p>{{ '{saml:wrong_authncontextclassref:description}'|trans|escape('html') }}</p>
+{% endblock %}

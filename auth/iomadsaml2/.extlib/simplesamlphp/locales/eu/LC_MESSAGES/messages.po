@@ -1,0 +1,1451 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: eu\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{admin:metadata_saml20-idp}"
+msgstr "SAML 2.0 IdP Metadatuak  "
+
+msgid "{errors:descr_WRONGUSERPASS}"
+msgstr ""
+"Ez dago erabiltzailerik adierazitako identifikadorearekin, edo "
+"adierazitako pasahitza okerra da.  Mesedez, berrikusi ezazu erabiltzaile-"
+"identifikadorea eta saia zaiztez berriro."
+
+msgid "{logout:failed}"
+msgstr "Saioa ixteko prozesuak huts egin du"
+
+msgid "{status:attributes_header}"
+msgstr "Atributuak"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-remote}"
+msgstr "SAML 2.0 Zerbitzu hornitzailea (Urrunekoa)"
+
+msgid "{errors:descr_NOCERT}"
+msgstr "Kautotze okerra: zure nabigatzaileak ez du bidali ziurtagiririk "
+
+msgid "{errors:title_PROCESSASSERTION}"
+msgstr "Errorea IdP-tik datorren erantzuna prozesatzean"
+
+msgid "{errors:title_NOSTATE}"
+msgstr "Egoera informazioa galdua"
+
+msgid "{login:username}"
+msgstr "Erabiltzaile-izena"
+
+msgid "{errors:title_METADATA}"
+msgstr "Errorea metadatuak kargatzean"
+
+msgid "{admin:metaconv_title}"
+msgstr "Metadatuak aztertu"
+
+msgid "{admin:cfg_check_noerrors}"
+msgstr "Ez da errorerik aurkitu"
+
+msgid "{errors:descr_LOGOUTINFOLOST}"
+msgstr ""
+"Saioa ixteko eragiketari buruzko informazioa galdu da. Irten nahi duzun "
+"zerbitzura itzuli eta saioa berriz ixten saitu behar duzu. Saioa ixteko "
+"informazioa denbora mugatu batean gordetzen da, orokorrean saio ixteko "
+"eragiketak iraun beharko lukeen denbora baino gehiago, beraz errore hau "
+"konfigurazioan erroreren bat jazo delako gerta liteke. Errorea etengabea "
+"bada, jar zaitez harremanetan zerbitzuaren hornitzailearekin."
+
+msgid "{disco:previous_auth}"
+msgstr "Lehenago, hemen kautotzea hautatu duzu"
+
+msgid "{admin:cfg_check_back}"
+msgstr "Itzuli fitxategien zerrendara"
+
+msgid "{errors:report_trackid}"
+msgstr ""
+"Mesedez, errore honen berri ematen baduzu, mantendu ezazu jarraipen "
+"zenbaki hau, honek sistemaren administratzaileak dituen erregistroetan "
+"zure saioa aurkitzea ahalbidetzen baitu:"
+
+msgid "{login:change_home_org_title}"
+msgstr "Zure jatorrizko erakundea aldatu"
+
+msgid "{errors:descr_METADATANOTFOUND}"
+msgstr "Ezin da aurkitu metadaturik %ENTITYID%-(a)rentzat"
+
+msgid "{admin:metadata_metadata}"
+msgstr "Metadatuak"
+
+msgid "{errors:report_text}"
+msgstr ""
+"Nahi izanez gero, zure helbide elektronikoa adierazi ezazu, "
+"administratzaileak zurekin harremanetan jar daitezen, eta zure arazoaren "
+"datu gehigarriak eskura ditzaten:"
+
+msgid "{errors:report_header}"
+msgstr "Erroreen berri eman"
+
+msgid "{login:change_home_org_text}"
+msgstr ""
+"<b>%HOMEORG%</b> hautatu duzu zure jatorrizko erakunde bezala. Informazio"
+" hau okerra bada beste bat hautatu dezakezu."
+
+msgid "{errors:title_PROCESSAUTHNREQUEST}"
+msgstr "Errorea zerbitzu hornitzailearen eskaera prozesatean "
+
+msgid "{errors:descr_PROCESSASSERTION}"
+msgstr "Ezin izan da identitatearen hornitzaileak bidalitako erantzuna onartu."
+
+msgid "{errors:debuginfo_header}"
+msgstr "Arazketa informazioa"
+
+msgid "{admin:debug_sending_message_msg_text}"
+msgstr ""
+"Arazketa moduan egonez gero, bidaltzera zoazen mezuaren edukia ikusiko "
+"duzu: "
+
+msgid "{errors:descr_RESPONSESTATUSNOSUCCESS}"
+msgstr ""
+"Idp-ak errore batekin erantzun dio eskaerari. (SAML erantzunean egoera "
+"kodea ez da arrakastatsua izan)"
+
+msgid "{admin:metadata_shib13-idp}"
+msgstr "Shib 1.3 IdP Metadatuak  "
+
+msgid "{login:help_text}"
+msgstr ""
+"Zeinen txarto! - Zure erabiltziale-izena eta pasahitza gabe ezin zara "
+"identifikatu ezta zerbitzuan sartu ere. Agian bada norbait lagun "
+"diezazukeena. Jar zaitez harremanetan erakundeko laguntza zentroarekin!"
+
+msgid "{logout:default_link_text}"
+msgstr "Itzuli SimpleSAMLphp instalazio orrira "
+
+msgid "{errors:error_header}"
+msgstr "SimpleSAMLphp-en errorea"
+
+msgid "{login:help_header}"
+msgstr "Lagundu! Ez dut nire pasahitza gogoratzen."
+
+msgid "{errors:descr_LDAPERROR}"
+msgstr ""
+"LDAP erabiltzaileen datu basea da, eta sartzea erabakitzen duzunean "
+"beharrezkoa da harekin harremanetan jartzea. Sartze ekintza horretan "
+"errore bat jazo da."
+
+msgid "{errors:descr_METADATA}"
+msgstr ""
+"Konfigurazio erroreak daude zure SimpleSAMLphp-ren instalazioan. "
+"Zerbitzuaren administratzailea bazara, ziurta ezazu metadatuen "
+"konfigurazioa zuzena dela."
+
+msgid "{errors:title_BADREQUEST}"
+msgstr "Eskaera oker bat jaso da."
+
+msgid "{status:sessionsize}"
+msgstr "Saioaren tamaina: %SIZE%"
+
+msgid "{logout:title}"
+msgstr "Saioa itxita."
+
+msgid "{admin:metaconv_xmlmetadata}"
+msgstr "XML metadatuak"
+
+msgid "{admin:metaover_unknown_found}"
+msgstr "Datu hauek ez dira antzeman"
+
+msgid "{errors:title_AUTHSOURCEERROR}"
+msgstr "Errorea kautotze jatorrian"
+
+msgid "{login:select_home_org}"
+msgstr "Hautatu zure jatorrizko erakundea"
+
+msgid "{logout:hold}"
+msgstr "Itxaroten"
+
+msgid "{admin:cfg_check_header}"
+msgstr "Konfigurazioa egiaztatu"
+
+msgid "{admin:debug_sending_message_send}"
+msgstr "Mezua bidali"
+
+msgid "{status:logout}"
+msgstr "Irten"
+
+msgid "{errors:descr_DISCOPARAMS}"
+msgstr ""
+"Aurkikuntza zerbitzuari bidalitako prametroak ez dira zehaztapenera "
+"doitzen."
+
+msgid "{errors:descr_CREATEREQUEST}"
+msgstr "Errore bat jazo da SAML eskaera sortzen saiatzean."
+
+msgid "{admin:metaover_optional_found}"
+msgstr "Hautazko datuak"
+
+msgid "{logout:return}"
+msgstr "Itzuli zerbitzura"
+
+msgid "{admin:metadata_xmlurl}"
+msgstr "<a href=\"%METAURL%\">xml metadatuekin URL bat</a> eskura dezakezu:"
+
+msgid "{logout:logout_all}"
+msgstr "Bai, zerbitzu guztiak"
+
+msgid "{admin:debug_disable_debug_mode}"
+msgstr ""
+"Arazketa modua desaktibatu daiteke SimpleSAMLphp "
+"<tt>config/config.php</tt> konfigurazio orokorreko fitxategian."
+
+msgid "{disco:select}"
+msgstr "Hautatu"
+
+msgid "{logout:also_from}"
+msgstr "Zerbitzu hauetan ere kautotuta zaude:"
+
+msgid "{login:login_button}"
+msgstr "Saioa hasi"
+
+msgid "{logout:progress}"
+msgstr "Saioa ixten..."
+
+msgid "{login:error_wrongpassword}"
+msgstr "Erabiltzaile-izena edo pasahitza okerra"
+
+msgid "{admin:metaover_group_metadata.shib13-sp-remote}"
+msgstr "Shib 1.3 Zerbitzu hornitzailea (Urrunekoa)"
+
+msgid "{errors:descr_PROCESSAUTHNREQUEST}"
+msgstr ""
+"IdP honek zerbitzu hornitzaile baten kautotze eskaera jaso du baina "
+"errore bat jazo da hau prozesatzen saiatzean."
+
+msgid "{logout:logout_all_question}"
+msgstr "Goian agertzen diren zerbitzu guztietako saioak itxi nahi al dituzu?"
+
+msgid "{errors:title_NOACCESS}"
+msgstr "Sarrera zehaztu gabe"
+
+msgid "{login:error_nopassword}"
+msgstr ""
+"Sarrera orrira zerbait bidali duzu baina, arrazoiren bategatik, pasahitza"
+" ez da bidali.Saia zaitez berriro, mesedez."
+
+msgid "{errors:title_NORELAYSTATE}"
+msgstr "RelayState zehaztu gabe"
+
+msgid "{errors:descr_NOSTATE}"
+msgstr "Egoera informazioa galdua eta ez dago modurik eskaera berrabiarazteko"
+
+msgid "{login:password}"
+msgstr "Pasahitza"
+
+msgid "{errors:debuginfo_text}"
+msgstr ""
+"Arazketa informazio hau erabilgarria izan daiteke sistemaren "
+"administratzailea edo erabiltzailearen arreta zentroarentzat:"
+
+msgid "{admin:cfg_check_missing}"
+msgstr "Konfigurazio fitxategian falta diren aukerak"
+
+msgid "{errors:descr_UNHANDLEDEXCEPTION}"
+msgstr "Kudeatu gabeko salbuespen bat abiarazi da"
+
+msgid "{general:yes}"
+msgstr "Bai"
+
+msgid "{errors:title_CONFIG}"
+msgstr "Konfigurazio errorea"
+
+msgid "{errors:title_LOGOUTREQUEST}"
+msgstr "Errorea saioa ixteko eskaera prozesatzean "
+
+msgid "{admin:metaover_errorentry}"
+msgstr "Metadatu sarrera honetan  errorea"
+
+msgid "{errors:title_METADATANOTFOUND}"
+msgstr "Ez dira metadatuak aurkitu"
+
+msgid "{login:contact_info}"
+msgstr "Harremanetarako informazioa:"
+
+msgid "{errors:title_UNHANDLEDEXCEPTION}"
+msgstr "Kudeatu gabeko salbuespena"
+
+msgid "{status:header_saml20_sp}"
+msgstr "SAML 2.0 SP Adibidea"
+
+msgid "{login:error_header}"
+msgstr "Eman dituzun datuak okerrak dira"
+
+msgid "{errors:title_USERABORTED}"
+msgstr "Kautotzea bertan behera utzia"
+
+msgid "{logout:incapablesps}"
+msgstr ""
+"Kautotuta zauden zerbitzu bat edo batzuk <i>ez dute uzten saioa "
+"ixten</i>. Zure saio guztiak ixten direla ziurtatzeko, <i>zure "
+"nabigatzaileko leiho guztiak ixtea</i> gomendatzen da."
+
+msgid "{admin:metadata_xmlformat}"
+msgstr "SAML 2.0 metadatuetako xml formatuan:"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-remote}"
+msgstr "SAML 2.0 Identitate hornitzailea (Urrunekoa)"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-hosted}"
+msgstr "SAML 2.0 Identitate hornitzailea (Anfitrioia)"
+
+msgid "{admin:metaover_required_found}"
+msgstr "Derrigorrezko eremuak"
+
+msgid "{admin:cfg_check_select_file}"
+msgstr "Hautatu ezazu egiaztatu beharreko konfigurazio fitxategia: "
+
+msgid "{errors:descr_UNKNOWNCERT}"
+msgstr "Kautotze okerra: zure nabigatzaileak bidalitako ziurtagiria ezezaguna da"
+
+msgid "{logout:logging_out_from}"
+msgstr "Honako zerbitzu hauen saioak itxi:"
+
+msgid "{logout:loggedoutfrom}"
+msgstr "%SP% saioa zuzen itxi da."
+
+msgid "{errors:errorreport_text}"
+msgstr "Errore txostena administratzaileei bidali zaie."
+
+msgid "{errors:descr_LOGOUTREQUEST}"
+msgstr "Errore bat jazo da saioa ixteko eskaera prozesatzean."
+
+msgid "{logout:success}"
+msgstr "Hemen adierazten den zerrendako zerbitzu guztietako saioak zuzen itxi dira"
+
+msgid "{admin:cfg_check_notices}"
+msgstr "Oharrak"
+
+msgid "{errors:descr_USERABORTED}"
+msgstr "Kautotzea bertan behera utzi du erabiltzaileak"
+
+msgid "{errors:descr_CASERROR}"
+msgstr "Errorea CAS zerbitzariarekin komunikatzen saiatzean"
+
+msgid "{general:no}"
+msgstr "Ez"
+
+msgid "{admin:metaconv_converted}"
+msgstr "Bihurtutako metadatuak"
+
+msgid "{logout:completed}"
+msgstr "Amaitua"
+
+msgid "{errors:descr_NOTSET}"
+msgstr ""
+"Ez da aldatu konfigurazio fitxategiaren pasahitzaren (auth.adminpassword)"
+" balio lehenetsia. Mesedez, edita ezazu fitxategia"
+
+msgid "{general:service_provider}"
+msgstr "Zerbitzu hornitzailea"
+
+msgid "{errors:descr_BADREQUEST}"
+msgstr "Errore bat dago orri honen eskaeran. Arrazoia hau da: %REASON%"
+
+msgid "{logout:no}"
+msgstr "Ez"
+
+msgid "{disco:icon_prefered_idp}"
+msgstr "[Aukera gogokoena]"
+
+msgid "{general:no_cancel}"
+msgstr "Ez, utzi"
+
+msgid "{login:user_pass_header}"
+msgstr "Sartu erabiltzaile-izena eta pasahitza"
+
+msgid "{errors:report_explain}"
+msgstr "Azal ezazu zer egin duzun errore honetara iristeko..."
+
+msgid "{errors:title_ACSPARAMS}"
+msgstr "SAML erantzuna falta da"
+
+msgid "{errors:descr_SLOSERVICEPARAMS}"
+msgstr ""
+"SingleLogoutService interfazera sartu zara baina ez duzu erantsi  SAML "
+"LogoutRequest edo LogoutResponse mezurik"
+
+msgid "{login:organization}"
+msgstr "Erakundea"
+
+msgid "{errors:title_WRONGUSERPASS}"
+msgstr "Erabiltzaile-izena edo pasahitz okerra"
+
+msgid "{admin:metaover_required_not_found}"
+msgstr "Derrigorrezko datu hauek ez dira aurkitu"
+
+msgid "{errors:descr_NOACCESS}"
+msgstr ""
+"Sarbide puntu hau ez dago gaituta. Egiazta itzazu SimpleSAMLphp-aren "
+"konfigurazioan gaitze aukerak."
+
+msgid "{errors:title_SLOSERVICEPARAMS}"
+msgstr "SAML mezua falta da"
+
+msgid "{errors:descr_ACSPARAMS}"
+msgstr ""
+"Baieztapen kontsumitzailearen interfazera sartu zara baina ez duzu SAML "
+"kautotze erantzun bat erantsi."
+
+msgid "{admin:debug_sending_message_text_link}"
+msgstr ""
+"Mezu bat bidaltzeari ekingo zaio. Saka ezazu \"Mezua bidali\" lotura "
+"jarraitzeko."
+
+msgid "{errors:descr_AUTHSOURCEERROR}"
+msgstr "Errorea kautotze jatorrian %AUTHSOURCE%. Arrazoia hau da: %REASON%"
+
+msgid "{status:some_error_occurred}"
+msgstr "Errore bat jazo da"
+
+msgid "{login:change_home_org_button}"
+msgstr "Jatorrizko erakundea hautatu"
+
+msgid "{admin:cfg_check_superfluous}"
+msgstr "Konfigurazio fitxategian soberan dauden aukerak"
+
+msgid "{errors:report_email}"
+msgstr "E-posta:"
+
+msgid "{errors:howto_header}"
+msgstr "Laguntza nola eskuratu"
+
+msgid "{errors:title_NOTSET}"
+msgstr "Pasahitzik ez da ezarrii"
+
+msgid "{errors:descr_NORELAYSTATE}"
+msgstr ""
+"Eskaera honen abiarazleak ez du ematen ondoren nora joan adierazten duen "
+"RelayState parametroa"
+
+msgid "{status:header_diagnostics}"
+msgstr "SimpleSAMLphp Diagnostikoa"
+
+msgid "{status:intro}"
+msgstr ""
+"Kaixo, hau SimpleSAMLphp-ren egoera orria da. Hemendik ikus dezakezu zure"
+" saioa iraungi den, zenbat denbora geratzen den hau gerta dadin eta zure "
+"saioan dauden atributu guztiak."
+
+msgid "{errors:title_NOTFOUNDREASON}"
+msgstr "Ez da orria aurkitu"
+
+msgid "{admin:debug_sending_message_title}"
+msgstr "Mezua bidaltzen"
+
+msgid "{errors:title_RESPONSESTATUSNOSUCCESS}"
+msgstr "Errore bat jazo da IdP-aren aldetik"
+
+msgid "{admin:metadata_shib13-sp}"
+msgstr "Shib 1.3 SP Metadatuak  "
+
+msgid "{admin:metaover_intro}"
+msgstr "SAML entitate baten xehetasunak ikusteko, klikatu entitatearen goiburua."
+
+msgid "{errors:title_NOTVALIDCERT}"
+msgstr "Ziurtagiri balio gabea"
+
+msgid "{general:remember}"
+msgstr "Onespena gogoratu"
+
+msgid "{disco:selectidp}"
+msgstr "Hauta ezazu zure identitate hornitzailea"
+
+msgid "{login:help_desk_email}"
+msgstr "Bidali posta laguntza teknikoari "
+
+msgid "{login:help_desk_link}"
+msgstr "Laguntza teknikoaren orria "
+
+msgid "{errors:title_CASERROR}"
+msgstr "CAS Errorea"
+
+msgid "{login:user_pass_text}"
+msgstr ""
+"Zerbitzu batek kautotu zaitezen eskatzen du. Mesedez, zure erabiltzaile-"
+"izena eta pasahitza honako formulario honetan sartu itzazu."
+
+msgid "{errors:title_DISCOPARAMS}"
+msgstr "Eskaera okerra aurkikuntza zerbitzuari"
+
+msgid "{general:yes_continue}"
+msgstr "Bai, jarraitu"
+
+msgid "{disco:remember}"
+msgstr "Nire hautaketa gogoratu"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-hosted}"
+msgstr "SAML 2.0 Zerbitzu hornitzailea (Anfitrioia)"
+
+msgid "{admin:metadata_simplesamlformat}"
+msgstr ""
+"SimpleSAMLphp formatuko fitxategi batean - beste muturrean SimpleSAMLphp "
+"entitate bat erabiltzen ariz gero, erabil ezazu aukera hau:"
+
+msgid "{disco:login_at}"
+msgstr "Non identifikatu"
+
+msgid "{errors:title_GENERATEAUTHNRESPONSE}"
+msgstr "Ezin izan da kautotze erantzuna sortu"
+
+msgid "{errors:errorreport_header}"
+msgstr "Errore txostena bidalita"
+
+msgid "{errors:title_CREATEREQUEST}"
+msgstr "Errorea eskaera sortzean"
+
+msgid "{admin:metaover_header}"
+msgstr "Ikusi metadatuak"
+
+msgid "{errors:report_submit}"
+msgstr "Bidal ezazu errorearen txostena"
+
+msgid "{errors:title_INVALIDCERT}"
+msgstr "Ziurtagiri baliogabea"
+
+msgid "{errors:title_NOTFOUND}"
+msgstr "Ez da orria aurkitu"
+
+msgid "{logout:logged_out_text}"
+msgstr "Saioa itxi da."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-hosted}"
+msgstr "Shib 1.3 Zerbitzu hornitzailea (Anfitrioia)"
+
+msgid "{admin:metadata_cert_intro}"
+msgstr "X509 ziurtagiriak PEM formatuan deskargatu."
+
+msgid "{admin:debug_sending_message_msg_title}"
+msgstr "Mezua"
+
+msgid "{errors:title_UNKNOWNCERT}"
+msgstr "Ziurtagiri ezezaguna"
+
+msgid "{errors:title_LDAPERROR}"
+msgstr "LDAP Errorea"
+
+msgid "{logout:failedsps}"
+msgstr ""
+"Ezinezkoa da zerbitzu bat edo batzuen saioak ixtea. Zure saio guztiak "
+"itxi direla ziurtatzeko, <i>zure web nabigatzailea ixtea</i> gomendatzen "
+"da.  "
+
+msgid "{errors:descr_NOTFOUND}"
+msgstr "Ez da aurkitu adierazi duzun orria. URLa hau da: %URL%"
+
+msgid "{errors:howto_text}"
+msgstr ""
+"Errore hau jazo izana SimpleSAMLphp-en ezusteko jokaera edo konfigurazio "
+"okerra izan da. Jar zaitez harremanetan identifikazio zerbitzu honen "
+"administratzailearekin eta bidal iezaiozu lehenagoko errore mezua. "
+
+msgid "{admin:metaover_group_metadata.shib13-idp-hosted}"
+msgstr "Shib 1.3 Identitate hornitzailea (Anfitrioia)"
+
+msgid "{errors:descr_NOTVALIDCERT}"
+msgstr "Ez duzu baliozko ziurtagiririk aurkeztu "
+
+msgid "{admin:debug_sending_message_text_button}"
+msgstr ""
+"Mezu bat bidaltzeari ekingo zaio. Saka ezazu \"Mezua bidali\" botoia "
+"jarraitzeko."
+
+msgid "{admin:metaover_optional_not_found}"
+msgstr "Hautazko datu hauek ez dira aurkitu"
+
+msgid "{logout:logout_only}"
+msgstr "Ez, %SPS bakarrik"
+
+msgid "{login:next}"
+msgstr "Hurrengoa"
+
+msgid "{errors:descr_GENERATEAUTHNRESPONSE}"
+msgstr ""
+"Identitatearen hornitzaileak errore bat antzeman du kautotze erantzuna "
+"sortzean."
+
+msgid "{disco:selectidp_full}"
+msgstr "Mesedez, non kautotu nahi duzun identifikazio hornitzailea hauta ezazu "
+
+msgid "{errors:descr_NOTFOUNDREASON}"
+msgstr ""
+"Ez da aurkitu adierazi duzun orria. Arrazoia hau da: %REASON% URL hau da:"
+" %URL%"
+
+msgid "{errors:title_NOCERT}"
+msgstr "Ziurtagiri gabe"
+
+msgid "{errors:title_LOGOUTINFOLOST}"
+msgstr "Saioa ixteko informazioa galdu da"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-remote}"
+msgstr "Πάροχος Ταυτότητας Shib 1.3 (Απομακρυσμένος)"
+
+msgid "{errors:descr_CONFIG}"
+msgstr "Badirudi errore bat jazo dela SimpleSAMLphp-en konfigurazioan"
+
+msgid "{admin:metadata_intro}"
+msgstr ""
+"Hona hemen SimpleSAMLphp-ak zuretzat sortu dituen metadatuak. Metadatuen "
+"dokumentu hau konfidantzazko zure kideei bidal diezaiekezu federazio bat "
+"konfiguratzeko."
+
+msgid "{admin:metadata_cert}"
+msgstr "Ziurtagiriak"
+
+msgid "{errors:descr_INVALIDCERT}"
+msgstr ""
+"Kautotze okerra: Zure nabigatzaileak bidalitako ziurtagiria baliogabea da"
+" edo ezin da irakurri"
+
+msgid "{status:header_shib}"
+msgstr "Shibboleth Adibidea"
+
+msgid "{admin:metaconv_parse}"
+msgstr "Aztertu"
+
+msgid "Person's principal name at home organization"
+msgstr "Jatorrizko erakundean pertsonak duen izen nagusia"
+
+msgid "Superfluous options in config file"
+msgstr "Konfigurazio fitxategian soberan dauden aukerak"
+
+msgid "Mobile"
+msgstr "Mugikorra"
+
+msgid "Shib 1.3 Service Provider (Hosted)"
+msgstr "Shib 1.3 Zerbitzu hornitzailea (Anfitrioia)"
+
+msgid ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+msgstr ""
+"LDAP erabiltzaileen datu basea da, eta sartzea erabakitzen duzunean "
+"beharrezkoa da harekin harremanetan jartzea. Sartze ekintza horretan "
+"errore bat jazo da."
+
+msgid ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+msgstr ""
+"Nahi izanez gero, zure helbide elektronikoa adierazi ezazu, "
+"administratzaileak zurekin harremanetan jar daitezen, eta zure arazoaren "
+"datu gehigarriak eskura ditzaten:"
+
+msgid "Display name"
+msgstr "Bistaratzeko izena"
+
+msgid "Remember my choice"
+msgstr "Nire hautaketa gogoratu"
+
+msgid "Notices"
+msgstr "Oharrak"
+
+msgid "Home telephone"
+msgstr "Etxeko telefonoa"
+
+msgid ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+msgstr ""
+"Kaixo, hau SimpleSAMLphp-ren egoera orria da. Hemendik ikus dezakezu zure"
+" saioa iraungi den, zenbat denbora geratzen den hau gerta dadin eta zure "
+"saioan dauden atributu guztiak."
+
+msgid "Explain what you did when this error occurred..."
+msgstr "Azal ezazu zer egin duzun errore honetara iristeko..."
+
+msgid "An unhandled exception was thrown."
+msgstr "Kudeatu gabeko salbuespen bat abiarazi da"
+
+msgid "Invalid certificate"
+msgstr "Ziurtagiri balio gabea"
+
+msgid "Service Provider"
+msgstr "Zerbitzu hornitzailea"
+
+msgid "Incorrect username or password."
+msgstr "Erabiltzaile-izena edo pasahitza okerra"
+
+msgid "There is an error in the request to this page. The reason was: %REASON%"
+msgstr "Errore bat dago orri honen eskaeran. Arrazoia hau da: %REASON%"
+
+msgid "E-mail address:"
+msgstr "E-posta:"
+
+msgid "Submit message"
+msgstr "Mezua bidali"
+
+msgid "No RelayState"
+msgstr "RelayState zehaztu gabe"
+
+msgid "Error creating request"
+msgstr "Errorea eskaera sortzean"
+
+msgid "Locality"
+msgstr "Herria"
+
+msgid "Unhandled exception"
+msgstr "Kudeatu gabeko salbuespena"
+
+msgid "The following required fields was not found"
+msgstr "Derrigorrezko datu hauek ez dira aurkitu"
+
+msgid "Download the X509 certificates as PEM-encoded files."
+msgstr "X509 ziurtagiriak PEM formatuan deskargatu."
+
+#, python-format
+msgid "Unable to locate metadata for %ENTITYID%"
+msgstr "Ezin da aurkitu metadaturik %ENTITYID%-(a)rentzat"
+
+msgid "Organizational number"
+msgstr "Erakundearen zenbakia"
+
+msgid "Password not set"
+msgstr "Pasahitzik ez da ezarrii"
+
+msgid "SAML 2.0 IdP Metadata"
+msgstr "SAML 2.0 IdP Metadatuak  "
+
+msgid "Post office box"
+msgstr "Posta-bulegoko ontzia"
+
+msgid ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+msgstr ""
+"Zerbitzu batek kautotu zaitezen eskatzen du. Mesedez, zure erabiltzaile-"
+"izena eta pasahitza honako formulario honetan sartu itzazu."
+
+msgid "CAS Error"
+msgstr "CAS Errorea"
+
+msgid ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+msgstr ""
+"Arazketa informazio hau erabilgarria izan daiteke sistemaren "
+"administratzailea edo erabiltzailearen arreta zentroarentzat:"
+
+msgid ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+msgstr ""
+"Ez dago erabiltzailerik adierazitako identifikadorearekin, edo "
+"adierazitako pasahitza okerra da.  Mesedez, berrikusi ezazu erabiltzaile-"
+"identifikadorea eta saia zaiztez berriro."
+
+msgid "Error"
+msgstr "Eman dituzun datuak okerrak dira"
+
+msgid "Next"
+msgstr "Hurrengoa"
+
+msgid "Distinguished name (DN) of the person's home organizational unit"
+msgstr "Pertsonaren jatorrizko erakundeko antolamendu-unitatearen izen osatua (DN)"
+
+msgid "State information lost"
+msgstr "Egoera informazioa galdua"
+
+msgid ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+msgstr ""
+"Ez da aldatu konfigurazio fitxategiaren pasahitzaren (auth.adminpassword)"
+" balio lehenetsia. Mesedez, edita ezazu fitxategia"
+
+msgid "Converted metadata"
+msgstr "Bihurtutako metadatuak"
+
+msgid "Mail"
+msgstr "Posta"
+
+msgid "No, cancel"
+msgstr "Ez"
+
+msgid ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+msgstr ""
+"<b>%HOMEORG%</b> hautatu duzu zure jatorrizko erakunde bezala. Informazio"
+" hau okerra bada beste bat hautatu dezakezu."
+
+msgid "Error processing request from Service Provider"
+msgstr "Errorea zerbitzu hornitzailearen eskaera prozesatean "
+
+msgid "Distinguished name (DN) of person's primary Organizational Unit"
+msgstr "Pertsonaren antolamendu-unitatearen izen osatua (DN)"
+
+msgid ""
+"To look at the details for an SAML entity, click on the SAML entity "
+"header."
+msgstr "SAML entitate baten xehetasunak ikusteko, klikatu entitatearen goiburua."
+
+msgid "Enter your username and password"
+msgstr "Sartu erabiltzaile-izena eta pasahitza"
+
+msgid "Login at"
+msgstr "Non identifikatu"
+
+msgid "No"
+msgstr "Ez"
+
+msgid "Home postal address"
+msgstr "Etxeko helbidea"
+
+msgid "WS-Fed SP Demo Example"
+msgstr "WS-Fed SP Adibidea"
+
+msgid "SAML 2.0 Identity Provider (Remote)"
+msgstr "SAML 2.0 Identitate hornitzailea (Urrunekoa)"
+
+msgid "Error processing the Logout Request"
+msgstr "Errorea saioa ixteko eskaera prozesatzean "
+
+msgid "Do you want to logout from all the services above?"
+msgstr "Goian agertzen diren zerbitzu guztietako saioak itxi nahi al dituzu?"
+
+msgid "Select"
+msgstr "Hautatu"
+
+msgid "The authentication was aborted by the user"
+msgstr "Kautotzea bertan behera utzi du erabiltzaileak"
+
+msgid "Your attributes"
+msgstr "Atributuak"
+
+msgid "Given name"
+msgstr "Izena"
+
+msgid "Identity assurance profile"
+msgstr "Bermearen profilaren identifikatzailea"
+
+msgid "SAML 2.0 SP Demo Example"
+msgstr "SAML 2.0 SP Adibidea"
+
+msgid "Logout information lost"
+msgstr "Saioa ixteko informazioa galdu da"
+
+msgid "Organization name"
+msgstr "Erakundearen izena"
+
+msgid "Authentication failed: the certificate your browser sent is unknown"
+msgstr "Kautotze okerra: zure nabigatzaileak bidalitako ziurtagiria ezezaguna da"
+
+msgid ""
+"You are about to send a message. Hit the submit message button to "
+"continue."
+msgstr ""
+"Mezu bat bidaltzeari ekingo zaio. Saka ezazu \"Mezua bidali\" botoia "
+"jarraitzeko."
+
+msgid "Home organization domain name"
+msgstr "Jatorrizko erakundearen domeinu izena"
+
+msgid "Go back to the file list"
+msgstr "Itzuli fitxategien zerrendara"
+
+msgid "Error report sent"
+msgstr "Errore txostena bidalita"
+
+msgid "Common name"
+msgstr "Izen arrunta (CN)"
+
+msgid "Please select the identity provider where you want to authenticate:"
+msgstr "Mesedez, non kautotu nahi duzun identifikazio hornitzailea hauta ezazu "
+
+msgid "Logout failed"
+msgstr "Saioa ixteko prozesuak huts egin du"
+
+msgid "Identity number assigned by public authorities"
+msgstr "Gizarte-segurantzako zenbakia"
+
+msgid "WS-Federation Identity Provider (Remote)"
+msgstr "WS-Federation Identitate hornitzailea (Urrunekoa)"
+
+msgid "Error received from Identity Provider"
+msgstr "Errore bat jazo da IdP-aren aldetik"
+
+msgid "LDAP Error"
+msgstr "LDAP Errorea"
+
+msgid ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+msgstr ""
+"Saioa ixteko eragiketari buruzko informazioa galdu da. Irten nahi duzun "
+"zerbitzura itzuli eta saioa berriz ixten saitu behar duzu. Saioa ixteko "
+"informazioa denbora mugatu batean gordetzen da, orokorrean saio ixteko "
+"eragiketak iraun beharko lukeen denbora baino gehiago, beraz errore hau "
+"konfigurazioan erroreren bat jazo delako gerta liteke. Errorea etengabea "
+"bada, jar zaitez harremanetan zerbitzuaren hornitzailearekin."
+
+msgid "Some error occurred"
+msgstr "Errore bat jazo da"
+
+msgid "Organization"
+msgstr "Erakundea"
+
+msgid "No certificate"
+msgstr "Ziurtagiri gabe"
+
+msgid "Choose home organization"
+msgstr "Jatorrizko erakundea hautatu"
+
+msgid "Persistent pseudonymous ID"
+msgstr "Goitizen ID etengabea"
+
+msgid "No SAML response provided"
+msgstr "SAML erantzuna falta da"
+
+msgid "No errors found."
+msgstr "Ez da errorerik aurkitu"
+
+msgid "SAML 2.0 Service Provider (Hosted)"
+msgstr "SAML 2.0 Zerbitzu hornitzailea (Anfitrioia)"
+
+msgid "The given page was not found. The URL was: %URL%"
+msgstr "Ez da aurkitu adierazi duzun orria. URLa hau da: %URL%"
+
+msgid "Configuration error"
+msgstr "Konfigurazio errorea"
+
+msgid "Required fields"
+msgstr "Derrigorrezko eremuak"
+
+msgid "An error occurred when trying to create the SAML request."
+msgstr "Errore bat jazo da SAML eskaera sortzen saiatzean."
+
+msgid ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+msgstr ""
+"Errore hau jazo izana SimpleSAMLphp-en ezusteko jokaera edo konfigurazio "
+"okerra izan da. Jar zaitez harremanetan identifikazio zerbitzu honen "
+"administratzailearekin eta bidal iezaiozu lehenagoko errore mezua. "
+
+#, python-format
+msgid "Your session is valid for %remaining% seconds from now."
+msgstr "Zure saioa %remaining% segundoz izango da baliagarri."
+
+msgid "Domain component (DC)"
+msgstr "Domeinuaren osagaia (DC)"
+
+msgid "Shib 1.3 Service Provider (Remote)"
+msgstr "Shib 1.3 Zerbitzu hornitzailea (Urrunekoa)"
+
+msgid "Password"
+msgstr "Pasahitza"
+
+msgid "Nickname"
+msgstr "Ezizena"
+
+msgid "Send error report"
+msgstr "Bidal ezazu errorearen txostena"
+
+msgid ""
+"Authentication failed: the certificate your browser sent is invalid or "
+"cannot be read"
+msgstr ""
+"Kautotze okerra: Zure nabigatzaileak bidalitako ziurtagiria baliogabea da"
+" edo ezin da irakurri"
+
+msgid "The error report has been sent to the administrators."
+msgstr "Errore txostena administratzaileei bidali zaie."
+
+msgid "Date of birth"
+msgstr "Jaioteguna"
+
+msgid "Private information elements"
+msgstr "Informazio pribatuaren elementuak"
+
+msgid "You are also logged in on these services:"
+msgstr "Zerbitzu hauetan ere kautotuta zaude:"
+
+msgid "SimpleSAMLphp Diagnostics"
+msgstr "SimpleSAMLphp Diagnostikoa"
+
+msgid "Debug information"
+msgstr "Arazketa informazioa"
+
+msgid "No, only %SP%"
+msgstr "Ez, %SPS bakarrik"
+
+msgid "Username"
+msgstr "Erabiltzaile-izena"
+
+msgid "Go back to SimpleSAMLphp installation page"
+msgstr "Itzuli SimpleSAMLphp instalazio orrira "
+
+msgid "You have successfully logged out from all services listed above."
+msgstr "Hemen adierazten den zerrendako zerbitzu guztietako saioak zuzen itxi dira"
+
+msgid "You are now successfully logged out from %SP%."
+msgstr "%SP% saioa zuzen itxi da."
+
+msgid "Affiliation"
+msgstr "Afiliazioa"
+
+msgid "You have been logged out."
+msgstr "Saioa itxi da."
+
+msgid "Return to service"
+msgstr "Itzuli zerbitzura"
+
+msgid "Logout"
+msgstr "Irten"
+
+msgid "State information lost, and no way to restart the request"
+msgstr "Egoera informazioa galdua eta ez dago modurik eskaera berrabiarazteko"
+
+msgid "Error processing response from Identity Provider"
+msgstr "Errorea IdP-tik datorren erantzuna prozesatzean"
+
+msgid "WS-Federation Service Provider (Hosted)"
+msgstr "WS-Federation Zerbitzu hornitzailea (Anfitrioia)"
+
+msgid "Preferred language"
+msgstr "Hizkuntza lehenetsia"
+
+msgid "SAML 2.0 Service Provider (Remote)"
+msgstr "SAML 2.0 Zerbitzu hornitzailea (Urrunekoa)"
+
+msgid "Surname"
+msgstr "Abizenak"
+
+msgid "No access"
+msgstr "Sarrera zehaztu gabe"
+
+msgid "The following fields was not recognized"
+msgstr "Datu hauek ez dira antzeman"
+
+msgid "Authentication error in source %AUTHSOURCE%. The reason was: %REASON%"
+msgstr "Errorea kautotze jatorrian %AUTHSOURCE%. Arrazoia hau da: %REASON%"
+
+msgid "Bad request received"
+msgstr "Eskaera oker bat jaso da."
+
+msgid "User ID"
+msgstr "Erabiltzaile ID"
+
+msgid "JPEG Photo"
+msgstr "JPEG argazkia"
+
+msgid "Postal address"
+msgstr "Posta-helbidea"
+
+msgid "An error occurred when trying to process the Logout Request."
+msgstr "Errore bat jazo da saioa ixteko eskaera prozesatzean."
+
+msgid "Sending message"
+msgstr "Mezua bidaltzen"
+
+msgid "In SAML 2.0 Metadata XML format:"
+msgstr "SAML 2.0 metadatuetako xml formatuan:"
+
+msgid "Logging out of the following services:"
+msgstr "Honako zerbitzu hauen saioak itxi:"
+
+msgid ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+msgstr ""
+"Identitatearen hornitzaileak errore bat antzeman du kautotze erantzuna "
+"sortzean."
+
+msgid "Could not create authentication response"
+msgstr "Ezin izan da kautotze erantzuna sortu"
+
+msgid "Labeled URI"
+msgstr "URI etiketatua"
+
+msgid "SimpleSAMLphp appears to be misconfigured."
+msgstr "Badirudi errore bat jazo dela SimpleSAMLphp-en konfigurazioan"
+
+msgid "Shib 1.3 Identity Provider (Hosted)"
+msgstr "Shib 1.3 Identitate hornitzailea (Anfitrioia)"
+
+msgid "Metadata"
+msgstr "Metadatuak"
+
+msgid "Login"
+msgstr "Saioa hasi"
+
+msgid ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+msgstr ""
+"IdP honek zerbitzu hornitzaile baten kautotze eskaera jaso du baina "
+"errore bat jazo da hau prozesatzen saiatzean."
+
+msgid "Yes, all services"
+msgstr "Bai, zerbitzu guztiak"
+
+msgid "Logged out"
+msgstr "Saioa itxita."
+
+msgid "Postal code"
+msgstr "Posta-kodea"
+
+msgid "Logging out..."
+msgstr "Saioa ixten..."
+
+msgid "Metadata not found"
+msgstr "Ez dira metadatuak aurkitu"
+
+msgid "SAML 2.0 Identity Provider (Hosted)"
+msgstr "SAML 2.0 Identitate hornitzailea (Anfitrioia)"
+
+msgid "Primary affiliation"
+msgstr "Lehen afiliazioa"
+
+msgid ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+msgstr ""
+"Mesedez, errore honen berri ematen baduzu, mantendu ezazu jarraipen "
+"zenbaki hau, honek sistemaren administratzaileak dituen erregistroetan "
+"zure saioa aurkitzea ahalbidetzen baitu:"
+
+msgid "XML metadata"
+msgstr "XML metadatuak"
+
+msgid ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+msgstr ""
+"Aurkikuntza zerbitzuari bidalitako prametroak ez dira zehaztapenera "
+"doitzen."
+
+msgid "Telephone number"
+msgstr "Telefono zenbakia"
+
+msgid ""
+"Unable to log out of one or more services. To ensure that all your "
+"sessions are closed, you are encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Ezinezkoa da zerbitzu bat edo batzuen saioak ixtea. Zure saio guztiak "
+"itxi direla ziurtatzeko, <i>zure web nabigatzailea ixtea</i> gomendatzen "
+"da.  "
+
+msgid "Bad request to discovery service"
+msgstr "Eskaera okerra aurkikuntza zerbitzuari"
+
+msgid "Select your identity provider"
+msgstr "Hauta ezazu zure identitate hornitzailea"
+
+msgid "Entitlement regarding the service"
+msgstr "Zerbitzuari dagokion eskubidea"
+
+msgid "Shib 1.3 SP Metadata"
+msgstr "Shib 1.3 SP Metadatuak  "
+
+msgid ""
+"As you are in debug mode, you get to see the content of the message you "
+"are sending:"
+msgstr ""
+"Arazketa moduan egonez gero, bidaltzera zoazen mezuaren edukia ikusiko "
+"duzu: "
+
+msgid "Certificates"
+msgstr "Ziurtagiriak"
+
+msgid "Remember"
+msgstr "Onespena gogoratu"
+
+msgid "Distinguished name (DN) of person's home organization"
+msgstr "Pertsonaren jatorrizko erakundearen izen osatua (DN)"
+
+msgid "You are about to send a message. Hit the submit message link to continue."
+msgstr ""
+"Mezu bat bidaltzeari ekingo zaio. Saka ezazu \"Mezua bidali\" lotura "
+"jarraitzeko."
+
+msgid "Organizational unit"
+msgstr "Antolamendu-unitatea"
+
+msgid "Authentication aborted"
+msgstr "Kautotzea bertan behera utzia"
+
+msgid "Local identity number"
+msgstr "Tokiko zenbaki identifikatzailea"
+
+msgid "Report errors"
+msgstr "Erroreen berri eman"
+
+msgid "Page not found"
+msgstr "Ez da orria aurkitu"
+
+msgid "Shib 1.3 IdP Metadata"
+msgstr "Shib 1.3 IdP Metadatuak  "
+
+msgid "Change your home organization"
+msgstr "Zure jatorrizko erakundea aldatu"
+
+msgid "User's password hash"
+msgstr "Erabiltzailearen pasahitzaren hash-a"
+
+msgid ""
+"In SimpleSAMLphp flat file format - use this if you are using a "
+"SimpleSAMLphp entity on the other side:"
+msgstr ""
+"SimpleSAMLphp formatuko fitxategi batean - beste muturrean SimpleSAMLphp "
+"entitate bat erabiltzen ariz gero, erabil ezazu aukera hau:"
+
+msgid "Yes, continue"
+msgstr "Bai, jarraitu"
+
+msgid "Completed"
+msgstr "Amaitua"
+
+msgid ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+msgstr ""
+"Idp-ak errore batekin erantzun dio eskaerari. (SAML erantzunean egoera "
+"kodea ez da arrakastatsua izan)"
+
+msgid "Error loading metadata"
+msgstr "Errorea metadatuak kargatzean"
+
+msgid "Select configuration file to check:"
+msgstr "Hautatu ezazu egiaztatu beharreko konfigurazio fitxategia: "
+
+msgid "On hold"
+msgstr "Itxaroten"
+
+msgid "Error when communicating with the CAS server."
+msgstr "Errorea CAS zerbitzariarekin komunikatzen saiatzean"
+
+msgid "No SAML message provided"
+msgstr "SAML mezua falta da"
+
+msgid "Help! I don't remember my password."
+msgstr "Lagundu! Ez dut nire pasahitza gogoratzen."
+
+msgid ""
+"You can turn off debug mode in the global SimpleSAMLphp configuration "
+"file <tt>config/config.php</tt>."
+msgstr ""
+"Arazketa modua desaktibatu daiteke SimpleSAMLphp "
+"<tt>config/config.php</tt> konfigurazio orokorreko fitxategian."
+
+msgid "How to get help"
+msgstr "Laguntza nola eskuratu"
+
+msgid ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+msgstr ""
+"SingleLogoutService interfazera sartu zara baina ez duzu erantsi  SAML "
+"LogoutRequest edo LogoutResponse mezurik"
+
+msgid "SimpleSAMLphp error"
+msgstr "SimpleSAMLphp-en errorea"
+
+msgid ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Kautotuta zauden zerbitzu bat edo batzuk <i>ez dute uzten saioa "
+"ixten</i>. Zure saio guztiak ixten direla ziurtatzeko, <i>zure "
+"nabigatzaileko leiho guztiak ixtea</i> gomendatzen da."
+
+msgid "Organization's legal name"
+msgstr "Erakundearen izen legala"
+
+msgid "Options missing from config file"
+msgstr "Konfigurazio fitxategian falta diren aukerak"
+
+msgid "The following optional fields was not found"
+msgstr "Hautazko datu hauek ez dira aurkitu"
+
+msgid "Authentication failed: your browser did not send any certificate"
+msgstr "Kautotze okerra: zure nabigatzaileak ez du bidali ziurtagiririk "
+
+msgid ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+msgstr ""
+"Sarbide puntu hau ez dago gaituta. Egiazta itzazu SimpleSAMLphp-aren "
+"konfigurazioan gaitze aukerak."
+
+msgid "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL</a>:"
+msgstr "<a href=\"%METAURL%\">xml metadatuekin URL bat</a> eskura dezakezu:"
+
+msgid "Street"
+msgstr "Kalea"
+
+msgid ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+msgstr ""
+"Konfigurazio erroreak daude zure SimpleSAMLphp-ren instalazioan. "
+"Zerbitzuaren administratzailea bazara, ziurta ezazu metadatuen "
+"konfigurazioa zuzena dela."
+
+msgid "Incorrect username or password"
+msgstr "Erabiltzaile-izena edo pasahitz okerra"
+
+msgid "Message"
+msgstr "Mezua"
+
+msgid "Contact information:"
+msgstr "Harremanetarako informazioa:"
+
+msgid "Unknown certificate"
+msgstr "Ziurtagiri ezezaguna"
+
+msgid "Legal name"
+msgstr "Izen legala"
+
+msgid "Optional fields"
+msgstr "Hautazko datuak"
+
+msgid ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+msgstr ""
+"Eskaera honen abiarazleak ez du ematen ondoren nora joan adierazten duen "
+"RelayState parametroa"
+
+msgid "You have previously chosen to authenticate at"
+msgstr "Lehenago, hemen kautotzea hautatu duzu"
+
+msgid ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+msgstr ""
+"Sarrera orrira zerbait bidali duzu baina, arrazoiren bategatik, pasahitza"
+" ez da bidali.Saia zaitez berriro, mesedez."
+
+msgid "Fax number"
+msgstr "Fax-zenbakia"
+
+msgid "Shibboleth demo"
+msgstr "Shibboleth Adibidea"
+
+msgid "Error in this metadata entry"
+msgstr "Metadatu sarrera honetan  errorea"
+
+msgid "Session size: %SIZE%"
+msgstr "Saioaren tamaina: %SIZE%"
+
+msgid "Parse"
+msgstr "Aztertu"
+
+msgid ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+msgstr ""
+"Zeinen txarto! - Zure erabiltziale-izena eta pasahitza gabe ezin zara "
+"identifikatu ezta zerbitzuan sartu ere. Agian bada norbait lagun "
+"diezazukeena. Jar zaitez harremanetan erakundeko laguntza zentroarekin!"
+
+msgid "Metadata parser"
+msgstr "Metadatuak aztertu"
+
+msgid "Choose your home organization"
+msgstr "Hautatu zure jatorrizko erakundea"
+
+msgid "Send e-mail to help desk"
+msgstr "Bidali posta laguntza teknikoari "
+
+msgid "Metadata overview"
+msgstr "Ikusi metadatuak"
+
+msgid "Title"
+msgstr "Tratamendua"
+
+msgid "Manager"
+msgstr "Kudeatzailea"
+
+msgid "You did not present a valid certificate."
+msgstr "Ez duzu baliozko ziurtagiririk aurkeztu "
+
+msgid "Authentication source error"
+msgstr "Errorea kautotze jatorrian"
+
+msgid "Affiliation at home organization"
+msgstr "Afiliazioa jatorrizko erakundean"
+
+msgid "Help desk homepage"
+msgstr "Laguntza teknikoaren orria "
+
+msgid "Configuration check"
+msgstr "Konfigurazioa egiaztatu"
+
+msgid "We did not accept the response sent from the Identity Provider."
+msgstr "Ezin izan da identitatearen hornitzaileak bidalitako erantzuna onartu."
+
+msgid "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+msgstr ""
+"Ez da aurkitu adierazi duzun orria. Arrazoia hau da: %REASON% URL hau da:"
+" %URL%"
+
+msgid "Shib 1.3 Identity Provider (Remote)"
+msgstr "Πάροχος Ταυτότητας Shib 1.3 (Απομακρυσμένος)"
+
+msgid ""
+"Here is the metadata that SimpleSAMLphp has generated for you. You may "
+"send this metadata document to trusted partners to setup a trusted "
+"federation."
+msgstr ""
+"Hona hemen SimpleSAMLphp-ak zuretzat sortu dituen metadatuak. Metadatuen "
+"dokumentu hau konfidantzazko zure kideei bidal diezaiekezu federazio bat "
+"konfiguratzeko."
+
+msgid "[Preferred choice]"
+msgstr "[Aukera gogokoena]"
+
+msgid "Organizational homepage"
+msgstr "Erakundearen hasiera-orria"
+
+msgid ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr ""
+"Baieztapen kontsumitzailearen interfazera sartu zara baina ez duzu SAML "
+"kautotze erantzun bat erantsi."
+
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"Aurre-produzkio batean sartzen ari zara. Konfigurazio hau aurre-"
+"produkzioko sistemaren frogak egin eta egiaztatzeko bakarrik da. Hona "
+"iristeko norbaitek bidali dizun lotura bat jarraitu baduzu eta "
+"<i>frogatzaile</i> bat ez bazara, ziurrenik errore bat izango da, eta zuk"
+" <b>ez zenuke hemen egon behar</b>."

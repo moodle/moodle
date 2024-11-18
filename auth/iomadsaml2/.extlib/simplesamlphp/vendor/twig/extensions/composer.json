@@ -1,0 +1,32 @@
+{
+    "name": "twig/extensions",
+    "description": "Common additional features for Twig that do not directly belong in core",
+    "keywords": ["i18n","text"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Fabien Potencier",
+            "email": "fabien@symfony.com"
+        }
+    ],
+    "require": {
+        "twig/twig": "^1.27|^2.0"
+    },
+    "require-dev": {
+        "symfony/phpunit-bridge": "^3.4",
+        "symfony/translation": "^2.7|^3.4"
+    },
+    "suggest": {
+        "symfony/translation": "Allow the time_diff output to be translated"
+    },
+    "autoload": {
+        "psr-0": { "Twig_Extensions_": "lib/" },
+        "psr-4": { "Twig\\Extensions\\": "src/" }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.5-dev"
+        }
+    }
+}

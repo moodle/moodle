@@ -1,0 +1,20 @@
+{% set pagetitle = 'Diagnostics on hostname, port and protocol'|trans %}
+{% set frontpage_section = 'main' %}
+{% extends "base.twig" %}
+
+{% block content %}
+    {%- include "@admin/includes/menu.twig" %}
+
+    <h2>{{ pagetitle }} </h2>
+
+    {%- embed "_table.twig" %}
+      {%- block namecol %}
+
+        <td class="attrname"><samp>{{ name }}</samp></td>
+      {%- endblock namecol %}
+      {%- block value %}
+
+        {{ value }}
+      {%- endblock value %}
+    {%- endembed %}
+{% endblock %}

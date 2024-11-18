@@ -569,6 +569,20 @@ function initialise_cfg() {
         return;
     }
 
+    // IOMAD - Set the theme if the server hostname matches one of ours.
+    if(!CLI_SCRIPT) {
+        $CFG->wwwrootdefault = $CFG->wwwroot;
+
+        // Does this match a company hostname?
+        if ($DB->get_manager()->table_exists('company') &&
+            ($companyrec = $DB->get_record('company', array('hostname' => $_SERVER['SERVER_NAME'])))) {
+            $company = new company($companyrec->id);
+
+            // Set the wwwroot to the company one using the same protocol.
+            $CFG->wwwroot  = $company->get_wwwroot();
+        }
+    }
+
     foreach ($localcfg as $name => $value) {
         // Note that get_config() keeps forced settings
         // and normalises values to string if possible.
@@ -641,7 +655,7 @@ function hash_local_config_cache() {
  * setup.php.
  */
 function initialise_fullme() {
-    global $CFG, $FULLME, $ME, $SCRIPT, $FULLSCRIPT;
+    global $CFG, $FULLME, $ME, $SCRIPT, $FULLSCRIPT, $DB;
 
     // Detect common config error.
     if (substr($CFG->wwwroot, -1) == '/') {
@@ -652,6 +666,22 @@ function initialise_fullme() {
         initialise_fullme_cli();
         return;
     }
+
+    // IOMAD - Set the theme if the server hostname matches one of ours.
+    if(!CLI_SCRIPT && !during_initial_install()){
+        $CFG->wwwrootdefault = $CFG->wwwroot;
+
+        // Does this match a company hostname?
+        if ($DB->get_manager()->table_exists('company') &&
+            ($companyrec = $DB->get_record('company', array('hostname' => $_SERVER['SERVER_NAME'])))) {
+            $company = new company($companyrec->id);
+
+            // Set the wwwroot to the company one using the same protocol.
+            $CFG->wwwroot  = $company->get_wwwroot();
+
+        }
+    }
+
     if (!empty($CFG->overridetossl)) {
         if (strpos($CFG->wwwroot, 'http://') === 0) {
             $CFG->wwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
@@ -694,6 +724,9 @@ function initialise_fullme() {
                 throw new moodle_exception('requirecorrectaccess', 'error', '', null,
                     'You called ' . $calledurl .', you should have called ' . $correcturl);
             }
+            require_once($CFG->dirroot . '/local/iomad/lib/iomad.php');
+
+            iomad::check_redirect($wwwroot, $rurl);
             $rfullpath = $rurl['fullpath'];
             // Check that URL is under $CFG->wwwroot.
             if (strpos($rfullpath, $wwwroot['path']) === 0) {

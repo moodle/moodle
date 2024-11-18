@@ -1,0 +1,43 @@
+table.flexible,
+.generaltable {
+    tbody tr:nth-of-type(#{$table-striped-order}) {
+        background-color: $table-accent-bg;
+    }
+}
+
+table {
+    caption {
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 42px;
+        text-align: left;
+        caption-side: top;
+    }
+}
+
+#page-report-loglive-index .generaltable,
+#page-admin-report-log-index .generaltable,
+#page-report-log-user .generaltable,
+#page-admin-user table,
+.environmenttable,
+.category_subcategories,
+.rcs-results {
+    th,
+    td {
+        padding: $table-cell-padding-sm;
+    }
+}
+
+.forumheaderlist,
+.generaltable,
+table.flexible,
+.category_subcategories,
+table#modules,
+table#permissions {
+    tbody tr {
+        @include hover {
+            color: $table-hover-color;
+            background-color: $table-hover-bg;
+        }
+    }
+}

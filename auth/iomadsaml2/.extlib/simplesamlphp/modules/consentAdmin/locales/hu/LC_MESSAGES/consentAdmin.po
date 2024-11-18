@@ -1,0 +1,158 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: hu\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consentAdmin:consentadmin:status_header}"
+msgstr "Hozzájárulás állapota"
+
+msgid "{consentAdmin:consentadmin:attributes_text}"
+msgstr "."
+
+msgid "{consentAdmin:consentadmin:service_provider_header}"
+msgstr "Szolgáltató"
+
+msgid "{consentAdmin:consentadmin:removed}"
+msgstr "Hozzájárulás visszavonva"
+
+msgid "{consentAdmin:consentadmin:consentadmin_header}"
+msgstr "Adatkezelési hozzájárulások kezelése"
+
+msgid "{consentAdmin:consentadmin:show}"
+msgstr "Attribútumok megjelenítése"
+
+msgid "{consentAdmin:consentadmin:attribute_org}"
+msgstr "Intézmény"
+
+msgid "{consentAdmin:consentadmin:attribute_injected}"
+msgstr "Attribútum beszúrása"
+
+msgid "{consentAdmin:consentadmin:show_hide_attributes}"
+msgstr "Attribútumok megjelenítése/rejtése"
+
+msgid "{consentAdmin:consentadmin:consentadmin_purpose}"
+msgstr "A szolgáltatás leírása"
+
+msgid "{consentAdmin:consentadmin:hide}"
+msgstr "Attribútumok rejtése"
+
+msgid "{consentAdmin:consentadmin:sp_empty_description}"
+msgstr "(nincs leírás)"
+
+msgid "{consentAdmin:consentadmin:service_providers_for}"
+msgstr "Szolgáltató"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description2}"
+msgstr ""
+"<h3>Hogyan kell visszavonni egy hozzájárulást?</h3> A szolgáltatóhoz "
+"tartozó jelölőnégyzetben szüntesse meg a kijelölést!"
+
+msgid "{consentAdmin:consentadmin:login}"
+msgstr "Belépés"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description1}"
+msgstr ""
+"Ezen az oldalon lehet szolgáltatónként (SP) az adakezelési "
+"hozzájárulásokat megtekinteni és módosítani."
+
+msgid "{consentAdmin:consentadmin:updated}"
+msgstr "Hozzájárulás frissítve"
+
+msgid "{consentAdmin:consentadmin:unknown}"
+msgstr "Ismeretlen ..."
+
+msgid "{consentAdmin:consentadmin:added}"
+msgstr "Hozzájárulás rögzítve"
+
+msgid "{consentAdmin:consentadmin:attribute_id}"
+msgstr "Azonosság"
+
+msgid "Injected attribut"
+msgstr "Attribútum beszúrása"
+
+msgid "Show"
+msgstr "Attribútumok megjelenítése"
+
+msgid "Consent Added"
+msgstr "Hozzájárulás rögzítve"
+
+msgid "Consent Administration"
+msgstr "Adatkezelési hozzájárulások kezelése"
+
+msgid "Here you can view and edit your consent for the Service Providers."
+msgstr ""
+"Ezen az oldalon lehet szolgáltatónként (SP) az adakezelési "
+"hozzájárulásokat megtekinteni és módosítani."
+
+msgid "Unknown ..."
+msgstr "Ismeretlen ..."
+
+msgid "Identity"
+msgstr "Azonosság"
+
+msgid "The purpose of the service is"
+msgstr "A szolgáltatás leírása"
+
+msgid "Hide"
+msgstr "Attribútumok rejtése"
+
+msgid "Service Provider"
+msgstr "Szolgáltató"
+
+msgid "Service Providers for"
+msgstr "Szolgáltató"
+
+msgid "login"
+msgstr "Belépés"
+
+msgid "(name not specified)"
+msgstr "(nincs név)"
+
+msgid "Consent Updated"
+msgstr "Hozzájárulás frissítve"
+
+msgid "Consent status"
+msgstr "Hozzájárulás állapota"
+
+msgid "(no description)"
+msgstr "(nincs leírás)"
+
+msgid "attributes"
+msgstr "."
+
+msgid ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+msgstr ""
+"<h3>Hogyan kell visszavonni egy hozzájárulást?</h3> A szolgáltatóhoz "
+"tartozó jelölőnégyzetben szüntesse meg a kijelölést!"
+
+msgid "Consent Removed"
+msgstr "Hozzájárulás visszavonva"
+
+msgid "show/hide attributes"
+msgstr "Attribútumok megjelenítése/rejtése"
+
+msgid "Organisation"
+msgstr "Intézmény"
+

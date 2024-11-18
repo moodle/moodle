@@ -144,7 +144,7 @@ class course extends context {
      * @return int[]
      */
     protected static function get_compatible_role_archetypes(): array {
-        return ['manager', 'editingteacher', 'teacher', 'student'];
+        return ['manager', 'editingteacher', 'teacher', 'student', 'companycourseeditor', 'companycoursenoneditor'];
     }
 
     /**

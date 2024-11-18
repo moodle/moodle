@@ -1,0 +1,40 @@
+{% set pagetitle = 'SimpleSAMLphp Statistics Metadata'|trans %}
+{% extends "base.twig" %}
+
+{% block preload %}
+    <link href="/{{ baseurlpath }}modules.php/statistics/assets/css/statistics.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <h2>{{ pagetitle }}</h2>
+    <table id="statmeta">
+    {% if metadata is defined %}
+        {% if metadata.lastrun is defined %}
+            <tr><td>Aggregator last run at</td><td>{{ metadata.lastrun|date }}</td></tr>
+        {% endif %}
+
+        {% if metadata.notBefore is defined %}
+            <tr><td>Aggregated data until</td><td>{{ metadata.notBefore|date }}</td></tr>
+        {% endif %}
+
+        {% if metadata.memory is defined %}
+            <tr><td>Memory usage</td><td>{{ metadata.memory }} MB</td></tr>
+        {% endif %}
+
+        {% if metadata.memory is defined %}
+            <tr><td>Execution time</td><td>{{ metadata.time }} seconds</td></tr>
+        {% endif %}
+
+        {% if metadata.memory is defined %}
+            <tr><td>SHA1 of last processed logline</td><td>{{ metadata.lastlinehash }}</td></tr>
+        {% endif %}
+
+        {% if metadata.memory is defined %}
+            <tr><td>Last processed logline</td><td>{{ metadata.lastline }}</td></tr>
+        {% endif %}
+    {% else %}
+        <tr><td>No metadata found</td></tr>
+    {% endif %}
+    </table>
+    <p>[ <a href="/{{ baseurlpath }}module.php/statistics/showstats.php">Show statistics</a> ]</p>
+{% endblock %}

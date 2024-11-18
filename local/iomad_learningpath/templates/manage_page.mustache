@@ -1,0 +1,55 @@
+{{!
+    @template local_iomad_learningpath/manage_page
+
+    Display learning path management page
+
+    Howard Miller 2018
+}}
+
+{{^ ispaths }}
+    <div class="alert alert-warning">{{# str }}nopaths, local_iomad_learningpath{{/ str }}</div>
+{{/ ispaths }}
+{{# ispaths }}
+    <div id="manage_learningpaths">
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-4"><b>{{# str }}name, local_iomad_learningpath{{/ str }}</b></div>
+            <div class="col-sm-4"><b>{{# str }}description, local_iomad_learningpath{{/ str }}</b></div>
+            <div class="col-sm-3"><b>{{# str }}actions, local_iomad_learningpath{{/ str }}</b></div>
+        </div>
+        {{# paths }}
+            <div class="row manage_list">
+                <div class="col-sm-1">
+                    {{# linkthumbnail }}
+                        <img width="50" src="{{{ linkthumbnail }}}">
+                    {{/ linkthumbnail }}
+                </div>
+                <div class="col-sm-4">{{ name }}</div>
+                <div class="col-sm-4"><small>{{{ description }}}</small></div>
+                <div class="col-sm-3">
+                    {{# active }}
+                        <a class="lp_active" href="" data-id="{{ id }}" data-toggle="tooltip" data-state="1" title="{{# str }}closeeye, local_iomad_learningpath{{/ str }}">
+                            <i class="fa fa-eye fa-lg"></i>
+                        </a>
+                    {{/ active }}
+                    {{^ active }}
+                        <a class="lp_active" href="" data-id="{{ id }}" data-toggle="tooltip" data-state="0" title="{{# str }}openeye, local_iomad_learningpath{{/ str }}">
+                            <i class="fa fa-eye-slash fa-lg"></i>
+                        </a>
+                    {{/ active }}
+                    &nbsp;<a href="{{{ linkcourses }}}" data-toggle="tooltip" title="{{# str }}editcourselist, local_iomad_learningpath{{/ str }}"><i class="fa fa-list fa-lg"></i></a>
+                    &nbsp;<a href="{{{ linkedit }}}" data-toggle="tooltip" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-cog fa-lg"></i></a>
+                    &nbsp;<a href="{{{ linkstudents }}}" data-toggle="tooltip" title="{{# str }}editstudents, local_iomad_learningpath{{/ str }}"><i class="fa fa-users fa-lg"></i></a>
+                    &nbsp;<a href="" class="lp_copy text-warning" data-id="{{ id }}" data-toggle="tooltip" title="{{# str }}copypath, local_iomad_learningpath{{/ str }}">
+                        <i class="fa fa-copy fa-lg"></i></a>
+                    &nbsp;<a href="" class="lp_delete text-danger" data-id="{{ id }}" data-toggle="tooltip" title="{{# str }}deletepath, local_iomad_learningpath{{/ str }}">
+                        <i class="fa fa-trash fa-lg"></i></a>
+                </div>
+            </div>
+        {{/ paths }}
+    </div>
+{{/ ispaths }}
+
+<div class="row top-space">
+    <a href="{{{ linknew }}}" class="btn btn-success"><i class="fa fa-plus"></i> {{# str }}addpath, local_iomad_learningpath{{/ str }}</a>
+</div>

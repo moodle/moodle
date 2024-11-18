@@ -34,6 +34,8 @@ defined('MOODLE_INTERNAL') || die();
 define('NAVIGATION_CACHE_NAME', 'navigation');
 define('NAVIGATION_SITE_ADMIN_CACHE_NAME', 'navigationsiteadmin');
 
+require_once($CFG->dirroot.'/local/iomad/lib/iomad.php');
+
 /**
  * This class is used to represent a node in a navigation tree
  *
@@ -1506,7 +1508,6 @@ class global_navigation extends navigation_node {
         $this->rootnodes['mycourses']->forceopen = true;
 
         $canviewcourseprofile = true;
-
         // Next load context specific content into the navigation
         switch ($this->page->context->contextlevel) {
             case CONTEXT_SYSTEM :
@@ -1730,6 +1731,12 @@ class global_navigation extends navigation_node {
      */
     protected function show_categories($ismycourse = false) {
         global $CFG, $DB;
+
+        // IOMAD : Force no categories.
+        if (!is_siteadmin()) {
+            return false;
+        }
+
         if ($ismycourse) {
             return $this->show_my_categories();
         }
@@ -1766,7 +1773,7 @@ class global_navigation extends navigation_node {
      * @return array An array of navigation_nodes one for each course
      */
     protected function load_all_courses($categoryids = null) {
-        global $CFG, $DB, $SITE;
+        global $CFG, $DB, $SITE, $USER;
 
         // Work out the limit of courses.
         $limit = 20;
@@ -1787,6 +1794,33 @@ class global_navigation extends navigation_node {
 
         // Check if we need to show categories.
         if ($this->show_categories()) {
+            // IOMAD - If not logged in, don't show any courses in the navigation.
+            if (!isloggedin()) {
+                return array();
+            }
+            if (iomad::is_company_user()) {
+                $companyid = iomad::get_my_companyid(context_system::instance());
+                $sharedsql = " AND ( c.id IN (
+                                   SELECT courseid FROM {company_course}
+                                   WHERE companyid = $companyid)
+                               OR c.id IN (
+                                   SELECT courseid FROM {iomad_courses}
+                                   WHERE shared=1)
+                               OR c.id IN (
+                                   SELECT courseid FROM {company_shared_courses}
+                                   WHERE companyid = $companyid))
+                               OR c.id IN (
+                                   SELECT clu.licensecourseid FROM {companylicense_users} clu 
+                                   JOIN {companylicense} cl ON (clu.licenseid = cl.id)
+                                   WHERE cl.companyid = $companyid
+                                   AND clu.userid = " . $USER->id ."
+                                   AND cl.expirydate > " . time() .")";
+            } else if (!is_siteadmin()) {
+                $sharedsql = " AND c.id IN (select courseid FROM {iomad_courses} WHERE shared=1) ";
+            } else {
+                $sharedsql = "";
+            }
+
             // Hmmm we need to show categories... this is going to be painful.
             // We now need to fetch up to $limit courses for each category to
             // be displayed.
@@ -1806,12 +1840,16 @@ class global_navigation extends navigation_node {
 
             // First up we are going to get the categories that we are going to
             // need so that we can determine how best to load the courses from them.
+            // IOMAD - Add $sharedsql after $categorywhere to hide other company
+            // categories.
             $sql = "SELECT cc.id, COUNT(c.id) AS coursecount
                         FROM {course_categories} cc
                     LEFT JOIN {course} c ON c.category = cc.id
                             {$categorywhere}
+                            {$sharedsql}
                     GROUP BY cc.id";
-            $categories = $DB->get_recordset_sql($sql, $categoryparams);
+            //$categories = $DB->get_recordset_sql($sql, $categoryparams);
+            $categories = $DB->get_records_sql($sql, $categoryparams);
             $fullfetch = array();
             $partfetch = array();
             foreach ($categories as $category) {
@@ -1824,7 +1862,7 @@ class global_navigation extends navigation_node {
                     $fullfetch[] = $category->id;
                 }
             }
-            $categories->close();
+            //$categories->close();
 
             if (count($fullfetch)) {
                 // First up fetch all of the courses in categories where we know that we are going to
@@ -1901,6 +1939,30 @@ class global_navigation extends navigation_node {
             }
         } else {
             // Prepare the SQL to load the courses and their contexts
+            // IOMAD addition.
+            if (iomad::is_company_user()) {
+                $companyid = iomad::get_my_companyid(context_system::instance());
+                $sharedsql = " AND ( c.id IN (
+                                   SELECT courseid FROM {company_course}
+                                   WHERE companyid = $companyid)
+                               OR c.id IN (
+                                   SELECT courseid FROM {iomad_courses}
+                                   WHERE shared=1)
+                               OR c.id IN (
+                                   SELECT courseid FROM {company_shared_courses}
+                                   WHERE companyid = $companyid))
+                               OR c.id IN (
+                                   SELECT clu.licensecourseid FROM {companylicense_users} clu 
+                                   JOIN {companylicense} cl ON (clu.licenseid = cl.id)
+                                   WHERE cl.companyid = $companyid
+                                   AND clu.userid = " . $USER->id ."
+                                   AND cl.expirydate > " . time() .")";
+            } else if (!is_siteadmin()) {
+                $sharedsql = " AND c.id IN (select courseid FROM {iomad_courses} WHERE shared=1) ";
+            } else {
+                $sharedsql = "";
+            }
+
             list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses), SQL_PARAMS_NAMED, 'lc', false);
             $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
             $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
@@ -1909,6 +1971,7 @@ class global_navigation extends navigation_node {
                         FROM {course} c
                             $ccjoin
                         WHERE c.id {$courseids}
+                        $sharedsql
                     ORDER BY c.sortorder ASC";
             $coursesrs = $DB->get_recordset_sql($sql, $courseparams);
             foreach ($coursesrs as $course) {
@@ -1973,7 +2036,6 @@ class global_navigation extends navigation_node {
      */
     protected function load_all_categories($categoryid = self::LOAD_ROOT_CATEGORIES, $showbasecategories = false) {
         global $CFG, $DB;
-
         // Check if this category has already been loaded
         if ($this->allcategoriesloaded || ($categoryid < 1 && $this->is_category_fully_loaded($categoryid))) {
             return true;
@@ -2023,8 +2085,16 @@ class global_navigation extends navigation_node {
         }
 
         $categoriesrs = $DB->get_recordset_sql("$sqlselect $sqlwhere $sqlorder", $params);
+
+        // IOMAD - Filter out the unwanted categories
+        if (!is_siteadmin()) {
+            $categoriesiomad = iomad::iomad_filter_categories($categoriesrs);
+        } else {
+            $categoriesiomad = $categoriesrs;
+        }
+
         $categories = array();
-        foreach ($categoriesrs as $category) {
+        foreach ($categoriesiomad as $category) {
             // Preload the context.. we'll need it when adding the category in order
             // to format the category name.
             context_helper::preload_from_record($category);
@@ -3673,12 +3743,22 @@ class global_navigation_for_ajax extends global_navigation {
             $limit = (int)$CFG->navcourselimit;
         }
 
+        if (iomad::is_company_user()) {
+            $companyid = iomad::get_my_companyid(context_system::instance());
+            $sharedsql = " AND ( cc.id IN (
+                               SELECT category FROM {company}
+                               WHERE id = $companyid)) ";
+        } else {
+            $sharedsql = "";
+        }
+
         $catcontextsql = context_helper::get_preload_record_columns_sql('ctx');
         $sql = "SELECT cc.*, $catcontextsql
                   FROM {course_categories} cc
                   JOIN {context} ctx ON cc.id = ctx.instanceid
                  WHERE ctx.contextlevel = ".CONTEXT_COURSECAT." AND
                        (cc.id = :categoryid1 OR cc.parent = :categoryid2)
+                       $sharedsql
               ORDER BY cc.depth ASC, cc.sortorder ASC, cc.id ASC";
         $params = array('categoryid1' => $categoryid, 'categoryid2' => $categoryid);
         $categories = $DB->get_recordset_sql($sql, $params, 0, $limit);
@@ -3739,7 +3819,7 @@ class global_navigation_for_ajax extends global_navigation {
             foreach ($courses as $course) {
                 // Add course if it's in category.
                 if (in_array($course->category, $categorylist)) {
-                    $this->add_course($course, true, self::COURSE_MY);
+                    //$this->add_course($course, true, self::COURSE_MY);
                 }
             }
         } else {

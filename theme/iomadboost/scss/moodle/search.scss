@@ -1,0 +1,92 @@
+.search-results .result {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.search-results .result .result-content {
+    margin: 7px 0;
+}
+
+.search-results .result .filename {
+    font-style: italic;
+}
+
+.simplesearchform {
+    @if $enable-rounded {
+        .input-group input.form-control {
+            border-top-left-radius: $border-radius;
+            border-bottom-left-radius: $border-radius;
+        }
+    }
+    .btn {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    .btn .icon {
+        margin: 0;
+    }
+    .btn-submit {
+        border-color: $input-border-color;
+        color: $gray-600;
+    }
+    .btn-close,
+    .btn-clear {
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: $gray-600;
+        z-index: 4;
+    }
+    .btn-close {
+        right: 2.2rem;
+    }
+    .btn-submit {
+        background-color: $gray-100;
+    }
+    .withclear {
+        padding-right: 2rem;
+    }
+    .searchinput {
+        display: flex;
+        flex: 1 1 auto;
+    }
+    .collapsing {
+        height: inherit;
+        transition: none;
+        width: inherit;
+    }
+}
+
+.simplesearchform .collapse.show,
+.simplesearchform .collapsing {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    display: flex;
+    background-color: $white;
+    z-index: $zindex-popover;
+    height: $navbar-height;
+    .form-inline {
+        width: auto;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+.search-areas-actions {
+    margin-bottom: $spacer;
+}
+
+.search-areas-actions > div {
+    margin-right: $spacer;
+    display: inline-block;
+}
+
+#core-search-areas .lastcol li {
+    margin-left: 24px;
+    text-indent: -24px;
+}
+#core-search-areas .lastcol li > i {
+    text-indent: 0;
+}

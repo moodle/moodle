@@ -1,0 +1,159 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: el\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consent:consent:service_providers_for}"
+msgstr "Πάροχοι υπηρεσιών για"
+
+msgid "{consent:consent:abort}"
+msgstr "Ακύρωση εισόδου στην υπηρεσία SPNAME"
+
+msgid "{consent:consent:remember}"
+msgstr "Να θυμάσαι την επιλογή μου"
+
+msgid "{consent:consent:login}"
+msgstr "Είσοδος"
+
+msgid "{consent:consent:consent_purpose}"
+msgstr "Περιγραφή όπως παρέχεται από την υπηρεσία: SPDESC"
+
+msgid "{consent:consent:noconsent_goto_about}"
+msgstr "Επιπλέον πληροφορίες για την υπηρεσία"
+
+msgid "{consent:consent:consent_header}"
+msgstr "Δήλωση συγκατάθεσης για τον διαμοιρασμό προσωπικών δεδομένων"
+
+msgid "{consent:consent:show_hide_attributes}"
+msgstr "εμφάνιση/απόκρυψη στοιχείων"
+
+msgid "{consent:consent:table_caption}"
+msgstr "Πληροφορίες χρήστη"
+
+msgid "{consent:consent:status_header}"
+msgstr "Κατάσταση συγκατάθεσης"
+
+msgid "{consent:consent:noconsent_title}"
+msgstr "Μη αποδοχή συγκατάθεσης"
+
+msgid "{consent:consent:consent_accept}"
+msgstr ""
+"Εάν προχωρήσετε, τα στοιχεία που ακολουθούν θα διαμοιραστούν με την "
+"υπηρεσία <b>SPNAME</b>. Συμφωνείτε με την απελευθέρωση των στοιχείων "
+"αυτών στην υπηρεσία κάθε φορά που επιθυμείτε πρόσβαση σε αυτή;"
+
+msgid "{consent:consent:table_summary}"
+msgstr ""
+"Εμφάνιση πληροφοριών που θα διαμοιραστούν με την υπηρεσία κατά την "
+"πρόσβαση σε αυτή"
+
+msgid "{consent:consent:service_provider_header}"
+msgstr "Πάροχος υπηρεσίας"
+
+msgid "{consent:consent:show_attribute}"
+msgstr "Εμφάνιση λεπτομερειών"
+
+msgid "{consent:consent:no}"
+msgstr "Απόρριψη"
+
+msgid "{consent:consent:consent_privacypolicy}"
+msgstr "Πολιτική προστασίας απορρήτου υπηρεσίας"
+
+msgid "{consent:consent:noconsent_text}"
+msgstr ""
+"Δεν έχετε δώσει συγκατάθεση για τον διαμοιρασμό προσωπικών δεδομένων με "
+"την υπηρεσία SPNAME"
+
+msgid "{consent:consent:noconsent_return}"
+msgstr "Επιστροφή στη σελίδα δήλωσης συγκατάθεσης"
+
+msgid "{consent:consent:yes}"
+msgstr "Αποδοχή"
+
+msgid "{consent:consent:consent_attributes_header}"
+msgstr "Πληροφορίες που θα διαμοιραστούν με την υπηρεσία SPNAME"
+
+msgid "Service Providers for"
+msgstr "Πάροχοι υπηρεσιών για"
+
+msgid "Yes, continue"
+msgstr "Αποδοχή"
+
+msgid "Return to consent page"
+msgstr "Επιστροφή στη σελίδα δήλωσης συγκατάθεσης"
+
+msgid "Consent status"
+msgstr "Κατάσταση συγκατάθεσης"
+
+msgid "Go to information page for the service"
+msgstr "Επιπλέον πληροφορίες για την υπηρεσία"
+
+msgid "Service Provider"
+msgstr "Πάροχος υπηρεσίας"
+
+msgid "Abort login to SPNAME"
+msgstr "Ακύρωση εισόδου στην υπηρεσία SPNAME"
+
+msgid "show/hide attributes"
+msgstr "εμφάνιση/απόκρυψη στοιχείων"
+
+msgid "The purpose of SPNAME is SPDESC"
+msgstr "Περιγραφή όπως παρέχεται από την υπηρεσία: SPDESC"
+
+msgid ""
+"List the information about you that is about to be transmitted to the "
+"service you are going to login to"
+msgstr ""
+"Εμφάνιση πληροφοριών που θα διαμοιραστούν με την υπηρεσία κατά την "
+"πρόσβαση σε αυτή"
+
+msgid "Consent about releasing personal information"
+msgstr "Δήλωση συγκατάθεσης για τον διαμοιρασμό προσωπικών δεδομένων"
+
+msgid "No consent given"
+msgstr "Μη αποδοχή συγκατάθεσης"
+
+msgid "login"
+msgstr "Είσοδος"
+
+msgid "You did not give consent for transfering your attributes to SPNAME."
+msgstr ""
+"Δεν έχετε δώσει συγκατάθεση για τον διαμοιρασμό προσωπικών δεδομένων με "
+"την υπηρεσία SPNAME"
+
+msgid "Remember"
+msgstr "Να θυμάσαι την επιλογή μου"
+
+msgid "Show content"
+msgstr "Εμφάνιση λεπτομερειών"
+
+msgid "SPNAME requires that the information below is transferred."
+msgstr ""
+"Εάν προχωρήσετε, τα στοιχεία που ακολουθούν θα διαμοιραστούν με την "
+"υπηρεσία <b>SPNAME</b>. Συμφωνείτε με την απελευθέρωση των στοιχείων "
+"αυτών στην υπηρεσία κάθε φορά που επιθυμείτε πρόσβαση σε αυτή;"
+
+msgid "Privacypolicy for the service"
+msgstr "Πολιτική προστασίας απορρήτου υπηρεσίας"
+
+msgid "No, cancel"
+msgstr "Απόρριψη"
+
+msgid "User information"
+msgstr "Πληροφορίες χρήστη"
+
+msgid "Information that will be sent to SPNAME"
+msgstr "Πληροφορίες που θα διαμοιραστούν με την υπηρεσία SPNAME"
+

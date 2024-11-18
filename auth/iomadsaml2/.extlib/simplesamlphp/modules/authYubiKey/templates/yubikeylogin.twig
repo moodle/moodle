@@ -1,0 +1,31 @@
+{% set pagetitle = header|trans %}
+{% extends "base.twig" %}
+
+{% block preload %}
+    <link rel="stylesheet" href="/{{ baseurlpath }}module.php/authYubiKey/assets/css/yubikey.css">
+{% endblock %}
+
+{% block postload %}
+    <script src="/{{ baseurlpath }}module.php/authYubiKey/assets/js/autofocus.js"></script>
+{% endblock %}
+
+{% block content %}
+    {% if errorCode != null %}
+    <div class="message-box error">
+        <h3>{{ errorTitle }}</h3>
+        <p>{{ errorDesc }}</p>
+    </div>
+    {% endif %}
+
+    <img style="float: right" src="{{ logoUrl }}" alt="">
+    <img style="clear: right; float: right" src="{{ devicepicUrl }}" alt="YubiKey">
+
+    <h2>{{ '{authYubiKey:yubikey:header}'|trans }}</h2>
+    <form action="?" method="post" name="f">
+        <p>{{ '{authYubiKey:yubikey:intro}'|trans }}</p>
+        <p><input id="otp" type="text" tabindex="2" name="otp" autofocus></p>
+    {% for key, value in stateParams %}
+        <input type="hidden" name="{{ key|escape('html') }}" value="{{ value|escape('html') }}">
+    {% endfor %}
+    </form>
+{% endblock %}

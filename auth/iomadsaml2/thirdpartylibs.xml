@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>.extlib/simplesamlphp</location>
+    <name>SimpleSamlPHP</name>
+    <version>1.17.7</version>
+    <license>LGPL</license>
+    <licenseversion>2.1+</licenseversion>
+  </library>
+  <library>
+    <location>sp/metadata.php</location>
+    <name>SP metadata</name>
+    <version></version>
+    <license></license>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>

@@ -1,0 +1,565 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: es\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{core:frontpage:link_phpinfo}"
+msgstr "PHP info"
+
+msgid "{core:no_state:report_text}"
+msgstr ""
+"Si el problema persiste, puede reportarlo a los administradores del "
+"sistema"
+
+msgid "{core:no_state:cause_backforward}"
+msgstr "Usando los botones atrás y adelante de su navegador web."
+
+msgid "{core:no_metadata:not_found_for}"
+msgstr "Fue imposible localizar los metadatos para la entidad:"
+
+msgid "{core:frontpage:link_shib13example}"
+msgstr ""
+"Ejemplo de SP empleando Shibboleth 1.3 - Prueba a acceder empleando tu "
+"IdP Shibboleth"
+
+msgid "{core:no_state:suggestions}"
+msgstr "Sugerencias para resolver este problema"
+
+msgid "{core:frontpage:login_as_admin}"
+msgstr "Entrar como administrador"
+
+msgid "{core:short_sso_interval:warning}"
+msgstr ""
+"Se ha detectado que han transcurrido solo unos segundos desde que fue "
+"autenticado por última vez en este servicio, por lo que se asumirá que "
+"existe un problema con este SP."
+
+msgid "{core:frontpage:link_doc_sp}"
+msgstr "Empleo de SimpleSAMLphp como Service Provider"
+
+msgid "{core:frontpage:link_meta_saml2sphosted}"
+msgstr "Metadatos alojados del SP SAML 2.0 (generados automáticamente)"
+
+msgid "{core:frontpage:link_openidprovider}"
+msgstr "Sitio del proveedor OpenID - Versión Alfa (código de prueba)"
+
+msgid "{core:frontpage:link_doc_install}"
+msgstr "Instalación de SimpleSAMLphp"
+
+msgid "{core:frontpage:link_diagnostics}"
+msgstr "Diagnóstico sobre nombre de host, puerto y protocolo"
+
+msgid "{core:no_state:suggestion_goback}"
+msgstr "Regrese a la página anterior y pruebe de nuevo"
+
+msgid "{core:no_state:causes}"
+msgstr "Este error puede ser causado por"
+
+msgid "{core:frontpage:link_meta_saml2idphosted}"
+msgstr "Metadatos alojados del IdP SAML 2.0 (generados automáticamente)"
+
+msgid "{core:frontpage:optional}"
+msgstr "Opcional"
+
+msgid "{core:frontpage:link_meta_shib13sphosted}"
+msgstr "Metadatos alojados del SP Shibooleth 1.3 (generados automáticamente)"
+
+msgid "{core:frontpage:doc_header}"
+msgstr "Documentaci&oacute;n"
+
+msgid "{core:frontpage:link_doc_advanced}"
+msgstr "Características avanzadas de SimpleSAMLphp"
+
+msgid "{core:frontpage:required_ldap}"
+msgstr "Necesario para LDAP"
+
+msgid "{core:frontpage:warnings_secretsalt}"
+msgstr ""
+"<strong>Su configuraci&oacute;n est&aacute; usando el <em>salt</em> por "
+"defecto</strong>. Aseg&uacute;rese de modificar la opci&oacute;n de "
+"configuraci&oacute;n 'secretsalt' en entornos de producci&oacute;n. [<a "
+"href=\"https://simplesamlphp.org/docs/devel/simplesamlphp-install\">Leer "
+"m&aacute;s sobre la configuraci&oacute;n de SimpleSAMLphp</a>]"
+
+msgid "{core:frontpage:authtest}"
+msgstr "Probar las fuentes para la autentificación ya configuradas"
+
+msgid "{core:frontpage:link_meta_overview}"
+msgstr ""
+"Vista general de los metadatos de tu instalación. Comprueba tus ficheros "
+"de metadatos"
+
+msgid "{core:frontpage:configuration}"
+msgstr "Configuración"
+
+msgid "{core:frontpage:welcome}"
+msgstr "Bienvenido"
+
+msgid "{core:frontpage:link_doc_shibsp}"
+msgstr "Configuración de Shibboleth 1.3 SP para trabajar con un IdP SimpleSAMLphp"
+
+msgid "{core:no_state:header}"
+msgstr "Información de estado perdida"
+
+msgid "{core:frontpage:metadata_header}"
+msgstr "Metadatos"
+
+msgid "{core:frontpage:link_doc_maintenance}"
+msgstr "Mantenimento y configuración de SimpleSAMLphp"
+
+msgid "{core:frontpage:link_configcheck}"
+msgstr "Comprobación de la configuración de SimpleSAMLphp"
+
+msgid "{core:frontpage:page_title}"
+msgstr "Página de instalación de SimpleSAMLphp"
+
+msgid "{core:no_cookie:header}"
+msgstr "No se encuentra cookie"
+
+msgid "{core:frontpage:warnings}"
+msgstr "Avisos"
+
+msgid "{core:frontpage:link_xmlconvert}"
+msgstr "Conversor de XML a metadatos de SimpleSAMLphp"
+
+msgid "{core:frontpage:link_cleardiscochoices}"
+msgstr "Borrar mis opciones de IdP en los servicios de descubrimiento de IdP"
+
+msgid "{core:frontpage:warnings_outdated}"
+msgstr ""
+"Su instalaci&oacute;n de SimpleSAMLphp est&aacute; desactualizada. Por "
+"favor, actualice a la <a href=\"https://simplesamlphp.org/download\">&uacute;ltima "
+"versi&oacute;n</a> lo antes posible."
+
+msgid "{core:frontpage:loggedin_as_admin}"
+msgstr "Ha entrado como administrador"
+
+msgid "{core:frontpage:auth}"
+msgstr "Autenticación"
+
+msgid "{core:no_metadata:suggestion_user_link}"
+msgstr ""
+"Si usted es un usuario que recibe este error luego de seguir un vínculo "
+"en un sitio, debe reportar el error al dueño del sitio."
+
+msgid "{core:no_state:description}"
+msgstr "No podemos encontrar la información de estado para la solicitud actual"
+
+msgid "{core:frontpage:show_metadata}"
+msgstr "Ver metadatos"
+
+msgid "{core:no_state:suggestion_closebrowser}"
+msgstr "Cierre el navegador y pruebe de nuevo"
+
+msgid "{core:short_sso_interval:warning_header}"
+msgstr "Intervalo de tiempo muy corto entre eventos de sesión única."
+
+msgid "{core:frontpage:intro}"
+msgstr ""
+"<strong>&iexcl;Felicidades!</strong>, ha instalado SimpleSAMLphp con "
+"&eacute;xito. &Eacute;sta es la p&aacute;gina inicial de su "
+"instalaci&oacute;n, aqu&iacute; encontrar&aacute; enlaces a ejemplos de "
+"prueba, diagn&oacute;sticos, metadatos e incluso enlaces a la "
+"documentaci&oacute;n pertinente."
+
+msgid "{core:no_metadata:header}"
+msgstr "Metadatos no encontrados"
+
+msgid "{core:frontpage:link_meta_shib13idphosted}"
+msgstr "Metadatos alojados del IdP Shibooleth 1.3 (generados automáticamente)"
+
+msgid "{core:frontpage:required}"
+msgstr "Necesario"
+
+msgid "{core:no_metadata:config_problem}"
+msgstr ""
+"Esto es posiblemente un problema de configuración en el proveedor de "
+"servicios o en el proveedor de identidad."
+
+msgid "{core:frontpage:warnings_suhosin_url_length}"
+msgstr ""
+"El número de parámetros de la petición está limitado por la extensión "
+"Suhosin de PHP. Por favor, incremente el valor de la opción "
+"suhosin.get.max_value_length a al menos 2048 bytes."
+
+msgid "{core:frontpage:warnings_https}"
+msgstr ""
+"<strong>No está usando HTTPS</strong> - comunicaciones cifradas con el "
+"usuario. HTTP funciona bien en entornos de evaluación, pero si va a "
+"emplearlo en producción, debería emplear HTTPS. [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-"
+"maintenance\">Lea más acerca del mantenimiento de SimpleSAMLphp </a> ]"
+
+msgid "{core:frontpage:federation}"
+msgstr "Federación"
+
+msgid "{core:frontpage:required_radius}"
+msgstr "Necesario para RADIUS"
+
+msgid "{core:no_state:cause_openbrowser}"
+msgstr "Abrió su navegador web con pestañas guardadas de la sesión previa."
+
+msgid "{core:frontpage:checkphp}"
+msgstr "Verificaci&oacute;n de su instalaci&oacute;n de PHP"
+
+msgid "{core:frontpage:link_doc_idp}"
+msgstr "Empleo de SimpleSAMLphp como Identity Provider"
+
+msgid "{core:no_state:report_header}"
+msgstr "Informar de este error"
+
+msgid "{core:frontpage:link_saml2example}"
+msgstr "Ejemplo de SP con SAML 2.0 - Prueba a acceder empleando tu IdP"
+
+msgid "{core:no_state:cause_nocookie}"
+msgstr "Las cookies pueden estar deshabilitadas en el navegador"
+
+msgid "{core:frontpage:about_header}"
+msgstr "Sobre SimpleSAMLphp"
+
+msgid "{core:frontpage:about_text}"
+msgstr ""
+"&iexcl;Eh! Esto de SimpleSAMLphp es interesante, &iquest;d&oacute;nde "
+"puedo averiguar m&aacute;s? Puedes encontrar m&aacute;s "
+"informaci&oacute;n en la <a "
+"href=\"https://simplesamlphp.org/\">p&aacute;gina web de "
+"SimpleSAMLphp</a>, en <a href=\"http://uninett.no\">UNINETT</a>."
+
+msgid "{core:no_metadata:suggestion_developer}"
+msgstr ""
+"Si usted es un desarrollador que está desplegando una solución de inicio "
+"único, tiene un problema con la configuración de sus metadatos. Verifique"
+" que los metadatos están configurados correctamente en el proveedor de "
+"identidad y en el proveedor de servicios"
+
+msgid "{core:no_cookie:retry}"
+msgstr "Reintentar"
+
+msgid "{core:frontpage:useful_links_header}"
+msgstr "Enlaces &uacute;tiles para su instalaci&oacute;n"
+
+msgid "{core:frontpage:metadata}"
+msgstr "Metadatos"
+
+msgid "{core:frontpage:recommended}"
+msgstr "Recomendado"
+
+msgid "{core:frontpage:link_doc_googleapps}"
+msgstr "SimpleSAMLphp como IdP para Google Apps for Education"
+
+msgid "{core:frontpage:tools}"
+msgstr "Herramientas"
+
+msgid "{core:short_sso_interval:retry}"
+msgstr "Reintente autenticación"
+
+msgid "{core:no_cookie:description}"
+msgstr ""
+"Al parecer ha deshabilitado las cookies de su navegador. Por favor revise"
+" las preferencias de su navegador y reintente."
+
+msgid "{core:frontpage:deprecated}"
+msgstr "Obsoleto"
+
+msgid "You are logged in as administrator"
+msgstr "Ha entrado como administrador"
+
+msgid "Go back to the previous page and try again."
+msgstr "Regrese a la página anterior y pruebe de nuevo"
+
+msgid "If this problem persists, you can report it to the system administrators."
+msgstr ""
+"Si el problema persiste, puede reportarlo a los administradores del "
+"sistema"
+
+msgid "Welcome"
+msgstr "Bienvenido"
+
+msgid "SimpleSAMLphp configuration check"
+msgstr "Comprobación de la configuración de SimpleSAMLphp"
+
+msgid "Metadata overview for your installation. Diagnose your metadata files"
+msgstr ""
+"Vista general de los metadatos de tu instalación. Comprueba tus ficheros "
+"de metadatos"
+
+msgid "XML to SimpleSAMLphp metadata converter"
+msgstr "Conversor de XML a metadatos de SimpleSAMLphp"
+
+msgid "Required"
+msgstr "Necesario"
+
+msgid "Warnings"
+msgstr "Avisos"
+
+msgid "Documentation"
+msgstr "Documentaci&oacute;n"
+
+msgid "Hosted Shibboleth 1.3 Service Provider Metadata (automatically generated)"
+msgstr "Metadatos alojados del SP Shibooleth 1.3 (generados automáticamente)"
+
+msgid "PHP info"
+msgstr "PHP info"
+
+msgid "About SimpleSAMLphp"
+msgstr "Sobre SimpleSAMLphp"
+
+msgid "Hosted SAML 2.0 Service Provider Metadata (automatically generated)"
+msgstr "Metadatos alojados del SP SAML 2.0 (generados automáticamente)"
+
+msgid "Retry login"
+msgstr "Reintente autenticación"
+
+msgid "Required for LDAP"
+msgstr "Necesario para LDAP"
+
+msgid "Close the web browser, and try again."
+msgstr "Cierre el navegador y pruebe de nuevo"
+
+msgid "Federation"
+msgstr "Federación"
+
+msgid "We were unable to locate the state information for the current request."
+msgstr "No podemos encontrar la información de estado para la solicitud actual"
+
+msgid "Delete my choices of IdP in the IdP discovery services"
+msgstr "Borrar mis opciones de IdP en los servicios de descubrimiento de IdP"
+
+msgid ""
+"This is most likely a configuration problem on either the service "
+"provider or identity provider."
+msgstr ""
+"Esto es posiblemente un problema de configuración en el proveedor de "
+"servicios o en el proveedor de identidad."
+
+msgid "Configure Shibboleth 1.3 SP to work with SimpleSAMLphp IdP"
+msgstr "Configuración de Shibboleth 1.3 SP para trabajar con un IdP SimpleSAMLphp"
+
+msgid "Using the back and forward buttons in the web browser."
+msgstr "Usando los botones atrás y adelante de su navegador web."
+
+msgid ""
+"You are running an outdated version of SimpleSAMLphp. Please update to <a"
+" href=\"https://simplesamlphp.org/download\">the latest version</a> as soon as possible."
+msgstr ""
+"Su instalaci&oacute;n de SimpleSAMLphp est&aacute; desactualizada. Por "
+"favor, actualice a la <a href=\"https://simplesamlphp.org/download\">&uacute;ltima "
+"versi&oacute;n</a> lo antes posible."
+
+msgid "Metadata not found"
+msgstr "Metadatos no encontrados"
+
+msgid "Missing cookie"
+msgstr "No se encuentra cookie"
+
+msgid "Cookies may be disabled in the web browser."
+msgstr "Las cookies pueden estar deshabilitadas en el navegador"
+
+msgid "Opened the web browser with tabs saved from the previous session."
+msgstr "Abrió su navegador web con pestañas guardadas de la sesión previa."
+
+msgid "Tools"
+msgstr "Herramientas"
+
+msgid "Test configured authentication sources "
+msgstr "Probar las fuentes para la autentificación ya configuradas"
+
+msgid ""
+"You appear to have disabled cookies in your browser. Please check the "
+"settings in your browser, and try again."
+msgstr ""
+"Al parecer ha deshabilitado las cookies de su navegador. Por favor revise"
+" las preferencias de su navegador y reintente."
+
+msgid "Installing SimpleSAMLphp"
+msgstr "Instalación de SimpleSAMLphp"
+
+msgid "Deprecated"
+msgstr "Obsoleto"
+
+msgid ""
+"<strong>Congratulations</strong>, you have successfully installed "
+"SimpleSAMLphp. This is the start page of your installation, where you "
+"will find links to test examples, diagnostics, metadata and even links to"
+" relevant documentation."
+msgstr ""
+"<strong>&iexcl;Felicidades!</strong>, ha instalado SimpleSAMLphp con "
+"&eacute;xito. &Eacute;sta es la p&aacute;gina inicial de su "
+"instalaci&oacute;n, aqu&iacute; encontrar&aacute; enlaces a ejemplos de "
+"prueba, diagn&oacute;sticos, metadatos e incluso enlaces a la "
+"documentaci&oacute;n pertinente."
+
+msgid "This error may be caused by:"
+msgstr "Este error puede ser causado por"
+
+msgid ""
+"<strong>You are not using HTTPS</strong> - encrypted communication with "
+"the user. HTTP works fine for test purposes, but in a production "
+"environment, you should use HTTPS. [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-"
+"maintenance\">Read more about SimpleSAMLphp maintenance</a> ]"
+msgstr ""
+"<strong>No está usando HTTPS</strong> - comunicaciones cifradas con el "
+"usuario. HTTP funciona bien en entornos de evaluación, pero si va a "
+"emplearlo en producción, debería emplear HTTPS. [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-"
+"maintenance\">Lea más acerca del mantenimiento de SimpleSAMLphp </a> ]"
+
+msgid "Metadata"
+msgstr "Metadatos"
+
+msgid "Retry"
+msgstr "Reintentar"
+
+msgid "SimpleSAMLphp Maintenance and Configuration"
+msgstr "Mantenimento y configuración de SimpleSAMLphp"
+
+msgid "Diagnostics on hostname, port and protocol"
+msgstr "Diagnóstico sobre nombre de host, puerto y protocolo"
+
+msgid ""
+"If you are an user who received this error after following a link on a "
+"site, you should report this error to the owner of that site."
+msgstr ""
+"Si usted es un usuario que recibe este error luego de seguir un vínculo "
+"en un sitio, debe reportar el error al dueño del sitio."
+
+msgid "Using SimpleSAMLphp as an Identity Provider"
+msgstr "Empleo de SimpleSAMLphp como Identity Provider"
+
+msgid "Optional"
+msgstr "Opcional"
+
+msgid "Suggestions for resolving this problem:"
+msgstr "Sugerencias para resolver este problema"
+
+msgid ""
+"This SimpleSAMLphp thing is pretty cool, where can I read more about it? "
+"You can find more information about it at the <a "
+"href=\"https://simplesamlphp.org/\">SimpleSAMLphp web page </a> over at "
+"<a href=\"http://uninett.no\">UNINETT</a>."
+msgstr ""
+"&iexcl;Eh! Esto de SimpleSAMLphp es interesante, &iquest;d&oacute;nde "
+"puedo averiguar m&aacute;s? Puedes encontrar m&aacute;s "
+"informaci&oacute;n en la <a "
+"href=\"https://simplesamlphp.org/\">p&aacute;gina web de "
+"SimpleSAMLphp</a>, en <a href=\"http://uninett.no\">UNINETT</a>."
+
+msgid "Shibboleth 1.3 SP example - test logging in through your Shib IdP"
+msgstr ""
+"Ejemplo de SP empleando Shibboleth 1.3 - Prueba a acceder empleando tu "
+"IdP Shibboleth"
+
+msgid "Authentication"
+msgstr "Autenticación"
+
+msgid "SimpleSAMLphp installation page"
+msgstr "Página de instalación de SimpleSAMLphp"
+
+msgid "Show metadata"
+msgstr "Ver metadatos"
+
+msgid "SimpleSAMLphp as an IdP for Google Apps for Education"
+msgstr "SimpleSAMLphp como IdP para Google Apps for Education"
+
+msgid "State information lost"
+msgstr "Información de estado perdida"
+
+msgid "Hosted SAML 2.0 Identity Provider Metadata (automatically generated)"
+msgstr "Metadatos alojados del IdP SAML 2.0 (generados automáticamente)"
+
+msgid "OpenID Provider site - Alpha version (test code)"
+msgstr "Sitio del proveedor OpenID - Versión Alfa (código de prueba)"
+
+msgid "Required for Radius"
+msgstr "Necesario para RADIUS"
+
+msgid "We were unable to locate the metadata for the entity:"
+msgstr "Fue imposible localizar los metadatos para la entidad:"
+
+msgid "SAML 2.0 SP example - test logging in through your IdP"
+msgstr "Ejemplo de SP con SAML 2.0 - Prueba a acceder empleando tu IdP"
+
+msgid "Using SimpleSAMLphp as a Service Provider"
+msgstr "Empleo de SimpleSAMLphp como Service Provider"
+
+msgid ""
+"We have detected that there is only a few seconds since you last "
+"authenticated with this service provider, and therefore assume that there"
+" is a problem with this SP."
+msgstr ""
+"Se ha detectado que han transcurrido solo unos segundos desde que fue "
+"autenticado por última vez en este servicio, por lo que se asumirá que "
+"existe un problema con este SP."
+
+msgid "Recommended"
+msgstr "Recomendado"
+
+msgid ""
+"If you are a developer who is deploying a single sign-on solution, you "
+"have a problem with the metadata configuration. Verify that metadata is "
+"configured correctly on both the identity provider and service provider."
+msgstr ""
+"Si usted es un desarrollador que está desplegando una solución de inicio "
+"único, tiene un problema con la configuración de sus metadatos. Verifique"
+" que los metadatos están configurados correctamente en el proveedor de "
+"identidad y en el proveedor de servicios"
+
+msgid "SimpleSAMLphp Advanced Features"
+msgstr "Características avanzadas de SimpleSAMLphp"
+
+msgid "Too short interval between single sign on events."
+msgstr "Intervalo de tiempo muy corto entre eventos de sesión única."
+
+msgid "Checking your PHP installation"
+msgstr "Verificaci&oacute;n de su instalaci&oacute;n de PHP"
+
+msgid ""
+"The length of query parameters is limited by the PHP Suhosin extension. "
+"Please increase the suhosin.get.max_value_length option to at least 2048 "
+"bytes."
+msgstr ""
+"El número de parámetros de la petición está limitado por la extensión "
+"Suhosin de PHP. Por favor, incremente el valor de la opción "
+"suhosin.get.max_value_length a al menos 2048 bytes."
+
+msgid "Useful links for your installation"
+msgstr "Enlaces &uacute;tiles para su instalaci&oacute;n"
+
+msgid "Configuration"
+msgstr "Configuración"
+
+msgid "Hosted Shibboleth 1.3 Identity Provider Metadata (automatically generated)"
+msgstr "Metadatos alojados del IdP Shibooleth 1.3 (generados automáticamente)"
+
+msgid ""
+"<strong>The configuration uses the default secret salt</strong> - make "
+"sure you modify the default 'secretsalt' option in the simpleSAML "
+"configuration in production environments. [<a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-install\">Read"
+" more about SimpleSAMLphp configuration</a> ]"
+msgstr ""
+"<strong>Su configuraci&oacute;n est&aacute; usando el <em>salt</em> por "
+"defecto</strong>. Aseg&uacute;rese de modificar la opci&oacute;n de "
+"configuraci&oacute;n 'secretsalt' en entornos de producci&oacute;n. [<a "
+"href=\"https://simplesamlphp.org/docs/devel/simplesamlphp-install\">Leer "
+"m&aacute;s sobre la configuraci&oacute;n de SimpleSAMLphp</a>]"
+
+msgid "Login as administrator"
+msgstr "Entrar como administrador"
+
+msgid "Report this error"
+msgstr "Informar de este error"
+

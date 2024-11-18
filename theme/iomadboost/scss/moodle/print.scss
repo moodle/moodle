@@ -1,0 +1,12 @@
+@media print {
+    // Fix body margin for drawer in print mode.
+    body.drawer-open-left.jsenabled,
+    body.drawer-open-right.jsenabled {
+        margin: 0;
+    }
+
+    // Safari fix see: http://v4-alpha.getbootstrap.com/getting-started/browsers-devices/#printing.
+    .container {
+        width: auto;
+    }
+}

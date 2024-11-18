@@ -1,0 +1,84 @@
+{{!
+    @template local_iomad_learningpath/manage_page
+
+    Display learning path course list
+
+    Howard Miller 2018
+}}
+
+<h2>{{ path.name }}</h2>
+
+
+<div class="row">
+    <div class="col-sm-6">
+        <a href="editgroup.php?learningpath={{ path.id }}">
+            <i class="fa fa-plus fa-2x text-muted"></i>
+            <span class="h5 text-muted">{{# str }}addgroup, local_iomad_learningpath{{/ str }}</span>
+        </a>
+    </div>
+    <div class="col-sm-6">
+        <form class="form-inline">
+            <div class="form-group">
+                <label for="category">{{# str }}licenseprogram, block_iomad_company_admin {{/ str }}</label>
+                <select id="program" class="form-control">
+                    {{# programlicenses }}
+                        <option value="{{ id }}" {{ selected }}>{{ name }}</option>
+                    {{/ programlicenses }}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="coursefilter">{{# str }}filter, local_iomad_learningpath{{/ str }}</label>
+                <input id="coursefilter" class="form-control" type="text" name="coursefilter">
+            </div>
+            <div class="form-group">
+                <label for="category">{{# str }}category {{/ str }}</label>
+                <select id="category" class="form-control">
+                    {{# categories }}
+                        <option value="{{ id }}">{{ name }}</option>
+                    {{/ categories }}
+                </select>
+           </div>
+        </form>
+    </div>
+</div>
+
+<div class="row m-t-1 m-b-1">
+    <div class="col-sm-6">
+        <div class="card bg-light">
+            <div class="card-header">
+                {{# str }}coursesinpath, local_iomad_learningpath{{/ str }}<br />
+                <small>
+                    {{# str }}clicktoremove, local_iomad_learningpath{{/ str }}
+                </small>
+            </div>
+            <div class="card-body card-block">
+                <p class="card-text">
+                    {{# groups }}
+                        {{> local_iomad_learningpath/groupcard }}
+                    {{/ groups }}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="card bg-light">
+            <div class="card-header">
+                {{# str }}prospectivecourses, local_iomad_learningpath{{/ str }}<br />
+                <small>{{# str }}clicktoadd, local_iomad_learningpath{{/ str }}</small>
+            </div>
+            <div class="card-body card-block">
+                <p class="card-text">
+                    <div id="noprospective" class="alert alert-warning" style="display: none">
+                        {{# str }}noprospectivecourses, local_iomad_learningpath{{/ str }}
+                    </div>
+                    <ul id="prospectivelist">
+                    </ul>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    </div>
+</div>
+
+{{{ done }}}

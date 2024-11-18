@@ -1,0 +1,158 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: zh_Hant_TW\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consentAdmin:consentadmin:status_header}"
+msgstr "許可狀態"
+
+msgid "{consentAdmin:consentadmin:attributes_text}"
+msgstr "屬性"
+
+msgid "{consentAdmin:consentadmin:service_provider_header}"
+msgstr "服務提供者"
+
+msgid "{consentAdmin:consentadmin:removed}"
+msgstr "同意移除"
+
+msgid "{consentAdmin:consentadmin:consentadmin_header}"
+msgstr "管轄許可"
+
+msgid "{consentAdmin:consentadmin:show}"
+msgstr "顯示"
+
+msgid "{consentAdmin:consentadmin:attribute_org}"
+msgstr "組織"
+
+msgid "{consentAdmin:consentadmin:attribute_injected}"
+msgstr "加入屬性"
+
+msgid "{consentAdmin:consentadmin:show_hide_attributes}"
+msgstr "顯示/隱藏屬性"
+
+msgid "{consentAdmin:consentadmin:consentadmin_purpose}"
+msgstr "此項服務的目的為"
+
+msgid "{consentAdmin:consentadmin:hide}"
+msgstr "隱藏"
+
+msgid "{consentAdmin:consentadmin:sp_empty_description}"
+msgstr "(無描述)"
+
+msgid "{consentAdmin:consentadmin:service_providers_for}"
+msgstr "服務提供者的"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description2}"
+msgstr ""
+"<h3>在這刪除您的授權</h3> 取消勾選服務提供者對應的核取方塊 <h3>連結</h3> <ul> <li><a "
+"href=\"https://www.wayf.dk\">開始</a> </li> <li><a "
+"href=\"https://www.wayf.dk/index.php/en/about-wayf/faq-frequently-asked-"
+"questions\">說明</a> </li> </ul> "
+
+msgid "{consentAdmin:consentadmin:login}"
+msgstr "登入"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description1}"
+msgstr "這邊可以檢視及修改您同意的服務提供者。"
+
+msgid "{consentAdmin:consentadmin:updated}"
+msgstr "同意更新"
+
+msgid "{consentAdmin:consentadmin:unknown}"
+msgstr "未知..."
+
+msgid "{consentAdmin:consentadmin:added}"
+msgstr "同意新增"
+
+msgid "{consentAdmin:consentadmin:attribute_id}"
+msgstr "身分"
+
+msgid "Injected attribut"
+msgstr "加入屬性"
+
+msgid "Show"
+msgstr "顯示"
+
+msgid "Consent Added"
+msgstr "同意新增"
+
+msgid "Consent Administration"
+msgstr "管轄許可"
+
+msgid "Here you can view and edit your consent for the Service Providers."
+msgstr "這邊可以檢視及修改您同意的服務提供者。"
+
+msgid "Unknown ..."
+msgstr "未知..."
+
+msgid "Identity"
+msgstr "身分"
+
+msgid "The purpose of the service is"
+msgstr "此項服務的目的為"
+
+msgid "Hide"
+msgstr "隱藏"
+
+msgid "Service Provider"
+msgstr "服務提供者"
+
+msgid "Service Providers for"
+msgstr "服務提供者的"
+
+msgid "login"
+msgstr "登入"
+
+msgid "(name not specified)"
+msgstr "(未定義名稱)"
+
+msgid "Consent Updated"
+msgstr "同意更新"
+
+msgid "Consent status"
+msgstr "許可狀態"
+
+msgid "(no description)"
+msgstr "(無描述)"
+
+msgid "attributes"
+msgstr "屬性"
+
+msgid ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+msgstr ""
+"<h3>在這刪除您的授權</h3> 取消勾選服務提供者對應的核取方塊 <h3>連結</h3> <ul> <li><a "
+"href=\"https://www.wayf.dk\">開始</a> </li> <li><a "
+"href=\"https://www.wayf.dk/index.php/en/about-wayf/faq-frequently-asked-"
+"questions\">說明</a> </li> </ul> "
+
+msgid "Consent Removed"
+msgstr "同意移除"
+
+msgid "show/hide attributes"
+msgstr "顯示/隱藏屬性"
+
+msgid "Organisation"
+msgstr "組織"
+
