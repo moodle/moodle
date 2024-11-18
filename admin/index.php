@@ -552,7 +552,7 @@ if (!$outagelessupgrade) {
           
             $pluginman = core_plugin_manager::instance();
           
-            $output = $PAGE->get_renderer(component: 'core', 'admin');
+            $output = $PAGE->get_renderer('core', 'admin');
             // echo 'stexem';
             // die();
             if (empty($confirmrelease)) {
