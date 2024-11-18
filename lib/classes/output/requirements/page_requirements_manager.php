@@ -57,6 +57,7 @@ use stdClass;
  * @since Moodle 2.0
  * @package core
  * @category output
+ * stexem
  */
 class page_requirements_manager
 {
