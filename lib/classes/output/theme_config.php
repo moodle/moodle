@@ -2163,7 +2163,8 @@ class theme_config {
             $classname = $this->rendererfactory;
             $this->rf = new $classname($this);
         }
-
+     
+        // stexem
         return $this->rf->get_renderer($page, $component, $subtype, $target);
     }
 

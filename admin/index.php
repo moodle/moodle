@@ -253,7 +253,7 @@ if (!core_tables_exist()) {
         die();
     }
     unset($failed);
-
+   
     //TODO: add a page with list of non-standard plugins here
 
     $strdatabasesetup = get_string('databasesetup');
@@ -305,17 +305,17 @@ if (!$outagelessupgrade) {
         purge_all_caches();
         redirect(new moodle_url($PAGE->url), 'Config cache inconsistency detected, resetting caches...');
     }
-
+  
     if (!$cache && $version > $CFG->version && !$outagelessupgrade) {  // Upgrade.
-
+        
         $PAGE->set_url(new moodle_url($PAGE->url, array(
             'confirmupgrade' => $confirmupgrade,
             'confirmrelease' => $confirmrelease,
             'confirmplugincheck' => $confirmplugins,
         )));
-
+   
         check_upgrade_key($upgradekeyhash);
-
+      
         // Warning about upgrading a test site.
         $testsite = false;
         if (defined('BEHAT_SITE_RUNNING')) {
@@ -326,7 +326,7 @@ if (!$outagelessupgrade) {
             // Store the themerev to restore after purging caches.
             $themerev = $CFG->themerev;
         }
-
+       
         // We purge all of MUC's caches here.
         // Caches are disabled for upgrade by CACHE_DISABLE_ALL so we must set the first arg to true.
         // This ensures a real config object is loaded and the stores will be purged.
@@ -528,7 +528,7 @@ if (!$outagelessupgrade) {
         // Better stop here, we can not continue with plugin upgrades or anything else.
         throw new moodle_exception('downgradedcore', 'error', new moodle_url('/admin/'));
     }
-
+   
     // Updated human-readable release version if necessary.
     if (!$cache && $release <> $CFG->release ) {  // Update the release version.
         set_config('release', $release);
@@ -544,15 +544,17 @@ if (!$outagelessupgrade) {
             'confirmrelease' => $confirmrelease,
             'confirmplugincheck' => $confirmplugins,
         )));
-
+       
         check_upgrade_key($upgradekeyhash);
 
         if (!$PAGE->headerprinted) {
             // Means core upgrade or installation was not already done.
-
+          
             $pluginman = core_plugin_manager::instance();
-            $output = $PAGE->get_renderer('core', 'admin');
-
+          
+            $output = $PAGE->get_renderer(component: 'core', 'admin');
+            // echo 'stexem';
+            // die();
             if (empty($confirmrelease)) {
                 require_once($CFG->libdir . '/environmentlib.php');
 

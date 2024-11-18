@@ -480,6 +480,17 @@ class page_requirements_manager {
             debugging('The question/qengine.js has been deprecated. ' .
                 'Please use core_question/question_engine', DEBUG_DEVELOPER);
         }
+
+        // echo $url;
+        // die();
+        // stexem
+        if($url == 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-MML-AM_CHTML' 
+            || $url == 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?delayStartupUntil=configured'){
+            return;
+        }
+        // echo 'stexem';
+        //  echo $url;
+        // die();
         $url = $this->js_fix_url($url);
         $where = $inhead ? 'head' : 'footer';
         $this->jsincludes[$where][$url->out()] = $url;

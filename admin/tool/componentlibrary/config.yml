@@ -71,3 +71,5 @@ params:
   cdn:
     # See https://www.srihash.org for info on how to generate the hashes
     popper:           "https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    mathjax: "https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-MML-AM_CHTML"
+    # stexem

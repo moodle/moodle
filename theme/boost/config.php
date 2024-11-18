@@ -184,3 +184,9 @@ $THEME->usescourseindex = true;
 $THEME->activityheaderconfig = [
     'notitle' => true
 ];
+
+// if (defined('MOODLE_INTERNAL')) {
+    // global $PAGE;
+    // $PAGE->requires->js(new moodle_url('https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-MML-AM_CHTML'), true);
+// }
+
