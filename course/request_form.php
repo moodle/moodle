@@ -58,12 +58,14 @@ class course_request_form extends moodleform {
 
         $mform->addElement('header','coursedetails', get_string('courserequestdetails'));
 
-        $mform->addElement('text', 'fullname', get_string('fullnamecourse'), 'maxlength="254" size="50"');
+        $mform->addElement('text', 'fullname', get_string('fullnamecourse'),
+            ['maxlength' => \core_course\constants::FULLNAME_MAXIMUM_LENGTH, 'size' => 50]);
         $mform->addHelpButton('fullname', 'fullnamecourse');
         $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
         $mform->setType('fullname', PARAM_TEXT);
 
-        $mform->addElement('text', 'shortname', get_string('shortnamecourse'), 'maxlength="100" size="20"');
+        $mform->addElement('text', 'shortname', get_string('shortnamecourse'),
+            ['maxlength' => \core_course\constants::SHORTNAME_MAXIMUM_LENGTH, 'size' => 20]);
         $mform->addHelpButton('shortname', 'shortnamecourse');
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_TEXT);

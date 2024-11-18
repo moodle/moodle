@@ -14,16 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_course;
+
 /**
- * Defines the version.
+ * Constants related to courses.
  *
- * @package    tool_recyclebin
- * @copyright  2016 Skylar Kelty <S.Kelty@kent.ac.uk>
+ * @package    core_course
+ * @copyright The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+abstract class constants {
+    /** @var int the length of the course.shortname field. */
+    public const FULLNAME_MAXIMUM_LENGTH = 1333;
 
-defined('MOODLE_INTERNAL') || die();
+    /** @var int the length of the course.shortname field. */
+    public const SHORTNAME_MAXIMUM_LENGTH = 255;
 
-$plugin->version   = 2024111500; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2024100100; // Requires this Moodle version.
-$plugin->component = 'tool_recyclebin'; // Full name of the plugin (used for diagnostics).
+}
