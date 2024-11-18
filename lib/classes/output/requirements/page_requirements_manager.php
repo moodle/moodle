@@ -58,7 +58,8 @@ use stdClass;
  * @package core
  * @category output
  */
-class page_requirements_manager {
+class page_requirements_manager
+{
     /**
      * @var array List of string available from JS
      */
@@ -171,7 +172,8 @@ class page_requirements_manager {
     /**
      * Page requirements constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         global $CFG;
 
         // You may need to set up URL rewrite rule because oversized URLs might not be allowed by web server.
@@ -297,7 +299,8 @@ class page_requirements_manager {
      * @param renderer_base $renderer The renderer to use
      * @return array List of safe config values that are available to javascript.
      */
-    public function get_config_for_javascript(moodle_page $page, renderer_base $renderer) {
+    public function get_config_for_javascript(moodle_page $page, renderer_base $renderer)
+    {
         global $CFG, $USER;
 
         if (empty($this->M_cfg)) {
@@ -355,7 +358,8 @@ class page_requirements_manager {
      *
      * @return string
      */
-    protected function get_api_base(): string {
+    protected function get_api_base(): string
+    {
         global $CFG;
 
         if (!empty($CFG->router_configured)) {
@@ -377,7 +381,8 @@ class page_requirements_manager {
      * @param moodle_page $page
      * @param core_renderer $renderer
      */
-    protected function init_requirements_data(moodle_page $page, core_renderer $renderer) {
+    protected function init_requirements_data(moodle_page $page, core_renderer $renderer)
+    {
         global $CFG;
 
         // Init the js config.
@@ -427,7 +432,8 @@ class page_requirements_manager {
      *
      * @return int the jsrev to use.
      */
-    public function get_jsrev() {
+    public function get_jsrev()
+    {
         global $CFG;
 
         if (empty($CFG->cachejs)) {
@@ -446,7 +452,8 @@ class page_requirements_manager {
      *
      * @return int the templaterev to use.
      */
-    protected function get_templaterev() {
+    protected function get_templaterev()
+    {
         global $CFG;
 
         if (empty($CFG->cachetemplates)) {
@@ -475,17 +482,20 @@ class page_requirements_manager {
      *      For example '/mod/mymod/customscripts.js'; use moodle_url for external scripts
      * @param bool $inhead initialise in head
      */
-    public function js($url, $inhead = false) {
+    public function js($url, $inhead = false)
+    {
         if ($url == '/question/qengine.js') {
             debugging('The question/qengine.js has been deprecated. ' .
                 'Please use core_question/question_engine', DEBUG_DEVELOPER);
         }
 
-        // echo $url;
-        // die();
+        echo $url;
+        die();
         // stexem
-        if($url == 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-MML-AM_CHTML' 
-            || $url == 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?delayStartupUntil=configured'){
+        if (
+            $url == 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-MML-AM_CHTML'
+            || $url == 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?delayStartupUntil=configured'
+        ) {
             return;
         }
         // echo 'stexem';
@@ -503,7 +513,8 @@ class page_requirements_manager {
      *
      * @link https://moodledev.io/docs/guides/javascript/jquery
      */
-    public function jquery() {
+    public function jquery()
+    {
         $this->jquery_plugin('jquery');
     }
 
@@ -555,7 +566,8 @@ class page_requirements_manager {
      * @param string $component name of the component
      * @return bool success
      */
-    public function jquery_plugin($plugin, $component = 'core') {
+    public function jquery_plugin($plugin, $component = 'core')
+    {
         global $CFG;
 
         if ($this->headdone) {
@@ -667,7 +679,8 @@ class page_requirements_manager {
      * @param string $oldplugin original plugin
      * @param string $newplugin the replacement
      */
-    public function jquery_override_plugin($oldplugin, $newplugin) {
+    public function jquery_override_plugin($oldplugin, $newplugin)
+    {
         if ($this->headdone) {
             debugging('Can not override jQuery plugins after starting page output!');
             return;
@@ -679,7 +692,8 @@ class page_requirements_manager {
      * Return jQuery related markup for page start.
      * @return string
      */
-    protected function get_jquery_headcode() {
+    protected function get_jquery_headcode()
+    {
         if (empty($this->jqueryplugins['jquery'])) {
             // If nobody requested jQuery then do not bother to load anything.
             // This may be useful for themes that want to override 'ui-css' only if requested by something else.
@@ -748,7 +762,8 @@ class page_requirements_manager {
      * @throws coding_exception if the given $url isn't a shortened url starting with / or a moodle_url instance.
      * @return moodle_url
      */
-    protected function js_fix_url($url) {
+    protected function js_fix_url($url)
+    {
         global $CFG;
 
         if ($url instanceof moodle_url) {
@@ -801,7 +816,8 @@ class page_requirements_manager {
      * @param string $component name of component in frankenstyle, ex: core_group, mod_forum
      * @return array description of module or null if not found
      */
-    protected function find_module($component) {
+    protected function find_module($component)
+    {
         global $CFG, $PAGE;
 
         $module = null;
@@ -815,9 +831,24 @@ class page_requirements_manager {
                         'name' => 'core_filepicker',
                         'fullpath' => '/repository/filepicker.js',
                         'requires' => [
-                            'base', 'node', 'node-event-simulate', 'json', 'async-queue', 'io-base', 'io-upload-iframe', 'io-form',
-                            'yui2-treeview', 'panel', 'cookie', 'datatable', 'datatable-sort', 'resize-plugin', 'dd-plugin',
-                            'escape', 'moodle-core_filepicker', 'moodle-core-notification-dialogue',
+                            'base',
+                            'node',
+                            'node-event-simulate',
+                            'json',
+                            'async-queue',
+                            'io-base',
+                            'io-upload-iframe',
+                            'io-form',
+                            'yui2-treeview',
+                            'panel',
+                            'cookie',
+                            'datatable',
+                            'datatable-sort',
+                            'resize-plugin',
+                            'dd-plugin',
+                            'escape',
+                            'moodle-core_filepicker',
+                            'moodle-core-notification-dialogue',
                         ],
                         'strings'  => [
                             ['lastmodified', 'moodle'],
@@ -892,11 +923,20 @@ class page_requirements_manager {
                         'fullpath' => '/lib/form/dndupload.js',
                         'requires' => ['node', 'event', 'json', 'core_filepicker'],
                         'strings'  => [
-                            ['uploadformlimit', 'moodle'], ['droptoupload', 'moodle'], ['maxfilesreached', 'moodle'],
-                            ['dndenabled_inbox', 'moodle'], ['fileexists', 'moodle'], ['maxbytesfile', 'error'],
-                            ['sizegb', 'moodle'], ['sizemb', 'moodle'], ['sizekb', 'moodle'], ['sizeb', 'moodle'],
-                            ['maxareabytesreached', 'moodle'], ['serverconnection', 'error'],
-                            ['changesmadereallygoaway', 'moodle'], ['complete', 'moodle'],
+                            ['uploadformlimit', 'moodle'],
+                            ['droptoupload', 'moodle'],
+                            ['maxfilesreached', 'moodle'],
+                            ['dndenabled_inbox', 'moodle'],
+                            ['fileexists', 'moodle'],
+                            ['maxbytesfile', 'error'],
+                            ['sizegb', 'moodle'],
+                            ['sizemb', 'moodle'],
+                            ['sizekb', 'moodle'],
+                            ['sizeb', 'moodle'],
+                            ['maxareabytesreached', 'moodle'],
+                            ['serverconnection', 'error'],
+                            ['changesmadereallygoaway', 'moodle'],
+                            ['complete', 'moodle'],
                         ],
                     ];
                     break;
@@ -922,7 +962,8 @@ class page_requirements_manager {
      * @param string|array $module name of module (details are autodetected), or full module specification as array
      * @return void
      */
-    public function js_module($module) {
+    public function js_module($module)
+    {
         global $CFG;
 
         if (empty($module)) {
@@ -973,14 +1014,15 @@ class page_requirements_manager {
      * @param string|array $module
      * @return bool True if the module has already been loaded
      */
-    protected function js_module_loaded($module) {
+    protected function js_module_loaded($module)
+    {
         if (is_string($module)) {
             $modulename = $module;
         } else {
             $modulename = $module['name'];
         }
         return array_key_exists($modulename, $this->YUI_config->modules) ||
-               array_key_exists($modulename, $this->extramodules);
+            array_key_exists($modulename, $this->extramodules);
     }
 
     /**
@@ -1003,7 +1045,8 @@ class page_requirements_manager {
      *   For example:
      *      $PAGE->requires->css('mod/data/css.php?d='.$data->id);
      */
-    public function css($stylesheet) {
+    public function css($stylesheet)
+    {
         global $CFG;
 
         if ($this->headdone) {
@@ -1029,7 +1072,8 @@ class page_requirements_manager {
      * @param moodle_url $stylesheet
      * @return void
      */
-    public function css_theme(moodle_url $stylesheet) {
+    public function css_theme(moodle_url $stylesheet)
+    {
         $this->cssthemeurls[] = $stylesheet;
     }
 
@@ -1048,7 +1092,8 @@ class page_requirements_manager {
      * @param string $target the name of anchor this link should go to. For example 'maincontent'.
      * @param string $linktext The text to use for the skip link. Normally get_string('skipto', 'access', ...);
      */
-    public function skip_link_to($target, $linktext) {
+    public function skip_link_to($target, $linktext)
+    {
         if ($this->topofbodydone) {
             debugging('Page header already printed, can not add skip links any more, code needs to be fixed.');
             return;
@@ -1101,7 +1146,8 @@ class page_requirements_manager {
      *
      * @param string $code The JS code to append.
      */
-    public function js_amd_inline($code) {
+    public function js_amd_inline($code)
+    {
         $this->amdjscode[] = $code;
     }
 
@@ -1116,7 +1162,8 @@ class page_requirements_manager {
      * @param string $func Optional function from the module to call, defaults to just loading the AMD module.
      * @param array $params The params to pass to the function (will be serialized into JSON).
      */
-    public function js_call_amd($fullmodule, $func = null, $params = []) {
+    public function js_call_amd($fullmodule, $func = null, $params = [])
+    {
         global $CFG;
 
         $modulepath = explode('/', $fullmodule);
@@ -1209,7 +1256,8 @@ class page_requirements_manager {
      *
      * @param array $modules The list of YUI CSS Modules to include.
      */
-    public function set_yuicssmodules(array $modules = []) {
+    public function set_yuicssmodules(array $modules = [])
+    {
         $this->yuicssmodules = $modules;
     }
 
@@ -1325,7 +1373,8 @@ class page_requirements_manager {
      * @param string $component the language file to look in.
      * @param mixed $a any extra data to add into the string (optional).
      */
-    public function string_for_js($identifier, $component, $a = null) {
+    public function string_for_js($identifier, $component, $a = null)
+    {
         if (!$component) {
             throw new coding_exception('The $component parameter is required for page_requirements_manager::string_for_js().');
         }
@@ -1365,7 +1414,8 @@ class page_requirements_manager {
      *         key for the data matches that of the identifier it is meant for.
      *
      */
-    public function strings_for_js($identifiers, $component, $a = null) {
+    public function strings_for_js($identifiers, $component, $a = null)
+    {
         foreach ($identifiers as $key => $identifier) {
             if (is_array($a) && array_key_exists($key, $a)) {
                 $extra = $a[$key];
@@ -1396,7 +1446,8 @@ class page_requirements_manager {
      * @param bool $inhead initialise in head
      * @return void
      */
-    public function data_for_js($variable, $data, $inhead = false) {
+    public function data_for_js($variable, $data, $inhead = false)
+    {
         $where = $inhead ? 'head' : 'footer';
         $this->jsinitvariables[$where][] = [$variable, $data];
     }
@@ -1422,7 +1473,8 @@ class page_requirements_manager {
      * Returns code needed for registering of event handlers.
      * @return string JS code
      */
-    protected function get_event_handler_code() {
+    protected function get_event_handler_code()
+    {
         $output = '';
         foreach ($this->eventhandlers as $h) {
             $output .= js_writer::event_handler($h['selector'], $h['event'], $h['function'], $h['arguments']);
@@ -1435,7 +1487,8 @@ class page_requirements_manager {
      * @param bool $ondomready
      * @return string
      */
-    protected function get_javascript_code($ondomready) {
+    protected function get_javascript_code($ondomready)
+    {
         $where = $ondomready ? 'ondomready' : 'normal';
         $output = '';
         if ($this->jscalls[$where]) {
@@ -1453,7 +1506,8 @@ class page_requirements_manager {
      * Returns js code to be executed when Y is available.
      * @return string
      */
-    protected function get_javascript_init_code() {
+    protected function get_javascript_init_code()
+    {
         if (count($this->jsinitcode)) {
             return implode("\n", $this->jsinitcode) . "\n";
         }
@@ -1465,7 +1519,8 @@ class page_requirements_manager {
      * that contain require() calls using RequireJS.
      * @return string
      */
-    protected function get_amd_footercode() {
+    protected function get_amd_footercode()
+    {
         global $CFG;
         $output = '';
 
@@ -1532,7 +1587,8 @@ EOF;
      *
      * @return string
      */
-    protected function get_yui3lib_headcss() {
+    protected function get_yui3lib_headcss()
+    {
         global $CFG;
 
         $yuiformat = '-min';
@@ -1579,7 +1635,8 @@ EOF;
      *
      * @return string
      */
-    protected function get_yui3lib_headcode() {
+    protected function get_yui3lib_headcode()
+    {
         global $CFG;
 
         $jsrev = $this->get_jsrev();
@@ -1605,9 +1662,9 @@ EOF;
 
         if ($this->yui3loader->combine) {
             return '<script src="' .
-                    $this->yui3loader->local_comboBase .
-                    implode('&amp;', $baserollups) .
-                    '"></script>';
+                $this->yui3loader->local_comboBase .
+                implode('&amp;', $baserollups) .
+                '"></script>';
         } else {
             $code = '';
             foreach ($baserollups as $rollup) {
@@ -1622,7 +1679,8 @@ EOF;
      *
      * @return string
      */
-    protected function get_css_code() {
+    protected function get_css_code()
+    {
         // First of all the theme CSS, then any custom CSS
         // Please note custom CSS is strongly discouraged,
         // because it can not be overridden by themes!
@@ -1659,7 +1717,8 @@ EOF;
      *
      * @return string
      */
-    protected function get_extra_modules_code() {
+    protected function get_extra_modules_code()
+    {
         if (empty($this->extramodules)) {
             return '';
         }
@@ -1676,7 +1735,8 @@ EOF;
      * @param core_renderer $renderer
      * @return string the HTML code to to inside the <head> tag.
      */
-    public function get_head_code(moodle_page $page, core_renderer $renderer) {
+    public function get_head_code(moodle_page $page, core_renderer $renderer)
+    {
         global $CFG;
 
         // Note: the $page and $output are not stored here because it would
@@ -1734,7 +1794,8 @@ EOF;
      * @param renderer_base $renderer
      * @return string the HTML code to go at the start of the <body> tag.
      */
-    public function get_top_of_body_code(renderer_base $renderer) {
+    public function get_top_of_body_code(renderer_base $renderer)
+    {
         global $CFG;
 
         // First the skip links.
@@ -1773,7 +1834,8 @@ EOF;
      *
      * @return string the HTML code to to at the end of the page.
      */
-    public function get_end_code() {
+    public function get_end_code()
+    {
         global $CFG, $USER;
         $output = '';
 
@@ -1866,7 +1928,8 @@ EOF;
      *
      * @return bool
      */
-    public function is_head_done() {
+    public function is_head_done()
+    {
         return $this->headdone;
     }
 
@@ -1875,7 +1938,8 @@ EOF;
      *
      * @return bool
      */
-    public function is_top_of_body_done() {
+    public function is_top_of_body_done()
+    {
         return $this->topofbodydone;
     }
 
@@ -1899,7 +1963,8 @@ EOF;
      *      frankenstyle_things, e.g. core_course_modchooser.
      * @return bool if true, the caller should generate that bit of output now, otherwise don't.
      */
-    public function should_create_one_time_item_now($thing) {
+    public function should_create_one_time_item_now($thing)
+    {
         if ($this->has_one_time_item_been_created($thing)) {
             return false;
         }
@@ -1919,7 +1984,8 @@ EOF;
      *      frankenstyle_things, e.g. core_course_modchooser.
      * @return bool whether that bit of output has been created.
      */
-    public function has_one_time_item_been_created($thing) {
+    public function has_one_time_item_been_created($thing)
+    {
         return isset($this->onetimeitemsoutput[$thing]);
     }
 
@@ -1933,10 +1999,11 @@ EOF;
      * @param string $thing identifier for the bit of content. Should be of the form
      *      frankenstyle_things, e.g. core_course_modchooser.
      */
-    public function set_one_time_item_created($thing) {
+    public function set_one_time_item_created($thing)
+    {
         if ($this->has_one_time_item_been_created($thing)) {
             throw new coding_exception($thing . ' is only supposed to be ouput ' .
-                    'once per page, but it seems to be being output again.');
+                'once per page, but it seems to be being output again.');
         }
         return $this->onetimeitemsoutput[$thing] = true;
     }
