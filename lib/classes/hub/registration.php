@@ -39,14 +39,31 @@ use iomad;
  * @copyright  2017 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class registration {
+class registration
+{
 
     /** @var array Fields used in a site registration form.
      * IMPORTANT: any new fields with non-empty defaults have to be added to CONFIRM_NEW_FIELDS */
-    const FORM_FIELDS = ['policyagreed', 'language', 'countrycode', 'privacy',
-        'contactemail', 'emailalert', 'emailalertemail', 'commnews', 'commnewsemail',
-        'contactname', 'name', 'description', 'imageurl', 'contactphone', 'regioncode',
-        'geolocation', 'street', 'organisationtype'];
+    const FORM_FIELDS = [
+        'policyagreed',
+        'language',
+        'countrycode',
+        'privacy',
+        'contactemail',
+        'emailalert',
+        'emailalertemail',
+        'commnews',
+        'commnewsemail',
+        'contactname',
+        'name',
+        'description',
+        'imageurl',
+        'contactphone',
+        'regioncode',
+        'geolocation',
+        'street',
+        'organisationtype'
+    ];
 
     /** @var array List of new FORM_FIELDS or siteinfo fields added indexed by the version when they were added.
      * If site was already registered, admin will be promted to confirm new registration data manually. Until registration is manually confirmed,
@@ -56,7 +73,10 @@ class registration {
     const CONFIRM_NEW_FIELDS = [
         2017092200 => [
             'commnews', // Receive communication news. This was added in 3.4 and is "On" by default. Admin must confirm or opt-out.
-            'mobileservicesenabled', 'mobilenotificationsenabled', 'registereduserdevices', 'registeredactiveuserdevices' // Mobile stats added in 3.4.
+            'mobileservicesenabled',
+            'mobilenotificationsenabled',
+            'registereduserdevices',
+            'registeredactiveuserdevices' // Mobile stats added in 3.4.
         ],
         // Analytics stats added in Moodle 3.7.
         2019022200 => ['analyticsenabledmodels', 'analyticspredictions', 'analyticsactions', 'analyticsactionsnotuseful'],
@@ -88,7 +108,8 @@ class registration {
      * @param bool $confirmed
      * @return stdClass|null
      */
-    protected static function get_registration($confirmed = true) {
+    protected static function get_registration($confirmed = true)
+    {
         global $DB;
 
         if (self::$registration === null) {
@@ -108,7 +129,8 @@ class registration {
      * @return stdClass
      * @throws \moodle_exception
      */
-    public static function require_registration() {
+    public static function require_registration()
+    {
         if ($registration = self::get_registration()) {
             return $registration;
         }
@@ -124,7 +146,8 @@ class registration {
      *
      * @return bool
      */
-    public static function is_registered() {
+    public static function is_registered()
+    {
         return self::get_registration() ? true : false;
     }
 
@@ -135,7 +158,8 @@ class registration {
      * @return null
      * @throws moodle_exception
      */
-    public static function get_token($strictness = IGNORE_MISSING) {
+    public static function get_token($strictness = IGNORE_MISSING)
+    {
         if ($strictness == MUST_EXIST) {
             $registration = self::require_registration();
         } else if (!$registration = self::get_registration()) {
@@ -149,7 +173,8 @@ class registration {
      *
      * @return int|null timestamp or null if site is not registered
      */
-    public static function get_last_updated() {
+    public static function get_last_updated()
+    {
         if ($registration = self::get_registration()) {
             return $registration->timemodified;
         }
@@ -162,14 +187,15 @@ class registration {
      * @param array $defaults default values for inputs in the registration form (if site was never registered before)
      * @return array site info
      */
-    public static function get_site_info($defaults = []) {
+    public static function get_site_info($defaults = [])
+    {
         global $CFG, $DB;
         require_once($CFG->libdir . '/badgeslib.php');
         require_once($CFG->dirroot . "/course/lib.php");
 
         $siteinfo = array();
         foreach (self::FORM_FIELDS as $field) {
-            $siteinfo[$field] = get_config('hub', 'site_'.$field);
+            $siteinfo[$field] = get_config('hub', 'site_' . $field);
             if ($siteinfo[$field] === false) {
                 $siteinfo[$field] = array_key_exists($field, $defaults) ? $defaults[$field] : null;
             }
@@ -238,7 +264,8 @@ class registration {
      * @param array $siteinfo result of get_site_info()
      * @return string
      */
-    public static function get_stats_summary($siteinfo) {
+    public static function get_stats_summary($siteinfo)
+    {
         $fieldsneedconfirm = self::get_new_registration_fields();
         $summary = html_writer::tag('p', get_string('sendfollowinginfo_help', 'hub')) .
             html_writer::start_tag('ul');
@@ -265,12 +292,21 @@ class registration {
             'resources' => get_string('resourcesnumber', 'hub', $siteinfo['resources']),
             'badges' => get_string('badgesnumber', 'hub', $siteinfo['badges']),
             'issuedbadges' => get_string('issuedbadgesnumber', 'hub', $siteinfo['issuedbadges']),
-            'participantnumberaverage' => get_string('participantnumberaverage', 'hub',
-                format_float($siteinfo['participantnumberaverage'], 2)),
-            'activeparticipantnumberaverage' => get_string('activeparticipantnumberaverage', 'hub',
-                format_float($siteinfo['activeparticipantnumberaverage'], 2)),
-            'modulenumberaverage' => get_string('modulenumberaverage', 'hub',
-                format_float($siteinfo['modulenumberaverage'], 2)),
+            'participantnumberaverage' => get_string(
+                'participantnumberaverage',
+                'hub',
+                format_float($siteinfo['participantnumberaverage'], 2)
+            ),
+            'activeparticipantnumberaverage' => get_string(
+                'activeparticipantnumberaverage',
+                'hub',
+                format_float($siteinfo['activeparticipantnumberaverage'], 2)
+            ),
+            'modulenumberaverage' => get_string(
+                'modulenumberaverage',
+                'hub',
+                format_float($siteinfo['modulenumberaverage'], 2)
+            ),
             'mobileservicesenabled' => get_string('mobileservicesenabled', 'hub', $mobileservicesenabled),
             'mobilenotificationsenabled' => get_string('mobilenotificationsenabled', 'hub', $mobilenotificationsenabled),
             'registereduserdevices' => get_string('registereduserdevices', 'hub', $siteinfo['registereduserdevices']),
@@ -300,7 +336,8 @@ class registration {
      *
      * @param stdClass $formdata data from {@link site_registration_form}
      */
-    public static function save_site_info($formdata) {
+    public static function save_site_info($formdata)
+    {
         foreach (self::FORM_FIELDS as $field) {
             set_config('site_' . $field, $formdata->$field, 'hub');
         }
@@ -312,7 +349,8 @@ class registration {
     /**
      * Updates site registration when "Update reigstration" button is clicked by admin
      */
-    public static function update_manual() {
+    public static function update_manual()
+    {
         global $DB;
 
         if (!$registration = self::get_registration()) {
@@ -328,13 +366,17 @@ class registration {
                 // proceed to site registration. This method will redirect away.
                 self::register('');
             }
-            \core\notification::add(get_string('errorregistrationupdate', 'hub', $e->getMessage()),
-                \core\output\notification::NOTIFY_ERROR);
+            \core\notification::add(
+                get_string('errorregistrationupdate', 'hub', $e->getMessage()),
+                \core\output\notification::NOTIFY_ERROR
+            );
             return false;
         }
         $DB->update_record('registration_hubs', ['id' => $registration->id, 'timemodified' => time()]);
-        \core\notification::add(get_string('siteregistrationupdated', 'hub'),
-            \core\output\notification::NOTIFY_SUCCESS);
+        \core\notification::add(
+            get_string('siteregistrationupdated', 'hub'),
+            \core\output\notification::NOTIFY_SUCCESS
+        );
         self::$registration = null;
         return true;
     }
@@ -344,7 +386,8 @@ class registration {
      *
      * @throws moodle_exception
      */
-    public static function update_cron() {
+    public static function update_cron()
+    {
         global $DB;
 
         if (!$registration = self::get_registration()) {
@@ -372,7 +415,8 @@ class registration {
      * @param string $hubname
      * @throws moodle_exception
      */
-    public static function confirm_registration($token, $newtoken, $hubname) {
+    public static function confirm_registration($token, $newtoken, $hubname)
+    {
         global $DB;
 
         $registration = self::get_registration(false);
@@ -407,7 +451,8 @@ class registration {
      * Retrieve the options for site privacy form element to use in registration form
      * @return array
      */
-    public static function site_privacy_options() {
+    public static function site_privacy_options()
+    {
         return [
             self::HUB_SITENOTPUBLISHED => get_string('siteprivacynotpublished', 'hub'),
             self::HUB_SITENAMEPUBLISHED => get_string('siteprivacypublished', 'hub'),
@@ -422,7 +467,8 @@ class registration {
      *
      * @return array
      */
-    public static function get_site_organisation_type_options(): array {
+    public static function get_site_organisation_type_options(): array
+    {
         return [
             1 => get_string('siteorganisationtype:wholeuniversity', 'hub'),
             2 => get_string('siteorganisationtype:universitydepartment', 'hub'),
@@ -456,7 +502,8 @@ class registration {
      * @param string $returnurl
      * @throws \coding_exception
      */
-    public static function register($returnurl) {
+    public static function register($returnurl)
+    {
         global $DB, $SESSION;
 
         if (self::is_registered()) {
@@ -483,8 +530,10 @@ class registration {
         // The most conservative limit for the redirect URL length is 2000 characters. Only pass parameters before
         // we reach this limit. The next registration update will update all fields.
         // We will also update registration after we receive confirmation from moodle.net.
-        $url = new moodle_url(HUB_MOODLEORGHUBURL . '/local/hub/siteregistration.php',
-            ['token' => $hub->token, 'url' => $params['url']]);
+        $url = new moodle_url(
+            HUB_MOODLEORGHUBURL . '/local/hub/siteregistration.php',
+            ['token' => $hub->token, 'url' => $params['url']]
+        );
         foreach ($params as $key => $value) {
             if (strlen($url->out(false, [$key => $value])) > 2000) {
                 break;
@@ -506,7 +555,8 @@ class registration {
      * @param bool $unpublishalluploadedcourses
      * @return bool
      */
-    public static function unregister($unpublishalladvertisedcourses, $unpublishalluploadedcourses) {
+    public static function unregister($unpublishalladvertisedcourses, $unpublishalluploadedcourses)
+    {
         global $DB;
 
         if (!$hub = self::get_registration()) {
@@ -517,8 +567,10 @@ class registration {
         try {
             api::unregister_site();
         } catch (moodle_exception $e) {
-            \core\notification::add(get_string('unregistrationerror', 'hub', $e->getMessage()),
-                \core\output\notification::NOTIFY_ERROR);
+            \core\notification::add(
+                get_string('unregistrationerror', 'hub', $e->getMessage()),
+                \core\output\notification::NOTIFY_ERROR
+            );
             return false;
         }
 
@@ -532,7 +584,8 @@ class registration {
      *
      * @return bool
      */
-    public static function reset_token() {
+    public static function reset_token()
+    {
         global $DB;
         if (!$hub = self::get_registration()) {
             return true;
@@ -547,13 +600,17 @@ class registration {
      * @param string $token
      * @throws moodle_exception
      */
-    public static function reset_site_identifier($token) {
+    public static function reset_site_identifier($token)
+    {
         global $DB, $CFG;
 
         $registration = self::get_registration(false);
         if (!$registration || $registration->token != $token) {
-            throw new moodle_exception('wrongtoken', 'hub',
-               new moodle_url('/admin/registration/index.php'));
+            throw new moodle_exception(
+                'wrongtoken',
+                'hub',
+                new moodle_url('/admin/registration/index.php')
+            );
         }
 
         $DB->delete_records('registration_hubs', array('id' => $registration->id));
@@ -582,7 +639,8 @@ class registration {
      *
      * @return array|null
      */
-    public static function get_moodlenet_info() {
+    public static function get_moodlenet_info()
+    {
         try {
             return api::get_hub_info();
         } catch (moodle_exception $e) {
@@ -599,7 +657,8 @@ class registration {
      *     to the registration form again (regardless of whether the site was registered or not).
      * @return bool
      */
-    public static function show_after_install($markasviewed = null) {
+    public static function show_after_install($markasviewed = null)
+    {
         global $CFG;
         if (self::is_registered()) {
             $showregistration = false;
@@ -625,7 +684,8 @@ class registration {
      *
      * @return array
      */
-    public static function get_new_registration_fields() {
+    public static function get_new_registration_fields()
+    {
         $fieldsneedconfirm = [];
         if (!self::is_registered()) {
             // Nothing to update if site is not registered.
@@ -646,7 +706,8 @@ class registration {
      *
      * @param string|moodle_url $url
      */
-    public static function registration_reminder($url) {
+    public static function registration_reminder($url)
+    {
         if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
             // No redirection during behat runs.
             return;
@@ -667,17 +728,17 @@ class registration {
      *
      * @return array
      */
-    public static function get_plugin_usage_data(): array {
+    public static function get_plugin_usage_data(): array
+    {
         global $DB;
-
-        $pluginman = core_plugin_manager::instance();
+        $pluginman = \core_plugin_manager::instance();
         $plugininfo = $pluginman->get_plugins();
         $data = [];
 
         foreach ($plugininfo as $plugins) {
             foreach ($plugins as $plugin) {
-                // Plugins are considered enabled if $plugin->is_enabled() returns true or null.
-                // Plugins that return null cannot be disabled.
+                // Les plugins sont considérés comme activés si $plugin->is_enabled() renvoie true ou null.
+                // Les plugins qui renvoient null ne peuvent pas être désactivés.
                 $enabled = ($plugin->is_enabled() || is_null($plugin->is_enabled()));
                 $data[$plugin->type][$plugin->name]['enabled'] = $enabled ? 1 : 0;
 
@@ -685,7 +746,6 @@ class registration {
                     $mid = $DB->get_field('modules', 'id', ['name' => $plugin->name]);
                     $count = $DB->count_records('course_modules', ['module' => $mid]);
                     $data[$plugin->type][$plugin->name]['count'] = $count;
-
                 } else if ($plugin->type === 'block') {
                     $count = $DB->count_records('block_instances', ['blockname' => $plugin->name]);
                     $data[$plugin->type][$plugin->name]['count'] = $count;
@@ -702,7 +762,8 @@ class registration {
      * @param bool $format Use true to format timestamp.
      * @return array
      */
-    private static function get_ai_usage_time_range(bool $format = false): array {
+    private static function get_ai_usage_time_range(bool $format = false): array
+    {
         global $DB;
 
         // We will try and use the last time this site was last registered for our 'from' time.
@@ -733,7 +794,8 @@ class registration {
      *
      * @return array
      */
-    public static function get_ai_usage_data(): array {
+    public static function get_ai_usage_data(): array
+    {
         global $DB;
 
         $params = self::get_ai_usage_time_range();
@@ -766,7 +828,6 @@ class registration {
                 $data[$provider][$actionname]['success_count'] += 1;
                 // Collect AI processing times for averaging.
                 $data[$provider][$actionname]['times'][] = (int)$action->timecompleted - (int)$action->timecreated;
-
             } else {
                 $data[$provider][$actionname]['fail_count'] += 1;
                 // Collect errors for determing the predominant one.
@@ -795,7 +856,6 @@ class registration {
                         // Average the time to perform the action (seconds).
                         $totaltime = array_sum($data[$p][$a]['times']);
                         $data[$p][$a]['average_time'] = round($totaltime / $count);
-
                     }
                 }
                 unset($data[$p][$a]['times']);

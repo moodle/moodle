@@ -36,25 +36,38 @@ if (!empty($companyid)) {
     $postfix = "_$companyid";
 }
 
-$enabled = new admin_setting_configcheckbox('factor_totp/enabled' . $postfix,
+$enabled = new admin_setting_configcheckbox(
+    'factor_totp/enabled' . $postfix,
     new lang_string('settings:enablefactor', 'tool_mfa'),
-    new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
+    new lang_string('settings:enablefactor_help', 'tool_mfa'),
+    0
+);
 $enabled->set_updatedcallback(function () {
     global $postfix;
     \tool_mfa\manager::do_factor_action('totp', get_config('factor_totp', 'enabled' . $postfix) ? 'enable' : 'disable');
 });
 $settings->add($enabled);
 
-$settings->add(new admin_setting_configtext('factor_totp/weight' . $postfix,
+$settings->add(new admin_setting_configtext(
+    'factor_totp/weight' . $postfix,
     new lang_string('settings:weight', 'tool_mfa'),
-    new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
+    new lang_string('settings:weight_help', 'tool_mfa'),
+    100,
+    PARAM_INT
+));
 
-$settings->add(new admin_setting_configduration('factor_totp/window' . $postfix,
+$window = new admin_setting_configduration(
+    'factor_totp/window' . $postfix,
     new lang_string('settings:window', 'factor_totp'),
-    new lang_string('settings:window_help', 'factor_totp'), 15);
+    new lang_string('settings:window_help', 'factor_totp'),
+    15
+);
 $window->set_max_duration(29);
-// $settings->add($window);
+$settings->add($window);
 
-$settings->add(new admin_setting_configcheckbox('factor_totp/totplink' . $postfix,
+$settings->add(new admin_setting_configcheckbox(
+    'factor_totp/totplink' . $postfix,
     new lang_string('settings:totplink', 'factor_totp'),
-    new lang_string('settings:totplink_help', 'factor_totp'), 1));
+    new lang_string('settings:totplink_help', 'factor_totp'),
+    1
+));
