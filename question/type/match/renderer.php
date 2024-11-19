@@ -44,24 +44,25 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
         $choices = $this->format_choices($question);
 
         $questiontextid = $qa->get_qt_field_name('qtext');
-        $result = '';
-        $result .= html_writer::tag('div', $question->format_questiontext($qa),
-                array('class' => 'qtext', 'id' => $questiontextid));
+        $result = html_writer::div($question->format_questiontext($qa), 'qtext', ['id' => $questiontextid]);
 
-        $result .= html_writer::start_tag('div', array('class' => 'ablock'));
-        $result .= html_writer::start_tag('table', array('class' => 'answer', 'role' => 'presentation'));
+        $result .= html_writer::start_tag('div', ['class' => 'ablock']);
+        $result .= html_writer::start_tag('table', ['class' => 'answer', 'role' => 'presentation']);
         $result .= html_writer::start_tag('tbody', ['role' => 'presentation']);
 
         $parity = 0;
         $i = 1;
         foreach ($stemorder as $key => $stemid) {
 
-            $result .= html_writer::start_tag('tr', array('class' => 'r' . $parity, 'role' => 'presentation'));
+            $result .= html_writer::start_tag('tr', ['class' => 'r' . $parity, 'role' => 'presentation']);
             $fieldname = 'sub' . $key;
 
             $itemtextid = $qa->get_qt_field_name($fieldname . '_itemtext');
-            $result .= html_writer::tag('td', $this->format_stem_text($qa, $stemid),
-                    array('class' => 'text', 'id' => $itemtextid, 'role' => 'presentation'));
+            $result .= html_writer::tag('td', $this->format_stem_text($qa, $stemid), [
+                'class' => 'text',
+                'id' => $itemtextid,
+                'role' => 'presentation',
+            ]);
 
             $classes = 'control';
             $feedbackimage = '';
@@ -88,18 +89,24 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
             }
 
             $labeltext = $options->add_question_identifier_to_label(get_string('answer', 'qtype_match', $i));
-            $result .= html_writer::tag('td',
-                    html_writer::label($labeltext,
-                            'menu' . $qa->get_qt_field_name('sub' . $key), false,
-                            array('class' => 'accesshide')) .
-                    html_writer::select($choices, $qa->get_qt_field_name('sub' . $key), $selected,
-                            ['0' => 'choose'],
-                            [
-                                'disabled' => $options->readonly,
-                                'class' => 'form-select d-inline-block ms-1',
-                                'aria-describedby' => $ariadescribedbyids,
-                            ]) .
-                    ' ' . $feedbackimage, array('class' => $classes, 'role' => 'presentation'));
+            $selectlabel = html_writer::label($labeltext, 'menu' . $qa->get_qt_field_name($fieldname), false, [
+                'class' => 'visually-hidden',
+            ]);
+            $select = html_writer::select(
+                $choices,
+                $qa->get_qt_field_name($fieldname),
+                $selected,
+                ['0' => 'choose'],
+                [
+                    'disabled' => $options->readonly,
+                    'class' => 'form-select d-inline-block ms-1',
+                    'aria-describedby' => $ariadescribedbyids,
+                ]
+            );
+            $result .= html_writer::tag('td', $selectlabel . $select . ' ' . $feedbackimage, [
+                'class' => $classes,
+                'role' => 'presentation',
+            ]);
 
             $result .= html_writer::end_tag('tr');
             $parity = 1 - $parity;
@@ -111,9 +118,7 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
         $result .= html_writer::end_tag('div'); // Closes <div class="ablock">.
 
         if ($qa->get_state() == question_state::$invalid) {
-            $result .= html_writer::nonempty_tag('div',
-                    $question->get_validation_error($response),
-                    array('class' => 'validationerror'));
+            $result .= html_writer::nonempty_tag('div', $question->get_validation_error($response), ['class' => 'validationerror']);
         }
 
         return $result;
