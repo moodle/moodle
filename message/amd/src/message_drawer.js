@@ -38,6 +38,10 @@ define(
     'core_message/message_drawer_helper',
     'core/pending',
     'core/drawer',
+    'core/toast',
+    'core/str',
+    'core/config',
+    'core/ajax',
 ],
 function(
     $,
@@ -55,7 +59,11 @@ function(
     Events,
     Helper,
     Pending,
-    Drawer
+    Drawer,
+    Toast,
+    Str,
+    Config,
+    Ajax,
 ) {
 
     var SELECTORS = {
@@ -66,6 +74,8 @@ function(
         VIEW_CONTACT: '[data-region="view-contact"]',
         VIEW_CONTACTS: '[data-region="view-contacts"]',
         VIEW_CONVERSATION: '[data-region="view-conversation"]',
+        VIEW_CONVERSATION_WITH_ID: '[data-region="view-conversation"][data-conversation-id]',
+        VIEW_CONVERSATION_WITH_USER: '[data-region="view-conversation"][data-other-user-id]',
         VIEW_GROUP_INFO: '[data-region="view-group-info"]',
         VIEW_OVERVIEW: '[data-region="view-overview"]',
         VIEW_SEARCH: '[data-region="view-search"]',
@@ -75,7 +85,9 @@ function(
         HEADER_CONTAINER: '[data-region="header-container"]',
         BODY_CONTAINER: '[data-region="body-container"]',
         FOOTER_CONTAINER: '[data-region="footer-container"]',
-        CLOSE_BUTTON: '[data-action="closedrawer"]'
+        CLOSE_BUTTON: '[data-action="closedrawer"]',
+        MESSAGE_INDEX: '[data-region="message-index"]',
+        MESSAGE_TEXT_AREA: '[data-region="send-message-txt"]',
     };
 
     /**
@@ -180,6 +192,165 @@ function(
      */
     var setJumpFrom = function(buttonid) {
         $(SELECTORS.DRAWER).attr('data-origin', buttonid);
+    };
+
+    /**
+     * Store an unsent message.
+     *
+     * Don't store this if the user has already seen the unsent message.
+     * This avoids spamming and ensures the user is only reminded once per unsent message.
+     * If the unsent message is sent, this attribute is removed and notification is possible again (see sendMessage).
+     */
+    const storeUnsentMessage = async() => {
+        const messageTextArea = document.querySelector(SELECTORS.MESSAGE_TEXT_AREA);
+
+        if (messageTextArea.value.trim().length > 0 && !messageTextArea.hasAttribute('data-unsent-message-viewed')) {
+
+            let message = messageTextArea.value;
+            let conversationid = 0;
+            let otheruserid = 0;
+
+            // We don't always have a conversation to link the unsent message to, so let's check for that.
+            const conversationId = document.querySelector(SELECTORS.VIEW_CONVERSATION_WITH_ID);
+            if (conversationId) {
+                const conversationWithId = messageTextArea.closest(SELECTORS.VIEW_CONVERSATION_WITH_ID);
+                conversationid = conversationWithId.getAttribute('data-conversation-id');
+            }
+            // Store the 'other' user id if it is there. This can be used to create conversations.
+            const conversationUser = document.querySelector(SELECTORS.VIEW_CONVERSATION_WITH_USER);
+            if (conversationUser) {
+                const conversationWithUser = messageTextArea.closest(SELECTORS.VIEW_CONVERSATION_WITH_USER);
+                otheruserid = conversationWithUser.getAttribute('data-other-user-id');
+            }
+
+            setStoredUnsentMessage(message, conversationid, otheruserid);
+        }
+    };
+
+    /**
+     * Get the stored unsent message from the session via web service.
+     *
+     * @returns {Promise}
+     */
+    const getStoredUnsentMessage = () => Ajax.call([{
+        methodname: 'core_message_get_unsent_message',
+        args: {}
+    }])[0];
+
+    /**
+     * Set the unsent message value in the session via web service.
+     *
+     * SendBeacon is used here because this is called on 'beforeunload'.
+     *
+     * @param {string} message The message string.
+     * @param {number} conversationid The conversation id.
+     * @param {number} otheruserid The other user id.
+     * @returns {Promise}
+     */
+    const setStoredUnsentMessage = (message, conversationid, otheruserid) => {
+        const method = 'core_message_set_unsent_message';
+        const requestUrl = new URL(`${Config.wwwroot}/lib/ajax/service.php`);
+        requestUrl.searchParams.set('sesskey', Config.sesskey);
+        requestUrl.searchParams.set('info', method);
+
+        navigator.sendBeacon(requestUrl, JSON.stringify([{
+            index: 0,
+            methodname: method,
+            args: {
+                message: message,
+                conversationid: conversationid,
+                otheruserid: otheruserid,
+            }
+        }]));
+    };
+
+    /**
+     * Check for an unsent message.
+     *
+     * @param {String} uniqueId Unique identifier for the Routes.
+     * @param {Object} root The message drawer container.
+     */
+    const getUnsentMessage = async(uniqueId, root) => {
+        let type;
+        let messageRoot;
+
+        // We need to check if we are on the message/index page.
+        // This logic is needed to handle the two message widgets here and ensure we are targetting the right one.
+        const messageIndex = document.querySelector(SELECTORS.MESSAGE_INDEX);
+        if (messageIndex !== null) {
+            type = 'index';
+            messageRoot = document.getElementById(`message-index-${uniqueId}`);
+            if (!messageRoot) {
+                // This is not the correct widget.
+                return;
+            }
+
+        } else {
+            type = 'drawer';
+            messageRoot = document.getElementById(`message-drawer-${uniqueId}`);
+        }
+
+        const storedMessage = await getStoredUnsentMessage();
+        const messageTextArea = messageRoot.querySelector(SELECTORS.MESSAGE_TEXT_AREA);
+        if (storedMessage.message && messageTextArea !== null) {
+            showUnsentMessage(messageTextArea, storedMessage, type, uniqueId, root);
+        }
+    };
+
+    /**
+     * Show an unsent message.
+     *
+     * There are two message widgets on the message/index page.
+     * Because of that, we need to try and target the correct widget.
+     *
+     * @param {String} textArea The textarea element.
+     * @param {Object} stored The stored message content.
+     * @param {String} type Is this from the drawer or index page?
+     * @param {String} uniqueId Unique identifier for the Routes.
+     * @param {Object} root The message drawer container.
+     */
+    const showUnsentMessage = (textArea, stored, type, uniqueId, root) => {
+        // The user has already been notified.
+        if (textArea.hasAttribute('data-unsent-message-viewed')) {
+            return;
+        }
+
+        // Depending on the type, show the conversation with the data we have available.
+        // A conversation can be continued if there is a conversationid.
+        // If the user was messaging a new non-contact, we won't have a conversationid yet.
+        // In that case, we use the otheruserid value to start a conversation with them.
+        switch (type) {
+            case 'index':
+                // Show the conversation in the main panel on the message/index page.
+                if (stored.conversationid) {
+                    Router.go(uniqueId, Routes.VIEW_CONVERSATION, stored.conversationid, 'frompanel');
+                // There was no conversation id, let's get a conversation going using the user id.
+                } else if (stored.otheruserid) {
+                    Router.go(uniqueId, Routes.VIEW_CONVERSATION, null, 'create', stored.otheruserid);
+                }
+                break;
+
+            case 'drawer':
+                // Open the drawer and show the conversation.
+                if (stored.conversationid) {
+                    let args = {
+                        conversationid: stored.conversationid
+                    };
+                    Helper.showConversation(args);
+                // There was no conversation id, let's get a conversation going using the user id.
+                } else if (stored.otheruserid) {
+                    show(uniqueId, root);
+                    Router.go(uniqueId, Routes.VIEW_CONVERSATION, null, 'create', stored.otheruserid);
+                }
+                break;
+        }
+
+        // Populate the text area.
+        textArea.value = stored.message;
+        textArea.setAttribute('data-unsent-message-viewed', 1);
+
+        // Notify the user.
+        Toast.add(Str.get_string('unsentmessagenotification', 'core_message'));
     };
 
     /**
@@ -331,6 +502,18 @@ function(
                 viewConversationFooter.attr('data-enter-to-send', enterToSendPreference.value);
             }
         });
+
+        // If our textarea is modified, remove the attribute which indicates the user has seen the unsent message notification.
+        // This will allow the user to be notified again.
+        const textArea = document.querySelector(SELECTORS.MESSAGE_TEXT_AREA);
+        if (textArea) {
+            textArea.addEventListener('keyup', function() {
+                textArea.removeAttribute('data-unsent-message-viewed');
+            });
+        }
+
+        // Catch any unsent messages and store them.
+        window.addEventListener('beforeunload', storeUnsentMessage);
     };
 
     /**
@@ -358,6 +541,9 @@ function(
 
         // Mark the drawer as ready.
         Helper.markDrawerReady();
+
+        // Get and show any unsent message.
+        getUnsentMessage(uniqueId, root);
     };
 
     return {

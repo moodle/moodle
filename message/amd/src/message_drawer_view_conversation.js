@@ -1336,6 +1336,12 @@ function(
         };
         sendMessageBuffer.push(message);
         processSendMessageBuffer();
+
+        // Remove the unsent message attribute so we can be notified of new unsent messages (see storeUnsentMessage).
+        const textArea = document.querySelector(SELECTORS.MESSAGE_TEXT_AREA);
+        if (textArea) {
+            textArea.removeAttribute('data-unsent-message-viewed');
+        }
     };
 
     /**
@@ -2119,6 +2125,9 @@ function(
             conversationId = getCachedPrivateConversationIdFromUserId(otherUserId);
         }
 
+        // Set attributes to aid in the restoration of unsent messages.
+        setConversationAttributes(footer, conversationId, otherUserId);
+
         // This is a new conversation if:
         // 1. We don't already have a state
         // 2. The given conversation doesn't match the one currently loaded
@@ -2194,6 +2203,26 @@ function(
      */
     var description = function() {
         return Str.get_string('messagedrawerviewconversation', 'core_message', viewState.name);
+    };
+
+    /**
+     * Set some attributes that will help reboot a conversation.
+     *
+     * These attributes aid in the storage and retrieval of unsent messages.
+     * When a conversationid is not present, otheruserid can be used to create a conversation.
+     *
+     * @param {Object} element The element to target.
+     * @param {Number|null} conversationId The conversationid.
+     * @param {Number|null} otherUserId The otheruserid.
+     */
+    const setConversationAttributes = function(element, conversationId, otherUserId) {
+        element.removeAttr('data-conversation-id');
+        element.removeAttr('data-other-user-id');
+        if (conversationId) {
+            element.attr('data-conversation-id', conversationId);
+        } else if (otherUserId) {
+            element.attr('data-other-user-id', otherUserId);
+        }
     };
 
     return {

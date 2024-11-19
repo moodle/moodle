@@ -5887,4 +5887,37 @@ final class externallib_test extends externallib_advanced_testcase {
 
         return [$user1, $user2, $user3, $convgroup, $convindividual];
     }
+
+    /**
+     * Test the getting and setting of unsent messages.
+     *
+     * @covers ::get_unsent_message
+     */
+    public function test_get_unsent_message(): void {
+        $this->resetAfterTest();
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Set an unsent message for user1.
+        $this->setUser($user1);
+        $message = 'Hello there';
+        $conversationid = 123;
+        $otheruserid = 456;
+        external\set_unsent_message::execute($message, $conversationid, $otheruserid);
+
+        // Get the unsent message for user1.
+        $result = external\get_unsent_message::execute();
+        $result = external_api::clean_returnvalue(external\get_unsent_message::execute_returns(), $result);
+        $this->assertEquals($message, $result['message']);
+        $this->assertEquals($conversationid, $result['conversationid']);
+        $this->assertEquals($otheruserid, $result['otheruserid']);
+
+        // We should not be able to get user1's messages as another user.
+        $this->setUser($user2);
+        $result = external\get_unsent_message::execute();
+        $result = external_api::clean_returnvalue(external\get_unsent_message::execute_returns(), $result);
+        $this->assertEmpty($result);
+    }
 }

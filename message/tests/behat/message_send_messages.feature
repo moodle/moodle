@@ -85,3 +85,14 @@ Feature: Message send messages
     And I open messaging
     And I select "Student 1" conversation in messaging
     And I should see "Hi!" in the "Student 1" "core_message > Message conversation"
+
+  Scenario: Unsent messages will notify users and give them a chance to send it
+    Given I log in as "student1"
+    And I open messaging
+    And I send "Hi!" message to "Student 2" user
+    And I select "Student 2" user in messaging
+    And I set the field "Write a message..." to "What you doing?"
+    When I follow "Dashboard"
+    Then I should see "You have an unsent message. It will be lost if you leave this page."
+    And I press "Send message"
+    And I should see "What you doing?" in the "Student 2" "core_message > Message conversation"
