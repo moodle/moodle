@@ -337,6 +337,12 @@ class behat_field_manager {
         if ($fieldtype === 'tags') {
             return 'autocomplete';
         }
+        if ($fieldtype === 'date_time_selector') {
+            return 'date_time';
+        }
+        if ($fieldtype === 'date_selector') {
+            return 'date';
+        }
 
         return $fieldtype;
     }

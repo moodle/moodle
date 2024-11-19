@@ -325,7 +325,13 @@ XPATH
 XPATH
         ,
             'date_time' => <<<XPATH
-.//fieldset[(%idMatch% or ./legend[%exactTagTextMatch%]) and (@data-fieldtype='date' or @data-fieldtype='date_time')]
+.//*[
+    (%idMatch% or ./legend[%exactTagTextMatch%]
+        or parent::div[@data-groupname=%locator% or ./label[contains(normalize-space(string(.)), %locator%)]]
+    ) and
+    (@data-fieldtype='date' or @data-fieldtype='date_time'
+        or @data-fieldtype='date_selector' or @data-fieldtype='date_time_selector')
+]
 XPATH
         ,
             'select_menu' => <<<XPATH
