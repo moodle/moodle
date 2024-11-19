@@ -300,7 +300,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function create_preset_provider(): array {
+    public static function create_preset_provider(): array {
         return [
             'Create using the default configuration' => [
                 'record' => null,

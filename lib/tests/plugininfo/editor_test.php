@@ -101,7 +101,7 @@ class editor_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_sorted_plugins_provider(): array {
+    public static function get_sorted_plugins_provider(): array {
         $pluginmanager = \core_plugin_manager::instance();
         $allplugins = array_keys($pluginmanager->get_plugins_of_type('editor'));
 
@@ -195,7 +195,7 @@ class editor_test extends advanced_testcase {
      *
      * @return array
      */
-    public function change_plugin_order_provider(): array {
+    public static function change_plugin_order_provider(): array {
         $pluginmanager = \core_plugin_manager::instance();
         $allplugins = array_keys($pluginmanager->get_plugins_of_type('editor'));
 

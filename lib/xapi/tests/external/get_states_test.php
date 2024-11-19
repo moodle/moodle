@@ -145,7 +145,7 @@ class get_states_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function components_provider(): array {
+    public static function components_provider(): array {
         return [
             'Inexistent component' => [
                 'component' => 'inexistent_component',
@@ -189,7 +189,7 @@ class get_states_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function since_formats_provider(): array {
+    public static function since_formats_provider(): array {
         return [
             'Null date' => [
                 'since' => null,
@@ -242,7 +242,7 @@ class get_states_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function activity_iri_provider(): array {
+    public static function activity_iri_provider(): array {
         return [
             'Activity with several states' => [
                 'activityiri' => iri::generate('1', 'activity'),
@@ -294,7 +294,7 @@ class get_states_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function agent_values_provider(): array {
+    public static function agent_values_provider(): array {
         return [
             'Current user' => [
                 'agentreference' => 'current',
@@ -332,7 +332,7 @@ class get_states_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function registration_values_provider(): array {
+    public static function registration_values_provider(): array {
         return [
             'Null registration' => [
                 'registration' => null,

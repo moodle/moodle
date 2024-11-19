@@ -35,7 +35,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @return array[]
      */
-    public function export_user_preference_provider(): array {
+    public static function export_user_preference_provider(): array {
         return [
             'Index drawer open' => [provider::DRAWER_OPEN_INDEX, true, 'privacy:drawerindexopen'],
             'Index drawer closed' => [provider::DRAWER_OPEN_INDEX, false, 'privacy:drawerindexclosed'],

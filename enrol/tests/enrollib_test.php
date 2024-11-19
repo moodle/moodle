@@ -381,7 +381,7 @@ class enrollib_test extends advanced_testcase {
      *
      * @return array
      */
-    public function enrol_course_delete_with_userid_provider() {
+    public static function enrol_course_delete_with_userid_provider(): array {
         return [
             'The teacher can un-enrol users in a course' =>
                 [
@@ -1028,7 +1028,7 @@ class enrollib_test extends advanced_testcase {
      *
      * @return array
      */
-    public function enrol_get_my_courses_by_time_provider(): array {
+    public static function enrol_get_my_courses_by_time_provider(): array {
         return [
             'No start or end time' =>
                 [null, null, true],
@@ -1190,7 +1190,7 @@ class enrollib_test extends advanced_testcase {
     /**
      * Test cases for the test_enrol_get_my_courses_sort_by_last_access test.
      */
-    public function get_enrol_get_my_courses_sort_by_last_access_test_cases() {
+    public static function get_enrol_get_my_courses_sort_by_last_access_test_cases(): array {
         $now = time();
 
         $enrolledcoursesdata = [
@@ -1293,7 +1293,7 @@ class enrollib_test extends advanced_testcase {
     /**
      * Test the get_enrolled_courses_by_timeline_classification function.
      *
-     * @dataProvider get_enrol_get_my_courses_sort_by_last_access_test_cases()
+     * @dataProvider get_enrol_get_my_courses_sort_by_last_access_test_cases
      * @param array $enrolledcoursesdata Courses to create and enrol the user in
      * @param array $unenrolledcoursesdata Courses to create nut not enrol the user in
      * @param string $sort Sort string for the enrol function
@@ -1443,7 +1443,7 @@ class enrollib_test extends advanced_testcase {
     /**
      * Test get_enrolled_with_capabilities_join cannotmatchanyrows attribute.
      *
-     * @dataProvider get_enrolled_with_capabilities_join_cannotmatchanyrows_data()
+     * @dataProvider get_enrolled_with_capabilities_join_cannotmatchanyrows_data
      * @param string $capability the tested capability
      * @param bool $useprohibit if the capability must be assigned to prohibit
      * @param int $expectedmatch expected cannotmatchanyrows value
@@ -1490,7 +1490,7 @@ class enrollib_test extends advanced_testcase {
      *
      * @return @array of testing scenarios
      */
-    public function get_enrolled_with_capabilities_join_cannotmatchanyrows_data() {
+    public static function get_enrolled_with_capabilities_join_cannotmatchanyrows_data(): array {
         return [
             'no prohibits, no capability' => [
                 'capability' => '',
@@ -1530,7 +1530,7 @@ class enrollib_test extends advanced_testcase {
      * Data provided for test_enrol_check_plugins_with_empty_config_value test.
      * @return array
      */
-    public function empty_config_data_provider(): array {
+    public static function empty_config_data_provider(): array {
         return [
             [0],
             ["0"],

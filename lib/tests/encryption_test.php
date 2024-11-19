@@ -56,7 +56,7 @@ class encryption_test extends advanced_testcase {
      *
      * @return array[] Array of method options for test
      */
-    public function encryption_method_provider(): array {
+    public static function encryption_method_provider(): array {
         return [
             'Sodium' => [encryption::METHOD_SODIUM],
         ];

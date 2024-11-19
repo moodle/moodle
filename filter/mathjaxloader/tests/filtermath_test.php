@@ -50,7 +50,7 @@ class filtermath_test extends \advanced_testcase {
      *
      * @return array of [inputtext, expectedoutput] tuples.
      */
-    public function math_filtering_inputs() {
+    public static function math_filtering_inputs(): array {
         return [
             // One inline formula.
             ['Some inline math \\( y = x^2 \\).',

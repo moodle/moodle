@@ -269,7 +269,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_active_tokens_provider(): array {
+    public static function get_active_tokens_provider(): array {
         return [
             'No expiration' => [0, true],
             'Active' => [time() + DAYSECS, true],

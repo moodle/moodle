@@ -275,7 +275,7 @@ class factor_test extends \advanced_testcase {
      * Increments by 30 minutes to cover half hour and hour cases.
      * Starting timestamp: 2022-01-15 07:30:00 Australia/Melbourne time.
      */
-    public function timestamp_provider() {
+    public static function timestamp_provider(): array {
         $starttimestamp = 1642192200;
         foreach (range(0, 23) as $i) {
             $timestamps[] = [$starttimestamp + ($i * HOURSECS)];

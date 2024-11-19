@@ -66,7 +66,7 @@ class adminpresets_admin_setting_sitesettext_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function save_value_provider(): array {
+    public static function save_value_provider(): array {
         return [
             'Fullname: different value' => [
                 'settingname' => 'fullname',

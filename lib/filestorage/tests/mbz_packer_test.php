@@ -89,7 +89,7 @@ class mbz_packer_test extends \advanced_testcase {
         $this->assertEquals('frog', $out->get_content());
     }
 
-    public function usezipbackups_provider() {
+    public static function usezipbackups_provider(): array {
         return [
             'Use zips'  => [true],
             'Use tgz'   => [false],

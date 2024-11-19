@@ -36,7 +36,7 @@ class util_test extends \advanced_testcase {
         }
     }
 
-    public function set_table_modified_by_sql_provider() {
+    public static function set_table_modified_by_sql_provider(): array {
         global $DB;
         $prefix = $DB->get_prefix();
 

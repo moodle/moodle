@@ -77,7 +77,7 @@ class adminpresets_setting_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function save_value_provider(): array {
+    public static function save_value_provider(): array {
         return [
             'Core setting with the same value is not saved' => [
                 'category' => 'optionalsubsystems',
@@ -167,7 +167,7 @@ class adminpresets_setting_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function save_attributes_values_provider(): array {
+    public static function save_attributes_values_provider(): array {
         return [
             'Plugin setting with the same value is not saved' => [
                 'category' => 'modsettinglesson',

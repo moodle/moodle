@@ -44,7 +44,7 @@ class lib_test extends advanced_testcase {
      *
      * @return array
      */
-    public function filter_tex_sanitize_formula_provider(): array {
+    public static function filter_tex_sanitize_formula_provider(): array {
         return [
             ['x\ =\ \frac{\sqrt{144}}{2}\ \times\ (y\ +\ 12)', 'x\ =\ \frac{\sqrt{144}}{2}\ \times\ (y\ +\ 12)'],
             ['\usepackage[latin1]{inputenc}', '\usepackage[latin1]{inputenc}'],

@@ -149,7 +149,7 @@ class state_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function state_provider(): array {
+    public static function state_provider(): array {
         return [
             // COURSEFORMAT. Test behaviour depending on course formats.
             'Single activity format' => [

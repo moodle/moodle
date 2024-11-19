@@ -426,7 +426,7 @@ class setuplib_test extends \advanced_testcase {
      *
      * @return array An array of arrays contain test data
      */
-    public function data_for_test_get_real_size() {
+    public static function data_for_test_get_real_size(): array {
         return array(
             array('8KB',    8192),
             array('8Kb',    8192),

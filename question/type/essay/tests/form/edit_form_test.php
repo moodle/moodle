@@ -102,7 +102,7 @@ class edit_form_test extends \advanced_testcase {
      *
      * @return array, an array of all possible options.
      */
-    public function user_preference_provider(): array {
+    public static function user_preference_provider(): array {
         $valid = [];
         $invalid = ['attachmentsrequired' => get_string('mustrequirefewer', 'qtype_essay')];
         return [

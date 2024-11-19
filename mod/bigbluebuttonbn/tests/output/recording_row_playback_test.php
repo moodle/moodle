@@ -130,7 +130,7 @@ class recording_row_playback_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function should_be_included_data_provider() {
+    public static function should_be_included_data_provider(): array {
         return [
             'editingteacher user should see all' => [
                 'role' => 'editingteacher',

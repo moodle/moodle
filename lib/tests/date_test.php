@@ -386,7 +386,7 @@ class date_test extends advanced_testcase {
         $this->assertSame('Etc/GMT-1', date_default_timezone_get());
     }
 
-    public function legacyUserTimezoneProvider() {
+    public static function legacyUserTimezoneProvider(): array {
         return [
             ['', 'Australia/Perth'],            // Fallback on default timezone.
             ['-13.0', 'Australia/Perth'],       // Fallback on default timezone.

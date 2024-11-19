@@ -201,7 +201,7 @@ class exporters_post_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function export_post_provider(): array {
+    public static function export_post_provider(): array {
         return [
             'Simple export' => [
             ],

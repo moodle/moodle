@@ -376,7 +376,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function folder_get_recent_mod_activity_provider(): array {
+    public static function folder_get_recent_mod_activity_provider(): array {
         return [
             'Teacher with force download' => [
                 'forcedownload' => 1,

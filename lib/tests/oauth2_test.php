@@ -119,7 +119,7 @@ class oauth2_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function system_oauth_client_provider() {
+    public static function system_oauth_client_provider(): array {
         return [
             [
                 (object) [
@@ -306,7 +306,7 @@ class oauth2_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function create_endpoints_for_standard_issuer_provider(): array {
+    public static function create_endpoints_for_standard_issuer_provider(): array {
         return [
             'Google' => [
                 'type' => 'google',
@@ -449,7 +449,7 @@ class oauth2_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function create_custom_profile_fields(): array {
+    public static function create_custom_profile_fields(): array {
         return [
             'data' =>
             [

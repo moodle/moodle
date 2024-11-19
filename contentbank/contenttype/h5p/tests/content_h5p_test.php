@@ -138,7 +138,7 @@ class content_h5p_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function is_view_allowed_provider(): array {
+    public static function is_view_allowed_provider(): array {
         return [
             'Editing teacher with all libraries enabled' => [
                 'role' => 'editingteacher',

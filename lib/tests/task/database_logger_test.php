@@ -236,7 +236,7 @@ class database_logger_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function delete_task_logs_provider(): array {
+    public static function delete_task_logs_provider(): array {
         return [
             [
                 [0],

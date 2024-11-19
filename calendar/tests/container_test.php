@@ -67,7 +67,7 @@ class container_test extends \advanced_testcase {
     /**
      * Test that the event factory correctly creates instances of events.
      *
-     * @dataProvider get_event_factory_testcases()
+     * @dataProvider get_event_factory_testcases
      * @param \stdClass $dbrow Row from the "database".
      */
     public function test_event_factory_create_instance($dbrow): void {
@@ -128,7 +128,7 @@ class container_test extends \advanced_testcase {
     /**
      * Test that the event factory deals with invisible modules properly as admin.
      *
-     * @dataProvider get_event_factory_testcases()
+     * @dataProvider get_event_factory_testcases
      * @param \stdClass $dbrow Row from the "database".
      */
     public function test_event_factory_when_module_visibility_is_toggled_as_admin($dbrow): void {
@@ -154,7 +154,7 @@ class container_test extends \advanced_testcase {
     /**
      * Test that the event factory deals with invisible modules properly as a guest.
      *
-     * @dataProvider get_event_factory_testcases()
+     * @dataProvider get_event_factory_testcases
      * @param \stdClass $dbrow Row from the "database".
      */
     public function test_event_factory_when_module_visibility_is_toggled_as_guest($dbrow): void {
@@ -183,7 +183,7 @@ class container_test extends \advanced_testcase {
     /**
      * Test that the event factory deals with invisible courses as an admin.
      *
-     * @dataProvider get_event_factory_testcases()
+     * @dataProvider get_event_factory_testcases
      * @param \stdClass $dbrow Row from the "database".
      */
     public function test_event_factory_when_course_visibility_is_toggled_as_admin($dbrow): void {
@@ -208,7 +208,7 @@ class container_test extends \advanced_testcase {
     /**
      * Test that the event factory deals with invisible courses as a student.
      *
-     * @dataProvider get_event_factory_testcases()
+     * @dataProvider get_event_factory_testcases
      * @param \stdClass $dbrow Row from the "database".
      */
     public function test_event_factory_when_course_visibility_is_toggled_as_student($dbrow): void {
@@ -504,7 +504,7 @@ class container_test extends \advanced_testcase {
     /**
      * Test cases for the get event factory test.
      */
-    public function get_event_factory_testcases() {
+    public static function get_event_factory_testcases(): array {
         return [
             'Data set 1' => [
                 'dbrow' => (object)[

@@ -241,7 +241,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
      *
      * @return array
      */
-    public function check_user_exists_provider() {
+    public static function check_user_exists_provider(): array {
         return [
             'Fetch by email' => [
                 'email', 's1@example.com', true

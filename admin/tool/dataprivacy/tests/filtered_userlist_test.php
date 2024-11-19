@@ -57,7 +57,7 @@ class filtered_userlist_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function apply_expired_contexts_filters_provider(): array {
+    public static function apply_expired_contexts_filters_provider(): array {
         return [
             // Entire list should be preserved.
             'No overrides' => [

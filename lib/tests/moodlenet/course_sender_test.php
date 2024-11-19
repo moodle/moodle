@@ -259,7 +259,7 @@ The last word of this sentence is in bold', $processeddescription);
      *
      * @return array Test data.
      */
-    public function share_resource_provider(): array {
+    public static function share_resource_provider(): array {
         return [
             'Success' => [
                 'http_response' => new Response(

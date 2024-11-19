@@ -852,7 +852,7 @@ XML;
      *
      * @return array[]
      */
-    public function sync_reference_provider(): array {
+    public static function sync_reference_provider(): array {
         return [
             'referecncelastsync done recently' => [
                 [

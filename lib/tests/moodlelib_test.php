@@ -1106,7 +1106,7 @@ final class moodlelib_test extends \advanced_testcase {
      *
      * @return array of ($filename, $length, $expected, $includehash)
      */
-    public function shorten_filename_provider() {
+    public static function shorten_filename_provider(): array {
         $filename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem';
         $shortfilename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque';
 
@@ -1209,7 +1209,7 @@ final class moodlelib_test extends \advanced_testcase {
      *
      * @return array of ($filename, $length, $expected, $includehash)
      */
-    public function shorten_filenames_provider() {
+    public static function shorten_filenames_provider(): array {
         $shortfilename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque';
         $longfilename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem';
         $extfilename = $longfilename.'.zip';
@@ -3213,7 +3213,7 @@ EOF;
     /**
      * A data provider for testing email messageid
      */
-    public function generate_email_messageid_provider() {
+    public static function generate_email_messageid_provider(): array {
         return array(
             'nopath' => array(
                 'wwwroot' => 'http://www.example.com',
@@ -3280,7 +3280,7 @@ EOF;
     /**
      * A data provider for testing email diversion
      */
-    public function diverted_emails_provider() {
+    public static function diverted_emails_provider(): array {
         return array(
             'nodiverts' => array(
                 'divertallemailsto' => null,
@@ -3487,7 +3487,7 @@ EOF;
      *
      * @return array
      */
-    public function email_to_user_attachment_provider(): array {
+    public static function email_to_user_attachment_provider(): array {
         global $CFG;
 
         // Return all paths that can be used to send attachments from.
@@ -3860,7 +3860,7 @@ EOF;
      *
      * @return array of test cases.
      */
-    public function count_words_testcases(): array {
+    public static function count_words_testcases(): array {
         // Copy-pasting example from MDL-64240.
         $copypasted = <<<EOT
 <p onclick="alert('boop');">Snoot is booped</p>
@@ -3935,7 +3935,7 @@ EOT;
      *
      * @return array of test cases.
      */
-    public function count_letters_testcases(): array {
+    public static function count_letters_testcases(): array {
         return [
             [0, ''],
             [1, 'x'],
@@ -4100,7 +4100,7 @@ EOT;
     /**
      * Data provider for private ips.
      */
-    public function data_private_ips() {
+    public static function data_private_ips(): array {
         return array(
             array('10.0.0.0'),
             array('172.16.0.0'),
@@ -4125,7 +4125,7 @@ EOT;
     /**
      * Data provider for public ips.
      */
-    public function data_public_ips() {
+    public static function data_public_ips(): array {
         return array(
             array('2400:cb00:2048:1::8d65:71b3'),
             array('2400:6180:0:d0::1b:2001'),
@@ -4178,7 +4178,7 @@ EOT;
      *
      * @return array Returns an array of test data for the above function.
      */
-    public function data_can_send_from_real_email_address() {
+    public static function data_can_send_from_real_email_address(): array {
         return [
             // Test from email is in allowed domain.
             // Test that from display is set to show no one.
@@ -4324,7 +4324,7 @@ EOT;
      *
      * @return array Returns an array of test data for the above function.
      */
-    public function data_email_is_not_allowed_for_allowemailaddresses() {
+    public static function data_email_is_not_allowed_for_allowemailaddresses(): array {
         return [
             // Test allowed domain empty list.
             [
@@ -4403,7 +4403,7 @@ EOT;
      *
      * @return array Returns an array of test data for the above function.
      */
-    public function data_email_is_not_allowed_for_denyemailaddresses() {
+    public static function data_email_is_not_allowed_for_denyemailaddresses(): array {
         return [
             // Test denied domain empty list.
             [
@@ -4581,7 +4581,7 @@ EOT;
      *
      * @return array
      */
-    public function component_class_callback_default_provider() {
+    public static function component_class_callback_default_provider(): array {
         return [
             'null' => [null],
             'empty string' => [''],
@@ -4597,7 +4597,7 @@ EOT;
      *
      * @return array
      */
-    public function component_class_callback_data_provider() {
+    public static function component_class_callback_data_provider(): array {
         return [
             'empty string' => [''],
             'string' => ['This is a string'],
@@ -4612,7 +4612,7 @@ EOT;
      *
      * @return array
      */
-    public function component_class_callback_multiple_params_provider() {
+    public static function component_class_callback_multiple_params_provider(): array {
         return [
             'empty array' => [
                 [],
@@ -4657,7 +4657,7 @@ EOT;
      *
      * @return array of (string)case => [(mixed)callable, (string|bool)expected description]
      */
-    public function callable_names_provider() {
+    public static function callable_names_provider(): array {
         return [
             'integer' => [
                 386,
@@ -4675,10 +4675,6 @@ EOT;
                 ['my_foobar_class', 'my_foobar_method'],
                 'my_foobar_class::my_foobar_method',
             ],
-            'static_method_of_object' => [
-                [$this, 'my_foobar_method'],
-                'core\moodlelib_test::my_foobar_method',
-            ],
             'method_of_object' => [
                 [new lang_string('parentlanguage', 'core_langconfig'), 'my_foobar_method'],
                 'lang_string::my_foobar_method',
@@ -4695,11 +4691,18 @@ EOT;
     }
 
     /**
+     * Test that get_callable_name works with a static method on an instance.
+     */
+    public function test_get_callable_name_this(): void {
+        $this->assertSame('core\moodlelib_test::foo', get_callable_name([$this, 'foo']));
+    }
+
+    /**
      * Data provider for \core_moodlelib_testcase::test_get_complete_user_data().
      *
      * @return array
      */
-    public function user_data_provider() {
+    public static function user_data_provider(): array {
         return [
             'Fetch data using a valid username' => [
                 'username', 's1', true
@@ -4834,7 +4837,7 @@ EOT;
     /**
      * Data provider for the test_get_time_interval_string() method.
      */
-    public function get_time_interval_string_provider() {
+    public static function get_time_interval_string_provider(): array {
         return [
             'Time is after the reference time by 1 minute, omitted format' => [
                 'time1' => 12345660,
@@ -4992,7 +4995,7 @@ EOT;
      *
      * @return array of ($size, $expected)
      */
-    public function display_size_provider() {
+    public static function display_size_provider(): array {
 
         return [
             [0, '0 bytes'],
@@ -5034,7 +5037,7 @@ EOT;
      *
      * @return array of ($size, $units, $expected)
      */
-    public function display_size_fixed_provider(): array {
+    public static function display_size_fixed_provider(): array {
         return [
             [0, 'KB', '0.0 KB'],
             [1, 'MB', '0.0 MB'],
@@ -5064,7 +5067,7 @@ EOT;
      *
      * @return array of ($size, $decimalplaces, $units, $expected)
      */
-    public function display_size_dp_provider(): array {
+    public static function display_size_dp_provider(): array {
         return [
             [0, 1, 'KB', '0.0 KB'],
             [1, 6, 'MB', '0.000001 MB'],
@@ -5110,7 +5113,7 @@ EOT;
      *
      * @return  array
      */
-    public function get_list_of_plugins_provider(): array {
+    public static function get_list_of_plugins_provider(): array {
         return [
             'Standard excludes' => [
                 ['amdd', 'class', 'local', 'test'],
@@ -5410,7 +5413,7 @@ EOT;
      *
      * @return array of test cases.
      */
-    public function is_proxybypass_provider(): array {
+    public static function is_proxybypass_provider(): array {
 
         return [
             'Proxybypass contains the same IP as the beginning of the URL' => [

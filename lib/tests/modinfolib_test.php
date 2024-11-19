@@ -1121,7 +1121,7 @@ class modinfolib_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_section_info_by_id_provider() {
+    public static function get_section_info_by_id_provider(): array {
         return [
             'Valid section id' => [
                 'sectionnum' => 1,

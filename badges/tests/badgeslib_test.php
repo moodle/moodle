@@ -482,7 +482,7 @@ class badgeslib_test extends advanced_testcase {
 
     }
 
-    public function data_for_message_from_template() {
+    public static function data_for_message_from_template(): array {
         return array(
             array(
                 'This is a message with no variables',
@@ -1242,7 +1242,7 @@ class badgeslib_test extends advanced_testcase {
      *
      * @return array
      */
-    public function save_backpack_credentials_provider(): array {
+    public static function save_backpack_credentials_provider(): array {
         return [
             'Empty fields' => [
                 false,
@@ -1310,7 +1310,7 @@ class badgeslib_test extends advanced_testcase {
      *
      * @return array
      */
-    public function badges_save_external_backpack_provider() {
+    public static function badges_save_external_backpack_provider(): array {
         $data = [
             'apiversion' => 2,
             'backpackapiurl' => 'https://api.ca.badgr.io/v2',
@@ -1427,7 +1427,7 @@ class badgeslib_test extends advanced_testcase {
     /**
      * Provider for test_badges_(create/update)_site_backpack
      */
-    public function badges_create_site_backpack_provider() {
+    public static function badges_create_site_backpack_provider(): array {
         return [
             "Test as admin user - creation test" => [true, true],
             "Test as admin user - update test" => [true, false],
@@ -1598,7 +1598,7 @@ class badgeslib_test extends advanced_testcase {
      *
      * @return array
      */
-    public function badges_get_site_primary_backpack_provider() {
+    public static function badges_get_site_primary_backpack_provider(): array {
         return [
             "Test with auth details" => [true],
             "Test without auth details" => [false],
@@ -1653,7 +1653,7 @@ class badgeslib_test extends advanced_testcase {
      *
      * @return array
      */
-    public function badges_change_sortorder_backpacks_provider(): array {
+    public static function badges_change_sortorder_backpacks_provider(): array {
         return [
             "Test up" => [
                 'backpacktomove' => 1,
@@ -1707,7 +1707,7 @@ class badgeslib_test extends advanced_testcase {
      * Data provider for test_badges_generate_badgr_open_url
      * @return array
      */
-    public function badgr_open_url_generator() {
+    public static function badgr_open_url_generator(): array {
         return [
             'Badgr Assertion URL test' => [
                 OPEN_BADGES_V2_TYPE_ASSERTION, "https://api.ca.badgr.io/public/assertions/123455"
@@ -1754,7 +1754,7 @@ class badgeslib_test extends advanced_testcase {
      *
      * @return array
      */
-    public function badges_external_get_mapping_provider() {
+    public static function badges_external_get_mapping_provider(): array {
         return [
             "Get the site backpack value" => [
                 1234, 4321, 'id', 'sitebackpackid'
