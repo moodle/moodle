@@ -670,7 +670,7 @@ class registration {
     public static function get_plugin_usage_data(): array {
         global $DB;
 
-        $pluginman = core_plugin_manager::instance();
+        $pluginman = \core_plugin_manager::instance();
         $plugininfo = $pluginman->get_plugins();
         $data = [];
 
