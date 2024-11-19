@@ -475,7 +475,7 @@ final class column_test extends advanced_testcase {
     /**
      * Test retrieving sort fields
      */
-    public function test_get_sortfields(): void {
+    public function test_get_sort_fields(): void {
         $column = $this->create_column('test')
             ->set_index(1)
             ->add_fields('t.foo, t.bar, t.baz')
@@ -487,7 +487,7 @@ final class column_test extends advanced_testcase {
     /**
      * Test retrieving sort fields when an aliased field is set as sortable
      */
-    public function test_get_sortfields_with_field_alias(): void {
+    public function test_get_sort_fields_with_field_alias(): void {
         $column = $this->create_column('test')
             ->set_index(1)
             ->add_field('t.foo')
@@ -498,9 +498,21 @@ final class column_test extends advanced_testcase {
     }
 
     /**
+     * Test retrieving sort fields that contain references to fields within complex snippet
+     */
+    public function test_get_sort_fields_complex(): void {
+        $column = $this->create_column('test')
+            ->set_index(1)
+            ->add_fields('t.foo, t.bar')
+            ->set_is_sortable(true, ['CASE WHEN 1=1 THEN t.foo ELSE t.bar END']);
+
+        $this->assertEquals(['CASE WHEN 1=1 THEN c1_foo ELSE c1_bar END'], $column->get_sort_fields());
+    }
+
+    /**
      * Test retrieving sort fields when an unknown field is set as sortable
      */
-    public function test_get_sortfields_unknown_field(): void {
+    public function test_get_sort_fields_unknown_field(): void {
         $column = $this->create_column('test')
             ->set_index(1)
             ->add_fields('t.foo')

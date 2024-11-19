@@ -116,15 +116,6 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
         $from .= ' ' . implode(' ', array_unique($joins));
 
         $this->set_sql($fields, $from, $wheresql, $params);
-
-        $counttablealias = database::generate_alias();
-        $this->set_count_sql("
-            SELECT COUNT(1)
-              FROM (SELECT {$fields}
-                      FROM {$from}
-                     WHERE {$wheresql}
-                           {$this->groupbysql}
-                   ) {$counttablealias}", $params);
     }
 
     /**
@@ -165,13 +156,13 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
     /**
      * Generate suitable SQL for the table
      *
+     * @param bool $includesort
      * @return string
      */
-    protected function get_table_sql(): string {
+    protected function get_table_sql(bool $includesort = true): string {
         $sql = "SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where} {$this->groupbysql}";
 
-        $sort = $this->get_sql_sort();
-        if ($sort) {
+        if ($includesort && ($sort = $this->get_sql_sort())) {
             $sql .= " ORDER BY {$sort}";
         }
 
@@ -188,10 +179,25 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
         global $DB;
 
         if (!$this->is_downloading()) {
-            $this->pagesize($pagesize, $DB->count_records_sql($this->countsql, $this->countparams));
 
-            $this->rawdata = $DB->get_recordset_sql($this->get_table_sql(), $this->sql->params, $this->get_page_start(),
-                $this->get_page_size());
+            // Initially set the page size, so the following SQL read has correct values.
+            $this->pagesize($pagesize, 0);
+
+            $countedcolumn = database::generate_alias();
+            $countedrecordset = $DB->get_counted_recordset_sql(
+                $this->get_table_sql(false),
+                $countedcolumn,
+                $this->get_sql_sort(),
+                $this->sql->params,
+                (int) $this->get_page_start(),
+                (int) $this->get_page_size(),
+            );
+
+            // Now set the total page size.
+            $countedsize = (int) ($countedrecordset->current()->{$countedcolumn} ?? 0);
+            $this->pagesize($pagesize, $countedsize);
+
+            $this->rawdata = $countedrecordset;
         } else {
             $this->rawdata = $DB->get_recordset_sql($this->get_table_sql(), $this->sql->params);
         }
