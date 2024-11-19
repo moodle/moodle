@@ -52,7 +52,7 @@ class nrps_info_test extends \advanced_testcase {
      * Data provider for testing object instantiation.
      * @return array the data for testing.
      */
-    public function instantiation_data_provider(): array {
+    public static function instantiation_data_provider(): array {
         return [
             'Valid creation' => [
                 'args' => [

@@ -53,7 +53,7 @@ class restore_structure_parser_processor_test extends advanced_testcase {
      *
      * @return array
      */
-    public function process_cdata_data_provider() {
+    public static function process_cdata_data_provider(): array {
         return array(
             array(null, null, true),
             array("$@NULL@$", null, true),

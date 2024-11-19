@@ -159,7 +159,7 @@ class entities_discussion_test extends \advanced_testcase {
      *
      * @return array start/end time offsets and the expected results.
      */
-    public function diplay_period_options_provider() {
+    public static function diplay_period_options_provider(): array {
         return array(
             ["No dates set", 0, 0, true, false, true],
             ["Only started date in the future", 100, 0, false, false, false],

@@ -115,7 +115,7 @@ class std_proxy_test extends \advanced_testcase {
     /**
      * Test cases for proxying test.
      */
-    public function proxy_testcases() {
+    public static function proxy_testcases(): array {
         return [
             'Object 1 member 1' => [
                 1,
@@ -153,7 +153,7 @@ class std_proxy_test extends \advanced_testcase {
     /**
      * Test cases for getting and setting tests.
      */
-    public function get_set_testcases() {
+    public static function get_set_testcases(): array {
         return [
             'Object 1' => [1],
             'Object 2' => [5]

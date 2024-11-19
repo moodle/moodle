@@ -135,7 +135,7 @@ class delete_states_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function components_provider(): array {
+    public static function components_provider(): array {
         return [
             'Inexistent component' => [
                 'component' => 'inexistent_component',
@@ -263,7 +263,7 @@ class delete_states_test extends externallib_advanced_testcase {
      *
      * @return array
      */
-    public function states_provider(): array {
+    public static function states_provider(): array {
         return [
             'Activities with different users and components' => [
                 'username' => 'user1',

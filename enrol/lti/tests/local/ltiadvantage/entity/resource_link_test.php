@@ -54,7 +54,7 @@ class resource_link_test extends \advanced_testcase {
      * Data provider for testing object instantiation.
      * @return array the data for testing.
      */
-    public function instantiation_data_provider(): array {
+    public static function instantiation_data_provider(): array {
         return [
             'Valid creation, no context or id provided' => [
                 'args' => [
@@ -140,7 +140,7 @@ class resource_link_test extends \advanced_testcase {
      *
      * @return array the array of test case data.
      */
-    public function add_grade_service_provider(): array {
+    public static function add_grade_service_provider(): array {
         return [
             'Valid, both URLs, some scopes' => [
                 'args' => [

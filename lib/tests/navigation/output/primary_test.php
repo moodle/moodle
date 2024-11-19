@@ -113,7 +113,7 @@ class primary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function primary_export_provider(): array {
+    public static function primary_export_provider(): array {
         return [
             "Export the menu data when: custom menu exists; multiple langs installed; user is not logged in." => [
                 true, true, '', ['mobileprimarynav', 'moremenu', 'lang', 'user']
@@ -190,7 +190,7 @@ class primary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function custom_menu_provider(): array {
+    public static function custom_menu_provider(): array {
         return [
             'Simple custom menu' => [
                 "Course search|/course/search.php

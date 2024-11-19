@@ -135,7 +135,7 @@ class prediction_actions_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function execute_actions_provider(): array {
+    public static function execute_actions_provider(): array {
         return [
             'Empty actions with no filter' => [
                 [],

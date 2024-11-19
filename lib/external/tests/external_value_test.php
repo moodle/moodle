@@ -34,7 +34,7 @@ class external_value_test extends advanced_testcase {
      *
      * @return array[]
      */
-    public function required_param_provider(): array {
+    public static function required_param_provider(): array {
         return [
             [ VALUE_DEFAULT, false ],
             [ VALUE_REQUIRED, false ],

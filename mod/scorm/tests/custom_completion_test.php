@@ -44,7 +44,7 @@ class custom_completion_test extends advanced_testcase {
      *
      * @return array[]
      */
-    public function get_state_provider(): array {
+    public static function get_state_provider(): array {
 
         // Prepare various reusable user scorm track data used to mock various completion states/requirements.
         $completionincomplete = (object) [
@@ -301,7 +301,7 @@ class custom_completion_test extends advanced_testcase {
      *
      * @return array[]
      */
-    public function get_available_custom_rules_provider(): array {
+    public static function get_available_custom_rules_provider(): array {
         return [
             'Completion status enabled only' => [
                 [

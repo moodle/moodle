@@ -188,7 +188,7 @@ class gradelib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function grade_get_date_for_user_grade_provider(): array {
+    public static function grade_get_date_for_user_grade_provider(): array {
         $u1 = (object) [
             'id' => 42,
         ];

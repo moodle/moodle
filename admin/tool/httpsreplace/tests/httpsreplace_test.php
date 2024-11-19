@@ -38,20 +38,20 @@ class httpsreplace_test extends \advanced_testcase {
     /**
      * Data provider for test_upgrade_http_links
      */
-    public function upgrade_http_links_provider() {
+    public static function upgrade_http_links_provider(): array {
         global $CFG;
         // Get the http url, since the default test wwwroot is https.
         $wwwroothttp = preg_replace('/^https:/', 'http:', $CFG->wwwroot);
         return [
             "Test image from another site should be replaced" => [
-                "content" => '<img src="' . $this->getExternalTestFileUrl('/test.jpg', false) . '">',
+                "content" => '<img src="' . self::getExternalTestFileUrl('/test.jpg', false) . '">',
                 "outputregex" => '/UPDATE/',
-                "expectedcontent" => '<img src="' . $this->get_converted_http_link('/test.jpg') . '">',
+                "expectedcontent" => '<img src="' . self::get_converted_http_link('/test.jpg') . '">',
             ],
             "Test object from another site should be replaced" => [
-                "content" => '<object data="' . $this->getExternalTestFileUrl('/test.swf', false) . '">',
+                "content" => '<object data="' . self::getExternalTestFileUrl('/test.swf', false) . '">',
                 "outputregex" => '/UPDATE/',
-                "expectedcontent" => '<object data="' . $this->get_converted_http_link('/test.swf') . '">',
+                "expectedcontent" => '<object data="' . self::get_converted_http_link('/test.swf') . '">',
             ],
             "Test image from a site with international name should be replaced" => [
                 "content" => '<img src="http://中国互联网络信息中心.中国/logosy/201706/W01.png">',
@@ -79,9 +79,9 @@ class httpsreplace_test extends \advanced_testcase {
                 "expectedcontent" => '<img src="https://anothersite.com?param=http://asdf.com">',
             ],
             "Search for params should be case insensitive" => [
-                "content" => '<object DATA="' . $this->getExternalTestFileUrl('/test.swf', false) . '">',
+                "content" => '<object DATA="' . self::getExternalTestFileUrl('/test.swf', false) . '">',
                 "outputregex" => '/UPDATE/',
-                "expectedcontent" => '<object DATA="' . $this->get_converted_http_link('/test.swf') . '">',
+                "expectedcontent" => '<object DATA="' . self::get_converted_http_link('/test.swf') . '">',
             ],
             "URL should be case insensitive" => [
                 "content" => '<object data="HTTP://some.site/path?query">',
@@ -89,30 +89,30 @@ class httpsreplace_test extends \advanced_testcase {
                 "expectedcontent" => '<object data="https://some.site/path?query">',
             ],
             "More params should not interfere" => [
-                "content" => '<img alt="A picture" src="' . $this->getExternalTestFileUrl('/test.png', false) .
+                "content" => '<img alt="A picture" src="' . self::getExternalTestFileUrl('/test.png', false) .
                     '" width="1”><p style="font-size: \'20px\'"></p>',
                 "outputregex" => '/UPDATE/',
-                "expectedcontent" => '<img alt="A picture" src="' . $this->get_converted_http_link('/test.png') .
+                "expectedcontent" => '<img alt="A picture" src="' . self::get_converted_http_link('/test.png') .
                     '" width="1”><p style="font-size: \'20px\'"></p>',
             ],
             "Broken URL should not be changed" => [
-                "content" => '<img src="broken.' . $this->getExternalTestFileUrl('/test.png', false) . '">',
+                "content" => '<img src="broken.' . self::getExternalTestFileUrl('/test.png', false) . '">',
                 "outputregex" => '/^$/',
-                "expectedcontent" => '<img src="broken.' . $this->getExternalTestFileUrl('/test.png', false) . '">',
+                "expectedcontent" => '<img src="broken.' . self::getExternalTestFileUrl('/test.png', false) . '">',
             ],
             "Link URL should not be changed" => [
-                "content" => '<a href="' . $this->getExternalTestFileUrl('/test.png', false) . '">' .
-                    $this->getExternalTestFileUrl('/test.png', false) . '</a>',
+                "content" => '<a href="' . self::getExternalTestFileUrl('/test.png', false) . '">' .
+                    self::getExternalTestFileUrl('/test.png', false) . '</a>',
                 "outputregex" => '/^$/',
-                "expectedcontent" => '<a href="' . $this->getExternalTestFileUrl('/test.png', false) . '">' .
-                    $this->getExternalTestFileUrl('/test.png', false) . '</a>',
+                "expectedcontent" => '<a href="' . self::getExternalTestFileUrl('/test.png', false) . '">' .
+                    self::getExternalTestFileUrl('/test.png', false) . '</a>',
             ],
             "Test image from another site should be replaced but link should not" => [
-                "content" => '<a href="' . $this->getExternalTestFileUrl('/test.png', false) . '"><img src="' .
-                    $this->getExternalTestFileUrl('/test.jpg', false) . '"></a>',
+                "content" => '<a href="' . self::getExternalTestFileUrl('/test.png', false) . '"><img src="' .
+                    self::getExternalTestFileUrl('/test.jpg', false) . '"></a>',
                 "outputregex" => '/UPDATE/',
-                "expectedcontent" => '<a href="' . $this->getExternalTestFileUrl('/test.png', false) . '"><img src="' .
-                    $this->get_converted_http_link('/test.jpg') . '"></a>',
+                "expectedcontent" => '<a href="' . self::getExternalTestFileUrl('/test.png', false) . '"><img src="' .
+                    self::get_converted_http_link('/test.jpg') . '"></a>',
             ],
         ];
     }
@@ -127,8 +127,8 @@ class httpsreplace_test extends \advanced_testcase {
      * @param   string  $path Path to be rewritten
      * @return  string
      */
-    protected function get_converted_http_link($path) {
-        return preg_replace('/^http:/', 'https:', $this->getExternalTestFileUrl($path, false));
+    protected static function get_converted_http_link($path) {
+        return preg_replace('/^http:/', 'https:', self::getExternalTestFileUrl($path, false));
     }
 
     /**
@@ -160,15 +160,15 @@ class httpsreplace_test extends \advanced_testcase {
     /**
      * Data provider for test_http_link_stats
      */
-    public function http_link_stats_provider() {
+    public static function http_link_stats_provider(): array {
         global $CFG;
         // Get the http url, since the default test wwwroot is https.
         $wwwrootdomain = 'www.example.com';
         $wwwroothttp = preg_replace('/^https:/', 'http:', $CFG->wwwroot);
-        $testdomain = $this->get_converted_http_link('');
+        $testdomain = self::get_converted_http_link('');
         return [
             "Test image from an available site so shouldn't be reported" => [
-                "content" => '<img src="' . $this->getExternalTestFileUrl('/test.jpg', false) . '">',
+                "content" => '<img src="' . self::getExternalTestFileUrl('/test.jpg', false) . '">',
                 "domain" => $testdomain,
                 "expectedcount" => 0,
             ],

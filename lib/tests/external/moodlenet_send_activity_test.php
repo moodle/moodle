@@ -140,7 +140,7 @@ class moodlenet_send_activity_test extends externallib_advanced_testcase {
      *
      * @return array Test data.
      */
-    public function return_resource_url_provider(): array {
+    public static function return_resource_url_provider(): array {
         return [
             'Success 1' => [
                 true,

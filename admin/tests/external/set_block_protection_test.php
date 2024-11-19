@@ -85,7 +85,7 @@ class set_block_protection_test extends \externallib_advanced_testcase {
      *
      * @return array
      */
-    public function execute_provider(): array {
+    public static function execute_provider(): array {
         return [
             [
                 'block_login',

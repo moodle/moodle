@@ -29,7 +29,7 @@ class client_test extends advanced_testcase {
      *
      * @return array
      */
-    public function map_response_provider(): array {
+    public static function map_response_provider(): array {
         return [
             "Nested objects syntax a-b-c syntax " => [
                 [

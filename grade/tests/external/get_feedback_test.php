@@ -77,7 +77,7 @@ class get_feedback_test extends \externallib_advanced_testcase {
      *
      * @return array
      */
-    public function get_feedback_provider(): array {
+    public static function get_feedback_provider(): array {
         return [
             'Return when feedback is set.' => [
                 'Test feedback',
@@ -154,7 +154,7 @@ class get_feedback_test extends \externallib_advanced_testcase {
      *
      * @return array
      */
-    public function get_feedback_invalid_request_provider(): array {
+    public static function get_feedback_invalid_request_provider(): array {
         return [
             'Logged user does not have permissions to view feedback.' => [
                 'user',

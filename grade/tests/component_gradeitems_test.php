@@ -76,7 +76,7 @@ namespace core_grades {
          *
          * @return array
          */
-        public function is_valid_itemname_provider(): array {
+        public static function is_valid_itemname_provider(): array {
             return [
                 'valid' => [
                     'someother',
@@ -173,7 +173,7 @@ namespace core_grades {
          *
          * @return array
          */
-        public function is_advancedgrading_itemname_provider(): array {
+        public static function is_advancedgrading_itemname_provider(): array {
             return [
                 'valid' => [
                     'someother',
@@ -209,7 +209,7 @@ namespace core_grades {
          *
          * @return array
          */
-        public function get_field_name_for_itemnumber_provider(): array {
+        public static function get_field_name_for_itemnumber_provider(): array {
             return [
                 'Valid itemnumber 0 case 1' => [
                     0,
@@ -291,7 +291,7 @@ namespace core_grades {
          *
          * @return array
          */
-        public function get_field_name_for_itemname_provider(): array {
+        public static function get_field_name_for_itemname_provider(): array {
             return [
                 'Empty itemname empty case 1' => [
                     '',
@@ -393,7 +393,7 @@ namespace core_grades {
          *
          * @return array
          */
-        public function get_itemname_from_itemnumber_provider(): array {
+        public static function get_itemname_from_itemnumber_provider(): array {
             return [
                 'Valid itemnumber 0' => [
                     0,
@@ -471,7 +471,7 @@ namespace core_grades {
          *
          * @return array
          */
-        public function get_itemnumber_from_itemname_provider(): array {
+        public static function get_itemnumber_from_itemname_provider(): array {
             return [
                 'Empty itemname empty' => [
                     '',

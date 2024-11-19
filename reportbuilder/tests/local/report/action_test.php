@@ -63,7 +63,7 @@ class action_test extends advanced_testcase {
      *
      * @return array[]
      */
-    public function action_title_provider(): array {
+    public static function action_title_provider(): array {
         $title = new lang_string('yes');
         return [
             'Specified via constructor' => ['', [], $title],

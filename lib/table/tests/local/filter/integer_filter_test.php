@@ -91,7 +91,7 @@ class integer_filter_test extends advanced_testcase {
      *
      * @return array
      */
-    public function add_filter_value_invalid_types_provider(): array {
+    public static function add_filter_value_invalid_types_provider(): array {
         return [
             'Null' => [null, 'NULL'],
             'Empty string' => ['', 'string'],

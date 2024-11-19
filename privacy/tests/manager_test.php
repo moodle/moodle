@@ -138,7 +138,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function component_is_compliant_provider() {
+    public static function component_is_compliant_provider(): array {
         return [
             'An empty subsystem' => [
                 'core_countries',
@@ -294,7 +294,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function is_empty_subsystem_provider() {
+    public static function is_empty_subsystem_provider(): array {
         return [
             'A subsystem which has no directory' => [
                 'core_langconfig',

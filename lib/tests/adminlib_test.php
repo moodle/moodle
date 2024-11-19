@@ -35,7 +35,7 @@ class adminlib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function db_should_replace_dataprovider() {
+    public static function db_should_replace_dataprovider(): array {
         return [
             // Skipped tables.
             ['block_instances', '', false],
@@ -86,7 +86,7 @@ class adminlib_test extends \advanced_testcase {
      * @covers ::db_should_replace
      * @return array
      */
-    public function db_should_replace_additional_skip_tables_dataprovider() {
+    public static function db_should_replace_additional_skip_tables_dataprovider(): array {
         return [
             // Skipped tables.
             ['block_instances', '', false],

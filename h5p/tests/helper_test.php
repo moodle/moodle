@@ -77,7 +77,7 @@ class helper_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function display_options_provider(): array {
+    public static function display_options_provider(): array {
         return [
             'All display options disabled' => [
                 false,
@@ -468,7 +468,7 @@ class helper_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function parse_js_array_provider(): array {
+    public static function parse_js_array_provider(): array {
         $lines = [
             "{",
             "  missingTranslation: '[Missing translation :key]',",

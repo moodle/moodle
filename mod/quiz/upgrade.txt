@@ -1,5 +1,11 @@
 This file describes API changes in the quiz code.
 
+=== 4.3.9 ===
+* A new test-case, `\mod_quiz\tests\attempt_walkthrough_testcase`, has been extracted from the
+  `\mod_quiz\attempt_walkthrough_from_csv_test` unit test and should be used instead.
+  To support this testcase the existing `$files` instance property should be replaced with a new static method,
+  `::get_test_files`. Both the existing instance property and the new static method can co-exist.
+
 === 4.3.4 ===
 * There is a new function qbank_helper::get_version_information_for_questions_in_attempt to efficiently
   check whether each question in an attempt is using the latest versions. This is used by re-grading,

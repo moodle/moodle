@@ -137,7 +137,7 @@ class helper_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_rounded_cost_provider(): array {
+    public static function get_rounded_cost_provider(): array {
         return [
             'IRR 0 surcharge' => [5.345, 'IRR', 0, 5],
             'IRR 12% surcharge' => [5.345, 'IRR', 12, 6],
@@ -151,7 +151,7 @@ class helper_test extends advanced_testcase {
      *
      * @return array[]
      */
-    public function get_cost_as_string_provider(): array {
+    public static function get_cost_as_string_provider(): array {
         return [
             'IRR 0 surcharge' => [5.345, 'IRR', 0, 'IRR'."\xc2\xa0".'5'],
             'IRR 12% surcharge' => [5.345, 'IRR', 12, 'IRR'."\xc2\xa0".'6'],

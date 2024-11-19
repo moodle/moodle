@@ -285,7 +285,7 @@ class datalib_test extends \qbehaviour_walkthrough_test_base {
      *
      * @return array test cases
      */
-    public function get_file_area_name_cases(): array {
+    public static function get_file_area_name_cases(): array {
         return [
             'simple variable' => ['response_attachments', 'response_attachments'],
             'behaviour variable' => ['response_5:answer', 'response_5answer'],

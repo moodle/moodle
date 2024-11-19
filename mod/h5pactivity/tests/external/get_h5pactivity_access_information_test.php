@@ -90,7 +90,7 @@ class get_h5pactivity_access_information_test extends externallib_advanced_testc
      *
      * @return array
      */
-    public function get_h5pactivity_access_information_data(): array {
+    public static function get_h5pactivity_access_information_data(): array {
         return [
             'Admin, tracking enabled' => [
                 '', 1, ['canview', 'canreviewattempts', 'canaddinstance']

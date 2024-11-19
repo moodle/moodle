@@ -19,13 +19,7 @@ namespace mod_quiz;
 use moodle_url;
 use question_bank;
 use question_engine;
-use mod_quiz\question\bank\qbank_helper;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.php');
+use mod_quiz\tests\question_helper_test_trait;
 
 /**
  * Quiz attempt walk through.
@@ -37,9 +31,17 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_quiz\quiz_attempt
  */
-class attempt_walkthrough_test extends \advanced_testcase {
+final class attempt_walkthrough_test extends \advanced_testcase {
+    use question_helper_test_trait;
 
-    use \quiz_question_helper_test_trait;
+    #[\Override]
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+
+        parent::setUpBeforeClass();
+
+        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+    }
 
     /**
      * Create a quiz with questions and walk through a quiz attempt.
@@ -424,7 +426,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
     }
 
 
-    public function get_correct_response_for_variants() {
+    public static function get_correct_response_for_variants(): array {
         return [[1, 9.9], [2, 8.5], [5, 14.2], [10, 6.8, true]];
     }
 

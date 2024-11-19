@@ -51,7 +51,7 @@ class admin_setting_managemfa_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_factor_combinations_provider() {
+    public static function get_factor_combinations_provider(): array {
         $provider = [];
 
         $factors = [];

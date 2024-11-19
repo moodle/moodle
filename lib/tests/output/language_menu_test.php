@@ -101,7 +101,7 @@ class language_menu_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_lang_menu_provider(): array {
+    public static function get_lang_menu_provider(): array {
         return [
             'Lang menu with only the current language' => [
                 false, 'en', []

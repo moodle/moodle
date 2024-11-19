@@ -16,6 +16,8 @@
 
 namespace core\task;
 
+use stdClass;
+
 /**
  * Unit tests for the file_temp_cleanup task.
  *
@@ -25,14 +27,13 @@ namespace core\task;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \core\task\file_temp_cleanup_task
  */
-class file_temp_cleanup_task_test extends \basic_testcase {
-
+final class file_temp_cleanup_task_test extends \basic_testcase {
     /**
      * Data provider for cron_delete_from_temp.
      *
      * @return array Provider data
      */
-    public function cron_delete_from_temp_provider() {
+    public static function cron_delete_from_temp_provider(): array {
         global $CFG;
 
         $tmpdir = realpath($CFG->tempdir);
@@ -46,45 +47,45 @@ class file_temp_cleanup_task_test extends \basic_testcase {
 
         $nodes = array();
         // Really old directory to remove.
-        $nodes[] = $this->generate_test_path('/dir1/dir1_1/dir1_1_1/dir1_1_1_1/', true, $lastweekstime * 52, false);
+        $nodes[] = self::generate_test_path('/dir1/dir1_1/dir1_1_1/dir1_1_1_1/', true, $lastweekstime * 52, false);
 
         // New Directory to keep.
-        $nodes[] = $this->generate_test_path('/dir1/dir1_2/', true, $time, true);
+        $nodes[] = self::generate_test_path('/dir1/dir1_2/', true, $time, true);
 
         // Directory a little less than 1 week old, keep.
-        $nodes[] = $this->generate_test_path('/dir2/', true, $afterlastweekstime, true);
+        $nodes[] = self::generate_test_path('/dir2/', true, $afterlastweekstime, true);
 
         // Directory older than 1 week old, remove.
-        $nodes[] = $this->generate_test_path('/dir3/', true, $beforelastweekstime, false);
+        $nodes[] = self::generate_test_path('/dir3/', true, $beforelastweekstime, false);
 
         // File older than 1 week old, remove.
-        $nodes[] = $this->generate_test_path('/dir1/dir1_1/dir1_1_1/file1_1_1_1', false, $beforelastweekstime, false);
+        $nodes[] = self::generate_test_path('/dir1/dir1_1/dir1_1_1/file1_1_1_1', false, $beforelastweekstime, false);
 
         // New File to keep.
-        $nodes[] = $this->generate_test_path('/dir1/dir1_1/dir1_1_1/file1_1_1_2', false, $time, true);
+        $nodes[] = self::generate_test_path('/dir1/dir1_1/dir1_1_1/file1_1_1_2', false, $time, true);
 
         // File older than 1 week old, remove.
-        $nodes[] = $this->generate_test_path('/dir1/dir1_2/file1_1_2_1', false, $beforelastweekstime, false);
+        $nodes[] = self::generate_test_path('/dir1/dir1_2/file1_1_2_1', false, $beforelastweekstime, false);
 
         // New file to keep.
-        $nodes[] = $this->generate_test_path('/dir1/dir1_2/file1_1_2_2', false, $time, true);
+        $nodes[] = self::generate_test_path('/dir1/dir1_2/file1_1_2_2', false, $time, true);
 
         // New file to keep.
-        $nodes[] = $this->generate_test_path('/file1', false, $time, true);
+        $nodes[] = self::generate_test_path('/file1', false, $time, true);
 
         // File older than 1 week, keep.
-        $nodes[] = $this->generate_test_path('/file2', false, $beforelastweekstime, false);
+        $nodes[] = self::generate_test_path('/file2', false, $beforelastweekstime, false);
 
         // Directory older than 1 week to keep.
         // Note: Since this directory contains a directory that contains a file that is also older than a week
         // the directory won't be deleted since it's mtime will be updated when the file is deleted.
 
-        $nodes[] = $this->generate_test_path('/dir4/dir4_1', true, $beforelastweekstime, true);
+        $nodes[] = self::generate_test_path('/dir4/dir4_1', true, $beforelastweekstime, true);
 
-        $nodes[] = $this->generate_test_path('/dir4/dir4_1/dir4_1_1/', true, $beforelastweekstime, true);
+        $nodes[] = self::generate_test_path('/dir4/dir4_1/dir4_1_1/', true, $beforelastweekstime, true);
 
         // File older than 1 week to remove.
-        $nodes[] = $this->generate_test_path('/dir4/dir4_1/dir4_1_1/file4_1_1_1', false, $beforelastweekstime, false);
+        $nodes[] = self::generate_test_path('/dir4/dir4_1/dir4_1_1/file4_1_1_1', false, $beforelastweekstime, false);
 
         $expectednodes = array();
         foreach ($nodes as $node) {
@@ -104,16 +105,10 @@ class file_temp_cleanup_task_test extends \basic_testcase {
         }
         sort($expectednodes);
 
-        $data = array(
-                array(
-                    $nodes,
-                    $expectednodes
-                ),
-                array(
-                    array(),
-                    array()
-                )
-        );
+        $data = [
+            [$nodes, $expectednodes],
+            [[], []],
+        ];
 
         return $data;
     }
@@ -126,13 +121,13 @@ class file_temp_cleanup_task_test extends \basic_testcase {
      * @param int $time modified time of the node in epoch
      * @param bool $keep Should the node exist after the delete function has run
      */
-    private function generate_test_path($path, $isdir = false, $time = 0, $keep = false) {
-        $node = new \stdClass();
-        $node->path = $path;
-        $node->isdir = $isdir;
-        $node->time = $time;
-        $node->keep = $keep;
-        return $node;
+    private static function generate_test_path($path, $isdir = false, $time = 0, $keep = false): stdClass {
+        return (object) [
+            'path' => $path,
+            'isdir' => $isdir,
+            'time' => $time,
+            'keep' => $keep,
+        ];
     }
     /**
      * Test removing files and directories from tempdir.
