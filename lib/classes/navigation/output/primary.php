@@ -208,6 +208,12 @@ class primary implements renderable, templatable {
 
         $pathmatches = false;
 
+        // Check for same host names before comparing the path.
+        $currenthost = array_key_exists('host', $current) ? strtolower($current['host']) : '';
+        $nodehost = array_key_exists('host', $nodeurl) ? strtolower($nodeurl['host']) : '';
+        if ($currenthost !== $nodehost) {
+            return false;
+        }
         // Exact match of the path of node and current url.
         $nodepath = $nodeurl['path'] ?? '/';
         $currentpath = $current['path'] ?? '/';
