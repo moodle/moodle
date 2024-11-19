@@ -78,7 +78,7 @@ $strnodeadline = get_string("nodeadline", "lesson");
 $table = new html_table();
 
 if ($usesections) {
-    $strsectionname = get_string('sectionname', 'format_'.$course->format);
+    $strsectionname = course_get_format($course)->get_generic_section_name();
     $table->head  = array ($strsectionname, $strname, $strgrade, $strdeadline);
     $table->align = array ("center", "left", "center", "center");
 } else {

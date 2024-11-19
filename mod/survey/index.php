@@ -44,7 +44,7 @@
     $table = new html_table();
 
     if ($usesections) {
-        $strsectionname = get_string('sectionname', 'format_'.$course->format);
+        $strsectionname = course_get_format($course)->get_generic_section_name();
         $table->head  = array ($strsectionname, $strname, $strstatus);
     } else {
         $table->head  = array ($strname, $strstatus);
@@ -89,5 +89,3 @@
     echo "<br />";
     echo html_writer::table($table);
     echo $OUTPUT->footer();
-
-

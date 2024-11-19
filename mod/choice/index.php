@@ -51,7 +51,7 @@
     $table = new html_table();
 
     if ($usesections) {
-        $strsectionname = get_string('sectionname', 'format_'.$course->format);
+        $strsectionname = course_get_format($course)->get_generic_section_name();
         $table->head  = array ($strsectionname, get_string("question"), get_string("answer"));
         $table->align = array ("center", "left", "left");
     } else {
@@ -103,5 +103,3 @@
     echo html_writer::table($table);
 
     echo $OUTPUT->footer();
-
-

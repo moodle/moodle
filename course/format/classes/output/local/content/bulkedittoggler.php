@@ -60,8 +60,8 @@ class bulkedittoggler implements named_templatable, renderable {
         ];
 
         if ($section) {
-            $data->sectionname = get_string('sectionname', "format_$course->format");
-            $data->sectiontitle = get_section_name($course, $section);
+            $data->sectionname = $format->get_generic_section_name();
+            $data->sectiontitle = $format->get_section_name($section);
         }
 
         return $data;

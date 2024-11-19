@@ -74,7 +74,7 @@ array_push($headings, get_string('quizcloses', 'quiz'));
 array_push($align, 'left');
 
 if (course_format_uses_sections($course->format)) {
-    array_unshift($headings, get_string('sectionname', 'format_'.$course->format));
+    array_unshift($headings, course_get_format($course)->get_generic_section_name());
 } else {
     array_unshift($headings, '');
 }

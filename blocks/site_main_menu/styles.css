@@ -1,26 +1,34 @@
-.block_site_main_menu li {
-    clear: both;
+/* Imitate mobile grid for activity card. */
+.block_site_main_menu .activity-item .activity-grid {
+    grid-template-columns: min-content 1fr min-content min-content min-content;
+    grid-template-rows: 1fr repeat(4, min-content);
+    grid-template-areas:
+        "icon          name          actions"
+        "visibility    visibility    visibility"
+        "dates         dates         dates"
+        "completion    completion    completion"
+        "altcontent    altcontent    altcontent"
+        "afterlink     afterlink     afterlink"
+        "availability  availability  availability";
 }
 
-.block_site_main_menu.block .content > .unlist > li > .column {
-    /* Made specific to win over .block.list_block .unlist > li > .column. */
-    width: 100%;
-    display: table;
-    margin-bottom: 0.5rem;
+.block_site_main_menu .activity-item .activity-grid.noname-grid {
+    grid-template-columns: 1fr min-content;
+    grid-template-areas:
+        "actions"
+        "visibility"
+        "altcontent"
+        "groupmode"
+        "afterlink"
+        "completion"
+        "availability";
 }
 
-.block_site_main_menu li .buttons a img {
-    vertical-align: text-bottom;
+.block_site_main_menu .activity-item .activity-grid.noname-grid .activity-actions {
+    justify-self: end;
 }
 
-.block_site_main_menu .footer {
-    margin-top: 1em;
-}
-
-.block_site_main_menu .section_add_menus noscript div {
-    display: inline;
-}
-
-.block_site_main_menu .instancename {
-    word-break: break-all;
+/* Hide extra edit elements in block space. */
+.block_site_main_menu .activity-groupmode-info {
+    display: none;
 }

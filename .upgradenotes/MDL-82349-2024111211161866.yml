@@ -1,0 +1,10 @@
+issueNumber: MDL-82349
+notes:
+  core_courseformat:
+    - message: >-
+        A new core_courseformat\base::get_generic_section_name method is
+        created to know how a specific format name the sections.
+        This method is also used by plugins to know how to name the sections
+        instead of using using a direct get_string on "sectionnamer" that
+        may not exists.
+      type: improved

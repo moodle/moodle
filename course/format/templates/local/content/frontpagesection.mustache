@@ -21,6 +21,7 @@
 
     Example context (json):
     {
+        "editing": true,
         "sections": [
             "<li>This is the section content</li>"
         ],
@@ -28,7 +29,7 @@
         "settingsurl": "#"
     }
 }}
-<div class="course-content">
+<div class="course-content" id="courseformat-frontpage-main-topic">
     {{#showsettings}}
     <div class="mb-2">
         <a href="{{{settingsurl}}}" title="{{#str}} edit {{/str}}" aria-label="{{#str}} edit {{/str}}">
@@ -37,10 +38,18 @@
     </div>
     {{/showsettings}}
     <div class="sitetopic">
-        <ul class="topics frontpage">
+        <ul class="topics frontpage" data-for="course_sectionlist">
             {{#sections}}
                 {{> core_courseformat/local/content/section }}
             {{/sections}}
         </ul>
     </div>
 </div>
+{{#js}}
+{{! The home page should be as fast as possible, we only load the editor when needed.}}
+{{#editing}}
+require(['core_courseformat/local/content'], function(component) {
+    component.init('courseformat-frontpage-main-topic', {});
+});
+{{/editing}}
+{{/js}}

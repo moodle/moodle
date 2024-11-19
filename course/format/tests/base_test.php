@@ -998,6 +998,31 @@ class base_test extends advanced_testcase {
     }
 
     /**
+     * Test for the get_generic_section_name method.
+     *
+     * @covers ::get_generic_section_name
+     */
+    public function test_get_generic_section_name(): void {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(['format' => 'topics']);
+        $course2 = $generator->create_course(['format' => 'theunittest']);
+
+        $format = course_get_format($course1);
+        $this->assertEquals(
+            get_string('sectionname', 'format_topics'),
+            $format->get_generic_section_name()
+        );
+
+        $format = course_get_format($course2);
+        $this->assertEquals(
+            get_string('section'),
+            $format->get_generic_section_name()
+        );
+    }
+
+    /**
      * Test can_sections_be_removed_from_navigation().
      *
      * @covers ::session_cache

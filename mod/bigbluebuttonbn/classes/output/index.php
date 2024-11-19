@@ -61,7 +61,7 @@ class index implements renderable {
         $table = new html_table();
 
         if (course_format_uses_sections($this->course->format)) {
-            $sectionheading = get_string('sectionname', "format_{$this->course->format}");
+            $sectionheading = course_get_format($this->course)->get_generic_section_name();
         } else {
             $sectionheading = '';
         }

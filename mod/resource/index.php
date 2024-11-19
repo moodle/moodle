@@ -41,7 +41,7 @@ $event->trigger();
 
 $strresource     = get_string('modulename', 'resource');
 $strresources    = get_string('modulenameplural', 'resource');
-$strsectionname  = get_string('sectionname', 'format_'.$course->format);
+$strsectionname  = course_get_format($course)->get_generic_section_name();
 $strname         = get_string('name');
 $strintro        = get_string('moduleintro');
 $strlastmodified = get_string('lastmodified');

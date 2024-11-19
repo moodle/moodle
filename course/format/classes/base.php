@@ -566,6 +566,18 @@ abstract class base {
     }
 
     /**
+     * Returns the generic name for sections in this course format.
+     *
+     * @return string
+     */
+    public function get_generic_section_name() {
+        if (get_string_manager()->string_exists('sectionname', 'format_' . $this->format)) {
+            return get_string('sectionname', 'format_' . $this->format);
+        }
+        return get_string('section');
+    }
+
+    /**
      * Returns the name for the highlighted section.
      *
      * @return string The name for the highlighted section based on the given course format.

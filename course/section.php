@@ -148,8 +148,8 @@ $editingtitle = '';
 if ($PAGE->user_is_editing()) {
     $editingtitle = 'editing';
 }
-$sectionname = get_string('sectionname', "format_$course->format");
-$sectiontitle = get_section_name($course, $section);
+$sectionname = $format->get_generic_section_name();
+$sectiontitle = $format->get_section_name($section);
 $PAGE->set_title(
     get_string(
         'coursesectiontitle' . $editingtitle,

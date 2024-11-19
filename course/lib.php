@@ -2867,7 +2867,7 @@ function include_course_editor(course_format $format) {
 
     $course = $format->get_course();
 
-    if ($SITE->id === $course->id) {
+    if (!$format->supports_ajax()?->capable) {
         return;
     }
 

@@ -63,7 +63,7 @@ $strname        = get_string('name');
 $table          = new html_table();
 
 if ($usesections) {
-    $strsectionname = get_string('sectionname', 'format_'.$course->format);
+    $strsectionname = course_get_format($course)->get_generic_section_name();
     $table->head  = array ($strsectionname, $strname);
     $table->align = array ('center', 'left');
 } else {
