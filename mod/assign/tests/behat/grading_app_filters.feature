@@ -27,6 +27,7 @@ Feature: In an assignment, teachers can change filters in the grading app
       | course                              | C1                      |
       | name                                | Test assignment name &  |
       | description                         | Submit your online text |
+      | submissiondrafts                    | 0                       |
       | assignsubmission_onlinetext_enabled | 1                       |
       | assignsubmission_file_enabled       | 0                       |
       | markingworkflow                     | 1                       |
@@ -79,3 +80,16 @@ Feature: In an assignment, teachers can change filters in the grading app
     And I click on "Advanced" "button" in the ".tertiary-navigation" "css_element"
     And the field "Marker" matches value "Marker 1"
     And the field "Marking state" matches value "In marking"
+
+  @javascript
+  Scenario: Applying filters in the grading app loads and displays the correct students
+    Given the following "mod_assign > submissions" exist:
+      | assign                  | user      | onlinetext                        |
+      | Test assignment name &  | student1  | I'm the student first submission  |
+    When I am on the "Test assignment name &" "assign activity" page logged in as teacher1
+    And I go to "Student 1" "Test assignment name &" activity advanced grading page
+    And I click on "Change filters" "link"
+    And I set the field "Filter" to "notsubmitted"
+    Then I should see "student2"
+    And I set the field "Filter" to "requiregrading"
+    And I should see "student1"
