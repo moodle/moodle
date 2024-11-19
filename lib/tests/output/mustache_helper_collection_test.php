@@ -31,7 +31,7 @@ class mustache_helper_collection_test extends \advanced_testcase {
      * text by the helper before being passed to other another helper. This prevents
      * nested calls to helpers.
      */
-    public function get_strip_disallowed_helpers_testcases() {
+    public static function get_strip_disallowed_helpers_testcases(): array {
         return [
             'no disallowed' => [
                 'disallowed' => [],
@@ -123,7 +123,7 @@ class mustache_helper_collection_test extends \advanced_testcase {
 
     /**
      * Test that the mustache_helper_collection class correctly strips
-     * @dataProvider get_strip_disallowed_helpers_testcases()
+     * @dataProvider get_strip_disallowed_helpers_testcases
      * @param string[] $disallowed The list of helpers to strip
      * @param string $input The input string for the helper
      * @param string $expected The expected output of the string after disallowed strip

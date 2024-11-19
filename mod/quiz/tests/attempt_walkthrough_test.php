@@ -21,11 +21,6 @@ use question_engine;
 use quiz;
 use quiz_attempt;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-
 /**
  * Quiz attempt walk through.
  *
@@ -36,7 +31,15 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \quiz_attempt
  */
-class attempt_walkthrough_test extends \advanced_testcase {
+final class attempt_walkthrough_test extends \advanced_testcase {
+    #[\Override]
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+
+        parent::setUpBeforeClass();
+
+        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+    }
 
     /**
      * Create a quiz with questions and walk through a quiz attempt.
@@ -372,9 +375,8 @@ class attempt_walkthrough_test extends \advanced_testcase {
         }
     }
 
-
-    public function get_correct_response_for_variants() {
-        return array(array(1, 9.9), array(2, 8.5), array(5, 14.2), array(10, 6.8, true));
+    public static function get_correct_response_for_variants(): array {
+        return [[1, 9.9], [2, 8.5], [5, 14.2], [10, 6.8, true]];
     }
 
     protected $quizwithvariants = null;

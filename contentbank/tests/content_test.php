@@ -74,7 +74,7 @@ class content_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function set_name_provider() {
+    public static function set_name_provider(): array {
         return [
             'Standard name' => ['New name', 'New name'],
             'Name with digits' => ['Today is 17/04/2017', 'Today is 17/04/2017'],

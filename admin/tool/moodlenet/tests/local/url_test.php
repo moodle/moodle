@@ -55,7 +55,7 @@ class url_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function url_provider() {
+    public static function url_provider(): array {
         return [
             'No path' => [
                 'url' => 'https://example.moodle.net',

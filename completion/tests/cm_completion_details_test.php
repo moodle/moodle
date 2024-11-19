@@ -104,7 +104,7 @@ class cm_completion_details_test extends advanced_testcase {
      *
      * @return array[]
      */
-    public function has_completion_provider(): array {
+    public static function has_completion_provider(): array {
         return [
             'Automatic' => [
                 COMPLETION_TRACKING_AUTOMATIC, true
@@ -136,7 +136,7 @@ class cm_completion_details_test extends advanced_testcase {
      *
      * @return array[]
      */
-    public function is_automatic_provider(): array {
+    public static function is_automatic_provider(): array {
         return [
             'Automatic' => [
                 COMPLETION_TRACKING_AUTOMATIC, true
@@ -167,7 +167,7 @@ class cm_completion_details_test extends advanced_testcase {
      * Data provider for test_get_overall_completion().
      * @return array[]
      */
-    public function overall_completion_provider(): array {
+    public static function overall_completion_provider(): array {
         return [
             'Complete' => [COMPLETION_COMPLETE],
             'Incomplete' => [COMPLETION_INCOMPLETE],
@@ -190,7 +190,7 @@ class cm_completion_details_test extends advanced_testcase {
      * Data provider for test_get_details().
      * @return array[]
      */
-    public function get_details_provider() {
+    public static function get_details_provider(): array {
         return [
             'No completion tracking' => [
                 COMPLETION_TRACKING_NONE, null, null, null, []
@@ -350,7 +350,7 @@ class cm_completion_details_test extends advanced_testcase {
      * Data provider for test_get_details_custom_order().
      * @return array[]
      */
-    public function get_details_custom_order_provider() {
+    public static function get_details_custom_order_provider(): array {
         return [
             'Custom and view/grade standard conditions, view first and grade last' => [
                 true,

@@ -57,7 +57,7 @@ class meeting_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function get_instance_types_meeting_info(): array {
+    public static function get_instance_types_meeting_info(): array {
         return [
             'Instance Type ALL - No Group' => [
                 'type' => instance::TYPE_ALL,
@@ -417,7 +417,7 @@ class meeting_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function get_data_can_join_with_dates(): array {
+    public static function get_data_can_join_with_dates(): array {
         return [
             'Instance Type ALL - No Group - Closed in past' => [
                 'type' => instance::TYPE_ALL,

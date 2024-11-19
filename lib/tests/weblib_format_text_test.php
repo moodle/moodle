@@ -149,7 +149,7 @@ class weblib_format_text_test extends \advanced_testcase {
      *
      * @return array of testcases
      */
-    public function format_text_blanktarget_testcases() {
+    public static function format_text_blanktarget_testcases(): array {
         return [
             'Simple link' => [
                 '<a href="https://www.youtube.com/watch?v=JeimE8Wz6e4">Hey, that\'s pretty good!</a>',
@@ -230,7 +230,7 @@ class weblib_format_text_test extends \advanced_testcase {
      *
      * @return array of testcases (string)testcasename => [(string)input, (string)nocleaned, (string)cleaned]
      */
-    public function format_text_cleaning_testcases() {
+    public static function format_text_cleaning_testcases(): array {
         return [
             'JavaScript' => [
                 'Hello <script type="text/javascript">alert("XSS");</script> world',

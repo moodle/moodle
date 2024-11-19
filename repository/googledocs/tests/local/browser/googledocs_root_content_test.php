@@ -29,8 +29,7 @@ require_once($CFG->dirroot . '/repository/googledocs/lib.php');
  * @copyright  2021 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class googledocs_root_content_test extends \googledocs_content_testcase {
-
+final class googledocs_root_content_test extends \googledocs_content_testcase {
     /**
      * Test get_content_nodes().
      *
@@ -66,37 +65,34 @@ class googledocs_root_content_test extends \googledocs_content_testcase {
      *
      * @return array
      */
-    public function get_content_nodes_provider(): array {
-
+    public static function get_content_nodes_provider(): array {
         $rootid = \repository_googledocs::REPOSITORY_ROOT_ID;
         $mydriveid = \repository_googledocs::MY_DRIVE_ROOT_ID;
         $shareddrivesid = \repository_googledocs::SHARED_DRIVES_ROOT_ID;
 
         return [
-            'Shared drives exist.' =>
+            'Shared drives exist.' => [
                 [
-                    [
-                        $this->create_google_drive_shared_drive_object('d85b21c0f86cb5', 'Shared Drive 1'),
-                        $this->create_google_drive_shared_drive_object('d85b21c0f86cb0', 'Shared Drive 3'),
-                    ],
-                    [
-                        $this->create_folder_content_node_array($mydriveid,
-                            get_string('mydrive', 'repository_googledocs'),
-                            "{$rootid}|Google+Drive"),
-                        $this->create_folder_content_node_array($shareddrivesid,
-                            get_string('shareddrives', 'repository_googledocs'),
-                            "{$rootid}|Google+Drive"),
-                    ],
+                    self::create_google_drive_shared_drive_object('d85b21c0f86cb5', 'Shared Drive 1'),
+                    self::create_google_drive_shared_drive_object('d85b21c0f86cb0', 'Shared Drive 3'),
                 ],
-            'Shared drives do not exist.' =>
                 [
-                    [],
-                    [
-                        $this->create_folder_content_node_array($mydriveid,
-                            get_string('mydrive', 'repository_googledocs'),
-                            "{$rootid}|Google+Drive"),
-                    ],
+                    self::create_folder_content_node_array($mydriveid,
+                        get_string('mydrive', 'repository_googledocs'),
+                        "{$rootid}|Google+Drive"),
+                    self::create_folder_content_node_array($shareddrivesid,
+                        get_string('shareddrives', 'repository_googledocs'),
+                        "{$rootid}|Google+Drive"),
                 ],
+            ],
+            'Shared drives do not exist.' => [
+                [],
+                [
+                    self::create_folder_content_node_array($mydriveid,
+                        get_string('mydrive', 'repository_googledocs'),
+                        "{$rootid}|Google+Drive"),
+                ],
+            ],
         ];
     }
 }

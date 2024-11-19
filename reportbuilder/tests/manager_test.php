@@ -180,7 +180,7 @@ class manager_test extends core_reportbuilder_testcase {
      *
      * @return array
      */
-    public function report_limit_reached_provider(): array {
+    public static function report_limit_reached_provider(): array {
         return [
             [0, 1, false],
             [1, 1, true],

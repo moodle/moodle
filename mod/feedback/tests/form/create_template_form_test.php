@@ -102,7 +102,7 @@ class create_template_form_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function createtemplate_form_with_modified_capabilities_provider(): array {
+    public static function createtemplate_form_with_modified_capabilities_provider(): array {
         return [
             "Manager without edititems permission cannot create any templates" => [
                 ['mod/feedback:edititems'], false
@@ -180,7 +180,7 @@ class create_template_form_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function createtemplate_form_provider(): array {
+    public static function createtemplate_form_provider(): array {
         return [
             'Create a private template as an admin' => [
                 'admin', false

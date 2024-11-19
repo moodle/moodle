@@ -588,7 +588,7 @@ class navigationlib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function set_force_into_more_menu_provider(): array {
+    public static function set_force_into_more_menu_provider(): array {
         return [
             'Navigation node without any children nodes; Force into "more" menu => true.' =>
                 [
@@ -625,7 +625,7 @@ class navigationlib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function is_action_link_provider(): array {
+    public static function is_action_link_provider(): array {
         return [
             'The navigation node has an action link.' =>
                 [
@@ -678,7 +678,7 @@ class navigationlib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function action_link_actions_provider(): array {
+    public static function action_link_actions_provider(): array {
         return [
             'The navigation node has an action link with an action attached.' =>
                 [

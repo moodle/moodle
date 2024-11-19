@@ -549,7 +549,7 @@ class fields_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_sql_fullname_provider(): array {
+    public static function get_sql_fullname_provider(): array {
         return [
             ['firstname lastname', 'FN LN'],
             ['lastname, firstname', 'LN, FN'],

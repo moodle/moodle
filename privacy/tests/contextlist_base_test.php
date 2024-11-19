@@ -64,7 +64,7 @@ class contextlist_base_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_contextids_provider() {
+    public static function get_contextids_provider(): array {
         return [
             'basic' => [
                 [1, 2, 3, 4, 5],

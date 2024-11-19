@@ -52,7 +52,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_endpoints_provider() {
+    public static function get_endpoints_provider(): array {
         global $CFG;
         return [
             [

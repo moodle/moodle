@@ -149,7 +149,7 @@ class sessionlib_test extends \advanced_testcase {
      *
      * @return array of config and secure result
      */
-    public function moodle_cookie_secure_provider() {
+    public static function moodle_cookie_secure_provider(): array {
         return array(
             array(
                 // Non ssl, not set.

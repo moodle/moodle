@@ -21,14 +21,6 @@ use question_bank;
 use question_finder;
 use quiz_statistics_report;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/quiz/tests/attempt_walkthrough_from_csv_test.php');
-require_once($CFG->dirroot . '/mod/quiz/report/default.php');
-require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
-require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
-
 /**
  * Quiz attempt walk through using data from csv file.
  *
@@ -46,19 +38,27 @@ require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class stats_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthrough_from_csv_test {
-
+final class stats_from_steps_walkthrough_test extends \mod_quiz\tests\attempt_walkthrough_testcase {
     /**
      * @var quiz_statistics_report object to do stats calculations.
      */
     protected $report;
 
-    protected function get_full_path_of_csv_file(string $setname, string $test): string {
-        // Overridden here so that __DIR__ points to the path of this file.
-        return  __DIR__."/fixtures/{$setname}{$test}.csv";
+    #[\Override]
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+
+        parent::setUpBeforeClass();
+
+        require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
+        require_once($CFG->dirroot . '/mod/quiz/report/default.php');
+        require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
     }
 
-    protected $files = array('questions', 'steps', 'results', 'qstats', 'responsecounts');
+    #[\Override]
+    protected static function get_test_files(): array {
+        return ['questions', 'steps', 'results', 'qstats', 'responsecounts'];
+    }
 
     /**
      * Create a quiz add questions to it, walk through quiz attempts and then check results.
@@ -66,8 +66,7 @@ class stats_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthrough_fr
      * @param array $csvdata data read from csv file "questionsXX.csv", "stepsXX.csv" and "resultsXX.csv".
      * @dataProvider get_data_for_walkthrough
      */
-    public function test_walkthrough_from_csv($quizsettings, $csvdata) {
-
+    public function test_walkthrough_from_csv($quizsettings, $csvdata): void {
         $this->create_quiz_simulate_attempts_and_check_results($quizsettings, $csvdata);
 
         $whichattempts = QUIZ_GRADEAVERAGE; // All attempts.

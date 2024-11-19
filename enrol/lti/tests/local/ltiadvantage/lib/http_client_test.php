@@ -109,7 +109,7 @@ class http_client_test extends \advanced_testcase {
      *
      * @return array the test case data.
      */
-    public function unsupported_methods_provider() {
+    public static function unsupported_methods_provider(): array {
         return [
             'head' => ['HEAD'],
             'put' => ['PUT'],

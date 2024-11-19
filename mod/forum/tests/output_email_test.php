@@ -29,7 +29,7 @@ class output_email_test extends \advanced_testcase {
     /**
      * Data provider for the postdate function tests.
      */
-    public function postdate_provider() {
+    public static function postdate_provider(): array {
         return array(
             'Timed discussions disabled, timestart unset' => array(
                 'globalconfig'      => array(

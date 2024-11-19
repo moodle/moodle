@@ -110,7 +110,7 @@ class request_transform_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function yesno_provider() {
+    public static function yesno_provider(): array {
         return [
             'Bool False' => [
                 false,

@@ -186,7 +186,7 @@ class configonlylib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function min_is_revision_valid_and_current_provider(): array {
+    public static function min_is_revision_valid_and_current_provider(): array {
         return [
             'Negative value' => [-1, false],
             'Empty value' => [0, false],

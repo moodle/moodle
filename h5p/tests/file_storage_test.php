@@ -598,7 +598,7 @@ class file_storage_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_icon_url_provider(): array {
+    public static function get_icon_url_provider(): array {
         return [
             'Icon included' => [
                 'filltheblanks.h5p',

@@ -77,7 +77,7 @@ class types_user_preference_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function invalid_string_provider() {
+    public static function invalid_string_provider(): array {
         return [
             'Space in summary' => [
                 'example',
@@ -95,7 +95,7 @@ class types_user_preference_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function valid_string_provider() {
+    public static function valid_string_provider(): array {
         return [
             'Valid combination' => [
                 'example',

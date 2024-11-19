@@ -219,7 +219,7 @@ class random_question_loader_test extends \advanced_testcase {
     /**
      * Data provider for the get_questions test.
      */
-    public function get_questions_test_cases() {
+    public static function get_questions_test_cases(): array {
         return [
                 'empty category' => [
                         'categoryindex' => 'emptycat',
@@ -291,7 +291,7 @@ class random_question_loader_test extends \advanced_testcase {
      *          Parent: cat1
      *      Category: emptycat
      *
-     * @dataProvider get_questions_test_cases()
+     * @dataProvider get_questions_test_cases
      * @param string $categoryindex The named index for the category to use
      * @param bool $includesubcategories If the search should include subcategories
      * @param string[] $usetagnames The tag names to include in the search
@@ -429,7 +429,7 @@ class random_question_loader_test extends \advanced_testcase {
     /**
      * Data provider for the count_questions test.
      */
-    public function count_questions_test_cases() {
+    public static function count_questions_test_cases(): array {
         return [
                 'empty category' => [
                         'categoryindex' => 'emptycat',
@@ -501,7 +501,7 @@ class random_question_loader_test extends \advanced_testcase {
      *          Parent: cat1
      *      Category: emptycat
      *
-     * @dataProvider count_questions_test_cases()
+     * @dataProvider count_questions_test_cases
      * @param string $categoryindex The named index for the category to use
      * @param bool $includesubcategories If the search should include subcategories
      * @param string[] $usetagnames The tag names to include in the search

@@ -64,7 +64,7 @@ class wikiparser_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function urls_inside_link_text_provider() {
+    public static function urls_inside_link_text_provider(): array {
         return [
             'creole implicit link' => [
                 'markup' => 'creole',

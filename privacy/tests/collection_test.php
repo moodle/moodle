@@ -199,7 +199,7 @@ class collection_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function component_list_provider() {
+    public static function component_list_provider(): array {
         return [
             ['core_privacy'],
             ['mod_forum'],

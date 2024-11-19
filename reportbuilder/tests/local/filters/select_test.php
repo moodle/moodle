@@ -38,7 +38,7 @@ class select_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_sql_filter_simple_provider(): array {
+    public static function get_sql_filter_simple_provider(): array {
         return [
             [select::ANY_VALUE, null, true],
             [select::EQUAL_TO, 'starwars', true],

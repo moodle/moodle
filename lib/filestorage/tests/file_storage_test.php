@@ -2129,7 +2129,7 @@ class file_storage_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function filepath_mimetype_provider(): array {
+    public static function filepath_mimetype_provider(): array {
         return [
             [__DIR__ . '/fixtures/testimage.jpg', 'image/jpeg'],
             [__DIR__ . '/fixtures/testimage.svg', 'image/svg+xml'],

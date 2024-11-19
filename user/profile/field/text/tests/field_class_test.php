@@ -60,7 +60,7 @@ class field_class_test extends \advanced_testcase {
      *
      * @return string[]
      */
-    public function filter_profile_field_text_provider(): array {
+    public static function filter_profile_field_text_provider(): array {
         return [
                 'simple_string' => ['Simple string', 'Simple string'],
                 'format_string' => ['HTML & is escaped', 'HTML &amp; is escaped'],

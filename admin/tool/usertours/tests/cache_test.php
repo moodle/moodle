@@ -126,7 +126,7 @@ class cache_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function get_matching_tourdata_provider() {
+    public static function get_matching_tourdata_provider(): array {
         $tourconfigs = [
             (object) [
                 'name' => 'my_exact_1',

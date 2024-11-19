@@ -123,12 +123,12 @@ class tool_launch_service_test extends \lti_advantage_testcase {
      *
      * @return array the test case data.
      */
-    public function user_launch_provider(): array {
+    public static function user_launch_provider(): array {
         return [
             'New tool: no legacy data, no migration claim sent' => [
                 'legacy_data' => null,
                 'launch_data' => [
-                    'user' => $this->get_mock_launch_users_with_ids(['1p3_1'])[0],
+                    'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => null,
                 ],
                 'expected' => [
@@ -144,7 +144,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
                     ]
                 ],
                 'launch_data' => [
-                    'user' => $this->get_mock_launch_users_with_ids(['1'])[0],
+                    'user' => self::get_mock_launch_users_with_ids(['1'])[0],
                     'launch_migration_claim' => [
                         'consumer_key' => 'CONSUMER_1',
                         'signing_secret' => 'toolsecret1',
@@ -167,7 +167,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
                     ]
                 ],
                 'launch_data' => [
-                    'user' => $this->get_mock_launch_users_with_ids(['1p3_1'])[0],
+                    'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => [
                         'consumer_key' => 'CONSUMER_1',
                         'signing_secret' => 'toolsecret2',
@@ -189,7 +189,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
                     ]
                 ],
                 'launch_data' => [
-                    'user' => $this->get_mock_launch_users_with_ids(['1p3_1'])[0],
+                    'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => null,
                 ],
                 'expected' => [
@@ -205,7 +205,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
                     ]
                 ],
                 'launch_data' => [
-                    'user' => $this->get_mock_launch_users_with_ids(['1p3_1'])[0],
+                    'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => [
                         'consumer_key' => 'CONSUMER_1',
                         'signing_secret' => 'secret-not-mapped-to-consumer',
@@ -229,7 +229,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
                     ]
                 ],
                 'launch_data' => [
-                    'user' => $this->get_mock_launch_users_with_ids(['1p3_1'])[0],
+                    'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => [
                         'consumer_key' => 'CONSUMER_1',
                         'user_id' => 'user-id-123',
@@ -252,7 +252,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
                     ]
                 ],
                 'launch_data' => [
-                    'user' => $this->get_mock_launch_users_with_ids(['1p3_1'])[0],
+                    'user' => self::get_mock_launch_users_with_ids(['1p3_1'])[0],
                     'launch_migration_claim' => [
                         'user_id' => 'user-id-123',
                         'context_id' => 'd345b',
@@ -277,7 +277,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
         [$course, $modresource] = $this->create_test_environment();
         $instructoruser = $this->getDataGenerator()->create_user();
         $launchservice = $this->get_tool_launch_service();
-        $mockuser = $this->get_mock_launch_users_with_ids(['1p3_1'])[0];
+        $mockuser = self::get_mock_launch_users_with_ids(['1p3_1'])[0];
         $mocklaunch = $this->get_mock_launch($modresource, $mockuser, null, null, false, null, []);
 
         $this->expectException(\moodle_exception::class);
@@ -295,7 +295,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
         [$course, $modresource] = $this->create_test_environment();
         $instructoruser = $this->getDataGenerator()->create_user();
         $launchservice = $this->get_tool_launch_service();
-        $mockuser = $this->get_mock_launch_users_with_ids(['1p3_1'])[0];
+        $mockuser = self::get_mock_launch_users_with_ids(['1p3_1'])[0];
         $mocklaunch = $this->get_mock_launch($modresource, $mockuser, null, null, false, null, ['id' => 999999]);
 
         $this->expectException(\moodle_exception::class);
@@ -327,7 +327,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
 
         // Call the service.
         $launchservice = $this->get_tool_launch_service();
-        $mockuser = $this->get_mock_launch_users_with_ids(['1p3_1'])[0];
+        $mockuser = self::get_mock_launch_users_with_ids(['1p3_1'])[0];
         $mocklaunch = $this->get_mock_launch($modresource, $mockuser);
 
         $this->expectException(\moodle_exception::class);
@@ -360,7 +360,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
 
         // Call the service.
         $launchservice = $this->get_tool_launch_service();
-        $mockuser = $this->get_mock_launch_users_with_ids(['1p3_1'])[0];
+        $mockuser = self::get_mock_launch_users_with_ids(['1p3_1'])[0];
         $mocklaunch = $this->get_mock_launch($modresource, $mockuser);
 
         $this->expectException(\moodle_exception::class);
@@ -382,18 +382,18 @@ class tool_launch_service_test extends \lti_advantage_testcase {
         $instructor2user = $this->getDataGenerator()->create_user();
         $adminuser = $this->getDataGenerator()->create_user();
         $learneruser = $this->getDataGenerator()->create_user();
-        $mockinstructoruser = $this->get_mock_launch_users_with_ids(['1'])[0];
-        $mockadminuser = $this->get_mock_launch_users_with_ids(
+        $mockinstructoruser = self::get_mock_launch_users_with_ids(['1'])[0];
+        $mockadminuser = self::get_mock_launch_users_with_ids(
             ['2'],
             false,
             'http://purl.imsglobal.org/vocab/lis/v2/system/person#Administrator'
         )[0];
-        $mocklearneruser = $this->get_mock_launch_users_with_ids(
+        $mocklearneruser = self::get_mock_launch_users_with_ids(
             ['3'],
             false,
             'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'
         )[0];
-        $mockinstructor2user = $this->get_mock_launch_users_with_ids(
+        $mockinstructor2user = self::get_mock_launch_users_with_ids(
             ['3'],
             false,
             'Instructor' // Using the legacy (deprecated in 1.3) simple name.
@@ -433,7 +433,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
         $this->resetAfterTest();
         [$course, $modresource] = $this->create_test_environment();
         $user = $this->getDataGenerator()->create_user();
-        $mockinstructoruser = $this->get_mock_launch_users_with_ids(['1'])[0];
+        $mockinstructoruser = self::get_mock_launch_users_with_ids(['1'])[0];
         $launchservice = $this->get_tool_launch_service();
         $userrepo = new user_repository();
 
@@ -481,7 +481,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
         [$course, $modresource] = $this->create_test_environment(true, true, false,
             \enrol_lti\helper::MEMBER_SYNC_ENROL_NEW, false, false, time() + DAYSECS);
         $instructoruser = $this->getDataGenerator()->create_user();
-        $mockinstructoruser = $this->get_mock_launch_users_with_ids(['1'])[0];
+        $mockinstructoruser = self::get_mock_launch_users_with_ids(['1'])[0];
         $mockinstructorlaunch = $this->get_mock_launch($modresource, $mockinstructoruser);
         $launchservice = $this->get_tool_launch_service();
 
@@ -499,8 +499,8 @@ class tool_launch_service_test extends \lti_advantage_testcase {
         [$course, $modresource] = $this->create_test_environment();
         $instructoruser = $this->getDataGenerator()->create_user();
         $learneruser = $this->getDataGenerator()->create_user();
-        $mockinstructoruser = $this->get_mock_launch_users_with_ids(['1'])[0];
-        $mocklearneruser = $this->get_mock_launch_users_with_ids(['1'], false, '')[0];
+        $mockinstructoruser = self::get_mock_launch_users_with_ids(['1'])[0];
+        $mocklearneruser = self::get_mock_launch_users_with_ids(['1'], false, '')[0];
         $mockinstructorlaunch = $this->get_mock_launch($modresource, $mockinstructoruser, null, null, false, null, [
             'id' => $modresource->uuid,
             'forcedembed' => true
@@ -533,7 +533,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
         $this->resetAfterTest();
         [$course, $modresource] = $this->create_test_environment();
         $instructoruser = $this->getDataGenerator()->create_user();
-        $mockinstructoruser = $this->get_mock_launch_users_with_ids(['1'])[0];
+        $mockinstructoruser = self::get_mock_launch_users_with_ids(['1'])[0];
         $mockinstructorlaunch = $this->get_mock_launch($modresource, $mockinstructoruser, null, null, false, null, [
             'id' => $modresource->uuid,
         ], $aud);
@@ -554,7 +554,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
      *
      * @return array the test case data
      */
-    public function aud_data_provider(): array {
+    public static function aud_data_provider(): array {
         return [
             'valid, array having multiple entries with the first one being clientid' => [
                 'aud' => ['123', 'something else', 'blah'],
@@ -622,7 +622,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
         $this->resetAfterTest();
         [$course, $modresource] = $this->create_test_environment();
         $instructoruser = $this->getDataGenerator()->create_user();
-        $mockinstructoruser = $this->get_mock_launch_users_with_ids(['1'])[0];
+        $mockinstructoruser = self::get_mock_launch_users_with_ids(['1'])[0];
         $userrepo = new user_repository();
         $resourcelinkrepo = new resource_link_repository();
         $launchservice = $this->get_tool_launch_service();
@@ -662,7 +662,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
      *
      * @return array the array of test case data.
      */
-    public function ags_claim_provider(): array {
+    public static function ags_claim_provider(): array {
         return [
             'Coupled line item with score post only, no change to scopes on subsequent launch' => [
                 'agsclaim1' => [

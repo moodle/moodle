@@ -65,7 +65,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function get_extension_provider() {
+    public static function get_extension_provider(): array {
         return [
             'H5P file' => ['something.h5p', '.h5p'],
             'PDF file' => ['something.pdf', '.pdf']
@@ -95,7 +95,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function get_extension_supporters_provider() {
+    public static function get_extension_supporters_provider(): array {
         return [
             'H5P first' => [['.h5p' => ['h5p', 'testable']], '.h5p', 'h5p'],
             'Testable first (but upload not implemented)' => [['.h5p' => ['testable', 'h5p']], '.h5p', 'h5p'],
@@ -259,7 +259,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @return array
      */
-    public function search_contents_provider(): array {
+    public static function search_contents_provider(): array {
 
         return [
             'Search all content in all contexts' => [
@@ -519,7 +519,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function get_contenttypes_with_capability_feature_provider(): array {
+    public static function get_contenttypes_with_capability_feature_provider(): array {
         return [
             'no-contenttypes_enabled' => [
                 'contenttypesenabled' => [],

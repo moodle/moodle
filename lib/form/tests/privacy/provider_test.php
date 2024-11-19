@@ -27,16 +27,13 @@ namespace core_form\privacy;
 use core_form\privacy\provider;
 use core_privacy\local\request\writer;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Unit tests for the privacy API implementation.
  *
  * @copyright 2018 David Mudrák <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
-
+final class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * When no preference exists, there should be no export.
      */
@@ -85,7 +82,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @return array
      */
-    public function data_filemanager_recentviewmode() {
+    public static function data_filemanager_recentviewmode(): array {
         return [
             'icons' => [
                 'val' => '1',

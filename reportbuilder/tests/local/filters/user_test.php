@@ -38,7 +38,7 @@ class user_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_sql_filter_simple(): array {
+    public static function get_sql_filter_simple(): array {
         return [
             [user::USER_ANY, ['admin', 'guest', 'user01', 'user02']],
             [user::USER_CURRENT, ['user01']],

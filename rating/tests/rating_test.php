@@ -279,7 +279,7 @@ class rating_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_aggregate_string_provider() {
+    public static function get_aggregate_string_provider(): array {
         return [
             'Non-numeric aggregate produces empty string' => [
                 RATING_AGGREGATE_NONE,
