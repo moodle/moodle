@@ -86,7 +86,7 @@ final class get_state_test extends \externallib_advanced_testcase {
 
         // Create a course.
         $numsections = 6;
-        $visiblesections = $numsections + 1; // Include topic 0.
+
         $course = $this->getDataGenerator()->create_course(['numsections' => $numsections, 'format' => $format]);
         $hiddensections = [4, 6];
         foreach ($hiddensections as $section) {
@@ -99,15 +99,19 @@ final class get_state_test extends \externallib_advanced_testcase {
         if ($isadmin) {
             $this->setAdminUser();
         } else {
-            if (!$canedit) {
-                // User won't see the hidden sections. Remove them from the total.
-                $visiblesections = $visiblesections - count($hiddensections);
-            }
             $user = $this->getDataGenerator()->create_user();
             if ($role != 'unenroled') {
                 $this->getDataGenerator()->enrol_user($user->id, $course->id, $role);
             }
             $this->setUser($user);
+        }
+        $visiblesections = $numsections + 1; // We include topic 0.
+        if (!$canedit) {
+            // User won't see the hidden sections. Remove them from the total.
+            $visiblesections = $visiblesections - count($hiddensections);
+        }
+        if ($format == 'social') {
+            $visiblesections = 1; // But Social format has one section visible.
         }
 
         // Social course format automatically creates a forum activity.
