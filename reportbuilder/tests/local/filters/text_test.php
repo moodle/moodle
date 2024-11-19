@@ -38,7 +38,7 @@ class text_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_sql_filter_simple_provider(): array {
+    public static function get_sql_filter_simple_provider(): array {
         return [
             [text::ANY_VALUE, null, true],
             [text::CONTAINS, 'looking', true],
@@ -107,7 +107,7 @@ class text_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_sql_filter_empty_provider(): array {
+    public static function get_sql_filter_empty_provider(): array {
         return [
             [text::IS_EMPTY, null, true],
             [text::IS_EMPTY, '', true],

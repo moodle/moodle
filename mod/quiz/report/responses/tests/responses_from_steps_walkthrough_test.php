@@ -19,13 +19,6 @@ namespace quiz_responses;
 use mod_quiz\quiz_attempt;
 use question_bank;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/quiz/tests/attempt_walkthrough_from_csv_test.php');
-require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
-require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
-
 /**
  * Quiz attempt walk through using data from csv file.
  *
@@ -35,26 +28,31 @@ require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class responses_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthrough_from_csv_test {
-    protected function get_full_path_of_csv_file(string $setname, string $test): string {
-        // Overridden here so that __DIR__ points to the path of this file.
-        return  __DIR__."/fixtures/{$setname}{$test}.csv";
+final class responses_from_steps_walkthrough_test extends \mod_quiz\tests\attempt_walkthrough_testcase {
+    #[\Override]
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+
+        parent::setUpBeforeClass();
+
+        require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
+        require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
     }
 
-    /**
-     * @var string[] names of the files which contain the test data.
-     */
-    protected $files = ['questions', 'steps', 'responses'];
+    #[\Override]
+    protected static function get_test_files(): array {
+        return ['questions', 'steps', 'responses'];
+    }
 
     /**
      * Create a quiz add questions to it, walk through quiz attempts and then check results.
      *
      * @param array $quizsettings settings to override default settings for quiz created by generator. Taken from quizzes.csv.
      * @param array $csvdata of data read from csv file "questionsXX.csv", "stepsXX.csv" and "responsesXX.csv".
+     * // phpcs:ignore moodle.PHPUnit.TestCaseProvider.dataProviderSyntaxMethodNotFound
      * @dataProvider get_data_for_walkthrough
      */
     public function test_walkthrough_from_csv($quizsettings, $csvdata): void {
-
         $this->resetAfterTest(true);
         question_bank::get_qtype('random')->clear_caches_before_testing();
 
@@ -72,7 +70,14 @@ class responses_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthroug
         }
     }
 
-    protected function assert_response_test($quizattemptid, $responses) {
+    /**
+     * Helper to assert a response.
+     *
+     * @param mixed $quizattemptid
+     * @param mixed $responses
+     * @throws \coding_exception
+     */
+    protected function assert_response_test($quizattemptid, $responses): void {
         $quizattempt = quiz_attempt::create($quizattemptid);
 
         foreach ($responses['slot'] as $slot => $tests) {
@@ -89,16 +94,16 @@ class responses_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthroug
             $stepswithsubmit = $qa->get_steps_with_submitted_response_iterator();
             $step = $stepswithsubmit[$responses['submittedstepno']];
             if (null === $step) {
-                throw new \coding_exception("There is no step no {$responses['submittedstepno']} ".
+                throw new \coding_exception("There is no step no {$responses['submittedstepno']} " .
                                            "for slot $slot in quizattempt {$responses['quizattempt']}!");
             }
             foreach (['responsesummary', 'fraction', 'state'] as $column) {
                 if (isset($tests[$column]) && $tests[$column] != '') {
-                    switch($column) {
-                        case 'responsesummary' :
+                    switch ($column) {
+                        case 'responsesummary':
                             $actual = $qa->get_question()->summarise_response($step->get_qt_data());
                             break;
-                        case 'fraction' :
+                        case 'fraction':
                             if (count($stepswithsubmit) == $responses['submittedstepno']) {
                                 // If this is the last step then we need to look at the fraction after the question has been
                                 // finished.
@@ -106,8 +111,8 @@ class responses_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthroug
                             } else {
                                 $actual = $step->get_fraction();
                             }
-                           break;
-                        case 'state' :
+                            break;
+                        case 'state':
                             if (count($stepswithsubmit) == $responses['submittedstepno']) {
                                 // If this is the last step then we need to look at the state after the question has been
                                 // finished.
@@ -118,7 +123,7 @@ class responses_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthroug
                             $actual = substr(get_class($state), strlen('question_state_'));
                     }
                     $expected = $tests[$column];
-                    $failuremessage = "Error in  quizattempt {$responses['quizattempt']} in $column, slot $slot, ".
+                    $failuremessage = "Error in  quizattempt {$responses['quizattempt']} in $column, slot $slot, " .
                     "submittedstepno {$responses['submittedstepno']}";
                     $this->assertEquals($expected, $actual, $failuremessage);
                 }

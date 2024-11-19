@@ -154,7 +154,7 @@ class get_attempts_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function execute_data(): array {
+    public static function execute_data(): array {
         return [
             // Teacher checking a user with attempts.
             'Manual grade, Teacher asking participant with attempts' => [
@@ -458,7 +458,7 @@ class get_attempts_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function execute_multipleusers_data(): array {
+    public static function execute_multipleusers_data(): array {
         return [
             // Teacher checks.
             'Teacher checking students with attempts' => [

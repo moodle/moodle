@@ -34,7 +34,7 @@ class calendar_event_exporter_test extends \advanced_testcase {
      * Data provider for the timestamp min limit test case to confirm
      * that the minimum time limit is set correctly on the boundary cases.
      */
-    public function get_timestamp_min_limit_test_cases() {
+    public static function get_timestamp_min_limit_test_cases(): array {
         $now = time();
         $todaymidnight = usergetmidnight($now);
         $tomorrowmidnight = $todaymidnight + DAYSECS;
@@ -70,7 +70,7 @@ class calendar_event_exporter_test extends \advanced_testcase {
     }
 
     /**
-     * @dataProvider get_timestamp_min_limit_test_cases()
+     * @dataProvider get_timestamp_min_limit_test_cases
      */
     public function test_get_timestamp_min_limit($starttime, $min, $expected): void {
         $class = calendar_event_exporter::class;
@@ -90,7 +90,7 @@ class calendar_event_exporter_test extends \advanced_testcase {
      * Data provider for the timestamp max limit test case to confirm
      * that the maximum time limit is set correctly on the boundary cases.
      */
-    public function get_timestamp_max_limit_test_cases() {
+    public static function get_timestamp_max_limit_test_cases(): array {
         $now = time();
         $todaymidnight = usergetmidnight($now);
         $yesterdaymidnight = $todaymidnight - DAYSECS;
@@ -126,7 +126,7 @@ class calendar_event_exporter_test extends \advanced_testcase {
     }
 
     /**
-     * @dataProvider get_timestamp_max_limit_test_cases()
+     * @dataProvider get_timestamp_max_limit_test_cases
      */
     public function test_get_timestamp_max_limit($starttime, $max, $expected): void {
         $class = calendar_event_exporter::class;

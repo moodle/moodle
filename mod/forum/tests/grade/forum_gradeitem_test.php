@@ -216,7 +216,7 @@ class forum_gradeitem_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function should_grade_only_active_users_provider(): array {
+    public static function should_grade_only_active_users_provider(): array {
         return [
             'Enabled showonlyactiveenrol setting; enabled showonlyactiveenrol preference; view suspended users capability' =>
                 [

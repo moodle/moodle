@@ -293,7 +293,7 @@ class store_test extends advanced_testcase {
      *
      * @return array
      */
-    public function execute_out_of_range_provider(): array {
+    public static function execute_out_of_range_provider(): array {
         return [
             'above' => [
                 'max' => 100,

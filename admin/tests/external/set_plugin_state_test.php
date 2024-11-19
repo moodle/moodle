@@ -66,7 +66,7 @@ class set_plugin_state_test extends \externallib_advanced_testcase {
      *
      * @return array
      */
-    public function execute_standard_provider(): array {
+    public static function execute_standard_provider(): array {
         $generatetestsfor = function (string $plugin): array {
             return [
                 [

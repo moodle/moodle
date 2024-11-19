@@ -175,7 +175,7 @@ class blogs_test extends core_reportbuilder_testcase {
      *
      * @return array[]
      */
-    public function datasource_filters_provider(): array {
+    public static function datasource_filters_provider(): array {
         return [
             'Filter title' => ['subject', 'Cool', 'blog:title', [
                 'blog:title_operator' => text::CONTAINS,

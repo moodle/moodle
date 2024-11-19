@@ -38,7 +38,7 @@ class category_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_sql_filter_provider(): array {
+    public static function get_sql_filter_provider(): array {
         return [
             // Equal to.
             ['One', category::EQUAL_TO, false, ['One']],

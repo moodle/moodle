@@ -32,7 +32,7 @@ class factor_test extends \advanced_testcase {
      *
      * @return array of different country codes and phone numbers.
      */
-    public function format_number_provider(): array {
+    public static function format_number_provider(): array {
 
         return [
             'Phone number with local format' => [
@@ -88,7 +88,7 @@ class factor_test extends \advanced_testcase {
      *
      * @return array with different phone numebr tests
      */
-    public function is_valid_phonenumber_provider(): array {
+    public static function is_valid_phonenumber_provider(): array {
         return [
             ['+919367788755', true],
             ['8989829304', false],

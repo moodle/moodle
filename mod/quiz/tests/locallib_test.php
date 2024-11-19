@@ -60,7 +60,7 @@ class locallib_test extends \advanced_testcase {
             format_float(0.247, 3));
     }
 
-    public function quiz_attempt_state_data_provider() {
+    public static function quiz_attempt_state_data_provider(): array {
         return [
             [quiz_attempt::IN_PROGRESS, null, null, display_options::DURING],
             [quiz_attempt::FINISHED, -90, null, display_options::IMMEDIATELY_AFTER],

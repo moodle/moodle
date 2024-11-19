@@ -65,7 +65,7 @@ class instance_test extends advanced_testcase {
      *
      * @return string[][]
      */
-    public function get_from_location_provider(): array {
+    public static function get_from_location_provider(): array {
         return [
             ['get_from_instanceid', 'id'],
             ['get_from_cmid', 'cmid'],
@@ -204,7 +204,7 @@ class instance_test extends advanced_testcase {
      *
      * @return \string[][]
      */
-    public function invalid_meetingid_provider(): array {
+    public static function invalid_meetingid_provider(): array {
         // Meeting IDs are in the formats:
         // - <meetingid[string]>-<courseid[number]>-<instanceid[number]>
         // - <meetingid[string]>-<courseid[number]>-<instanceid[number]>[<groupid[number]>]
@@ -314,7 +314,7 @@ class instance_test extends advanced_testcase {
      *
      * @return array
      */
-    public function is_currently_open_provider(): array {
+    public static function is_currently_open_provider(): array {
         return [
             'No opening or closing time set: Is open' => [null, null, true],
             'Opening time set in the past, no closing: Is open' => [-DAYSECS, null, true],
@@ -393,7 +393,7 @@ class instance_test extends advanced_testcase {
      *
      * @return array
      */
-    public function user_must_wait_to_join_provider(): array {
+    public static function user_must_wait_to_join_provider(): array {
         return [
             'Admins must never wait to join (waiting disabled)' => [true, false, false, false],
             'Admins must never wait to join (waiting enabled)' => [true, false, true, false],
@@ -437,7 +437,7 @@ class instance_test extends advanced_testcase {
      *
      * @return array
      */
-    public function does_current_user_count_towards_user_limit_provider(): array {
+    public static function does_current_user_count_towards_user_limit_provider(): array {
         return [
             'Admin does not count' => [true, false, false],
             'Moderator does not count' => [false, true, false],
@@ -482,7 +482,7 @@ class instance_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_current_user_password_provider(): array {
+    public static function get_current_user_password_provider(): array {
         return [
             'Admin is a moderator' => [true, false, true],
             'Moderator is a moderator' => [false, true, true],
@@ -523,7 +523,7 @@ class instance_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_current_user_role_provider(): array {
+    public static function get_current_user_role_provider(): array {
         return [
             'Admin is a moderator' => [true, false, true],
             'Moderator is a moderator' => [false, true, true],
@@ -564,7 +564,7 @@ class instance_test extends advanced_testcase {
      *
      * @return array
      */
-    public function allow_recording_start_stop_provider(): array {
+    public static function allow_recording_start_stop_provider(): array {
         return [
             'Meeting is not recorded: No start/stop' => [false, false, false],
             'Meeting recorded, Buttons shown: Allow' => [true, true, true],

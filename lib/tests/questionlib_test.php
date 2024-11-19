@@ -1541,7 +1541,7 @@ class questionlib_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function question_capability_on_question_provider() {
+    public static function question_capability_on_question_provider(): array {
         return [
             'Unrelated capability which is present' => [
                 'capabilities' => [
@@ -2171,7 +2171,7 @@ class questionlib_test extends \advanced_testcase {
      *
      * @return array test cases.
      */
-    public function find_next_unused_idnumber_cases(): array {
+    public static function find_next_unused_idnumber_cases(): array {
         return [
             [null, null],
             ['id', null],

@@ -40,7 +40,7 @@ class targets_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function analysable_provider() {
+    public static function analysable_provider(): array {
 
         $now = new \DateTime("now", \core_date::get_server_timezone_object());
         $year = $now->format('Y');
@@ -153,7 +153,7 @@ class targets_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function sample_provider() {
+    public static function sample_provider(): array {
         $now = time();
         return [
             'enrolmentendbeforecourse' => [
@@ -204,7 +204,7 @@ class targets_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function active_during_analysis_time_provider() {
+    public static function active_during_analysis_time_provider(): array {
         $now = time();
 
         return [
