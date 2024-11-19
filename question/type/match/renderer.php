@@ -49,19 +49,19 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
                 array('class' => 'qtext', 'id' => $questiontextid));
 
         $result .= html_writer::start_tag('div', array('class' => 'ablock'));
-        $result .= html_writer::start_tag('table', array('class' => 'answer'));
-        $result .= html_writer::start_tag('tbody');
+        $result .= html_writer::start_tag('table', array('class' => 'answer', 'role' => 'presentation'));
+        $result .= html_writer::start_tag('tbody', ['role' => 'presentation']);
 
         $parity = 0;
         $i = 1;
         foreach ($stemorder as $key => $stemid) {
 
-            $result .= html_writer::start_tag('tr', array('class' => 'r' . $parity));
+            $result .= html_writer::start_tag('tr', array('class' => 'r' . $parity, 'role' => 'presentation'));
             $fieldname = 'sub' . $key;
 
             $itemtextid = $qa->get_qt_field_name($fieldname . '_itemtext');
             $result .= html_writer::tag('td', $this->format_stem_text($qa, $stemid),
-                    array('class' => 'text', 'id' => $itemtextid));
+                    array('class' => 'text', 'id' => $itemtextid, 'role' => 'presentation'));
 
             $classes = 'control';
             $feedbackimage = '';
@@ -91,7 +91,7 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
                                 'class' => 'form-select d-inline-block ms-1',
                                 'aria-describedby' => "$questiontextid $itemtextid",
                             ]) .
-                    ' ' . $feedbackimage, array('class' => $classes));
+                    ' ' . $feedbackimage, array('class' => $classes, 'role' => 'presentation'));
 
             $result .= html_writer::end_tag('tr');
             $parity = 1 - $parity;
