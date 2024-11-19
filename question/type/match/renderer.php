@@ -43,9 +43,10 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
 
         $choices = $this->format_choices($question);
 
+        $questiontextid = $qa->get_qt_field_name('qtext');
         $result = '';
         $result .= html_writer::tag('div', $question->format_questiontext($qa),
-                array('class' => 'qtext'));
+                array('class' => 'qtext', 'id' => $questiontextid));
 
         $result .= html_writer::start_tag('div', array('class' => 'ablock'));
         $result .= html_writer::start_tag('table', array('class' => 'answer'));
@@ -58,8 +59,9 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
             $result .= html_writer::start_tag('tr', array('class' => 'r' . $parity));
             $fieldname = 'sub' . $key;
 
+            $itemtextid = $qa->get_qt_field_name($fieldname . '_itemtext');
             $result .= html_writer::tag('td', $this->format_stem_text($qa, $stemid),
-                    array('class' => 'text'));
+                    array('class' => 'text', 'id' => $itemtextid));
 
             $classes = 'control';
             $feedbackimage = '';
@@ -83,7 +85,12 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
                             'menu' . $qa->get_qt_field_name('sub' . $key), false,
                             array('class' => 'accesshide')) .
                     html_writer::select($choices, $qa->get_qt_field_name('sub' . $key), $selected,
-                            array('0' => 'choose'), array('disabled' => $options->readonly, 'class' => 'custom-select ms-1')) .
+                            array('0' => 'choose'),
+                            array(
+                                'disabled' => $options->readonly,
+                                'class' => 'custom-select ms-1',
+                                'aria-describedby' => "$questiontextid $itemtextid",
+                            )) .
                     ' ' . $feedbackimage, array('class' => $classes));
 
             $result .= html_writer::end_tag('tr');
