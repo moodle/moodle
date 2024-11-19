@@ -267,8 +267,8 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
                     }
                 });
 
-                if (this._filteredUsers.length && foundIndex !== null) {
-                    this._selectUserById(this._filteredUsers[foundIndex].id);
+                if (this._filteredUsers.length) {
+                    this._selectUserById(this._filteredUsers[foundIndex ?? 0].id);
                 } else {
                     this._selectNoUser();
                 }
