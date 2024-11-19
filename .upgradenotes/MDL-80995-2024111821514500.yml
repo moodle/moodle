@@ -1,0 +1,7 @@
+issueNumber: MDL-80995
+notes:
+  tool_mfa:
+    - message: >-
+        The previously deprecated `setup_factor` renderer method has been
+        removed
+      type: removed
