@@ -3418,29 +3418,11 @@ abstract class grade_helper {
     protected static $aggregationstrings = null;
 
     /**
-     * Cached grade tree plugin strings
-     * @var array
-     */
-    protected static $langstrings = [];
-
-    /**
-     * First checks the cached language strings, then returns match if found, or uses get_string()
-     * to get it from the DB, caches it then returns it.
-     *
      * @deprecated since 4.3
-     * @todo MDL-78780 This will be deleted in Moodle 4.7.
-     * @param string $strcode
-     * @param string|null $section Optional language section
-     * @return string
      */
-    public static function get_lang_string(string $strcode, ?string $section = null): string {
-        debugging('grade_helper::get_lang_string() is deprecated, please use' .
-            ' get_string() instead.', DEBUG_DEVELOPER);
-
-        if (empty(self::$langstrings[$strcode])) {
-            self::$langstrings[$strcode] = get_string($strcode, $section);
-        }
-        return self::$langstrings[$strcode];
+    #[\core\attribute\deprecated('get_string', since: '4.3', mdl: 'MDL-78561', final: true)]
+    public static function get_lang_string(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**

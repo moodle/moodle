@@ -333,23 +333,11 @@ abstract class grade_report {
     }
 
     /**
-     * First checks the cached language strings, then returns match if found, or uses get_string()
-     * to get it from the DB, caches it then returns it.
-     *
      * @deprecated since 4.2
-     * @todo MDL-77307 This will be deleted in Moodle 4.6.
-     * @param string $strcode
-     * @param string $section Optional language section
-     * @return string
      */
-    public function get_lang_string($strcode, $section=null) {
-        debugging('grade_report::get_lang_string() is deprecated, please use' .
-            ' get_string() instead.', DEBUG_DEVELOPER);
-
-        if (empty($this->lang_strings[$strcode])) {
-            $this->lang_strings[$strcode] = get_string($strcode, $section);
-        }
-        return $this->lang_strings[$strcode];
+    #[\core\attribute\deprecated('get_string', since: '4.2', mdl: 'MDL-77033', final: true)]
+    public function get_lang_string(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
