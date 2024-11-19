@@ -906,7 +906,7 @@ class datalib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_safe_orderby_provider(): array {
+    public static function get_safe_orderby_provider(): array {
         $orderbymap = [
             'courseid' => 'c.id',
             'somecustomvalue' => 'c.startdate, c.shortname',
@@ -994,7 +994,7 @@ class datalib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_safe_orderby_multiple_provider(): array {
+    public static function get_safe_orderby_multiple_provider(): array {
         $orderbymap = [
             'courseid' => 'c.id',
             'firstname' => 'u.firstname',

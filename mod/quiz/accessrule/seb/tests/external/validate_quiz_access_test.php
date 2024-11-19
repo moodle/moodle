@@ -54,7 +54,7 @@ class validate_quiz_access_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function bad_parameters_provider(): array {
+    public static function bad_parameters_provider(): array {
         return [
             'no params' => [
                 'cmid' => null,

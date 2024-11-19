@@ -73,7 +73,7 @@ class secondary_test extends \advanced_testcase {
      * Data provider for test_get_leaf_nodes
      * @return array
      */
-    public function leaf_nodes_order_provider(): array {
+    public static function leaf_nodes_order_provider(): array {
         return [
             'Initialise the order with whole numbers' => [3, 2, 1],
             'Initialise the order with a mix of whole and float numbers' => [2.1, 2, 1],
@@ -139,7 +139,7 @@ class secondary_test extends \advanced_testcase {
      * Data provider for the test_setting_initialise function
      * @return array
      */
-    public function setting_initialise_provider(): array {
+    public static function setting_initialise_provider(): array {
         return [
             'Testing in a course context' => ['course', 'coursehome', 'courseheader', 'Course'],
             'Testing in a course context using a single activity course format' =>
@@ -231,7 +231,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function active_node_scan_provider(): array {
+    public static function active_node_scan_provider(): array {
         return [
             'Test by activating node adjacent to root node'
                 => ['firstchild', 'firstchild'],
@@ -289,7 +289,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function force_nodes_into_more_menu_provider(): array {
+    public static function force_nodes_into_more_menu_provider(): array {
         return [
             'The total number of navigation nodes exceeds the max display limit (5); ' .
             'navnode2 and navnode4 are forced into "more" menu by default.' =>
@@ -472,7 +472,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return \string[][]
      */
-    public function nodes_match_current_url_provider(): array {
+    public static function nodes_match_current_url_provider(): array {
         return [
             "Match url to a node that is a deep nested" => [
                 '/view/course.php',
@@ -530,7 +530,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function get_menu_array_provider(): array {
+    public static function get_menu_array_provider(): array {
         return [
             "Fetch information from a node with action and no children" => [
                 'child1',
@@ -635,7 +635,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_node_with_first_action_provider(): array {
+    public static function get_node_with_first_action_provider(): array {
         return [
             "Search for action when parent has no action and multiple children with actions" => [
                 "child3",
@@ -694,7 +694,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function add_external_nodes_to_secondary_provider() {
+    public static function add_external_nodes_to_secondary_provider(): array {
         return [
             "Container node with internal action and external children" => [
                 [
@@ -862,7 +862,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return string[]
      */
-    public function get_overflow_menu_data_provider(): array {
+    public static function get_overflow_menu_data_provider(): array {
         return [
             "Active node is the course home node" => [
                 '/coursehome.php',
@@ -927,7 +927,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array Provider information.
      */
-    public function get_overflow_menu_data_course_admin_provider(): array {
+    public static function get_overflow_menu_data_course_admin_provider(): array {
         return [
             "Backup page returns overflow" => [
                 '/backup/backup.php',

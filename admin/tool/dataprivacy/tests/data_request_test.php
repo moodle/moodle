@@ -35,7 +35,7 @@ class data_request_test extends data_privacy_testcase {
      *
      * @return  array
      */
-    public function status_state_provider(): array {
+    public static function status_state_provider(): array {
         return [
             [
                 'state' => api::DATAREQUEST_STATUS_PENDING,
@@ -138,9 +138,9 @@ class data_request_test extends data_privacy_testcase {
      *
      * @return      array
      */
-    public function non_resettable_provider(): array {
+    public static function non_resettable_provider(): array {
         $states = [];
-        foreach ($this->status_state_provider() as $thisstatus) {
+        foreach (self::status_state_provider() as $thisstatus) {
             if (!$thisstatus['resettable']) {
                 $states[] = $thisstatus;
             }

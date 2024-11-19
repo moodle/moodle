@@ -109,7 +109,7 @@ class question_type_test extends \advanced_testcase {
         ), $this->qtype->get_possible_responses($q));
     }
 
-    public function get_question_saving_which() {
+    public static function get_question_saving_which(): array {
         return array(array('two_of_four'), array('one_of_four'));
     }
 

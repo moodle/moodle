@@ -94,7 +94,7 @@ class item_attachment_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function invalid_values_data(): array {
+    public static function invalid_values_data(): array {
         return [
             'No usageType attachment' => [
                 'usageType', null

@@ -33,7 +33,7 @@ class calculated_question_summary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_min_max_provider() {
+    public static function get_min_max_provider(): array {
         return [
             'negative number and null' => [
                 [
@@ -105,7 +105,7 @@ class calculated_question_summary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_sd_min_max_provider() {
+    public static function get_sd_min_max_provider(): array {
         return [
             'null and number' => [
                 [

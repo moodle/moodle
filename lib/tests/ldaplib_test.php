@@ -184,7 +184,7 @@ class ldaplib_test extends \advanced_testcase {
      *
      * @return array of testcases.
      */
-    public function ldap_normalise_objectclass_provider() {
+    public static function ldap_normalise_objectclass_provider(): array {
         return array(
             'Empty value' => array(
                 array(null),

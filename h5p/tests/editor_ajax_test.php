@@ -161,7 +161,7 @@ class editor_ajax_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_translations_provider(): array {
+    public static function get_translations_provider(): array {
         return [
             'No library' => [
                 [],

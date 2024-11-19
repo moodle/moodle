@@ -405,7 +405,7 @@ class helper_test extends \advanced_testcase {
     /**
      * Data provider for the set_xpath test.
      */
-    public function set_xpath_provider() {
+    public static function set_xpath_provider(): array {
         return [
             "Correct structure" => [
                 "parameters" => [

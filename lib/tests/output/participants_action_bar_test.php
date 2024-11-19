@@ -68,7 +68,7 @@ class participants_action_bar_test extends \advanced_testcase {
      * Provider for test_get_content_for_select
      * @return array[]
      */
-    public function get_content_for_select_provider() {
+    public static function get_content_for_select_provider(): array {
         return [
             'Get dropdown content when in a course context' => [
                 'course', 3, ['Enrolments', 'Groups', 'Permissions']

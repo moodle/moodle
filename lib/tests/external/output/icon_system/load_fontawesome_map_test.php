@@ -77,7 +77,7 @@ class load_fontawesome_map_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function valid_fontawesome_theme_provider(): array {
+    public static function valid_fontawesome_theme_provider(): array {
         return [
             'Boost theme' => ['boost'],
             'Classic theme (extends boost)' => ['classic'],

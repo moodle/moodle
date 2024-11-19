@@ -75,7 +75,7 @@ class search_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_search_contents_provider(): array {
+    public static function get_search_contents_provider(): array {
         return [
             'Search for existing pattern found within the name of content items' => [
                 [

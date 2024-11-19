@@ -32,7 +32,7 @@ class helper_test extends \advanced_testcase {
      *
      * @return array of different country codes and phone numbers.
      */
-    public function format_number_provider(): array {
+    public static function format_number_provider(): array {
 
         return [
             'Phone number with local format' => [

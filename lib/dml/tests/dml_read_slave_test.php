@@ -94,7 +94,7 @@ class dml_read_slave_test extends \base_testcase {
      * @return array
      * @dataProvider table_names_provider
      */
-    public function table_names_provider(): array {
+    public static function table_names_provider(): array {
         return [
             [
                 "SELECT *

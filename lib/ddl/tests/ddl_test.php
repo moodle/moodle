@@ -2264,7 +2264,7 @@ class ddl_test extends \database_driver_testcase {
      *
      * @return array The type-value pair fixture.
      */
-    public function get_enc_quoted_provider() {
+    public static function get_enc_quoted_provider(): array {
         return array(
             // Reserved: some examples from SQL-92.
             [true, 'from'],
@@ -2313,7 +2313,7 @@ class ddl_test extends \database_driver_testcase {
      *
      * @return array The type-old-new tuple fixture.
      */
-    public function sql_generator_get_rename_field_sql_provider() {
+    public static function sql_generator_get_rename_field_sql_provider(): array {
         return array(
             // Reserved: an example from SQL-92.
             // Both names should be reserved.

@@ -4473,7 +4473,7 @@ EOD;
 
     }
 
-    public function sql_concat_join_provider() {
+    public static function sql_concat_join_provider(): array {
         return array(
             // All strings.
             array(
@@ -6315,7 +6315,7 @@ EOD;
      * @return array[]
      * @see \mysqli_native_moodle_database::get_server_info
      */
-    public function get_server_info_mysql_provider() {
+    public static function get_server_info_mysql_provider(): array {
         return [
             'MySQL 5.7.39 - MySQLi version' => [
                 '5.7.39-log',

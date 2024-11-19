@@ -100,9 +100,11 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
      * @param string $role the LTI role to include in the user data.
      * @return array the users list.
      */
-    protected function get_mock_launch_users_with_ids(array $ids, bool $includepicture = false,
-            string $role = 'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor'): array {
-
+    protected static function get_mock_launch_users_with_ids(
+        array $ids,
+        bool $includepicture = false,
+        string $role = 'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor',
+    ): array {
         $users = [];
         foreach ($ids as $id) {
             $user = [

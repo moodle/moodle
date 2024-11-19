@@ -70,7 +70,7 @@ class base_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function log_provider(): array {
+    public static function log_provider(): array {
         return [
             // Action = base.
             'action=base and mode = show' => [

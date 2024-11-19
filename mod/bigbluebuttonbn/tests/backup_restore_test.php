@@ -223,7 +223,7 @@ class backup_restore_test extends restore_date_testcase {
      * Return an array of BigBlueButton types
      * @return array[]
      */
-    public function bbb_type_provider() {
+    public static function bbb_type_provider(): array {
         return [
             'All' => [instance::TYPE_ALL],
             'Recording Only' => [instance::TYPE_RECORDING_ONLY],

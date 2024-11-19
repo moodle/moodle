@@ -49,7 +49,7 @@ class backup_xml_transformer_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function filephp_links_replace_data_provider() {
+    public static function filephp_links_replace_data_provider(): array {
         return array(
             array('http://test.test/', 'http://test.test/'),
             array('http://test.test/file.php/1', 'http://test.test/file.php/1'),
