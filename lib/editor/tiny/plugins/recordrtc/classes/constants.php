@@ -39,4 +39,7 @@ class constants {
 
     /** @var string TINYRECORDRTC_SCREEN_FHD The Full-HD screen-sharing resolution. */
     public const TINYRECORDRTC_SCREEN_FHD = '1920,1080';
+
+    /** @var array TINYRECORDRTC_AUDIO_BITRATES The audio bitrate options. */
+    public const TINYRECORDRTC_AUDIO_BITRATES = [24000, 32000, 48000, 64000, 96000, 128000, 160000, 192000, 256000, 320000];
 }
