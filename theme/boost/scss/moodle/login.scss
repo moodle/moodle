@@ -33,6 +33,7 @@ $login-identity-provider-btn-border: $border-color !default;
     padding: $logincontainer-padding;
     box-shadow: $logincontainer-shadow;
     margin-bottom: 2rem;
+    @include border-radius();
     .login-languagemenu {
         display: flex;
         justify-content: flex-start;
@@ -79,6 +80,5 @@ $login-identity-provider-btn-border: $border-color !default;
 @include media-breakpoint-up(md) {
     .login-container {
         width: 500px !important; /* stylelint-disable-line declaration-no-important */
-        @include border-radius();
     }
 }
