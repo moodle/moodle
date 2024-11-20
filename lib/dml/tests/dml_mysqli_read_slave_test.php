@@ -40,7 +40,7 @@ require_once(__DIR__.'/fixtures/read_slave_moodle_database_mock_mysqli.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \mysqli_native_moodle_database
  */
-class dml_mysqli_read_slave_test extends \base_testcase {
+final class dml_mysqli_read_slave_test extends \database_driver_testcase {
     /**
      * Test readonly handle is not used for reading from special pg_*() call queries,
      * pg_try_advisory_lock and pg_advisory_unlock.
@@ -136,12 +136,14 @@ class dml_mysqli_read_slave_test extends \base_testcase {
      *
      * @return void
      */
-    public function test_real_readslave_connect_fail(): void {
+    public function test_real_readslave_connect_fail_host(): void {
         global $DB;
 
         if ($DB->get_dbfamily() != 'mysql') {
             $this->markTestSkipped('Not mysql');
         }
+
+        $invalidhost = 'host.that.is.not';
 
         // Open second connection.
         $cfg = $DB->export_dbconfig();
@@ -149,12 +151,87 @@ class dml_mysqli_read_slave_test extends \base_testcase {
             $cfg->dboptions = [];
         }
         $cfg->dboptions['readonly'] = [
-            'instance' => ['host.that.is.not'],
+            'instance' => [$invalidhost],
             'connecttimeout' => 1
         ];
 
-        $db2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
+        $this->resetDebugging();
+        $db2 = \moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
         $db2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
         $this->assertTrue(count($db2->get_records('user')) > 0);
+
+        $debugging = array_map(function ($d) {
+            return $d->message;
+        }, $this->getDebuggingMessages());
+        $this->resetDebugging();
+        $this->assertEquals(2, count($debugging));
+        $this->assertMatchesRegularExpression(
+            sprintf(
+                '/%s%s/',
+                preg_quote("Readonly db connection failed for host {$invalidhost}:"),
+                '.* Name or service not known',
+                $cfg->dbname
+            ),
+            $debugging[0]
+        );
+        $this->assertEquals("Readwrite db connection succeeded for host {$cfg->dbhost}", $debugging[1]);
+    }
+
+    /**
+     * Test connection failure
+     *
+     * @return void
+     */
+    public function test_real_readslave_connect_fail_dbname(): void {
+        global $DB;
+
+        if ($DB->get_dbfamily() != 'mysql') {
+            $this->markTestSkipped("Not mysql");
+        }
+
+        $invaliddb = 'cannot-exist-really';
+
+        // Open second connection.
+        $cfg = $DB->export_dbconfig();
+        $cfg->dbname = $invaliddb;
+        if (!isset($cfg->dboptions)) {
+            $cfg->dboptions = [];
+        }
+        $cfg->dboptions['readonly'] = [
+            'instance' => [$cfg->dbhost],
+            'connecttimeout' => 1,
+        ];
+
+        $this->resetDebugging();
+        $db2 = \moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
+        try {
+            $db2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
+        } catch (\dml_connection_exception $e) {  // phpcs:ignore
+            // We cannot go with expectException() because it would skip the rest.
+        }
+
+        $debugging = array_map(function ($d) {
+            return $d->message;
+        }, $this->getDebuggingMessages());
+        $this->resetDebugging();
+        $this->assertEquals(2, count($debugging));
+        $this->assertMatchesRegularExpression(
+            sprintf(
+                '/%s%s/',
+                preg_quote("Readonly db connection failed for host {$cfg->dbhost}: "),
+                "Access denied for user .* to database '$invaliddb'",
+                $cfg->dbname
+            ),
+            $debugging[0]
+        );
+        $this->assertMatchesRegularExpression(
+            sprintf(
+                '/%s%s/',
+                preg_quote("Readwrite db connection failed for host {$cfg->dbhost}: "),
+                'Access denied for user .* '.preg_quote("to database '$invaliddb'"),
+                $cfg->dbname
+            ),
+            $debugging[1]
+        );
     }
 }

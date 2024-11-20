@@ -153,6 +153,7 @@ trait moodle_read_slave_trait {
         $this->pprefix = $prefix;
         $this->pdboptions = $dboptions;
 
+        $logconnection = false;
         if ($dboptions) {
             if (isset($dboptions['readonly'])) {
                 $this->wantreadslave = true;
@@ -180,8 +181,11 @@ trait moodle_read_slave_trait {
                 }
 
                 if (count($slaves) > 1) {
-                    // Randomise things a bit.
-                    shuffle($slaves);
+                    // Don't shuffle for unit tests as order is important for them to pass.
+                    if (!PHPUNIT_TEST) {
+                        // Randomise things a bit.
+                        shuffle($slaves);
+                    }
                 }
 
                 // Find first connectable readonly slave.
@@ -198,9 +202,17 @@ trait moodle_read_slave_trait {
                     try {
                         $this->raw_connect($rodb['dbhost'], $rodb['dbuser'], $rodb['dbpass'], $dbname, $prefix, $dboptions);
                         $this->dbhreadonly = $this->get_db_handle();
+                        if ($logconnection) {
+                            debugging(
+                                "Readonly db connection succeeded for host {$rodb['dbhost']}"
+                            );
+                        }
                         break;
-                    } catch (dml_connection_exception $e) { // phpcs:ignore
-                        // If readonly slave is not connectable we'll have to do without it.
+                    } catch (dml_connection_exception $e) {
+                        debugging(
+                            "Readonly db connection failed for host {$rodb['dbhost']}: {$e->debuginfo}"
+                        );
+                        $logconnection = true;
                     }
                 }
                 // ... lock_db queries always go to master.
@@ -212,7 +224,19 @@ trait moodle_read_slave_trait {
             }
         }
         if (!$this->dbhreadonly) {
-            $this->set_dbhwrite();
+            try {
+                $this->set_dbhwrite();
+            } catch (dml_connection_exception $e) {
+                debugging(
+                    "Readwrite db connection failed for host {$this->pdbhost}: {$e->debuginfo}"
+                );
+                throw $e;
+            }
+            if ($logconnection) {
+                debugging(
+                    "Readwrite db connection succeeded for host {$this->pdbhost}"
+                );
+            }
         }
 
         return true;

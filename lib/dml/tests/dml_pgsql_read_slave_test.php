@@ -267,18 +267,37 @@ class dml_pgsql_read_slave_test extends \advanced_testcase {
             $this->markTestSkipped('Not postgres');
         }
 
+        $invalidhost = 'host.that.is.not';
+
         // Open second connection.
         $cfg = $DB->export_dbconfig();
         if (!isset($cfg->dboptions)) {
             $cfg->dboptions = array();
         }
         $cfg->dboptions['readonly'] = [
-            'instance' => ['host.that.is.not'],
+            'instance' => [$invalidhost],
             'connecttimeout' => 1
         ];
 
+        $this->resetDebugging();
         $db2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
         $db2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
         $this->assertTrue(count($db2->get_records('user')) > 0);
+
+        $debugging = array_map(function ($d) {
+            return $d->message;
+        }, $this->getDebuggingMessages());
+        $this->resetDebugging();
+        $this->assertEquals(2, count($debugging));
+        $this->assertMatchesRegularExpression(
+            sprintf(
+                '/%s%s/',
+                preg_quote("Readonly db connection failed for host {$invalidhost}: "),
+                '.* Name or service not known',
+                $cfg->dbname
+            ),
+            $debugging[0]
+        );
+        $this->assertEquals("Readwrite db connection succeeded for host {$cfg->dbhost}", $debugging[1]);
     }
 }
