@@ -1,0 +1,7 @@
+issueNumber: MDL-83035
+notes:
+  tool_admin_presets:
+    - message: >-
+        behat_admin_presets::following_in_the_should_download_between_and_bytes
+        is deprecated. Use: the following element should download a file that:
+      type: deprecated
