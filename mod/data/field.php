@@ -92,7 +92,7 @@ require_capability('mod/data:managetemplates', $context);
 
 $actionbar = new \mod_data\output\action_bar($data->id, $PAGE->url);
 
-$PAGE->add_body_class('mediumwidth');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_heading($course->fullname);
 $PAGE->activityheader->disable();
 

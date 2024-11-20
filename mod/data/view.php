@@ -225,7 +225,7 @@ if ($mode == 'asearch') {
     $PAGE->navbar->add(get_string('search'));
 }
 
-$PAGE->add_body_class('mediumwidth');
+$PAGE->add_body_class('limitedwidth');
 $titleparts = [
     format_string($data->name),
     format_string($course->fullname),
