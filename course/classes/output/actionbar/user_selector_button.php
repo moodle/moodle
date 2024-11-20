@@ -20,6 +20,7 @@ use core\output\named_templatable;
 use core\output\renderable;
 use core\output\renderer_base;
 use core\url;
+use moodle_url;
 use stdClass;
 
 /**
@@ -32,14 +33,15 @@ use stdClass;
  * @copyright  2024 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_selector_button implements renderable, named_templatable {
+class user_selector_button implements renderable, named_templatable
+{
 
     /**
      * The class constructor.
      */
     public function __construct(
         private stdClass $course,
-        private url $resetlink,
+        private moodle_url $resetlink,
         private ?int $userid = null,
         private ?int $groupid = null,
         private string $usersearch = '',
@@ -52,7 +54,8 @@ class user_selector_button implements renderable, named_templatable {
         }
     }
 
-    public function export_for_template(renderer_base $output) {
+    public function export_for_template(renderer_base $output)
+    {
         return [
             'currentvalue' => $this->usersearch,
             'courseid' => $this->course->id,
@@ -67,7 +70,8 @@ class user_selector_button implements renderable, named_templatable {
         ];
     }
 
-    public function get_template_name(renderer_base $renderer): string {
+    public function get_template_name(renderer_base $renderer): string
+    {
         return 'core_user/comboboxsearch/user_selector';
     }
 }
