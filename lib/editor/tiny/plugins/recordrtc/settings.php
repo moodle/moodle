@@ -58,8 +58,18 @@ if ($ADMIN->fulltree) {
     // Audio bitrate.
     $name = get_string('audiobitrate', 'tiny_recordrtc');
     $desc = get_string('audiobitrate_desc', 'tiny_recordrtc');
-    $default = '128000';
-    $setting = new admin_setting_configtext('tiny_recordrtc/audiobitrate', $name, $desc, $default, PARAM_INT, 8);
+    $options = [];
+    foreach (\tiny_recordrtc\constants::TINYRECORDRTC_AUDIO_BITRATES as $rate) {
+        $kbrate = $rate / 1000;
+        $options[$rate] = get_string('kbrate', 'tiny_recordrtc', $kbrate);
+    }
+    $setting = new admin_setting_configselect(
+        name: 'tiny_recordrtc/audiobitrate',
+        visiblename: $name,
+        description: $desc,
+        defaultsetting: \tiny_recordrtc\constants::TINYRECORDRTC_AUDIO_BITRATES[5],
+        choices: $options,
+    );
     $settings->add($setting);
 
     // Video bitrate.
