@@ -1,0 +1,286 @@
+@import "colors";
+
+$primary:       #88b77b !default;
+$secondary:     #f60 !default;
+$primary_30:       rgba(136, 183, 123, .3) !default;
+$primary_70:       rgba(136, 183, 123, .7) !default;
+$secondary_30:     rgba(255, 102, 0, .3) !default;
+$secondary_70:     rgba(255, 102, 0, .7) !default;
+$footerbgopacity: $primary_70 !default;
+
+$success:       $green !default;
+$info:          $cyan !default;
+$warning:       $orange !default;
+$danger:        $red !default;
+
+$info-outline:    #1f7e9a;
+$warning-outline: #a6670e;
+
+$font_0: fontawesome;
+
+// Final Import.
+@import "includes";
+
+// PRESET Customization content.
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: normal;
+}
+#frontpage-available-course-list,
+#frontpage-course-list,
+#frontpage-category-combo,
+#frontpage-category-names,
+#site-news-forum {
+    h2 {
+        font-weight: bold;
+    }
+}
+
+/* Secondary navigation menu */
+.secondary-navigation .moremenu.navigation .nav-tabs .nav-item {
+    background-color: $wild_sand;
+    .nav-link {
+        &:before {
+            display: none;
+        }
+        &:hover,
+        &:focus,
+        &:active {
+            background-color: $primary;
+        }
+    }
+}
+
+/* End of Secondary navigation menu */
+
+/* Site Features */
+.site-features.icon-block .custom-site-expo {
+    .col-md-6 {
+        &:first-child {
+            .site-feature-head .rcthumb {
+                color: $color_picton_blue_approx;
+                background: $color_charlotte_approx;
+            }
+        }
+        &:nth-child(2) {
+            .site-feature-head .rcthumb {
+                color: $color_cinnabar;
+                background: $color_romantic_approx;
+            }
+        }
+        &:nth-child(3) {
+            .site-feature-head .rcthumb {
+                color: $seal_brown;
+                background: $color_cape_honey_approx;
+            }
+        }
+        &:last-child {
+            .site-feature-head .rcthumb {
+                color: $green;
+                background: $color_zanah_approx;
+            }
+        }
+    }
+    .sitebox {
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 16px 5px $black_10;
+        .site-feature-head {
+            .rcthumb {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+                box-shadow: none;
+                margin: -50px 0 0;
+            }
+        }
+        .site-feature-body {
+            text-align: left;
+            h6,
+            h6 a {
+                color: $secondary;
+                font-weight: bold;
+            }
+        }
+    }
+}
+/* End of Site Features */
+
+/* Promoted Courses */
+.promoted-courses .promatedcourse-slider .slider-item .course-box {
+    &:before {
+        content: '';
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        background: $black_20;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+    .info {
+        z-index: 1;
+    }
+}
+
+/* End of Promoted Courses */
+
+/* Marketing Spot */
+.marketing-spot {
+    padding-bottom: 40px;
+    overflow: hidden;
+    position: relative;
+    z-index: 0;
+    .info-media {
+        padding: 15px;
+        border-radius: 10px;
+        overflow: visible;
+        position: relative;
+        z-index: 0;
+        &:before {
+            content: '';
+            width: 80%;
+            height: 80%;
+            border-radius: 60% 40% 40% 20%;
+            background-color: $primary_30;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            animation: morph 15s linear infinite alternate, spin 20s linear infinite;
+        }
+        &:after {
+            content: '';
+            width: 80%;
+            height: 80%;
+            border-radius: 60% 40% 40% 20% / 70% 50% 30% 25%;
+            background-color: $secondary_30;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            z-index: -1;
+            animation: morph 15s linear infinite alternate, spin 20s linear infinite;
+        }
+        img {
+            max-width: 500px;
+            border-radius: 10px;
+            margin: 0 auto;
+        }
+    }
+}
+/* End of Marketing Spot */
+
+/* Jumbotron */
+
+@media (max-width: 575px) {
+    .jumbotron-block .inner-wrap:hover:before {
+        height: 100%;
+        top: -30px;
+        right: -240px;
+    }
+}
+/* End of Jumbotron */
+
+/* Course category */
+.course_category_tree.frontpage-category-names .category {
+    width: 48%;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 15px;
+    > .info {
+        .numberofcourse {
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            color: $white;
+            text-align: center;
+            background: $primary;
+            border-radius: 50%;
+            padding: 0;
+            margin-top: -5px;
+            float: right;
+        }
+    }
+    .category {
+        width: 45%;
+    }
+    .subcategories .subcategories .category {
+        width: 100%;
+    }
+}
+
+@media (min-width: 992px) {
+    .course_category_tree.frontpage-category-names .category {
+        width: 45%;
+    }
+}
+
+@media (max-width: 991px) {
+    .course_category_tree.frontpage-category-names .category .category {
+        width: 100%;
+    }
+    .course_category_tree.frontpage-category-names .category {
+        width: 45%;
+    }
+}
+
+@media (max-width: 575px) {
+    .course_category_tree.frontpage-category-names .category {
+        width: 100%;
+    }
+}
+
+/* End of Course category */
+
+/* Combo courses */
+#frontpage-category-combo .course_category_tree .category {
+    > .info {
+        border-radius: 5px;
+        > .categoryname {
+            padding: 15px 10px;
+            &:before {
+                width: 30px;
+                height: 30px;
+                color: $white;
+                line-height: 30px;
+                text-align: center;
+                border-radius: 50%;
+                box-shadow: 2px 5px 5px $black_20;
+                background: $primary;
+                margin-left: -30px;
+                display: inline-block;
+            }
+            a {
+                line-height: 30px;
+            }
+        }
+    }
+    &:not(.with_children) .info .categoryname:before {
+        content: '';
+        display: none;
+    }
+    > .content {
+        border-radius: 5px;
+        background-color: $white;
+        .coursebox {
+            border: 0;
+            .info .coursename {
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+/* End of Combo courses */
+
+/* Footer */
+#footer.footer-image {
+    .foot-links ul li a:hover {
+        color: $white;
+    }
+}
+/* End of Footer */

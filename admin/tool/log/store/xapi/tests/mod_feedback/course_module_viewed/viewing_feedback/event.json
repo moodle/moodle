@@ -1,0 +1,9 @@
+{
+    "id": 1,
+    "userid": 1,
+    "courseid": 1,
+    "timecreated": 1433946701,
+    "objectid": 1,
+    "contextinstanceid": 1,
+    "eventname": "\\mod_feedback\\event\\course_module_viewed"
+}

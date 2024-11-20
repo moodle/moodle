@@ -1,0 +1,60 @@
+// This file is part of the Pimenko theme for Moodle
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Theme Pimenko style files.
+ * @package    theme_pimenko
+ * @copyright  Pimenko 2020
+ * @author     Sylvain Revenu - Pimenko 2020 <contact@pimenko.com> <pimenko.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+$togglercolor: unquote('tooglercolor');
+
+[data-region='drawer'] {
+    background: #fff;
+    height: calc(100% - 65px);
+    top: 65px;
+
+    .list-group-item.list-group-item-action {
+        background: none;
+        border: none;
+
+        &.active,
+        &:hover {
+            color: unquote('brandcolor');
+        }
+    }
+
+    .list-group-item:not(.list-group-item-action) .media-body {
+        cursor: default;
+    }
+}
+
+.drawerheader {
+    padding: 0;
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-light .navbar-toggler {
+    border: none;
+    color: unquote('navbartextcolor');
+
+    .navbar-toggler-icon {
+        background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'><path stroke='#{$togglercolor}' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg>");
+    }
+}

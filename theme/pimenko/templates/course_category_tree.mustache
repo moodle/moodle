@@ -1,0 +1,14 @@
+<div {{{contentattributes}}}>
+    <div class="collapsible-actions">
+        <a href="#" class="{{{linkclass}}}">{{{linkname}}}</a>
+    </div>
+    <div class="content">{{{categorycontent}}}</div>
+</div>
+{{#js}}
+    <!--   We open all 1st rank category by default. -->
+    $(document).ready(function() {
+        if($('.categoryname')) {
+            $('.categoryname').click();
+        }
+    });
+{{/js}}

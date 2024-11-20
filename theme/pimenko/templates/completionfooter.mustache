@@ -1,0 +1,52 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+<div class="next_activity_area">
+    <div class="next_activity_link">
+        <div class="activity-complete">
+            {{{completionicon}}}
+            <div class="clearfix"></div>
+        </div>
+        <div class="next_activity_text">
+        </div>
+    </div>
+</div>
+
+<form action="." method="get">
+    <div>
+        <input type="hidden" id="completion_dynamic_change" name="completion_dynamic_change" value="0" />
+    </div>
+</form>
+
+<div class="modal" id="nextmodnav" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center" role="document">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <button type="button" class="btn btn-default btn-sm text-dimmed float-right" data-dismiss="modal"
+                            aria-label="Close">
+                        <i class="fa fa-times"></i>
+                    </button>
+                    <p class="m-t-0 m-b-20">{{#str}}nextmod, theme_pimenko{{/str}}</p>
+                    <h2 class="m-b-20 text-dimmed">{{{nextmodname}}}</h2>
+                    <a href="{{{nextmodurl}}}" class="btn btn-success btn-full m-b-20">
+                        {{#str}}nextmod, theme_pimenko{{/str}}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

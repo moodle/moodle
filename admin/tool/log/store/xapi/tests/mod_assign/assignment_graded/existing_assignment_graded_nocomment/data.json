@@ -1,0 +1,55 @@
+{
+    "user": [
+        {
+            "id": 1,
+            "firstname": "test_fullname",
+            "email": "test@test.com"
+        },
+        {
+            "id": 2,
+            "firstname": "test2_fullname",
+            "email": "test2@test.com"
+        }
+    ],
+    "course": [
+        {
+            "id": 1,
+            "fullname": "test_name",
+            "lang": "en"
+        }
+    ],
+    "course_modules": [
+        {
+            "id": 1,
+            "course": 1,
+            "module": 1,
+            "instance": 1
+        }
+    ],
+    "assign": [
+        {
+            "id": 1,
+            "name": "test_name"
+        }
+    ],
+    "grade": [
+        {
+            "id": 1,
+            "userid": 2,
+            "assignment": 1,
+            "grade": 1
+        }
+    ],
+    "assignfeedback_comments": [
+    ],
+    "grade_items": [
+        {
+            "id": 1,
+            "itemmodule": "assign",
+            "iteminstance": 1,
+            "grademin": 0,
+            "grademax": 2,
+            "gradepass": 1
+        }
+    ]
+}

@@ -1,0 +1,13 @@
+.DS_STORE
+/.idea
+/.vscode
+/*.sublime-project
+/*.sublime-workspace
+/classes/log/error_log.txt
+/composer.phar
+/node_modules
+/notes.md
+/vendor
+/xapi
+/xapi.zip
+.phpunit.result.cache

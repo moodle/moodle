@@ -1,0 +1,130 @@
+// This file is part of the Pimenko theme for Moodle
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Theme Pimenko style files.
+ * @package    theme_pimenko
+ * @copyright  Pimenko 2020
+ * @author     Sylvain Revenu - Pimenko 2020 <contact@pimenko.com> <pimenko.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* Login Page */
+/* Background Image */
+
+#page-login-index,
+#page-login-forgot_password {
+    background: unquote('loginbgimage');
+    background-size: unquote('loginbgstyle');
+}
+
+#page-login-index,
+#page-login-signup,
+#page-login-forgot_password {
+
+    .textbox {
+        p {
+            color: #343b3f;
+            font-size: 1.5rem;
+            margin-bottom: 0;
+            padding: 10px;
+            text-align: center !important;
+        }
+    }
+
+    .logintextbox {
+        padding: 10px;
+    }
+
+    #page-wrapper {
+        padding-top: 65px;
+    }
+
+    .outercont {
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        /* Add a top padding to avoid content overlay */
+        left: 50%;
+        margin: auto 0;
+        padding: 15px;
+        position: relative;
+        transform: translateX(-50%);
+    }
+
+    .fullin.narrow .container,
+    .fullin.standard .container {
+        width: 100% !important;
+    }
+
+    #page-footer {
+        margin: 0;
+    }
+
+    #topofscroll {
+        margin: auto;
+    }
+
+    #page {
+        background: none;
+    }
+
+    @media (min-width: 1200px) {
+        .container {
+            max-width: 100%;
+        }
+    }
+}
+
+#page-login-signup {
+    .textbox {
+        p {
+            display: none;
+        }
+    }
+}
+
+#page-login-index header {
+    background-color: unquote('loginbgopacity1');
+
+    #page-login-index #page-navbar,
+    #page-login-index .card {
+        background-color: unquote('loginbgopacity2');
+    }
+
+    #page-login-index #page-footer {
+        background-color: unquote('loginbgopacity3');
+    }
+}
+
+#page-login-forgot_password {
+    #region-main {
+        max-width: 50%;
+        margin: auto;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 1px solid rgba(0,0,0,.125);
+        border-radius: 0.5rem;
+        padding: 15px;
+    }
+}
+
+.signupform {
+    background: white;
+    padding: 15px;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: 0.5rem;
+}
+

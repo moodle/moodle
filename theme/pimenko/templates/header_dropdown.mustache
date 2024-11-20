@@ -1,0 +1,17 @@
+<div class="dropdown nav-item h-100">
+    <a class="dropdown-toggle nav-link" id="navbarDropdownMenuLink"  href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{dropdownname}}
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        {{#dropdownitems}}
+            <li {{#submenu}}class="dropdown-submenu"{{/submenu}}>
+                <a class="dropdown-item {{#submenu}}dropdown-toggle{{/submenu}}" href="{{url}}">
+                    {{{name}}}
+                </a>
+                {{#submenu}}
+                    {{{submenu}}}
+                {{/submenu}}
+            </li>
+        {{/dropdownitems}}
+    </ul>
+</div>

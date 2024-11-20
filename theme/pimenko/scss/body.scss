@@ -1,0 +1,144 @@
+// This file is part of the Pimenko theme for Moodle
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Theme Pimenko style files.
+ * @package    theme_pimenko
+ * @copyright  Pimenko 2020
+ * @author     Sylvain Revenu - Pimenko 2020 <contact@pimenko.com> <pimenko.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+body {
+    font-family: unquote('googlefont'), serif;
+
+    #page {
+        margin-top: 0;
+    }
+
+    a.see-all-link {
+        text-decoration: none;
+
+        .popover-region-footer-container {
+            padding: 0;
+
+            .popover-region-seeall-text {
+                height: 100%;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: unquote('brandcolortextbutton');
+            }
+        }
+    }
+
+    .btn-primary,
+    .btn-submit,
+    .simplesearchform .btn-submit,
+    .btn-close,
+    #goto-top-link .btn,
+    .popover-region-seeall-text,
+    .btn-secondary {
+        background-color: unquote('brandcolorbutton');
+        border-color: unquote('brandcolorbutton');
+        color: unquote('brandcolortextbutton');
+
+        &:hover,
+        &:active,
+        &:focus {
+            background-color: unquote('darkenbrandcolorbutton');
+            border-color: unquote('darkenbrandcolorbutton');
+            color: unquote('darkenbrandcolortextbutton');
+        }
+    }
+
+    .dropdown-item {
+        &:hover,
+        &:active {
+            background-color: unquote('darkenbrandcolorbutton');
+            border-color: unquote('darkenbrandcolorbutton');
+            color: unquote('darkenbrandcolortextbutton') !important;
+        }
+        &:focus,
+        &:focus-within {
+            background-color: unquote('brandcolorbutton');
+            border-color: unquote('brandcolorbutton');
+            color: unquote('brandcolortextbutton') !important;
+        }
+    }
+
+    section.block {
+
+        & > .card-body {
+            padding: 0 !important;
+        }
+
+        .card-body {
+            .card-title {
+                background-color: unquote('brandcolorbutton');
+                color: unquote('brandcolortextbutton');
+                display: inline-block !important;
+                padding: 1rem;
+                width: 100%;
+            }
+        }
+    }
+
+    .block_html {
+        background: none;
+    }
+
+    #page.drawers {
+        padding: 0;
+    }
+}
+
+body.scrolled #goto-top-link {
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 0s ease 0s, opacity .7s ease .1s;
+}
+
+@include media-breakpoint-down(sm) {
+    #goto-top-link {
+        bottom: 0;
+    }
+}
+
+#goto-top-link {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity .7s ease 0s, visibility .1s ease .8s;
+    display: block;
+    position: fixed;
+    bottom: $gototop-bottom-position;
+    right: 0;
+    a {
+        position: absolute;
+        right: 0;
+        transform: translateY(-100%);
+    }
+}
+
+.block {
+    .block-controls {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .card-text {
+        padding: 10px;
+    }
+}

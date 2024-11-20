@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>tincanphp/</location>
+        <name>TinCanPHP</name>
+        <version>1.1.1</version>
+        <license>Apache</license>
+        <licenseversion>2</licenseversion>
+    </library>
+</libraries>

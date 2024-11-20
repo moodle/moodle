@@ -1,0 +1,10 @@
+{
+    "id": 1,
+    "userid": 1,
+    "courseid": 1,
+    "timecreated": 1433946701,
+    "objecttable": "forum",
+    "objectid": 1,
+    "contextinstanceid": 1,
+    "eventname": "\\mod_forum\\event\\discussion_created"
+}

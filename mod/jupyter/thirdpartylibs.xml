@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>vendor/guzzlehttp/guzzle</location>
+        <name>Guzzle</name>
+        <version>v7.5.0</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+     <library>
+        <location>vendor/firebase/php-jwt</location>
+        <name>Firebase</name>
+        <version>v6.3.1</version>
+        <license>BSD-3-Clause</license>
+        <licenseversion></licenseversion>
+    </library>
+</libraries>

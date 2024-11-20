@@ -1,0 +1,52 @@
+[
+    {
+        "actor": {
+            "name": "test_fullname",
+            "account": {
+                "homePage": "http:\/\/www.example.org",
+                "name": "1"
+            }
+        },
+        "verb": {
+            "id": "https:\/\/brindlewaye.com\/xAPITerms\/verbs\/loggedin\/",
+            "display": {
+                "en": "logged into"
+            }
+        },
+        "object": {
+            "id": "http:\/\/www.example.org",
+            "definition": {
+                "type": "http:\/\/id.tincanapi.com\/activitytype\/lms",
+                "name": {
+                    "en": "test_name"
+                }
+            }
+        },
+        "timestamp": "2015-06-10T22:31:41+08:00",
+        "context": {
+            "platform": "Moodle",
+            "language": "en",
+            "extensions": {
+                "http:\/\/lrs.learninglocker.net\/define\/extensions\/info": {
+                    "http:\/\/moodle.org": "1.0.0",
+                    "https:\/\/github.com\/xAPI-vle\/moodle-logstore_xapi": "0.0.0-development",
+                    "event_name": "\\core\\event\\user_loggedin",
+                    "event_function": "\\src\\transformer\\events\\core\\user_loggedin"
+                }
+            },
+            "contextActivities": {
+                "category": [
+                    {
+                        "id": "http:\/\/moodle.org",
+                        "definition": {
+                            "type": "http:\/\/id.tincanapi.com\/activitytype\/source",
+                            "name": {
+                                "en": "Moodle"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+]

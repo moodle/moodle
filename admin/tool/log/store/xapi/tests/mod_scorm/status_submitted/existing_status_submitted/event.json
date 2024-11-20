@@ -1,0 +1,10 @@
+{
+    "id": 1,
+    "userid": 1,
+    "courseid": 1,
+    "timecreated": 1433946701,
+    "objectid": 1,
+    "eventname": "\\mod_scorm\\event\\status_submitted",
+    "other": "a:1:{s:9:\"attemptid\";i:1;} ",
+    "contextinstanceid": 1
+}

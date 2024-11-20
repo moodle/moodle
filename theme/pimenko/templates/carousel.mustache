@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+    @package    theme_pimenko
+    @copyright  Pimenko 2020
+    @author     Sylvain Revenu - Pimenko 2020 <contact@pimenko.com> <pimenko.com>
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+<div id="pimenko-carousel" class="carousel slide {{layout}}" data-ride="carousel">
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+        {{#slides}}
+            <div class="carousel-item {{active}}">
+                <img class="d-block w-100" src="{{{image}}}">
+                <div class="carousel-caption d-none d-md-block">
+                    {{{caption}}}
+                </div>
+            </div>
+        {{/slides}}
+    </div>
+
+    <!-- Indicators -->
+
+    <ol class="carousel-indicators">
+        {{#slides}}
+            <li data-target="#pimenko-carousel" data-slide-to="{{slidenum}}" class="{{active}}">
+            </li>
+        {{/slides}}
+    </ol>
+
+    <!-- Controls -->
+    <a class="carousel-control-prev" href="#pimenko-carousel" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#pimenko-carousel" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>

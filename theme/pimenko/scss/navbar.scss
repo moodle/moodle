@@ -1,0 +1,223 @@
+// This file is part of the Pimenko theme for Moodle
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Theme Pimenko style files.
+ * @package    theme_pimenko
+ * @copyright  Pimenko 2020
+ * @author     Sylvain Revenu - Pimenko 2020 <contact@pimenko.com> <pimenko.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+nav.navbar.pimenko-navbar,
+nav.navbar.pimenko-navbar.fixed-top {
+    background-color: unquote('navbarcolor') !important;
+    color: unquote('navbartextcolor');
+    position: fixed;
+    z-index: 1030;
+
+    .popover-region {
+        height: 100%;
+    }
+
+    &.withnavbarpicture {
+        background-repeat: no-repeat;
+        background-size: auto;
+    }
+
+    #header-category-select {
+        .dropdown-menu {
+            position: absolute;
+
+            li:hover > ul.dropdown-menu {
+                display: block;
+            }
+
+            .dropdown-submenu {
+                position: relative;
+            }
+
+            .dropdown-submenu > .dropdown-menu {
+                left: 100%;
+                margin-top: -6px;
+                top: 0;
+            }
+
+            & > li > a:after {
+                display: inline-block;
+                margin-left: 0.255em;
+                vertical-align: 0.255em;
+                content: "";
+                border-top: 0.3em solid;
+                border-right: 0.3em solid transparent;
+                border-bottom: 0;
+                border-left: 0.3em solid transparent;
+                font-size: 15px;
+            }
+
+            /* rotate caret on hover */
+            & > li > a:hover:after {
+                text-decoration: underline;
+                transform: rotate(-90deg);
+            }
+        }
+    }
+
+    .navbar-nav {
+        align-items: center;
+        display: flex;
+
+        li:not(.d-none),
+        input {
+            display: flex !important;
+        }
+    }
+
+    .navbar-brand {
+        display: flex;
+        padding-bottom: 0;
+        padding-top: 0;
+
+        .logo,
+        .site-name {
+            margin: auto;
+        }
+    }
+
+    .site-name,
+    .editmode-switch-form label,
+    .nav-item,
+    :not(button).nav-link,
+    .simplesearchform .btn,
+    a {
+        color: unquote('navbartextcolor');
+    }
+
+    .editmode-switch-form label.text-primary {
+        color: unquote('navbartextcolor') !important;
+    }
+
+    .editmode-switch-form .custom-switch .custom-control-input {
+        height: 100%;
+    }
+
+    a,
+    .popover-region-toggle {
+        &:hover,
+        &:focus {
+            color: unquote('darkennavcolor') !important;
+        }
+    }
+
+    .popover-region-container {
+        top: 38px;
+    }
+
+    .dropdown-menu a,
+    .popover-region-container,
+    .content-item-container a,
+    .popover-region-header-actions a {
+        color: #333;
+        line-height: initial;
+
+        &.dropdown-item {
+            padding-left: 1.75em;
+
+            &:hover,
+            &:active {
+                background-color: unquote('darkenbrandcolorbutton');
+                border-color: unquote('darkenbrandcolorbutton');
+                color: unquote('darkenbrandcolortextbutton') !important;
+            }
+
+            &:focus,
+            &:focus-within {
+                background-color: unquote('brandcolorbutton');
+                border-color: unquote('brandcolorbutton');
+                color: unquote('brandcolortextbutton') !important;
+
+                &::before {
+                    color: unquote('brandcolortextbutton'); content: "•";
+                    display: inline-block;
+                    left: 10px;
+                    position: absolute;
+                }
+            }
+        }
+    }
+
+    .nav-item {
+        display: flex;
+    }
+
+    .dropdown-toggle,
+    .popover-region-toggle {
+        &::after,
+        &::before {
+            display: none;
+        }
+    }
+
+    .simplesearchform .btn-submit {
+        background-color: unquote('brandcolorbutton');
+    }
+
+    .custom-switch .custom-control-label {
+        align-items: center;
+        color: unquote('navbartextcolor');
+        display: flex;
+        justify-content: center;
+        justify-items: center;
+        text-align: center;
+
+        &::after,
+        &::before {
+            top: initial;
+        }
+    }
+
+    .custom-control {
+        display: flex;
+    }
+
+    .editmode-switch-form {
+        position: relative;
+    }
+}
+
+.primary-navigation {
+
+    .moremenu .nav-link {
+        border-bottom: solid 3px;
+        border-color: transparent;
+
+        &:hover,
+        &:focus {
+            background: none;
+        }
+
+        &.active {
+            border-bottom-color: unquote('darkennavcolor') !important;
+        }
+    }
+}
+
+.moremenu .nav-link.active {
+    border-bottom-color: unquote('brandcolorbutton');
+}
+
+.navbar.fixed-top #header-category-select .dropdown .dropdown-menu {
+    overflow-y: visible;
+}

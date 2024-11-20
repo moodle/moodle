@@ -1,0 +1,214 @@
+[
+    {
+        "actor": {
+            "name": "test_fullname",
+            "account": {
+                "homePage": "http:\/\/www.example.org",
+                "name": "1"
+            }
+        },
+        "verb": {
+            "id": "http:\/\/adlnet.gov\/expapi\/verbs\/completed",
+            "display": {
+                "en": "completed"
+            }
+        },
+        "object": {
+            "id": "http:\/\/www.example.org\/mod\/quiz\/view.php?id=1",
+            "definition": {
+                "type": "http:\/\/adlnet.gov\/expapi\/activities\/assessment",
+                "name": {
+                    "en": "test_quiz_name"
+                }
+            }
+        },
+        "timestamp": "2015-06-10T22:31:41+08:00",
+        "result": {
+            "score": {
+                "raw": 50,
+                "min": 0,
+                "max": 100,
+                "scaled": 0.5
+            },
+            "completion": true,
+            "success": true,
+            "duration": "PT1S"
+        },
+        "context": {
+            "platform": "Moodle",
+            "language": "en",
+            "extensions": {
+                "http:\/\/lrs.learninglocker.net\/define\/extensions\/info": {
+                    "http:\/\/moodle.org": "1.0.0",
+                    "https:\/\/github.com\/xAPI-vle\/moodle-logstore_xapi": "0.0.0-development",
+                    "event_name": "\\mod_quiz\\event\\attempt_submitted",
+                    "event_function": "\\src\\transformer\\events\\mod_quiz\\attempt_submitted\\handler"
+                }
+            },
+            "contextActivities": {
+                "other": [
+                    {
+                        "id": "http:\/\/www.example.org\/mod\/quiz\/attempt.php?attempt=1&cmid=1",
+                        "definition": {
+                            "type": "http:\/\/adlnet.gov\/expapi\/activities\/attempt",
+                            "name": {
+                                "en": "Attempt"
+                            }
+                        }
+                    }
+                ],
+                "grouping": [
+                    {
+                        "id": "http:\/\/www.example.org",
+                        "definition": {
+                            "type": "http:\/\/id.tincanapi.com\/activitytype\/lms",
+                            "name": {
+                                "en": "test_name"
+                            }
+                        }
+                    },
+                    {
+                        "id": "http:\/\/www.example.org\/course\/view.php?id=1",
+                        "definition": {
+                            "type": "http:\/\/id.tincanapi.com\/activitytype\/lms\/course",
+                            "name": {
+                                "en": "test_name"
+                            }
+                        }
+                    }
+                ],
+                "category": [
+                    {
+                        "id": "http:\/\/moodle.org",
+                        "definition": {
+                            "type": "http:\/\/id.tincanapi.com\/activitytype\/source",
+                            "name": {
+                                "en": "Moodle"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "actor": {
+            "name": "test_fullname",
+            "account": {
+                "homePage": "http:\/\/www.example.org",
+                "name": "1"
+            }
+        },
+        "verb": {
+            "id": "http:\/\/adlnet.gov\/expapi\/verbs\/answered",
+            "display": {
+                "en": "answered"
+            }
+        },
+        "object": {
+            "id": "http:\/\/www.example.org\/question\/question.php?cmid=1&id=1",
+            "definition": {
+                "type": "http:\/\/adlnet.gov\/expapi\/activities\/cmi.interaction",
+                "name": {
+                    "en": "test_question"
+                },
+                "interactionType": "choice",
+                "correctResponsesPattern": [
+                    "answer 1[,]answer 2"
+                ],
+                "choices": [
+                    {
+                        "id": "1",
+                        "description": {
+                            "en": "answer 1"
+                        }
+                    },
+                    {
+                        "id": "2",
+                        "description": {
+                            "en": "answer 2"
+                        }
+                    },
+                    {
+                        "id": "3",
+                        "description": {
+                            "en": "answer 3"
+                        }
+                    }
+                ]
+            }
+        },
+        "timestamp": "2015-06-10T22:31:41+08:00",
+        "result": {
+            "response": "answer 1[,]answer 2",
+            "success": true,
+            "completion": true,
+            "extensions": {
+                "http:\/\/learninglocker.net\/xapi\/cmi\/choice\/response": "answer 1; answer 2"
+            }
+        },
+        "context": {
+            "platform": "Moodle",
+            "language": "en",
+            "extensions": {
+                "http:\/\/lrs.learninglocker.net\/define\/extensions\/info": {
+                    "http:\/\/moodle.org": "1.0.0",
+                    "https:\/\/github.com\/xAPI-vle\/moodle-logstore_xapi": "0.0.0-development",
+                    "event_name": "\\mod_quiz\\event\\attempt_submitted",
+                    "event_function": "\\src\\transformer\\events\\mod_quiz\\attempt_submitted\\handler"
+                }
+            },
+            "contextActivities": {
+                "grouping": [
+                    {
+                        "id": "http:\/\/www.example.org",
+                        "definition": {
+                            "type": "http:\/\/id.tincanapi.com\/activitytype\/lms",
+                            "name": {
+                                "en": "test_name"
+                            }
+                        }
+                    },
+                    {
+                        "id": "http:\/\/www.example.org\/course\/view.php?id=1",
+                        "definition": {
+                            "type": "http:\/\/id.tincanapi.com\/activitytype\/lms\/course",
+                            "name": {
+                                "en": "test_name"
+                            }
+                        }
+                    },
+                    {
+                        "id": "http:\/\/www.example.org\/mod\/quiz\/view.php?id=1",
+                        "definition": {
+                            "type": "http:\/\/adlnet.gov\/expapi\/activities\/assessment",
+                            "name": {
+                                "en": "test_quiz_name"
+                            }
+                        }
+                    },
+                    {
+                        "id": "http:\/\/www.example.org\/mod\/quiz\/attempt.php?attempt=1&cmid=1",
+                        "definition": {
+                            "type": "http:\/\/adlnet.gov\/expapi\/activities\/attempt",
+                            "name": {
+                                "en": "Attempt"
+                            }
+                        }
+                    }
+                ],
+                "category": [
+                    {
+                        "id": "http:\/\/moodle.org",
+                        "definition": {
+                            "type": "http:\/\/id.tincanapi.com\/activitytype\/source",
+                            "name": {
+                                "en": "Moodle"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+]

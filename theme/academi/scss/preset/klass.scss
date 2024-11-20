@@ -1,0 +1,413 @@
+@import "colors";
+
+$primary:       #009fe5 !default;
+$secondary:     #c02424 !default;
+$primary_30:       rgba(0, 159, 229, .3) !default;
+$primary_70:       rgba(0, 159, 229, .7) !default;
+$secondary_30:     rgba(192, 36, 36, .3) !default;
+$secondary_70:     rgba(192, 36, 36, .7) !default;
+$footerbgopacity: $primary_70 !default;
+
+$info-outline:    #1f7e9a;
+$warning-outline: #a6670e;
+
+$font_1: arvoregular;
+
+@font-face {
+    font-family: arvoregular;
+    src: url([[setting:fontwww]]arvo/arvo-regular_201-webfont.eot);
+    src:
+        url([[setting:fontwww]]arvo/arvo-regular_201-webfont.eot?#iefix) format('embedded-opentype'),
+        url([[setting:fontwww]]arvo/arvo-regular_201-webfont.woff2) format('woff2'),
+        url([[setting:fontwww]]arvo/arvo-regular_201-webfont.woff) format('woff'),
+        url([[setting:fontwww]]arvo/arvo-regular_201-webfont.ttf) format('truetype'),
+        url([[setting:fontwww]]arvo/arvo-regular_201-webfont.svg#arvoregular) format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@import "includes";
+
+// PRESET Customization content.
+
+body {
+    font-family: $font_1;
+}
+.pagelayout-frontpage h2 b {
+    font-weight: normal;
+}
+.moremenu .nav.nav-tabs .nav-item .nav-link {
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    background: none;
+    &:hover,
+    &:focus,
+    &:active,
+    &:focus:active {
+        color: $secondary;
+        background: none;
+    }
+    &.active,
+    &.active:focus,
+    &.active:active {
+        color: $secondary;
+        background: none;
+        border-bottom-color: $primary;
+    }
+}
+.main-inner .drawer-toggles .drawer-toggler {
+    button,
+    button:hover {
+        box-shadow: 2px 5px 5px $black_20;
+    }
+}
+#page-wrapper #page #page-content {
+    padding-bottom: 0 !important;
+}
+.course_category_tree .category {
+    > .info > .categoryname.aabtn:before {
+        color: $primary;
+    }
+    .numberofcourse {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 767px) {
+    .moremenu.navigation .nav.nav-tabs .nav-item .nav-link {
+        &:hover,
+        &:focus,
+        &:active,
+        &:focus:active,
+        &.active {
+            color: $secondary;
+            border-top: 0;
+            border-left: 0;
+            border-right: 0;
+            background: none;
+        }
+    }
+}
+
+/* Header */
+#header {
+    background-color: $secondary;
+    .usermenu .dropdown-menu .carousel .carousel-inner .carousel-item a {
+        &:hover,
+        &:focus,
+        &:active {
+            color: $white;
+            background-color: $secondary;
+        }
+    }
+    .nav.navbar-nav .nav-link {
+        &:hover,
+        &:focus,
+        &:active {
+            color: $primary;
+            border-bottom-color: $white;
+            background-color: $white;
+        }
+        &.active {
+            color: $white;
+            border-color: $primary;
+            background-color: $primary;
+        }
+    }
+}
+/* End of Header */
+
+/* Header Main */
+.header-main {
+    background-color: $primary;
+    .navbar.navbar-light .primary-navigation .navigation .nav-link {
+        color: $white;
+        &:hover,
+        &:focus,
+        &:active,
+        &.active {
+            color: $secondary;
+            background-color: $white;
+        }
+    }
+}
+/* End of Header Main */
+
+/* Promoted Courses */
+.promoted-courses {
+    .promatedcourse-slider {
+        .slider-item .course-box {
+            .thumb {
+                height: 200px;
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+                &:before,
+                img {
+                    border-radius: 0;
+                    border-top-left-radius: 10px;
+                    border-top-right-radius: 10px;
+                    background: none;
+                }
+            }
+            .info {
+                min-height: 86px;
+                border-bottom-left-radius: 10px;
+                border-bottom-right-radius: 10px;
+                background-color: $primary;
+                padding: 15px 20px;
+                display: flex;
+                align-items: center;
+                position: static;
+                h5 {
+                    margin-bottom: 0;
+                    a {
+                        color: $white;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* Homepage Carousel */
+.homepage-carousel > div .homecarousel-slide-item .slide-item .slide-text .heading-content .link-button a {
+    background-color: $secondary;
+    border-radius: 0;
+}
+/* End of Homepage Carousel */
+
+/* Site Features */
+.site-features.icon-block .custom-site-expo .sitebox {
+    background: $primary_30;
+    padding: 20px;
+    margin-top: 50px;
+    .site-feature-head {
+        margin-top: -70px;
+        .rcthumb {
+            width: 100px;
+            height: 100px;
+            font-size: 30px;
+            background-color: $primary;
+            box-shadow: none;
+        }
+    }
+    .site-feature-body {
+        h6,
+        h6 a {
+            color: $secondary;
+            font-weight: bold;
+        }
+    }
+}
+/* End of Site Features */
+
+/* Marketing Spot */
+.marketing-spot {
+    padding-bottom: 40px;
+    background: $secondary_70;
+    position: relative;
+    z-index: 0;
+    .info-content p {
+        font-size: 17px;
+    }
+    &:after {
+        content: '';
+        width: 80%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: auto;
+        right: 0;
+        z-index: -1;
+        /* transform: skew(-10deg, 0deg); */
+    }
+    .info-media img {
+        max-width: 500px;
+        width: auto;
+        margin: 0 auto;
+    }
+}
+
+@media (min-width: 992px) {
+    .info-block {
+        .info-head {
+            h2,
+            p {
+                text-align: left;
+            }
+        }
+        .row .col-lg-6 {
+            &:first-child {
+                order: 1;
+            }
+            &:last-child {
+                position: static;
+                .info-media {
+                    max-height: none;
+                    width: 49%;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                }
+            }
+        }
+    }
+}
+/* End of Marketing Spot */
+
+/* Jumbotron block */
+.jumbotron-block {
+    margin-bottom: 0;
+    .container {
+        max-width: none;
+        .inner-wrap {
+            border-radius: 0;
+        }
+    }
+}
+
+@media (max-width: 991px) {
+    .jumbotron-block {
+        background-color: $wild_sand;
+        margin: 0;
+    }
+}
+/* End of Jumbotron block */
+
+/* Course category */
+.course_category_tree.frontpage-category-names {
+    h2 {
+        color: $white;
+    }
+    .category {
+        width: 48%;
+        display: inline-block;
+        margin-right: 15px;
+        > .info > .categoryname {
+            a {
+                color: $white;
+            }
+        }
+    }
+}
+/* End of Course category */
+
+/* Combo courses */
+#frontpage-category-combo .course_category_tree .category {
+    border-radius: 5px;
+    background-color: $primary_30;
+    > .info {
+        border-radius: 5px;
+        background: none;
+        .categoryname {
+            border-radius: 5px;
+            padding: 15px;
+            &:before {
+                color: $primary;
+            }
+            a {
+                color: $primary;
+            }
+        }
+    }
+    > .content {
+        padding: 0;
+        .courses .coursebox {
+            border: 0;
+            background: none;
+            padding: 10px 20px;
+            margin-top: 0;
+            .info .coursename {
+                margin-bottom: 0;
+                a {
+                    font-size: 16px;
+                }
+            }
+            .content {
+                border-radius: 5px;
+                background: rgb(255, 255, 255);
+                padding: 10px;
+                margin-top: 10px;
+            }
+        }
+    }
+    &:not(.with_children) .info .categoryname:before {
+        content: '';
+    }
+}
+/* End of Combo courses */
+
+/* Footer */
+#footer {
+    .footer-main {
+        background-color: $wild_sand;
+        border-top: 5px solid $primary;
+        h2 {
+            font-size: 24px;
+            font-weight: normal;
+        }
+        .foot-links ul a {
+            color: $color_mine_shaft_approx;
+            &:hover,
+            &:focus,
+            &:active {
+                color: $secondary;
+            }
+        }
+        p {
+            color: $color_mine_shaft_approx;
+            margin-bottom: 8px;
+        }
+        .contact-info a {
+            color: $color_mine_shaft_approx;
+            &:hover,
+            &:focus,
+            &:active {
+                color: $secondary;
+            }
+        }
+        .social-media ul li a {
+            background-color: $white;
+            &:after {
+                background-color: $black_10;
+            }
+        }
+    }
+    &.footer-image .footer-main {
+        border-color: $secondary_70;
+        .foot-links ul a {
+            color: $white;
+            &:hover,
+            &:focus,
+            &:active {
+                color: $secondary;
+            }
+        }
+        p {
+            color: $white;
+        }
+        a {
+            color: $white;
+        }
+    }
+    .footer-bottom {
+        border-top: 2px solid $primary;
+        background-color: $wild_sand;
+        a {
+            color: $primary;
+            &:hover,
+            &:focus,
+            &:active {
+                color: $secondary;
+            }
+        }
+        p {
+            color: $color_mine_shaft_approx;
+        }
+        .footer-content-debugging {
+            color: $color_mine_shaft_approx;
+        }
+    }
+}
+
+/* End of Footer */

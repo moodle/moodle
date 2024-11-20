@@ -1,0 +1,33 @@
+# We're using the "PEP 8 – Style Guide for Python Code" for python files
+# https://peps.python.org/pep-0008/
+# and "PSR-2: Coding Style Guide" for php files
+# https://www.php-fig.org/psr/psr-2/
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# 4 space indentation
+[*.{py,php}]
+indent_style = space
+indent_size = 4
+
+[*.md]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = false
+
+# Tab indentation (no size specified)
+[Makefile]
+indent_style = tab
+
+# 2 space indentation
+[{*.yaml,*.yml}]
+indent_style = space
+indent_size = 2

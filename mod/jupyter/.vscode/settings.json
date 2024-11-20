@@ -1,0 +1,11 @@
+{
+  "terminal.integrated.scrollback": 1000000,
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "editor.formatOnSave": true,
+  "phpSniffer.standard": "moodle",
+  "[php]": {
+    "editor.defaultFormatter": "wongjn.php-sniffer"
+  },
+}

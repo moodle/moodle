@@ -1,0 +1,85 @@
+// This file is part of the Pimenko theme for Moodle
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Theme Pimenko style files.
+ * @package    theme_pimenko
+ * @copyright  Pimenko 2022
+ * @author     Sylvain Revenu - Pimenko 2022 <contact@pimenko.com> <pimenko.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+.edit_cover {
+    bottom: 0;
+    display: flex;
+    padding: 0 15px;
+    right: 0;
+    width: 100%;
+    z-index: 1;
+
+    label {
+        color: unquote('buttontextcolour');
+        display: inline-block;
+        margin: 0;
+
+        input {
+            display: none;
+            left: 0;
+            opacity: 0;
+            position: absolute;
+            top: 0;
+        }
+    }
+
+    .delete-cover {
+        height: 35px;
+        margin-left: 5px;
+
+        i {
+            margin: 0;
+        }
+    }
+}
+
+.courseheader {
+    min-height: 80px;
+}
+
+.coverimage {
+    min-height: 300px;
+
+    .withgradient {
+        color: unquote('gradienttextcolor');
+        background: linear-gradient(270.78deg,rgba(47,42,128,.3) 0%,unquote('gradientcovercolor') 100%);
+
+        .page-context-header {
+            padding-left: 15px;
+
+            .page-header-headings {
+                .text-muted {
+                    color: unquote('gradienttextcolor') !important;
+                }
+            }
+        }
+    }
+
+    .displaythumbanil {
+        max-width: 400px;
+        max-height: 300px;
+        display: flex;
+        right: 0;
+        position: absolute;
+    }
+}

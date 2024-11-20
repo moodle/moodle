@@ -1,0 +1,367 @@
+@import "colors";
+
+$primary:       #a55ba5 !default;
+$secondary:     #8e558e !default;
+$primary_30:       rgba(165, 91, 165, .3) !default;
+$primary_70:       rgba(165, 91, 165, .7) !default;
+$secondary_30:     rgba(142, 85, 142, .3) !default;
+$secondary_70:     rgba(142, 85, 142, .7) !default;
+$footerbgopacity: $primary_70 !default;
+
+$info-outline:    #1f7e9a;
+$warning-outline: #a6670e;
+
+$font_1: 'arial';
+
+@import "includes";
+
+// PRESET Customization content.
+body {
+    font-family: $font_1;
+}
+.moremenu {
+    .nav.nav-tabs {
+        .nav-item {
+            margin-right: 1px;
+            .nav-link {
+                width: 100%;
+                border-color: $wild_sand;
+                background-color: $wild_sand;
+                flex-direction: row;
+            }
+        }
+    }
+    .dropdownmoremenu > .dropdown-menu .dropdown-menu .dropdown-item {
+        &:hover,
+        &:focus,
+        &[aria-current="true"]:focus-within,
+        &[aria-current="true"]:hover,
+        &.active:focus-within,
+        &.active:hover {
+            background: $primary;
+        }
+    }
+    .dropdown-menu {
+        border-radius: 5px;
+    }
+    .dropdown-item {
+        &:hover,
+        &:focus,
+        &[aria-current="true"]:focus-within,
+        &[aria-current="true"]:hover,
+        &.active:focus-within,
+        &.active:hover {
+            color: $white;
+            background: $secondary;
+        }
+    }
+}
+.main-inner .drawer-toggles .drawer-toggler {
+    button,
+    button:hover {
+        box-shadow: 2px 5px 5px $black_20;
+    }
+}
+#page-wrapper #page #page-content {
+    padding-bottom: 0 !important;
+}
+
+
+/* Header */
+#header {
+    background-color: $secondary;
+    .usermenu .dropdown-menu .carousel .carousel-inner .carousel-item a {
+        &:hover,
+        &:focus,
+        &:active {
+            color: $white;
+            background-color: $primary;
+        }
+    }
+    .nav.navbar-nav .nav-link {
+        &:hover,
+        &:focus,
+        &:active {
+            color: $white;
+            border-bottom-color: $primary;
+            background-color: $primary;
+        }
+        &.active {
+            color: $white;
+            border-color: $primary;
+            background-color: $primary;
+        }
+    }
+}
+/* End of Header */
+
+/* Header Main */
+.header-main {
+    background-color: $primary;
+    .navbar.navbar-light .primary-navigation .navigation .nav-link {
+        color: $white;
+        &:hover,
+        &:focus,
+        &:active,
+        &.active {
+            color: $white;
+            background-color: $secondary;
+        }
+    }
+}
+/* End of Header Main */
+
+/* Promoted Courses */
+.promoted-courses {
+    .promatedcourse-slider {
+        .slick-slide {
+            margin-left: 5px;
+        }
+        .slider-item .course-box {
+            height: 280px;
+            border-radius: 10px;
+            background-color: $primary;
+            overflow: hidden;
+            z-index: 0;
+            .thumb {
+                height: 160px;
+                position: absolute;
+                top: 10px;
+                bottom: auto;
+                left: 10px;
+                right: 10px;
+                &:before {
+                    display: none;
+                }
+            }
+            &:after {
+                content: '';
+                width: 80%;
+                height: 50%;
+                position: absolute;
+                border-radius: 10px;
+                background: rgba(255, 255, 255, 0.2);
+                z-index: -1;
+                bottom: 0;
+                right: -80px;
+                transform: rotate(-55deg);
+            }
+            .info {
+                padding: 10px;
+                position: absolute;
+                top: auto;
+                bottom: 20px;
+                left: 10px;
+                right: auto;
+            }
+        }
+    }
+}
+/* Promoted Courses */
+
+/* Site Features */
+.site-features.icon-block {
+    .custom-site-expo .sitebox {
+        .site-feature-head .rcthumb {
+            width: 100px;
+            height: 100px;
+            font-size: 35px;
+            border-radius: 30px;
+            box-shadow: none;
+            overflow: hidden;
+            position: relative;
+            z-index: 0;
+            &:before {
+                content: '';
+                width: 50px;
+                height: 50px;
+                position: absolute;
+                background: $white_20;
+                border-radius: 50%;
+                top: -20px;
+                left: -20px;
+                z-index: -1;
+                transition: all .8s ease;
+            }
+            &:hover::before {
+                width: 130%;
+                height: 130%;
+                transition: all .8s ease;
+            }
+        }
+        .site-feature-body {
+            h6,
+            h6 a {
+                color: $black;
+                font-weight: bold;
+            }
+        }
+    }
+}
+/* End of Site Features */
+
+/* Marketing Spot */
+.marketing-spot .info-media {
+    overflow: hidden;
+    img {
+        max-width: 500px;
+        border-radius: 10px;
+        margin: 0 auto;
+    }
+}
+
+/* Course Category */
+.course_category_tree.frontpage-category-names {
+    .content > .subcategories {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .category {
+        display: inline-block;
+        vertical-align: top;
+        margin-right: 15px;
+        > .info {
+            border-radius: 40px;
+            .categoryname {
+                &:before {
+                    display: none;
+                }
+                .numberofcourse {
+                    color: $color_mine_shaft_approx;
+                }
+            }
+        }
+    }
+}
+/* End of Course Category */
+
+/* Enrolled coruses */
+.courses.frontpage-course-list-enrolled .coursebox .content .courseimage {
+    max-width: 180px;
+    img {
+        width: 180px;
+    }
+}
+
+@media (min-width: 992px) {
+    #frontpage-course-list .coursebox {
+        width: 45%;
+        margin-right: 30px;
+        display: inline-block;
+        vertical-align: top;
+    }
+}
+
+@media (max-width: 575px) {
+    .courses.frontpage-course-list-enrolled .coursebox .content {
+        .courseimage {
+            margin-left: 0;
+        }
+        .d-flex {
+            flex-direction: column;
+        }
+    }
+}
+/* End of Enrolled coruses*/
+
+/* Combo courses */
+#frontpage-category-combo .course_category_tree .category {
+    > .info {
+        border-radius: 25px;
+        > .categoryname {
+            &:before {
+                width: 30px;
+                height: 30px;
+                text-align: center;
+                line-height: 30px;
+                background: $black_20;
+                border-radius: 50%;
+                margin-right: 5px;
+                float: right;
+            }
+            &:after {
+                content: '';
+                clear: both;
+            }
+            a {
+                line-height: 30px;
+                margin-left: 10px;
+            }
+        }
+    }
+    &:not(.with_children) > .info > .categoryname:before {
+        display: none;
+    }
+    .content .coursebox {
+        background: none;
+    }
+}
+/* End of Combo courses */
+
+/* Jumbotron block */
+.jumbotron-block {
+    margin-bottom: 0;
+    .container {
+        max-width: none;
+        .inner-wrap {
+            text-align: center;
+            border-radius: 0;
+            display: block;
+            .desc-wrap {
+                width: auto;
+                background-image: none;
+            }
+            .btn-block {
+                text-align: center;
+                margin-top: 15px;
+            }
+        }
+    }
+}
+
+@media (max-width: 991px) {
+    .jumbotron-block {
+        margin: 0;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .jumbotron-block {
+        margin: 0;
+        .inner-wrap {
+            &:before {
+                width: 35%;
+                top: -30px;
+            }
+            &:hover:before {
+                width: 45%;
+                height: 100%;
+                top: -50px;
+                right: -100px;
+            }
+        }
+    }
+}
+
+/* End of Jumbotron block */
+
+/* Footer */
+#footer {
+    .footer-main {
+        background-color: $primary;
+        h2 {
+            color: $white;
+            font-size: 24px;
+            font-weight: normal;
+        }
+        a {
+            &:hover,
+            &:focus,
+            &:active {
+                color: $white;
+                text-decoration: none;
+            }
+        }
+    }
+}
+/* End of Footer */

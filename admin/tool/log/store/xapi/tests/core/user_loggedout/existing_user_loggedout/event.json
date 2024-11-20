@@ -1,0 +1,9 @@
+{
+    "id": 1,
+    "userid": 1,
+    "courseid": 1,
+    "timecreated": 1433946701,
+    "objecttable": "course",
+    "objectid": 1,
+    "eventname": "\\core\\event\\user_loggedout"
+}

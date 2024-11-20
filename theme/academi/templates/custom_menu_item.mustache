@@ -1,0 +1,55 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_academi/custom_menu_item
+
+    Academi custom_menu_item template.
+    Example context (json):
+    {
+        "sitename": "Moodle",
+        "output": {
+            "doctype": "<!DOCTYPE html>",
+            "page_title": "Test page",
+            "favicon": "favicon.ico",
+            "main_content": "<h1>Headings make html validators happier</h1>"
+         },
+         "bodyattributes":""
+    }
+}}
+
+{{^divider}}
+{{#haschildren}}
+<span class="dropdown nav-item ps">
+    <a class="dropdown-toggle nav-link" id="drop-down-{{uniqid}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
+        {{text}}
+    </a>
+    <div class="dropdown-menu ps" aria-labelledby="drop-down-{{uniqid}}">
+        {{#children}}
+            {{^divider}}
+                <a class="dropdown-item" href="{{{url}}}" {{#title}}title="{{{title}}}"{{/title}}>{{text}}</a>
+            {{/divider}}
+            {{#divider}}
+                <div class="dropdown-divider"></div>
+            {{/divider}}
+        {{/children}}
+    </div>
+</span>
+{{/haschildren}}
+{{^haschildren}}
+<a class="nav-item nav-link" href="{{{url}}}" {{#title}}title="{{{title}}}"{{/title}}>{{text}}</a>
+{{/haschildren}}
+{{/divider}}

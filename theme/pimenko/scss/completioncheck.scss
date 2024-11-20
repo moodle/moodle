@@ -1,0 +1,89 @@
+// This file is part of the Pimenko theme for Moodle
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Theme Pimenko style files.
+ * @package    theme_pimenko
+ * @copyright  Pimenko 2020
+ * @author     Sylvain Revenu - Pimenko 2020 <contact@pimenko.com> <pimenko.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+.next_activity_area {
+    background-color: transparent;
+    margin-top: 0;
+
+    .checkbox {
+        label {
+            background-color: gray;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px -2px rgba(0, 0, 0, 0.2);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 60px;
+            justify-content: center;
+            margin-left: auto;
+            user-select: none;
+            width: 60px;
+
+            &.active {
+                background-color: green;
+
+                .completionfooter {
+                    display: none;
+                }
+            }
+
+            input[type='checkbox'] {
+                opacity: 0;
+            }
+
+            .fa {
+                font-size: 35px;
+                margin: auto;
+                height: auto;
+                width: auto;
+                max-width: initial;
+                max-height: initial;
+            }
+
+            &:active:not(.disable) {
+                box-shadow: 0 5px 5px -3px rgba(0, 0, 0, .2), 0 8px 10px 1px rgba(0, 0, 0, .14), 0 3px 10px 2px rgba(0, 0, 0, .12);
+            }
+
+            &.disable {
+                cursor: not-allowed;
+
+                &::before {
+                    cursor: not-allowed;
+                }
+            }
+
+            .completionfooter {
+                display: inline-block;
+                font-size: 15px;
+                margin: -12px auto 0;
+                text-align: center;
+                width: 80%;
+            }
+        }
+    }
+
+    .completioncheck {
+        display: none;
+    }
+}

@@ -1,0 +1,90 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_academi/slideshow
+
+    Home page slider in the academi theme.
+
+    Example context (json):
+    {
+        "sitename": "Moodle",
+        "output": {
+            "doctype": "<!DOCTYPE html>",
+            "page_title": "slide show page",
+            "main_content": "<h1>Headings make html validators happier</h1>"
+        },
+        "bodyattributes":"",
+        "status": "true",
+        "numofslide": "1",
+        "slidestatus": "true"
+    }
+}}
+{{#status}}
+    {{#isblockempty}}
+        <div class="custom-alert-block alert alert-warning">
+            {{#str}}blockemptymessage, theme_academi{{/str}}
+        </div>
+    {{/isblockempty}}
+
+
+    {{#sliderblockstatus}}
+        <div class="homepage-carousel">
+            {{#numofslide}}
+                <a href="#" class="prevBtn carousel-control left"> <span aria-hidden="true"></span> </a>
+                <a href="#" class="nextBtn carousel-control right"> <span aria-hidden="true"></span> </a>
+            {{/numofslide}}
+            <div id="homepage-carousel">
+                {{#slides}}
+                    {{#slidestatus}}
+                        {{#slideimg}}
+                            <div class="homecarousel-slide-item carousel-item">
+                                <div class="slide-item slide-content {{overlayClass}}">
+                                    <div class="slide-main-background">
+                                        {{#slideimg}}
+                                            <img src="{{{slideimg}}}" class="slide-image">
+                                        {{/slideimg}}
+                                    </div>
+                                    {{! Slide content }}
+                                    {{#slidecontentstatus}}
+                                        <div class="slide-text content_overlayer {{contentClass}}" style="width:{{contentwidth}};">
+                                            <div class="heading-content">
+                                                {{#caption}}
+                                                    <h1 data-animation='animated {{contentAnimation}}' class="{{contentAclass}}">{{{caption}}}</h1>
+                                                {{/caption}}
+                                                <br>
+                                                {{#desc}}
+                                                    <p data-animation='animated {{contentAnimation}}' class="{{contentAclass}}">{{{desc}}}</p>
+                                                {{/desc}}
+                                                <div class="link-button">
+                                                    {{#btntxt}}
+                                                        <a href="{{{btnlink}}}" target="{{btntarget}}" class='btn btn-primary {{contentAclass}}' data-animation='animated {{contentAnimation}}'>
+                                                            {{btntxt}}
+                                                        </a>
+                                                    {{/btntxt}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {{/slidecontentstatus}}
+                                </div>
+                            </div>
+                        {{/slideimg}}
+                    {{/slidestatus}}
+                {{/slides}}
+            </div>
+        </div>
+    {{/sliderblockstatus}}
+{{/status}}

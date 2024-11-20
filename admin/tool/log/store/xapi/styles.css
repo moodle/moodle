@@ -1,0 +1,21 @@
+#xapierrorlog .reply-event {
+    cursor: pointer;
+}
+#xapierrorlog .reply-event:hover {
+    opacity: 0.7;
+}
+#xapierrorlog .disabled {
+    cursor: not-allowed;
+}
+#xapierrorlog .fa-repeat {
+    color: lightskyblue;
+}
+#xapierrorlog .fa-spin {
+    color: blue;
+}
+#xapierrorlog .fa-check {
+    color: green;
+}
+#xapierrorlog .fa-remove {
+    color: red;
+}

@@ -1,0 +1,72 @@
+[
+    {
+        "actor": {
+            "name": "test_fullname",
+            "account": {
+                "homePage": "http:\/\/www.example.org",
+                "name": "1"
+            }
+        },
+        "verb": {
+            "id": "http:\/\/id.tincanapi.com\/verb\/viewed",
+            "display": {
+                "en": "viewed"
+            }
+        },
+        "object": {
+            "id": "http:\/\/www.example.org\/mod\/bigbluebuttonbn\/view.php?id=1",
+            "definition": {
+                "type": "http:\/\/adlnet.gov\/expapi\/activities\/meeting",
+                "name": {
+                    "en": "test_bigbluebuttonbn_name"
+                }
+            }
+        },
+        "timestamp": "2015-06-10T22:31:41+08:00",
+        "context": {
+            "platform": "Moodle",
+            "language": "en",
+            "extensions": {
+                "http:\/\/lrs.learninglocker.net\/define\/extensions\/info": {
+                    "http:\/\/moodle.org": "1.0.0",
+                    "https:\/\/github.com\/xAPI-vle\/moodle-logstore_xapi": "0.0.0-development",
+                    "event_name": "\\mod_bigbluebuttonbn\\event\\activity_management_viewed",
+                    "event_function": "\\src\\transformer\\events\\mod_bigbluebuttonbn\\activity_management_viewed"
+                }
+            },
+            "contextActivities": {
+                "grouping": [
+                    {
+                        "id": "http:\/\/www.example.org",
+                        "definition": {
+                            "type": "http:\/\/id.tincanapi.com\/activitytype\/lms",
+                            "name": {
+                                "en": "test_name"
+                            }
+                        }
+                    },
+                    {
+                        "id": "http:\/\/www.example.org\/course\/view.php?id=1",
+                        "definition": {
+                            "type": "http:\/\/id.tincanapi.com\/activitytype\/lms\/course",
+                            "name": {
+                                "en": "test_name"
+                            }
+                        }
+                    }
+                ],
+                "category": [
+                    {
+                        "id": "http:\/\/moodle.org",
+                        "definition": {
+                            "type": "http:\/\/id.tincanapi.com\/activitytype\/source",
+                            "name": {
+                                "en": "Moodle"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+]

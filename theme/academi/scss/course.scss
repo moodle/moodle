@@ -1,0 +1,129 @@
+/* Courses */
+.pagelayout-course {
+    #page {
+        &.drawers .main-inner {
+            max-width: none;
+        }
+        #page-header .header-actions-container .header-action {
+            .bulkEnable {
+                color: $primary !important;
+                border: 1px solid $primary;
+                border-radius: 5px;
+                &:hover,
+                &:focus,
+                &:active {
+                    color: $white !important;
+                    background-color: $primary;
+                }
+                i.icon {
+                    margin-left: 5px;
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+}
+#page-course-index #region-main {
+    .coursebox {
+        margin-bottom: 9px;
+    }
+    .mform {
+        fieldset {
+            margin-bottom: 40px;
+        }
+        legend {
+            margin-bottom: 30px;
+        }
+    }
+}
+#page-course-index-category .course_category_tree .category > .info > .categoryname.aabtn:before {
+    color: $white;
+}
+#course-category-listings {
+    .moodle-actionmenu[data-enhance] .toggle-display.textmenu .caret {
+        vertical-align: middle;
+        margin-top: 0;
+        top: 0;
+    }
+    .listitem[data-selected='1'] {
+        border-left-color: $primary;
+    }
+    #category-listing .course-count i.icon {
+        margin-left: 5px;
+    }
+}
+
+#page-course-management #page #page-content ul.ml li .menubar .dropdown {
+    a.dropdown-toggle i.icon {
+        margin: 0;
+    }
+    .dropdown-menu a.dropdown-item i.icon {
+        color: $primary;
+    }
+}
+
+.list-group-item {
+    background: none;
+    &.active {
+        background: $primary;
+        border-color: $primary;
+        span i.icon {
+            color: $white;
+        }
+    }
+}
+
+.course-content {
+    .single-section ul {
+        &.topics,
+        &.weeks {
+            li.section {
+                margin-top: 0;
+            }
+        }
+    }
+}
+.path-course {
+    .theme-container.limitedwidth #page.drawers .main-inner {
+        #page-header,
+        .secondary-navigation {
+            max-width: none;
+        }
+    }
+    .course-content .stickyfooter {
+        .sticky-footer-content {
+            .mx-auto {
+                width: 75%;
+                .actions {
+                    width: 100%;
+                    flex-wrap: nowrap;
+                    margin: 0 10px;
+                    li.nav-item {
+                        width: 100%;
+                        margin: 0 5px;
+                        .btn {
+                            width: 100%;
+                            align-items: center;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .course_category_tree .category {
+        > .info > .categoryname {
+            padding: 10px 15px;
+        }
+    }
+    &.limitedwidth.uses-drawers .course-content .stickyfooter .sticky-footer-content {
+        max-width: $modal-xl;
+    }
+    .category .course_category_tree .category.with_children > .info > .categoryname.aabtn {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+}
+
+/* .path-grade-report-grader.hasstickyfooter .gradeparent tr.lastrow {
+    bottom: 0;
+} */

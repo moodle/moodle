@@ -1,0 +1,687 @@
+/* Typography */
+/* Font and color style for the body */
+body {
+    font-size: $fontsize;
+    font-family: Century Gothic, Arial, Helvetica, sans-serif;
+    color: $color_storm_dust_approx;
+    background-color: $white;
+}
+/* End of page container size */
+
+* {
+    outline: none;
+    &:focus,
+    &:active {
+        outline: none;
+        box-shadow: none;
+    }
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: normal;
+    color: $secondary;
+}
+h1 {
+    font-size: 42px;
+}
+h2 {
+    font-size: 34px;
+}
+h3 {
+    font-size: 26px;
+}
+h4 {
+    font-size: 23px;
+}
+h5 {
+    font-size: 21px;
+}
+h6 {
+    font-size: 18px;
+}
+/* End of Headings */
+
+.form-control:focus {
+    box-shadow: none;
+}
+
+/* Link tag */
+a {
+    color: $primary;
+    &:hover,
+    &:focus,
+    &:active {
+        color: $secondary;
+        outline: none;
+    }
+    &:first-of-type > .icon,
+    span:first-of-type > .icon {
+        margin-left: 0;
+    }
+}
+/* End of Link tag */
+
+/* Form input */
+input {
+    font-family: Century Gothic, Arial, Helvetica, sans-serif;
+    color: $color_chicago_approx;
+    border-radius: 5px;
+    &.form-submit {
+        font-weight: bold;
+        font-family: Arial, Helvetica, sans-serif;
+        color: $white;
+        padding: 7px 16px;
+        border-radius: 0;
+        box-shadow: none;
+        background: $secondary;
+        border: 0;
+        text-shadow: none;
+        &:hover,
+        &:focus,
+        &:active,
+        &.active,
+        &.disabled {
+            outline: 0;
+            color: $white;
+            background: $color_charcoal;
+        }
+    }
+    &#id_submitbutton,
+    &#id_submitbutton2 {
+        background: $secondary;
+        border: 0;
+        text-shadow: none;
+        &:hover,
+        &:focus,
+        &:active,
+        &.active,
+        &.disabled {
+            color: $white;
+            background: $color_charcoal;
+        }
+    }
+    &.form-submit[disabled],
+    &#id_submitbutton[disabled],
+    &#id_submitbutton2[disabled] {
+        color: $white;
+        background: $color_charcoal;
+    }
+    &.active[type="button"],
+    &.active[type="submit"],
+    &.active[type="reset"] {
+        box-shadow: none;
+    }
+    &[size] {
+        width: auto;
+    }
+    &[type="text"],
+    &[type="password"],
+    &[type="datetime"],
+    &[type="datetime-local"],
+    &[type="date"],
+    &[type="month"],
+    &[type="time"],
+    &[type="week"],
+    &[type="number"],
+    &[type="email"],
+    &[type="url"],
+    &[type="search"],
+    &[type="tel"],
+    &[type="color"] {
+        height: 45px;
+        border-color: $light_grey;
+        box-shadow: none;
+        &:focus {
+            border-color: $black_20;
+        }
+    }
+    &[type="button"],
+    &[type="submit"],
+    &[type="reset"] {
+        font-weight: bold;
+        font-family: Arial, Helvetica, sans-serif;
+        color: $white;
+        text-shadow: none;
+        background: $primary;
+        padding: 0 16px;
+        border: 0;
+        box-shadow: none;
+        &:hover,
+        &:focus,
+        &:active {
+            color: $white;
+            background: $color_charcoal;
+            outline: 0;
+            box-shadow: none;
+        }
+    }
+    &[type="submit"].btn-link {
+        color: $white;
+    }
+}
+.uneditable-input {
+    height: 45px;
+    border-color: $light_grey;
+    box-shadow: none;
+}
+/* End of Form input */
+
+/* Button */
+button {
+    font-family: Arial, Helvetica, sans-serif;
+    color: $white;
+    font-weight: bold;
+    text-shadow: none;
+    background: $primary;
+    padding: 7px 16px;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    &:hover,
+    &:focus,
+    &.active,
+    &:active {
+        color: $white;
+        background: $color_charcoal;
+        outline: 0;
+    }
+    &.close:hover,
+    &.close:focus {
+        background: none;
+    }
+}
+.btn {
+    height: 45px;
+    outline: none;
+    line-height: 2;
+    border-radius: 5px;
+    &.btn-link {
+        color: $primary;
+        height: auto;
+        border: 0;
+        i:before {
+            color: $primary;
+        }
+    }
+    &.btn-secondary:disabled {
+        &:hover,
+        &:focus {
+            color: $color_chicago_approx;
+            background-color: $color_celeste_approx;
+        }
+    }
+    &:focus {
+        outline: none;
+        box-shadow: none;
+    }
+    &:not(:disabled):not(.disabled) {
+        border-color: $color_gallery_approx;
+    }
+    &.btn-outline-secondary.dropdown-toggle {
+        &:hover,
+        &:focus,
+        &:active,
+        &:focus:active {
+            color: $white;
+            border-color: $primary;
+            background: $primary;
+            box-shadow: none;
+            i.icon {
+                color: $white;
+            }
+        }
+    }
+}
+.show > .btn-outline-secondary.dropdown-toggle {
+    background: none;
+    color: inherit;
+}
+.btn-group .btn {
+    height: auto;
+}
+a.btn {
+    height: auto;
+}
+
+/* Primary Button */
+.btn-primary {
+    font-family: Arial, Helvetica, sans-serif;
+    color: $white;
+    text-shadow: none;
+    background: $primary;
+    padding: 7px 16px;
+    border: 0;
+    box-shadow: none;
+    &:hover,
+    &:focus,
+    &:active {
+        color: $white;
+        background: $secondary;
+        outline: 0;
+        box-shadow: none;
+    }
+    &.disabled,
+    &:disabled {
+        color: $white;
+        background: $secondary;
+    }
+    &:active,
+    &.active,
+    &:focus,
+    &.focus {
+        &:hover,
+        &:focus,
+        &:active,
+        &.focus {
+            color: $white;
+            background-color: $secondary;
+        }
+    }
+    &:not(:disabled):not(.disabled):active {
+        background-color: $secondary;
+        border-color: $secondary;
+        &:focus {
+            box-shadow: none;
+        }
+    }
+}
+.open > .btn-primary.dropdown-toggle {
+    &:hover,
+    &:focus,
+    &.focus {
+        color: $white;
+        background-color: $secondary;
+    }
+}
+input[type="submit"].btn-link {
+    height: 45px;
+}
+/* End of Primary Button */
+
+/* Secondary Button */
+.btn-secondary {
+    background-color: $secondary;
+    &:hover,
+    &:focus,
+    &:focus:active,
+    &:not(:disabled):not(.disabled):active:focus,
+    &:not(:disabled):not(.disabled).active:focus {
+        color: $white;
+        border-color: $primary;
+        background-color: $primary;
+        box-shadow: none;
+    }
+}
+.show > .btn-secondary.dropdown-toggle:focus {
+    color: $white;
+    border-color: $primary;
+    background-color: $primary;
+    box-shadow: none;
+}
+/* End of Secondary Button */
+.form-buttons,
+#fitem_id_submitbutton,
+#fgroup_id_buttonar {
+    background: none;
+    border-top: 0;
+}
+/* End of Button */
+
+/* Submit button */
+.submit.buttons input[name="cancel"] {
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    color: $white;
+    text-shadow: none;
+    background: $primary;
+    padding: 11px 16px;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    &:hover,
+    &:focus {
+        color: $white;
+        background: $secondary;
+        outline: 0;
+    }
+}
+/* End of Submit button */
+
+/*Common RTL*/
+.dir-rtl {
+    .form-buttons,
+    #fitem_id_submitbutton,
+    #fgroup_id_buttonar {
+        background: none;
+        border-top: 0;
+    }
+}
+
+
+/* Form Select */
+select {
+    font-family: Century Gothic, Arial, Helvetica, sans-serif;
+    color: $color_chicago_approx;
+    border-radius: 0;
+    line-height: 36px;
+    border-color: $light_grey;
+    &:focus {
+        outline: 0;
+        border-color: $black_20;
+    }
+    &[size],
+    &[multiple] {
+        width: 100%;
+        max-width: 220px;
+    }
+}
+.custom-select:focus {
+    border-color: $black_20;
+    box-shadow: none;
+}
+
+/* RTL */
+.dir-rtl {
+    select[multiple],
+    select[size] {
+        width: 100%;
+        max-width: 220px;
+    }
+}
+
+/* End of Form Select */
+
+/* Textarea */
+textarea {
+    font-family: Century Gothic, Arial, Helvetica, sans-serif;
+    color: $color_chicago_approx;
+    height: auto;
+    border-radius: 0;
+    border-color: $light_grey;
+    box-shadow: none;
+    &:focus {
+        border-color: $black_20;
+    }
+    &[cols] {
+        width: auto;
+    }
+}
+/* End of Textarea */
+
+/* Dropdown */
+.dropdown-menu {
+    border-color: $wild_sand;
+    border-radius: 0;
+    box-shadow: 2px 5px 5px $black_20;
+    > li > a:hover,
+    > li > a:focus,
+    .dropdown-submenu:hover > a,
+    .dropdown-submenu:focus > a {
+        color: $dark_grey;
+        background: $light_grey;
+    }
+    .dropdown-item {
+        &.text-danger {
+            &:hover,
+            &:focus,
+            &:focus-within,
+            &:active {
+                background-color: $danger;
+            }
+        }
+        &:hover,
+        &:focus,
+        &:focus-within,
+        &:active {
+            color: $secondary;
+            background: $wild_sand;
+            a {
+                color: $secondary;
+            }
+        }
+        &.active {
+            color: $white;
+            background: $primary;
+        }
+    }
+}
+/* End of Dropdown */
+
+/* Table */
+table {
+    #form {
+        td.submit {
+            background: none;
+            border-top: 0;
+        }
+        tbody > tr:nth-child(2n + 1) {
+            > td,
+            > th {
+                background: $wild_sand;
+            }
+        }
+    }
+    &.forumheaderlist,
+    &.generaltable
+    &.flexible,
+    &.rolecap,
+    &#explaincaps,
+    &#defineroletable,
+    .grading-report,
+    #listdirectories,
+    .userenrolment,
+    #modules,
+    #permissions {
+        tbody {
+            > tr {
+                &:nth-child(2n + 1) {
+                    > td,
+                    > th {
+                        background: $wild_sand;
+                    }
+                }
+            }
+            tr:hover {
+                > td,
+                > th {
+                    background: $wild_sand;
+                }
+            }
+        }
+    }
+    &.forumheaderlist
+    &.generaltable,
+    &.flexible,
+    &.rolecap {
+        tr {
+            th,
+            td {
+                padding: 4px;
+            }
+        }
+        th,
+        td {
+            line-height: 21px;
+            padding: 12px;
+            border-top: 0;
+        }
+        thead tr th {
+            color: $white;
+            background: $primary;
+            a {
+                color: $white;
+                i:before {
+                    color: $white;
+                }
+                &.btn-link i:before {
+                    color: $white;
+                }
+            }
+            img {
+                background: none repeat scroll 0 0;
+            }
+        }
+    }
+}
+.table thead th i.icon {
+    color: $primary;
+}
+
+/* RTL */
+.dir-rtl table {
+    &#form td.submit {
+        background: none;
+        border-top: 0;
+    }
+}
+/* End of Table */
+
+.aabtn.focus,
+.aabtn:focus,
+.btn-link.focus,
+.btn-link:focus,
+.nav-link.focus,
+.nav-link:focus,
+.editor_atto_toolbar button.focus,
+.editor_atto_toolbar button:focus,
+.editor_atto_toolbar .atto_toolbar_row.focus,
+.editor_atto_toolbar .atto_toolbar_row:focus,
+[role="button"].focus,
+[role="button"]:focus,
+.list-group-item-action.focus,
+.list-group-item-action:focus,
+input[type="checkbox"].focus,
+input[type="checkbox"]:focus,
+input[type="radio"].focus,
+input[type="radio"]:focus,
+input[type="file"].focus,
+input[type="file"]:focus,
+input[type="image"].focus,
+input[type="image"]:focus,
+.sr-only-focusable.focus,
+.sr-only-focusable:focus,
+a.dropdown-toggle.focus,
+a.dropdown-toggle:focus,
+.modal-dialog[tabindex="0"].focus,
+.modal-dialog[tabindex="0"]:focus,
+.moodle-dialogue-base .closebutton.focus,
+.moodle-dialogue-base .closebutton:focus,
+button.close.focus,
+button.close:focus,
+.form-autocomplete-selection.focus,
+.form-autocomplete-selection:focus,
+[role="treeitem"]:not([aria-expanded="true"]).focus,
+[role="treeitem"]:not([aria-expanded="true"]):focus {
+    outline: none;
+    box-shadow: none;
+}
+.aalink.focus,
+#page-footer a:not([class]).focus,
+.arrow_link.focus,
+a:not([class]).focus,
+.activityinstance > a.focus,
+.aalink:focus,
+#page-footer a:not([class]):focus,
+.arrow_link:focus,
+a:not([class]):focus,
+.activityinstance > a:focus {
+    background: none;
+    box-shadow: none;
+}
+
+
+@media (min-width: 992px) {
+    .container-fluid {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+}
+
+@media (max-width: 767px) {
+    textarea[cols],
+    input[size] {
+        width: 100%;
+    }
+    .nav-tabs:not(.more-nav),
+    .nav-pills,
+    .nav-item.show {
+        border-radius: 0;
+        background: none;
+        padding: 0;
+        .nav-link {
+            border: 1px solid $mercury;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            box-shadow: none;
+            margin: 0;
+            &:hover,
+            &:focus {
+                color: $white;
+                border-color: $primary;
+                background: $primary;
+            }
+            &.active:not(:disabled):not(.disabled) {
+                &:active,
+                &:active:focus,
+                .active:focus,
+                &.active {
+                    color: $white;
+                    border-color: $secondary;
+                    background: $secondary;
+                    box-shadow: none;
+                }
+            }
+        }
+    }
+    .show > .nav-tabs:not(.more-nav) .nav-link.active.dropdown-toggle,
+    .show > .nav-pills .nav-link.active.dropdown-toggle,
+    .show > .nav-tabs:not(.more-nav) .nav-link.active.dropdown-toggle:focus,
+    .show > .nav-pills .nav-link.active.dropdown-toggle:focus {
+        color: $white;
+        border-color: $secondary;
+        background: $secondary;
+        box-shadow: none;
+    }
+    .nav-tabs .nav-link.active:not(:disabled):not(.disabled):active,
+    .nav-tabs .nav-link.active:not(:disabled):not(.disabled).active,
+    .show > .nav-tabs .nav-link.active.dropdown-toggle,
+    .nav-pills .nav-link.active:not(:disabled):not(.disabled):active,
+    .nav-pills .nav-link.active:not(:disabled):not(.disabled).active,
+    .show > .nav-pills .nav-link.active.dropdown-toggle {
+        background: $primary;
+        border-color: $primary;
+    }
+}
+
+@media (max-width: 574px) {
+    form {
+        select {
+            max-width: 220px;
+        }
+        input[type="text"] {
+            max-width: 220px;
+        }
+        input[type="password"] {
+            max-width: 220px;
+        }
+        &.atto_form input[type="url"] {
+            max-width: 220px;
+        }
+    }
+    select {
+        width: auto;
+        &.singleselect {
+            max-width: 220px;
+            width: auto;
+        }
+    }
+    textarea {
+        max-width: 220px;
+    }
+}

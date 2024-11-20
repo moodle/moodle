@@ -1,0 +1,70 @@
+{
+    "user": [
+        {
+            "id": 1,
+            "firstname": "test_instructor_name",
+            "email": "instructor@test.com"
+        },
+        {
+            "id": 2,
+            "firstname": "test_attendee_name",
+            "email": "attendee@test.com"
+        }
+    ],
+    "course": [
+        {
+            "id": 1,
+            "fullname": "test_name",
+            "lang": "en"
+        }
+    ],
+    "course_modules": [
+        {
+            "id": 1,
+            "course": 1,
+            "module": 1,
+            "instance": 1
+        }
+    ],
+    "modules": [
+        {
+            "id": 1,
+            "name": "facetoface"
+        }
+    ],
+    "facetoface": [
+        {
+            "id": 1,
+            "name": "test_facetoface_name"
+        }
+    ],
+    "facetoface_sessions": [
+        {
+            "id": 1,
+            "facetoface": 1
+        }
+    ],
+    "facetoface_signups": [
+        {
+            "id": 1,
+            "sessionid": 1,
+            "userid": 2
+        }
+    ],
+    "facetoface_sessions_dates": [
+        {
+            "id": 1,
+            "sessionid": 1,
+            "timestart": 123123123,
+            "timefinish": 123123123
+        }
+    ],
+    "facetoface_signups_status": [
+        {
+            "id": 1,
+            "signupid": 1,
+            "timecreated": 123123123,
+            "statuscode": 100
+        }
+    ]
+}

@@ -1,0 +1,163 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_academi/academi_blocks
+
+    Academi additional blocks template.
+    Example context (json):
+    {
+        "sitename": "Moodle",
+        "output": {
+            "doctype": "<!DOCTYPE html>",
+            "page_title": "academi blocks page",
+            "main_content": "<h1>Headings make html validators happier</h1>"
+        },
+        "bodyattributes":"",
+        "sitefeatures": "false",
+        "mspot": "false",
+        "jumbotron": "false"
+    }
+}}
+
+{{#sitefeatures}}
+    {{#isblockempty}}
+        <div class="custom-alert-block alert alert-warning">
+            {{#str}}blockemptymessage, theme_academi{{/str}}
+        </div>
+    {{/isblockempty}}
+
+    {{#blockisempty}}
+        <div class="site-features {{class}}" id="sitefeatures">
+            <div class="custom-site-expo">
+                <div class="container">
+                    {{#blockstatus}}
+                        <div class='sitefeature-block-title'>
+                            {{#blocktitle}}
+                                <h2><b>{{blocktitle}}</b></h2>
+                            {{/blocktitle}}
+                            {{#blockdesc}}
+                                <p>{{{blockdesc}}}</p>
+                            {{/blockdesc}}
+                        </div>
+                    {{/blockstatus}}
+
+                    <div class="row">
+                        {{#feature}}
+                            {{#status}}
+                                <div class="{{colclass}}">
+                                    <div class="sitebox">
+                                        {{#icon}}
+                                            <div class="site-feature-head">
+                                                <div class="rcthumb">
+                                                    <i class="fa fa-{{icon}}"></i>
+                                                </div>
+                                            </div>
+                                        {{/icon}}
+                                        {{#sfbbody}}
+                                            <div class="site-feature-body">
+                                                {{#title}}
+                                                    {{#url}}
+                                                        <h6>
+                                                            <a href="{{url}}" target='_blank'>{{title}}</a>
+                                                        </h6>
+                                                    {{/url}}
+                                                    {{^url}}
+                                                        <h6>{{title}}</h6>
+                                                    {{/url}}
+                                                {{/title}}
+                                                {{#content}}<p>{{content}}</p>{{/content}}
+                                            </div>
+                                        {{/sfbbody}}
+                                    </div>
+                                </div>
+                            {{/status}}
+                        {{/feature}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{/blockisempty}}
+{{/sitefeatures}}
+
+{{#mspot}}
+    {{#isblockempty}}
+        <div class="custom-alert-block alert alert-warning">
+            {{#str}}blockemptymessage, theme_academi{{/str}}
+        </div>
+    {{/isblockempty}}
+
+    {{#blockisempty}}
+        <div class="marketing-spot" id="marketingspot">
+            <div class="container">
+                <div class="info-block">
+                    <div class="row">
+                        <div class="{{colclass}}">
+                            {{#mspotheadcontent}}
+                                <div class="info-head">
+                                    {{#title}}<h2><b>{{title}}</b></h2>{{/title}}
+                                    {{#desc}}<p>{{desc}}</p>{{/desc}}
+                                </div>
+                            {{/mspotheadcontent}}
+                            {{#content}}
+                                <div class="info-content">
+                                    <p>{{{content}}}</p>
+                                </div>
+                            {{/content}}
+                        </div>
+                        {{#media}}
+                            <div class="{{colclass}}">
+                                <div class="info-media">
+                                    <img src="{{{media}}}" class="media-image">
+                                </div>
+                            </div>
+                        {{/media}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{/blockisempty}}
+{{/mspot}}
+
+{{#jumbotron}}
+    {{#isblockempty}}
+        <div class="custom-alert-block alert alert-warning">
+            {{#str}}blockemptymessage, theme_academi{{/str}}
+        </div>
+    {{/isblockempty}}
+
+    {{#blockisempty}}
+        <div class="jumbotron-block {{^jumbotroncontent}}jumbotron-btn-block{{/jumbotroncontent}}" id="jumbotron">
+            <div class="container">
+                <div class="inner-wrap">
+                    {{#jumbotroncontent}}
+                        <div class="desc-wrap">
+                            {{#title}}<h2><b>{{title}}</b></h2>{{/title}}
+                            {{#desc}}<p>{{desc}}</p>{{/desc}}
+                        </div>
+                    {{/jumbotroncontent}}
+                    {{#btntext}}
+                        <div class="btn-block">
+                            <a href="{{{buttonlink}}}" target="{{btntarget}}" class='btn-jumbo'>
+                                {{{btntext}}}
+                            </a>
+                        </div>
+                    {{/btntext}}
+                </div>
+            </div>
+        </div>
+    {{/blockisempty}}
+{{/jumbotron}}

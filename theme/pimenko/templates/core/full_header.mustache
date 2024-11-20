@@ -1,0 +1,99 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/full_header
+
+    This template renders the header.
+
+    Example context (json):
+    {
+        "contextheader": "context_header_html",
+        "settingsmenu": "settings_html",
+        "hasnavbar": false,
+        "navbar": "navbar_if_available",
+        "courseheader": "course_header_html",
+        "welcomemessage": "welcomemessage"
+    }
+}}
+<header id="page-header" class="header-maxwidth d-print-none">
+    <div class="w-100">
+        <div class="d-flex flex-wrap">
+            {{#hasnavbar}}
+                <div id="page-navbar">
+                    {{{navbar}}}
+                </div>
+            {{/hasnavbar}}
+            <div class="ml-auto d-flex">
+                {{{pageheadingbutton}}}
+            </div>
+            <div id="course-header">
+                {{{courseheader}}}
+            </div>
+        </div>
+        <div class="d-flex align-items-center courseheader
+            {{#coverimagedata}}{{#coverexist}}coverimage position-relative{{/coverexist}}{{/coverimagedata}}"
+            {{#coverimagedata}}{{^displayasthumbnail}}
+             style="background-image: url({{{urlcoverimage}}});background-size: cover;background-repeat: no-repeat;background-position: center center;"
+            {{/displayasthumbnail}}{{/coverimagedata}}
+        >
+            {{#coverimagedata}}
+                {{#displayasthumbnail}}
+                    <img class='displaythumbanil' alt='{{#str}}coursecover, theme_pimenko{{/str}}' src="{{{urlcoverimage}}}">
+                {{/displayasthumbnail}}
+            {{/coverimagedata}}
+            <div class="w-100 h-100 d-flex {{#coverimagedata}} {{#coverexist}} {{#withgradient}}position-absolute withgradient{{/withgradient}} {{/coverexist}} {{/coverimagedata}}">
+                {{^displaytitlecourseunderimage}}
+                    {{^welcomemessage}}
+                        {{#contextheader}}
+                            <div class="mr-auto d-flex mt-auto mb-auto">
+                                {{{contextheader}}}
+                            </div>
+                        {{/contextheader}}
+                    {{/welcomemessage}}
+                {{/displaytitlecourseunderimage}}
+                {{> core/welcome }}
+                <div class="header-actions-container ml-auto d-flex mt-auto mb-auto" data-region="header-actions-container">
+                    {{#headeractions}}
+                        <div class="header-action ml-2">{{{.}}}</div>
+                    {{/headeractions}}
+                    {{#coverimagedata}}
+                        {{#seemenu}}
+                            <div class="edit_cover">
+                                <label class="btn btn-sm btn-file btn-secondary state-visible">
+                                    <span>{{#str}} editcoverimage, theme_pimenko {{/str}}</span>
+                                    <input type="file" data-id="{{{id}}}" class="cover_file d-none" data-name="{{{filename}}}">
+                                </label>
+                                <button class="btn btn-danger delete-cover" type="button" style="display:inline-block;">
+                                    <i class="icon fa fa-trash fa-fw " title="delete" role="img" aria-label="delete"></i>
+                                </button>
+                            </div>
+                        {{/seemenu}}
+                    {{/coverimagedata}}
+                </div>
+            </div>
+        </div>
+        {{#displaytitlecourseunderimage}}
+            {{^welcomemessage}}
+                {{#contextheader}}
+                    <div class="mr-auto d-flex mt-auto mb-auto">
+                        {{{contextheader}}}
+                    </div>
+                {{/contextheader}}
+            {{/welcomemessage}}
+        {{/displaytitlecourseunderimage}}
+    </div>
+</header>

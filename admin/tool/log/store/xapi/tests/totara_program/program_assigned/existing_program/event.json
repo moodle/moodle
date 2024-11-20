@@ -1,0 +1,8 @@
+{
+    "id": 1,
+    "userid": 1,
+    "timecreated": 1560399491,
+    "objecttable": "prog_assignment",
+    "objectid": 1,
+    "eventname": "\\totara_program\\event\\program_assigned"
+}

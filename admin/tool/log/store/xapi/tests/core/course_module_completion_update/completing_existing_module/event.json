@@ -1,0 +1,8 @@
+{
+    "id": 1,
+    "relateduserid": 1,
+    "courseid": 1,
+    "timecreated": 1433946701,
+    "contextinstanceid": 1,
+    "eventname": "\\core\\event\\course_module_completion_updated"
+}

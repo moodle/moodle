@@ -1,0 +1,84 @@
+// This file is part of the Pimenko theme for Moodle
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Theme pimenko style files.
+ * @package    theme_pimenko
+ * @copyright  Pimenko 2020
+ * @author     Sylvain Revenu - Pimenko 2020 <contact@pimenko.com> <pimenko.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+.front-page-row {
+
+    > div {
+        margin-top: 1rem;
+    }
+
+    .card {
+        border: none;
+    }
+}
+
+.moodle-region {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+@for $i from 1 through 8 {
+
+    #front-page-row-#{$i} {
+        background-color: unquote('blockregionrowbackgroundcolor#{$i}');
+        color: unquote('blockregionrowtextcolor#{$i}');
+
+        a {
+            color: unquote('blockregionrowlinkcolor#{$i}');
+
+            &:hover,
+            &:focus {
+                color: unquote('blockregionrowlinkhovercolor#{$i}');
+            }
+
+            &.menu-action {
+
+                &,
+                &:hover,
+                &:focus {
+                    color: black;
+                }
+            }
+        }
+
+        .block_html .header h2 {
+            color: unquote('blockregionrowtextcolor#{$i}');
+        }
+    }
+}
+
+#page-site-index #topofscroll {
+    margin-top: 0;
+    max-width: 100%;
+    padding: 0 !important;
+
+    .carousel-item img {
+        max-height: 600px;
+    }
+
+    .moodle-region {
+        max-width: 850px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}

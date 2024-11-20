@@ -1,0 +1,55 @@
+<div class="card-body p-0 course-gallery-container">
+    {{> theme_pimenko/course_gallery }}
+</div>
+
+<script src="{{{ rootpath }}}/theme/pimenko/javascript/geopattern/js/geopattern.min.js"></script>
+{{#js}}
+    require(['jquery'], function($) {
+        (function() {
+        // Generate pictures for the courses without picture
+        let generatePictures = function(courseGallery) {
+        for(let i in courseGallery) {
+        let id = courseGallery.item(i).id;
+        let img = courseGallery.item(i).getElementsByClassName('img-course').item(0);
+        if(img.style['background-image'] === 'url("")') {
+        let pattern = GeoPattern.generate(id);
+        img.style['background-image'] = pattern.toDataUrl();
+        }
+        }
+        }
+
+        let courses = document.getElementsByClassName('course-gallery')
+        let nbCourseMore = 1;
+        let i = 0;
+
+        while(i < courses.length) {
+        if (nbCourseMore <= 12) {
+        courses.item(parseInt(i)).style.display = 'flex';
+        if (parseInt(i) === courses.length - 1) {
+        $('#load-more').hide();
+        }
+        }
+        nbCourseMore++;
+        i++;
+        }
+
+        let courseGallery = document.getElementsByClassName('course-gallery');
+        // Generate when the document is loaded
+        if ( courseGallery.length > 0 ) {
+        generatePictures(courseGallery);
+        }
+
+        // And when the gallery changes
+        let gallery = document.getElementsByClassName('course-gallery-container')[0];
+        let config = { attributes: false, childList: true, subtree: true };
+        let galleryChange = function(mutationsList, observer) {
+        let courseGallery = document.getElementsByClassName('course-gallery');
+        if ( courseGallery.length > 0 ) {
+        generatePictures(courseGallery);
+        }
+        }
+        let observer = new MutationObserver(galleryChange);
+        observer.observe(gallery, config);
+        })();
+    });
+{{/js}}

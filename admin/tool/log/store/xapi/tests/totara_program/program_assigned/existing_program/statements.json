@@ -1,0 +1,63 @@
+[
+    {
+        "actor": {
+            "name": "test_fullname",
+            "account": {
+                "homePage": "http:\/\/www.example.org",
+                "name": "1"
+            }
+        },
+        "verb": {
+            "id": "http:\/\/activitystrea.ms\/schema\/1.0\/assign",
+            "display": {
+                "en": "assigned"
+            }
+        },
+        "object": {
+            "id": "http:\/\/www.example.org\/totara\/program\/view.php?id=1",
+            "definition": {
+                "type": "http:\/\/id.tincanapi.com\/activitytype\/lms\/program",
+                "name": {
+                    "en": "test_name"
+                }
+            }
+        },
+        "timestamp": "2019-06-13T05:18:11+01:00",
+        "context": {
+            "platform": "Moodle",
+            "language": "en",
+            "extensions": {
+                "http:\/\/lrs.learninglocker.net\/define\/extensions\/info": {
+                    "http:\/\/moodle.org": "1.0.0",
+                    "https:\/\/github.com\/xAPI-vle\/moodle-logstore_xapi": "0.0.0-development",
+                    "event_name": "\\totara_program\\event\\program_assigned",
+                    "event_function": "\\src\\transformer\\events\\totara_program\\program_assigned"
+                }
+            },
+            "contextActivities": {
+                "grouping": [
+                    {
+                        "id": "http:\/\/www.example.org",
+                        "definition": {
+                            "type": "http:\/\/id.tincanapi.com\/activitytype\/lms",
+                            "name": {
+                                "en": "test_name"
+                            }
+                        }
+                    }
+                ],
+                "category": [
+                    {
+                        "id": "http:\/\/moodle.org",
+                        "definition": {
+                            "type": "http:\/\/id.tincanapi.com\/activitytype\/source",
+                            "name": {
+                                "en": "Moodle"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+]

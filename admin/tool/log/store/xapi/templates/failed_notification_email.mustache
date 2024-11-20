@@ -1,0 +1,69 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template logstore_xapi/failed_notification_email
+
+    Email template for the failed notifications.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+    }
+}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{#str}}failedsubject, logstore_xapi{{/str}}</title>
+</head>
+<body>
+<div>
+  <p>{{#str}}failedtosend, logstore_xapi{{/str}}</p>
+  <br/>
+  <table>
+    <tr>
+      <th>
+        {{#str}}eventname, logstore_xapi{{/str}}
+      </th>
+      <th>
+        {{#str}}count, logstore_xapi{{/str}}
+      </th>
+    </tr>
+    {{# errors }}
+      <tr>
+        <td>
+          {{{ eventname }}}
+        </td>
+        <td>
+          {{{ count }}}
+        </td>
+      </tr>
+    {{/errors}}
+  </table>
+  <p><a href="{{lmsinstance}}">{{#str}}lmsinstance, logstore_xapi{{/str}}</a></p>
+  <p><a href="{{errorlogpageurl}}">{{#str}}errorlogpage, logstore_xapi{{/str}}</a></p>
+</div>
+</body>
+</html>

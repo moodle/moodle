@@ -1,0 +1,78 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myoverview/view-cards
+
+    This template renders the cards view for the myoverview block.
+
+    Example context (json):
+    {
+        "courses": [
+            {
+                "name": "Assignment due 1",
+                "viewurl": "https://moodlesite/course/view.php?id=2",
+                "courseimage": "https://moodlesite/pluginfile/123/course/overviewfiles/123.jpg",
+                "fullname": "course 3",
+                "hasprogress": true,
+                "progress": 10,
+                "coursecategory": "Miscellaneous",
+                "visible": true
+            }
+        ]
+    }
+}}
+{{< core_course/coursecards }}
+    {{$coursename}}
+        <span class="multiline">
+            {{#shortentext}}50, {{{coursename}}} {{/shortentext}}
+        </span>
+    {{/coursename}}
+    {{$coursecategory}}
+        <span class="sr-only">
+            {{#str}}aria:coursecategory, core_course{{/str}}
+        </span>
+        <span class="categoryname text-truncate">
+            {{{category}}}
+        </span>
+    {{/coursecategory}}
+    {{$divider}}
+        <div class="pl-1 pr-1">|</div>
+    {{/divider}}
+    {{$other}}
+        <div class="fixed media_tag px-3 pb-3 pt-3">
+            <span class="w-100 d-flex">
+                {{#showstartdate}}
+                    {{#str}}cardlabeldate, theme_pimenko{{/str}} : {{{startdate}}}
+                {{/showstartdate}}
+            </span>
+            <span class="w-100 d-flex">
+                {{#showcontacts}}
+                    {{#contacts}}
+                        {{#str}}cardlabelformat, theme_pimenko{{/str}} : {{{name}}}<br>
+                    {{/contacts}}
+                {{/showcontacts}}
+            </span>
+        </div>
+        {{#showcustomfields}}
+            <div class="fixed media_tag px-3 pb-3 pt-3">
+                {{#customfields}}
+                    {{{customfield}}}
+                {{/customfields}}
+            </div>
+        {{/showcustomfields}}
+    {{/other}}
+{{/ core_course/coursecards }}

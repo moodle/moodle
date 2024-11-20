@@ -1,0 +1,442 @@
+@import "colors";
+
+$primary:       #39b3e6 !default;
+$secondary:     #353535 !default;
+$primary_30:       rgba(57, 179, 230, .3) !default;
+$primary_70:       rgba(57, 179, 230, .7) !default;
+$secondary_30:     rgba(53, 53, 53, .3) !default;
+$secondary_70:     rgba(53, 53, 53, .7) !default;
+$footerbgopacity: $primary_70 !default;
+
+$info-outline:    #1f7e9a;
+$warning-outline: #a6670e;
+
+$font_1: alegreyasansR;
+$font_2: alegreyasansM;
+$font_3: alegreyasansB;
+$font_4: alegreyasansL;
+$font_5: alegreyasansI;
+
+@font-face {
+    font-family: 'alegreyasansR';
+    src: url('[[setting:fontwww]]alegreyasans-regular/alegreyasans-regular-webfont.eot');
+    src:
+        url('[[setting:fontwww]]alegreyasans-regular/alegreyasans-regular-webfont.eot?#iefix') format('embedded-opentype'),
+        url('[[setting:fontwww]]alegreyasans-regular/alegreyasans-regular-webfont.woff2') format('woff2'),
+        url('[[setting:fontwww]]alegreyasans-regular/alegreyasans-regular-webfont.woff') format('woff'),
+        url('[[setting:fontwww]]alegreyasans-regular/alegreyasans-regular-webfont.ttf') format('truetype'),
+        url('[[setting:fontwww]]alegreyasans-regular/alegreyasans-regular-webfont.svg#arvoregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'alegreyasansM';
+    src: url('[[setting:fontwww]]alegreyasans-medium/alegreyasans-medium-webfont.eot');
+    src:
+        url('[[setting:fontwww]]alegreyasans-medium/alegreyasans-medium-webfont.eot?#iefix') format('embedded-opentype'),
+        url('[[setting:fontwww]]alegreyasans-medium/alegreyasans-medium-webfont.woff2') format('woff2'),
+        url('[[setting:fontwww]]alegreyasans-medium/alegreyasans-medium-webfont.woff') format('woff'),
+        url('[[setting:fontwww]]alegreyasans-medium/alegreyasans-medium-webfont.ttf') format('truetype'),
+        url('[[setting:fontwww]]alegreyasans-medium/alegreyasans-medium-webfont.svg#arvoregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'alegreyasansB';
+    src: url('[[setting:fontwww]]alegreyasans-bold/alegreyasans-bold-webfont.eot');
+    src:
+        url('[[setting:fontwww]]alegreyasans-bold/alegreyasans-bold-webfont.eot?#iefix') format('embedded-opentype'),
+        url('[[setting:fontwww]]alegreyasans-bold/alegreyasans-bold-webfont.woff2') format('woff2'),
+        url('[[setting:fontwww]]alegreyasans-bold/alegreyasans-bold-webfont.woff') format('woff'),
+        url('[[setting:fontwww]]alegreyasans-bold/alegreyasans-bold-webfont.ttf') format('truetype'),
+        url('[[setting:fontwww]]alegreyasans-bold/alegreyasans-bold-webfont.svg#arvoregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'alegreyasansL';
+    src: url('[[setting:fontwww]]alegreyasans-light/alegreyasans-light-webfont.eot');
+    src:
+        url('[[setting:fontwww]]alegreyasans-light/alegreyasans-light-webfont.eot?#iefix') format('embedded-opentype'),
+        url('[[setting:fontwww]]alegreyasans-light/alegreyasans-light-webfont.woff2') format('woff2'),
+        url('[[setting:fontwww]]alegreyasans-light/alegreyasans-light-webfont.woff') format('woff'),
+        url('[[setting:fontwww]]alegreyasans-light/alegreyasans-light-webfont.ttf') format('truetype'),
+        url('[[setting:fontwww]]alegreyasans-light/alegreyasans-light-webfont.svg#arvoregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'alegreyasansI';
+    src: url('[[setting:fontwww]]alegreyasans-italic/alegreyasans-italic-webfont.eot');
+    src:
+        url('[[setting:fontwww]]alegreyasans-italic/alegreyasans-italic-webfont.eot?#iefix') format('embedded-opentype'),
+        url('[[setting:fontwww]]alegreyasans-italic/alegreyasans-italic-webfont.woff2') format('woff2'),
+        url('[[setting:fontwww]]alegreyasans-italic/alegreyasans-italic-webfont.woff') format('woff'),
+        url('[[setting:fontwww]]alegreyasans-italic/alegreyasans-italic-webfont.ttf') format('truetype'),
+        url('[[setting:fontwww]]alegreyasans-italic/alegreyasans-italic-webfont.svg#arvoregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@import "includes";
+
+// PRESET Customization content.
+
+body {
+    font-family: $font_1;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: $font_2;
+    color: $primary;
+}
+
+/* Secondary navigation menu */
+.secondary-navigation .moremenu.navigation .nav-tabs {
+    &:first-child .nav-item a {
+        margin-left: 5px;
+    }
+    &:last-child .nav-item a {
+        margin-right: 5px;
+    }
+    .nav-item {
+        background-color: $wild_sand;
+        .nav-link {
+            border: 0;
+            background-color: transparent;
+            box-shadow: none;
+            position: relative;
+            z-index: 0;
+            &:focus:active {
+                background: none;
+            }
+            &:before {
+                display: none;
+            }
+            &:hover,
+            &:focus,
+            &:active,
+            &.active {
+                color: $primary;
+                &:before {
+                    content: '';
+                    width: 100%;
+                    height: 70%;
+                    border-radius: 10px;
+                    background: $white;
+                    display: block;
+                    position: absolute;
+                    left: 0;
+                    z-index: -1;
+                }
+            }
+        }
+    }
+    .dropdownmoremenu .dropdown-menu .dropdown-item {
+        margin: 0;
+        &:hover,
+        &:focus,
+        &:active {
+            color: $primary;
+            background: $white;
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    .secondary-navigation .moremenu.navigation .nav-tabs .nav-item .nav-link {
+        &:hover,
+        &:focus,
+        &:active,
+        &.active {
+            background: none;
+        }
+    }
+}
+/* End of Secondary navigation menu */
+
+/* Promoted Courses */
+.promoted-courses .promatedcourse-slider {
+    .slider-item .course-box {
+        height: 280px;
+        border-radius: 10px;
+        overflow: hidden;
+        z-index: 0;
+        .thumb {
+            &:before {
+                opacity: 0.8;
+            }
+        }
+        &:after {
+            content: "";
+            width: 130%;
+            height: 80%;
+            position: absolute;
+            background: $white_20;
+            z-index: 0;
+            bottom: 20px;
+            right: -300px;
+            opacity: 0;
+            transform: rotate(-75deg);
+            transition: all .5s ease;
+        }
+        &:hover:after {
+            right: -130px;
+            opacity: 1;
+            transition: all .5s ease;
+        }
+    }
+    .slick-slide {
+        &:nth-child(1n) .slider-item .course-box .thumb:before {
+            background-color: $color_mandy_approx;
+            background-image: linear-gradient(45deg, #f94da4, #f26fbf);
+            box-shadow: 0 2px 5px $color_mandy_approx;
+        }
+        &:nth-child(2n) .slider-item .course-box .thumb:before {
+            background-color: $color_lochmara_approx;
+            background-image: linear-gradient(45deg, #9a68f5, #b48af9);
+            box-shadow: 0 2px 5px $color_lochmara_approx;
+        }
+        &:nth-child(3n) .slider-item .course-box .thumb:before {
+            background-color: $light_blue;
+            background-image: linear-gradient(45deg, #f9c845, #fce068);
+            box-shadow: 0 2px 5px $light_blue;
+        }
+        &:nth-child(4n) .slider-item .course-box .thumb:before {
+            background-color: $asparagus;
+            background-image: linear-gradient(45deg, #559af1, #87b8f6);
+            box-shadow: 0 2px 5px $asparagus;
+        }
+    }
+}
+/* Promoted Courses */
+
+/* Site Features */
+.site-features.icon-block .custom-site-expo {
+    .sitebox {
+        min-height: 135px;
+        border-radius: 5px;
+        background-color: $white;
+        box-shadow: 0 1px 5px $black_20;
+        padding: 20px;
+        margin-top: 10px;
+        display: flex;
+        transition: all .5s ease;
+        .site-feature-head {
+            margin-right: 15px;
+            .rcthumb {
+                width: 70px;
+                height: 70px;
+                font-size: 24px;
+                line-height: 70px;
+                color: $white;
+                display: inline-block;
+                background: $primary;
+                box-shadow: 2px 2px 5px $black_20;
+                padding: 0;
+            }
+        }
+        .site-feature-body {
+            text-align: left;
+            padding-top: 0;
+            h6 {
+                color: $black;
+                font-weight: bold;
+            }
+        }
+        &:hover {
+            background-color: $primary;
+            transition: all .5s ease;
+            .site-feature-head .rcthumb {
+                color: $primary;
+                background-color: $white;
+            }
+            .site-feature-body {
+                h6,
+                h6 a,
+                p {
+                    color: $white;
+                }
+            }
+        }
+    }
+}
+
+@media (min-width: 768px) {
+    .site-features.icon-block .custom-site-expo {
+        .col-md-6 {
+            max-width: 50%;
+            flex: 0 0 50%;
+        }
+    }
+}
+/* End of Site Features */
+
+/* Marketing Spot */
+.marketing-spot {
+    background: $wild_sand;
+    position: relative;
+    z-index: 0;
+    &:before {
+        content: '';
+        width: 36%;
+        height: 100%;
+        background: $primary;
+        position: absolute;
+        top: 0;
+        transform: skew(-10deg, 0deg);
+        left: -60px;
+        z-index: -1;
+    }
+    .info-head {
+        h2 {
+            color: $primary;
+        }
+        p {
+            color: $color_tapa_approx;
+        }
+    }
+    .row .col-lg-6:first-child {
+        order: 2;
+    }
+    .info-content p {
+        color: $color_mine_shaft_approx;
+    }
+    .info-media img {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+}
+/* End of Marketing Spot */
+
+/* Jumbotron */
+@media (max-width: 575px) {
+    .jumbotron-block .inner-wrap:hover:before {
+        height: 90%;
+        top: 0;
+        right: -110px;
+    }
+}
+/* End of Jumbotron */
+
+/* Course Category */
+.course_category_tree.frontpage-category-names .category {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    > .info {
+        border: 1px solid transparent;
+        border-radius: 25px;
+        background-color: $primary_30;
+        .categoryname {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            &:before {
+                display: none;
+            }
+            .numberofcourse {
+                font-size: 16px;
+                color: $color_mine_shaft_approx;
+                margin-left: 2px;
+            }
+        }
+        &:hover {
+            border: 1px solid $primary;
+            background-color: $white;
+        }
+    }
+}
+/* End of Course Category */
+
+/* Category combo */
+#frontpage-category-combo .course_category_tree .category {
+    border-radius: 5px;
+    background-color: $white;
+    margin-bottom: 10px;
+    > .info {
+        border-radius: 5px;
+        background-color: $primary_30;
+        margin-bottom: 0;
+        > .categoryname {
+            padding: 20px 15px;
+            &:before {
+                color: $primary;
+                float: right;
+            }
+            &:after {
+                content: '\f212';
+                font-family: $font_0;
+                font-weight: $font_weight;
+                margin-right: 10px;
+                float: left;
+            }
+            a {
+                font-size: 18px;
+                color: $primary;
+            }
+        }
+    }
+    &:not(.with_children) .info .categoryname:before {
+        content: '';
+    }
+    > .content {
+        border-radius: 5px;
+        background-color: $white;
+        padding: 0;
+        .coursebox {
+            border: 0;
+            padding: 10px 20px;
+            margin-top: 0;
+            .info .coursename {
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+/* End of Category combo */
+
+/* Footer */
+#footer {
+    .footer-main {
+        h2 {
+            font-size: 24px;
+            font-family: $font_3;
+            font-weight: normal;
+            color: $white;
+        }
+        a {
+            &:hover,
+            &:focus,
+            &:active {
+                color: $white;
+                text-decoration: none;
+            }
+        }
+        .social-media ul li {
+            &:after {
+                background-color: $black_20;
+            }
+            a {
+                background-color: $white;
+            }
+        }
+    }
+    .footer-bottom a {
+        &:hover,
+        &:focus,
+        &:active {
+            color: $white;
+        }
+    }
+    &.footer-image .foot-links ul a:hover {
+        color: $white;
+    }
+}
+/* End of Footer */

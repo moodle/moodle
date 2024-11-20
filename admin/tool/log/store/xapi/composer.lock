@@ -1,0 +1,54 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "2dd098e912bb2fcfd6129ec3d6933869",
+    "packages": [],
+    "packages-dev": [
+        {
+            "name": "learninglocker/statementfactory",
+            "version": "v0.0.11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LearningLocker/StatementFactory.git",
+                "reference": "92c8d9a94f1edc29ba899ed30409f045315c7273"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LearningLocker/StatementFactory/zipball/92c8d9a94f1edc29ba899ed30409f045315c7273",
+                "reference": "92c8d9a94f1edc29ba899ed30409f045315c7273",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Locker\\XApi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL v3"
+            ],
+            "authors": [
+                {
+                    "name": "Ryan Smith",
+                    "email": "0ryansmith1994@gmail.com"
+                }
+            ],
+            "description": "Learning Locker's classes for xAPI.",
+            "time": "2020-02-11T10:15:03+00:00"
+        }
+    ],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": [],
+    "prefer-stable": true,
+    "prefer-lowest": false,
+    "platform": {
+        "ext-json": "*"
+    },
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>vendor/composer</location>
+        <name>Composer</name>
+        <version>latest</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>vendor/learninglocker/statementfactory/</location>
+        <name>StatementFactory</name>
+        <version>v0.0.0</version>
+        <license>GPL3</license>
+        <licenseversion></licenseversion>
+    </library>
+</libraries>

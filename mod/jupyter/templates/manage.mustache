@@ -1,0 +1,173 @@
+{{!
+This file is part of Moodle - https://moodle.org/
+
+Moodle is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Moodle is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Moodle. If not, see
+<http: //www.gnu.org/licenses />.
+}}
+
+<body>
+    <div align="center">
+        <iframe id="iframe" src={{login}}></iframe>
+        <hr>
+
+        <div class="container-fluid px-0">
+            <div class="row">
+                {{#autograded}}
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <p>
+                                {{#str}}submitbuttoninfo, mod_jupyter{{/str}}
+                            </p>
+                            <button data-action="mod_jupyter/submit-notebook_button" data-target="#submitModal"
+                                class="btn btn-primary" data-toggle="modal">
+                                {{#str}}submitbuttontext, mod_jupyter{{/str}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {{/autograded}}
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <p id="description">
+                                {{#str}}resetbuttoninfo,mod_jupyter{{/str}}
+                            </p>
+                            <button data-toggle="modal" data-target="#resetModal" class="btn btn-secondary">
+                                <i class="fa fa-undo"></i>
+                                {{#str}}resetbuttontext, mod_jupyter{{/str}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{! Reset modal }}
+        <div class="modal fade" id="resetModal" tabindex="-1" role="dialog" aria-labelledby="resetModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="resetModalLabel">{{#str}}resetmodaltitle,
+                            mod_jupyter{{/str}}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        {{#str}}resetmodalbody,mod_jupyter{{/str}}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                            data-dismiss="modal">{{#str}}resetmodalcancelbuttontext,mod_jupyter
+                            {{/str}}</button>
+                        <button type="button" class="btn btn-primary" data-action="mod_jupyter/reset-notebook_button"
+                            data-dismiss="modal">{{#str}}resetmodalresetbuttontext,
+                            mod_jupyter{{/str}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{! Submit response modal }}
+    <div class="modal fade" id="submitModal" tabindex="-1" role="dialog" aria-labelledby="submitModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="submitModalLabel">{{#str}}submitmodaltitle,
+                        mod_jupyter{{/str}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                        data-action="mod_jupyter/reset-modal_button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{! Submit response modal body}}
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center">
+                        <div data-element="mod_jupyter/body-placeholder">
+                            <div class="spinner-border m-5" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-action="mod_jupyter/reset-modal_button"
+                        data-dismiss="modal">{{#str}}submitmodalbuttontext,
+                        mod_jupyter{{/str}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<style>
+    iframe {
+        display: block;
+        border: none;
+        height: 75vh;
+        width: 100%;
+        margin-bottom: 2rem;
+    }
+
+
+
+    #iframe-reset-button {
+        position: relative;
+        padding-left: 2.5rem;
+        padding-right: 1rem;
+        padding-top: 0.6rem;
+        padding-bottom: 0.6rem;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.3rem;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+        background: #1abc9c;
+        border-bottom: 1px solid #12ab8d;
+        box-shadow: inset 0 -2px #12ab8d;
+    }
+
+    #iframe-reset-button:active {
+        top: 1px;
+        box-shadow: none;
+    }
+
+    #iframe-reset-button>div {
+        position: absolute;
+        font-size: 1.3rem;
+        font-weight: bold;
+        transition: .2s ease-in-out;
+    }
+
+    #reset-icon {
+        position: absolute;
+        left: 1rem;
+        width: 1rem;
+        height: 1rem;
+        transition: all 0.4s ease-in-out;
+        fill: #ffffff;
+    }
+
+    #iframe-reset-button:hover #reset-icon,
+    #iframe-reset-button:focus #reset-icon {
+        transform: rotate(-360deg) scale(1.2);
+    }
+</style>

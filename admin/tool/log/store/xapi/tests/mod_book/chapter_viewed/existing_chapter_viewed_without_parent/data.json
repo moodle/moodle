@@ -1,0 +1,46 @@
+{
+    "user": [
+        {
+            "id": 1,
+            "firstname": "test_fullname",
+            "email": "test@test.com"
+        }
+    ],
+    "course": [
+        {
+            "id": 1,
+            "fullname": "test_name",
+            "lang": "en"
+        }
+    ],
+    "course_modules": [
+        {
+            "id": 1,
+            "course": 1,
+            "module": 1,
+            "instance": 1
+        }
+    ],
+    "modules": [
+        {
+            "id": 1,
+            "name": "book"
+        }
+    ],
+    "book": [
+        {
+            "id": 1,
+            "name": "test_book_name"
+        }
+    ],
+    "book_chapters": [
+        {
+            "id": 1,
+            "bookid": "1",
+            "pagenum": "1",
+            "subchapter": "0",
+            "title": "test_book_chapter_title",
+            "content": "<p>test_book_chapter_content</p>"
+        }
+    ]
+}

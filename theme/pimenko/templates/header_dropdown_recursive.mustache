@@ -1,0 +1,12 @@
+<ul class="dropdown-menu">
+    {{#dropdownitems}}
+        <li {{#submenu}}class="dropdown-submenu"{{/submenu}}>
+            <a class="dropdown-item {{#submenu}}dropdown-toggle{{/submenu}}" href="{{url}}">
+                {{{name}}}
+            </a>
+            {{#submenu}}
+                {{{submenu}}}
+            {{/submenu}}
+        </li>
+    {{/dropdownitems}}
+</ul>

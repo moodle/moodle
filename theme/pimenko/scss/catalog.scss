@@ -1,0 +1,301 @@
+// This file is part of the Pimenko theme for Moodle
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Theme Pimenko style files.
+ * @package    theme_pimenko
+ * @copyright  Pimenko 2020
+ * @author     Sylvain Revenu - Pimenko 2020 <contact@pimenko.com> <pimenko.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+#page-course-index,
+#page-course-index-category {
+
+    form.mform.form-inline.simplesearchform {
+        padding: 0;
+    }
+
+    .searchcourse {
+
+        select,
+        input {
+            -moz-appearance: none;
+            -webkit-appearance: none;
+            background-color: transparent;
+            border-left: 0;
+            border-radius: 0;
+            border-right: 0;
+            border-top: 0;
+            font-size: 1.25rem;
+            line-height: 1.5;
+            resize: none;
+
+            &:focus {
+                box-shadow: none;
+            }
+
+            &:not(:disabled):not([readonly]):focus ~ .form-group__bar:after,
+            &:not(:disabled):not([readonly]):focus ~ .form-group__bar:before {
+                width: 50%;
+            }
+        }
+
+        .form-group__bar {
+            bottom: 0;
+            left: 0;
+            position: absolute;
+            width: 100%;
+            z-index: 3;
+
+            &:before {
+                left: 50%;
+            }
+
+            &:after {
+                right: 50%;
+            }
+
+            &:before,
+            &:after {
+                background-color: unquote('brandcolor');
+                bottom: 0;
+                content: '';
+                height: 2px;
+                position: absolute;
+                transition: all 350ms;
+                transition-timing-function: ease;
+                width: 0;
+            }
+        }
+    }
+
+    #course-gallery {
+
+        .course-gallery {
+            overflow: hidden;
+            padding: 0;
+            // Need this to force display card on layer.
+            flex-basis: calc((100% / 3) - 20px);
+            max-width: calc((100% / 3) - 20px);
+            margin-bottom: 0.25rem;
+
+            &.dashboard-card {
+                max-width: calc((100% / 3) - 20px);
+            }
+
+            .img-course {
+                background-position: center;
+                background-size: cover;
+                height: 7rem;
+                width: 100%;
+            }
+
+            .card-title {
+
+                p.course_title {
+                    font-size: .9375rem;
+                }
+
+                .course-category {
+                    .card-text {
+                        span {
+                            font-size: .9375rem;
+                        }
+                    }
+                }
+            }
+
+            .course-summary {
+                font-size: .9375rem;
+                max-height: 350px;
+                opacity: 0.75;
+                overflow: hidden;
+            }
+
+            .course-data {
+                margin-bottom: 0;
+                margin-top: auto;
+            }
+
+            .card {
+                max-height: 540px;
+
+                .card-block {
+                    margin: 1rem 1rem 3rem;
+                    max-height: 350px;
+                    overflow: hidden;
+                    padding: 0.5rem;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+
+        .buttons {
+            flex: 100%;
+        }
+    }
+
+    button.modalbutton {
+        border-radius: 100%;
+        height: 30px;
+        padding: 0;
+        width: 30px;
+    }
+
+    .buttons {
+        margin-top: 10px;
+    }
+
+    .prettypanels-categ {
+        padding: 10px;
+    }
+
+    .courseimage {
+        img {
+            max-height: 250px;
+            height: auto;
+            max-width: 250px;
+        }
+    }
+
+    .entercourse {
+        clear: both;
+        display: block;
+        font-size: 18px;
+        font-weight: bold;
+        height: 40px;
+        line-height: 28px;
+        text-transform: uppercase;
+        width: 50%;
+        max-width: 125px;
+    }
+
+    .coursename a.aalink {
+        &:before {
+            content: '\f19d';
+            font: normal normal normal 14px/1 FontAwesome;
+        }
+    }
+
+    .coursebox {
+        margin-top: 10px;
+    }
+
+    .coursebox > .info > .coursename a {
+        background: none;
+        font-size: 1rem;
+    }
+
+    .tertiary-navigation div.filter {
+
+        label {
+            display: block;
+            margin-bottom: 0;
+            opacity: 0.75;
+        }
+
+        .urlselect,
+        .simplesearchform {
+
+            select,
+            input {
+                -moz-appearance: none;
+                -webkit-appearance: none;
+                background-color: transparent;
+                border-left: 0;
+                border-radius: 0;
+                border-right: 0;
+                border-top: 0;
+                font-size: 1.25rem;
+                line-height: 1.5;
+                resize: none;
+
+                &:focus {
+                    box-shadow: none;
+                }
+
+                &:not(:disabled):not([readonly]):focus ~ .form-group__bar:after,
+                &:not(:disabled):not([readonly]):focus ~ .form-group__bar:before {
+                    width: 50%;
+                }
+            }
+
+            .form-group__bar {
+                bottom: 0;
+                left: 0;
+                position: absolute;
+                width: 100%;
+                z-index: 3;
+
+                &:before {
+                    left: 50%;
+                }
+
+                &:after {
+                    right: 50%;
+                }
+
+                &:before,
+                &:after {
+                    background-color: unquote('brandcolor');
+                    bottom: 0;
+                    content: '';
+                    height: 2px;
+                    position: absolute;
+                    transition: all 350ms;
+                    transition-timing-function: ease;
+                    width: 0;
+                }
+            }
+        }
+
+        .loader {
+            display: none;
+            position: absolute;
+            right: 50%;
+
+            .circular {
+                width: 100%;
+            }
+        }
+
+        #category-search-form {
+            margin: 0;
+        }
+    }
+
+    button {
+        .collapsed-icon-container {
+            display: none;
+        }
+    }
+
+    button.collapsed {
+        .expanded-icon-container {
+            display:none;
+        }
+
+        .collapsed-icon-container {
+            display: block;
+        }
+    }
+}
+
+// Remember to remove this at 4.1
+.tertiary-navigation .navitem:not(:last-child),
+.tertiary-navigation .navitem-divider:not(:last-child) {
+    margin-right: 20px;
+}

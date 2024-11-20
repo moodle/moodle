@@ -1,0 +1,51 @@
+{
+    "user": [
+        {
+            "id": 1,
+            "firstname": "test_fullname",
+            "email": "test@test.com"
+        }
+    ],
+    "course": [
+        {
+            "id": 1,
+            "fullname": "test_name",
+            "lang": "en"
+        }
+    ],
+    "scorm": [
+        {
+            "id": 1,
+            "name": "test_name"
+        }
+    ],
+    "scorm_scoes_track": [
+        {
+            "id": 1,
+            "userid": 1,
+            "scormid": 1,
+            "scoid": 1,
+            "attempt": 1,
+            "element": "cmi.core.lesson_status",
+            "value": "completed"
+        },
+        {
+            "id": 2,
+            "userid": 1,
+            "scormid": 1,
+            "scoid": 1,
+            "attempt": 1,
+            "element": "cmi.core.score.min",
+            "value": 0
+        },
+        {
+            "id": 3,
+            "userid": 1,
+            "scormid": 1,
+            "scoid": 1,
+            "attempt": 1,
+            "element": "cmi.core.score.max",
+            "value": 100
+        }
+    ]
+}

@@ -1,0 +1,8 @@
+/.idea/
+.DS_Store
+jupyter_config_default.py
+/.vs/slnx.sqlite
+/.vs/*
+vendor/
+/composer.phar
+/node_modules/

@@ -1,0 +1,21 @@
+{
+    "user": [
+        {
+            "id": 1,
+            "firstname": "loggedin_user_firstname",
+            "email": "test1@test.com"
+        },
+        {
+            "id": 2,
+            "firstname": "viewed_user_firstname",
+            "email": "test2@test.com"
+        }
+    ],
+    "course": [
+        {
+            "id": 1,
+            "fullname": "test_name",
+            "lang": "en"
+        }
+    ]
+}

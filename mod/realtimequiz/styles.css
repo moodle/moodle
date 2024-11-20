@@ -1,0 +1,59 @@
+/* -*-CSS-*- */
+
+.realtimequizplainbox {
+    padding: 10px;
+    margin: 10px;
+}
+
+.realtimequizbox {
+    background-color: #b8e5ef;
+    background-image: linear-gradient(#b8e5ef, #e1e8ea);
+    padding: 20px;
+    margin: 10px;
+}
+
+.realtimequiz_report_question {
+    background-color: #b8e5ef;
+    background-image: linear-gradient(#b8e5ef, #e1e8ea);
+    border-style: solid;
+    border-width: 1px;
+}
+
+.realtimequiz_report_question_correct {
+    background-color: #81dca3;
+    background-image: linear-gradient(#72e07f, #81dca3);
+    border-style: solid;
+    border-width: 1px;
+}
+
+.realtimequiz_report_answer {
+    background-color: #e1e8ea;
+    background-image: linear-gradient(#e1e8ea, #fbfdfd);
+    border-style: solid;
+    border-width: 1px;
+}
+
+.realtimequiz_report_answer_correct {
+    background-color: #81dca3;
+    background-image: linear-gradient(#81dca3, #fbfdfd);
+    border-style: solid;
+    border-width: 1px;
+}
+
+.realtimequiz_editquestion {
+    display: inline-block;
+    width: 70%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-right: 5px;
+}
+
+.realtimequiz_editicons {
+    display: inline-block;
+    width: 20%;
+}
+
+.realtimequiz_highlight_correct {
+    background-color: #81dca3;
+}
