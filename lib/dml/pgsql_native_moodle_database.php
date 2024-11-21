@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/moodle_database.php');
-require_once(__DIR__.'/moodle_read_slave_trait.php');
+require_once(__DIR__.'/moodle_read_replica_trait.php');
 require_once(__DIR__.'/pgsql_native_moodle_recordset.php');
 require_once(__DIR__.'/pgsql_native_moodle_temptables.php');
 
@@ -37,11 +37,11 @@ require_once(__DIR__.'/pgsql_native_moodle_temptables.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class pgsql_native_moodle_database extends moodle_database {
-    use moodle_read_slave_trait {
-        select_db_handle as read_slave_select_db_handle;
-        can_use_readonly as read_slave_can_use_readonly;
-        query_start as read_slave_query_start;
-        query_end as read_slave_query_end;
+    use moodle_read_replica_trait {
+        select_db_handle as read_replica_select_db_handle;
+        can_use_readonly as read_replica_can_use_readonly;
+        query_start as read_replica_query_start;
+        query_end as read_replica_query_end;
     }
 
     /** @var array $sslmodes */
@@ -297,7 +297,7 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return void
      */
     protected function select_db_handle(int $type, string $sql): void {
-        $this->read_slave_select_db_handle($type, $sql);
+        $this->read_replica_select_db_handle($type, $sql);
 
         if (preg_match('/^DECLARE (crs\w*) NO SCROLL CURSOR/', $sql, $match)) {
             $cursor = $match[1];
@@ -318,7 +318,7 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return bool
      */
     protected function can_use_readonly(int $type, string $sql): bool {
-        // ... pg_*lock queries always go to master.
+        // ... pg_*lock queries always go to primary.
         if (preg_match('/\bpg_\w*lock/', $sql)) {
             return false;
         }
@@ -328,7 +328,7 @@ class pgsql_native_moodle_database extends moodle_database {
             return false;
         }
 
-        return $this->read_slave_can_use_readonly($type, $sql);
+        return $this->read_replica_can_use_readonly($type, $sql);
 
     }
 
@@ -341,7 +341,7 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return void
      */
     protected function query_start($sql, ?array $params, $type, $extrainfo=null) {
-        $this->read_slave_query_start($sql, $params, $type, $extrainfo);
+        $this->read_replica_query_start($sql, $params, $type, $extrainfo);
         // pgsql driver tends to send debug to output, we do not need that.
         $this->last_error_reporting = error_reporting(0);
     }
@@ -355,7 +355,7 @@ class pgsql_native_moodle_database extends moodle_database {
         // reset original debug level
         error_reporting($this->last_error_reporting);
         try {
-            $this->read_slave_query_end($result);
+            $this->read_replica_query_end($result);
             if ($this->savepointpresent &&
                     !in_array(
                         $this->last_type,

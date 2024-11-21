@@ -29,10 +29,10 @@ use moodle_database;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__.'/fixtures/read_slave_moodle_database_mock_mysqli.php');
+require_once(__DIR__.'/fixtures/read_replica_moodle_database_mock_mysqli.php');
 
 /**
- * DML mysqli_native_moodle_database read slave specific tests
+ * DML mysqli_native_moodle_database read replica specific tests
  *
  * @package    core
  * @category   dml
@@ -40,7 +40,7 @@ require_once(__DIR__.'/fixtures/read_slave_moodle_database_mock_mysqli.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \mysqli_native_moodle_database
  */
-final class dml_mysqli_read_slave_test extends \database_driver_testcase {
+final class dml_mysqli_read_replica_test extends \database_driver_testcase {
     /**
      * Test readonly handle is not used for reading from special pg_*() call queries,
      * pg_try_advisory_lock and pg_advisory_unlock.
@@ -48,19 +48,19 @@ final class dml_mysqli_read_slave_test extends \database_driver_testcase {
      * @return void
      */
     public function test_lock(): void {
-        $DB = new read_slave_moodle_database_mock_mysqli();
+        $DB = new read_replica_moodle_database_mock_mysqli();
 
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        $this->assertEquals(0, $DB->perf_get_reads_replica());
 
         $DB->query_start("SELECT GET_LOCK('lock',1)", null, SQL_QUERY_SELECT);
         $this->assertTrue($DB->db_handle_is_rw());
         $DB->query_end(null);
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        $this->assertEquals(0, $DB->perf_get_reads_replica());
 
         $DB->query_start("SELECT RELEASE_LOCK('lock',1)", null, SQL_QUERY_SELECT);
         $this->assertTrue($DB->db_handle_is_rw());
         $DB->query_end(null);
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        $this->assertEquals(0, $DB->perf_get_reads_replica());
     }
 
     /**
@@ -91,25 +91,25 @@ final class dml_mysqli_read_slave_test extends \database_driver_testcase {
         $db2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
 
         $reads = $db2->perf_get_reads();
-        $readsprimary = $reads - $db2->perf_get_reads_slave();
+        $readsprimary = $reads - $db2->perf_get_reads_replica();
 
         // Readonly handle queries.
 
         $db2->setup_is_unicodedb();
         $this->assertGreaterThan($reads, $reads = $db2->perf_get_reads());
-        $this->assertEquals($readsprimary, $reads - $db2->perf_get_reads_slave());
+        $this->assertEquals($readsprimary, $reads - $db2->perf_get_reads_replica());
 
         $db2->get_tables();
         $this->assertGreaterThan($reads, $reads = $db2->perf_get_reads());
-        $this->assertEquals($readsprimary, $reads - $db2->perf_get_reads_slave());
+        $this->assertEquals($readsprimary, $reads - $db2->perf_get_reads_replica());
 
         $db2->get_indexes('course');
         $this->assertGreaterThan($reads, $reads = $db2->perf_get_reads());
-        $this->assertEquals($readsprimary, $reads - $db2->perf_get_reads_slave());
+        $this->assertEquals($readsprimary, $reads - $db2->perf_get_reads_replica());
 
         $db2->get_columns('course');
         $this->assertGreaterThan($reads, $reads = $db2->perf_get_reads());
-        $this->assertEquals($readsprimary, $reads - $db2->perf_get_reads_slave());
+        $this->assertEquals($readsprimary, $reads - $db2->perf_get_reads_replica());
 
         // Readwrite handle queries.
 
@@ -119,16 +119,16 @@ final class dml_mysqli_read_slave_test extends \database_driver_testcase {
 
             $rcm->invoke($db2);
             $this->assertGreaterThan($reads, $reads = $db2->perf_get_reads());
-            $this->assertGreaterThan($readsprimary, $readsprimary = $reads - $db2->perf_get_reads_slave());
+            $this->assertGreaterThan($readsprimary, $readsprimary = $reads - $db2->perf_get_reads_replica());
         }
 
         $db2->get_dbengine();
         $this->assertGreaterThan($reads, $reads = $db2->perf_get_reads());
-        $this->assertGreaterThan($readsprimary, $readsprimary = $reads - $db2->perf_get_reads_slave());
+        $this->assertGreaterThan($readsprimary, $readsprimary = $reads - $db2->perf_get_reads_replica());
 
         $db2->get_row_format('course');
         $this->assertGreaterThan($reads, $reads = $db2->perf_get_reads());
-        $this->assertGreaterThan($readsprimary, $readsprimary = $reads - $db2->perf_get_reads_slave());
+        $this->assertGreaterThan($readsprimary, $readsprimary = $reads - $db2->perf_get_reads_replica());
     }
 
     /**
@@ -136,7 +136,7 @@ final class dml_mysqli_read_slave_test extends \database_driver_testcase {
      *
      * @return void
      */
-    public function test_real_readslave_connect_fail_host(): void {
+    public function test_real_readreplica_connect_fail_host(): void {
         global $DB;
 
         if ($DB->get_dbfamily() != 'mysql') {
@@ -182,7 +182,7 @@ final class dml_mysqli_read_slave_test extends \database_driver_testcase {
      *
      * @return void
      */
-    public function test_real_readslave_connect_fail_dbname(): void {
+    public function test_real_readreplica_connect_fail_dbname(): void {
         global $DB;
 
         if ($DB->get_dbfamily() != 'mysql') {

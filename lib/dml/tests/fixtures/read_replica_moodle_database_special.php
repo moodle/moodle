@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Database driver test class for testing moodle_read_slave_trait
+ * Database driver test class for testing moodle_read_replica_trait
  *
  * @package    core
  * @category   dml
@@ -27,17 +27,17 @@ namespace core;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__.'/read_slave_moodle_database.php');
+require_once(__DIR__.'/read_replica_moodle_database.php');
 
 /**
- * Database driver mock test class that uses read_slave_moodle_recordset_special
+ * Database driver mock test class that uses read_replica_moodle_recordset_special
  *
  * @package    core
  * @category   dml
  * @copyright  2018 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class read_slave_moodle_database_special extends read_slave_moodle_database {
+class read_replica_moodle_database_special extends read_replica_moodle_database {
     /**
      * Returns empty array
      * @param string $sql the SQL select query to execute.
@@ -52,7 +52,7 @@ class read_slave_moodle_database_special extends read_slave_moodle_database {
     }
 
     /**
-     * Returns read_slave_moodle_database::get_records_sql()
+     * Returns read_replica_moodle_database::get_records_sql()
      * For the tests where we need both fake result and dbhandle info.
      * @param string $sql the SQL select query to execute.
      * @param array $params array of sql parameters
@@ -74,7 +74,7 @@ class read_slave_moodle_database_special extends read_slave_moodle_database {
      */
     public function get_recordset_sql($sql, ?array $params = null, $limitfrom = 0, $limitnum = 0) {
         $dbhandle = parent::get_recordset_sql($sql, $params);
-        return new read_slave_moodle_recordset_special();
+        return new read_replica_moodle_recordset_special();
     }
 
     /**
@@ -97,7 +97,7 @@ class read_slave_moodle_database_special extends read_slave_moodle_database {
  * @copyright  2018 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class read_slave_moodle_recordset_special extends \moodle_recordset {
+class read_replica_moodle_recordset_special extends \moodle_recordset {
     /**
      * Iterator interface
      * @return void

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Read slave helper that exposes selected moodle_read_slave_trait metods
+ * Read replica helper that exposes selected moodle_read_replica_trait mehtods.
  *
  * @package    core
  * @category   dml
@@ -28,14 +28,14 @@ namespace core;
 use ReflectionProperty;
 
 /**
- * Read slave helper that exposes selected moodle_read_slave_trait metods
+ * Read replica helper that exposes selected moodle_read_replica_trait methods.
  *
  * @package    core
  * @category   dml
  * @copyright  2018 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-trait test_moodle_read_slave_trait {
+trait test_moodle_read_replica_trait {
     /**
      * Constructs a mock db driver
      *
@@ -52,7 +52,7 @@ trait test_moodle_read_slave_trait {
 
         $this->prefix = 'test_'; // Default, not to leave empty.
 
-        $rcp = new ReflectionProperty(parent::class, 'wantreadslave');
+        $rcp = new ReflectionProperty(parent::class, 'wantreadreplica');
         $rcp->setValue($this, true);
 
         $this->dbhwrite = $rw;
