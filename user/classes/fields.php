@@ -536,7 +536,7 @@ class fields {
                                  $DB->sql_equal($fieldalias . '.shortname', $placeholder, false) . "
                        LEFT JOIN {user_info_data} $dataalias ON $dataalias.fieldid = $fieldalias.id
                                  AND $dataalias.userid = {$usertable}id";
-                // For Oracle we need to convert the field into a usable format.
+                // For sqlsrv we need to convert the field into a usable format.
                 $fieldsql = $DB->sql_compare_text($dataalias . '.data', 255);
                 $selects .= ", $fieldsql AS $prefix$field";
                 $mappings[$field] = $fieldsql;
@@ -613,7 +613,7 @@ class fields {
             }
 
             if (core_text::strlen($chunk) > 0) {
-                // If content is just whitespace, add to elements directly (also Oracle doesn't support passing ' ' as param).
+                // If content is just whitespace, add it directly to elements to handle it appropriately.
                 if (preg_match('/^\s+$/', $chunk)) {
                     $elements[] = "'$chunk'";
                 } else {

@@ -1393,7 +1393,7 @@ abstract class sql_generator {
     public static function getAllReservedWords() {
         global $CFG;
 
-        $generators = array('mysql', 'postgres', 'oracle', 'mssql');
+        $generators = array('mysql', 'postgres', 'mssql');
         $reserved_words = array();
 
         foreach($generators as $generator) {

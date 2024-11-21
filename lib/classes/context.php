@@ -423,15 +423,6 @@ abstract class context extends stdClass implements IteratorAggregate {
                                  ct.depth = temp.depth,
                                  ct.locked = temp.locked
                            WHERE ct.id = temp.id";
-        } else if ($dbfamily == 'oracle') {
-            $updatesql = "UPDATE {context} ct
-                             SET (ct.path, ct.depth, ct.locked) =
-                                 (SELECT temp.path, temp.depth, temp.locked
-                                    FROM {context_temp} temp
-                                   WHERE temp.id=ct.id)
-                           WHERE EXISTS (SELECT 'x'
-                                           FROM {context_temp} temp
-                                           WHERE temp.id = ct.id)";
         } else if ($dbfamily == 'postgres' || $dbfamily == 'mssql') {
             $updatesql = "UPDATE {context}
                              SET path = temp.path,

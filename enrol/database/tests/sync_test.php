@@ -82,11 +82,6 @@ final class sync_test extends \advanced_testcase {
                 }
                 break;
 
-            case 'oracle':
-                set_config('dbtype', 'oci8po', 'enrol_database');
-                set_config('dbsybasequoting', '1', 'enrol_database');
-                break;
-
             case 'postgres':
                 set_config('dbtype', 'postgres7', 'enrol_database');
                 $setupsql = "SET NAMES 'UTF-8'";

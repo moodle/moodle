@@ -75,7 +75,7 @@ class auroramysql_native_moodle_database extends mysqli_native_moodle_database {
      * Returns more specific database driver type
      *
      * Returns more specific database driver type. Can be used before connect().
-     * @return string db type mysqli, pgsql, oci, mssql, sqlsrv
+     * @return string db type mysqli, pgsql, mssql, sqlsrv
      */
     protected function get_dbtype(): ?string {
         return 'auroramysql';

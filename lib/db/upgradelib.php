@@ -1423,19 +1423,6 @@ function upgrade_block_set_my_user_parent_context(
                SET bi.parentcontextid = bic.contextid
              WHERE bi.id = bic.instanceid
         EOF;
-    } else if ($dbfamily === 'oracle') {
-        $sql = <<<EOF
-            UPDATE {block_instances} bi
-            SET (bi.parentcontextid) = (
-                SELECT bic.contextid
-                  FROM {block_instance_context} bic
-                 WHERE bic.instanceid = bi.id
-            ) WHERE EXISTS (
-                SELECT 'x'
-                  FROM {block_instance_context} bic
-                 WHERE bic.instanceid = bi.id
-            )
-        EOF;
     } else {
         // Postgres and sqlsrv.
         $sql = <<<EOF
@@ -1878,27 +1865,10 @@ function upgrade_change_binary_column_to_int(
     $dbman->add_field($table, $field);
 
     // Copy the 'true' values from the old field to the new field.
-    if ($DB->get_dbfamily() === 'oracle') {
-        // It's tricky to use the binary column in the WHERE clause in Oracle DBs.
-        // Let's go updating the records one by one. It's nasty, but it's only done for instances with Oracle DBs.
-        // The normal SQL UPDATE statement will be used for other DBs.
-        $columns = implode(', ', ['id', $tmpfieldname, $fieldname]);
-        $records = $DB->get_recordset($tablename, null, '', $columns);
-        if ($records->valid()) {
-            foreach ($records as $record) {
-                if (!$record->$tmpfieldname) {
-                    continue;
-                }
-                $DB->set_field($tablename, $fieldname, 1, ['id' => $record->id]);
-            }
-        }
-        $records->close();
-    } else {
-        $sql = 'UPDATE {' . $tablename . '}
-                   SET ' . $fieldname . ' = 1
-                 WHERE ' . $tmpfieldname . ' = ?';
-        $DB->execute($sql, [1]);
-    }
+    $sql = 'UPDATE {' . $tablename . '}
+               SET ' . $fieldname . ' = 1
+             WHERE ' . $tmpfieldname . ' = ?';
+    $DB->execute($sql, [1]);
 
     // Drop the old field.
     $oldfield = new xmldb_field($tmpfieldname);

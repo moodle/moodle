@@ -1494,11 +1494,12 @@ function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL)
     foreach ($searchterms as $searchterm) {
         $i++;
 
-        $NOT = false; /// Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
-                   /// will use it to simulate the "-" operator with LIKE clause
+        // Initially we aren't going to perform NOT LIKE searches, only MSSQL
+        // will use it to simulate the "-" operator with LIKE clause.
+        $NOT = false;
 
-    /// Under Oracle and MSSQL, trim the + and - operators and perform
-    /// simpler LIKE (or NOT LIKE) queries
+        // Under MSSQL, trim the + and - operators and perform
+        // simpler LIKE (or NOT LIKE) queries
         if (!$DB->sql_regex_supported()) {
             if (substr($searchterm, 0, 1) == '-') {
                 $NOT = true;
@@ -3815,7 +3816,7 @@ function glossary_get_search_terms_sql(array $terms, $fullsearch = true, $glossa
     foreach ($terms as $searchterm) {
         $i++;
 
-        $not = false; // Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
+        $not = false; // Initially we aren't going to perform NOT LIKE searches, only MSSQL
                       // will use it to simulate the "-" operator with LIKE clause.
 
         if (empty($fullsearch)) {
@@ -3827,7 +3828,7 @@ function glossary_get_search_terms_sql(array $terms, $fullsearch = true, $glossa
         }
         $params['emptychar' . $i] = '';
 
-        // Under Oracle and MSSQL, trim the + and - operators and perform simpler LIKE (or NOT LIKE) queries.
+        // Under MSSQL, trim the + and - operators and perform simpler LIKE (or NOT LIKE) queries.
         if (!$DB->sql_regex_supported()) {
             if (substr($searchterm, 0, 1) === '-') {
                 $not = true;

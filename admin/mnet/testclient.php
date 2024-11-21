@@ -91,7 +91,8 @@ if (!empty($hostid) && array_key_exists($hostid, $hosts)) {
     // this query is horrible and has to be remapped afterwards, because of the non-uniqueness
     // of the remoterep service (it has two plugins so far that use it)
     // it's possible to get a unique list back using a subquery with LIMIT but that would break oracle
-    // so it's best to just do this small query and then remap the results afterwards
+    // so it's best to just do this small query and then remap the results afterwards.
+    // TODO: Optimise the query, as Oracle-specific constraints no longer apply.
     $sql = '
         SELECT DISTINCT
             ' . $DB->sql_concat('r.plugintype', "'_'", 'r.pluginname', "'_'", 's.name')  . ' AS uniqueid,

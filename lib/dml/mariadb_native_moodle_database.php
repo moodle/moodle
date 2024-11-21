@@ -68,7 +68,7 @@ class mariadb_native_moodle_database extends mysqli_native_moodle_database {
     /**
      * Returns more specific database driver type
      * Note: can be used before connect()
-     * @return string db type mysqli, pgsql, oci, mssql, sqlsrv
+     * @return string db type mysqli, pgsql, mssql, sqlsrv
      */
     protected function get_dbtype() {
         return 'mariadb';

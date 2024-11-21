@@ -497,8 +497,7 @@ class provider implements
             $userid
         );
 
-        // The layout column causes the union in the following query to fail on Oracle, it also appears to not be used.
-        // So we can filter the return values to be only those used to generate the data, this will have the benefit
+        // Filtering the return values to be only those used to generate the data, this will have the benefit
         // improving performance on all databases as we will no longer be returning a text field for each row.
         $attemptfields = 'qa.id, qa.quiz, qa.userid, qa.attempt, qa.uniqueid, qa.preview, qa.state, qa.timestart, ' .
             'qa.timefinish, qa.timemodified, qa.timemodifiedoffline, qa.timecheckstate, qa.sumgrades, ' .

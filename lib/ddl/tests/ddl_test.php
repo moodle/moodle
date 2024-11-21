@@ -2131,7 +2131,6 @@ final class ddl_test extends \database_driver_testcase {
         $rec = $DB->get_record($tablename, array('id'=>$id));
         $this->assertSame($maxstr, $rec->name);
 
-        // Following test is supposed to fail in oracle.
         $maxstr = '';
         for ($i=0; $i<xmldb_field::CHAR_MAX_LENGTH; $i++) {
             $maxstr .= '言'; // Random long string that should fix exactly the limit for one char column.
@@ -2147,11 +2146,7 @@ final class ddl_test extends \database_driver_testcase {
             $rec = $DB->get_record($tablename, array('id'=>$id));
             $this->assertSame($maxstr, $rec->name);
         } catch (dml_exception $e) {
-            if ($DB->get_dbfamily() === 'oracle') {
-                $this->fail('Oracle does not support text fields larger than 4000 bytes, this is not a big problem for mostly ascii based languages');
-            } else {
-                throw $e;
-            }
+            throw $e;
         }
 
         $table = new xmldb_table('testtable');
@@ -2298,7 +2293,6 @@ final class ddl_test extends \database_driver_testcase {
                     $this->assertSame("`$columnname`", $gen->getEncQuoted($columnname));
                     break;
                 case 'mssql': // The Moodle connection runs under 'QUOTED_IDENTIFIER ON'.
-                case 'oracle':
                 case 'postgres':
                 case 'sqlite':
                 default:
@@ -2360,7 +2354,6 @@ final class ddl_test extends \database_driver_testcase {
                         $gen->getRenameFieldSQL($table, $field, $newcolumnname)
                     );
                     break;
-                case 'oracle':
                 case 'postgres':
                 default:
                     $this->assertSame(
@@ -2388,7 +2381,6 @@ final class ddl_test extends \database_driver_testcase {
                         $gen->getRenameFieldSQL($table, $field, $newcolumnname)
                     );
                     break;
-                case 'oracle':
                 case 'postgres':
                 default:
                     $this->assertSame(
