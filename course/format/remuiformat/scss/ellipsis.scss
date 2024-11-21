@@ -1,0 +1,15 @@
+$ellipsis-range: 5;
+
+.text-clamp {
+    display: -webkit-box !important;
+    /* autoprefixer: off */
+    -webkit-box-orient: vertical;
+    /* autoprefixer: on */
+    overflow: hidden !important;
+
+    @for $i from 1 through $ellipsis-range {
+        &.text-clamp-#{$i} {
+            -webkit-line-clamp: #{$i};
+        }
+    }
+}

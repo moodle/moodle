@@ -1,0 +1,611 @@
+// Card layout
+// Desktops, large screens
+&.editing {
+    .remui-format-card {
+        .yui3-dd-proxy {
+            .section {
+                .toggle-icon {
+                    border: 0;
+                    background: transparent;
+                }
+            }
+        }
+       &.all-section-format .section .single-card{
+            padding: 24px;
+        }
+
+        &.single-section-format {
+            .activity-cards {
+                .actions {
+                    top: 1rem;
+                    right: 0.5rem;
+                }
+                .wdm-mod-name {
+                    padding-right: 5rem;
+                    margin-bottom: 1.5rem !important;
+                }
+            }
+            .activity {
+                &.label {
+                    grid-column: 1/-1;
+                }
+                .title {
+                    margin-bottom: 30px;
+                }
+            }
+        }
+
+        .dark {
+            .action-menu-trigger {
+                .btn.btn-icon:hover,
+                .btn.btn-icon:focus {
+                    background-color: transparent ;
+                    box-shadow: none ;
+                }
+                .text-muted .fa-cog,.dropdown-toggle .icon {
+                    color: $white;
+                }
+            }
+            .text-muted .fa-cog {
+                color: $white;
+            }
+
+        }
+    }
+}
+
+.sections {
+    .single-card-container {
+        margin-bottom: 28px;
+    }
+}
+
+@media (max-width: 1400px) {
+    // Sections
+    &.site-menubar-unfold {
+        &.path-course.editing,
+        &.path-course.pinaside {
+            .remui-format-card {
+                .single-card-container {
+                    min-width: 50% !important;
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (min-width: 1200px) and (max-width: 1400px) {
+    &.drawer-open-left {
+        #region-main {
+            &.has-blocks {
+                .remui-card-format {
+                    .general-section-activities li {
+                        min-width: 50% !important;
+                    }
+                    .single-card-container {
+                        min-width: 50% !important;
+                    }
+                    // General section in Boost theme
+                    .generaldetails {
+                        min-width: 100% !important;
+                        order: 12;
+                    }
+                    .coursedetails {
+                        min-width: 100% !important;
+                        order: 1;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 1200px) {
+    &.site-menubar-unfold {
+        &.editing,
+        &.pinaside {
+            .remui-format-card {
+                .general-section-activities li {
+                    min-width: 50% !important;
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+    &.drawer-open-left {
+        .remui-card-format {
+            .general-section-activities li,
+            .single-card-container {
+                min-width: 50% !important;
+            }
+        }
+    }
+    &.site-menubar-unfold {
+        &.path-course.pinaside {
+            .remui-card-format {
+                .generaldetails {
+                    order: 12;
+                    min-width: 100%;
+                }
+                .coursedetails {
+                    order: 1;
+                    min-width: 100%;
+                    padding-bottom: 15px;
+                }
+                .coursemainimagediv {
+                    display: none !important;
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    &.drawer-open-left .single-card-container {
+        min-width: 100% !important;
+    }
+}
+
+@media (max-width: 768px) {
+    &.path-course.site-menubar-unfold {
+        .remui-card-format {
+            .generaldetails,
+            .coursedetails {
+                min-width: 100% !important;
+            }
+        }
+    }
+}
+
+.remui-format-card {
+    // margin-top: 20px;
+    .availabilityinfo {
+        &.isrestricted {
+            margin: 0px;
+            // margin-top: $margin-16;
+            padding: $pad-8;
+            border-radius: $border-radius-8;
+            background-color: $small-ui-bg;
+            @include frmt-font-styling(12px,normal,400);
+            ul {
+                padding-left: 1rem;
+                li{
+                    margin-top: 4px;
+                }
+            }
+
+            strong{
+                @include frmt-font-styling(12px,15px,600);
+                a{
+                    @include frmt-font-styling(12px,normal,400);
+                }
+            }
+        }
+    }
+    &.all-section-format {
+        .sections:not(.generalsection-container.sections) {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax($card-min-width-1, 1fr));
+            gap: $gap-24;
+            @media (min-width:1440px) {
+                grid-template-columns: repeat(auto-fill, minmax($card-min-width-2, $card-min-width-2));
+            }
+            // margin-top: 48px;
+            .section:not(#section-0) {
+                // flex: 1 1 calc(25% - 24px);
+                // max-width: 314px;
+                border: unset;
+                border-radius: $border-radius-8;
+                &:hover{
+                    box-shadow: $card-box-shadow;
+                }
+                .content .yui3-dd-drop {
+                    display: none;
+                }
+            }
+        }
+        // Show two cards per row, when both sidebars open in RemUI
+        // when left sidebar and right blocks section open in Boost
+        @media (max-width: 1200px) {
+            .single-card-container {
+                min-width: 50% !important;
+            }
+        }
+        @media (min-width: 768px) {
+            .general-section-activities .activity {
+                &>div {
+                    width: 100%;
+                }
+            }
+        }
+        #changenumsections.section {
+            flex: unset !important;
+            padding: unset !important;
+            min-height: 340px;
+            max-width: unset !important;
+        }
+        @include single-card-ui();
+    }
+    // Styling for single section page
+    &.single-section-format {
+        .content {
+            // margin: 0 -0.5rem;
+        }
+        .section.main {
+            background: transparent;
+            border: 0;
+            box-shadow: none;
+        }
+        .sections {
+            width: 100%;
+
+            .section {
+                display: flex;
+                flex-direction: column;
+                gap: $gap-16;
+
+                .section-details {
+                    padding-bottom: 20px;
+                    border-bottom: 1px solid #D5DDEA;
+                    div.no-overflow{
+                        @include frmt-font-styling(14px,22px,400);
+                        color: $paragraph-color;
+                        img{
+                            border-radius: $border-radius-8;
+                        }
+                    }
+                    .general-single-card {
+                        align-items: flex-start;
+                        justify-content: space-between;
+                        gap:$gap-16;
+                        @media (max-width:$screen-900) {
+                            // flex-direction: column;
+                            // align-items: unset;
+                            // gap: $gap-24;
+                        }
+                        @media (max-width:$tb-screenp-bp) {
+                            flex-direction: column;
+                            gap: $gap-32;
+                        }
+                        .header-progresbar-wrapper{
+                            gap: $gap-6;
+                            flex-direction: column;
+                            @media (max-width:$screen-900) {
+                                gap: $gap-24;
+                            }
+                            @media (max-width:$tb-screenp-bp) {
+                                gap:$gap-16
+                            }
+                            .section-title {
+                                gap: $gap-8;
+                                color: $heading-color;
+                                @include frmt-font-styling(24px, 32px, 700);
+                            }
+                            .progress-bar-warpper{
+                                @media (max-width:$sm-screen-bp){
+                                    // justify-content: center;
+                                    flex-direction: row;
+                                    flex-wrap: nowrap;
+                                    align-items: center;
+                                }
+
+                                .progress {
+                                    width: $progress-bar-min-width;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                &.hide {
+                    display: none !important;
+                }
+            }
+        }
+
+        // Section activities cards.
+        .activity-cards,
+        .activity-cards.section {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax($card-min-width-1, 1fr));
+            @media (min-width:1200px) {
+                grid-template-columns: repeat(auto-fill, minmax($card-min-width-2, 1fr));
+            }
+            gap: $gap-24;
+            padding: 0 !important;
+            width: 100%;
+            margin: 0;
+            position: relative;
+
+            @media (max-width:425px) {
+                grid-template-columns: repeat(auto-fill, minmax($card-min-width-1, 1fr));
+            }
+
+            .activity {
+                padding: $pad-8;
+                display: flex;
+                transition: all 0.5s ease;
+                padding: 0px;
+                // min-height: $section-card-min-height;
+                &:hover{
+                    box-shadow: $card-box-shadow;
+                }
+                .activitytitle {
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    gap: $gap-26 !important;
+                    .media-body {
+                        .text-font-small.small {
+                            color: $paragraph-color;
+                            @include frmt-font-styling(16px, 24px, 400);
+                            display: none;
+                        }
+                    }
+                }
+                .cm_action_menu {
+                    position: relative !important;
+                    top: 0 !important;
+                    right: 0 !important;
+                }
+
+                .autocompletion img {
+                    width: 18px;
+                    height: 18px;
+                }
+                &:hover {
+                    background: transparent !important;
+                }
+                .single-card {
+                    min-height: $single-card-min-height;
+                    .single-card-child-wrapper{
+                        gap: $gap-12;
+                    }
+                }
+                &.modtype_label{
+                    .single-card{
+                        min-height: unset;
+                    }
+                }
+                .editing_move {
+                    position: relative;
+                    // float: left;
+                    width: fit-content;
+                    top: -15px;
+                    left: -15px;
+                }
+                &>div {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    gap: $gap-16;
+                    width: 100%;
+                    border-radius: $border-radius-8;
+                    background-color: white;
+                    border: 1px solid $light-border;
+                    position: relative;
+                    padding: $pad-24;
+                }
+
+                .activity-content {
+                    // padding: 0.8rem 0 1.5rem 0;
+                    width: 100%;
+                    overflow: auto;
+                    color: $paragraph-color;
+                    @include frmt-font-styling(14px,24px,400);
+                    .contentwithoutlink {
+                        padding: 0;
+                    }
+                }
+
+                .completion-container{
+                    margin: 0px !important;
+                    padding: 0px !important;
+                    .automatic-completion-conditions{
+                        display: flex;
+                        flex-direction: column;
+                        gap: $gap-8;
+                        .badge{
+                            width: fit-content;
+                        }
+                    }
+                }
+                .wdm-mod-name {
+                    margin-bottom: 0.5rem;
+                    font-weight: 600;
+                }
+                // Activity title in editing mode.
+                .title {
+                    // a {
+                    //     color: #37474f;
+                    //     width: 100%;
+                    // }
+                    &.nosummary {
+                        &>a,
+                        div {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            gap: $gap-16;
+                            text-decoration: none;
+                            .media-body{
+                                gap: $gap-4;
+                            }
+                        }
+                    }
+                    .inplaceeditable {
+                        display: block;
+                        width: 100%;
+                        text-align: start;
+
+                        .activityicon {
+                            display: block;
+                            margin: 20px auto;
+                        }
+                    }
+                }
+                // Toggle row column button styling
+                .toggle-row-column {
+                    padding: 6px 5px;
+                    width: 33px;
+                    border: $border-height solid #e4eaec;
+                    img.icon {
+                        margin: 0;
+                    }
+                }
+                // Hide column icon when activity is in column format.
+                &.col-activity {
+                    .toggle-row-column .type-col {
+                        display: none;
+                    }
+                }
+                // Hide row icon when activity is in row format.
+                &.row-activity {
+                    .toggle-row-column .type-row {
+                        display: none;
+                    }
+                }
+                // .nosummary .availabilityinfo {
+                //     text-align: center;
+                // }
+                // Placing conpletion marker.
+                .completion-container.manual-completion {
+                    width: 100%;
+                    .completion-info .btn,[data-region="completion-info"] .btn{
+                        width: 100%;
+                    }
+
+                    .filler {
+                        display: none;
+                    }
+                }
+                // Hiding move left and right menu items.
+                .moodle-actionmenu {
+                    .dropdown-menu-right {
+                        .editing_moveright,
+                        .editing_moveleft {
+                            display: none;
+                        }
+                    }
+                }
+                &.modtype_label{
+                    grid-column: 1/-1 !important;
+                    .single-card{
+                        background-color: transparent;
+
+                        .toggle-row-column{
+                            display: none;
+                        }
+                        .completion-info,
+                        [data-region="completion-info"] {
+                            display: flex;
+                            justify-content: flex-end;
+                            .btn{
+                                width: fit-content;
+                            }
+                        }
+                    }
+                }
+            }
+
+            //common css to .section class
+            @include single-card-ui();
+            // additonal css to .section class
+            .section{
+                background-color: $white;
+                border-radius: $border-radius-8;
+                border-color: $light-border;
+                border-width:$border-height;
+                border-style: solid;
+                .single-card{
+                    border: unset;
+                }
+            }
+        }
+    }
+    .contentwithoutlink {
+        padding: 0;
+    }
+    .single-card {
+        a:hover {
+            text-decoration: none;
+        }
+    }
+}
+
+// Show More Less Handle
+&:not(.limitedwidth) {
+    .remui-format-card.all-section-format {
+        .showhideactivity .general-section-activities  {
+            li:nth-child(n+5) {
+                display: none !important;
+            }
+            @media only screen and (max-width: 1439px) {
+
+                li:nth-child(n+5) {
+                    display: none !important;
+                }
+            }
+            @media only screen and (max-width: 1199px) {
+                li:nth-child(n+4) {
+                    display: none !important;
+                }
+            }
+
+        }
+    }
+}
+&.limitedwidth {
+    .remui-format-card.all-section-format {
+        & .sections{
+            @media (min-width:1440px) {
+                grid-template-columns: repeat(auto-fill, minmax($card-min-width-1,1fr)) !important;
+            }
+        }
+        .general-section-activities{
+            @media (min-width:1440px) {
+                grid-template-columns: repeat(auto-fill, minmax($card-min-width-1,1fr)) !important;
+            }
+        }
+        .showhideactivity .general-section-activities  {
+		     li:nth-child(n+4) {
+		         display: none !important;
+		     }
+        }
+    }
+    .activity-cards,
+    .activity-cards.section {
+        grid-template-columns: repeat(auto-fill, minmax($card-min-width-1, 1fr)) !important;
+    }
+}
+
+.remui-format-card.all-section-format {
+    .showhideactivity .general-section-activities  {
+        @media only screen and (max-width: 1023px) {
+            li:nth-child(n+3) {
+                display: none !important;
+            }
+        }
+        @media only screen and (max-width: 767px) {
+            li:nth-child(n+3) {
+                display: none !important;
+            }
+        }
+        @media only screen and (max-width: 550px) {
+            li:nth-child(n+2) {
+                display: none !important;
+            }
+        }
+    }
+}
+
+.frmt-pt-50{
+    padding-top: 50%;
+}
+.section.main:not(.course-section) .activity .availabilityinfo,
+.section.main:not(.course-section) .activity .contentafterlink {
+    margin-top: 0px;
+    margin-left: 0px;
+}

@@ -1,0 +1,184 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template format_remuiformat/card_general_section_edit
+
+
+    Example context (json):
+    {
+        "editing: "1",
+        "defaultview: "1/0",
+        "expanded: "1/0",
+        "collapsed: "1/0",
+        "user_id: "1",
+        "courseid: "1",
+        "generalsection": [
+         {
+            "generalsectiontitle": "General Section Title",
+            "activities": [
+                {
+                    "index": "index",
+                    "id": "id",
+                    "completion": "completion",
+                    "viewurl": "viewurl",
+                    "title": "title",
+                    "modulename": "modulename",
+                    "summary": "summary",
+                    "completed": "completed",
+                    "hidden": "hidden",
+                    "availstatus": "availstatus",
+                    "modicons": "modicons",
+                }
+            ],
+            "generalsectionsummary": "General Section Summary",
+         }
+        ],
+        "sections": [
+            {
+                "index": "1",
+                "title": "Section Title",
+                "singlepageurl": "Single Page URL",
+                "hiddenmessage": "Hidden message",
+                "summary": "Summary",
+                "hidden": "1/0",
+                "activityinfostring": "2 Files, 2 Quizzes"
+                "sectionactivities" [
+                    {
+                    }
+                ]
+            }
+        ]
+    }
+}}
+<li id="section-{{{index}}}" class="border-0 section main cards col-lg-12 col-sm-12 p-0">
+    <div class="general-section d-flex flex-column">
+        {{>format_remuiformat/optional_secheader}}
+        <div class="d-none hidden course-prgress-container" data-courseid="{{courseid}}"></div>
+        <div class="section-details">
+            <div class="generaldetails content">
+                <div class="left side">
+                    {{{ leftsection }}}
+                </div>
+                <div class="right side">
+                    {{{ optionmenu }}}
+                </div>
+                <div class="generaldetails content d-flex flex-column"></div>
+                <h2 class="section-title pt-0 p-t-0 m-0">{{{title}}}</h2>
+                <div class='generalsectioninfo'>
+                    {{{availability}}}
+                    {{#fullsummary}}
+                    {{! <input type="checkbox" class="read-more-state" id="read-more-summary" /> }}
+                    <div class="read-more-target coursesummary" >{{{fullsummary}}}
+                    </div>
+                    <a id="readmorebtn" class="d-none readbtn">{{#str}} showmore, format_remuiformat{{/str}}</a>
+                    <a id="readlessbtn" class="d-none readbtn">{{#str}} showless, format_remuiformat{{/str}}</a>
+                    {{! <label for="read-more-summary" class=" text-primary small read-more-trigger"></label> }}
+                    {{/fullsummary}}
+                    <a class="text-muted" href="{{ editsetionurl }}"><span><i class="fa fa-cog font-size-20"
+                                aria-hidden="true"></i></span></a>
+                </div>
+            </div>
+            <div class="coursedetails">
+                <div class="details d-flex flex-column">
+                    {{!> format_remuiformat/course_progress }}
+                    <h3 class="m-0 activities-title">{{#str}}courseinformation,format_remuiformat{{/str}}</h3>
+                    <ul class="section-activities-summary">
+                        {{#activitylist}}
+                        <li class="item">{{ . }}</li>
+                        {{/activitylist}}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {{#activityexists}}
+        <div class="activities-wrapper d-flex flex-column">
+            <h4 class="activitieshead m-0">{{#str}} generalactivities, format_remuiformat{{/str}}</h4>
+            <div class="content">
+                <div class="summary"></div>
+                <ul class="img-text section general-section-activities  text-center yui3-dd-drop "
+                    data-draggroups="resource">
+                    {{#activities}}
+                        {{^isdelegatedsection}}
+                            <li class="activity {{{modulename}}} modtype_{{{modulename}}} d-flex flex-column justify-content-between  list-unstyled yui3-dd-drop"
+                                id="module-{{id}}" data-draggroups="resource">
+
+                                <div class="activityinstance p-0 m-0 d-flex h-100 flex-column">
+                                    <div class="title-activity-container text-break w-100 text-left ">
+                                        {{{title}}}
+                                    </div>
+                                    {{#modhiddenfromstudents}}
+                                        <div data-region="sectionbadges" class="sectionbadges d-flex align-items-center">
+                                            {{!> core_courseformat/local/content/section/badges }}
+                                            {{>format_remuiformat/edwbadges}}
+                                        </div>
+                                    {{/modhiddenfromstudents}}
+                                    {{#modstealth}}
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge badge-pill badge-warning">{{#str}}hiddenoncoursepage{{/str}}</span>
+                                    </div>
+                                    {{/modstealth}}
+                                    {{#summary}}
+                                    <div class="contentafterlink">
+                                        {{{summary}}}
+                                    </div>
+                                    {{/summary}}
+                                    <span class=""><span class="editing_move moodle-core-dragdrop-draghandle"
+                                        title="{{#str}} moveresource, format_remuiformat {{/str}}" tabindex="0"
+                                        data-draggroups="resource" role="button" data-sectionreturn="0"
+                                        style="cursor: move;">{{#pix}} i/move_2d,core {{/pix}}</span>
+                                    </span>
+                                </div>
+                                <div class="p-0 action-availstatus-wrapper">
+                                    {{#hasopenduedata}}
+                                    <div class="description text-left">
+                                        <div data-region="activity-dates" class="activity-dates small course-description-item">
+                                            <div class="description-inner">
+                                                {{#opendue}}
+                                                <div>
+                                                    <strong>{{label}}</strong> {{timestamp}}
+                                                </div>
+                                                {{/opendue}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{/hasopenduedata}}
+                                    {{{availstatus}}}
+                                    <div class="actions">
+                                        {{{completion}}}
+                                        {{{modicons}}}
+                                    </div>
+                                </div>
+
+                            </li>
+                        {{/isdelegatedsection}}
+                        {{#isdelegatedsection}}
+                            {{>format_remuiformat/card_section_summary_edit}}
+                        {{/isdelegatedsection}}
+                    {{/activities}}
+                </ul>
+            </div>
+        </div>
+        {{/activityexists}}
+        <div class="text-center showactivitywrapper">
+            <span class="showactivity text-primary show">
+                {{#str}}showmore, format_remuiformat{{/str}}
+            </span>
+        </div>
+        {{{addnewactivity}}}
+    </div>
+</li>

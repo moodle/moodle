@@ -1,0 +1,29 @@
+{
+    "name": "edwisercourseformat",
+    "version": "1.0.0",
+    "description": "Course Format with Cards and List layouts.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "globby": "^10.0.1",
+        "gulp-babel": "^8.0.0",
+        "gulp-cli": "^2.0.1",
+        "gulp-debug": "^4.0.0",
+        "gulp-shell": "^0.6.5",
+        "gulp-sourcemaps": "^2.6.5",
+        "gulp-util": "^3.0.8",
+        "package.json": "^2.0.1"
+    },
+    "devDependencies": {
+        "gulp": "^4.0.2",
+        "gulp-autoprefixer": "^5.0.0",
+        "gulp-clean": "^0.4.0",
+        "gulp-exec": "^5.0.0",
+        "gulp-minify": "^3.1.0",
+        "gulp-sass": "^4.0.2"
+    }
+}

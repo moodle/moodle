@@ -1,0 +1,2699 @@
+body#page-course-view-remuiformat {
+  /* hide borders from region main */
+  /* Boost 3.4 */
+  /* Boost 3.5 */
+  /* Boost 3.6 */
+  /* Fordson 3.7 */
+  /* RemUI 3.4, 3.5, 3.6 */
+  /* Hover effect only if Section is available. */
+}
+
+body#page-course-view-remuiformat .p-24 {
+  padding: 24px;
+}
+
+body#page-course-view-remuiformat .gap-16 {
+  gap: 16px;
+}
+
+body#page-course-view-remuiformat .fullwidth-grid-item {
+  grid-column: 1/-1;
+}
+
+body#page-course-view-remuiformat .flex-gap-8 {
+  gap: 8px;
+}
+
+body#page-course-view-remuiformat .flex-gap-16 {
+  gap: 16px;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-card .yui3-dd-proxy .section .toggle-icon {
+  border: 0;
+  background: transparent;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-card.all-section-format .section .single-card {
+  padding: 24px;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-card.single-section-format .activity-cards .actions {
+  top: 1rem;
+  right: 0.5rem;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-card.single-section-format .activity-cards .wdm-mod-name {
+  padding-right: 5rem;
+  margin-bottom: 1.5rem !important;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-card.single-section-format .activity.label {
+  grid-column: 1/-1;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-card.single-section-format .activity .title {
+  margin-bottom: 30px;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-card .dark .action-menu-trigger .btn.btn-icon:hover,
+body#page-course-view-remuiformat.editing .remui-format-card .dark .action-menu-trigger .btn.btn-icon:focus {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-card .dark .action-menu-trigger .text-muted .fa-cog, body#page-course-view-remuiformat.editing .remui-format-card .dark .action-menu-trigger .dropdown-toggle .icon {
+  color: #fff;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-card .dark .text-muted .fa-cog {
+  color: #fff;
+}
+
+body#page-course-view-remuiformat .sections .single-card-container {
+  margin-bottom: 28px;
+}
+
+@media (max-width: 1400px) {
+  body#page-course-view-remuiformat.site-menubar-unfold.path-course.editing .remui-format-card .single-card-container, body#page-course-view-remuiformat.site-menubar-unfold.path-course.pinaside .remui-format-card .single-card-container {
+    min-width: 50% !important;
+  }
+}
+
+@media only screen and (min-width: 1200px) and (max-width: 1400px) {
+  body#page-course-view-remuiformat.drawer-open-left #region-main.has-blocks .remui-card-format .general-section-activities li {
+    min-width: 50% !important;
+  }
+  body#page-course-view-remuiformat.drawer-open-left #region-main.has-blocks .remui-card-format .single-card-container {
+    min-width: 50% !important;
+  }
+  body#page-course-view-remuiformat.drawer-open-left #region-main.has-blocks .remui-card-format .generaldetails {
+    min-width: 100% !important;
+    order: 12;
+  }
+  body#page-course-view-remuiformat.drawer-open-left #region-main.has-blocks .remui-card-format .coursedetails {
+    min-width: 100% !important;
+    order: 1;
+  }
+}
+
+@media (max-width: 1200px) {
+  body#page-course-view-remuiformat.site-menubar-unfold.editing .remui-format-card .general-section-activities li, body#page-course-view-remuiformat.site-menubar-unfold.pinaside .remui-format-card .general-section-activities li {
+    min-width: 50% !important;
+  }
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+  body#page-course-view-remuiformat.drawer-open-left .remui-card-format .general-section-activities li,
+  body#page-course-view-remuiformat.drawer-open-left .remui-card-format .single-card-container {
+    min-width: 50% !important;
+  }
+  body#page-course-view-remuiformat.site-menubar-unfold.path-course.pinaside .remui-card-format .generaldetails {
+    order: 12;
+    min-width: 100%;
+  }
+  body#page-course-view-remuiformat.site-menubar-unfold.path-course.pinaside .remui-card-format .coursedetails {
+    order: 1;
+    min-width: 100%;
+    padding-bottom: 15px;
+  }
+  body#page-course-view-remuiformat.site-menubar-unfold.path-course.pinaside .remui-card-format .coursemainimagediv {
+    display: none !important;
+  }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  body#page-course-view-remuiformat.drawer-open-left .single-card-container {
+    min-width: 100% !important;
+  }
+}
+
+@media (max-width: 768px) {
+  body#page-course-view-remuiformat.path-course.site-menubar-unfold .remui-card-format .generaldetails,
+  body#page-course-view-remuiformat.path-course.site-menubar-unfold .remui-card-format .coursedetails {
+    min-width: 100% !important;
+  }
+}
+
+body#page-course-view-remuiformat .remui-format-card .availabilityinfo.isrestricted {
+  margin: 0px;
+  padding: 8px;
+  border-radius: 8px;
+  background-color: #EBF0F9;
+  font-size: 12px;
+  line-height: normal;
+  font-weight: 400;
+}
+
+body#page-course-view-remuiformat .remui-format-card .availabilityinfo.isrestricted ul {
+  padding-left: 1rem;
+}
+
+body#page-course-view-remuiformat .remui-format-card .availabilityinfo.isrestricted ul li {
+  margin-top: 4px;
+}
+
+body#page-course-view-remuiformat .remui-format-card .availabilityinfo.isrestricted strong {
+  font-size: 12px;
+  line-height: 15px;
+  font-weight: 600;
+}
+
+body#page-course-view-remuiformat .remui-format-card .availabilityinfo.isrestricted strong a {
+  font-size: 12px;
+  line-height: normal;
+  font-weight: 400;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .sections:not(.generalsection-container.sections) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+@media (min-width: 1440px) {
+  body#page-course-view-remuiformat .remui-format-card.all-section-format .sections:not(.generalsection-container.sections) {
+    grid-template-columns: repeat(auto-fill, minmax(302px, 302px));
+  }
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .sections:not(.generalsection-container.sections) .section:not(#section-0) {
+  border: unset;
+  border-radius: 8px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .sections:not(.generalsection-container.sections) .section:not(#section-0):hover {
+  box-shadow: 0px 13px 37px rgba(92, 107, 121, 0.1);
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .sections:not(.generalsection-container.sections) .section:not(#section-0) .content .yui3-dd-drop {
+  display: none;
+}
+
+@media (max-width: 1200px) {
+  body#page-course-view-remuiformat .remui-format-card.all-section-format .single-card-container {
+    min-width: 50% !important;
+  }
+}
+
+@media (min-width: 768px) {
+  body#page-course-view-remuiformat .remui-format-card.all-section-format .general-section-activities .activity > div {
+    width: 100%;
+  }
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format #changenumsections.section {
+  flex: unset !important;
+  padding: unset !important;
+  min-height: 340px;
+  max-width: unset !important;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .sectionbadges [data-type="highlighted"] {
+  display: none;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .highlight {
+  position: absolute;
+  top: -1px;
+  right: 16px;
+  width: 0;
+  height: 0;
+  border-left: 18px solid;
+  border-right: 18px solid;
+  border-top: 26px solid;
+  border-bottom: 16px solid;
+  border-bottom-color: transparent;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .right.side {
+  display: flex;
+  margin-left: auto;
+  margin: 0px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .right.side .icon.spacer {
+  display: none;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .sectionname,
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .sectionname a {
+  color: #313848;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card {
+  background-color: #fff;
+  border: 1px solid #EBF0F9;
+  border-radius: inherit;
+  padding: 24px;
+  gap: 16px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card .content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card .content .section-activities-summary .item {
+  font-size: 0.8rem;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card {
+  min-height: 120px;
+  height: 100%;
+  width: 100%;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card.dark .left.side,
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card.dark .sectionname,
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card.dark .sectionname *,
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card.dark .wdm-section-summary *,
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card.dark .section-activities-summary {
+  color: #fff !important;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card.dark .sectionname .ignoredirty, body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card.dark .sectionname .ignoredirty.form-control, body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card.dark .sectionname .editinstructions {
+  color: #313848 !important;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card.dark .sectionname .badge {
+  color: #313848;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card.dark .sectionname .badge-primary {
+  color: white;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card.dark .left.side .section-handle .icon {
+  color: #fff;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card.dark .progress-bar-warpper .progress-text {
+  color: #fff;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card.dark .right.side .wdm-add-new-section {
+  color: #fff;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .single-card:hover .progress-text {
+  visibility: visible;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .section-header {
+  gap: 16px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .section-header a {
+  text-decoration: none;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .section-action-container {
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .section-action-container .progress-text {
+  align-self: center;
+  color: #4C5A73;
+  font-size: 12px;
+  line-height: 15px;
+  font-weight: 600;
+}
+
+@media (min-width: 480px) and (max-width: 767px) {
+  body#page-course-view-remuiformat .remui-format-card.all-section-format .section .section-action-container .progress-text {
+    padding: 5px 0 0 13px !important;
+  }
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .section-activities-summary {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: 100%;
+  color: #4C5A73;
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 600;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .section-activities-summary .item {
+  float: left;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .wdm-section-summary .no-overflow {
+  margin: 0;
+  width: 100%;
+  color: #4C5A73;
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+}
+
+body#page-course-view-remuiformat .remui-format-card.all-section-format .section .wdm-section-summary .no-overflow p {
+  margin: 0px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .section.main {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .sections {
+  width: 100%;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .sections .section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .sections .section .section-details {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #D5DDEA;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .sections .section .section-details div.no-overflow {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+  color: #4C5A73;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .sections .section .section-details div.no-overflow img {
+  border-radius: 8px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .sections .section .section-details .general-single-card {
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  body#page-course-view-remuiformat .remui-format-card.single-section-format .sections .section .section-details .general-single-card {
+    flex-direction: column;
+    gap: 32px;
+  }
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .sections .section .section-details .general-single-card .header-progresbar-wrapper {
+  gap: 16px;
+  flex-direction: column;
+}
+
+@media (max-width: 900px) {
+  body#page-course-view-remuiformat .remui-format-card.single-section-format .sections .section .section-details .general-single-card .header-progresbar-wrapper {
+    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  body#page-course-view-remuiformat .remui-format-card.single-section-format .sections .section .section-details .general-single-card .header-progresbar-wrapper {
+    gap: 16px;
+  }
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .sections .section .section-details .general-single-card .header-progresbar-wrapper .section-title {
+  gap: 8px;
+  color: #313848;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+}
+
+@media (max-width: 568px) {
+  body#page-course-view-remuiformat .remui-format-card.single-section-format .sections .section .section-details .general-single-card .header-progresbar-wrapper .progress-bar-warpper {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .sections .section .section-details .general-single-card .header-progresbar-wrapper .progress-bar-warpper .progress {
+  width: 230px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .sections .section.hide {
+  display: none !important;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+  padding: 0 !important;
+  width: 100%;
+  margin: 0;
+  position: relative;
+}
+
+@media (min-width: 1200px) {
+  body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards,
+  body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section {
+    grid-template-columns: repeat(auto-fill, minmax(302px, 1fr));
+  }
+}
+
+@media (max-width: 425px) {
+  body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards,
+  body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity {
+  padding: 8px;
+  display: flex;
+  transition: all 0.5s ease;
+  padding: 0px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity:hover,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity:hover {
+  box-shadow: 0px 13px 37px rgba(92, 107, 121, 0.1);
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .activitytitle,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .activitytitle {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 26px !important;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .activitytitle .media-body .text-font-small.small,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .activitytitle .media-body .text-font-small.small {
+  color: #4C5A73;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  display: none;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .cm_action_menu,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .cm_action_menu {
+  position: relative !important;
+  top: 0 !important;
+  right: 0 !important;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .autocompletion img,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .autocompletion img {
+  width: 18px;
+  height: 18px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity:hover,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity:hover {
+  background: transparent !important;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .single-card,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .single-card {
+  min-height: 152px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .single-card .single-card-child-wrapper,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .single-card .single-card-child-wrapper {
+  gap: 12px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity.modtype_label .single-card,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity.modtype_label .single-card {
+  min-height: unset;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .editing_move,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .editing_move {
+  position: relative;
+  width: -webkit-fit-content;
+  width: fit-content;
+  top: -15px;
+  left: -15px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity > div,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  border-radius: 8px;
+  background-color: white;
+  border: 1px solid #EBF0F9;
+  position: relative;
+  padding: 24px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .activity-content,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .activity-content {
+  width: 100%;
+  overflow: auto;
+  color: #4C5A73;
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 400;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .activity-content .contentwithoutlink,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .activity-content .contentwithoutlink {
+  padding: 0;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .completion-container,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .completion-container {
+  margin: 0px !important;
+  padding: 0px !important;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .completion-container .automatic-completion-conditions,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .completion-container .automatic-completion-conditions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .completion-container .automatic-completion-conditions .badge,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .completion-container .automatic-completion-conditions .badge {
+  width: -webkit-fit-content;
+  width: fit-content;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .wdm-mod-name,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .wdm-mod-name {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .title.nosummary > a,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .title.nosummary div,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .title.nosummary > a,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .title.nosummary div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  text-decoration: none;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .title.nosummary > a .media-body,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .title.nosummary div .media-body,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .title.nosummary > a .media-body,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .title.nosummary div .media-body {
+  gap: 4px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .title .inplaceeditable,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .title .inplaceeditable {
+  display: block;
+  width: 100%;
+  text-align: start;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .title .inplaceeditable .activityicon,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .title .inplaceeditable .activityicon {
+  display: block;
+  margin: 20px auto;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .toggle-row-column,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .toggle-row-column {
+  padding: 6px 5px;
+  width: 33px;
+  border: 1px solid #e4eaec;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .toggle-row-column img.icon,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .toggle-row-column img.icon {
+  margin: 0;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity.col-activity .toggle-row-column .type-col,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity.col-activity .toggle-row-column .type-col {
+  display: none;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity.row-activity .toggle-row-column .type-row,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity.row-activity .toggle-row-column .type-row {
+  display: none;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .completion-container.manual-completion,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .completion-container.manual-completion {
+  width: 100%;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .completion-container.manual-completion .completion-info .btn, body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .completion-container.manual-completion [data-region="completion-info"] .btn,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .completion-container.manual-completion .completion-info .btn,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .completion-container.manual-completion [data-region="completion-info"] .btn {
+  width: 100%;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .completion-container.manual-completion .filler,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .completion-container.manual-completion .filler {
+  display: none;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .moodle-actionmenu .dropdown-menu-right .editing_moveright,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity .moodle-actionmenu .dropdown-menu-right .editing_moveleft,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .moodle-actionmenu .dropdown-menu-right .editing_moveright,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity .moodle-actionmenu .dropdown-menu-right .editing_moveleft {
+  display: none;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity.modtype_label,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity.modtype_label {
+  grid-column: 1/-1 !important;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity.modtype_label .single-card,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity.modtype_label .single-card {
+  background-color: transparent;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity.modtype_label .single-card .toggle-row-column,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity.modtype_label .single-card .toggle-row-column {
+  display: none;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity.modtype_label .single-card .completion-info,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity.modtype_label .single-card [data-region="completion-info"],
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity.modtype_label .single-card .completion-info,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity.modtype_label .single-card [data-region="completion-info"] {
+  display: flex;
+  justify-content: flex-end;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity.modtype_label .single-card .completion-info .btn,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .activity.modtype_label .single-card [data-region="completion-info"] .btn,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity.modtype_label .single-card .completion-info .btn,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .activity.modtype_label .single-card [data-region="completion-info"] .btn {
+  width: -webkit-fit-content;
+  width: fit-content;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .sectionbadges [data-type="highlighted"],
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .sectionbadges [data-type="highlighted"] {
+  display: none;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .highlight,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .highlight {
+  position: absolute;
+  top: -1px;
+  right: 16px;
+  width: 0;
+  height: 0;
+  border-left: 18px solid;
+  border-right: 18px solid;
+  border-top: 26px solid;
+  border-bottom: 16px solid;
+  border-bottom-color: transparent;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .right.side,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .right.side {
+  display: flex;
+  margin-left: auto;
+  margin: 0px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .right.side .icon.spacer,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .right.side .icon.spacer {
+  display: none;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .sectionname,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .sectionname a,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .sectionname,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .sectionname a {
+  color: #313848;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card {
+  background-color: #fff;
+  border: 1px solid #EBF0F9;
+  border-radius: inherit;
+  padding: 24px;
+  gap: 16px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card .content,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card .content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card .content .section-activities-summary .item,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card .content .section-activities-summary .item {
+  font-size: 0.8rem;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card {
+  min-height: 120px;
+  height: 100%;
+  width: 100%;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card.dark .left.side,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card.dark .sectionname,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card.dark .sectionname *,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card.dark .wdm-section-summary *,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card.dark .section-activities-summary,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card.dark .left.side,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card.dark .sectionname,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card.dark .sectionname *,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card.dark .wdm-section-summary *,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card.dark .section-activities-summary {
+  color: #fff !important;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card.dark .sectionname .ignoredirty, body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card.dark .sectionname .ignoredirty.form-control, body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card.dark .sectionname .editinstructions,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card.dark .sectionname .ignoredirty,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card.dark .sectionname .ignoredirty.form-control,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card.dark .sectionname .editinstructions {
+  color: #313848 !important;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card.dark .sectionname .badge,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card.dark .sectionname .badge {
+  color: #313848;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card.dark .sectionname .badge-primary,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card.dark .sectionname .badge-primary {
+  color: white;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card.dark .left.side .section-handle .icon,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card.dark .left.side .section-handle .icon {
+  color: #fff;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card.dark .progress-bar-warpper .progress-text,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card.dark .progress-bar-warpper .progress-text {
+  color: #fff;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card.dark .right.side .wdm-add-new-section,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card.dark .right.side .wdm-add-new-section {
+  color: #fff;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card:hover .progress-text,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card:hover .progress-text {
+  visibility: visible;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .section-header,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .section-header {
+  gap: 16px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .section-header a,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .section-header a {
+  text-decoration: none;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .section-action-container,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .section-action-container {
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .section-action-container .progress-text,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .section-action-container .progress-text {
+  align-self: center;
+  color: #4C5A73;
+  font-size: 12px;
+  line-height: 15px;
+  font-weight: 600;
+}
+
+@media (min-width: 480px) and (max-width: 767px) {
+  body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .section-action-container .progress-text,
+  body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .section-action-container .progress-text {
+    padding: 5px 0 0 13px !important;
+  }
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .section-activities-summary,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .section-activities-summary {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: 100%;
+  color: #4C5A73;
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 600;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .section-activities-summary .item,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .section-activities-summary .item {
+  float: left;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .wdm-section-summary .no-overflow,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .wdm-section-summary .no-overflow {
+  margin: 0;
+  width: 100%;
+  color: #4C5A73;
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .wdm-section-summary .no-overflow p,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .wdm-section-summary .no-overflow p {
+  margin: 0px;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section {
+  background-color: #fff;
+  border-radius: 8px;
+  border-color: #EBF0F9;
+  border-width: 1px;
+  border-style: solid;
+}
+
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards .section .single-card,
+body#page-course-view-remuiformat .remui-format-card.single-section-format .activity-cards.section .section .single-card {
+  border: unset;
+}
+
+body#page-course-view-remuiformat .remui-format-card .contentwithoutlink {
+  padding: 0;
+}
+
+body#page-course-view-remuiformat .remui-format-card .single-card a:hover {
+  text-decoration: none;
+}
+
+body#page-course-view-remuiformat:not(.limitedwidth) .remui-format-card.all-section-format .showhideactivity .general-section-activities li:nth-child(n+5) {
+  display: none !important;
+}
+
+@media only screen and (max-width: 1439px) {
+  body#page-course-view-remuiformat:not(.limitedwidth) .remui-format-card.all-section-format .showhideactivity .general-section-activities li:nth-child(n+5) {
+    display: none !important;
+  }
+}
+
+@media only screen and (max-width: 1199px) {
+  body#page-course-view-remuiformat:not(.limitedwidth) .remui-format-card.all-section-format .showhideactivity .general-section-activities li:nth-child(n+4) {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1440px) {
+  body#page-course-view-remuiformat.limitedwidth .remui-format-card.all-section-format .sections {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
+  }
+}
+
+@media (min-width: 1440px) {
+  body#page-course-view-remuiformat.limitedwidth .remui-format-card.all-section-format .general-section-activities {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
+  }
+}
+
+body#page-course-view-remuiformat.limitedwidth .remui-format-card.all-section-format .showhideactivity .general-section-activities li:nth-child(n+4) {
+  display: none !important;
+}
+
+body#page-course-view-remuiformat.limitedwidth .activity-cards,
+body#page-course-view-remuiformat.limitedwidth .activity-cards.section {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
+}
+
+@media only screen and (max-width: 1023px) {
+  body#page-course-view-remuiformat .remui-format-card.all-section-format .showhideactivity .general-section-activities li:nth-child(n+3) {
+    display: none !important;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  body#page-course-view-remuiformat .remui-format-card.all-section-format .showhideactivity .general-section-activities li:nth-child(n+3) {
+    display: none !important;
+  }
+}
+
+@media only screen and (max-width: 550px) {
+  body#page-course-view-remuiformat .remui-format-card.all-section-format .showhideactivity .general-section-activities li:nth-child(n+2) {
+    display: none !important;
+  }
+}
+
+body#page-course-view-remuiformat .frmt-pt-50 {
+  padding-top: 50%;
+}
+
+body#page-course-view-remuiformat .section.main:not(.course-section) .activity .availabilityinfo,
+body#page-course-view-remuiformat .section.main:not(.course-section) .activity .contentafterlink {
+  margin-top: 0px;
+  margin-left: 0px;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-list .summary {
+  padding-top: 8px;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-list .sections .section .side {
+  margin: 0;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-list .sections .section .side.left {
+  align-items: center;
+}
+
+@media (max-width: 1200px) {
+  body#page-course-view-remuiformat.editing .remui-format-list .sections .section .side.left {
+    flex-direction: column;
+    align-items: start;
+  }
+}
+
+body#page-course-view-remuiformat.editing .remui-format-list .sections .section .side.left .section-handle {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-list .sections .section .side.right {
+  gap: 8px;
+  justify-content: space-between;
+}
+
+@media (max-width: 900px) {
+  body#page-course-view-remuiformat.editing .remui-format-list .sections .section .side.right {
+    width: 100%;
+  }
+}
+
+body#page-course-view-remuiformat.editing .remui-format-list .sections .section .sectionname {
+  display: flex;
+  align-items: center;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-list .sections .section .card-title .fa-angle-up,
+body#page-course-view-remuiformat.editing .remui-format-list .sections .section .card-title .fa-angle-down {
+  margin-right: 2%;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-list .sections .section .card-title .fa-angle-up:hover,
+body#page-course-view-remuiformat.editing .remui-format-list .sections .section .card-title .fa-angle-down:hover {
+  cursor: pointer;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-list .sections #changenumsections {
+  width: 100%;
+}
+
+body#page-course-view-remuiformat.editing .remui-format-list .section_availability .section_availability,
+body#page-course-view-remuiformat.editing .remui-format-list .section_availability.course-description-item {
+  padding: 0px 24px 24px 24px;
+}
+
+body#page-course-view-remuiformat .modtype_label {
+  box-shadow: unset !important;
+  background-color: unset;
+  border: 0px !important;
+}
+
+body#page-course-view-remuiformat .modtype_label .single-card {
+  border: 0 !important;
+}
+
+body#page-course-view-remuiformat .modtype_label .contentwithoutlink {
+  max-height: 100%;
+  padding: 0px;
+}
+
+body#page-course-view-remuiformat .modtype_label .activity-badges .badge {
+  white-space: nowrap !important;
+}
+
+body#page-course-view-remuiformat:not(.editing) .remui-format-list .sections .section .side.left {
+  align-items: center;
+  gap: 4px;
+}
+
+@media (max-width: 900px) {
+  body#page-course-view-remuiformat:not(.editing) .remui-format-list .sections .section .side.left {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+body#page-course-view-remuiformat:not(.editing) .remui-format-list .sections .section .side.right {
+  margin-top: 0;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  body#page-course-view-remuiformat:not(.editing) .remui-format-list .sections .section .side.right {
+    width: 100%;
+  }
+}
+
+body#page-course-view-remuiformat:not(.editing) .remui-format-list .sections .section .sectionname .panel-title .float-right {
+  padding-right: 10px;
+}
+
+body#page-course-view-remuiformat:not(.editing) .remui-format-list .sections .section .availability-summary-wrapper:not(:has(:first-child)) {
+  display: none;
+}
+
+body#page-course-view-remuiformat:not(.editing) .remui-format-list .sections .section .availability-summary-wrapper:has(:nth-child(2)) .summary {
+  margin-top: 16px;
+}
+
+body#page-course-view-remuiformat:not(.editing) .remui-format-list.one-section-format .sections .section .sectionname .panel-title .float-right {
+  padding-right: 0;
+}
+
+body#page-course-view-remuiformat .remui-format-list .availabilityinfo.isrestricted {
+  margin: 0px;
+  padding: 8px;
+  border-radius: 8px;
+  background-color: #EBF0F9;
+  font-size: 12px;
+  line-height: normal;
+  font-weight: 400;
+}
+
+body#page-course-view-remuiformat .remui-format-list .availabilityinfo.isrestricted .description-inner ul,
+body#page-course-view-remuiformat .remui-format-list .availabilityinfo.isrestricted .expanded-content ul {
+  padding-left: 1rem;
+}
+
+body#page-course-view-remuiformat .remui-format-list .availabilityinfo.isrestricted .description-inner ul li,
+body#page-course-view-remuiformat .remui-format-list .availabilityinfo.isrestricted .expanded-content ul li {
+  margin-top: 4px;
+  margin-bottom: unset !important;
+}
+
+body#page-course-view-remuiformat .remui-format-list .availabilityinfo.isrestricted strong {
+  font-size: 12px;
+  line-height: 15px;
+  font-weight: 600;
+}
+
+body#page-course-view-remuiformat .remui-format-list .availabilityinfo.isrestricted strong a {
+  font-size: 12px;
+  line-height: normal;
+  font-weight: 400;
+}
+
+body#page-course-view-remuiformat .remui-format-list .summary, body#page-course-view-remuiformat .remui-format-list .course-section-summary-wrapper {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  color: #4C5A73;
+  gap: 16px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .summary .no-overflow p, body#page-course-view-remuiformat .remui-format-list .course-section-summary-wrapper .no-overflow p {
+  margin: 0;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section {
+  width: 100%;
+}
+
+@media (max-width: 568px) {
+  body#page-course-view-remuiformat .remui-format-list .sections .section .side.left {
+    gap: 24px;
+  }
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section:not(#section-0) {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #EBF0F9;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section.collapsed .summary.card-text {
+  display: none;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section .content .panel-title,
+body#page-course-view-remuiformat .remui-format-list .sections .section .content h3 a {
+  margin: 0px;
+  color: #313848;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section .content .course-section-summary-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section .content .course-section-summary-wrapper .no-overflow {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+  color: #4C5A73;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section .course-section-header {
+  justify-content: space-between;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  body#page-course-view-remuiformat .remui-format-list .sections .section .course-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section .course-section-header .name-progress-wrapper {
+  gap: 16px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section .course-section-header .sectionheading {
+  color: #313848;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section .course-section-header .header-progresbar-wrapper {
+  gap: 16px;
+  flex-direction: column;
+}
+
+@media (max-width: 900px) {
+  body#page-course-view-remuiformat .remui-format-list .sections .section .course-section-header .header-progresbar-wrapper {
+    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  body#page-course-view-remuiformat .remui-format-list .sections .section .course-section-header .header-progresbar-wrapper {
+    gap: 16px;
+  }
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section .course-section-header .header-progresbar-wrapper .section-title {
+  gap: 8px;
+  color: #313848;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+}
+
+@media (max-width: 568px) {
+  body#page-course-view-remuiformat .remui-format-list .sections .section .course-section-header .header-progresbar-wrapper .progress-bar-warpper {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+  body#page-course-view-remuiformat .remui-format-list .sections .section .course-section-header .header-progresbar-wrapper .progress-bar-warpper .progress {
+    width: 230px;
+  }
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section .highlight {
+  position: absolute;
+  top: 0;
+  width: 3px;
+  bottom: 0;
+  left: 0;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section .card-footer {
+  background: transparent;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section {
+  padding: 0;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section .mod-indent-1 {
+  width: 35px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section .mod-indent-2 {
+  width: 70px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section .mod-indent-3 {
+  width: 105px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section .mod-indent-4 {
+  width: 140px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section .mod-indent-5 {
+  width: 175px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section .mod-indent-6 {
+  width: 210px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section .mod-indent-7 {
+  width: 245px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section .mod-indent-8 {
+  width: 280px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section .mod-indent-9 {
+  width: 315px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section .mod-indent-10 {
+  width: 350px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section .mod-indent-11 {
+  width: 385px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section .mod-indent-12 {
+  width: 420px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section .mod-indent-13 {
+  width: 455px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section .mod-indent-14 {
+  width: 490px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section .mod-indent-15 {
+  width: 525px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section ul.section .mod-indent-16 {
+  width: 560px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section .right.side {
+  width: -webkit-max-content;
+  width: max-content;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section .right.side .wdm-add-new-section {
+  white-space: nowrap;
+}
+
+body#page-course-view-remuiformat .remui-format-list .sections .section .section_action_menu.ml-auto {
+  margin: unset !important;
+}
+
+body#page-course-view-remuiformat .remui-format-list.all-section-format ul.sections li.section .toggle-icon {
+  cursor: pointer;
+  -webkit-transform: rotate(-90deg);
+          transform: rotate(-90deg);
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+body#page-course-view-remuiformat .remui-format-list.all-section-format ul.sections li.section .toggle-icon::before {
+  display: flex;
+  transition: all 0.5s ease;
+  font-size: 1.2rem;
+}
+
+body#page-course-view-remuiformat .remui-format-list.all-section-format ul.sections li.section.collapsed .toggle-icon::before {
+  -webkit-transform: rotate(180deg);
+          transform: rotate(180deg);
+}
+
+body#page-course-view-remuiformat .remui-format-list.all-section-format ul.sections li.section .content ul.section {
+  border: unset !important;
+  border-radius: unset !important;
+  border-top: 1px solid #EBF0F9 !important;
+}
+
+body#page-course-view-remuiformat .remui-format-list.all-section-format ul.sections li.section .content ul.section .activity {
+  padding: 0px;
+}
+
+body#page-course-view-remuiformat .remui-format-list.all-section-format ul.sections li.section .content ul.section .activity .activitytitle {
+  gap: 24px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list,
+body#page-course-view-remuiformat .remui-format-list .card-footer {
+  padding: unset;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section,
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section {
+  padding: 24px !important;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section li:not(:last-child),
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section li:not(:last-child) {
+  margin-bottom: 16px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section li:has(.divider):not(:has(.divider-plus)),
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section li:has(.divider):not(:has(.divider-plus)) {
+  margin-bottom: 0px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity,
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity {
+  border-top: 0;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity .activitytitle,
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity .activitytitle {
+  gap: 24px;
+}
+
+@media (max-width: 568px) {
+  body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity .activitytitle,
+  body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity .activitytitle {
+    flex-direction: column;
+  }
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity .activity-info.mt-1,
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity .activity-info.mt-1 {
+  margin-left: 74px;
+  padding-left: 0;
+}
+
+@media (max-width: 768px) {
+  body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity .activity-info.mt-1,
+  body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity .activity-info.mt-1 {
+    margin-top: 24px !important;
+    margin-left: 0;
+  }
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity .activity-info.mt-1 .activity-information .automatic-completion-conditions,
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity .activity-info.mt-1 .activity-information .automatic-completion-conditions {
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 8px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity .activity-basis:has([data-region="completion-info"]),
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity .activity-basis:has([data-region="completion-info"]) {
+  margin-bottom: 16px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity .activity-basis > div.flex-column,
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity .activity-basis > div.flex-column {
+  flex-direction: column !important;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity .description .availabilityinfo,
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity .description .availabilityinfo {
+  margin: unset;
+  margin-top: 8px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity.indented:hover,
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity.indented:hover {
+  background-color: unset !important;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity.indented .cm_action_menu.actions .section-cm-edit-actions .editing_moveright,
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity.indented .cm_action_menu.actions .section-cm-edit-actions .editing_moveright {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity .activity-item:not(:has(.activity-grid)) > *:not(.activity-basis):not(.editing_move),
+  body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity .activity-item .activity-grid > *:not(.activity-instance):not(.activityiconcontainer):not(.activity-actions),
+  body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity .activity-item:not(:has(.activity-grid)) > *:not(.activity-basis):not(.editing_move),
+  body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity .activity-item .activity-grid > *:not(.activity-instance):not(.activityiconcontainer):not(.activity-actions) {
+    margin-left: 74px;
+  }
+}
+
+@media (max-width: 768px) {
+  body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity .activity-item .activity-grid > .activity-instance,
+  body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity .activity-item .activity-grid > .activityiconcontainer,
+  body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity .activity-item .activity-grid > .activity-instance,
+  body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity .activity-item .activity-grid > .activityiconcontainer {
+    margin-bottom: 8px !important;
+  }
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity .activity-item:not(:has(.activity-grid)) > *:has(.badge),
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity .activity-item .activity-grid > *:has(.badge),
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity .activity-item:not(:has(.activity-grid)) > *:has(.badge),
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity .activity-item .activity-grid > *:has(.badge) {
+  margin-bottom: 16px !important;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity.modtype_label .activity-item > *,
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity.modtype_label .activity-item > * {
+  margin-left: unset !important;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity.modtype_subsection .activity-altcontent,
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity.modtype_subsection .activity-altcontent {
+  margin-left: 0px !important;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activities-list ul.section .activity.modtype_subsection .activity-altcontent .section,
+body#page-course-view-remuiformat .remui-format-list .card-footer ul.section .activity.modtype_subsection .activity-altcontent .section {
+  border: unset !important;
+  border-radius: unset !important;
+}
+
+body#page-course-view-remuiformat .remui-format-list.one-section-format.all-section .sections .section:not(#section-0) ul.section {
+  display: none;
+}
+
+body#page-course-view-remuiformat .remui-format-list.one-section-format.all-section .sections .section:not(#section-0) .content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px;
+}
+
+body#page-course-view-remuiformat .remui-format-list.one-section-format .one-section-format-details-page-wrapper .section .course-section-summary-wrapper {
+  padding: 24px;
+}
+
+body#page-course-view-remuiformat .remui-format-list.one-section-format .activities-list ul.section {
+  margin: 0;
+  border: unset !important;
+  border-radius: unset !important;
+  border-top: 1px solid #EBF0F9 !important;
+}
+
+body#page-course-view-remuiformat .remui-format-list.one-section-format .activities-list ul.section .activity {
+  padding: 0px !important;
+}
+
+body#page-course-view-remuiformat .remui-format-list.one-section-format .activities-list ul.section .activity:last-child {
+  border-bottom: 0 !important;
+}
+
+body#page-course-view-remuiformat .remui-format-list.one-section-format .activities-list .section-modchooser {
+  margin: 0px;
+}
+
+body#page-course-view-remuiformat .remui-format-list.one-section-format .activities-list .section-modchooser.mb-3 {
+  margin-bottom: 0px !important;
+}
+
+body#page-course-view-remuiformat .remui-format-list .section_availability .section_availability,
+body#page-course-view-remuiformat .remui-format-list .section_availability.course-description-item {
+  color: #4C5A73;
+  padding-top: 2px;
+  font-size: 12px;
+  line-height: 15px;
+  font-weight: 400;
+}
+
+body#page-course-view-remuiformat .remui-format-list .section_availability .section_availability .availabilityinfo,
+body#page-course-view-remuiformat .remui-format-list .section_availability.course-description-item .availabilityinfo {
+  background-color: #EBF0F9;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .section_availability .section_availability .availabilityinfo ul li,
+body#page-course-view-remuiformat .remui-format-list .section_availability.course-description-item .availabilityinfo ul li {
+  margin-top: 4px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .section_availability .section_availability strong,
+body#page-course-view-remuiformat .remui-format-list .section_availability.course-description-item strong {
+  font-size: 12px;
+  line-height: normal;
+  font-weight: 600;
+}
+
+body#page-course-view-remuiformat .remui-format-list .section_availability .section_availability strong a,
+body#page-course-view-remuiformat .remui-format-list .section_availability.course-description-item strong a {
+  font-size: 12px;
+  line-height: normal;
+  font-weight: 400;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activity-item .activity-grid {
+  grid-template-rows: 1fr repeat(6, -webkit-min-content);
+  grid-template-rows: 1fr repeat(6, min-content);
+  grid-template-areas: "icon name groupmode completion actions"
+ "icon visibility groupmode completion actions"
+ "icon visibility groupmode completion actions"
+ "dates dates dates dates dates"
+ "altcontent altcontent altcontent altcontent altcontent"
+ "afterlink afterlink afterlink afterlink afterlink"
+ "availability availability availability availability availability";
+}
+
+body#page-course-view-remuiformat .remui-format-list .activity-item .activity-grid .activity-dates {
+  margin-right: 0 !important;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activity-item .activity-grid .activity-instance:not(:has(.activityiconcontainer)) {
+  margin-left: 24px;
+}
+
+body#page-course-view-remuiformat .remui-format-list .activity-item .activity-grid .activity-instance:not(:has(.activityiconcontainer)) ~ .activity-badges {
+  margin-left: 24px !important;
+}
+
+body#page-course-view-remuiformat .text-clamp {
+  display: -webkit-box !important;
+  /* autoprefixer: off */
+  -webkit-box-orient: vertical;
+  /* autoprefixer: on */
+  overflow: hidden !important;
+}
+
+body#page-course-view-remuiformat .text-clamp.text-clamp-1 {
+  -webkit-line-clamp: 1;
+}
+
+body#page-course-view-remuiformat .text-clamp.text-clamp-2 {
+  -webkit-line-clamp: 2;
+}
+
+body#page-course-view-remuiformat .text-clamp.text-clamp-3 {
+  -webkit-line-clamp: 3;
+}
+
+body#page-course-view-remuiformat .text-clamp.text-clamp-4 {
+  -webkit-line-clamp: 4;
+}
+
+body#page-course-view-remuiformat .text-clamp.text-clamp-5 {
+  -webkit-line-clamp: 5;
+}
+
+body#page-course-view-remuiformat .row {
+  margin: unset;
+}
+
+body#page-course-view-remuiformat.editing .general-section-activities .cm_action_menu.actions .section-cm-edit-actions .editing_moveright, body#page-course-view-remuiformat.editing .general-section-activities .cm_action_menu.actions .section-cm-edit-actions .editing_moveleft {
+  display: none;
+}
+
+body#page-course-view-remuiformat #region-top-blocks.pb-3, body#page-course-view-remuiformat #region-top-blocks.py-3 {
+  padding: 0px !important;
+}
+
+body#page-course-view-remuiformat .secondary-navigation {
+  padding: 0px;
+  margin-bottom: 24px;
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 336px;
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 100%;
+  width: 100%;
+}
+
+@media (max-width: 568px) {
+  body#page-course-view-remuiformat header.hasbackground.design-1 {
+    min-height: 445px;
+  }
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .dashboard-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (max-width: 568px) {
+  body#page-course-view-remuiformat header.hasbackground.design-1 .dashboard-bar-wrapper {
+    gap: 8px;
+  }
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-main-section .category {
+  margin-bottom: 8px;
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-main-section .category .badge {
+  padding: 4px 6px;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #37be71;
+  font-size: 12px;
+  line-height: 15px;
+  font-weight: 400;
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px 24px;
+}
+
+@media (max-width: 568px) {
+  body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section {
+    align-items: start;
+    flex-direction: column;
+  }
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper {
+  display: flex;
+  gap: 12px 24px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+@media (max-width: 568px) {
+  body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper {
+    gap: 16px;
+  }
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper .edw-ratings-wrapper {
+  color: #fff;
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper .edw-ratings-wrapper .inner {
+  flex-direction: row-reverse;
+  gap: 8px;
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper .edw-ratings-wrapper .avgrating {
+  order: 2;
+  margin-left: 4px;
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper .edw-ratings-wrapper .rnr-link {
+  padding-left: 2px;
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper .edw-ratings-wrapper .avgrating, body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper .edw-ratings-wrapper .rnr-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper .stat-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper .instructor-info {
+  color: #fff;
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper .instructor-info .stat {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 600;
+  color: #313848;
+  padding: 4px;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper .instructor-info .userpicture,
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper .instructor-info .userinitials {
+  width: 24px;
+  height: 24px;
+  border: unset;
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper .instructor-info .userinitials {
+  font-size: 12px;
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper .instructor-info .view-user-profile-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper .instructor-info .titles {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+  color: #fff;
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .rating-instructor-wrapper .instructor-info .view-all-instructorslink {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 600;
+  color: #fff;
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .progress-resume-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 24px 40px;
+}
+
+@media (max-width: 1200px) {
+  body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .progress-resume-wrapper {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 568px) {
+  body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .progress-resume-wrapper {
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    width: 100%;
+  }
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .progress-resume-wrapper .progressbar-text-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #fff;
+  font-size: 12px;
+  line-height: 15px;
+  font-weight: 400;
+}
+
+@media (max-width: 568px) {
+  body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .progress-resume-wrapper .progressbar-text-wrapper {
+    width: 100%;
+  }
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .progress-resume-wrapper .progress {
+  min-width: 230px;
+  height: 7px !important;
+}
+
+@media (max-width: 568px) {
+  body#page-course-view-remuiformat header.hasbackground.design-1 .header-sub-section .progress-resume-wrapper .progress {
+    min-width: unset;
+  }
+}
+
+body#page-course-view-remuiformat header.hasbackground.design-1 .header-heading {
+  color: white;
+}
+
+body#page-course-view-remuiformat .summary-collapsed {
+  max-height: 300px;
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, #D9D9D9 51.56%, rgba(217, 217, 217, 0) 100%);
+}
+
+body#page-course-view-remuiformat .progress-bar-warpper {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+}
+
+@media (max-width: 568px) {
+  body#page-course-view-remuiformat .progress-bar-warpper {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+}
+
+body#page-course-view-remuiformat .progress-bar-warpper .progress {
+  height: 7px !important;
+  margin: 0px;
+  width: 230px;
+}
+
+@media (max-width: 568px) {
+  body#page-course-view-remuiformat .progress-bar-warpper .progress {
+    width: 100%;
+  }
+}
+
+body#page-course-view-remuiformat .progress-bar-warpper .progress-text {
+  color: #4C5A73;
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 15px;
+  font-weight: 600;
+}
+
+body#page-course-view-remuiformat .card-section-rightnav,
+body#page-course-view-remuiformat .card-section-leftnav {
+  background-color: #0051F9;
+  border-radius: 5px;
+  height: -webkit-fit-content;
+  height: fit-content;
+}
+
+body#page-course-view-remuiformat .card-section-rightnav a,
+body#page-course-view-remuiformat .card-section-leftnav a {
+  color: #fff;
+}
+
+body#page-course-view-remuiformat .remui-format-card .hide,
+body#page-course-view-remuiformat .remui-format-list .hide {
+  display: none;
+}
+
+body#page-course-view-remuiformat.editing .yui3-dd-proxy .section {
+  text-decoration: none;
+}
+
+body#page-course-view-remuiformat.editing .action-menu-trigger .dropdown-toggle::after,
+body#page-course-view-remuiformat.editing .action-menu .dropdown-toggle::after {
+  display: none;
+}
+
+body#page-course-view-remuiformat.editing .action-menu-trigger .dropdown-subpanel .dropdown-toggle,
+body#page-course-view-remuiformat.editing .action-menu .dropdown-subpanel .dropdown-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+body#page-course-view-remuiformat.editing .action-menu-trigger .dropdown-subpanel .dropdown-toggle::before,
+body#page-course-view-remuiformat.editing .action-menu .dropdown-subpanel .dropdown-toggle::before {
+  display: inline-block;
+  order: 3;
+  -webkit-transform: rotate(180deg);
+          transform: rotate(180deg);
+  font-size: 10px;
+}
+
+body#page-course-view-remuiformat.editing .stretched-link::after {
+  display: none;
+}
+
+body#page-course-view-remuiformat.editing .general-section-activities .activity.modtype_folder .contentwithoutlink {
+  padding-left: 2.142rem;
+  padding-top: 0.714rem;
+}
+
+body#page-course-view-remuiformat.editing .activity .media-body .text-font-small.small {
+  display: block !important;
+}
+
+body#page-course-view-remuiformat .activity.activity-wrapper .activity-item .description .activity-dates .description-inner div {
+  line-height: 22px;
+}
+
+body#page-course-view-remuiformat #page .activityiconcontainer {
+  border-radius: 8px;
+  margin-right: 0 !important;
+  height: 50px;
+  width: 50px;
+}
+
+body#page-course-view-remuiformat #page .activityiconcontainer .activityinstance img {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+body#page-course-view-remuiformat #page .generalsecactivitiescontent > .activityinstance {
+  gap: 12px;
+}
+
+body#page-course-view-remuiformat #page .generalsecactivitiescontent .action-availstatus-wrapper:has(:first-child) {
+  margin-top: 16px;
+}
+
+body#page-course-view-remuiformat .course-section-header .sectionname .panel-title .text-success {
+  margin-left: 5px;
+  margin-top: 5px;
+}
+
+body#page-course-view-remuiformat .automatic-completion-conditions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+body#page-course-view-remuiformat .automatic-completion-conditions .badge {
+  padding: 8px !important;
+  background-color: #EBF0F9;
+  border-radius: 4px;
+  width: -webkit-fit-content;
+  width: fit-content;
+}
+
+body#page-course-view-remuiformat .automatic-completion-conditions .badge strong {
+  color: #313848;
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 600;
+}
+
+body#page-course-view-remuiformat .automatic-completion-conditions .badge span {
+  color: #4C5A73;
+  font-size: 12px;
+  line-height: 22px;
+  font-weight: 400;
+}
+
+body#page-course-view-remuiformat .automatic-completion-conditions .badge span .font-weight-normal {
+  color: #4C5A73;
+  font-size: 12px;
+  line-height: 22px;
+  font-weight: 400;
+}
+
+body#page-course-view-remuiformat:not(.editing) .activity .activitytitle .media-body > :first-child {
+  display: none;
+}
+
+body#page-course-view-remuiformat .activity .activitytitle .media-body {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 4px;
+  width: 100%;
+  text-align: start;
+}
+
+body#page-course-view-remuiformat .activity .activitytitle .media-body > :first-child {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  color: #647390;
+  text-transform: capitalize !important;
+}
+
+body#page-course-view-remuiformat .activity .activitytitle .media-body .activityname {
+  display: block !important;
+}
+
+body#page-course-view-remuiformat .activity .activitytitle .media-body .activityname a {
+  color: #313848;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+body#page-course-view-remuiformat .activity .activitytitle .media-body .activityname .inplaceeditable {
+  display: inline;
+}
+
+body#page-course-view-remuiformat .activity .activitytitle .media-body .activityname .inplaceeditable .instancename {
+  display: inline;
+}
+
+body#page-course-view-remuiformat .activity .activitytitle .media-body .activityname .inplaceeditable .quickeditlink {
+  margin-left: 8px;
+}
+
+body#page-course-view-remuiformat .activity > .activityinstance {
+  gap: 12px;
+}
+
+body#page-course-view-remuiformat .activity .activity-item:not(.activityinline) {
+  border: 1px solid #EBF0F9;
+  border-radius: 8px;
+  padding: 24px;
+  background-color: #fff;
+}
+
+body#page-course-view-remuiformat .activity.activity-wrapper .activity-item:has(.section.delegated-section) {
+  padding: 0;
+  border: 0;
+  box-shadow: unset;
+}
+
+body#page-course-view-remuiformat .activity.activity-wrapper .activity-item:has(.section.delegated-section) .section-item:hover {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+body#page-course-view-remuiformat .activity .description .course-description-item, body#page-course-view-remuiformat .activity .description .activity-dates, body#page-course-view-remuiformat .activity .activity-grid .course-description-item, body#page-course-view-remuiformat .activity .activity-grid .activity-dates {
+  padding: 8px;
+  flex-direction: column;
+  margin-top: 0px !important;
+  background-color: #EBF0F9;
+  border-radius: 4px;
+  color: #4C5A73;
+  font-size: 12px;
+  font-weight: 400px;
+}
+
+body#page-course-view-remuiformat .activity .description .course-description-item .description-inner, body#page-course-view-remuiformat .activity .description .activity-dates .description-inner, body#page-course-view-remuiformat .activity .activity-grid .course-description-item .description-inner, body#page-course-view-remuiformat .activity .activity-grid .activity-dates .description-inner {
+  padding: 0px;
+  border: unset;
+}
+
+body#page-course-view-remuiformat .activity .description .course-description-item .description-inner ul li, body#page-course-view-remuiformat .activity .description .activity-dates .description-inner ul li, body#page-course-view-remuiformat .activity .activity-grid .course-description-item .description-inner ul li, body#page-course-view-remuiformat .activity .activity-grid .activity-dates .description-inner ul li {
+  margin-bottom: unset;
+}
+
+body#page-course-view-remuiformat .activity .description .activity-altcontent,
+body#page-course-view-remuiformat .activity .description .activity-description, body#page-course-view-remuiformat .activity .activity-grid .activity-altcontent,
+body#page-course-view-remuiformat .activity .activity-grid .activity-description {
+  padding: 8px 0 0 0;
+  background-color: unset;
+  border: 0;
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+body#page-course-view-remuiformat .activity .description .activity-altcontent p,
+body#page-course-view-remuiformat .activity .description .activity-description p, body#page-course-view-remuiformat .activity .activity-grid .activity-altcontent p,
+body#page-course-view-remuiformat .activity .activity-grid .activity-description p {
+  margin: 0;
+}
+
+body#page-course-view-remuiformat .course-content .sections {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+body#page-course-view-remuiformat .course-content .sections.generalsection-container {
+  margin-bottom: 48px;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section {
+  gap: 48px;
+  padding: 0px;
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  border-radius: unset;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .section-title {
+  color: #313848;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .section-details {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .section-details .generaldetails {
+  gap: 8px;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .section-details .generaldetails .generalsectioninfo .coursesummary {
+  color: #4C5A73;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .section-details .generaldetails .generalsectioninfo .readbtn {
+  font-size: 14px;
+  line-height: 17px;
+  font-weight: 600;
+  color: #0051F9;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .section-details .coursedetails {
+  width: 100%;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .section-details .coursedetails .details {
+  gap: 8px;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .section-details .coursedetails .details .activities-title {
+  color: #313848;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .section-details .coursedetails .details .section-activities-summary {
+  color: #4C5A73;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper {
+  gap: 16px;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .activitieshead {
+  color: #313848;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+  padding: 0px;
+  margin: 0px;
+  max-width: unset;
+}
+
+@media (min-width: 1440px) {
+  body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities {
+    grid-template-columns: repeat(auto-fill, minmax(302px, 302px));
+  }
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .section {
+  list-style: none;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity:not(.modtype_label) {
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #EBF0F9;
+  border-radius: 8px;
+  min-height: 152px;
+  transition: all 0.5s ease;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity:not(.modtype_label):hover {
+  box-shadow: 0px 13px 37px rgba(92, 107, 121, 0.1);
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity:not(.modtype_label) .sectionbadges {
+  width: 100%;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity:not(.modtype_label) .actions {
+  display: flex;
+  position: relative;
+  justify-content: start;
+  padding: 0px;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity:not(.modtype_label) .actions .spinner {
+  position: relative;
+  left: 0;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity:not(.modtype_label) .actions .cm_action_menu.actions {
+  margin: 0px;
+  width: 100%;
+  position: unset !important;
+  justify-content: flex-end;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity:not(.modtype_label) .actions .activity-information {
+  width: 100%;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity:not(.modtype_label) .actions .activity-information .completion-info,
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity:not(.modtype_label) .actions .activity-information [data-region="completion-info"] {
+  width: 100%;
+  float: left;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity:not(.modtype_label) .actions .activity-information .completion-info .btn,
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity:not(.modtype_label) .actions .activity-information [data-region="completion-info"] .btn {
+  width: 100%;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity:not(.modtype_label) .action-availstatus-wrapper:has(:nth-child(2)) .actions {
+  margin-top: 16px;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity.modtype_label {
+  grid-column: 1/-1;
+  text-align: left;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity.modtype_label .actions {
+  position: relative !important;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity .activitytitle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 26px;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity .availabilityinfo .description-inner {
+  color: #4C5A73;
+  text-align: left;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity .availabilityinfo .description-inner .icon {
+  margin: unset;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity .editing_move {
+  position: absolute;
+  display: flex;
+  left: -15px;
+  top: -15px;
+  z-index: 10;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity .editing_move i {
+  margin: 0px;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity .contentafterlink {
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+  text-align: left;
+  color: #4C5A73;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .activities-wrapper .general-section-activities .activity .activityinstance {
+  position: relative;
+}
+
+body#page-course-view-remuiformat .course-content .sections #section-0 .general-section .showactivity {
+  font-size: 14px;
+  line-height: 17px;
+  font-weight: 600;
+  color: #0051F9;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+body#page-course-view-remuiformat .course-content .sections .badge {
+  padding: 4px 8px;
+  margin: unset;
+  white-space: normal;
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 400;
+  vertical-align: middle;
+  text-align: left;
+}
+
+body#page-course-view-remuiformat .course-content .sections .wdm-add-new-section {
+  border: 1px solid #e4eaec;
+}
+
+body#page-course-view-remuiformat .content .summary .no-overflow {
+  width: 100%;
+}
+
+body#page-course-view-remuiformat .container-fluid #region-main .card,
+body#page-course-view-remuiformat .container-fluid #region-main {
+  border: none;
+}
+
+body#page-course-view-remuiformat .container-fluid #region-main .card.card-block:first-of-type {
+  background: transparent;
+  padding: 0;
+  overflow: visible;
+}
+
+body#page-course-view-remuiformat .container-fluid #region-main .card > .card-body:first-of-type {
+  background: #fff;
+  overflow: visible;
+}
+
+body#page-course-view-remuiformat .container-fluid #region-main {
+  background: #fff;
+  overflow: visible;
+}
+
+body#page-course-view-remuiformat .container-fluid #region-main {
+  background: #fff !important;
+  overflow: visible;
+}
+
+body#page-course-view-remuiformat .container #region-main .card.card-block:first-of-type {
+  background: transparent;
+  padding: 0;
+  overflow: visible;
+}
+
+body#page-course-view-remuiformat .wdm-card-section {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+body#page-course-view-remuiformat .wdm-completion-container form.togglecompletion,
+body#page-course-view-remuiformat .wdm-completion-container form.togglecompletion > div {
+  display: inline !important;
+}
+
+body#page-course-view-remuiformat .wdm-completion-container form.togglecompletion .btn.btn-link,
+body#page-course-view-remuiformat .wdm-completion-container .autocompletion {
+  padding: 0 0 0 10px;
+  background: transparent;
+}
+
+body#page-course-view-remuiformat .wdm-completion-container form.togglecompletion .btn.btn-link:hover {
+  background: transparent !important;
+}
+
+body#page-course-view-remuiformat .wdm-completion-container form.togglecompletion .btn.btn-link img,
+body#page-course-view-remuiformat .wdm-completion-container .autocompletion img {
+  width: 18px;
+  height: 18px;
+  margin: 4px 0;
+}
+
+body#page-course-view-remuiformat .section-summary-activities,
+body#page-course-view-remuiformat .summary .no-overflow p {
+  color: #4C5A73;
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 600;
+  font-weight: bold;
+}
+
+body#page-course-view-remuiformat .flex-1 {
+  flex: 1;
+}
+
+body#page-course-view-remuiformat .w-p100 {
+  width: 100% !important;
+}
+
+body#page-course-view-remuiformat .text-right {
+  text-align: right !important;
+}
+
+body#page-course-view-remuiformat .text-center {
+  text-align: center !important;
+}
+
+body#page-course-view-remuiformat .progress-xs {
+  width: 100%;
+  border-bottom: 0 !important;
+  border-radius: 5px;
+  position: relative;
+  bottom: 0;
+}
+
+body#page-course-view-remuiformat .progress-xs,
+body#page-course-view-remuiformat .progress-xs .progress-bar {
+  height: 7px !important;
+  border-radius: 5px;
+}
+
+body#page-course-view-remuiformat .progress-xs .progress-bar {
+  line-height: 4px !important;
+}
+
+body#page-course-view-remuiformat .bg-green-600 {
+  background-color: #11c26d !important;
+}
+
+body#page-course-view-remuiformat .progress-xs.dark {
+  background-color: #e0e0e09e !important;
+}
+
+body#page-course-view-remuiformat .progress-xs.light {
+  background-color: #b7b4b4a3 !important;
+}
+
+body#page-course-view-remuiformat .remui-format-card .current::before {
+  left: -.1rem !important;
+}
+
+body#page-course-view-remuiformat div#card-container a .section-title:hover {
+  text-decoration: underline;
+}
+
+body#page-course-view-remuiformat input.ignoredirty.form-control {
+  width: 100% !important;
+}
+
+body#page-course-view-remuiformat div#card-editing-container #section-0 li.activity img.activityicon {
+  vertical-align: middle;
+  height: 28px;
+  width: 28px;
+}
+
+body#page-course-view-remuiformat .section-modchooser {
+  margin: 0px !important;
+}
+
+body#page-course-view-remuiformat.theme_adaptable .section-modchooser .section-modchooser-link *,
+body#page-course-view-remuiformat.theme_adaptable .section-modchooser .section-modchooser-link a:hover {
+  color: #51666C;
+}
+
+body#page-course-view-remuiformat .section-modchooser .section-modchooser-link *,
+body#page-course-view-remuiformat .section-modchooser .section-modchooser-link a:hover {
+  color: white;
+}
+
+body#page-course-view-remuiformat div#card-editing-container div.availabilityinfo.ishidden,
+body#page-course-view-remuiformat div#card-container div.availabilityinfo.ishidden,
+body#page-course-view-remuiformat li.wdm-card-single-section div.availabilityinfo {
+  padding: 10px 0;
+  font-weight: bold;
+}
+
+body#page-course-view-remuiformat .wdm-section-summary.summary-muted * {
+  color: #526069 !important;
+  display: none;
+}
+
+body#page-course-view-remuiformat .wdm-card-completion button.btn-link {
+  padding: 0;
+}
+
+body#page-course-view-remuiformat .wdm-card-completion button.btn-link img {
+  margin: 0 2px 0 0;
+}
+
+body#page-course-view-remuiformat #changenumsections {
+  border: none;
+}
+
+body#page-course-view-remuiformat #changenumsections > div {
+  width: 100%;
+}
+
+body#page-course-view-remuiformat #changenumsections .single-card,
+body#page-course-view-remuiformat #changenumsections .card-block {
+  justify-content: center;
+  box-shadow: none;
+  background: #e5e5e5;
+}
+
+body#page-course-view-remuiformat #changenumsections a {
+  color: #526069 !important;
+}
+
+body#page-course-view-remuiformat #changenumsections i.fa {
+  margin: 0 auto;
+}
+
+body#page-course-view-remuiformat .w-full {
+  width: 100%;
+}
+
+body#page-course-view-remuiformat .d-flex {
+  display: flex;
+}
+
+body#page-course-view-remuiformat .d-block {
+  display: block;
+}
+
+body#page-course-view-remuiformat .mdl-right {
+  text-align: right;
+}
+
+body#page-course-view-remuiformat .float-right {
+  float: right;
+}
+
+body#page-course-view-remuiformat .align-items-center {
+  align-items: center;
+}
+
+body#page-course-view-remuiformat .showactivitywrapper {
+  text-align: center !important;
+}
+
+body#page-course-view-remuiformat .showactivitywrapper .showactivity {
+  font-size: 24px;
+  line-height: 24px;
+  cursor: pointer;
+}
+
+body#page-course-view-remuiformat .inplaceeditable a:focus {
+  box-shadow: unset;
+  border: unset;
+  background: unset;
+}
+
+body#page-course-view-remuiformat .modchoosercontainer .chooser-container .tab-content .optionscontainer .option .optioninfo .optionicon {
+  margin-right: unset !important;
+  margin: auto !important;
+  margin-top: 15px !important;
+}
+
+body#page-course-view-remuiformat .badge-primary {
+  background-color: #1C376F;
+}
+
+body#page-course-view-remuiformat .contentwithoutlink,
+body#page-course-view-remuiformat .contentafterlink {
+  max-height: 220px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+body#page-course-view-remuiformat .contentwithoutlink p,
+body#page-course-view-remuiformat .contentafterlink p {
+  margin: 0;
+}
+
+body#page-course-view-remuiformat .font-size-16 {
+  font-size: 16px;
+}
+
+body#page-course-view-remuiformat.editing .general-section-activities .activity .contentafterlink .no-overflow {
+  overflow: auto !important;
+}
+
+body#page-course-view-remuiformat .availabilityinfo.isrestricted .showmore-container .btn span.expanded-content {
+  padding: 1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+body#page-course-view-remuiformat .availabilityinfo.isrestricted .showmore-container .btn span.expanded-content .icon {
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+body#page-course-view-remuiformat .availabilityinfo.isrestricted .showmore-container.collapsed .btn span.collapsed-content {
+  padding: 1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+body#page-course-view-remuiformat .availabilityinfo.isrestricted .showmore-container.collapsed .btn span.collapsed-content .icon {
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+body#page-course-view-remuiformat .availabilityinfo.isrestricted .showmore-container.collapsed .btn .expanded-content {
+  display: none;
+}
+
+body#page-course-view-remuiformat .availabilityinfo.isrestricted ul {
+  padding-left: 1rem !important;
+}
+
+body#page-course-view-remuiformat.limitedwidth header.hasbackground.design-1 .header-sub-section .progress-resume-wrapper {
+  flex-direction: column;
+}
+
+body#page-course-view-remuiformat .bulkEnable {
+  display: none;
+}
+
+.section .dndupload-preview-overlay, .section .dndupload-preview-wrapper {
+  display: none;
+}
+
+.single-section ul.remuiformat {
+  padding-left: 0;
+}
+
+.section.delegated-section {
+  text-align: start;
+  border-radius: 8px;
+}
+
+.section.delegated-section .wdm-add-new-section {
+  display: none;
+}
+
+.section.delegated-section::after {
+  content: unset;
+}
+
+.section.delegated-section .content .section:not(:has(:first-child)) {
+  display: none !important;
+}
+
+body:not(.editing) #page-content .course-content ul li.section.main.delegated-section {
+  margin-top: 0.25rem;
+}
+
+.edw-m405 #page .editing_move {
+	display: none !important;
+}

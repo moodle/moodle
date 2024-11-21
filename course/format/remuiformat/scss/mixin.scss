@@ -1,0 +1,173 @@
+@mixin  frmt-font-styling($font-size,$line-height,$font-weight) {
+    font-size: $font-size;
+    line-height: $line-height;
+    font-weight: $font-weight;
+
+}
+@mixin  single-card-ui() {
+    .section {
+        .sectionbadges {
+            [data-type="highlighted"] {
+                display: none;
+            }
+        }
+        // Highlighting current section
+        .highlight {
+            position: absolute;
+            top: -1px;
+            right: 16px;
+            width: 0;
+            height: 0;
+            border-left: 18px solid;
+            border-right: 18px solid;
+            border-top: 26px solid;
+            border-bottom: 16px solid;
+            border-bottom-color: transparent;
+        }
+        .right.side {
+            display: flex;
+            margin-left: auto;
+            margin: 0px;
+        }
+        // Hide right side spacer.
+        .right.side .icon.spacer {
+            display: none;
+        }
+
+        .sectionname,
+        .sectionname a {
+            color: $heading-color;
+            @include frmt-font-styling(24px, 32px, 700);
+        }
+
+        .single-card {
+            background-color: $white;
+            // position: relative;
+            border: $border-height solid $light-border;
+            border-radius: inherit;
+            padding: $pad-24;
+            gap: $gap-16;
+
+            .content {
+                display: flex;
+                flex-direction: column;
+                gap: $gap-16;
+                .section-activities-summary{
+                    .item{
+                        font-size: 0.8rem;
+                    }
+                }
+            }
+        }
+        // Styling for section cards
+        .single-card {
+            min-height: $section-card-min-height;
+            height: 100%;
+            width: 100%;
+            // Dark theme
+            &.dark {
+                .left.side,
+                .sectionname,
+                .sectionname *,
+                .wdm-section-summary *,
+                .section-activities-summary {
+                    color: $white !important;
+                }
+                .sectionname{
+                    .ignoredirty,.ignoredirty.form-control,.editinstructions{
+                        color:$heading-color !important;
+                    }
+
+                    .badge{
+                        color: $heading-color ;
+                    }
+                    .badge-primary{
+                        color: white;
+                    }
+                }
+                .left.side{
+                    .section-handle .icon{
+                        color: $white;
+                    }
+                }
+                .progress-bar-warpper{
+                    .progress-text{
+                        color: $white;
+                    }
+                }
+                .right.side{
+                    .wdm-add-new-section{
+                        color: $white;
+                    }
+                }
+            }
+            // Light theme
+            &.light {
+                // .left.side,
+                // .sectionname,
+                // .sectionname *,
+                // .wdm-section-summary *
+                // {
+                //      color: #101010 !important;
+                // }
+            }
+            &:hover .progress-text {
+                visibility: visible;
+            }
+        }
+        .section-header {
+            gap: $gap-16;
+            a {
+                text-decoration: none;
+            }
+        }
+        // Placing section action container.
+        .section-action-container {
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            // margin: 0 -15px;
+
+            .progress-text {
+                align-self: center;
+                color: $paragraph-color;
+                @include frmt-font-styling(12px, 15px, 600);
+
+                @media (min-width: 480px) and (max-width: 767px) {
+                    padding: 5px 0 0 13px !important;
+                }
+            }
+        }
+        // Section activities summary container.
+        .section-activities-summary {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: $gap-4;
+            width: 100%;
+            color: $paragraph-color;
+            @include frmt-font-styling(14px, 22px, 600);
+
+            .item {
+                float: left;
+                text-decoration: none;
+                font-size: 0.9rem;
+            }
+        }
+
+        .wdm-section-summary {
+            .no-overflow {
+                margin: 0;
+                width: 100%;
+                color: $paragraph-color;
+                @include frmt-font-styling(14px, 22px, 400);
+
+                p {
+                    margin: 0px;
+                }
+            }
+        }
+    }
+
+}

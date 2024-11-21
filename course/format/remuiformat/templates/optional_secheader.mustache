@@ -1,0 +1,84 @@
+<div class="rmuiformate-header-wrapper d-none ">
+    <header id="page-header" class=" d-print-none hasbackground design-1 position-relative "
+        style="background:  url('{{headercourseimage}}');background-position: {{remuiheaderimagebgposition}}; background-size:{{remuiheaderimagebgsize}};background-repeat: no-repeat;">
+           <div class = "position-absolute w-100 h-100" style="background: linear-gradient(180deg, rgba(0, 0, 0, 0.0)  -24.52%, #000000 97.67%);left:0%;bottom:0%; opacity:{{{overlayopacity}}};border-radius:inherit;"> </div>
+       <div class="align-self-end" style="z-index:1;">
+        {{{turneditingonswitch}}}
+       </div>
+        <div class="w-100 header-wrapper " style="z-index:1;">
+            <div class="d-flex flex-wrap w-100">
+                <div class="d-flex align-items-center w-100">
+                    <div class="dashboard-bar-wrapper w-100">
+                        <div class="header-main-section">
+                            <div class="category">
+                                <span class="badge ">
+                                    {{{coursecategoryname}}}
+                                </span>
+                            </div>
+                            <div class="page-context-header p-0 m-0">
+                                <div class="page-header-headings p-0">
+                                    <h1 class="h2 header-heading coursepage design-1 m-0">{{{coursefullname}}}</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="header-sub-section">
+                            <div class="rating-instructor-wrapper">
+                                {{#rnrdesign}}
+                                <div class="edw-ratings-wrapper">
+                                    {{{rnrdesign}}}
+                                </div>
+                                {{/rnrdesign}}
+                                {{#teachers}}
+                                <div class="instructor-info stat-container position-relative">
+                                    {{#instructors}}
+                                    <div class="position-relative">
+                                        <a class="view-user-profile-link" href="{{teacherprofileurl}}" class="" title="{{name}}"></a>
+                                        {{{avatars}}}
+                                        <span class="titles ">{{name}}</span>
+                                    </div>
+                                    {{/instructors}}
+                                    {{#teachercount}}
+                                        <a class="view-all-instructorslink" href="{{participantspageurl}}" class="">view all</a>
+                                    {{/teachercount}}
+                                </div>
+                                {{/teachers}}
+                            </div>
+                            {{#coursecompletionstatus}}
+                            <div class="progress-resume-wrapper">
+                                <div class="progressbar-text-wrapper">
+                                    <div class="progress progress-rounded">
+                                        <div class="progress-bar bg-green-600"
+                                            style="width: {{{percentage}}}%; height: 100%;" role="progressbar">
+                                            <span class="sr-only">{{{percentage}}}% {{#str}} Complete, format_remuiformat {{/str}}</span>
+                                        </div>
+                                    </div>
+                                    <span>{{{percentage}}}% {{#str}} Complete, format_remuiformat {{/str}}</span>
+                                </div>
+                                {{#resumeactivityurl}}
+                                <a class="btn btn-primary btn-block bold" href="{{{ resumeactivityurl }}}"
+                                    role="button">{{#str}} resumetoactivity, format_remuiformat{{/str}}</a>
+                                {{/resumeactivityurl}}
+                            </div>
+                            {{/coursecompletionstatus}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </header>
+</div>
+{{#courseheaderdesign}}
+{{#js}}
+require(['format_remuiformat/headerreplaces'], function(HEADERREPLACE) {
+HEADERREPLACE.init();
+});
+{{/js}}
+{{/courseheaderdesign}}
+{{#subsectionjs}}
+{{#js}}
+require(['jquery','core_courseformat/local/content'], function($,component) {
+    $(document).ready(function() {
+      component.init('page', {}, {{sectionreturn}});
+    });
+});
+{{/js}}
+{{/subsectionjs}}

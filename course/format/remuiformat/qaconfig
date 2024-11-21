@@ -1,0 +1,18 @@
+#DO NOT PASS WILDCARD FILE NAMES. PHPCPD_IGNORE_FILES accepts only FILE NAMES. 
+
+#Whether to enable static analyzer for this repo. When set to 1, checks are enabled and all static analyzers are executed.
+#When set to 0, no static analyzer is not exeucted for this repo
+ENABLE_ALL_CHECKS="0"
+
+#When this parameter is not provided or blank, it takes PSR2 standard by default
+PHPCS_CODING_STANDARD="moodle"
+
+#Give file names only. Do not include directory separator. Path of the file does not matter.So provide comma separated file names
+PHPCPD_IGNORE_FILES=""
+
+#Provide Relative Paths of files and folders to be ignored for PHPMD. Accepts Comma Separated List
+#For Moodle we need to enter all dir and file names here.
+PHPMD_IGNORE_FILES="classes, renderer.php, lib.php"
+
+#Provide Relative Paths of files and folders to be ignored for PHPCS, Aceepts Comma separated list
+PHPCS_IGNORE_FILES=""

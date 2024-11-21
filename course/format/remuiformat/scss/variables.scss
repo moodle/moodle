@@ -1,0 +1,77 @@
+$white:#fff;
+$heading-color:#313848;
+$paragraph-color:#4C5A73;
+$blue:#0051F9;
+$secondary-brand-color: #37be71;
+$light-border:#EBF0F9;
+$asscent-bg-color:#1C376F;
+$small-ui-bg:#EBF0F9;
+
+$sm-screen-bp:568px;
+$tb-screenp-bp:768px;
+$screen-900:900px;
+
+$pad-24:24px;
+$pad-16:16px;
+$pad-8:8px;
+$pad-6:6px;
+$pad-4:4px;
+$card-box-shadow : 0px 13px 37px rgba(92, 107, 121, 0.1);
+
+$gap-48:48px;
+$gap-40:40px;
+$gap-32:32px;
+$gap-26:26px;
+$gap-24:24px;
+$gap-20:20px;
+$gap-16:16px;
+$gap-14:14px;
+$gap-12:12px;
+$gap-6:16px;
+$gap-8:8px;
+$gap-4:4px;
+
+$margin-48:48px;
+$margin-28:28px;
+$margin-24:24px;
+$margin-16:16px;
+$margin-8:8px;
+
+$header-img-min-height:336px;
+$header-img-mob-height:445px;
+
+$section-card-min-height:120px;
+
+$single-card-min-height:152px;
+
+$border-radius-16:16px;
+$border-radius-8:8px;
+$border-radius-4:4px;
+$border-radius-5:5px;
+
+$border-height:1px;
+
+$progress-bar-min-width:230px;
+$progress-bar-height:7px;
+
+$activity-icon-height:28px;
+$activity-icon-width:28px;
+$summary-max-height:220px;
+
+$card-min-width-1:240px;
+$card-min-width-2:302px;
+.p-24{
+    padding: 24px;
+}
+.gap-16{
+    gap: 16px;
+}
+.fullwidth-grid-item{
+    grid-column: 1/-1;
+}
+.flex-gap-8{
+    gap: 8px;
+}
+.flex-gap-16{
+    gap: 16px;
+}

@@ -1,0 +1,1098 @@
+body#page-course-view-remuiformat {
+    @import './variables.scss';
+    @import './mixin.scss';
+    @import './card-layout.scss';
+    @import './list-layout.scss';
+    @import './ellipsis.scss';
+
+    .row {
+        margin: unset;
+    }
+    // #page.drawers div[role="main"]{
+    //     padding: unset;
+    // }
+    &.editing .general-section-activities {
+        .cm_action_menu.actions{
+            .section-cm-edit-actions{
+                .editing_moveright,.editing_moveleft{
+                    display: none;
+                }
+            }
+        }
+    }
+    #region-top-blocks.pb-3,#region-top-blocks.py-3{
+        padding: 0px !important;
+    }
+    .secondary-navigation{
+        padding: 0px;
+        margin-bottom: $margin-24;
+    }
+    header.hasbackground.design-1 {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: $header-img-min-height;
+        padding: $pad-24;
+        border-radius: $border-radius-8;
+        max-width: 100%;
+        width: 100%;
+        @media (max-width:$sm-screen-bp) {
+            min-height: $header-img-mob-height;
+        }
+
+        .dashboard-bar-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: $gap-24;
+
+            @media (max-width:$sm-screen-bp) {
+                gap: $gap-8;
+            }
+        }
+
+        .header-main-section {
+            .category {
+                margin-bottom: 8px;
+
+                .badge {
+                    padding: 4px 6px;
+                    border-radius: $border-radius-4;
+                    background-color: $white;
+                    color: $secondary-brand-color;
+                    @include frmt-font-styling(12px,15px,400);
+                }
+            }
+        }
+
+        .header-sub-section {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            gap: $gap-32 $gap-24;
+            // flex-wrap: wrap;
+
+            @media (max-width:1200px) {
+                // align-items: unset;
+                // justify-content: space-between;
+            }
+
+            @media (max-width:$sm-screen-bp) {
+                align-items: start;
+                flex-direction: column;
+                // gap: 32px;
+                // justify-content: space-between;
+            }
+
+            .rating-instructor-wrapper {
+                display: flex;
+                gap: $gap-12 $gap-24;
+                flex-wrap: wrap;
+                align-items: center;
+
+                @media (max-width:1200px) {
+                    // gap: $gap-24;
+                    // flex-direction: column;
+                    // justify-content: space-between;
+                }
+
+                @media (max-width:$sm-screen-bp) {
+                    gap: $gap-16;
+                }
+
+                .edw-ratings-wrapper {
+                    color: $white;
+
+                    .inner {
+                        flex-direction: row-reverse;
+                        gap: $gap-8;
+                    }
+
+                    .avgrating {
+                        order: 2;
+                        margin-left: 4px;
+                    }
+
+                    .rnr-link {
+                        padding-left: 2px;
+                    }
+
+                    .avgrating, .rnr-link {
+                        font-size: 14px;
+                        font-weight: 600;
+                        color: $white;
+                    }
+                }
+
+                .stat-container {
+                    display: flex;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    gap: 8px 16px;
+                }
+
+                .instructor-info {
+                    color: $white;
+
+                    .stat {
+                        @include frmt-font-styling(14px,22px,600);
+                        color: #313848;
+                        padding: $pad-4;
+                        border-radius: $border-radius-4;
+                        background-color: #fff;
+                    }
+
+                    .userpicture,
+                    .userinitials {
+                        width: 24px;
+                        height: 24px;
+                        border: unset;
+                    }
+
+                    .userinitials {
+                        font-size: 12px;
+                    }
+
+                    .view-user-profile-link {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                    }
+
+                    .titles {
+                        @include frmt-font-styling(14px,22px,400);
+                        color: $white;
+                    }
+                    .view-all-instructorslink {
+                        @include frmt-font-styling(14px,22px,600);
+                        color: $white;
+                    }
+                }
+            }
+
+            .progress-resume-wrapper {
+                display: flex;
+                align-items: center;
+                gap: $gap-24 $gap-40;
+
+                @media (max-width:1200px) {
+                    flex-direction: column;
+                }
+
+                @media (max-width: $sm-screen-bp) {
+                    gap: $gap-16;
+                    flex-wrap: wrap;
+                    align-items: flex-start;
+                    width: 100%;
+                }
+
+                .progressbar-text-wrapper {
+                    display: flex;
+                    flex-direction: column;
+                    gap: $gap-4;
+                    color: $white;
+                    @include frmt-font-styling(12px,15px,400);
+                    @media (max-width:$sm-screen-bp) {
+                        width: 100%;
+                    }
+                }
+
+                .progress {
+                    min-width: $progress-bar-min-width;
+                    height: $progress-bar-height !important;
+
+                    @media (max-width:$sm-screen-bp) {
+                        min-width: unset;
+                    }
+                }
+            }
+        }
+
+        .header-heading {
+            color: white;
+        }
+    }
+    .summary-collapsed{
+        max-height: 300px;
+        position: relative;
+        overflow: hidden;
+        -webkit-mask-image: linear-gradient(180deg, #D9D9D9 51.56%, rgba(217, 217, 217, 0.00) 100%);
+    }
+    .progress-bar-warpper {
+        display: flex;
+        flex-direction: row;
+        gap: $gap-8;
+        align-items: center;
+
+        @media (max-width:$sm-screen-bp) {
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .progress {
+            height: $progress-bar-height !important;
+            margin: 0px;
+            width: $progress-bar-min-width;
+
+            @media (max-width:$sm-screen-bp) {
+                width: 100%;
+            }
+        }
+
+        .progress-text {
+            color: $paragraph-color;
+            white-space: nowrap;
+            @include frmt-font-styling(12px, 15px, 600);
+        }
+    }
+
+    .card-section-rightnav,
+    .card-section-leftnav {
+        background-color: $blue;
+        border-radius: $border-radius-5;
+        height: fit-content;
+
+        a {
+            color: $white;
+        }
+    }
+    .remui-format-card,
+    .remui-format-list {
+        .hide {
+            display: none;
+        }
+    }
+    &.editing {
+        .yui3-dd-proxy {
+            .section {
+                text-decoration: none;
+            }
+        }
+        .action-menu-trigger,
+        .action-menu {
+          .dropdown-toggle::after {
+            display: none;
+          }
+
+          .dropdown-subpanel {
+            .dropdown-toggle{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                &::before {
+                    display: inline-block;
+                    order: 3;
+                    transform: rotate(180deg);
+                    font-size: 10px;
+                }
+            }
+          }
+        }
+        .stretched-link::after {
+            display: none;
+        }
+        .general-section-activities {
+            .activity {
+                &.modtype_folder {
+                    .contentwithoutlink {
+                        padding-left: 2.142rem;
+                        padding-top: 0.714rem;
+                    }
+                }
+            }
+        }
+        .activity {
+            .media-body {
+                .text-font-small.small {
+                    display: block !important;
+                }
+            }
+        }
+    }
+    .activity.activity-wrapper .activity-item .description .activity-dates .description-inner div {
+        line-height: 22px;
+    }
+    #page{
+        .activityiconcontainer {
+            border-radius: $border-radius-8;
+            margin-right: 0 !important;
+            height: 50px;
+            width: 50px;
+            .activityinstance img {
+                width: $activity-icon-width !important;
+                height: $activity-icon-height !important;
+            }
+        }
+
+        .generalsecactivitiescontent {
+            & > .activityinstance {
+                gap: $gap-12;
+            }
+
+            .action-availstatus-wrapper:has(:first-child) {
+                margin-top: $margin-16;
+            }
+        }
+    }
+    .course-section-header{
+        .sectionname{
+            .panel-title{
+                .text-success{
+                    margin-left: 5px;
+                    margin-top: 5px;
+                }
+            }
+        }
+
+    }
+
+  .automatic-completion-conditions {
+        display: flex;
+        flex-direction: column;
+        gap: $gap-8;
+        .badge {
+            padding: $pad-8 !important;
+            background-color: $small-ui-bg;
+            border-radius: $border-radius-4;
+            width: fit-content;
+            strong {
+                color: $heading-color;
+                @include frmt-font-styling(14px, 22px, 600);
+            }
+
+            span {
+                color: $paragraph-color;
+                @include frmt-font-styling(12px, 22px, 400);
+                .font-weight-normal{
+                    color: $paragraph-color;
+                @include frmt-font-styling(12px, 22px, 400);
+                }
+            }
+        }
+    }
+
+    &:not(.editing) {
+        .activity {
+            .activitytitle {
+                .media-body {
+                    &>:first-child {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+
+    .activity {
+        .activitytitle {
+            .media-body {
+                display: flex;
+                flex-direction: column;
+                align-items: start;
+                gap: $gap-4;
+                width: 100%;
+                text-align: start;
+
+                &>:first-child {
+                    @include frmt-font-styling(16px, 24px, 400);
+                    color: #647390;
+                    text-transform: capitalize !important;
+                }
+
+                .activityname {
+                    display: block !important;
+                    & a {
+                        color: $heading-color;
+                        @include frmt-font-styling(20px, 28px, 700);
+                        word-break: break-word;
+                    }
+
+                    .inplaceeditable {
+                        display: inline;
+
+                        // gap: 8px;
+                        .instancename {
+                            display: inline;
+                        }
+
+                        .quickeditlink {
+                            margin-left: $margin-8;
+                        }
+                    }
+                }
+            }
+        }
+
+        & > .activityinstance {
+            gap: $gap-12;
+        }
+
+        .activity-item:not(.activityinline) {
+            border: $border-height solid $light-border;
+            border-radius: $border-radius-8;
+            padding: $pad-24;
+            background-color: $white;
+        }
+
+        &.activity-wrapper {
+            .activity-item:has(.section.delegated-section) {
+                padding: 0;
+                border: 0;
+
+                box-shadow: unset;
+
+                .section-item:hover {
+                    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+                }
+            }
+        }
+
+        .description,.activity-grid  {
+            .availabilityinfo{
+                // width: fit-content;
+            }
+            .course-description-item,.activity-dates {
+                padding: $border-radius-8;
+                flex-direction: column;
+                // margin: 0px 0px 0px 0px !important;
+                margin-top: 0px !important;
+                background-color: $small-ui-bg;
+                border-radius: $border-radius-4;
+                color: $paragraph-color;
+                font-size: 12px;
+                font-weight: 400px;
+                .description-inner{
+                    padding: 0px;
+                    border:unset;
+                    ul{
+                        li{
+                            margin-bottom: unset;
+                        }
+                    }
+                }
+
+            }
+
+            .activity-altcontent,
+            .activity-description {
+                padding: $pad-8 0 0 0;
+                background-color: unset;
+                border: 0;
+                margin-top: 0;
+                margin-bottom: $margin-16;
+                font-size: 14px;
+
+                p {
+                    margin: 0;
+                }
+            }
+        }
+    }
+    .course-content {
+        .sections {
+            &.generalsection-container{
+                margin-bottom: $margin-48;
+            }
+            #section-0 {
+
+                // general section
+                .general-section {
+                    gap: $gap-48;
+                    padding: 0px;
+                    background: transparent;
+                    box-shadow: none;
+                    border: none;
+                    border-radius: unset;
+
+                    .section-title {
+                        color: $heading-color;
+                        @include frmt-font-styling(24px, 32px, 700);
+                    }
+
+                    .section-details {
+                        display: flex;
+                        flex-direction: column;
+                        gap: $gap-32;
+
+                        .generaldetails {
+                            gap: $gap-8;
+
+                            .generalsectioninfo {
+                                .coursesummary {
+                                    color: $paragraph-color;
+                                    @include frmt-font-styling(16px, 24px, 400);
+                                }
+
+                                .readbtn {
+                                    @include frmt-font-styling(14px, 17px, 600);
+                                    color: $blue;
+                                    text-decoration: none;
+                                    cursor: pointer;
+                                }
+                            }
+                        }
+
+                        .coursedetails {
+                            width: 100%;
+
+                            .details {
+                                gap: $gap-8;
+
+                                .activities-title {
+                                    color: $heading-color;
+                                    @include frmt-font-styling(20px, 28px, 600);
+                                }
+
+                                .section-activities-summary {
+                                    color: $paragraph-color;
+                                    @include frmt-font-styling(16px, 24px, 400);
+                                }
+                            }
+                        }
+                    }
+
+                    .activities-wrapper {
+                        gap: $gap-16;
+
+                        .activitieshead {
+                            color: $heading-color;
+                            @include frmt-font-styling(24px, 32px, 700);
+                        }
+
+                        .general-section-activities {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fill, minmax($card-min-width-1, 1fr));
+                            @media (min-width:1440px) {
+                                grid-template-columns: repeat(auto-fill, minmax($card-min-width-2, $card-min-width-2));
+                            }
+                            gap: $gap-24;
+                            // flex-wrap: wrap;
+                            padding: 0px;
+                            margin: 0px;
+                            max-width: unset;
+                            .section{
+                                list-style: none;
+                            }
+                            .activity {
+                                &:not(.modtype_label) {
+                                    padding: $pad-24;
+                                    background: $white;
+                                    border: $border-height solid $light-border;
+                                    border-radius: $border-radius-8;
+                                    min-height: $single-card-min-height;
+                                    transition: all 0.5s ease;
+                                    &:hover{
+                                        box-shadow: $card-box-shadow;
+                                    }
+                                    .sectionbadges{
+                                        width: 100%;
+                                    }
+                                    .actions {
+                                        display: flex;
+                                        position: relative;
+                                        justify-content: start;
+                                        // margin-top: $margin-16;
+                                        padding: 0px;
+
+                                        .spinner {
+                                            position: relative;
+                                            left: 0;
+                                        }
+
+                                        .cm_action_menu.actions {
+                                            margin: 0px;
+                                            width: 100%;
+                                            position: unset !important;
+                                            justify-content: flex-end;
+                                        }
+
+                                        .activity-information {
+                                            width: 100%;
+
+                                            .completion-info,
+                                            [data-region="completion-info"] {
+                                                width: 100%;
+                                                float: left;
+
+                                                .btn {
+                                                    width: 100%;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    .action-availstatus-wrapper:has(:nth-child(2)) {
+                                        .actions {
+                                            margin-top: $margin-16;
+                                        }
+                                    }
+
+                                }
+
+                                &.modtype_label {
+                                    grid-column: 1/-1;
+                                    text-align: left ;
+                                    .actions{
+                                        position: relative !important;
+                                        justify-content: flex-end;
+                                        align-items: center;
+                                        gap: 16px;
+                                    }
+                                }
+                                .activitytitle {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    justify-content: center;
+                                    width: 100%;
+                                    gap: $gap-26;
+
+                                }
+                                .availabilityinfo{
+                                    .description-inner{
+                                        color: $paragraph-color;
+                                        text-align: left;
+                                        .icon{
+                                            margin: unset;
+                                        }
+                                    }
+                                }
+
+
+
+                                .editing_move {
+                                    position: absolute;
+                                    display: flex;
+                                    left: -15px;
+                                    top: -15px;
+                                    z-index: 10;
+
+                                    i {
+                                        margin: 0px;
+                                    }
+                                }
+
+                                .contentafterlink {
+                                    // margin: $margin-8 0px 0px 0px !important;
+                                    padding: 0px;
+                                    display: flex;
+                                    flex-direction: column;
+                                    @include frmt-font-styling(14px, 22px, 400);
+                                    text-align: left;
+                                    color: $paragraph-color;
+                                }
+                                .activityinstance{
+                                    position: relative;
+                                }
+                            }
+                        }
+                    }
+
+                    .showactivity {
+                        @include frmt-font-styling(14px,17px,600);
+                        color: $blue;
+                        text-decoration: underline;
+                        cursor: pointer;
+                    }
+                }
+                // .sectionbadges {
+                //     .badge {
+                //         margin: 0.2rem auto;
+                //     }
+                // }
+            }
+
+            .badge {
+                padding: $pad-4 $pad-8;
+                margin: unset;
+                white-space: normal;
+                @include frmt-font-styling(12px, 14px, 400);
+                vertical-align: middle;
+                text-align: left;
+                // margin-right: .5rem;
+            }
+
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            .wdm-add-new-section {
+                // margin-right: 5px;
+                border: $border-height solid #e4eaec;
+            }
+        }
+    }
+    .content .summary .no-overflow {
+        width: 100%;
+    }
+    // /* Global */
+    /* hide borders from region main */
+    .container-fluid #region-main .card,
+    .container-fluid #region-main {
+        border: none;
+    }
+    /* Boost 3.4 */
+    .container-fluid #region-main .card.card-block:first-of-type {
+        background: transparent;
+        padding: 0;
+        overflow: visible;
+    }
+    /* Boost 3.5 */
+    .container-fluid #region-main .card>.card-body:first-of-type {
+        background: $white;
+        overflow: visible;
+    }
+    /* Boost 3.6 */
+    .container-fluid #region-main {
+        background: $white;
+        overflow: visible;
+    }
+    /* Fordson 3.7 */
+    .container-fluid #region-main {
+        background: $white !important;
+        overflow: visible;
+    }
+    /* RemUI 3.4, 3.5, 3.6 */
+    .container #region-main .card.card-block:first-of-type {
+        background: transparent;
+        padding: 0;
+        overflow: visible;
+    }
+    .wdm-card-section {
+        display: flex;
+        justify-content: flex-end;
+        gap: $gap-6;
+        margin-top: $margin-24;
+    }
+    // .format-remuiformat div.actions form.togglecompletion button.btn.btn-link {
+    //     font-size: 15px;
+    // }
+    .wdm-completion-container form.togglecompletion,
+    .wdm-completion-container form.togglecompletion>div {
+        display: inline !important;
+    }
+    .wdm-completion-container form.togglecompletion .btn.btn-link,
+    .wdm-completion-container .autocompletion {
+        padding: 0 0 0 10px;
+        background: transparent;
+    }
+    .wdm-completion-container form.togglecompletion .btn.btn-link:hover {
+        background: transparent !important;
+    }
+    .wdm-completion-container form.togglecompletion .btn.btn-link img,
+    .wdm-completion-container .autocompletion img {
+        width: 18px;
+        height: 18px;
+        margin: 4px 0;
+    }
+
+    .section-summary-activities,
+    .summary .no-overflow p {
+        // padding: 2px 0 8px 0;
+        color: $paragraph-color;
+        @include frmt-font-styling(14px, 22px, 600);
+        font-weight: bold;
+    }
+    .flex-1 {
+        flex: 1;
+    }
+    .w-p100 {
+        width: 100% !important;
+    }
+    .text-right {
+        text-align: right !important;
+    }
+    .text-center {
+        text-align: center !important;
+    }
+    .progress-xs {
+        width: 100%;
+        // margin: 0 auto;
+        border-bottom: 0 !important;
+        border-radius: $border-radius-5;
+        position: relative;
+        bottom: 0;
+    }
+    .progress-xs,
+    .progress-xs .progress-bar {
+        height: 7px !important;
+        border-radius: $border-radius-5;
+    }
+    .progress-xs .progress-bar {
+        line-height: 4px !important;
+    }
+    .bg-green-600 {
+        background-color: #11c26d !important;
+    }
+    .progress-xs.dark {
+        background-color: #e0e0e09e !important;
+    }
+    .progress-xs.light {
+        background-color: #b7b4b4a3 !important;
+    }
+    // #section-0 .sno {
+    //     display: inline-block;
+    //     font-size: 18px;
+    //     font-weight: 900;
+    //     color: rgba(0, 0, 0, 0.8);
+    //     padding: 5px 0;
+    // }
+    .remui-format-card .current::before {
+        left: -.1rem !important;
+    }
+    /* Hover effect only if Section is available. */
+    div#card-container a .section-title:hover {
+        text-decoration: underline;
+    }
+    input.ignoredirty.form-control {
+        width: 100% !important;
+    }
+    // #section-0 .progress {
+    //     margin-bottom: 5px;
+    //     border-radius: 15px;
+    //     background-color: #ddd;
+    //     height: 12px;
+    //     border-bottom: unset;
+    //     /* Fordson */
+    //     margin-left: 0px;
+    //     /* Moove */
+    // }
+    div#card-editing-container #section-0 li.activity img.activityicon {
+        vertical-align: middle;
+        height: 28px;
+        width: 28px;
+    }
+    .section-modchooser{
+        // margin: 24px !important;
+        // padding: 24px !important;
+        margin: 0px !important;
+    }
+    &.theme_adaptable {
+        .section-modchooser {
+            .section-modchooser-link {
+                *,
+                a:hover {
+                    color: #51666C;
+                }
+            }
+        }
+    }
+    .section-modchooser {
+        .section-modchooser-link {
+            *,
+            a:hover {
+                color: white;
+            }
+        }
+    }
+    div#card-editing-container div.availabilityinfo.ishidden,
+    div#card-container div.availabilityinfo.ishidden,
+    li.wdm-card-single-section div.availabilityinfo {
+        padding: 10px 0;
+        font-weight: bold;
+    }
+    .wdm-section-summary.summary-muted * {
+        color: #526069 !important;
+        display: none;
+    }
+    .wdm-card-completion button.btn-link {
+        padding: 0;
+    }
+    .wdm-card-completion button.btn-link img {
+        margin: 0 2px 0 0;
+    }
+    #changenumsections {
+        border: none;
+        &>div {
+            width: 100%;
+        }
+        .single-card,
+        .card-block {
+            justify-content: center;
+            box-shadow: none;
+            background: #e5e5e5;
+        }
+        a {
+            color: #526069 !important;
+        }
+        i.fa {
+            margin: 0 auto;
+        }
+    }
+    .w-full {
+        width: 100%;
+    }
+    .d-flex {
+        display: flex;
+    }
+    .d-block {
+        display: block;
+    }
+    .mdl-right {
+        text-align: right;
+    }
+    .float-right {
+        float: right;
+    }
+    .align-items-center {
+        align-items: center;
+    }
+    // Show More / Show Less Button
+    .showactivitywrapper {
+        text-align: center !important;
+        .showactivity {
+            font-size: 24px;
+            line-height: 24px;
+            cursor: pointer;
+        }
+    }
+
+    .inplaceeditable {
+        a {
+            &:focus {
+                box-shadow: unset;
+                border: unset;
+                background: unset;
+            }
+        }
+    }
+    .modchoosercontainer{
+        .chooser-container{
+            .tab-content{
+                .optionscontainer{
+                    .option{
+                        .optioninfo{
+                            .optionicon{
+                                margin-right: unset !important;
+                                margin: auto !important;
+                                margin-top: 15px !important;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .badge-primary{
+        background-color: $asscent-bg-color;
+    }
+
+    .contentwithoutlink,
+    .contentafterlink{
+        max-height: $summary-max-height;
+        justify-content: space-between;
+        width: 100%;
+        // overflow: auto;
+
+        p {
+            margin: 0;
+        }
+    }
+
+    .font-size-16{
+        font-size: 16px;
+    }
+    &.editing {
+        .general-section-activities {
+            .activity {
+                .contentafterlink {
+                    .no-overflow{
+                        overflow: auto !important;
+                    }
+                }
+            }
+        }
+    }
+
+    .availabilityinfo {
+        &.isrestricted {
+            .showmore-container .btn{
+                span.expanded-content{
+                    padding: 1px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    .icon{
+                        font-size: 18px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+            }
+            .showmore-container.collapsed .btn{
+                span.collapsed-content{
+                    padding: 1px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    .icon{
+                        font-size: 18px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+                .expanded-content{
+                    display: none;
+                }
+            }
+            ul {
+                padding-left: 1rem !important;
+            }
+        }
+    }
+
+    &.limitedwidth  {
+        header.hasbackground.design-1 {
+            .header-sub-section {
+                .progress-resume-wrapper {
+                    flex-direction: column;
+                }
+            }
+        }
+    }
+
+    .bulkEnable {
+        display: none;
+    }
+}
+.section{
+    .dndupload-preview-overlay,.dndupload-preview-wrapper{
+        display: none;
+    }
+}
+
+.single-section ul.remuiformat {
+    padding-left: 0;
+}
+
+.section.delegated-section {
+    text-align: start;
+    border-radius: 8px;
+
+    .wdm-add-new-section {
+        display: none;
+    }
+
+    &::after {
+        content: unset;
+    }
+
+    .content .section:not(:has(:first-child)) {
+        display: none !important;
+    }
+}
+
+
+body:not(.editing) #page-content .course-content ul li.section.main.delegated-section {
+    margin-top: 0.25rem;
+}
+
+// drag and drop icon removed temprarly from moodle4.5
+.edw-m405 #page .editing_move {
+	display: none !important;
+}
