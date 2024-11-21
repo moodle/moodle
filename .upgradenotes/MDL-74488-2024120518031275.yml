@@ -1,0 +1,13 @@
+issueNumber: MDL-74488
+notes:
+  core_reportbuilder:
+    - message: >-
+        New `report` helper class `get_report_row_count` method for retrieving
+        row count of custom or system report, without having to retrieve the
+        report content
+      type: improved
+    - message: >-
+        The `schedule` helper class `get_schedule_report_count` method is now
+        deprecated, existing code should instead use
+        `report::get_report_row_count`
+      type: deprecated
