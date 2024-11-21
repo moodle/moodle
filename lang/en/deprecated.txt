@@ -115,6 +115,7 @@ modulenotexist,core_debug
 coursecalendar,core_calendar
 importcalendarexternal,core_calendar
 nocalendarsubscriptions,core_calendar
+failedtaskcontexturlname,core
 datechanged,core
 daystakingcourse,core_course
 siteregistrationcontact,core_hub

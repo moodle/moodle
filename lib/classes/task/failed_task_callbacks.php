@@ -17,6 +17,7 @@
 namespace core\task;
 
 use core\hook\task\after_failed_task_max_delay;
+use core\url;
 use core_user;
 use stdClass;
 
@@ -39,14 +40,13 @@ class failed_task_callbacks {
         $task = $hook->get_task();
 
         $admins = get_admins();
-        if (empty($admins)) {
-            return;
-        }
         foreach ($admins as $admin) {
+            $tasklogslink = new url('/admin/tasklogs.php', ['filter' => get_class($task)]);
+
             $a = new stdClass();
             $a->firstname = $admin->firstname;
             $a->taskname = $task->get_name();
-            $a->link = new \moodle_url('/report/status/index.php', ['detail' => 'tool_task_maxfaildelay']);
+            $a->link = $tasklogslink->out(false);
             $messagetxt = get_string('failedtaskbody', 'moodle', $a);
             // Create message.
             $message = new \core\message\message();
@@ -60,9 +60,8 @@ class failed_task_callbacks {
             $message->fullmessagehtml = text_to_html($messagetxt);
             $message->smallmessage = get_string('failedtasksubject', 'moodle', $task->get_name());
             $message->notification = 1;
-            $message->contexturl = (
-                new \moodle_url('/report/status/index.php', ['detail' => 'tool_task_maxfaildelay']))->out(false);
-            $message->contexturlname = get_string('failedtaskcontexturlname', 'moodle');
+            $message->contexturl = $tasklogslink->out(false);
+            $message->contexturlname = get_string('tasklogs', 'admin');
             // Actually send the message.
             message_send($message);
         }
