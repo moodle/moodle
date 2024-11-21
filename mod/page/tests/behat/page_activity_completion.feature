@@ -18,7 +18,7 @@ Feature: View activity completion information in the Page resource
       | student1 | C1 | student        |
       | teacher1 | C1 | editingteacher |
 
-  Scenario: View automatic completion items as teacher
+  Scenario: A teacher can view a page resource automatic completion items
     Given the following "activity" exists:
       | activity       | page                     |
       | course         | C1                       |
@@ -30,7 +30,7 @@ Feature: View activity completion information in the Page resource
     When I am on the "Music history" "page activity" page logged in as teacher1
     Then "Music history" should have the "View" completion condition
 
-  Scenario: View automatic completion items as student
+  Scenario: A student can complete a page resource by viewing it
     Given the following "activity" exists:
       | activity       | page                     |
       | course         | C1                       |
