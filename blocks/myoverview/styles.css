@@ -13,13 +13,12 @@
 .progress-container {
     width: 100%;
     background-color: #e0e0e0; /* Light gray background */
-    border-radius: 5px; /* Gives radius to background */
+    border-radius: 5px; /* Gives radius */
     overflow: hidden;
 }
 
 .progress-bar {
     height: 10px; /*default 20*/
-    border-radius: 10px 0 0 10px /* 5 0 0 5  -- Gives radius to the color red, yellow, green*/
 }
 
 .progress-bar[style*="width: 0%"],
