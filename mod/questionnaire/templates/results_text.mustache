@@ -1,0 +1,86 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_questionnaire/results_text
+
+    Template which defines a results display for text responses.
+
+    Classes required for JS:
+    * /mod/questionnaire/module.js
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+
+    Example context (json):
+    {
+        "responses": [
+            {
+                "response": {
+                    "respondent" : "User 1",
+                    "text": "Some text"
+                }
+            },
+            {
+                "response": {
+                    "respondent" : "User 2",
+                    "text": "Some other text"
+                }
+            }
+        ],
+        "total": {
+            "total": "8/10"
+        }
+    }
+    }}
+<!-- Begin HTML generated from results_text template. -->
+{{#responses.0}}
+<table class="generaltable">
+    <thead>
+    <tr>
+        <th class="header c0" style="text-align:left;" scope="col">{{#str}} respondent, mod_questionnaire {{/str}}</th>
+        <th class="header c1 lastcol" style="text-align:right;" scope="col">{{#str}} response, mod_questionnaire {{/str}}</th>
+    </tr>
+    </thead>
+    <tbody>
+{{/responses.0}}
+{{#responses}}
+    {{#response}}
+    <tr class="">
+        <td class="cell c0" style="text-align:left;">{{{response.respondent}}}</td>
+        <td class="cell c1 lastcol" style="text-align:right;">{{{response.text}}}</td>
+    </tr>
+    {{/response}}
+{{/responses}}
+{{#total}}
+    <tr>
+        <td colspan="2"><div class="tabledivider"></div></td>
+    </tr>
+    <tr class="lastrow">
+        <td class="cell c0" style="text-align:left;">{{#str}} totalresponses, mod_questionnaire{{/str}}</td>
+        <td class="cell c1 lastcol" style="text-align:right;">{{total}}</td>
+    </tr>
+{{/total}}
+{{#responses.0}}
+    </tbody>
+</table>
+{{/responses.0}}
+{{^responses}}
+    <p class="generaltable">&nbsp;{{#str}} noresponsedata, questionnaire{{/str}}</p>
+{{/responses}}
+<!-- End HTML generated from results_choice template. -->

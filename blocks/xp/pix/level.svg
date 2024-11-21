@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="100"
+   height="100"
+   id="svg3016"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="New document 1">
+  <defs
+     id="defs3018" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.48"
+     inkscape:cx="36.785013"
+     inkscape:cy="53.787812"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer2"
+     showgrid="false"
+     inkscape:window-width="926"
+     inkscape:window-height="669"
+     inkscape:window-x="20"
+     inkscape:window-y="20"
+     inkscape:window-maximized="0"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata3021">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-258.5625,-388.0625)" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer"
+     transform="translate(-258.5625,-388.0625)">
+    <path
+       style="fill:#45b29d;fill-opacity:1;stroke:none"
+       d="m 308.71875,388.0625 -20.59375,25.5 -29.5625,12.4375 16.75,28.4375 2.09375,33.375 30.9375,-7.9375 30.875,8.1875 L 341.625,454.75 358.5625,426.4375 329.125,413.75 308.71875,388.0625 z m -1.15625,33.3125 c 1.98696,5e-5 3.73696,0.16671 5.25,0.53125 1.513,0.36462 2.87237,0.94796 4.09375,1.75 1.31247,0.87504 2.29424,1.94796 2.96875,3.1875 0.67445,1.23962 1.03122,2.68493 1.03125,4.34375 -3e-5,2.26045 -0.80211,4.24222 -2.40625,5.9375 -1.58596,1.67711 -3.48701,2.71877 -5.65625,3.15625 l 0,0.40625 c 0.87497,0.14586 1.90102,0.43231 3.03125,0.90625 1.13018,0.45575 2.05987,1.05731 2.84375,1.75 0.87497,0.78387 1.62237,1.75262 2.1875,2.9375 0.56507,1.18491 0.84371,2.71616 0.84375,4.59375 -4e-5,1.85939 -0.3568,3.57553 -1.03125,5.125 -0.67451,1.54949 -1.62243,2.88281 -2.84375,4.03125 -1.36722,1.27604 -2.9844,2.22396 -4.84375,2.84375 -1.84116,0.60156 -3.85679,0.90625 -6.0625,0.90625 -2.26043,0 -4.46877,-0.26563 -6.65625,-0.8125 -2.18751,-0.52865 -4.00261,-1.11198 -5.40625,-1.75 l 0,-5.71875 0.40625,0 c 1.54948,1.02084 3.37239,1.85678 5.46875,2.53125 2.09635,0.67449 4.14321,1.03126 6.09375,1.03125 1.14842,10e-6 2.36196,-0.21093 3.65625,-0.59375 1.29425,-0.3828 2.35414,-0.9401 3.15625,-1.6875 0.83852,-0.80208 1.44269,-1.6901 1.84375,-2.65625 0.41925,-0.96614 0.62498,-2.17967 0.625,-3.65625 -2e-5,-1.45832 -0.24481,-2.67707 -0.71875,-3.625 -0.45575,-0.96613 -1.08596,-1.70311 -1.90625,-2.25 -0.82033,-0.56509 -1.8021,-0.95571 -2.96875,-1.15625 -1.16668,-0.21873 -2.4323,-0.31248 -3.78125,-0.3125 l -2.46875,0 0,-4.5625 1.9375,0 c 2.77081,3e-5 4.9531,-0.57029 6.59375,-1.71875 1.65883,-1.16664 2.49997,-2.86976 2.5,-5.09375 -3e-5,-0.98434 -0.20575,-1.8333 -0.625,-2.5625 -0.41929,-0.74736 -1.00263,-1.33851 -1.75,-1.8125 -0.78387,-0.47393 -1.63804,-0.81767 -2.53125,-1 -0.89325,-0.18225 -1.90106,-0.28121 -3.03125,-0.28125 -1.73179,4e-5 -3.58074,0.31775 -5.53125,0.9375 -1.95053,0.61983 -3.76824,1.49483 -5.5,2.625 l -0.28125,0 0,-5.71875 c 1.29426,-0.63798 3.0052,-1.22132 5.15625,-1.75 2.16925,-0.54684 4.28905,-0.81245 6.3125,-0.8125 z"
+       id="path2985"
+       inkscape:connector-curvature="0" />
+    <g
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       id="text3818" />
+  </g>
+</svg>

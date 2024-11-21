@@ -1,0 +1,280 @@
+$section-bg: #fff;
+$section-body-padding: 0;
+$section-padding: 10px 15px;
+$section-border-radius: 0;
+
+//** Border color for elements within sections
+$section-inner-border: #ddd;
+$section-content-bg: #f5f5f5;
+
+$section-default-text: #333;
+$section-default-color: #ddd;
+
+.block.block_course_modulenavigation {
+    .content {
+        background-color: $section-bg;
+        padding: 5px;
+        white-space: normal;
+    }
+
+    .pagination,
+    .allpagination {
+        display: table;
+        margin: 0;
+        padding: $section-body-padding;
+        width: 100%;
+    }
+
+    .pagination .prev,
+    .allpagination .prev,
+    .pagination .next,
+    .allpagination .next {
+        width: 10%;
+    }
+
+    .pagination .prev a,
+    .allpagination .prev a,
+    .pagination .next a,
+    .allpagination .next a {
+        background-color: inherit;
+    }
+
+    .pagination .sectionname,
+    .allpagination .sectionname,
+    .pagination .allsectionames,
+    .allpagination .allsectionames {
+        border: 0;
+        border-radius: $section-border-radius;
+        width: 90%;
+    }
+
+    .pagination .expand-arrow,
+    .allpagination .expand-arrow {
+        float: right;
+        width: 18px;
+    }
+
+    .pagination > li,
+    .allpagination > li {
+        display: table-cell;
+    }
+
+    .pagination > li a,
+    .allpagination > li a {
+        background-color: transparent;
+        border: 0;
+        border-radius: $section-border-radius;
+        display: block;
+        float: none;
+        padding: $section-body-padding;
+    }
+
+    ul.activities {
+        list-style: none;
+        margin: 0;
+        padding: $section-body-padding;
+
+        li > a {
+            border-bottom: 1px solid #eee;
+            display: block;
+            padding: 5px 10px;
+
+            &:hover,
+            &.active {
+                background-color: #eee;
+                text-decoration: none;
+            }
+        }
+
+        .completionbox {
+            display: table-cell;
+            position: relative;
+            width: 18px;
+        }
+
+        .activityname {
+            display: table-cell;
+        }
+
+        .completioncheck {
+            border-radius: 5px;
+            content: '';
+            display: inline-block;
+            height: 10px;
+            margin-top: -5px;
+            position: absolute;
+            top: 50%;
+            width: 10px;
+
+            &.incomplete {
+                border: 1px solid #ccc;
+            }
+
+            &.completed {
+                background-color: #5cb85c;
+                border: 1px solid #5cb85c;
+            }
+        }
+
+        .modulenavigationlabel {
+            color: black;
+            cursor: default;
+            font-weight: 700;
+            pointer-events: none;
+        }
+    }
+
+    .section {
+        background-color: $section-bg;
+        border: 1px solid transparent;
+        border-radius: $section-border-radius;
+        margin-bottom: 20px;
+    }
+
+    .section-body {
+        padding: $section-body-padding;
+    }
+
+    .module-navigation-section-heading {
+        border-bottom: 1px solid transparent;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        padding: $section-padding;
+
+        > .dropdown .dropdown-toggle {
+            color: inherit;
+        }
+    }
+
+    .tocourse {
+        background-color: $section-content-bg;
+        border: 1px solid $section-default-color;
+        display: block;
+        margin-bottom: 3px;
+        padding: $section-padding;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+
+    .onesection .module-navigation-section-heading {
+        padding: $section-body-padding;
+    }
+
+    .section-title {
+        color: inherit;
+        margin-bottom: 0;
+        margin-top: 0;
+
+        > {
+            a,
+            .small,
+            .small > a {
+                color: inherit;
+            }
+        }
+    }
+
+    .section-footer {
+        background-color: $section-content-bg;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top: 1px solid $section-default-color;
+        padding: $section-padding;
+    }
+
+    .section > {
+        .list-group,
+        .section-collapse > .list-group {
+            margin-bottom: 0;
+        }
+
+        .list-group .list-group-item,
+        .section-collapse > .list-group .list-group-item {
+            border-radius: $section-border-radius;
+            border-width: 1px 0;
+        }
+
+        .list-group:first-child .list-group-item:first-child,
+        .section-collapse > .list-group:first-child .list-group-item:first-child {
+            border-top: 0;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        .list-group:last-child .list-group-item:last-child,
+        .section-collapse > .list-group:last-child .list-group-item:last-child {
+            border-bottom: 0;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .module-navigation-section-heading + .section-collapse > .list-group .list-group-item:first-child {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    }
+
+    .module-navigation-section-heading + .list-group .list-group-item:first-child,
+    .list-group + .section-footer {
+        border-top-width: 0;
+    }
+
+    .section-group {
+        margin-bottom: 20px;
+
+        .section {
+            border-radius: $section-border-radius;
+            margin-bottom: 0;
+
+            + .section {
+                margin-top: 5px;
+            }
+        }
+
+        .module-navigation-section-heading {
+            border-bottom: 0;
+
+            + .section-collapse > {
+                .section-body,
+                .list-group {
+                    border-top: 1px solid $section-default-color;
+                }
+            }
+        }
+
+        .section-footer {
+            border-top: 0;
+
+            + .section-collapse .section-body {
+                border-bottom: 1px solid $section-default-color;
+            }
+        }
+    }
+
+    .section-default {
+        border-color: $section-default-color;
+
+        > {
+            .module-navigation-section-heading {
+                background-color: $section-content-bg;
+                border-color: $section-default-color;
+                color: #333;
+
+                + .section-collapse > .section-body {
+                    border-top-color: $section-default-color;
+                }
+
+                .badge {
+                    background-color: #333;
+                    color: $section-content-bg;
+                }
+            }
+
+            .section-footer + .section-collapse > .section-body {
+                border-bottom-color: $section-default-color;
+            }
+        }
+    }
+}

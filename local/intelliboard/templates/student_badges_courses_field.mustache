@@ -1,0 +1,27 @@
+{{#courses}}
+    <span class="badge-report-item">
+        <strong>{{name}}</strong>:
+
+        {{^bydate}}
+            {{!-- Completion state --}}
+            <span class="badge-report-crit-item">
+                {{#str}}completion, local_intelliboard{{/str}} - <span class="{{completionclass}}">{{completion}}</span><!--
+            --></span>
+        {{/bydate}}
+
+        {{!-- Grade --}}
+        {{#grade}}
+            <span class="badge-report-crit-item">
+                {{#str}}grade, local_intelliboard{{/str}} <span class="{{gradeclass}}">{{grade}}</span>/{{requiredgrade}}<!--
+            --></span>
+        {{/grade}}
+
+        {{!-- Completion date --}}
+        {{#bydate}}
+            <span class="badge-report-crit-item">
+                {{#str}}completion, local_intelliboard{{/str}} <span class="{{bydateclass}}">{{bydate}}</span>/{{requiredbydate}}<!--
+            --></span>
+        {{/bydate}}
+    </span>
+    <br>
+{{/courses}}

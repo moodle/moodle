@@ -1,0 +1,10 @@
+{
+  "moodle-block_xp-rulepicker": {
+    "requires": [
+        "base",
+        "node",
+        "handlebars",
+        "moodle-core-notification-dialogue"
+    ]
+  }
+}

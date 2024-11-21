@@ -1,0 +1,71 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_questionnaire/navbaralpha
+
+    Template which defines a questionnaire all responses navigation bar for the report page.
+
+    Classes required for JS:
+    * /mod/questionnaire/module.js
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * firstrespondent - object: "url" and "title" strings for first respondent link.
+    * previous - object: "url" and "title" strings for previous link.
+    * respnumber - object: Current positio ("currpos") and "total" number of responses.
+    * next - object: "url" and "title" strings for next link.
+    * lastrespondent - object: "url" and "title" strings for last respondent link.
+    * listlink - string: Url of the link back to the response list.
+    * printaction - string: HTML to launch the print function.
+
+    Example context (json):
+    {
+        "firstrespondent": {
+            "url": "http://somelink.com",
+            "title": "Link title"
+        },
+        "previous": {
+            "url": "http://somelink.com",
+            "title": "Link title"
+        },
+        "respnumber": {
+            "currpos": 1,
+            "total": 22
+        },
+        "next": {
+            "url": "http://somelink.com",
+            "title": "Link title"
+        },
+        "lastrespondent": {
+            "url": "http://somelink.com",
+            "title": "Link title"
+        },
+        "listlink": "http://somelink.com",
+        "printaction": "<div>HTML of the printaction.</div>"
+    }
+    }}
+<div class="box respondentsnavbar">
+    {{#firstrespondent}}<b>&lt;&lt;</b> <a href="{{url}}" title="{{title}}">{{# str }}firstrespondent, mod_questionnaire{{/ str }}</a> |{{/firstrespondent}}
+    {{#previous}}<b>&lt;</b> <a href="{{url}}" title="{{title}}">{{# str }}previous, moodle{{/ str }}</a> | {{/previous}}
+    {{#respnumber}}<b>{{currpos}} / {{total}}</b>{{/respnumber}}
+    {{#next}} | <a href="{{url}}" title="{{title}}">{{# str}}next, moodle{{/ str }}</a> <b>&gt;</b>{{/next}}
+    {{#lastrespondent}} | <a href="{{url}}" title="{{title}}">{{# str }}lastrespondent, mod_questionnaire{{/ str }}</a> <b>&gt;&gt;</b>
+    {{/lastrespondent}}
+    <br /><b>&lt;&lt;&lt; <a href="{{listlink}}">{{# str }}viewbyresponse, mod_questionnaire{{/ str }}</a></b> | {{{printaction}}}
+</div>

@@ -1,0 +1,82 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_questionnaire/reportpagepdf
+
+    Template which defines a questionnaire completion page. This template uses a simple level of HTML, suitable for being
+    translated into a PDF file by the TCPDF library.
+
+    Classes required for JS:
+    * /mod/questionnaire/module.js
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * tabsarea - string: HTML of the tabs management area.
+    * notifications - string: HTML of any notifications loaded.
+    * myheaders - string: HTML of the page header.
+    * navigationbar - string: HTML of the response navigation controls.
+    * respondentinfo - string: HTML of any specific response/respondent information.
+    * title - string: Text title of the questionnaire.
+    * printblank - string: HTML of optional print blank questionnaire control.
+    * subtitle - string: Optional text subtitle.
+    * addinfo - string: Optional HTML additional information.
+    * feedbackcharts - string: HTML of any chart displays.
+    * feedbackscores - string: HTML of any feedback scores.
+    * feedbackmessages - string: HTML of any feedback messages.
+    * feedbacknotes - string: HTML of any feedback notes.
+    * responses - array: Array of responses HTML.
+    * bottomnavigationbar - string: HTML of the bottom response navigation controls.
+
+    Example context (json):
+    {
+        "notifications": "<div>Notification one</div>",
+        "myheaders": "HTML of the page header.",
+        "respondentinfo": "<div>This is respondent information HTML</div>",
+        "title": "Test Questionnaire HTML",
+        "subtitle": "This is a subtitle HTML",
+        "addinfo": "<div>This is additional information HTML.</div>",
+        "feedbackcharts": "<div>Feedback charts HTML.</div>",
+        "feedbackscores": "<div>Feedback scores HTML.</div>",
+        "feedbackmessages": "<div>Feedback messages HTML.</div>",
+        "feedbacknotes": "<div>Feedback notes HTML.</div>",
+        "responses": [
+            "Response 1 HTML",
+            "Response 2 HTML"
+        ],
+        "bottomnavigationbar": "Navigation bar HTML"
+    }
+    }}
+<div class="mod_questionnaire_reportpage generalbox">{{!
+    }}{{#notifications}}{{{notifications}}}{{/notifications}}{{!
+    }}<div class="box generalbox">{{!
+        }}{{#myheaders}}<h2>{{{.}}}</h2>{{/myheaders}}{{!
+        }}{{{respondentinfo}}}
+        {{#title}}<h3 class="surveyTitle">{{{.}}}</h3>{{{printblank}}}{{/title}}
+        {{#subtitle}}<h4 class="surveySubTitle">{{{.}}}</h4>{{/subtitle}}
+        {{#addinfo}}<div class="addInfo">{{{.}}}</div>{{/addinfo}}
+        {{#feedbackcharts}}{{{.}}}{{/feedbackcharts}}
+        {{#feedbackscores}}{{{.}}}{{/feedbackscores}}
+        {{#feedbackmessages}}
+        <h3>{{# str }} feedbackreport, mod_questionnaire {{/ str }}</h3>
+        {{{.}}}
+        {{/feedbackmessages}}
+        {{#feedbacknotes}}{{{.}}}{{/feedbacknotes}}
+        {{#responses}}{{{.}}}{{/responses}}
+    </div>
+</div>

@@ -1,0 +1,17 @@
+span.mobileratequestion {
+    padding-left: 2em;
+    padding-right: 2em;
+}
+
+.mod_questionnaire_slider .range-has-pin .range-pin {
+    -webkit-transform: translate3d(0, 0, 0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
+}
+.mod_questionnaire_slider .range-has-pin::part(pin) {
+    -webkit-transform: translate3d(0, -24px, 0) scale(1);
+    transform: translate3d(0, -24px, 0) scale(1);
+}
+
+ion-label.disabled {
+    opacity: 0.8 !important;
+}

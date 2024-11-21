@@ -1,0 +1,49 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_xp/resource-selector-contents
+
+    Resource selector results.
+
+    Example context (json):
+    {}
+}}
+<div>
+    <div class="alert alert-info results-empty" style="display: none">
+        {{#str}}noresults, core{{/str}}
+    </div>
+    <div class="alert alert-warning searching-results" style="display: none">
+        {{#str}}loadinghelp, core{{/str}}
+    </div>
+    <div style="overflow: auto; max-height: 300px">
+        <table
+            class="table table-condensed table-striped table-sm search-results"
+            style="display: none; width: 100%; margin: 0;">
+            <tbody>
+                <tr class="resource-template resource-node">
+                    <td>
+                        <div class="resource-name"></div>
+                        <small class="dimmed resource-subname"></small>
+                    </td>
+                    <td style="text-align: right; vertical-align: middle">
+                        <button class="btn btn-small btn-secondary btn-sm">{{#str}}select, core{{/str}}</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

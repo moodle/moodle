@@ -1,0 +1,117 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_xp/xp-widget
+
+    XP Widget.
+
+    Example context (json):
+    {
+    }
+}}
+<div>
+
+    {{#hasmanagernotices}}
+        {{#managernotices}}
+            {{{.}}}
+        {{/managernotices}}
+    {{/hasmanagernotices}}
+
+    {{#introhtml}}
+        <div class="introduction">{{{.}}}</div>
+    {{/introhtml}}
+
+    <div class="xp-text-xl xp-text-center xp-font-bold">{{{levelnamehtml}}}</div>
+
+    <div class="xp-my-3">{{{badgehtml}}}</div>
+
+    <div class="xp-mt-6">
+
+        <div class="xp-flex xp-gap-3">
+            <div class="xp-flex-1 xp-overflow-hidden">
+
+                <div class="xp-flex xp-flex-wrap xp-items-end xp-gap-1 xp-max-w-full">
+                    <div class="xp-text-xs xp-uppercase xp-text-gray-600">{{#str}}total, block_xp{{/str}}</div>
+                    <div class="xp-bg-gray-200 xp-rounded-full xp-px-3 xp-py-1 xp-overflow-hidden">
+                        <div class="xp-max-w-full xp-text-xl xp-leading-none xp-truncate" title="{{xp}}">{{{xphtml}}}</div>
+                    </div>
+                </div>
+
+                <div class="xp-mt-2">
+                    {{{progressbarhtml}}}
+                </div>
+
+            </div>
+
+            {{#shownextlevel}}
+            <div class="xp-self-end">
+                {{{nextbadgehtml}}}
+            </div>
+            {{/shownextlevel}}
+
+        </div>
+
+    </div>
+
+    {{#showrankingsnapshot}}
+        <div class="xp-mt-6">
+            <h5 class="block_xp-heading">{{#str}}ranking, block_xp{{/str}}</h5>
+            {{#hasrankingsnapshot}}
+            {{#showranksinrankingsnapshot}}
+            <div class="xp-flex xp-gap-2 xp-items-center">
+                {{#rankingsnapshot}}
+                    <div class="xp-flex xp-flex-col xp-items-center {{^highlight}}xp-flex-1{{/highlight}}{{#highlight}}xp-flex-2{{/highlight}} xp-overflow-hidden">
+                        <div class="{{^highlight}}xp-mt-4{{/highlight}}{{#highlight}}xp-text-xl xp-bg-gray-200 xp-rounded-full xp-px-2 xp-py-1 xp-min-w-[3rem] {{/highlight}} xp-max-w-full xp-truncate xp-text-center xp-leading-none xp-mb-1" aria-labelledby="block_xp-ranking-snapshot-rank-{{uniqid}}-{{idx}}">
+                            {{#isplaceholder}}-{{/isplaceholder}}
+                            {{^isplaceholder}}{{{rankhtml}}}{{/isplaceholder}}
+                        </div>
+                    </div>
+                {{/rankingsnapshot}}
+            </div>
+            {{/showranksinrankingsnapshot}}
+            <div class="xp-flex xp-gap-2 xp-items-center">
+                {{#rankingsnapshot}}
+                    <div class="xp-flex xp-flex-col xp-items-center {{^highlight}}xp-mt-1 xp-flex-1{{/highlight}}{{#highlight}}xp-flex-2{{/highlight}} xp-overflow-hidden" id="block_xp-ranking-snapshot-rank-{{uniqid}}-{{idx}}">
+                        <img src="{{picurl}}" alt="{{name}}" class="xp-block xp-w-full xp-rounded-full {{^highlight}} xp-max-w-[4rem] xp-border-gray-200 {{/highlight}}{{#highlight}} xp-max-w-[6rem] xp-border-sky-400 {{/highlight}} xp-border-solid xp-border-2 xp-p-0.5">
+                        {{#showdiffsinrankingsnapshot}}
+                        {{^highlight}}
+                        <div class="xp-text-2xs xp-text-gray-500 xp-mt-1" title="{{diff}}">
+                            {{#hasdiff}}{{{diff}}}{{/hasdiff}}{{^hasdiff}}&nbsp;{{/hasdiff}}
+                        </div>
+                        {{/highlight}}
+                        {{/showdiffsinrankingsnapshot}}
+                    </div>
+                {{/rankingsnapshot}}
+            </div>
+            {{/hasrankingsnapshot}}
+
+        </div>
+    {{/showrankingsnapshot}}
+
+    {{#showrecentactivity}}
+        <div class="xp-mt-6">
+            {{{recentactivityhtml}}}
+        </div>
+    {{/showrecentactivity}}
+
+    {{#showactions}}
+        <div class="xp-mt-6">
+            {{{actionshtml}}}
+        </div>
+    {{/showactions}}
+
+</div>

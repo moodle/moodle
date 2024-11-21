@@ -1,0 +1,47 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_xp/admin-compatibility-check
+
+    Recommended plugins.
+
+    Example context (json):
+    {
+    }
+}}
+<div class="block_xp">
+    {{^ haswarnings }}
+        <p class="mb-2">{{# str }} notecompatibilityissues, block_xp {{/ str }}</p>
+        <p>{{# pix }} i/valid, core {{/ pix }}{{# str }} noissuesidentified, block_xp {{/ str }}</p>
+    {{/ haswarnings }}
+    {{# haswarnings }}
+        <p>{{# str }} notecompatibilityissues, block_xp {{/ str }}</p>
+        <div class="xp-space-y-4">
+            {{#warnings}}
+                <div class="xp-border xp-border-solid xp-border-red-600 xp-rounded xp-bg-red-100 xp-p-4">
+                    <div class="xp-font-bold xp-mb-1">
+                        {{# pix }} i/invalid, core {{/ pix }}{{ title }}
+                    </div>
+                    <div>
+                        {{ message }}
+                        {{# url }} <a href="{{ . }}" target="_blank" re="noopener noreferer">{{# str }}learnmore, block_xp{{/ str }}</a> {{/ url }}
+                    </div>
+                </div>
+            {{/warnings}}
+        </div>
+    {{/ haswarnings }}
+</div>

@@ -1,0 +1,28 @@
+.block_pimenkofeaturedcourses #course-gallery .course-gallery .img-course {
+    background-position: center;
+    background-size: cover;
+    height: 7rem;
+    width: 100%;
+}
+
+.block_pimenkofeaturedcourses #course-gallery .card-block.card-title {
+    background: none;
+}
+
+.block_pimenkofeaturedcourses #course-gallery .course-gallery {
+    border:1px solid rgba(0,0,0,.125);
+}
+
+.block_pimenkofeaturedcourses .modalbutton {
+    border-radius: 100%;
+    height: 35px;
+    width: 35px;
+}
+
+.block_pimenkofeaturedcourses .modal-body {
+    color: #0c0c0c;
+}
+
+.block_pimenkofeaturedcourses .course-category .card-text {
+    padding: 0;
+}

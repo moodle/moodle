@@ -1,0 +1,11 @@
+{
+  "moodle-block_xp-notification": {
+    "requires": [
+        "base",
+        "node",
+        "handlebars",
+        "button-plugin",
+        "moodle-core-notification-dialogue"
+    ]
+  }
+}

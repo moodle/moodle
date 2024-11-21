@@ -1,0 +1,12 @@
+{
+  "name": "moodle-block_xp-filters",
+  "builds": {
+    "moodle-block_xp-filters": {
+      "jsfiles": [
+        "constants.js",
+        "filters.js",
+        "dnd.js"
+      ]
+    }
+  }
+}

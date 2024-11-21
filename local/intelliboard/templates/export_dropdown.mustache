@@ -1,0 +1,25 @@
+<div class="report-export-panel">
+   {{#totara_version}}
+        <a href="#" title="xls" data-format="xls">
+            {{# pix }} fileformats/xls, local_intelliboard, excel, local_intelliboard {{/ pix }}
+        </a>
+        <a href="#" title="csv" data-format="csv">
+            {{# pix }} fileformats/csv, local_intelliboard, csv, local_intelliboard {{/ pix }}
+        </a>
+        <a href="#" title="pdf" data-format="pdf">
+            {{# pix }} fileformats/pdf, local_intelliboard, pdf, local_intelliboard {{/ pix }}
+        </a>
+   {{/totara_version}}
+   {{^totara_version}}
+        <a href="#" title="xls" data-format="xls">
+            {{# pix }} fileformats/xls, local_intelliboard, {{#str}} excel, local_intelliboard {{/str}} {{/ pix }}
+        </a>
+        <a href="#" title="csv" data-format="csv">
+            {{# pix }} fileformats/csv, local_intelliboard, {{#str}} csv, local_intelliboard {{/str}}{{/ pix }}
+        </a>
+        <a href="#" title="pdf" data-format="pdf">
+            {{# pix }} fileformats/pdf, local_intelliboard, {{#str}} pdf, local_intelliboard {{/str}}{{/ pix }}
+        </a>
+   {{/totara_version}}
+
+</div>

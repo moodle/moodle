@@ -1,0 +1,44 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_questionnaire/fbsectionspage
+
+    Template which defines a questionnaire completion page.
+
+    Classes required for JS:
+    * /mod/questionnaire/module.js
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * tabsarea - string: HTML of the tabs management area.
+    * formarea - string: HTML of the management form.
+
+    Example context (json):
+    {
+        "tabsarea": "<div>HTML of the tabs area.</div>",
+        "formarea": "<div>HTML of the form area</div>"
+    }
+    }}
+<div class="mod_questionnaire_fbsectionspage generalbox">
+    {{{tabsarea}}}
+    <form id="fbsections" method="post">
+    {{{notifications}}}
+    {{{formarea}}}
+    </form>
+</div>

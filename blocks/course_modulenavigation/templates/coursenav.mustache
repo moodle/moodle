@@ -1,0 +1,122 @@
+{{!
+    This file is part of The Course Module Navigation Block
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+    @package    block_course_modulenavigation
+    @copyright  2019 Pimenko <contact@pimenko.com> <pimenko.com>
+    @author     Sylvain Revenu | Nick Papoutsis | Bas Brands | Pimenko
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+{{!
+    @template block-course_modulenavigation/coursenave
+
+    Block template for navigation
+
+    The purpose of this template is render a navigation block in course contexts. This template renders all the visible sections in a course.
+
+    Classes required for JS:
+    * none
+
+    Context variables required for this template:
+    * sections Array of course sections containing arrays of modules
+
+    Example context (json):
+    {
+        "sections": [
+            {
+                "number":1,
+                "title":"Topic 1",
+                "url":{},
+                "selected":false,
+                "collapse":false,
+                "onlytitles":false,
+                "modules":[
+                            {
+                                "name":"Test",
+                                "url":{},
+                                "onclick":{},
+                                "completeclass":"incomplete"
+                            }
+                        ],
+                "hasmodules":true
+            }
+        ]
+    }
+}}
+<div class="section-group" id="accordion" role="tablist" aria-multiselectable="true">
+    {{#sections}}
+        <div class="section section-default">
+            <div class="module-navigation-section-heading" role="tab" id="heading{{number}}">
+                <div class="section-title">
+                    <ul class="allpagination">
+                        <li class="allsectionnames">
+                            {{#collapse}}
+                            <a href="{{{url}}}">{{{title}}}</a>
+                            {{/collapse}}
+                            {{^collapse}}
+                                {{#onlytitles}}
+                                    <a href="{{{url}}}">{{{title}}}</a>
+                                {{/onlytitles}}
+                                {{^onlytitles}}
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{number}}"
+                                   aria-expanded="true" aria-controls="collapse{{number}}">{{{title}}}</a>
+                                {{/onlytitles}}
+                            {{/collapse}}
+                        </li>
+                        {{#collapse}}
+                            <li class="arrowaccordion">
+                                {{#hasmodules}}
+                                    <a class="expand-arrow" role="button" data-toggle="collapse"
+                                       data-parent="#accordion" href="#collapse{{number}}" aria-expanded="true"
+                                       aria-controls="collapse{{number}}">
+                                    </a>
+                                {{/hasmodules}}
+                            </li>
+                        {{/collapse}}
+                    </ul>
+                </div>
+            </div>
+            <div id="collapse{{number}}" class="section-collapse collapse {{#selected}}show{{/selected}}"
+                 role="tabsection" aria-labelledby="heading{{number}}">
+                <div class="section-body">
+                    <ul class="activities">
+                        {{#modules}}
+                            {{^issubsection}}
+                                {{^onlytitles}}
+                                    <li>
+                                        <a href="{{{url}}}" class="{{active}} {{#label}}modulenavigationlabel{{/label}}" onclick="{{{onclick}}}">
+                                            {{#completionon}}
+                                                <div class="completionbox">
+                                                    <div class="completioncheck {{completeclass}}">
+                                                    </div>
+                                                </div>
+                                            {{/completionon}}
+                                            <div class="activityname">
+                                                {{{name}}}
+                                            </div>
+                                        </a>
+                                    </li>
+                                {{/onlytitles}}
+                            {{/issubsection}}
+                            {{#issubsection}}
+                                {{> block_course_modulenavigation/subsection }}
+                            {{/issubsection}}
+                        {{/modules}}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {{/sections}}
+</div>

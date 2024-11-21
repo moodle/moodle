@@ -1,0 +1,116 @@
+{{!
+    This file is part of The Course Module Navigation Block
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+    @package    block_course_modulenavigation
+    @copyright  2019 Pimenko <contact@pimenko.com> <pimenko.com>
+    @author     Sylvain Revenu | Nick Papoutsis | Bas Brands | Pimenko
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+{{!
+    @template block-course_modulenavigation/coursenave
+
+    Block template for navigation
+
+    The purpose of this template is render a navigation block in course contexts. This template renders only the current active section.
+
+    Classes required for JS:
+    * none
+
+    Context variables required for this template:
+    * sections Array of course sections containing arrays of modules
+    * courseurl String contain a simple url
+    * coursename String contain a simple course name
+
+    Example context (json):
+    {
+        "sections": [
+            {
+                "number":1,
+                "title":"Topic 1",
+                "url":{},
+                "selected":false,
+                "collapse":false,
+                "onlytitles":false,
+                "modules":[
+                            {
+                                "name":"Test",
+                                "url":{},
+                                "completeclass":"incomplete"
+                            }
+                        ],
+                "hasmodules":true
+            }
+        ],
+        "courseurl" : "https://moodle.org",
+        "coursename" : "Toto is a course name"
+    }
+}}
+<div class="section-group onesection" id="accordion" role="tablist" aria-multiselectable="false">
+    <div class="backtocourse">
+        <a href="{{{courseurl}}}" class="tocourse">{{coursename}}</a>
+    </div>
+    {{#sections}}
+        {{#selected}}
+            <div class="section section-default">
+                <div class="module-navigation-section-heading" role="tab" id="heading{{number}}">
+                    <div class="section-title">
+                        <ul class="pagination">
+                            {{#hasprev}}
+                                <li class="prev {{prevclass}}">
+                                    <a href="{{prevurl}}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {{/hasprev}}
+                        <li class="sectionname">
+                            <a href="{{currurl}}" aria-lable="Current">
+                                {{title}}
+                            </a>
+                            {{#hasnext}}
+                                <li class="next {{nextclass}}">
+                                    <a href="{{nexturl}}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            {{/hasnext}}
+                        </ul>
+                    </div>
+                </div>
+                <div id="collapse" class="section-collapse" aria-labelledby="heading">
+                    <div class="section-body">
+                        <ul class="activities list-group">
+                            {{#modules}}
+                                <li>
+                                    <a href="{{{url}}}" class="{{active}}">
+                                        {{#completionon}}
+                                            <div class="completionbox">
+                                                <div class="completioncheck {{completeclass}}">
+                                                </div>
+                                            </div>
+                                        {{/completionon}}
+                                        <div class="activityname">
+                                            {{{name}}}
+                                        </div>
+                                    </a>
+                                </li>
+                            {{/modules}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        {{/selected}}
+    {{/sections}}
+</div>

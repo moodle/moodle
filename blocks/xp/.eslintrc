@@ -1,0 +1,20 @@
+{
+    "env": {
+        "browser": true,
+        "amd": true,
+        "node": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 6
+    },
+    "rules": {
+        "no-console": "warn",
+        "indent": [
+            "error",
+            4,
+            {
+                "SwitchCase": 1
+            }
+        ]
+    }
+}

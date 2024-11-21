@@ -1,0 +1,208 @@
+<div class="sheader clearfix">
+    <div class="avatar">
+        {{{ user_picture }}}
+    </div>
+    {{#render_students}}
+        <div class="info">
+            <div class="intelliboard-dropdown students">
+                {{#userlist}}
+                    {{#isselected}}
+                        <button>
+                            <span value="{{id}}">{{name}}</span> <i class="ion-android-arrow-dropdown"></i>
+                        </button>
+                    {{/isselected}}
+                {{/userlist}}
+                <ul>
+                    {{#userlist}}
+                        {{#notselected}}
+                            <li value="{{id}}">{{name}}</li>
+                        {{/notselected}}
+                    {{/userlist}}
+                </ul>
+            </div>
+            <div class="clear"></div>
+            <p>{{showing_user_email}}</p>
+        </div>
+    {{/render_students}}
+    {{^render_students}}
+        <div class="info">
+            <h2>{{showing_user_name}} <i class="ion-checkmark-circled"></i></h2>
+            <p>{{showing_user_email}}</p>
+        </div>
+    {{/render_students}}
+    <div class="stats">
+        <ul>
+            {{#t04}}
+                <li>
+                    {{totals.completed}}
+                    <span>{{#str}}completed_courses, local_intelliboard{{/str}}</span>
+                </li>
+            {{/t04}}
+
+            {{#t05}}
+                <li>
+                    {{totals.inprogress}}
+                    <span>{{#str}}courses_in_progress, local_intelliboard{{/str}}</span>
+                </li>
+            {{/t05}}
+
+            {{#t06}}
+                <li>
+                    {{totals.grade}}
+                    <span>{{#str}}courses_avg_grade, local_intelliboard{{/str}}</span>
+                </li>
+            {{/t06}}
+
+            {{#t08}}
+                <li class="dropdown">
+                    <a href="javascript:;" data-toggle="dropdown" >{{totals.sum_grade}}</a>
+                    <span>{{#str}}courses_sum_grade, local_intelliboard{{/str}}</span>
+                    <div class="dropdown-menu">
+                        <ul class="sum-courses-list">
+                            {{#user_courses}}
+                                <li class="course-item clearfix">
+                                    <label>
+                                        <input type="checkbox" value="{{id}}" {{#checked}} checked="checked" {{/checked}}
+                                               autocomplete="off">
+                                        {{fullname}}
+                                    </label>
+                                </li>
+                            {{/user_courses}}
+                        </ul>
+                        <button class="btn btn-primary">{{#str}}save, local_intelliboard{{/str}}</button>
+                    </div>
+                </li>
+            {{/t08}}
+
+            {{#t07}}
+                <li>
+                    <a href="{{messages_url}}">{{totals.messages}}</a>
+                    <span>{{#str}}messages, local_intelliboard{{/str}}</span>
+                </li>
+            {{/t07}}
+        </ul>
+    </div>
+</div>
+<ul class="intelliboard-menu">
+    {{#t2}}
+        <li>
+            <a href="index.php{{#other_user}}?user={{other_user}}{{/other_user}}" {{#pagehome}}class="active"{{/pagehome}}>
+                <i class="ion-ios-pulse"></i> {{#str}}dashboard, local_intelliboard{{/str}}
+            </a>
+        </li>
+    {{/t2}}
+    {{#t3}}
+        <li>
+            <a href="courses.php{{#other_user}}?user={{other_user}}{{/other_user}}" {{#pagecourses}}class="active"{{/pagecourses}}>
+                {{#str}}courses, local_intelliboard{{/str}}
+            </a>
+        </li>
+    {{/t3}}
+    {{#t4}}
+        <li>
+            <a href="grades.php{{#other_user}}?user={{other_user}}{{/other_user}}" {{#pagegrades}}class="active"{{/pagegrades}}>
+                {{grade_name}}
+            </a>
+        </li>
+    {{/t4}}
+
+    {{#show_reports}}
+        <li class="submenu">
+            <a href="#" {{#pagegreports}}class="active"{{/pagegreports}}>
+                {{#str}}reports, local_intelliboard{{/str}} <i class="arr ion-arrow-down-b"></i>
+            </a>
+            <ul>
+                {{#reports}}
+                    <li>
+                        <a href="reports.php?id={{reportid}}" {{#reportselected}}class="active"{{/reportselected}}>
+                            {{name}}
+                        </a>
+                    </li>
+                {{/reports}}
+            </ul>
+        </li>
+    {{/show_reports}}
+    <li>
+        <a href="badges.php" {{#pagebadges}}class="active"{{/pagebadges}}>
+            {{#str}}badges{{/str}}
+        </a>
+    </li>
+    {{#intellicartenabled}}
+        <!-- Orders -->
+        <li>
+            <a href="{{ordersurl}}" {{#pagemyorders}}class="active"{{/pagemyorders}}>
+                {{#str}}myorders, local_intelliboard{{/str}}
+            </a>
+        </li>
+        <!-- Seats -->
+        {{#showseats}}
+            <li>
+                <a href="{{seatsurl}}" {{#pagemyseats}}class="active"{{/pagemyseats}}>
+                    {{#str}}myseats, local_intelliboard{{/str}}
+                </a>
+            </li>
+        {{/showseats}}
+        <!-- Waitlist -->
+        {{#showwaitlist}}
+            <li>
+                <a href="{{waitlisturl}}" {{#pagemywaitlist}}class="active"{{/pagemywaitlist}}>
+                    {{#str}}mywaitlist, local_intelliboard{{/str}}
+                </a>
+            </li>
+        {{/showwaitlist}}
+        <!-- Subscriptions -->
+        {{#showsubscriptions}}
+            <li>
+                <a href="{{subscriptionurl}}" {{#pagemysubscriptions}}class="active"{{/pagemysubscriptions}}>
+                    {{#str}}mysubscriptions, local_intelliboard{{/str}}
+                </a>
+            </li>
+        {{/showsubscriptions}}
+    {{/intellicartenabled}}
+</ul>
+{{#render_students}}
+    {{#js}}
+        require(['jquery'], function($) {
+            $(document).ready(function() {
+                $('.sheader .info .intelliboard-dropdown ul li').click(function (e) {
+                    var stext = $(this).parent().parent().find('span').text();
+                    var svalue = $(this).parent().parent().find('span').attr('value');
+                    var ctext = $(this).text();
+                    var cvalue = $(this).attr('value');
+
+                    $(this).text(stext);
+                    $(this).attr('value', svalue);
+                    $(this).parent().parent().find('span').text(ctext);
+                    $(this).parent().parent().find('span').attr('value', cvalue);
+                    $(this).parent().hide();
+                    location = "{{pagepath}}?user=" + cvalue;
+                });
+
+                $('.sheader .info .intelliboard-dropdown button').click(function (e) {
+                    e.stopPropagation();
+                    if ($(this).parent().hasClass('disabled')) {
+                        return false;
+                    }
+                    $(this).parent().find('ul').toggle();
+                });
+
+                $('.sum-courses-list label').click(function (e) {
+                    e.stopPropagation();
+                });
+                $('.sheader .stats .dropdown-menu button').click(function (e) {
+                    e.stopPropagation();
+                    var checkedVals = $('.sum-courses-list input:checkbox:checked').map(function() {
+                        return this.value;
+                    }).get().join(',');
+                    M.cfg.developerdebug = false;
+                    require(['core_user/repository'], function(UserRepository) {
+                        UserRepository.setUserPreference('enabeled_sum_courses_<?php echo $showing_user->id;?>', checkedVals);
+                    });
+                    setTimeout(function () {
+                        window.location.reload();
+                    },600);
+                });
+            });
+        });
+    {{/js}}
+{{/render_students}}

@@ -1,0 +1,22 @@
+{
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "indent": [
+            "warn",
+            2
+        ],
+        "no-unused-vars": "off",
+        "object-curly-spacing": [
+            "always"
+        ],
+        "promise/no-native": "off"
+    }
+}

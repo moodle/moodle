@@ -1,0 +1,61 @@
+# This is the language of our project.
+language: php
+
+# Installs the updated version of PostgreSQL and extra APT packages.
+addons:
+  postgresql: "9.6"
+
+# Ensure DB and docker services are running.
+services:
+  - mysql
+  - postgresql
+  - docker
+
+# Cache Composer's and NPM's caches to speed up build times.
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - $HOME/.npm
+
+# Determines which versions of PHP to test our project against.  Each version
+# listed here will create a separate build and run the tests against that
+# version of PHP.
+php:
+  - 7.3
+  - 7.4
+
+# This section sets up the environment variables for the build.
+env:
+  global:
+    - MOODLE_BRANCH=MOODLE_311_STABLE
+    - IGNORE_PATHS=node_modules/
+  matrix:
+    - DB=pgsql
+    - DB=mysqli
+
+# This lists steps that are run before the installation step.
+before_install:
+  - phpenv config-rm xdebug.ini
+  - cd ../..
+  - composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
+  - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+
+# This lists steps that are run for installation and setup.
+install:
+  - moodle-plugin-ci install
+
+# This lists steps that are run for the purposes of testing.  Any of
+# these steps can be re-ordered or removed to your liking.  And of
+# course, you can add any of your own custom steps.
+script:
+  - moodle-plugin-ci phplint
+  - moodle-plugin-ci phpcpd
+  - moodle-plugin-ci phpmd
+  - moodle-plugin-ci codechecker
+  # Desactivate this for nom - The error returned is not clear enough
+  # - moodle-plugin-ci phpdoc
+  - moodle-plugin-ci validate
+  - moodle-plugin-ci savepoints
+  # Desactivate this for nom - Looks like it is trying to scan the vendor and node_modules folders.
+  # - moodle-plugin-ci mustache
+  - moodle-plugin-ci grunt

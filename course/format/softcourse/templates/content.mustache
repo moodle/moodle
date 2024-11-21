@@ -1,0 +1,127 @@
+{{!
+    This file is part of DigiBoard
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_softcourse/templates/content
+
+    Block template for softcourse content
+
+    This template is used to generate a basic display for the softcourse content.
+
+    Classes required for JS:
+    * none
+
+    Context variables required for this template:
+    * coursesummary string
+    * start_url object moodle_url
+    * start string
+    * disabledStart string
+    * initialsection object section
+    * sections object of section
+}}
+
+<div id="softcourse-introduction" class="card">
+    {{#courseintroduction}}
+        <div id="softcourse-summary">{{{ courseintroduction }}}</div>
+    {{/courseintroduction}}
+    {{#start_url}}
+        <a class="btn btn-secondary" id="softcourse-start-button"
+            {{#disabledStart}} aria-disabled="{{disabledStart}}" {{/disabledStart}}
+            {{#start_url}} href="{{ start_url }}" {{/start_url}}
+            {{^start_url}} href="#" {{/start_url}}
+        >
+            {{#str}} startcourse, format_softcourse {{/str}}
+        </a>
+    {{/start_url}}
+    {{> format_softcourse/sections }}
+</div>
+
+{{#js}}
+    require(['core_courseformat/local/content'], function(component) {
+    component.init('{{uniqid}}-course-format', {}, {{sectionreturn}});
+    });
+
+    document.body.addEventListener('click', function (event) {
+        // filter out clicks on any other elements
+        if (event.target.nodeName == 'A' && event.target.getAttribute('aria-disabled') == 'true') {
+            event.preventDefault();
+        }
+    });
+
+    // Handle text truncate for summary.
+    // This value will be use for backup text.
+    var fulltext = [];
+    texttruncate('softcourse-section-summary');
+
+    function texttruncate(id) {
+        var selector = document.getElementsByClassName(id);
+        if (selector != null && selector.length > 0) {
+            var truncate = false;
+
+            for (var i = 0; i < selector.length; i++) {
+                var el = selector[i];
+                if (el != null && el.innerHTML.length > 0) {
+                    // Backup text.
+                    var wordArray = '';
+                    if (fulltext[i]) {
+                        if(el.innerHTML != fulltext[i].join(' ')) {
+                            el.innerHTML = fulltext[i].join(' ');
+                        }
+                        wordArray = fulltext[i].slice();
+                    } else {
+                        wordArray = el.innerHTML.split(' ');
+                        // Use slic() to prevent copy reference.
+                        fulltext[i] = wordArray.slice();
+                    }
+                    <!--    var p = container.querySelector('p');-->
+                    <!--    var divh = container.clientHeight;-->
+                    <!--    while (p.offsetHeight > divh)-->
+                    while(el.querySelector('div').offsetHeight > el.clientHeight) {
+                        wordArray.pop();
+                        el.innerHTML = wordArray.join(' ');
+                        truncate = true;
+                        if(truncate) {
+                            if(el.querySelector('div').lastChild.tagName) {
+                            el.querySelector('div').lastChild.innerHTML += '...';
+                            } else {
+                            el.querySelector('div').innerHTML += '...';
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    var rtime;
+    var timeout = false;
+    var delta = 200;
+    $(window).resize(function() {
+        rtime = new Date();
+            if (timeout === false) {
+                timeout = true;
+            setTimeout(resizeend, delta);
+    }});
+
+    function resizeend() {
+        if (new Date() - rtime < delta) {
+            setTimeout(resizeend, delta);
+        } else {
+            timeout = false;
+            texttruncate('softcourse-section-summary');
+        }
+    }
+{{/js}}

@@ -1,0 +1,293 @@
+<p class="setup-page-supheading">
+    {{#str}}setup_subheading, local_intelliboard{{/str}}
+</p>
+<div class="setup-wrapper noselect">
+    <div class="tab-item moodle-settings">
+        <div class="tab-header noselect">
+            <span class="tab-header-title">
+                <span>1</span>
+                <span>{{#str}}moodle_settings, local_intelliboard{{/str}}</span>
+            </span>
+            <span>
+                <span class="tab-header-button">
+                    <button class="next">{{#str}}next, local_intelliboard{{/str}}</button>
+                </span>
+            </span>
+        </div>
+        <div class="tab-body">
+            <div class="content">
+                <div class="warnings-block hidden">
+                </div>
+
+                <!-- Enable web services -->
+                <div class="tab-body-item">
+                    <div class="tab-body-item-title">
+                        {{#str}}webservices, webservice{{/str}}
+                    </div>
+                    <div class="tab-body-item-content">
+                        <p class="description">{{#str}}web_services_descr, local_intelliboard{{/str}}</p>
+                        <div class="switch-item">
+                            <label class="switch">
+                                <input type="checkbox" name="webservice" value="1" id="webservice" checked="checked">
+                                <span class="intelliboard-slider round"></span>
+                            </label>
+                            {{#str}}enablews, webservice{{/str}}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enable protocols -->
+                <div class="tab-body-item">
+                    <div class="tab-body-item-title">
+                        {{#str}}protocol, local_intelliboard{{/str}}
+                    </div>
+                    <div class="tab-body-item-content">
+                        <p class="description">{{#str}}protocols_descr, local_intelliboard{{/str}}</p>
+                        <div class="choose-group">
+                            <div class="item active">
+                                <div class="round">
+                                    <input type="checkbox" name="rest_protocol" value="1" id="rest_protocol" checked="checked">
+                                    <label for="rest_protocol"></label>
+                                </div>
+                                {{#str}}rest, local_intelliboard{{/str}}
+                            </div>
+                            <div class="item">
+                                <div class="round">
+                                    <input type="checkbox" name="soap_protocol" value="0" id="soap_protocol">
+                                    <label for="soap_protocol"></label>
+                                </div>
+                                {{#str}}soap, local_intelliboard{{/str}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Authorized user -->
+                <div class="tab-body-item">
+                    <div class="tab-body-item-title">
+                        {{#str}}serviceusers, webservice{{/str}}
+                    </div>
+                    <div class="tab-body-item-content">
+                        <p class="description">{{#str}}authorized_user_descr, local_intelliboard{{/str}}</p>
+                        <div class="input-item">
+                            <label for="usernameorid">{{#str}}usernameorid, webservice{{/str}}</label>
+                            <div class="iconed-input-wrapper">
+                                <input type="text" name="usernameorid" id="usernameorid" value="{{current_user.username}}">
+                                <i class="ion-ios-person-outline"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IntelliBoard settings -->
+                <div class="tab-body-item">
+                    <div class="tab-body-item-title">
+                        {{#str}}intelliboard_settings, local_intelliboard{{/str}}
+                    </div>
+                    <div class="tab-body-item-content">
+                        <p class="description">{{#str}}intb_settings_descr, local_intelliboard{{/str}}</p>
+
+                        <div class="input-item">
+                            <label for="subscription_email">{{#str}}email_subscr, local_intelliboard{{/str}}</label>
+                            <div class="iconed-input-wrapper">
+                                <input type="email" name="subscription_email" id="subscription_email" value="{{current_user.email}}">
+                                <i class="ion-ios-email-outline"></i>
+                            </div>
+                        </div>
+
+                        <div class="switch-item">
+                            <label class="switch">
+                                <input type="checkbox" name="enable_tracking" value="0" id="enable_tracking" checked="checked">
+                                <span class="intelliboard-slider round"></span>
+                            </label>
+                            {{#str}}enable_time_tracking, local_intelliboard{{/str}}
+                            <p class="description">{{#str}}enable_time_tracking_descr, local_intelliboard{{/str}}</p>
+                        </div>
+                        <div class="switch-item">
+                            <label class="switch">
+                                <input type="checkbox" name="enable_sso_link" value="1" id="enable_sso_link" checked="checked">
+                                <span class="intelliboard-slider round"></span>
+                            </label>
+                            {{#str}}enable_sso, local_intelliboard{{/str}}
+                            <p class="description">{{#str}}enable_sso_descr, local_intelliboard{{/str}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="loader hidden">
+                <img src="{{loader_img_url}}" alt="Loader image">
+            </div>
+            <div class="tab-body-button">
+                <button class="next">{{#str}}next, local_intelliboard{{/str}}</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-item terms closed">
+        <div class="tab-header">
+            <span class="tab-header-title">
+                <span>2</span>
+                <span>{{#str}}intelliboard_terms, local_intelliboard{{/str}}</span>
+            </span>
+            <span>
+                <span class="tab-header-button">
+                    <button class="back">{{#str}}back{{/str}}</button>
+                </span>
+                <span class="tab-header-button">
+                    <button class="next">{{#str}}next, local_intelliboard{{/str}}</button>
+                </span>
+            </span>
+        </div>
+        <div class="tab-body">
+            <div class="content">
+                <div class="warnings-block hidden">
+                </div>
+
+                <div class="intelliboard-terms-item">
+                    <div class="switch-item">
+                        <label class="switch">
+                            <input name="terms" id="termsField" type="checkbox" value="1" required="required">
+                            <span class="intelliboard-slider round"></span>
+                        </label>
+                        <strong>{{#str}}terms_msg, local_intelliboard{{/str}}</strong>
+                    </div>
+                    <div class="intelliboard-terms-item-content">
+                        {{{intelliboard.terms}}}
+                    </div>
+                </div>
+                <div class="intelliboard-terms-item">
+                    <div class="switch-item">
+                        <label class="switch">
+                            <input name="privacy" id="privacyField" type="checkbox" value="1" required="required">
+                            <span class="intelliboard-slider round"></span>
+                        </label>
+                        <strong>{{#str}}privacy_msg, local_intelliboard{{/str}}</strong>
+                    </div>
+                    <div class="intelliboard-terms-item-content">
+                        {{{intelliboard.privacy}}}
+                    </div>
+                </div>
+                <div class="intelliboard-terms-item">
+                    <div class="switch-item">
+                        <label class="switch">
+                            <input name="shield" id="shieldField" type="checkbox" value="1" required="required">
+                            <span class="intelliboard-slider round"></span>
+                        </label>
+                        <strong>{{#str}}shield_msg, local_intelliboard{{/str}}</strong>
+                    </div>
+                    <div class="intelliboard-terms-item-content">
+                        {{{intelliboard.shield}}}
+                    </div>
+                </div>
+            </div>
+            <div class="loader hidden">
+                <img src="{{loader_img_url}}" alt="Loader image">
+            </div>
+            <div class="tab-body-button">
+                <button class="back">{{#str}}back{{/str}}</button>
+                <button class="next">{{#str}}next, local_intelliboard{{/str}}</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-item authentication closed">
+        <div class="tab-header">
+            <span class="tab-header-title">
+                <span>3</span>
+                <span>{{#str}}authentication, local_intelliboard{{/str}}</span>
+            </span>
+            <span>
+                <span class="tab-header-button">
+                    <button class="back">{{#str}}back{{/str}}</button>
+                </span>
+            </span>
+        </div>
+        <div class="tab-body">
+            <div class="content">
+                <div class="warnings-block hidden">
+                </div>
+                <div class="login-form hidden">
+                    <div class="form-item">
+                        <div class="input-item">
+                            <label for="loginEmail">{{#str}}email, local_intelliboard{{/str}}</label>
+                            <div class="iconed-input-wrapper">
+                                <input type="email" name="loginEmail" id="loginEmail" class="form-control" value="">
+                                <i class="ion-ios-email-outline"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-item">
+                        <div class="input-item">
+                            <label for="loginPassword">{{#str}}password, local_intelliboard{{/str}}</label>
+                            <div class="iconed-input-wrapper">
+                                <input type="password" name="loginPassword" id="loginPassword" class="form-control">
+                                <i class="ion-ios-locked-outline"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-action">
+                        <button class="btn-primary sign-in form-control">{{#str}}sign_in, local_intelliboard{{/str}}</button>
+                    </div>
+                </div>
+                <div class="register-form hidden">
+                    <div class="form-item">
+                        <div class="input-item">
+                            <label for="registerName">{{#str}}name, local_intelliboard{{/str}}</label>
+                            <div class="iconed-input-wrapper">
+                                <input type="text" name="registerName" id="registerName" class="form-control" value="{{full_name}}">
+                                <i class="ion-ios-person-outline"></i>
+                            </div>
+                        </div>
+                        <div class="input-item">
+                            <label for="registerEmail">{{#str}}email, local_intelliboard{{/str}}</label>
+                            <div class="iconed-input-wrapper">
+                                <input type="email" name="registerEmail" id="registerEmail" class="form-control" value="">
+                                <i class="ion-ios-email-outline"></i>
+                            </div>
+                        </div>
+                        <div class="form-item">
+                            <div class="input-item">
+                                <label for="registerPassword">{{#str}}password, local_intelliboard{{/str}}</label>
+                                <div class="iconed-input-wrapper">
+                                    <input type="password" name="registerPassword" id="registerPassword" class="form-control">
+                                    <i class="ion-ios-locked-outline"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-item">
+                            <label for="registerCountry">{{#str}}country, local_intelliboard{{/str}}</label>
+                            <div class="iconed-input-wrapper">
+                                <select name="registerCountry" id="registerCountry" class="form-control">
+                                    {{#intelliboard.countries}}
+                                        <option value="{{name}}">{{name}}</option>
+                                    {{/intelliboard.countries}}
+                                </select>
+                                <i class="ion-ios-world-outline"></i>
+                            </div>
+                        </div>
+                        <div class="form-action">
+                            <button class="btn-primary sign-up form-control">{{#str}}sign_up, local_intelliboard{{/str}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="loader hidden">
+                <img src="{{loader_img_url}}" alt="Loader image">
+            </div>
+            <div class="tab-body-button">
+                <button class="back">{{#str}}back{{/str}}</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-item congrats closed">
+        <div class="tab-body">
+            <i class="ion-ios-unlocked-outline"></i>
+            <h2>{{#str}}congratulations_intb_register, local_intelliboard{{/str}}!</h2>
+            <p>{{#str}}congratulations_intb_register_msg, local_intelliboard{{/str}}</p>
+            <a href="{{next_url}}" class="btn btn-primary">
+                {{#str}}next, local_intelliboard{{/str}}
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,43 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_xp/sub-navigation
+
+    Example context (json):
+    {
+    }
+}}
+<nav class="
+    xp-text-left
+    xp-flex-row xp-flex-wrap xp-border-0 xp-border-b xp-border-solid xp-border-gray-100 xp-pb-4 xp-gap-2
+    lg:xp-space-y-1 lg:xp-flex-col lg:xp-flex-nowrap lg:xp-pb-0 lg:xp-border-b-0 lg:xp-gap-0
+    ">
+    {{#items}}
+        <a href="{{ url }}"
+            {{#current}}
+            class="lg:xp-w-full xp-no-underline xp-bg-gray-100 xp-text-gray-900 xp-flex xp-items-center xp-pl-3 xp-pr-2 xp-py-2 xp-text-sm xp-font-medium xp-rounded-md xp-gap-1"
+            aria-current="page"
+            {{/current}}
+            {{^current}}
+            class="lg:xp-w-full xp-no-underline xp-text-gray-600 hover:xp-bg-gray-50 hover:xp-text-gray-900 xp-flex xp-items-center xp-pl-3 xp-pr-2 xp-py-2 xp-text-sm xp-font-medium xp-rounded-md"
+            {{/current}}
+            >
+          <span class="xp-grow xp-truncate">{{ text }}</span>
+          {{#addonrequired}}<span class="xp-py-0.5 xp-px-1 xp-normal-case xp-text-2xs xp-inline-block xp-bg-black xp-text-white xp-rounded xp-no-underline xp-font-normal xp-align-middle">XP+</span>{{/addonrequired}}
+        </a>
+    {{/items}}
+</nav>

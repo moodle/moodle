@@ -1,0 +1,17 @@
+{
+    "name": "fmcorz/moodle-block_xp",
+    "type": "moodle-block",
+    "description": "Moodle plugin to gamify students' learning experience.",
+    "homepage": "https://github.com/FMCorz/moodle-block_xp",
+    "license": "GPL-3.0+",
+    "require": {
+        "composer/installers": "*"
+    },
+    "extra": {
+        "installer-name": "xp"
+    },
+    "support": {
+        "issues": "https://github.com/FMCorz/moodle-block_xp/issues",
+        "source": "https://github.com/FMCorz/moodle-block_xp"
+    }
+}

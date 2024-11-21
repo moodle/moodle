@@ -1,0 +1,42 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_questionnaire/mobile_date_question
+
+    Template which defines a date question display in the mobile app.
+
+    Context variables required for this template:
+    * fieldkey - integer: ID of the question.
+    * completed - boolean: True if question already completed.
+
+    Example context (json):
+    {
+        "fieldkey": 985,
+        "completed": 0
+    }
+}}
+{{=<% %>=}}
+<ion-item>
+    <ion-label>
+        <%#completed%>
+        <core-format-text text="{{ CONTENT_OTHERDATA.<%fieldkey%> }}"></core-format-text>
+        <%/completed%>
+    </ion-label>
+    <%^completed%>
+    <ion-datetime displayFormat="DD/MM/YYYY" max="2100-12-31" [(ngModel)]="CONTENT_OTHERDATA.<%fieldkey%>"></ion-datetime>
+    <%/completed%>
+</ion-item>

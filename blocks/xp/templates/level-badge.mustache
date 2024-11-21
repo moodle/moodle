@@ -1,0 +1,10 @@
+{{#badgeurl}}
+<div class="block_xp-level level-{{level}} {{$size}}{{size}}{{/size}} level-badge" aria-label="{{#str}} levelx, block_xp, {{ level }} {{/str}}">
+    <img src={{ badgeurl }} alt="{{#str}} levelx, block_xp, {{ level }} {{/str}}">
+</div>
+{{/badgeurl}}
+{{^badgeurl}}
+<div class="block_xp-level level-{{level}} {{$size}}{{size}}{{/size}}" aria-label="{{#str}} levelx, block_xp, {{ level }} {{/str}}">
+    {{ level }}
+</div>
+{{/badgeurl}}

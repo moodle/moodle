@@ -1,0 +1,260 @@
+.block.block_course_modulenavigation .content {
+    background-color: #fff;
+    padding: 5px;
+    white-space: normal;
+}
+
+.block.block_course_modulenavigation .pagination,
+.block.block_course_modulenavigation .allpagination {
+    display: table;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.block.block_course_modulenavigation .pagination .prev,
+.block.block_course_modulenavigation .allpagination .prev,
+.block.block_course_modulenavigation .pagination .next,
+.block.block_course_modulenavigation .allpagination .next {
+    width: 10%;
+}
+
+.block.block_course_modulenavigation .pagination .prev a,
+.block.block_course_modulenavigation .allpagination .prev a,
+.block.block_course_modulenavigation .pagination .next a,
+.block.block_course_modulenavigation .allpagination .next a {
+    background-color: inherit;
+}
+
+.block.block_course_modulenavigation .pagination .sectionname,
+.block.block_course_modulenavigation .allpagination .sectionname,
+.block.block_course_modulenavigation .pagination .allsectionames,
+.block.block_course_modulenavigation .allpagination .allsectionames {
+    border: 0;
+    border-radius: 0;
+    width: 90%;
+}
+
+.block.block_course_modulenavigation .pagination .expand-arrow,
+.block.block_course_modulenavigation .allpagination .expand-arrow {
+    float: right;
+    width: 18px;
+}
+
+.block.block_course_modulenavigation .pagination > li,
+.block.block_course_modulenavigation .allpagination > li {
+    display: table-cell;
+}
+
+.block.block_course_modulenavigation .pagination > li a,
+.block.block_course_modulenavigation .allpagination > li a {
+    background-color: transparent;
+    border: 0;
+    border-radius: 0;
+    display: block;
+    float: none;
+    padding: 0;
+}
+
+.block.block_course_modulenavigation ul.activities {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.block.block_course_modulenavigation ul.activities li > a {
+    border-bottom: 1px solid #eee;
+    display: block;
+    padding: 5px 10px;
+}
+
+.block.block_course_modulenavigation ul.activities li > a:hover,
+.block.block_course_modulenavigation ul.activities li > a.active {
+    background-color: #eee;
+    text-decoration: none;
+}
+
+.block.block_course_modulenavigation ul.activities .completionbox {
+    display: table-cell;
+    position: relative;
+    width: 18px;
+}
+
+.block.block_course_modulenavigation ul.activities .activityname {
+    display: table-cell;
+}
+
+.block.block_course_modulenavigation ul.activities .completioncheck {
+    border-radius: 5px;
+    content: '';
+    display: inline-block;
+    height: 10px;
+    margin-top: -5px;
+    position: absolute;
+    top: 50%;
+    width: 10px;
+}
+
+.block.block_course_modulenavigation ul.activities .completioncheck.incomplete {
+    border: 1px solid #ccc;
+}
+
+.block.block_course_modulenavigation ul.activities .completioncheck.completed {
+    background-color: #5cb85c;
+    border: 1px solid #5cb85c;
+}
+
+.block.block_course_modulenavigation ul.activities .modulenavigationlabel {
+    color: black;
+    cursor: default;
+    font-weight: 700;
+    pointer-events: none;
+}
+
+.block.block_course_modulenavigation .section {
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-radius: 0;
+    margin-bottom: 20px;
+}
+
+.block.block_course_modulenavigation .section-body {
+    padding: 0;
+}
+
+.block.block_course_modulenavigation .module-navigation-section-heading {
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    padding: 10px 15px;
+}
+
+.block.block_course_modulenavigation .module-navigation-section-heading > .dropdown .dropdown-toggle {
+    color: inherit;
+}
+
+.block.block_course_modulenavigation .tocourse {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    display: block;
+    margin-bottom: 3px;
+    padding: 10px 15px;
+}
+
+.block.block_course_modulenavigation .tocourse:hover {
+    text-decoration: none;
+}
+
+.block.block_course_modulenavigation .onesection .module-navigation-section-heading {
+    padding: 0;
+}
+
+.block.block_course_modulenavigation .section-title {
+    color: inherit;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.block.block_course_modulenavigation .section-title > a,
+.block.block_course_modulenavigation .section-title > .small,
+.block.block_course_modulenavigation .section-title > .small > a {
+    color: inherit;
+}
+
+.block.block_course_modulenavigation .section-footer {
+    background-color: #f5f5f5;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top: 1px solid #ddd;
+    padding: 10px 15px;
+}
+
+.block.block_course_modulenavigation .section > .list-group,
+.block.block_course_modulenavigation .section > .section-collapse > .list-group {
+    margin-bottom: 0;
+}
+
+.block.block_course_modulenavigation .section > .list-group .list-group-item,
+.block.block_course_modulenavigation .section > .section-collapse > .list-group .list-group-item {
+    border-radius: 0;
+    border-width: 1px 0;
+}
+
+.block.block_course_modulenavigation .section > .list-group:first-child .list-group-item:first-child,
+.block.block_course_modulenavigation .section > .section-collapse > .list-group:first-child .list-group-item:first-child {
+    border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.block.block_course_modulenavigation .section > .list-group:last-child .list-group-item:last-child,
+.block.block_course_modulenavigation .section > .section-collapse > .list-group:last-child .list-group-item:last-child {
+    border-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.block.block_course_modulenavigation .section > .module-navigation-section-heading + .section-collapse > .list-group .list-group-item:first-child {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.block.block_course_modulenavigation .module-navigation-section-heading + .list-group .list-group-item:first-child,
+.block.block_course_modulenavigation .list-group + .section-footer {
+    border-top-width: 0;
+}
+
+.block.block_course_modulenavigation .section-group {
+    margin-bottom: 20px;
+}
+
+.block.block_course_modulenavigation .section-group .section {
+    border-radius: 0;
+    margin-bottom: 0;
+}
+
+.block.block_course_modulenavigation .section-group .section + .section {
+    margin-top: 5px;
+}
+
+.block.block_course_modulenavigation .section-group .module-navigation-section-heading {
+    border-bottom: 0;
+}
+
+.block.block_course_modulenavigation .section-group .module-navigation-section-heading + .section-collapse > .section-body,
+.block.block_course_modulenavigation .section-group .module-navigation-section-heading + .section-collapse > .list-group {
+    border-top: 1px solid #ddd;
+}
+
+.block.block_course_modulenavigation .section-group .section-footer {
+    border-top: 0;
+}
+
+.block.block_course_modulenavigation .section-group .section-footer + .section-collapse .section-body {
+    border-bottom: 1px solid #ddd;
+}
+
+.block.block_course_modulenavigation .section-default {
+    border-color: #ddd;
+}
+
+.block.block_course_modulenavigation .section-default > .module-navigation-section-heading {
+    background-color: #f5f5f5;
+    border-color: #ddd;
+    color: #333;
+}
+
+.block.block_course_modulenavigation .section-default > .module-navigation-section-heading + .section-collapse > .section-body {
+    border-top-color: #ddd;
+}
+
+.block.block_course_modulenavigation .section-default > .module-navigation-section-heading .badge {
+    background-color: #333;
+    color: #f5f5f5;
+}
+
+.block.block_course_modulenavigation .section-default > .section-footer + .section-collapse > .section-body {
+    border-bottom-color: #ddd;
+}
+
+/*# sourceMappingURL=styles.css.map */

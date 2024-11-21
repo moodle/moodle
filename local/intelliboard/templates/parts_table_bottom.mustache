@@ -1,0 +1,25 @@
+<div class="intelliboard-table-bottom">
+	<div class="intb-pagination">
+		{{{ pagination_html }}}
+	</div>
+	<div class="intb-page-size">
+		<select autocomplete="off">
+			{{# page_size_options }}
+				<option value="{{ value }}" data-link="{{{ url }}}"
+						{{#selected}}selected="selected"{{/selected}}>
+					{{ value }}
+				</option>
+			{{/ page_size_options }}
+		</select>
+	</div>
+</div>
+<div class="clearfix"></div>
+{{# js }}
+	require(['jquery'], function($) {
+		$('.intelliboard-table-bottom .intb-page-size > select').on('change', function() {
+			window.location.href = $(this).find(
+				'option:selected'
+			).attr('data-link');
+		});
+	});
+{{/ js }}

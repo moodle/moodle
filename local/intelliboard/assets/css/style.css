@@ -1,0 +1,1213 @@
+/**
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+/**
+ * @package    local_intelliboard
+ * @copyright  2017 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @website    http://intelliboard.net/
+ */
+
+
+@import url(ionicons.min.css);
+
+.clear{clear:both;float:none;}
+.clearfix {*zoom: 1;}
+.clearfix:before,
+.clearfix:after{display: table;line-height: 0;content: "";}
+.clearfix:after{clear: both;}
+
+.system{}
+.system-box{width:31.3%;float:left;margin:1%;}
+.system-header{border-bottom: 1px solid #C4C4C4;color: #000000;font: 600 14px "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif; margin: 0 0 5px;padding: 0 0 5px;}
+.system-item{width:31.3%;float:left;margin:1%;}
+.system-item strong{color: #008B3A;font: 300 21px "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;}
+.system-item p{margin:0;color: #CCCCCC;font: 13px "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;}
+
+.intelliboard-page{font-family:"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;}
+.intelliboard-page h2,
+.intelliboard-page h3{font-family:"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif; font-weight:400;}
+.intelliboard-page .log{font-family: monospace; font-size: 9px; margin: 0;}
+
+.intelliboard-filterform{display: block;  margin: 0 auto;  padding: 20px;  width: 300px;}
+.intelliboard-filterform button,
+.intelliboard-filterform select,
+.intelliboard-filterform input{width:100%; display: block; margin-bottom: 10px}
+.intelliboard-filterform button{  margin: 30px 0 0;}
+
+.intelliboard-search{margin: 30px 0 20px;width: 100%;}
+.intelliboard-search form{margin: 0; float: left; width: calc(100% - 150px)}
+.intelliboard-search form input{float: left; margin: 0}
+.intelliboard-search form button{float: left; margin: 0 10px 0}
+.intelliboard-search form span{float: right}
+.intelliboard-search form span.pull-left{float: left}
+.intelliboard-search form span a{font-size: 24px;color:#ddd; margin-left: 6px;}
+.intelliboard-search form span a.active,
+.intelliboard-search form span a:hover{color:#666;}
+.intelliboard-search > form > select {width: 25%; margin-right: 10px;}
+.intelliboard-search .report-export-panel {float: right; padding: 0;}
+
+.intelliboard-overflow{width:100%;overflow: hidden;}
+.intelliboard-overflow .no-overflow{width:100%;}
+.intelliboard-courses-grid{width:103%; list-style: none;padding: 0;margin: 0;transition: all 0.5s ease;}
+.intelliboard-courses-grid.list,
+.intelliboard-courses-grid.list li{width:100%;}
+.intelliboard-courses-grid.list li .course-more{ margin-top: 10px; }
+.intelliboard-courses-grid.list li .course-stats{position: absolute;width: 300px;top:25px;right: 110px;}
+.intelliboard-courses-grid li{position:relative; transitions: all 0.5s ease; margin-bottom: 2%; margin-right: 2%; padding: 0; float: left; width: 47.5%; box-sizing: border-box;;border-top:2px solid #ccc; border-left: 1px solid #ccc;border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; border-radius: 3px;}
+.intelliboard-courses-grid li .course-info{padding: 15px 15px 5px;}
+.intelliboard-courses-grid li .course-info .icon{position: relative; float: left;background-color: #ccc;padding:12px 10px 6px;margin-right: 15px;text-align: center;}
+.intelliboard-courses-grid li .course-info .icon::after,
+.intelliboard-courses-grid li .course-info .icon::before{content: '';position: absolute;top:0;right: 0;}
+.intelliboard-courses-grid li .course-info .icon::after{border-top: 15px solid transparent;border-left: 15px solid rgba(0,0,0,0.2);}
+.intelliboard-courses-grid li .course-info .icon::before{border-bottom: 15px solid transparent;border-right: 15px solid #fff;}
+.intelliboard-courses-grid li .course-info .icon i{color: #fff; font-size: 32px; background: rgba(255, 255, 255, 0.1) none repeat scroll 0 0; border-radius: 50%; display: inline-block; height: 40px; line-height: 40px;  width: 40px;}
+.intelliboard-courses-grid li .course-info .icon span{color: #fff; display: block; font-size: 12px;margin-top: 5px}
+.intelliboard-courses-grid li .course-info .title{float: left; font-size: 14px;  width: 45%;}
+.intelliboard-courses-grid li .course-info .title img{border-radius: 50%}
+.intelliboard-courses-grid li .course-info .title strong{font-size: 14px;margin-bottom: 5px;display: block;}
+.intelliboard-courses-grid li .course-info .grade{float: right}
+.intelliboard-courses-grid li .course-more{background-color: #ccc;padding:5px 15px;}
+.intelliboard-courses-grid li .course-more .more{color: #fff;float: right;line-height:20px; font-size: 13px}
+.intelliboard-courses-grid li .course-more span{float: left;}
+.intelliboard-courses-grid li .course-more span a{color: #fff;line-height:19px;font-size: 16px; margin-right: 5px;}
+.intelliboard-courses-grid li .course-more span a strong{font-size: 12px; font-weight: 400; display: none;}
+.intelliboard-courses-grid li .course-chart{padding: 15px 25px 5px 40px; display: none;}
+.intelliboard-courses-grid.cview li{display: none;}
+.intelliboard-courses-grid.cview li.active{display: block;}
+.intelliboard-courses-grid.cview li.active .course-chart{display: block;}
+.intelliboard-courses-grid.cview li.active .course-more span a:hover{ text-decoration: none;}
+.intelliboard-courses-grid.cview li.active .course-more span a strong{display: inline;text-decoration: none;}
+.intelliboard-courses-grid li .course-stats{padding: 5px;}
+.intelliboard-courses-grid li .course-stats div{display: inline-block;text-align: center;width: 32%;}
+.intelliboard-courses-grid li .course-stats div span{font-size: 12px;opacity: 0.6}
+.intelliboard-courses-grid li .course-stats div p{font-size: 19px;font-weight: 200;}
+.intelliboard-courses-grid li .course-activities i{vertical-align: bottom;}
+
+.intelliboard-courses-grid li.f1{border-color: #428bca; } /* blue */
+.intelliboard-courses-grid li.f1 .icon,
+.intelliboard-courses-grid li.f1 .course-more{background-color: #428bca; } /* blue */
+.intelliboard-courses-grid li.f2{border-color:  #5bc0de; } /* light-blue */
+.intelliboard-courses-grid li.f2 .icon,
+.intelliboard-courses-grid li.f2 .course-more{background-color:  #5bc0de; } /* light-blue */
+.intelliboard-courses-grid li.f3{border-color: #f0ad4e; } /* yellow */
+.intelliboard-courses-grid li.f3 .icon,
+.intelliboard-courses-grid li.f3 .course-more{background-color: #f0ad4e; } /* yellow */
+.intelliboard-courses-grid li.f4{border-color: #5cb85c; } /* green */
+.intelliboard-courses-grid li.f4 .icon,
+.intelliboard-courses-grid li.f4 .course-more{background-color: #5cb85c; } /* green */
+.intelliboard-courses-grid li.f5{border-color: #d9534f; } /* red */
+.intelliboard-courses-grid li.f5 .icon,
+.intelliboard-courses-grid li.f5 .course-more{background-color: #d9534f; } /* red */
+
+
+.intelliboard-origin .avg{margin:20px 0; box-sizing: border-box;border: 1px solid #ddd;border-radius: 5px;}
+.intelliboard-origin p{font-size:17px;font-weight:600; margin:0;padding:15px; display: inline-block;width: calc(50% - 3px); box-sizing: border-box; text-align: center;}
+.intelliboard-origin p span{font-size:13px;font-weight:400; color: #999; display: block;margin-top: 3px;}
+.intelliboard-origin p.site{color: #1d7fb3; border-left: 1px solid #ddd;}
+.intelliboard-origin p.user{color: #1db34f;}
+.intelliboard-origin .avg.full p.site,
+.intelliboard-origin .avg.full p.user{display: block;border:0;width: auto;}
+.intelliboard-chart-dash{width:100%;height:250px}
+
+.intelliboard-student .sheader{padding: 10px 0 30px;}
+.intelliboard-student .avatar{float: left}
+.intelliboard-student .stats{float:right;}
+.intelliboard-student .stats ul{padding: 0;margin: 0;list-style: none;}
+.intelliboard-student .stats ul li{padding: 15px 0 15px 20px; margin: 0; display: inline-block;font-size: 32px;font-weight: 400; text-align: center;}
+.intelliboard-student .stats ul li{}
+.intelliboard-student .stats ul li:first-child{padding-left: 0}
+.intelliboard-student .stats ul li span{display: block; font-size: 13px; opacity: 0.8; font-weight: 400;margin-top: 5px;}
+.intelliboard-student .info{float: left; margin-left: 25px}
+.intelliboard-student .info h2{margin: 15px 0 3px; font-size: 21px; line-height: 21px;}
+.intelliboard-student .info h2 i{opacity: 0.3; font-size: 16px;margin-left: 3px;}
+.intelliboard-student .info p{opacity: 0.8;}
+.intelliboard-student .avatar img{border-radius: 50%;}
+.intelliboard-student .actions{float: right;width: 120px;}
+.intelliboard-student .actions a{display: block;width: 100%; border:1px solid #4c75a2; margin-bottom: 10px; text-align: center; padding: 5px; border-radius: 5px; box-sizing: border-box;}
+
+.align-center{text-align: center !important;}
+.d-inline-block{display: inline-block!important;}
+
+
+
+
+.intelliboard-data-table span.brd{border:1px solid #444;font-size: 12px; padding:3px 6px; border-radius: 3px; }
+.intelliboard-data-table span.d1{border-color:#5cb85c; }
+.intelliboard-data-table span.d2{background-color:#d9534f;color: #fff;border:0;}
+.intelliboard-data-table span.d3{border-color:#5bc0de; }
+.intelliboard-data-table span.d4{border-color:#f0ad4e;}
+.intelliboard-data-table.list{}
+.intelliboard-data-table.list thead,
+.intelliboard-data-table.list tbody tr td:nth-child(0),
+.intelliboard-data-table.list tbody tr td:nth-child(1),
+.intelliboard-data-table.list tbody tr td:nth-child(1),
+.intelliboard-data-table.list tbody tr td:nth-child(4),
+.intelliboard-data-table.list tbody tr td:nth-child(5),
+.intelliboard-data-table.list tbody tr td:nth-child(6){display: none}
+.intelliboard-data-table.list tbody tr:first-child td{border-top:0;}
+.intelliboard-data-table tfoot tr td{text-align: right}
+.intelliboard-data-table p{margin: 0}
+.intelliboard-box .tab{display: none}
+.intelliboard-box .tab.active{display:table;}
+.intelliboard-box .tab.settings-tab.active{display:block;padding-bottom: 30px}
+.intelliboard-box .tab.settings-tab.active select{width:100%;}
+
+.intelliboard-grade{width: 30px;height: 30px;line-height: 30px;text-align: center;border-radius: 50%; display: inline-block;font-size: 13px; background-color: #e3e3e3}
+
+.intelliboard-icon{width: 30px;height: 30px;line-height: 30px;text-align: center;border-radius: 50%; display: inline-block;font-size: 20px;}
+.intelliboard-icon.f1{background-color: #428bca;color: #fff} /* blue */
+.intelliboard-icon.f2{background-color:  #5bc0de;color: #fff} /* light-blue */
+.intelliboard-icon.f3{background-color: #f0ad4e;color: #fff} /* yellow */
+.intelliboard-icon.f4{background-color: #5cb85c;color: #fff} /* green */
+.intelliboard-icon.f5{background-color: #d9534f;color: #fff} /* red */
+.intelliboard-icon.f6{background-color: #ddd;color: #fff} /* red */
+
+.chart-tab{height: 100%;}
+.chart-tabs a.active{text-decoration: underline;}
+.chart-tab .filter-box {margin-bottom: 10px;}
+.chart-tab .filter-box input{width: 49%; padding:8px 16px;margin-bottom: 0; height:auto;box-sizing: border-box; float: left;margin-right: 2%;}
+.chart-tab .filter-box .intelliboard-dropdown{width: 49%; float: left;}
+.chart-tab .area{ height:350px;}
+.chart-tab .filter-box .intelliboard-dropdown.users{margin-left: 2%;}
+
+.nav-tabs span{float:right;padding-top: 2px;}
+.nav-tabs span a{font-size: 21px; line-height:28px;color:#ddd; margin-left: 8px;}
+.nav-tabs span a.active,
+.nav-tabs span a:hover{color:#666;}
+.nav-tabs span form{display: none;margin: 0;}
+.nav-tabs span.active .actbtn{display: none;}
+.nav-tabs span.active form{display: block;position: relative;}
+.nav-tabs span.active form input{max-width: 100px; margin: 0;float: left;}
+.nav-tabs span.active form button{ background: transparent none repeat scroll 0 0; border:0;box-shadow: none;margin: 4px 10px; padding: 0; float: left;}
+.nav-tabs span.active form button i{color: #ddd;font-size: 21px;line-height: 24px;}
+.nav-tabs span.active form a{float: left;line-height: 21px; margin: 5px 0;}
+
+.table-tabs a.active{text-decoration: underline;}
+.table-tabs.icono span{float:right;}
+.table-tabs.icono span a{font-size: 24px;color:#ddd; margin-left: 6px;}
+.table-tabs.icono span a.active,
+.table-tabs.icono span a:hover{color:#666;}
+
+.area:not(.custom-tooltip) .google-visualization-tooltip{ padding:5px; height:auto!important;}
+
+.intelli-instructor-header{	border-bottom: 1px solid #ddd;  margin-bottom: 40px; display: flex; flex-wrap: wrap;}
+.intelli-instructor-header .instructor-head{width: 70%;float: left;box-sizing: border-box; border-right: 1px solid #ddd; box-sizing: border-box;padding-top: 10px}
+.intelli-instructor-header .instructor-head.full{width: 100%; border: 0px none;}
+.intelli-instructor-header .instructor-chart{ height: 250px }
+.intelli-instructor-header h3{font-size: 21px;margin:0; float: left}
+.intelli-instructor-header .instructor-head .intelliboard-dropdown{width:160px; margin-right: 10px; margin-bottom: 10px;}
+.intelli-instructor-header .summary{width: 30%;float: right;box-sizing: border-box;padding-left: 20px; padding-top: 10px;box-shadow: -1px 0 0 0 #ddd; position: relative;}
+.intelli-instructor-header .summary h3{float: none;margin-bottom: 15px}
+.intelli-instructor-header .summary-chart-wrap{min-height: 100px;}
+.intelli-instructor-header .summary-chart{width: 100%;height: 200px;}
+.intelli-instructor-header .summary-chart-wrap{position: relative;overflow: hidden;}
+.intelli-instructor-header .summary-chart-label{position: absolute;top: 0;left: 0; right:0; bottom: 0;margin: auto; text-align: center;width: 100%; z-index: 9999; height: 30px;font-weight: 100;line-height: 26px; font-size: 42px;}
+.intelli-instructor-header .summary-chart-label i{display: block;text-align: center;font-size: 11px;font-weight: 100; padding-top: 5px;font-style: normal;text-transform: uppercase;}
+.intelli-instructor-header .summary-users-list{position: absolute;z-index: 99999;background-color: #fff;width: 100%;height: 100%;overflow: auto;top: 100%;left: 0;transition: all 0.3s;}
+.intelli-instructor-header .summary-users-list.visible{top: 0;transition: all 0.3s;}
+.intelli-instructor-header .summary-users-list .close{position: absolute;right: 4px;top: 10px;}
+.intelli-instructor-header .summary-users-list ul{padding-left: 20px;list-style: none;margin: 0;max-height: calc(100% - 56px);overflow: auto;}
+.intelli-instructor-header .summary .intelliboard-dropdown{ position: absolute; right:0;}
+.intelli-instructor-header .summary .intelliboard-dropdown button{float: right; width: auto;}
+.intelli-instructor-header .summary .filter-box .daterange{width: 100%;box-sizing: border-box; height:auto;}
+.intelli-instructor-header .summary .intelliboard-dropdown{width: 140px;}
+.intelli-instructor-header .instructor-total{border-top: 1px solid #f6f6f6;  list-style: outside none none; margin: 10px 20px 0;  padding: 0;  text-align: center;  width: auto;font-weight: 100; }
+.intelli-instructor-header .instructor-total li{text-transform: uppercase; width:32%; color:#999; font-size: 12px; padding: 15px 0;margin: 0;display: inline-block;box-sizing: border-box;}
+.intelli-instructor-header .instructor-total li strong{color:#333; display: block; font-weight: 300; font-size: 26px;margin-bottom: 10px}
+.instructor-summary{list-style: outside none none; margin:5px 0 0; padding: 0; text-align: left; width: auto;}
+.instructor-summary li{padding: 10px; border-bottom: 1px solid #ddd; font-size: 13px;}
+.instructor-summary li:last-child{ border-bottom: 0;}
+.instructor-summary li strong{float: right}
+
+.intelliboard-origin-head{border-bottom: 0px solid #eee;margin:30px 0 10px;}
+.intelliboard-origin-head.instr{margin:30px 0 10px;}
+.intelliboard-origin-head a{text-align: center;color: #222;padding: 10px 15px;border-radius: 3px;cursor: pointer;margin-right: 5px; float: left; opacity: 0.4;background-color: #eee;text-decoration:none;}
+.intelliboard-origin-head1 span{float: right; padding: 8px 15px;border: 1px solid #ddd; border-radius: 3px; cursor: pointer;}
+.intelliboard-origin-head1 span:hover{border: 1px solid #ccc;}
+.intelliboard-origin-head1 span i{margin-left: 10px;}
+.intelliboard-origin-head a.active,
+.intelliboard-origin-head a:hover{background-color: #eee; opacity: 1}
+
+.intelliboard-dropdown{position: relative;float: right;width: 135px;font-size: 14px;}
+.intelliboard-dropdown.disabled button{opacity: 0.4;}
+.intelliboard-dropdown button{color: #333!important;font-weight:normal; width:100%;box-sizing: border-box; padding: 8px 15px;border: 1px solid #ddd; border-radius: 3px; cursor: pointer;margin: 0;background: #fff none repeat scroll 0 0;}
+.intelliboard-dropdown button:hover{border: 1px solid #ccc;background: #fff none repeat scroll 0 0;}
+.intelliboard-dropdown button span{float: left;max-width: 93%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+.intelliboard-dropdown button i{float: right;}
+.intelliboard-dropdown ul{width:100%;box-sizing: border-box; display: none;position: absolute;right: 0;top: 40px;background-color: #fff;border-radius: 3px; border: 1px solid #ddd; margin: 0;padding: 0;list-style: none; z-index: 2; box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);max-height: 250px; overflow: auto;}
+.intelliboard-dropdown ul li{ margin: 0;padding: 10px 14px;cursor: pointer;}
+.intelliboard-dropdown ul li a{color: #333}
+.intelliboard-dropdown ul li:hover{background-color: #f6f6f6; }
+
+.sheader .info .intelliboard-dropdown{float: left;margin-bottom: 5px;}
+.sheader .stats .sum-courses-list li.course-item{text-align: left;padding: 8px 16px;display: block;}
+.sheader .stats .sum-courses-list li.course-item label{padding-left: 23px;}
+.sheader .stats .sum-courses-list li.course-item label input{margin-left: -25px;}
+.sheader .stats .sum-courses-list{max-height: 300px;overflow: auto;margin-bottom: 10px;}
+.sheader .stats .sum-courses-list{max-height: 300px;overflow: auto;margin-bottom: 10px;}
+.sheader .stats .dropdown-menu{min-width: 180px;}
+.sheader .stats .dropdown-menu button{margin: 0;}
+.course-item .course-info > .title > strong > a {
+    color: #000;
+}
+
+.s-progress{float: right;width: 180px;}
+.s-progress div{position:relative; border-bottom:3px solid #eee; margin-top: 6px;font-size:13px;}
+.s-progress div .text{float: left;}
+.s-progress div .value{float: right;opacity: 0.6}
+.s-progress div .state{position: absolute;bottom: -3px; left: 0;background-color: #3dbfdf;height: 3px;width: 100%;}
+
+.intelliboard-menu{margin:0;padding:0;list-style:none;border-bottom: 1px solid #e8e8e8;}
+.intelliboard-menu li{margin:0;padding:0 20px 0 0;display:inline-block;position:relative}
+.intelliboard-menu li a{padding:10px 0;color:#222;text-decoration:none;text-transform:uppercase; line-height: 38px;}
+.intelliboard-menu li a.active{border-bottom:2px solid #222}
+.intelliboard-menu li a:hover{border-bottom:2px solid #222}
+.intelliboard-menu li a i{font-size: 17px;}
+.intelliboard-menu li a i.arr{color: #ccc; font-size: 14px;  margin-left: 3px;}
+.intelliboard-menu .sso{float:right;padding:0;}
+.intelliboard-menu .sso a:hover{border:0;font-weight:600}
+.intelliboard-menu ul{max-height: 400px; overflow-y: auto;width:250px;position:absolute;top:37px;left:-25px;background:#fff;box-shadow:0 1px 6px #ddd;display:none;margin:0;z-index:9999}
+.intelliboard-menu ul li{padding:3px 20px;display:block;border-bottom:1px solid #eee;}
+.intelliboard-menu ul li a{padding:0;text-transform:capitalize;}
+.intelliboard-menu ul li a:hover{border:0;}
+.intelliboard-menu ul li a.active{border:0;font-weight:bold}
+.intelliboard-menu li.submenu:hover ul{display:block;z-index: 99999;}
+.dir-rtl .intelliboard-menu li.submenu ul{left: auto;right:0;}
+.intelliboard-menu li ul li:hover{background:#f9f9f9}
+.intelliboard-menu li ul li{padding:10px 20px;}
+.intelliboard-menu li ul li a{line-height: 15px;font-size: 13px}
+.intelliboard-menu.admin-menu ul.reports-l li:nth-child(-n+3) {
+    background-color: #f9f9f9;
+}
+.intelliboard-menu.admin-menu ul {
+    padding-left: 0;
+}
+
+.intelliboard-page .additional_header {border-bottom: 1px solid #e8e8e8;}
+.intelliboard-page .additional_header .intelliboard-menu{float: left; border-bottom: none;}
+.intelliboard-page .additional_header .additional-form{float: right;}
+.intelliboard-page .additional_header .additional-form .flatpickr-wrapper{min-width: 205px;}
+.intelliboard-page .additional_header .additional-form .flatpickr-calendar{right: 0;}
+
+.reports-header h3{float:left;}
+.reports-header form{float:right;margin: 6px 0;}
+.reports-header form select{margin-left: 5px; margin-right: 3px;}
+
+.reports-list{margin:0;padding:0;list-style:none;}
+.reports-list li{margin:0;padding:2px;list-style:none;width: 33%;display: inline-block;box-sizing: border-box;}
+.reports-list li label{margin:0;padding:0;}
+.intelliboard-content .submit-btn{margin:20px 0;}
+
+.intelliboard-content:after{clear: both;content: ".";display: block;height: 0;visibility: hidden;}
+.intelliboard-content{margin:20px 0;}
+.intelliboard-content h3{font-size:21px;font-weight: 400;margin:0 0 20px;}
+.intelliboard-content .grid h3 i.help{cursor:help; margin-left: 5px; color: rgba(0, 0, 0, 0); font-size: 19px; transition: all 0.5s ease;}
+.intelliboard-content .grid:hover h3 i.help{color: rgba(0, 0, 0, 0.2);}
+.intelliboard-content .grid h3:hover i.help{color: rgba(0, 0, 0, 0.4);}
+.intelliboard-content .grid h3 i.help:hover{color: rgba(0, 0, 0, 0.6);}
+.intelliboard-content .grid{width:46%;margin:2% 2% 0; height:330px;float: left;}
+.intelliboard-content .scroly{overflow-y: auto; max-height: 260px;padding-right:10px;}
+.intelliboard-content .table{width:100%;}
+.intelliboard-content .table th{border:0;font-size:12px;}
+.intelliboard-content .table.overflow tr td{position:relative;overflow:hidden;}
+.intelliboard-content .pagination{float:right;margin-left:10px;}
+
+.intelliboard-content .table .info-average{width:40px;height:40px;line-height:40px;text-align:center;background:#f9f9f9;border-radius:50%;margin:0 auto;text-shadow: 1px 1px #fff;}
+.intelliboard-content .table tr:nth-child(odd) .info-average{background:#fff;}
+.intelliboard-content .table button,
+.intelliboard-content .table .button{display: none;}
+
+.intelliboard-content .scroly::-webkit-scrollbar {width: 0.4em;}
+.intelliboard-content .scroly::-webkit-scrollbar-track {-webkit-box-shadow: none;background:#f9f9f9;}
+.intelliboard-content .scroly::-webkit-scrollbar-thumb :hover{background-color: rgba(0,0,0,0.4);}
+.intelliboard-content .scroly::-webkit-scrollbar-thumb {background-color: rgba(0,0,0,0.1);outline:0;border-radius:3px;}
+
+.intelliboard-footer{margin:25px 0;text-align:right;line-height:26px;opacity: 0.4;}
+.intelliboard-footer:hover{opacity:1;}
+.intelliboard-footer em{display:block;}
+
+.intelliboard-reports:after{clear: both;content: ".";display: block;height: 0;visibility: hidden;}
+.intelliboard-reports{margin:0 auto 10px;max-width:600px; list-style:none;}
+.intelliboard-reports a{display:block; padding:2% 0;margin:1%;width:31%;float:left;border:1px solid #eee;text-align:center; box-sizing: border-box;}
+.intelliboard-reports a i{font-size:36px;color:#41BEE9}
+.intelliboard-reports a span{display:block;line-height:36px;font-size:15px;color:#333}
+.intelliboard-reports a:hover{text-decoration:none;background:#f9f9f9}
+
+.intelliboard-box:after{clear: both;content: ".";display: block;height: 0;visibility: hidden;}
+.intelliboard-box h3{font-weight: 400;margin:0 0 20px;}
+.intelliboard-box{margin:20px 0;}
+.intelliboard-box .h410{height: 410px; overflow: hidden;}
+.intelliboard-box .h420{height: 420px; overflow: hidden;}
+.intelliboard-box .h440{height: 440px; overflow: hidden;}
+.intelliboard-box .box60{width:60%;}
+.intelliboard-box .box40{width:40%;}
+.intelliboard-box .box45{width:45%;}
+.intelliboard-box .box50{width:50%;}
+.intelliboard-box .box100{width:100%;}
+.intelliboard-box .pull-left{float:left;}
+.intelliboard-box .pull-right{float:right;}
+.intelliboard-box .pl15{padding-left:15px;box-sizing: border-box;}
+.intelliboard-box .pl30{padding-left:30px;box-sizing: border-box;}
+.intelliboard-box .up{color:#AABC39}
+.intelliboard-box .down{color:#DD4B39}
+.intelliboard-box .table th[align="center"], .intelliboard-box  .table td[align="center"]{text-align:center;}
+.intelliboard-progress{height:6px;background:#E3E3E3; overflow: hidden;}
+.intelliboard-progress.s{height:3px;background:#E3E3E3;margin-top:10px;}
+.intelliboard-progress.xl{height:10px;background:#E3E3E3;margin-top:5px;}
+.intelliboard-progress.xxl{height:20px;background:#E3E3E3;margin-top:5px;}
+.intelliboard-progress.xxx{height:30px;background:#E3E3E3;margin-top:5px;}
+.intelliboard-progress span{background:#41BEE9;height: 100%; display: block; text-align: center; text-shadow: 0px 0px rgba(0, 0, 0, 0.1);}
+.intelliboard-progress.g1 span{background:#428bca;}
+.intelliboard-list{padding:0;margin:0; list-style:none;}
+.intelliboard-list li{padding:0;margin:0 0 10px;}
+
+.intelliboard-fade60{opacity: 0.4}
+
+.intelliboard-total{border:1px solid #E3E3E3;border-radius:8px; box-sizing: border-box;line-height: 68px;margin-top: 10px;}
+.intelliboard-total h3{width:16%;margin:0;text-align:center;float:left;line-height: inherit;}
+.intelliboard-total p{width:21%; font-size:26px;font-weight:600;margin:0;text-align:center;float:left;border-left:1px solid #E3E3E3; box-sizing: border-box;}
+.intelliboard-total p span{font-size:16px;font-weight:400;}
+
+.intelliboard-upgrade{border:1px solid #eee;border-radius:8px;padding:20px;position:relative;margin:30px 0;}
+.intelliboard-upgrade i{position:absolute;top:30px;left:30px;font-size:56px; }
+.intelliboard-upgrade h3{margin-left:80px;margin-top:0;}
+.intelliboard-upgrade p{margin-left:80px;}
+.intelliboard-upgrade button{margin-left:80px;margin-bottom:0;}
+
+.intelloboard-btn{border:1px solid #333;padding:6px 10px;color:#333;border-radius:3px;text-decoration:none;}
+.intelloboard-btn:hover{color:#000;}
+
+.intelloboard-alert{width:500px;border:1px solid #eee;border-radius:1px;padding:20px;padding-left:80px;position:relative;margin:0 auto 30px;}
+.intelloboard-alert i{position:absolute;top:20px;left:20px;font-size:56px; }
+.intelloboard-alert h3{margin-top:0;}
+.intelloboard-alert p{margin-bottom: 10px;line-height: 24px;}
+.intelloboard-alert p.agreement{margin-bottom: 0px; margin-top: 15px; font-size: 11px;}
+.intelloboard-alert p.agreement a{color:#333}
+.intelloboard-alert p.title{margin:10px 0}
+.intelloboard-alert div.list{width: 40%; margin-right: 2%; float: left; background: #f5f5f5 none repeat scroll 0 0; margin-bottom: 10px;  padding: 5px 20px;}
+.intelloboard-alert div.list a{color:#333}
+.intelloboard-alert > a{margin-right:10px;}
+
+.chart-tooltip{background-color: #222222; min-width: 300px;}
+.chart-tooltip-header{color: #bbbbbb;font-weight: 400;font-size: 11px;padding: 6px 12px;box-sizing: border-box;}
+.chart-tooltip-body div{box-sizing: border-box; width:50%;display:inline-block; color: #bbbbbb;font-weight: 400;font-size: 11px;padding: 6px 12px;}
+.chart-tooltip-body div span{color: #dddddd;}
+.chart-tooltip-left{border-top: 3px solid #1db34f;}
+.chart-tooltip-left.full{width: 100%;}
+.chart-tooltip-right{border-top: 3px solid #1d7fb3;}
+
+
+.intelliboard-chart{position:relative;margin-top:85px;clear:both;min-height:280px;}
+.intelliboard-chart-header{position:absolute;top:-50px;left:0;width:100%;z-index: 999;}
+.intelliboard-chart-header h3{float: left; line-height: 17px;  margin: 0;}
+.intelliboard-chart-header .range{float:right;}
+.intelliboard-chart-header .range a{padding:8px 10px;text-decoration:none;line-height: 26px; color: #ccc;}
+.intelliboard-chart-header .range a.active{background: #eee; border-radius: 3px; color: #333;}
+.intelliboard-chart-body{margin-left:220px}
+.intelliboard-stats{width:220px;position: absolute;}
+.intelliboard-stats  h4{font-size: 17px; font-weight: 300; line-height: 32px;  margin: 0;}
+.intelliboard-stats  p{margin:0 0 18px 18px;}
+.intelliboard-stats .up{color:#AABC39}
+.intelliboard-stats .down{color:#DD4B39}
+.intelliboard-tooltip {position: relative;}
+.intelliboard-tooltip:hover:after{font-size:12px;background: #333;background: rgba(0,0,0,.8);border-radius: 5px;bottom: 26px;color: #fff;content: attr(title);left: 20%;padding: 5px 15px;position: absolute;z-index: 98;white-space: pre;}
+.intelliboard-tooltip:hover:before{border: solid;border-color: #333 transparent;border-width: 6px 6px 0 6px;bottom: 20px;content: "";left: 50%;position: absolute;z-index: 99;}
+
+.grades-table{margin-top: 30px}
+.grades-table table{margin-top: 20px}
+.grades-table tr td{overflow: hidden;}
+.grades-table tr td .info-progress{margin: 13px 0;}
+.grades-table .paging{float: none; margin: 20px 0 0}
+.grades-table .intelliboard-search{margin: 0; float: left;}
+
+.orange-color{color: #f0ad4e}
+.green-color{color: #5cb85c}
+
+.progress-table tr{ }
+.progress-table tr td{overflow: visible; vertical-align: middle;}
+.progress-table tr td .intelliboard-progres{margin: 0}
+
+.intelliboard-course-header{margin-bottom: 20px;}
+.intelliboard-course-header .grade{float: left;margin-right: 20px}
+.intelliboard-course-header .details{float: left;}
+.intelliboard-course-header h3{margin:5px 0;}
+.intelliboard-course-header h3 i{font-size: 14px;opacity: 0.2;}
+.intelliboard-course-header h3:hover i{opacity: 1;}
+.intelliboard-course-header span{margin-right: 10px}
+.intelliboard-course-header p{margin:0;}
+.intelliboard-course-header p i{margin-right: 5px;}
+.intelliboard-course-header p span{margin-right: 10px;color: rgba(0,0,0,0.4)}
+.intelliboard-course-header a{float: right;}
+
+.intelliboard-report-wrap{position: relative;}
+.intelliboard-report-wrap .dataformatselector{position: absolute; right: 0; top: 0px; margin: 0}
+.intelliboard-course-header ul.path{clear:both; margin: 0 0 0 100px;  padding: 5px 0;list-style: none; border-top: 1px solid #ccc;}
+.intelliboard-course-header ul.path li{float: left; font-size: 15px; font-weight: 400; display: inline-block; margin-right: 5px }
+
+.intelliboard-course-header ul.summary{clear:both; margin: 0 0 0 100px;  padding: 5px 0;list-style: none; border-top: 1px solid #ccc;}
+.intelliboard-course-header ul.summary li{display: block; font-size: 15px; font-weight: 400; display: inline-block; margin-right: 30px }
+.intelliboard-course-header ul.summary li span{display: block; font-size: 13px; opacity: 0.6; font-weight: 400;}
+.intelliboard-course-header .avatar{float: left;margin-right: 20px}
+.intelliboard-course-header .avatar img{ border-radius: 50%}
+.intelliboard-course-header .btn-back{ margin-top: 10px}
+.intelliboard-course-header .activity{ width: 80px;height: 80px;border-radius: 50%; background-color: #ddd; float: left;margin-right: 20px; line-height: 80px; font-size: 36px; color: #fff; text-transform: uppercase;text-align: center}
+
+.intelliboard-course-header ul.totals{float:right;padding: 0;margin: 0;list-style: none;}
+.intelliboard-course-header ul.totals li{padding: 15px 0 15px 20px; margin: 0; display: inline-block;font-size: 32px;font-weight: 400; text-align: center;}
+.intelliboard-course-header ul.totals li{}
+.intelliboard-course-header ul.totals li:first-child{padding-left: 0}
+.intelliboard-course-header ul.totals li span{display: block; font-size: 13px; opacity: 0.8; font-weight: 400;margin-top: 5px;}
+
+.intelliboard-additional-form .switcher{ float: right;margin-bottom: 10px;margin-right: 10px;min-width: 170px;}
+.intelliboard-additional-form .switcher a {border: 1px solid #ddd;box-sizing: border-box;color: #333;display: block;float: left;height: 100%;transition: all 0.3s ease-out 0s; width: 50%; padding:8px 15px;text-decoration: none;box-shadow:0 1px 2px rgba(0, 0, 0, 0.05);}
+.intelliboard-additional-form .switcher a:first-child {border-radius: 3px 0 0 3px;}
+.intelliboard-additional-form .switcher a:last-child {border-radius: 0 3px 3px 0;}
+.intelliboard-additional-form .switcher a.active {background-color: #ddd;}
+.intelliboard-additional-form .daterange{float: right;margin-bottom: 10px;margin-right: 10px;padding: 8px 15px;}
+
+.info-progress{width:150px;height:14px;background-color:#fff;box-shadow: 0 0 10px #DDDDDD inset;position:relative;}
+.info-progress span{display:block;height:100%;position:absolute;top:0;left:0;text-indent: -9999px;}
+.info-progress .current{background-color:#ccc;z-index:1;}
+.info-progress .average{border-right:1px dashed #676767; z-index:2;height:250px;top:-100px;}
+.info-progress .goal{border-right:3px solid #686868; z-index:3;}
+.info-hidden{opacity:0;text-indent:-9999px;height: 1px;width:1px;}
+
+
+.intelliboard-content{
+	position: relative;
+}
+#iframe{
+	position: relative;
+}
+div#iframe{
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+#iframe iframe{
+	position: relative;
+	z-index: 1;
+}
+#iframe-loading{
+	position: absolute;
+	top: 80px;
+	left: 0;
+	width: 100%;
+	font-size: 15px;
+	letter-spacing: 1px;
+	text-align: center;
+}
+#daterange.disabled{
+	opacity: 0.4;
+	cursor: default;
+}
+#daterange{
+	margin-left: 5px;
+	min-width: 200px;
+}
+.daterange-wrap{position: relative;}
+.daterange-wrap i:hover{color: #000;}
+.daterange-wrap i{color: rgba(0, 0, 0, 0.6);
+    cursor: pointer;
+    font-size: 17px;
+    position: absolute;
+    right: 13px;
+    top: -4px;}
+
+/*Bootstrap v3.3.5 (http://getbootstrap.com)*/
+.pagination-info{float:right; line-height: 34px;}
+.pagination {
+  display: inline-block;
+  padding-left: 0;
+  margin: 0 0;
+  border-radius: 4px;
+}
+.pagination > li {
+  display: inline;
+}
+.pagination > li > a,
+.pagination > li > span {
+  position: relative;
+  float: left;
+  padding: 6px 12px;
+  margin-left: -1px;
+  line-height: 1.42857143;
+  color: #337ab7;
+  text-decoration: none;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+.pagination > li:first-child > a,
+.pagination > li:first-child > span {
+  margin-left: 0;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+.pagination > li:last-child > a,
+.pagination > li:last-child > span {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+.pagination > li > a:hover,
+.pagination > li > span:hover,
+.pagination > li > a:focus,
+.pagination > li > span:focus {
+  z-index: 3;
+  color: #23527c;
+  background-color: #eee;
+  border-color: #ddd;
+}
+.pagination > .active > a,
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span:focus {
+  z-index: 2;
+  color: #fff;
+  cursor: default;
+  background-color: #337ab7;
+  border-color: #337ab7;
+}
+.pagination > .disabled > span,
+.pagination > .disabled > span:hover,
+.pagination > .disabled > span:focus,
+.pagination > .disabled > a,
+.pagination > .disabled > a:hover,
+.pagination > .disabled > a:focus {
+  color: #777;
+  cursor: not-allowed;
+  background-color: #fff;
+  border-color: #ddd;
+}
+.pagination-lg > li > a,
+.pagination-lg > li > span {
+  padding: 10px 16px;
+  font-size: 18px;
+  line-height: 1.3333333;
+}
+.pagination-lg > li:first-child > a,
+.pagination-lg > li:first-child > span {
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+.pagination-lg > li:last-child > a,
+.pagination-lg > li:last-child > span {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+.pagination-sm > li > a,
+.pagination-sm > li > span {
+  padding: 5px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.pagination-sm > li:first-child > a,
+.pagination-sm > li:first-child > span {
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+.pagination-sm > li:last-child > a,
+.pagination-sm > li:last-child > span {
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+.quizchartcontainer{position: relative;padding-top: 50px;padding-bottom:10px;background: #fff none repeat scroll 0 0;}
+.quizchartcontainer .graph-tabs{position: absolute;left:10px;top: 10px; }
+.quizchartcontainer .graph-tabs span{display: inline-block;padding: 5px;margin-left: 10px;font-weight: 600;cursor: pointer; opacity: 0.4;}
+.quizchartcontainer .graph-tabs span.active{border-bottom: 1px solid #666; opacity: 1;}
+.quizchartcontainer .graph-tabs span.active:hover{border-bottom: 1px solid #666; opacity: 1;}
+.quizchartcontainer .quizchart{}
+.quizchartcontainer .quizchart.hidden{display: none}
+.quizchartcontainer .quizchart.active{display: block}
+.quizchart.actives::after {
+    background: #fff none repeat scroll 0 0;
+    border: 0px solid;
+    bottom: 0;
+    content: "";
+    height: 30px;
+    position: absolute;
+    right: 0;
+    width: 37%;
+}
+.monitors{padding:20px;margin:0;list-style: none;}
+.monitors .alert{margin-top: 20px;}
+.monitors li{padding:20px 0; border-bottom: 1px solid #f6f6f6;}
+.monitors li h3{float:left; font-size: 21px;font-weight: 400;margin:0; line-height: 36px;}
+.widget-chart{padding-top: 10px;}
+.widget-filters{float: right;display: block;margin:0;}
+.widget-filters .ms-choice{}
+div.widget-select,
+select.widget-select,
+input.widget-daterange{width: 150px;  float: left; margin:0 0 0 5px;}
+.widget-chart.loading::after {
+content: "...";
+font-size: 26px;
+left: 0;
+position: absolute;
+text-align: center;
+top: 50%;
+width: 100%;
+z-index: 9999;
+}
+.widget-chart.loading {
+opacity: 0.2;
+position: relative;
+}
+.flatpickr-calendar-title {
+    color: #999;
+    font-size: 11px;
+}
+.ion-spin-animation { -webkit-animation: spin 1s infinite linear; -moz-animation: spin 1s infinite linear; -o-animation: spin 1s infinite linear; animation: spin 1s infinite linear; }
+
+@-moz-keyframes spin { 0% { -moz-transform: rotate(0deg); }
+    100% { -moz-transform: rotate(359deg); } }
+@-webkit-keyframes spin { 0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(359deg); } }
+@-o-keyframes spin { 0% { -o-transform: rotate(0deg); }
+    100% { -o-transform: rotate(359deg); } }
+@-ms-keyframes spin { 0% { -ms-transform: rotate(0deg); }
+    100% { -ms-transform: rotate(359deg); } }
+@keyframes spin { 0% { transform: rotate(0deg); }
+    100% { transform: rotate(359deg); } }
+.ion-load-a.ion-spin-animation { -webkit-animation-timing-function: steps(8, start); -moz-animation-timing-function: steps(8, start); animation-timing-function: steps(8, start); }
+
+
+.intelliboard-analytics .pie-box{margin-top: 15px;margin-bottom: 15px;border-bottom: 1px solid #ccc;border-top: 1px solid #ccc;padding-top: 5px;}
+.intelliboard-analytics .pie-chart-box {margin-bottom: 15px;}
+.intelliboard-analytics .pie-chart-box > div{float: left;width: 50%;}
+.intelliboard-analytics .pie-box .chart{height: 400px;width: 100%;}
+.intelliboard-analytics .info-box{padding:0 10px;}
+.intelliboard-analytics .info-box h3{border-bottom: 1px solid #ccc;margin-bottom: 5px;}
+.intelliboard-analytics .highcharts-credits{display: none;}
+.intelliboard-analytics .head-box .title-box{float: left;}
+.intelliboard-analytics .head-box .export-box{float: right;}
+.intelliboard-analytics .head-box .export-box .btn{margin-left: 5px;}
+.intelliboard-content h4 {font-size: 19px;font-weight: 400;}
+.intelliboard-analytics div.google-visualization-tooltip { padding: 5px;height: auto!important;}
+
+
+.intelliboard-support-bg{
+	width: 300px;
+	height: 410px;
+	background: url('../img/bg-element@3x.png') no-repeat top right;
+	background-size: 360px auto;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	z-index: 0;
+}
+.intelliboard-support-player button{
+	margin-top: 10px;
+	position: absolute;
+}
+.intelliboard-support-player{
+	position: absolute;
+	top: 5%;
+	left: calc(50% - 500px);
+	width: 1000px;
+	z-index: 9999;
+	display: none;
+	text-align: center;
+	box-shadow: 0 50px 50px 50px rgba(0,0,0, 0.6);
+	position: absolute;
+}
+.intelliboard-support-play:hover{
+	opacity: 0.8;
+}
+.intelliboard-support-play{
+	width: 200px;
+	height: 200px;
+	background: url('../img/play-button.png') no-repeat top left;
+	background-size: 200px 200px;
+	position: absolute;
+	right: 3%;
+	bottom: 3%;
+	z-index: 0;
+	cursor: pointer;
+}
+.intelliboard-support {
+	height: 480px;
+	background:#F7FAFE url('../img/video-background.png') no-repeat top right;
+	background-size: auto 660px;
+	border: 1px solid #ddd;
+	position: relative;
+	padding: 50px 30px;
+	box-sizing: border-box;
+}
+.intelliboard-support-logo img{
+	display: block;
+	width: 220px;
+}
+.intelliboard-support-text span{
+  display: block;
+  margin-bottom: 12px;
+}
+.intelliboard-support-logo {
+	margin-bottom: 20px;
+}
+.intelliboard-support-text{
+    font-size: 14px;
+    color: #536383;
+    margin-bottom: 40px;
+    letter-spacing: .3px;
+    z-index: 1;
+    position: relative;
+    word-spacing: 3px;
+    line-height: 21px;
+}
+
+.intelliboard-support-text-2{
+    font-size: 20px;
+    color: #536383;
+    margin-bottom: 40px;
+    letter-spacing: .3px;
+    z-index: 1;
+    position: relative;
+    word-spacing: 3px;
+    line-height: 21px;
+}
+.intelliboard-support-terms{
+    text-align: left;
+    font-size: 13px;
+    line-height: 1.53;
+    color: #a2aac1;
+    margin-bottom: 30px;
+    letter-spacing: .3px;
+    z-index: 1;
+    position: relative;
+    width: calc(100% - 400px);
+    margin: 25px;
+}
+.intelliboard-support-info a{
+	text-decoration: underline;
+}
+.intelliboard-support-info{
+	font-size: 13px;
+	max-width: 270px;
+  line-height: 1.53;
+  color: #536383;
+	margin-bottom: 0px;
+	letter-spacing: .3px;
+	z-index: 1;
+	position: relative;
+}
+.intelliboard-support-links{
+  margin-top: 20px;
+	margin-bottom: 20px;
+	z-index: 1;
+	position: relative;
+}
+.intelliboard-support-links.actions {
+    margin-left: -10px;
+}
+.intelliboard-support-links.initial-reports {
+    margin-bottom: 0;
+}
+.intelliboard-support-links.initial-reports a {
+    margin-bottom: 15px;
+}
+.intelliboard-support-links-header {
+  font-size: 14px;
+  color: #545e7b;
+  font-weight: 600;
+  margin: 10px 0 20px;
+  z-index: 99999;
+position: relative;
+}
+
+
+
+.intelliboard-support-contacts{
+	margin: 25px;
+	z-index: 1;
+	position: relative;
+    width: calc(100% - 400px);
+}
+.intelliboard-support-contacts a{
+	margin-left: 0px;
+}
+.intelliboard-support-contacts strong{
+	display: block;
+	font-size: 12px;
+	color: #545e7b;
+	letter-spacing: .3px;
+	font-weight: 500;
+}
+.intelliboard-support-btn:hover{
+	color: #528dce;
+}
+.intelliboard-support-btn:hover,
+.intelliboard-support-large-btn:hover{
+	text-decoration: none;
+	opacity: 0.8;
+}
+.intelliboard-support-large-btn span{
+	background: url('../img/button-field.png') no-repeat top left;
+	background-size: 260px 60px;
+	height: 60px;
+	width: 260px;
+	display: block;
+	text-align: center;
+	line-height: 45px;
+	text-transform: uppercase;
+	color: #fff;
+	margin: -15px -5px;
+	text-decoration: none;
+	font-size: 12px;
+}
+.intelliboard-support-large-btn{
+	background: url('../img/button-frame.png') no-repeat top left;
+	background-size: 225px 31px;
+	height: 40px;
+	width: 243px;
+	display: inline-block;
+}
+.intelliboard-support-btn{
+	background: url('../img/rectangle-2.png') no-repeat top left;
+	background-size: 228px 36px;
+	height: 40px;
+	width: 228px;
+	display: inline-block;
+	text-align: center;
+	line-height: 38px;
+	text-transform: uppercase;
+	margin-right: 18px;
+	color: #528dce;
+	font-size: 12px;
+    display: inline-block;
+}
+.intelliboard-support-menu a:hover{
+	text-decoration: none;
+	opacity: 0.8;
+}
+.intelliboard-support-menu a{
+	color: #fff;
+	background-color: #BB5A5D;
+	border: 3px solid rgba(255,255,255,0.5);
+	border-radius: 15px 0 15px 0;
+	line-height: 60px;
+	text-transform: uppercase;
+	font-size: 16px;
+	padding: 10px 30px;
+}
+.intelliboard-support-menu{
+	float: right;
+}
+
+.intelliboard-support-block{
+    max-width: 55%;
+    margin: 30px 10px;
+}
+.intelliboard-support-block-col1 {
+    vertical-align:middle;
+    display: table-cell;
+    width: 65%;
+    float: left;
+    margin: 30px 0px;
+    padding-right: 15px;
+}
+
+.intelliboard-support-block-col2 {
+    vertical-align:middle;
+    display: table-cell;
+    width: 35%;
+    float: right;
+    margin: 30px 0px;
+    padding-left: 30px;
+    border-left: 1px solid #4472c4;
+}
+
+.intelliboard-support-title {
+    margin-bottom: 30px;
+}
+
+@media screen and (max-width: 600px) {
+	body .intelliboard-origin p{
+		border: 0 !important;
+		width: 100%;
+	}
+}
+
+@media screen and (max-width: 1200px) {
+	body .intelliboard-support-menu a{
+		color: #528dce;
+		border: 2px solid #528dce;
+	}
+	body .intelliboard-support-terms {
+		margin-top: 30px;
+		margin-bottom: 0;
+	}
+	body .intelliboard-support div {
+		width: 100%;
+		max-width: 100%;
+	}
+	body .intelliboard-support-player button{
+		display: none;
+	}
+	body .intelliboard-support-player {
+		display: block;
+		position: relative;
+		top: 0;
+		left: 0;
+		width: 100%;
+		box-shadow: none;
+}
+	body .intelliboard-support-play {
+		display: none;
+	}
+	body .intelliboard-support {
+		height: auto;
+		background:#F7FAFE;
+	}
+}
+@media screen and (max-width: 800px) {
+
+}
+@media screen and (max-width: 1200px) {
+
+	body .intelliboard-courses-grid{width: 100%; margin-right: 0;}
+	body .intelliboard-courses-grid li{width: 100%; margin-right: 0;}
+	body .intelliboard-box .box40,
+	body .intelliboard-box .box45,
+	body .intelliboard-box .box60,
+	body .intelliboard-box .box50{width: 100%;}
+	body .intelliboard-box > div:not(:first-child){margin-top: 15px;}
+
+    .intelli-instructor-header .instructor-head{float: none;width: 100%;border-right: none;border-bottom: 1px solid #ddd;}
+    .intelli-instructor-header .summary{float: none;width: 100%;box-shadow: none;padding-left: 0;}
+}
+
+.nav-tabs span.active form > span.searchviewclose i,
+.nav.nav-tabs > span > span.actbtn i {
+    color: #ddd;
+    font-size: 21px;
+    line-height: 24px;
+}
+.nav-tabs span.active form > span.searchviewclose:hover,
+.nav.nav-tabs > span > span.actbtn:hover {
+    cursor: pointer;
+}
+.nav-tabs span.active form > span.searchviewclose,
+.nav.nav-tabs > span > span.actbtn {
+    background: transparent none repeat scroll 0 0;
+    border: 0;
+    box-shadow: none;
+    margin: 4px 10px;
+    padding: 0;
+    float: left;
+}
+.nav.nav-tabs > span > span.actbtn.active i {
+    color: #666;
+}
+
+div[aria-label="A tabular representation of the data in the chart."] {
+    visibility: hidden !important;
+    display: none !important;
+}
+.screen-reader-content {
+    visibility: hidden;
+    width: 0;
+    height: 0;
+}
+.total_student .flatpickr-calendar.static.open {
+    z-index: 99999;
+    right: 0;
+    left: auto;
+}
+.summary .total_student .flatpickr-wrapper {
+    width: 100%;
+}
+.intelliboard-student .intelliboard-dropdown {
+    width: 150px;
+}
+
+.intelliboard-table-bottom {
+	float: left;
+	width: 100%;
+	margin-top: 10px;
+}
+.intelliboard-table-bottom > .intb-pagination {
+	float: left;
+	width: 90%;
+	height: 40px;
+}
+.intelliboard-table-bottom > .intb-pagination ul.pagination.mt-3 {
+	margin-top: 0 !important;
+}
+.intelliboard-table-bottom > .intb-page-size {
+	float: left;
+    width: 10%;
+    height: 40px;
+    text-align: right;
+}
+.intelliboard-table-bottom > .intb-page-size > select {
+	width: 60px;
+	border-radius: 4px;
+	border: 1px solid #ccc;
+	background: #fff;
+	color: black;
+	padding: 5px;
+}
+
+.badge-report-crit-item:after {
+    content: ",";
+}
+.badge-report-item .badge-report-crit-item:last-child:after {
+    content: "";
+}
+.badge-report-item .bad {
+    color: #d33939;
+}
+.badge-report-item .good {
+    color: #49955e;
+}
+
+.instructor-dashboard-settings-wrapper button.ms-choice span:hover {
+    color: #999;
+}
+.instructor-dashboard-settings-wrapper button.ms-choice {
+    background: #fff;
+}
+.instructor-dashboard-settings-wrapper {
+    margin-top: 15px;
+    width: 100%;
+}
+.instructor-courses-settings {
+    min-width: 150px;
+}
+.instructor-courses-settings .ms-drop.bottom button.btn.btn-primary {
+    width: 100%;
+    margin-left: 0;
+    background: #428bca none repeat scroll 0 0;;
+}
+.summary-chart-wrap {
+    z-index: 1;
+}
+.competency-cohort-filter-wrapper .ms-parent {
+    width: 200px !important;
+}
+.competency-cohort-filter-wrapper select[name="cohort_filter"] {
+    height: 36px;
+    background: #fff;
+    border-color: #ccc;
+    border-radius: 3px;
+}
+.competency-dashboard .cohort-filter-wrapper {
+    position: absolute;
+    right: 0;
+    top: -40px;
+}
+
+.competency-dashboard .cohort-filter-wrapper .ms-parent .ms-drop.bottom {
+    right: 0;
+}
+
+.competency-cohort-filter-wrapper.courses .ms-parent .ms-choice {
+    height: 37px;
+    margin-top: 3px;
+    margin-left: 0;
+}
+
+.competency-cohort-filter-wrapper.courses .ms-parent .ms-choice > div {
+    right: 0;
+    top: 4px;
+}
+
+.competency-cohort-filter-wrapper.courses .ms-parent .ms-choice:hover > span.placeholder {
+    color: #999;
+}
+
+.competency-cohort-filter-wrapper.courses .ms-parent .ms-choice > span {
+    top: 4px;
+}
+
+.competency-cohort-filter-wrapper.courses .ms-parent .ms-choice > span.placeholder {
+    top: 3px;
+    left: 0;
+}
+.intelliboard-page.intelliboard-instructor.competency-dashboard {
+    position: relative;
+}
+
+#page-initial-report .alert.alert-warning {
+    margin-top: 1rem;
+}
+
+.intelliboard-support-links.initial-reports {
+  border: 1px solid #B3C6E8;
+  padding: 30px 10px 10px 30px;
+  display: inline-block;
+  background-color: rgba(255,255,255, 0.6);
+  margin-top: 0px;
+  margin-bottom: 20px;
+  border-radius: 30px 0px;
+}
+.intelliboard-support-links.initial-reports a {
+    height: 36px;
+    border-top-left-radius: 13px;
+    border-bottom-right-radius: 14px;
+    background-color: rgba(255,255,255,0.8);
+}
+
+.intelliboard-nav {
+    display: flex;
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+.intelliboard-card-block {
+    padding: 1.429rem;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+}
+
+.instr-dashb-mainchartform {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.chart8-filter-box {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* General */
+.intelliboard-page .nav-item, .intelliboard-data-table, .intelliboard-box .filter-box,
+.intelliboard-origin-head, .intelliboard-box .filter-box input[type="text"] {
+    font-size: 14px;
+}
+.ib-table-wrapper {
+    overflow: auto;
+}
+
+@media screen and (max-width: 1200px) {
+    .intelliboard-page .nav-item .nav-link {
+        padding: 4px 7px;
+    }
+    .intelliboard-dropdown button, .filter-box input[type="text"] {
+        padding: 5px;
+    }
+    .intelliboard-card-block.card-block {
+        padding: 5px 0;
+    }
+}

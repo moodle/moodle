@@ -1,0 +1,8 @@
+<ul class="list-group instructor-dashboard-settings-wrapper">
+    {{#courses}}
+        <li class="list-group-item">
+            {{name}} <div class="checkbox-container">
+            <input type="checkbox" data-course="{{id}}" autocomplete="off" {{#selected}}checked="checked"{{/selected}}></div>
+        </li>
+    {{/courses}}
+</ul>

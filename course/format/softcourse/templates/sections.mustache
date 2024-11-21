@@ -1,0 +1,50 @@
+{{!
+    This file is part of DigiBoard
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_softcourse/templates/sections
+
+    Block template for softcourse sections
+
+    This template is used to generate a basic display for the softcourse sections list.
+
+    Classes required for JS:
+    * none
+
+    Context variables required for this template:
+    * initialsection object section
+    * sections object of section
+        * skip bool
+}}
+
+<div id="softcourse-sections">
+    <ul id="softcourse-tabs">
+        {{$ initialsection }}
+            {{#initialsection}}
+                {{^skip}}
+                    {{> format_softcourse/section }}
+                {{/skip}}
+            {{/initialsection}}
+        {{/ initialsection}}
+        {{$ sections }}
+            {{# sections}}
+                {{^skip}}
+                    {{> format_softcourse/section }}
+                {{/skip}}
+            {{/sections}}
+        {{/ sections}}
+    </ul>
+</div>

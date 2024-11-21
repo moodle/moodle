@@ -1,0 +1,49 @@
+{{#showalert}}
+    <div class="alert alert-warning">
+        {{#str}}initial_reports_warning, local_intelliboard, {{connect_url}} {{/str}}
+    </div>
+{{/showalert}}
+<div class="intelliboard-table-wrapper">
+    <div class="table-panel">
+        <div class="intelliboard-filters">
+            {{#show_search_filter}}
+            <div class="filter-item search" data-url="{{{base_url}}}">
+                <span class="field-wrapper">
+                    <input type="text" class="form-control" placeholder="{{#str}}type_here, local_intelliboard{{/str}}"
+                           value="{{search_val}}">
+                    <span class="clear-icon">&#10006;</span>
+                </span>
+                <button class="btn btn-default">
+                    {{#str}}search{{/str}}
+                </button>
+            </div>
+            {{/show_search_filter}}
+        </div>
+        <div class="actions">
+            <a class="btn btn-default" href="{{{dashboard_url}}}">
+                {{#str}}back{{/str}}
+            </a>
+        </div>
+    </div>
+    <div class="intelliboard-table-content">
+        {{{report_table}}}
+    </div>
+</div>
+
+{{#js}}
+    require(["jquery"], function($) {
+        $(document).ready(() => {
+            $(".filter-item.search button").on("click", function() {
+                let url = $(this).parents('.filter-item').data("url");
+                url += "&q=" + $(".filter-item.search input").val();
+                window.location.href = url;
+            });
+
+            $(".filter-item.search .field-wrapper .clear-icon").on("click", function() {
+                let url = $(this).parents('.filter-item').data("url");
+                url += "&q=";
+                window.location.href = url;
+            });
+        });
+    });
+{{/js}}

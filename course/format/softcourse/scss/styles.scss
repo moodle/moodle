@@ -1,0 +1,442 @@
+$brandcolorsoftcoursebrand: unquote("brandcolor");
+$brandcolorsoftcoursedefault: orange;
+
+.card-whithout-bg {
+    background-color: transparent;
+    border: none;
+    margin-bottom: 0;
+    min-height: 0;
+    padding: 0;
+
+    form[action="."] {
+        margin: 0;
+    }
+}
+
+#page-course-view-softcourse {
+
+    #region-main {
+
+        .stretched-link {
+            color: $brandcolorsoftcoursedefault;
+            color: $brandcolorsoftcoursebrand;
+            display: flex;
+            overflow: hidden;
+            text-decoration: none;
+            width: 100%;
+            z-index: 1;
+        }
+
+        & > .card {
+
+            @extend .card-whithout-bg;
+            padding-top: 0;
+
+        }
+
+        .course-content {
+            #softcourse-introduction {
+                padding: 30px;
+
+                #softcourse-start-button {
+                    -moz-appearance: button;
+                    -webkit-appearance: button;
+                    appearance: button;
+
+                    color: initial;
+                    margin-top: 15px;
+                    max-width: 220px;
+                    text-decoration: none;
+                    width: 100%;
+
+                    &[aria-disabled=true] {
+                        cursor: not-allowed;
+                        display: inline-block; /* For IE11/ MS Edge bug */
+                        opacity: 0.5;
+                        pointer-events: none;
+                        text-decoration: none;
+                    }
+                }
+            }
+
+            #softcourse-sections {
+                margin-top: 50px;
+                padding: 0;
+
+                #softcourse-tabs {
+                    color: inherit;
+                    padding-left: 0;
+                    text-decoration: none;
+
+                    .softcourse-section {
+                        display: flex;
+                        flex-direction: row;
+                        flex-wrap: wrap;
+                        margin-top: 15px;
+                        padding: 0;
+                        position: relative;
+                        transition: box-shadow 0.5s ease;
+
+                        &:hover {
+                            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, .15),
+                            0 4px 5px 0 rgba(0, 0, 0, .14),
+                            0 1px 10px 0 rgba(0, 0, 0, .12);
+
+                            .softcourse-section-img {
+
+                                span {
+                                    z-index: 0;
+                                }
+
+                                .delete-img,
+                                .update-img,
+                                span {
+                                    cursor: pointer;
+                                    opacity: 0.75;
+
+                                    &:hover {
+                                        color: #fff;
+                                    }
+                                }
+
+                                .delete-img,
+                                .update-img {
+                                    z-index: 4;
+                                }
+                            }
+
+                            .softcourse-section-body {
+                                .delete-img,
+                                .fa-leanpub,
+                                .progress,
+                                .progress-percent,
+                                .softcourse-activities-count,
+                                .update-img {
+                                    opacity: 1;
+                                }
+                            }
+                        }
+
+                        &:active {
+                            box-shadow: 0 5px 5px -3px rgba(0, 0, 0, .2),
+                            0 8px 10px 1px rgba(0, 0, 0, .14),
+                            0 3px 10px 2px rgba(0, 0, 0, .12);
+                        }
+
+                        .softcourse-section-img {
+                            background-color: $brandcolorsoftcoursedefault;
+                            background-color: $brandcolorsoftcoursebrand;
+                            background-position: center;
+                            background-repeat: no-repeat;
+                            background-size: contain;
+                            display: flex;
+                            height: 150px;
+                            min-width: 250px;
+
+                            @media only screen and (max-width: 710px) {
+                                background-image: none;
+                                min-width: 50px;
+                                width: 50px;
+                            }
+
+                            & > span {
+                                bottom: 10px;
+                                color: white;
+                                display: inline-block;
+                                font-size: 1.2rem;
+                                left: 0;
+                                opacity: 0;
+                                position: absolute;
+                                text-align: center;
+                                text-transform: uppercase;
+                                transition: opacity 0.5s ease;
+                                width: 250px;
+
+                                @media only screen and (max-width: 710px) {
+                                    font-size: 1.5rem;
+                                    top: 65px;
+                                    width: 50px;
+
+                                    span {
+                                        display: none;
+                                    }
+                                }
+                            }
+
+                            & > i {
+
+                                @media only screen and (max-width: 710px) {
+                                    display: none;
+                                }
+                            }
+
+                            .update-img {
+                                color: white;
+                                display: inline-block;
+                                font-size: 1.2rem;
+                                height: 50px;
+                                left: 200px;
+                                opacity: 0;
+                                position: absolute;
+                                top: 0;
+                                transition: opacity 0.5s ease;
+                                width: 50px;
+
+                                &:hover,
+                                &:hover::before {
+                                    cursor: pointer;
+                                }
+
+                                &::before {
+                                    padding: 15px;
+                                    position: absolute;
+                                }
+
+                                input[type="file"] {
+                                    height: 50px;
+                                    left: 0;
+                                    opacity: 0;
+                                    position: absolute;
+                                    width: 50px;
+
+                                    &:hover {
+                                        cursor: pointer;
+                                    }
+                                }
+
+                                @media only screen and (max-width: 710px) {
+                                    display: none;
+                                }
+                            }
+
+                            .delete-img {
+                                color: white;
+                                display: inline-block;
+                                font-size: 1.2rem;
+                                height: 50px;
+                                left: 200px;
+                                opacity: 0;
+                                position: absolute;
+                                top: 50px;
+                                transition: opacity 0.5s ease;
+                                width: 50px;
+
+                                &:hover,
+                                &:hover::before {
+                                    cursor: pointer;
+                                }
+
+                                &::before {
+                                    padding: 15px;
+                                    position: absolute;
+                                }
+
+                                input[type="button"] {
+                                    height: 50px;
+                                    left: 0;
+                                    opacity: 0;
+                                    position: absolute;
+                                    width: 50px;
+
+                                    &:hover {
+                                        cursor: pointer;
+                                    }
+                                }
+
+                                @media only screen and (max-width: 710px) {
+                                    display: none;
+                                }
+                            }
+
+                            &:not(.not-empty)::before {
+                                color: white;
+                                content: "\f19d";
+                                font-family: "FontAwesome";
+                                font-size: 100px;
+                                text-align: center;
+                                transition: top 0.5s ease;
+                                width: 100%;
+
+                                @media only screen and (max-width: 710px) {
+                                    display: none;
+                                }
+                            }
+                        }
+
+                        .softcourse-section-body {
+                            color: #000;
+                            display: flex;
+                            flex: 1;
+                            flex-direction: column;
+                            height: 150px;
+                            margin-left: 50px;
+                            padding: 10px 10px 10px 0;
+                            position: relative;
+                            width: calc(100% - 300px);
+                            z-index: 0;
+
+                            .softcourse-section-name {
+                                display: inline-block;
+                                font-size: 1.2rem;
+                                max-height: 30px;
+                                max-width: 100%;
+                                overflow: hidden;
+                                padding-right: 15px;
+                                text-decoration: none;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
+                                width: 100%;
+                            }
+
+                            .softcourse-section-summary {
+                                display: inline-block;
+                                font-size: 0.75rem;
+                                height: 100%;
+                                max-height: 75px;
+                                overflow: hidden;
+                                padding-right: 15px;
+                                width: 100%;
+
+                                p {
+                                    height: 100%;
+                                }
+                            }
+
+                            .softcourse-section-info {
+                                align-items: center;
+                                display: flex;
+                                height: 30px;
+                                justify-content: center;
+                                margin-bottom: 0;
+                                margin-top: auto;
+                                width: 100%;
+                            }
+
+                            .fa-leanpub {
+                                color: $brandcolorsoftcoursedefault;
+                                color: $brandcolorsoftcoursebrand;
+                                font-size: 1rem;
+                                opacity: 0;
+                                transition: opacity .5s ease;
+
+                                &::before {
+                                    font-size: 1.2rem;
+                                }
+                            }
+
+                            .softcourse-activities-count {
+                                color: $brandcolorsoftcoursedefault;
+                                color: $brandcolorsoftcoursebrand;
+                                font-size: 1rem;
+                                opacity: 0;
+                                transition: opacity .5s ease;
+                            }
+
+                            .progress {
+                                display: inline-flex;
+                                opacity: 0;
+                                transition: opacity .5s ease;
+                                width: calc(100% - 100px);
+
+                                @media only screen and (max-width: 710px) {
+                                    width: calc(100% - 100px);
+                                }
+
+                                .progress-bar {
+                                    display: inline-flex;
+                                }
+                            }
+
+                            .progress-percent {
+                                color: $brandcolorsoftcoursedefault;
+                                color: $brandcolorsoftcoursebrand;
+                                margin-left: 5px;
+                                opacity: 0;
+                                transition: opacity .5s ease;
+                            }
+
+                            @media only screen and (max-width: 710px) {
+                                margin-left: 30px;
+                                width: calc(100% - 80px);
+                            }
+                        }
+                    }
+                }
+            }
+
+            #ul.softcourse {
+                list-style: none;
+                margin: 0;
+
+                li.section {
+
+                    .content {
+                        margin: 0 40px;
+                    }
+
+                    .left,
+                    .right {
+                        padding: 0 6px;
+                        width: 40px;
+                    }
+
+                    .left {
+                        padding-top: 22px;
+                        text-align: right;
+
+                        .section-handle img.icon {
+                            padding: 0;
+                            vertical-align: baseline;
+                        }
+                    }
+
+                    .section_action_menu {
+
+                        .textmenu,
+                        .menu-action-text {
+                            white-space: nowrap;
+                        }
+                    }
+                }
+            }
+        }
+
+        &.jsenabled {
+
+            .course-content {
+
+                ul.softcourse {
+
+                    li.section {
+
+                        .left,
+                        .right {
+                            width: auto;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &.editing {
+
+        ul.softcourse {
+
+            li.section {
+                list-style-type: none;
+
+                .side {
+                    &.left,
+                    &.right {
+                        margin: 1rem;
+                    }
+                }
+
+                .summary {
+                    padding: 1rem;
+                }
+            }
+        }
+    }
+}

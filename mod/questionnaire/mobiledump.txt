@@ -1,0 +1,54 @@
+<ion-list radio-group name="<%fieldkey%>" [(ngModel)]="CONTENT_OTHERDATA.responses['<%fieldkey%>']">
+    <%#choices%>
+    <ion-grid no-padding>
+        <ion-row>
+            <ion-col>
+                <ion-item>
+                    <ion-label><core-format-text text="<%content%>"></core-format-text></ion-label>
+                    <ion-radio<%#value%> checked="true"<%/value%>
+                    value="<%id%>"
+                    <%#completed%> disabled="true"<%/completed%>></ion-radio>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <%/choices%>
+</ion-list>
+
+<button ion-button item-end outline icon-end block core-site-plugins-new-content component="mod_questionnaire" method="mobile_view_activity"
+    [args]="{
+        cmid: <%cmid%>,
+        rid: <%rid%>,
+        completeq: 1,
+        action: 'nextpage',
+        pagenum: <%pagenum%>
+    }"
+    [useOtherData]=""
+    [preSets]="{getFromCache: 0, saveToCache: 0}"
+    refreshOnSuccess="true"
+    samePage="true" type="submit"
+>{{ 'plugin.mod_questionnaire.nextpage' | translate }} <ion-icon name="arrow-forward"></ion-icon></button>
+
+
+
+=========== error_log ===============
+
+[Thu Aug 01 10:17:34.671596 2019] [php7:notice] [pid 67268] [client ::1:61305] stdClass Object
+(
+    [action] => nextpage
+    [appcustomurlscheme] => moodlemobile
+    [appid] => com.moodle.moodlemobile
+    [appisdesktop] => 1
+    [appismobile] => 0
+    [appiswide] => 1
+    [applang] => en-us
+    [appplatform] => mac
+    [appversioncode] => 3700
+    [appversionname] => 3.7.0
+    [cmid] => 153
+    [completeq] => 1
+    [pagenum] => 2
+    [rid] => 0
+    [userid] => 3
+)
+

@@ -1,0 +1,61 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_xp/rules-page-loading-error
+
+    Error to display when the rules page loads with errors.
+
+    Note that we did not translate these strings, and we applied only inline styling
+    because a) this should occur rarely enough that translations do not matter, b)
+    styling can be broken when the page fails to load, so enforcing them is best.
+
+    Lastly, we do not use the #js helper because the JavaScript needs to execute as
+    this renders and not on page load, so it must be inlined. The JavaScript will
+    check whether another expected part of the page was rendered (given a delay),
+    and if not it will display this error.
+
+    Example context (json):
+    {
+    }
+}}
+<div id="block_xp_rules_page_loading_error" style="display: none">
+    <div style="background: #fff0b5; color: black; padding: 2rem; margin: 1rem 0; font-size: 18px;">
+        <div style="text-align: left; margin-bottom: 2rem;">
+            <div style="font-size: 32px">😧 Uh oh!</div>
+            <p>... Something terrible seems to have happened!</p>
+        </div>
+        <p style="margin-bottom: 1rem;">It appears that this page did not load properly. Generally we would do our best to handle problems like these, but we have been defeated 😐!<p>
+        <p style="margin-bottom: 1rem;">Don't worry though, we'll sort it out together 👌. And not to brag 😎, but chances are it's not even <em>Level Up XP</em>'s fault.</p>
+        <p style="margin-bottom: 0;">Alright trooper, we have left some instructions for you, or your team, to look at and defeat this bug 🐞! Follow this link to start your adventure: <a href="https://docs.levelup.plus/xp/docs/troubleshooting/rules-page-broken?ref=blockxp_rules" target="_blank">https://docs.levelup.plus/xp/docs/troubleshooting/rules-page-broken</a>.</p>
+    </div>
+    <script>
+        (function() {
+            setTimeout(function() {
+                try {
+                    var elsuccess = document.getElementById('block_xp_rules_page_loading_success');
+                    var elerror = document.getElementById('block_xp_rules_page_loading_error');
+                    if (elsuccess || !elerror) {
+                        return;
+                    };
+                    elerror.style = '';
+                } catch (err) {
+                    console.log(err);
+                }
+            }, 1000)
+        })();
+    </script>
+</div>

@@ -1,0 +1,58 @@
+{{#subsection}}
+    <div class="section section-default p-1">
+        <div class="module-navigation-section-heading" role="tab" id="heading{{number}}">
+            <div class="section-title">
+                <ul class="allpagination">
+                    <li class="allsectionnames">
+                        {{#collapse}}
+                            <a href="{{{url}}}">{{{title}}}</a>
+                        {{/collapse}}
+                        {{^collapse}}
+                            {{#onlytitles}}
+                                <a href="{{{url}}}">{{{title}}}</a>
+                            {{/onlytitles}}
+                            {{^onlytitles}}
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{number}}"
+                                   aria-expanded="true" aria-controls="collapse{{number}}">{{{title}}}</a>
+                            {{/onlytitles}}
+                        {{/collapse}}
+                    </li>
+                    {{#collapse}}
+                        <li class="arrowaccordion">
+                            {{#hasmodules}}
+                                <a class="expand-arrow" role="button" data-toggle="collapse"
+                                   data-parent="#accordion" href="#collapse{{number}}" aria-expanded="true"
+                                   aria-controls="collapse{{number}}">
+                                </a>
+                            {{/hasmodules}}
+                        </li>
+                    {{/collapse}}
+                </ul>
+            </div>
+        </div>
+        <div id="collapse{{number}}" class="section-collapse collapse {{#selected}}show{{/selected}}"
+             role="tabsection" aria-labelledby="heading{{number}}">
+            <div class="section-body">
+                <ul class="activities">
+                    {{#modules}}
+                        {{^onlytitles}}
+                            <li>
+                                <a href="{{{url}}}" class="{{active}} {{#label}}modulenavigationlabel{{/label}}" onclick="{{{onclick}}}">
+                                    {{#completionon}}
+                                        <div class="completionbox">
+                                            <div class="completioncheck {{completeclass}}">
+                                            </div>
+                                        </div>
+                                    {{/completionon}}
+                                    <div class="activityname">
+                                        {{{name}}}
+                                    </div>
+                                </a>
+                            </li>
+                        {{/onlytitles}}
+                    {{/modules}}
+                </ul>
+            </div>
+        </div>
+    </div>
+{{/subsection}}

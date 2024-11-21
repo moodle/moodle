@@ -1,0 +1,819 @@
+{{#show_content}}
+	<div class="intelli-instructor-header clearfix">
+        <div class="instructor-dashboard-settings-wrapper">
+            <select class="instructor-courses-settings" multiple="multiple" autocomplete="off">
+                {{#instructorAllCourses}}
+                    <option value="{{id}}" {{#optionselected}}selected="selected"{{/optionselected}}>
+                        {{fullname}}
+                    </option>
+                {{/instructorAllCourses}}
+            </select>
+        </div>
+
+        {{! Main chart }}
+		<div class="instructor-head {{#instructorheadfull}}full{{/instructorheadfull}}">
+			{{#showmainchart}}
+				<h3>{{#str}}in1, local_intelliboard{{/str}}</h3>
+	            <div class="intelliboard-dropdown">
+	                {{#selectedmenu}}
+	                    <button>
+                            <span value="{{key}}">{{value}}</span>
+                            <i class="ion-android-arrow-dropdown"></i>
+                        </button>
+	                {{/selectedmenu}}
+	                <ul>
+                        {{#othermenu}}
+                            <li><a href="{{{url}}}">{{value}}</a></li>
+                        {{/othermenu}}
+	                </ul>
+	            </div>
+                {{#iscourseview}}
+                    <div class="intelliboard-additional-form instr-dashb-mainchartform">
+                        <div class="intelliboard-dropdown">
+                            {{#selectedmycourse}}
+                                <button>
+                                    <span value="{{key}}">{{value}}</span>
+                                    <i class="ion-android-arrow-dropdown"></i>
+                                </button>
+                            {{/selectedmycourse}}
+                            <ul>
+                                {{#othermycourses}}
+                                    <li><a href="{{{url}}}">{{value}}</a></li>
+                                {{/othermycourses}}
+                            </ul>
+                        </div>
+                        <div class="switcher clearfix">
+                            <a href="#" data-view="activity" class="active">{{#str}}s45, local_intelliboard{{/str}}</a>
+                            <a href="#" data-view="topic" class="">{{#str}}topics, local_intelliboard{{/str}}</a>
+                        </div>
+                    </div>
+                {{/iscourseview}}
+                <div class="clearfix"></div>
+	            <div id="instructor-chart-{{view}}" class="instructor-chart area"></div>
+            {{/showmainchart}}
+            {{#showinstructortotals}}
+                <ul class="instructor-total">
+                    <li>
+                        <strong>{{stats.courses}}</strong>
+                        {{#str}}in3, local_intelliboard{{/str}}
+                    </li>
+                    <li>
+                        <strong>{{stats.users}}</strong>
+                        {{#str}}in4, local_intelliboard{{/str}}
+                    </li>
+                    <li>
+                        <strong>{{stats.grades}}</strong>
+                        {{#str}}in5, local_intelliboard{{/str}}
+                    </li>
+                </ul>
+			{{/showinstructortotals}}
+		</div>
+
+        {{! Summary chart }}
+		{{#showsummarychart}}
+            <div class="summary clearfix">
+                <div class="intelliboard-dropdown">
+                    <button><i class="ion-android-arrow-dropdown"></i></button>
+                    <ul>
+                        {{#summarymenu}}
+                            <li><a href="#" data-tab="{{key}}">{{value}}</a></li>
+                        {{/summarymenu}}
+                    </ul>
+                </div>
+                {{#pluginsettings.n5}}
+                    <div class="summary-item curent_progress">
+                        <h3>{{#str}}in2, local_intelliboard{{/str}}</h3>
+
+                        <div class="summary-chart-wrap">
+                            <span class="summary-chart-label">
+                                {{summarychartlabel}}%
+                                <i>{{#str}}progress, local_intelliboard{{/str}}</i>
+                            </span>
+                            <div id="summary-chart" class="summary-chart" ></div>
+                        </div>
+                        <ul class="instructor-summary  clearfix">
+                            <li>
+                                {{#str}}in6, local_intelliboard{{/str}}
+                                <strong>{{stats.completed}}</strong>
+                            </li>
+                            <li>
+                                {{#str}}in7, local_intelliboard{{/str}}
+                                <strong>{{stats.notcompleted}}</strong>
+                            </li>
+                            <li>
+                                {{#str}}in8, local_intelliboard{{/str}}
+                                <strong>{{stats.grade}}</strong>
+                            </li>
+                        </ul>
+                    </div>
+                {{/pluginsettings.n5}}
+
+                {{#pluginsettings.n13}}
+                    <div class="summary-item total_student" style="display: none;">
+                        <h3>{{#str}}in27, local_intelliboard{{/str}}</h3>
+
+                        <div class="summary-chart-wrap">
+                            <span class="summary-chart-label"><span id="summary-chart-label">0</span>
+                                <i>{{#str}}in29, local_intelliboard{{/str}}</i>
+                            </span>
+                            <div id="summary-users-chart" class="summary-users-chart"></div>
+                            <div id="summary-users-list" class="summary-users-list">
+                                <h3 class="title"></h3>
+                                <span class="close"><i class="ion-android-close"></i></span>
+                                <ul></ul>
+                            </div>
+                        </div>
+                        <ul class="instructor-summary  clearfix">
+                            <li>
+                                {{#str}}learners_enrolled_period, local_intelliboard{{/str}}:
+                                <strong id="total-student-number">-</strong>
+                            </li>
+                            <li>
+                                {{#str}}in32, local_intelliboard{{/str}}:
+                                <strong id="avg-timespent-number">-</strong>
+                            </li>
+                        </ul>
+                    </div>
+                {{/pluginsettings.n13}}
+            </div>
+		{{/showsummarychart}}
+	</div>
+
+	<div class="intelliboard-box instructor-dashboard-intelliboard-box">
+		{{#showintelliboardbox1}}
+            <div class="box{{intelliboardbox1class}} pull-left h440">
+                <ul class="intelliboard-nav nav nav-tabs clearfix">
+                    {{#pluginsettings.n6}}
+                        <li role="presentation" class="nav-item" data-tab="chart4">
+                            <a class="nav-link active" href="#">{{#str}}in9, local_intelliboard{{/str}}</a>
+                        </li>
+                    {{/pluginsettings.n6}}
+                    {{#pluginsettings.n14}}
+                        <li role="presentation" class="nav-item" data-tab="chart5">
+                            <a class="nav-link" href="#">{{#str}}in26, local_intelliboard{{/str}}</a>
+                        </li>
+                    {{/pluginsettings.n14}}
+                    {{#pluginsettings.n18}}
+                        <li role="presentation" class="nav-item" data-tab="chart7">
+                            <a class="nav-link" href="#">{{#str}}in34, local_intelliboard{{/str}}</a>
+                        </li>
+                    {{/pluginsettings.n18}}
+                </ul>
+                <div class="intelliboard-card-block card-block">
+                    {{#pluginsettings.n6}}
+                        <div id="chart4" class="chart-tab active">{{#str}}loading, local_intelliboard{{/str}}</div>
+                    {{/pluginsettings.n6}}
+
+                    {{#pluginsettings.n14}}
+                        <div id="chart5" class="chart-tab" style="display: none;">
+                            <div class="filter-box clearfix">
+                                <div class="intelliboard-dropdown">
+                                    {{#selectedmycourse}}
+                                        <button value="{{key}}">
+                                            <span>{{value}}</span>
+                                            <i class="ion-android-arrow-dropdown"></i>
+                                        </button>
+                                    {{/selectedmycourse}}
+
+                                    <ul>
+                                        {{#selectedmycourse}}
+                                            <li><a href="#" data-value="{{key}}">{{value}}</a></li>
+                                        {{/selectedmycourse}}
+                                        {{#othermycourses}}
+                                            <li><a href="#" data-value="{{key}}">{{value}}</a></li>
+                                        {{/othermycourses}}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div id="chart5_area" class="area">{{#str}}loading, local_intelliboard{{/str}}</div>
+                        </div>
+                    {{/pluginsettings.n14}}
+
+                    {{#pluginsettings.n18}}
+                        <div id="chart7" class="chart-tab" style="display: none;">
+                            <div class="filter-box clearfix">
+                                <div class="intelliboard-dropdown courses">
+                                    {{#selectedmycourse}}
+                                        <button value="{{key}}">
+                                            <span>{{value}}</span>
+                                            <i class="ion-android-arrow-dropdown"></i>
+                                        </button>
+                                    {{/selectedmycourse}}
+
+                                    <ul>
+                                        {{#selectedmycourse}}
+                                            <li><a href="#" data-value="{{key}}">{{value}}</a></li>
+                                        {{/selectedmycourse}}
+                                        {{#othermycourses}}
+                                            <li><a href="#" data-value="{{key}}">{{value}}</a></li>
+                                        {{/othermycourses}}
+                                    </ul>
+                                </div>
+                                <div class="intelliboard-dropdown users">
+                                    <button value="0">
+                                        <span>{{#str}}select_user, local_intelliboard{{/str}}</span>
+                                        <i class="ion-android-arrow-dropdown"></i>
+                                    </button>
+                                    <ul>
+                                        {{#enrolledusers}}
+                                            <li><a href="#" data-value="{{key}}">{{value}}</a></li>
+                                        {{/enrolledusers}}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div id="chart7_area" class="area custom-tooltip">
+                                <p class="alert alert-warning">{{#str}}select_user, local_intelliboard{{/str}}</p>
+                            </div>
+                        </div>
+                    {{/pluginsettings.n18}}
+                </div>
+            </div>
+		{{/showintelliboardbox1}}
+
+        {{#showintelliboardbox2}}
+            <div class="box{{intelliboardbox2class}} pull-right h440">
+                <ul class="intelliboard-nav nav nav-tabs clearfix">
+                    {{#pluginsettings.n7}}
+                        <li role="presentation" class="nav-item" data-tab="chart2">
+                            <a class="nav-link active" href="#">{{#str}}in10, local_intelliboard{{/str}}</a>
+                        </li>
+                    {{/pluginsettings.n7}}
+                    {{#pluginsettings.n15}}
+                        <li role="presentation" class="nav-item" data-tab="chart3">
+                            <a class="nav-link" href="#">{{#str}}in31, local_intelliboard{{/str}}</a>
+                        </li>
+                    {{/pluginsettings.n15}}
+                    {{#pluginsettings.n16}}
+                        <li role="presentation" class="nav-item" data-tab="chart6">
+                            <a class="nav-link" href="#">{{#str}}in33, local_intelliboard{{/str}}</a>
+                        </li>
+                    {{/pluginsettings.n16}}
+                </ul>
+                <div class="intelliboard-card-block card-block">
+                    {{#pluginsettings.n7}}
+                        <div id="chart2" class="chart-tab active">{{#str}}loading, local_intelliboard{{/str}}</div>
+                    {{/pluginsettings.n7}}
+                    {{#pluginsettings.n15}}
+                        <div id="chart3" class="chart-tab" style="display: none;">
+                            <div class="filter-box clearfix">
+
+                                <div class="intelliboard-dropdown">
+                                    {{#selectedmycourse}}
+                                        <button value="{{key}}">
+                                            <span>{{value}}</span>
+                                            <i class="ion-android-arrow-dropdown"></i>
+                                        </button>
+                                    {{/selectedmycourse}}
+
+                                    <ul>
+                                        {{#selectedmycourse}}
+                                            <li><a href="#" data-value="{{key}}">{{value}}</a></li>
+                                        {{/selectedmycourse}}
+                                        {{#othermycourses}}
+                                            <li><a href="#" data-value="{{key}}">{{value}}</a></li>
+                                        {{/othermycourses}}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div id="chart3_area" class="area">{{#str}}loading, local_intelliboard{{/str}}</div>
+                        </div>
+                    {{/pluginsettings.n15}}
+                    {{#pluginsettings.n16}}
+                        <div id="chart6" class="chart-tab" style="display: none;">
+                            <div class="filter-box clearfix">
+                                <div class="intelliboard-dropdown">
+                                    {{#selectedmycourse}}
+                                        <button value="{{key}}">
+                                            <span>{{value}}</span>
+                                            <i class="ion-android-arrow-dropdown"></i>
+                                        </button>
+                                    {{/selectedmycourse}}
+
+                                    <ul>
+                                        {{#selectedmycourse}}
+                                            <li><a href="#" data-value="{{key}}">{{value}}</a></li>
+                                        {{/selectedmycourse}}
+                                        {{#othermycourses}}
+                                            <li><a href="#" data-value="{{key}}">{{value}}</a></li>
+                                        {{/othermycourses}}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div id="chart6_area" class="area">{{#str}}loading, local_intelliboard{{/str}}</div>
+                        </div>
+                    {{/pluginsettings.n16}}
+                </div>
+            </div>
+
+            <div class="box100 pull-left">
+                <div class="intelliboard-card-block card-block">
+                    <div id="chart8" class="chart-tab">
+                        <div class="filter-box chart8-filter-box">
+                            <div class="intelliboard-dropdown">
+                                {{#selectedmycourse}}
+                                    <button value="{{key}}">
+                                        <span>{{value}}</span>
+                                        <i class="ion-android-arrow-dropdown"></i>
+                                    </button>
+                                {{/selectedmycourse}}
+
+                                <ul>
+                                    {{#selectedmycourse}}
+                                        <li><a href="#" data-value="{{key}}">{{value}}</a></li>
+                                    {{/selectedmycourse}}
+                                    {{#othermycourses}}
+                                        <li><a href="#" data-value="{{key}}">{{value}}</a></li>
+                                    {{/othermycourses}}
+                                </ul>
+                            </div>
+                            <div class="export-box">
+                                {{> local_intelliboard/export_dropdown}}
+                            </div>
+                        </div>
+                        <h4>{{#str}}grade_activities_overview, local_intelliboard{{/str}}</h4>
+                        <div id="chart8_area" class="area">
+                            {{#str}}loading, local_intelliboard{{/str}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+		{{/showintelliboardbox2}}
+	</div>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+    {{#js}}
+        require(['jquery', 'local_intelliboard/flatpickr', 'local_intelliboard/instructor_actions'], function($, flatpickr, instructorActions) {
+            let pageurl = '{{{pageurl}}}'.replaceAll('&amp;', '&');
+            google.charts.load('current', {"callback": googleChartsCallback, 'name':'visualization', 'version': 1, 'packages':['corechart'], 'language': '{{currentlanguage}}'});
+
+            function decodeJson(htmlstring) {
+                var taEl = document.createElement("textarea");
+                taEl.innerHTML = htmlstring;
+                return JSON.parse(taEl.value);
+            }
+
+            function googleChartsCallback() {
+                $('.intelliboard-dropdown button').click(function(e){
+                    e.stopPropagation();
+                    if($(this).parent().hasClass('disabled')){
+                        return false;
+                    }
+                    $(this).parent().find('ul').toggle();
+                });
+
+                $('.nav-tabs .nav-item').click(function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    var parent = $(this).parent();
+                    var container = $(parent).parent();
+                    var tab = $(this).attr('data-tab');
+
+                    $(parent).children('.nav-item').removeClass('active');
+                    $(parent).children('.nav-item').children('.nav-link').removeClass('active');
+
+                    $(this).addClass('active');
+                    $(this).children('.nav-link').addClass('active');
+
+                    $(container).children('.card-block').children('.chart-tab').hide();
+                    $('#'+tab).show();
+                });
+
+                $("#general-daterange").flatpickr({
+                    mode: "range",
+                    dateFormat: "{{dateformat}}",
+                    locale: '{{currentlanguage}}',
+                    static: true,
+                    defaultDate: ["{{timestartdate}}", "{{timefinishdate}}"],
+                    onClose: function(selectedDates, dateStr, instance) {
+                        if($('#general-daterange').val() == ''){
+                        return;
+                        }
+                        var href = removeParam('daterange', window.location.search);
+                        if(href == '?'){
+                            href = '';
+                        }
+                        if(href != ''){
+                            href = href+'&';
+                        }
+                        href = href+'daterange='+$('#general-daterange').val();
+                        window.location = window.location.pathname+'?'+href;
+                    }
+                });
+
+                $('.summary .intelliboard-dropdown ul li a').click(function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    var tab = $(this).attr('data-tab');
+                    $('.summary .summary-item').hide();
+                    $('.summary .summary-item.'+tab).show();
+                    $('.summary .intelliboard-dropdown ul').hide();
+
+                    summary_student_daterange_change();
+                });
+                $('.summary .intelliboard-dropdown ul li:first-child a').click();
+
+                $('#chart5 .intelliboard-dropdown a').click(function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    $('#chart5 .intelliboard-dropdown button span').html($(this).html());
+                    $('#chart5 .intelliboard-dropdown button').val($(this).attr('data-value'));
+                    $('#chart5 .intelliboard-dropdown ul').hide();
+                    load_engagement_chart();
+                });
+                $('.nav-item[data-tab="chart5"]').click(function (e) {
+                    e.stopPropagation();
+                    load_engagement_chart();
+                });
+
+                $('#chart8 .intelliboard-dropdown a').click(function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    $('#chart8 .intelliboard-dropdown button span').html($(this).html());
+                    $('#chart8 .intelliboard-dropdown button').val($(this).attr('data-value'));
+                    $('#chart8 .intelliboard-dropdown ul').hide();
+                    load_graded_activities_overview_chart();
+                });
+
+                $('#chart7 .intelliboard-dropdown.courses a').click(function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    var course = $(this).attr('data-value');
+                    $('#chart7 .intelliboard-dropdown.courses button span').html($(this).html());
+                    $('#chart7 .intelliboard-dropdown.courses button').val(course);
+                    $('#chart7 .intelliboard-dropdown.courses ul').hide();
+                    $('#chart7 .intelliboard-dropdown.users button span').html('{{jsstrings.selectuser}}');
+
+                    load_chart7_users_list(course);
+                });
+                {{#pluginsettings.n18}}
+                var course = $('#chart7 .intelliboard-dropdown.courses button').val();
+                load_chart7_users_list(course);
+                {{/pluginsettings.n18}}
+
+                $("#chart7 .intelliboard-dropdown.users").on("click", "a", function(e){
+                    e.stopPropagation();
+                    e.preventDefault();
+                    var user = $(this).attr('data-value');
+                    var course = $('#chart7 .intelliboard-dropdown.courses button').val();
+
+                    $('#chart7 .intelliboard-dropdown.users button span').html($(this).html());
+                    $('#chart7 .intelliboard-dropdown.users button').val(user);
+                    $('#chart7 .intelliboard-dropdown.users ul').hide();
+
+                    instructorActions.execAction('get_student_grade_progression', {user: user, course: course}, function(response) {
+                        if(response.length<2){
+                            $('#chart7_area').html("<p class='alert alert-warning'>{{jsstrings.nodata}}</p>");
+                        }else {
+                            for (var i = 1; i < response.length; i++) {
+                                response[i][0] = new Date(response[i][0] * 1000);
+                            }
+                            var data = google.visualization.arrayToDataTable(response);
+                            var options = decodeJson('{{{gradeprogressionoptions}}}');
+                            options.vAxis.format = '#';
+                            options.vAxis.title = '{{chart7title}}';
+                            var chart = new google.visualization.LineChart(document.getElementById('chart7_area'));
+                            chart.draw(data, options);
+                        }
+                    });
+                });
+
+                $('#chart3 .intelliboard-dropdown a').click(function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    $('#chart3 .intelliboard-dropdown button span').html($(this).html());
+                    $('#chart3 .intelliboard-dropdown button').val($(this).attr('data-value'));
+                    $('#chart3 .intelliboard-dropdown ul').hide();
+                    load_module_utilization_chart();
+                });
+                $('.nav-item[data-tab="chart3"]').click(function (e) {
+                    e.stopPropagation();
+                    load_module_utilization_chart();
+                });
+                $('#chart6 .intelliboard-dropdown a').click(function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    $('#chart6 .intelliboard-dropdown button span').html($(this).html());
+                    $('#chart6 .intelliboard-dropdown button').val($(this).attr('data-value'));
+                    $('#chart6 .intelliboard-dropdown ul').hide();
+                    load_topic_utilization_chart();
+                });
+                $('.nav-item[data-tab="chart6"]').click(function (e) {
+                    e.stopPropagation();
+                    load_topic_utilization_chart();
+                });
+
+
+                $('.nav-tabs .nav-item:first-child').click();
+
+                {{#iscourseview}}
+                    $('.intelliboard-additional-form .switcher a').click(function (e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        $('.intelliboard-additional-form .switcher a').removeClass('active');
+                        $(this).addClass('active');
+
+                        drawInsructorChart();
+                    });
+                {{/iscourseview}}
+
+                function removeParam(key, sourceURL) {
+                    var rtn = sourceURL.split("?")[0],
+                        param,
+                        params_arr = [],
+                        queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
+                    if (queryString !== "") {
+                        params_arr = queryString.split("&");
+                        for (var i = params_arr.length - 1; i >= 0; i -= 1) {
+                            param = params_arr[i].split("=")[0];
+                            if (param === key) {
+                                params_arr.splice(i, 1);
+                            }
+                        }
+                        rtn = rtn + "?" + params_arr.join("&");
+                    }
+                    return rtn;
+                }
+
+                {{#pluginsettings.n7}}
+                    google.charts.setOnLoadCallback(LearningProgress);
+                    function LearningProgress() {
+                        var daterange = $('#general-daterange').val();
+                        instructorActions.execAction('modules', {daterange: daterange}, function(response) {
+                            var data = google.visualization.arrayToDataTable(response);
+                            var options = decodeJson('{{{learningprogressoptions}}}');
+                            var chart = new google.visualization.PieChart(document.getElementById('chart2'));
+                            chart.draw(data, options);
+                        });
+                    }
+                {{/pluginsettings.n7}}
+
+                {{#pluginsettings.n6}}
+                    google.charts.setOnLoadCallback(Correlations);
+                    function Correlations() {
+                        var daterange = $('#general-daterange').val();
+                        instructorActions.execAction('correlations', {daterange: daterange, page: 0, length: 100}, function(response) {
+                            var data = new google.visualization.DataTable();
+                            data.addColumn('number', '{{jsstrings.grade}}');
+                            data.addColumn('number', '{{jsstrings.in13}}');
+                            data.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true}});
+                            data.addRows(response);
+                            var options = decodeJson('{{{correlationsoptions}}}');
+                            var chart = new google.visualization.ScatterChart(document.getElementById('chart4'));
+                            chart.draw(data, options);
+                        });
+                    }
+                {{/pluginsettings.n6}}
+
+                {{#pluginsettings.n5}}
+                    google.charts.setOnLoadCallback(progressChart);
+                    function progressChart() {
+                        var data = google.visualization.arrayToDataTable([
+                            ['{{jsstrings.completed}}', '{{jsstrings.incompleted}}'],
+                            ['{{jsstrings.completed}}', {{stats.completed}}],
+                            ['{{jsstrings.incompleted}}', {{stats.notcompleted}}]
+                        ]);
+                        var options = {
+                        chartArea: {width: '100%',height: '90%',},
+                        pieHole: 0.8,
+                        pieSliceTextStyle: {
+                            color: 'transparent',
+                        },
+                        colors:['#1db34f','#e74c3c'],
+                        legend: 'none'
+                        };
+                        var chart = new google.visualization.PieChart(document.getElementById('summary-chart'));
+                        chart.draw(data, options);
+                    }
+                {{/pluginsettings.n5}}
+
+                google.charts.setOnLoadCallback(drawInsructorChart);
+                function drawInsructorChart() {
+                    var options = {
+                        title:'',
+                        legend:{position: 'top', alignment: 'end'},
+                        vAxis: {title:'{{jsstrings.learners}}'},
+                        hAxis:{textPosition: 'none', title:'{{jsstrings.courses}}'},
+                        seriesType:'bars',
+                        series:{1:{type:'line'}},
+                        chartArea:{width:'90%',height: '76%',right:10 },
+                        colors:['#1d7fb3', '#1db34f'],
+                        backgroundColor:{fill:'transparent'}
+                    };
+                    {{#isgradesview}}
+                        options.vAxis.title = "{{jsstrings.in19}}";
+                        var data = google.visualization.arrayToDataTable([
+                            ['Course', '{{jsstrings.in19}}', '{{jsstrings.in25}}'],
+                            {{#courses}}
+                                ['{{name}}', {v: {{data1}}, f: '{{data1}}'}, {{data2}}],
+                            {{/courses}}
+
+                            {{^courses}}
+                                ['', {v: 0, f: '0'}, 0],
+                            {{/courses}}
+                        ]);
+                    {{/isgradesview}}
+                    {{#isactivitiesview}}
+                        options.vAxis.title = "{{jsstrings.in14}}";
+                        options.vAxis.minValue = 0;
+                        options.vAxis.maxValue = 1;
+                        options.vAxis.format = 'percent';
+
+                        var data = google.visualization.arrayToDataTable([
+                            ['{{jsstrings.course}}', '{{jsstrings.in15}}'],
+                            {{#courses}}
+                                ['{{name}}', {v: {{data1perc}}, f: '{{data1}}%'} ],
+                            {{/courses}}
+                            {{^courses}}
+                                ['', {v: 0, f: 0}]
+                            {{/courses}}
+                        ]);
+                    {{/isactivitiesview}}
+                    {{#iscourseview}}
+                        $('#instructor-chart-{{view}}').html('{{jsstrings.loading}}');
+                        options.vAxis.textPosition = 'none';
+                        options.tooltip = {isHtml: true};
+                        options.chartArea.width = '95%';
+
+                        var course = {{course}};
+                        var chart = new google.visualization.ComboChart(document.getElementById('instructor-chart-{{view}}'));
+                        var view = $('.intelliboard-additional-form .switcher a.active').attr('data-view');
+                        var daterange = $('#general-daterange').val();
+
+                        instructorActions.execAction('get_course_overview', {view: view, course: course, daterange: daterange}, function(response) {
+                            if(view == 'activity'){
+                                options.vAxis.title = "{{jsstrings.s25}}";
+                                options.hAxis.title = "{{jsstrings.s45}}";
+                            }else{
+                                options.vAxis.title = "{{jsstrings.s47}}";
+                                options.hAxis.title = "{{jsstrings.s48}}";
+                            }
+                            var data = google.visualization.arrayToDataTable(response);
+
+                            chart.draw(data, options);
+                        });
+                        return;
+                    {{/iscourseview}}
+                    {{#isotherview}}
+                        var data = google.visualization.arrayToDataTable([
+                            ['{{jsstrings.course}}', '{{jsstrings.enrolled}}', '{{jsstrings.completed}}'],
+                            {{#courses}}
+                                ['{{name}}', {{data1}}, {{data2}}],
+                            {{/courses}}
+                        ]);
+                    {{/isotherview}}
+                    //var options = <?php echo $factorInfo->CourseProgressCalculation; ?>;
+                    var chart = new google.visualization.ComboChart(document.getElementById('instructor-chart-{{view}}'));
+                    chart.draw(data, options);
+                    $('.intelliboard-origin-head a:first').trigger('click');
+                }
+
+                google.charts.setOnLoadCallback(load_graded_activities_overview_chart);
+                function load_graded_activities_overview_chart() {
+                    var course = $('#chart8 .intelliboard-dropdown button').val() || 0;
+                    instructorActions.execAction('graded_activities_overview', {course: course}, function(response) {
+                        let data = google.visualization.arrayToDataTable(response);
+                        let options = decodeJson('{{{gradeactivitiesoverviewoptions}}}');
+                        options.title = '{{jsstrings.gradeactivitiesoverview}}';
+
+                        if (options.hAxis) {
+                            options.hAxis.direction = -1;
+                            options.hAxis.slantedText = true;
+                            options.hAxis.slantedTextAngle = 90;
+                        } else {
+                            options.hAxis = {slantedText:true, slantedTextAngle:60 };
+                        }
+                        let chart = new google.visualization.ColumnChart(
+                            document.getElementById('chart8_area')
+                        );
+                        chart.draw(data, options);
+                    });
+                }
+
+                function load_engagement_chart() {
+                    var daterange = $('#general-daterange').val();
+                    var course = $('#chart5 .intelliboard-dropdown button').val() || 0;
+                    instructorActions.execAction('get_learner_engagement', {course: course, daterange: daterange}, function(response) {
+                        var data = google.visualization.arrayToDataTable(response);
+                        var options = decodeJson('{{{correlationsoptions}}}');
+                        options.vAxis = {format: '#%', title: '{{jsstrings.s46}}'};
+                        options.height = 290;
+                        var chart = new google.visualization.AreaChart(document.getElementById('chart5_area'));
+                        chart.draw(data, options);
+                    });
+                }
+
+                function load_module_utilization_chart() {
+                    var daterange = $('#general-daterange').val();
+                    var course = $('#chart3 .intelliboard-dropdown button').val() || 0;
+                    instructorActions.execAction('get_module_utilization', {course: course, daterange: daterange}, function(response) {
+                        if(response.length > 0) {
+                            var data = google.visualization.arrayToDataTable(response);
+                            var options = decodeJson('{{{learningprogressoptions}}}');
+                            options.height = 270;
+                            options.tooltip = {isHtml: true};
+                            var chart = new google.visualization.PieChart(document.getElementById('chart3_area'));
+                            chart.draw(data, options);
+                        }else{
+                            $('#chart3_area').html('{{{nodatabox}}}');
+                        }
+                    });
+                }
+
+                function load_topic_utilization_chart() {
+                    var daterange = $('#general-daterange').val();
+                    var course = $('#chart6 .intelliboard-dropdown button').val() || 0;
+                    instructorActions.execAction('get_topic_utilization', {course: course, daterange: daterange}, function(response) {
+                        if(response.length > 0) {
+                            var data = google.visualization.arrayToDataTable(response);
+                            var options = decodeJson('{{{learningprogressoptions}}}');
+                            options.height = 270;
+                            options.tooltip = {isHtml: true};
+                            var chart = new google.visualization.PieChart(document.getElementById('chart6_area'));
+                            chart.draw(data, options);
+                        }else{
+                            $('#chart6_area').html('{{{nodatabox}}}');
+                        }
+                    });
+                }
+
+                function summary_student_daterange_change() {
+                    var daterange = $('#general-daterange').val();
+                    instructorActions.execAction('get_total_students', {daterange: daterange}, function(response) {
+                        $('#avg-timespent-number').html(response.avg_timespend);
+                        $('#total-student-number').html(response.enrolled_users);
+                        $('#summary-chart-label').html(response.active_users);
+                        $('#summary-users-chart').hide();
+
+                        if(response.total_users>0) {
+                            $('#summary-users-chart').show();
+                            var data = [
+                                ['{{jsstrings.total}}', '{{jsstrings.in27}}'],
+                                ['{{jsstrings.in29}}', Number(response.active_users)],
+                                ['{{jsstrings.in30}}', response.total_users - response.active_users],
+                            ];
+                            data = google.visualization.arrayToDataTable(data);
+                            var options = {
+                                chartArea: {width: '100%',height: '90%',},
+                                pieHole: 0.8,
+                                pieSliceTextStyle: {
+                                    color: 'transparent',
+                                },
+                                colors:['#1db34f','#e74c3c'],
+                                legend: 'none'
+                            };
+                            var chart = new google.visualization.PieChart(document.getElementById('summary-users-chart'));
+                            google.visualization.events.addListener(chart, 'select', function () {
+                                var selectedItem = chart.getSelection()[0];
+                                if(selectedItem.row == 1){
+                                    $('#summary-users-list ul').html(response.users.not_active);
+                                    $('#summary-users-list .title').html('{{jsstrings.in30}}');
+                                }else{
+                                    $('#summary-users-list ul').html(response.users.active);
+                                    $('#summary-users-list .title').html('{{jsstrings.in29}}');
+                                }
+                                $('#summary-users-list').addClass('visible');
+                            });
+                            chart.draw(data, options);
+                        }
+                    });
+
+                    $('#summary-users-list .close').click(function (e) {
+                        e.stopPropagation();
+                        $('#summary-users-list').removeClass('visible');
+                    });
+                }
+
+                function load_chart7_users_list(course) {
+                    instructorActions.execAction('get_course_users', {course: course}, function(response) {
+                        $('#chart7 .intelliboard-dropdown.users ul').html(response.items);
+                    });
+                }
+
+                $('#chart8 .report-export-panel a').on('click', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    let format = $(this).attr('data-format');
+                    let course = $('#chart8 .intelliboard-dropdown button').val();
+                    let params = [
+                        'action=graded_activities_overview_export',
+                        'course=' + course,
+                        'format=' + format,
+                        'sesskey=' + M.cfg.sesskey
+                    ];
+                    window.location.replace(
+                        "{{wwwroot}}/local/intelliboard/instructor/export.php?" + params.join('&')
+                    );
+                });
+
+            }
+        });
+    {{/js}}
+{{/show_content}}
+{{^show_content}}
+    <br>
+    <div class="alert alert-info alert-block">
+        {{#str}}in23, local_intelliboard{{/str}}
+    </div>
+{{/show_content}}

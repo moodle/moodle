@@ -1,0 +1,120 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_questionnaire/results_choice
+
+    Template which defines a results display for responses with defined choices. This template uses a simple level of HTML,
+    suitable for being translated into a PDF file by the TCPDF library.
+
+    Classes required for JS:
+    * /mod/questionnaire/module.js
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+
+    Example context (json):
+    {
+        "responses": [
+            {
+                "response": {
+                    "text": "choice 1",
+                    "alt1": "alt1",
+                    "image1": "http://localhost/mod/questionnaire/images/hbar_1.gif",
+                    "alt2": "alt2",
+                    "width2": "28",
+                    "image2": "http://localhost/mod/questionnaire/images/hbar.gif",
+                    "alt3": "alt3",
+                    "image3": "http://localhost/mod/questionnaire/images/hbar_r.gif",
+                    "percent": "20%",
+                    "total": 2
+                }
+            },
+            {
+                "response": {
+                    "text": "choice 2",
+                    "alt1": "alt1",
+                    "image1": "http://localhost/mod/questionnaire/images/hbar_1.gif",
+                    "alt2": "alt2",
+                    "width2": "28",
+                    "image2": "http://localhost/mod/questionnaire/images/hbar.gif",
+                    "alt3": "alt3",
+                    "image3": "http://localhost/mod/questionnaire/images/hbar_r.gif",
+                    "percent": "20%",
+                    "total": 2
+                }
+            }
+        ],
+        "total": {
+            "alt1": "alt1",
+            "image1": "http://localhost/mod/questionnaire/images/hbar_1.gif",
+            "alt2": "alt2",
+            "width2": "28",
+            "image2": "http://localhost/mod/questionnaire/images/hbar.gif",
+            "alt3": "alt3",
+            "image3": "http://localhost/mod/questionnaire/images/hbar_r.gif",
+            "percent": "20%",
+            "total": "8/10"
+        }
+    }
+    }}
+<!-- Begin HTML generated from results_choice template. -->
+{{#responses.0}}
+<table class="generaltable">
+    <thead>
+    <tr>
+        <th class="header c0" style="text-align:left;width:50%;" scope="col">{{#str}} response, mod_questionnaire {{/str}}</th>
+        <th class="header c1" style="text-align:left;width:40%;" scope="col">{{#str}} average, mod_questionnaire {{/str}}</th>
+        <th class="header c2 lastcol" style="text-align:right;width:10%;" scope="col">{{#str}} total, mod_questionnaire {{/str}}</th>
+    </tr>
+    </thead>
+    <tbody>
+{{/responses.0}}
+{{#responses}}
+    {{#response}}
+    <tr class=""{{^response.evencolor}} style="background-color: #E5E5E6"{{/response.evencolor}}>
+        <td class="cell c0" style="text-align:left;width:50%;">{{response.text}}</td>
+        <td class="cell c1" style="text-align:left;width:40%;white-space:nowrap;">
+            <img style="height:9px; width:4px;" alt="{{response.alt1}}" src="{{response.image1}}" /><img style="height:9px; width:{{response.width2}}px;" alt="{{response.alt2}}" src="{{response.image2}}" /><img style="height:9px; width:4px;" alt="{{response.alt3}}" src="{{response.image3}}" />
+            {{{response.percent}}}
+        </td>
+        <td class="cell c2 lastcol" style="text-align:right;width:10%;">{{response.total}}</td>
+    </tr>
+    {{/response}}
+{{/responses}}
+{{#total}}
+    <tr{{#total.evencolor}} style="background-color: #E5E5E6"{{/total.evencolor}}>
+        <td colspan="3"><div class="tabledivider"> </div></td>
+    </tr>
+    <tr class="lastrow"{{^total.evencolor}} style="background-color: #E5E5E6"{{/total.evencolor}}>
+        <td class="cell c0" style="text-align:left;width:50%;">{{#str}} totalresponses, mod_questionnaire{{/str}}</td>
+        <td class="cell c1" style="text-align:left;width:40%;white-space:nowrap;">
+            <img style="height:9px; width:4px;" alt="{{alt1}}" src="{{image1}}" /><img style="height:9px; width:{{width2}}px;" alt="{{alt2}}" src="{{image2}}" /><img style="height:9px; width:4px;" alt="{{alt3}}" src="{{image3}}" />
+            {{{percent}}}
+        </td>
+        <td class="cell c2 lastcol" style="text-align:right;width:10%;">{{total}}</td>
+    </tr>
+{{/total}}
+{{#responses.0}}
+    </tbody>
+</table>
+{{/responses.0}}
+{{^responses}}
+    <p class="generaltable">&nbsp;{{#str}} noresponsedata, questionnaire{{/str}}</p>
+{{/responses}}
+<!-- End HTML generated from results_choice template. -->

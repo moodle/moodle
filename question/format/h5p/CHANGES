@@ -1,0 +1,33 @@
+1.0.8 Add Crossword support
+
+1.0.7 File metadata bug fixes
+
+1.0.6 Add Support for Find the Hotspot and Fimd Multiple Hotspots
+
+1.0.5 Transfer Author/Licensing information of files
+
+1.0.4 Add support for Image Sequencing type
+
+1.0.3 Add support for Branching Scenario
+
+1.0.2 Add support for Advanced Fill in the Blanks
+
+1.0.1 Add support for Interactive Book
+
+1.0 First stable release
+
+1.0 Beta 6 Stop video player appearing when media absent
+
+1.0 Beta 5 Fix formatting of Drag the Words. Implement overall feedback
+    import. The styles file was removed that made labels visible on
+    dropzones in order to prevent changes to existing questions on
+    installation. The CSS should be added to individual site themes
+    if desired.
+
+1.0 Beta 4 Support Essay and Mark Text content types. Improved Drag and
+    Drop placement. Handle overall feedback.
+
+1.0 Beta 3 Add Interactive Video support.
+
+1.0 Beta 2 Add Audio and Video media support
+

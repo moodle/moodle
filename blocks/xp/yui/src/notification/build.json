@@ -1,0 +1,10 @@
+{
+  "name": "moodle-block_xp-notification",
+  "builds": {
+    "moodle-block_xp-notification": {
+      "jsfiles": [
+        "notification.js"
+      ]
+    }
+  }
+}
