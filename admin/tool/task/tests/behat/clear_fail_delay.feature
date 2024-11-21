@@ -10,23 +10,21 @@ Feature: Clear scheduled task fail delay
     And I navigate to "Server > Tasks > Scheduled tasks" in site administration
 
   Scenario: Any fail delay is highlighted
-    Then I should see "60" in the "Send new user passwords" "table_row"
+    Then I should see "1 min" in the "Send new user passwords" "table_row"
     And I should see "Clear" in the "Send new user passwords" "table_row"
-    And I should see "60" in the "td.table-danger" "css_element"
+    And I should see "1 min" in the "td.table-danger" "css_element"
 
   Scenario: Clear fail delay
     When I click on "Clear" "text" in the "Send new user passwords" "table_row"
     And I should see "Are you sure you want to clear the fail delay"
     And I press "Clear"
-
-    Then I should not see "60" in the "Send new user passwords" "table_row"
+    Then I should not see "1 min" in the "Send new user passwords" "table_row"
     And I should not see "Clear" in the "Send new user passwords" "table_row"
     And I should see "Send new user passwords" in the "tr.table-primary" "css_element"
 
   Scenario: Cancel clearing the fail delay
     When I click on "Clear" "text" in the "Send new user passwords" "table_row"
     And I press "Cancel"
-
-    Then I should see "60" in the "Send new user passwords" "table_row"
+    Then I should see "1 min" in the "Send new user passwords" "table_row"
     And I should see "Clear" in the "Send new user passwords" "table_row"
     And I should see "Send new user passwords" in the "tr.table-primary" "css_element"
