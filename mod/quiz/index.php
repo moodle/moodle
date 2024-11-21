@@ -23,6 +23,7 @@
  */
 
 use mod_quiz\output\grades\grade_out_of;
+use mod_quiz\output\renderer;
 
 require_once("../../config.php");
 require_once("locallib.php");
@@ -46,8 +47,10 @@ $strquizzes = get_string("modulenameplural", "quiz");
 $PAGE->navbar->add($strquizzes);
 $PAGE->set_title($strquizzes);
 $PAGE->set_heading($course->fullname);
-echo $OUTPUT->header();
-echo $OUTPUT->heading($strquizzes, 2);
+/** @var renderer $output */
+$output = $PAGE->get_renderer('mod_quiz');
+echo $output->header();
+echo $output->heading($strquizzes, 2);
 
 // Get all the appropriate data.
 if (!$quizzes = get_all_instances_in_course("quiz", $course)) {
@@ -162,8 +165,8 @@ foreach ($quizzes as $quiz) {
         $feedback = '';
         if ($quiz->grade && array_key_exists($quiz->id, $grades)) {
             if ($alloptions->marks >= question_display_options::MARK_AND_MAX) {
-                $grade = $OUTPUT->render(new grade_out_of(
-                        $grades[$quiz->id], $quiz->grade, $quiz->sumgrades, style: grade_out_of::SHORT));
+                $grade = $output->render(new grade_out_of(
+                        $quiz, $grades[$quiz->id], $quiz->grade, $quiz->sumgrades, style: grade_out_of::SHORT));
             }
             if ($alloptions->overallfeedback) {
                 $feedback = quiz_feedback_for_grade($grades[$quiz->id], $quiz, $context);
@@ -182,4 +185,4 @@ foreach ($quizzes as $quiz) {
 echo html_writer::table($table);
 
 // Finish the page.
-echo $OUTPUT->footer();
+echo $output->footer();
