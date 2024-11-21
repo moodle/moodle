@@ -420,6 +420,12 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
             new lang_string('generalgroups', 'backup'), new lang_string('configgeneralgroups', 'backup'),
             array('value' => 1, 'locked' => 0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_competencies', new lang_string('generalcompetencies','backup'), new lang_string('configgeneralcompetencies','backup'), array('value'=>1, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock(
+        'backup/backup_general_customfield',
+        new lang_string('generalcustomfield', 'backup'),
+        new lang_string('configgeneralcustomfield', 'backup'),
+        ['value' => 1, 'locked' => 0],
+    ));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_contentbankcontent',
         new lang_string('generalcontentbankcontent', 'backup'),
         new lang_string('configgeneralcontentbankcontent', 'backup'),
@@ -430,7 +436,6 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         new lang_string('configgeneralxapistate', 'backup'),
         ['value' => 1, 'locked' => 0])
     );
-
 
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_legacyfiles',
         new lang_string('generallegacyfiles', 'backup'),
@@ -460,6 +465,12 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
             new lang_string('generalgroups', 'backup'), new lang_string('configgeneralgroups', 'backup'),
             array('value' => 1, 'locked' => 0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_import_competencies', new lang_string('generalcompetencies','backup'), new lang_string('configgeneralcompetencies','backup'), array('value'=>1, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock(
+        'backup/backup_import_customfield',
+        new lang_string('generalcustomfield', 'backup'),
+        new lang_string('configgeneralcustomfield', 'backup'),
+        ['value' => 1, 'locked' => 0],
+    ));
     $temp->add(new admin_setting_configcheckbox_with_lock(
         'backup/backup_import_contentbankcontent',
         new lang_string('generalcontentbankcontent', 'backup'),
@@ -590,6 +601,12 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
             new lang_string('configgeneralgroups', 'backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_competencies', new lang_string('generalcompetencies','backup'), new lang_string('configgeneralcompetencies','backup'), 1));
     $temp->add(new admin_setting_configcheckbox(
+        'backup/backup_auto_customfield',
+        new lang_string('generalcustomfield', 'backup'),
+        new lang_string('configgeneralcustomfield', 'backup'),
+        1,
+    ));
+    $temp->add(new admin_setting_configcheckbox(
         'backup/backup_auto_contentbankcontent',
         new lang_string('generalcontentbankcontent', 'backup'),
         new lang_string('configgeneralcontentbankcontent', 'backup'),
@@ -668,6 +685,12 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_competencies',
         new lang_string('generalcompetencies', 'backup'),
         new lang_string('configrestorecompetencies', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock(
+        'restore/restore_general_customfield',
+        new lang_string('generalcustomfield', 'backup'),
+        new lang_string('configrestorecustomfield', 'backup'),
+        ['value' => 1, 'locked' => 0],
+    ));
     $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_contentbankcontent',
         new lang_string('generalcontentbankcontent', 'backup'),
         new lang_string('configrestorecontentbankcontent', 'backup'), array('value' => 1, 'locked' => 0)));
