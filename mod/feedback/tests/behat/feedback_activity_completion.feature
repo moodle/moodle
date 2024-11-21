@@ -34,12 +34,12 @@ Feature: View activity completion in the feedback activity
         | Multiple choice values | drums\guitar\hurdygurdy           |
     And I log out
 
-  Scenario: View automatic completion items as a teacher
+  Scenario: Feedback module displays completion conditions to teachers
     When I am on the "Music history" "feedback activity" page logged in as teacher1
     Then "Music history" should have the "View" completion condition
     And "Music history" should have the "Submit feedback" completion condition
 
-  Scenario: View automatic completion items as a student
+  Scenario: Student can complete a feedback activity when all conditions are met
     Given I am on the "Music history" "feedback activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "todo"
     And the "Submit feedback" completion condition of "Music history" is displayed as "todo"
