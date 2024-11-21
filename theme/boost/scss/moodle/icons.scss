@@ -28,6 +28,34 @@ $iconsizes: map-merge((
 ), $iconsizes);
 // stylelint-enable
 
+// This mixin change an icon color using filters.
+// The code is adapted from https://jsfiddle.net/Tegos/3fchp0qm/ example.
+@mixin recolor-icon($color: #000, $opacity: 1) {
+    // Extracting the color component using / 255 is deprecated in Sass.
+    // However, the alternative of using math.div is not working in moodle yet.
+    // The workaround to extract the color component is multiply by 1/255 as float.
+    $r: red($color) * 0.00392156862745098;
+    $g: green($color) * 0.00392156862745098;
+    $b: blue($color) * 0.00392156862745098;
+    $a: $opacity;
+    $svg-filter-id: "recolor";
+
+    $svg-url: 'data:image/svg+xml;utf8,' +
+        '<svg xmlns="http://www.w3.org/2000/svg">' +
+        '<filter id="#{$svg-filter-id}" color-interpolation-filters="sRGB">' +
+        '<feColorMatrix type="matrix" values="' +
+        '0 0 0 0 #{$r} ' +
+        '0 0 0 0 #{$g} ' +
+        '0 0 0 0 #{$b} ' +
+        '0 0 0 #{$a} 0 ' +
+        '"/>' +
+        '</filter>' +
+        '</svg>' +
+        '##{$svg-filter-id}';
+
+    filter: url($svg-url);
+}
+
 .icon {
     max-width: map-get($iconsizes, 4);
     max-height: map-get($iconsizes, 4);
@@ -195,7 +223,7 @@ img.icon {
             .activityicon,
             .icon {
                 &:not(.nofilter) {
-                    filter: $value;
+                    @include recolor-icon($value, 1);
                 }
             }
         }

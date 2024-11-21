@@ -26337,32 +26337,32 @@ img.icon {
 
 .activityiconcontainer.administration:not(.isbranded) .activityicon:not(.nofilter),
 .activityiconcontainer.administration:not(.isbranded) .icon:not(.nofilter) {
-  filter: invert(45%) sepia(46%) saturate(3819%) hue-rotate(260deg) brightness(101%) contrast(87%);
+  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.8549019608 0 0 0 0 0.3450980392 0 0 0 0 0.937254902 0 0 0 1 0 "/></filter></svg>#recolor');
 }
 
 .activityiconcontainer.assessment:not(.isbranded) .activityicon:not(.nofilter),
 .activityiconcontainer.assessment:not(.isbranded) .icon:not(.nofilter) {
-  filter: invert(36%) sepia(98%) saturate(6969%) hue-rotate(315deg) brightness(90%) contrast(119%);
+  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.9764705882 0 0 0 0 0 0 0 0 0 0.5254901961 0 0 0 1 0 "/></filter></svg>#recolor');
 }
 
 .activityiconcontainer.collaboration:not(.isbranded) .activityicon:not(.nofilter),
 .activityiconcontainer.collaboration:not(.isbranded) .icon:not(.nofilter) {
-  filter: invert(25%) sepia(54%) saturate(6226%) hue-rotate(245deg) brightness(100%) contrast(102%);
+  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.3568627451 0 0 0 0 0.2509803922 0 0 0 0 1 0 0 0 1 0 "/></filter></svg>#recolor');
 }
 
 .activityiconcontainer.communication:not(.isbranded) .activityicon:not(.nofilter),
 .activityiconcontainer.communication:not(.isbranded) .icon:not(.nofilter) {
-  filter: invert(48%) sepia(74%) saturate(4887%) hue-rotate(11deg) brightness(102%) contrast(101%);
+  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.9215686275 0 0 0 0 0.3843137255 0 0 0 0 0 0 0 0 1 0 "/></filter></svg>#recolor');
 }
 
 .activityiconcontainer.content:not(.isbranded) .activityicon:not(.nofilter),
 .activityiconcontainer.content:not(.isbranded) .icon:not(.nofilter) {
-  filter: invert(49%) sepia(52%) saturate(4675%) hue-rotate(156deg) brightness(89%) contrast(102%);
+  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0.6 0 0 0 0 0.6784313725 0 0 0 1 0 "/></filter></svg>#recolor');
 }
 
 .activityiconcontainer.interactivecontent:not(.isbranded) .activityicon:not(.nofilter),
 .activityiconcontainer.interactivecontent:not(.isbranded) .icon:not(.nofilter) {
-  filter: invert(25%) sepia(63%) saturate(1152%) hue-rotate(344deg) brightness(94%) contrast(91%);
+  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.5529411765 0 0 0 0 0.2392156863 0 0 0 0 0.1058823529 0 0 0 1 0 "/></filter></svg>#recolor');
 }
 
 .icon-box {
@@ -26402,12 +26402,12 @@ img.icon {
 }
 
 :root {
-  --activityadministration: invert(45%) sepia(46%) saturate(3819%) hue-rotate(260deg) brightness(101%) contrast(87%);
-  --activityassessment: invert(36%) sepia(98%) saturate(6969%) hue-rotate(315deg) brightness(90%) contrast(119%);
-  --activitycollaboration: invert(25%) sepia(54%) saturate(6226%) hue-rotate(245deg) brightness(100%) contrast(102%);
-  --activitycommunication: invert(48%) sepia(74%) saturate(4887%) hue-rotate(11deg) brightness(102%) contrast(101%);
-  --activitycontent: invert(49%) sepia(52%) saturate(4675%) hue-rotate(156deg) brightness(89%) contrast(102%);
-  --activityinteractivecontent: invert(25%) sepia(63%) saturate(1152%) hue-rotate(344deg) brightness(94%) contrast(91%);
+  --activityadministration: #da58ef;
+  --activityassessment: #f90086;
+  --activitycollaboration: #5b40ff;
+  --activitycommunication: #eb6200;
+  --activitycontent: #0099ad;
+  --activityinteractivecontent: #8d3d1b;
 }
 
 /* admin.less */

@@ -74,7 +74,7 @@ Since Moodle 4.4, the available activity purposes are:
 
 ### Purpose colours
 
-The activity icon colours can be customised using the theme Boost 'Raw initial SCSS' feature. Simply copy any of these scss variables that you want to customize, change the colour value, generate the filter using, for instance https://codepen.io/sosuke/pen/Pjoqqp and done! There is no background colour or filter for the 'Other' or the 'Interface' purposes.
+The activity icon colours can be customised using the theme Boost 'Raw initial SCSS' feature. The following variables are available:
 
 {{< highlight scss >}}
 $activity-icon-administration-bg:     #da58ef !default;
@@ -83,19 +83,6 @@ $activity-icon-collaboration-bg:      #5b40ff !default;
 $activity-icon-communication-bg:      #eb6200 !default;
 $activity-icon-content-bg:            #0099ad !default;
 $activity-icon-interactivecontent-bg: #8d3d1b !default;
-
-$activity-icon-administration-filter:
-    invert(45%) sepia(46%) saturate(3819%) hue-rotate(260deg) brightness(101%) contrast(87%) !default;
-$activity-icon-assessment-filter:
-    invert(36%) sepia(98%) saturate(6969%) hue-rotate(315deg) brightness(90%) contrast(119%) !default;
-$activity-icon-collaboration-filter:
-    invert(25%) sepia(54%) saturate(6226%) hue-rotate(245deg) brightness(100%) contrast(102%) !default;
-$activity-icon-communication-filter:
-    invert(48%) sepia(74%) saturate(4887%) hue-rotate(11deg) brightness(102%) contrast(101%) !default;
-$activity-icon-content-filter:
-    invert(49%) sepia(52%) saturate(4675%) hue-rotate(156deg) brightness(89%) contrast(102%) !default;
-$activity-icon-interactivecontent-filter:
-    invert(25%) sepia(63%) saturate(1152%) hue-rotate(344deg) brightness(94%) contrast(91%) !default;
 {{</ highlight >}}
 
 ### Custom activity icons
