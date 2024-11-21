@@ -84,6 +84,8 @@ function xsendfile($filepath) {
         if (!$aliased) {
             return false;
         }
+        // Nginx expects the path to be url encoded see https://trac.nginx.org/nginx/ticket/316.
+        $filepath = rawurlencode($filepath);
     }
 
     header("$CFG->xsendfile: $filepath");
