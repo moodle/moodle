@@ -2962,6 +2962,8 @@ abstract class moodle_database {
     ): array {
         $fullcountsql = $this->generate_fullcount_sql($sql, $params, $fullcountcolumn);
         if ($sort) {
+            // Remove "ORDER BY" with any extra spaces from $sort.
+            $sort = preg_replace('/\s*ORDER\s+BY\s*/i', '', $sort);
             $fullcountsql .= " ORDER BY " . $sort;
         }
         return $this->get_records_sql($fullcountsql, $params, $limitfrom, $limitnum);
@@ -2993,6 +2995,8 @@ abstract class moodle_database {
     ): moodle_recordset {
         $fullcountsql = $this->generate_fullcount_sql($sql, $params, $fullcountcolumn);
         if ($sort) {
+            // Remove "ORDER BY" with any extra spaces from $sort.
+            $sort = preg_replace('/\s*ORDER\s+BY\s*/i', '', $sort);
             $fullcountsql .= " ORDER BY " . $sort;
         }
         return $this->get_recordset_sql($fullcountsql, $params, $limitfrom, $limitnum);
