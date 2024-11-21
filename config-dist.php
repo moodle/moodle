@@ -110,41 +110,41 @@ $CFG->dboptions = array(
                                 // Currently supported only with mysqli, mariadb, and aurora drivers.
     /*
     'connecttimeout' => null, // Set connect timeout in seconds. Not all drivers support it.
-    'readonly' => [          // Set to read-only slave details, to get safe reads
-                             // from there instead of the master node. Optional.
+    'readonly' => [          // Set to read-only replica details, to get safe reads
+                             // from there instead of the primary node. Optional.
                              // Currently supported by pgsql and mysqli variety classes.
                              // If not supported silently ignored.
-      'instance' => [        // Readonly slave connection parameters
+      'instance' => [        // Readonly replica connection parameters
         [
-          'dbhost' => 'slave.dbhost',
-          'dbport' => '',    // Defaults to master port
-          'dbuser' => '',    // Defaults to master user
-          'dbpass' => '',    // Defaults to master password
+          'dbhost' => 'replica.dbhost',
+          'dbport' => '',    // Defaults to primary port
+          'dbuser' => '',    // Defaults to primary user
+          'dbpass' => '',    // Defaults to primary password
         ],
         [...],
       ],
 
     Instance(s) can alternatively be specified as:
 
-      'instance' => 'slave.dbhost',
-      'instance' => ['slave.dbhost1', 'slave.dbhost2'],
-      'instance' => ['dbhost' => 'slave.dbhost', 'dbport' => '', 'dbuser' => '', 'dbpass' => ''],
+      'instance' => 'replica.dbhost',
+      'instance' => ['replica.dbhost1', 'replica.dbhost2'],
+      'instance' => ['dbhost' => 'replica.dbhost', 'dbport' => '', 'dbuser' => '', 'dbpass' => ''],
 
-      'connecttimeout' => 2, // Set read-only slave connect timeout in seconds. See above.
-      'latency' => 0.5,      // Set read-only slave sync latency in seconds.
+      'connecttimeout' => 2, // Set read-only replica connect timeout in seconds. See above.
+      'latency' => 0.5,      // Set read-only replica sync latency in seconds.
                              // When 'latency' seconds have lapsed after an update to a table
-                             // it is deemed safe to use readonly slave for reading from the table.
+                             // it is deemed safe to use readonly replica for reading from the table.
                              // It is optional, defaults to 1 second. If you want once written to a table
-                             // to always use master handle for reading set it to something ridiculosly big,
+                             // to always use primary handle for reading set it to something ridiculosly big,
                              // eg 10.
                              // Lower values increase the performance, but setting it too low means
-                             // missing the master-slave sync.
-      'exclude_tables' => [  // Tables to exclude from read-only slave feature.
+                             // missing the primary-replica sync.
+      'exclude_tables' => [  // Tables to exclude from read-only replica feature.
           'table1',          // Should not be used, unless in rare cases when some area of the system
           'table2',          // is malfunctioning and you still want to use readonly feature.
       ],                     // Then one can exclude offending tables while investigating.
 
-    More info available in lib/dml/moodle_read_slave_trait.php where the feature is implemented.
+    More info available in lib/dml/moodle_read_replica_trait.php where the feature is implemented.
     ]
      */
 // For all database config settings see https://docs.moodle.org/en/Database_settings

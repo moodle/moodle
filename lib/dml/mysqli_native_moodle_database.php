@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/moodle_database.php');
-require_once(__DIR__.'/moodle_read_slave_trait.php');
+require_once(__DIR__.'/moodle_read_replica_trait.php');
 require_once(__DIR__.'/mysqli_native_moodle_recordset.php');
 require_once(__DIR__.'/mysqli_native_moodle_temptables.php');
 
@@ -37,8 +37,8 @@ require_once(__DIR__.'/mysqli_native_moodle_temptables.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mysqli_native_moodle_database extends moodle_database {
-    use moodle_read_slave_trait {
-        can_use_readonly as read_slave_can_use_readonly;
+    use moodle_read_replica_trait {
+        can_use_readonly as read_replica_can_use_readonly;
     }
 
     /** @var array $sslmodes */
@@ -652,12 +652,12 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool
      */
     protected function can_use_readonly(int $type, string $sql): bool {
-        // ... *_LOCK queries always go to master.
+        // ... *_LOCK queries always go to primary.
         if (preg_match('/\b(GET|RELEASE)_LOCK/i', $sql)) {
             return false;
         }
 
-        return $this->read_slave_can_use_readonly($type, $sql);
+        return $this->read_replica_can_use_readonly($type, $sql);
     }
 
     /**

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Database driver test class for testing moodle_read_slave_trait
+ * Database driver test class for testing moodle_read_replica_trait
  *
  * @package    core
  * @category   dml
@@ -23,48 +23,32 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core;
+
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__.'/read_replica_moodle_database.php');
+
 /**
- * Database recordset mock test class
+ * Database driver test class that exposes table_names()
  *
  * @package    core
  * @category   dml
  * @copyright  2018 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class read_slave_moodle_recordset_special extends moodle_recordset {
+class read_replica_moodle_database_table_names extends read_replica_moodle_database {
     /**
-     * Iterator interface
-     * @return void
+     * @var string
      */
-    public function close() {
-    }
+    protected $prefix = 't_';
+
     /**
-     * Iterator interface
-     * @return stdClass
+     * Upgrade to public
+     * @param string $sql
+     * @return array
      */
-    public function current(): stdClass {
-        return new stdClass();
-    }
-    /**
-     * Iterator interface
-     * @return void
-     */
-    public function next(): void {
-    }
-    /**
-     * Iterator interface
-     * @return mixed
-     */
-    #[\ReturnTypeWillChange]
-    public function key() {
-    }
-    /**
-     * Iterator interface
-     * @return bool
-     */
-    public function valid(): bool {
-        return false;
+    public function table_names(string $sql): array {
+        return parent::table_names($sql);
     }
 }

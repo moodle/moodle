@@ -1,0 +1,14 @@
+issueNumber: MDL-71257
+notes:
+  core:
+    - message: >-
+        The methods `want_read_slave` and `perf_get_reads_slave` in
+        `lib/dml/moodle_database.php` have been deprecated in favour of
+        renamed versions that substitute `slave` for `replica`.
+      type: deprecated
+    - message: >-
+        The trait `moodle_read_slave_trait` has been deprecated in favour of a
+        functionally identical version called `moodle_read_replica_trait`.
+        The renamed trait substitutes the terminology of `slave` with `replica`,
+        and `master` with `primary`.
+      type: deprecated

@@ -5706,9 +5706,9 @@ EOD;
         if (!isset($cfg->dboptions)) {
             $cfg->dboptions = array();
         }
-        // If we have a readonly slave situation, we need to either observe
+        // If we have a readonly replica situation, we need to either observe
         // the latency, or if the latency is not specified we need to take
-        // the slave out because the table may not have propagated yet.
+        // the replica out because the table may not have propagated yet.
         if (isset($cfg->dboptions['readonly'])) {
             if (isset($cfg->dboptions['readonly']['latency'])) {
                 usleep(intval(1000000 * $cfg->dboptions['readonly']['latency']));

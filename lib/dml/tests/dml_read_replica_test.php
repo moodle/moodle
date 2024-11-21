@@ -27,8 +27,8 @@ namespace core;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__.'/fixtures/read_slave_moodle_database_table_names.php');
-require_once(__DIR__.'/fixtures/read_slave_moodle_database_special.php');
+require_once(__DIR__.'/fixtures/read_replica_moodle_database_table_names.php');
+require_once(__DIR__.'/fixtures/read_replica_moodle_database_special.php');
 require_once(__DIR__.'/../../tests/fixtures/event_fixtures.php');
 
 /**
@@ -38,9 +38,9 @@ require_once(__DIR__.'/../../tests/fixtures/event_fixtures.php');
  * @category   dml
  * @copyright  2018 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \moodle_read_slave_trait
+ * @covers     \moodle_read_replica_trait
  */
-final class dml_read_slave_test extends \database_driver_testcase {
+final class dml_read_replica_test extends \database_driver_testcase {
 
     /** @var float */
     static private $dbreadonlylatency = 0.8;
@@ -51,7 +51,7 @@ final class dml_read_slave_test extends \database_driver_testcase {
      * @param bool $wantlatency
      * @param mixed $readonly
      * @param mixed $dbclass
-     * @return read_slave_moodle_database $db
+     * @return read_replica_moodle_database $db
      */
     public function new_db(
         $wantlatency = false,
@@ -60,8 +60,8 @@ final class dml_read_slave_test extends \database_driver_testcase {
             ['dbhost' => 'test_ro2', 'dbport' => 2, 'dbuser' => 'test2', 'dbpass' => 'test2'],
             ['dbhost' => 'test_ro3', 'dbport' => 3, 'dbuser' => 'test3', 'dbpass' => 'test3'],
         ],
-        $dbclass = read_slave_moodle_database::class
-    ): read_slave_moodle_database {
+        $dbclass = read_replica_moodle_database::class
+    ): read_replica_moodle_database {
         $dbhost = 'test_rw';
         $dbname = 'test';
         $dbuser = 'test';
@@ -78,8 +78,8 @@ final class dml_read_slave_test extends \database_driver_testcase {
     }
 
     /**
-     * Asert that the mock handle returned from read_slave_moodle_database methods
-     * is a readonly slave handle.
+     * Asert that the mock handle returned from read_replica_moodle_database methods
+     * is a readonly replica handle.
      *
      * @param string $handle
      * @return void
@@ -89,7 +89,7 @@ final class dml_read_slave_test extends \database_driver_testcase {
     }
 
     /**
-     * moodle_read_slave_trait::table_names() test data provider
+     * moodle_read_replica_trait::table_names() test data provider
      *
      * @return array
      * @dataProvider table_names_provider
@@ -133,7 +133,7 @@ final class dml_read_slave_test extends \database_driver_testcase {
     }
 
     /**
-     * Test moodle_read_slave_trait::table_names() query parser.
+     * Test moodle_read_replica_trait::table_names() query parser.
      *
      * @param string $sql
      * @param array $tables
@@ -141,7 +141,7 @@ final class dml_read_slave_test extends \database_driver_testcase {
      * @dataProvider table_names_provider
      */
     public function test_table_names($sql, $tables): void {
-        $db = new read_slave_moodle_database_table_names();
+        $db = new read_replica_moodle_database_table_names();
 
         $this->assertEquals($tables, $db->table_names($db->fix_sql_params($sql)[0]));
     }
@@ -155,19 +155,19 @@ final class dml_read_slave_test extends \database_driver_testcase {
     public function test_read_read_write_read(): void {
         $DB = $this->new_db(true);
 
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        $this->assertEquals(0, $DB->perf_get_reads_replica());
         $this->assertNull($DB->get_dbhwrite());
 
         $handle = $DB->get_records('table');
         $this->assert_readonly_handle($handle);
-        $readsslave = $DB->perf_get_reads_slave();
-        $this->assertGreaterThan(0, $readsslave);
+        $readsreplica = $DB->perf_get_reads_replica();
+        $this->assertGreaterThan(0, $readsreplica);
         $this->assertNull($DB->get_dbhwrite());
 
         $handle = $DB->get_records('table2');
         $this->assert_readonly_handle($handle);
-        $readsslave = $DB->perf_get_reads_slave();
-        $this->assertGreaterThan(1, $readsslave);
+        $readsreplica = $DB->perf_get_reads_replica();
+        $this->assertGreaterThan(1, $readsreplica);
         $this->assertNull($DB->get_dbhwrite());
 
         $now = microtime(true);
@@ -177,14 +177,14 @@ final class dml_read_slave_test extends \database_driver_testcase {
         if (microtime(true) - $now < self::$dbreadonlylatency) {
             $handle = $DB->get_records('table');
             $this->assertEquals('test_rw::test:test', $handle);
-            $this->assertEquals($readsslave, $DB->perf_get_reads_slave());
+            $this->assertEquals($readsreplica, $DB->perf_get_reads_replica());
 
             sleep(1);
         }
 
         $handle = $DB->get_records('table');
         $this->assert_readonly_handle($handle);
-        $this->assertEquals($readsslave + 1, $DB->perf_get_reads_slave());
+        $this->assertEquals($readsreplica + 1, $DB->perf_get_reads_replica());
     }
 
     /**
@@ -195,13 +195,13 @@ final class dml_read_slave_test extends \database_driver_testcase {
     public function test_read_write_write(): void {
         $DB = $this->new_db();
 
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        $this->assertEquals(0, $DB->perf_get_reads_replica());
         $this->assertNull($DB->get_dbhwrite());
 
         $handle = $DB->get_records('table');
         $this->assert_readonly_handle($handle);
-        $readsslave = $DB->perf_get_reads_slave();
-        $this->assertGreaterThan(0, $readsslave);
+        $readsreplica = $DB->perf_get_reads_replica();
+        $this->assertGreaterThan(0, $readsreplica);
         $this->assertNull($DB->get_dbhwrite());
 
         $handle = $DB->insert_record_raw('table', array('name' => 'blah'));
@@ -209,7 +209,7 @@ final class dml_read_slave_test extends \database_driver_testcase {
 
         $handle = $DB->update_record_raw('table', array('id' => 1, 'name' => 'blah2'));
         $this->assertEquals('test_rw::test:test', $handle);
-        $this->assertEquals($readsslave, $DB->perf_get_reads_slave());
+        $this->assertEquals($readsreplica, $DB->perf_get_reads_replica());
     }
 
     /**
@@ -220,34 +220,34 @@ final class dml_read_slave_test extends \database_driver_testcase {
     public function test_write_read_read(): void {
         $DB = $this->new_db();
 
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        $this->assertEquals(0, $DB->perf_get_reads_replica());
         $this->assertNull($DB->get_dbhwrite());
 
         $handle = $DB->insert_record_raw('table', array('name' => 'blah'));
         $this->assertEquals('test_rw::test:test', $handle);
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        $this->assertEquals(0, $DB->perf_get_reads_replica());
 
         $handle = $DB->get_records('table');
         $this->assertEquals('test_rw::test:test', $handle);
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        $this->assertEquals(0, $DB->perf_get_reads_replica());
 
         $handle = $DB->get_records_sql("SELECT * FROM {table2} JOIN {table}");
         $this->assertEquals('test_rw::test:test', $handle);
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        $this->assertEquals(0, $DB->perf_get_reads_replica());
 
         sleep(1);
 
         $handle = $DB->get_records('table');
         $this->assert_readonly_handle($handle);
-        $this->assertEquals(1, $DB->perf_get_reads_slave());
+        $this->assertEquals(1, $DB->perf_get_reads_replica());
 
         $handle = $DB->get_records('table2');
         $this->assert_readonly_handle($handle);
-        $this->assertEquals(2, $DB->perf_get_reads_slave());
+        $this->assertEquals(2, $DB->perf_get_reads_replica());
 
         $handle = $DB->get_records_sql("SELECT * FROM {table2} JOIN {table}");
         $this->assert_readonly_handle($handle);
-        $this->assertEquals(3, $DB->perf_get_reads_slave());
+        $this->assertEquals(3, $DB->perf_get_reads_replica());
     }
 
     /**
@@ -259,12 +259,12 @@ final class dml_read_slave_test extends \database_driver_testcase {
         $DB = $this->new_db();
         $DB->add_temptable('temptable1');
 
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        $this->assertEquals(0, $DB->perf_get_reads_replica());
         $this->assertNull($DB->get_dbhwrite());
 
         $handle = $DB->get_records('temptable1');
         $this->assertEquals('test_rw::test:test', $handle);
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        $this->assertEquals(0, $DB->perf_get_reads_replica());
 
         $DB->delete_temptable('temptable1');
     }
@@ -277,12 +277,12 @@ final class dml_read_slave_test extends \database_driver_testcase {
     public function test_read_excluded_tables(): void {
         $DB = $this->new_db();
 
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        $this->assertEquals(0, $DB->perf_get_reads_replica());
         $this->assertNull($DB->get_dbhwrite());
 
         $handle = $DB->get_records('exclude');
         $this->assertEquals('test_rw::test:test', $handle);
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        $this->assertEquals(0, $DB->perf_get_reads_replica());
     }
 
     /**
@@ -383,7 +383,7 @@ final class dml_read_slave_test extends \database_driver_testcase {
         $this->with_global_db(function () {
             global $DB;
 
-            $DB = $this->new_db(true, ['test_ro'], read_slave_moodle_database_special::class);
+            $DB = $this->new_db(true, ['test_ro'], read_replica_moodle_database_special::class);
             $DB->set_tables([
                 'config_plugins' => [
                     'columns' => [
@@ -456,13 +456,13 @@ final class dml_read_slave_test extends \database_driver_testcase {
 
         $DB = $this->new_db(false, 'test_ro_fail');
 
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        $this->assertEquals(0, $DB->perf_get_reads_replica());
         $this->assertNotNull($DB->get_dbhwrite());
 
         $handle = $DB->get_records('table');
         $this->assertEquals('test_rw::test:test', $handle);
-        $readsslave = $DB->perf_get_reads_slave();
-        $this->assertEquals(0, $readsslave);
+        $readsreplica = $DB->perf_get_reads_replica();
+        $this->assertEquals(0, $readsreplica);
 
         $debugging = array_map(function ($d) {
             return $d->message;
@@ -475,7 +475,7 @@ final class dml_read_slave_test extends \database_driver_testcase {
     }
 
     /**
-     * In multiple slaves scenario, test failed readonly connection falls back to
+     * In multiple replicas scenario, test failed readonly connection falls back to
      * another readonly connection.
      *
      * @return void
@@ -485,13 +485,13 @@ final class dml_read_slave_test extends \database_driver_testcase {
 
         $DB = $this->new_db(false, ['test_ro_fail', 'test_ro_ok']);
 
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        $this->assertEquals(0, $DB->perf_get_reads_replica());
         $this->assertNull($DB->get_dbhwrite());
 
         $handle = $DB->get_records('table');
         $this->assertEquals('test_ro_ok::test:test', $handle);
-        $readsslave = $DB->perf_get_reads_slave();
-        $this->assertEquals(1, $readsslave);
+        $readsreplica = $DB->perf_get_reads_replica();
+        $this->assertEquals(1, $readsreplica);
 
         $debugging = array_map(function ($d) {
             return $d->message;
@@ -530,7 +530,7 @@ final class dml_read_slave_test extends \database_driver_testcase {
         $this->with_global_db(function () {
             global $DB;
 
-            $DB = $this->new_db(true, ['test_ro'], read_slave_moodle_database_special::class);
+            $DB = $this->new_db(true, ['test_ro'], read_replica_moodle_database_special::class);
             $DB->set_tables([
                 'lock_db' => [
                     'columns' => [
@@ -540,7 +540,7 @@ final class dml_read_slave_test extends \database_driver_testcase {
                 ]
             ]);
 
-            $this->assertEquals(0, $DB->perf_get_reads_slave());
+            $this->assertEquals(0, $DB->perf_get_reads_replica());
             $this->assertNull($DB->get_dbhwrite());
 
             $lockfactory = new \core\lock\db_record_lock_factory('default');
@@ -550,7 +550,7 @@ final class dml_read_slave_test extends \database_driver_testcase {
 
             $lock = $lockfactory->get_lock('abc', 2);
             $lock->release();
-            $this->assertEquals(0, $DB->perf_get_reads_slave());
+            $this->assertEquals(0, $DB->perf_get_reads_replica());
             $this->assertTrue($DB->perf_get_reads() > 0);
         });
     }
@@ -565,7 +565,7 @@ final class dml_read_slave_test extends \database_driver_testcase {
             global $DB, $CFG;
 
             $CFG->dbsessions = true;
-            $DB = $this->new_db(true, ['test_ro'], read_slave_moodle_database_special::class);
+            $DB = $this->new_db(true, ['test_ro'], read_replica_moodle_database_special::class);
             $DB->set_tables([
                 'sessions' => [
                     'columns' => [
@@ -574,13 +574,13 @@ final class dml_read_slave_test extends \database_driver_testcase {
                 ]
             ]);
 
-            $this->assertEquals(0, $DB->perf_get_reads_slave());
+            $this->assertEquals(0, $DB->perf_get_reads_replica());
             $this->assertNull($DB->get_dbhwrite());
 
             $session = new \core\session\database();
             $session->read('dummy');
 
-            $this->assertEquals(0, $DB->perf_get_reads_slave());
+            $this->assertEquals(0, $DB->perf_get_reads_replica());
             $this->assertTrue($DB->perf_get_reads() > 0);
         });
 

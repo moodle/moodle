@@ -2879,16 +2879,52 @@ abstract class moodle_database {
     /**
      * Returns whether we want to connect to slave database for read queries.
      * @return bool Want read only connection
+     * @deprecated Since Moodle 5.0. See MDL-71257.
+     * @todo Final deprecation in Moodle 6.0. See MDL-83171.
      */
+    #[\core\attribute\deprecated(
+        replacement: 'want_read_replica',
+        since: '5.0',
+        mdl: 'MDL-71257',
+        reason: 'Renamed'
+    )]
     public function want_read_slave(): bool {
+        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        return false;
+    }
+
+    /**
+     * Returns whether we want to connect to replica database for read queries.
+     *
+     * @return bool Want read only connection.
+     */
+    public function want_read_replica(): bool {
         return false;
     }
 
     /**
      * Returns the number of reads before first write done by this database.
      * @return int Number of reads.
+     * @deprecated Since Moodle 5.0
+     * @todo Final deprecation in Moodle 6.0. See MDL-83171.
      */
+    #[\core\attribute\deprecated(
+        replacement: 'perf_get_reads_replica',
+        since: '5.0',
+        mdl: 'MDL-71257',
+        reason: 'Renamed'
+    )]
     public function perf_get_reads_slave(): int {
+        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        return 0;
+    }
+
+    /**
+     * Returns the number of reads before first write done by this database.
+     *
+     * @return int Number of reads.
+     */
+    public function perf_get_reads_replica(): int {
         return 0;
     }
 
