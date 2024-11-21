@@ -45,7 +45,7 @@ Feature: Completion pass grade
     And I log out
 
   @javascript
-  Scenario: View automatic completion items as a teacher
+  Scenario: Database module completion conditions are displayed regardless of the view
     Given I am on the "Music history" "data activity" page logged in as teacher1
 #   We add an entry to let the user change to a different view.
     When I add an entry to "Music history" database with:
@@ -62,7 +62,7 @@ Feature: Completion pass grade
     And "Music history" should have the "Receive a passing grade" completion condition
 
   @javascript
-  Scenario: View automatic completion items as a failing student
+  Scenario: Student cannot complete a database activity if one of the conditions are not met
     Given I am on the "Music history" "data activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Make entries: 2" completion condition of "Music history" is displayed as "todo"
@@ -101,7 +101,7 @@ Feature: Completion pass grade
     And "Vinnie Student1" user has completed "Music history" activity
 
   @javascript
-  Scenario: View automatic completion items as a passing student
+  Scenario: Student can complete a database activity when all conditions are met
     Given I am on the "Music history" "data activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Make entries: 2" completion condition of "Music history" is displayed as "todo"
