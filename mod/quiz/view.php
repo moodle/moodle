@@ -68,6 +68,8 @@ quiz_view($quiz, $course, $cm, $context);
 
 // Initialize $PAGE, compute blocks.
 $PAGE->set_url('/mod/quiz/view.php', ['id' => $cm->id]);
+// On the quiz view page, the browser back/forwards buttons should force a reload.
+$PAGE->set_cacheable(false);
 
 // Create view object which collects all the information the renderer will need.
 $viewobj = new view_page();
