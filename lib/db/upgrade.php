@@ -1444,6 +1444,25 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024100100.02);
     }
 
+    if ($oldversion < 2024100701.01) {
+        $smsgateways = $DB->get_records('sms_gateways');
+        foreach ($smsgateways as $gateway) {
+            $newconfig = json_decode($gateway->config);
+            // Continue only if either the `returnurl` OR the `saveandreturn` property exists.
+            if (property_exists($newconfig, "returnurl") || property_exists($newconfig, "saveandreturn")) {
+                // Remove unnecessary data in the config.
+                unset($newconfig->returnurl, $newconfig->saveandreturn);
+
+                // Update the record with the new config.
+                $gateway->config = json_encode($newconfig);
+                $DB->update_record('sms_gateways', $gateway);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024100701.01);
+    }
+
     // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
