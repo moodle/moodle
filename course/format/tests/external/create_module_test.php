@@ -85,9 +85,6 @@ final class create_module_test extends \externallib_advanced_testcase {
     public function test_execute_with_format_override(): void {
         $this->resetAfterTest();
 
-        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
-        $manager::enable_plugin('subsection', 1);
-
         // Create a course.
         $course = $this->getDataGenerator()->create_course(['format' => 'theunittest', 'numsections' => 1, 'initsections' => 1]);
         $targetsection = get_fast_modinfo($course->id)->get_section_info(1);
