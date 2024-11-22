@@ -2,6 +2,11 @@ This files describes API changes for course formats
 
 Overview of this plugin type at https://moodledev.io/docs/apis/plugintypes/format
 
+=== 4.4.5 ===
+* Add core_courseformat\base::invalidate_all_session_caches to reset course editor cache for all users when course is changed.
+  This method can be used as an alternative to core_courseformat\base::session_cache_reset for resetting the cache for the current
+  user in case the change in the course should be reflected for all users.
+
 === 4.4.1 ===
 * The constructor of core_courseformat\output\local\state\cm has been updated to accept a new optional parameter called is_tracked_user.
   If is_tracked_user is pre-computed for this CM's course, it can be provided here to avoid an additional function call.
