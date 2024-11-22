@@ -213,13 +213,13 @@ final class statslib_test extends \advanced_testcase {
             [
                 "startwday" => 0,
                 "timezone" => 'America/Chicago',
-                "date" => '25-03-2017 22:00',
+                "timestart" => '25-03-2017 22:00',
                 "expected" => '19-03-2017 00:00:00'
             ],
             [
                 "startwday" => 1,
                 "timezone" => 'Atlantic/Canary',
-                "date" => '06-08-2018 22:00',
+                "timestart" => '06-08-2018 22:00',
                 "expected" => '06-08-2018 00:00:00'
             ],
         ];

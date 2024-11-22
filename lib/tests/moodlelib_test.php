@@ -3215,14 +3215,14 @@ EOF;
         return array(
             'nopath' => array(
                 'wwwroot' => 'http://www.example.com',
-                'ids' => array(
+                'msgids' => array(
                     'a-custom-id' => '<a-custom-id@www.example.com>',
                     'an-id-with-/-a-slash' => '<an-id-with-%2F-a-slash@www.example.com>',
                 ),
             ),
             'path' => array(
                 'wwwroot' => 'http://www.example.com/path/subdir',
-                'ids' => array(
+                'msgids' => array(
                     'a-custom-id' => '<a-custom-id/path/subdir@www.example.com>',
                     'an-id-with-/-a-slash' => '<an-id-with-%2F-a-slash/path/subdir@www.example.com>',
                 ),

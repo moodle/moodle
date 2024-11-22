@@ -65,7 +65,7 @@ final class cookie_helper_test extends \advanced_testcase {
                     'Secure',
                 ],
                 'casesensitive' => false,
-                'output' => [
+                'expectedheaders' => [
                     'Set-Cookie: testcookie=value; path=/test/; HttpOnly; Partitioned; SameSite=None; Secure;',
                 ],
             ],
@@ -84,7 +84,7 @@ final class cookie_helper_test extends \advanced_testcase {
                     'Secure',
                 ],
                 'casesensitive' => false,
-                'output' => [
+                'expectedheaders' => [
                     'Set-Cookie: testcookie=value; path=/test/; HttpOnly; Partitioned; SameSite=None; Secure;',
                     'Set-Cookie: mytestcookie=value; path=/test/; HttpOnly; Partitioned; SameSite=None; Secure;',
                 ],
@@ -107,7 +107,7 @@ final class cookie_helper_test extends \advanced_testcase {
                     'Secure',
                 ],
                 'casesensitive' => false,
-                'output' => [
+                'expectedheaders' => [
                     'Set-Cookie: testcookie=value; path=/test/; HttpOnly; Partitioned; SameSite=None; Secure;',
                     'Set-Cookie: mytestcookie=value; path=/test/; HttpOnly; Partitioned; SameSite=None; Secure;',
                     'Set-Cookie: anothertestcookie=value; path=/test/; HttpOnly;',
@@ -129,7 +129,7 @@ final class cookie_helper_test extends \advanced_testcase {
                     'Secure',
                 ],
                 'casesensitive' => false,
-                'output' => [
+                'expectedheaders' => [
                     'Set-Cookie: testcookie=value; path=/test/; secure; HttpOnly; Partitioned; SameSite=None',
                     'Set-Cookie: mytestcookie=value; path=/test/; secure; HttpOnly; SameSite=None; Partitioned;',
                 ],
@@ -150,7 +150,7 @@ final class cookie_helper_test extends \advanced_testcase {
                     'Secure',
                 ],
                 'casesensitive' => true,
-                'output' => [
+                'expectedheaders' => [
                     'Set-Cookie: testcookie=value; path=/test/; secure; HttpOnly; SameSite=None; partitioned; Partitioned; Secure;',
                     'Set-Cookie: mytestcookie=value; path=/test/; secure; HttpOnly; SameSite=None; Partitioned; Secure;',
                 ],
@@ -167,7 +167,7 @@ final class cookie_helper_test extends \advanced_testcase {
                     'Secure',
                 ],
                 'casesensitive' => false,
-                'output' => [
+                'expectedheaders' => [
                     'Set-Cookie: testcookie=value; path=/test/; secure; HttpOnly; SameSite=None; partitioned',
                     'Set-Cookie: mytestcookie=value; path=/test/; secure; HttpOnly; SameSite=None',
                 ],
@@ -183,7 +183,7 @@ final class cookie_helper_test extends \advanced_testcase {
                 ],
                 'attributes' => [],
                 'casesensitive' => false,
-                'output' => [
+                'expectedheaders' => [
                     'Set-Cookie: testcookie=value; path=/test/; secure; HttpOnly; SameSite=None; partitioned',
                     'Set-Cookie: mytestcookie=value; path=/test/; secure; HttpOnly; SameSite=None',
                 ],
@@ -204,7 +204,7 @@ final class cookie_helper_test extends \advanced_testcase {
                     'Secure',
                 ],
                 'casesensitive' => false,
-                'output' => [
+                'expectedheaders' => [
                     'Authorization: blah',
                     'Set-Cookie: testcookie=value; path=/test/; secure; HttpOnly; SameSite=None; Partitioned',
                     'Set-Cookie: mytestcookie=value; path=/test/; secure; HttpOnly; SameSite=None; Partitioned;',

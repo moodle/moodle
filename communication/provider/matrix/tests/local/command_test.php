@@ -352,7 +352,7 @@ final class command_test extends \advanced_testcase {
     public static function sendasjson_provider(): array {
         return [
             'As JSON' => [
-                'sendasjon' => true,
+                'sendasjson' => true,
                 'endpoint' => 'example/:id/endpoint',
                 'params' => [
                     ':id' => 12345,

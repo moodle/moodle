@@ -51,8 +51,8 @@ final class system_report_exporter_test extends advanced_testcase {
      */
     public static function export_provider(): array {
         return [
-            ['With filters' => true],
-            ['Without filters' => false],
+            'With filters' => [true],
+            'Without filters' => [false],
         ];
     }
 

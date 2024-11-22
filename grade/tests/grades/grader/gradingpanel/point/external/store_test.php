@@ -296,20 +296,20 @@ final class store_test extends advanced_testcase {
     public static function execute_out_of_range_provider(): array {
         return [
             'above' => [
-                'max' => 100,
-                'supplied' => 101,
+                'maxvalue' => 100,
+                'suppliedvalue' => 101,
             ],
             'above just' => [
-                'max' => 100,
-                'supplied' => 101.001,
+                'maxvalue' => 100,
+                'suppliedvalue' => 101.001,
             ],
             'below' => [
-                'max' => 100,
-                'supplied' => -100,
+                'maxvalue' => 100,
+                'suppliedvalue' => -100,
             ],
             '-1' => [
-                'max' => 100,
-                'supplied' => -1,
+                'maxvalue' => 100,
+                'suppliedvalue' => -1,
             ],
         ];
     }

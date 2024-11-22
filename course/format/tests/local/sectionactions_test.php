@@ -268,27 +268,27 @@ final class sectionactions_test extends \advanced_testcase {
     public static function create_if_missing_provider(): array {
         return [
             'existing section' => [
-                'sectionnum' => [1],
+                'sectionnums' => [1],
                 'expected' => false,
             ],
             'unexisting section' => [
-                'sectionnum' => [3],
+                'sectionnums' => [3],
                 'expected' => true,
             ],
             'several existing sections' => [
-                'sectionnum' => [1, 2],
+                'sectionnums' => [1, 2],
                 'expected' => false,
             ],
             'several unexisting sections' => [
-                'sectionnum' => [3, 4],
+                'sectionnums' => [3, 4],
                 'expected' => true,
             ],
             'empty array' => [
-                'sectionnum' => [],
+                'sectionnums' => [],
                 'expected' => false,
             ],
             'existent and unexistent sections' => [
-                'sectionnum' => [1, 2, 3, 4],
+                'sectionnums' => [1, 2, 3, 4],
                 'expected' => true,
             ],
         ];

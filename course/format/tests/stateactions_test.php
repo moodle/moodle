@@ -1560,7 +1560,7 @@ final class stateactions_test extends \advanced_testcase {
                 'cmtomove' => ['subsection1'], // When moving a subsection we actually move the delegated module.
                 'targetsection' => 'subsection2',
                 'expectedcoursetree' => [],
-                'exception' => 'error/subsectionmoveerror',
+                'expectedexception' => 'error/subsectionmoveerror',
             ],
             'Move module into subsection' => [
                 'cmtomove' => ['cm1'],

@@ -199,7 +199,7 @@ final class phpunit_dataset_test extends advanced_testcase {
                 'rows' => [],
             ],
             'csv loads ok' => [
-                'fullpath' => file_get_contents(__DIR__ . '/fixtures/sample_dataset.csv'),
+                'content' => file_get_contents(__DIR__ . '/fixtures/sample_dataset.csv'),
                 'type' => 'csv',
                 'tablename' => 'user',
                 'exception' => null,
@@ -215,7 +215,7 @@ final class phpunit_dataset_test extends advanced_testcase {
                 ],
             ],
             'xml loads ok' => [
-                'fullpath' => file_get_contents(__DIR__ . '/fixtures/sample_dataset.xml'),
+                'content' => file_get_contents(__DIR__ . '/fixtures/sample_dataset.xml'),
                 'type' => 'xml',
                 'tablename' => 'user',
                 'exception' => null,

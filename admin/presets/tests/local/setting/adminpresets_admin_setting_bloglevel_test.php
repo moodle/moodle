@@ -75,15 +75,15 @@ final class adminpresets_admin_setting_bloglevel_test extends \advanced_testcase
     public static function save_value_provider(): array {
         return [
             'Save the bloglevel and set blog_menu block visibility to true' => [
-                'setttingvalue' => BLOG_USER_LEVEL,
+                'settingvalue' => BLOG_USER_LEVEL,
                 'expectedsaved' => true,
             ],
             'Same value to bloglevel, so it will not be saved' => [
-                'setttingvalue' => BLOG_SITE_LEVEL,
+                'settingvalue' => BLOG_SITE_LEVEL,
                 'expectedsaved' => false,
             ],
             'Save the bloglevel and set blog_menu block visibility to false' => [
-                'setttingvalue' => 0,
+                'settingvalue' => 0,
                 'expectedsaved' => true,
             ],
         ];

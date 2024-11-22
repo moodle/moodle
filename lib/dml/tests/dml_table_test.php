@@ -111,13 +111,13 @@ final class dml_table_test extends \database_driver_testcase {
                     'flag' => ['flag', XMLDB_TYPE_CHAR, '255', null, null, null, 'lala'],
                 ],
                 'primarykey' => 'id',
-                'prefix' => 's',
+                'fieldprefix' => 's',
                 'result' => (object) [
                     'sid' => 1,
                     'scourse' => 42,
                     'sflag' => 'foo',
                 ],
-                'expectedrecord' => (object) [
+                'expected' => (object) [
                     'id' => 1,
                     'course' => 42,
                     'flag' => 'foo',
@@ -130,7 +130,7 @@ final class dml_table_test extends \database_driver_testcase {
                     'flag' => ['flag', XMLDB_TYPE_CHAR, '255', null, null, null, 'lala'],
                 ],
                 'primarykey' => 'id',
-                'prefix' => 's',
+                'fieldprefix' => 's',
                 'result' => (object) [
                     'sid' => 1,
                     'scourse' => 42,
@@ -139,7 +139,7 @@ final class dml_table_test extends \database_driver_testcase {
                     'ocourse' => 'course',
                     'oflag' => 'flag',
                 ],
-                'expectedrecord' => (object) [
+                'expected' => (object) [
                     'id' => 1,
                     'course' => 42,
                     'flag' => 'foo',
