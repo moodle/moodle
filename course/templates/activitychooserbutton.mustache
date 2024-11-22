@@ -39,7 +39,7 @@
 <div class="dropdown">
     <button class="btn add-content d-flex justify-content-center align-items-center p-1 icon-no-margin"
             type="button"
-            id="dropdownMenuButton"
+            id="dropdownMenuButton-{{#modid}}{{modid}}{{/modid}}{{^modid}}{{uniqid}}{{/modid}}"
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
@@ -49,7 +49,7 @@
     >
         {{#pix}} t/add, core {{/pix}}
     </button>
-    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-{{#modid}}{{modid}}{{/modid}}{{^modid}}{{uniqid}}{{/modid}}">
         {{> core_course/addresourceoractivitybutton }}
         {{#actionlinks}}
             {{> core/action_link}}
