@@ -570,12 +570,14 @@ final class manager_test extends \advanced_testcase {
         $record->timemodified = time() - 60*20;
         $r2 = $this->mockhandler->add_test_session($record);
 
+        // Guest session still within the session timeout limit.
         $record->sid          = md5('hokus3');
         $record->userid       = $guestid;
         $record->timecreated  = time() - 60*60*60;
-        $record->timemodified = time() - 60*20;
+        $record->timemodified = time() - 60*5;
         $r3 = $this->mockhandler->add_test_session($record);
 
+        // Guest session outside the session timeout limit.
         $record->sid          = md5('hokus4');
         $record->userid       = $guestid;
         $record->timecreated  = time() - 60*60*60;
