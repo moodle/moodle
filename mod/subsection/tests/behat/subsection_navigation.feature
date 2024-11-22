@@ -5,8 +5,7 @@ Feature: Teachers navigate to subsections
   I need to navigate to subsections
 
   Background:
-    Given I enable "subsection" "mod" plugin
-    And the following "users" exist:
+    Given the following "users" exist:
       | username | firstname  | lastname  | email                 |
       | teacher1 | Teacher    | 1         | teacher1@example.com  |
     And the following "courses" exist:

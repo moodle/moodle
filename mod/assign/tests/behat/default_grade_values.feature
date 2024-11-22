@@ -24,8 +24,8 @@ Feature: Assignments can have default grades and scales defined
     When I am on the "Course 1" course page logged in as teacher1
     And I wait until the page is ready
     And I switch editing mode on
-    And I click on "Add an activity or resource" "button"
-    And I follow "Assignment"
+    And I open the activity chooser
+    And I click on "Add a new Assignment" "link" in the "Add an activity or resource" "dialogue"
     And I set the following fields to these values:
       | name | Test assignment |
     Then the following fields match these values:

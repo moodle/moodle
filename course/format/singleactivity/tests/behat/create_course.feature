@@ -21,7 +21,6 @@ Feature: Courses can be created in Single Activity mode
       | moodle/course:manageactivities | allow   |
       | moodle/course:viewparticipants | allow   |
       | moodle/role:assign             | allow   |
-    And I enable "subsection" "mod" plugin
     When I log in as "kevin"
     And I am on site homepage
     And I press "Add a new course"

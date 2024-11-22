@@ -26,14 +26,15 @@ Feature: Use the activity chooser to insert activities anywhere in a section
 
   Scenario: The activity chooser icon is hidden by default and be made visible on hover
     Given I hover ".navbar-brand" "css_element"
-    And "Insert an activity or resource before 'Test Forum'" "button" should not be visible
-    When I hover "Insert an activity or resource before 'Test Forum'" "button"
-    Then "Insert an activity or resource before 'Test Forum'" "button" should be visible
+    And "Insert content before 'Test Forum'" "button" should not be visible
+    When I hover "Insert content before 'Test Forum'" "button"
+    Then "Insert content before 'Test Forum'" "button" should be visible
 
   Scenario: The activity chooser can be used to insert modules before existing modules
-    Given I hover "Insert an activity or resource before 'Test Forum'" "button"
-    And I press "Insert an activity or resource before 'Test Forum'"
-    And I should see "Add an activity or resource" in the ".modal-title" "css_element"
+    Given I change window size to "large"
+    And I hover "Insert content before 'Test Forum'" "button"
+    And I press "Insert content before 'Test Forum'"
+    And I click on "Activity or resource" "button" in the ".dropdown .show" "css_element"
     When I click on "Add a new Assignment" "link" in the "Add an activity or resource" "dialogue"
     And I set the following fields to these values:
       | Assignment name | Test Assignment |

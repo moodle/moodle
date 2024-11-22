@@ -13,6 +13,6 @@ Feature: Make test scenario can execute specific steps
     And I press "Import"
     And I should see "Scenario: Course with some disabled plugins"
     When I am on "C1" course homepage with editing mode on
-    And I click on "Add an activity or resource" "button" in the "Section 1" "section"
+    And I open the activity chooser
     Then I should see "Page" in the "Add an activity or resource" "dialogue"
     And I should not see "Book" in the "Add an activity or resource" "dialogue"

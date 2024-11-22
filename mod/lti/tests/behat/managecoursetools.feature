@@ -171,7 +171,7 @@ Feature: Manage course tools
       | teacher1 | C2     | editingteacher |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I click on "Add an activity or resource" "button" in the "New section" "section"
+    And I open the activity chooser
     And I should see "Teaching Tool 1" in the ".modal-body" "css_element"
     And I should not see "Teaching Tool 2" in the ".modal-body" "css_element"
     And I should not see "Teaching Tool 3" in the ".modal-body" "css_element"
@@ -181,7 +181,7 @@ Feature: Manage course tools
     And I click on "Don't show in activity chooser" "field" in the "Teaching Tool 1" "table_row"
     And I click on "Show in activity chooser" "field" in the "Teaching Tool 2" "table_row"
     And I am on "Course 1" course homepage
-    And I click on "Add an activity or resource" "button" in the "New section" "section"
+    And I open the activity chooser
     And I should not see "Teaching Tool 1" in the ".modal-body" "css_element"
     And I should see "Teaching Tool 2" in the ".modal-body" "css_element"
     And I should not see "Teaching Tool 3" in the ".modal-body" "css_element"
@@ -189,7 +189,7 @@ Feature: Manage course tools
 
     # Should not affect other courses.
     And I am on "Course 2" course homepage
-    And I click on "Add an activity or resource" "button" in the "New section" "section"
+    And I open the activity chooser
     And I should see "Teaching Tool 1" in the ".modal-body" "css_element"
     And I should not see "Teaching Tool 2" in the ".modal-body" "css_element"
     And I should not see "Teaching Tool 3" in the ".modal-body" "css_element"
@@ -200,7 +200,7 @@ Feature: Manage course tools
     And I click on "Show in activity chooser" "field" in the "Teaching Tool 1" "table_row"
     And I click on "Don't show in activity chooser" "field" in the "Teaching Tool 2" "table_row"
     And I am on "Course 1" course homepage
-    And I click on "Add an activity or resource" "button" in the "New section" "section"
+    And I open the activity chooser
     And I should see "Teaching Tool 1" in the ".modal-body" "css_element"
     And I should not see "Teaching Tool 2" in the ".modal-body" "css_element"
     And I should not see "Teaching Tool 3" in the ".modal-body" "css_element"
@@ -221,7 +221,7 @@ Feature: Manage course tools
       | Course Tool 2 | /mod/lti/tests/fixtures/tool_provider.php | C1     | 1             |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I click on "Add an activity or resource" "button" in the "New section" "section"
+    And I open the activity chooser
     And I should see "Course Tool 1" in the ".modal-body" "css_element"
     And I should not see "Course Tool 2" in the ".modal-body" "css_element"
     And I click on "Close" "button" in the ".modal-dialog" "css_element"
@@ -229,7 +229,7 @@ Feature: Manage course tools
     And I click on "Don't show in activity chooser" "field" in the "Course Tool 1" "table_row"
     And I click on "Show in activity chooser" "field" in the "Course Tool 2" "table_row"
     And I am on "Course 1" course homepage
-    And I click on "Add an activity or resource" "button" in the "New section" "section"
+    And I open the activity chooser
     And I should not see "Course Tool 1" in the ".modal-body" "css_element"
     And I should see "Course Tool 2" in the ".modal-body" "css_element"
     And I click on "Close" "button" in the ".modal-dialog" "css_element"
@@ -237,7 +237,7 @@ Feature: Manage course tools
     And I click on "Show in activity chooser" "field" in the "Course Tool 1" "table_row"
     And I click on "Don't show in activity chooser" "field" in the "Course Tool 2" "table_row"
     And I am on "Course 1" course homepage
-    And I click on "Add an activity or resource" "button" in the "New section" "section"
+    And I open the activity chooser
     And I should see "Course Tool 1" in the ".modal-body" "css_element"
     And I should not see "Course Tool 2" in the ".modal-body" "css_element"
 
@@ -279,7 +279,7 @@ Feature: Manage course tools
     And I restore "test_backup.mbz" backup into a new course using this options:
       | Schema | Course name | Restored course |
     And I should see "Restored course"
-    And I click on "Add an activity or resource" "button" in the "General" "section"
+    And I open the activity chooser
     Then I should not see "Teaching Tool 1" in the ".modal-body" "css_element"
     And I should see "Teaching Tool 2" in the ".modal-body" "css_element"
     And I should not see "Course Tool 2" in the ".modal-body" "css_element"

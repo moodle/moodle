@@ -19,7 +19,7 @@ Feature: Scorm activity default completion
   Scenario: Completion conditions when there is no default set at site or course level.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I press "Add an activity or resource"
+    And I open the activity chooser
     When I click on "Add a new SCORM" "link" in the "Add an activity or resource" "dialogue"
     And I expand all fieldsets
     Then the field "None" matches value "1"
@@ -40,7 +40,7 @@ Feature: Scorm activity default completion
       | completionstatusrequired_scorm[2]   | 0 |
     And I click on "Save changes" "button" in the "[data-region='activitycompletion-scorm']" "css_element"
     And I am on "Course 1" course homepage with editing mode on
-    And I press "Add an activity or resource"
+    And I open the activity chooser
     When I click on "Add a new SCORM" "link" in the "Add an activity or resource" "dialogue"
     And I expand all fieldsets
     Then the field "None" matches value "0"
@@ -62,7 +62,7 @@ Feature: Scorm activity default completion
       | completionstatusrequired_scorm[2]   | 0 |
     And I click on "Save changes" "button" in the "[data-region='activitycompletion-scorm']" "css_element"
     And I am on "Course 1" course homepage with editing mode on
-    And I press "Add an activity or resource"
+    And I open the activity chooser
     When I click on "Add a new SCORM" "link" in the "Add an activity or resource" "dialogue"
     And I expand all fieldsets
     Then the field "None" matches value "0"
@@ -86,7 +86,7 @@ Feature: Scorm activity default completion
       | course | module | completion |
       | C1    | scorm  | 1          |
     And I am on "Course 1" course homepage with editing mode on
-    And I press "Add an activity or resource"
+    And I open the activity chooser
     When I click on "Add a new SCORM" "link" in the "Add an activity or resource" "dialogue"
     And I expand all fieldsets
     Then the field "None" matches value "0"
@@ -105,7 +105,8 @@ Feature: Scorm activity default completion
       | completionstatusrequired_scorm[2]   | 1 |
     And I click on "Save changes" "button" in the "[data-region='activitycompletion-scorm']" "css_element"
     And I am on "Course 1" course homepage with editing mode on
-    And I press "Add an activity or resource"
+#    When I add a "Teaching Tool 1" to section "1" using the activity chooser
+    And I open the activity chooser
     When I click on "Add a new SCORM" "link" in the "Add an activity or resource" "dialogue"
     And I expand all fieldsets
     Then the field "None" matches value "0"

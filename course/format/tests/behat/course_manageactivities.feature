@@ -36,7 +36,9 @@ Feature: Verify edit utils availability
     Given I log in as "teacher1"
     When I am on "Course 1" course homepage
     And I turn editing mode on
+    And I open the activity chooser
     Then I should see "Add an activity or resource"
+    And I click on "Close" "button" in the "Add an activity or resource" "dialogue"
     And I open "Activity sample 1" actions menu
     And I should see "Edit settings"
     And ".section_action_menu" "css_element" should exist in the "Section 1" "section"

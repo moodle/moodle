@@ -90,8 +90,7 @@ Feature: View an outline report
     And I should see "-" in the "Book name" "table_row"
 
   Scenario: The outline report can represent courses with subsections
-    Given I enable "subsection" "mod" plugin
-    And the following "activities" exist:
+    Given the following "activities" exist:
       | activity | name      | course | section | visible | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
       | assign   | Activity1 | C1     | 1       | 1       | 1                                   | 0                             |
     And the following "activities" exist:
