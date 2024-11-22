@@ -35,13 +35,13 @@ $duplicate     = optional_param('duplicate', 0, PARAM_INT); // TODO remove this 
 $hide          = optional_param('hide', 0, PARAM_INT); // TODO remove this param as part of MDL-83530.
 $stealth       = optional_param('stealth', 0, PARAM_INT); // TODO remove this param as part of MDL-83530.
 $show          = optional_param('show', 0, PARAM_INT); // TODO remove this param as part of MDL-83530.
-$copy          = optional_param('copy', 0, PARAM_INT);
-$moveto        = optional_param('moveto', 0, PARAM_INT);
-$movetosection = optional_param('movetosection', 0, PARAM_INT);
+$copy          = optional_param('copy', 0, PARAM_INT); // TODO remove this param as part of MDL-83530.
+$moveto        = optional_param('moveto', 0, PARAM_INT); // TODO remove this param as part of MDL-83530.
+$movetosection = optional_param('movetosection', 0, PARAM_INT); // TODO remove this param as part of MDL-83530.
 $delete        = optional_param('delete', 0, PARAM_INT); // TODO remove this param as part of MDL-83530.
 $course        = optional_param('course', 0, PARAM_INT);
 $groupmode     = optional_param('groupmode', -1, PARAM_INT); // TODO remove this param as part of MDL-83530.
-$cancelcopy    = optional_param('cancelcopy', 0, PARAM_BOOL);
+$cancelcopy    = optional_param('cancelcopy', 0, PARAM_BOOL); // TODO remove this param as part of MDL-83530.
 $confirm       = optional_param('confirm', 0, PARAM_BOOL); // TODO remove this param as part of MDL-83530.
 
 // This page should always redirect
@@ -192,6 +192,11 @@ if (!empty($add)) {
 
 
 if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
+    // TODO remove this if as part of MDL-83530.
+    debugging(
+        'The moveto param is deprecated. Please use the standard move modal instead.',
+        DEBUG_DEVELOPER
+    );
     $cm     = get_coursemodule_from_id('', $USER->activitycopy, 0, true, MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
@@ -330,6 +335,11 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     redirect(course_get_url($course, $cm->sectionnum, $urloptions));
 
 } else if (!empty($copy) and confirm_sesskey()) { // value = course module
+    // TODO remove this else if as part of MDL-83530.
+    debugging(
+        'The copy param is deprecated. Please use the standard move modal instead.',
+        DEBUG_DEVELOPER
+    );
     $cm     = get_coursemodule_from_id('', $copy, 0, true, MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
@@ -348,7 +358,11 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     redirect(course_get_url($course, $section->section, $urloptions));
 
 } else if (!empty($cancelcopy) and confirm_sesskey()) { // value = course module
-
+    // TODO remove this else if as part of MDL-83530.
+    debugging(
+        'The copy param is deprecated. Please use the standard move modal instead.',
+        DEBUG_DEVELOPER
+    );
     $courseid = $USER->activitycopycourse;
     $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 

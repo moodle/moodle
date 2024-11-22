@@ -19,6 +19,9 @@
 
     Displays the course module list inside a course section.
 
+    TODO remove showmovehere, strmovefull, movingstr, cancelcopyurl, movetosectionurl,
+    strmovefull and all associated HTML as part of MDL-83530.
+
     Example context (json):
     {
         "cms": [
@@ -30,6 +33,7 @@
                     },
                     "id": 3,
                     "module": "forum",
+                    "anchor": "module-3",
                     "extraclasses": "newmessages"
                 }
             },
@@ -41,6 +45,7 @@
                     },
                     "id": 4,
                     "module": "assign",
+                    "anchor": "module-4",
                     "extraclasses": ""
                 }
             }

@@ -55,6 +55,7 @@ class cmlist implements named_templatable, renderable {
     /** @var string the item output class name */
     protected $itemclass;
 
+    // TODO remove movehereclass as part of MDL-83530.
     /** @var optional move here output class */
     protected $movehereclass;
 
@@ -92,12 +93,12 @@ class cmlist implements named_templatable, renderable {
         $data = new stdClass();
         $data->cms = [];
 
-        // By default, non-ajax controls are disabled but in some places like the frontpage
-        // it is necessary to display them. This is a temporal solution while JS is still
-        // optional for course editing.
+        // TODO remove showmovehere and the if clause as part of MDL-83530.
         $showmovehere = ismoving($course->id);
-
         if ($showmovehere) {
+            // By default, non-ajax controls are disabled but in some places like the frontpage
+            // it is necessary to display them. This is a temporal solution while JS is still
+            // optional for course editing.
             $data->hascms = true;
             $data->showmovehere = true;
             $data->strmovefull = strip_tags(get_string("movefull", "", "'$user->activitycopyname'"));
@@ -112,8 +113,9 @@ class cmlist implements named_templatable, renderable {
 
         foreach ($modinfo->sections[$section->section] as $modnumber) {
             $mod = $modinfo->cms[$modnumber];
-            // If the old non-ajax move is necessary, we do not print the selected cm.
+            // TODO remove this if as part of MDL-83530.
             if ($showmovehere && $USER->activitycopy == $mod->id) {
+                // If the old non-ajax move is necessary, we do not print the selected cm.
                 continue;
             }
             if ($mod->is_visible_on_course_page() && $mod->is_of_type_that_can_display()) {
