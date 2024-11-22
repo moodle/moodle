@@ -30,6 +30,9 @@
   Use of the `context` table is also deprecated in the `file` and `instance` (tag) entities
 
   For more information see [MDL-78118](https://tracker.moodle.org/browse/MDL-78118)
+- Final removal of support for `get_default_table_aliases` method. Entities must now implement `get_default_tables`, which is now abstract, to define the tables they use
+
+  For more information see [MDL-80430](https://tracker.moodle.org/browse/MDL-80430)
 
 ## 4.5
 

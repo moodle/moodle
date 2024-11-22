@@ -24,6 +24,15 @@
 
   For more information see [MDL-81308](https://tracker.moodle.org/browse/MDL-81308)
 
+### Deprecated
+
+- The methods `want_read_slave` and `perf_get_reads_slave` in `lib/dml/moodle_database.php` have been deprecated in favour of renamed versions that substitute `slave` for `replica`.
+
+  For more information see [MDL-71257](https://tracker.moodle.org/browse/MDL-71257)
+- The trait `moodle_read_slave_trait` has been deprecated in favour of a functionally identical version called `moodle_read_replica_trait`. The renamed trait substitutes the terminology of `slave` with `replica`, and `master` with `primary`.
+
+  For more information see [MDL-71257](https://tracker.moodle.org/browse/MDL-71257)
+
 ### Removed
 
 - moodle_process_email() has been deprecated with the removal of the unused and non-functioning admin/process_email.php.

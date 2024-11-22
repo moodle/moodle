@@ -32,6 +32,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-81308](https://tracker.moodle.org/browse/MDL-81308)
 
+#### Deprecated
+
+- The methods `want_read_slave` and `perf_get_reads_slave` in `lib/dml/moodle_database.php` have been deprecated in favour of renamed versions that substitute `slave` for `replica`.
+
+  For more information see [MDL-71257](https://tracker.moodle.org/browse/MDL-71257)
+- The trait `moodle_read_slave_trait` has been deprecated in favour of a functionally identical version called `moodle_read_replica_trait`. The renamed trait substitutes the terminology of `slave` with `replica`, and `master` with `primary`.
+
+  For more information see [MDL-71257](https://tracker.moodle.org/browse/MDL-71257)
+
 #### Removed
 
 - moodle_process_email() has been deprecated with the removal of the unused and non-functioning admin/process_email.php.
@@ -53,6 +62,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- A new core_courseformat\base::get_generic_section_name method is created to know how a specific format name the sections. This method is also used by plugins to know how to name the sections instead of using using a direct get_string on "sectionnamer" that may not exists.
+
+  For more information see [MDL-82349](https://tracker.moodle.org/browse/MDL-82349)
 - Add core_courseformat\base::invalidate_all_session_caches to reset course editor cache for all users when course is changed. This method can be used as an alternative to core_courseformat\base::session_cache_reset for resetting the cache for the current user  in case the change in the course should be reflected for all users.
 
   For more information see [MDL-83185](https://tracker.moodle.org/browse/MDL-83185)
@@ -97,6 +109,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   Use of the `context` table is also deprecated in the `file` and `instance` (tag) entities
 
   For more information see [MDL-78118](https://tracker.moodle.org/browse/MDL-78118)
+- Final removal of support for `get_default_table_aliases` method. Entities must now implement `get_default_tables`, which is now abstract, to define the tables they use
+
+  For more information see [MDL-80430](https://tracker.moodle.org/browse/MDL-80430)
 
 ### gradereport_grader
 
@@ -127,6 +142,20 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The external function get_user_attempts now returns the total number of attempts.
 
   For more information see [MDL-82775](https://tracker.moodle.org/browse/MDL-82775)
+
+### mod_quiz
+
+#### Changed
+
+- The `\mod_quiz\attempt_walkthrough_from_csv_test` unit test has been marked as final and should not be extended by other tests.
+
+  All shared functionality has been moved to a new autoloadable test-case:
+  `\mod_quiz\tests\attempt_walkthrough_testcase`.
+
+  To support this testcase the existing `$files` instance property should be replaced with a new static method, `::get_test_files`.
+  Both the existing instance property and the new static method can co-exist.
+
+  For more information see [MDL-81521](https://tracker.moodle.org/browse/MDL-81521)
 
 ## 4.5
 

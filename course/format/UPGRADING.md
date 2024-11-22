@@ -4,6 +4,9 @@
 
 ### Added
 
+- A new core_courseformat\base::get_generic_section_name method is created to know how a specific format name the sections. This method is also used by plugins to know how to name the sections instead of using using a direct get_string on "sectionnamer" that may not exists.
+
+  For more information see [MDL-82349](https://tracker.moodle.org/browse/MDL-82349)
 - Add core_courseformat\base::invalidate_all_session_caches to reset course editor cache for all users when course is changed. This method can be used as an alternative to core_courseformat\base::session_cache_reset for resetting the cache for the current user  in case the change in the course should be reflected for all users.
 
   For more information see [MDL-83185](https://tracker.moodle.org/browse/MDL-83185)
