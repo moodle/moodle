@@ -1,0 +1,8 @@
+issueNumber: MDL-83733
+notes:
+  block_site_main_menu:
+    - message: '''Activity'' selector in site_main_menu block has been deleted.'
+      type: removed
+  block_social_activities:
+    - message: '''Activity'' selector in social_activities block has been deleted.'
+      type: removed
