@@ -5,3 +5,6 @@ attemptsdeleted,mod_quiz
 gradesdeleted,mod_quiz
 useroverridesdeleted,mod_quiz
 groupoverridesdeleted,mod_quiz
+randomcoursecatwithsubcat,mod_quiz
+randomcoursewithsubcat,mod_quiz
+randomsystemwithsubcat,mod_quiz

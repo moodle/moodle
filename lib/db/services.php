@@ -3270,6 +3270,12 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ],
+    'core_question_move_questions' => [
+        'classname' => '\core_question\external\move_questions',
+        'description' => 'Bulk move questions to a new category.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
 );
 
 $services = array(

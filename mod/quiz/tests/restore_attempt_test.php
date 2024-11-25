@@ -68,7 +68,15 @@ class restore_attempt_test extends \advanced_testcase {
         $controller = new restore_controller($backuptempdir, $courseid, backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id,
             backup::TARGET_NEW_COURSE);
 
-        $this->assertTrue($controller->execute_precheck());
+        $controller->execute_precheck();
+        $results = $controller->get_precheck_results();
+        // Backup contains categories attached to deprecated contexts so the results should only contain warnings for these.
+        $this->assertCount(2, $results['warnings']);
+        foreach ($results['warnings'] as $warning) {
+            $this->assertStringContainsString('will be created at a question bank module context by restore', $warning);
+        }
+        $this->assertArrayNotHasKey('errors', $results);
+
         $controller->execute_plan();
         $controller->destroy();
 

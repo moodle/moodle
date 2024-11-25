@@ -2056,9 +2056,6 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         if (!$cb->delete_contents($this->get_context())) {
             throw new moodle_exception('errordeletingcontentfromcategory', 'contentbank', '', $this->get_formatted_name());
         }
-        if (!question_delete_course_category($this, null)) {
-            throw new moodle_exception('cannotdeletecategoryquestions', '', '', $this->get_formatted_name());
-        }
 
         // Delete all events in the category.
         $DB->delete_records('event', array('categoryid' => $this->id));
@@ -2244,12 +2241,6 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                         'notifysuccess'
                 );
             }
-        }
-        if (!question_delete_course_category($this, $newparentcat)) {
-            if ($showfeedback) {
-                echo $OUTPUT->notification(get_string('errordeletingquestionsfromcategory', 'question', $catname), 'notifysuccess');
-            }
-            return false;
         }
 
         // Finally delete the category and it's context.

@@ -117,29 +117,20 @@ function get_questions_category(object $category, bool $noparent, bool $recurse 
  * Common setup for all pages for editing questions.
  * @param string $baseurl the name of the script calling this funciton. For examle 'qusetion/edit.php'.
  * @param string $edittab code for this edit tab
- * @param bool $requirecmid require cmid? default false
+ * @param bool $requirecmid This parameter has been deprecated since 4.5 and should not be used anymore.
  * @param bool $unused no longer used, do no pass
  * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
-function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused = null) {
+function question_edit_setup($edittab, $baseurl, $requirecmid = null, $unused = null) {
     global $PAGE;
 
-    if ($unused !== null) {
+    if ($unused !== null || $requirecmid !== null) {
         debugging('Deprecated argument passed to question_edit_setup()', DEBUG_DEVELOPER);
     }
 
     $params = [];
 
-    if ($requirecmid) {
-        $params['cmid'] = required_param('cmid', PARAM_INT);
-    } else {
-        $params['cmid'] = optional_param('cmid', null, PARAM_INT);
-    }
-
-    if (!$params['cmid']) {
-        $params['courseid'] = required_param('courseid', PARAM_INT);
-    }
-
+    $params['cmid'] = required_param('cmid', PARAM_INT);
     $params['qpage'] = optional_param('qpage', null, PARAM_INT);
 
     // Pass 'cat' from page to page and when 'category' comes from a drop down menu
@@ -167,14 +158,12 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
  * Common function for building the generic resources required by the
  * editing questions pages.
  *
- * Either a cmid or a course id must be provided as keys in $params or
- * an exception will be thrown. All other params are optional and will have
- * sane default applied if not provided.
+ * A cmid must be provided as a key in $params or an exception will be thrown.
+ * All other params are optional and will have sane default applied if not provided.
  *
  * The acceptable keys for $params are:
  * [
  *      'cmid' => PARAM_INT,
- *      'courseid' => PARAM_INT,
  *      'qpage' => PARAM_INT,
  *      'cat' => PARAM_SEQUENCE,
  *      'category' => PARAM_SEQUENCE,
@@ -209,7 +198,6 @@ function question_build_edit_resources($edittab, $baseurl, $params,
     ];
     $paramtypes = [
         'cmid' => PARAM_INT,
-        'courseid' => PARAM_INT,
         'qpage' => PARAM_INT,
         'cat' => PARAM_SEQUENCE,
         'category' => PARAM_SEQUENCE,
@@ -237,28 +225,20 @@ function question_build_edit_resources($edittab, $baseurl, $params,
     }
 
     $cmid = $cleanparams['cmid'];
-    $courseid = $cleanparams['courseid'];
     $qpage = $cleanparams['qpage'] ?: -1;
     $cat = $cleanparams['cat'] ?: 0;
     $category = $cleanparams['category'] ?: 0;
     $qperpage = $cleanparams['qperpage'];
     $cpage = $cleanparams['cpage'] ?: 1;
 
-    if (is_null($cmid) && is_null($courseid)) {
-        throw new \moodle_exception('Must provide a cmid or courseid');
+    if (is_null($cmid)) {
+        throw new \moodle_exception('Must provide a cmid');
     }
 
-    if ($cmid) {
-        list($module, $cm) = get_module_from_cmid($cmid);
-        $courseid = $cm->course;
-        $thispageurl->params(compact('cmid'));
-        $thiscontext = context_module::instance($cmid);
-    } else {
-        $module = null;
-        $cm = null;
-        $thispageurl->params(compact('courseid'));
-        $thiscontext = context_course::instance($courseid);
-    }
+    list($module, $cm) = get_module_from_cmid($cmid);
+    $courseid = $cm->course;
+    $thispageurl->params(compact('cmid'));
+    $thiscontext = context_module::instance($cmid);
 
     if (defined('AJAX_SCRIPT') && AJAX_SCRIPT) {
         // For AJAX, we don't need to set up the course page for output.
@@ -307,7 +287,7 @@ function question_build_edit_resources($edittab, $baseurl, $params,
         $pagevars['qperpage'] = $qperpage ?? $defaultquestionsperpage;
     }
 
-    $defaultcategory = question_make_default_categories($contexts->all());
+    $defaultcategory = question_get_default_category($contexts->lowest()->id, true);
 
     $contextlistarr = [];
     foreach ($contexts->having_one_edit_tab_cap($edittab) as $context){

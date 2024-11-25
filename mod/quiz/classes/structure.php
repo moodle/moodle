@@ -75,6 +75,9 @@ class structure {
     /** @var array the slotids => question tags array for all slots containing a random question. */
     protected $randomslottags = null;
 
+    /** @var array an array of question banks course_modules records indexed by their associated contextid */
+    protected array $questionsources = [];
+
     /**
      * Create an instance of this class representing an empty quiz.
      *
@@ -1833,6 +1836,13 @@ class structure {
      * @throws coding_exception If the context level is unsupported.
      */
     private function get_used_category_description(stdClass $qcategory, bool $includesubcategories): string {
+
+        $context = \context::instance_by_id($qcategory->contextid);
+
+        if ($context->contextlevel != CONTEXT_MODULE) {
+            throw new coding_exception('Unsupported context.');
+        }
+
         if ($qcategory->name === 'top') { // This is a "top" question category.
             if (!$includesubcategories) {
                 // Question categories labeled as "top" cannot directly contain questions. If the subcategories that may
@@ -1840,30 +1850,51 @@ class structure {
                 // that informs the user about the issues associated with these types of generated random questions.
                 return get_string('randomfaultynosubcat', 'mod_quiz');
             }
-
-            $context = \context::instance_by_id($qcategory->contextid);
-
-            switch ($context->contextlevel) {
-                case CONTEXT_MODULE:
-                    return get_string('randommodulewithsubcat', 'mod_quiz');
-
-                case CONTEXT_COURSE:
-                    return get_string('randomcoursewithsubcat', 'mod_quiz');
-
-                case CONTEXT_COURSECAT:
-                    $contextname = shorten_text($context->get_context_name(false), 100);
-                    return get_string('randomcoursecatwithsubcat', 'mod_quiz', $contextname);
-
-                case CONTEXT_SYSTEM:
-                    return get_string('randomsystemwithsubcat', 'mod_quiz');
-
-                default:
-                    throw new coding_exception('Unsupported context.');
-            }
+            return get_string('randommodulewithsubcat', 'mod_quiz');
         }
         // Otherwise, return the description of the used standard question category, also indicating whether subcategories
         // are included.
         return $includesubcategories ? get_string('randomcatwithsubcat', 'mod_quiz', $qcategory->name) :
             $qcategory->name;
+    }
+
+    /**
+     * Populate question_sources with cm records for later reference.
+     *
+     * @return void
+     */
+    private function populate_question_sources(): void {
+        global $DB;
+
+        $sql = 'SELECT c.id AS contextid, cm.*
+                  FROM {question_categories} qc
+                  JOIN {context} c ON c.id = qc.contextid
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = ' . CONTEXT_MODULE . '
+              GROUP BY c.id, cm.id';
+        $this->questionsources = $DB->get_records_sql($sql);
+    }
+
+    /**
+     * Get data on the question bank being used by the question in the slot.
+     *
+     * @param int $slot slot number
+     * @return stdClass|null
+     */
+    public function get_source_bank(int $slot): ?stdClass {
+        $questionid = $this->slotsinorder[$slot]->questionid;
+
+            $this->questionsources[$this->questions[$questionid]->contextid] ?? $this->populate_question_sources();
+
+        // This shouldn't happen as all categories belong to a module context level but let's account for it.
+        if (empty($this->questionsources[$this->questions[$questionid]->contextid])) {
+            return null;
+        }
+
+        $cminfo = \cm_info::create($this->questionsources[$this->questions[$questionid]->contextid]);
+
+        return (object) [
+            'cminfo' => $cminfo,
+            'issharedbank' => plugin_supports('mod', $cminfo->modname, FEATURE_PUBLISHES_QUESTIONS, false),
+        ];
     }
 }

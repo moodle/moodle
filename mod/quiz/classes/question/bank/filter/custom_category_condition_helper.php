@@ -37,6 +37,9 @@ class custom_category_condition_helper extends \qbank_managecategories\helper {
         global $CFG;
         $pcontexts = [];
         foreach ($contexts as $context) {
+            if ($context->contextlevel !== CONTEXT_MODULE) {
+                continue;
+            }
             $pcontexts[] = $context->id;
         }
         $contextslist = join(', ', $pcontexts);

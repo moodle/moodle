@@ -74,8 +74,6 @@ abstract class base extends area_base {
         global $DB;
         $coursecontext = \context_course::instance($courseid);
         $param = [
-            'ctxcourse' => CONTEXT_COURSE,
-            'courseid' => $courseid,
             'module' => CONTEXT_MODULE,
             'coursecontextpath' => $DB->sql_like_escape($coursecontext->path) . '/%',
         ];
@@ -96,11 +94,8 @@ abstract class base extends area_base {
                     ON qc.id = qbe.questioncategoryid
             INNER JOIN {context} ctx
                     ON ctx.id = qc.contextid
-                 WHERE (ctx.contextlevel = :ctxcourse
-                   AND ctx.id = qc.contextid
-                   AND ctx.instanceid = :courseid)
-                    OR (ctx.contextlevel = :module
-                   AND {$DB->sql_like('ctx.path', ':coursecontextpath')})
+                 WHERE ctx.contextlevel = :module
+                   AND {$DB->sql_like('ctx.path', ':coursecontextpath')}
               ORDER BY q.id ASC";
 
         return $DB->get_recordset_sql($sql, $param);
@@ -111,8 +106,12 @@ abstract class base extends area_base {
      * question categories at the system context only.
      *
      * @return \moodle_recordset
+     * @deprecated since Moodle 5.0.
+     * @todo MDL-82413 Final deprecation in Moodle 6.0.
      */
+    #[\core\attribute\deprecated(null, since: '5.0', reason: 'This method should not be used', mdl: 'MDL-71378')]
     public function find_system_areas(): ?\moodle_recordset {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
         global $DB;
         $params = [
             'syscontext' => CONTEXT_SYSTEM,
@@ -175,15 +174,7 @@ abstract class base extends area_base {
         $catid = 'null';
 
         if ($record = self::get_course_and_category(CONTEXT_MODULE, $event->objectid)) {
-            if ($record->contextlevel == CONTEXT_MODULE) {
-                $courseid = $record->courseid;
-            } else if ($record->contextlevel == CONTEXT_COURSE) {
-                $courseid = $record->instanceid;
-            } else if ($record->contextlevel == CONTEXT_COURSECAT) {
-                $catid = $record->instanceid;
-            } else if ($record->contextlevel == CONTEXT_SYSTEM) {
-                $courseid = 1;
-            }
+            $courseid = $record->courseid;
         }
 
         return "
@@ -202,6 +193,10 @@ abstract class base extends area_base {
     public static function get_course_and_category($coursemodule, $refid) {
         global $DB;
 
+        if ($coursemodule !== CONTEXT_MODULE) {
+            debugging("Invalid contextlevel: ($coursemodule}", DEBUG_DEVELOPER);
+        }
+
         $sql = 'SELECT ctx.instanceid,
                        cm.course as courseid,
                        ctx.contextlevel
@@ -214,7 +209,7 @@ abstract class base extends area_base {
                     ON qc.id = qbe.questioncategoryid
             INNER JOIN {context} ctx
                     ON ctx.id = qc.contextid
-             LEFT JOIN {course_modules} cm
+            INNER JOIN {course_modules} cm
                     ON cm.id = ctx.instanceid
                    AND ctx.contextlevel = :coursemodule
                  WHERE q.id = :refid';

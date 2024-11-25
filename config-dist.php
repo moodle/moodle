@@ -790,6 +790,15 @@ $CFG->admin = 'admin';
 // If no value is set, then it will default to 5 seconds.
 //
 // $CFG->progresspollinterval = 5;
+//
+// Default question bank module
+//
+// $CFG->corequestion_defaultqbankmod = 'qbank'
+//
+// Question banks are only stored at activity module context and this setting defines which module type will
+// be used for creating question banks by default. This is in circumstances such as quiz backup & restores when
+// no target context can be found and the system needs to create a question bank to store the categories and questions.
+
 
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!

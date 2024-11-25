@@ -18,8 +18,8 @@ Feature: A teacher can preview questions in the question bank
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name                          |
       | Test questions   | numerical | Test question to be previewed |

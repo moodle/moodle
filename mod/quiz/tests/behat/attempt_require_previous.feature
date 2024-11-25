@@ -12,13 +12,16 @@ Feature: Attempt a quiz where some questions require that the previous question 
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
+    And the following "activities" exist:
+      | activity | name    | intro              | course | idnumber |
+      | qbank    | Qbank 1 | Question bank 1    | C1     | qbank1   |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | student  | C1     | student        |
       | teacher  | C1     | editingteacher |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | qbank1    | Test questions |
 
   @javascript
   Scenario Outline: A question that requires the previous one is initially blocked

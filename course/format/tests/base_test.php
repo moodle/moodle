@@ -541,13 +541,14 @@ class base_test extends advanced_testcase {
         $course = $generator->create_course();
         $format = course_get_format($course);
 
-        $originalsection = $DB->get_record('course_sections', ['course' => $course->id, 'section' => 1], '*', MUST_EXIST);
+        $originalsection = $DB->get_record('course_sections', ['course' => $course->id, 'section' => 0], '*', MUST_EXIST);
         $generator->create_module('page', ['course' => $course, 'section' => $originalsection->section]);
         $generator->create_module('page', ['course' => $course, 'section' => $originalsection->section]);
         $generator->create_module('page', ['course' => $course, 'section' => $originalsection->section]);
+        $generator->create_module('qbank', ['course' => $course, 'section' => $originalsection->section]);
 
         $originalmodcount = $DB->count_records('course_modules', ['course' => $course->id, 'section' => $originalsection->id]);
-        $this->assertEquals(3, $originalmodcount);
+        $this->assertEquals(4, $originalmodcount);
 
         $modinfo = get_fast_modinfo($course);
         $sectioninfo = $modinfo->get_section_info($originalsection->section, MUST_EXIST);
@@ -563,7 +564,10 @@ class base_test extends advanced_testcase {
         }
 
         $newmodcount = $DB->count_records('course_modules', ['course' => $course->id, 'section' => $newsection->id]);
-        $this->assertEquals($originalmodcount, $newmodcount);
+        $modinfo = course_modinfo::instance($course);
+        $qbankinstances = $modinfo->get_instances_of('qbank');
+        $this->assertCount(1, $qbankinstances);
+        $this->assertEquals($originalmodcount - 1, $newmodcount);
     }
 
     /**

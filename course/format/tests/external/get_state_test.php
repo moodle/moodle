@@ -125,6 +125,7 @@ class get_state_test extends \externallib_advanced_testcase {
             $this->activities[$activitycm->id] = $activitycm;
         } else {
             // Add some activities to the course.
+            $this->create_activity($course->id, 'qbank', 0, true, $canedit);
             $this->create_activity($course->id, 'page', 1, true, $canedit);
             $this->create_activity($course->id, 'forum', 1, true, $canedit);
             $this->create_activity($course->id, 'book', 1, false, $canedit);
@@ -172,10 +173,12 @@ class get_state_test extends \externallib_advanced_testcase {
                 $this->assertEquals($this->sections[$section->number], $section->cmlist);
             }
         }
-        // Check course modules information.
+        // Check course modules information,
+        // must not contain modules that cannot be displayed to the course page under any circumstances.
         foreach ($result->cm as $cm) {
             $this->assertEquals($this->activities[$cm->id]->name, $cm->name);
             $this->assertEquals((bool) $this->activities[$cm->id]->visible, $cm->visible);
+            $this->assertNotEquals('qbank', $this->activities[$cm->id]->modname);
         }
     }
 
@@ -277,7 +280,7 @@ class get_state_test extends \externallib_advanced_testcase {
 
         list(, $activitycm) = get_course_and_cm_from_instance($activity->id, $type);
 
-        if ($visible || $canedit) {
+        if (($visible || $canedit) && $activitycm->is_of_type_that_can_display()) {
             $this->activities[$activitycm->id] = $activitycm;
             $this->sections[$section][] = $activitycm->id;
         }

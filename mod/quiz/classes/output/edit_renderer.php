@@ -52,8 +52,14 @@ class edit_renderer extends \plugin_renderer_base {
      * @param array $pagevars the variables from {@link question_edit_setup()}.
      * @return string HTML to output.
      */
-    public function edit_page(\mod_quiz\quiz_settings $quizobj, structure $structure,
-        \core_question\local\bank\question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars) {
+    public function edit_page(
+        \mod_quiz\quiz_settings $quizobj,
+        structure $structure,
+        \core_question\local\bank\question_edit_contexts $contexts,
+        \moodle_url $pageurl,
+        array $pagevars,
+    ) {
+
         $output = '';
 
         // Page title.
@@ -111,11 +117,14 @@ class edit_renderer extends \plugin_renderer_base {
         if ($structure->can_be_edited()) {
             $thiscontext = $contexts->lowest();
             $this->page->requires->js_call_amd('mod_quiz/modal_quiz_question_bank', 'init', [
-                $thiscontext->id
+                $thiscontext->id,
+                $quizobj->get_cm()->id,
+                $quizobj->get_cm()->id,
             ]);
 
             $this->page->requires->js_call_amd('mod_quiz/modal_add_random_question', 'init', [
                 $thiscontext->id,
+                $quizobj->get_cm()->id,
                 $pagevars['cat'],
                 $pageurl->out_as_local_url(true),
                 $pageurl->param('cmid'),
@@ -744,8 +753,23 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function question(structure $structure, int $slot, \moodle_url $pageurl) {
+        global $DB;
+
         // Get the data required by the question_slot template.
         $slotid = $structure->get_slot_id_for_slot($slot);
+        $question = $structure->get_question_in_slot($slot);
+        $bank = $structure->get_source_bank($slot);
+
+        if ($bank?->issharedbank) {
+            $bankurl = (new \moodle_url('/question/edit.php',
+                [
+                    'cmid' => $bank->cminfo->id,
+                    'cat' => "{$question->category},{$question->contextid}",
+                ]
+            ))->out(false);
+        } else {
+            $bankurl = '';
+        }
 
         $output = '';
         $output .= html_writer::start_tag('div');
@@ -771,6 +795,9 @@ class edit_renderer extends \plugin_renderer_base {
             'questiondependencyicon' => ($structure->can_be_edited() ? $this->question_dependency_icon($structure, $slot) : ''),
             'versionselection' => false,
             'draftversion' => $structure->get_question_in_slot($slot)->status == question_version_status::QUESTION_STATUS_DRAFT,
+            'bankname' => $bank?->cminfo->get_formatted_name(),
+            'issharedbank' => $bank?->issharedbank,
+            'bankurl' => $bankurl,
         ];
 
         $data['versionoptions'] = [];
@@ -1060,9 +1087,10 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function random_question(structure $structure, $slotnumber, $pageurl) {
         $question = $structure->get_question_in_slot($slotnumber);
+        $bankcontext = \context::instance_by_id($question->contextid);
         $slot = $structure->get_slot_by_number($slotnumber);
         $editurl = new \moodle_url('/mod/quiz/editrandom.php',
-                ['returnurl' => $pageurl->out_as_local_url(), 'slotid' => $slot->id]);
+                ['returnurl' => $pageurl->out_as_local_url(), 'slotid' => $slot->id, 'bankcmid' => $bankcontext->instanceid]);
 
         $temp = clone($question);
         $temp->questiontext = '';

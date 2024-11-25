@@ -16,17 +16,17 @@ Feature: Set a quiz with certainty-based marking
       | user     | course | role           |
       | student1 | C1     | student        |
       | teacher1 | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity | name    | course | idnumber |
+      | quiz     | Quiz 1  | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype       | name  | questiontext    |
       | Test questions   | truefalse   | TF1   | First question  |
       | Test questions   | truefalse   | TF2   | Second question |
       | Test questions   | truefalse   | TF3   | Third question  |
-    And the following "activities" exist:
-      | activity | name   | course |
-      | quiz     | Quiz 1 | C1     |
     And quiz "Quiz 1" contains the following questions:
       | question | page |
       | TF1      | 1    |

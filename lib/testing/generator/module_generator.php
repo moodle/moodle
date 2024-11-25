@@ -109,7 +109,7 @@ abstract class testing_module_generator extends component_generator_base {
 
         $cm->id = $DB->insert_record('course_modules', $cm);
 
-        course_add_cm_to_section($courseid, $cm->id, $sectionnum);
+        course_add_cm_to_section($courseid, $cm->id, $sectionnum, null, $modulename);
 
         return $cm->id;
     }

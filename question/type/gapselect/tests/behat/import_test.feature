@@ -31,6 +31,7 @@ Feature: Import and export select missing words questions
     # Now export again.
     And I am on the "Course 1" "core_question > course question export" page logged in as teacher
     And I set the field "id_format_xml" to "1"
+    And I set the field "Export category" to "Default for C1 (1)"
     And I press "Export questions to file"
     And following "click here" should download a file that:
       | Has mimetype                 | text/xml                 |

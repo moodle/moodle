@@ -18,12 +18,34 @@
 
     Example context (json):
     {
-        "checkbox" : "<input id='selectquestion-1' name='selectquestion[]' type='checkbox' class='select-multiple-checkbox'>",
-        "questionnumber" : "<span class='slotnumber'><span class='accesshide'>Question</span> 1</span>",
-        "questionname" : "This is a test question",
-        "questionicons" : "<i class='icon fa fa-search-plus fa-fw' title='Preview question' aria-label='Preview question'></i>",
-        "canbeedited" : false,
-        "questiondependencyicon" : "<span class='question_dependency_wrapper question_dependency_cannot_depend'></span>"
+        "slotid": "1",
+        "canbeedited": true,
+        "checkbox": "<input id='selectquestion-1' name='selectquestion[]' type='checkbox' class='select-multiple-checkbox'>",
+        "questionnumber": "<span class='slotnumber'><span class='accesshide'>Question</span> 1</span>",
+        "questionname": "This is a test question",
+        "questionicons": "<i class='icon fa fa-search-plus fa-fw' title='Preview question'></i>",
+        "questiondependencyicon": "<span class='question_dependency_wrapper question_dependency_cannot_depend'></span>",
+        "versionselection": true,
+        "draftversion": false,
+        "bankname": "Question bank 1",
+        "issharedbank": true,
+        "bankurl": "http://example.com/question/edit.php?cmid=1&cat=1%2C1",
+        "versionoptions": [],
+        "versionoption": [
+            {
+                "versionid": 0,
+                "version": 0,
+                "versionvalue": "Always latest",
+                "selected": true
+            },
+            {
+                "versionid": "1",
+                "version": "1",
+                "questionid": "1",
+                "selected": false,
+                "versionvalue": "v1 (latest)"
+            }
+        ]
     }
 }}
 
@@ -33,6 +55,11 @@
     <div class="mod-indent"></div>
     <div class="activityinstance">
         {{{questionname}}}
+        {{#issharedbank}}
+            <a href="{{bankurl}}">
+                <span class="badge bg-primary text-light ms-2 mt-1">{{bankname}}</span>
+            </a>
+        {{/issharedbank}}
     </div>
     <span class="actions">
         {{#versionselection}}

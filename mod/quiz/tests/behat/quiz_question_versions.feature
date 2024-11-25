@@ -14,12 +14,12 @@ Feature: Quiz question versioning
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
-    And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
     And the following "activities" exist:
-      | activity   | name   | course | idnumber |
-      | quiz       | Quiz 1 | C1     | quiz1    |
+      | activity | name    | course | idnumber |
+      | quiz     | Quiz 1  | C1     | quiz1    |
+    And the following "question categories" exist:
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name           | questiontext              |
       | Test questions   | truefalse | First question | Answer the first question |

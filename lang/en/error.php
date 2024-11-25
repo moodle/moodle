@@ -65,7 +65,6 @@ $string['cannotcreateuploaddir'] = 'Cannot create upload folder. The site admini
 $string['cannotcustomisefiltersblockuser'] = 'You cannot customise filters settings in user or block contexts.';
 $string['cannotdeletebackupids'] = 'Couldn\'t delete previous backup ids';
 $string['cannotdeletecategorycourse'] = 'Course \'{$a}\' failed to be deleted.';
-$string['cannotdeletecategoryquestions'] = 'Could not delete questions from category \'{$a}\'';
 $string['cannotdeletecourse'] = 'You do not have the permission to delete this course';
 $string['cannotdeletecustomfield'] = 'Error deleting custom field data';
 $string['cannotdeletedir'] = 'Cannot delete ({$a})';
@@ -664,3 +663,6 @@ $string['unknownhelp'] = 'Unknown help section {$a}';
 // Deprecated since Moodle 4.5.
 $string['cannotsetpassword'] = 'Could not set user password!';
 $string['myisamproblem'] = 'Database tables are using MyISAM database engine, it is recommended to use ACID compliant engine with full transaction support such as InnoDB.';
+
+// Deprecated since Moodle 5.0.
+$string['cannotdeletecategoryquestions'] = 'Could not delete questions from category \'{$a}\'';

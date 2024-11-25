@@ -14,13 +14,16 @@ Feature: A teacher can delete questions in the question bank
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name    | intro              | course | idnumber |
+      | qbank      | Qbank 1 | Question bank 1    | C1     | qbank1   |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | qbank1    | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype | name                        | questiontext                  |
       | Test questions   | essay | Test question to be deleted | Write about whatever you want |
-    And I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
+    And I am on the "Qbank 1" "core_question > question bank" page logged in as "teacher1"
 
   @javascript
   Scenario: A question not used anywhere can really be deleted
@@ -49,7 +52,7 @@ Feature: A teacher can delete questions in the question bank
     And quiz "Test quiz" contains the following questions:
       | question                         | page | requireprevious |
       | Test used question to be deleted | 1    | 0               |
-    When I am on the "Course 1" "core_question > course question bank" page
+    When I am on the "Qbank 1" "core_question > question bank" page
     And I choose "Delete" action for "Test used question to be deleted" in the question bank
     And I should see "This will delete the following question and all its versions:"
     And I should see "* Denotes questions which can't be deleted because they are in use. Instead, they will be hidden in the question bank unless you set 'Show hidden questions' to 'Yes'."
@@ -74,7 +77,7 @@ Feature: A teacher can delete questions in the question bank
 
   @javascript
   Scenario: Delete question has multiple versions in question bank page
-    Given I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
+    Given I am on the "Qbank 1" "core_question > question bank" page logged in as "teacher1"
     When the following "core_question > updated questions" exist:
       | questioncategory | question                    | questiontext                          |
       | Test questions   | Test question to be deleted | Test question to be deleted version 2 |

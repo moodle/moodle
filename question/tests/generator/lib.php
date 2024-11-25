@@ -71,9 +71,29 @@ class core_question_generator extends component_generator_base {
             if (isset($record['parent'])) {
                 $record['contextid'] = $DB->get_field('question_categories', 'contextid', ['id' => $record['parent']]);
             } else {
-                $record['contextid'] = context_system::instance()->id;
+                $qbank = $this->datagenerator->create_module('qbank', ['course' => SITEID]);
+                $record['contextid'] = context_module::instance($qbank->cmid)->id;
             }
+        } else {
+            // Any requests for a question category in a contextlevel that is no longer supported
+            // will have a qbank instance created on the associated context and then the category
+            // will be made for that context instead.
+            $context = context::instance_by_id($record['contextid']);
+            if ($context->contextlevel !== CONTEXT_MODULE) {
+                $course = match ($context->contextlevel) {
+                    CONTEXT_COURSE => get_course($context->instanceid),
+                    CONTEXT_SYSTEM => get_site(),
+                    CONTEXT_COURSECAT => $this->datagenerator->create_course(['category' => $context->instanceid]),
+                    default => throw new \Exception('Invalid context to infer a question bank from.'),
+                };
+                $qbank = \core_question\local\bank\question_bank_helper::get_default_open_instance_system_type($course, true);
+                $bankcontext = context_module::instance($qbank->id);
+            } else {
+                $bankcontext = $context;
+            }
+            $record['contextid'] = $bankcontext->id;
         }
+
         if (!isset($record['parent'])) {
             $record['parent'] = question_get_top_category($record['contextid'], true)->id;
         }
@@ -162,33 +182,20 @@ class core_question_generator extends component_generator_base {
     }
 
     /**
-     * Setup a course category, course, a question category, and 2 questions
-     * for testing.
+     * Set up a course category, a course, a mod_qbank instance, a question category for the mod_qbank instance,
+     * and 2 questions for testing.
      *
-     * @param string $type The type of question category to create.
-     * @return array The created data objects
+     * @return array of the data objects mentioned above
      */
-    public function setup_course_and_questions($type = 'course') {
+    public function setup_course_and_questions() {
         $datagenerator = $this->datagenerator;
         $category = $datagenerator->create_category();
         $course = $datagenerator->create_course([
             'numsections' => 5,
             'category' => $category->id
         ]);
-
-        switch ($type) {
-            case 'category':
-                $context = context_coursecat::instance($category->id);
-                break;
-
-            case 'system':
-                $context = context_system::instance();
-                break;
-
-            default:
-                $context = context_course::instance($course->id);
-                break;
-        }
+        $qbank = $datagenerator->create_module('qbank', ['course' => $course->id]);
+        $context = context_module::instance($qbank->cmid);
 
         $qcat = $this->create_question_category(['contextid' => $context->id]);
 
@@ -197,7 +204,7 @@ class core_question_generator extends component_generator_base {
                 $this->create_question('shortanswer', null, ['category' => $qcat->id]),
         ];
 
-        return [$category, $course, $qcat, $questions];
+        return [$category, $course, $qcat, $questions, $qbank];
     }
 
     /**

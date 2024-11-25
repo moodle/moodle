@@ -37,16 +37,15 @@ use qbank_managecategories\question_categories;
 require_login();
 core_question\local\bank\helper::require_plugin_enabled(helper::PLUGINNAME);
 
+// Since Moodle 5.0 any request with the courseid parameter is deprecated and will redirect to the banks management page.
+if ($courseid = optional_param('courseid', 0, PARAM_INT)) {
+    redirect(new moodle_url('/question/banks.php', ['courseid' => $courseid]));
+}
+
 list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
     question_edit_setup('categories', '/question/bank/managecategories/category.php');
-$courseid = optional_param('courseid', 0, PARAM_INT);
 
-if (!is_null($cmid)) {
-    $thiscontext = context_module::instance($cmid)->id;
-} else {
-    $course = get_course($courseid);
-    $thiscontext = context_course::instance($course->id)->id;
-}
+$thiscontext = context_module::instance($cmid)->id;
 
 $todelete = optional_param('delete', 0, PARAM_INT); // The ID of a category to delete.
 
@@ -112,10 +111,13 @@ if ($questionstomove) {
     echo $OUTPUT->box(get_string('categorymove', 'question', $vars), 'generalbox boxaligncenter');
     $moveform->display();
 } else {
+    // Get module contexts we have capabilities to manage.
+    $contextswithcaps = $contexts->having_one_edit_tab_cap('categories');
+    $modcontexts = array_filter($contextswithcaps, static fn ($context) => $context->contextlevel === CONTEXT_MODULE);
     // Display the user interface.
     $questioncategories = new question_categories(
         $thispageurl,
-        $contexts->having_one_edit_tab_cap('categories'),
+        $modcontexts,
         $cmid,
         $courseid,
         $thiscontext,

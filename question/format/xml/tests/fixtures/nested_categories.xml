@@ -3,7 +3,7 @@
 <!-- question: 0  -->
   <question type="category">
     <category>
-      <text>$course$/Delta</text>
+      <text>$module$/Delta</text>
     </category>
     <info format="plain_text">
       <text>This is Delta category for test</text>
@@ -14,7 +14,7 @@
 <!-- question: 0  -->
   <question type="category">
     <category>
-      <text>$course$/Delta/Epsilon</text>
+      <text>$module$/Delta/Epsilon</text>
     </category>
     <info format="markdown">
       <text>This is Epsilon category for test</text>
@@ -25,7 +25,7 @@
 <!-- question: 0  -->
   <question type="category">
     <category>
-      <text>$course$/Delta/Epsilon/Zeta</text>
+      <text>$module$/Delta/Epsilon/Zeta</text>
     </category>
     <info format="moodle_auto_format">
       <text>This is Zeta category for test</text>

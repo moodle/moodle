@@ -183,7 +183,13 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
 
     // Course_modules and course_sections each contain a reference to each other.
     // So we have to update one of them twice.
-    $sectionid = course_add_cm_to_section($course, $moduleinfo->coursemodule, $moduleinfo->section, $moduleinfo->beforemod);
+    $sectionid = course_add_cm_to_section(
+        $course,
+        $moduleinfo->coursemodule,
+        $moduleinfo->section,
+        $moduleinfo->beforemod,
+        $moduleinfo->modulename
+    );
 
     // Trigger event based on the action we did.
     // Api create_from_cm expects modname and id property, and we don't want to modify $moduleinfo since we are returning it.
@@ -490,6 +496,11 @@ function set_moduleinfo_defaults($moduleinfo) {
 
     if (!isset($moduleinfo->downloadcontent)) {
         $moduleinfo->downloadcontent = DOWNLOAD_COURSE_CONTENT_ENABLED;
+    }
+
+    // Module types with this flag set to false must always be in section number 0.
+    if (!course_modinfo::is_mod_type_visible_on_course($moduleinfo->modulename)) {
+        $moduleinfo->section = 0;
     }
 
     return $moduleinfo;
@@ -876,9 +887,16 @@ function get_moduleinfo_data($cm, $course) {
  * @param  string $suffix the suffix to add to the name of the completion rules.
  * @return array module information about other required data
  * @since  Moodle 3.2
+ * @throws coding_exception if you try to set a section other than 0 on a module type that has feature flag FEATURE_CAN_DISPLAY
+ * set to false.
  */
 function prepare_new_moduleinfo_data($course, $modulename, $section, string $suffix = '') {
     global $CFG;
+
+    // Module types with this flag set to false must always be in section number 0.
+    if ($section != 0 && !course_modinfo::is_mod_type_visible_on_course($modulename)) {
+        throw new coding_exception("Modules with feature flag FEATURE_CAN_DISPLAY set to false can only be in section 0");
+    }
 
     list($module, $context, $cw) = can_add_moduleinfo($course, $modulename, $section);
 

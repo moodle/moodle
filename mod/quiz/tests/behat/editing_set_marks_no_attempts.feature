@@ -15,12 +15,12 @@ Feature: Edit quiz marks with no attempts
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
     And the following "activities" exist:
-      | activity   | name   | course | idnumber | grade | decimalpoints | questiondecimalpoints |
-      | quiz       | Quiz 1 | C1     | quiz1    | 20    | 2             | -1                    |
+      | activity   | name    | course | idnumber | grade | decimalpoints | questiondecimalpoints |
+      | quiz       | Quiz 1  | C1     | quiz1    | 20    | 2             | -1                    |
 
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name            | questiontext |
       | Test questions   | truefalse | First question  | Answer me    |

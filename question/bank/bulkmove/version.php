@@ -26,6 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qbank_bulkmove';
-$plugin->version   = 2024100700;
+$plugin->version   = 2024100800;
 $plugin->requires  = 2024100100;
 $plugin->maturity  = MATURITY_STABLE;

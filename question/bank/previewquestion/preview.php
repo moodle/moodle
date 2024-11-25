@@ -63,11 +63,6 @@ if ($cmid = optional_param('cmid', 0, PARAM_INT)) {
     $cm = get_coursemodule_from_id(false, $cmid);
     require_login($cm->course, false, $cm);
     $context = context_module::instance($cmid);
-
-} else if ($courseid = optional_param('courseid', 0, PARAM_INT)) {
-    require_login($courseid);
-    $context = context_course::instance($courseid);
-
 } else {
     require_login();
     $category = $DB->get_record('question_categories', ['id' => $question->category], '*', MUST_EXIST);
@@ -321,7 +316,7 @@ if (!is_null($returnurl)) {
     $previewdata['redirect'] = true;
     $previewdata['redirecturl'] = $returnurl;
 }
-$closeurl = new moodle_url('/question/edit.php', ['courseid' => $COURSE->id]);
+$closeurl = new moodle_url('/question/edit.php', ['cmid' => $context->instanceid]);
 echo $PAGE->get_renderer('qbank_previewquestion')->render_preview_page($previewdata);
 
 // Log the preview of this question.

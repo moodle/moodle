@@ -86,11 +86,12 @@ class helper_test extends \advanced_testcase {
 
         // Create a course.
         $this->course = $generator->create_course();
-        $this->context = \context_course::instance($this->course->id);
+        $qbank = self::getDataGenerator()->create_module('qbank', ['name' => 'QBANK 1', 'course' => $this->course->id]);
+        $this->context = \context_module::instance($qbank->cmid);
 
         // Create a question in the default category.
         $this->contexts = new question_edit_contexts($this->context);
-        $this->cat = question_make_default_categories($this->contexts->all());
+        $this->cat = question_get_default_category($this->contexts->lowest()->id, true);
         $this->questiondata1 = $questiongenerator->create_question('numerical', null,
             ['name' => 'Example question', 'category' => $this->cat->id]);
 
@@ -211,13 +212,13 @@ class helper_test extends \advanced_testcase {
      */
     public function test_get_displaydata(): void {
         $this->helper_setup();
-        $coursecontext = \context_course::instance($this->course->id);
-        $contexts = new question_edit_contexts($coursecontext);
+        $contexts = new question_edit_contexts($this->context);
         $addcontexts = $contexts->having_cap('moodle/question:add');
         $url = new \moodle_url('/question/bank/bulkmove/move.php');
         $displaydata = \qbank_bulkmove\helper::get_displaydata($addcontexts, $url, $url);
+        $this->assertDebuggingCalled();
         $this->assertStringContainsString('Test question category 1', $displaydata['categorydropdown']);
-        $this->assertStringContainsString('Default for Category 1', $displaydata['categorydropdown']);
+        $this->assertStringContainsString('Default for QBANK 1', $displaydata['categorydropdown']);
         $this->assertEquals($url, $displaydata ['moveurl']);
         $this->assertEquals($url, $displaydata ['returnurl']);
     }

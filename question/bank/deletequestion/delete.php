@@ -31,8 +31,7 @@ global $DB, $OUTPUT, $PAGE, $COURSE;
 
 $deleteselected = optional_param('deleteselected', false, PARAM_BOOL);
 $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
-$cmid = optional_param('cmid', 0, PARAM_INT);
-$courseid = optional_param('courseid', 0, PARAM_INT);
+$cmid = required_param('cmid', PARAM_INT);
 $deleteall = optional_param('deleteall', false, PARAM_BOOL);
 
 if ($returnurl) {
@@ -41,16 +40,9 @@ if ($returnurl) {
 
 \core_question\local\bank\helper::require_plugin_enabled('qbank_deletequestion');
 
-if ($cmid) {
-    list($module, $cm) = get_module_from_cmid($cmid);
-    require_login($cm->course, false, $cm);
-    $thiscontext = context_module::instance($cmid);
-} else if ($courseid) {
-    require_login($courseid, false);
-    $thiscontext = context_course::instance($courseid);
-} else {
-    throw new moodle_exception('missingcourseorcmid', 'question');
-}
+[$module, $cm] = get_module_from_cmid($cmid);
+require_login($cm->course, false, $cm);
+$thiscontext = context_module::instance($cmid);
 
 $contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
 $url = new moodle_url('/question/bank/deletequestion/delete.php');
@@ -115,7 +107,6 @@ if ($deleteselected) {
             'sesskey' => sesskey(),
             'returnurl' => $returnurl->out_as_local_url(false),
             'cmid' => $cmid,
-            'courseid' => $courseid,
         ],
     );
     $continue = new \single_button($deleteurl, get_string('delete'), 'post');

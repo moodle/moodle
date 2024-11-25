@@ -80,11 +80,13 @@ class edit_form_test extends \advanced_testcase {
         $this->setAdminUser();
         $this->resetAfterTest();
 
-        $syscontext = \context_system::instance();
-        $category = question_make_default_categories(array($syscontext));
+        $course = self::getDataGenerator()->create_course();
+        $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $course->id]);
+        $bankcontext = \context_module::instance($qbank->cmid);
+        $category = question_get_default_category($bankcontext->id, true);
         $fakequestion = new \stdClass();
         $fakequestion->qtype = 'gapselect'; // Does not actually matter if this is wrong.
-        $fakequestion->contextid = $syscontext->id;
+        $fakequestion->contextid = $bankcontext->id;
         $fakequestion->createdby = 2;
         $fakequestion->category = $category->id;
         $fakequestion->questiontext = 'Test [[1]] question [[2]]';
@@ -96,7 +98,7 @@ class edit_form_test extends \advanced_testcase {
         $fakequestion->inputs = null;
 
         $form = new $classname(new \moodle_url('/'), $fakequestion, $category,
-                new \core_question\local\bank\question_edit_contexts($syscontext));
+                new \core_question\local\bank\question_edit_contexts($bankcontext));
 
         return [$form, $category];
     }

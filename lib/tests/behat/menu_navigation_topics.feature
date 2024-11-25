@@ -79,7 +79,7 @@ Feature: Menu navigation has accurate checkmarks in topic course format
     Given I log in as "admin"
     And I am on "Course 1" course homepage
     And I update the href of the "//*//a/following-sibling::*//a[contains(text(), 'Filters')]" "xpath" link to "#"
-    And I navigate to "Question bank" in current page administration
+    And I navigate to "Question banks" in current page administration
     Then menu item "Filters" should not be active
 
   @javascript

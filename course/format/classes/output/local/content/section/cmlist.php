@@ -116,7 +116,7 @@ class cmlist implements named_templatable, renderable {
             if ($showmovehere && $USER->activitycopy == $mod->id) {
                 continue;
             }
-            if ($mod->is_visible_on_course_page()) {
+            if ($mod->is_visible_on_course_page() && $mod->is_of_type_that_can_display()) {
                 $item = new $this->itemclass($format, $section, $mod, $this->displayoptions);
                 $data->cms[] = (object)[
                     'cmitem' => $item->export_for_template($output),

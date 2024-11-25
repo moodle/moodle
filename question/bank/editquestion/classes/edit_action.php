@@ -60,11 +60,7 @@ class edit_action extends question_action_base {
         $this->strview = get_string('view');
         $this->editquestionurl = new \moodle_url('/question/bank/editquestion/question.php',
                 array('returnurl' => $this->qbank->returnurl));
-        if ($this->qbank->cm !== null) {
-            $this->editquestionurl->param('cmid', $this->qbank->cm->id);
-        } else {
-            $this->editquestionurl->param('courseid', $this->qbank->course->id);
-        }
+        $this->editquestionurl->param('cmid', $this->qbank->cm->id);
     }
 
     public function get_menu_position(): int {

@@ -99,25 +99,12 @@ class submit_tags extends external_api {
         $mform = new tags_form(null, $formoptions, 'post', '', null, $cantag, $data);
 
         if ($validateddata = $mform->get_data()) {
-            if ($cantag) {
-                if (isset($validateddata->tags)) {
-                    // Due to a mform bug, if there's no tags set on the tag element, it submits the name as the value.
-                    // The only way to discover is checking if the tag element is an array.
-                    $tags = is_array($validateddata->tags) ? $validateddata->tags : [];
-
-                    core_tag_tag::set_item_tags('core_question', 'question', $validateddata->id,
-                            $questioncontext, $tags);
-
-                    $result['status'] = true;
-                }
-
-                if (isset($validateddata->coursetags)) {
-                    $coursetags = is_array($validateddata->coursetags) ? $validateddata->coursetags : [];
-                    core_tag_tag::set_item_tags('core_question', 'question', $validateddata->id,
-                            $editingcontext->get_course_context(false), $coursetags);
-
-                    $result['status'] = true;
-                }
+            if ($cantag && isset($validateddata->tags)) {
+                // Due to a mform bug, if there's no tags set on the tag element, it submits the name as the value.
+                // The only way to discover is checking if the tag element is an array.
+                $tags = is_array($validateddata->tags) ? $validateddata->tags : [];
+                core_tag_tag::set_item_tags('core_question', 'question', $validateddata->id, $questioncontext, $tags);
+                $result['status'] = true;
             }
         }
 

@@ -26,6 +26,7 @@
         "categoryid": "2",
         "perpage": "100",
         "contextid": "3",
+        "quizcmid": "4",
         "component": "core_quiz",
         "callback": "get_question_data",
         "view": "\\\\core\\\\question\\\\local\\\\bank\\\\view",
@@ -39,7 +40,7 @@
 
 {{#js}}
     require(['core_question/filter'], function(Filter) {
-        Filter.init('core-filter-{{uniqid}}', {{courseid}}, {{categoryid}}, {{perpage}}, {{contextid}},
+        Filter.init('core-filter-{{uniqid}}', {{courseid}}, {{categoryid}}, {{perpage}}, {{contextid}}, {{quizcmid}},
                 '{{component}}', '{{callback}}', '{{view}}', {{cmid}}, '{{{pagevars}}}', '{{{extraparams}}}');
     });
 {{/js}}

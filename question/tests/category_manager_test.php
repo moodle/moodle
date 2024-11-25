@@ -31,6 +31,17 @@ use core_question\local\bank\question_edit_contexts;
  * @covers \core_question\category_manager
  */
 final class category_manager_test extends \advanced_testcase {
+
+    /**
+     * Create a course and qbank module and return the module context for use in tests.
+     *
+     * @return \core\context\module|false
+     */
+    private function create_course_and_get_qbank_context() {
+        $course = self::getDataGenerator()->create_course();
+        $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $course->id]);
+        return context_module::instance($qbank->cmid);
+    }
     /**
      * Test creating a category.
      */
@@ -39,7 +50,7 @@ final class category_manager_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $this->resetAfterTest();
-        $context = context_course::instance(SITEID);
+        $context = $this->create_course_and_get_qbank_context();
         $topcat = question_get_top_category($context->id, true);
         $manager = new category_manager();
         $id = $manager->add_category(
@@ -63,7 +74,7 @@ final class category_manager_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $this->resetAfterTest();
-        $context = context_course::instance(SITEID);
+        $context = $this->create_course_and_get_qbank_context();
         $topcat = question_get_top_category($context->id, true);
         $manager = new category_manager();
         $id = $manager->add_category(
@@ -87,7 +98,7 @@ final class category_manager_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $this->resetAfterTest();
-        $context = context_course::instance(SITEID);
+        $context = $this->create_course_and_get_qbank_context();
         $topcat = question_get_top_category($context->id, true);
         $manager = new category_manager();
         $manager->add_category(
@@ -116,7 +127,7 @@ final class category_manager_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $this->resetAfterTest();
-        $context = context_course::instance(SITEID);
+        $context = $this->create_course_and_get_qbank_context();
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $topcat = question_get_top_category($context->id, true);
         $category = $questiongenerator->create_question_category([
@@ -154,7 +165,7 @@ final class category_manager_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $this->resetAfterTest();
-        $context = context_course::instance(SITEID);
+        $context = $this->create_course_and_get_qbank_context();
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $topcat = question_get_top_category($context->id, true);
         $category = $questiongenerator->create_question_category([
@@ -193,7 +204,7 @@ final class category_manager_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $this->resetAfterTest();
-        $context = context_course::instance(SITEID);
+        $context = $this->create_course_and_get_qbank_context();
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $topcat = question_get_top_category($context->id, true);
         $category = $questiongenerator->create_question_category([
@@ -231,7 +242,7 @@ final class category_manager_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $this->resetAfterTest();
-        $context = context_course::instance(SITEID);
+        $context = $this->create_course_and_get_qbank_context();
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $topcat = question_get_top_category($context->id, true);
         $questiongenerator->create_question_category([
@@ -304,7 +315,7 @@ final class category_manager_test extends \advanced_testcase {
         $course = $generator->create_course();
         $quiz = $generator->get_plugin_generator('mod_quiz')->create_instance(['course' => $course->id]);
         $contexts = new question_edit_contexts(context_module::instance($quiz->cmid));
-        $defaultcat = question_make_default_categories([$contexts->lowest()]);
+        $defaultcat = question_get_default_category($contexts->lowest()->id, true);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         // Create the category.
         $category = $questiongenerator->create_question_category([
@@ -381,7 +392,7 @@ final class category_manager_test extends \advanced_testcase {
         $quiz = $generator->create_module('quiz', ['course' => $course->id]);
         $contexts = new question_edit_contexts(context_module::instance($quiz->cmid));
 
-        $defaultcategory = question_make_default_categories([$contexts->lowest()]);
+        $defaultcategory = question_get_default_category($contexts->lowest()->id, true);
         $questiongerator = $generator->get_plugin_generator('core_question');
 
         // Short answer question is made of one question.
@@ -406,7 +417,7 @@ final class category_manager_test extends \advanced_testcase {
         $quiz = $generator->create_module('quiz', ['course' => $course->id]);
         $contexts = new question_edit_contexts(context_module::instance($quiz->cmid));
 
-        $defaultcategory = question_make_default_categories([$contexts->lowest()]);
+        $defaultcategory = question_get_default_category($contexts->lowest()->id, true);
         $questiongerator = $generator->get_plugin_generator('core_question');
 
         // Multi answer question is made of one parent and two child questions.
@@ -435,7 +446,7 @@ final class category_manager_test extends \advanced_testcase {
         $quiz = $generator->create_module('quiz', ['course' => $course->id]);
         $contexts = new question_edit_contexts(context_module::instance($quiz->cmid));
 
-        $defaultcategory = question_make_default_categories([$contexts->lowest()]);
+        $defaultcategory = question_get_default_category($contexts->lowest()->id, true);
         $questiongerator = $generator->get_plugin_generator('core_question');
 
         // Create two versions of a multianswer question which will lead to
@@ -467,7 +478,7 @@ final class category_manager_test extends \advanced_testcase {
         $quiz = $generator->create_module('quiz', ['course' => $course->id]);
         $contexts = new question_edit_contexts(context_module::instance($quiz->cmid));
 
-        $defaultcategory = question_make_default_categories([$contexts->lowest()]);
+        $defaultcategory = question_get_default_category($contexts->lowest()->id, true);
         $questiongerator = $generator->get_plugin_generator('core_question');
 
         // Multi answer question is made of one parent and two child questions.
@@ -507,7 +518,7 @@ final class category_manager_test extends \advanced_testcase {
         $qcategory1 = $questiongenerator->create_question_category(['contextid' => $context->id]);
 
         // Try to delete a top category.
-        $categorytop = question_get_top_category($qcategory1->id, true)->id;
+        $categorytop = question_get_top_category($qcategory1->contextid, true)->id;
         $this->expectException('moodle_exception');
         $this->expectExceptionMessage(get_string('cannotdeletetopcat', 'question'));
         $manager->require_can_delete_category($categorytop);

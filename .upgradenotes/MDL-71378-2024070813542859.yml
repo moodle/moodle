@@ -1,0 +1,17 @@
+issueNumber: MDL-71378
+notes:
+  tool_brickfield:
+    - message: >
+        tool_brickfield\local\areas\core_question\answerbase::find_system_areas
+
+
+        No replacement. System context no longer a valid context to assign a
+        question category
+      type: deprecated
+    - message: >
+        tool_brickfield\local\areas\core_question\base::find_system_areas
+
+
+        No replacement. System context no longer a valid context to assign a
+        question category
+      type: deprecated

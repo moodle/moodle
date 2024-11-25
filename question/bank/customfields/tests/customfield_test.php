@@ -91,7 +91,8 @@ class customfield_test extends \advanced_testcase {
         // Question initial set up.
         $this->category = $this->getDataGenerator()->create_category();
         $this->course = $this->getDataGenerator()->create_course(['category' => $this->category->id]);
-        $context = \context_coursecat::instance($this->category->id);
+        $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $this->course->id]);
+        $context = \context_module::instance($qbank->cmid);
         $this->qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
         $qcat = $this->qgen->create_question_category(['contextid' => $context->id]);
 

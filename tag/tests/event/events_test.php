@@ -100,7 +100,9 @@ class events_test extends \advanced_testcase {
         global $DB;
 
         // Create a course to tag.
-        $course = $this->getDataGenerator()->create_course();
+        $course = self::getDataGenerator()->create_course();
+        $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $course->id]);
+        $qbankcontext = \context_module::instance($qbank->cmid);
 
         // Trigger and capture the event for tagging a course.
         $sink = $this->redirectEvents();
@@ -115,7 +117,7 @@ class events_test extends \advanced_testcase {
 
         // Create a question to tag.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $cat = $questiongenerator->create_question_category();
+        $cat = $questiongenerator->create_question_category(['contextid' => $qbankcontext->id]);
         $question = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
 
         // Trigger and capture the event for tagging a question.
@@ -129,7 +131,7 @@ class events_test extends \advanced_testcase {
         // Check that the tag was added to the question and the event data is valid.
         $this->assertEquals(1, $DB->count_records('tag_instance', array('component' => 'core')));
         $this->assertInstanceOf('\core\event\tag_added', $event);
-        $this->assertEquals(\context_system::instance(), $event->get_context());
+        $this->assertEquals($qbankcontext, $event->get_context());
     }
 
     /**

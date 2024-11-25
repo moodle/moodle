@@ -42,10 +42,13 @@ class question_bank_column_test extends \advanced_testcase {
     public function test_column_header_multi_sort_no_tooltips(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
+        $qbank = $this->getDataGenerator()->create_module('qbank', ['course' => $course->id]);
+        $cm = get_coursemodule_from_id('qbank', $qbank->cmid);
         $questionbank = new view(
                 new question_edit_contexts(\context_course::instance($course->id)),
                 new \moodle_url('/'),
-                $course
+                $course,
+                $cm
         );
         $columnbase = new testable_core_question_column($questionbank);
 
@@ -76,10 +79,13 @@ class question_bank_column_test extends \advanced_testcase {
     public function test_column_header_multi_sort_with_tooltips(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
+        $qbank = $this->getDataGenerator()->create_module('qbank', ['course' => $course->id]);
+        $cm = get_coursemodule_from_id('qbank', $qbank->cmid);
         $questionbank = new view(
                 new question_edit_contexts(\context_course::instance($course->id)),
                 new \moodle_url('/'),
-                $course
+                $course,
+                $cm
         );
         $columnbase = new testable_core_question_column($questionbank);
 

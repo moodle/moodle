@@ -166,7 +166,7 @@ final class helper_test extends manage_category_test_base {
         $qcategory1 = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
 
         // Try to delete a top category.
-        $categorytop = question_get_top_category($qcategory1->id, true)->id;
+        $categorytop = question_get_top_category($qcategory1->contextid, true)->id;
         try {
             helper::question_can_delete_cat($categorytop);
         } catch (moodle_exception $e) {

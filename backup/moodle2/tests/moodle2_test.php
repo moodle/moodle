@@ -141,7 +141,7 @@ final class moodle2_test extends \advanced_testcase {
                 backup::TARGET_NEW_COURSE);
         $thrown = null;
         try {
-            $this->assertTrue($rc->execute_precheck());
+            $rc->execute_precheck();
             $rc->execute_plan();
             $rc->destroy();
         } catch (Exception $e) {
@@ -154,6 +154,11 @@ final class moodle2_test extends \advanced_testcase {
         }
 
         $this->assertNull($thrown);
+
+        // Backup contained a question category in a deprecated context.
+        $results = $rc->get_precheck_results();
+        $this->assertCount(1, $results['warnings']);
+        $this->assertStringStartsWith('The questions category', $results['warnings'][0]);
 
         // Get information about the resulting course and check that it is set
         // up correctly.
@@ -1040,13 +1045,24 @@ final class moodle2_test extends \advanced_testcase {
                     backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id,
                     backup::TARGET_NEW_COURSE);
 
-            $this->assertTrue($rc->execute_precheck());
+            $rc->execute_precheck();
             $rc->execute_plan();
             $rc->destroy();
+
+            // Backup contained question category(s) in a deprecated context.
+            $expectedwarnings = $backupid === 'question_category_34_format' ? 1 : 2;
+            $results = $rc->get_precheck_results();
+            $this->assertCount($expectedwarnings, $results['warnings']);
+            for ($i = 0; $i < $expectedwarnings; $i++) {
+                $this->assertStringStartsWith('The questions category', $results['warnings'][$i]);
+            }
 
             // Get information about the resulting course and check that it is set up correctly.
             $modinfo = get_fast_modinfo($newcourseid);
             $quizzes = array_values($modinfo->get_instances_of('quiz'));
+            $qbanks = $modinfo->get_instances_of('qbank');
+            $this->assertCount(1, $qbanks);
+            $qbank = reset($qbanks);
             $contexts = $quizzes[0]->context->get_parent_contexts(true);
 
             $topcategorycount = [];
@@ -1055,6 +1071,11 @@ final class moodle2_test extends \advanced_testcase {
 
                 // Make sure all question categories that were inside the backup file were restored correctly.
                 if ($context->contextlevel == CONTEXT_COURSE) {
+                    // Course context categories are deprecated and now get transferred to a qbank instance on the course
+                    // at point of restore.
+                    $cats = $DB->get_records('question_categories',
+                        ['contextid' => $qbank->context->id], 'parent', 'id, name, parent'
+                    );
                     $this->assertEquals(['top', 'Default for C101'], array_column($cats, 'name'));
                 } else if ($context->contextlevel == CONTEXT_MODULE) {
                     $this->assertEquals(['top', 'Default for Q1'], array_column($cats, 'name'));

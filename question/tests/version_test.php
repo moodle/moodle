@@ -203,15 +203,16 @@ class version_test extends \advanced_testcase {
         $qcategory = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
         $qcategorychild = $this->qgenerator->create_question_category(['contextid' => $this->context->id,
             'parent' => $qcategory->id]);
-        $systemcontext = \context_system::instance();
-        $qcategorysys = $this->qgenerator->create_question_category(['contextid' => $systemcontext->id]);
+        $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $this->course->id]);
+        $bankcontext = \context_module::instance($qbank->cmid);
+        $qcategorysys = $this->qgenerator->create_question_category(['contextid' => $bankcontext->id]);
         $question = $this->qgenerator->create_question('shortanswer', null, ['category' => $qcategorychild->id]);
         $questiondefinition = question_bank::load_question($question->id);
 
         // Add it to the quiz.
         quiz_add_quiz_question($question->id, $this->quiz);
 
-        // Move the category to system context.
+        // Move the category to qbank context.
         $manager = new category_manager();
         $manager->move_questions_and_delete_category($qcategorychild->id, $qcategorysys->id);
 

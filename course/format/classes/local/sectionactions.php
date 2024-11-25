@@ -318,10 +318,11 @@ class sectionactions extends baseactions {
         );
 
         // Move all modules to section 0.
-        $sectionzero = $DB->get_record('course_sections', ['course' => $this->course->id, 'section' => '0']);
-        $modules = $DB->get_records('course_modules', ['section' => $sectioninfo->id], '');
-        foreach ($modules as $mod) {
-            moveto_module($mod, $sectionzero);
+        $modinfo = get_fast_modinfo($this->course->id);
+        foreach ($modinfo->get_cms() as $cm) {
+            if ($cm->sectionnum == $sectioninfo->section) {
+                moveto_module($cm, $modinfo->get_section_info(0));
+            }
         }
 
         $removaltask = new \core_course\task\course_delete_modules();

@@ -30,6 +30,11 @@ use core_question\local\bank\view;
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
+// Since Moodle 5.0 any request with the courseid parameter is deprecated and will redirect to the banks management page.
+if ($courseid = optional_param('courseid', 0, PARAM_INT)) {
+    redirect(new moodle_url('/question/banks.php', ['courseid' => $courseid]));
+}
+
 list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
         question_edit_setup('questions', '/question/edit.php');
 
@@ -43,6 +48,18 @@ if ($PAGE->course->id == $SITE->id) {
     $PAGE->set_primary_active_tab('home');
 }
 
+// Mods that publish questions need a modified navbar breadcrumb here as they are managed differently to other module types.
+if (plugin_supports('mod', $cm->modname, FEATURE_PUBLISHES_QUESTIONS, false)) {
+    $PAGE->navbar->ignore_active();
+    $coursenode = $PAGE->navigation->find($PAGE->course->id, navigation_node::TYPE_COURSE);
+    $modnode = $PAGE->navigation->find($cm->id, navigation_node::TYPE_ACTIVITY);
+    $PAGE->navbar->add($coursenode->text, $coursenode->action, $coursenode->type, $coursenode->shorttext, icon: $coursenode->icon);
+    $PAGE->navbar->add(get_string('questionbank_plural', 'core_question'),
+        \core_question\local\bank\question_bank_helper::get_url_for_qbank_list($PAGE->course->id)
+    );
+    $PAGE->navbar->add($modnode->text, $modnode->action, $modnode->type, $modnode->shorttext, icon: $modnode->icon);
+}
+
 $thispageurl->param('deleteall', 1);
 $questionbank = new view($contexts, $thispageurl, $COURSE, $cm, $pagevars);
 
@@ -53,6 +70,12 @@ $PAGE->set_heading($COURSE->fullname);
 $PAGE->activityheader->disable();
 
 echo $OUTPUT->header();
+if (!\core_question\local\bank\question_bank_helper::has_bank_migration_task_completed_successfully()) {
+    $defaultactivityname = \core_question\local\bank\question_bank_helper::get_default_question_bank_activity_name();
+    echo $OUTPUT->notification(get_string('transfernotfinished', 'mod_' . $defaultactivityname),
+        \core\output\notification::NOTIFY_WARNING
+    );
+}
 
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');
@@ -64,12 +87,15 @@ echo $renderer->render($qbankaction);
 // Print the question area.
 $questionbank->display();
 
+[$categoryid, $contextid] = explode(',', $pagevars['cat']);
+$questionbank->init_bulk_actions_js();
+
 // Log the view of this category.
-list($categoryid, $contextid) = explode(',', $pagevars['cat']);
 $category = new stdClass();
 $category->id = $categoryid;
 $catcontext = context::instance_by_id($contextid);
 $event = question_category_viewed::create_from_question_category_instance($category, $catcontext);
 $event->trigger();
+\core_question\local\bank\question_bank_helper::add_bank_context_to_recently_viewed($catcontext);
 
 echo $OUTPUT->footer();

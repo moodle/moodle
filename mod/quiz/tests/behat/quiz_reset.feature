@@ -20,15 +20,15 @@ Feature: Quiz reset
       | name    | course | idnumber |
       | Group 1 | C1     | G1       |
       | Group 2 | C1     | G2       |
-    And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
-    And the following "questions" exist:
-      | questioncategory | qtype     | name | questiontext   |
-      | Test questions   | truefalse | TF1  | First question |
     And the following "activities" exist:
       | activity | name           | intro                 | course | idnumber |
       | quiz     | Test quiz name | Test quiz description | C1     | quiz1    |
+    And the following "question categories" exist:
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
+    And the following "questions" exist:
+      | questioncategory | qtype     | name | questiontext   |
+      | Test questions   | truefalse | TF1  | First question |
     And quiz "Test quiz name" contains the following questions:
       | question | page |
       | TF1      | 1    |

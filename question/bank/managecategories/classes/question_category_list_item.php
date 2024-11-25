@@ -87,12 +87,8 @@ class question_category_list_item extends \list_item {
         $str = $extraargs['str'];
         $category = $this->item;
 
-        // Each section adds html to be displayed as part of this list item.
-        $nodeparent = $PAGE->settingsnav->find('questionbank', \navigation_node::TYPE_CONTAINER);
+        $questionbankurl = new moodle_url('/question/edit.php', $this->parentlist->pageurl->params());
 
-        // The category URL is based on the node action.
-        $questionbankurl = new moodle_url($nodeparent->action->out_omit_querystring(),
-            $this->parentlist->pageurl->params());
         $questionbankurl->param('cat', $category->id . ',' . $category->contextid);
 
         $categoryname = format_string($category->name, true, ['context' => $this->parentlist->context]);

@@ -35,22 +35,10 @@ class helper {
      * @return \moodle_url the requested URL.
      */
     public static function question_get_export_single_question_url($question): \moodle_url {
-        $params = ['id' => $question->id, 'sesskey' => sesskey()];
         $context = \context::instance_by_id($question->contextid);
-        switch ($context->contextlevel) {
-            case CONTEXT_MODULE:
-                $params['cmid'] = $context->instanceid;
-                break;
-
-            case CONTEXT_COURSE:
-                $params['courseid'] = $context->instanceid;
-                break;
-
-            default:
-                $params['courseid'] = SITEID;
-        }
-
-        return new \moodle_url('/question/bank/exporttoxml/exportone.php', $params);
+        return new \moodle_url('/question/bank/exporttoxml/exportone.php',
+            ['id' => $question->id, 'sesskey' => sesskey(), 'cmid' => $context->instanceid]
+        );
     }
 
 }

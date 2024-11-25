@@ -14,9 +14,12 @@ Feature: Edit quizzes where some questions require the previous one to have been
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name    | course | idnumber |
+      | qbank      | Qbank 1 | C1     | qbank1   |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | qbank1    | Test questions |
     And I log in as "teacher1"
 
   @javascript

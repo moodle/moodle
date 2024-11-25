@@ -30,6 +30,7 @@ $string['alltries'] = 'All tries';
 $string['answers'] = 'Answers';
 $string['availableq'] = 'Available?';
 $string['badbase'] = 'Bad base before **: {$a}**';
+$string['banksincourse'] = 'Question banks in this course';
 $string['behaviour'] = 'Behaviour';
 $string['broken'] = 'This is a "broken link", it points to a nonexistent file.';
 $string['byandon'] = 'by <em>{$a->user}</em> on <em>{$a->time}</em>';
@@ -81,6 +82,7 @@ $string['clickunflag'] = 'Remove flag';
 $string['contexterror'] = 'You shouldn\'t have got here if you\'re not moving a category to another context.';
 $string['copy'] = 'Copy from {$a} and change links.';
 $string['created'] = 'Created';
+$string['createdefault'] = 'Create default question bank';
 $string['createdby'] = 'Created by';
 $string['createdmodifiedheader'] = 'Created / last saved';
 $string['createnewquestion'] = 'Create a new question ...';
@@ -96,6 +98,8 @@ will have their sharing status changed to the same sharing status as the categor
 on upgrading to Moodle 1.9. The following categories will have their sharing status changed. Questions which are
 affected will continue to work in all existing quizzes until you remove them from these quizzes.</p>';
 $string['cwrqpfsnoprob'] = 'No question categories in your site are affected by the \'Random questions selecting questions from sub categories\' issue.';
+$string['defaultbank'] = '{$a->coursename} course question bank';
+$string['defaultcreated'] = 'Default course question bank created';
 $string['defaultfor'] = 'Default for {$a}';
 $string['defaultinfofor'] = 'The default category for questions shared in context \'{$a}\'.';
 $string['defaultmarkmustbepositive'] = 'The default mark must be positive.';
@@ -111,17 +115,11 @@ $string['deletingbehaviour'] = 'Deleting question behaviour \'{$a}\'';
 $string['deletingqtype'] = 'Deleting question type \'{$a}\'';
 $string['didnotmatchanyanswer'] = '[Did not match any answer]';
 $string['disabled'] = 'Disabled';
+$string['disabledbanks'] = 'All question bank module types are disabled.';
 $string['disterror'] = 'The distribution {$a} caused problems';
 $string['donothing'] = 'Don\'t copy or move files or change links.';
 $string['editcategories'] = 'Edit categories';
 $string['editcategories_help'] = 'Rather than keeping everything in one big list, questions may be arranged into categories and subcategories.
-
-Each category has a context which determines where the questions in the category can be used:
-
-* Activity context - Questions only available in the activity module
-* Course context - Questions available in all activity modules in the course
-* Course category context - Questions available in all activity modules and courses in the course category
-* System context - Questions available in all courses and activities on the site
 
 Categories are also used for random questions, as questions are selected from a particular category.';
 $string['editcategories_link'] = 'question/category';
@@ -133,7 +131,6 @@ $string['editthiscategory'] = 'Edit this category';
 $string['emptyxml'] = 'Unknown error - empty imsmanifest.xml';
 $string['enabled'] = 'Enabled';
 $string['erroraccessingcontext'] = 'Cannot access context';
-$string['errordeletingquestionsfromcategory'] = 'Error deleting questions from category {$a}.';
 $string['errorduringpost'] = 'Error occurred during post-processing!';
 $string['errorduringpre'] = 'Error occurred during pre-processing!';
 $string['errorduringproc'] = 'Error occurred during processing!';
@@ -253,6 +250,7 @@ $string['movingquestions'] = 'Moving questions and any files';
 $string['movingquestionsandfiles'] = 'Are you sure you want to move question(s) {$a->questions} to context for <strong>"{$a->tocontext}"</strong>?<br /> We have detected <strong>{$a->urlcount} files</strong> linked from these question(s) in {$a->fromareaname}, would you like to copy or move these to {$a->toareaname}?';
 $string['movingquestionsnofiles'] = 'Are you sure you want to move question(s) {$a->questions} to context for <strong>"{$a->tocontext}"</strong>?<br /> There are <strong>no files</strong> linked from these question(s) in {$a->fromareaname}.';
 $string['needtochoosecat'] = 'You need to choose a category to move this question to or press \'cancel\'.';
+$string['nobanks'] = 'This course does not have any question banks yet';
 $string['nocate'] = 'No such category {$a}!';
 $string['nopermissionadd'] = 'You don\'t have permission to add questions here.';
 $string['nopermissionedit'] = 'You don\'t have permission to edit questions from here.';
@@ -267,6 +265,7 @@ $string['novirtualquestiontype'] = 'No virtual question type for question type {
 $string['numqas'] = 'No. question attempts';
 $string['numquestions'] = 'No. questions';
 $string['numquestionsandhidden'] = '{$a->numquestions} (+{$a->numhidden} hidden +{$a->numdraft} draft)';
+$string['otherquestionbank'] = 'Other question banks';
 $string['page-question-x'] = 'Any question page';
 $string['page-question-edit'] = 'Question editing page';
 $string['page-question-category'] = 'Question category page';
@@ -290,6 +289,7 @@ $string['published'] = 'shared';
 $string['qtypeveryshort'] = 'T';
 $string['questionaffected'] = '<a href="{$a->qurl}">Question "{$a->name}" ({$a->qtype})</a> is in this question category but is also being used in <a href="{$a->qurl}">quiz "{$a->quizname}"</a> in another course "{$a->coursename}".';
 $string['questionbank'] = 'Question bank';
+$string['questionbank_plural'] = 'Question banks';
 $string['questionbanknavigation'] = 'Question bank tertiary navigation';
 $string['questioncategories'] = 'Question categories';
 $string['questioncategory'] = 'Question category';
@@ -307,6 +307,8 @@ $string['questiontags'] = 'Question tags';
 $string['questiontype'] = 'Question type';
 $string['questionuse'] = 'Use question in this activity';
 $string['questionvariant'] = 'Question variant';
+$string['quizquestionbank'] = "This quiz question bank";
+$string['recentlyviewedquestionbanks'] = 'Recently viewed question banks';
 $string['reviewresponse'] = 'Review response';
 $string['save'] = 'Save';
 $string['savechangesandcontinueediting'] = 'Save changes and continue editing';
@@ -318,6 +320,7 @@ $string['selectquestionsforbulk'] = 'Select questions for bulk actions';
 $string['shareincontext'] = 'Share in context for {$a}';
 $string['stoponerror'] = 'Stop on error';
 $string['stoponerror_help'] = 'This setting determines whether the import process stops when an error is detected, resulting in no questions being imported, or whether any questions containing errors are ignored and any valid questions are imported.';
+$string['switchbank'] = 'Switch bank';
 $string['tofilecategory'] = 'Write category to file';
 $string['tofilecontext'] = 'Write context to file';
 $string['topfor'] = 'Top for {$a}';
@@ -362,6 +365,7 @@ $string['contexterror'] = 'You shouldn\'t have got here if you\'re not moving a 
 $string['correct'] = 'Correct';
 $string['correctfeedback'] = 'For any correct response';
 $string['correctfeedbackdefault'] = 'Your answer is correct.';
+$string['courserestore'] = 'Course restore';
 $string['decimalplacesingrades'] = 'Decimal places in grades';
 $string['defaultmark'] = 'Default mark';
 $string['errorsavingflags'] = 'Error saving the flag state.';
@@ -408,6 +412,8 @@ $string['notyetanswered'] = 'Not yet answered';
 $string['notchanged'] = 'Not changed since last attempt';
 $string['notyourpreview'] = 'This preview does not belong to you';
 $string['options'] = 'Options';
+$string['otherbanks'] = 'Other activities with questions';
+$string['otherbanksdesc'] = "The following activities in this course also contain questions,<br /> although they cannot be shared.";
 $string['parent'] = 'Parent';
 $string['partiallycorrect'] = 'Partially correct';
 $string['partiallycorrectfeedback'] = 'For any partially correct response';
@@ -418,6 +424,7 @@ $string['penaltyforeachincorrecttry_help'] = 'When questions are run using the \
 The penalty is a proportion of the total question grade, so if the question is worth three marks, and the penalty is 0.3333333, then the student will score 3 if they get the question right first time, 2 if they get it right second try, and 1 of they get it right on the third try.
 
 For some multi-part questions this scoring logic is applied separately to each part of the question. The details depend on the question type and can be complicated, but the principle is to give students credit for the knowledge they have demonstrated as fairly as possible.';
+$string['previewbank'] = "Preview shared question bank";
 $string['previewquestion'] = 'Preview question: {$a}';
 $string['privacy:metadata:database:question'] = 'The details about a specific question.';
 $string['privacy:metadata:database:question:createdby'] = 'The person who created the question.';
@@ -494,6 +501,8 @@ $string['submissionoutofsequencefriendlymessage'] = "You have entered data outsi
 $string['submit'] = 'Submit';
 $string['submitandfinish'] = 'Submit and finish';
 $string['submitted'] = 'Submit: {$a}';
+$string['systembank'] = "System shared question bank";
+$string['systembankdescription'] = "This type of question bank is created automatically. It will be used for things such as backup restores that could not find a target context, and for when deleting a category and it's contents could not be deleted safely";
 $string['tagarea_question'] = 'Questions';
 $string['technicalinfo'] = 'Technical information';
 $string['technicalinfo_help'] = 'This technical information is probably only useful for developers working on new question types. It may also be helpful when trying to diagnose problems with questions.';
@@ -524,3 +533,6 @@ $string['version_selection'] = 'Version {$a->version}';
 $string['versioninfo'] = 'Version {$a->version} (of {$a->latestversion})';
 $string['versioninfolatest'] = 'Version {$a->version} (latest)';
 $string['question_version'] = 'Question version';
+
+// Deprecated since Moodle 5.0.
+$string['errordeletingquestionsfromcategory'] = 'Error deleting questions from category {$a}.';

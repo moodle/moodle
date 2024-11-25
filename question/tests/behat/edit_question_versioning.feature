@@ -14,12 +14,12 @@ Feature: Questions in the question bank have versions
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
     And the following "activities" exist:
       | activity   | name   | course | idnumber |
       | quiz       | Quiz 1 | C1     | quiz1    |
+    And the following "question categories" exist:
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name           | questiontext              | answer 1 |
       | Test questions   | truefalse | First question | Answer the first question | True     |
@@ -29,13 +29,13 @@ Feature: Questions in the question bank have versions
 
   @javascript
   Scenario: Question version is displayed
-    Given I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
+    Given I am on the "Quiz 1" "mod_quiz > question bank" page logged in as "teacher1"
     When I choose "Edit question" action for "First question" in the question bank
     Then I should see "Version 1"
 
   @javascript
   Scenario: Question version change when question is altered
-    Given I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
+    Given I am on the "Quiz 1" "mod_quiz > question bank" page logged in as "teacher1"
     When I choose "Edit question" action for "First question" in the question bank
     And I should see "Version 1"
     When I set the field "id_name" to "Renamed question v2"

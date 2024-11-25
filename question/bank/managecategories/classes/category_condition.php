@@ -32,6 +32,9 @@ class category_condition extends condition {
     /** @var \stdClass The course record. */
     protected $course;
 
+    /** @var \stdClass The course_modules record. */
+    protected \stdClass $cm;
+
     /** @var \stdClass The category record. */
     protected $category;
 
@@ -57,8 +60,11 @@ class category_condition extends condition {
             return;
         }
         $this->cat = $qbank->get_pagevars('cat');
-        $this->contexts = $qbank->contexts->having_one_edit_tab_cap($qbank->get_pagevars('tabname'));
+        $this->contexts = array_filter($qbank->contexts->having_one_edit_tab_cap($qbank->get_pagevars('tabname')),
+            static fn($context) => $context->contextlevel === CONTEXT_MODULE
+        );
         $this->course = $qbank->course;
+        $this->cm = $qbank->cm;
 
         [$categoryid, $contextid] = self::validate_category_param($this->cat);
         if (is_null($categoryid)) {
@@ -78,7 +84,7 @@ class category_condition extends condition {
      */
     public function get_default_category(): \stdClass {
         if (empty($this->category)) {
-            return question_get_default_category(\context_course::instance($this->course->id)->id);
+            return question_get_default_category(\context_module::instance($this->cm->id)->id, true);
         }
 
         return $this->category;

@@ -14,9 +14,12 @@ Feature: A teacher can see highlighted questions in the question bank
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity | name    | course | idnumber |
+      | qbank    | Qbank 1 | C1     | qbank1   |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | qbank1    | Test questions |
     And 101 "questions" exist with the following data:
       | questioncategory | Test questions                |
       | qtype            | essay                         |

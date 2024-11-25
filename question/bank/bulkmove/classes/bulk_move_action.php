@@ -16,6 +16,8 @@
 
 namespace qbank_bulkmove;
 
+use moodle_exception;
+
 /**
  * Class bulk_move_action is the base class for moving questions.
  *
@@ -43,5 +45,32 @@ class bulk_move_action extends \core_question\local\bank\bulk_action_base {
             'moodle/question:moveall',
             'moodle/question:add',
         ];
+    }
+
+    /**
+     * Initialise the modal js with the current bank context id and question category id.
+     * @return void
+     */
+    public function initialise_javascript(): void {
+        global $PAGE;
+
+        $category = $this->qbank->get_pagevars('cat');
+
+        if (!empty($category)) {
+            [$categoryid, $contextid] = explode(',', $category);
+        } else {
+            $defaultcategory = question_get_default_category($this->qbank->cm->context->id, true);
+            $categoryid = $defaultcategory->id;
+            $contextid = $defaultcategory->contextid;
+        }
+
+        $PAGE->requires->js_call_amd(
+            'qbank_bulkmove/modal_question_bank_bulkmove',
+            'init',
+            [
+                'contextid' => $contextid,
+                'categoryid' => $categoryid,
+            ]
+        );
     }
 }

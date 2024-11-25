@@ -27,7 +27,7 @@ namespace core_question\local\bank;
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class bulk_action_base {
+abstract class bulk_action_base extends view_component {
 
     /**
      * Title of the bulk action.
@@ -67,6 +67,15 @@ abstract class bulk_action_base {
      */
     public function get_bulk_action_capabilities(): ?array {
         return null;
+    }
+
+    /**
+     * Override if you want to load your own javascript.
+     *
+     * @return void
+     */
+    public function initialise_javascript(): void {
+
     }
 
     /**

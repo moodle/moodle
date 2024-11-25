@@ -2124,6 +2124,12 @@ abstract class base {
         if (array_key_exists($originalsection->section, $modinfo->sections)) {
             foreach ($modinfo->sections[$originalsection->section] as $modnumber) {
                 $originalcm = $modinfo->cms[$modnumber];
+                // We don't want to duplicate any modules with the FEATURE_CAN_DISPLAY set to false.
+                // These mod types are always in section 0 so safe to say we are currently duplicating that section,
+                // and we don't want to inadvertantly duplicate mods we can't see.
+                if (!$originalcm->is_of_type_that_can_display()) {
+                    continue;
+                }
                 if (!$originalcm->deletioninprogress) {
                     duplicate_module($course, $originalcm, $newsection->id, false);
                 }

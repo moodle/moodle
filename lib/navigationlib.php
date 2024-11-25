@@ -4915,7 +4915,8 @@ class settings_navigation extends navigation_node {
 
         // Questions
         require_once($CFG->libdir . '/questionlib.php');
-        question_extend_settings_navigation($coursenode, $coursecontext)->trim_if_empty();
+        $baseurl = \core_question\local\bank\question_bank_helper::get_url_for_qbank_list($course->id);
+        question_extend_settings_navigation($coursenode, $coursecontext, $baseurl)->trim_if_empty();
 
         if ($adminoptions->update) {
             // Repository Instances
@@ -5899,7 +5900,8 @@ class settings_navigation extends navigation_node {
 
         // Questions
         require_once($CFG->libdir . '/questionlib.php');
-        question_extend_settings_navigation($frontpage, $coursecontext)->trim_if_empty();
+        $baseurl = \core_question\local\bank\question_bank_helper::get_url_for_qbank_list($course->id);
+        question_extend_settings_navigation($frontpage, $coursecontext, $baseurl)->trim_if_empty();
 
         // Manage files
         if ($adminoptions->files) {

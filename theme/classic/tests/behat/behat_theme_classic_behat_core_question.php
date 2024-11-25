@@ -35,15 +35,10 @@ class behat_theme_classic_behat_core_question extends behat_core_question {
      * @param string $questiontypename The question type name
      * @param TableNode $questiondata The data to fill the question type form.
      */
+    #[\core\attribute\deprecated('behat_core_question::i_add_a_question_filling_the_form_with()', since: '5.0', mdl: 'MDL-71378')]
     public function i_add_a_question_filling_the_form_with($questiontypename, TableNode $questiondata) {
 
-        // Go to question bank.
-        $this->execute("behat_general::click_link", get_string('questionbank', 'question'));
-
-        // Click on create question.
-        $this->execute('behat_forms::press_button', get_string('createnewquestion', 'question'));
-
-        // Add question.
-        $this->finish_adding_question($questiontypename, $questiondata);
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        parent::i_add_a_question_filling_the_form_with($questiontypename, $questiondata);
     }
 }

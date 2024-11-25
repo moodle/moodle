@@ -137,3 +137,7 @@ filterfirstactive,core_grades
 filterlastactive,core_grades
 noreplybouncemessage,core
 noreplybouncesubject,core
+configgeneralquestionbank,core_backup
+generalquestionbank,core_backup
+cannotdeletecategoryquestions,core_error
+errordeletingquestionsfromcategory,core_question

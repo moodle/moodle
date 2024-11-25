@@ -23,9 +23,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['bulkmoveheader'] = 'Move the selected questions';
+$string['bulkmoveheader'] = 'Move the selected questions to...';
 $string['close'] = 'Close';
+$string['confirmmove'] = 'Are you sure you want to move these questions?';
 $string['movequestions'] = 'Move questions';
 $string['movetobulkaction'] = 'Move to...';
 $string['pluginname'] = 'Bulk move questions';
 $string['privacy:metadata'] = 'The Bulk move questions question bank plugin does not store any personal data.';
+$string['questionsmoved'] = 'Questions successfully moved';
+$string['warning'] = 'You must select a question bank before you can select a category.';

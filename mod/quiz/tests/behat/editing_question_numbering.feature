@@ -15,13 +15,14 @@ Feature: Editing question numbering of the existing questions already in a quiz
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
     And the following "activities" exist:
-      | activity   | name   | intro              | course | idnumber |
-      | quiz       | Quiz 1 | Quiz 1 for testing | C1     | quiz1    |
-      | quiz       | Quiz 2 | Quiz 2 for testing | C1     | quiz2    |
+      | activity   | name    | intro              | course | idnumber |
+      | quiz       | Quiz 1  | Quiz 1 for testing | C1     | quiz1    |
+      | quiz       | Quiz 2  | Quiz 2 for testing | C1     | quiz2    |
+      | qbank      | Qbank 1 | Qbank for testing  | C1     | qbank1   |
     And the following "question categories" exist:
-      | contextlevel | reference | name                |
-      | Course       | C1        | Questions Category 1|
-      | Course       | C1        | Questions Category 2|
+      | contextlevel    | reference | name                |
+      | Activity module | qbank1    | Questions Category 1|
+      | Activity module | qbank1    | Questions Category 2|
     Given the following "questions" exist:
       | questioncategory     | qtype       | name        | questiontext           |
       | Questions Category 1 | description | Description | This is decription ... |

@@ -14,14 +14,17 @@ Feature: A teacher can put questions with idnumbers in categories in the questio
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity | name    | course | idnumber |
+      | qbank    | Qbank 1 | C1     | qbank1   |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
 
   Scenario: A question can only have a unique idnumber within a category
     When the following "question categories" exist:
-      | contextlevel | reference | questioncategory | name           | idnumber |
-      | Course       | C1        | Top              | top            |          |
-      | Course       | C1        | top              | Used category  | c1used   |
+      | contextlevel    | reference | questioncategory | name           | idnumber |
+      | Activity module | qbank1    | Top              | top            |          |
+      | Activity module | qbank1    | top              | Used category  | c1used   |
     And the following "questions" exist:
       | questioncategory | qtype | name            | questiontext                  | idnumber |
       | Used category    | essay | Test question 1 | Write about whatever you want | q1       |
@@ -34,9 +37,9 @@ Feature: A teacher can put questions with idnumbers in categories in the questio
 
   Scenario: A question can be edited and saved without changing the idnumber
     When the following "question categories" exist:
-      | contextlevel | reference | questioncategory | name           | idnumber |
-      | Course       | C1        | Top              | top            |          |
-      | Course       | C1        | top              | Used category  | c1used   |
+      | contextlevel    | reference | questioncategory | name           | idnumber |
+      | Activity module | qbank1    | Top              | top            |          |
+      | Activity module | qbank1    | top              | Used category  | c1used   |
     And the following "questions" exist:
       | questioncategory | qtype | name            | questiontext                  | idnumber |
       | Used category    | essay | Test question 1 | Write about whatever you want | q1       |
@@ -46,10 +49,10 @@ Feature: A teacher can put questions with idnumbers in categories in the questio
 
   Scenario: Question idnumber conflicts found when saving to the same category.
     When the following "question categories" exist:
-      | contextlevel | reference | questioncategory | name       |
-      | Course       | C1        | Top              | top        |
-      | Course       | C1        | top              | Category 1 |
-      | Course       | C1        | top              | Category 2 |
+      | contextlevel    | reference | questioncategory | name       |
+      | Activity module | qbank1    | Top              | top        |
+      | Activity module | qbank1    | top              | Category 1 |
+      | Activity module | qbank1    | top              | Category 2 |
     And the following "questions" exist:
       | questioncategory | qtype | name             | questiontext                  | idnumber |
       | Category 1       | essay | Question to edit | Write about whatever you want | q1       |
@@ -62,10 +65,10 @@ Feature: A teacher can put questions with idnumbers in categories in the questio
   @javascript
   Scenario: Moving a question between categories can force a change to the idnumber
     And the following "question categories" exist:
-      | contextlevel | reference | questioncategory | name           | idnumber |
-      | Course       | C1        | Top              | top            |          |
-      | Course       | C1        | top              | Subcategory    | c1sub    |
-      | Course       | C1        | top              | Used category  | c1used   |
+      | contextlevel    | reference | questioncategory | name           | idnumber |
+      | Activity module | qbank1    | Top              | top            |          |
+      | Activity module | qbank1    | top              | Subcategory    | c1sub    |
+      | Activity module | qbank1    | top              | Used category  | c1used   |
     And the following "questions" exist:
       | questioncategory | qtype | name            | questiontext                  | idnumber |
       | Used category    | essay | Test question 1 | Write about whatever you want | q1       |
@@ -79,8 +82,12 @@ Feature: A teacher can put questions with idnumbers in categories in the questio
     And I click on "Test question 3" "checkbox" in the "Test question 3" "table_row"
     And I click on "With selected" "button"
     And I click on question bulk action "move"
-    And I set the field "Question category" to "Subcategory"
-    And I press "Move to"
+    And I open the autocomplete suggestions list in the ".search-categories" "css_element"
+    And I click on "Used category" item in the autocomplete list
+    And I click on "Move questions" "button"
+    And I should see "Are you sure you want to move these questions?"
+    And I click on "Confirm" "button"
+    And I wait until the page is ready
     And I choose "Edit question" action for "Test question 3" in the question bank
     # The question just moved into this category needs to have a unique idnumber, so a number is appended.
     Then the field "ID number" matches value "q1_1"

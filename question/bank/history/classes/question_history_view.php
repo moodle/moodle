@@ -63,6 +63,10 @@ class question_history_view extends view {
         array $params = [],
         array $extraparams = [],
     ) {
+        if ($cm === null) {
+            debugging('$cm is now a required field', DEBUG_DEVELOPER);
+        }
+
         $this->entryid = $extraparams['entryid'];
         $this->basereturnurl = new \moodle_url($extraparams['returnurl']);
         parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);

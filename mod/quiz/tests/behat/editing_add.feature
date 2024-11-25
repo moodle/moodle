@@ -15,8 +15,11 @@ Feature: Edit quiz page - adding things
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
     And the following "activities" exist:
-      | activity   | name   | intro                           | course | idnumber |
-      | quiz       | Quiz 1 | Quiz 1 for testing the Add menu | C1     | quiz1    |
+      | activity   | name    | intro                                     | course | idnumber  |
+      | quiz       | Quiz 1  | Quiz 1 for testing the Add menu           | C1     | quiz1     |
+    And the following "question categories" exist:
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
     And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
 
   @javascript
@@ -100,11 +103,11 @@ Feature: Edit quiz page - adding things
 
     # Create a couple of sub categories.
     Given the following "question categories" exist:
-      | contextlevel | reference | questioncategory | name           |
-      | Course       | C1        | Default for C1   | Subcat 1       |
-      | Course       | C1        | Default for C1   | Subcat 2       |
-    When I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
+      | contextlevel    | reference | questioncategory | name           |
+      | Activity module | quiz1     | Test questions   | Subcat 1       |
+      | Activity module | quiz1     | Test questions   | Subcat 2       |
+    When I am on the "Quiz 1" "mod_quiz > question categories" page
+
     And I select "Questions" from the "Question bank tertiary navigation" singleselect
     And I should see "Question bank"
 
@@ -229,10 +232,7 @@ Feature: Edit quiz page - adding things
 
   @accessibility @javascript
   Scenario: Check the accessibility of the quiz questions page
-    Given the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
-    And the following "questions" exist:
+    Given the following "questions" exist:
       | questioncategory | qtype     | name           | questiontext              |
       | Test questions   | truefalse | First question | Answer the first question |
       | Test questions   | truefalse | Other question | Answer the first question |

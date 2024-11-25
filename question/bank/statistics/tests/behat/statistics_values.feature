@@ -16,19 +16,20 @@ Feature: Show statistics in question bank
       | user     | course | role           |
       | student1 | C1     | student        |
       | student2 | C1     | student        |
+    And the following "activities" exist:
+      | activity   | name    | intro              | course | idnumber |
+      | quiz       | Quiz 1  | Quiz 1 description | C1     | quiz1    |
+      | quiz       | Quiz 2  | Quiz 2 description | C1     | quiz2    |
+      | qbank      | Qbank 1 | Question bank 1    | C1     | qbank1   |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | qbank1    | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype       | name  | questiontext    |
       | Test questions   | truefalse   | TF1   | First question  |
       | Test questions   | truefalse   | TF2   | Second question |
       | Test questions   | truefalse   | TF3   | Third question  |
       | Test questions   | truefalse   | TF4   | Fourth question |
-    And the following "activities" exist:
-      | activity   | name   | intro              | course | idnumber |
-      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    |
-      | quiz       | Quiz 2 | Quiz 2 description | C1     | quiz2    |
     And quiz "Quiz 1" contains the following questions:
       | question | page | maxmark |
       | TF1      | 1    | 1.0     |
@@ -74,7 +75,7 @@ Feature: Show statistics in question bank
       | 1    | True     |
       | 2    | True     |
     And I run pending statistics recalculation tasks
-    When I am on the "Course 1" "core_question > course question bank" page logged in as "admin"
+    When I am on the "Qbank 1" "core_question > question bank" page logged in as "admin"
     Then I should see "50.00%" in the "TF1" "table_row"
     And I should see "75.00%" in the "TF2" "table_row"
     And I should see "75.00%" in the "TF3" "table_row"
@@ -90,7 +91,7 @@ Feature: Show statistics in question bank
       | 1    | True     |
       | 2    | True     |
     And I run pending statistics recalculation tasks
-    When I am on the "Course 1" "core_question > course question bank" page logged in as "admin"
+    When I am on the "Qbank 1" "core_question > question bank" page logged in as "admin"
     Then I should see "50.00%" in the "TF1" "table_row"
     And I should see "75.00%" in the "TF2" "table_row"
     And I should see "75.00%" in the "TF3" "table_row"
@@ -106,7 +107,7 @@ Feature: Show statistics in question bank
       | 1    | True     |
       | 2    | True     |
     And I run pending statistics recalculation tasks
-    When I am on the "Course 1" "core_question > course question bank" page logged in as "admin"
+    When I am on the "Qbank 1" "core_question > question bank" page logged in as "admin"
     Then I should see "Likely" in the "TF1" "table_row"
     And I should see "Unlikely" in the "TF2" "table_row"
     And I should see "Unlikely" in the "TF3" "table_row"
@@ -128,7 +129,7 @@ Feature: Show statistics in question bank
       | 1    | True     |
       | 2    | False    |
     And I run pending statistics recalculation tasks
-    When I am on the "Course 1" "core_question > course question bank" page logged in as "admin"
+    When I am on the "Qbank 1" "core_question > question bank" page logged in as "admin"
     Then I should see "Likely" in the "TF1" "table_row"
     And I should see "Very likely" in the "TF2" "table_row"
     And I should see "Very likely" in the "TF3" "table_row"
@@ -152,7 +153,7 @@ Feature: Show statistics in question bank
       | quiz       | Quiz 3 | C2     | quiz3    |
     And the following "question categories" exist:
       | contextlevel    | reference | name           |
-      | Course          | C2        | Quiz questions |
+      | Activity module | quiz3     | Quiz questions |
     And the following "questions" exist:
       | questioncategory | qtype       | template    | name |
       | Quiz questions   | multichoice | one_of_four | MCA  |

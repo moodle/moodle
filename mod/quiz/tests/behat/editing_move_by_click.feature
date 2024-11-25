@@ -14,17 +14,17 @@ Feature: Edit quiz page - drag-and-drop
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name    | course | idnumber |
+      | quiz       | Quiz 1  | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name       | questiontext        |
       | Test questions   | truefalse | Question A | This is question 01 |
       | Test questions   | truefalse | Question B | This is question 02 |
       | Test questions   | truefalse | Question C | This is question 03 |
-    And the following "activities" exist:
-      | activity   | name   | course | idnumber |
-      | quiz       | Quiz 1 | C1     | quiz1    |
     And quiz "Quiz 1" contains the following questions:
       | question   | page |
       | Question A | 1    |

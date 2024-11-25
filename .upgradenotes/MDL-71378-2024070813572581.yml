@@ -1,0 +1,42 @@
+issueNumber: MDL-71378
+notes:
+  core:
+    - message: >
+        question_make_default_categories()
+
+
+        No longer creates a default category in either CONTEXT_SYSTEM,
+        CONTEXT_COURSE, or CONTEXT_COURSECAT.
+
+        Superceded by question_get_default_category which can optionally create one if it does not exist.
+      type: deprecated
+    - message: |
+        question_delete_course()
+
+        No replacement. Course contexts no longer hold question categories.
+      type: deprecated
+    - message: |
+        question_delete_course_category()
+
+        Course category contexts no longer hold question categories.
+      type: deprecated
+  qbank_bulkmove:
+    - message: >
+        qbank_bulkmove/helper::get_displaydata
+
+
+        Superceded by a modal and webservice, see
+        qbank_bulkmove/modal_question_bank_bulkmove and
+        core_question_external\move_questions
+      type: deprecated
+    - message: |
+        qbank_bulkmove\output\renderer::render_bulk_move_form
+
+        Superceded by qbank_bulkmove\output\bulk_move
+      type: deprecated
+  core_question:
+    - message: |
+        question_type::generate_test
+
+        No replacement, not used anywhere in core.
+      type: deprecated

@@ -14,9 +14,12 @@ Feature: Display of information before starting a quiz
     And the following "course enrolments" exist:
       | user     | course | role    |
       | student  | C1     | student |
+    And the following "activities" exist:
+      | activity | name          | course | idnumber |
+      | qbank    | Qbank 1       | C1     | qbank1   |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel    | reference | name           |
+      | Activity module | qbank1    | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype       | name  | questiontext               |
       | Test questions   | truefalse   | TF1   | Text of the first question |

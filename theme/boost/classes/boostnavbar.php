@@ -113,6 +113,11 @@ class boostnavbar implements \renderable {
             foreach ($this->items as $key => $item) {
                 // Remove if it is a course category breadcrumb node.
                 $this->remove($item->key, \breadcrumb_navigation_node::TYPE_CATEGORY);
+
+                // Module types not visible on the course main page cannot have a section breadcrumb.
+                if (!$this->page->cm->is_of_type_that_can_display() && $item->type === navigation_node::TYPE_SECTION) {
+                    $this->remove($item->key, \breadcrumb_navigation_node::TYPE_SECTION);
+                }
             }
             $courseformat = course_get_format($this->page->course);
             $removesections = $courseformat->can_sections_be_removed_from_navigation();

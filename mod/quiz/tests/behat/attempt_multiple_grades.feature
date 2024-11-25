@@ -14,12 +14,12 @@ Feature: Attempt a quiz with multiple grades
     And the following "course enrolments" exist:
       | user    | course | role    |
       | student | C1     | student |
-    And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
     And the following "activities" exist:
-      | activity   | name   | course |
-      | quiz       | Quiz 1 | C1     |
+      | activity   | name   | course | idnumber |
+      | quiz       | Quiz 1 | C1     | quiz1    |
+    And the following "question categories" exist:
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
 
   @javascript
   Scenario: Navigation to, and display of, grading setup
