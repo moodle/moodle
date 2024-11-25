@@ -99,3 +99,6 @@ Feature: A teacher can put questions in categories in the question bank
     When I set the field "Also show questions from subcategories" to "1"
     And I click on "Apply filters" "button"
     Then I should see "Question 1" in the "categoryquestions" "table"
+    When I reload the page
+    Then I should see "Question 1" in the "categoryquestions" "table"
+    And the field "Also show questions from subcategories" matches value "1"
