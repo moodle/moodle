@@ -4,14 +4,14 @@
 
 @each $color, $value in $colors {
     .swatch-#{$color} {
-        color: color-yiq($value);
+        color: color-contrast($value);
         background-color: #{$value};
     }
 }
 
 @each $color, $value in $grays {
     .swatch-#{$color} {
-        color: color-yiq($value);
+        color: color-contrast($value);
         background-color: #{$value};
     }
 }

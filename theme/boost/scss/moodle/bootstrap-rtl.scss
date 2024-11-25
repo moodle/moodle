@@ -13,6 +13,9 @@
     }
 }
 
+$custom-control-indicator-size:         1rem !default;
+$custom-switch-width: $custom-control-indicator-size * 1.75 !default;
+
 .dir-rtl {
     .custom-select {
         background-position: 0.75rem center;

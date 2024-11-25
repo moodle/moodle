@@ -35,8 +35,10 @@
 
     .modal-body {
         .moodlenet-share-activity-info {
+            color: $body-color;
+            border-color: $primary-light-border;
+            @include gradient-bg($primary-light-background);
             @include border-radius();
-            @include alert-variant($primary-light-background, $primary-light-border, $body-color);
             border-width: 1px;
             border-style: solid;
             padding: 0.6em 1.5em;

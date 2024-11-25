@@ -28,7 +28,7 @@ $divider-hover-color: $primary !default;
             @include button-variant($bg-color, $bg-color, $value);
             color: shift-color($value, $alert-color-scale);
             &:hover {
-                color: color-yiq($value);
+                color: color-contrast($value);
             }
         }
     }
@@ -589,7 +589,7 @@ $divider-hover-color: $primary !default;
     background-color: shift-color($primary, $alert-bg-scale);
     &:hover,
     &:focus {
-        color: color-yiq($primary);
+        color: color-contrast($primary);
         background-color: $primary;
     }
     .icon {

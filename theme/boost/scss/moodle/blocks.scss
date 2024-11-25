@@ -39,7 +39,7 @@ $blocks-column-width: 360px !default;
     float: right;
 }
 
-$blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width * 0.5 );
+$blocks-plus-gutter: calc(#{$blocks-column-width} + (#{$grid-gutter-width} * 0.5));
 
 /* We put an absolutely positioned div in a relatively positioned div so it takes up no space */
 @include media-breakpoint-up(sm) {
@@ -375,7 +375,9 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width * 0.5 );
 // Block add button
 //
 .block-add {
-    @include alert-variant($primary-light-background, $primary-light-border, $primary);
+    color: $primary;
+    border-color: $primary-light-border;
+    @include gradient-bg($primary-light-background);
     @include border-radius();
     width: 100%;
     border-width: $border-width;

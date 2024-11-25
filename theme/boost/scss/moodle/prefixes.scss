@@ -28,6 +28,8 @@ input[type="month"] {
     }
 }
 
+$card-columns-gap: 1.25rem !default;
+
 .card-columns {
     @include media-breakpoint-up(sm) {
         -webkit-column-gap: $card-columns-gap;
@@ -56,6 +58,8 @@ input[type="month"] {
     -webkit-user-select: none;
     -ms-user-select: none;
 }
+
+$user-selects: all, auto, none !default;
 
 @each $value in $user-selects {
     .user-select-#{$value} {

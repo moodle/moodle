@@ -10,7 +10,7 @@
 .reportbuilder-wrapper {
     .btn-outline-secondary[data-toggle="collapse"]:not(.collapsed),
     .dropdown.show .btn-outline-secondary[data-toggle="dropdown"] {
-        color: color-yiq($gray-600);
+        color: color-contrast($gray-600);
         background-color: $gray-600;
         border-color: $gray-600;
     }

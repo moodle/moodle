@@ -278,6 +278,9 @@ div#dateselector-calendar-panel {
     z-index: 3;
 }
 
+$custom-select-disabled-color: $gray-600 !default;
+$custom-select-disabled-bg: $gray-200 !default;
+
 .form-autocomplete-suggestions li {
     list-style-type: none;
     padding: $dropdown-item-padding-y $dropdown-item-padding-x;

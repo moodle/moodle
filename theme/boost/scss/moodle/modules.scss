@@ -468,10 +468,12 @@ $grading-drawer-width: 430px !default;
 $grading-animation-duration: .3s !default;
 $grading-icon-button-size: 36px !default;
 $grading-search-button-padding-left: calc(#{map-get($spacers, 2)} + 8px) !default;
-$grading-search-input-padding-left: calc(#{map-get($spacers, 2)} + #{map-get($spacers, 2)} + #{$grading-icon-button-size - ($input-border-width * 2)}) !default; /* stylelint-disable-line max-line-length */
+$grading-search-input-padding-left: calc(#{map-get($spacers, 2)} + #{map-get($spacers, 2)} + #{$grading-icon-button-size} - calc(#{$input-border-width} * 2)) !default; /* stylelint-disable-line max-line-length */
 $grading-search-input-padding-right: calc(#{map-get($spacers, 2)} + #{$grading-icon-button-size}) !default;
 $grading-nav-bar-active-drawer-button-bottom: calc(#{map-get($spacers, 2) * -1} - 1px) !default;
 $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) * 2} + 45px) !default;
+
+$input-line-height-lg:  1.5 !default;
 
 @keyframes expandSearchButton {
     from {
@@ -634,7 +636,7 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
                         transform: translateY(-50%);
                         color: $input-color;
                         height: $grading-icon-button-size;
-                        width: $grading-icon-button-size - ($input-border-width * 2);
+                        width: calc(#{$grading-icon-button-size} - calc(#{$input-border-width} * 2));
                         background-color: $input-bg;
                         opacity: 1;
                         visibility: visible;
@@ -1369,7 +1371,7 @@ img.userpicture {
     #quiz-timer-wrapper #quiz-timer.timeleft#{$i} {
         $bg: lighten($red, ($i * 3%));
         background-color: $bg;
-        color: color-yiq($bg);
+        color: color-contrast($bg);
     }
 }
 
@@ -1498,8 +1500,10 @@ $popout-header-height: 4rem;
     padding: $alert-padding-y $alert-padding-x;
     margin-bottom: $alert-margin-bottom;
     border: $alert-border-width solid transparent;
+    color: shift-color($info, $alert-color-scale);
+    border-color: shift-color($info, $alert-border-scale);
     @include border-radius($alert-border-radius);
-    @include alert-variant(shift-color($info, $alert-bg-scale), shift-color($info, $alert-border-scale), shift-color($info, $alert-color-scale)); /* stylelint-disable-line max-line-length */
+    @include gradient-bg(shift-color($info, $alert-bg-scale));
 }
 
 .assignfeedback_editpdf_menu {

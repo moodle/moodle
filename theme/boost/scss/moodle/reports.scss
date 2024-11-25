@@ -50,6 +50,6 @@
     // Since we are using disabled elements to create a sense of hierarchy,
     // we intentionally use a slightly different color for them.
     // We do this because HTML still does not allow nested optgroups in select elements.
-    color: lighten($custom-select-color, 1%);
+    color: lighten($body-color, 1%);
     font-weight: bolder;
 }
