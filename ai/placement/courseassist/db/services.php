@@ -32,4 +32,11 @@ $functions = [
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+    'aiplacement_courseassist_explain_text' => [
+        'classname' => 'aiplacement_courseassist\external\explain_text',
+        'description' => 'Explain text for the Course Assistance Placement',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
 ];

@@ -23,6 +23,7 @@
  */
 
 $string['aisummary'] = 'AI summary';
+$string['courseassist:explain_text'] = 'Explain text';
 $string['courseassist:summarise_text'] = 'Summarise text';
 $string['copy'] = 'Copy';
 $string['generatefailtitle'] = 'Something went wrong';

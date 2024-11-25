@@ -22,6 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['action:explain_text:apiversion'] = 'API version';
+$string['action:explain_text:deployment'] = 'Deployment ID';
+$string['action:explain_text:deployment_help'] = 'The deployment ID that relates to the API endpoint the provider uses for this action.';
+$string['action:explain_text:systeminstruction'] = 'System instruction';
+$string['action:explain_text:systeminstruction_help'] = 'This instruction is sent to the AI model along with the user\'s prompt. Editing this instruction is not recommended unless absolutely required.';
 $string['action:generate_image:apiversion'] = 'API version';
 $string['action:generate_image:deployment'] = 'Deployment ID';
 $string['action:generate_image:deployment_help'] = 'The deployment ID that relates to the API endpoint the provider uses for this action.';

@@ -22,6 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['action:explain_text:endpoint'] = 'API endpoint';
+$string['action:explain_text:model'] = 'AI model';
+$string['action:explain_text:model_help'] = 'The model used to explain the provided text.';
+$string['action:explain_text:systeminstruction'] = 'System instruction';
+$string['action:explain_text:systeminstruction_help'] = 'This instruction is sent to the AI model along with the user\'s prompt. Editing this instruction is not recommended unless absolutely required.';
 $string['action:generate_image:endpoint'] = 'API endpoint';
 $string['action:generate_image:model'] = 'AI model';
 $string['action:generate_image:model_help'] = 'The model used to generate images from user prompts.';
