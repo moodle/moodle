@@ -60,10 +60,18 @@ define(['jquery', 'core_form/events'], function($, FormEvent) {
                 // Find the the feedback container in the aria-describedby attribute.
                 const feedbackIndex = describedByIds.indexOf(feedbackId);
 
-                // Sometimes (atto) we have a hidden textarea backed by a real contenteditable div.
-                if (($(element).prop("tagName") == 'TEXTAREA') && parent.find('[contenteditable]').length > 0) {
-                    element = parent.find('[contenteditable]');
+                if (element.tagName === 'TEXTAREA') {
+                    // Check if the textarea is backed by a contenteditable div.
+                    const contentEditable = parent.find('[contenteditable]');
+                    if (contentEditable.length > 0) {
+                        // Use the contenteditable div as the target element.
+                        element = contentEditable[0];
+                    } else {
+                        // Use the TinyMCE iframe as the target element if it exists.
+                        element = document.getElementById(`${element.id}_ifr`) || element;
+                    }
                 }
+
                 if (msg !== '') {
                     parent.addClass('has-danger');
                     parent.data('client-validation-error', true);
