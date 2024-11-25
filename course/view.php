@@ -304,6 +304,23 @@ if (!empty($bulkbutton)) {
 }
 
 $PAGE->set_heading($course->fullname);
+
+// Make sure that section 0 exists (this function will create one if it is missing).
+course_create_sections_if_missing($course, 0);
+
+// Get information about course modules and existing module types.
+// format.php in course formats may rely on presence of these variables.
+$modinfo = get_fast_modinfo($course);
+$modnames = get_module_types_names();
+$modnamesplural = get_module_types_names(true);
+$modnamesused = $modinfo->get_used_module_names();
+$mods = $modinfo->get_cms();
+$sections = $modinfo->get_section_info_all();
+
+// Include course AJAX. This should be done before starting the UI
+// to allow page header, blocks, or drawers use the course editor.
+include_course_ajax($course, $modnamesused);
+
 echo $OUTPUT->header();
 
 // Show communication room status notification.
@@ -324,25 +341,10 @@ if ($USER->editing == 1) {
 // Course wrapper start.
 echo html_writer::start_tag('div', ['class' => 'course-content']);
 
-// Make sure that section 0 exists (this function will create one if it is missing).
-course_create_sections_if_missing($course, 0);
-
-// Get information about course modules and existing module types.
-// format.php in course formats may rely on presence of these variables.
-$modinfo = get_fast_modinfo($course);
-$modnames = get_module_types_names();
-$modnamesplural = get_module_types_names(true);
-$modnamesused = $modinfo->get_used_module_names();
-$mods = $modinfo->get_cms();
-$sections = $modinfo->get_section_info_all();
-
 // CAUTION, hacky fundamental variable defintion to follow!
 // Note that because of the way course fromats are constructed though
 // inclusion we pass parameters around this way.
 $displaysection = $section;
-
-// Include course AJAX.
-include_course_ajax($course, $modnamesused);
 
 // Include the actual course format.
 require($CFG->dirroot .'/course/format/'. $course->format .'/format.php');

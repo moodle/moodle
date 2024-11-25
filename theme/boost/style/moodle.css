@@ -27353,15 +27353,6 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
   color: #6a737b;
 }
 
-.block_social_activities li a.movehere,
-.block_site_main_menu li a.movehere {
-  display: block;
-  width: 100%;
-  height: 2rem;
-  border: 2px dashed #343a40;
-  margin: 4px 0;
-}
-
 .pagelayout-embedded .has-fake-blocks {
   padding: 1rem;
   display: flex;

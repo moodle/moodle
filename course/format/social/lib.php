@@ -129,18 +129,45 @@ class format_social extends core_courseformat\base {
         return $this->get_format_options();
     }
 
-    /**
-     * Returns the information about the ajax support in the given source format.
-     *
-     * The returned object's property (boolean)capable indicates that
-     * the course format supports Moodle course ajax features.
-     *
-     * @return stdClass
-     */
+    #[\Override]
     public function supports_ajax() {
+        // All home page is rendered in the backend, we only need an ajax editor components in edit mode.
+        // This will also prevent redirectng to the login page when a guest tries to access the site,
+        // and will make the home page loading faster.
         $ajaxsupport = new stdClass();
-        $ajaxsupport->capable = true;
+        $ajaxsupport->capable = $this->show_editor();
         return $ajaxsupport;
     }
 
+    #[\Override]
+    public function supports_components() {
+        return true;
+    }
+
+    #[\Override]
+    public function uses_sections() {
+        return true;
+    }
+
+    #[\Override]
+    public function get_section_name($section) {
+        return get_string('socialactivities', 'format_social');
+    }
+
+    /**
+     * Social format uses only section 0.
+     *
+     * @return int
+     */
+    #[\Override]
+    public function get_sectionnum(): int {
+        return 0;
+    }
+
+
+    #[\Override]
+    public function get_max_sections() {
+        // Social ony uses one section.
+        return 1;
+    }
 }
