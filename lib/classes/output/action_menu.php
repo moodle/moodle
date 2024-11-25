@@ -386,24 +386,11 @@ class action_menu implements renderable, templatable {
     }
 
     /**
-     * Sets the alignment of the dialogue in relation to button used to toggle it.
-     *
-     * @deprecated since Moodle 4.0
-     *
-     * @param int $dialogue One of action_menu::TL, action_menu::TR, action_menu::BL, action_menu::BR.
-     * @param int $button One of action_menu::TL, action_menu::TR, action_menu::BL, action_menu::BR.
+     * @deprecated since Moodle 4.0, use action_menu::set_menu_left().
      */
-    public function set_alignment($dialogue, $button) {
-        debugging('The method action_menu::set_alignment() is deprecated, use action_menu::set_menu_left()', DEBUG_DEVELOPER);
-        if (isset($this->attributessecondary['data-align'])) {
-            // We've already got one set, lets remove the old class so as to avoid troubles.
-            $class = $this->attributessecondary['class'];
-            $search = 'align-' . $this->attributessecondary['data-align'];
-            $this->attributessecondary['class'] = str_replace($search, '', $class);
-        }
-        $align = $this->get_align_string($dialogue) . '-' . $this->get_align_string($button);
-        $this->attributessecondary['data-align'] = $align;
-        $this->attributessecondary['class'] .= ' align-' . $align;
+    #[\core\attribute\deprecated('action_menu::set_menu_left', since: '4.0', mdl: 'MDL-72466', final: true)]
+    public function set_alignment(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -436,20 +423,11 @@ class action_menu implements renderable, templatable {
     }
 
     /**
-     * Sets a constraint for the dialogue.
-     *
-     * The constraint is applied when the dialogue is shown and limits the display of the dialogue to within the
-     * element the constraint identifies.
-     *
-     * This is required whenever the action menu is displayed inside any CSS element with the .no-overflow class
-     * (flexible_table and any of it's child classes are a likely candidate).
-     *
-     * @deprecated since Moodle 4.3
-     * @param string $ancestorselector A snippet of CSS used to identify the ancestor to contrain the dialogue to.
+     * @deprecated since Moodle 4.3, use set_boundary() method instead.
      */
-    public function set_constraint($ancestorselector) {
-        debugging('The method set_constraint() is deprecated. Please use the set_boundary() method instead.', DEBUG_DEVELOPER);
-        $this->set_boundary('window');
+    #[\core\attribute\deprecated('action_menu::set_boundary', since: '4.3', mdl: 'MDL-77375', final: true)]
+    public function set_constraint(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -469,14 +447,11 @@ class action_menu implements renderable, templatable {
     }
 
     /**
-     * If you call this method the action menu will be displayed but will not be enhanced.
-     *
-     * By not displaying the menu enhanced all items will be displayed in a single row.
-     *
-     * @deprecated since Moodle 3.2
+     * @deprecated since Moodle 3.2, use a list of action_icon instead.
      */
+    #[\core\attribute\deprecated('Use a list of action_icons instead', since: '3.2', mdl: 'MDL-55904', final: true)]
     public function do_not_enhance() {
-        debugging('The method action_menu::do_not_enhance() is deprecated, use a list of action_icon instead.', DEBUG_DEVELOPER);
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
