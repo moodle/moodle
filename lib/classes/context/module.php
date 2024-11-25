@@ -170,15 +170,7 @@ class module extends context {
         $subcaps = array();
 
         $modulepath = "{$CFG->dirroot}/mod/{$module->name}";
-        if (file_exists("{$modulepath}/db/subplugins.json")) {
-            $subplugins = (array) json_decode(file_get_contents("{$modulepath}/db/subplugins.json"))->plugintypes;
-        } else if (file_exists("{$modulepath}/db/subplugins.php")) {
-            debugging('Use of subplugins.php has been deprecated. ' .
-                'Please update your plugin to provide a subplugins.json file instead.',
-                DEBUG_DEVELOPER);
-            $subplugins = array();  // Should be redefined in the file.
-            include("{$modulepath}/db/subplugins.php");
-        }
+        $subplugins = \core_component::get_subplugins("mod_{$module->name}");
 
         if (!empty($subplugins)) {
             foreach (array_keys($subplugins) as $subplugintype) {

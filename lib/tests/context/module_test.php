@@ -189,13 +189,16 @@ class module_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
-        $page = $this->getDataGenerator()->create_module('page', ['course' => $course->id, 'name' => 'Pokus']);
-        $context = module::instance($page->cmid);
+        $mod = $this->getDataGenerator()->create_module('book', ['course' => $course->id, 'name' => 'Pokus']);
+        $context = module::instance($mod->cmid);
 
         $capabilities = $context->get_capabilities();
         $capabilities = convert_to_array($capabilities);
         $capabilities = array_column($capabilities, 'name');
-        $this->assertContains('mod/page:view', $capabilities);
+
+        $this->assertContains('mod/book:read', $capabilities);
+        $this->assertContains('booktool/exportimscp:export', $capabilities);
+        $this->assertContains('booktool/importhtml:import', $capabilities);
         $this->assertNotContains('mod/url:view', $capabilities);
         $this->assertNotContains('moodle/course:view', $capabilities);
         $this->assertNotContains('moodle/category:manage', $capabilities);
