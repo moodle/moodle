@@ -117,10 +117,9 @@ trait mod_forum_tests_generator_trait {
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
 
         // Add a post to the discussion.
-        $strre = get_string('re', 'forum');
         $record = array_merge([
             'course' => $forum->course,
-            'subject' => "{$strre} {$discussion->subject}",
+            'subject' => $discussion->subject,
             'userid' => $author->id,
             'forum' => $forum->id,
             'discussion' => $discussion->id,
@@ -146,13 +145,12 @@ trait mod_forum_tests_generator_trait {
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
 
         // Add a post to the discussion.
-        $strre = get_string('re', 'forum');
         $record = (object) array_merge([
             'discussion' => $parent->discussion,
             'parent' => $parent->id,
             'userid' => $author->id,
             'mailnow' => 1,
-            'subject' => $strre . ' ' . $parent->subject,
+            'subject' => $parent->subject,
         ], $options);
 
         $post = $generator->create_post($record);

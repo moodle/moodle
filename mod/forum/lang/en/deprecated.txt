@@ -7,3 +7,4 @@ privacy:request:delete:discussion:name,mod_forum
 privacy:request:delete:post:message,mod_forum
 privacy:request:delete:post:subject,mod_forum
 tagsdeleted,mod_forum
+re,mod_forum
