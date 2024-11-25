@@ -855,7 +855,7 @@ function file_get_all_files_in_draftarea(int $draftitemid, string $filepath = '/
 
     if (!empty($draftfiles)) {
         foreach ($draftfiles->list as $draftfile) {
-            if ($draftfile->type == 'file') {
+            if ($draftfile->type !== 'folder') {
                 $files[] = $draftfile;
             }
         }
