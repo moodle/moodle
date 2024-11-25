@@ -1,0 +1,10 @@
+issueNumber: MDL-77713
+notes:
+  core_question:
+    - message: >-
+        Deprecated method
+        `mod_quiz\question\bank\qbank_helper::get_version_options` in favour of
+        `core_question\local\bank\version_options::get_version_options` so that
+        the method is in core rather than a module, and can safely be used from
+        anywhere as required.
+      type: deprecated

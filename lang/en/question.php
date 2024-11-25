@@ -27,6 +27,7 @@ $string['addcategory'] = 'Add category';
 $string['adminreport'] = 'Report on possible problems in your question database.';
 $string['advancedsearchoptions'] = 'Search options';
 $string['alltries'] = 'All tries';
+$string['alwayslatest'] = 'Always latest';
 $string['answers'] = 'Answers';
 $string['availableq'] = 'Available?';
 $string['badbase'] = 'Bad base before **: {$a}**';
@@ -533,6 +534,7 @@ $string['version_selection'] = 'Version {$a->version}';
 $string['versioninfo'] = 'Version {$a->version} (of {$a->latestversion})';
 $string['versioninfolatest'] = 'Version {$a->version} (latest)';
 $string['question_version'] = 'Question version';
-
+$string['question_versionshort'] = 'v{$a}';
+$string['versioninfolatestshort'] = 'v{$a} (latest)';
 // Deprecated since Moodle 5.0.
 $string['errordeletingquestionsfromcategory'] = 'Error deleting questions from category {$a}.';

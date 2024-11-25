@@ -101,19 +101,17 @@ Feature: A teacher can preview questions in the question bank
     And I click on "submitbutton" "button"
     And I choose "Preview" action for "New version" in the question bank
     When I expand all fieldsets
-    And I should see "Version 2"
-    And I should see "(latest)"
+    And I should see "Version 2 (latest)"
     And I should see "New version"
     And I should see "New text version"
     And I should not see "Test question to be previewed"
     And I should not see "Version 1"
-    And I should see "1" in the "Question version" "select"
-    And I should see "2" in the "Question version" "select"
-    And I set the field "Question version" to "1"
+    And I should see "v1" in the "Question version" "select"
+    And I should see "v2" in the "Question version" "select"
+    And I set the field "Question version" to "v1"
     And I press "Save preview options and start again"
     Then I should see "Version 1"
-    And I should not see "Version 2"
-    And I should not see "(latest)"
+    And I should not see "Version 2 (latest)"
 
   Scenario: The preview always uses the latest question version by default.
     Given the following "core_question > updated questions" exist:
