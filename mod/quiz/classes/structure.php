@@ -1866,11 +1866,11 @@ class structure {
     private function populate_question_sources(): void {
         global $DB;
 
-        $sql = 'SELECT c.id AS contextid, cm.*
+        $sql = 'SELECT c.id AS contextid, cm.id, cm.course
                   FROM {question_categories} qc
                   JOIN {context} c ON c.id = qc.contextid
                   JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = ' . CONTEXT_MODULE . '
-              GROUP BY c.id, cm.id';
+              GROUP BY c.id, cm.id, cm.course';
         $this->questionsources = $DB->get_records_sql($sql);
     }
 
