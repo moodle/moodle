@@ -577,6 +577,7 @@ class redis extends handler implements SessionHandlerInterface {
 
     #[\Override]
     public function get_session_by_sid(string $sid): \stdClass {
+        $this->init_redis_if_required();
         $keys = ["id", "state", "sid", "userid", "sessdata", "timecreated", "timemodified", "firstip", "lastip"];
         $sessiondata = $this->connection->hmget($this->sessionkeyprefix . $sid, $keys);
 
