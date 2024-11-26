@@ -3385,9 +3385,10 @@ class workshop {
 
         // This is from enrollib.php:get_enrolled_join(). It says it's better for caching to use round.
         $now = round(time(), -2);
+        $userfieldsapi = \core_user\fields::for_name()->with_userpic();
 
         $sqlarray = [];
-        $sqlarray['select'] = "SELECT DISTINCT u.*";
+        $sqlarray['select'] = "SELECT DISTINCT u.id" . $userfieldsapi->get_sql('u')->selects;
         $sqlarray['from'] = "FROM {user} u";
         $sqlarray['join'] = [];
         $sqlarray['join'][] = "JOIN {user_enrolments} ue ON ue.userid = u.id";
