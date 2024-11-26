@@ -1,0 +1,102 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_adaptable/headerstyletwo
+
+    Header style two.
+
+    Example context (json):
+    {
+        "hasmobileprimarynav": true,
+        "headerbg": "",
+        "langmenu": "",
+        "loginoruser": "",
+        "mobileprimarynavicon": "Markup",
+        "navbarsearch": "",
+        "pageheaderoriginal": true,
+        "responsiveheader": "d-none d-lg-block",
+        "shownavbar": true,
+        "headerlogo": "",
+        "headertitle": "Adaptable",
+        "topmenus": ""
+    }
+}}
+<header id="adaptable-page-header-wrapper"{{{headerbg}}}>
+    <div id="header2" class="above-header container">
+        <div class="row{{^pageheaderoriginal}} justify-content-lg-between{{/pageheaderoriginal}}">
+            <div class="d-none d-lg-block{{#pageheaderoriginal}} col-lg-6{{/pageheaderoriginal}}{{^pageheaderoriginal}} col{{/pageheaderoriginal}}">
+                <div class="d-flex justify-content-start align-items-center h-100 bd-highlight">
+                    {{#headerlogo}}{{{headerlogo}}}{{/headerlogo}}
+                    {{#headertitle}}{{{headertitle}}}{{/headertitle}}
+                    <div id="course-header">
+                        {{{output.course_header}}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="{{#pageheaderoriginal}}col-lg-6 {{/pageheaderoriginal}}{{^pageheaderoriginal}}col-lg-auto {{/pageheaderoriginal}}pr-0 my-auto">
+                <nav class="navbar navbar-expand btco-hover-menu">
+                    {{#hasmobileprimarynav}}
+                    <button class="navbar-toggler nav-link aabtn d-block d-lg-none px-1 my-1 border-0" data-toggler="drawers" data-action="toggle" data-target="theme_adaptable-drawers-primary">
+                        {{{mobileprimarynavicon}}}
+                        <span class="sr-only">{{#str}}sidepanel, core{{/str}}</span>
+                    </button>
+                    {{/hasmobileprimarynav}}
+                    <div class="collapse navbar-collapse">
+                        <ul class="navbar-nav ml-auto">
+
+                            {{#pageheaderoriginal}}
+                            <li class="nav-item navbarsearchsocial mx-md-1 my-auto">
+                                {{{navbarsearch}}}
+                            </li>
+                            {{/pageheaderoriginal}}
+
+                            {{#topmenus}}
+                            <li class="my-auto m-1">{{{topmenus}}}</li>
+                            {{/topmenus}}
+
+                            {{! Remove Messages and Notifications icons when no navbar. }}
+                            {{#shownavbar}}
+                            <li id="nav-popover-container" class="my-auto mx-1 d-flex">
+                                {{{output.navbar_plugin_output}}}
+                            </li>
+                            {{/shownavbar}}
+
+                            {{#langmenu}}
+                                {{{langmenu}}}
+                            {{/langmenu}}
+
+                            {{{output.page_heading_menu}}}
+
+                            {{{loginoruser}}}
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    {{#shownavbar}}
+        {{> theme_adaptable/headernavbar}}
+    {{/shownavbar}}
+
+</header>
+
+{{#hasmobileprimarynav}}
+{{< theme_adaptable/primary-drawer-mobile }}
+{{/ theme_adaptable/primary-drawer-mobile }}
+{{/hasmobileprimarynav}}

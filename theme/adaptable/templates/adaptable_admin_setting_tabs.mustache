@@ -1,0 +1,85 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_adaptable/adaptable_admin_setting_tabs
+
+
+    Example context (json):
+    {
+        "versioninfo": "Release 3.0.3, version 2020073104 on Moodle 3.9.4 (Build: 20210118)",
+        "maturity": "Maturity info",
+        "maturityalert": "info",
+        "privacynote": "Privacy info",
+        "versioncheck": "Not supported on this version of Moodle",
+        "tabs": [
+         {
+            "name": "tab1",
+            "active": 0,
+            "displayname": "Inactive tab1",
+            "html": "<p>Tab 1 content</p>",
+            "disabled": true
+         },
+         {
+            "name": "tab2",
+            "active": 1,
+            "displayname": "Active tab2",
+            "html": "<p>Tab 2 content</p>"
+         }
+        ]
+    }
+}}
+{{#maturity}}
+<div class="alert alert-{{maturityalert}} mb-3">
+<h3>{{versioninfo}}</h3>
+<p>{{{maturity}}}</p>
+{{{privacynote}}}
+</div>
+{{/maturity}}
+{{^maturity}}
+<h3>{{versioninfo}}</h3>
+{{privacynote}}}
+{{/maturity}}
+{{#versioncheck}}
+<div class="alert alert-warning mb-3">
+{{{versioncheck}}}
+</div>
+{{/versioncheck}}
+<ul class="nav nav-tabs" role="tablist">
+    {{#tabs}}
+        <li class="nav-item">
+            <a href="#{{name}}" class="nav-link{{#active}} active{{/active}}{{#disabled}} font-italic{{/disabled}}" data-toggle="tab" role="tab"
+                {{#active}}aria-selected="true"{{/active}}
+                {{^active}}aria-selected="false" tabindex="-1"{{/active}}>{{displayname}}</a>
+        </li>
+    {{/tabs}}
+</ul>
+<div class="tab-content mt-3">
+    {{#tabs}}
+        <div class="tab-pane{{#active}} active{{/active}}{{#disabled}} disabled{{/disabled}}" id="{{name}}" role="tabpanel">
+            {{{html}}}
+        </div>
+    {{/tabs}}
+</div>
+{{#js}}
+    const disabledtabs = document.getElementsByClassName("tab-pane disabled");
+    disabledtabs.forEach(function(tab) {
+        const settings = tab.querySelectorAll("input, select, textarea");
+        settings.forEach(function(setting) {
+            setting.setAttribute("disabled", "disabled");
+        });
+    });
+{{/js}}

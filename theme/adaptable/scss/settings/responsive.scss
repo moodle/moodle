@@ -1,0 +1,625 @@
+//
+// This file is part of Adaptable theme for moodle
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+// Adaptable Responsive style sheet
+//
+// @package    theme_adaptable
+// @copyright  2015-2019 Jeremy Hopkins (Coventry University)
+// @copyright  2015-2019 Fernando Acedo (3-bits.com)
+// @copyright  2018-2019 Manoj Solanki (Coventry University)
+//
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//
+
+// =======================================================
+// Media Queries - max's in reverse
+// order for prescidence.
+// =======================================================
+
+// =======================================================
+// 1200px
+// =======================================================
+
+@media (max-width: 1199px) {
+    .showhideblocksdesc,
+    .zoomdesc {
+        display: none;
+    }
+}
+
+// =======================================================
+// 991px
+// =======================================================
+@media(max-width: 991px) {
+    #region-main-box {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    #block-region-side-post .block-controls {
+        display: none;
+    }
+}
+
+// =======================================================
+// 979px
+// =======================================================
+@media (max-width: 979px) {
+    #page-header {
+        min-height: 60px;
+    }
+
+    .langdesc {
+        display: inline;
+    }
+    .slidestyle2 .flex-caption {
+        right: -800px;
+    }
+    .slidestyle2 .flex-active-slide .flex-caption {
+        right: 0;
+        transition: all 1s ease;
+    }
+    .slidestyle2 .flex-caption h3 {
+        max-width: 970px;
+    }
+    .slidestyle2 .flex-caption br {
+        display: none;
+    }
+    .slidestyle2 .flex-caption {
+        top: 25%;
+    }
+    .slidestyle2 .flex-direction-nav {
+        display: none;
+    }
+    .slidestyle2 .flex-caption h4 {
+        font-size: 23px;
+        line-height: 30px;
+    }
+    .slidestyle2 .flex-caption a.submit {
+        font-size: 14px;
+        float: none;
+        white-space: normal;
+        width: auto;
+    }
+
+    .navbar {
+        float: none !important;
+    }
+
+    .navbar .pull-right {
+        float: none;
+    }
+
+    .navbar .nav > li > a {
+        margin: 0 10px 0 0 !important;
+    }
+
+    .flex-direction-nav .flex-next {
+        right: 0 !important;
+    }
+
+    .flex-direction-nav .flex-prev {
+        left: 0 !important;
+    }
+
+    // Header.
+    // Logo.
+    #logocontainer {
+        clear: both;
+        display: block !important;
+        height: auto;
+        margin: 5px 0;
+        padding: 0;
+        width: 100%;
+    }
+
+    #logo img {
+        display: block;
+        margin: 0 auto;
+    }
+
+    // Header title.
+    #headertitle {
+        clear: both;
+        display: block;
+        height: auto;
+        left: 0;
+        margin: 5px 0;
+        max-width: 100%;
+        padding: 0;
+        text-align: center;
+        top: 0;
+    }
+
+    // Social Icons.
+    .socialbox {
+        clear: both;
+        display: table;
+        float: none;
+        margin: 15px auto;
+        padding: 5px;
+    }
+
+    .coursebox .panel-body p {
+        font-size: 90%;
+        line-height: 130%;
+    }
+
+    .enrolmenticons {
+        display: none;
+    }
+
+    #editingbutton a,
+    #editingbutton .btn {
+        margin-left: 10px !important;
+    }
+
+    .hbl, .sbl, .hbll, .sbll {
+        display: none !important;
+    }
+
+    .nav-collapse .nav {
+        margin-left: 0 !important;
+        width: 100%;
+    }
+
+    #adaptable-page-header-wrapper #main-navbar {
+        border-bottom: 0;
+    }
+
+    #page-header a img {
+        display: block;
+        float: none;
+        margin: 0 auto;
+    }
+
+    .nav .dropdown-menu li a {
+        color: [[setting:menufontcolor]];
+    }
+
+    .nav-collapse.active {
+        background-color: [[setting:mobilemenubkcolor]];
+        height: auto;
+        padding-bottom: 4px;
+        top: 6px;
+    }
+
+    #editingbutton {
+        margin-left: 10px;
+    }
+
+    .menutitle {
+        float: none;
+    }
+
+    // New styles for Adaptable 2.
+    #adaptable-page-header-wrapper .nav-link {
+        padding: inherit;
+    }
+
+
+    #adaptable-page-header-wrapper .topmenuleft {
+        float: left !important;
+        margin: 0;
+        padding: 5px 5px 0 0;
+    }
+
+    #adaptable-page-header-wrapper .navbar .popover-region {
+        margin: 4px 0 0 4px;
+    }
+
+    .page-header-margin.header-style1 #page {
+        margin-top: 41px;
+    }
+
+    .mobiletheme.page-header-margin.header-style1.has-header-bg .headerbgimage {
+        background-image: none !important;
+    }
+
+    .page-header-margin.header-style2 #page {
+        margin-top: 46px;
+    }
+
+    // Course activity and section layout updates to remove any extra padding on smaller screens.
+    .section .activity .activityinstance {
+        min-width: 100%;
+    }
+
+    .activity-meta-container {
+        margin: 0 0 0 20px;
+    }
+}
+
+// =======================================================
+// 767px
+// =======================================================
+@media (max-width: 767px) {
+    #ticker-announce {
+        float: none;
+        margin: 0;
+        text-align: center;
+    }
+
+    #ticker-wrap #newscontent {
+        line-height: normal;
+        max-width: inherit;
+        overflow: inherit;
+        padding: 10px 10px 10px;
+        white-space: normal;
+
+        #news {
+            white-space: normal;
+        }
+    }
+
+    .slidestyle2 .flex-caption {
+        background-color: transparent !important;
+        left: 0;
+        position: relative;
+        top: auto;
+    }
+
+    .slidestyle2 .flex-caption a.submit {
+        float: none;
+        margin: 0;
+        text-align: center;
+        width: auto;
+    }
+
+    .slidestyle2 .flex-caption h3 {
+        background-color: #000;
+        margin: 0 !important;
+    }
+
+    .slidestyle2 .flex-caption h4 {
+        font-size: 18px;
+        line-height: 22px;
+        padding: 10px 0;
+    }
+
+    // 1 tile.
+    .coursebox.col-12 .coursebtn {
+        width: 30% !important;
+    }
+
+    // 2 tiles.
+    .coursebox.col-6 .coursebtn {
+        width: 55% !important;
+    }
+
+    // 3 tiles.
+    .coursebox.col-4 .coursebtn {
+        width: 70% !important;
+    }
+
+    // 4 tiles.
+    .coursebox.col-3 .coursebtn {
+        width: 80% !important;
+    }
+
+    // 6 tiles.
+    .coursebox.col-2 .coursebtn {
+        width: 95% !important;
+    }
+
+    #page-site-index a.submit {
+        width: auto;
+    }
+
+    .headermenu2 {
+        clear: both;
+        float: none;
+        padding: 10px 0;
+        text-align: center;
+    }
+
+    .flex-caption {
+        font-size: 90% !important;
+        padding: 5px 0 !important;
+        width: 100% !important;
+    }
+
+    .flex-caption p {
+        font-size: 90% !important;
+        line-height: 1.4em;
+        margin: 0 5px !important;
+    }
+
+    .flex-caption h3 {
+        font-size: 1.1em !important;
+        line-height: 2em;
+        margin: 0 5px !important;
+    }
+
+    a.submit {
+        display: block;
+        margin: 5px auto;
+        text-align: center;
+        width: 80%;
+    }
+
+    .block .header {
+        margin: 0 !important;
+    }
+
+    #page-footer {
+        margin: 50px 0;
+    }
+
+    #editingbutton a,
+    #editingbutton .btn {
+        margin-left: -10px !important;
+    }
+
+    .navbar .nav > li > a {
+        margin: 0 10px 0 4px !important;
+    }
+
+    #social-connect {
+        clear: both;
+        float: none;
+        width: auto;
+    }
+
+    .message .contactselector {
+        float: none;
+        width: auto;
+    }
+
+    .message .messagearea {
+        border-left: none;
+        float: none;
+        min-height: 200px;
+        padding-left: 1%;
+        width: auto;
+    }
+
+    .navbar .nav-collapse.in > .nav > li > a {
+        border-radius: 0;
+        padding-left: 0 !important;
+    }
+
+    .userhead {
+        height: 20px;
+    }
+
+    .userprofile dl.list dt {
+        width: 110px !important;
+    }
+
+    .userprofile dl.list dd {
+        margin-left: 120px !important;
+    }
+
+    .newmenu1,
+    .newmenu2,
+    .newmenu3,
+    .newmenu4,
+    .newmenu5,
+    .newmenu6,
+    .newmenu7,
+    .newmenu8,
+    .newmenu9,
+    .newmenu10,
+    .newmenu11,
+    .newmenu12,
+    .newmenu13,
+    .newmenu14,
+    .newmenu15,
+    .newmenu16 {
+        display: none;
+    }
+
+    // Links and Language menu, hide text on small screens.
+    .above-header .langdesc,
+    .above-header .linksdesc {
+        display: none;
+    }
+
+    .above-header {
+        min-height: 37px;
+    }
+
+    #header2,
+    #header2 .row,
+    #adaptable-page-header-wrapper > #header2 > div > div,
+    #adaptable-page-header-wrapper #header2 .navbar-nav {
+        min-height: 46px;
+    }
+
+    .page-header-margin.header-style2 #page {
+        margin-top: 62px;
+    }
+
+    .socialbox a {
+        color: [[setting:headertextcolor]];
+    }
+
+    .socialbox a i {
+        // Make at least 29px, values look odd but on inspection they are needed to be so for FontAwesome.
+        font-size: [[setting:responsivesocialsize]];
+        line-height: [[setting:responsivesocialsize]];
+    }
+    .custom-select {
+        max-width:100%;
+    }
+}
+
+// =======================================================
+// 576px
+// =======================================================
+@media (max-width: 576px) {
+    .page-header-margin.header-style2 #page {
+        margin-top: 38px;
+    }
+}
+
+// =======================================================
+// 480px
+// =======================================================
+@media (max-width: 480px) {
+    .flex-caption {
+        background-color: #000 !important;
+        margin-top: -1px !important;
+        padding: 5px 0 !important;
+        position: relative !important;
+        width: auto !important;
+    }
+
+    #page-content {
+        margin-top: 15px;
+        padding: 0;
+        width: auto;
+    }
+
+    #page-header .userimg {
+        display: none;
+    }
+}
+
+// Mins in ascending order.
+
+// =======================================================
+// 481px
+// =======================================================
+@media (min-width: 481px) {
+    // Activity chooser styling. Desktop styling.
+    .jsenabled .choosercontainer #chooseform .alloptions {
+        max-height: -webkit-calc(100vh - 15em) !important;
+        max-height: calc(100vh - 15em) !important;
+        max-width: 50%;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .jsenabled .choosercontainer #chooseform .instruction,
+    .jsenabled .choosercontainer #chooseform .typesummary {
+        background-color: #fff;
+        bottom: 0;
+        left: 50%;
+        margin: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 1.8em;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    // Selected option settings.
+    .jsenabled .choosercontainer #chooseform .instruction {
+        display: block;
+        font-size: 1.2em;
+    }
+
+    .choosercontainer #chooseform .selected .typesummary,
+    .choosercontainer #chooseform .selected .instruction {
+        display: block;
+        font-size: 1.1em;
+    }
+
+    .choosercontainer #chooseform .selected {
+        background-color: #fff;
+    }
+
+    // Styling for overall activity chooser box.
+
+    .moodle-dialogue-base .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-hd,
+    .moodle-dialogue-base .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
+        font-size: 36px;
+        min-height: 40px;
+        padding: 20px;
+        padding-right: 30px;
+        text-align: center;
+    }
+
+    .moodle-dialogue-base .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
+        margin-right: 10px;
+        margin-top: 10px;
+    }
+
+    .moodle-dialogue-base .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons button.yui3-button.closebutton:hover {
+        filter: alpha(opacity=100);
+        opacity: 1;
+    }
+
+    .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-bd {
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+        padding: 0;
+    }
+    // End Activity chooser styling.
+}
+
+// =======================================================
+// 786px
+// =======================================================
+@media (min-width: 768px) {
+    body.drawer-open-left {
+        margin-left: 0;
+    }
+    .above-header .linksmenu {
+        margin-left: 0;
+    }
+
+    .adaptable-drawer {
+        display: none;
+    }
+}
+
+// =======================================================
+// 1201px or higher / nozoom
+// =======================================================
+@media (min-width: 1200px) {
+    .standard .container {
+        max-width: 100%;
+        width: 1170px;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .standard .container {
+        max-width: 100%;
+        width: 960px;
+    }
+}
+
+@media (min-width: 1000px) {
+    .narrow .container {
+        max-width: 100%;
+        width: 1000px;
+    }
+}
+
+@media (max-width: 992px) and (max-width: 999px) {
+    .narrow .container {
+        max-width: 100%;
+        width: 960px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    #adaptable-page-header-wrapper .container,
+    .container {
+        max-width: 100%;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767px) {
+    .container {
+        max-width: 100%;
+    }
+}

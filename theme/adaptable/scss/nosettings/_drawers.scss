@@ -1,0 +1,89 @@
+//
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+// Adaptable course index override styles style sheet
+//
+// @package    theme_adaptable
+// @copyright  2022 G J Barnard - {@link http://moodle.org/user/profile.php?id=442195}
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//
+
+.drawer-toggles .drawer-toggler {
+    top: calc(50% - 27px);
+    z-index: 11;
+}
+
+@media (min-width: 768px) {
+    #page.drawers {
+        height: 100vh;
+        padding-left: 2rem;
+        padding-right: 2rem;
+
+        #adaptable-page-header-wrapper:not(.sticky) {
+            margin-left: -2rem;
+            margin-right: -2rem;
+        }
+    }
+}
+
+@media (min-width: 992px) {
+    #page.drawers {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+
+        #adaptable-page-header-wrapper:not(.sticky),
+        #page-footer {
+            margin-left: -1.25rem;
+            margin-right: -1.25rem;
+            width: auto;
+        }
+
+        &.show-drawer-left {
+            padding-left: 0;
+
+            #adaptable-page-header-wrapper:not(.sticky),
+            #page-footer {
+                margin-left: 0;
+            }
+        }
+        &.show-drawer-right {
+            padding-right: 0;
+
+            #adaptable-page-header-wrapper:not(.sticky),
+            #page-footer {
+                margin-right: 0;
+            }
+        }
+    }
+}
+
+.drawer-left,
+.drawer-right {
+    height: 100vh;
+    top: 0;
+}
+
+#page.drawers {
+    margin-top: 0;
+    overflow-y: auto;
+}
+
+@include media-breakpoint-up(lg) {
+    #page.drawers {
+        transition-property: margin-left, margin-right;
+    }
+}

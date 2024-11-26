@@ -1,0 +1,62 @@
+//
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+// Adaptable Blocks styles style sheet
+//
+// @package    theme_adaptable
+// @copyright  2021 G J Barnard - {@link http://moodle.org/user/profile.php?id=442195}
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//
+
+.adaptable-block-area {
+    background: #EEE;
+    border: 2px dashed #BFBDBD;
+    display: block;
+    min-height: 50px;
+}
+
+.block {
+    .block-action {
+        //@include fa-icon();
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        //display: inline-block;
+        font-style: normal;
+        font-variant: normal;
+        font-weight: normal;
+        line-height: 1;
+
+        cursor: pointer;
+        float: right;
+
+        margin-top: 4px;
+
+        &:before {
+            content: "\f066";
+            font: normal normal 900 16px/1 'Font Awesome 6 Free';
+        }
+    }
+    &.hidden {
+        .block-action:before {
+            content: "\f065";
+        }
+    }
+    .block-controls .action-menu .menubar {
+        justify-content: space-between;
+        width: 100%;
+    }
+}

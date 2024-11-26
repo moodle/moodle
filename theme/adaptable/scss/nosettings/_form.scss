@@ -1,0 +1,84 @@
+//
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+// Adaptable Form override styles style sheet
+//
+// @package    theme_adaptable
+// @copyright  2019 G J Barnard - {@link http://moodle.org/user/profile.php?id=442195}
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//
+
+fieldset {
+    min-width: 0;
+}
+
+.mform {
+    fieldset {
+        margin-left: 0;
+        &.collapsible legend a.fheader {
+            margin-left: 0;
+        }
+    }
+}
+
+.col-form-label.d-inline {
+    float: right;
+    margin: 3px 5px 5px 0;
+}
+
+@media (min-width: 768px) {
+    .availability-dialogue .moodle-dialogue {
+        width: 740px !important;
+    }
+
+    .availability-dialogue .list-unstyled li.row div:nth-child(1) {
+        // col-6 -> col4.
+            flex: 0 0 33.3333333333%;
+            max-width: 33.3333333333%;
+            padding-bottom: 4px;
+    }
+
+    .availability-dialogue .list-unstyled li.row div:nth-child(2) {
+        // col-6 -> col8.
+        flex: 0 0 66.6666666667%;
+        max-width: 66.6666666667%;
+    }
+}
+
+#admin-activatetemplateoverride_mod_forum_forum_post_email_htmlemail,
+#admin-overriddentemplate_mod_forum_forum_post_email_htmlemail,
+#admin-activatetemplateoverride_mod_forum_forum_post_email_htmlemail_body,
+#admin-overriddentemplate_mod_forum_forum_post_email_htmlemail_body,
+#admin-activatetemplateoverride_mod_forum_forum_post_email_textemail,
+#admin-overriddentemplate_mod_forum_forum_post_email_textemail,
+#admin-activatetemplateoverride_mod_forum_forum_post_emaildigestbasic_htmlemail,
+#admin-overriddentemplate_mod_forum_forum_post_emaildigestbasic_htmlemail,
+#admin-activatetemplateoverride_mod_forum_forum_post_emaildigestbasic_textemail,
+#admin-overriddentemplate_mod_forum_forum_post_emaildigestbasic_textemail,
+#admin-activatetemplateoverride_mod_forum_forum_post_emaildigestfull_htmlemail,
+#admin-overriddentemplate_mod_forum_forum_post_emaildigestfull_htmlemail,
+#admin-activatetemplateoverride_mod_forum_forum_post_emaildigestfull_textemail,
+#admin-overriddentemplate_mod_forum_forum_post_emaildigestfull_textemail {
+    .col-sm-3,
+    .col-sm-9 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .col-sm-3 {
+        text-align: left !important;
+    }
+}

@@ -1,0 +1,127 @@
+//
+// This file is part of Moodle - http://moodle.org/
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+// Adaptable print media style sheet
+//
+// @package    theme_adaptable
+// @copyright  2015-2018 Jeremy Hopkins (Coventry University)
+// @copyright  2015-2018 Fernando Acedo (3-bits.com)
+// @copyright  2017-2018 Manoj Solanki (Coventry University)
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//
+//
+
+/// Hide some elements in Print view.
+@media print {
+    // Remove things.
+    .above-header,
+    .socialbox,
+    #navwrap,
+    #page-navbar,
+    .purgecaches,
+    #back-to-top {
+        display: none !important;
+    }
+
+    #region-main {
+        margin: 0 !important;
+    }
+
+    .page-context-header {
+        margin: 0 !important;
+    }
+
+    // Remove sidebar.
+    #block-region-side-post,
+    #block-region-side-pre {
+        display: none !important;
+    }
+
+    // Remove Adaptable block regions.
+    #frontblockregion {
+        display: none !important;
+    }
+
+    // Remove student image from printout.
+    img.userpicture {
+        display: none !important;
+    }
+
+    // Grades.
+    .grade-navigation,
+    #graded_users_selector,
+    .view_users_selector {
+        display: none !important;
+    }
+
+    // Remove selection boxes from printout of user grade report.
+    .form-search input,
+    .form-inline input,
+    .form-horizontal input,
+    .form-search textarea,
+    .form-inline textarea,
+    .form-horizontal textarea,
+    .form-search select,
+    .form-inline select,
+    .form-horizontal select,
+    .form-search .help-inline,
+    .form-inline .help-inline,
+    .form-horizontal .help-inline,
+    .form-search .uneditable-input,
+    .form-inline .uneditable-input,
+    .form-horizontal .uneditable-input,
+    .form-search .input-prepend,
+    .form-inline .input-prepend,
+    .form-horizontal .input-prepend,
+    .form-search .input-append,
+    .form-inline .input-append,
+    .form-horizontal .input-append {
+        display: none !important;
+    }
+
+    div.singleview_buttons {
+        display: none !important;
+    }
+
+    // Topics / Weeks course format.
+    #page .course-content ul li.section.main {
+        page-break-before: always;
+    }
+
+    // Remove footer.
+    footer {
+        display: none !important;
+    }
+}
+
+// Print settings.
+@page {
+    margin: [[setting:printmargin]];
+    size: [[setting:printpageorientation]];
+}
+
+@media print {
+    body,
+    li.activity.label,
+    .file-picker td.label {
+        font-size: [[setting:printbodyfontsize]];
+    }
+
+    body,
+    li {
+        line-height: [[setting:printlineheight]];
+    }
+}

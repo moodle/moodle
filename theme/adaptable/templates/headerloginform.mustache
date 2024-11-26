@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_adaptable/headerloginform
+
+    Header login form.
+
+    Example context (json):
+    {
+        "url": "http://localhost",
+        "token": "",
+        "displayloginbox": true,
+        "hasoidc": false
+    }
+}}
+{{#displayloginbox}}
+<form id="pre-login-form" class="form-inline my-2 my-lg-0" action="{{{url}}}" method="post">
+    <input type="hidden" name="logintoken" value="{{token}}">
+    <input type="text" name="username" placeholder="{{#str}}loginplaceholder, theme_adaptable{{/str}}" size="11">
+    <input type="password" name="password" placeholder="{{#str}}passwordplaceholder, theme_adaptable{{/str}}" size="11">
+    <button class="btn-login" type="submit">{{#str}}logintextbutton, theme_adaptable{{/str}}</button>
+</form>
+{{/displayloginbox}}
+{{^displayloginbox}}
+    {{#hasoidc}}
+        {{#oidcdata}}
+            <a href="{{url}}" title="{{name}}" class="btn-login d-inline-block">
+                {{#iconurl}}
+                <img src="{{iconurl}}" alt="{{name}}">
+                {{/iconurl}}
+                {{name}}
+            </a>
+        {{/oidcdata}}
+            <a class="btn-login d-inline-block" href="{{{url}}}">{{#str}}logintextbuttonwhenoidc, theme_adaptable{{/str}}</a>
+    {{/hasoidc}}
+    {{^hasoidc}}
+        <a class="btn-login d-inline-block" href="{{{url}}}">{{#str}}logintextbutton, theme_adaptable{{/str}}</a>
+    {{/hasoidc}}
+{{/displayloginbox}}

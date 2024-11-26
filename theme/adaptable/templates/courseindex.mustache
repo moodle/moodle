@@ -1,0 +1,46 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_adaptable/courseindex
+
+    Adaptable Course Index template.
+
+    Context variables required for this template:
+    * courseindex - true if there is a course index
+    * courseindexopen - true if the nav drawer should be open on page load
+    * left - true if side post is on the left
+
+    Example context (json):
+    {
+        "courseindex": true,
+        "courseindexopen": true,
+        "left": false
+    }
+}}
+{{#courseindex}}
+    {{< theme_boost/drawer }}
+        {{$id}}theme_adaptable-drawers-courseindex{{/id}}
+        {{$drawerclasses}}drawer drawer-{{#left}}right{{/left}}{{^left}}left{{/left}}{{#courseindexopen}} show{{/courseindexopen}}{{#stickynavbar}} d-none{{/stickynavbar}}{{/drawerclasses}}
+        {{$drawercontent}}
+            {{{courseindex}}}
+        {{/drawercontent}}
+        {{$drawerpreferencename}}drawer-open-index{{/drawerpreferencename}}
+        {{$drawerstate}}show-drawer-{{#left}}right{{/left}}{{^left}}left{{/left}}{{/drawerstate}}
+        {{$tooltipplacement}}{{#left}}left{{/left}}{{^left}}right{{/left}}{{/tooltipplacement}}
+        {{$closebuttontext}}{{#str}}closecourseindex, core{{/str}}{{/closebuttontext}}
+    {{/ theme_boost/drawer}}
+{{/courseindex}}

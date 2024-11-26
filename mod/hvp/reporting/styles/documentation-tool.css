@@ -1,0 +1,123 @@
+.h5p-documentation-tool-header {
+  background-color: #233448;
+  color: white;
+  padding: 1em;
+  margin: 1em 0;
+}
+
+.h5p-standard-page-container {
+  border-bottom: 1px solid #ddd;
+  padding: 0.8em 1em;
+}
+
+.h5p-standard-page-container:last-child {
+  border-bottom: none;
+}
+
+.h5p-standard-page-title {
+  font-weight: bold;
+}
+
+.h5p-goal-table {
+  width: 100%;
+}
+
+.h5p-goal-table tbody {
+  border-top: none;
+}
+
+.h5p-goal-table tr {
+  border: 1px solid #ddd;
+}
+
+.h5p-goal-table tr:last-child {
+  border-bottom: none;
+}
+
+.h5p-goal-table tr:first-child {
+  border-top: none;
+}
+
+.h5p-goal-table td {
+  padding: 1em;
+}
+
+.h5p-goal-index {
+  border-right: 1px solid #ddd;
+  vertical-align: top;
+  font-weight: bold;
+  width: 1em;
+}
+
+.h5p-goal-assessment-index {
+  padding: 1em;
+}
+
+.h5p-goal-assessment-text {
+  border-right: 1px solid #ddd;
+}
+
+.h5p-goal-assessment-choice:before {
+  display: inline-block;
+  font-family: 'h5p-reporting-icons';
+  width: 1.6em;
+  height: 1.6em;
+  line-height: 1.6em;
+  text-align: center;
+
+  color: #000000;
+  background-color: #dddddd;
+  border: 0.042em solid #c6c6c6;
+  border-radius: 0.084em;
+}
+
+.h5p-goal-assessment-choice-0:before {
+  content: "\f006";
+  background-color: #cc3636;
+  color: #fff;
+  border-color: #cc3636;
+}
+
+.h5p-goal-assessment-choice-1:before {
+  content: '\f123';
+  background-color: #d48d11;
+  color: #fff;
+  border-color: #d48d11;
+}
+
+.h5p-goal-assessment-choice-2:before {
+  content: '\f005';
+  background-color: #5bb24d;
+  color: #fff;
+  border-color: #5bb24d;
+}
+
+.h5p-goal-assessment-alt-container {
+  background-color: #eee;
+  border: 0.042em solid #ccc;
+  padding: 0.5em;
+  margin-bottom: 1em;
+}
+
+.h5p-goal-assessment-choice {
+  vertical-align: top;
+}
+
+.h5p-goal-table .h5p-goal-assessment-choice {
+  width: 1em;
+}
+
+.h5p-goal-assessment-alt-container .h5p-goal-assessment-choice {
+  display: inline-block;
+  margin: 0.3em 0 0.3em 0.7em;
+}
+
+.h5p-goal-assessment-alt-container .h5p-goal-assessment-choice:before {
+  margin-right: 0.5em;
+}
+
+.h5p-no-goals {
+  font-weight: bold;
+  padding-left: 1em;
+  margin: 2em 0;
+}

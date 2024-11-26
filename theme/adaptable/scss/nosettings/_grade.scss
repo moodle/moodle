@@ -1,0 +1,60 @@
+//
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+// Adaptable Grade override styles style sheet
+//
+// @package    theme_adaptable
+// @copyright  2021 G J Barnard - {@link http://moodle.org/user/profile.php?id=442195}
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//
+
+.gradereport-grader-table img {
+    max-width: none;
+}
+
+.path-grade-report-grader {
+    #maincontainer {
+        max-width: none;
+        width: auto;
+    }
+
+    .secondary-navigation .moremenu .nav {
+        margin: 0;
+    }
+
+    .gradeparent {
+        th.header,
+        th.userfield {
+            .action-menu {
+                margin-left: auto;
+            }
+        }
+        tr.heading {
+            top: 0;
+        }
+    }
+
+    .heading .gradeitemheader {
+        padding-left: 2.2rem;
+        text-indent: -2.2rem;
+        width: 100%;
+    }
+
+    &.hasstickyfooter .gradeparent tr.lastrow {
+        bottom: -1px;
+    }
+}

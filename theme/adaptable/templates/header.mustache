@@ -1,0 +1,43 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_adaptable/header
+
+    This template renders the header.
+
+    Example context (json):
+    {
+        "settingsmenu": "settings_html",
+        "hasnavbar": false,
+        "navbar": "navbar_if_available",
+        "headerclasses": "d-none d-md-flex"
+    }
+}}
+
+<div id="page-second-header" class="col-12 pt-3 pb-3 {{{headerclasses}}}">
+    <div class="d-flex flex-fill flex-wrap align-items-center">
+        <div id="page-navbar" class="mr-auto">
+            {{{navbar}}}
+        </div>
+        {{#headeractions}}
+        <div class="header-actions-container flex-shrink-0" data-region="header-actions-container">
+            <div class="header-action ml-2">{{{.}}}</div>
+        </div>
+        {{/headeractions}}
+    </div>
+</div>
+

@@ -1,0 +1,86 @@
+//
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+// Adaptable search style sheet
+//
+// @package    theme_adaptable
+// @copyright  2021 G J Barnard - {@link http://moodle.org/user/profile.php?id=442195}
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//
+
+.headersearch {
+    padding: [[setting:searchboxpadding]];
+    .btn {
+        color: [[setting:headertextcolor2]];
+    }
+}
+
+.headersearch,
+.navbarsearchsocial {
+    .btn {
+        box-shadow: none;
+    }
+    .btn-close {
+        border-width: 0;
+    }
+}
+
+#adaptable-page-header-wrapper #header2 a.btn-open i {
+    color: [[setting:headertextcolor]];
+}
+
+.headersearch abbr[title]{
+    border-bottom: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.headersearch .form-inline,
+.navbarsearchsocial .form-inline,
+#adaptable-page-header-wrapper .above-header .navbar .navbarsearchsocial button {
+    margin: 0;
+}
+
+.headersearch .form-inline input.form-control[type=text],
+.navbarsearchsocial .form-inline input.form-control[type=text] {
+    height: 35px;
+}
+
+#adaptable-page-header-wrapper .navbarsearchsocial form .icon {
+    color: [[setting:fontcolor]];
+}
+
+.headersearch .simplesearchform .btn-submit,
+#adaptable-page-header-wrapper .above-header .navbar .navbarsearchsocial button {
+    border-radius: 0;
+}
+.navbarsearchsocial .btn-open {
+    border-width: 0;
+    font-size: 1.2em;
+}
+
+#adaptable-page-header-wrapper .navbarsearchsocial .icon {
+    margin-right: 0;
+    padding-right: 0;
+}
+
+.simplesearchform .collapse.show,
+.simplesearchform .collapsing {
+    background-color: transparent;
+    height: auto;
+    position: relative;
+}

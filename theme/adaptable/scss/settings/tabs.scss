@@ -1,0 +1,53 @@
+//
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+// Adaptable User styles style sheet
+//
+// @package    theme_adaptable
+// @copyright  &copy; 2019 - Coventry University
+// @author     G J Barnard - {@link http://moodle.org/user/profile.php?id=442195}
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//
+
+.tabcontentcontainer input.adaptabletab:checked + label {
+    background-color: [[setting:headerbkcolor]];
+    border-color: [[setting:headerbkcolor]];
+    color: [[setting:headertextcolor]];
+}
+
+.tabcontentcontainer label.adaptabletab {
+    background-color: #eee;
+    border-bottom: 0;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: 400;
+    margin: 0 4px 0 0;
+    padding: 1em;
+    position: relative;
+    transition: background-color .2s ease;
+}
+
+// Tab panel content.
+#adaptable_profile_tree .adaptable-tab.tab-panel {
+    border: 1px solid rgba(0,0,0,.125); // Same colour as profile card border.
+    border-top: 4px solid [[setting:headerbkcolor]];
+}
+
+// Remove borders on cards in the tabs.
+.adaptable-tab.tab-panel .node_category {
+    border-color: transparent;
+}

@@ -1,0 +1,68 @@
+//
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+// Adaptable Navigation style sheet
+//
+// @package    theme_adaptable
+// @copyright  2019 G J Barnard - {@link http://moodle.org/user/profile.php?id=442195}
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//
+
+.navbar {
+    min-height: 40px;
+}
+
+header .nav-item {
+    margin-bottom: auto;
+    margin-top: auto;
+    vertical-align: middle;
+}
+
+@media (max-width: 767px) {
+    .responsivesectionnav .activity-navigation {
+        .text {
+            display: none;
+        }
+
+        .col-md-6 {
+            width: 50%;
+        }
+    }
+}
+
+// New message drawer (moodle 3.6 and higher).
+.message-app {
+    box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+// Adjust height according to header style.
+.header-style1 [data-region="drawer"] {
+    height: calc(100% - 105px);
+    top: 105px;
+}
+
+.header-style2 [data-region="drawer"] {
+    height: calc(100% - 46px);
+    top: 46px;
+}
+
+@media screen and (min-width: 768px) {
+    .header-style2 [data-region="drawer"] {
+        height: calc(100% - 72px);
+        top: 72px;
+    }
+}

@@ -1,0 +1,203 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_adaptable/core/loginform
+
+    Moodle template for the login page.
+
+    Context variables required for this template:
+    * autofocusform: Auto focus on form ?,
+    * canloginasguest - Is guest login allowed?,
+    * canloginbyemail - Is login by email allowed?,
+    * cansignup - Signup allowed?,
+    * cookieshelpicon - cookies help icon details
+    * error - Any errors in the form?,
+    * forgotpasswordurl - Forgot password url,
+    * hasidentityproviders - Flag, set to true to hide identity providers,
+    * hasinstructions - Flag, set to true to show instructions,
+    * identityproviders - List of identity providers,
+    * instructions - Instructions,
+    * instructionsformat - Format of instructions,
+    * loginurl - Login url,
+    * signupurl - Signup url,
+    * errorformatted - Formatted error,
+    * logourl - Flag, logo url,
+    * sitename - Name of site.,
+    * logintoken - Random token to protect login request.,
+    * maintenance - Maintenance message
+
+    Example context (json):
+    {
+        "autofocusform": false,
+        "canloginasguest": "1",
+        "canloginbyemail": false,
+        "cansignup": true,
+        "cookieshelpicon": {
+            "heading": "Cookies must be enabled in your browser",
+            "text": "<div class=\"no-overflow\">Two cookies are used on this site. Both died..</div>",
+            "icon": {
+                "attributes": [
+                    {
+                        "name": "class",
+                        "value": ""
+                    },
+                    {
+                        "name": "alt",
+                        "value": "Help with Cookies must be enabled in your browser"
+                    },
+                    {
+                        "name": "title",
+                        "value": "Help with Cookies must be enabled in your browser"
+                    },
+                    {
+                        "name": "src",
+                        "value": "http://localhost/stable_master/theme/image.php?theme=boost&component=core&image=help"
+                    }
+                ]
+            },
+            "linktext": null,
+            "title": "Help with Cookies must be enabled in your browser",
+            "url": "http://localhost/stable_master/help.php?component=core&identifier=cookiesenabled&lang=en",
+            "ltr": true
+        },
+        "error": "",
+        "forgotpasswordurl": "http://localhost/stable_master/login/forgot_password.php",
+        "hasidentityproviders": false,
+        "hasinstructions": true,
+        "identityproviders": [],
+        "instructions": "For full access to this site, you first need to create an account.",
+        "instructionsformat": "1",
+        "loginurl": "http://localhost/stable_master/login/index.php",
+        "signupurl": "http://localhost/stable_master/login/signup.php",
+        "cookieshelpiconformatted": "",
+        "errorformatted": "",
+        "logourl": false,
+        "sitename": "Beer & Chips",
+        "logintoken": "randomstring",
+        "maintenance": "For full access to this site, you need to login in as an admin.",
+        "languagemenu": "Choose language"
+    }
+}}
+
+<div class="loginform">
+    {{#maintenance}}
+        <div class="alert alert-danger login-maintenance">
+            {{{maintenance}}}
+        </div>
+    {{/maintenance}}
+    {{#error}}
+        <a href="#" id="loginerrormessage" class="sr-only">{{error}}</a>
+        <div class="alert alert-danger" role="alert">{{error}}</div>
+    {{/error}}
+    {{#cansignup}}
+        <a href="{{signupurl}}" class="sr-only">{{#str}} tocreatenewaccount {{/str}}</a>
+    {{/cansignup}}
+    {{#hasoidc}}
+        {{#hasidentityproviders}}
+        <div class="login-divider"></div>
+        <div class="login-identityproviders">
+            <h2 class="login-heading">{{#str}} potentialidps, auth {{/str}}</h2>
+            {{#identityproviders}}
+                <a href="{{url}}" title="{{name}}">
+                    <button class="loginbtn btn login-identityprovider-btn btn-block">
+                        {{#iconurl}}
+                            <img src="{{iconurl}}" alt="{{name}}" width="24" height="24"/>
+                        {{/iconurl}}
+                        {{name}}
+                    </button>
+                </a>
+            {{/identityproviders}}
+        </div>
+        {{/hasidentityproviders}}
+    {{/hasoidc}}
+    {{^hasoidc}}
+        {{> theme_adaptable/corepartials/loginup }}
+    {{/hasoidc}}
+    {{#hasinstructions}}
+        <div class="login-divider"></div>
+        <div class="login-instructions {{#cansignup}}mb-3{{/cansignup}}">
+            <h2 class="login-heading">{{#str}}firsttime{{/str}}</h2>
+            {{{instructions}}}
+        </div>
+    {{/hasinstructions}}
+    {{#cansignup}}
+        <div class="login-signup">
+            <a class="btn btn-secondary" href="{{signupurl}}">{{#str}}startsignup{{/str}}</a>
+        </div>
+    {{/cansignup}}
+    {{#canloginasguest}}
+        <div class="login-divider"></div>
+        {{> theme_adaptable/corepartials/loginguest }}
+    {{/canloginasguest}}
+    {{#hasoidc}}
+    <button class="loginbtn btn btn-secondary btn-block mt-2" type="button" data-toggle="collapse" data-target="#loginmanual"
+        aria-expanded="false" aria-controls="loginmanual">
+        {{#str}} logintextmanualbutton, theme_adaptable {{/str}}
+    </button>
+    <div class="collapse" id="loginmanual">
+        {{> theme_adaptable/corepartials/loginup }}
+    </div>
+    {{/hasoidc}}
+    {{^hasoidc}}
+        {{#hasidentityproviders}}
+        <div class="login-divider"></div>
+        <div class="login-identityproviders">
+            <h2 class="login-heading">{{#str}} potentialidps, auth {{/str}}</h2>
+            {{#identityproviders}}
+                <a href="{{url}}" title="{{name}}">
+                    <button class="loginbtn btn login-identityprovider-btn btn-block">
+                        {{#iconurl}}
+                            <img src="{{iconurl}}" alt="{{name}}" width="24" height="24"/>
+                        {{/iconurl}}
+                        {{name}}
+                    </button>
+                </a>
+            {{/identityproviders}}
+        </div>
+        {{/hasidentityproviders}}
+    {{/hasoidc}}
+    <div class="login-divider"></div>
+    <div class="d-flex">
+        {{#languagemenu}}
+            <div class="login-languagemenu">
+                {{>core/action_menu}}
+            </div>
+            <div class="divider border-left align-self-center mx-3"></div>
+        {{/languagemenu}}
+        <button type="button" class="btn btn-secondary" {{!
+        }} data-modal="alert"{{!
+        }} data-modal-title-str='["cookiesenabled", "core"]' {{!
+        }} data-modal-content-str='["cookiesenabled_help_html", "core"]'{{!
+        }}>{{#str}}cookiesnotice{{/str}}</button>
+    </div>
+</div>
+
+{{#js}}
+    {{^error}}
+        {{#autofocusform}}
+            var userNameField = document.getElementById('username');
+            if (userNameField.value.length == 0) {
+                userNameField.focus();
+            } else {
+                document.getElementById('password').focus();
+            }
+        {{/autofocusform}}
+    {{/error}}
+    {{#error}}
+        document.getElementById('loginerrormessage').focus();
+    {{/error}}
+{{/js}}

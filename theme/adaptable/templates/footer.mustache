@@ -1,0 +1,93 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+    @copyright  2024 G J Barnard
+                  {@link https://moodle.org/user/profile.php?id=442195}
+                  {@link https://gjbarnard.co.uk}
+    @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
+}}
+{{!
+    @template theme_adaptable/footer
+
+    Footer.
+
+    Example context (json):
+    {
+    }
+}}
+{{{output.standard_after_main_region_html}}}
+<footer id="page-footer" class="{{responsivepagefooter}}">
+    <div id="course-footer">{{{output.course_footer}}}</div>
+    {{#showfooterblocks}}{{{output.get_footer_blocks}}}{{/showfooterblocks}}
+    {{#socialicons}}
+    <div class="container">
+        <div class="row">
+            <div class="col-12 pagination-centered socialicons">
+            {{{socialicons}}}
+            </div>
+        </div>
+    </div>
+    {{/socialicons}}
+    <div class="info container2 clearfix">
+        <div class="container">
+            <div class="row">
+                <div class="tool_usertours-resettourcontainer"></div>
+                {{#footnote}}
+                <div class="{{#moodledocs}}col-md-4{{/moodledocs}}{{^moodledocs}}col-md-8{{/moodledocs}} my-md-0 my-2">{{{footnote}}}</div>
+                {{/footnote}}
+                {{#moodledocs}}
+                <div class="col-md-4 my-md-0 my-2 helplink">{{{output.page_doc_link}}}</div>
+                {{/moodledocs}}
+                <div class="col-md-4 my-md-0 my-2">{{{output.standard_footer_html}}}</div>
+            </div>
+            {{#debug}}
+            <div class="row">
+                <div class="col-12 my-md-0 my-2">
+                    {{{debug}}}
+                </div>
+            </div>
+            {{/debug}}
+        </div>
+    </div>
+</footer>
+<div id="back-to-top"><i class="fa fa-angle-up "></i></div>
+{{#savediscard}}{{{savediscard}}}{{/savediscard}}
+
+</div>{{! End #page. }}
+</div>{{! End #page-wrapper. }}
+
+{{{output.standard_end_of_body_html}}}
+
+{{#customjsfiles}}
+<script src="{{.}}"></script>
+{{/customjsfiles}}
+{{#customjs}}
+{{#js}}
+{{{customjs}}}
+{{/js}}
+{{/customjs}}
+
+{{{output.get_all_tracking_methods}}}
+
+</body>
+</html>
+{{#js}}
+    M.util.js_pending('theme_boost/loader');
+    require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
+        Drawer.init();
+        M.util.js_complete('theme_boost/loader');
+    });
+{{/js}}

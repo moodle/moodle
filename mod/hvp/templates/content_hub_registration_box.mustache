@@ -1,0 +1,34 @@
+<div class="form-item row" style="margin-bottom: 2em;">
+    <div class="form-label col-sm-3 text-sm-right"></div>
+    <div class="form-setting col-sm-9">
+        {{^name}}
+            {{# str }} contenthub:register, mod_hvp, {{ registrationurl }} {{/str}}
+        {{/name}}
+        {{#name}}
+            <div>
+                <img src="{{logo}}" style="max-width: 5em; display: inline-block; vertical-align: top;" />
+                <div style="display: inline-block">
+                    <div>{{name}}</div>
+                    {{#contactPerson}}
+                        <div>{{contactPerson}}</div>
+                    {{/contactPerson}}
+                    {{#email}}
+                        <div>{{email}}</div>
+                    {{/email}}
+                    <div>
+                        {{address}} {{zip}} {{city}}
+                    </div>
+                    {{#country}}
+                        <div>{{country}}</div>
+                    {{/country}}
+                    {{#phone}}
+                        <div>{{phone}}</div>
+                    {{/phone}}
+                </div>
+                <div style="margin-top: 1em">
+                    {{# str}} contenthub:changesettings, mod_hvp, {{ registrationurl }} {{/str}}
+                </div>
+            </div>
+        {{/name}}
+    </div>
+</div>

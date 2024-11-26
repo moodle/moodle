@@ -1,0 +1,1812 @@
+//
+// This file is part of Adaptable theme for moodle
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+// Adaptable main CSS file
+//
+// @package    theme_adaptable
+// @copyright  2015-2019 Jeremy Hopkins (Coventry University)
+// @copyright  2015-2019 Fernando Acedo (3-bits.com)
+// @copyright  2018-2019 Manoj Solanki (Coventry University)
+//
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//
+
+// Main elements selectors.
+html,
+body {
+    background-color: [[setting:maincolor]];
+    color: [[setting:fontcolor]];
+    font-family: [[setting:fontname]], sans-serif;
+    font-size: [[setting:fontsize]];
+    font-weight: [[setting:fontweight]] !important;
+    line-height: normal;
+    margin: 0;
+    padding: 0;
+}
+
+#page-my-index, // Overridden from Boost theme to ignore background colour set on dashboard.
+body {
+    background-color: [[setting:backcolor]];
+    background-size: 100% auto;
+}
+
+// Headings.
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0 0 10px;
+    color: [[setting:fontheadercolor]];
+    font-family: [[setting:fontheadername]], sans-serif;
+    font-weight: [[setting:fontheaderweight]] !important;
+}
+
+// Other text tags.
+input,
+select,
+textarea {
+    background-color: [[setting:maincolor]];
+    color: [[setting:fontcolor]];
+    font-family: [[setting:fontname]], sans-serif;
+    font-size: [[setting:fontsize]];
+    font-weight: [[setting:fontweight]] !important;
+}
+
+// Links.
+a,
+a:visited,
+.tabtree .tabrow0 li a {
+    color: [[setting:linkcolor]];
+    text-decoration: none;
+}
+
+a:hover,
+a:active {
+    color: [[setting:linkhover]];
+    text-decoration: none;
+}
+
+a:focus {
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+}
+
+// Text Selection.
+::selection,
+::-moz-selection {
+    background-color: [[setting:selectionbackground]];
+    color: [[setting:selectiontext]];
+}
+
+// Main headings.
+.headingblock, h2.main,
+#site-news-forum h2,
+#frontpage-course-list h2,
+#frontpage-category-names h2,
+#frontpage-category-combo h2,
+.course_category_tree .category > .info > .categoryname {
+    border-bottom: 0 solid #eee;
+    color: [[setting:fontheadercolor]];
+    font-family: [[setting:fontheadername]], sans-serif !important;
+    font-size: 24px;
+    font-weight: [[setting:fontheaderweight]] !important;
+    margin-bottom: 20px;
+}
+
+#nologo,
+#nologo a,
+.generalbox h2,
+h3.sectionname,
+div.tabtree li.selected a span,
+.forumpost .subject,
+.blog_entry div.subject a,
+h2.headingblock,
+h2.main,
+h3.main,
+h2.main a,
+h3.main a,
+div.loginpanel h2,
+div.signuppanel h2 {
+    font-weight: bold;
+}
+
+.well h4 {
+    margin-left: 30px;
+}
+
+.container.outercont {
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+}
+
+#logo {
+    margin-bottom: 2px;
+    margin-left: 0;
+    margin-top: 0;
+    max-width: 250px;
+}
+
+#logocontainer {
+    float: left;
+    margin: 5px 15px 10px 0;
+}
+
+#headertitle,
+#headertitle a,
+#headertitle p,
+#headertitle h1,
+#headertitle h2,
+#headertitle h3,
+#headertitle h4,
+#headertitle h5,
+#headertitle h6 {
+    color: [[setting:fonttitlecolor]];
+
+    font-family: [[setting:fonttitlename]], sans-serif;
+    font-size: [[setting:fonttitlesize]];
+    font-weight: [[setting:fonttitleweight]] !important;
+
+    line-height: 120%;
+    margin: 0;
+    overflow: visible;
+    position: relative;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    width: auto;
+}
+
+.socialbox {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    vertical-align: middle;
+    a {
+        color: [[setting:headertextcolor]] !important;
+    }
+}
+
+.socialicons {
+    padding-top: [[setting:socialpaddingtop]];
+    a {
+        // Make at least 29px, values look odd but on inspection they are needed to be so for FontAwesome.
+        font-size: [[setting:socialsize]];
+        line-height: [[setting:socialsize]];
+        padding-left: [[setting:socialpaddingsidehalf]]px;
+        padding-right: [[setting:socialpaddingsidehalf]]px;
+        &:first-of-type {
+            margin-left: [[setting:socialpaddingsidehalf]]px;
+        }
+        &:last-of-type {
+            margin-right: [[setting:socialpaddingsidehalf]]px;
+        }
+    }
+}
+
+.headermenu {
+    color: #ccc;
+    float: right;
+    font-size: 12px;
+    margin-left: 15px;
+    padding-top: 0;
+    padding-right: 0;
+    text-align: right;
+}
+
+.headermenu span.fa.fa-angle-down {
+    font-size: 13px;
+    padding-left: 5px;
+}
+
+.headermenu .usermendrop a {
+    font-family: [[setting:fontname]], sans-serif;
+    font-size: [[setting:topmenufontsize]];
+}
+
+.headermenu .usermendrop a:hover {
+    text-decoration: none !important;
+}
+
+.usermendrop span {
+    font-size: [[setting:topmenufontsize]];
+    height: 30px;
+    padding-right: 5px;
+}
+
+#page-header .userimg {
+    float: right;
+    margin-bottom: 20px;
+    margin-left: 10px;
+    margin-right: 15px;
+}
+
+.usermenu2.nav {
+    color: [[setting:headertextcolor]];
+    font-size: [[setting:topmenufontsize]];
+    margin-bottom: 0;
+    padding-left: 10px;
+}
+
+.usermenu2.nav a.dropdown-toggle {
+    color: [[setting:headertextcolor]];
+    font-family: [[setting:fontname]], sans-serif;
+    font-size: [[setting:topmenufontsize]];
+}
+
+.usermenu2 .fa.fa-comments {
+    padding-right: 3px;
+}
+
+// Badges.
+.badge {
+    padding: .4rem .6em;
+}
+
+a.component-expand .badge {
+    margin: 0.8em 0.8em 0.4em 0.8em;
+}
+
+.navbar .count-container {
+    background-color: [[setting:msgbadgecolor]];
+}
+
+.badge-primary {
+    background-color: #1177d1;
+    color: #fff;
+}
+
+.badge-primary[href]:hover,
+.badge-primary[href]:focus {
+    background-color: #0d5ca2;
+    color: #fff;
+    text-decoration: none;
+}
+
+.badge-secondary {
+    background-color: #ced4da;
+    color: #212529;
+}
+
+.badge-secondary[href]:hover,
+.badge-secondary[href]:focus {
+    background-color: #b1bbc4;
+    color: #212529;
+    text-decoration: none;
+}
+
+.badge-success {
+    background-color: #5cb85c;
+    color: #fff;
+}
+
+.badge-success[href]:hover,
+.badge-success[href]:focus {
+    background-color: #449d44;
+    color: #fff;
+    text-decoration: none;
+}
+
+.badge-info {
+    background-color: #5bc0de;
+    color: #212529;
+}
+
+.badge-info[href]:hover,
+.badge-info[href]:focus {
+    background-color: #31b0d5;
+    color: #212529;
+    text-decoration: none;
+}
+
+.badge-warning {
+    background-color: #f0ad4e;
+    color: #212529;
+}
+
+.badge-warning[href]:hover,
+.badge-warning[href]:focus {
+    background-color: #ec971f;
+    color: #212529;
+    text-decoration: none;
+}
+
+.badge-danger {
+    background-color: #d9534f;
+    color: #fff;
+}
+
+.badge-danger[href]:hover,
+.badge-danger[href]:focus {
+    background-color: #c9302c;
+    color: #fff;
+    text-decoration: none;
+}
+
+.badge-light {
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.badge-light[href]:hover,
+.badge-light[href]:focus {
+    background-color: #dae0e5;
+    color: #212529;
+    text-decoration: none;
+}
+
+.badge-dark {
+    background-color: #373a3c;
+    color: #fff;
+}
+
+.badge-dark[href]:hover,
+.badge-dark[href]:focus {
+    background-color: #1f2021;
+    color: #fff;
+    text-decoration: none;
+}
+
+.slidewrap {
+    margin-bottom: [[setting:slidermarginbottom]];
+    margin-top: [[setting:slidermargintop]];
+}
+
+#frontblockregion {
+    background-color: [[setting:blockregionbackgroundcolor]];
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.flexibleblocks,
+#marketblocks {
+    background-color: [[setting:marketblocksbackgroundcolor]];
+    padding-bottom: 10px;
+
+    h3 {
+        font-size: 24px;
+        font-weight: normal;
+        line-height: 48px;
+        margin: 10px auto;
+    }
+}
+
+#marketblocks .internalmarket {
+    border: 1px solid [[setting:marketblockbordercolor]];
+    border-top: 0;
+    padding: 10px 15px 30px;
+    text-align: center;
+}
+
+.marketimage { // Deprecated.
+    border: 0;
+    display: block;
+    width: 100%;
+}
+
+.flexiblerow,
+.marketrow {
+    margin-top: 20px;
+}
+
+.editing-flexible-blocks,
+.flexible-blocks-overflow {
+    column-gap: 0.25rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: start;
+
+    .block {
+        flex: 0 0 calc(25% - 0.5rem);
+        max-width: 25%;
+    }
+}
+
+.flexible-blocks-overflow {
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+img.emoticon {
+    height: [[setting:emoticonsize]];
+    width: [[setting:emoticonsize]];
+}
+
+.personpic {
+    text-align: center;
+}
+
+#person img {
+    border: 6px solid #fff;
+    display: block;
+    margin: 0 auto;
+    max-width: 130px;
+}
+
+.persontitle {
+    padding-top: 40px;
+}
+
+span.fa-chevron-right.fa {
+    font-size: 10px;
+}
+
+#theinfo .span3 {
+    padding-top: 35px;
+    text-align: right;
+}
+
+#theinfo2 .span3 {
+    padding-top: 35px;
+    text-align: right;
+}
+
+#frontpage-course-list h2 {
+    display: [[setting:enableavailablecourses]];
+}
+
+#page-footer {
+    background-color: [[setting:footerbkcolor]];
+    border-top: 0;
+    color: [[setting:footertextcolor]] !important;
+    font-size: 110%;
+    margin: auto 0 0;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+#page-footer h3 {
+    color: [[setting:footertextcolor]] !important;
+    word-wrap: break-word;
+}
+
+#page-footer a {
+    color: [[setting:footerlinkcolor]] !important;
+}
+
+#page-footer .block-list > li {
+    padding: 0.3em 0;
+}
+
+.block-list > li {
+    line-height: 1.2;
+}
+
+.white li a, .base-tabs a.white, .block-list a.white {
+    color: #fff;
+}
+
+#page-footer li a span + span {
+    color: #abb5bf;
+    padding-left: 5px;
+}
+
+.fa.fa-chevron-right.icon-right-open-mini {
+    font-size: 10px;
+}
+
+#page-footer .block-list > li a {
+    padding: 0;
+}
+
+#page-footer .blockplace2,
+#page-footer .blockplace3 {
+    display: none;
+}
+
+#page-site-index #page-footer .blockplace2 {
+    display: block;
+}
+
+.tool_dataprivacy {
+    display: [[setting:gdprbutton]];
+}
+
+.screen-reader-text {
+    left: -9999px;
+    position: absolute;
+    top: -9999px;
+}
+
+.clear {
+    clear: both;
+}
+
+.headermenu input[name=username],
+.headermenu input[name=password] {
+    height: 12px;
+    padding-bottom: 4px;
+}
+
+#page-footer .logininfo {
+    font-size: 90%;
+    margin: 0 auto 0;
+    width: auto;
+}
+
+#page-footer .info {
+    border-top: 1px solid [[setting:dividingline2]];
+    color: [[setting:footertextcolor2]];
+    font-size: 90%;
+    line-height: 21px;
+    margin: 0 auto;
+    margin-top: 34px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#page-footer .info a {
+    color: [[setting:footerlinkcolor]] !important;
+}
+
+.info nav ul li {
+    border: medium none;
+    display: inline-block;
+    float: left;
+}
+
+.mrl,
+.mhl,
+.mal {
+    margin-right: 20px !important;
+}
+.mtm,
+.mvm,
+.mam {
+    margin-top: 10px !important;
+}
+
+.info nav ul li a {
+    border-right: 1px solid #666;
+    margin: auto;
+    padding: 0.1em .8em;
+}
+
+#page-footer ol,
+#page-footer ul {
+    list-style: none outside none;
+    margin: 0 0;
+}
+
+#page-my-index #page-navbar {
+    display: inline;
+}
+
+.navbar .nav-collapse.in {
+    border-top: none;
+}
+
+.navbar .nav {
+    display: block;
+    float: left;
+    left: 0;
+    margin: 0 0 0 4px;
+    position: relative;
+}
+
+.navbar .nav > li > a {
+    margin: 0 0 0 0 !important;
+}
+
+langmenu a:hover {
+    background-color: none !important;
+    text-decoration: none !important;
+}
+
+// Breadcrumb //
+#page-navbar {
+    margin-top: 10px;
+}
+
+.breadcrumb {
+    background-color: [[setting:breadcrumb]];
+    padding: 0 10px;
+    li {
+        margin: 5px 0;
+        text-shadow: none;
+        span {
+            a {
+                text-decoration: none;
+            }
+            &.divider {
+                border-bottom: 0 solid [[setting:maincolor]];
+                display: none !important;
+            }
+        }
+        a.firstli {
+            padding-left: 15px;
+            padding-right: 20px;
+        }
+    }
+    > a {
+        display: inline-block;
+        margin: 5px 0;
+    }
+    ul i,
+    li.lastli span {
+        color: [[setting:breadcrumbtextcolor]];
+        text-decoration: none;
+    }
+}
+
+.separator {
+    margin: 9px;
+    i {
+        margin-left: 5px;
+    }
+}
+
+.breadcrumb-button {
+    margin-top: 1px;
+}
+
+.arrow-top {
+    border-bottom: 18px solid transparent;
+    border-left: 17px solid [[setting:breadcrumb]];
+    border-top: 17px solid transparent;
+    height: 0;
+    position: absolute;
+    right: -17px;
+    top: 0;
+    width: 0;
+    z-index: 1;
+}
+
+.arrow-bottom {
+    border-bottom: 18px solid transparent;
+    border-left: 17px solid #fff;
+    border-top: 17px solid transparent;
+    height: 0;
+    position: absolute;
+    right: -18px;
+    top: 0;
+    width: 0;
+}
+
+// Messages popup.
+#newmessageoverlay #newmessagetext {
+    background-color: [[setting:messagepopupbackground]];
+    border-radius: 5px 5px 0 0;
+    color: [[setting:messagepopupcolor]];
+}
+
+#newmessageoverlay {
+    border: 3px solid [[setting:messagepopupbackground]];
+}
+
+.nav .dropdown-menu li a {
+    border-bottom-color: none !important;
+}
+
+.pagelayout-redirect #content {
+    background-color: #fff;
+    border: 1px solid #dadada;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+    margin: 20px auto;
+    padding: 1em;
+    width: 60%;
+}
+
+div.redirectmessage {
+    background: #fff url([[pix:theme|ajax-loader]]) no-repeat 50% 95%;
+    border: none solid transparent;
+    font-size: 13px;
+    margin: 10px auto 0 auto;
+    padding: 20px 20px 40px;
+    width: 60%;
+}
+
+#mode select,
+#forummenu select {
+    height: 36px;
+}
+
+[data-region='post-action'] {
+    margin: 5px 5px 0 0;
+}
+
+#page-grade-export-xls-index #region-main table {
+    display: block;
+    overflow: auto;
+    width: 100%;
+}
+
+.gradingform_guide .criterion .description {
+    padding: 10px 5px 10px 5px;
+    width: 100%;
+}
+
+#notice h4 {
+    font-size: 24px;
+    font-weight: bold !important;
+    margin-bottom: 20px;
+}
+
+#notice.box {
+    background-color: [[setting:alertbackgroundcolorinfo]];
+    border: none;
+    border-color: [[setting:alertbordercolorinfo]];
+    color: [[setting:alertcolorinfo]];
+    font-size: 18px;
+    padding: 15px;
+    margin-top: 100px;
+}
+
+#notice,
+.redirectmessage2 {
+    border-color: #e5e5e5;
+    text-align: center;
+    padding: 5px;
+}
+
+.pagelayout-redirect #page-content {
+    margin: 20px auto 0;
+    text-align: center;
+    width: 80%;
+}
+
+.pagelayout-redirect #page {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
+    box-shadow: none;
+    max-width: inherit;
+    padding: 0;
+}
+
+#page-mod-forum-post #id_subject {
+    width: 100%;
+}
+
+#plugins-control-panel,
+#admindeviceselector {
+    display: block;
+    overflow: auto;
+}
+
+#admindeviceselector .cell img {
+    max-width: 420px;
+}
+
+table.mceLayout2 iframe {
+    max-width: 500px !important;
+}
+
+.editor_atto_menu .open ul.dropdown-menu {
+    min-width: 3.5em;
+}
+
+.form-item .form-label,
+.mform .fitem div.fitemtitle,
+.userprofile dl.list dt,
+.form-horizontal .control-label {
+    width: 250px;
+}
+
+.mform .fitem div.fitemtitle {
+    text-align: right;
+}
+
+.form-label {
+    label,
+    > p {
+        color: [[setting:fontheadercolor]];
+        font-family: [[setting:fontheadername]], sans-serif !important;
+        font-size: 18px;
+        font-weight: [[setting:fontheaderweight]] !important;
+        padding-bottom: 10px;
+    }
+}
+
+.form-colorpicker input {
+    display: inline;
+}
+
+.settingsform {
+    .form-item {
+        border-bottom: 1px solid [[setting:fontcolorrgba]];
+        margin: 10px 0;
+        padding: 10px 0;
+    }
+    fieldset {
+        margin-bottom: 10px;
+    }
+}
+
+input[type="radio"], input[type="checkbox"] {
+    margin-right: 1px;
+}
+
+#region-main {
+    background-color: $body-bg;
+    border: none;
+    color: [[setting:regionmaintextcolor]];
+    transition: all .5s ease-in-out;
+}
+
+// Lang menu.
+.langmenu {
+    a {
+        color: [[setting:headertextcolor]];
+        &:hover {
+            background-color: none;
+            color: [[setting:headertextcolor]];
+        }
+    }
+}
+
+// Alert messages.
+.alert .close {
+    text-decoration: none;
+}
+
+.customalert {
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+     a {
+        text-decoration: underline;
+        &:hover {
+            color: red;
+        }
+    }
+    p {
+        display: inline;
+    }
+}
+
+#beta {
+    background-color: #cc0000;
+    min-height: 50px;
+     h3 {
+        color: #fff !important;
+        font-size: 24px;
+        font-weight: bolder;
+        line-height: 48px;
+        text-align: center;
+     }
+}
+
+// Alerts.
+.alert {
+    margin-bottom: 0;
+}
+
+// Course alerts.
+.adaptable-alert-info {
+    background-color: [[setting:alertbackgroundcolorinfo]];
+    border-width: 1px;
+    border-color: [[setting:alertbordercolorinfo]];
+    color: [[setting:alertcolorinfo]];
+
+    a,
+    a:hover {
+        color: [[setting:alertcolorinfo]];
+    }
+}
+
+.adaptable-alert-success {
+    background-color: [[setting:alertbackgroundcolorsuccess]];
+    border-color: [[setting:alertbordercolorsuccess]];
+    border-width: 1px;
+    color: [[setting:alertcolorsuccess]];
+
+    a,
+    a:hover {
+        color: [[setting:alertcolorsuccess]];
+    }
+}
+
+.adaptable-alert-warning {
+    background-color: [[setting:alertbackgroundcolorwarning]];
+    border-color: [[setting:alertbordercolorwarning]];
+    border-width: 1px;
+    color: [[setting:alertcolorwarning]];
+
+    a,
+    a:hover {
+        color: [[setting:alertcolorwarning]];
+    }
+}
+
+// Admin errors.
+.adminerror {
+    background-color: #f2dede;
+    border-color: #ebcccc;
+    border-radius: 0.25rem;
+    color: #a94442;
+    margin-bottom: 1rem;
+    margin-top: 50px;
+    padding: 0.75rem 1.25rem;
+}
+
+.notifytiny {
+    background-color: #f2dede;
+    border-color: #ebcccc;
+    border-radius: 0.25rem;
+    color: #a94442;
+    font-family: monospace;
+    font-size: 14px;
+    margin: 1rem;
+    padding: 0.75rem 1.25rem;
+}
+
+.navbar .singlebutton,
+.navbar input,
+.navbar .singlebutton div,
+.path-mod-data .navbar form {
+    line-height: 18px;
+    margin: 0 0;
+}
+
+#adaptable-page-header-wrapper .navbar {
+    #pre-login-form input {
+        margin: 5px;
+        padding: 2px;
+    }
+
+    a.btn-login,
+    #pre-login-form button.btn-login {
+        height: 30px;
+        margin: 3px 1px 1px 10px;
+        padding: 0 15px;
+    }
+}
+
+.navbar .singlebutton input {
+    padding: 4px 15px;
+    margin-left: 5px;
+}
+
+.navbar #coursesearchnavbar,
+.navbar .wikisearch {
+    margin-top: 3px;
+}
+
+.navbar .forumsearch input[type=text] {
+    padding: 0;
+}
+
+// Show modal pop-up.
+#notice {
+    margin: 30px auto;
+    min-width: 220px;
+    width: 70%;
+}
+
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
+    background-image: none;
+    margin-top: 5px;
+    margin-right: 5px;
+    padding: 0;
+}
+
+.fp-select {
+    .fp-thumbnail {
+        background: transparent;
+        border: none;
+        margin: auto;
+
+        img {
+            border: 1px solid [[setting:fontcolorrgba]];
+            border-radius: 4px;
+        }
+    }
+}
+
+#page-navbar .breadcrumb-button {
+    display: block;
+    text-align: right;
+}
+
+.user-enroller-panel {
+    z-index: 2;
+}
+
+#gridshadebox_content {
+    background-clip: padding-box;
+    background-color: #fff;
+    border: 1px solid #999;
+    border-radius: 6px;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    min-height: 200px;
+    outline: 0;
+
+    ul.gtopics {
+        margin: 12px 1px 0 1px;
+    }
+}
+
+.sr-only {
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+button.close {
+    -webkit-appearance: none;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    padding: 0;
+}
+
+.close {
+    color: #000;
+    filter: alpha(opacity=20);
+    float: right;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    opacity: .2;
+    text-shadow: 0 1px 0 #fff;
+}
+
+#region-main .generaltable {
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+div.no-overflow,
+.yui3-datatable {
+    overflow-y: visible;
+    overflow-x: auto;
+}
+
+.paging {
+    word-wrap: break-word;
+}
+
+.path-course-view .completionprogress {
+    z-index: 2;
+}
+
+.greybox {
+    border: 1px solid #ccc;
+}
+
+.search-box__input {
+    width: 280px;
+}
+
+button.search-box__button {
+    background-image: none;
+}
+
+.search-box__button {
+    margin: 2px !important;
+    transition: background-color .2s ease-in-out;
+}
+
+.search-box__button:hover {
+    background-color: [[setting:buttonhovercolor]];
+    border: 1px solid rgba(#000, .05);
+    box-shadow: 1px 1px 2px rgba(255, 255, 255, .2);
+    color: [[setting:buttontexthovercolor]];
+    opacity: 0.9;
+    text-decoration: none;
+    text-shadow: -1px -1px 0 [[setting:buttonhovercolor]];
+    transition: all 150ms linear;
+}
+
+.search-box {
+    margin: 0 auto;
+    width: 312px;
+}
+
+.bg-white {
+    background-color: #fff;
+}
+
+.pas {
+    float: right;
+    padding: 2px 4px;
+}
+
+.no-border {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+div.questionbankwindow.block {
+    overflow: auto;
+}
+
+.container {
+    transition: width .5s ease-in-out;
+}
+
+#zoominicon {
+    cursor: pointer;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+}
+
+.fselect #id_courses {
+    width: 100% !important;
+}
+
+.moodlewidth {
+    padding-right: 4px !important;
+    padding-left: 4px !important;
+}
+
+.collapsibleregioncaption {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.overview .name a {
+    text-decoration: underline;
+}
+
+.cimbox {
+    background-color: [[setting:blockbackgroundcolor]];
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 175px;
+    position: relative;
+    margin-right: -1px;
+    transition: all .5s ease-in-out;
+}
+
+a.cimbox {
+    display: block;
+}
+
+#page-site-index a.submit {
+    white-space: normal;
+    width: 100%;
+}
+
+.coursebox-content {
+    padding: 5px 15px 10px;
+    text-align: center;
+}
+
+.coursebox.hover .summary {
+    color: [[setting:rendereroverlayfontcolor]];
+    display: none;
+    left: 0;
+    min-height: 50px;
+    overflow: auto;
+    padding: 20px;
+    position: absolute;
+    text-align: center;
+    top: 0;
+}
+
+.coursebox.hover .summary p {
+    color: [[setting:rendereroverlayfontcolor]];
+}
+
+.coursebox.panel.hover {
+    height: 100%;
+}
+
+.coursebox.panel.hover .panel-body .coursebox-content h3 {
+    font-size: 20px;
+    font-weight: normal;
+    line-height: normal;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.coursebox.panel.hover:hover .panel-body {
+    background-color: [[setting:rendereroverlaycolor]];
+    transition: all .5s ease-in-out;
+}
+
+.coursebox.panel.hover:hover .panel-body .coursebox-content h3,
+.coursebox.panel.hover:focus .panel-body .coursebox-content h3 {
+    color: [[setting:rendereroverlayfontcolor]];
+}
+
+.coursebox.hover .teachers li a,
+.coursebox.hover .summary > a:link,
+.coursebox.hover .summary > a:visited {
+    color: [[setting:rendereroverlayfontcolor]];
+}
+
+.coursebox.hover .teachers {
+    color: [[setting:rendereroverlayfontcolor]];
+    padding-left: 2px;
+    padding-top: 2px;
+    text-align: left;
+}
+
+.coursebox.hover:hover .summary {
+    display: block;
+    height: auto;
+    min-width: 100%;
+    width: auto;
+}
+
+.coursebox.panel.hover:hover .panel-body .cimbox {
+    opacity: .3;
+    transition: all .5s ease-in-out;
+}
+
+.panel.hover .coursebtn.submit.btn {
+    border: 1px solid #eee !important;
+    box-shadow: none;
+    display: block;
+    float: none;
+    font-weight: 300;
+    margin: 0 auto;
+    padding-left: 0;
+    padding-right: 0;
+    position: inherit;
+    width: 90%;
+}
+
+.coursebox.hover .boxfooter {
+    clear: none;
+    margin-bottom: 0;
+}
+
+.coursebox .content .courseimage img {
+    max-width: 300px;
+}
+
+.paging .paging-morelink {
+    clear: both;
+}
+
+.dir-rtl.path-mod-forum .indent {
+    margin-right: 3%;
+    margin-left: 0;
+}
+
+.path-mod-forum .indent {
+    margin-left: 3%;
+}
+
+.gradingform_guide.editor .addcriterion input,
+.gradingform_guide.editor .addcomment input {
+    background-color: #00aeef;
+    display: block;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.gradingform_guide.editor .criterion .controls .delete input {
+    background: transparent url([[pix:t/delete]]) no-repeat center top;
+    height: 16px;
+    margin-top: 4px;
+    width: 20px;
+}
+
+.gradingform_guide.editor .moveup input {
+    background: transparent url([[pix:t/up]]) no-repeat center top;
+    height: 15px;
+    margin-top: 4px;
+    width: 20px;
+}
+
+.gradingform_guide.editor .movedown input {
+    background: transparent url([[pix:t/down]]) no-repeat center top;
+    height: 15px;
+    margin-top: 4px;
+    width: 20px;
+}
+
+.gradingform_guide.editor .movedown input:hover,
+.gradingform_guide.editor .controls .delete input:hover {
+    background: #00aeef url([[pix:t/up]]) no-repeat center top;
+}
+
+.gradingform_guide.editor .addcriterion input,
+.gradingform_guide.editor .addcomment input {
+    background-position: 5px 12px;
+    color: #fff;
+    font-weight: normal;
+    height: 36px;
+    line-height: 20px;
+    padding-left: 10px;
+}
+
+.gradingform_guide.editor .addcomment,
+.gradingform_guide.editor .addcriterion {
+    margin-top: 10px;
+}
+
+.footer-inner .pull-right {
+    text-align: right;
+}
+
+#page-footer .validators,
+#page-footer .purgecaches,
+#page-footer .performanceinfo,
+#page-footer #load {
+    display: block;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.purgecaches {
+    clear: both;
+}
+
+#page-footer .performanceinfo {
+    margin: 10px 0;
+}
+
+.purgecaches a:link {
+    color: #fff;
+}
+
+.helplink {
+    text-align: center;
+}
+
+// Hidden admin blocks.
+.hidden-blocks .block {
+    float: right;
+    margin-left: 10px;
+    width: 250px;
+}
+
+.hidden-blocks {
+    background-color: rgba(255, 154, 154, 0.5);
+    padding: 7px 7px;
+}
+
+.hidden-blocks h3 {
+    border-bottom: 1px solid #e8eaeb;
+    color: #ff0000;
+    margin-left: 10px;
+    text-shadow: 1px 1px 2px #fff;
+}
+
+.hidden-blocks .block-region .block {
+    margin: 0 10px;
+    width: 25%;
+}
+
+.hidden-blocks .block-region .block .header {
+  border-top: 0;
+}
+
+// Quiz navigation.
+//   Published by Tim Hunt in the moodle forum
+//   Some styles are modified for Adaptable
+//   Important!: Some colours are hardcoded
+//
+
+.que .formulation {
+    background-color: transparent !important;
+    border: 1px solid [[setting:maincolor]] !important;
+    color: [[setting:fontcolor]];
+}
+
+.que .info {
+    background-color: transparent !important;
+    border: 1px solid [[setting:maincolor]] !important;
+}
+
+.path-mod-quiz #mod_quiz_navblock .qn_buttons {
+    margin-right: -14px;
+}
+
+.path-mod-quiz #mod_quiz_navblock .qnbutton {
+    background: none;
+    background-color: [[setting:maincolor]];
+    border: 0;
+    border-radius: 4px;
+    color: [[setting:linkcolor]] !important;
+    font-size: 14px;
+    font-weight: bold;
+    height: 45px;
+    line-height: 25px !important;
+    margin: 0 5px 5px 0;
+    width: 35px;
+}
+
+.path-mod-quiz #mod_quiz_navblock .qnbutton .thispageholder {
+    border: 1px solid #999;
+    border-radius: 4px;
+    z-index: 1;
+}
+
+.path-mod-quiz #mod_quiz_navblock .qnbutton.thispage .thispageholder {
+    border: 3px solid #1f536b;
+}
+
+.path-mod-quiz #mod_quiz_navblock .qnbutton.flagged .thispageholder {
+    background: url([[pix:theme|mod/quiz/flag-on]]) 20px 0 no-repeat;
+}
+
+.path-mod-quiz #mod_quiz_navblock .qnbutton .trafficlight {
+    background: #fff none center 4px / 10px no-repeat scroll;
+    border: 0;
+    border-radius: 0 0 4px 4px;
+    height: 20px;
+    margin-top: 25px;
+}
+
+// Not yet answered.
+.path-mod-quiz #mod_quiz_navblock .qnbutton.notyetanswered .trafficlight,
+.path-mod-quiz #mod_quiz_navblock .qnbutton.invalidanswer .trafficlight {
+    background-color: #fff;
+}
+
+// Correct answer.
+.path-mod-quiz #mod_quiz_navblock .qnbutton.correct .trafficlight {
+    background-color: #8bc34a;
+}
+
+// Blocked.
+.path-mod-quiz #mod_quiz_navblock .qnbutton.blocked .trafficlight {
+    background-color: #000;
+}
+
+// Wrong answer.
+.path-mod-quiz #mod_quiz_navblock .qnbutton.notanswered .trafficlight,
+.path-mod-quiz #mod_quiz_navblock .qnbutton.incorrect .trafficlight {
+    background-color: #f44336;
+}
+
+// Partially correct.
+.path-mod-quiz #mod_quiz_navblock .qnbutton.partiallycorrect .trafficlight {
+    background-color: #ff9800;
+}
+
+// Answered.
+.path-mod-quiz #mod_quiz_navblock .qnbutton.complete .trafficlight,
+.path-mod-quiz #mod_quiz_navblock .qnbutton.answersaved .trafficlight,
+.path-mod-quiz #mod_quiz_navblock .qnbutton.requiresgrading .trafficlight {
+    background-color: #999;
+}
+
+// Fix user image in quiz report.
+#page-mod-quiz-report table#attempts td,
+#page-mod-quiz-report table.quizresponseanalysis td {
+    max-width: 100%;
+    min-width: 30px;
+}
+
+// Fix quiz page width.
+#page-mod-quiz-attempt .container {
+    width: 100% !important;
+}
+
+
+// Fix glossary print option.
+#page-mod-glossary-view .glossarycontrol {
+    margin: -40px 5px;
+}
+
+.rcs-search {
+    margin: auto 0 0 5px;
+}
+
+// Fix Video Player icons.
+.vjs-icon-play::before,
+.video-js .vjs-big-play-button::before,
+.video-js .vjs-play-control::before,
+.vjs-icon-fullscreen-enter::before,
+.video-js .vjs-fullscreen-control::before {
+    font-family: videojs;
+}
+
+// Fix activity restriction dialog (and others?).
+.moodle-dialogue-content[role="dialog"] .row {
+    margin-left: inherit;
+}
+
+// Edit hover dropdown background.
+.moodle-actionmenu.show[data-enhanced] .menu a:hover {
+    background-color: #c0c0c0;
+}
+
+.moodle-actionmenu.show[data-enhanced] .menu {
+    height: auto;
+}
+
+// img assignment.
+.path-mod-assign [data-region="user-info"] .img-rounded {
+    height: 60px;
+}
+
+.rounded-circle {
+    max-width: none !important;
+}
+
+// Dimmed text (courses or users).
+.dimmed,
+a.dimmed,
+a.dimmed:link,
+a.dimmed:visited,
+a.dimmed_text,
+a.dimmed_text:link,
+a.dimmed_text:visited,
+.dimmed_text,
+.dimmed_text a,
+.dimmed_text a:link,
+.dimmed_text a:visited,
+.usersuspended,
+.usersuspended a,
+.usersuspended a:link,
+.usersuspended a:visited,
+.dimmed_category,
+.dimmed_category a {
+    color: [[setting:dimmedtextcolor]] !important;
+}
+
+.activity img.iconlarge {
+    height: [[setting:coursesectionactivityiconsize]];
+    width: [[setting:coursesectionactivityiconsize]];
+    vertical-align: middle;
+}
+
+// Plugins installation status.
+.status-upgrade {
+    background-color: #d9edf7;
+}
+
+.status-new {
+    background-color: #dff0d8;
+}
+
+
+// Activity chooser styling.
+.moodle-dialogue-base .moodle-dialogue.chooserdialogue {
+    height: 100%;
+    min-width: 90%;
+}
+
+.choosercontainer #chooseform .option label {
+    border-bottom: 1px solid #fff;
+    display: block;
+    font-weight: normal;
+    padding: 0.4em 0 0.7em 0;
+}
+
+.jschooser .choosercontainer #chooseform .alloptions .option .typename {
+    display: inline-block;
+    font-size: 1.2em;
+    width: 65%;
+}
+
+// Only set these options if we're showing the js container.
+.jsenabled .choosercontainer #chooseform .alloptions {
+    max-width: 95%;
+}
+
+.chooserdialogue .moodle-dialogue-wrap {
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 0;
+    -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+    margin-left: -3px;
+    margin-top: 15px;
+}
+
+.moodle-dialogue-base .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-hd,
+.moodle-dialogue-base .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
+    background-image: none;
+    border-bottom: 1px solid #f5f5f5;
+    border-radius: 0;
+    color: #565656;
+    font-size: 16px;
+    min-height: 20px;
+    padding: 10px;
+    text-align: left;
+}
+
+.choosercontainer #chooseform .selected .typesummary,
+.choosercontainer #chooseform .selected .instruction {
+    display: none;
+}
+// End Activity chooser styling.
+
+#savediscardsection {
+    background-color: #eee;
+    filter: alpha(opacity=80);
+    min-height: 30px;
+    opacity: 0.8;
+    padding: 10px;
+    position: fixed; // For IE8 and earlier.
+    top: 10px;
+    width: 100%;
+}
+
+img.smallicon {
+    height: 16px;
+    width: 16px;
+    vertical-align: middle;
+}
+
+#page-course-resources {
+    table.mod_index td img {
+        height: 36px;
+        width: 36px;
+        vertical-align: middle;
+    }
+
+    #region-main table.generaltable {
+        display: table;
+    }
+}
+
+#profilepic img,
+.userpicture {
+    background-color: #fff;
+    border-radius: 50%;
+    display: inline;
+    margin: 0 4px 0 0;
+}
+
+#adaptable-page-header-wrapper {
+    .above-header .userpicture {
+        height: 25px;
+        width: 25px;
+    }
+
+    #header2 .userpicture {
+        height: 35px;
+        width: 35px;
+    }
+}
+
+.comment-message .picture {
+    float: left;
+    width: 30px;
+}
+
+.tag_list .inline-list a.label-info[href] {
+    color: #fff !important;
+}
+
+.groupmanagementtable .row {
+    margin-left: 0;
+}
+
+// Added to style the grid of letters etc on participants page.
+.userlist .initialbar {
+    margin-bottom: 10px;
+    .letter {
+        border: 0;
+        height: 1.8em;
+        min-width: 1.8em;
+        &.active {
+            line-height: 2em;
+        }
+        &:hover {
+            color: #fff !important;
+        }
+    }
+}
+
+.form-inline input.form-control[type=text] {
+    border-radius: 2px;
+    height: 32px;
+    min-width: 0;
+}
+
+// Transform default value text in settings to Italic.
+.form-item .form-setting .form-defaultinfo {
+    font-style: italic;
+    padding-left: 5px;
+}
+
+// Dialog box styling.
+.moodle-dialogue-base .moodle-dialogue-wrap .container,
+.moodle-dialogue-base .chooserdialogue .moodle-dialogue-wrap .container {
+    width: 100%;
+}
+
+.moodle-dialogue-base button.closebutton,
+.moodle-dialogue-base .chooserdialogue button.closebutton,
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .closebutton,
+.moodle-dialogue-base .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons button.yui3-button.closebutton {
+    background-color: [[setting:maincolor]];
+    border-radius: 3px;
+    color: [[setting:fontcolor]];
+    line-height: 1.2em;
+    margin: 0;
+    opacity: 1;
+    padding: 0;
+    width: 26px;
+}
+
+.moodle-dialogue-base .closebutton::after,
+.moodle-dialogue-base .chooserdialogue .closebutton::after
+.moodle-dialogue-base .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons button.yui3-button.closebutton:after {
+    background: none;
+    color: #777;
+    display: inline-block;
+    opacity: 1;
+    vertical-align: top;
+}
+
+.moodle-dialogue-base .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
+    padding: 0.6em;
+}
+
+.form-group textarea.form-control {
+    margin: 0 0 0.7rem 0;
+}
+
+// File Picker.
+.fp-setlicense select {
+    display: block;
+}
+
+.form-control-static .icon
+.detail-pair-value .icon {
+    font-size: 24px !important;
+}
+
+.subheader h3 {
+    font-size: 1.6rem !important;
+    margin-top: 70px !important;
+}
+
+// Info icon.
+.text-info {
+    color: [[setting:infoiconcolor]] !important;
+}
+
+// Highlight results.
+.highlight {
+    background-color: #ff0;
+    color: #000 !important;
+
+}
+
+.text-danger .icon,
+.notconnected,
+.que .validationerror,
+.text-error {
+    color: [[setting:dangericoncolor]] !important;
+}
+
+.notconnected,
+.que .validationerror,
+.text-error {
+    margin-right: 1px !important;
+    margin-top: 8px !important;
+}
+
+// Success / fail icon.
+.text-success,
+.green,
+.notifysuccess,
+.connected,
+.detail-pair-value .text-danger,
+.form-control-static .text-danger,
+.notconnected,
+.que .validationerror,
+.text-error {
+    font-size: 24px !important;
+}
+
+.progressbar_container {
+    max-width: none;
+}
+
+[[setting:loginbgopacity]]

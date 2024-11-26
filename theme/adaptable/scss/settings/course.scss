@@ -1,0 +1,750 @@
+//
+// This file is part of Adaptable theme for moodle
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+// Adaptable course CSS file
+//
+// @package    theme_adaptable
+// @copyright  2015-2019 Jeremy Hopkins (Coventry University)
+// @copyright  2015-2019 Fernando Acedo (3-bits.com)
+// @copyright  2018-2019 Manoj Solanki (Coventry University)
+//
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//
+
+// Common settings.
+
+#page-coursetitle h1 {
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+#coursetitle,
+#headertitle #coursetitle {
+    color: [[setting:fonttitlecolorcourse]];
+}
+
+// Course Tiles.
+
+// Remove 'Available courses' label.
+#frontpage-available-course-list h2 {
+    display: [[setting:enableavailablecourses]];
+}
+
+// Display the course list container.
+
+#frontpage-available-course-list {
+    display: block;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    flex-grow: 1;
+    flex-wrap: wrap;
+}
+
+#page-site-index .courses {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.paging-morelink {
+    display: block;
+    clear:both;
+    width: 100%;
+}
+
+// Media breakpoints for courses list area.
+@media (min-width: 992px) {
+    #page-site-index .courses {
+        max-width: 960px;
+    }
+}
+@media (min-width: 1200px) {
+    #page-site-index .courses {
+        max-width: 100%;
+    }
+}
+
+// Course tiles.
+.coursebox.panel .panel-body {
+    border: 4px solid [[setting:tilesbordercolor]];
+    margin: 2px;
+}
+
+.coursebox.panel,
+.coursebox.panel .panel-body {
+    position: relative;
+}
+
+.coursebox .boxfooter {
+    clear: both;
+    margin-bottom: 30px;
+}
+
+// 1 tile.
+.coursebox.col-12 .coursebtn {
+    width: 20%;
+}
+
+// 2 tiles.
+.coursebox.col-6 .coursebtn {
+    width: 40%;
+}
+
+// 3 tiles.
+.coursebox.col-4 .coursebtn {
+    width: 50%;
+}
+
+// 4 tiles.
+.coursebox.col-3 .coursebtn {
+    width: 50%;
+}
+
+// 6 tiles.
+.coursebox.col-2 .coursebtn {
+    width: 80%;
+}
+
+.coursebox.panel ul.teachers li {
+    display: [[setting:tilesshowallcontacts]];
+}
+
+.coursebox.panel ul.teachers li:first-child {
+    display: block;
+}
+
+.coursebox .panel-heading {
+    padding: 12px 10px 10px;
+}
+
+.coursebox .panel-heading a {
+    font-size: 105%;
+}
+
+.courses .coursebox.even {
+  background-color: #eee !important;
+}
+
+.coursebox > .info > .coursename a {
+    background-size: 14px;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.coursebox > .info > h3.name,
+.course_category_tree .category > .info .name {
+    font-size: 120%;
+    font-weight: normal;
+    margin: 0;
+}
+
+.coursebox .content {
+    clear: none;
+}
+
+.coursebox {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+      flex-grow: 2 !important;
+        flex-shrink: 2 !important;
+          flex-basis: 90% !important;
+}
+
+#page .covtiles.panel {
+    background: transparent !important;
+    border: 0;
+    position: relative;
+}
+
+#page .covtiles.panel .panel-body {
+    border: 1px solid #e4e4e4;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px #c1c1c1;
+    padding: 5px;
+    position: relative;
+}
+
+#marketblocks.covtiles {
+    overflow: visible;
+}
+
+#marketblocks .covtiles {
+    border-radius: 2px;
+    box-shadow: 0 1px 2px #c1c1c1;
+    position: relative;
+    border: 5px solid #fff;
+}
+
+#page .covtiles.panel:hover .panel-body {
+    background-color: transparent !important;
+}
+
+#marketblocks.covtiles .internalmarket {
+    background-color: transparent;
+    border: 0;
+    padding: 10px 5px;
+    text-align: left;
+    position: relative;
+}
+
+#marketblocks.covtiles h3 {
+    margin-bottom: 0;
+}
+
+#marketblocks.covtiles a.submit {
+    margin-top: 10px;
+    display: inline-block;
+}
+
+#page .covtiles.panel .cimbox {
+    background-position: 50% 0 !important;
+    background-size: cover !important;
+    height: 200px;
+    overflow: hidden;
+}
+
+#page .covtiles.panel .cimbox,
+#page .covtiles.panel:hover .cimbox,
+#page .covtiles.panel:hover {
+    opacity: 1;
+}
+
+.covtiles.coursebox.panel.hover .panel-body .coursebox-content h3,
+#marketblocks.covtiles h4 {
+    background: [[setting:covbkcolor]];
+    border: 5px solid #fff;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    color: [[setting:covfontcolor]] !important;
+    font-size: 18px;
+    font-weight: 800;
+    left: -5px;
+    margin: 0;
+    padding: 5px 10px;
+    text-align: left;
+    width: auto;
+    max-width: 100%;
+}
+
+.covtiles.coursebox.panel.hover .panel-body .coursebox-content h3 a,
+#marketblocks.covtiles h4 a,
+.covtiles.coursebox.panel.hover .panel-body .coursebox-content h3 a:hover,
+#marketblocks.covtiles h4 a:hover {
+    color: [[setting:covfontcolor]] !important;
+}
+
+.covtiles .coursebox-content {
+    position: relative;
+    padding: 0 0;
+}
+
+.coursebox.hover.covtiles2 .summary {
+    display: block !important;
+    background: [[setting:covbkcolor]];
+    bottom: 0;
+    left: 0;
+    padding: 0;
+    right: 0;
+    top: inherit;
+    width: 98%;
+    height: 0;
+    min-height: 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 1;
+    transition: max-height 1.0s !important;
+}
+
+.coursebox.hover.covtiles2:hover .summary {
+    height: auto;
+    min-height: 30px;
+    padding: 10px 1%;
+    max-height: 1000px;
+    opacity: 1;
+    transition: max-height 1.0s !important;
+}
+
+.covtiles.panel.hover .coursebtn.submit.btn {
+    display: block;
+    margin-top: 10px;
+}
+
+.coursebox.hover.covtiles .summary {
+    background: [[setting:covbkcolor]];
+    color: [[setting:covfontcolor]] !important;
+    display: block;
+    position: relative;
+    text-align: left;
+    min-width: auto;
+}
+
+#page .covtiles.panel .panel-body {
+    padding-bottom: 38px;
+}
+
+.covtiles .coursebox-content {
+    background-color: [[setting:covbkcolor]];
+    bottom: 5px;
+    height: 38px;
+    left: 5px;
+    right: 4px;
+    position: absolute;
+    overflow: hidden;
+    transition: height .5s ease-in-out;
+    width: auto;
+    z-index: 9; // Override .cimbox class. */
+}
+
+.covtiles .panel-body .coursebox-content:hover,
+.covtiles .panel-body .coursebox-content:focus {
+    height: calc(100% - 5px);
+}
+
+// Topics / Weekly format.
+.course-content ul.topics li.section {
+    padding-bottom: 0;
+}
+
+#page .course-content ul li.section.main {
+    background-color: [[setting:coursesectionbgcolor]];
+    border: [[setting:coursesectionborderwidth]] [[setting:coursesectionborderstyle]] [[setting:coursesectionbordercolor]];
+    margin-bottom: 10px;
+    border-radius: [[setting:coursesectionborderradius]];
+}
+
+.sitetopic ul.section,
+.course-content ul.section {
+    margin: 0;
+}
+
+.sitetopic ul.section,
+body:not(.editing) .sitetopic ul.section,
+.course-content ul.section {
+    padding-left: 0.2em;
+}
+
+@media (max-width: 767.98px) {
+    .course-content li.section ul ul {
+        padding-left: 1rem;
+    }
+}
+
+#newdiscussionform {
+    text-align: center;
+}
+
+#searchforums {
+    margin: 5px 0 5px 5px;
+}
+
+.course-content .current {
+    background-color: transparent;
+    border-left: 0 solid #ccc;
+    border-right: 0 dashed #ccc;
+    margin-top: 0 !important;
+}
+
+.panel-body {
+    overflow: hidden;
+}
+
+.panel-body .courseimage img {
+    float: right;
+    margin-bottom: 10px;
+    max-width: 60px;
+    margin-left: 5px;
+}
+
+.course-content ul li.section .side {
+    display: none;
+}
+
+.editing .course-content ul li.section .side {
+    display: inherit;
+}
+
+.course-content ul.topics li.section .content,
+.course-content ul.weeks li.section .content {
+    margin: 0;
+}
+
+.editing .course-content ul.topics li.section .content,
+.editing .course-content ul.weeks li.section .content {
+    margin: 0;
+}
+
+.course-content ul.topics li.section .content .summarytext,
+.course-content ul.weeks li.section .content .summarytext {
+    margin-left: 15px;
+}
+
+.section-handle {
+    margin: 0;
+    position: relative;
+    top: 12px;
+}
+
+.course-content ul.topics li.section .left {
+    padding-top: 2px;
+    text-align: right;
+}
+
+.course-content ul li.section.main {
+    margin: 0;
+}
+
+.sectionname {
+    background-color: [[setting:coursesectionheaderbg]];
+    border-bottom: [[setting:coursesectionheaderborderstyle]] [[setting:coursesectionheaderbordercolor]] [[setting:coursesectionheaderborderwidth]];
+    border-bottom-left-radius: [[setting:coursesectionheaderborderradiusbottom]];
+    border-bottom-right-radius: [[setting:coursesectionheaderborderradiusbottom]];
+    border-radius: [[setting:coursesectionheaderborderradiustop]];
+    color: [[setting:sectionheadingcolor]];
+    margin-bottom: 20px;
+    padding: 3px 10px;
+}
+
+// Alter nav on single-section for better onetopic course format support.
+.single-section .nav {
+    margin-bottom: 0;
+}
+
+.single-section .nav-tabs {
+    border-bottom: none;
+}
+
+.path-course-view .completionprogress {
+    color: #666;
+    float: none;
+    font-size: 90%;
+    padding: 0 0 10px;
+}
+
+#gridshadebox_content .content .summary,
+#gridshadebox_content .content ul.section {
+    padding: 0 20px;
+}
+
+// Current Section.
+#page .course-content ul li.section.main.current{
+    background-color: [[setting:currentcolor]];
+}
+
+.course-content ul li.section.hidden .sectionname,
+.course-content ul li.section.hidden .content > div {
+    margin-right: 40px;
+}
+
+// One Topic.
+// CSS for the one topic format tabs.
+.format-onetopic .onetopic {
+    .tab_content {
+        background-color: [[setting:regionmaincolor]];
+        color: [[setting:regionmaintextcolor]];
+    }
+
+    .nav-tabs {
+        .nav-link {
+            background-color: #eee;
+            border: 1px solid #eee;
+            margin: 2px; // Magic number so tabs can have border.
+
+            .tab_content .sectionname {
+                background-color: inherit;
+                color: inherit;
+            }
+        }
+
+        .nav-link.active,
+        .nav-item.show .nav-link {
+            background-color: [[setting:headerbkcolor]];
+            border-color: transparent;
+        }
+
+        .nav-link.active {
+            .tab_content,
+            .tab_content .sectionname {
+                background-color: [[setting:onetopicactivetabbackgroundcolor]] !important;
+                color: [[setting:onetopicactivetabtextcolor]] !important;
+            }
+        }
+    }
+}
+
+// Profile picture.
+// Make the profile picture circular.
+.format-socialwall img.userpicture {
+    border: 0.25em solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0.05em 0.05em rgba(0,0,0,0.05);
+}
+
+.activity_footer,
+.section_footer {
+  margin-top: 2em;
+  padding: 1em 15px;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  clear: both;
+  display: block;
+}
+
+.section_footer .prevnext {
+  font-style: normal;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .section_footer .previous_activity,
+  .section_footer .previous_section,
+  .section_footer .next_activity,
+  .section_footer .next_section {
+    width: 50%;
+    vertical-align: top;
+  }
+
+}
+
+.section_footer > .jumpmenu {
+  width: 100%;
+}
+
+.next_activity,
+.next_section {
+  text-align: right;
+  min-height: 1px;
+}
+
+.jumpnav > .jumpmenu {
+  text-align: center;
+  margin-top: 1em;
+}
+.jumpnav > .jumpmenu #jump-to-activity.custom-select {
+    width: auto;
+}
+
+.previous_activity,
+.previous_section {
+  min-height: 1px;
+}
+
+.nav_icon {
+  padding: .3em;
+  text-align: center;
+  font-size: 1.5em;
+  line-height: 2em;
+  display: table-cell;
+  min-width: 50px;
+}
+
+.previous_activity .nav_icon,
+.previous_section .nav_icon {
+  margin-right: .3em;
+  border-right: 1px solid #eee;
+}
+.previous_activity .text,
+.previous_section .text {
+  padding-left: 9px;
+}
+.next_activity .nav_icon,
+.next_section .nav_icon {
+  margin-left: .3em;
+  border-left: 1px solid #eee;
+}
+.next_activity .text,
+.next_section .text {
+  padding-right: 9px;
+}
+
+.activity_footer .text,
+.section_footer .text {
+  display: table-cell;
+  width: 10007px;
+  vertical-align: top;
+  padding-top: 9px;
+  color: #565656;
+}
+
+.nav_guide {
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-style: normal;
+}
+
+// Activity styling */
+.block_site_main_menu .mod-indent .activity,
+.block_site_main_menu .main-menu-content .activity {
+    padding: 5px 0 5px 0;
+}
+
+.section-modchooser {
+    padding: 5px 10px;
+}
+
+.section li .ad-activity-wrapper {
+    border-bottom: [[setting:coursesectionactivityborderwidth]] [[setting:coursesectionactivityborderstyle]] [[setting:coursesectionactivitybordercolor]];
+    box-shadow: -[[setting:coursesectionactivityleftborderwidth]] 0 0 0 [[setting:coursesectionactivityassignleftbordercolor]];
+}
+
+.section li .modtype_assign .ad-activity-wrapper {
+    background-color: [[setting:coursesectionactivityassignbgcolor]];
+}
+
+.section li.modtype_forum .ad-activity-wrapper {
+    background-color: [[setting:coursesectionactivityforumbgcolor]];
+}
+
+.section li.modtype_quiz .ad-activity-wrapper {
+    background-color: [[setting:coursesectionactivityquizbgcolor]];
+}
+
+.activity img.activityicon {
+    margin-right: 0;
+}
+
+// Label Info.
+.section .activity .availabilityinfo {
+    margin-left: 30px;
+    margin-top: 1em;
+}
+
+.availabilityinfo .label-info {
+    background-color: [[setting:alertbackgroundcolorinfo]];
+    border-color: [[setting:alertbordercolorinfo]];
+    color: [[setting:alertcolorinfo]];
+    font-size: 14px;
+    padding: 10px;
+}
+
+.availabilityinfo .label-info a,
+.availabilityinfo .label-info a:hover {
+    color: [[setting:alertcolorinfo]] !important;
+}
+
+
+// Activity further information styling.
+.ad-activity-meta-container {
+    padding: 5px 0 0 0;
+}
+
+.ad-activity-mod-feedback {
+    padding: 5px 0;
+}
+
+.ad-activity-action i {
+    margin-right: 0.35rem;
+}
+
+.ad-activity-mod-feedback i,
+.ad-activity-mod-engagement i {
+    font-size: 1.1em;
+}
+
+li.activity div.actions-right {
+    float: right;
+    padding: 5px;
+}
+
+.ad-activity-wrapper {
+    margin: [[setting:coursesectionactivitymargintop]] 0 [[setting:coursesectionactivitymarginbottom]] 0;
+    padding: 5px 10px 5px 0;
+}
+
+.section .activity .mod-indent-outer {
+    width: 100%;
+}
+
+.section .label .mod-indent-outer {
+    padding-left: 0;
+}
+
+.section .activity.modtype_label.label {
+    padding: 0;
+}
+
+.topics .section .activity .mod-indent-outer {
+    margin-left: 15px;
+}
+
+.course-content ul.topics li.section .summary {
+    margin: 5px 5px 5px 10px;
+}
+
+.section .activity .actions-right .actions {
+    position: absolute;
+    right: 17px;
+    top: 15px;
+}
+
+.section .activity .activityinstance {
+    min-width: 60%;
+    margin-left: 5px;
+}
+
+.course-content ul.gtopics li.section .content {
+    margin: 0 10px;
+}
+
+.course-content ul.ftopics li.section .content {
+    margin: 0 10px;
+}
+
+.section li.activity {
+    clear: both;
+    padding: 0;
+    margin-bottom: 5px;
+}
+
+.course-content .single-section .section-navigation {
+    margin-bottom: auto;
+}
+
+// region-main-settings-menu is used on pages other than course pages, but included here to keep the settings together.
+.context-header-settings-menu,
+.region-main-settings-menu {
+    height: 42px;
+    margin-top: 0;
+}
+.context-header-settings-menu .dropdown-toggle>.icon,
+#region-main-settings-menu .dropdown-toggle>.icon {
+    vertical-align: sub;
+}
+
+#region-main-settings-menu > div {
+    position: static;
+    margin: 0;
+    right: auto;
+}
+
+.section .activity .contentwithoutlink > a,
+.section .activity .activityinstance > a,
+.section .activity .contentwithoutlink .inplaceeditable > a,
+.section .activity .activityinstance .inplaceeditable > a {
+    color: [[setting:coursesectionactivityheadingcolour]];
+}
+
+.section .activity .contentwithoutlink > a > span,
+.section .activity .activityinstance > a > span,
+.section .activity .contentwithoutlink .inplaceeditable > a > span,
+.section .activity .activityinstance .inplaceeditable > a > span {
+    font-size: 1.1em;
+    padding-left: 8px;
+    font-weight: 800;
+}

@@ -1,0 +1,14 @@
+/*!
+ * Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ * Copyright 2023 Fonticons, Inc.
+ */
+// V4 compatibility
+// -------------------------
+
+@font-face {
+  font-family: 'FontAwesome';
+  font-display: $fa-font-display;
+  src: url('[[font:theme|fa-v4compatibility.woff2]]') format('woff2'),
+    url('[[font:theme|fa-v4compatibility.ttf]]') format('truetype');
+  unicode-range: U+F041,U+F047,U+F065-F066,U+F07D-F07E,U+F080,U+F08B,U+F08E,U+F090,U+F09A,U+F0AC,U+F0AE,U+F0B2,U+F0D0,U+F0D6,U+F0E4,U+F0EC,U+F10A-F10B,U+F123,U+F13E,U+F148-F149,U+F14C,U+F156,U+F15E,U+F160-F161,U+F163,U+F175-F178,U+F195,U+F1F8,U+F219,U+F27A; }

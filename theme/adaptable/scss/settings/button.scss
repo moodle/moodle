@@ -1,0 +1,487 @@
+//
+// This file is part of Adaptable theme for moodle
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+// Adaptable buttons CSS file
+//
+// @package    theme_adaptable
+// @copyright  2015-2019 Jeremy Hopkins (Coventry University)
+// @copyright  2015-2019 Fernando Acedo (3-bits.com)
+// @copyright  2018-2019 Manoj Solanki (Coventry University)
+//
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//
+
+// Default style for all the buttons.
+.btn {
+    background-image: none;
+    border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+    border-bottom-color: #b3b3b3;
+    border-radius: [[setting:buttonradius]];
+    border-style: solid;
+    box-shadow: 0 [[setting:buttondropshadow]] 0 0 rgba(0, 0, 0, 0.5) inset;
+    cursor: pointer;
+    font-family: [[setting:fontname]], sans-serif;
+    margin-bottom: 0;
+    padding: 6px 12px 6px;
+    text-align: center;
+    text-shadow: none;
+
+    &.btn-icon {
+        @include hover-focus {
+            background-color: [[setting:buttonhovercolor]];
+            color: [[setting:buttontexthovercolor]];
+        }
+    }
+    // Caret.
+    .caret {
+        border-top-color: [[setting:buttontextcolor]] !important;
+    }
+}
+
+// Primary button.
+button,
+.btn-primary,
+a.btn-primary,
+a.btn-primary:visited,
+.backup-restore .singlebutton button[type="submit"],
+.path-mod-workshop .assessment-summary.graded .singlebutton input[type="submit"],
+.path-mod-workshop .example-summary.graded .singlebutton input[type="submit"],
+.btn-default,
+[data-role="next"],
+[data-role="previous"],
+input[type="submit"],
+input[type="button"],
+#searchform_button,
+a.submit,
+#notice .singlebutton + .singlebutton input,
+input.form-submit,
+input#id_submitbutton,
+input#id_submitbutton2,
+.path-admin .buttons input[type="submit"],
+.nav-pills > .active > a,
+td.submit input,
+div.discussionsubscription > a.discussiontoggle,
+.btn-outline-secondary,
+.paging-morelink a,
+a#adaptable-message-user-button,
+
+// Add Restrictions Dialogue.
+#availability_addrestriction_date.btn.btn-secondary,
+#availability_addrestriction_grade.btn.btn-secondary,
+#availability_addrestriction_profile.btn.btn-secondary,
+#availability_addrestriction_list_.btn.btn-secondary,
+#availability_addrestriction_completion.btn.btn-secondary {
+    background-color: [[setting:buttoncolor]];
+    background-image: none;
+    background-size: 100% 200%;
+    border: none;
+    box-shadow: 0 [[setting:buttondropshadow]] 0 0 rgba(0, 0, 0, 0.5) inset;
+    color: [[setting:buttontextcolor]];
+    cursor: pointer;
+    font-family: [[setting:fontname]], sans-serif;
+    padding: .4rem 1rem;
+    text-shadow: none;
+    transition: background .2s ease-out;
+}
+
+.btn-primary:hover {
+    background-color: [[setting:buttonhovercolor]];
+    text-decoration: none;
+    color: [[setting:buttontexthovercolor]];
+}
+
+.btn-primary:focus {
+    background-color: [[setting:buttonfocuscolour]];
+    box-shadow: $input-btn-focus-box-shadow;
+    text-decoration: none;
+    color: [[setting:buttontextfocuscolour]];
+}
+
+// Secondary button.
+.btn-secondary {
+    background-color: [[setting:buttoncolorscnd]];
+    color: [[setting:buttontextcolorscnd]];
+    text-decoration: none;
+}
+
+a.btn-secondary {
+    color: [[setting:buttontextcolorscnd]];
+}
+
+.btn-secondary:hover {
+    background-color: [[setting:buttonhovercolorscnd]];
+    color: [[setting:buttontextcolorscnd]];
+    text-decoration: none;
+}
+
+.btn-secondary:focus {
+    background-color: [[setting:buttonfocuscolour]];
+    box-shadow: $input-btn-focus-box-shadow;
+    text-decoration: none;
+    color: [[setting:buttontextfocuscolour]];
+}
+
+.btn-sm {
+  margin-right: 3px;
+}
+
+// Action buttons.
+#notice .singlebutton + .singlebutton input,
+submit.buttons input[name="cancel"] {
+    background-color: [[setting:editoffbk]] !important;
+    text-shadow: none;
+}
+
+.path-mod-workshop .assessment-summary.graded .singlebutton input[type="submit"]:hover,
+.path-mod-workshop .example-summary.graded .singlebutton input[type="submit"]:hover,
+input.form-submit:hover,
+input#id_submitbutton:hover,
+input#id_submitbutton2:hover,
+.path-admin .buttons input[type="submit"]:hover,
+td.submit input:hover,
+input.form-submit:active,
+input#id_submitbutton:active,
+input#id_submitbutton2:active,
+.path-admin .buttons input[type="submit"]:active,
+td.submit input:active,
+input.form-submit.active,
+input#id_submitbutton.active,
+input#id_submitbutton2.active,
+.path-admin .buttons input[type="submit"].active,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+#searchform_button:hover,
+a.submit:hover,
+#notice .singlebutton + .singlebutton input:hover,
+.submit.buttons input[name="cancel"]:hover,
+.submitbutton:hover,
+.nav-pills > .active > a:hover,
+.btn-outline-secondary:hover,
+div.discussionsubscription > a.discussiontoggle:hover,
+a#adaptable-message-user-button:hover,
+#availability_addrestriction_date.btn.btn-secondary:hover,
+#availability_addrestriction_grade.btn.btn-secondary:hover,
+#availability_addrestriction_profile.btn.btn-secondary:hover,
+#availability_addrestriction_list_.btn.btn-secondary:hover,
+#availability_addrestriction_completion.btn.btn-secondary:hover {
+    background-color: [[setting:buttonhovercolor]];
+    background-image: none;
+    background-position: 0 -100%;
+    color: [[setting:buttontexthovercolor]];
+    text-decoration: none !important;
+}
+
+.path-mod-workshop .assessment-summary.graded .singlebutton input[type="submit"]:focus,
+.path-mod-workshop .example-summary.graded .singlebutton input[type="submit"]:focus,
+input.form-submit:focus,
+input#id_submitbutton:focus,
+input#id_submitbutton2:focus,
+.path-admin .buttons input[type="submit"]:focus,
+td.submit input:focus,
+input[type="submit"]:focus,
+input[type="button"]:focus,
+#searchform_button:focus,
+a.submit:focus,
+#notice .singlebutton + .singlebutton input:focus,
+.submit.buttons input[name="cancel"]:focus,
+.submitbutton:focus,
+.nav-pills > .active > a:focus,
+.btn-outline-secondary:focus,
+div.discussionsubscription > a.discussiontoggle:focus,
+a#adaptable-message-user-button:focus,
+#availability_addrestriction_date.btn.btn-secondary:focus,
+#availability_addrestriction_grade.btn.btn-secondary:focus,
+#availability_addrestriction_profile.btn.btn-secondary:focus,
+#availability_addrestriction_list_.btn.btn-secondary:focus,
+#availability_addrestriction_completion.btn.btn-secondary:focus{
+    background-color: [[setting:buttonfocuscolour]];
+    background-image: none;
+    background-position: 0 -100%;
+    color: [[setting:buttontextfocuscolour]];
+    text-decoration: none !important;
+}
+
+button.close {
+    box-shadow: none !important;
+    color: #777;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
+#editingbutton {
+    padding-right: 10px;
+    line-height: 22px;
+}
+
+.navbar #editingbutton .singlebutton {
+    line-height: inherit;
+}
+
+.navbar #editingbutton .singlebutton:first-child {
+    margin-right: 6px;
+}
+
+#editingbutton .simplesearchform {
+    display: inline-block;
+}
+
+#editingbutton #coursesearchnavbar .form-group .btn {
+    margin: 0 5px 0 5px;
+    padding: 4px 12px;
+}
+
+#editingbutton .helptooltip a {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+}
+
+td.submit input.active, input.form-submit.disabled,
+input#id_submitbutton.disabled,
+input#id_submitbutton2.disabled,
+.path-admin .buttons input[type="submit"].disabled,
+td.submit input.disabled,
+input.form-submit[disabled],
+input#id_submitbutton[disabled],
+input#id_submitbutton2[disabled],
+.path-admin .buttons input[type="submit"][disabled],
+td.submit input[disabled],
+.btn-outline-secondary[disabled] {
+    background-color: [[setting:buttonhovercolor]];
+    background-image: none;
+    box-shadow: 0 [[setting:buttondropshadow]] 0 0 rgba(0, 0, 0, 0.5) inset;
+    color: [[setting:buttontexthovercolor]];
+}
+
+#editingbutton .btn,
+#editingbutton input[type="submit"] {
+    background-image: none;
+    background-color: [[setting:editonbk]];
+    box-shadow: 0 [[setting:buttondropshadow]] 0 0 rgba(0, 0, 0, 0.5) inset;
+    color: [[setting:editfont]];
+    height: 32px;
+    line-height: 28px;
+    padding: 0 [[setting:edithorizontalpadding]];
+}
+
+.editing #editingbutton .btn,
+.editing #editingbutton input[type="submit"],
+.editing #editingbutton a:hover,
+.purgecaches a,
+.tool_dataprivacy a {
+    background-image: none;
+    background-color: [[setting:editoffbk]];
+    box-shadow: 0 [[setting:buttondropshadow]] 0 0 rgba(0, 0, 0, 0.5) inset;
+    color: [[setting:editfont]];
+    padding: 0 [[setting:edithorizontalpadding]];
+    text-decoration: none !important;
+}
+
+.purgecaches a,
+.tool_dataprivacy a {
+    border-radius: [[setting:buttonradius]];
+}
+
+.fp-btn-choose {
+    margin-bottom: 10px;
+}
+
+// Set Cancel button to a link instead a button to improve usability.
+.submit.buttons input[name="cancel"],
+[data-role="end"],
+[data-role="cancel"],
+.cancel a,
+#id_cancel,
+input[name="addcancel"],
+button[name="resetbutton"] {
+    font-family: [[setting:fontname]], sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    height: 36px;
+    cursor: pointer;
+    color: [[setting:buttontextcolorcancel]] !important;
+    background-image: none !important;
+    background-color: [[setting:buttoncolorcancel]] !important;
+    box-shadow: none;
+    border: none;
+}
+
+// Set Cancel hover to a link with the same colour that Cancel but underlined.
+.cancel a:hover,
+[data-role="end"]:hover,
+[data-role="cancel"]:hover,
+input[name="addcancel"]:hover,
+button[name="resetbutton"]:hover,
+#id_cancel:hover {
+    color: [[setting:buttontextcolorcancel]] !important;
+    background-color: [[setting:buttonhovercolorcancel]] !important;
+    text-decoration: none !important;
+}
+
+// Disabled button hardcoded to grey.
+.btn-primary.disabled,
+.btn-primary[disabled] {
+    background-image: none;
+    background-color: #e0e0e0;
+    color: #bdbdbd;
+}
+
+#notice .singlebutton + .singlebutton input,
+.submit.buttons input[name="cancel"] {
+    color: [[setting:editfont]] !important;
+    background-image: none;
+    background-color: [[setting:editoffbk]] !important;
+    text-shadow: none;
+}
+
+// Login.
+.btn-login {
+    background-image: none;
+    background-color: [[setting:buttonlogincolor]];
+    border: none;
+    box-shadow: 0 [[setting:buttondropshadow]] 0 0 rgba(0, 0, 0, 0.5) inset;
+    color: [[setting:buttonlogintextcolor]];
+    cursor: pointer;
+    height: [[setting:buttonloginheight]];
+    margin-right: 2px;
+    margin-top: [[setting:buttonloginmargintop]];
+    padding: [[setting:buttonloginpadding]] 15px;
+    text-shadow: none;
+    transition: background 0.2s ease-out 0s;
+}
+
+.btn-login:hover {
+    background-image: none;
+    background-color: [[setting:buttonloginhovercolor]];
+    color: [[setting:buttonlogintextcolor]];
+    text-decoration: none;
+}
+
+.continuebutton {
+    margin: 10px 0;
+}
+
+// Complete activity button.
+.path-course-view li.activity span.autocompletion img,
+.path-course-view li.activity form.togglecompletion .btn {
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+// Message Drawer styles (moodle 3.6 and higher).
+
+// Hide messages drawer unused buttons.
+.message-drawer .btn.hidden {
+    display: none !important;
+}
+
+// Display buttons with same height than the rest.
+.message-drawer .btn-block {
+    min-height: 36px;
+}
+
+// Set action buttons to action colour.
+.message-drawer button[data-action="confirm-delete-conversation"],
+.message-drawer button[data-action="confirm-block"] {
+    background-color: [[setting:editoffbk]] !important;
+    text-shadow: none !important;
+    color: #ffffff !important;
+}
+
+// Remove border from progress icon button styling that is present due to previous styles
+// defined for a links used with button styling.
+a.btn[data-toggle="popover"] {
+    margin-left: 5px;
+    border: none;
+    background-color: transparent !important;
+}
+
+// btn-group.
+.btn-group .btn  {
+    margin-right: 5px;
+}
+
+.discussiontoggle {
+    margin-right: 5px;
+}
+
+// .btn-link styles.
+.btn-link,
+a.btn-link {
+    background-color: [[setting:buttoncolor]];
+    box-shadow: none;
+    color: [[setting:buttontextcolor]] !important;
+    a {
+        color: [[setting:buttontextcolor]] !important;
+    }
+
+    &:hover,
+    :focus {
+        background-color: [[setting:buttonhovercolor]];
+        color: [[setting:buttontexthovercolor]] !important;
+    }
+
+    &.add-sections,
+    &.section-modchooser-link {
+        background-color: transparent;
+        color: [[setting:linkcolor]] !important;
+
+        &:hover,
+        :focus {
+            background-color: transparent;
+            color: [[setting:linkhover]] !important;
+        }
+    }
+
+    &.text-reset {
+        color: [[setting:buttontextcolor]] !important;
+    }
+
+    .icon {
+        margin-right: 0;
+    }
+
+    .menu-action-text .icon {
+        margin-top: 8px;
+    }
+}
+
+.discussiontoggle {
+    padding: 10px;
+}
+
+// Forum subscribed button.
+div.discussionsubscription {
+    margin-top: -2px !important;
+}
+
+// Forum Move discussion button.
+#forummenu .btn-secondary {
+    margin-left: 5px;
+}
+
+.fp-upload-btn {
+    margin-top: 1rem;
+}
+
+// Message button margin (applies to all the elements).
+#page-user-profile .node_category li,
+.path-user .node_category li {
+    margin-top: 15px;
+}

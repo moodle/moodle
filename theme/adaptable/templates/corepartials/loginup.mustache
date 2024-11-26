@@ -1,0 +1,68 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_adaptable/corepartials/loginup
+
+    Context variables required for this template:
+    * canloginbyemail - Is login by email allowed?,
+    * loginurl - Login url,
+    * logintoken - Random token to protect login request.
+
+    Example context (json):
+    {
+        "canloginbyemail": false,
+        "loginurl": "http://localhost/stable_master/login/index.php",
+        "logintoken": "randomstring"
+    }
+}}
+    <form class="login-form" action="{{loginurl}}" method="post" id="login">
+        <input type="hidden" name="logintoken" value="{{logintoken}}">
+        <div class="login-form-username form-group">
+            <label for="username" class="sr-only">
+                {{^canloginbyemail}}
+                    {{#str}} username {{/str}}
+                {{/canloginbyemail}}
+                {{#canloginbyemail}}
+                    {{#str}} usernameemail {{/str}}
+                {{/canloginbyemail}}
+            </label>
+            <input type="text" name="username" id="username" {{!
+                !}}class="form-control form-control-lg" {{!
+                !}}value="{{username}}" {{!
+                !}}placeholder="{{^canloginbyemail}}{{#cleanstr}}username{{/cleanstr}}{{/canloginbyemail}}{{!
+                !}}{{#canloginbyemail}}{{#cleanstr}}usernameemail{{/cleanstr}}{{/canloginbyemail}}" {{!
+                !}}autocomplete="username">
+        </div>
+        <div class="login-form-password form-group">
+            <label for="password" class="sr-only">{{#str}} password {{/str}}</label>
+            <input type="password" name="password" id="password" value="" {{!
+                !}}class="form-control form-control-lg" {{!
+                !}}placeholder="{{#cleanstr}}password{{/cleanstr}}" {{!
+                !}}autocomplete="current-password">
+        </div>
+        {{#recaptcha}}
+        <div class="login-form-recaptcha mb-3">
+            {{{recaptcha}}}
+        </div>
+        {{/recaptcha}}
+        <div class="login-form-submit form-group">
+            <button class="loginbtn btn btn-primary btn-lg btn-block" type="submit" id="loginbtn">{{#str}}login{{/str}}</button>
+        </div>
+        <div class="login-form-forgotpassword form-group">
+            <a href="{{forgotpasswordurl}}">{{#str}}forgotaccount{{/str}}</a>
+        </div>
+    </form>

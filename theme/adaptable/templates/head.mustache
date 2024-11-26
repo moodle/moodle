@@ -1,0 +1,70 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_adaptable/head
+
+    This template renders the head.
+
+    Example context (json):
+    {
+        "sitefullname": "My site",
+        "pagetitle": "Denise Emma Bug",
+        "siteurl": "https://local.localhost/",
+        "maincolor": "#ffaabb"
+    }
+}}
+{{{ output.doctype }}}
+<html {{{ output.htmlattributes }}}>
+<head>
+    <title>{{{ output.page_title }}}</title>
+    <link rel="shortcut icon" href="{{{ output.favicon }}}" />
+    {{{ output.standard_head_html }}}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Twitter Card data -->
+    <meta name="twitter:card" value="summary">
+    <meta name="twitter:site" value="{{sitefullname}}">
+    <meta name="twitter:title" value="{{pagetitle}}">
+
+    <!-- Open Graph data -->
+    <meta property="og:title" content="{{pagetitle}}">
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{siteurl}}">
+    <meta name="og:site_name" value="{{sitefullname}}">
+
+    <!-- Chrome, Firefox OS and Opera on Android topbar color -->
+    <meta name="theme-color" content="{{maincolor}}">
+
+    <!-- Windows Phone topbar color -->
+    <meta name="msapplication-navbutton-color" content="{{maincolor}}">
+
+    <!-- iOS Safari topbar color -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="{{maincolor}}">
+
+    {{#fontname}}
+    <!-- Load Google main font -->
+    <link href="https://fonts.googleapis.com/css?family={{fontname}}" rel="stylesheet" type="text/css">
+    {{/fontname}}
+    {{#fontheadername}}
+    <!-- Load Google header font -->
+    <link href="https://fonts.googleapis.com/css?family={{fontheadername}}" rel="stylesheet" type="text/css">
+    {{/fontheadername}}
+    {{#fonttitlename}}
+    <!-- Load Google title font -->
+    <link href="https://fonts.googleapis.com/css?family={{fonttitlename}}" rel="stylesheet" type="text/css">
+    {{/fonttitlename}}
+</head>

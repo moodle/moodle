@@ -1,0 +1,772 @@
+//
+// This file is part of Adaptable theme for moodle
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+// Adaptable block styles sheet
+//
+// @package    theme_adaptable
+// @copyright  2015-2019 Jeremy Hopkins (Coventry University)
+// @copyright  2015-2019 Fernando Acedo (3-bits.com)
+// @copyright  2018-2019 Manoj Solanki (Coventry University)
+//
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//
+
+.block-region-front .block {
+    border: none;
+}
+
+.block-region-front .block .header {
+    border: none;
+}
+
+.block .content a.dimmed {
+    font-style: italic;
+}
+
+.block_timeline .col-sm {
+    flex-basis: 0%;
+    flex-grow: 1;
+    max-width: 100%;
+}
+
+// Reset border values.
+[class^="block-side-"] .card-body,
+.block {
+    background-color: [[setting:blockbackgroundcolor]];
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin-bottom: 2px;
+}
+
+// Block action classes lifted from previously used bootstrapbase parent theme.
+.block.hidden .header .block_action {
+    .block-hider-hide {
+        display: none;
+    }
+    .block-hider-show {
+        display: inline;
+    }
+}
+
+.block .header .block_action {
+    float: right;
+    margin-left: 5px;
+    padding: 1px 2px;
+}
+
+.block .header .block_action .block-hider-show,
+.block .header .block_action .block-hider-hide {
+    cursor: pointer;
+}
+
+.block .header .block_action .block-hider-show,
+.jsenabled .block-region:not(#block-region-information) .block.hidden .content {
+    display: none;
+}
+
+.jsenabled .block-region:not(#block-region-information) .block.hidden .content {
+    opacity: 0;
+}
+
+.jsenabled .block .content {
+    opacity: 1;
+    display: block;
+    -webkit-transition: ease [[setting:navbardropdowntransitiontime]];
+    -moz-transition: ease [[setting:navbardropdowntransitiontime]];
+    -ms-transition: ease [[setting:navbardropdowntransitiontime]];
+    -o-transition: ease [[setting:navbardropdowntransitiontime]];
+    transition: ease [[setting:navbardropdowntransitiontime]];
+}
+
+// Block titles.
+.block .header,
+.block > .card-body {
+    border-width: [[setting:blockheaderbordertop]] [[setting:blockheaderborderright]] [[setting:blockheaderborderbottom]] [[setting:blockheaderborderleft]];
+    border-color: [[setting:blockbordercolor]];
+    border-style: [[setting:blockheaderbordertopstyle]];
+    padding: 5px;
+    border-radius: [[setting:blockheadertopradius]] [[setting:blockheadertopradius]] [[setting:blockheaderbottomradius]] [[setting:blockheaderbottomradius]];
+}
+
+// Block header.
+.block .header {
+    background-color: [[setting:blockheaderbackgroundcolor]];
+    padding-right: 0;
+    .action-menu {
+        .menubar {
+            margin-top: 4px;
+        }
+        .dropdown-toggle,
+        .action-menu-item {
+            color: [[setting:fontblockheadercolor]];
+        }
+    }
+}
+
+#block-region-information {
+    .block {
+        .header {
+            .block-action {
+                display: none;
+            }
+        }
+    }
+}
+
+// Block title.
+.block .title h2 {
+    color: [[setting:fontblockheadercolor]];
+    font-size: [[setting:fontblockheadersize]];
+    font-weight: [[setting:fontblockheaderweight]] !important;
+    margin-bottom: 0;
+    text-shadow: none;
+    text-transform: none;
+}
+
+// Block content.
+.block > .content {
+    border-color: [[setting:blockbordercolor]];
+    border-radius: [[setting:blockmaintopradius]] [[setting:blockmaintopradius]] [[setting:blockmainbottomradius]] [[setting:blockmainbottomradius]];
+    border-style: [[setting:blockmainbordertopstyle]];
+    border-width: [[setting:blockmainbordertop]] [[setting:blockmainborderright]] [[setting:blockmainborderbottom]] [[setting:blockmainborderleft]];
+    font-weight: normal;
+    padding: 10px 5px;
+}
+
+.block-region-front .block .content {
+    padding: 10px 5px;
+}
+
+.block .block-hider-show,
+.block .block-hider-hide {
+    width: 18px;
+}
+
+// Some specific block styles for calendar block, login block, my profile block, etc.
+// Navigation block.
+.jsenabled .block_settings .block_tree .tree_item.branch,
+.block_navigation .block_tree .tree_item.branch {
+    color: [[setting:linkcolor]] !important;
+}
+
+// Fix wrong indentation.
+.block_navigation .block_tree p.hasicon img {
+    padding-right: 0;
+}
+
+.block_navigation ul.block_tree > li > ul,
+.block_navigation ul.block_tree > li > ul > li p.tree_item.branch {
+    padding-left: 0;
+}
+
+.block_navigation ul.block_tree > li > ul > li p.hasicon {
+    padding-left: 1px;
+}
+.block_navigation ul.block_tree > li > p[aria-expanded="true"]:before {
+    content: "\f625"; // gauge-high <- dashboard.
+    font-family: "Font Awesome 6 Free";
+    text-indent: -3px;
+}
+
+// Course Timeline block.
+.block .content .block-timeline a:hover {
+    background-color: [[setting:navbardropdownhovercolor]] !important;
+    color: [[setting:navbardropdowntexthovercolor]] !important;
+}
+
+// Recently accessed courses block.
+.block_recentlyaccessedcourses .paging-bar-container {
+    margin-top: -3rem;
+}
+
+// Login block.
+.block_login label {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    font-weight: 400;
+}
+
+.block_login .username label:before {
+    content: "\f007"; // user <- user.
+    font-family: "Font Awesome 6 Free";
+    margin-right: 5px;
+    color: #999;
+}
+
+.block_login .password label:before {
+    content: "\f084"; // key <- key.
+    font-family: "Font Awesome 6 Free";
+    margin-right: 5px;
+    color: #999;
+}
+
+.loginbox .loginpanel .desc {
+    clear: both;
+}
+
+.block_login .content {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+}
+
+.block_login .c1.btn input {
+    display: block;
+    text-align: center;
+    width: 96%;
+}
+
+.loginbox .loginform .form-input input {
+    width: 50%;
+}
+
+.loginbox .loginform .form-input {
+    float: right;
+    width: 66%;
+}
+
+.loginbox .loginform .form-label {
+  width: 33%;
+}
+
+// Admin block.
+.block_adminblock .content {
+    margin: 0 auto;
+}
+
+// Course Overview block.
+.block_course_overview .content {
+    margin: 0;
+}
+
+.btn.coursemenubtn {
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0% !important;
+    color: #000000 !important;
+}
+
+.btn.coursemenubtn:hover {
+    background-color: #f0f0f0 !important;
+    border-radius: 100% !important;
+}
+
+.coursemenubtn .fa {
+    color: #000000 !important;
+}
+
+
+// Calendar block.
+.block_calendar_month table.minicalendar.calendartable td {
+    border: none !important;
+}
+
+.block_calendar_month table.minicalendar.calendartable th {
+    border: none !important;
+    border-radius: 0;
+    background-color: #e0e0e0;
+}
+
+.block_calendar_month table.minicalendar {
+    margin-bottom: 0 !important;
+}
+
+.block_calendar_month table.minicalendar.calendartable th abbr {
+    border: none !important;
+    text-decoration: none;
+}
+
+.block .calendar-controls {
+    .previous,
+    .next {
+        font-size: 0.8rem;
+        margin-top: 0.125rem;
+        .arrow {
+            display: none;
+        }
+        &:before,
+        &:after {
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+        }
+    }
+    .previous {
+        &:before {
+            content: "\f053"; // chevron-left.
+        }
+    }
+    .next {
+        &:after {
+            content: "\f054"; // chevron-right.
+        }
+    }
+}
+
+@media (min-width: 768px) {
+    section:not(#region-main) .block.block_calendar_month .maincalendar .calendarwrapper {
+        .previous,
+        .next {
+            font-size: .8rem;
+        }
+    }
+}
+
+// Comments block.
+.block_comments div.content li {
+    list-style-type: none;
+}
+
+.block_tree_box hr {
+    background: transparent;
+    border: none;
+    border-top: 1px solid #eee;
+}
+
+// Site Info block.
+.site-info-container {
+    background-color: [[setting:maincolor]];
+    padding: 5px 10px;
+    height: 120px
+}
+
+.site-info-value {
+    color: #ffffff;
+    font-size: 48px;
+    display: block;
+    text-align: right;
+}
+
+.site-info-label {
+    color: #ffffff;
+    font-size: 18px;
+    display: block;
+    text-align: right;
+}
+
+// Server Info block.
+.server-info-container {
+    background-color: #39c121;
+    padding: 5px 10px;
+    height: 120px
+}
+
+// Quiz editing block header.
+.questionbankwindow.block {
+    padding: 0;
+}
+
+#page-mod-quiz-edit .questionbankwindow div.header {
+    background-color: #eee;
+    color: inherit;
+}
+
+#page-mod-quiz-edit .questionbankwindow div.header a {
+    color: inherit;
+}
+
+#mod_quiz_navblock input {
+    white-space: normal;
+}
+
+// Hidden blocks.
+.block.hidden .header {
+    border-bottom: 0;
+}
+
+.block.invisible:hover {
+    opacity: 1;
+}
+
+body.has_dock div#dock {
+    z-index: 3;
+}
+
+// Squared dot.
+.block_settings .block_tree li.item_with_icon > p img {
+    left: 3px;
+    top: 2px;
+}
+
+// Block Icons.
+.showblockicons {
+    .block .header .title h2:before {
+        content: "\f0c9"; // navicon <- navicon.
+        display: inline-block;
+        font-family: "Font Awesome 6 Free";
+        font-size: [[setting:blockiconsheadersize]];
+        font-style: normal;
+        font-variant: normal;
+        font-weight: 900; // fa-solid.
+        padding-right: 8px;
+        text-rendering: auto;
+    }
+
+    .block_news_items.block .header .title h2:before {
+        content: "\f0a1"; // bullhorn <- bullhorn.
+        font-family: "Font Awesome 6 Free";
+    }
+
+    .block_navigation.block .header .title h2:before {
+        content: "\f0e8"; // sitemap <- sitemap.
+    }
+
+    .block_calendar_upcoming.block .header .title h2:before,
+    .block_calendar_month.block .header .title h2:before {
+        content: "\f133"; // far calendar <- calendar-o.
+        font-weight: 400; // fa-regular.
+    }
+
+    .block_course_list.block .header .title h2:before {
+        content: "\f390"; // desktop <- desktop.
+    }
+
+    .block_completionstatus.block .header .title h2:before,
+    .block_selfcompletion.block .header .title h2:before {
+        content: "\f625"; // gauge-high <- tachometer.
+    }
+
+    .block_blog_menu.block .header .title h2:before,
+    .block_book_toc.block .header .title h2:before {
+        content: "\f02d"; // book <- book.
+    }
+
+    .block_quiz_results.block .header .title h2:before {
+        content: "\e0e3"; // chart-column <- bar-chart.
+    }
+
+    .block_quiz_navblock.block .header .title h2:before {
+        content: "\f126"; // code-branch <- code-fork.
+    }
+
+    .block_glossary_random.block .header .title h2:before {
+        content: "\f0eb"; // far lightbulb <- lightbulb-o.
+        font-weight: 400; // fa-regular.
+    }
+
+    .block_participants.block .header .title h2:before,
+    .block_online_users.block .header .title h2:before,
+    .block_block_mentees.block .header .title h2:before {
+        content: "\f0c0"; // users <- group.
+    }
+
+    .block_html.block .header .title h2:before {
+        content: "\f022"; // far rectangle-list <- list-alt.
+        font-weight: 400; // fa-regular.
+    }
+
+    .block_section_links.block .header .title h2:before,
+    .block_admin_bookmarks.block .header .title h2:before {
+        content: "\f02e"; // bookmark <- bookmark.
+    }
+
+    .block_activity_modules.block .header .title h2:before {
+        content: "\f12e"; // puzzle-piece <- puzzle-piece.
+    }
+
+    .block_comments.block .header .title h2:before {
+        content: "\f075"; // comment <- comment.
+    }
+
+    .block_settings.block .header .title h2:before {
+        content: "\f085"; // gears <- cogs.
+    }
+
+    .block_blog_tags.block .header .title h2:before,
+    .block_tags.block .header .title h2:before {
+        content: "\f02c"; // tags <- tags.
+    }
+
+    .block_private_files.block .header .title h2:before {
+        content: "\f07b"; // folder <- folder.
+    }
+
+    .block_messages.block .header .title h2:before {
+        content: "\f0e0"; // envelope <- envelope.
+    }
+
+    .block_community.block .header .title h2:before {
+        content: "\f0ac"; // globe <- globe.
+    }
+
+    .block_recent_activity.block .header .title h2:before {
+        content: "\f017"; // far clock <- clock-o.
+        font-weight: 400; // fa-regular.
+    }
+
+    .block_rss_client.block .header .title h2:before {
+        content: "\f09e"; // rss <- feed.
+    }
+
+    .block_search_forums.block .header .title h2:before,
+    .block_globalsearch.block .header .title h2:before {
+        content: "\f002"; // magnifying-glass <- search.
+    }
+
+    .block_myprofile.block .header .title h2:before {
+        content: "\f007"; // user <- user.
+    }
+
+    .block_adminblock.block .header .title h2:before {
+        content: "\f009"; // table-cells-large <- th-large.
+    }
+
+    .block_feedback.block .header .title h2:before {
+        content: "\f164"; // far thumbs-up <- thumbs-o-up.
+        font-weight: 400; // fa-regular.
+    }
+
+    .block_flickr.block .header .title h2:before {
+        content: "\f03e"; // far image <- picture-o.
+        font-weight: 400; // fa-regular.
+    }
+
+    .block_youtube.block .header .title h2:before {
+        content: "\f145"; // ticket <- ticket.
+    }
+
+    .block_course_badges.block .header .title h2:before,
+    .block_badges.block .header .title h2:before {
+        content: "\f0a3"; // certificate <- certificate.
+    }
+
+    .block_twitter_search.block .header .title h2:before {
+        content: "\e61b"; // x-twitter <- twitter.
+    }
+
+    .block_overview.block .header .title h2:before {
+        content: "\f03a"; // list <- list.
+    }
+
+    .block_timeline.block .header .title h2:before {
+        content: "\f062"; // arrow-up <- arrow-up.
+    }
+
+    .block_starredcourses.block .header .title h2:before {
+        content: "\f005"; // star <- star.
+    }
+
+    .block_lp.block .header .title h2:before {
+        content: "\f277"; // signs-post <- map-signs.
+    }
+    
+    .block_sitenews.block .header .title h2:before {
+        content: "\f1ea"; // far newspaper <- newspaper-o.
+        font-weight: 400; // fa-regular.
+    }
+}
+
+// Overriden from Boost..
+.block_tree .tree_item.branch {
+    margin-left: 0;
+}
+
+.block_settings .block_tree .tree_item.branch {
+    padding-left: 5px;
+}
+
+.block_settings .block_tree p.hasicon {
+    padding-left: 5px;
+}
+
+// Add slightly extra margin on right.
+.block_settings .block_tree p.hasicon .icon {
+    margin-right: 4px;
+}
+
+// Circle icon size decreased.
+.block_settings .fa-circle {
+    font-size: 10px;
+    margin-right: .25rem;
+}
+
+// Tabbed layout for course and dashboard.
+
+main.tabcontentcontainer {
+    margin: 5px 0;
+    min-height: 400px;
+    padding: 0;
+}
+
+#dashboardtabcontainer section.adaptable-tab-section {
+    border-top: 4px solid [[setting:tabbedlayoutdashboardcolorselected]];
+    display: none;
+    padding: 20px 0 0;
+}
+
+#coursetabcontainer section.adaptable-tab-section {
+    border-top: 4px solid [[setting:tabbedlayoutcoursepagetabcolorselected]];
+    display: none;
+    padding: 20px 0 0;
+}
+
+#dashboardtabcontainer input.dashboardtab,
+#coursetabcontainer input.coursetab {
+    display: none;
+}
+
+.tabcontentcontainer div.linktab,
+.tabcontentcontainer label.dashboardtab,
+.tabcontentcontainer label.coursetab {
+    border-bottom: 0;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: 400;
+    padding: 15px 15px 25px;
+    position: relative;
+    margin: 0 4px 0 0;
+    transition: background-color 0.2s ease;
+}
+
+.tabcontentcontainer label.dashboardtab {
+    background-color: [[setting:tabbedlayoutdashboardcolorunselected]];
+}
+
+.tabcontentcontainer div.linktab,
+.tabcontentcontainer label.coursetab {
+    background-color: [[setting:tabbedlayoutcoursepagetabcolorunselected]];
+}
+
+.tabcontentcontainer div.linktab {
+    line-height: 1;
+    vertical-align: top;
+}
+
+.tabcontentcontainer div.linktab a {
+    color: inherit;
+}
+
+.tabcontentcontainer > dashboardtab.label:hover::after,
+.tabcontentcontainer > dashboardtab.input:focus + label::after,
+.tabcontentcontainer > dashboardtab.input:checked + label::after {
+  background-color: [[setting:tabbedlayoutdashboardcolorselected]];
+}
+
+.tabcontentcontainer > coursetab.label:hover::after,
+.tabcontentcontainer > coursetab.input:focus + label::after,
+.tabcontentcontainer > coursetab.input:checked + label::after {
+    background-color: [[setting:tabbedlayoutcoursepagetabcolorselected]];
+}
+
+.tabcontentcontainer div.linktab,
+.tabcontentcontainer input.dashboardtab:checked + label {
+    border-color: [[setting:tabbedlayoutdashboardcolorselected]];
+    background-color: [[setting:tabbedlayoutdashboardcolorselected]];
+    border-top: 4px solid [[setting:tabbedlayoutdashboardcolorselected]];  // Override this in custom css to change the selected tab colour.
+    color: #FFF;
+}
+
+.tabcontentcontainer input.coursetab:checked + label {
+    border-color: [[setting:tabbedlayoutcoursepagetabcolorselected]];
+    background-color: [[setting:tabbedlayoutcoursepagetabcolorselected]];
+    border-top: 4px solid [[setting:tabbedlayoutcoursepagetabcolorselected]];  // Override this in custom css to change the selected tab colour.
+    color: #FFF;
+}
+
+#tab-content:checked ~ #adaptable-course-tab-content,
+#tab1:checked ~ #adaptable-course-tab-1,
+#tab2:checked ~ #adaptable-course-tab-2 {
+    display: block;
+}
+
+#dashboard-tab-content:checked ~ #adaptable-dashboard-tab-content,
+#dashboard-tab1:checked ~ #adaptable-dashboard-tab-1,
+#dashboard-tab2:checked ~ #adaptable-dashboard-tab-2 {
+    display: block;
+}
+
+.tabcontentcontainer .tab-panel {
+    padding: 30px 0;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.tabcontentcontainer .tabset {
+    max-width: 100%;
+    min-height: 200px;
+}
+
+#dashboard-tab-content:checked ~ #adaptable-dashboard-tab-content.adaptable-tab-section.tab-panel {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+@media (min-width: 1024px) {
+
+    .tabcontentcontainer div.linktab,
+    .tabcontentcontainer dashboardtab.input[type="radio"],
+    .tabcontentcontainer coursetab.input[type="radio"] {
+        font-size: 1.4em;
+    }
+
+    .tabcontentcontainer div.linktab {
+        font-size: 3em;
+        padding: 10px 15px;
+    }
+
+    .tabcontentcontainer label.dashboardtab,
+    .tabcontentcontainer label.coursetab {
+        font-size: 1.25em;
+        padding: 20px 40px;
+    }
+}
+
+@media (max-width: 1023px) {
+    .tabcontentcontainer div.linktab {
+        font-size: 1.6em;
+        padding: 10px 15px;
+    }
+
+    .tabcontentcontainer label.dashboardtab,
+    .tabcontentcontainer label.coursetab {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 460px) {
+    .tabcontentcontainer div.linktab {
+        font-size: 1.5em;
+        padding: 12px;
+    }
+
+    .tabcontentcontainer label.dashboardtab,
+    .tabcontentcontainer label.coursetab {
+        font-size: 0.95em;
+    }
+
+    .tabcontentcontainer div.linktab,
+    .tabcontentcontainer label.dashboardtab,
+    .tabcontentcontainer label.coursetab {
+        width: 100%; // Make tabs full width at this resolution.
+        margin: 2px 0;
+    }
+
+    .tabcontentcontainer label.dashboardtab:before,
+    .tabcontentcontainer label.coursetab:before {
+        content: "\f101"; // angles-right <- angle-double-right.
+        font-family: "Font Awesome 6 Free";
+        padding-right: 5px;
+    }
+
+    #coursetabcontainer section.adaptable-tab-section,
+    #dashboardtabcontainer section.adaptable-tab-section {
+        border: 0;
+    }
+
+}

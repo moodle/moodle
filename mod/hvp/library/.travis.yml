@@ -1,0 +1,40 @@
+language: php
+
+# At present the only jobs to run are a php lint.
+# Run this against all supported versions of PHP.
+jobs:
+  include:
+    # Bionic supports PHP 7.1, 7.2, 7.3, and 7.4.
+    # https://docs.travis-ci.com/user/reference/bionic/#php-support
+    - php: 7.4
+      dist: bionic
+    - php: 7.3
+      dist: bionic
+    - php: 7.2
+      dist: bionic
+    - php: 7.1
+      dist: bionic
+
+    # Xenial was the last Travis distribution to support PHP 5.6, and 7.0.
+    # https://docs.travis-ci.com/user/reference/xenial/#php-support
+    - php: 7.0
+      dist: xenial
+    - php: 5.6
+      dist: xenial
+
+    # Trusty was the last Travis distribution to support PHP 5.4, and 5.5.
+    # https://docs.travis-ci.com/user/languages/php/#php-54x---55x-support-is-available-on-precise-and-trusty-only
+    - php: 5.5
+      dist: trusty
+    - php: 5.4
+      dist: trusty
+
+
+    # Precise was the last Travis distribution to support PHP 5.2, and 5.3.
+    # https://docs.travis-ci.com/user/languages/php/#php-52x---53x-support-is-available-on-precise-only
+    - php: 5.3
+      dist: precise
+
+script:
+  # Run a php lint across all PHP files.
+  - find . -type f -name '*\.php' -print0 | xargs -0 -n1 php -l

@@ -1,0 +1,492 @@
+//
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+// Adaptable Menu Style sheet
+//
+// @package    theme_adaptable
+// @copyright  2015-2016 Jeremy Hopkins (Coventry University)
+// @copyright  2015-2019 Fernando Acedo (3-bits.com)
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//
+
+// Navwrap.
+#adaptable-page-header-wrapper #main-navbar {
+    background-color: [[setting:menubkcolor]];
+    border-bottom: 3px solid [[setting:menubordercolor]];
+    clear: both;
+    z-index: 100;
+}
+
+#adaptable-page-header-wrapper #main-navbar .navbar .navbar-nav > li:first-child > a.dropdown-toggle {
+    margin-left: -[[setting:menufontpadding]];
+}
+
+#adaptable-page-header-wrapper #main-navbar .navbar .navbar-nav > li:last-child > a.dropdown-toggle {
+    margin-right: -[[setting:menufontpadding]];
+}
+
+// Remove caret from main navbar menu.
+#adaptable-page-header-wrapper #main-navbar .dropdown-toggle::after {
+    content: none;
+}
+
+#adaptable-page-header-wrapper {
+    .navbar-nav .dropdown li a .icon,
+    .above-header a .icon {
+        margin-right: 2px;
+        text-align: center;
+    }
+}
+
+// New main navbar styling */
+#adaptable-page-header-wrapper #main-navbar .navbar-nav > li > a.nav-link,
+#adaptable-page-header-wrapper #main-navbar .navbar-nav > li > div.nav-link,
+#adaptable-page-header-wrapper #main-navbar .navbar-nav .context-header-settings-menu .action-menu-trigger a.dropdown-toggle,
+#adaptable-page-header-wrapper #main-navbar .navbar-nav .context-header-settings-menu .action-menu-trigger a.dropdown-toggle:hover,
+#adaptable-page-header-wrapper #main-navbar .navbar-nav .region-main-settings-menu .action-menu-trigger a.dropdown-toggle,
+#adaptable-page-header-wrapper #main-navbar .navbar-nav .region-main-settings-menu .action-menu-trigger a.dropdown-toggle:hover {
+    background-color: transparent;
+    color: [[setting:menufontcolor]];
+    font-size: [[setting:menufontsize]];
+    font-weight: 400;
+    line-height: 42px;
+    padding: 0 [[setting:menufontpadding]];
+    text-decoration: none;
+    text-shadow: none;
+    text-transform: none;
+    -moz-transition: all [[setting:navbardropdowntransitiontime]];
+    -ms-transition: all [[setting:navbardropdowntransitiontime]];
+    -o-transition: all [[setting:navbardropdowntransitiontime]];
+    -webkit-transition: all [[setting:navbardropdowntransitiontime]];
+    transition: all [[setting:navbardropdowntransitiontime]];
+}
+
+#adaptable-page-header-wrapper #main-navbar .navbar-nav {
+    margin-left: -[[setting:menufontpadding]];
+}
+
+#adaptable-page-header-wrapper .dropdown-menu ul {
+    margin: 0;
+    padding: 0;
+}
+
+#adaptable-page-header-wrapper #dropdownlangmenu0.dropdown-menu {
+    left: auto;
+    right: 0;
+}
+
+#adaptable-page-header-wrapper #main-navbar ul.navbar-nav > li > a.nav-link:hover,
+#adaptable-page-header-wrapper #main-navbar li div.nav-link:hover,
+#adaptable-page-header-wrapper #main-navbar li #editingbutton input[type="submit"]:hover {
+    background-color: [[setting:menubkhovercolor]];
+    color: [[setting:menufonthovercolor]];
+}
+
+#adaptable-page-header-wrapper #main-navbar .input-group {
+    align-items: center;
+    display: flex;
+}
+
+#adaptable-page-header-wrapper .above-header .navbar button {
+    font-size: 16px;
+    margin: 3px 1px 1px 0;
+    padding: 2px 2px;
+}
+
+.navbar .nav > li:last-child > a {
+    border-right: 0 !important;
+}
+
+#header1 {
+    background-color: [[setting:headerbkcolor]];
+    border-bottom: 1px solid [[setting:dividingline]];
+}
+
+#adaptable-page-header-wrapper .above-header .dropdown-item {
+    padding: .3rem 0.65rem;
+}
+
+#adaptable-page-header-wrapper .above-header .nav-link > .fa,
+#adaptable-page-header-wrapper .above-header .nav-link > .fas,
+#adaptable-page-header-wrapper .above-header .navbar-nav > li > a,
+#adaptable-page-header-wrapper .above-header .navbar-nav > li .usermenu .dropdown-toggle {
+    color: [[setting:headertextcolor]];
+}
+
+#adaptable-page-header-wrapper .above-header .navbar-nav > li > a {
+    font-size: [[setting:topmenufontsize]];
+    text-decoration: none;
+}
+
+#adaptable-page-header-wrapper .above-header .navbar .popover-region-toggle i {
+    color: [[setting:headertextcolor]];
+    font-size: 1.2em;
+}
+
+#adaptable-page-header-wrapper .above-header .navbar > li {
+    line-height: 23px;
+}
+
+#adaptable-page-header-wrapper .nav-link {
+    padding: .1rem .2rem .1rem .2rem;
+}
+
+#adaptable-page-header-wrapper .dropdown-menu .dropdown .dropdown-toggle {
+    padding: .25rem 1.5rem;
+}
+
+#adaptable-page-header-wrapper .above-header .linksmenu {
+    margin: 2px 15px 0 15px;
+}
+
+#adaptable-page-header-wrapper .above-header .navbar .popover-region i
+#adaptable-page-header-wrapper .above-header a i {
+    color: [[setting:headertextcolor]];
+}
+
+#adaptable-page-header-wrapper #header2 .popover-region-container a i {
+    color: inherit;
+}
+
+#adaptable-page-header-wrapper #header2 a i {
+    padding-right: 4px;
+}
+
+#adaptable-page-header-wrapper .above-header a.dropdown-toggle {
+    margin-top: 2px;
+}
+
+// The Overlay (background) */
+.overlaymenu {
+    background-color: rgb(0,0,0); // Black fallback color.
+    background-color: rgba(0,0,0, 0.9); // Black w/opacity.
+    height: 0;
+    left: 0;
+    overflow-x: hidden; // Disable horizontal scroll.
+    position: fixed;
+    top: 0;
+    transition: 0.5s; // 0.5 second transition effect to slide in or slide down the overlay (height or width, depending on reveal).
+    width: 100%;
+    z-index: 1090;
+}
+
+.overlaymenu.open {
+    height: 100%;
+}
+
+.overlaymenu .overlayclosebtn {
+    position: absolute;
+    right: 45px;
+    top: 20px;
+}
+
+.overlay-content {
+    margin-top: 30px;
+    position: relative;
+    top: 5%;
+    width: 100%;
+}
+
+.overlay-content li > a {
+    color: #fff !important;
+    display: block;
+    font-size: 1.5em;
+    padding: 8px;
+    text-decoration: none;
+    transition: 0.3s; // Transition effects on hover (color).
+}
+
+.overlay-content li > a:hover {
+    color: [[setting:linkhover]];
+}
+
+.overlay-content ul.overlaylist {
+    list-style: none;
+    margin: 0 auto 30px;
+    max-width: 90%;
+    text-align: left;
+}
+
+.overlay-content ul.overlaylist .level-0 a {
+    font-size: 2em;
+    margin-bottom: 1em;
+}
+
+.overlay-content ul.overlaylist .level-2 a:before {
+    content: "-";
+    margin-right: 15px;
+}
+.overlay-content ul.overlaylist .level-3 a:before {
+    content: ".";
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+// When the height of the screen is less than 450 pixels, change the font-size of the links and position the close button again, so they don't overlap.
+@media (max-height: 450px) {
+    .overlaymenu a {font-size: 20px}
+    .overlaymenu .closebtn {
+        font-size: 40px;
+        right: 35px;
+        top: 15px;
+    }
+}
+
+// Styling the top menu link when it's configured not to appear on the right.
+#adaptable-page-header-wrapper .topmenuleft {
+    float: left;
+    margin: 0;
+    padding: 10px 0 0 0;
+}
+
+// New dropdown-related classes.  These are mainly for settings.
+
+.navbar {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.navbar li.dropdown.open > .dropdown-toggle,
+.navbar li.dropdown.active > .dropdown-toggle,
+.navbar li.dropdown.open.active > .dropdown-toggle {
+    font-size: [[setting:menufontsize]];
+}
+
+#adaptable-page-header-wrapper .navbar .dropdown-menu {
+    border-radius: [[setting:navbardropdownborderradius]];
+    font-size: [[setting:menufontsize]];
+    -webkit-transition: all [[setting:navbardropdowntransitiontime]];
+    -moz-transition: all [[setting:navbardropdowntransitiontime]];
+    -ms-transition: all [[setting:navbardropdowntransitiontime]];
+    -o-transition: all [[setting:navbardropdowntransitiontime]];
+    transition: all [[setting:navbardropdowntransitiontime]];
+}
+
+#region-main-settings-menu .dropdown-menu {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+.dropdown-menu.fade {
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.show > .dropdown-menu.fade {
+    pointer-events: auto;
+    opacity: 1;
+}
+
+// Bootstrap hides/shows dropdowns onclick via the class 'show'.
+.dropdown-menu.show {
+    display: block !important; // SHAME - using important as this seems to be overwriten elsewhere.
+}
+
+#adaptable-page-header-wrapper .nav .dropdown-menu li a {
+    background-color: none;
+    color: [[setting:linkcolor]];
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus,
+.dropdown-item:focus-within,
+.dropdown-item:active,
+.dropdown-item.active,
+.dropdown-submenu:hover > a,
+.dropdown-submenu:focus > a,
+.block a.dropdown-item.active {
+    background-color: [[setting:navbardropdownhovercolor]];
+    color: [[setting:navbardropdowntexthovercolor]];
+}
+
+// Add dropdown menu items styles for each theme color (mantainning default hover colour for contrast).
+@each $color, $value in $theme-colors {
+    .dropdown-item.text-#{$color} {
+        color: $value;
+        &:hover {
+            color: [[setting:navbardropdowntexthovercolor]] !important; /* stylelint-disable-line declaration-no-important */
+        }
+    }
+}
+
+.dropdown-item:focus-within a {
+    color: [[setting:navbardropdowntexthovercolor]];
+}
+
+.dropdown-menu a,
+.dropdown-menu > .active,
+.dropdown-menu > .active > a,
+.dropdown-submenu > a
+#adaptable-page-header-wrapper .dropdown-menu li a {
+    color: [[setting:navbardropdowntextcolor]];
+    .icon {
+        color: $dropdown-color;
+    }
+}
+
+.dropdown-item:hover > a,
+.dropdown-item:focus > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus,
+#adaptable-page-header-wrapper .dropdown-menu li a:hover {
+    background-color: [[setting:navbardropdownhovercolor]];
+    background-image: none !important;
+    color: [[setting:navbardropdowntexthovercolor]];
+}
+
+.dropdown-submenu>.dropdown-menu {
+    border-radius: [[setting:navbardropdownborderradius]];
+}
+
+#adaptable-page-header-wrapper #main-navbar .navbar-nav > .nav-item .dropdown-menu .dropdown-toggle:after {
+    border-color: transparent;
+    border-left-color: [[setting:linkcolor]];
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    display: block;
+    content: " ";
+    float: right;
+    height: 0;
+    margin-right: -12px;
+    margin-top: 9px;
+    width: 0;
+}
+
+#adaptable-page-header-wrapper #main-navbar .navbar-nav .nav-item .dropdown-menu > .nav-item .dropdown-menu {
+    max-height: 400px;
+    overflow-x: auto;
+    top: -1px;
+}
+
+// New bootstrap related css classes for hover menus. The below added for Adaptable for Moodle 3.6 onwards.
+
+//=-====Bootstrapthemes.co btco-hover-menu=====
+
+#adaptable-page-header-wrapper .navbar-nav {
+    margin-bottom: 0;
+}
+
+#adaptable-page-header-wrapper .navbar {
+    .popover-region-toggle {
+        color: inherit;
+        width: inherit;
+    }
+    .popover-region {
+        margin: 0 0 0 4px;
+        .icon {
+            font-weight: 900; // https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight - override 'bolder' when body has <= 300 weight.
+        }
+    }
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: rgb(64, 64, 64);
+}
+
+// Drop-down menu for hover.
+#adaptable-page-header-wrapper .btco-hover-menu {
+    background: none;
+    margin: 0;
+    padding: 0;
+}
+
+#adaptable-page-header-wrapper #main-navbar .action-menu .dropdown-toggle::after {
+    border-bottom: 0;
+    border-left: .5em solid transparent;
+    border-right: .5em solid transparent;
+    border-top: .5em solid;
+    content: "";
+    display: inline-block;
+    height: 0;
+    margin-left: .255em;
+    vertical-align: .255em;
+    width: 0;
+}
+
+#adaptable-page-header-wrapper #main-navbar .action-menu a.dropdown-toggle i {
+    padding: 0;
+}
+
+
+@media (max-width: 991px) {
+    #adaptable-page-header-wrapper .btco-hover-menu .show > .dropdown-toggle::after{
+        transform: rotate(-90deg);
+    }
+}
+
+@media (min-width: 991px) {
+    #adaptable-page-header-wrapper .btco-hover-menu ul li {
+        position:relative;
+    }
+
+    #adaptable-page-header-wrapper .btco-hover-menu ul li:hover > ul,
+    #adaptable-page-header-wrapper .btco-hover-menu ul ul.dropdown-menu li:hover > ul {
+        display: block;
+    }
+
+    #adaptable-page-header-wrapper .btco-hover-menu ul ul.dropdown-menu {
+        display: none;
+        margin-top: 0;
+        min-width: 180px;
+        padding: 0;
+        position: absolute;
+    }
+
+    #adaptable-page-header-wrapper .btco-hover-menu ul ul.dropdown-menu ul {
+        display: none;
+        left: 100%;
+        min-width: 180px;
+        position: absolute;
+        top: 0;
+    }
+
+    #adaptable-page-header-wrapper .btco-hover-menu ul ul.dropdown-menu ul ul {
+        left: -100%;
+        z-index: 1;
+    }
+
+    #adaptable-page-header-wrapper .above-header .btco-hover-menu ul ul.dropdown-menu {
+        min-width: 60px;
+    }
+}
+
+.nav-link img.userpicture {
+    margin-right: 0;
+}
+
+#adaptable-page-header-wrapper #main-navbar .nav-item {
+    .nav-link .fa:not(.sections-menu) {
+        margin-right: 2px;
+    }
+    &:first-of-type .nav-link .fa:not(.sections-menu) {
+        margin-left: 2px;
+    }
+}
+
+#adaptable-page-header-wrapper #main-navbar .nav-item .fa-circle {
+    font-size: 10px;
+    margin-right: .25rem;
+}
+
+#adaptable-page-header-wrapper #main-navbar .nav-item i.only {
+    padding-right: 0;
+}
+
+#adaptable-page-header-wrapper .context-header-settings-menu .icon {
+    width: auto;
+}

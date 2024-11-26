@@ -1,0 +1,20 @@
+.secondary-navigation {
+    border-top-style: none;
+    border-bottom-style: none;
+    .navigation {
+        background-color: inherit;
+        border-bottom: none;
+        border-top: none;
+        margin-bottom: map-get($spacers, 1);
+        margin-left: 0;
+        margin-right: 0;
+        .nav-tabs {
+            background-color: inherit;
+            border-bottom-style: none;
+            justify-content: center;
+            > .nav-item {
+                border-bottom: 1px solid $nav-tabs-border-color;
+            }
+        }
+    }
+}

@@ -1,0 +1,52 @@
+.h5p-true-false-footer {
+  font-size: 14px;
+  text-align: right;
+  margin-top: 30px;
+  color: #5C5C5C;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.h5p-true-false-correct-responses-pattern,
+.h5p-true-false-user-response-wrong,
+.h5p-true-false-user-response-correct {
+  padding: 0.33em 0.66em;
+  margin-left: 0.33em;
+  margin-right: 0.33em;
+  border-radius: 0.33em;
+}
+
+.h5p-true-false-correct-responses-pattern {
+  color: #79B74B;
+  background-color: #fff;
+  border: dashed 1px #79B74B;
+}
+
+.h5p-true-false-user-response-correct {
+  color: #ffffff;
+  background: #8AC062;
+  border: dashed 1px #8AC062;
+}
+
+.h5p-true-false-user-response-correct:before {
+  font-family: 'h5p-reporting-icons';
+  content: "\e90c";
+}
+
+.h5p-true-false-user-response-wrong {
+  color: #ffffff;
+  background-color: #DF465A;
+  border: dashed 1px #DF465A;
+}
+
+.h5p-true-false-user-response-wrong:before {
+  font-family: 'h5p-reporting-icons';
+  content: "\e894";
+}
+
+.h5p-true-false-user-response-wrong,
+.h5p-true-false-user-response-correct,
+.h5p-true-false-correct-responses-pattern {
+  white-space: nowrap;
+  display: inline-block;
+}

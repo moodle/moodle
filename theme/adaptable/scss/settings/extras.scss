@@ -1,0 +1,1224 @@
+//
+// This file is part of Adaptable theme for moodle
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+// Adaptable Extras CSS file
+//
+// @package    theme_adaptable
+// @copyright  2015-2019 Jeremy Hopkins (Coventry University)
+// @copyright  2015-2019 Fernando Acedo (3-bits.com)
+// @copyright  2018-2019 Manoj Solanki (Coventry University)
+//
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//
+
+#back-to-top {
+    background-color: [[setting:regionmaincolorrgba]];
+    border: 1px solid [[setting:linkcolorrgba]];
+    border-radius: 5px;
+    color: [[setting:linkcolorrgba]];
+    cursor: pointer;
+    display: none;
+    font-size: 1.1em;
+    padding: 5px 12px;
+    position: fixed;
+    right: 3px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    top: 85%;
+    transition: all 0.3s ease 0s;
+
+    &:hover {
+        border-color: [[setting:linkhoverrgba]];
+        box-shadow: 0 0 4px [[setting:linkhoverrgba]];
+        color: [[setting:linkhoverrgba]];
+    }
+
+    #page.show-drawer-right & {
+        right: $drawer-right-width + 14px;
+    }
+}
+
+.singleselect {
+    display: inline-block;
+    max-width: 100%;
+    width: 100%;
+}
+
+.panel-heading {
+    border-bottom: 1px solid #000;
+    padding: 12px 15px 10px;
+    background-color: #f3f3f3;
+    border-color: #e8eaeb;
+    color: #555;
+    a {
+        display: inline-block;
+        font-size: 110%;
+        font-weight: bold;
+        max-width: 80%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.panel-body {
+    padding: 15px;
+}
+
+ul.teachers {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-size: 90%;
+}
+
+.btn.btn-info {
+    background-image: none !important;
+    color: #fff;
+    padding: 8px 15px;
+    text-shadow: none;
+}
+
+
+// Messages.
+.messaging-area-container .messaging-area .contacts-area .contacts {
+    .contact.selected {
+        background-color: #e9ebeb;
+    }
+    .contact.selected,
+    .contact.selected .information .lastmessage,
+    .contact:hover .information .lastmessage {
+        color: #333;
+    }
+}
+
+.messaging-area-container .messaging-area .contacts-area .tabs .tab.selected {
+    color: [[setting:linkcolor]] !important;
+
+}
+
+.messaging-area-container .messaging-area .contacts-area .tabs .tab {
+    background-color: transparent;
+}
+
+.messaging-area-container .messaging-area .messages-area .messages .message .content.right {
+    background-color: #dcf8c6;
+    border-radius: 5px;
+    border: 1px solid #c0c0c0;
+    box-shadow: 2px 2px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.messaging-area-container .messaging-area .messages-area .messages .message .content.left {
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #c0c0c0;
+    box-shadow: 2px 2px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.messaging-area-container .messaging-area .contacts-area .contacts .contact:hover {
+    background-color: #e9ebeb;
+    color: #333;
+}
+
+.messaging-area-container .messaging-area .messages-area .messages .message .content .text p {
+    font-size: 1.2em;
+}
+
+.messaging-area-container .messaging-area .messages-area .messages .message .content .timesent {
+    color: #808080;
+    float: right;
+    font-size: 1em;
+}
+
+.messaging-area-container .messaging-area .messages-area .messages {
+    background-color: [[setting:messagingbackgroundcolor]];
+}
+
+.messaging-area-container .messaging-area .messages-area .response {
+    padding: 0 10px 9px;
+}
+
+.information .lastmessage,
+.information .lastmessage:hover {
+    color: #e9ebeb;
+}
+
+.msg-title,
+.msg-sender,
+.msg-time {
+    background-color: [[setting:maincolor]];
+    color: [[setting:fontcolor]];
+}
+
+.msg-time {
+    float: right;
+    font-size: 1em;
+}
+
+.messaging-area-container .messaging-area .messages-area .messages-header .name-container .status {
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 16px;
+}
+
+.messaging-area-container .messaging-area .messages-area .messages-header .btn {
+    height: 25px;
+    line-height: 25px;
+    padding: 0 5px;
+    width: auto;
+    color: [[setting:linkcolor]] !important;
+    background: none !important;
+    border: 0;
+    box-shadow: none;
+    font-size: 18px;
+}
+
+.messaging-area-container .messaging-area .messages-area .messages-header .btn .messages-delete,
+.messaging-area-container .messaging-area .messages-area .messages-header .btn .cancel-messages-delete {
+    height: 25px;
+    line-height: 25px;
+    padding: 0 5px;
+    width: auto;
+    font-size: 14px;
+}
+
+.messaging-area-container .messaging-area .messages-area .response {
+    border-top: none;
+}
+
+.messaging-area-container .messaging-area .messages-area .messages .blocktime {
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 4px;
+}
+
+.messaging-area-container .messaging-area .contacts-area .tabs .tab {
+    color: [[setting:linkcolor]];
+}
+
+.messaging-area-container .messaging-area .contacts-area .tabs .tab:hover {
+    color: [[setting:linkhover]];
+}
+
+.messaging-area-container .messaging-area .messages-area .messages-header .actions {
+    font-weight: normal;
+    padding-right: 15px;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.messaging-area-container .status .online-text {
+    color: #51666C;
+}
+
+.messages-area .actions a:hover {
+    text-decoration: none;
+}
+
+// Messages Pop-Up (moodle 3.2+).
+#newmessageoverlay {
+    background-clip: padding-box;
+    background-color: #ffffff;
+    border-radius: 6px;
+    bottom: 5px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    display: block;
+    left: inherit;
+    max-width: 276px;
+    padding: 1px;
+    position: absolute;
+    position: fixed;
+    right: 5px;
+    top: inherit;
+    text-align: left;
+    white-space: normal;
+    z-index: 1010;
+}
+
+#newmessageoverlay.top {
+    margin-top: -10px;
+}
+
+#newmessageoverlay.right {
+    margin-left: 10px;
+}
+
+#newmessageoverlay.bottom {
+    margin-top: 10px;
+}
+
+#newmessageoverlay.left {
+    margin-left: -10px;
+}
+
+#newmessageoverlay.top > .arrow {
+    left: 50%;
+    margin-left: -11px;
+    border-bottom-width: 0;
+    border-top-color: #999;
+    border-top-color: rgba(0, 0, 0, 0.25);
+    bottom: -11px;
+}
+
+#newmessageoverlay.top > .arrow:after {
+    border-bottom-width: 0;
+    border-top-color: #fff;
+    bottom: 1px;
+    content: " ";
+    margin-left: -10px;
+}
+
+#newmessageoverlay.right > .arrow {
+    border-left-width: 0;
+    border-right-color: #999;
+    border-right-color: rgba(0, 0, 0, 0.25);
+    left: -11px;
+    margin-top: -11px;
+    top: 50%;
+}
+
+#newmessageoverlay.right > .arrow:after {
+    border-left-width: 0;
+    border-right-color: #fff;
+    bottom: -10px;
+    content: " ";
+    left: 1px;
+}
+
+#newmessageoverlay.bottom > .arrow {
+    border-bottom-color: #999;
+    border-bottom-color: rgba(0, 0, 0, 0.25);
+    border-top-width: 0;
+    left: 50%;
+    margin-left: -11px;
+    top: -11px;
+}
+
+#newmessageoverlay.bottom > .arrow:after {
+    border-bottom-color: #fff;
+    border-top-width: 0;
+    content: " ";
+    margin-left: -10px;
+    top: 1px;
+}
+
+#newmessageoverlay.left > .arrow {
+    border-left-color: #999;
+    border-left-color: rgba(0, 0, 0, 0.25);
+    border-right-width: 0;
+    margin-top: -11px;
+    right: -11px;
+    top: 50%;
+}
+
+#newmessageoverlay.left > .arrow:after {
+    border-left-color: #fff;
+    border-right-width: 0;
+    bottom: -10px;
+    content: " ";
+    right: 1px;
+}
+
+#newmessageoverlay a {
+    text-decoration: underline;
+}
+
+#newmessageoverlay #newmessagetext {
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 18px;
+    margin: 0;
+    padding: 8px 14px;
+}
+
+#newmessageoverlay #usermessage {
+    background-color: #fff;
+    border: 1px dotted rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    margin-top: 5px;
+    padding: 9px 14px;
+}
+
+#newmessageoverlay #newmessagelinks {
+    margin: 5px 14px;
+}
+
+.box.message .messagearea .messagehistory .box.center table.message_user_pictures td#user1,
+.box.message .messagearea .messagehistory .box.center table.message_user_pictures td#user2 {
+    display: block;
+    height: 160px;
+}
+
+.box.message .messagearea .messagehistory .box.center table.message_user_pictures td#user1 img.userpicture,
+.box.message .messagearea .messagehistory .box.center table.message_user_pictures td#user2 img.userpicture {
+    border-radius: 50%;
+}
+
+.box.message .messagearea .messagehistory .box.center table.message_user_pictures td#user1 img.userpicture {
+    border: 3px solid #d6e9c6;
+}
+
+.box.message .messagearea .messagehistory .box.center table.message_user_pictures td#user2 img.userpicture {
+    border: 3px solid #bce8f1;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype {
+    border: 0;
+    border-bottom: 1px solid #ddd;
+    color: #fff;
+    padding: 5px 15px;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype > li {
+    float: left;
+    margin-bottom: -1px;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype > li > a {
+    border: 1px solid transparent;
+    border-radius: 4px 4px 0 0;
+    line-height: 1.42857143;
+    margin-right: 2px;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype > li > a:hover {
+    border-color: #eee #eee #ddd;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype > li.active > a,
+.box.message .messagearea .messagehistory .messagehistorytype > li.active > a:hover,
+.box.message .messagearea .messagehistory .messagehistorytype > li.active > a:focus {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+    color: #555;
+    cursor: default;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype.nav-justified {
+    border-bottom: 0;
+    padding: 10px 0 0 0;
+    width: 100%;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype.nav-justified > li {
+    float: none;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype.nav-justified > li > a {
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype.nav-justified > .dropdown .dropdown-menu {
+    left: auto;
+    top: auto;
+}
+
+#intro.generalbox {
+	background-color: [[setting:introboxbackgroundcolor]];
+}
+
+// Forum.
+.forumpost .maincontent .left {
+    padding: 0 10px 0 10px;
+}
+
+.forumpost .row .left {
+    width: auto;
+}
+
+.forumpost .options .commands {
+    float: right;
+    margin-left: 0;
+}
+
+.forumpost .subject {
+    font-weight: bold;
+}
+
+.forumsearch input[type=text] {
+    margin-bottom: 0 !important;
+}
+
+// Further styling for forum block.
+.forumpost .userpicture {
+    background-color: #fff;
+    border: 5px solid #fff;
+    border-radius: 50%;
+    display: inline;
+    height: 50px !important;
+    margin: 0 10px 0 0;
+    padding: 1px;
+    width: 50px !important;
+}
+
+.forumpost .picture img.userpicture {
+    margin: 0 10px 0 10px;
+}
+
+.forumpost .header .topic {
+    margin: 0 0 10px 10px;
+}
+
+.forumpost {
+    background-color: [[setting:forumbodybackgroundcolor]];
+}
+
+.forumpost .header {
+    padding: 10px 0 10px 0;
+    background-color: [[setting:forumheaderbackgroundcolor]];
+    border-radius: 0 0 0 0;
+}
+
+// Lesson Activity.
+#page-mod-lesson-edit .singleselect {
+    width: auto;
+}
+
+.path-mod-lesson .answeroption .fcheckbox label,
+.path-mod-lesson .mform .fitem.answeroptiongroup fieldset.fgroup label {
+    float: left;
+    padding-left: 40px;
+}
+
+.lessonbutton a {
+    background-color: [[setting:buttoncolor]];
+    border: none;
+    box-shadow: 0 -2px 0 0 rgba(0, 0, 0, 0.5) inset;
+    color: [[setting:buttontextcolor]] !important;
+    cursor: pointer;
+    padding: 8px 15px 8px;
+    margin: 10px;
+    transition: background .2s ease-out;
+}
+
+.lessonbutton a:hover {
+    background-image: none;
+    background-color: [[setting:buttonhovercolor]];
+    box-shadow: 0 -2px 0 0 rgba(0, 0, 0, 0.5) inset;
+    color: [[setting:buttontexthovercolor]] !important;
+}
+
+.box {
+    margin-top: 15px;
+}
+
+.block .content .box {
+    margin-top: 0;
+}
+
+// Forum Activity.
+#page-mod-forum-discuss .discussioncontrol.displaymode {
+    text-align: left;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect {
+    width: 100%;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect {
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    color: #555;
+    display: block;
+    font-size: 14px;
+    height: 38px;
+    line-height: 1.42857143;
+    padding: 8px 12px;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    width: auto;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect:focus {
+    border-color: #66afe9;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, 0.6);
+    outline: 0;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect::-moz-placeholder {
+    opacity: 1;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect::-moz-placeholder,
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect:-ms-input-placeholder,
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect::-webkit-input-placeholder {
+    color: #999;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect[disabled],
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect[readonly],
+fieldset[disabled] #page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect {
+    background-color: #eee;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+textarea#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect {
+    height: auto;
+}
+
+// For forum page, to add padding to each discussion in the table.  Applies to Moodle 3.6 only.
+.path-mod-forum .forumheaderlist tbody .discussion td {
+    padding-bottom: 0.5em;
+    padding-top: 0.5em;
+}
+
+// Remove margin for form elements where it's not needed.
+#page-mod-forum-discuss .discussioncontrols .form-inline,
+.forumsearch .form-inline {
+    margin: 0;
+}
+
+#page-mod-forum-discuss .discussioncontrols input {
+    margin: 0;
+    padding: .6rem 1rem;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    color: #555;
+    display: block;
+    float: left;
+    font-size: 14px;
+    height: 38px;
+    line-height: 1.42857143;
+    margin: 0 10px 0 0;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    width: auto;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect:focus {
+    border-color: #66afe9;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, 0.6);
+    outline: 0;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect::-moz-placeholder {
+    opacity: 1;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect::-moz-placeholder,
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect:-ms-input-placeholder,
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect::-webkit-input-placeholder {
+        color: #999;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect[disabled],
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect[readonly],
+fieldset[disabled] #page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect {
+    cursor: not-allowed;
+    background-color: #eee;
+    opacity: 1;
+}
+
+textarea#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect {
+    height: auto;
+}
+
+@media (max-width: 575px) {
+    #page-mod-forum-discuss .discussioncontrols .discussioncontrol {
+        float: none;
+    }
+}
+
+@media (min-width: 576px) {
+    #page-mod-forum-discuss .discussioncontrols .discussioncontrol,
+    #page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion.movediscussion {
+        float: left;
+    }
+}
+
+#page-mod-forum-discuss .forumpost .row .left.picture img,
+#page-site-index .forumpost .row .left.picture img {
+    border: 5px solid #fff;
+    border-radius: 270px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    height: 50px;
+    margin-right: 10px;
+    padding: 1px;
+    vertical-align: middle;
+    width: 50px;
+}
+
+.forumpost .subject {
+    font-size: 1.8em;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.forumpost .content {
+    clear: both;
+    padding: 0 15px;
+}
+
+.forumpost .row.maincontent .left {
+    float: none;
+}
+
+#page-mod-forum-discuss .forumpost .row .options .commands a {
+    background-color: #f7f7f7;
+    border: 1px solid #b4b4b7;
+    border-radius: 3px;
+    color: #000 !important;
+    font-size: 12px;
+    line-height: 22px;
+    margin: 0 6px;
+    padding: 9px 12px 9px;
+    text-decoration: none;
+    transition: 0.25s;
+}
+
+#page-mod-forum-discuss .forumpost .row .options .commands a:hover {
+    background: #1990d5;
+    color: #fff !important;
+    font-weight: 400;
+}
+
+.options.clearfix {
+    padding: 15px 5px;
+}
+
+.signuppanel .row .btn {
+    display: none;
+}
+
+#changenumsections .smallicon {
+    width: 24px;
+}
+
+#id_category,
+#id_parent {
+    max-width: 100%;
+}
+
+// News Ticker.
+#ticker,
+#ticker_container {
+    font-size: 16px;
+}
+
+#ticker-wrap {
+    background-color: [[setting:tickerconstainerbackgroundcolour]];
+    color: [[setting:tickerconstainertextcolour]];
+    line-height: 40px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    position: relative;
+    [[setting:tickerwidth]]
+}
+
+#ticker-announce {
+    background-color: [[setting:tickerheaderbackgroundcolour]];
+    color: [[setting:tickerheadertextcolour]];
+    float: left;
+    font-weight: 600;
+    margin-right: 15px;
+    margin-left: -15px;
+    padding: 0 15px;
+    text-transform: uppercase;
+}
+
+#ticker-wrap #controls {
+    padding-right: 15px;
+}
+
+#play_trigger a,
+#pause_trigger a,
+#ticker-wrap #controls .fa {
+    color: [[setting:tickerconstainertextcolour]];
+}
+
+#ticker-wrap #controls .fa {
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#ticker-wrap #newscontent {
+    max-width: 75%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#ticker-wrap #newscontent #news {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// Slider.
+// Browser Resets.
+.flex-container a:active,
+.flexslider a:active,
+.flex-container a:focus,
+.flexslider a:focus {
+    outline: none;
+}
+
+.slides,
+.flex-control-nav,
+.flex-direction-nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+// IMPORTANT! FlexSlider Necessary Styles.
+.flexslider {
+    margin: 0;
+    padding: 0;
+}
+
+.flexslider .slides > li {
+    display: none;
+    -webkit-backface-visibility: hidden;
+}
+
+// Hide the slides before the JS is loaded. Avoids image jumping.
+.flexslider .slides img {
+    display: block;
+    width: 100%;
+}
+
+.flex-pauseplay span {
+    text-transform: capitalize;
+}
+
+// Clearfix for the .slides element.
+.slides:after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    line-height: 0;
+    visibility: hidden;
+}
+
+html[xmlns] .slides {
+    display: block;
+}
+
+* html .slides {
+    height: 1%;
+}
+
+// No JavaScript Fallback.
+// If you are not using another script, such as Modernizr, make sure you include js that eliminates this class on page load.
+.no-js .slides > li:first-child {
+    display: block;
+}
+
+// FlexSlider Default Theme - adjusted.
+.flexslider {
+    background: transparent;
+    margin: 0;
+    position: relative;
+    zoom: 1;
+}
+.flex-viewport {
+    max-height: 2000px;
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    transition: all 1s ease;
+}
+.dir-rtl .flex-viewport {
+    direction: ltr;
+    max-height: 2000px;
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    transition: all 1s ease;
+}
+
+.loading .flex-viewport {
+    max-height: 300px;
+}
+
+.flexslider .slides {
+    zoom: 1;
+}
+
+// Direction Nav.
+.flex-direction-nav a {
+    cursor: pointer;
+    display: block;
+    height: 30px;
+    margin: 0 10px;
+    opacity: 0;
+    position: absolute;
+    text-indent: -9999px;
+    top: 50%;
+    transition: all .3s ease;
+    width: 30px;
+}
+
+.flex-direction-nav .flex-next {
+    background: #333 url([[pix:theme|next]]) no-repeat 50% 50%;
+    opacity: .2;
+    right: 0;
+}
+
+.flex-direction-nav .flex-prev {
+    background: #333 url([[pix:theme|previous]]) no-repeat 50% 50%;
+    left: 0;
+    opacity: .2;
+}
+
+.flexslider:hover .flex-next,
+.flexslider:hover .flex-prev {
+    opacity: 1;
+}
+
+.flex-direction-nav .disabled {
+    cursor: default;
+    filter: alpha(opacity=30);
+    opacity: 0.3 !important;
+}
+
+// Direction Nav (Blog Slider).
+.image-slider .flex-direction-nav a {
+    opacity: 0;
+}
+
+.image-slider .flex-direction-nav .flex-next {
+    background: #333 url([[pix:theme|next]]) no-repeat 50% 50%;
+    right: 0;
+}
+
+.image-slider .flex-direction-nav .flex-prev {
+    background: #333 url([[pix:theme|previous]]) no-repeat 50% 50%;
+    left: 0;
+}
+
+.image-slider:hover .flex-next,
+.image-slider:hover .flex-prev {
+    opacity: 0.3;
+}
+
+// Control Nav.
+.flex-control-nav {
+    bottom: 10px;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
+
+.flex-control-nav li {
+    display: inline-block;
+    margin: 0 4px;
+    zoom: 1;
+    *display: inline;
+}
+
+.flex-control-paging li a {
+    background: #666;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    display: block;
+    height: 8px;
+    text-indent: -9999px;
+    width: 8px;
+}
+
+.flex-control-paging li a:hover {
+    background: #333;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.flex-control-paging li a.flex-active {
+    background-color: #000;
+    cursor: default;
+}
+
+.flex-control-thumbs {
+    margin: 5px 0 0;
+    position: static;
+    overflow: hidden;
+}
+
+.flex-control-thumbs li {
+    float: left;
+    margin: 0;
+    width: 25%;
+}
+
+.flex-control-thumbs img {
+    cursor: pointer;
+    display: block;
+    opacity: 0.7;
+    width: 100%;
+}
+
+.flex-control-thumbs img:hover {
+    opacity: 1;
+}
+
+.flex-control-thumbs .active {
+    opacity: 1;
+    cursor: default;
+}
+
+// Caption style.
+// IE rgba() hack.
+.flex-caption {
+    background: none;
+    -ms-filter: progid: DXImageTransform.Microsoft.gradient(startColorstr=#4C000000, endColorstr=#4C000000);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr=#4C000000, endColorstr=#4C000000);
+    zoom: 1;
+}
+
+.flex-caption {
+    background-color: rgba(0, 0, 0, 0.5);
+    bottom: 0;
+    color: #fff;
+    margin: 0;
+    padding: 25px 25px 25px 30px;
+    position: absolute;
+    right: 0;
+    width: 50%;
+}
+
+.flex-caption h3 {
+    color: [[setting:sliderh3color]];
+    font-size: 1.5em;
+    letter-spacing: 1px;
+    margin-bottom: 0;
+    text-transform: uppercase;
+}
+
+.flex-caption h4 {
+    color: [[setting:sliderh4color]];
+    font-size: 1em;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+.flex-caption p {
+    margin: 0 0 15px;
+}
+
+.flex-caption .submit {
+    background: [[setting:slidersubmitbgcolor]];
+    color: [[setting:slidersubmitcolor]] !important;
+    float: right;
+    margin-right: 10px;
+}
+
+#main-slider {
+    margin: 0 0 10px;
+}
+
+.slides li {
+    position: relative;
+}
+
+.flex-control-nav {
+    margin-bottom: -40px;
+}
+
+// New slider style.
+// Direction Nav.
+.slidestyle2 .flex-direction-nav a {
+    cursor: pointer;
+    display: block;
+    height: 100%;
+    opacity: 0;
+    position: absolute;
+    text-indent: -9999px;
+    top: 0%;
+    width: 30px;
+    -webkit-transition: all .3s ease;
+}
+
+.slidestyle2 .flex-direction-nav .flex-next {
+    background: [[setting:slideroption2a]] url([[pix:theme|next]]) no-repeat 50% 50%;
+    background-size: auto 24px;
+    height: 35px;
+    opacity: 1;
+    right: 15px;
+    top: 46%;
+    width: 30px;
+}
+
+.slidestyle2 .flex-direction-nav .flex-prev {
+    background: [[setting:slideroption2a]] url([[pix:theme|previous]]) no-repeat 50% 50%;
+    background-size: auto 24px;
+    height: 35px;
+    left: 15px;
+    opacity: 1;
+    top: 46%;
+    width: 30px;
+}
+
+// Caption style.
+// IE rgba() hack.
+.slidestyle2 .flex-caption {
+    background: none;
+    -ms-filter: progid: DXImageTransform.Microsoft.gradient(startColorstr=#4C000000, endColorstr=#4C000000);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr=#4C000000, endColorstr=#4C000000);
+    zoom: 1;
+}
+
+.slidestyle2 .flex-caption {
+    color: inherit;
+    top: 35%;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    transition: all 1s ease-in-out;
+    width: 100%;
+}
+
+.slidestyle2 .flex-caption .span6 {
+    margin-left: 6%;
+}
+
+// CSS transitions on larger screens.
+.slidestyle2 .flex-caption h3 {
+    background: [[setting:slider2h3bgcolor]];
+    clear: both;
+    color: [[setting:slider2h3color]];
+    display: block;
+    float: left;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 20px;
+    margin: 0 0 0 30px;
+    max-width: 1170px;
+    padding: 5px 15px;
+    text-transform: uppercase;
+}
+
+.slidestyle2 .flex-caption h4 {
+    background-color: [[setting:slider2h4bgcolor]];
+    clear: both;
+    color: [[setting:slider2h4color]];
+    font-size: 22px;
+    font-weight: normal;
+    line-height: 32px;
+    margin-bottom: 0;
+    padding: 15px;
+    text-align: left;
+    text-decoration: none !important;
+}
+
+.slidestyle2 a:hover .flex-caption h4,
+.slidestyle2 a:hover .flex-caption h3,
+.slidestyle2 a:hover h4,
+.slidestyle2 *:hover {
+    text-decoration: none !important;
+}
+
+.slidestyle2 .flex-caption p {
+    color: #333;
+    margin: 0 0 15px;
+}
+
+.slidestyle2 .flex-caption a.submit {
+    border: 0 solid #ab3423;
+    background: [[setting:slideroption2color]] !important;
+    border-radius: 0;
+    box-shadow: none;
+    color: [[setting:slideroption2submitcolor]] !important;
+    display: block;
+    font-size: 16px;
+    float: right;
+    margin: 0 0 0 30px;
+    padding: 8px 15px;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.slidestyle2 .flex-direction-nav {
+    display: inherit;
+}
+
+.slidestyle2 .flex-control-nav.flex-control-paging {
+    display: none;
+}
+
+.slidestyle2 #main-slider {
+    margin: 0;
+}
+
+// Fullscreen button.
+.fullin.narrow .container,
+.fullin.standard .container {
+    width: [[setting:fullscreenwidth]];
+}
+
+@media (max-width: 991px) {
+    .fullin.narrow .container,
+    .fullin.standard .container {
+        width: 100%;
+    }
+}
+
+.sbll {
+    display: none;
+}
+
+.fullin .sbll {
+    display: inherit;
+}
+
+.fullin .hbll {
+    display: none;
+}
+
+@media (min-width: 992px) {
+    .zoomin #region-main-box {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+.sbl {
+    display: none;
+}
+
+.zoomin .sbl {
+    display: inherit;
+}
+
+.zoomin .hbl {
+    display: none;
+}
+
+.fpcombocollapse {
+    .fp-chevron:before {
+        content: "\f077"; // chevron-up <- chevron-up.
+        font-family: "Font Awesome 6 Free";
+    }
+
+    &.collapsed .fp-chevron:before {
+        content: "\f078"; // chevron-down <- chevron-down.
+        font-family: "Font Awesome 6 Free";
+    }
+}

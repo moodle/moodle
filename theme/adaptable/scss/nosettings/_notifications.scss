@@ -1,0 +1,80 @@
+//
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
+//
+// Adaptable Notifications override styles style sheet
+//
+// @package    theme_adaptable
+// @copyright  2019 G J Barnard - {@link http://moodle.org/user/profile.php?id=442195}
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//
+
+.navbar .popover-region-container {
+    background-color: $body-bg;
+    border: 1px solid $body-color; // Possibly make a setting!
+    box-shadow: 5px 5px 15px 1px $body-color;
+    color: $body-color;
+    height: 500px;
+    opacity: 1;
+    position: absolute;
+    right: 0;
+    top: 40px;
+    transition: height 0.25s ease 0s;
+    visibility: visible;
+    width: 360px;
+    z-index: 100;
+}
+
+.count-container {
+    right: -5px;
+}
+
+.popover-region-toggle::before,
+.popover-region-toggle::after {
+    visibility: hidden;
+}
+
+.popover-region-content-container {
+    height: calc(100% - 100px);
+}
+
+.popover-region-header-container,
+.popover-region-footer-container {
+    height: 50px;
+    line-height: 50px;
+}
+
+.popover-region-header-text,
+.popover-region-seeall-text {
+    font-size: 125%;
+    line-height: 50px;
+}
+
+.content-item-container.notification .content-item-body .notification-message {
+    font-size: 100%;
+}
+
+.content-item-container .content-item-footer .timestamp,
+.content-item-container .view-more {
+    font-size: 70%;
+}
+
+@media (min-width: 768px) {
+    .navbar .popover-region-container {
+        font-size: 125%;
+        width: 400px;
+    }
+}

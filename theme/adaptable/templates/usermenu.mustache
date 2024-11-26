@@ -1,0 +1,56 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_adaptable/usermenu
+
+    A custom bootstrap dropdown for Adaptable's user menu.
+    // TODO - This should use a core template at some point in the future.
+
+    Example context (json):
+    {
+        "username": "A Student",
+        "showusername": true,
+        "usernamepositionleft": true,
+        "userpic": "URL",
+        "userprofilemenu": "Markup"
+    }
+}}
+
+<a class="nav-link dropdown-toggle my-auto" role="button" href="#"
+id="usermenu" data-toggle="dropdown"
+aria-haspopup="true" aria-expanded="false"
+aria-controls="usermenu-dropdown"
+aria-label="{{#str}}usermenu, theme_adaptable{{/str}}"
+title="{{username}}">
+    {{#showusername}}
+    {{#usernamepositionleft}}
+        <span class="d-none d-md-inline-block mx-1">{{username}}</span>
+    {{/usernamepositionleft}}
+    {{/showusername}}
+    {{{userpic}}}
+    {{#showusername}}
+    {{^usernamepositionleft}}
+        <span class="d-none d-md-inline-block mx-1">{{username}}</span>
+    {{/usernamepositionleft}}
+    {{/showusername}}
+</a>
+
+<div class="dropdown-menu dropdown-menu-right" role="menu"
+id="usermenu-dropdown"
+aria-labelledby="usermenu" >
+    {{{userprofilemenu}}}
+</div>
