@@ -473,7 +473,7 @@ function scorm_insert_track($userid, $scormid, $scoid, $attemptornumber, $elemen
             if (!empty($tracktest)) {
                 if ($tracktest->value == "incomplete") {
                     $v = new stdClass();
-                    $v->id = $track->valueid;
+                    $v->id = $tracktest->valueid;
                     $v->value = "completed";
                     $DB->update_record('scorm_scoes_value', $v);
                 }
