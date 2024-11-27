@@ -41,19 +41,6 @@
  */
 
 function xmldb_forum_upgrade($oldversion) {
-    global $CFG, $DB;
-
-    $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
-
-    // Automatically generated Moodle v4.1.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2022112801) {
-        // Some very old discussions from early Moodle versions may have the usermodified set to zero.
-        $DB->execute("UPDATE {forum_discussions} SET usermodified = userid WHERE usermodified = 0");
-
-        upgrade_mod_savepoint(true, 2022112801, 'forum');
-    }
 
     // Automatically generated Moodle v4.2.0 release upgrade line.
     // Put any upgrade step following this.
