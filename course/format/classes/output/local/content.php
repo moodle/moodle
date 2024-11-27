@@ -195,7 +195,7 @@ class content implements named_templatable, renderable {
      * @param course_modinfo $modinfo the current course modinfo object
      * @return section_info[] an array of section_info to display
      */
-    private function get_sections_to_display(course_modinfo $modinfo): array {
+    protected function get_sections_to_display(course_modinfo $modinfo): array {
         $singlesectionid = $this->format->get_sectionid();
         if ($singlesectionid) {
             return [

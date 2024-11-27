@@ -47,7 +47,7 @@ class summary implements named_templatable, renderable {
     protected $format;
 
     /** @var section_info the course section class */
-    private $section;
+    protected $section;
 
     /**
      * Constructor.

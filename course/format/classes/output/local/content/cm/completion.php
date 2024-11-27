@@ -93,7 +93,7 @@ class completion implements named_templatable, renderable {
      * @param stdClass $completioninfo the completion info
      * @return array the completion dialog exported for template
      */
-    private function get_completion_dialog(\renderer_base $output, stdClass $completioninfo): array {
+    protected function get_completion_dialog(\renderer_base $output, stdClass $completioninfo): array {
         global $PAGE;
 
         $editurl = new \moodle_url(

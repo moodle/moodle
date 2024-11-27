@@ -49,7 +49,7 @@ class sectionnavigation implements named_templatable, renderable {
     protected $sectionno;
 
     /** @var stdClass the calculated data to prevent calculations when rendered several times */
-    private $data = null;
+    protected $data = null;
 
     /**
      * Constructor.
