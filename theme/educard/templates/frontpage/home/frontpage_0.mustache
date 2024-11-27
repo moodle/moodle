@@ -1,0 +1,34 @@
+<!-- CUSTOMIZE -->
+<!-- Start Header Area -->
+    {{#frontpagenavchoice2}}
+        {{> theme_educard/frontpage/header/header2}}
+    {{/frontpagenavchoice2}}
+    {{#frontpagenavchoice3}}
+        {{> theme_educard/frontpage/header/header3}}
+    {{/frontpagenavchoice3}}
+    {{#frontpagenavchoice4}}
+        {{> theme_educard/frontpage/header/header4}}
+    {{/frontpagenavchoice4}}
+<!-- End Header Area -->
+<!-- Start Slider  or Banners Area  -->
+    {{#sliderenabled}}
+        {{> theme_educard/frontpage/slider/slider_1 }}
+    {{/sliderenabled}}
+    {{^sliderenabled}}
+        {{#bannerheadingenabled}}
+            {{> theme_educard/frontpage/banner/banners }}
+        {{/bannerheadingenabled}}
+    {{/sliderenabled}}  
+
+    {{#frontpagenavchoice1}}
+        {{> theme_educard/frontpage/header/header1}}
+    {{/frontpagenavchoice1}}
+<!-- End Slider Area -->
+<!-- Start section -->
+    {{> theme_educard/frontpage/section/section }}
+<!-- End section -->
+    {{#block20enabled}}
+        {{> theme_educard/frontpage/block20/block20 }}
+    {{/block20enabled}}
+
+<!-- END CUSTOMIZE -->    

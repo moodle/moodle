@@ -1,0 +1,37 @@
+<div id="block08-3-s" class="block08-3 educard-block educard-font">
+    <div class="block08-bg block-start-end-space">
+        <div class="container educard-teacher-block">
+            <div class="educard-sub-title">
+                <h6>{{block08headline}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block08header}} <span>{{block08maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="mt-60">
+                <div id="block08-3-slider" class="splide block08-3-slider">
+                    <div class="splide__track" >
+                        <ul class="splide__list">
+                        {{#block08}}
+                        <li class="splide__slide">
+                            <div class="card h-100 block-shadow mx-auto" >
+                                <a class="card-social-icon block-shadow" href="mailto:{{usermail}}"><i class='bx bx-mail-send'></i></a>
+                                <div>
+                                    <img src="{{userpictureURL}}" alt="{{teachername}}">
+                                </div>
+                                <div class="card-body text-center">
+                                    <a href="{{userURL}}">
+                                        <h4>{{teachername}}</h4>
+                                    </a>
+                                    <p class="font-size-m font-weight-500 mb-0">{{job}}</p>
+                                </div>
+                            </div>
+                        </li>
+                        {{/block08}}
+                        </ul>
+                    </div>
+                </div>
+            </div>    
+        </div>
+    </div>
+</div>

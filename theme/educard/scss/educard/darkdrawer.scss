@@ -1,0 +1,158 @@
+/* Theme wellko side bar group item customize*/
+// List grup padding.
+.dark-dashboard,
+.dark-frontpage {
+    .message-app {
+        background-color: var(--color-dl-card-black) !important;
+        .bg-white {
+            background-color: var(--color-dl-bg-black-dark) !important;  
+        }
+        .list-group-item, .card {
+            background-color: var(--color-dl-bg-black);
+        }
+        .list-group .list-group-item {
+            &:hover {
+                color: var(--color-dl-bg-black-dark);
+                background-color: var(--color-dl-yellow-a);
+            }
+        }
+        .btn.btn-link.btn-icon {
+            &:hover, &:focus {
+                background-color: var(--color-dl-grey-b);
+            }
+        }
+        .closewidget {
+            .text-dark {
+                color: var(--color-dl-grey-a) !important;
+            }
+
+        }
+    }
+    .drawerheader {
+        .btn {
+            color: var(--color-dl-grey-a);
+        }
+    }
+    .drawer.drawer-left {
+        background-color: var(--color-dl-bg-black-dark);
+        .courseindex-link {
+            color: var(--color-dl-grey-a);
+            &:hover {
+                color: var(--color-dl-yellow-b);
+            }
+        }
+        .courseindex {
+            .courseindex-item {
+                &:hover, &:focus {
+                    .courseindex-link,
+                    .courseindex-chevron {
+                        color: var(--color-dl-yellow-b);
+                    }
+                }
+                .completioninfo {
+                    min-width: 40px;
+                }
+                .circle-step-num-activated {
+                    position: relative;
+                    box-sizing: border-box;
+                    width: 24px;
+                    height: 24px;
+                    float: left;
+                    border-radius: 16px;
+                    border: 1px solid var(--color-dl-yellow-b);
+                    background: var(--color-dl-bg-black-dark);
+                    overflow: hidden;
+                    margin-right: 8px;
+                    .inner {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: transparent;
+                        width: 5px;
+                        height: 16px;
+                        border-radius: 50%;
+                        text-align: center;
+                        color: var(--color-dl-yellow-b);
+                    }
+                }
+
+            }
+        }
+    }
+
+    .drawer.drawer-right {
+        background-color: var(--color-dl-bg-black-dark);
+        .drawercontent {
+            .block-region {
+                .card {
+                    background-color: var(--color-dl-grey-b);
+                    color: var(--color-dl-white-bsc);
+                    .card-body .card-text .activity-item{
+                        background-color: transparent;
+                    }
+                }
+            }
+
+        }
+    }
+    .drawercontent .list-group a.list-group-item {
+        padding: 10px 15px;
+        font-weight: 800;
+        border-bottom: 2px solid var(--thm-border);
+        text-transform: uppercase;
+        font-size: 14px;
+    }
+
+    .drawercontent .list-group-item {
+        padding: 0.77rem 1.25rem;
+        border: 0 solid var(--color-dl-bg-black) !important;
+        background-color: var(--color-dl-card-black) !important;
+        &.active {
+            color: $list-group-active-color;
+            background-color: $list-group-active-bg;
+            border-color: $list-group-active-border-color;
+        }
+    }
+    .drawercontent {
+        .list-group-item-action {
+            font-weight: 500;
+            border: 0px solid rgba(0, 0, 0, 0.125);
+            color: var(--color-dl-grey-a);
+            &:hover, 
+            &:focus {
+                z-index: 1;
+                color: #dee5eb;
+            }
+        }
+        a.bg-light:hover,
+        a.bg-light:focus,
+        button.bg-light:hover,
+        button.bg-light:focus {
+            background-color: var(--color-dl-grey-b) !important;
+        }
+    }
+    .drawer-toggles {
+        .drawer-toggler {
+            .btn {
+                background-color: var(--color-dl-grey-b);
+                border-radius: 15px;
+            }
+        }
+        .drawer-left-toggle {
+            .btn {
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+        }
+        .drawer-right-toggle {
+            .btn {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+        }
+    }
+}

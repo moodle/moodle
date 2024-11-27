@@ -1,0 +1,81 @@
+<div id="block21-4-s" class="block21-4 educard-block educard-font">
+    <div class="block21-bg block-start-end-space">
+        <div class="container">
+            <div class="educard-sub-title">
+                <h6>{{block21headline}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block21header}}<span> {{block21maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="mt-60">
+                <div id="block21-4-slider" class="splide block21-4-slider">
+                    <div class="splide__track" >
+                        <ul class="splide__list">
+                            {{#block21}}
+                            <li class="splide__slide">
+                                <div class="course-item block-shadow block-hover-shadow educard-rounded">
+                                    {{#block21imgenabled}}
+                                    <div class="category-name align-middle block-shadow educard-rounded">
+                                        <i class="bx bx-category-alt"></i>
+                                        <a href="{{categorylink}}">
+                                            <h4 class="text-truncate-1">{{categoryName}}</h4>
+                                        </a>
+                                    </div>
+                                    <div class="img">
+                                        {{#imgurl}}<img src="{{imgurl}}" alt="image">{{/imgurl}}
+                                    </div>
+                                    {{/block21imgenabled}}
+                                    {{^block21imgenabled}}
+                                    <div class="noimg"> 
+                                        <div class="category-name-noimg align-middle block-shadow">
+                                            <a href="{{categorylink}}">
+                                                <h4 class="text-truncate-1">{{categoryName}}</h4>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {{/block21imgenabled}}
+                                    <div class="details position-relative">
+                                        {{#block21priceshow}}
+                                        <h4 class="price block-shadow educard-rounded">
+                                            {{cost}} {{currency}}
+                                        </h4>
+                                        {{/block21priceshow}}
+                                        {{#teachername}}
+                                        <div class="user-picture">
+                                            <span class="align-middle" data-toggle="tooltip" data-placement="top" title="{{{teachername}}}">
+                                                {{{userpicture}}}
+                                            </span>
+                                        </div>
+                                        {{/teachername}}
+                                        <span class="align-middle" data-toggle="tooltip" data-placement="top" title="{{#str}}block21tooltipenrolled, theme_educard{{/str}}">
+                                            <i class="fa fa-user-o" aria-hidden="true"></i> {{studentscount}}
+                                        </span>
+                                        <span class="float-right" data-toggle="tooltip" data-placement="top" title="{{#str}}block21tooltiplastdate, theme_educard{{/str}}">
+                                            <i class="fa fa-calendar"></i> {{update}}
+                                        </span>
+                                        <a href="{{courselink}}">
+                                            <h4 class="text-truncate-1">
+                                                {{#block21shortname}}{{shortname}}{{/block21shortname}}
+                                                {{#block21fullname}}{{fullname}}{{/block21fullname}}
+                                            </h4>
+                                        </a>
+                                        <div class="font-size-m text-truncate-3">{{{summary}}}</div>
+                                    </div>
+                                </div>
+                            </li>
+                            {{/block21}}
+                        </ul>
+                    </div>
+                </div>            
+            </div>
+            <div class="text-center mt-3">
+                {{#block21button}}
+                <a class="educard-btn btn mt-3 text-white border-0 block-shadow" href="{{block21buttonlink}}">
+                    <span>{{block21button}}</span>
+                </a>
+                {{/block21button}}
+            </div>
+        </div>
+    </div>
+</div>        

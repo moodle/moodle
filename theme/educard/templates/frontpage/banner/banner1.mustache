@@ -1,0 +1,43 @@
+<div class="banner-1 educard-header-1 educard-block educard-font position-relative">
+    {{#banner1shape}}
+    <div class="educard-shape">
+        <img class="educard-shape-1" src="{{shape1}}" alt="shape-1">
+        <img class="educard-shape-2" src="{{shape2}}" alt="shape-2">
+        <img class="educard-shape-3" src="{{shape3}}" alt="shape-3">
+        <img class="educard-shape-4" src="{{shape4}}" alt="shape-4">
+    </div>
+    {{/banner1shape}}
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 col-lg-6">
+                <div class="bg-img img-fluid" style="background-image:url({{imgbanner1}})">
+                </div> 
+            </div>
+            <div class="col-md-6 col-lg-6 info-detail align-self-center">
+                <div class="educard-sub-title">
+                    <h6>{{banner1caption1}}</h6>
+                </div>
+                <div>
+                    <h1>{{banner1caption2}} <span> {{banner1caption3}}</span></h1>
+                    <div class="educard-heading-line-left"></div>
+                </div>
+                <h4 class="subtitle">{{banner1caption4}}</h4>
+                <div class="educard-search">
+                    <form action="search/index.php" method="get">
+                        <div class="form-group">
+                            <i class="fa fa-search"></i>
+                            <input type="text" class="form-control" placeholder="{{banner1placeholder}}">
+                            <button type="submit">{{#str}}search, core{{/str}}</button>
+                        </div>
+                    </form>
+                    <div class="ctgtext">{{banner1ctgtext}}</div>
+                    <ul class="educard-search-list">
+                        {{#banner1ctg}}
+                        <li><a href="course/index.php?categoryid={{ctgid}}">{{ctgname}}</a></li>
+                        {{/banner1ctg}}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

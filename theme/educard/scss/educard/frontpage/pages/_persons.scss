@@ -1,0 +1,89 @@
+#page02-1,
+#page02-2,
+#page02-3,
+#page02-4 { 
+    .page-header {
+        text-align: center;
+        position: relative;
+        padding: 250px 0 150px 0;
+        background-repeat: no-repeat;
+        background-size: cover;
+        max-height: 500px;
+        &:before {
+            position: absolute;
+            content: "";
+            background-image: linear-gradient(to bottom, $navbarcolor, transparent);
+            opacity: 0.9;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            max-width: 100%;
+        }
+        h1 {
+            position: relative;
+            color: $navbarlinkcolor;
+            font-size: 60px;
+            font-weight: 700;
+        }
+        a {
+            position: relative;
+            padding: 0 12px;
+            font-size: 22px;
+            color: $navbarlinkcolor;
+            text-decoration: none;
+            &:hover {
+                color: $navbarlinkhovercolor;
+            }
+            &:after {
+                position: absolute;
+                content: "/";
+                width: 8px;
+                height: 8px;
+                top: -2px;
+                right: -7px;
+                text-align: center;
+                color: $navbarlinkcolor;
+            }
+            &:last-child::after {
+                display: none;
+            }
+            
+        }
+    }
+}
+.dark-frontpage {
+    #page02-1,
+    #page02-2,
+    #page02-3,
+    #page02-4 { 
+        .page-header {
+            h1 {
+                color: $navbarlinkcolordark;
+            }
+            a {
+                color: $navbarlinkcolordark;
+                &:after {
+                    color: $navbarlinkcolordark;
+                }
+            }
+            &:before {
+                background-image: linear-gradient(to bottom, $navbarcolordark, transparent);
+            }
+        }
+    }
+}
+
+@media (max-width: 767.98px) {
+    #page02-1,
+    #page02-2,
+    #page02-3,
+    #page02-4 {
+        .page-header h2 {
+            font-size: 35px;
+        }
+        .page-header a {
+            font-size: 18px;
+        }
+    }
+}

@@ -1,0 +1,37 @@
+/* Dark Light Button */
+
+.dl-frontpage {
+  .fa-moon-o,
+  .bx-moon,
+  .bx-bulb,
+  .bxs-bulb {
+    color: $navbarlinkcolor;
+  }
+}
+
+.dl-frontpage {
+  #fpdarksidenav {
+      padding: 4px;
+      border-radius: 50%;
+  }
+  #darki-fp {
+    font-size: 25px;
+  }
+}
+.dark-frontpage {
+  .dl-frontpage {
+    .fa-sun-o,
+    .bx-sun,
+    .bxs-sun,
+    .bxs-bulb,
+    .bx-bulb {
+      color: var(--color-dl-yellow-b);
+    }
+  }
+}
+/*
+#fpdarksidenav {
+  background-color: var(--dark);
+}
+*/
+/* Dark light side bar end*/

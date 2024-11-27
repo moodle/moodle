@@ -1,0 +1,42 @@
+<div id="block10-3" class="block10-3 educard-block educard-font">
+    <div class="block10-bg block-start-end-space">
+        <div class="container">
+            <div class="educard-sub-title">
+                <h6>{{{block10headline}}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block10header}} <span>{{block10maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div id="person-boxes" class="educard-block person-boxes pb-50 mt-60">
+                <div class="container">
+                    <div class="row">
+                    {{#block10}}
+                        <div class="col-md-6 col-lg-4 d-flex align-items-stretch mb-5">
+                            <div class="person-box block-shadow block-hover-shadow educard-rounded w-100">
+                                <div class="person-img">
+                                    <img {{# block10image }} src="{{{block10image}}}"  {{/ block10image }}
+                                        {{^ block10image }} src="{{frontpageimglink}}block10/d3/{{block10count}}.jpg" {{/ block10image }}
+                                        alt="user-img" onerror="this.style.display='none'">
+                                </div>  
+                                <div>
+                                    <h4 class="text-center">
+                                        {{#block10name}}{{block10name}}{{/block10name}}
+                                    </h4>
+                                </div>
+                                <div class="font-weight-600 text-center soft-color pb-2">
+                                    <span>{{block10job}}</span>
+                                </div>  
+                                <div class="font-size-m text-truncate-3">
+                                    <i class='bx bxs-quote-alt-left'></i>
+                                    {{{block10caption}}}
+                                </div>
+                            </div>
+                        </div>
+                        {{/block10}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

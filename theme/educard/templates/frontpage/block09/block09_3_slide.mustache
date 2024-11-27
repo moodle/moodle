@@ -1,0 +1,30 @@
+{{!-- Categories --}}
+<div id="block09-3-s" class="block09-3 educard-block educard-font">
+	<div class="container">
+        <div id="block09-3-slider" class="splide block09-3-slider" >
+            <div class="splide__track" >
+                <ul class="splide__list">
+                    <!-- Category item -->
+                    {{#block09}}
+                    <li class="splide__slide">
+                        <div class="card card-body shadow educard-rounded h-100">
+                            <div class="d-flex align-items-center">
+                                <!-- Icon -->
+                                <div class="icon-lg bg-color bg-color-{{count}} bg-opacity-10 rounded-circle text-color text-color-{{count}}">
+                                    <i class="{{block09icon}}"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h5 class="mb-0">
+                                        <a href="{{catagoryURL}}" class="stretched-link">{{catagoryname}}</a>
+                                    </h5>
+                                    <span>{{coursecount}} {{#str}}courses, core {{/str}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    {{/block09}}
+                </ul>
+            </div>
+        </div>
+	</div>
+</div>

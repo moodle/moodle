@@ -1,0 +1,86 @@
+{{!-- Course --}}
+<div id="block13-1" class="block13-1 educard-block educard-font">
+    <div class="block13-bg block-start-end-space">
+        <div class="container">
+            <div class="educard-sub-title">
+                <h6>{{{block13headline}}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block13header}} <span>{{block13maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div id="btncontainer" class="mt-5 mb-3 text-center">
+                <button type="button" class="mb-1 btn fltactive" onclick="filterSelection('all')"> 
+                    All 
+                    <span class="badge badge-light">{{block13totalcourse}}</span>
+                </button>
+                {{#block13-ctgry}}
+                <button type="button" class="mb-1 btn" onclick="filterSelection('category-id-{{catagoryid}}')">
+                    {{catagoryname}} <span class="badge badge-light">{{coursecount}}</span>
+                </button>
+                {{/block13-ctgry}}
+            </div>
+            <div class="row mt-60">
+                {{#block13}}
+                <!-- Card item START -->
+                <div class="coursefilterdiv col-xl-4 col-md-6 mb-4 category-id-{{idcategory}}">
+                    <div class="card h-100 block-shadow block-hover-shadow educard-rounded">
+                        <!-- Image -->
+                        {{#block13imgenabled}}
+                        <img src="{{imgurl}}" class="card-img-top" alt="course image" loading="lazy">
+                        {{/block13imgenabled}}
+                        <!-- Card body -->
+                        <div class="card-body pb-3">
+                            <div class="d-flex justify-content-between mb-2 ctg-header">
+                                <a href="{{categorylink}}" class="font-size-s font-weight-500 educard-rd-bg-color-{{counter}} educard-rd-color-{{counter}} rounded p-1">
+                                    {{categoryName}}
+                                </a>
+                                <div class="h6 mb-0 educard-rd-color-{{counter}} ctg-heart">
+                                    <i class="fa fa-heart"></i>
+                                </div>
+                            </div>
+                            <!-- Title -->
+                            <h4 class="card-title">
+                                <a href="{{courselink}}" class="{{#block13shortname}}text-truncate-1{{/block13shortname}}
+                                    {{#block13fullname}}text-truncate-2{{/block13fullname}}">
+                                    {{#block13shortname}}{{shortname}}{{/block13shortname}}
+                                    {{#block13fullname}}{{fullname}}{{/block13fullname}}
+                                </a>
+                            </h4>
+                            <div class="text-truncate-2 font-size-m">{{{summary}}}</div>
+                            <!-- Rating star -->
+                            {{#star}}
+                            <ul class="list-inline mt-3 mb-0">
+                                <li class="list-inline-item mr-0"><i class="fa fa-star text-warning"></i></li>
+                                <li class="list-inline-item mr-0"><i class="fa fa-star text-warning"></i></li>
+                                <li class="list-inline-item mr-0"><i class="fa fa-star text-warning"></i></li>
+                                <li class="list-inline-item mr-0"><i class="fa fa-star text-warning"></i></li>
+                                <li class="list-inline-item mr-0"><i class="fa fa-star text-warning"></i></li>
+                                <li class="list-inline-item ml-2 h6 mb-0">({{star}})</li>
+                            </ul>
+                            {{/star}}
+                        </div>
+                        <!-- Card footer -->
+                        <div class="card-footer p-3">
+                            <div class="d-flex justify-content-between">
+                                {{#block13priceshow}}
+                                <span class="h6 mb-0">
+                                    <i class="fa fa-credit-card mr-1" aria-hidden="true"></i>
+                                    {{cost}} {{currency}}
+                                </span>
+                                {{/block13priceshow}}
+                                <span class="h6 mb-0">
+                                    <i class="fa fa-pencil-square-o mr-1" aria-hidden="true"></i>
+                                    {{format}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card item END -->
+                {{/block13}}
+            </div>
+        </div>
+    </div>
+</div>
+<script src="theme/educard/js/coursefilter.min.js"></script>

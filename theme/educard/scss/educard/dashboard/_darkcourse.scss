@@ -1,0 +1,231 @@
+/* Course SCSS */
+.editing.dark-dashboard .activity-item {
+    &:hover {
+        color: var(--color-dl-grey-a);
+        background: #666;
+        border-color: var(--color-dl-yellow-a);
+    }
+}
+.path-mod-book {
+    &.dark-dashboard {
+        .btn-previous,
+        .btn-next {
+            background: var(--color-dl-grey-b);
+            .icon {
+                font-size: initial;
+            }
+        }
+        .btn-previous {
+            border-radius: 15px 0 0 15px;
+        }
+        .btn-next { 
+            border-radius: 0 15px 15px 0;
+        }
+    }
+    .btn-previous,
+    .btn-next {
+        .icon {
+            font-size: initial;
+        }
+        
+    }
+    .btn-previous {
+        border-radius: 15px 0 0 15px;
+    }
+    .btn-next { 
+        border-radius: 0 15px 15px 0;
+    }
+}
+.path-backup.dark-dashboard .mform .root_setting:nth-of-type(even),
+.path-backup.dark-dashboard .mform .grouped_settings:nth-of-type(even) {
+    background-color: var(--color-dl-bg-black);
+}
+.path-mod.dark-dashboard {
+    .activity-information {
+        .completion-info {
+            position: relative;
+            z-index: 2;
+        }
+    }
+    .activity-header:not(:empty) {
+        background-color: var(--color-dl-grey-b)
+    }
+}
+.dark-dashboard {
+    .dropdown-menu.dialog-small {
+        background-color: var(--color-dl-grey-a);
+    }
+    .btn-outline-secondary.disabled,
+    .btn-outline-secondary:disabled {
+        color: var(--color-dl-yellow-b);
+    }
+    .course-content {
+        .course-section {
+            border-bottom: none;
+            .activity-item {
+                background-color: transparent;
+            }
+            &.hidden .section-item {
+                background-color: transparent;
+            }
+        }
+        .single-section {
+            .nextsection,
+            .prevsection {
+                a {
+                    padding: 8px 12px;
+                    border-top: 1px solid var(--color-dl-grey-a);
+                    background-color: var(--color-dl-grey-b);
+                    border-radius: 0.25rem;
+                }
+            }
+            .section-navigation {
+                align-items: center;
+                margin-top: 10px;
+            }
+            .custom-select {
+                background-color: var(--color-dl-grey-b);
+                color: var(--color-dl-grey-a)
+            }
+        }
+        .course-section .course-section-header {
+            /*
+            background-color:  rgba(75, 131, 251, 0.1);
+            padding: 15px;
+            border-radius: 1rem;
+            */
+            .btn {
+                background-color: rgba(var(--theme-color-rgba), 0.6);
+                .fa {
+                    color: var(--color-dl-yellow-b) !important;
+                }
+                &.btn-icon {
+                    &:hover, &:focus {
+                        background-color: var(--color-dl-grey-b);
+                    }
+                }
+            }
+        }
+        .section.course-section.main.section-summary {
+            border-bottom: 1px solid #dee2e6;
+        }
+        h3 {
+            font-weight: 500;
+        }
+        .activity-item {
+            .activity-groupmode-info {
+                    .groupmode-information {
+                        background: var(--color-dl-orange);
+                }
+            }
+            .activity-dates {
+                color: var(--color-dl-grey-a);
+            }
+        }
+        .course-section .sectionname>a {
+            color: var(--color-dl-yellow-b);
+        }
+    }
+    .backup-restore {
+        .backup-section {
+            background-color: var(--color-dl-bg-black-dark);
+            border: 1px solid var(--color-dl-yellow-a);
+        }
+    }
+
+    .description .course-description-item {
+        background-color: initial;
+    }
+    .editor_atto_content_wrap {
+        background-color: var(--color-dl-card-black);
+        color: #333;
+    }
+    .editor_atto_notification .atto_info {
+        background-color: var(--color-dl-grey-b);
+    }
+    .course-header-txt {
+        background-color: var(--color-dl-bg-black-dark);
+        opacity: .6;
+    }
+    .chip {
+        background-color: var(--color-dl-grey-b);
+    }
+    .coursebox {
+        padding: 0.9rem;
+        overflow: hidden;
+        margin-bottom: 15px;
+        &.even, &.first, &.last {
+            background-color: var(--color-dl-card-black)!important;
+            border-radius: 0.5rem;
+        }
+    }
+    .list-group-item {
+        background-color: var(--color-dl-card-black)!important;
+        border: 6px solid var(--color-dl-bg-black)!important;
+    }
+
+    /* Course activity go back and next button. */
+    .course-activity-edcrd-1 {
+        .course-activity-edcrd-2,
+        .course-activity-edcrd-3 {
+            background-color: rgb(37, 38, 43);
+            border: 1px solid rgb(55, 58, 64);
+            &:hover {
+                background-color: rgb(44, 46, 51);
+                box-shadow: rgb(0 0 0 / 5%) 0px 1px 3px, rgb(0 0 0 / 5%) 0px 20px 25px -5px, rgb(0 0 0 / 4%) 0px 10px 10px -5px;
+            }
+        }
+        .course-activity-edcrd-2 {
+            .course-activity-edcrd-22 {
+                color: rgb(144, 146, 150);
+            }
+        }
+        .course-activity-edcrd-3 {
+            .course-activity-edcrd-32 {
+                color: rgb(144, 146, 150);
+            }        
+        }
+    }
+    &.path-mod-survey .surveytable .whitecell {
+        background-color: transparent !important;
+    }
+    .table-warning, .table-warning > th, .table-warning > td {
+        background-color: inherit;
+    }
+    .tertiary-navigation {
+        .btn-secondary {
+            background: none;
+            background-color: var(--color-dl-grey-b) !important;
+            border-color: var(--color-dl-grey-b) !important;
+            color: var(--color-dl-grey-a) !important;
+        }
+        .navitem .btn {
+            color: var(--color-dl-grey-a) !important;
+        }
+    }
+    a:hover {
+        color: var(--color-dl-red) !important;
+        text-decoration: none !important;
+    }
+    .text-dark {
+        color: #0f6fc5 !important;
+    }
+    .activity-add {
+        background: var(--color-dl-white-bsc) linear-gradient(180deg, var(--yellow), var(--color-dl-grey-b)) repeat-x;
+        border-color: var(--color-dl-orange);
+        border-width: 2px;
+        width: auto;
+    }
+    .chooser-container .tab-content .optionscontainer .option.card {
+        background-color: #ccc !important;
+    }
+    .list-unstyled .card {
+        background-color: var(--color-dl-grey-b);
+        table.quizreviewsummary {
+            th.cell, 
+            td.cell {
+                background-color: var(--color-dl-grey-b);
+            }
+        }
+    }   
+}

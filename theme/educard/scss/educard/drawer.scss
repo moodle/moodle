@@ -1,0 +1,56 @@
+/* Theme educard side bar group item customize*/
+.list-group-item-action{
+    &:hover {
+        background-color: $hythemecolor-obs-5;
+    }
+    &:focus {
+        background-color: $hythemecolor-obs-5;
+    }
+}
+.list-group-item {
+    padding: 0.77rem 1.25rem;
+    &.active {
+        color: $list-group-active-color;
+        background-color: $list-group-active-bg;
+        border-color: $list-group-active-border-color;
+      }
+}
+.list-group-item-action {
+    color: $hythemecolor;
+    font-weight: 500;
+    border: 0px solid rgba(0, 0, 0, 0.125);
+}
+/* Theme dashboard nav menu style=2 logo settings */
+#nav-drawer{
+    border-right: 1px solid rgba(0, 0, 0, 0.125);
+    .logo .list-group-item {
+        border: 0px;
+        max-height: $navbar-height;
+        img {
+            max-height: 30px;
+        }
+    }
+}
+
+.drawer-toggles {
+    .drawer-toggler {
+        .btn {
+            border-radius: 15px;
+            .icon {
+                vertical-align: middle;    
+            }
+        }
+    }
+    .drawer-left-toggle {
+        .btn {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    }
+    .drawer-right-toggle {
+        .btn {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+    }
+}

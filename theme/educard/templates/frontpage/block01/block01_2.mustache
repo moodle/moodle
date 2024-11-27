@@ -1,0 +1,26 @@
+<div id="block01-2" class="block01-2 educard-block educard-font block-shadow block-hover-shadow mt-2 mb-2">
+    <div class="{{#block01color}}block01-bg-color{{/block01color}} block01-bg">
+        <div class="educard-rounded pt-50 
+            {{^block01color}}{{#imgblock01background}} block01-2-bg-img{{/imgblock01background}}{{/block01color}}
+            {{^block01parallax}} block01-no-attachment{{/block01parallax}}">
+            <div class="container pt-20 pb-20">
+                <div class="row">
+                {{#block01button}}
+                <div class="col-md-8">
+                {{/block01button}}
+                    <div class="h1">{{block01header}}<span> {{block01maintitle}}</span></div>
+                    <h5>{{{block01caption}}}</h5>
+                {{#block01button}}    
+                    <a class="btn educard-btn mt-3 mb-3" href="{{{block01buttonlink}}}">
+                        <span>{{{block01button}}}</span>
+                    </a>
+                </div>
+                {{/block01button}}
+                {{^block01button}}    
+                <div class=" mb-3"></div>
+                {{/block01button}}
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>

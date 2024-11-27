@@ -1,0 +1,26 @@
+<div  id="block04-1" class="block04-1 educard-block educard-font pb-90 bg-dark">
+    <div class="container block-start-end-space">
+        <div class="educard-sub-title pt-40">
+            <h6>{{block04headline}}</h6>
+        </div>
+        <div>
+            <div class="h1 text-white">{{block04header}}<span> {{block04maintitle}}</span></div>
+            <div class="educard-heading-line-left"></div>
+        </div>
+        <div class="row">
+            {{#block04}}
+            <div class="col-sm-6 col-lg-4 col-xl-3 pb-10 pt-60">
+                <div class="single-project educard-rounded block04-1-bg-img-{{counter}}">
+                    <div class="project-inner text-center">
+                        <a class="btn btn-md btn-warning text-white" href="{{link}}"><h5>{{title}}</h5></a>
+                        <p>{{caption}}</p> 
+                    </div>
+                </div>
+            </div>
+            {{/block04}}
+        </div> 
+        <div class="d-flex justify-content-center pt-20">
+            <a class="btn educard-btn text-white" href="{{block04buttonlink}}">{{block04button}}</a>
+        </div>
+    </div>
+</div>

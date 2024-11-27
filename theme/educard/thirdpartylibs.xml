@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>js/splide.min.js</location>
+        <name>Splide.js</name>
+        <license>MIT</license>
+        <version>2.4.20</version>
+        <licenseversion>2020</licenseversion>
+    </library>
+    <library>
+        <location>fonts/</location>
+        <name>Boxicons - free - https://boxicons.com/</name>
+        <license>The MIT License (MIT)</license>
+        <version>2.1.2</version>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>style/animate.min.css</location>
+        <name>animate.css - https://animate.style/</name>
+        <license>Licensed under the MIT license - http://opensource.org/licenses/MIT</license>
+        <version>4.1.1</version>
+        <licenseversion></licenseversion>
+    </library>
+</libraries>

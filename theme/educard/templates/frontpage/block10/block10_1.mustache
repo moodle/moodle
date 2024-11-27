@@ -1,0 +1,46 @@
+<div id="block10-1" class="block10-1 educard-block educard-font">
+    <div class="block10-bg block-start-end-space">
+        <div class="container">
+            <div class="educard-sub-title">
+                <h6>{{block10headline}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block10header}} <span>{{block10maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="row mt-60">
+                <div class=" col-3">
+                    <div class="nav flex-column educard-testimonial" id="v-pills-tab" role="tablist">
+                    {{#block10}}
+                        <a class="nav-link {{#active}}active{{/active}}" data-toggle="pill" href="#t6-{{block10count}}" role="tab" aria-controls="t6-{{block10count}}" aria-expanded="true">
+                            <img {{# block10image }} src="{{{block10image}}}"  {{/ block10image }}
+                                 {{^ block10image }} src="{{frontpageimglink}}block10/d1/{{block10count}}.jpg" {{/ block10image }}
+                                class="rounded-circle" alt="img" onerror="this.style.display='none'">
+                        </a>
+                    {{/block10}}
+                    </div>
+                </div>
+                <div class=" col-9 ml-auto align-self-center">
+                    <div class="tab-content" id="v-pills-tabContent">
+                        {{#block10}}
+                        <div class="tab-pane fade show {{#active}}active{{/active}}" id="t6-{{block10count}}" role="tabpanel">
+                            <p>{{{block10caption}}}</p>
+                            <div class="d-flex mt-5">
+                                <div>
+                                    {{#block10name}}
+                                    <h5 class="mb-0 text-uppercase site-color">
+                                        {{block10name}}
+                                    </h5>
+                                    {{/block10name}}
+                                    <p>{{block10job}}</p>
+                                </div>
+                                <button class="btn rounded-circle btn-testimonial-quote btn-md ml-auto" title="quote"><i class="fa fa-quote-right"></i></button>
+                            </div>
+                        </div>
+                        {{/block10}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>

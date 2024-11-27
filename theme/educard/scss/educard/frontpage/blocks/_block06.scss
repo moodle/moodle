@@ -1,0 +1,147 @@
+/*-----------------------
+    Join Us Block06
+-------------------------*/
+.dark-frontpage,
+.dark-dashboard {
+    .block06-bg {
+        background-image: none;
+    }
+    .block06-bg-color {
+        background-color: var(--color-dl-grey-b) !important;
+    }
+    .block06-1,
+    .block06-2 {
+        .soft-color {
+            color: var(--color-dl-grey-a);
+        }
+    }
+    .block06-2 {
+        background: none;
+        .bg-educard-gradiant {
+            background: linear-gradient(to top, var(--theme-color) 0%, var(--color-dl-card-black) 100%);
+            margin-top: 0;
+        }
+        background: linear-gradient(to top, var(--theme-color) 0%, var(--color-dl-card-black) 100%);
+        .waves-bg {
+            background-image: url([[pix:theme|fp/shapes/waves-block-6-dark]]);
+            padding-top: 5rem;
+        }
+    }
+    .block06-3 {
+        .block-06-3-box {
+            border: 1px solid var(--color-dl-yellow-b) !important;
+        }
+    }
+}
+
+.block06-1 {
+    .typewrite {
+        border-right: 0.08em solid transparent;
+    }
+}
+.block06-2 {
+    .waves-bg {
+        background-image: url([[pix:theme|fp/shapes/waves-block-6]]);
+        background-repeat: no-repeat;
+        background-position: bottom center;
+      }
+    .bg-educard-gradiant{
+        background: var( --theme-color );
+        background: -webkit-linear-gradient(legacy-direction(to right), var( --theme-color-ops-6 ) 0%, var( --theme-color-ops-1 ) 100%);
+        background: -webkit-gradient(linear, left top, right top, from(var( --theme-color-ops-6 )), to(var( --theme-color-ops-1 )));
+        background: -webkit-linear-gradient(left, var( --theme-color-ops-6 ) 0%, var( --theme-color-ops-1 ) 100%);
+        background: -o-linear-gradient(left, var( --theme-color-ops-6 ) 0%, var( --theme-color-ops-1 ) 100%);
+        background: linear-gradient(to top, var( --theme-color ) 0%, #ffffff 100%);
+    }
+    .typewrite > .wrap { 
+        border-right: 0.08em solid transparent;
+    }
+}
+/* Educard block06-3 */
+.block06-3 {
+    .bg-grad-color {
+        background: -webkit-gradient(linear, left bottom, left top, from(var( --theme-color2-ops-7 )), to(var( --theme-color)));
+        background: linear-gradient(360deg, var( --theme-color2-ops-7 ) 0%, var( --theme-color) 100%);
+    }
+    img.icon {
+        width: auto;
+        height: auto;
+    }
+    .svg-1 {
+        background-image:url([[pix:theme|fp/shapes/pencil]]);
+        width: 68px;
+        height: 68px;
+    }
+    .svg-2 {
+        background-image:url([[pix:theme|fp/shapes/graduated]]);
+        -webkit-transform: rotate(74deg) !important;
+        transform: rotate(74deg) !important;
+        width: 68px;
+        height: 68px;
+    }
+    .ms-3 {
+        margin-left: 1rem !important;
+    }
+    .start-0 {
+        left: 0 !important;
+    }
+    .bottom-0 {
+        bottom: 0 !important;
+    }
+    .me-5 {
+        margin-right: 3rem !important;
+    }
+    .end-0 {
+        right: 0 !important;
+    }
+    .top-0 {
+        top: 0 !important;
+    }
+    .start-50 {
+        left: 50% !important;
+    }
+    .rotate-74 {
+        -webkit-transform: rotate(74deg) !important;
+        transform: rotate(74deg) !important;
+    }
+    .z-index-n1 {
+        z-index: -1 !important;
+    }
+    .opcty-5 {
+        opacity: 0.5 !important;
+    }
+    .ms-n3 {
+        margin-left: -1rem !important;
+    }
+    .fill-white {
+        fill: #fff !important;
+    }
+    .translate-middle-y {
+        -webkit-transform: translateY(-50%) !important;
+        transform: translateY(-50%) !important;
+    }
+    .top-50 {
+        top: 50% !important;
+    }
+    .rotate-10 {
+        -webkit-transform: rotate(10deg) !important;
+        transform: rotate(10deg) !important;
+    }
+    .fill-danger {
+        fill: #d6293e !important;
+    }
+    .rounded-3 {
+        border-radius: 0.5rem !important;
+    }
+   
+    @media (min-width: 1200px) {
+        .ms-xl-5 {
+            margin-left: 3rem !important;
+        }
+    }
+    @media (min-width: 768px) {
+        .text-md-end {
+            text-align: right !important;
+        }
+    }
+}

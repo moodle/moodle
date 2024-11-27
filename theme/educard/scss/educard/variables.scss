@@ -1,0 +1,33 @@
+// Convert a hex value to comma-delimited rgb values
+// In: #000
+// Out: 0,0,0
+
+@function hexToRGB($hex) {
+    @return red($hex), green($hex), blue($hex);
+}
+:root {
+    --login-background-img: " ";
+    --navbar-color: #{$navbarcolor};
+    --theme-color: #{$hythemecolor};
+    --theme-color-rgba: #{hexToRGB($hythemecolor)};
+    --theme-color-ops-1: rgba(var( --theme-color-rgba ), 0.1);
+    --theme-color-ops-2: rgba(var( --theme-color-rgba ), 0.2);
+    --theme-color-ops-3: rgba(var( --theme-color-rgba ), 0.3);
+    --theme-color-ops-4: rgba(var( --theme-color-rgba ), 0.4);
+    --theme-color-ops-5: rgba(var( --theme-color-rgba ), 0.5);
+    --theme-color-ops-6: rgba(var( --theme-color-rgba ), 0.6);
+    --theme-color-ops-7: rgba(var( --theme-color-rgba ), 0.7);
+    --theme-color-ops-8: rgba(var( --theme-color-rgba ), 0.8);
+    --theme-color-ops-9: rgba(var( --theme-color-rgba ), 0.9);
+    --theme-color2: #{$hythemecolor2};
+    --theme-color2-rgba: #{hexToRGB($hythemecolor2)};
+    --theme-color2-ops-1: rgba(var( --theme-color2-rgba ), 0.1);
+    --theme-color2-ops-2: rgba(var( --theme-color2-rgba ), 0.2);
+    --theme-color2-ops-3: rgba(var( --theme-color2-rgba ), 0.3);
+    --theme-color2-ops-4: rgba(var( --theme-color2-rgba ), 0.4);
+    --theme-color2-ops-5: rgba(var( --theme-color2-rgba ), 0.5);
+    --theme-color2-ops-6: rgba(var( --theme-color2-rgba ), 0.6);
+    --theme-color2-ops-7: rgba(var( --theme-color2-rgba ), 0.7);
+    --theme-color2-ops-8: rgba(var( --theme-color2-rgba ), 0.8);
+    --theme-color2-ops-9: rgba(var( --theme-color2-rgba ), 0.9);
+}

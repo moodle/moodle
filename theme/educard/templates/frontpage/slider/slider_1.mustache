@@ -1,0 +1,293 @@
+{{#slider1}}
+<div class="blockslider slider-1 educard-block educard-font">
+    <div class="splide slider" id="splide_slide">
+        <div class="splide__arrows">
+            <button class="splide__arrow splide__arrow--prev {{nextprev}}">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+                    <path d="m15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z"></path>
+                </svg>
+            </button><button class="splide__arrow splide__arrow--next {{nextprev}}">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+                    <path d="m15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="splide__track">
+            <ul class="splide__list">
+                {{#slides}}
+                <li class="splide__slide">
+                    <div class="text-center">
+                        {{#image}}
+                            <img src="{{image}}" class="w-100 slide-img {{^slidershowheight}}full-page{{/slidershowheight}}" 
+                                {{#slidershowheight}}height={{slidershowheight}}{{/slidershowheight}} alt="sld" loading="lazy">
+                        {{/image}}
+                        <div {{#slideropacity}}class="carousel-content-image" {{/slideropacity}}>
+                        </div>
+                        <div class="slide-text text-light {{textposition}}">
+                            {{#title}}
+                            <div class="slide-title text-uppercase educard-text-shadow h1 {{#textanimation}}display-none{{/textanimation}}">
+                                {{{ title }}}
+                            </div>
+                            {{/title}}
+                            {{#caption}}
+                                <h4 class="slide-caption educard-text-shadow {{#textanimation}}display-none{{/textanimation}}">
+                                    {{{ caption }}}
+                                </h4>
+                            {{/caption}}
+                            {{#button}}
+                            <div class="mt-3">
+                                <a class="educard-btn btn" href="{{{buttonurl}}}" 
+                                {{#buttonurlblank}} target="_blank"{{/buttonurlblank}}>
+                                    {{{ button }}}
+                                </a>
+                            </div>
+                            {{/button}}
+                        </div>
+                    </div>
+                </li>
+                {{/slides}}
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    "use strict";
+    /* Main slider settings   
+       Setting parameters (like kenburns) are taken from mustache. 
+    */
+    var splideId = document.getElementById("splide_slide");
+    if (splideId) {
+        var var_nextprev = Number('{{nextprev}}');
+        var var_autoplay = Number('{{autoplay}}');
+        var var_pagination = Number('{{pagination}}');
+        var var_textanimation = '{{textanimation}}';
+        document.addEventListener('DOMContentLoaded', function () {
+            let splide = new Splide('#splide_slide', {
+                type: 'loop',
+                autoplay: var_autoplay,
+                pagination: var_pagination,
+                perPage: 1,
+                direction: document.dir,
+            });
+            var kenburns = '{{kenburns}}';
+            splide.on('active', Slide => {
+                const element = Slide.slide.querySelector('.slide-img');
+                if (element) {
+                    element.classList.add(kenburns);
+                }
+            });
+            splide.on('inactive', Slide => {
+                const element = Slide.slide.querySelector('.slide-img');
+                if (element) {
+                    element.classList.remove(kenburns);
+                }
+            });
+            if (var_textanimation != '0') {
+                splide.on('active', Slide => {
+                    const element = Slide.slide.querySelector('.slide-title');
+                    if (element) {
+                        element.classList.add('tracking-in-expand-fwd', 'display-block');
+                    }
+                });
+                splide.on('inactive', Slide => {
+                    const element = Slide.slide.querySelector('.slide-title');
+                    if (element) {
+                        element.classList.remove('tracking-in-expand-fwd', 'display-block');
+                    }
+                });
+                splide.on('active', Slide => {
+                    const element = Slide.slide.querySelector('.slide-caption');
+                    if (element) {
+                        element.classList.add('tracking-in-expand-fwd', 'display-block');
+                    }
+                });
+                splide.on('inactive', Slide => {
+                    const element = Slide.slide.querySelector('.slide-caption');
+                    if (element) {
+                        element.classList.remove('tracking-in-expand-fwd', 'display-block');
+                    }
+                });
+            }
+            splide.mount();
+        });
+    }
+</script>
+{{/slider1}}
+{{#slider2}}
+<section id="educard-c-1">
+    <div class="educard-block educard-font pt-60">
+        <div id="educardCarousel1" class="carousel slide carousel-fade" data-ride="carousel"
+            {{^autoplay}}data-interval="false" {{/autoplay}}>
+            {{#pagination}}
+            <ol class="carousel-indicators">
+                {{#slides}}
+                <li data-target="#educardCarousel1" data-slide-to="{{{ key }}}" {{#active}}class="active" {{/active}}></li>
+                {{/slides}}
+            </ol>
+            {{/pagination}}
+            <div class="carousel-inner">
+                {{#slides}}
+                <div class="carousel-item {{#active}}active{{/active}} {{#image}}main-slider-2-bg-img-{{count}}{{/image}}">
+                    <div class="carousel-container">
+                        <div class="max-width-text {{textposition}}">
+                            {{#slidershapes}}
+                                <img src="/image/slider/shapes/shape-{{{ key }}}.png" 
+                                    class="animate__animated animate__backInDown img-filter" alt="sld" loading="lazy">
+                            {{/slidershapes}}
+                            {{#title}}
+                                <div  class="h2 {{#textanimation}}animate__animated animate__fadeInDown{{/textanimation}}" >
+                                    {{{ title }}}
+                                </div>
+                            {{/title}}
+                            {{#caption}}
+                                <div  class="text-white pb-3 {{#textanimation}}animate__animated animate__fadeInUp{{/textanimation}}" >
+                                    {{{ caption }}}
+                                </div>
+                            {{/caption}}
+                            {{#button}}
+                                <a href="{{{buttonurl}}}" {{#buttonurlblank}} target="_blank"{{/buttonurlblank}} 
+                                    class="btn-get-started scrollto animate__animated animate__fadeInUp">
+                                    {{{ button }}}
+                                </a>
+                            {{/button}}
+                        </div>
+                    </div>
+                </div>
+                {{/slides}}
+            </div>
+            <a class="carousel-control-prev {{nextprev}}" href="#educardCarousel1" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </a>
+            <a class="carousel-control-next {{nextprev}}" href="#educardCarousel1" role="button" data-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </a>
+        </div>
+    </div>
+</section>
+{{/slider2}}
+{{#slider3}}
+<section id="educard-c-2" class="educard-font">
+    <div id="educardCarousel2" {{#autoplay}}data-interval="5000"{{/autoplay}} class="carousel slide" data-ride="carousel"
+        {{^autoplay}}data-interval="false" {{/autoplay}}>
+        <div class="carousel-inner">
+            {{#slides}}
+            <div class="carousel-item {{#active}}active{{/active}} {{#image}}main-slider-3-bg-img-{{count}}{{/image}}">
+                <div class="carousel-3-shape">
+                    {{#slidershapes}}
+                        <img src="/image/slider/shapes/shape-{{{ key }}}.png" 
+                            class="animate__animated animate__backInDown img-filter" alt="sld" loading="lazy">
+                    {{/slidershapes}}
+                </div>
+                <div class="carousel-container">
+                    <div class="carousel-content animate__animated animate__fadeInUp">
+                        <div class="{{textposition}}">
+                            {{#title}}
+                            <h2>{{title}}</h2>
+                            {{/title}}
+                            {{#caption}}
+                            <div>{{caption}}</div>
+                            {{/caption}}
+                            {{#button}}
+                            <a href="{{{buttonurl}}}" {{#buttonurlblank}} target="_blank"{{/buttonurlblank}} 
+                                class="btn-get-started">
+                                {{{ button }}}
+                            </a>
+                            {{/button}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{/slides}}
+        </div>
+        <a class="carousel-control-prev {{nextprev}}" href="#educardCarousel2" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon bx bx-left-arrow"></span>
+        </a>
+        <a class="carousel-control-next {{nextprev}}" href="#educardCarousel2" role="button" data-slide="next">
+            <span class="carousel-control-next-icon bx bx-right-arrow"></span>
+        </a>
+        {{#pagination}}
+        <ol class="carousel-indicators">
+            {{#slides}}
+            <li data-target="#educardCarousel2" data-slide-to="{{{ key }}}" {{#active}}class="active" {{/active}}></li>
+            {{/slides}}
+        </ol>
+        {{/pagination}}
+    </div>
+</section>
+{{/slider3}}
+{{#slider4}}
+<section id="hero-educard" class="d-flex flex-column justify-content-end align-items-center">
+    <div id="heroCarousel" {{#autoplay}}data-interval="5000"{{/autoplay}} class="container carousel carousel-fade" data-ride="carousel" 
+        {{^autoplay}}data-interval="false" {{/autoplay}}>
+        {{#slides}}
+        <div class="carousel-item {{#active}}active{{/active}}">
+            <div class="carousel-container">
+                <div class="row">
+                    <div class="{{#image}}col-lg-6{{/image}}{{^image}}col-lg-12{{/image}} d-flex flex-column 
+                        justify-content-center pt-lg-0 order-2 order-lg-1 aos-init aos-animate"
+                        data-aos="fade-up" data-aos-delay="200">
+                        {{#title}}
+                        <div class="h1 max-width-text {{#textanimation}}animate__animated animate__fadeInDown{{/textanimation}} {{textposition}}">
+                            {{title}}
+                        </div>
+                        {{/title}}
+                        {{#caption}}
+                        <div class="h2 max-width-text {{#textanimation}}animate__animated animate__fadeInUp{{/textanimation}} {{textposition}}">
+                            {{caption}}
+                        </div>
+                        {{/caption}}
+                        {{#button}}
+                        <div class="mb-2 {{textposition}}">
+                            <a href="{{buttonurl}}" {{#buttonurlblank}} target="_blank"{{/buttonurlblank}} 
+                                class="btn-get-started animate__animated animate__fadeInUp scrollto">
+                                {{button}}
+                            </a>
+                        </div>
+                        {{/button}}
+                    </div>
+                    {{#image}}
+                    <div class="col-lg-6 order-1 order-lg-2 hero-educard-img" data-aos="zoom-in" data-aos-delay="200">
+                        <img src="{{image}}" class="img-fluid animated" alt="img" loading="lazy">
+                    </div>
+                    {{/image}}
+                </div>
+            </div>
+        </div>
+        {{/slides}}
+        <div class="d-none d-sm-block">
+            <a class="carousel-control-prev {{nextprev}}" href="#heroCarousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            </a>
+            <a class="carousel-control-next {{nextprev}}" href="#heroCarousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            </a>
+        </div>
+        {{#pagination}}
+        <ol class="carousel-indicators">
+            {{#slides}}
+            <li data-target="#heroCarousel" data-slide-to="{{{ key }}}" {{#active}}class="active" {{/active}}></li>
+            {{/slides}}
+        </ol>
+        {{/pagination}}
+    </div>
+    <svg class="hero-waves d-flex" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        viewBox="0 24 150 28 " preserveAspectRatio="none">
+        <defs>
+            <path id="wave-path" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"/>
+        </defs>
+        <g class="wave1">
+            <use xlink:href="#wave-path" x="50" y="3" fill="rgba(255,255,255, .1)"/>
+        </g>
+        <g class="wave2">
+            <use xlink:href="#wave-path" x="50" y="0" fill="rgba(255,255,255, .2)"/>
+        </g>
+        <g class="wave3">
+            <use xlink:href="#wave-path" x="50" y="9" fill="#fff"/>
+        </g>
+    </svg>
+    
+</section>
+{{/slider4}}

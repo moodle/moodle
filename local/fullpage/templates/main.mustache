@@ -1,0 +1,118 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_fullpage/main
+
+    Fullpage main template.
+
+    Context variables required for this template:
+    * pageadvanced - true, false
+    * pagecap - Html page structure
+    * pageimglink - true, false
+    * pageimglink - Link
+
+    Example context (json):
+    {
+        "title": "Favourite cheeses",
+        "pageadvanced": true,
+        "pagecap": "<div>Page</div>",
+        "pageimglink": "https://yoursite.com/images/"
+    }
+}}
+
+{{> local_fullpage/head }}
+
+{{#pageadvanced}}
+    <div id="fullpage-advanced"  {{#pagenavbar}} class="mt-5 pt-5"{{/pagenavbar}}>
+            {{{pagecap}}}
+    </div>
+    {{#pageimglink}}
+        <div id="imgnewlink" style="display:none;">{{pageimglink}}</div>
+        <script src="js/imglink.js"></script>
+    {{/pageimglink}}
+{{/pageadvanced}}
+
+{{#pagesimple}}
+    {{#backgroundsimple}}
+        <div id="fullpage-backgroundsimple" class="container pt-60">
+            <div class="backgroundsimple">
+                {{{pagecap}}}
+            </div>
+        </div>    
+    {{/backgroundsimple}}
+    {{#topsimple}}
+        <div id="fullpage-topsimple" class="pt-60">
+            {{#pageimg}}
+            <div class="text-center container overflow-hidden">
+                <img src="{{pageimg}}" class="img-fluid" alt="img">
+            </div> 
+            {{/pageimg}}
+            {{{pagecap}}}
+
+        </div>    
+    {{/topsimple}}
+    {{#fulltopsimple}}
+        {{#pageimg}}
+        <div id="fullpage-fulltopsimple" class="text-center pt-60">
+            <img src="{{pageimg}}" class="img-fluid" alt="img">
+        </div>
+        {{/pageimg}}
+        <div class="container pt-3">    
+            {{{pagecap}}}
+        </div>    
+    {{/fulltopsimple}}
+    {{#leftsimple}}
+    <div id="fullpage-leftsimple" class="container pt-3">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6 overflow-hidden pt-70">
+                {{#pageimg}}
+                <img src="{{pageimg}}" class="img-fluid" alt="img">
+                {{/pageimg}}
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 leftsimple">
+                {{{pagecap}}}
+            </div>
+        </div> 
+    </div>       
+    {{/leftsimple}}
+    {{#rightsimple}}
+    <div id="fullpage-rightsimple" class="container pt-3">
+        <div class="row">
+            <div class="col-lg-6 rightsimple">
+                {{{pagecap}}}
+            </div>
+            <div class="col-lg-6 overflow-hidden pt-70">
+                {{#pageimg}}
+                <img src="{{pageimg}}" class="img-fluid" alt="img">
+                {{/pageimg}}
+            </div>
+        </div>
+    </div>
+    {{/rightsimple}}
+    {{#backgroundsimple}}
+        <script>
+            "use strict";
+            window.onload = function () {
+                const links = document.getElementsByClassName( "backgroundsimple" );
+                for ( let i = 0; i < links.length; i++ ) {
+                    const link = links[ i ];
+                    document.documentElement.style.setProperty('--backgroundurl', "url('{{pageimg}}')")
+                }
+            }
+        </script>
+    {{/backgroundsimple}}
+{{/pagesimple}}

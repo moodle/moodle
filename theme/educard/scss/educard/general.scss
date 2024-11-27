@@ -1,0 +1,39 @@
+/* Body color.*/
+body {
+    --color-dl-white-bsc: $body-bg;
+    --color-dl-bg-black: $body-color;
+    color: var(--color-dl-white-bsc);
+    background-color: var(--color-dl-bg-black);
+}
+// Button focus none shadow.
+.btn:focus, .btn.focus {
+    outline: 0;
+    box-shadow: none;
+}
+.form-select {
+    .custom-select option {
+        &:nth-child(even) {
+            background-color: var(--color-dl-grey-a);
+        }
+        &:nth-child(odd) {
+            background-color: var(--light);
+        }
+    }
+}
+/* Edit user h2 none */
+#page-user-editadvanced section[id="region-main"] h2
+{
+    display: none;
+}
+/* Twitter to X. Geçici çözüm. */
+.fa.fa-twitter,
+.bx.bxl-twitter {
+	font-family:sans-serif;
+}
+.fa.fa-twitter,
+.bx.bxl-twitter {
+    &:before {
+        content:"𝕏";
+        font-size:1em;
+    }
+}

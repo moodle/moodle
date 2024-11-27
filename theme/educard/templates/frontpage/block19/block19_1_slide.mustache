@@ -1,0 +1,39 @@
+<div id="block19-1-s" class="block19-1 educard-block educard-font">
+    <div class="block19-bg block-start-end-space">
+        <div class="container">
+            {{#block19headerenabled}}
+            <div class="educard-sub-title">
+                <h6>{{block19headline}}</h6>
+             </div>
+            <div>
+                <div class="h1">{{{block19header}}} <span>{{block19maintitle}}</span></div>
+                <div class="educard-heading-line-left bg-dark"></div>
+            </div>
+            {{/block19headerenabled}}
+            <div class="pt-40 pb-40 align-items-center">
+                <div id="block19-1-slider" class="splide block19-1-slider" >
+                    <div class="splide__track" >
+                        <ul class="splide__list">
+                            {{#block19}}
+                            <li class="splide__slide">
+                                <div class="text-center pt-10 pb-10">
+                                    <div class="cls-brand">
+                                        <a href="{{{link}}}">
+                                            {{#image19}}
+                                            <img src="{{image19}}" alt="img">
+                                            {{/image19}}
+                                            {{^image19}}
+                                            <img src="{{frontpageimglink}}block19/d1/{{count}}.jpg" alt="img" onerror="this.style.display='none'">
+                                            {{/image19}}
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                            {{/block19}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

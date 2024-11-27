@@ -1,0 +1,56 @@
+<div class="block07-1 col-md-12 col-lg-4 educard-block educard-font mt-3 mb-3">
+    <div class="card h-100 educard-course-card block-shadow block-hover-shadow educard-rounded">
+        {{#block07imgenabled}}
+        <div class="course-img">
+            <img src="{{{sc_imgurl}}}" class="card-img-top" alt="#" >
+        </div>
+        <div class="educard-course-category" data-toggle="tooltip" data-placement="top" 
+                title="{{#str}}category, core{{/str}}">
+            <a href="{{sc_categorylink}}"><h5>{{sc_categoryname}}</h5></a>
+        </div>
+        {{/block07imgenabled}}
+        {{^block07imgenabled}}
+        <div class="course-noimg">
+            <div class="educard-course-category-noimg" data-toggle="tooltip" data-placement="top" 
+                    title="{{#str}}category, core{{/str}}">
+                <a href="{{sc_categorylink}}">
+                    <h5 class="text-truncate-1">{{sc_categoryname}}</h5>
+                </a>
+            </div>
+        </div>
+        {{/block07imgenabled}}
+        <div class="card-body educard-card-body">
+            <div class="name-price">
+                <div class="teacher-info">
+                    {{{sc_userpicture}}}
+                    {{#sc_teachername}}
+                    <h4 class="title">{{{sc_teachername}}}</h4>
+                    {{/sc_teachername}}
+                </div>
+                {{#block07priceshow}}
+                <div class="price">
+                    <h5>{{sc_cost}} {{sc_currency}}</h5>
+                </div>
+                {{/block07priceshow}}
+            </div>
+            <h4 class="pt-3 pb-3"> 
+                <a href="{{sc_courselink}}">
+                    {{#block07shortname}}{{sc_shortname}}{{/block07shortname}}
+                    {{#block07fullname}}{{sc_fullname}}{{/block07fullname}}
+                </a>
+            </h4>
+        </div>
+        <div class="card-footer educard-course-footer">
+            <div>
+                <span data-toggle="tooltip" data-placement="top" title="{{#str}}block07tooltipenrolled, theme_educard {{/str}}">
+                    <i class="fa fa-user-o" aria-hidden="true"></i>
+                    {{sc_studentscount}}
+                </span>
+                <span class="float-right" data-toggle="tooltip" data-placement="top" title="{{#str}}block07tooltiplastdate, theme_educard {{/str}}">
+                    <i class="fa fa-calendar-o" aria-hidden="true"></i>
+                    {{sc_update}}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,78 @@
+<div id="block08-4-s" class="block08-4 educard-block educard-font">
+    <div class="block08-bg block-start-end-space">
+        <div class="container educard-teacher-block">
+            <div class="educard-sub-title">
+                <h6>{{block08headline}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block08header}} <span>{{block08maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="mt-60">
+                <div id="block08-4-slider" class="splide block08-4-slider">
+                    <div class="splide__track" >
+                        <ul class="splide__list">
+                        {{#block08}}
+                        <li class="splide__slide">
+                            <div class="educard-teacher-boxes block-shadow block-hover-shadow educard-rounded">
+                                <div class="overlay-image view-overlay">
+                                    <img src="{{userpictureURL}}" class="img-fluid" alt="#">
+                                    <div class="mask educard-teacher-desc">
+                                        <div class="educard-zoom-link text-white">
+                                            {{#showdescription}}
+                                            <h4> {{teachername}} </h4>
+                                            <div class="text-truncate-3">{{{description}}}</div>
+                                            {{/showdescription}}
+                                            <div class="educard-teacher-social">
+                                                {{#usersocial1}}
+                                                <a href="{{usersocial1link}}" target="_blank"><i class="{{usersocial1}}"></i></a>
+                                                {{/usersocial1}}
+                                                {{#usersocial2}}
+                                                <a href="{{usersocial2link}}" target="_blank"><i class="{{usersocial2}}"></i></a>
+                                                {{/usersocial2}}
+                                                {{#usersocial3}}
+                                                <a href="{{usersocial3link}}" target="_blank"><i class="{{usersocial3}}"></i></a>
+                                                {{/usersocial3}}
+                                                {{#usersocial4}}
+                                                <a href="{{usersocial4link}}" target="_blank"><i class="{{usersocial4}}"></i></a>
+                                                {{/usersocial4}}
+                                                {{#usersocial5}}
+                                                <a href="{{usersocial5link}}" target="_blank"><i class="{{usersocial5}}"></i></a>
+                                                {{/usersocial5}}
+                                                {{#usersocial6}}
+                                                <a href="{{usersocial6link}}" target="_blank"><i class="{{usersocial6}}"></i></a>
+                                                {{/usersocial6}}    
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="educard-teacher-info card-body">
+                                    <a href="{{userURL}}">
+                                        <h4 class="text-truncate-1">{{teachername}}</h4>
+                                    </a>
+                                    <p>{{job}}	&nbsp;</p>
+                                    {{#block08total}}
+                                    <div class="educard-teacher-footer soft-color font-weight-500 mt-2 pt-1">
+                                        <span class="educard-teacher-student">
+                                            <i class="fa fa-user-o" aria-hidden="true"></i>
+                                            {{studentscount}} 
+                                            <span>{{#str}} student, grades {{/str}} </span>
+                                        </span>
+                                        <span class="educard-teacher-courses float-right">
+                                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                            {{coursecount}} 
+                                            <span>{{#str}} course, core {{/str}} </span>
+                                        </span>
+                                    </div>
+                                    {{/block08total}}
+                                </div>        
+                            </div>
+                        </li>
+                        {{/block08}}
+                        </ul>
+                    </div>
+                </div>
+            </div>    
+        </div>
+    </div>
+</div>

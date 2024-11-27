@@ -1,0 +1,388 @@
+/* Scoroll hide */
+/* User preference */
+#page-user-preferences.dark-dashboard .card {
+    background-color: var(--color-dl-card-black);
+    border: 1px solid var(--color-dl-yellow-a);
+}
+body#page-question-type-multichoice.dark-dashboard {
+    div[id^=fitem_id_][id*=answer_],
+    div[id^=fitem_id_][id*=fraction_],
+    div[id^=fitem_id_][id*=feedback_] {
+        background: initial;
+    }
+}
+body#page-question-type-match.dark-dashboard {
+    div[id^=fitem_id_][id*=subquestions_],
+    div[id^=fitem_id_][id*=subanswers_] {
+        background: initial;
+    }
+}
+body#page-question-type-shortanswer.dark-dashboard,
+body#page-question-type-numerical.dark-dashboard,
+body#page-question-type-calculated.dark-dashboard,
+body#page-question-type-calculatedmulti.dark-dashboard,
+body#page-question-type-calculatedsimple.dark-dashboard {
+    div[id^=fgroup_id_][id*=answeroptions_],
+    div[id^=fgroup_id_][id*=answertolerance_],
+    div[id^=fgroup_id_][id*=answerdisplay_],
+    div[id^=fitem_id_][id*=feedback_] {
+        background: initial;
+    }
+}
+body#page-question-type-ddmarker.dark-dashboard {
+    div[id^=fitem_id_][id*=hint_] {
+        background: initial;
+    }
+}
+body#page-question-type-ddimageortext.dark-dashboard {
+    div[id^=fgroup_id_][id*=drags_],
+    div[id^=fitem_id_][id*=dragitem_],
+    div[id^=fitem_id_][id*=draglabel_] {
+        background: initial;
+    }
+}
+#page-admin-themeselector {
+    &.dark-dashboard .main-inner .card.theme-card{
+        background-color: var(--color-dl-grey-b);
+
+    }
+}
+.dark-dashboard {
+    /* Link color 
+    a {
+        color: var(--color-dl-yellow-b);
+    }
+    a:hover {
+        color: var(--color-dl-white-bsc);
+    }
+    */
+    .aalink.focus,
+    .aalink:focus,
+    #page-footer a:not([class]).focus,
+    #page-footer a:not([class]):focus,
+    .arrow_link.focus,
+    .arrow_link:focus, 
+    a:not([class]).focus,
+    a:not([class]):focus,
+    .activityinstance > a.focus,
+    .activityinstance > a:focus {
+        color: var(--color-dl-grey-a);
+    }
+    .btn.btn-icon:hover, 
+    .btn.btn-icon:focus {
+        background-color: var(--color-dl-grey-b);
+    }
+    /* Color picker */
+    .admin_colourpicker .currentcolour {
+        height: 52px !important;
+    }
+    
+    /* Backup restore*/
+    .path-backup .mform .root_setting:nth-of-type(even),
+    .path-backup .mform .grouped_settings:nth-of-type(even) {
+        background-color: transparent;
+    }
+    /* Current release information */
+    .pagelayout-maintenance {
+        .alert-warning, .environmenttable .warn {
+            background-color: initial;
+        }
+    }
+    .alert-warning, .environmenttable .warn {
+        background: var(--color-dl-grey-a);
+    }
+    /* Site admin appearance */
+    .fp-navbar {
+        background-color: var(--color-dl-grey-b);
+    }
+    .filemanager-container, .filepicker-filelist {
+        margin-top: 0;
+        background-color: var(--color-dl-bg-black-dark);     
+    }
+    #userfilesform .filemanager .filemanager-container {
+        margin-top: 0px;
+    }
+    /* file picker */
+    .yui3-datatable-header {
+        text-shadow: none; 
+    }
+    .yui3-datatable-table {
+        background-color: var(--color-dl-grey-a);
+    }
+    .yui3-datatable-even .yui3-datatable-cell {
+        background-color: var(--color-dl-bg-black-dark) !important;
+    }
+    .yui3-datatable-odd .yui3-datatable-cell {
+        background-color: var(--color-dl-grey-b);
+    }
+    .fp-iconview .fp-thumbnail img {
+        border-radius: 8px;
+        border: 0 solid #ddd;
+    }
+    .file-picker.fp-generallayout {
+        .fp-repo-items {
+            border: 1px solid var(--color-dl-white-bsc);
+            border-radius: 0.25rem;
+        }
+    }
+    .yui3-datatable-cell, 
+    .yui3-datatable-header {
+        border-left: 1px solid var(--color-dl-white-bsc);
+        border-bottom: 1px solid var(--color-dl-white-bsc);
+    }
+    .fp-iconview .fp-thumbnail {
+        border: 1px solid transparent;
+    }
+    .fp-iconview .fp-filename-field .fp-filename {
+        background: none;
+    }
+    .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
+        color: var(--color-dl-white-bsc);
+        background: var(--color-dl-grey-b);
+    }
+    .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
+        background-color: var(--color-dl-bg-black);
+    }
+    .file-picker .fp-content {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        background-color: var(--color-dl-grey-b);
+        border: none;
+    }
+    .file-picker .fp-navbar {
+        border: none;
+    }
+    /* Footer popover */
+    .footer-content-popover {
+        background-color: var(--color-dl-grey-b);
+        overflow: hidden;
+    }
+    .popover.footer .popover-body {
+        background-color: var(--color-dl-bg-black-dark);
+        color: var(--color-dl-white-bsc);
+        .footer-section a {
+            color: var(--color-dl-yellow-a);
+            .icon {
+                color: var(--color-dl-yellow-b);
+            }
+        }
+    }
+    /* Fullpage Plugin */
+    #page-admin-setting-local_fullpage,
+    .settingsform,
+    #adminsettings {
+        .accordion .card {
+            background-color: var(--color-dl-bg-black);
+        }
+    }
+
+    .block_private_files [role="treeitem"]:not([aria-expanded]):last-child {
+        background-size: 11px 1px, 2px 52%;
+    }
+    .block_private_files [role="treeitem"]:not([aria-expanded]) {
+        background-image: repeating-linear-gradient( to right,
+            var(--color-dl-yellow-a) 0, var(--color-dl-yellow-b) 1px, var(--color-dl-yellow-a) 0px,
+            var(--color-dl-yellow-a) 2px ), repeating-linear-gradient( to top, var(--color-dl-yellow-a) 0,
+            var(--color-dl-yellow-b) 1px, var(--color-dl-yellow-b) 1px, var(--color-dl-yellow-b) 2px );
+        background-repeat: no-repeat, no-repeat;
+        background-position: left 10px top 50%, left 8px top 0;
+        background-size: 11px 1px, 2px 100%;
+    }
+    /* Report builder */
+    .path-admin-reportbuilder {
+        .navbar.bg-white {
+            background-color: initial !important;
+        }
+        .reportbuilder-toggle-card .card-header {
+            border-bottom: none;
+            border-radius: calc(0.5rem - 1px) calc(0.5rem - 1px);
+        }
+        .reportbuilder-sidebar-settings {
+            #settingscardview {
+                .card-body {
+                    color: var(--color-dl-bg-black);
+                }
+            }
+        }
+        .audiences-wrapper {
+            .instance-card {
+                .card-body {
+                    color: var(--color-dl-bg-black);
+                }
+            }
+        }
+    }
+    /* User profile */
+    .userprofile {
+        .card {
+            background-color: var(--color-dl-card-black);
+            border: 1px solid var(--color-dl-yellow-a);
+        }
+    }
+    .path-admin-tool-dataprivacy {
+        .card {
+            background-color: var(--color-dl-bg-black-dark);
+            border: 1px solid var(--color-dl-yellow-a);
+        }
+    }
+    #message-user-button {
+        &.btn {
+             color: var(--color-dl-yellow-b);
+        }
+    }
+    /* Block */
+    .block_navigation,
+    .block_settings,
+    .block_course_list,
+    .block.block_with_controls.card {
+        background-color: var(--color-dl-bg-black-dark);
+        border: 1px solid var(--color-dl-yellow-b);
+    }
+    /* Plugin Install */
+    .plugin-install-console {
+        color: var(--color-dl-grey-a);
+    }
+    #plugins-check-page .pluginupdateinfo, 
+    #plugins-control-panel .pluginupdateinfo {
+        background-color: var(--color-dl-grey-b);
+    }
+
+    .forumpost {
+        border: 1px solid var(--color-dl-yellow-a) !important;
+        border-radius: 0.25rem;
+    }
+    #page-report-outline-user .section {
+        border-radius: 5px;
+    }
+    .gradeparent tr .cell,
+    .gradeparent .floater .cell {
+        background-color: var(--color-dl-bg-black-dark);
+    }
+    .gradeparent .userrow.odd .cell,
+    .gradeparent .floater .cell.odd,
+    .gradeparent .heading .cell,
+    .gradeparent .cell.category,
+    .gradeparent .avg .cell {
+        background-color: var(--color-dl-bg-black-dark);
+    }
+
+    .tertiary-navigation-selector .select-menu .dropdown-toggle {
+        color: var(--color-dl-grey-a)
+    }
+    .content-item-container.unread {
+        background-color: inherit;
+    }
+    .dropdown-menu {
+        color: #d2f42a;
+    }
+    .btn-sm, .btn-group-sm>.btn {
+        background: black;
+    }
+    .fp-viewbar:not(.disabled) a.checked {
+        background-color: #4272d7;
+    }
+    div.editor_atto_toolbar {
+        background: #495057;
+        button {
+            background: #495057;
+        }
+        div.atto_group {
+            border-radius: 1px;
+            background: none;
+        }
+    }
+    .defaultactivitycompletion-item a {
+        color: #0f6fc5;
+    }
+    .table.table-striped {
+        img {
+            &.icon {
+                background-color: beige;
+                padding: 3px;
+                border-radius: 50%;
+                &.spacer {
+                    background-color: inherit !important;
+                }
+            }
+        }
+    }
+    table.generaltable {
+        img {
+            &.icon {
+                background-color: var(--color-dl-yellow-a);
+                border-radius: 0.25rem;
+                padding: 0.25rem;
+                &.spacer {
+                    background-color: transparent;
+                }
+            }
+        }
+    }
+    .table-hover tbody tr:hover {
+        color: var(--color-dl-yellow-b);
+    }
+    .tour-actions>ul>li {
+        background-color: #1d2125;
+    }
+    pre {
+        color: #357a32;
+    }
+    .environmenttable .warn {
+        background: none;
+    }
+    .local_codechecker_results .fail.error {
+        color: white !important;
+    }
+    .btn-secondary {
+        color: #f0ad4e;
+        background: #000 linear-gradient(180deg,#212529,#495057) repeat-x;
+        border-color: #ced4da;
+    }
+    .gradetree-wrapper {
+        background-color: #495057;
+        .setup-grades.generaltable {
+            tr th {
+                background-color: #495057;
+            }
+            tr.category td {
+                background-color: #343a40;
+            }
+            tr.item.courseitem td {
+                background-color: #495057;
+            }
+        }
+    }
+    .action-menu-trigger .dropdown a.btn.dropdown-toggle {
+        color: #f0ad4e;
+    }
+    #sticky-footer.stickyfooter {
+        background-color: var(--color-dl-bg-black-dark) !important;
+    }
+    .btn-group.header-button-group a.btn .header-button-title {
+        color: #f0ad4e;
+    }
+    .choosercontainer #chooseform {
+        .selected,
+        .instruction, 
+        .typesummary {
+            background-color: #495057;
+        }
+        .alloptions .option img.icon {
+            padding: 3px;
+            background-color: bisque;
+            border-radius: 50%;
+        }
+    }
+   
+    #qrcode {
+        background-color: bisque;
+        padding: 10px;
+        text-align: center;
+    }
+    @media (min-width: 992px) {
+        .path-admin-reportbuilder.pagelayout-popup .dynamictabs .nav-tabs {
+            background-color: var(--color-dl-bg-black);
+            box-shadow: none;
+        }
+    }
+}

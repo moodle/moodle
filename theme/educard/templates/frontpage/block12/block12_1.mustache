@@ -1,0 +1,76 @@
+<div id="block12-1" class="block12-1 educard-block educard-font">
+    <div class="block12-bg block-start-end-space">
+        <div class="container">
+            <div class="educard-sub-title">
+                <h6>{{block12headline}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{{block12header}}} <span>{{block12maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="row mt-60 educard-video-block">
+                {{#block12}}
+                <div class="col-lg-6 col-md-12">
+                    <div class="card educard-rounded border-0 mb-4 hovereffect">
+                        <div class="row no-gutters">
+                            <div class="col-md-8">
+                                <div class="card-body d-flex ">
+                                    <div>
+                                        <img class="educard-rounded"
+                                        {{# block12image }} src="{{{block12image}}}"  {{/ block12image }}
+                                        {{^ block12image }} src="{{frontpageimglink}}block12/d1/{{block12count}}.jpg" {{/ block12image }}
+                                        alt="img"/>
+                                        <a href="#block121Modal{{block12count}}" data-toggle="modal" title="modal" class="btn-sm educard-link-btn">
+                                            <i aria-hidden="true" class="fa fa-play-circle-o"></i>
+                                            Play
+                                        </a>
+                                    </div>
+                                    <div class="col-lg-8 col-md-8 text-center">
+                                        <h6 class="mt-2 font-weight-600"><span>{{block12title}}</span></h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="educard-category col-lg-4 col-md-4 d-none d-sm-none d-md-block">
+                                <i class="{{block12icon}}"></i>
+                                <h6 class="font-weight-600">
+                                    <a href="#block121Modal{{block12count}}" data-toggle="modal" title="modal"
+                                        class="category mt-2">{{block12caption}}
+                                    </a>
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="block121Modal{{block12count}}" class="modal block12modal fade">
+                    <div class="modal-dialog modal-lg">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                {{#youtube}}
+                                <div class="embed-responsive embed-responsive-16by9">
+                                    <iframe class="embed-responsive-item" title="video" width="650" src="{{{link}}}" allowfullscreen>
+                                    </iframe>
+                                </div>
+                                {{/youtube}}
+                                {{#vimeo}}
+                                <div class="embed-responsive embed-responsive-16by9">
+                                    <iframe src="{{{link}}}" width="650" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen>
+                                    </iframe>
+                                </div>    
+                                {{/vimeo}}
+                                {{#custom}}
+                                <div class="embed-responsive embed-responsive-16by9">
+                                    <video controls muted playsinline width="650"> 
+                                        <source src="{{{link}}}"  type="video/mp4">
+                                    </video>
+                                </div>
+                                {{/custom}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{/block12}}
+            </div>
+        </div>
+    </div>
+</div>

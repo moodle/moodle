@@ -1,0 +1,29 @@
+/* Theme bagde settings */
+.dark-dashboard {
+    .badge {
+        font-weight: 600;
+        font-size: 11px;
+        padding: 4px 4px;
+        border-radius: 0.25rem;
+    }
+    .badge-info {
+        color: rgb(240, 241, 237);
+        background-color: rgb(184, 79, 79, .6);
+    }
+    a.badge-info:hover, a.badge-info:focus {
+        color: #fff;
+        background-color:  rgba(80, 77, 92);
+    }
+    .badge-secondary {
+        color: var(--color-dl-yellow-b);
+        padding: 0.4em;
+    }
+    .badge-warning {
+        color: var(--color-dl-grey-b);
+    }
+    .badge-pill {
+        padding-right: 0.6em;
+        padding-left: 0.6em;
+        border-radius: 5px;
+    }
+}

@@ -1,0 +1,44 @@
+<div id="block05-2" class="block05-2 educard-block educard-font">
+    <div class="block05-bg block-start-end-space">
+        <div class="container educard-why-we-block">
+            <div class="educard-sub-title">
+                <h6>{{block05headline}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block05header}}<span> {{block05maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="bg-dots-horizontal-1"></div>
+            <div class="bg-dots-vertical"></div>
+            <div class="row mt-60">
+                <div class="col-lg-8">
+                    <div class="row">
+                        {{#block05}}
+                        <div class="col-lg-6 col-md-6 col-sm-6 educard-why-box">
+                            <div class="block05-2-card border-0 mb-4">
+                                <a href="{{link}}">
+                                    <i class="{{icon}}"></i>
+                                    <h5 class="font-weight-600 mt-3 mb-3">{{{title}}}</h5>
+                                </a>
+                                <p>{{#shortentext}} 100, {{{caption}}} {{/shortentext}}</p>
+                            </div>
+                        </div>
+                        {{/block05}}
+                    </div>
+                </div>
+                <div class="col-lg-4" style="min-height: 300px;">
+                    <div class="position-relative h-100">
+                        <img class="position-absolute w-100 h-100 rounded"
+                            {{# block05image }}
+                            src="{{block05image}}"
+                            {{/ block05image }}
+                            {{^ block05image }}
+                            src="{{frontpageimglink}}block05/d2/1.jpg"
+                            {{/ block05image }}
+                            style="object-fit: contain;" alt="block05image">
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>

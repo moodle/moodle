@@ -1,0 +1,70 @@
+.dark-frontpage {
+    #navheader.navbar-scrolled {
+        background: rgba($navbarcolordark, 0.95);
+    }
+    #navnarhy_top {
+        a.nav-link {
+            color: $navbarlinkcolordark !important;
+        }
+    }
+    #navbarhy,
+    .bg-navbarcolor {
+        background-color: $navbarcolordark !important;
+    }
+    .navbar-nav {
+        .nav-link,
+        .icon,
+        .langbutton,
+        .usermenu .login a {
+            color: $navbarlinkcolordark !important;
+        }
+    }
+    .dropdown-toggle::after {
+        color: $navbarlinkcolordark !important;
+    }
+    .nav-link:hover,
+    .nav-link:focus,
+    .langbutton:hover,
+    .langbutton:focus {
+        color: $navbarlinkhovercolordark !important;
+        border-color: transparent;
+        background-color: transparent;
+    }
+    .navbar-brand {
+        color: $navbarlinkcolordark !important;
+    }
+    .aside_bar {
+        background-color: $navbarcolordark;
+    }
+    .aside_bar.aside_mobile ul .menu-item a {
+        color: $navbarlinkcolordark;
+    }
+    .navbar-1, 
+    .navbar-2,
+    .navbar-3,
+    .navbar-4 {
+        .head_actions {
+            .head_trigger {
+                span {
+                    background-color: $navbarlinkcolordark !important;
+                }
+            }
+        }
+        .langmenu a .icon {
+            color: $navbarlinkcolordark !important;
+        }
+    }
+    .searchform-navbar {
+        .icon {
+            color: initial !important;
+        }
+    }
+    #duyuru-c-1 {
+        a {
+            color: var(--color-dl-yellow-b);
+        }
+        .bg-duyuru {
+            background-color: #414145;
+        }
+    }
+}

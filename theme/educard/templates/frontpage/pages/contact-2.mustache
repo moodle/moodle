@@ -1,0 +1,108 @@
+<div id="page01-2" class="container-xx bg-light p-0" style="background-image: url({{imgpage02}});">
+    <!-- Page Header End -->
+    <div class="page-header" style="background-image: url({{imgpage01}});">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h1>{{#str}} contact, badges {{/str}}</h1>
+                </div>
+                <div class="col-12">
+                    <a href="?">{{#str}} home, moodle {{/str}}</a>
+                    <a href="?home=p1">{{#str}} contact, badges {{/str}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Header End -->
+    <!-- Contact Start -->
+    <div class="container-xl py-5" >
+        <div class="container">
+            <div class="text-center mx-auto pt-70" style="max-width: 600px;">
+                <h2 class="mb-3">{{page01header}}</h2>
+                <p>{{page01caption}}</p>
+            </div>
+            <div class="row g-4 pt-70 pb-70 page01-2-icon">
+                <div class="col-md-6 col-lg-4 text-center">
+                    <div class="contact-bg rounded-circle d-inline-flex align-items-center justify-content-center mb-4" 
+                            style="width: 75px; height: 75px;">
+                        <i class="bx bx-map"></i>
+                    </div>
+                    <h6 id="map-address">{{page01address}}</h6>
+                </div>
+                <div class="col-md-6 col-lg-4 text-center">
+                    <div class="contact-bg rounded-circle d-inline-flex align-items-center justify-content-center mb-4" 
+                            style="width: 75px; height: 75px;">
+                        <i class="bx bx-envelope"></i>
+                    </div>
+                    <h6>{{page01email}}</h6>
+                </div>
+                <div class="col-md-6 col-lg-4 text-center">
+                    <div class="contact-bg rounded-circle d-inline-flex align-items-center justify-content-center mb-4" 
+                            style="width: 75px; height: 75px;">
+                        <i class="bx bx-phone"></i>
+                    </div>
+                    <h6>{{page01phone}}</h6>
+                </div>
+            </div>
+            <div class="contact-bg mb-70">
+                <div class="row g-0">
+                    <div class="col-lg-6">
+                        <div class="h-100 d-flex flex-column justify-content-center p-5">
+                            <form autocomplete="off" action="./user/contactsitesupport.php"
+                                method="post" accept-charset="utf-8" class="mform"
+                                data-boost-form-errors-enhanced="1">
+                                <div style="display: none;">
+                                    <input name="sesskey" type="hidden" value="{{sesskey}}">
+                                    <input name="_qf__core_user_form_contactsitesupport_form" type="hidden" value="1">
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-sm-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control border-0" name="name" id="id_name" 
+                                                    placeholder="{{#str}} fullname, core {{/str}}">
+                                            <label for="id_name"></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-floating">
+                                            <input type="email" class="form-control border-0" name="email" id="id_email"
+                                                     placeholder="{{#str}} email, core {{/str}}">
+                                            <label for="id_email"></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control border-0" name="subject" id="id_subject"
+                                                    placeholder="{{#str}} subject, core {{/str}}">
+                                            <label for="id_subject"></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <textarea class="form-control border-0" placeholder="{{#str}} message, core {{/str}}" 
+                                                    name="message" id="id_messages" style="height: 100px"></textarea>
+                                            <label for="id_messages"></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <button id="id_submitbutton" class="btn btn-warning w-100 py-3" type="submit" name="submitbutton">
+                                            {{#str}} submit, core {{/str}}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" style="min-height: 400px;">
+                        <div class="position-relative h-100">
+                            <div id="map" class="contact_map "></div>
+                            <p id="map-geolocation-1" class="d-none">{{page01geolocation_1}}</p>
+                            <p id="map-geolocation-2" class="d-none">{{page01geolocation_2}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Contact End -->

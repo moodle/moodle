@@ -1,0 +1,77 @@
+/* Deafult Margin & Padding */
+
+/*-- Margin Top --*/
+$number: 10;
+@for $i from 1 to 20
+{
+  .mt-#{$number} 
+  {
+	margin-top: $number + px;
+  }
+  $number: $number + 5;
+}
+
+/*-- Margin Bottom --*/
+$number: 10;
+@for $i from 1 to 20
+{
+  .mb-#{$number} 
+  {
+	margin-bottom: $number + px;
+  }
+  $number: $number + 5;
+}
+
+/*-- Padding Top --*/
+$number: 10;
+@for $i from 1 to 20
+{
+  .pt-#{$number} 
+  {
+	padding-top: $number + px;
+  }
+  $number: $number + 5;
+}
+
+/*-- Padding Bottom --*/
+$number: 10;
+@for $i from 1 to 20
+{
+  .pb-#{$number} 
+  {
+	padding-bottom: $number + px;
+  }
+  $number: $number + 5;
+}
+
+/*-- Random background color --*/
+@for $i from 1 to 50
+{
+  .educard-rd-bg-color-#{$i} 
+  {
+	background-color: rgb(random(255), random(255), random(255), .1) !important;
+  }
+}
+
+/*-- Random color --*/
+
+@for $i from 1 to 50
+{
+  .educard-rd-color-#{$i} 
+  {
+	color: rgb(random(150), random(150), random(150)) !important;
+  }
+}
+/*-- Border size --*/
+@for $i from 1 to 5
+{
+  .border-#{$i} {
+    border: #{$i}px solid #dee2e6 !important;
+  }
+}
+@for $i from 1 to 10
+{
+  .rounded-#{$i} {
+    border-radius: #{$i}px !important;
+  }
+}

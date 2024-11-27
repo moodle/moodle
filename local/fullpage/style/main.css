@@ -1,0 +1,130 @@
+/* Fullpage main css  */
+/* 
+#page-site-index .drawer {
+    visibility: hidden;
+} */
+
+#page-header {
+    margin-top: 80px;
+}
+#page-site-index .drawer-right-toggle {
+    display: none;
+}
+
+.pagelayout-standard #page.drawers .main-inner, body.limitedwidth #page.drawers .main-inner {
+    max-width: 1920px;
+    margin: 0;
+    padding: 0;
+}
+
+#page-site-index #page.drawers.show-drawer-right {
+    margin-left: 0;
+    margin-right: 0;
+    padding-right: 0;
+}
+
+.fullpage-alert {
+    margin: 10% auto;
+    max-width: 750px;
+}
+
+.fullpage-alert .icon {
+    height: 30px;
+    width: 30px;
+    vertical-align: text-top;
+}
+
+#page-site-index #page {
+    margin: 0;
+    padding: 0;
+}
+
+#page-site-index #page.drawers div[role="main"] {
+    padding-left: 0; 
+    padding-right: 0;
+}
+
+/* #page-site-index #page .container {
+    width: 90%;
+    padding-right: 0;
+    padding-left: 0;
+    margin-right: auto;
+    margin-left: auto;
+} */
+
+#page-site-index #page.drawers {
+    height: calc(100vh - 0px);
+}
+/*
+.page-context-header {
+    padding-top: 90px;
+}
+*/
+#page-navbar {
+    padding-top: 80px;
+}
+.backgroundsimple {
+    min-height: 500px;
+}
+.backgroundsimple:before {    
+    content: "";
+    background: var(--backgroundurl) no-repeat center center fixed ;
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.2;
+}
+
+.pb-20 {
+    padding-bottom: 20px;
+}
+.pb-30 {
+    padding-bottom: 30px;
+}
+.pb-40 {
+    padding-bottom: 40px;
+}
+.pb-50 {
+    padding-bottom: 50px;
+}
+.pb-60 {
+    padding-bottom: 60px;
+}
+.pb-70 {
+    padding-bottom: 70px;
+}
+.pb-80 {
+    padding-bottom: 80px;
+}
+
+.pt-20 {
+    padding-top: 20px;
+}
+.pt-30 {
+    padding-top: 30px;
+}
+.pt-40 {
+    padding-top: 40px;
+}
+.pt-50 {
+    padding-top: 50px;
+}
+.pt-60 {
+    padding-top: 60px;
+}
+.pt-70 {
+    padding-top: 70px;
+}
+.pt-80 {
+    padding-top: 80px;
+}
+/*
+@media (min-width: 1300px) {
+    .container {
+        max-width: 1920px;
+    }
+}
+*/

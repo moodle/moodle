@@ -1,0 +1,116 @@
+.educard-header-5 {
+    background-color: var(--theme-color-ops-3);
+    .educard-shape img {
+        position: absolute;
+    }
+    .educard-shape-1 {
+        bottom: 20%;
+        left: 85%;
+        width: 80px;
+    }
+    .educard-shape-2 {
+        top: 15%;
+        left: 50%;
+        width: 80px;
+    }
+    .educard-shape-3 {
+        left: 10%;
+    }
+    .educard-shape-4 {
+        bottom: 30%;
+        left: 39%;
+        width: 80px;
+    }
+    h1 {
+        font-size: 4.5rem;
+        padding-top: 55px
+    }
+    .info-detail {
+        padding: 10% 15px;
+        .title {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 50px;
+        }
+        .subtitle {
+            margin: 50px 0;
+        }
+    }
+    .frame {
+        padding: 12px;
+        background-color: #fff;
+    }
+    .btn-style {
+        border: var(--theme-color) 2px dashed;
+        font-size: large;
+        color: var(--theme-color);
+        padding: 15px 25px;
+        &:hover {
+            background-color: var(--theme-color-ops-5)!important;
+        }
+    }
+    .waves {
+        position:relative;
+        width: 100%;
+        height:15vh;
+        margin-bottom:-7px; /*Fix for safari gap*/
+        min-height:100px;
+        max-height:150px;
+    }
+    .parallax > use {
+        animation: move-forever 25s cubic-bezier(.55,.5,.45,.5)     infinite;
+        &:nth-child(1) {
+            animation-delay: -2s;
+            animation-duration: 7s;
+        }
+        &:nth-child(2) {
+            animation-delay: -3s;
+            animation-duration: 10s;
+        }
+        &:nth-child(3) {
+            animation-delay: -4s;
+            animation-duration: 13s;
+        }
+        &:nth-child(4) {
+            animation-delay: -5s;
+            animation-duration: 20s;
+        }
+
+    }
+    @keyframes move-forever {
+        0% {
+        transform: translate3d(-90px,0,0);
+        }
+        100% { 
+        transform: translate3d(85px,0,0);
+        }
+    }
+    @-webkit-keyframes mover {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(50px); }
+    }
+    @keyframes mover {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(50px); }
+    }
+    
+    @media (max-width: 991px){
+        .hero,
+        .educard-shape-2,
+        .educard-shape-1,
+        .educard-shape-3,
+        .educard-shape-4 {
+            display: none;
+        }
+
+    }
+    @media (max-width: 767px){
+        .waves {
+            height:40px;
+            min-height:40px;
+        }
+        .educard-search form button {
+            padding: 19px 8px;
+        }
+    }
+}

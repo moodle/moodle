@@ -1,0 +1,69 @@
+<div class="color-main">
+    <div id="open-color-pallet" class="btn">
+        <i class='bx bx-palette'></i>
+    </div>
+    <div id="color-change">
+        <div id="close-color-pallet" class="btn">
+            <i class="fa fa-times" aria-hidden="true"></i>
+        </div>
+        <div class="p-1 text-center">
+            <h5 class="font-weight-500">COLOR Setup</h5>
+        </div>
+        <div class="row text-center">
+            {{^frontpagenavchoice4}}
+            <div class="col-sm-4">
+                <h5>Navbar</h5>
+            </div>
+            <div class="col-sm-8">
+            {{/frontpagenavchoice4}}
+            {{#frontpagenavchoice4}}
+            <div class="col-sm-12">
+            {{/frontpagenavchoice4}}
+                <h5>Theme</h5>
+            </div>  
+        </div>
+        <div class="row text-center">
+            {{^frontpagenavchoice4}}
+            <div class="col-sm-4">
+                <h6>Color</h6>
+            </div>
+            <div class="col-sm-4">
+                <h6>First</h6>
+            </div>
+            <div class="col-sm-4">
+                <h6>Second</h6>
+            </div>
+            {{/frontpagenavchoice4}}
+            {{#frontpagenavchoice4}}
+            <div class="col-sm-6">
+                <h6>First</h6>
+            </div>
+            <div class="col-sm-6">
+                <h6>Second</h6>
+            </div>
+            {{/frontpagenavchoice4}} 
+        </div>
+        <div class="row text-center">
+            {{^frontpagenavchoice4}}
+            <div class="col-sm-4">
+                <input id="color-navbar" value="{{navbarcolor}}" type="color"/>
+            </div>
+            <div class="col-sm-4">
+                <input id="color-theme" value="{{sitecolor}}" type="color"/>
+            </div>
+            <div class="col-sm-4">
+                <input id="color-theme2" value="{{sitecolor2}}" type="color"/>
+            </div>
+            {{/frontpagenavchoice4}}
+            {{#frontpagenavchoice4}}
+            <div class="col-sm-6">
+                <input id="color-theme" value="{{sitecolor}}" type="color"/>
+            </div>
+            <div class="col-sm-6">
+                <input id="color-theme2" value="{{sitecolor2}}" type="color"/>
+            </div>
+            {{/frontpagenavchoice4}}
+        </div>
+    </div>
+</div>
+<script src="theme/educard/js/colorchange.min.js"></script>

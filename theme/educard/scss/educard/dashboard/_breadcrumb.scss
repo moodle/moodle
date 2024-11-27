@@ -1,0 +1,130 @@
+/* Theme Educard breadcrumb settings */
+.breadcrumb {
+    font-weight: 600;
+}
+/* Media max-width: 768px */
+@include media-breakpoint-down(sm) {
+    .breadcrumb:not(:empty) {
+        border: 0 solid $gray-200;
+    }
+}
+/* Media min-width: 576px */
+@include media-breakpoint-up(sm) {
+    /* Breadcrumbs */
+    .breadcrumb li:hover {
+      background-color: $breadcrumb-bg-hover;
+    }
+    .breadcrumb li:hover:after {
+      background-color: $breadcrumb-bg-hover;
+    }
+    /* Breadcrumb ol setings */
+    ol.breadcrumb {
+      display: inline-block;
+      overflow: hidden;
+      margin:0px;
+      padding:0px;
+      background: none;
+      a {
+        color: $breadcrumb-text-color;
+        text-decoration: none;
+      }
+      li {
+        text-decoration: none;
+        outline: none;
+        display: block;
+        float: left;
+        font-size: 14px;
+        line-height: 36px;
+        padding: 0 15px 0 30px !important;
+        background-color: $breadcrumb-bg;
+        position: relative;
+        &:first-child {
+          padding-left: 25px;
+          border-radius: 5px 0 0 5px;
+          &:before {
+              left: 14px;
+          }
+  
+        }
+        &:last-child {
+          border-radius: 0 5px 5px 0;
+          padding-right: 20px;
+          &:after {
+            content: none;
+          }
+        }
+        &:active{
+          background-color: $breadcrumb-bg-hover;
+          &:after {
+            background-color: $breadcrumb-bg-hover;
+          }
+        }
+        &:after {
+          content: '';
+          position: absolute;
+          top: 0; 
+          right: -18px;
+          width: 36px; 
+          height: 36px;
+          transform: scale(0.707) rotate(45deg);
+          z-index: 1;
+          background-color: $breadcrumb-bg;
+          box-shadow: 1px -1px 0 1px $hythemecolor-obs-3, 1px -1px 0 1px $hythemecolor-obs-3;
+          border-radius: 0 5px 0 50px;
+        }
+        .breadcrumb-item.dimmed_text {
+          background-color: $breadcrumbdimmed;
+          &:hover {
+            background-color: $breadcrumb-bg-hover;
+            &:after {
+              background-color: $breadcrumb-bg-hover;
+            }
+          }
+          &:after {
+            content: '';
+            position: absolute;
+            top: 0; 
+            right: -18px;
+            width: 36px; 
+            height: 36px;
+            transform: scale(0.707) rotate(45deg);
+            z-index: 1;
+            background-color: $breadcrumbdimmed;
+            box-shadow: 1px -1px 0 1px $hythemecolor-obs-3, 1px -1px 0 1px $hythemecolor-obs-3;
+            border-radius: 0 5px 0 50px;
+          }
+        }
+      }
+    }
+    .breadcrumb-item + .breadcrumb-item::before {
+        display: inline-block;
+        padding: 0;
+        content: "";
+    }
+    .dir-rtl ol.breadcrumb li:after{
+        transform: scale(.707) rotate(315deg);
+        box-shadow: -2px -2px 0 0 $hythemecolor-obs-3, -2px -2px 0 0 $hythemecolor-obs-3;
+    }
+    #region-main {
+      border-radius: 0.25rem;
+    }
+}
+/* Media max-width: 576px */
+@include media-breakpoint-down(xs) {  
+    .breadcrumb {
+        width: initial !important;
+        margin-top: .5rem;
+        margin-bottom: .5rem;
+        font-size: 13px;
+    }
+    ol.breadcrumb a {
+        color: $breadcrumb-text-color;
+        text-decoration: none;
+    }
+    .sectionname .section-title{
+        margin:0px;
+    }
+    .carousel-item img {
+        max-height: 450px;
+    }
+}

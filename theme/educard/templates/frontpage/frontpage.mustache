@@ -1,0 +1,74 @@
+{{!
+    @template theme_educard/frontpage/frontpage
+
+    Theme front page builder.
+}}
+
+{{> theme_educard/frontpage/head }}
+
+<body {{{ bodyattributes }}}>
+    <script>
+        var dlcurrentTheme = localStorage.getItem("theme-dashboard-educard");
+        if (dlcurrentTheme == "dark") {
+            document.body.classList.toggle("dark-frontpage");
+        }
+    </script>
+{{> core/local/toast/wrapper}}
+<!-- CUSTOMIZE -->
+{{#frontpage0}}
+    {{> theme_educard/frontpage/home/frontpage_0}}
+{{/frontpage0}}
+{{#frontpage1}}
+    {{> theme_educard/frontpage/home/frontpage_1}}
+{{/frontpage1}}
+{{#frontpage2}}
+    {{> theme_educard/frontpage/home/frontpage_2}}
+{{/frontpage2}}
+{{#frontpage3}}
+    {{> theme_educard/frontpage/home/frontpage_3}}
+{{/frontpage3}}
+{{#frontpage4}}
+    {{> theme_educard/frontpage/home/frontpage_4}}
+{{/frontpage4}}
+{{#frontpage5}}
+    {{> theme_educard/frontpage/home/frontpage_5}}
+{{/frontpage5}}
+{{#frontpage6}}
+    {{> theme_educard/frontpage/home/frontpage_6}}
+{{/frontpage6}}
+{{#frontpage7}}
+    {{> theme_educard/frontpage/home/frontpage_7}}
+{{/frontpage7}}
+{{#frontpage8}}
+    {{> theme_educard/frontpage/home/frontpage_8}}
+{{/frontpage8}}
+<!-- END CUSTOMIZE -->
+<!-- PAGES -->  
+{{#pages}}
+    {{> theme_educard/frontpage/pages/pages}}
+{{/pages}}
+<!-- Aside Bar mobil -->    
+    {{> theme_educard/frontpage/header_mobil }}
+<div>
+    {{! go to top is sticky to footer so needs to be sibling }}
+    <a role="button" href="#" aria-label="{{#str}}totop, theme_educard {{/str}}">
+        <i class="fa fa-angle-up scrollUp"></i>
+    </a>
+</div>
+{{#announcementsbar}}
+    {{> theme_educard/frontpage/announcements}}
+{{/announcementsbar}}
+{{#colorpalette}}
+    {{> theme_educard/frontpage/colorchange}}
+{{/colorpalette}}
+{{> theme_educard/frontpage/setup}} 
+
+</body>   
+</html>
+{{#js}}
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
+    Drawer.init();
+    M.util.js_complete('theme_boost/loader');
+});
+{{/js}}

@@ -1,0 +1,26 @@
+<div id="block01-3" class="educard-block educard-font">
+    <div class="block01-3 py-5 {{#block01color}}block01-bg-color{{/block01color}}
+                {{^block01color}}{{#imgblock01background}} block01-3-bg-img{{/imgblock01background}}{{/block01color}}
+                {{^block01parallax}} block01-no-attachment{{/block01parallax}}">
+        <div class="block01-bg">        
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-5 text-center">
+                        <div class="card frame block-shadow block-hover-shadow border-0">
+                            <div class="card-body site-background-color-obs-2">
+                                <div class="py-3 px-2">
+                                    <h3 class="site-background-color rounded-pill px-3 py-1 text-white">{{block01headline}}</h3>
+                                    <h4 class="my-3 soft-color"> {{block01header}} {{block01maintitle}}</h4>
+                                    <div class="subtitle">{{{block01caption}}}</div>
+                                    {{#block01button}}
+                                        <a href="{{{block01buttonlink}}}" class="educard-btn btn mt-3 text-white border-0"><span>{{{block01button}}}</span></a>
+                                    {{/block01button}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

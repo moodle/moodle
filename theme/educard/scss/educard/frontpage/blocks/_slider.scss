@@ -1,0 +1,698 @@
+/* Carousel image size. */
+[role="button"]:focus {
+    box-shadow: none;
+}
+.max-width-text {
+    max-width: 850px;
+}
+.carousel-item img {
+    position: relative;
+    object-fit:cover;
+    top: 0;
+    left: 0;
+}
+.carousel-content-image {
+    position: absolute;
+    bottom: 0;
+    background: var(--theme-color2-ops-5);
+    color: #f1f1f1;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    padding-left: 30px;
+    border-radius: 0 0 5px 5px;
+}
+.slider_arrow_left {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+.slider_arrow_right {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.slider-1 {
+    .slide-text {
+        position: absolute;
+        width: 100%;
+        padding-left: 15vw;
+        padding-right: 15vw;
+        top: 50%;
+        .h1 {
+           font-weight: 700;
+        }
+    }
+    .display-none {
+        display: none;
+    }
+    .display-block {
+        display: block;
+    }
+    .carousel-content-image {
+        border-radius: 0;
+    }
+}
+
+/*--------------------------------------------------------------
+# Educard carousel 2 Section
+--------------------------------------------------------------*/
+#educard-c-1 {
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    overflow: hidden;
+    position: relative;
+    .container {
+        text-align: center;
+    }
+    .carousel, .carousel-inner, .carousel-item, .carousel-item::before {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+    }
+    .carousel-item {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        &:before {
+            content: "";
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+    }
+    .carousel-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        bottom: 0;
+        top: 70px;
+        left: 50px;
+        right: 50px;
+    }
+    h2, .h2 {
+        color: #fff;
+        margin-bottom: 30px;
+        //font-size: 48px;
+        font-size: calc(2rem + 1.17vw);
+        font-weight: 700;
+    }
+    p {
+        margin: 0 auto 30px auto;
+        color: #fff;
+    }
+    .carousel-fade {
+        overflow: hidden;
+    }
+    .carousel-control-prev, .carousel-control-next {
+        width: 10%;
+    }
+    .carousel-indicators {
+        li {
+            cursor: pointer;
+        }
+    }
+    .btn-get-started {
+        font-weight: 500;
+        font-size: 16px;
+        letter-spacing: 1px;
+        display: inline-block;
+        padding: 8px 32px;
+        border-radius: 50px;
+        transition: 0.5s;
+        margin: 10px;
+        color: #fff;
+        background: var( --theme-color2 );
+        &:hover {
+            background: #fff;
+            color: var( --theme-color );
+        }
+    }
+    a {
+        &.carousel-control-prev,
+        &.carousel-control-next {
+            &.arrow-none {
+                display: none;
+            }
+            &.arrow-top {
+                top: 10%;
+                bottom: unset;
+            }
+            &.arrow-center {
+                top: 50%;
+                bottom: unset;
+            }
+            &.arrow-bottom {
+                top: 90%;
+                bottom: unset;
+            }
+        }
+    }
+}
+@media (max-width: 556px) {
+    #educard-c-1 {
+        height: 92vh;
+    }
+}
+@media (max-height: 556px) {
+    #educard-c-1 {
+        height: 100vh;
+    }
+}
+@media (max-width: 768px) {
+    #educard-c-1 h2 {
+      font-size: 28px;
+    }
+}
+@media (min-width: 1024px) {
+    #educard-c-1 .carousel-control-prev, #educard-c-1 .carousel-control-next {
+      width: 5%;
+    }
+}
+.educard-nav-3 {
+    #educard-c-1 {
+        height: calc( 100vh - 141px);
+    }
+}
+@include media-breakpoint-down(lg) {
+    .educard-nav-3 {
+        #educard-c-1 {
+            height: calc( 100vh - 131px);
+        }
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .educard-nav-3 {
+        #educard-c-1 {
+            .carousel-indicators {
+                bottom: initial;
+                top: 20px;
+            }
+        }
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .educard-nav-3 {
+        #educard-c-1 {
+            height: calc( 100vh - 126px);
+        }
+    }
+}
+@include media-breakpoint-down(xs) {
+    .educard-nav-3 {
+        #educard-c-1 {
+            height: calc( 100vh - 116px);
+        }
+    }
+    .educard-nav-2 {
+        .slider-1 {
+            .splide__pagination {
+                bottom: unset;
+                top: 120px;
+            }
+        }
+    }
+}
+
+/*--------------------------------------------------------------
+# Educard carousel 3 Section
+--------------------------------------------------------------*/
+#educard-c-2 {
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+    position: relative;
+
+    .carousel-3-shape {
+        display: block;
+        position: absolute;
+        text-align: center;
+        margin-top: 40vh;
+        right: 10vh;
+        left: 10vh;
+    }
+    .carousel, .carousel-inner, .carousel-item, .carousel-item::before {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+    }
+    .carousel-item {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        &:before {
+            content: "";
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+    }
+    .carousel-container {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        position: absolute;
+        bottom: 60px;
+        top: 70px;
+        left: 10vh;
+        right: 10vh;
+    }
+    .carousel-content {
+        background: rgba(4, 4, 4, 0.7);
+        padding: 20px;
+        color: #fff;
+        border-top: 5px solid var( --theme-color );
+        border-radius: 20px;
+        border-bottom: 5px solid var(--theme-color2);
+        margin-bottom: 60px;
+        h2 {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+    }
+    .btn-get-started {
+        font-family: "Roboto", sans-serif;
+        font-weight: 500;
+        font-size: 14px;
+        letter-spacing: 1px;
+        display: inline-block;
+        padding: 12px 32px;
+        border-radius: 4px;
+        transition: 0.5s;
+        line-height: 1;
+        margin: 10px;
+        color: #fff;
+        -webkit-animation-delay: 0.8s;
+        animation-delay: 0.8s;
+        border: 2px solid var( --theme-color );
+        &:hover {
+            background: var( --theme-color );
+            color: #fff;
+            text-decoration: none;
+        }
+    }
+    .carousel-inner .carousel-item {
+        transition-property: opacity;
+        background-position: center top;
+    }
+    .carousel-inner .carousel-item,
+    .carousel-inner .active.carousel-item-start,
+    .carousel-inner .active.carousel-item-end {
+        opacity: 0;
+    }
+    .carousel-inner .active,
+    .carousel-inner .carousel-item-next.carousel-item-start,
+    .carousel-inner .carousel-item-prev.carousel-item-end {
+        opacity: 1;
+        transition: 0.5s;
+    }
+    .carousel-inner .carousel-item-next,
+    .carousel-inner .carousel-item-prev,
+    .carousel-inner .active.carousel-item-start,
+    .carousel-inner .active.carousel-item-end {
+        left: 0;
+        transform: translate3d(0, 0, 0);
+    }
+    .carousel-control-next-icon, .carousel-control-prev-icon {
+        background: none;
+        font-size: 30px;
+        line-height: 0;
+        width: auto;
+        height: auto;
+        background: var( --theme-color );
+        border-radius: 50px;
+        transition: 0.3s;
+        color: rgba(255, 255, 255, 0.9);
+        width: 54px;
+        height: 54px;
+        align-items: center;
+        justify-content: center;
+        display: none;
+    }
+    .carousel-control-next-icon:hover, .carousel-control-prev-icon:hover {
+        background: rgba(255, 255, 255, 0.6);
+        color: rgba(255, 255, 255, 0.9);
+    }
+    .carousel-indicators {
+        bottom: 50px;
+        li {
+            cursor: pointer;
+            background: #fff;
+            overflow: hidden;
+            border: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50px;
+            opacity: 0.6;
+            transition: 0.3s;
+        }
+    }
+    .carousel-indicators li.active {
+        opacity: 1;
+        background: #1bbd36;
+    }
+    &:hover {
+        .carousel-control-next-icon, .carousel-control-prev-icon  {
+            display: flex;
+        }
+    }
+    a {
+        &.carousel-control-prev,
+        &.carousel-control-next {
+            &.arrow-none {
+                display: none;
+            }
+            &.arrow-top {
+                top: 10%;
+                bottom: unset;
+            }
+            &.arrow-center {
+                top: 50%;
+                bottom: unset;
+            }
+            &.arrow-bottom {
+                top: 90%;
+                bottom: unset;
+            }
+        }
+    }
+}
+.educard-nav-3 {
+    #educard-c-2 {
+        height: 86vh;
+    }
+}
+@media (max-width: 556px) {
+    #educard-c-2 {
+        .carousel-control-next-icon, .carousel-control-prev-icon  {
+            display: none;
+        }
+    }
+}
+@media (min-width: 1024px) {
+    #educard-c-2 .carousel-content {
+      width: 65%;
+    }
+    #educard-c-2 .carousel-control-prev, #educard-c-2 .carousel-control-next {
+      width: 5%;
+    }
+}
+@media (max-width: 992px) {
+    #educard-c-2 .carousel-container {
+      top: 58px;
+    }
+    #educard-c-2 .carousel-content h2 {
+      margin-bottom: 15px;
+      font-size: 22px;
+    }
+    #educard-c-2 .carousel-content p {
+      font-size: 15px;
+    }
+    .educard-nav-3 {
+        #educard-c-2 {
+            height: 86vh;
+        }
+    }
+}
+@media (max-height: 500px) {
+    #educard-c-2 {
+      height: 120vh;
+    }
+}
+
+/*--------------------------------------------------------------
+# Hero Educard Section
+--------------------------------------------------------------*/
+.dark-frontpage {
+    #hero-educard {
+        .wave3 {
+            use {
+                fill: var(--color-dl-bg-black);
+            }
+        }
+        .h1 {
+            color: var(--color-dl-yellow-a);
+        }
+    }
+}
+#hero-educard {
+    width: 100%;
+    padding-top: 70px;
+    background: linear-gradient(0deg, #2a2c39 0%, #33364a 100%);
+    .carousel-item {
+        img {
+            max-height: 600px;
+        }
+    }
+    /*
+    .container {
+        padding-top: 45px;
+    }
+    */
+    .carousel-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        text-align: left;
+        position: relative;
+        height: 70vh;
+        padding-top: 60px;
+    }
+    .h1 {
+        color: #fff;
+        margin-bottom: 30px;
+        font-size: 48px;
+        font-weight: 700;
+    }
+    .h2 {
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 50px;
+        font-size: 24px;
+    }
+    .btn-get-started {
+        font-family: "Jost", sans-serif;
+        font-weight: 500;
+        font-size: 16px;
+        letter-spacing: 1px;
+        display: inline-block;
+        padding: 11px 28px 11px 28px;
+        border-radius: 50px;
+        transition: 0.5s;
+        margin: 10px 0 0 0;
+        color: #fff;
+        background: var( --theme-color );
+        text-decoration: none;
+        &:hover {
+            background: var( --theme-color2 );
+        }
+    }
+    .btn-watch-video {
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        transition: 0.5s;
+        margin: 10px 0 0 25px;
+        color: #fff;
+        line-height: 1;
+        i {
+            line-height: 0;
+            color: #fff;
+            font-size: 32px;
+            transition: 0.3s;
+            margin-right: 8px;
+        }
+        &:hover i {
+            color: #47b2e4;
+        }
+    }
+    .animated {
+        animation: up-down 2s ease-in-out infinite alternate-reverse both;
+    }
+    a {
+        &.carousel-control-prev,
+        &.carousel-control-next {
+            background-image: none;
+            &.arrow-none {
+                display: none;
+            }
+            &.arrow-top {
+                width: 5%;
+                top: 10%;
+                bottom: unset;
+            }
+            &.arrow-center {
+                width: 5%;
+                top: 50%;
+                bottom: unset;
+            }
+            &.arrow-bottom {
+                width: 5%;
+                top: 90%;
+                bottom: unset;
+            }
+        }
+    }
+
+    @media (max-width: 991px) {
+        text-align: center;
+        .animated {
+            -webkit-animation: none;
+            animation: none;
+        }
+        .hero-educard-img {
+            text-align: center;
+            img {
+                max-height: 350px;
+            }
+        }
+        .carousel-container {
+            text-align: center;
+        }
+        .carousel-indicators {
+            bottom: unset;
+            display: none;
+        }
+    } 
+
+    @media (max-width: 768px) {
+        .hero-educard-img {
+            text-align: center;
+            img {
+                max-height: 300px;
+            }
+        }
+        .h1 {
+            font-size: 28px;
+            line-height: 36px;
+        }
+        .h2 {
+            font-size: 18px;
+            line-height: 24px;
+            margin-bottom: 30px;
+        }
+    }
+
+    @media (max-width: 575px) {
+        .hero-educard-img {
+            text-align: center;
+            img {
+                max-height: 250px;
+            }
+        }
+        .btn-get-started {
+            font-size: 16px;
+            padding: 10px 24px 11px 24px;
+        }
+        .carousel-indicators {
+            bottom: unset;
+            display: none;
+        }
+    }
+
+    @-webkit-keyframes up-down {
+        0% {
+            transform: translateY(10px);
+        }
+
+        100% {
+            transform: translateY(-10px);
+        }
+    }
+
+    @keyframes up-down {
+        0% {
+            transform: translateY(10px);
+        }
+
+        100% {
+            transform: translateY(-10px);
+        }
+    }
+    .hero-waves {
+        display: block;
+        width: 100%;
+        height: 60px;
+        position: relative;
+    }
+    
+    .wave1 use {
+        -webkit-animation: move-forever1 10s linear infinite;
+        animation: move-forever1 10s linear infinite;
+        -webkit-animation-delay: -2s;
+        animation-delay: -2s;
+    }
+    
+    .wave2 use {
+        -webkit-animation: move-forever2 8s linear infinite;
+        animation: move-forever2 8s linear infinite;
+        -webkit-animation-delay: -2s;
+        animation-delay: -2s;
+    }
+    
+    .wave3 use {
+        -webkit-animation: move-forever3 6s linear infinite;
+        animation: move-forever3 6s linear infinite;
+        -webkit-animation-delay: -2s;
+        animation-delay: -2s;
+    }
+    
+    @-webkit-keyframes move-forever1 {
+        0% {
+            transform: translate(85px, 0%);
+        }
+        100% {
+            transform: translate(-90px, 0%);
+        }
+    }
+    
+    @keyframes move-forever1 {
+        0% {
+            transform: translate(85px, 0%);
+        }
+        100% {
+            transform: translate(-90px, 0%);
+        }
+    }
+    @-webkit-keyframes move-forever2 {
+        0% {
+            transform: translate(-90px, 0%);
+        }
+        100% {
+            transform: translate(85px, 0%);
+        }
+    }
+    @keyframes move-forever2 {
+        0% {
+            transform: translate(-90px, 0%);
+        }
+        100% {
+            transform: translate(85px, 0%);
+        }
+    }
+    @-webkit-keyframes move-forever3 {
+        0% {
+            transform: translate(-90px, 0%);
+        }
+        100% {
+            transform: translate(85px, 0%);
+        }
+    }
+    @keyframes move-forever3 {
+        0% {
+            transform: translate(-90px, 0%);
+        }
+        100% {
+            transform: translate(85px, 0%);
+        }
+    }
+}

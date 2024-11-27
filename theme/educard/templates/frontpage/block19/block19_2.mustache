@@ -1,0 +1,29 @@
+<div id="block19-2" class="block19-2 educard-block block-start-end-space pt-40 pb-40 educard-font">
+    <div class="container">
+        {{#block19headerenabled}}
+        <div class="educard-sub-title text-white">
+            <h6>{{block19headline}}</h6>
+        </div>
+        <div>
+            <div class="h1">{{{block19header}}} <span class="text-white">{{block19maintitle}}</span></div>
+            <div class="educard-heading-line-left bg-dark"></div>
+        </div>
+        {{/block19headerenabled}}
+        <div class="row pt-40 align-items-center ">
+            {{#block19}}
+            <div class="text-center col-xs col-sm-4 col-md pt-10 pb-10">
+                <div class="card h-100" >
+                    <a class="text-decoration-none" href="{{{link}}}">
+                        {{#image19}}
+                        <img src="{{image19}}" alt="img">
+                        {{/image19}}
+                        {{^image19}}
+                        <img src="{{frontpageimglink}}block19/d2/{{count}}.jpg" alt="img" onerror="this.style.display='none'">
+                        {{/image19}}
+                    </a> 
+                </div>    
+            </div>   
+            {{/block19}}    
+        </div>
+    </div>
+</div> 

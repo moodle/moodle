@@ -1,0 +1,43 @@
+/* Moodle orjinal frontpage settings */
+.educardsetup{
+    display: block;
+    #page {
+        margin-top: 40px;
+        margin-bottom: 45px;
+    }
+    #page-content{
+        height: auto;
+    }
+    #region-main {
+        height: auto;
+        padding-bottom : 40px;
+        overflow-x: auto;
+        overflow-y: visible;
+        #site-news-forum, 
+        #frontpage-available-course-list,
+        #frontpage-category-names,
+        #frontpage-category-combo,
+        #frontpage-course-list {
+            display: block !important;
+        }
+        .simplesearchform,
+        .skip-block-to,
+        .buttons {
+            display: none !important;
+        }
+        .box{
+            padding-top : 0px !important;
+            padding-bottom : 0px !important;
+        }
+    }
+    .modal .close {
+        color: $hythemecolor;
+        display: block;
+        padding: initial;
+        text-shadow: none;
+        margin-left: auto;
+    }
+    .course-section-header {
+        background-color: transparent !important;
+    }
+}

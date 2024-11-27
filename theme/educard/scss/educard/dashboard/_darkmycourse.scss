@@ -1,0 +1,156 @@
+/* Dashboard mycourse */
+.page-mycourses.dark-dashboard, .pagelayout-mydashboard.dark-dashboard {
+    .block_myoverview {
+    /* Course img top */
+        .block .block-cards {
+            .list-group-item {
+                background-color: var(--color-dl-bg-black-dark);
+                border: 1px solid var(--color-dl-grey-b);
+            }
+            .course-summaryitem {
+                border: 1px solid var(--color-dl-grey-b);
+                background-color: var(--color-dl-bg-black-dark);
+            }
+            .course-listitem .btn.btn-link.btn-icon {
+                margin-right: 15px;
+                &:focus, &:hover {
+                    background-color: var(--color-dl-grey-b);
+                }
+            }
+        }
+    }
+}
+.pagelayout-course.dark-dashboard {
+    .description {
+        .activity-altcontent.course-description-item {
+            p {
+                color: var(--color-dl-grey-b);
+            }
+        }
+    }
+}
+
+/* In course page header img, category and url select none display */
+/* Course activite header none */
+.pagelayout-incourse.dark-dashboard {
+    .page-header-headings .text-muted,
+    .urlselect,
+    /* .page-header-image, */
+    section[id="region-main"] h2
+    {
+        display: none;
+    }
+}
+
+/* Page, my course */
+.dark-dashboard {
+    #region-main,
+    .form-item,
+    .form-description,
+    .form-item p {
+        color: var(--color-dl-white-bsc) !important;
+        background-color: var(--color-dl-bg-black) !important;        
+    }
+    .activity-header {
+        .activity-description, .description-inner {
+            color: var(--color-dl-grey-a);
+        }
+    }
+
+    .form-control {
+        background-color: var(--color-dl-grey-a);       
+    }
+    .drawers .block_myoverview,
+    .block_recentlyaccessedcourses {
+        border: 1px solid var(--color-dl-yellow-b);
+    }
+
+    .block_myoverview,
+    .block_recentlyaccessedcourses.card {
+        color: var(--color-dl-white-bsc);
+        background-color: var(--color-dl-bg-black);
+    }
+    .block_myoverview .card {
+        color: var(--color-dl-white-bsc);
+        background-color: var(--color-dl-grey-b);
+    }
+    .block_myoverview .card-footer {
+        color: var(--color-dl-white-bsc);
+        background-color: transparent !important;
+    }
+    /*
+    .dashboard-card-deck .dashboard-card .dashboard-card-footer {
+        padding: 0.3rem;
+    }
+    */
+    .block_myoverview .card-footer .coursemenubtn {
+        margin-top: 0 !important;
+    }
+    /* Catagory name */
+    .block .block-cards span.categoryname,
+    .block .block-cards .btn-link {
+        color: var(--color-dl-grey-a);
+    }
+
+    /* Course topic */
+    .editing .activity-item {
+        &:hover {
+            color: var(--color-dl-bg-black-dark);
+            background-color: var(--color-dl-grey-b);
+            border-color: var(--color-dl-white-bsc);
+        }
+    }
+    .activity-item.hiddenactivity {
+        background-color: transparent;
+    }
+    .activity-item.hiddenactivity .description .course-description-item,
+    .activity-item.hiddenactivity .activityiconcontainer,
+    .activity-item.hiddenactivity .badge {
+        mix-blend-mode: normal;
+    }
+    /* Button hover */
+    .block .block-cards .btn.btn-link.btn-icon:hover,
+    .block .block-cards .btn.btn-link.btn-icon:focus {
+        background-color: var(--color-dl-bg-black-dark);
+    }
+    /* Manage courses and categories */
+    #coursecat-management {
+        .category-listing, .course-listing {
+            .card-body {
+                background-color: var(--color-dl-bg-black-dark);
+                border-bottom-left-radius: 0.5rem;
+                border-bottom-right-radius: 0.5rem;
+                .list-group-item {
+                    background-color: var(--color-dl-bg-black-dark);
+                }
+                .custom-control {
+                    z-index: 0;
+                }
+            }
+        }
+    }
+    #course-category-listings.columns-3 {
+        background-color: initial;
+        #category-listing > div,
+        #course-listing > div,
+        #course-detail > div {
+            background-color: var(--color-dl-grey-b);
+        }
+    }
+    .filter-group {
+        .bg-white, &.bg-white, &.bg-light {
+            background-color: var(--color-dl-bg-black-dark) !important;
+        }
+    }
+    .card {
+        &.dashboard-card {
+            .card-footer {
+                &.dashboard-card-footer {
+                    .btn {
+                        background-color: var(--color-dl-grey-b) !important;
+                    }
+                }
+            }
+        }
+    }
+}

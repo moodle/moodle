@@ -1,0 +1,220 @@
+/*-----------------------
+    Why we Block05
+-------------------------*/
+.dark-frontpage,
+.dark-dashboard {
+    .block05-bg {
+        background-image: none;
+    }
+    .block05-1 {
+        .video-img-thumbnail,
+        .single-choose-item i {
+            border: 1px solid var(--color-dl-yellow-b) !important;
+        }
+    }
+    .block05-1,
+    .block05-2,
+    .block05-3 {
+        a {
+            color: var(--teal);
+        }
+        .single-choose-item,
+        .block05-2-card {
+            i {
+                border: 1px solid var(--color-dl-yellow-b) !important;
+                background-color: var(--color-dl-bg-black-dark);
+            }
+        }
+        .block05-3-icon {
+            border: 2px solid var(--color-dl-yellow-b)!important;
+        }
+    }
+    .block05-3 {
+        img {
+            border: 1px solid var(--color-dl-yellow-b)!important;
+        }
+    }
+    .block05-4 {
+        .content {
+            .edu-icon-box {
+                i {
+                    border: 1px solid var(--color-dl-yellow-b)!important;
+                    border-radius: 0.25rem;
+                    padding: 15px;
+                    font-size: 40px !important;
+                }
+            }
+        }
+    }
+
+}
+.block05-1 {
+    .video-img-thumbnail {
+        height: 320px;
+        width: 100%;
+        border: 1px solid var( --theme-color );
+        background-color: var( --theme-color2-ops-3 );
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+
+        &:hover {
+            box-shadow: $educard-fp1-hover-shadow;
+        }
+    }
+    .single-choose-item {
+        i {
+            margin-right: 15px;
+            width: 70px;
+            height: 70px;
+            line-height: 70px;
+            background-color: #ffffff;
+            font-size: 40px;
+            color: #6ba292;
+            border-radius: 5px;
+            text-align: center;
+            border: 1px solid var( --theme-color-ops-3 );
+            left: 0;
+            top: 2px;
+            float: left;
+            -webkit-transition: 0.3s;  
+            transition: 0.3s;
+        }
+        a {
+            &:hover {
+                color: var( --theme-color );
+            }
+        }
+        &:hover {
+            i { 
+                border-radius: 50px;
+                color: var( --theme-color );
+            }
+        }
+    }
+    .play-btn {
+        background: #fff;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 108px;
+        animation: animate 2s linear infinite;
+        cursor: pointer;
+        width: 100px;
+        height: 100px;
+        position: relative;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%);
+        i {
+            color: var( --theme-color );
+            font-size: 102px;
+        }
+    }
+    @keyframes animate{
+      0% {
+        box-shadow: 0 0 0 0 rgba(var( --theme-color-rgba ),0.7);
+      }
+      40% {
+        box-shadow: 0 0 0 50px rgba(255,193,7,0);
+      }
+      80% {
+        box-shadow: 0 0 0 50px rgba(255,193,7,0);
+      }
+      100% {
+        box-shadow: 0 0 0 rgba(255,193,7,0);
+      }
+    }
+}
+.block05-2 {
+    .educard-why-we-block {
+        .block05-2-card {
+            background-color: unset;
+            i {
+                margin-right: 15px;
+                width: 70px;
+                height: 70px;
+                line-height: 70px;
+                background: var( --theme-color-ops-1 );
+                font-size: 40px;
+                color: var( --theme-color );
+                text-align: center;
+                border-radius: 5px;
+                text-align: center;
+                border: 1px solid var( --theme-color-ops-3 );
+                left: 0;
+                top: 2px;
+                float: left;
+                -webkit-transition: 0.3s;
+                transition: 0.3s;
+                box-shadow: 0 0 10px rgb(0 0 0 / 15%);
+            }
+            a {
+                &:hover {
+                    i {
+                        color: #fff;
+                        background: var( --theme-color2 );
+                        box-shadow: 0 0 10px rgb(0 0 0 / 30%);
+                        border-radius: 50px;
+                        transition: 0.5s;
+                    }
+                }
+            }
+        }
+        .educard-why-img {
+            margin: auto;
+            .back-shape {
+                position: absolute;
+                left: -40px;
+                top: 310px;
+                -webkit-animation: mover 1s infinite  alternate;
+                animation: mover 1s infinite  alternate;
+            }
+            .back-shape-2 {
+                position: absolute;
+                right: -12px;
+                top: -75px;
+                -webkit-animation: mover2 1s infinite  alternate;
+                animation: mover2 1s infinite  alternate;
+            }
+        }
+    }
+    @-webkit-keyframes mover {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-10px); }
+    }
+    @keyframes mover {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-10px); }
+    }
+    @-webkit-keyframes mover2 {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(10px); }
+    }
+    @keyframes mover2 {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(10px); }
+    }
+}
+.block05-4 {
+    .content {
+        .edu-icon-box {
+            margin-top: 25px;
+            i {
+                font-size: 48px;
+                float: left;
+                color: #5777ba;
+            }
+            h4 {
+                font-size: 20px;
+                font-weight: 700;
+                margin: 5px 0 10px 60px;
+                color: #585a61;
+            }
+            p {
+                font-size: 15px;
+                color: #979aa1;
+                margin-left: 60px;
+            }
+        } 
+    } 
+}

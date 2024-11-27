@@ -1,0 +1,47 @@
+<div class="block07-3 col-md-12 col-lg-4 educard-block educard-font mt-3 mb-3">
+    <div class="block07-3-single-course educard-rounded">
+        {{#block07imgenabled}}
+        <div class="course-head overlay text-center educard-rounded">
+            <img src="{{{sc_imgurl}}}" alt="#">
+            <a href="{{sc_categorylink}}" class="block07-3-btn">{{sc_categoryname}}</a>
+        </div>
+        {{/block07imgenabled}}
+        <div class="course-body h-100">
+            <div class="name-price">
+                <div class="teacher-info">
+                    {{#sc_teachername}}
+                    {{{sc_userpicture}}}
+                    <h4 class="title">{{{sc_teachername}}}</h4>
+                    {{/sc_teachername}}
+                </div>
+                {{#block07priceshow}}
+                <span class="price">{{sc_cost}} {{sc_currency}}</span>
+                {{/block07priceshow}}
+            </div>
+            <div class="course-body-text">
+                <h4 class="c-title {{^sc_teachername}}c-title-mrg{{/sc_teachername}} text-truncate-3">
+                    <a href="{{sc_courselink}}">
+                        {{#block07shortname}}{{sc_shortname}}{{/block07shortname}}
+                        {{#block07fullname}}{{sc_fullname}}{{/block07fullname}}
+                    </a>
+                </h4>
+                {{#block07shortname}}
+                <div class="p-class ">{{#shortentext}} 170, {{{sc_summary}}} {{/shortentext}}</div>
+                {{/block07shortname}}
+                {{#block07fullname}}
+                <div class="p-class ">{{#shortentext}} 150, {{{sc_summary}}} {{/shortentext}}</div>
+                {{/block07fullname}}
+            </div>
+        </div>
+        <div class="course-meta">
+            <div class="course-info">
+                <span data-toggle="tooltip" data-placement="top" title="{{#str}}block07tooltipenrolled, theme_educard{{/str}}">
+                    <i class="fa fa-users"></i>{{sc_studentscount}}
+                </span>
+                <span class="float-right" data-toggle="tooltip" data-placement="top" title="{{#str}}block07tooltiplastdate, theme_educard{{/str}}">
+                    <i class="fa fa-calendar"></i>{{sc_update}}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>        

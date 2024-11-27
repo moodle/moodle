@@ -1,0 +1,207 @@
+/*-----------------------
+    Features Block03
+-------------------------*/
+.dark-frontpage,
+.dark-dashboard {
+    .block03-bg {
+        background-image: none;
+        background-color: var(--color-dl-bg-black);
+    }
+    .block03-1 {
+        .item-icon {
+            i {
+                border: 1px solid var(--color-dl-yellow-b) !important;
+            }
+        }
+    }
+    .block03-1,
+    .block03-2 {
+        a {
+            color: var(--color-dl-yellow-a);
+            &:hover {
+                color: var(--theme-color);
+            }
+        }
+    }
+    .block03-2 {
+        .features-card {
+            background: var(--color-dl-grey-b);
+        }
+        .card-icon {
+            background-color: var(--color-dl-bg-black);
+            border: 2px solid var(--color-dl-yellow-b);
+            box-shadow: 0 0 25px 0 rgb(18 18 16 / 57%);
+        }
+        .count-text {
+            color: var(--color-dl-bg-black);
+        }
+        p {
+            color: var(--warning);
+        }
+        .card {
+            border: 1px solid var(--color-dl-yellow-b) !important;
+        }
+    }
+    .block03-3 {
+        h4 {
+            color: var(--color-dl-yellow-a);
+        }
+        .our-services {
+            background-color: var(--color-dl-grey-b);
+            box-shadow: 0 0 25px 0 rgb(18 18 16 / 57%);
+            border: 1px solid var(--color-dl-yellow-b) !important;
+            .icons {
+                border: 3px solid var(--color-dl-yellow-a) !important;
+            }
+        }
+    }
+}
+.block03-1 {
+    .item-icon {
+        i {
+            width: 100px;
+            height: 100px;
+            background: var( --theme-color-ops-1 );
+            color: var( --theme-color );
+            font-size: 50px;
+            text-align: center;
+            line-height: 100px;
+            display: inline-block;
+            border: 1px solid var( --theme-color-ops-3 );
+            -webkit-transition: .3s;
+            transition: .3s;
+            box-shadow: $educard-fp1-shadow;
+            &:hover {
+                background: var( --theme-color2 );
+                color: #fff;
+                box-shadow: $educard-fp1-hover-shadow;
+            }
+        }
+    } 
+}
+.block03-2 {
+    .features-card {
+        height: 235px;
+        background: #ffffff;
+        padding: 12px;
+        .card {
+            background-color: var( --theme-color2-ops-2 );
+            p {
+                overflow: hidden;
+            }
+        }
+    }
+    .card-icon {
+        font-size: 3rem;
+        background-color: #f2f2f2;
+        color: var( --theme-color2 );
+        border: 1px solid var( --theme-color-ops-3 );
+        border-radius: 50%;
+        width: 5rem;
+        display: flex;
+        height: 5rem;
+        align-items: center;
+        justify-content: center;
+        margin: -4rem auto 0.5rem auto;
+        opacity: 1;
+    }
+    .count-text {
+        color: white;
+        font-weight: 600;
+        display: none;
+    }
+    .features-card:hover {
+        .card-icon {
+            transform: scale(1.1);
+            background-color: var( --theme-color );
+            i {
+                display: none;
+            }
+        }
+        .count-text {
+            display: block;
+            animation: tracking-in-expand-fwd-top 0.3s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+        }
+    }
+}
+.block03-3 {
+    .box {
+        position: relative;
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px
+    }
+    .our-services {
+        margin-top: 75px;
+        padding: 20px;
+        padding-bottom: 30px;
+        min-height: 198px;
+        text-align: center;
+        border-radius: 10px;
+        background-color: #fff;
+        transition: all 3s ease-in-out;
+        box-shadow: 0 0 25px 0 rgba(20,27,202,.17);
+        .icons {
+            display: inline-block;
+            padding: 15px;
+            margin-bottom: -21px;
+            transform: translateY(-50%);
+            font-size: 60px;
+            color:#f2f2f2;
+            -webkit-border-radius: 90px 40px 250px 10px/70px 80px 70px 40px;
+            border-radius: 90% 40% 250% 10%/70% 80% 70% 40%;
+        }
+        &:hover h4, &:hover p {
+            color: #fff
+        }
+        .bg-1 {
+            background-image: linear-gradient(-45deg, #fb0054 0%, #f55b2a 100%)
+        }
+        .bg-2 {
+            background-image: linear-gradient(-45deg, #34b5bf 0%, #210c59 100%)
+        }
+        .bg-3 {
+            background-image: linear-gradient(-45deg, #3615e7 0%, #44a2f6 100%)
+        }
+        .bg-4 {
+            background-image: linear-gradient(-45deg, #fc6a0e 0%, #fdb642 100%)
+        }
+        .bg-5 {
+            background-image: linear-gradient(-45deg, #8d40fb 0%, #5a57fb 100%)
+        }
+        .bg-6 {
+            background-image: linear-gradient(-45deg, #27b88d 0%, #22dd73 100%)
+        }
+    }
+    .our-services.count-1:hover {
+        box-shadow: 0 0 25px 0 rgba(20,27,201,.05);
+        cursor: pointer;
+        background-image: linear-gradient(-45deg, #fb0054 0%, #f55b2a 100%);
+    }
+    .our-services.count-2:hover {
+        box-shadow: 0 0 25px 0 rgba(20,27,201,.05);
+        cursor: pointer;
+        background-image: linear-gradient(-45deg, #34b5bf 0%, #210c59 100%);
+    }
+    .our-services.count-3:hover {
+        box-shadow: 0 0 25px 0 rgba(20,27,201,.05);
+        cursor: pointer;
+        background-image: linear-gradient(-45deg, #3615e7 0%, #44a2f6 100%);
+    }
+    .our-services.count-4:hover {
+        box-shadow: 0 0 25px 0 rgba(20,27,201,.05);
+        cursor: pointer;
+        background-image: linear-gradient(-45deg, #fc6a0e 0%, #fdb642 100%);
+    }
+    .our-services.count-5:hover {
+        box-shadow: 0 0 25px 0 rgba(20,27,201,.05);
+        cursor: pointer;
+        background-image: linear-gradient(-45deg, #8d40fb 0%, #5a57fb 100%);
+    }
+    .our-services.count-6:hover {
+        box-shadow: 0 0 25px 0 rgba(20,27,201,.05);
+        cursor: pointer;
+        background-image: linear-gradient(-45deg, #27b88d 0%, #22dd73 100%);
+    }
+    
+}

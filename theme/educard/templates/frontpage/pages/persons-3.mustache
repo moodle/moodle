@@ -1,0 +1,31 @@
+<div id="page02-3" class="page02-3 educard-block educard-font">
+    {{> theme_educard/frontpage/pages/person-header}}
+    {{#frontpagenavchoice1}}
+        {{> theme_educard/frontpage/header/header1}}
+    {{/frontpagenavchoice1}}
+    <div class="page02-bg block-start-end-space mb-50">
+        <div class="container">
+            {{#page02explanation}}
+                {{{page02explanation}}}
+            {{/page02explanation}}
+            <div class="row mt-60 mb-60">
+            {{#page02}}
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-5">
+                    <div class="card h-100 block-shadow mx-auto" >
+                        <a class="card-social-icon block-shadow" href="mailto:{{usermail}}"><i class='bx bx-mail-send'></i></a>
+                        <div>
+                            <img src="{{userpictureURL}}" alt="{{teachername}}">
+                        </div>
+                        <div class="card-body text-center educard-rounded">
+                            <a href="{{userURL}}">
+                                <h4>{{teachername}}</h4>
+                            </a>
+                            <p class="font-size-m font-weight-500 mb-0">{{job}}</p>
+                        </div>
+                    </div>
+                </div>
+            {{/page02}}    
+            </div>
+        </div>    
+    </div>
+</div>

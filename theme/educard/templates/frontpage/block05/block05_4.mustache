@@ -1,0 +1,44 @@
+<div id="block05-4" class="block05-4 educard-block educard-font">
+    <div class="block05-bg block-start-end-space">
+        <div class="container-fluid">
+            <div class="container">
+                <div class="educard-sub-title">
+                    <h6>{{block05headline}}</h6>
+                </div>
+                <div>
+                    <div class="h1">{{block05header}}<span> {{block05maintitle}}</span></div>
+                    <div class="educard-heading-line-left"></div>
+                </div>
+                <div class="row mt-60">
+                    <div class="row no-gutters">
+                        <div class="col-xl-7 d-flex align-items-stretch order-2 order-lg-1">
+                            <div class="content d-flex flex-column justify-content-center">
+                                <div class="row">
+                                    {{#block05}}
+                                    <div class="col-md-6 edu-icon-box" data-aos="fade-up">
+                                        <i class="color-{{count}} {{icon}} "></i>
+                                        <a href="{{link}}">
+                                            <h4 class="pl-4">{{title}}</h4>
+                                        </a> 
+                                        <p class="pl-4 mb-0">{{#shortentext}} 100, {{{caption}}} {{/shortentext}}</p>
+                                    </div>
+                                    {{/block05}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="image col-xl-5 d-flex align-items-stretch justify-content-center order-1 order-lg-2">
+                            <img 
+                                {{# block05image }}
+                                src="{{block05image}}"
+                                {{/ block05image }}
+                                {{^ block05image }}
+                                src="{{frontpageimglink}}block05/d4/1.jpg"
+                                {{/ block05image }}
+                                class="img-fluid" alt="block05image">
+                        </div>
+                    </div>    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

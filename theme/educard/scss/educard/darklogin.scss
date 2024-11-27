@@ -1,0 +1,51 @@
+/* Login page */
+
+.pagelayout-login {
+    &.dark-dashboard, &.dark-frontpage {
+        .login-container h1.login-heading {
+            color: var(--color-dl-white-bsc);
+        }
+        #page {
+            background-color: var(--color-dl-bg-black);
+            //background-image: none;
+            background-repeat: repeat-x;
+        }
+        .login-container {
+            background-color: var(--color-dl-bg-black-dark);
+        }
+        .login-form {
+            max-width:500px;
+            .login-form-username::before, .login-form-password::before {
+                font-family: 'boxicons';
+                width: 20px;
+                font-size: 1.25rem;
+                line-height: 1;
+                position: absolute;
+                top: calc(50% - ( 1.25rem / 2));
+                left: 12.5px;
+                text-align: center;
+                color: var(--color-dl-bg-black);
+                opacity: .5;
+                z-index: 2;
+            }
+            .login-form-username::before {
+                content: "\ec63";
+            }
+            .login-form-password::before {
+                content: "\eb4a";
+            }
+            .login-form-username, .login-form-password {
+                position: relative;
+                .form-control {
+                    padding-left: 40px;
+                }
+            }
+        }
+        /* Login page social login button */
+        .btn-login {
+            color: var( --theme-color );
+            background-color: var( --theme-color-ops-1 );
+            border-color: var( --theme-color-ops-8 );
+        }
+    }
+}

@@ -1,0 +1,13 @@
+/* Modle form */
+.dark-dashboard {
+    .modal-content {
+        background-color: var(--color-dl-grey-b);
+        .list-group-item {
+            background-color: var(--color-dl-grey-b);
+            color: var(--color-dl-white-bsc);
+        }
+    }
+    .modchooser .modal-footer {
+        background: initial;
+    }
+}

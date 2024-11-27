@@ -1223,10 +1223,12 @@ class core_renderer extends renderer_base {
         $colornumbers = range(1, 10);
         $basecolors = [];
         foreach ($colornumbers as $number) {
-            $basecolors[] = get_config('core_admin', 'coursecolor' . $number);
+            $color = get_config('core_admin', 'coursecolor' . $number);
+            if(!empty($color) && preg_match('/^#[a-f0-9]{6}$/i', $color)){                
+                $basecolors[] = $color; 
+            }
         }
-
-        $color = $basecolors[$id % 10];
+        $color = $basecolors[$id % count($basecolors)];
         return $color;
     }
 

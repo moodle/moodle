@@ -1,0 +1,162 @@
+
+.dark-frontpage {
+    .educard-header-3 {
+        .header_box_style {
+            background-color: var(--color-dl-grey-b);
+            border: 2px solid var(--color-dl-yellow-b);
+            .header_box_icon {
+                &.site-color {
+                    color: var(--color-dl-grey-a);
+                    &.site-background-color-obs-1 {
+                        background-color: var(--color-dl-bg-black);
+                    }
+                }
+            }
+        }
+        .frame {
+            background-color: var(--color-dl-grey-b);
+        }
+        .educard-shape-3 {
+            &.educard-shape-3-drk {
+                display: block;
+            }
+        }
+    }
+    
+}
+.educard-header-3 {
+    &.curved {
+        position: relative;
+        border-bottom-left-radius: 50% 23%;
+        border-bottom-right-radius: 50% 23%;
+    }
+    .educard-shape {
+        img {
+            position: absolute;
+        }
+    }
+    .educard-shape-1 {
+        left: 50%;
+        top: 12%;
+        -webkit-animation: mover 3s infinite  alternate;
+        animation: mover 3s infinite  alternate;
+    }
+    .educard-shape-2 {
+        top: 7%;
+        left: 14%;
+        position: absolute;
+        -webkit-animation: mover 3s infinite  alternate;
+        animation: mover 3s infinite  alternate;
+    }
+    .educard-shape-3 {
+        width: 796px;
+        left: 44%;
+        top: 20%;
+       -webkit-animation: slide-in-left 3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+                  animation: slide-in-left 3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+        &.educard-shape-3-drk {
+            display: none;
+        }
+    }
+    .educard-shape-4 {
+        bottom: 17%;
+        left: -6%;
+        width: 55%;
+        height: 55%;
+    }
+    .info-detail {
+        padding: 15% 15px;
+        .title {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 50px;
+        }
+        .subtitle {
+            margin: 50px 0;
+        }
+    }
+    .educard_header_box {
+        &.box_color {
+            padding: 0;
+            box-shadow: none;
+            background: transparent;
+            border-radius: 0;
+            .header_box_style {
+                padding: 0.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                width: 100%;
+            }
+        }
+        .box_text {
+            flex: 1;
+            padding-right: 10px;
+        }
+    }
+    .header_box_icon {
+        width: 5rem;
+        height: 5rem;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        border: 1px dashed;
+        border-radius: 50%;
+        margin-right: 10px;
+        font-size: 3rem;
+    }
+    .box_top {
+        margin-top: -50px;
+    }
+    .frame {
+        padding: 12px;
+        background-color: #fff;
+    }
+
+    @-webkit-keyframes mover {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(50px); }
+    }
+    @keyframes mover {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(50px); }
+    }
+    @media (max-width: 1430px) {
+        .educard-shape-1,
+        .educard-shape-2,
+        .educard-shape-3,
+        .educard-shape-3.educard-shape-3-drk,
+        .educard-shape-4 {
+            display: none !important;
+        }
+    }
+    @media (max-width: 991px) {
+        .educard-shape-1,
+        .educard-shape-2,
+        .educard-shape-3,
+        .educard-shape-3.educard-shape-3-drk,
+        .educard-shape-4 {
+            display: none !important;
+        }
+    }
+    @media (max-width: 767px) {
+        .educard-shape-2,
+        .educard-shape-3,
+        .educard-shape-3.educard-shape-3-drk {
+            display: none !important;
+        }
+        .educard-search form button {
+            padding: 19px 8px;
+        }
+    }
+}
+.educard-nav-2 {
+    .educard-header-3 {
+        .educard-shape-1 {
+            top: 15%;
+        }
+        @media (max-width: 767px) {
+            padding-top: 120px;
+        }
+    }
+}

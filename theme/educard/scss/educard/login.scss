@@ -1,0 +1,141 @@
+/* Login page */
+#page-login-index {
+    #page-content {
+        height: 100%;
+    }
+}
+.login-right {
+    .login-container {
+        animation-name: slide-right;
+        .login-languagemenu {
+            animation: 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s 1 normal both running slide-in-right;
+        }
+    }
+}
+.login-left {
+    .login-container {
+        animation-name: slide-left;
+        .login-languagemenu {
+            animation: 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s 1 normal both running slide-in-left;
+        }
+    }
+}
+.login-center {
+    .login-container {
+        animation-name: slide-top;
+    }
+    .login-languagemenu {
+        animation: 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s 1 normal both running slide-in-left;
+    }
+}
+.login-container {
+    transition: 0.5s;
+    box-shadow: none;
+    margin-bottom: 0;
+    border-radius: 0;
+    animation-duration: 1s;
+    .btn {
+        padding: 0.5rem 1rem;
+        width: 100%;
+    }
+    .login-logo {
+        max-height: 100px;
+    }
+    .login-identityprovider-btn {
+        background-color: var(--light);
+    }
+    .dropdown-menu {
+        top: 12px !important;
+        min-width: 250px;
+    }
+}
+.loginform {
+    padding-top: 0;
+    padding-bottom: 0;
+    .alert {
+        text-align: center;
+        font-weight: 700;
+    }
+}
+.login-form {
+    max-width: 500px;
+    .login-form-username::before, .login-form-password::before {
+        font-family: 'boxicons';
+        width: 20px;
+        font-size: 1.25rem;
+        line-height: 1;
+        position: absolute;
+        top: calc(50% - ( 1.25rem / 2));
+        left: 12.5px;
+        text-align: center;
+        color: inherit;
+        opacity: .5;
+        z-index: 2;
+    }
+    .login-form-username::before {
+        content: "\ec63";
+    }
+    .login-form-password::before {
+        content: "\eb4a";
+    }
+    .login-form-username, .login-form-password {
+        position: relative;
+        .form-control {
+            padding-left: 40px;
+        }
+    }
+}
+/* Login page social login button */
+.btn-login {
+    color: var( --theme-color );
+    background-color: var( --theme-color-ops-1 );
+    border-color: var( --theme-color-ops-8 );
+}
+/* External Login */
+.login-identityproviders {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-content: stretch;
+    align-items: baseline;
+}
+.login-container h2.login-heading {
+    width: 100%;
+}
+.login-identityproviders a.login-identityprovider-btn {
+    width: 48%;
+    margin-right: 2%;
+}
+/* Help(?) button */
+.login-background .btn-footer-popover {
+    right: 3rem;
+    bottom: 1rem;
+}
+
+@include media-breakpoint-up(sm) {
+    .login-container {
+        max-width: 450px;
+        .login-languagemenu {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: beige;
+            padding: 5px 15px;
+            border-radius: 0.25rem;
+            opacity: 0;
+        }
+        .divider {
+            display: none;
+        }
+    }
+    .login-right {
+        .login-languagemenu {
+            left: 10px;
+            width: fit-content;
+        }
+    }
+}
+@include media-breakpoint-down(xs) {
+    .login-container {
+        width: 100%;
+    }
+}

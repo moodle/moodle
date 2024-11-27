@@ -1,0 +1,44 @@
+<div id="page02-1" class="page02-1 educard-block educard-font">
+    {{> theme_educard/frontpage/pages/person-header}}
+    {{#frontpagenavchoice1}}
+        {{> theme_educard/frontpage/header/header1}}
+    {{/frontpagenavchoice1}}
+    <div class="page02-bg block-start-end-space mb-50">
+        <div class="container">
+            {{#page02explanation}}
+                {{{page02explanation}}}
+            {{/page02explanation}}
+            <div class="teachers mt-60 mb-60">
+                <div class="row">
+                    {{#page02}}
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                        <div class="single-teacher">
+                            <div class="teacher-head overlay block-hover-shadow educard-rounded text-center">
+                                <img src="{{userpictureURL}}" alt="#">
+                                {{#page02total}}
+                                <ul class="social educard-rounded">
+                                    <li><a class="educard-rounded" href="#"><i class="fa fa-user-o"><span class="count" data-toggle="tooltip" data-placement="top"
+                                        title="{{#str}}page02tooltipstudents, theme_educard {{/str}}"> {{studentscount}}</span></i> </a></li>
+                                    <li><a class="educard-rounded" href="#"><i class="fa fa-graduation-cap"><span class="count" data-toggle="tooltip" data-placement="top"
+                                        title="{{#str}}page02tooltipcourse, theme_educard {{/str}}"> {{coursecount}}</span></i></a></li>
+                                </ul>
+                                {{/page02total}}
+                            </div>
+                            <div class="teacher-content educard-rounded">
+                                <a href="{{userURL}}">
+                                    <h4>{{teachername}}</h4>
+                                </a>
+                                {{#job}}
+                                <h4>
+                                    <span>{{job}}</span>
+                                </h4>
+                                {{/job}}
+                            </div>
+                        </div>
+                    </div>
+                    {{/page02}}
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>    

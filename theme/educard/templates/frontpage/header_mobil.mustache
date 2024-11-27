@@ -1,0 +1,36 @@
+<!-- Mobile Menu Start -->
+<aside class="aside_bar aside_bar_left aside_mobile">
+    <!-- logo -->
+    <a href="{{{ config.homeurl }}}" class="navbar-brand">
+        {{#headerlogocompact}}
+            {{# output.get_compact_logo_url }}
+                <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
+            {{/ output.get_compact_logo_url }}    
+        {{/headerlogocompact}}
+        {{#headerlogo}}
+            {{# output.get_logo_url }}
+                <img src="{{output.get_logo_url}}" class="logo mr-1" alt="{{sitename}}">
+            {{/ output.get_logo_url }}
+        {{/headerlogo}}
+        {{^ headerlogocompact }}
+            {{^ headerlogo }}
+                {{{ sitename }}}
+            {{/ headerlogo }}
+        {{/ headerlogocompact }}
+    </a>
+     <!-- logo -->
+    <!-- Menu -->
+    <nav>
+        <ul class="main-menu">
+            {{#userlogin}}
+            <li class="menu-item">
+                <a href="my">{{#str}}mymoodle, admin{{/str}}</a>
+            </li>
+            {{/userlogin}}
+            {{{frontpagenavlink-m}}}
+        </ul>
+    </nav>
+    <!-- Menu -->
+</aside>
+<div class="aside-overlay trigger-left"></div>
+<!-- Mobile Menu End -->

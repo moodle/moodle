@@ -1,0 +1,50 @@
+.color-main{
+    #open-color-pallet {
+        position: fixed;
+        height: 50px;
+        width: 50px;
+        left: 0;
+        padding: 5px;
+        font-size: 30px;
+        color: white;
+        top: 150px;
+        border-radius: 0 50px 50px 0;
+        background-color: var(--theme-color-ops-8);
+        z-index: 999;
+    }
+    #color-change {
+        position: fixed;
+        left: 50%;
+        width: 250px;
+        margin: auto;
+        margin-left: -125px;
+        padding: 15px;
+        font-size: 14px;
+        color: white;
+        border-radius: 5px;
+        top: 135px;
+        border: 1px dashed var(--theme-color);
+        background-color: var(--theme-color-ops-8);
+        display: none;
+        z-index: 999;
+        #close-color-pallet {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            border: none;
+            color: white;
+            background-color: var(--theme-color-ops-2);
+        }
+        .btn {
+            padding: 0.175rem 0.55rem;
+        }
+    }
+    @include media-breakpoint-down(sm) {
+        #open-color-pallet {
+            height: 35px;
+            width: 35px;
+            padding: 2px;
+            font-size: 20px;
+        }
+    }
+}

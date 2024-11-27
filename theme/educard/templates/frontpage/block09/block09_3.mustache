@@ -1,0 +1,26 @@
+{{!-- Categories --}}
+<div id="block09-3" class="block09-3 educard-block educard-font">
+	<div class="container">
+		<div class="row">
+			<!-- Category item -->
+            {{#block09}}
+			<div class="col-sm-6 col-lg-4 col-xl-4 pb-3">
+				<div class="card card-body shadow educard-rounded h-100">
+					<div class="d-flex align-items-center">
+						<!-- Icon -->
+						<div class="icon-lg bg-color bg-color-{{count}} bg-opacity-10 rounded-circle text-color text-color-{{count}}">
+                            <i class="{{block09icon}}"></i>
+                        </div>
+						<div class="ml-3">
+							<h5 class="mb-0">
+                                <a href="{{catagoryURL}}" class="stretched-link">{{catagoryname}}</a>
+                            </h5>
+							<span>{{coursecount}} {{#str}}courses, core {{/str}}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+            {{/block09}}
+		</div>
+	</div>
+</div>

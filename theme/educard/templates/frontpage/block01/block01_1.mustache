@@ -1,0 +1,33 @@
+<div id="block01-1" class="block01-1 educard-block educard-font">
+    {{#editinguser}}
+        <i class="fp-settings icon fa fa-cog fa-fw"></i>
+    {{/editinguser}}   
+    <div class="block01-bg py-5 block-01-1-img {{#block01color}}block01-bg-color{{/block01color}} 
+        {{^block01color}}{{#imgblock01background}} block01-1-bg-img{{/imgblock01background}}{{/block01color}}
+        {{^block01parallax}} block01-no-attachment{{/block01parallax}}">
+    </div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12 text-center">
+                <div class="card block-frame block-shadow block-hover-shadow educard-rounded border-0">
+                    <div class="card-body site-background-color-obs-2">
+                        <div class="py-3 px-2">
+                            <h2 class="site-background-color rounded px-3 py-3 text-white">
+                                {{block01headline}}
+                            </h2>
+                            <h4 class="my-3 soft-color"> 
+                                {{block01header}} {{block01maintitle}}
+                            </h4>
+                            <div class="text-truncate-3 font-size-m">{{{block01caption}}}</div>
+                            {{#block01button}}
+                                <a href="{{{block01buttonlink}}}" class="educard-btn btn mt-3 text-white border-0">
+                                    <span>{{{block01button}}}</span>
+                                </a>
+                            {{/block01button}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

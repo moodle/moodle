@@ -1,0 +1,151 @@
+// Body settings.
+.secondary-navigation .navigation {
+    border-top: none; 
+    border-bottom: none;
+    font-weight: 700;
+}
+#page.drawers .main-inner {
+    background-color: transparent;
+    max-width: 1320px;
+}
+#page-my-index .block_myoverview.block {
+    padding: 15px;
+}
+.classhide {
+    display: none;
+}
+.classvisible {
+    display: block;
+}
+// Dashboard blocks.
+#block-region-content {
+    h5 {
+        font-weight: 500;
+    }
+}
+// List grup padding.
+.list-group-item  {
+    padding: 1.25rem 1.25rem;
+}
+// Link focus.
+.aalink.focus, .aalink:focus, #page-footer a:not([class]).focus,
+#page-footer a:not([class]):focus, .arrow_link.focus, .arrow_link:focus, 
+a:not([class]).focus, a:not([class]):focus, .activityinstance > a.focus, .activityinstance > a:focus {
+    outline: 0.2rem solid transparent;
+    color: #212529;
+    background-color: transparent;
+    box-shadow: none;
+    text-decoration: underline;
+}
+.activity-item:not(.activityinline) {
+    margin-bottom: 3px;
+}
+// Dashboard my courses.
+.dashboard-card a.coursename {
+    text-decoration: none;
+    font-weight: 700;
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #1e1f21;
+}
+.card.dashboard-card {
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    -ms-border-radius: 6px;
+    -o-border-radius: 6px;
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,.05);
+    -webkit-box-shadow: 0 1px 2px rgb(0 0 0 / 10%);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 10%);
+    transition: all .4s ease-in-out;
+}
+
+#instance-196-header, #instance-201-header, #instance-209-header, #instance-205-header, #instance-208-header, .modal-title {
+    font-weight: 700;
+}
+.calendar-controls .previous, .calendar-controls .next, .calendar-controls .current {
+    font-weight: 700;
+}
+// Dashboard button.
+.btn {
+    font-weight: 700;
+}
+/* Dashboard course card img size.*/
+.dashboard-card-deck {
+    .dashboard-card {
+        .dashboard-card-img {
+            height: $dashboard-card-img-height;
+        }
+    }
+}
+.page-context-header {
+    align-items: center;
+}
+#page-header-headings {
+    padding: 0 15px;
+}
+/* Course left side shadow cancel. */ 
+.drawer.scrolled .drawerheader {
+    box-shadow: none;
+}
+/* Theme settings */
+.settingsform {
+    overflow-x: hidden;
+}
+/* Educard settings accordion */
+.educard-acc {
+    .educard-i-up {
+        display: block;
+    }
+    .educard-i-down {
+        display: none;
+    }
+    &.collapsed {
+        .educard-i-down {
+            display: block;
+        }
+        .educard-i-up {
+            display: none;
+        }
+    }
+}
+.plugintypeheader .action-icon .icon {
+    margin-left: 0.5rem;
+}
+/* File picker */
+.moodle-dialogue-bd {
+    height: auto !important;
+}
+/* filemaneger.scss */
+.file-picker {
+    .fp-navbar {
+        border-color: #ddd;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    }
+    .btn-sm {
+        line-height: 1;
+    }
+}
+/* Footer display none*/
+.pagelayout-course,
+.pagelayout-incourse,
+.pagelayout-admin {
+    #page-footer-frontpage {
+        display: none;
+    }
+}
+/* Right sidebar */
+.block_recentlyaccesseditems .card {
+    margin-top: 5px;
+}
+/* Frontpage Orj moodle page button */
+.setupbutton{
+    position: relative;
+    bottom: 32px;
+    margin-left: 20px;
+    i {
+        font-size: 24px;
+        color: white;
+    }
+}

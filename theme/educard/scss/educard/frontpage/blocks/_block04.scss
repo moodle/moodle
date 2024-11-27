@@ -1,0 +1,132 @@
+/*-----------------------
+    Latest Block04
+-------------------------*/
+.dark-frontpage,
+.dark-dashboard {
+    
+    .block04-bg {
+        background-image: none;
+    }
+    .block04-1 {
+        .single-project {
+            border: 1px solid var(--color-dl-yellow-b) !important;
+        }
+
+    }
+    .block04-2 {
+        .block04-card {
+            background-color: var(--color-dl-bg-black-dark);
+            border: 1px solid var(--color-dl-yellow-b) !important;
+        }
+        .project-inner {
+            border: 1px solid var(--color-dl-yellow-b) !important;
+        }
+    }
+}
+.block04-1,  .block04-2{
+    .block04-card {
+        background-color: white;
+        padding: 12px;
+    }
+    .single-project {
+        height: 400px;
+        display: table;
+        width: 100%;
+        background-size: cover;
+        background-position: center;
+        background-color: #cccc;
+        position: relative;
+        z-index: 1;
+        &:hover {
+            .project-inner {
+                visibility: visible;
+                opacity: 1;
+                filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+                &:after {
+                    -webkit-transform: scaleY(1);
+                            transform: scaleY(1);
+                    visibility: visible;
+                    opacity: 0.7;
+                    filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
+                }
+            }
+        }
+    }
+    .splide__slide.is-active {
+        .project-inner {
+            visibility: visible;
+            opacity: 1;
+            filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+            &:after {
+                -webkit-transform: scaleY(1);
+                        transform: scaleY(1);
+                visibility: visible;
+                opacity: .5;
+                filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
+            }
+        }
+    }
+    .project-inner {
+        display: table-cell;
+        vertical-align: middle;
+        position: relative;
+        visibility: hidden;
+        opacity: 0;
+        filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        -webkit-transition: .3s;
+        transition: .3s;
+        color: #fff;
+        p {
+            padding: 1rem 3rem;
+        }
+        &:after {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            content: "";
+            background: var( --theme-color2 );
+            color: #fff;
+            z-index: -1;
+            -webkit-transform: scaleY(0);
+                    transform: scaleY(0);
+            opacity: 0;
+            filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+            visibility: hidden;
+            -webkit-transition: .5s;
+            transition: .5s;
+            border-radius: 0.25rem;
+        }
+        a:hover {
+            color: gray-100;
+        }
+    }
+    .block04arrow {
+        z-index: 1;
+        width: 2em;
+        height: 2em;
+        background-color: var( --theme-color );
+        border: 1px solid var( --theme-color-ops-3 );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        padding: 0;
+        opacity: .7;
+        font-size: 1rem;
+        &:hover {
+            border: 1px solid white;
+        }
+    }
+    #block04-1-carousel {
+        p {
+            padding: 1rem 1rem;
+        }
+    }
+    #block04-1-carouselMobile {
+        p {
+            padding: 1rem 3rem;
+        }
+    }
+}

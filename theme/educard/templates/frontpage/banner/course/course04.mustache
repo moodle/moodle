@@ -1,0 +1,51 @@
+<div class="block07-4 col-md-12 col-lg-4 educard-block educard-font mt-3 mb-3">
+    <div class="course-item block-shadow block-hover-shadow educard-rounded">
+        {{#block07imgenabled}}
+        <div class="category-name align-middle block-shadow">
+            <i class="bx bx-category-alt"></i>
+            <a href="{{sc_categorylink}}">
+                <h4 class="text-truncate-1">{{sc_categoryname}}</h4>
+            </a>
+        </div>
+        <div class="img">
+            {{#sc_imgurl}}<img src="{{sc_imgurl}}" alt="image">{{/sc_imgurl}}
+        </div>
+        {{/block07imgenabled}}
+        {{^block07imgenabled}}
+        <div class="noimg"> 
+            <div class="category-name-noimg align-middle block-shadow">
+                <a href="{{sc_categorylink}}">
+                    <h4 class="text-truncate-1">{{sc_categoryname}}</h4>
+                </a>
+            </div>
+        </div>
+        {{/block07imgenabled}}
+        <div class="details position-relative">
+            {{#block07priceshow}}
+            <h4 class="price block-shadow educard-rounded">
+                {{sc_cost}} {{sc_currency}}
+            </h4>
+            {{/block07priceshow}}
+            {{#sc_teachername}}
+            <div class="user-picture">
+                    <span class="align-middle" data-toggle="tooltip" data-placement="top" title="{{{sc_teachername}}}">
+                    {{{sc_userpicture}}}
+                </span>    
+            </div>
+            {{/sc_teachername}}
+            <span class="h6 align-middle font-weight-500" data-toggle="tooltip" data-placement="top" title="{{#str}}block07tooltipenrolled, theme_educard{{/str}}">
+                <i class="fa fa-user-o mr-1" aria-hidden="true"></i> {{sc_studentscount}}
+            </span>
+            <span class="h6 float-right font-weight-500" data-toggle="tooltip" data-placement="top" title="{{#str}}block07tooltiplastdate, theme_educard{{/str}}">
+                <i class="fa fa-calendar mr-1"></i> {{sc_update}}
+            </span>
+            <a href="{{sc_courselink}}">
+                <h4 class="text-truncate-1">
+                    {{#block07shortname}}{{sc_shortname}}{{/block07shortname}}
+                    {{#block07fullname}}{{sc_fullname}}{{/block07fullname}}
+                </h4>
+            </a>
+            <div class="font-size-m text-truncate-3">{{{sc_summary}}}</div>
+        </div>
+    </div>
+</div>

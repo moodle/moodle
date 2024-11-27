@@ -1,0 +1,123 @@
+// Frontpage blocks scss.
+@import "slider";
+@import "block01";
+@import "block02";
+@import "block03";
+@import "block04";
+@import "block05";
+@import "block06";
+@import "block07";
+@import "block08";
+@import "block09";
+@import "block10";
+@import "block11";
+@import "block12";
+@import "block13";
+@import "block14";
+//@import "block18";
+@import "block19";
+@import "block20";
+@import "block21";
+
+/* HTML Block SVG header 5*/
+.dark-frontpage,
+.dark-dashboard {
+    .parallax > use:nth-child(4) {
+        fill: var(--color-dl-bg-black);
+    }
+}
+// Course teacher, price and blog the author.
+.block07-1 .educard-card-body,
+.block07-2 .educard-card-body,
+.block21-1 .educard-card-body,
+.block21-2 .educard-card-body,
+.block11-1 .card-body,
+.block11-2 .educard-author-blog {
+    margin-top: 0;
+    padding-top: 0;
+   .name-price {
+       padding: 0;
+       width: 100%;
+       position: relative;
+       z-index: 333;
+       margin-top: -33.5px;
+       .teacher-info {
+           display: inline-block;
+           .title {
+               font-weight: 500;
+               padding: 10px;
+               color: #fff;
+               border-radius: 30px;
+               position: absolute;
+               left: 0;
+               font-size: 13px;
+               -webkit-transform:translateX(-30px);
+               -moz-transform:translateX(-30px);
+               transform:translateX(-30px);
+               opacity:0;
+               visibility:hidden;
+               -webkit-transition: all 0.3s ease 0s;
+               -moz-transition: all 0.3s ease 0s;
+               transition: all 0.3s ease 0s;
+               background-color: var( --theme-color );
+               &:before {
+                   content: "";
+                   border-bottom: 12px solid;
+                   border-right: 10px solid transparent;
+                   border-left: 10px solid transparent;
+                   position: absolute;
+                   top: -10px;
+                   color: var( --theme-color );
+               }
+           }
+           img {
+               width: 60px;
+               height: 60px;
+               line-height: 60px;
+               border-radius: 100%;
+               display: inline-block;
+               border: 4px solid #fff;
+               -webkit-box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.15);
+               -moz-box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.15);
+               box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.15);
+           }
+           &:hover { 
+               img {
+                   -webkit-transform:rotate(360deg);
+                   -moz-transform:rotate(360deg);
+                   transform:rotate(360deg);
+                   border-color: var( --theme-color );
+                   -webkit-transition: all 0.3s ease 0s;
+                   -moz-transition: all 0.3s ease 0s;
+                   transition: all 0.3s ease 0s;
+               }
+               .title {
+                   transform:translateX(0px);
+                   opacity:1;
+                   visibility:visible;
+                   margin-top: 12px;
+               }
+           }
+           
+       }
+       .price {
+           color: #fff;
+           padding: 5px 25px;
+           position: relative;
+           margin-top: 12px;
+           float: right;
+           border-radius: 50px;
+           right: 0;
+           background: var( --theme-color );
+           &:before {
+               position: absolute;
+               left: 0;
+               content: "";
+               border-left: 15px solid #fff;
+               border-bottom: 15px solid transparent;
+               border-top: 15px solid transparent;
+               display: none;
+           }
+       }
+   }
+}

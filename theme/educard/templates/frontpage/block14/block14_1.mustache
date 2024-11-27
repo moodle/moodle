@@ -1,0 +1,46 @@
+{{!--  Block Events 1 --}}
+<div id="block14-1" class="block14-1 educard-block educard-font">
+    <div class="block14-bg block-start-end-space">
+        <div class="container">
+            <div class="educard-sub-title">
+                <h6>{{block14headline}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{{block14header}}} <span>{{block14maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="row mt-60">
+                {{#block14}}
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="event-item block-shadow block-hover-shadow">
+                            <div class="img">
+                                {{#img}}<img src="{{img}}" alt="image">{{/img}}
+                                {{^img}}<img src="{{frontpageimglink}}block14/d1/{{count}}.jpg" alt="image">{{/img}}
+                                <div class="crt-date">
+                                    <h6><i class="fa fa-calendar"></i> {{date}} </h6>
+                                </div>  
+                            </div>
+                            <div class="details position-relative">
+                                <a href="{{link}}">
+                                    <h4 class="text-truncate-1">
+                                        {{eventheader}}
+                                    </h4>
+                                </a>
+                                <div class="font-size-m text-truncate-4">{{{caption}}}</div>
+                            </div>
+                            {{#detail}}
+                            <div class="event-hover-action event-item block-shadow block-hover-shadow bg-white text-dark">
+                                <div class="p-2 site-background-color text-white text-center font-weight-bold">
+                                    {{#str}}show, moodle{{/str}} {{#str}}details, moodle{{/str}}
+                                </div>    
+                                {{{detail}}}
+                            </div>
+                            {{/detail}}
+                        </div>
+
+                    </div>
+                {{/block14}}
+            </div>
+        </div>
+    </div>
+</div>

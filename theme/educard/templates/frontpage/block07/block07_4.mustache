@@ -1,0 +1,76 @@
+{{!-- Course --}}
+<div id="block07-4" class="block07-4 educard-block educard-font">
+    <div class="block07-bg block-start-end-space">
+        <div class="container">
+            <div class="educard-sub-title">
+                <h6>{{{block07headline}}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block07header}} <span>{{block07maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="row mt-60">
+                {{#block07}}
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="course-item block-shadow block-hover-shadow educard-rounded">
+                        {{#block07imgenabled}}
+                        <div class="category-name align-middle block-shadow">
+                            <i class="bx bx-category-alt"></i>
+                            <a href="{{categorylink}}">
+                                <h4 class="text-truncate-1">{{categoryName}}</h4>
+                            </a>
+                        </div>
+                        <div class="img">
+                            {{#imgurl}}<img src="{{imgurl}}" alt="image">{{/imgurl}}
+                        </div>
+                        {{/block07imgenabled}}
+                        {{^block07imgenabled}}
+                        <div class="noimg"> 
+                            <div class="category-name-noimg align-middle block-shadow">
+                                <a href="{{categorylink}}">
+                                    <h4 class="text-truncate-1">{{categoryName}}</h4>
+                                </a>
+                            </div>
+                        </div>
+                        {{/block07imgenabled}}
+                        <div class="details position-relative">
+                            {{#block07priceshow}}
+                            <h4 class="price block-shadow educard-rounded">
+                                {{cost}} {{currency}}
+                            </h4>
+                            {{/block07priceshow}}
+                            {{#teachername}}
+                            <div class="user-picture">
+                                    <span class="align-middle" data-toggle="tooltip" data-placement="top" title="{{{teachername}}}">
+                                    {{{userpicture}}}
+                                </span>    
+                            </div>
+                            {{/teachername}}
+                            <span class="h6 align-middle font-weight-500" data-toggle="tooltip" data-placement="top" title="{{#str}}block07tooltipenrolled, theme_educard{{/str}}">
+                                <i class="fa fa-user-o mr-1" aria-hidden="true"></i> {{studentscount}}
+                            </span>
+                            <span class="h6 float-right font-weight-500" data-toggle="tooltip" data-placement="top" title="{{#str}}block07tooltiplastdate, theme_educard{{/str}}">
+                                <i class="fa fa-calendar mr-1"></i> {{update}}
+                            </span>
+                            <a href="{{courselink}}">
+                                <h4 class="text-truncate-1">
+                                    {{#block07shortname}}{{shortname}}{{/block07shortname}}
+                                    {{#block07fullname}}{{fullname}}{{/block07fullname}}
+                                </h4>
+                            </a>
+                            <div class="font-size-m text-truncate-3">{{{summary}}}</div>
+                        </div>
+                    </div>
+                </div>
+                {{/block07}}
+            </div>
+            <div class="text-center mt-3">
+                {{#block07button}}
+                <a class="educard-btn btn mt-3 text-white border-0 block-shadow" href="{{block07buttonlink}}">
+                    <span>{{block07button}}</span>
+                </a>
+                {{/block07button}}
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+{{!-- Categories --}}
+<div id="block09-2-s" class="block09-2 educard-block educard-font">
+    <div class="block09-bg block-start-end-space">
+        <div class="container educard-category">
+            <div class="educard-sub-title">
+                <h6>{{{block09headline}}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block09header}} <span>{{block09maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="mt-60 wrap-category-educard">
+                <div id="block09-2-slider" class="splide block09-2-slider" >
+                    <div class="splide__track" >
+                        <ul class="splide__list">
+                            {{#block09}}
+                            <li class="splide__slide">
+                                <div class="educard-single-item mb-4 mt-2 educard-rounded block-shadow block-hover-shadow border-0">
+                                    <div class="card educard-item-image educard-rounded {{#bgcolor}}block09-bg-color-{{counter}}{{/bgcolor}}">
+                                        {{#imgurl}}<img class="educard-rounded" src="{{imgurl}}" alt="image">{{/imgurl}}
+                                        <div class="overlay educard-rounded">
+                                            <div class="overlay-text text-center">
+                                                <i class="{{block09icon}}"></i>
+                                                <a href="{{catagoryURL}}">
+                                                    <h4 class="text-white">{{catagoryname}}</h4>
+                                                </a>
+                                                <p> {{coursecount}} {{#str}}courses, core {{/str}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>   
+                            {{/block09}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

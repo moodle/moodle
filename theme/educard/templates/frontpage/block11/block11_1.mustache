@@ -1,0 +1,41 @@
+<div id="block11-1" class="block11-1 educard-block educard-font">
+    <div class="block11-bg block-start-end-space">
+        <div class="container">
+            <div class="educard-sub-title">
+                <h6>{{block11headline}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{{block11header}}} <span>{{block11maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="row mt-60">
+                {{#block11}}
+                <div class="col-xl-4 col-md-6 mb-4 on-hover">
+                    <div class="card h-100 border-0 block-shadow block-hover-shadow">
+                        <div class="blog-img rounded-top">
+                            {{#imgurl}}
+                            <img src="{{{imgurl}}}" alt="img">
+                            {{/imgurl}}
+                            <div class="educard-date text-center">
+                                {{{shortdate}}}
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="name-price">
+                                <div class="teacher-info">
+                                    {{{userpicture}}}
+                                    <h4 class="title">{{{username}}}</h4>
+                                </div>
+                            </div>
+                            <h4 class="mt-4"><a href="{{postURL}}"> {{subject}} </a></h4>
+                            <div class="card-text">
+                                {{#shortentext}} 125, {{{summary}}} {{/shortentext}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{/block11}}
+            </div>
+        </div>
+    </div>
+</div>  

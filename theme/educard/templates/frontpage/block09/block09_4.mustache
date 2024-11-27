@@ -1,0 +1,39 @@
+{{!-- Categories --}}
+<div id="block09-4" class="block09-4 educard-block educard-font">
+    <div class="block09-bg block-start-end-space">
+        <div class="container educard-category">
+            <div class="educard-sub-title">
+                <h6>{{{block09headline}}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block09header}} <span>{{block09maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="row mt-60">
+                {{#block09}}
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="categori-item">
+                        {{#bgnone}}
+                            <div class="img-none educard-rounded"></div>
+                        {{/bgnone}}
+                        {{^bgnone}}
+                        <div class="img educard-rounded {{#bgcolor}}img-none block09-bg-color-{{counter}}{{/bgcolor}}">
+                            {{#imgurl}}<img src="{{imgurl}}" alt="image">{{/imgurl}}
+                        </div>
+                        {{/bgnone}}
+                        <div class="details position-relative block-shadow block-hover-shadow educard-rounded">
+                            <div class="icon">
+                                <i class="{{block09icon}}"></i>
+                            </div>
+                            <a href="{{catagoryURL}}" class="stretched-link">
+                                <h4 class="text-truncate-1">{{catagoryname}}</h4>
+                            </a>
+                            <div class="font-size-m text-truncate-3">{{{description}}}</div>
+                        </div>
+                    </div>
+                </div>
+                {{/block09}}
+            </div>
+        </div>
+    </div>
+</div>

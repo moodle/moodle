@@ -1,0 +1,329 @@
+/*-----------------------
+    Video Block 12
+-------------------------*/
+.dark-frontpage,
+.dark-dashboard {
+    .block12-bg {
+        background-image: none;
+    }
+    .block12-1 {
+        .card {
+            border: 1px solid var(--color-dl-yellow-b)!important;
+            &:hover {
+                .educard-link-btn {
+                    background-color: var(--color-dl-grey-b) !important;
+                    color: var(--color-dl-yellow-b);
+                    padding: 5px 15px 5px 15px;
+                }
+            }
+        }
+        .card-body {
+            background-color: var(--color-dl-bg-black-dark);
+        }
+        .educard-category {
+            background-color: var(--color-dl-grey-b) !important;
+            h6 {
+                margin-bottom: 0;
+            }
+            :hover a {
+                color: var(--color-dl-yellow-b) !important;
+            }
+        }
+    }
+    .block12-2,
+    .block12-3 {
+        .educard-video-block {
+            .card {
+                background-color: var(--color-dl-bg-black-dark);
+                border: 1px solid var(--color-dl-yellow-b)!important;
+                .play-btn {
+                    background: var(--color-dl-yellow-a);
+                }
+            }
+            .card-body {
+                background-color: var(--color-dl-bg-black);
+                h4 {
+                    color: var(--color-dl-yellow-b);
+                }
+                i {
+                    color: var(--color-dl-grey-a);
+                }
+            }
+            .frame {
+                background-color: var(--color-dl-grey-b);
+            }
+            h6 span {
+                color: var(--color-dl-yellow-b);
+            }
+            a {
+                color: var(--color-dl-yellow-b);
+                &:hover {
+                    color: var(--theme-color);
+                }
+            }
+        }
+    }
+
+
+}
+.block12-1,
+.block12-2,
+.block12-3 {
+    .modal .close {
+        height: 30px;
+        width: 30px;
+        margin: 0;
+        color: white;
+        border-radius: 3px;
+        font-size: 30px;
+        opacity: 1;
+    }
+}
+.modal-content {
+    border-radius: 5px;
+}
+.block12-1 {
+    .block12-bg {
+        background-repeat: repeat;
+    }
+    .hovereffect {
+        width: 100%;
+        float: left;
+        overflow: hidden;
+        position: relative;
+        text-align: center;
+        cursor: default;
+        img {
+            display: block;
+            position: relative;
+            -webkit-transition: all 0.4s cubic-bezier(0.88, -0.99, 0, 1.81);
+            transition: all 0.4s cubic-bezier(0.88, -0.99, 0, 1.81);
+            width: 110px;
+            height: 80px;
+        }
+        &:hover img {
+            -ms-transform: scale(1.2);
+            -webkit-transform: scale(1.2);
+            transform: scale(1.2);
+        }
+    }
+    .educard-video-block {
+        .card{
+            box-shadow: 0px 0px 30px rgb(115 128 157 / 10%);
+            transition: all 0.3s ease-in-out;
+            display: flex;
+            position: relative;
+            border-radius: 6px;
+            transition: 0.3s ease-in-out;
+            &:hover{
+                box-shadow: 0px 0px 30px rgb(115 128 157 / 30%);
+                .educard-link-btn {
+                    display: inline-block;
+                    -ms-transform: scale(1.2);
+                    -webkit-transform: scale(1.2);
+                    transform: scale(1.2);
+                }
+            }
+        }
+        .category {
+            width: 100%;
+            height: 100%;
+            padding: 45px 0;
+        }
+        .educard-link-btn {
+            display: none;
+            position: absolute;
+            top: 45px;
+            left:2.7em;
+            color: var( --theme-color );
+            &:hover {
+                display: none;
+                position: absolute;
+                color: #fff !important;
+                background-color: var( --theme-color ) !important;
+            }
+        }
+        .educard-category{
+            background-color: var( --theme-color-ops-1 );
+            &:hover{
+                background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffacac' fill-opacity='0.4'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+                animation: animatedBackground 5s linear infinite alternate;
+                a {
+                    display: inline-block;
+                    color: var( --theme-color );
+                }
+                i{
+                    display: none;
+                }
+            }
+            a {
+                display: none;
+            }
+            i {
+                color: var( --theme-color2 );
+                height: auto;
+                width: auto;
+                margin-top: 36px;
+                font-size: 48px;
+                display: inline-block;
+                margin-right: 0;
+            } 
+        }
+
+    }
+    @keyframes animatedBackground {
+        from {
+            background-position: 0 0;
+        }
+        to {
+            background-position: 100% 0;
+        }
+    }
+    .video-img-thumbnail {
+        height: 320px;
+        background-size: cover;
+        background-position: center;
+        a {
+            position: absolute;
+            left: 0;
+            right: 0;
+            font-size: 60px;
+            color: #fff;
+            top: 50%;
+            -webkit-transform: translateY(-50%);
+                    transform: translateY(-50%);
+            -webkit-transition: .5s;
+            transition: .5s;
+            &:hover {
+                color: var( --theme-color );
+            }
+        }
+        &:hover {
+            box-shadow: $educard-fp1-hover-shadow;
+        }
+    }
+    .single-choose-item i {
+        margin-right: 15px;
+        font-size: 30px;
+    }
+    .single-choose-item {
+        margin-bottom: 20px;
+    }
+}
+.block12-2,
+.block12-3 {
+    .block12-bg {
+        background-repeat: repeat;
+    }
+    .educard-video-block {
+        .frame {
+            padding: 12px;
+            background-color: white;
+        }
+        .card {
+            box-shadow: 0px 0px 30px rgb(115 128 157 / 10%);
+            &:hover {
+                box-shadow: 0px 0px 30px rgb(115 128 157 / 30%);
+            }
+            .play-btn {
+                background: white;
+                border-radius: 50%;
+                text-align: center;
+                animation: animate 2s linear infinite;
+                cursor: pointer;
+                width: 64px;
+                height: 64px;
+                position: absolute;
+                left: 3%;
+                top: 50%;
+                transform: translate(-50%,-50%);
+                i {
+                    color: var( --theme-color );
+                    font-size: 64px;
+                }
+            }
+        }
+        .card-body {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: auto;
+            background-color: var( --theme-color-ops-2 );
+            i {
+                font-size: 24px;
+                margin-top: 2px;
+            }
+            h6 {
+                margin-top: 5px;
+                margin-left: 5px;
+            }
+        }
+        .video-back {
+            filter: brightness(70%); 
+            background-repeat: no-repeat;
+            img {
+                height:200px;
+                width: 100%;
+                object-fit: cover; 
+            }
+        }
+    }
+
+    @media (max-width: 767px) {
+        .educard-video-block {
+            .play-btn {
+                left: 50% !important;
+                top: 4% !important;
+            }
+            .card-body {
+                background-size: contain;;
+            }
+        }
+    }
+
+    @keyframes animate{
+        0% {
+            box-shadow: 0 0 0 0 rgba(var( --theme-color-rgba ),0.7);
+        }
+        40% {
+            box-shadow: 0 0 0 50px rgba(255,193,7,0);
+        }
+        80% {
+            box-shadow: 0 0 0 50px rgba(255,193,7,0);
+        }
+        100% {
+            box-shadow: 0 0 0 rgba(255,193,7,0);
+        }
+    }
+}
+.block12-3 {
+    .educard-video-block {
+        .video-back {
+            img {
+                height: 350px;
+            }
+        }
+        .card {
+            box-shadow: 0px 0px 30px rgb(115 128 157 / 10%);
+            &:hover {
+                box-shadow: 0px 0px 30px rgb(115 128 157 / 30%);
+            }
+            .play-btn {
+                background: transparent;
+                animation: none;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%,-50%);
+                i {
+                    color: #ddd;
+                    font-size: 64px;
+                }
+            }
+        }
+        .card-body {
+            background-color: white;
+        }
+    }
+}

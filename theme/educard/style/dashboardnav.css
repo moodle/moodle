@@ -1,0 +1,34 @@
+/* Theme dashboard navbar change */
+.fixed-top {
+    position: -webkit-sticky;
+    position: sticky;
+    right: 0;
+}
+[data-region="drawer"] {
+    height: calc(100%);
+}
+#page {
+    margin-top: 0px;
+}
+@media (min-width: 576px){
+    [data-region="drawer"] {
+        padding: 0px 0px;
+        background-color: #f7f7f7 !important;
+        top: 0px;
+        border-top: 5px solid var(--theme-color);
+    }
+    #page {
+        background-color: #f7f7f7 !important;
+    }
+}
+@media (max-width: 767.98px){
+    [data-region="drawer"] {
+        padding: 0px 0px;
+        background-color: #f7f7f7 !important;
+        top: 60px;
+        border-top: 0px;
+    }
+    .navbar-two {
+        display: none;
+    }
+}

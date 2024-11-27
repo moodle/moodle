@@ -1,0 +1,46 @@
+<div class="banner-5 educard-header-5 educard-block educard-font position-relative pt-5">
+    {{#banner5shape}}
+    <div class="educard-shape">
+        <img class="educard-shape-1" src="{{shape1}}" alt="shape-1">
+        <img class="educard-shape-2" src="{{shape2}}" alt="shape-2">
+        <img class="educard-shape-4" src="{{shape4}}" alt="shape-4">
+    </div>
+    {{/banner5shape}}
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-5 col-md-12 col-sm-12 info-detail align-self-center">
+                <div>
+                    <h1>{{banner5caption1}} <span> {{banner5caption2}}</span></h1>
+                    <div class="educard-heading-line-left"></div>
+                </div>
+                <h3 class="subtitle">{{banner5caption3}}</h3>
+                {{#banner5btn}}
+                <a class="btn educard-btn mt-3 mb-3" href="{{banner5btnlnk}}">
+                    <span>{{banner5btn}}</span>
+                </a>
+                {{/banner5btn}}
+                {{#banner5btn1}}
+                <a class="btn btn-style mt-3 mb-3" href="{{banner5btn1lnk}}">
+                    <span>{{banner5btn1}}</span>
+                </a>
+                {{/banner5btn1}}
+            </div>
+            <div class="col-lg-7 col-md-5">
+                <img class="hero img-fluid" src="{{imgbanner5}}" alt="hero" loading="lazy">
+            </div>
+        </div>
+    </div>
+    <div>
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"></path>
+            </defs>
+            <g class="parallax">
+                <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7"></use>
+                <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)"></use>
+                <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)"></use>
+                <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff"></use>
+            </g>
+        </svg>
+    </div>
+</div>

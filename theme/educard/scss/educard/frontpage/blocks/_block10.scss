@@ -1,0 +1,189 @@
+/*-----------------------
+    Testimonials Block10
+-------------------------*/
+.dark-frontpage,
+.dark-dashboard {
+    .block10-bg {
+        background-image: none;
+    }
+    .block10-1 {
+        .btn-testimonial-quote {
+            background: var(--orange) !important;
+            border: 1px solid var(--theme-color) !important;
+            i {
+                color: var(--color-dl-grey-b);
+            }
+            
+        }
+        p, h5 {
+            color: var(--color-dl-yellow-b);  
+        }
+        .nav-link img {
+            border: 5px solid var(--color-dl-yellow-b);
+        }
+    }
+    .block10-2 {
+        .card {
+            background-color: var(--color-dl-bg-black-dark);
+            border: 1px solid var(--color-dl-yellow-b);
+            min-height: 200px;
+        }
+        .testimonial {
+            background-color: var(--color-dl-grey-b);
+        }
+        .picture .img-bg {
+            background-color: var(--color-dl-yellow-a);
+        }
+    }
+    .block10-3 {
+        .person-boxes {
+            .person-box {
+                background-color: var(--color-dl-bg-black-dark);
+                border: 1px solid var(--color-dl-yellow-b) !important;
+                h4 {
+                    color: var(--color-dl-yellow-a);
+                }
+                p,
+                span {
+                    color: var(--color-dl-grey-a);
+                }
+            }
+        } 
+    }
+}
+.block10-1 {
+    .educard-testimonial {
+        border-right: none;
+    }
+    .nav-link {
+        border-radius: 0px;
+        margin: 8px -2px 8px 0;
+        img {
+            width: 10vw;
+            height: 10vw;
+            max-width: 100px;
+            max-height: 100px;
+            opacity: 0.5;
+            border: 2px solid #ccc;
+        }
+        &.active {
+            background: transparent;
+            color: #8d97ad;
+            border-right: 3px solid var( --theme-color );
+            img {
+                opacity: 1;
+            }
+            &:hover {
+                background-color: transparent;
+            }
+        }
+    }
+    .btn-testimonial-quote {
+        background: #ffc600 !important;
+        border: 1px solid var( --theme-color ) !important;
+        i {
+            color: #fff;
+        }
+    }
+    .btn-md {
+        padding: 18px 0px;
+        width: 60px;
+        height: 60px;
+        font-size: 20px;
+    }
+}
+.block10-2 {
+    .testimonial{
+        padding: 12px;
+        -webkit-transition: .6s;
+        transition: .6s;
+        .checked {
+            color: orange;
+        }
+    }
+    .picture {
+        img {
+            height: 60px;
+            width: 60px;
+            margin: 5px;
+            -webkit-clip-path: polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%);
+            clip-path: polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%);
+        }
+        .img-bg {
+            position: absolute;
+            height: 70px;
+            width: 70px;
+            display: inline-block;
+            background-color: white;
+            -webkit-clip-path: polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%);
+            clip-path: polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%);
+        }
+    }
+    .card {
+        background-color: var( --theme-color-ops-1 );
+    }
+    .name-job {
+        line-height: .8;
+    }
+}
+.block10-3 {
+    .person-boxes {
+        padding-top: 0;
+        position: relative;
+        z-index: 100;
+        .person-box {
+            padding: 40px 30px;
+            position: relative;
+            overflow: hidden;
+            background: #fff;
+            transition: all 0.3s ease-in-out;
+            i {
+                color: #666;
+            }
+            .person-img {
+                margin: 0 auto 5px auto;
+                display: flex;
+                justify-content: center;
+                img {
+                    height: 70px;
+                    width: 70px;
+                    border-radius: 50px;
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-down(sm) {
+	.block10 {
+        .educard-testimonial-style {
+            -webkit-box-orient: horizontal !important;
+            -webkit-box-direction: normal !important;
+            -webkit-flex-direction: row !important;
+            -ms-flex-direction: row !important;
+            flex-direction: row !important;
+            border-right: 0px solid rgba(120, 130, 140, 0.13);
+            border-bottom: 1px solid rgba(120, 130, 140, 0.13);
+            margin-bottom: 40px;
+            background-color: transparent;
+            .nav-link {
+                margin: 0px 0px -2px 0;
+                padding: 10px;
+                img {
+                    width: 40px;
+                }
+            }
+            .nav-link.active {
+                border-right: 0px solid #0071dc;
+                border-bottom: 3px solid #0071dc;
+            }
+        }
+        .nav-pills .nav-link.active:not(:disabled):not(.disabled).active {
+            background-color: transparent;
+            border-color: var( --theme-color );
+        }
+        .nav-link.active.focus, .nav-pills .nav-link.active:focus {
+            box-shadow: none;
+        }
+    }
+}

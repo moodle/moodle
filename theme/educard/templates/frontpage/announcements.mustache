@@ -1,0 +1,69 @@
+<!-- duyuru -->
+<section id="duyuru-c-1" class="educard-block educard-font">
+    <div id="carouselduyuruindicator" class="carousel slide " data-ride="carousel">
+        <div class="carousel-inner container bg-duyuru educard-rounded">
+            <div class="d-flex pt-2 pb-2 pl-2 pr-2 text-center">
+                <div class="col-11 pl-5">
+                    {{#duyuru}}
+                    <div class="carousel-item {{#active}}active{{/active}}">
+                        <a href="#duyuruModal{{ say }}" class="h6" data-toggle="modal">
+                            <i class="fa fa-bullhorn">&nbsp;&nbsp;</i>
+                            {{ say }}-{{ subject }} - {{postmodified}}
+                        </a>
+                    </div>
+                    {{/duyuru}}
+                </div>
+                <div class="col-1">
+                    <ol class="carousel-indicators d-none">
+                        {{#duyuru}}
+                        <li data-target="#carouselduyuruindicator" data-slide-to="{{say}}" {{#active}}class="active"
+                            {{/active}}></li>
+                        {{/duyuru}}
+                    </ol>
+                    <span class="{{#active}} active {{/active}}"></span>
+                </div>
+                <a class="carousel-control-prev" href="#carouselduyuruindicator" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </a>
+                <a class="carousel-control-next" href="#carouselduyuruindicator" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Modal -->
+<div class="duyuru-modal">
+    {{#duyuru}}
+    <div class="modal fade" id="duyuruModal{{ say }}" tabindex="-1" aria-labelledby="duyuruModalLabel{{ say }}" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header pt-3 pb-3">
+                    <div>
+                        {{{userpicture}}}
+                    </div>
+                    <div class="duyuru-c-1-header"> 
+                        <h6 class="modal-title" id="duyuruModalLabel{{ say }}">{{ subject }}</h6>
+                        <span>{{fullname}} - {{postmodified}}</span>
+                        
+                    </div>
+                    <div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="p-5">{{{message}}}</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary pt-2 pb-2" data-dismiss="modal">Close</button>
+                    <a class="btn btn-primary pt-2 pb-2" href="{{url}}" target="_blank" role="button">{{#str}}
+                        details, moodle {{/str}}</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/duyuru}}
+</div>

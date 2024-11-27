@@ -1,0 +1,81 @@
+<div id="block07-4-s" class="block07-4 educard-block educard-font">
+    <div class="block07-bg block-start-end-space">
+        <div class="container">
+            <div class="educard-sub-title">
+                <h6>{{block07headline}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block07header}}<span> {{block07maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="mt-60">
+                <div id="block07-4-slider" class="splide block07-4-slider">
+                    <div class="splide__track" >
+                        <ul class="splide__list">
+                            {{#block07}}
+                            <li class="splide__slide">
+                                <div class="course-item block-shadow block-hover-shadow educard-rounded">
+                                    {{#block07imgenabled}}
+                                    <div class="category-name align-middle block-shadow educard-rounded">
+                                        <i class="bx bx-category-alt"></i>
+                                        <a href="{{categorylink}}">
+                                            <h4 class="text-truncate-1">{{categoryName}}</h4>
+                                        </a>
+                                    </div>
+                                    <div class="img">
+                                        {{#imgurl}}<img src="{{imgurl}}" alt="image">{{/imgurl}}
+                                    </div>
+                                    {{/block07imgenabled}}
+                                    {{^block07imgenabled}}
+                                    <div class="noimg"> 
+                                        <div class="category-name-noimg align-middle block-shadow">
+                                            <a href="{{categorylink}}">
+                                                <h4 class="text-truncate-1">{{categoryName}}</h4>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {{/block07imgenabled}}
+                                    <div class="details position-relative">
+                                        {{#block07priceshow}}
+                                        <h4 class="price block-shadow educard-rounded">
+                                            {{cost}} {{currency}}
+                                        </h4>
+                                        {{/block07priceshow}}
+                                        {{#teachername}}
+                                        <div class="user-picture">
+                                            <span class="align-middle" data-toggle="tooltip" data-placement="top" title="{{{teachername}}}">
+                                                {{{userpicture}}}
+                                            </span>
+                                        </div>
+                                        {{/teachername}}
+                                        <span class="align-middle" data-toggle="tooltip" data-placement="top" title="{{#str}}block07tooltipenrolled, theme_educard{{/str}}">
+                                            <i class="fa fa-user-o" aria-hidden="true"></i> {{studentscount}}
+                                        </span>
+                                        <span class="float-right" data-toggle="tooltip" data-placement="top" title="{{#str}}block07tooltiplastdate, theme_educard{{/str}}">
+                                            <i class="fa fa-calendar"></i> {{update}}
+                                        </span>
+                                        <a href="{{courselink}}">
+                                            <h4 class="text-truncate-1">
+                                                {{#block07shortname}}{{shortname}}{{/block07shortname}}
+                                                {{#block07fullname}}{{fullname}}{{/block07fullname}}
+                                            </h4>
+                                        </a>
+                                        <div class="font-size-m text-truncate-3">{{{summary}}}</div>
+                                    </div>
+                                </div>
+                            </li>
+                            {{/block07}}
+                        </ul>
+                    </div>
+                </div>            
+            </div>
+            <div class="text-center mt-3">
+                {{#block07button}}
+                <a class="educard-btn btn mt-3 text-white border-0 block-shadow" href="{{block07buttonlink}}">
+                    <span>{{block07button}}</span>
+                </a>
+                {{/block07button}}
+            </div>
+        </div>
+    </div>
+</div>        

@@ -1,0 +1,67 @@
+/* Theme Educard navbar */
+.navbar {
+    max-height: $navbar-height;
+    font-weight: $navbar-font-weight;
+    @include font-size($navbar-font-size);
+    .popover-region-container {
+        top: calc(#{$navbar-height} - (#{$spacer} / 2));
+    }
+    margin: auto;
+    .usertext {
+        margin-right: 10px!important;
+        margin-left: 10px;
+    }
+}
+
+.hydropdown {
+    position: relative;
+    right: 0;
+    .icon{
+        margin: 0;
+    }
+    .hydropbtn {
+        font-size: 16px;  
+        border: none;
+        outline: none;
+        color: white;
+        padding: 14px 16px;
+        background-color: #f9f9f9;
+        font-family: inherit;
+        margin: 0;
+    }
+    &:hover .hydropdown-content {
+        display: block;
+    }
+}
+.hydropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #dee2e6;
+    min-width: 160px;
+    z-index: 1;
+    border-radius: 0.3rem;
+    box-shadow: 0 50px 100px rgb(50 50 93 / 10%), 0 15px 35px rgb(50 50 93 / 15%), 0 5px 15px rgb(0 0 0 / 10%);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    z-index : 99999;
+    a {
+        float: none;
+        //color: black;
+        padding: 0.25rem 1.5rem;
+        text-decoration: none;
+        display: block;
+        text-align: left;
+    }
+}
+.dashboard-header-area .hydropdown .hydropdown-content {
+    right:0;
+}
+
+#langheader3 {
+    .dropdown-menu {
+        right: 0;
+        left: auto;
+    }
+}
+.navbar.fixed-top {
+    align-items: center;
+}

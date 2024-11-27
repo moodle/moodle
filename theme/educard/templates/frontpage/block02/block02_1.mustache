@@ -1,0 +1,23 @@
+<div id= "block02-1" class="block02-1 educard-block educard-font">
+    <div class="block02-bg block-start-end-space">
+        <div class="container">
+            <div class="row">
+                {{#block02}}
+                <div class="{{{count}}}">
+                    <div class="single-edu-icon-box mb-3 educard-rounded block02-1-bg-img-{{counter}}">
+                        <div class="edu-icon-box-content">
+                            <h4 class="iconbox-content-heading text-truncate-1"><i class="{{icon}}"></i> {{{title}}} </h4>
+                            <div class="iconbox-content-body">
+                                <div class="text-truncate-5 pb-2"> {{#shortentext}} 150, {{{caption}}} {{/shortentext}} </div>
+                                {{#button}}
+                                <a class="btn" href="{{{buttonurl}}}"><i class="fa fa-plus-square"></i> {{{button}}}</a>
+                                {{/button}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{/block02}}
+            </div>
+        </div>
+    </div>
+</div>

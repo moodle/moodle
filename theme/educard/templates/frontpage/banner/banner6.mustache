@@ -1,0 +1,24 @@
+<!-- educard Video İcon Header Block -->
+<section class="banner-6 educard-video-header" {{#banner6mb}}style="margin-bottom:{{banner6mb}}"{{/banner6mb}}>
+    <!-- This div is  intentionally blank. It creates the transparent black overlay over the video which you can modify in the CSS -->
+    <div class="overlay"></div>
+    <!-- The HTML5 video element that will create the background video on the header -->
+    <video playsinline="playsinline" autoplay="autoplay" muted="muted" loop="loop">
+        <source src="{{banner6vdolnk}}" type="video/mp4">
+    </video>
+
+    <!-- The header content -->
+    <div class="container h-100">
+        <div class="d-flex h-100 text-center align-items-center">
+            <div class="w-100 text-white">
+                <h1 class="display-3">{{{banner6caption1}}}</h1>
+                <div class="lead mb-0">{{{banner6caption2}}}</div>
+                {{#banner6btn}}
+                <a class="btn btn-style mt-3 mb-3" href="{{banner6btnlnk}}">
+                    <span>{{banner6btn}}</span>
+                </a>
+                {{/banner6btn}}
+            </div>
+        </div>
+    </div>
+</section>

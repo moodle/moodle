@@ -1,0 +1,88 @@
+<div id="block04-1-s" class="block04-1 educard-block educard-font pb-90 bg-dark">
+    <div class="container block-start-end-space">
+        <div class="educard-sub-title pt-40">
+            <h6>{{block04headline}}</h6>
+        </div>
+        <div>
+            <div class="h1 text-white">{{block04header}}<span> {{block04maintitle}}</span></div>
+            <div class="educard-heading-line-left"></div>
+        </div>
+        {{! This Code Block is For PC Edition }}
+        <div class="text-center d-none d-sm-none d-lg-block">
+            <div class="d-none d-sm-none d-lg-block p-3">
+                <div class="text-white">
+                    <a class="btn-sm float-left block04arrow text-decoration-none text-white" href="#block04-1-carousel" role="button" data-slide="prev"><i class="fa fa-chevron-left"></i></a>
+                    <a class="btn educard-btn text-white" href="{{block04buttonlink}}">{{block04button}}</a>
+                    <a class="btn-sm float-right block04arrow text-decoration-none text-white" href="#block04-1-carousel" role="button" data-slide="next"><i class="fa fa-chevron-right"></i></a>
+                </div>
+            </div>
+            <div id="block04-1-carousel" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner" role="listbox">
+                    <div class="carousel-item active">
+                        {{#block04_1}}
+                        <div class="col-lg-3 float-left">
+                            <div class="single-project educard-rounded block04-1-bg-img-{{counter}}">
+                                <div class="project-inner p-1">
+                                    <a class="btn btn-md btn-warning text-white"  href="{{link}}"><h5>{{title}}</h5></a>
+                                    <p>{{caption}}</p>
+                                </div>
+                            </div>
+                        </div>   
+                        {{/block04_1}} 
+                    </div>
+                    <div class="carousel-item ">
+                        {{#block04_2}}
+                        <div class="col-lg-3 float-left">
+                            <div class="single-project educard-rounded block04-1-bg-img-{{counter}}">
+                                <div class="project-inner p-1">
+                                    <a class="btn btn-md btn-warning text-white" href="{{link}}"><h5>{{title}}</h5></a>
+                                    <p>{{caption}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {{/block04_2}}
+                    </div>
+                </div>
+                <div class="d-none d-sm-block d-md-none d-block d-sm-none">
+                    <a class="carousel-control-prev " href="#block04-1-carousel" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#block04-1-carousel"  data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>    
+            </div>
+        </div>
+
+        {{! This Code Block is For Mobile Edition }}
+        <div class="container text-center my-3 d-lg-none d-xl-none">
+            <div class="blockbgcolor-b">
+                <a class="btn btn-sm btn-secondary mb-4" href="{{block04buttonlink}}">{{block04button}}</a>
+            </div>  
+            <div id="block04-1-carouselMobile" class="carousel slide " data-ride="carousel">
+                <div class="carousel-inner " >
+                    {{#block04}}
+                    <div class="carousel-item col-lg-3 float-left {{#active}}active{{/active}} ">
+                        <div class="single-project educard-rounded block04-bg-img-{{counter}}">
+                            <div class="project-inner">
+                                <a class="btn btn-md btn-secondary text-white" href="{{link}}"><h5>{{title}}</h5></a>
+                                <p>{{caption}}</p>
+                            </div>
+                        </div>
+                    </div>    
+                    {{/block04}}
+                </div>
+                <a class="carousel-control-prev " href="#block04-1-carouselMobile" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#block04-1-carouselMobile"  data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

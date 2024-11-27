@@ -1,0 +1,86 @@
+<footer class="block20 educard-block educard-font">
+    <div class="footer-header-underline pt-60 pb-20  
+                    {{#footerbackcolor}} footerbackcolor {{/footerbackcolor}}
+                    {{^footerbackcolor}} bg-dark {{/footerbackcolor}}
+                    ">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-widget">
+                        <div class="footer-logo">
+                            {{#block20logo}}
+                                <img src="{{block20logo}}" alt="{{sitename}}">
+                            {{/block20logo}}
+                            {{^block20logo}}
+                                {{#block20col1header}}
+                                    <div class="d-flex footer-site-name">
+                                        {{#pix}}graduation-cap-solid, theme_educard{{/pix}}
+                                        <div class="h4 d-flex align-items-center m-0">{{{block20col1header}}}</div>
+                                    </div>
+                                {{/block20col1header}}
+                                {{^block20col1header}}
+                                    <div class="d-flex footer-site-name">
+                                        {{#pix}}graduation-cap-solid, theme_educard{{/pix}}
+                                        <div class="h4 d-flex align-items-center m-0">{{sitename}}</div>
+                                    </div>
+                                {{/block20col1header}}
+                            {{/block20logo}}
+
+                            <div class="footer-dec">
+                                {{{block20col1caption}}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 ">
+                    <div class="footer-widget">
+                        <div class="widget-title footer-header-underline">
+                            <h3>{{{block20col4header}}}</h3>
+                        </div>
+                        <div class="address-line">
+                            {{{block20col4caption}}} 
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-widget">
+                        <div class="widget-title footer-header-underline">
+                            <h3>{{{block20col2header}}}</h3>
+                        </div>
+                        <ul class="footer-menu">
+                            {{{block20col2links}}}
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-widget">
+                        <div class="widget-title footer-header-underline">
+                            <h3>{{{block20col3header}}}</h3>
+                        </div>
+                        <ul class="footer-menu">
+                        {{{block20col3links}}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="copyright-area bg-dark">
+        <div class="container">
+            <div class="row ">
+                <div class="col-12 text-center pt-10 social-links">
+                    {{{block20social}}}
+                </div>
+                <div class="col-12 text-center  d-flex justify-content-center">
+                    {{> theme_educard/frontpage/setup-button }}  
+                    <div class="copyright-area ">
+                        <div class="small">
+                            {{{block20copyright}}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{> theme_educard/frontpage/theme }}
+    </div>
+</footer>

@@ -1,0 +1,61 @@
+.shape-main {
+    width: 100%;
+    position: relative;
+    height: 583px;
+}
+span.blue-circle {
+    left: 13%;
+    bottom: 120px;
+    width: 330px;
+    height: 150px;
+    border-bottom: 0;
+    top: auto;
+    border-top-left-radius: 245px;
+    border-top-right-radius: 245px;
+    position: absolute;
+    background: #695de9;
+    transform: rotate(
+-29deg);
+}
+
+// Educard bg dots Colors
+.bg-dots-horizontal {
+    position: absolute;
+    background-image: radial-gradient(var( --theme-color-ops-5 ) 1px, transparent 0);
+    background-size: 30px 30px;
+    height: 250px;
+    width: 90%;
+    right: -15px;
+    left: -15px;
+}
+.bg-dots-vertical {
+    position: absolute;
+    background-image: radial-gradient(var( --theme-color-ops-5 ) 1px, transparent 0);
+    background-size: 30px 30px;
+    height: 550px;
+    width: 10%;
+    left: 0;
+}
+.bg-dots-horizontal-1 {
+    position: absolute;
+    height: 550px;
+    width: 15%;
+    right: 0;
+    background-image: radial-gradient(var( --theme-color-ops-1 ) 10%, transparent 11%),
+      radial-gradient(var( --theme-color-ops-2 ) 10%, transparent 11%);
+    background-size: 60px 60px;
+    background-position: 0 0, 30px 30px;
+    background-repeat: repeat;
+}
+.bg-dots-vertical-1 {
+    position: absolute;
+    height: 550px;
+    width: 15%;
+    right: 0;
+    background-image: radial-gradient(var( --theme-color-ops-1 ) 10%, transparent 11%),
+      radial-gradient(var( --theme-color-ops-2 ) 10%, transparent 11%);
+    background-size: 60px 60px;
+    background-position: 0 0, 30px 30px;
+    background-repeat: repeat;
+}
+

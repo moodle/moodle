@@ -1,0 +1,264 @@
+/*-----------------------
+    Iconbox Block02
+-------------------------*/
+.dark-frontpage,
+.dark-dashboard {
+    .block02-1 {
+        .single-edu-icon-box {
+            border: 1px solid var(--color-dl-yellow-b) !important;
+            .edu-icon-box-content {
+                background: var(--color-dl-grey-b);
+            }
+        }
+    }
+
+    .block02-2 {
+        .card {
+            border: 1px solid var(--color-dl-yellow-b) !important;
+        }
+        .educard-wrap-iconbox {
+        background-color: var(--color-dl-grey-b);
+        }
+    }
+    .block02-3 .edu-icon-box {
+        background: var(--color-dl-grey-b);
+        border: 1px solid var(--color-dl-yellow-b) !important;
+        a {
+            color: var(--color-dl-yellow-a);
+            &:hover {
+                color: var(--color-dl-grey-a);
+            }
+        }
+    }
+    .block02-4-card {
+        border: 1px solid var(--color-dl-yellow-b) !important;
+    }
+    .block02-4 {
+        .block02-bg {
+            background-image: none;
+        }
+    }
+}
+.block02-1 {
+    .single-edu-icon-box {
+        height: 280px;
+        background-size: cover;
+        background-position: center;
+        background-color: #cccc;
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+        box-shadow: $educard-fp1-shadow;
+        .edu-icon-box-content {
+            position: absolute;
+            left: 0;
+            top: 210px;
+            width: 100%;
+            height: 100%;
+            background: var( --theme-color-ops-8 );
+            opacity: .9;
+            filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
+            color: #fff;
+            z-index: -1;
+            padding: 20px 30px 30px 30px;
+            -webkit-transition: .6s;
+            transition: .6s;
+            cursor: pointer;
+            &:hover {
+                top: 0;
+            }
+        }
+        .iconbox-content-heading {
+            margin: 0 0 15px;
+            text-transform: normal;
+            color: #fff;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            -webkit-box-align: center;
+                -ms-flex-align: center;
+                    align-items: center;
+            i {
+                font-size: 30px;
+                margin-right: 15px;
+                vertical-align: middle;
+            }    
+        }
+        .iconbox-content-body {
+            p {
+                color: #f6f6f6;
+                text-align: justify;
+                //margin-bottom: 25px;
+            }
+            .btn {
+                background-color: white;
+            }
+        }
+    }   
+}
+.block02-2 {
+    .educard-wrap-iconbox {
+        -webkit-transition: 0.2s ease-in;
+        -o-transition: 0.2s ease-in;
+        transition: 0.2s ease-in;
+        background-color: #fff;
+        .corner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            overflow: hidden;
+            top: 0;
+            right: 0;
+            background-color: #fff;
+            opacity: 0.9;
+            border-radius: 0px 2px 0 80px;
+            border: 1px solid var( --theme-color-ops-1 );
+            z-index: 1;
+        } 
+        .card-body {
+            box-sizing: border-box;
+            position: relative;
+            border: none;
+            .icon {
+                font-size: 40px;
+                position: absolute;
+                top: 12px;
+                right: 26px;
+                z-index: 1;
+                text-align: center;
+                color: var( --theme-color );
+            }
+            h4 {
+                color:var( --theme-color );
+            }
+        }
+        .card-footer {
+            border: none;
+            background-color: transparent;
+            a {
+                &:hover{
+                    i{
+                        margin-left:5px;
+                        transition: 0.4s; 
+                    }
+                }
+            }
+            .linking {
+                color: var( --theme-color );
+                background-color: #ffffff;
+                &:hover {
+                    color: #fff;
+                    background-color: var( --theme-color );
+                }
+            }
+        }
+        &:hover {
+            -webkit-transform: scale(1.05);
+            -ms-transform: scale(1.05);
+            transform: scale(1.05);
+            border: none;
+            .corner {
+                background-color: var( --theme-color );
+            }
+            .icon {
+                color: #fff;
+            }
+        }
+    }
+    .card {
+        border: none;
+        background-color: var( --theme-color2-ops-5 );
+    }
+    h4 {
+        height: 100px;
+    }
+}
+.block02-3 {
+    padding-top: 0;
+    position: relative;
+    z-index: 100;
+    .edu-icon-box {
+        padding: 40px 30px;
+        position: relative;
+        overflow: hidden;
+        background: #fff;
+        transition: all 0.3s ease-in-out;
+        .icon {
+            margin: 0 auto 20px auto;
+            display: inline-block;
+            text-align: center;
+            i {
+                font-size: 36px;
+                line-height: 1;
+                color: #f6b024;
+            }
+        }
+    }
+    .title {
+        margin-bottom: 15px;
+    }
+}
+.block02-4 {
+    .rounded-3 {
+        border-radius: 0.5rem !important;
+    }
+    .me-3 {
+        margin-right: 1rem !important;
+    }
+    .end-0 {
+        right: 0 !important;
+    }
+    .bottom-0 {
+        bottom: 0 !important;
+    }
+    .bg-1 {
+        --bs-bg-opacity: 1;
+        background-color: rgba(6, 106, 201, var(--bs-bg-opacity)) !important;
+    }
+    .bg-2 {
+        --bs-bg-opacity: 1;
+        background-color: rgba(154, 158, 164, var(--bs-bg-opacity)) !important;
+    }
+    .bg-3 {
+        --bs-bg-opacity: 1;
+        background-color: rgba(53, 122, 50, var(--bs-bg-opacity)) !important;
+    }
+    .bg-4 {
+        --bs-bg-opacity: 1;
+        background-color: rgba(202, 49, 32, var(--bs-bg-opacity)) !important;
+    }
+
+    .bg-opacity-10 {
+        --bs-bg-opacity: 0.2;
+    }
+    .btn-1 {
+        color: #fff;
+        background-color: #0f6fc5;
+        border-color: #0f6fc5;
+    }
+    .btn-2 {
+        color: #212529;
+        background-color: #f0ad4e;
+        border-color: #f0ad4e;
+    }
+    .btn-3 {
+        color: #fff;
+        background-color: #357a32;
+        border-color: #357a32;
+    }
+    .btn-4 {
+        color: #fff;
+        background-color: #008196;
+        border-color: #008196;
+    }
+    .h-100px {
+        height: 100px !important;
+    }
+    @media (min-width: 576px) {
+        .h-sm-200px {
+            height: 200px !important;
+        }
+    }
+}

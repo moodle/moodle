@@ -1,0 +1,111 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+<div id="navbarhy" class="navbar-1">
+    <nav class="navbar header-area fixed-top navbar-expand bg-navbarcolor educard-font" 
+        aria-label="{{#str}}sitemenubar, admin{{/str}}">
+        <div class="container">
+            <button class="navbar-toggler aabtn d-none d-lg-none px-1 my-1 border-0" data-toggler="drawers" 
+                data-action="toggle" data-target="theme_boost-drawers-primary">
+                <span class="navbar-toggler-icon"></span>
+                <span class="sr-only">{{#str}}sidepanel, core{{/str}}</span>
+            </button>
+            <div class="head_actions">
+                <button type="button" class="head_trigger mobile_trigger" title="Mobil Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>  
+            <a href="{{{ config.homeurl }}}" 
+                class="navbar-brand d-none d-xl-flex align-items-center m-0 mr-4 p-1 aabtn
+                {{#headerlogocompact}}{{#compactlogovar}} bg-logo {{/compactlogovar}} {{/headerlogocompact}}
+                {{#headerlogo}}{{#logovar}}  bg-logo {{/logovar}}{{/headerlogo}}">
+                {{#headerlogocompact}}
+                    {{# compactlogovar }}
+                        <img src="{{output.get_compact_logo_url}}" class="logo" alt="{{sitename}}">
+                    {{/ compactlogovar }}
+                    {{^ compactlogovar }}
+                        {{#pix}}graduation-cap-solid, theme_educard{{/pix}}
+                        <div class="pr-5 mr-5">
+                            {{{ sitename }}}
+                        </div>
+                    {{/ compactlogovar }}
+                {{/headerlogocompact}}
+                {{#headerlogo}}
+                    {{# logovar }}
+                        <img src="{{output.get_logo_url}}" class="logo" alt="{{sitename}}">
+                    {{/ logovar }}
+                    {{^ logovar }}
+                        {{#pix}}graduation-cap-solid, theme_educard{{/pix}}
+                        <div class="pr-5 mr-5">
+                            {{{ sitename }}}
+                        </div>
+                    {{/ logovar }}
+                {{/headerlogo}}
+                {{#nonelogo}}
+                    {{#pix}}graduation-cap-solid, theme_educard{{/pix}}
+                    <div class="pr-5 mr-5">
+                        {{{ sitename }}}
+                    </div>
+                {{/nonelogo}}
+            </a>
+            {{#primarymoremenu}}
+                <div class="primary-navigation">
+                    {{! > core/moremenu }}
+                </div>
+            {{/primarymoremenu}}
+
+            <div class="navbar-nav d-none d-lg-flex my-1 px-1">
+                <!-- page_heading_menu -->
+                {{{ output.page_heading_menu }}}
+                <div class="navbar-nav mr-auto">
+                    {{{frontpagenavlink}}}
+                </div>
+            </div>
+
+            <div id="usernavigation" class="navbar-nav ml-auto">
+                {{# output.search_box }}
+                    {{{ output.search_box }}}
+                    <div class="divider border-left h-75 align-self-center mx-1"></div>
+                {{/output.search_box}}
+                {{#langmenu}}
+                    {{> theme_boost/language_menu }}
+                    <div class="divider border-left h-75 align-self-center mx-1"></div>
+                {{/langmenu}}
+
+                <div class="d-flex align-items-stretch usermenu-container" data-region="usermenu">
+                    {{#usermenu}}
+                        {{> core/user_menu }}
+                    {{/usermenu}}
+                </div>
+            </div>
+            {{> theme_educard/frontpage/header/lightdark }}
+        </div>
+    </nav>
+</div>
+{{#js}}
+    window.onscroll = function() {navFunction()};
+    var navbar = document.getElementById("navbarhy");
+    var sticky = navbar.offsetTop;
+    function navFunction() {
+        if (window.pageYOffset >= sticky) {
+            navbar.classList.add("stickyhy")
+        } else {
+            navbar.classList.remove("stickyhy");
+        }
+    }
+{{/js}}

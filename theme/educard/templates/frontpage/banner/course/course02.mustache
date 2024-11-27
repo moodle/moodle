@@ -1,0 +1,76 @@
+<div class="block07-2 col-md-12 col-lg-4 educard-block educard-font mt-3 mb-3">
+    <div class="card h-100 educard-course-card block-shadow block-hover-shadow educard-rounded">
+        {{#block07imgenabled}}
+        <div class="course-img-2">
+            <img src="{{{sc_imgurl}}}" class="card-img-top" alt="#" >
+        </div>
+        <div class="educard-course-category" data-toggle="tooltip" data-placement="top" 
+                title="{{#str}}category, core{{/str}}">
+            <a href="{{sc_categorylink}}"><h5 class="pl-2">{{sc_categoryname}}</h5></a>
+        </div>
+        {{/block07imgenabled}}
+        {{^block07imgenabled}}
+        <div class="course-noimg">
+            <div class="educard-course-category-noimg" data-toggle="tooltip" data-placement="top" 
+                    title="{{#str}}category, core{{/str}}">
+                <a href="{{sc_categorylink}}">
+                    <h5 class="text-truncate-1 pl-2">{{sc_categoryname}}</h5>
+                </a>
+            </div>
+        </div>
+        {{/block07imgenabled}}
+        <div class="card-body educard-card-body">
+            <div class="name-price">
+                <div class="block07-2-teacher-bg"></div>
+                {{#sc_teachername}}
+                <div class="block07-2-teacher">
+                    {{{sc_userpicture}}}
+                    <div class="user-name {{^block07imgenabled}}user-name-noimg{{/block07imgenabled}}">
+                        <span>{{#str}} defaultcourseteacher, moodle {{/str}}</span><br>
+                        <span> {{{sc_teachername}}}</span>
+                    </div>    
+                </div>
+                {{/sc_teachername}}
+                {{#block07priceshow}}
+                <div class="price-2 font-weight-500">
+                    <span>{{sc_format}}</span>
+                    <span class="float-right">{{sc_cost}} {{sc_currency}}</span>
+                </div>
+                {{/block07priceshow}}
+            </div>
+            <h4 class="pt-3"> 
+                <a href="{{sc_courselink}}">
+                    {{#block07shortname}}{{sc_shortname}}{{/block07shortname}}
+                    {{#block07fullname}}{{sc_fullname}}{{/block07fullname}}
+                </a>
+            </h4>
+        </div>
+        <div class="card-footer educard-course-footer soft-color font-weight-500 educard-rounded">
+            <span data-toggle="tooltip" data-placement="top" title="{{#str}}block07tooltipenrolled, theme_educard {{/str}}">
+                <i class="fa fa-user-o" aria-hidden="true"></i>
+                {{sc_studentscount}}
+            </span>
+            <span class="float-right" data-toggle="tooltip" data-placement="top" title="{{#str}}block07tooltiplastdate, theme_educard {{/str}}">
+                <i class="fa fa-calendar-o" aria-hidden="true"></i>
+                {{sc_update}}
+            </span>
+        </div>
+        <div class="card-caption text-white">
+            <div class="pt-2"></div>
+            <h4 class="text-center pt-3 "> 
+                <a class="text-white" href="{{sc_courselink}}">
+                    {{#block07shortname}}{{sc_shortname}}{{/block07shortname}}
+                    {{#block07fullname}}{{sc_fullname}}{{/block07fullname}}
+                </a>
+            </h4>
+            <div class="text-justify">
+                {{#block07imgenabled}}
+                <div>{{#shortentext}} 420, {{{sc_summary}}} {{/shortentext}}</div>
+                {{/block07imgenabled}}
+                {{^block07imgenabled}}
+                <div>{{#shortentext}} 300, {{{sc_summary}}} {{/shortentext}}</div>
+                {{/block07imgenabled}}
+            </div>
+        </div>
+    </div>
+</div>

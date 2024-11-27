@@ -1,0 +1,445 @@
+/*-----------------------
+    Teachers Block08
+-------------------------*/
+.dark-frontpage,
+.dark-dashboard {
+    .block08-bg,
+    .page02-bg {
+        background-image: none;
+    }
+    .block08-1,
+    .page02-1 {
+        .teachers {
+            .teacher-head {
+                border: 1px solid var(--color-dl-yellow-b) !important;
+            }
+            .teacher-content {
+                background: var(--color-dl-grey-b);
+                border: 1px solid var(--color-dl-yellow-b) !important;
+                a {
+                    color: var(--color-dl-yellow-b);
+                }
+                h4 span {
+                    color: var(--color-dl-yellow-a);
+                }
+            }
+            .social li a {
+                color: var(--color-dl-yellow-b);
+                border: 1px solid var(--color-dl-grey-b);
+            }
+        }
+    }
+    .block08-2,
+    .page02-2, 
+    .block08-4,
+    #page02-4 {
+        .educard-teacher-block {
+            .educard-teacher-boxes {
+                background-color: var(--color-dl-bg-black-dark);
+                border: 1px solid var(--color-dl-yellow-b) !important;
+                a {
+                    color: var(--color-dl-yellow-b);
+                }
+            }
+        }
+        .educard-teacher-footer::before {
+            height: 0 !important;
+            width: 0 !important;
+        }
+        .educard-teacher-student,
+        .educard-teacher-courses,
+        .educard-teacher-info p {
+            color: var(--orange) !important;
+            i {
+                color: var(--orange) !important;    
+            }
+        }
+        img.img-fluid.atto_image_button_text-bottom {
+            display: none;
+        } 
+    }
+    .block08-3,
+    .page02-3 {
+        .card {
+            background-color: var(--color-dl-bg-black-dark);
+            border-color: var(--color-dl-yellow-a) !important;
+            a {
+                color: var(--color-dl-yellow-a);
+                background-color: var(--activityadministration);
+            }
+            &:hover {
+                border-color: var(--color-dl-yellow-b) !important;
+            }
+        }
+    }
+}
+
+.block08-1,
+.page02-1 {
+    .teachers {
+        .teachers-slider{
+            margin-top:30px;
+        }
+        .single-teacher {
+            position: relative;
+            margin-bottom: 50px;
+            box-shadow: $educard-fp1-shadow;
+        } 
+        .teacher-head {
+            position: relative;
+            img{
+                height: 100%;
+                width: 100%;
+                text-align: center;
+            }
+        }
+        .teacher-head.overlay::before {
+            opacity: 0;
+            z-index: 1;
+            visibility: hidden;
+            border-radius: 0.25rem;
+        }
+        .social {
+            width: 75px;
+            position: absolute;
+            top: 15px;
+            text-align: center;
+            padding: 15px 0;
+            opacity: 0;
+            visibility: hidden;
+            -webkit-transition: all 0.3s ease 0s;
+            -moz-transition: all 0.3s ease 0s;
+            transition: all 0.3s ease 0s;
+            left: 15px;
+            z-index: 2;
+            -webkit-transform: translateY(-100%);
+            -moz-transform: translateY(-100%);
+            transform: translateY(-100%);
+            li {
+                display: block;
+                margin-bottom: 10px;
+                a {
+                    color: #fff;
+                    font-size: 14px;
+                    width: 60px;
+                    height: 30px;
+                    line-height: 30px;
+                    border: 1px solid #fff;
+                    display: inline-block;
+                    &:hover{
+                        border-color:transparent;
+                        background:#fff;
+                        color: var( --theme-color );
+                    }
+                }
+                &:last-child{
+                    margin: 0;
+                }
+              
+            }
+        }
+        .teacher-content {
+            background: #fff;
+            padding: 12px 30px;
+            text-align: center;
+            position: absolute;
+            bottom: -15px;
+            left: 15px;
+            z-index: 33;
+            -webkit-box-shadow: $educard-fp1-shadow;
+            -moz-box-shadow: $educard-fp1-shadow;
+            box-shadow: $educard-fp1-shadow;
+            -webkit-transition: all 0.3s ease 0s;
+            -moz-transition: all 0.3s ease 0s;
+            transition: all 0.3s ease 0s;
+            &:hover {
+                background: var( --theme-color );
+                transform: scale(1.0);
+                opacity: 1;
+                visibility: visible;
+            }
+            &:hover h4, &:hover span{
+                color: #fff;
+            }
+            h4 {
+                span {
+                    color: var( --theme-color );
+                    display: block;
+                    font-weight: 400;
+                    font-size: 15px;
+                    margin-top: 5px;
+                    -webkit-transition: all 0.3s ease 0s;
+                    -moz-transition: all 0.3s ease 0s;
+                    transition: all 0.3s ease 0s;
+                }
+            }
+        }
+        .single-teacher {
+            &:hover {
+                .teacher-head.overlay:before{
+                    opacity: 0.6;
+                    visibility: visible
+                }
+                .social{
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translateY(0%);
+                }
+            }
+            &.active .teacher-content{
+                transform: scale(1.0);
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+    }
+    .overlay{
+        position: relative
+    }
+    .overlay::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.8;
+        background: var( --theme-color );
+        content: "";
+        -webkit-transition: all 0.3s ease 0s;
+        -moz-transition: all 0.3s ease 0s;
+        transition: all 0.3s ease 0s;
+    }
+}
+.block08-2,
+.page02-2,
+.block08-4,
+#page02-4 {
+    .educard-teacher-block {
+        .educard-teacher-boxes {
+            margin-bottom: 30px;
+            padding: 12px;
+            bottom: 0;
+            left: 0;
+            background-color: white;
+            .card-body {
+                height: 120px;
+            }
+            .educard-teacher-social {
+                width: 100%;
+                margin-top: 19px;
+                padding: 5px 20px 26px 20px;
+                a {
+                    background: #fff;
+                    height: 32px;
+                    width: 32px;
+                    text-align: center;
+                    border-radius: 5px;
+                    color: #494949;
+                    line-height: 32px;
+                    font-size: 15px;
+                    border: solid 1px #eee;
+                    -webkit-transition: all 0.3s ease-in;
+                    -moz-transition: all 0.3s ease-in;
+                    -o-transition: all 0.3s ease-in;
+                    transition: all 0.3s ease-in;
+                    display: inline-block;
+                    margin-bottom: 3px;
+                    margin-right: 4px;
+                    &:hover {
+                        border: solid 1px var( --theme-color );
+                        background-color: var( --theme-color );
+                        i {
+                            color: #fff;
+                        }
+                    }
+                }
+            }
+            .overlay-image {
+                width: 100%;
+                height: 235px;
+                overflow: hidden;
+                position: relative;
+                text-align: center;
+                background: var( --theme-color-ops-5 );
+                border-top-left-radius: 0.25rem;
+                border-top-right-radius: 0.25rem;
+                .mask {
+                    width: 100%;
+                    height: 100%;
+                    position: absolute;
+                    overflow: hidden;
+                    top: 0;
+                    left: 0;
+                }
+                .content {
+                    width: 100%;
+                    height: 100%;
+                    position: absolute;
+                    overflow: hidden;
+                    top: 0;
+                    left: 0;
+                }
+            }
+            .view-overlay { 
+                img {
+                    -webkit-transform: scaleY(1);
+                    -moz-transform: scaleY(1);
+                    -o-transform: scaleY(1);
+                    -ms-transform: scaleY(1);
+                    transform: scaleY(1);
+                    -webkit-transition: all 0.7s ease-in-out;
+                    -moz-transition: all 0.7s ease-in-out;
+                    -o-transition: all 0.7s ease-in-out;
+                    -ms-transition: all 0.7s ease-in-out;
+                    transition: all 0.7s ease-in-out;
+                }
+                .mask {
+                    -webkit-transition: all 0.5s linear;
+                    -moz-transition: all 0.5s linear;
+                    -o-transition: all 0.5s linear;
+                    -ms-transition: all 0.5s linear;
+                    transition: all 0.5s linear;
+                    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+                    filter: alpha(opacity=0);
+                    opacity: 0;
+                }
+                &:hover {
+                    img {
+                        -webkit-transform: scale(10);
+                        -moz-transform: scale(10);
+                        -o-transform: scale(10);
+                        -ms-transform: scale(10);
+                        transform: scale(10);
+                        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+                        filter: alpha(opacity=0);
+                        opacity: 0;
+                    }
+                    .mask {
+                        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+                        filter: alpha(opacity=100);
+                        opacity: 1;
+                    }
+                }
+            }
+            .educard-zoom-link {
+                position: absolute;
+                top: 10%;
+                right: 10px;
+                bottom:0;
+                left: 10px;
+                margin: auto;
+                padding: 0 10px;
+            }
+        }
+        .educard-teacher-info {
+            p {
+                margin: 0;
+                padding: 0;
+                color: var( --theme-color );
+            }
+            a {
+                margin: 0;
+                padding: 5px 0 6px 0;
+                &:hover{
+                    color: var( --theme-color );
+                }
+            }
+            .educard-teacher-footer::before {
+                    position: absolute;
+                    content: "";
+                    height: 1px;
+                    width: 100%;
+                    background: #ebebeb;
+                    top: -5px;
+            }
+            .educard-teacher-footer {
+                position: relative;
+                border: hidden;
+                span {
+                    margin: 0;
+                    margin-right: 3px;
+                }
+                .educard-teacher-student, .educard-teacher-courses { 
+                    i {
+                        color: var( --theme-color );
+                        margin-right: 2px;
+
+                    }
+                }
+            }
+        }       
+    }
+    img.img-fluid.atto_image_button_text-bottom {
+        display: none;
+    }
+}
+.block08-3,
+.page02-3 {
+    .card {
+        border-radius: 100% 100% 8px 8px;
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 50%;
+            transition: all 0.5s ease-in;
+            -webkit-filter: brightness(0.7) saturate(0.9);
+            filter: brightness(0.7) saturate(0.9);
+        }
+        .card-social-icon {
+            display: block;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 3rem;
+            height: 3rem;
+            transition: all .25s ease-in-out;
+            background-color: #fff;
+            border: 1px solid var( --theme-color );
+            border-radius: 50%;
+            color: var( --theme-color );
+            font-size: 32px;
+            text-align: center;
+            text-decoration: none;
+            opacity: 0;
+            z-index: 5;
+        }
+        &:hover {
+            border-color: var( --theme-color-ops-3 ) !important;
+            transition: all 0.3s ease-in;
+            border-top-left-radius: 8px;
+            img {
+                border-top-right-radius: 8px;
+                transition: all 0.3s ease-in;
+                -webkit-filter: brightness(1) saturate(1);
+                filter: brightness(1) saturate(1);
+            }
+            .card-social-icon {
+                opacity: 1;
+            }
+        }
+    }
+}
+.block08-4,
+#page02-4 {
+    i {
+        font-weight: 500;
+    }
+    .educard-teacher-block {
+        .educard-teacher-boxes {
+            padding: 0 0 12px 0 !important;
+            .overlay-image {
+                border-top-left-radius: 0.25rem !important;
+                border-top-right-radius: 0.25rem !important;
+            }
+        }
+        .educard-teacher-info {
+            .educard-teacher-footer {
+                .educard-teacher-student, .educard-teacher-courses{ 
+                    i {
+                        color: #141517;
+                    }
+                }
+            }
+        }
+    }
+}

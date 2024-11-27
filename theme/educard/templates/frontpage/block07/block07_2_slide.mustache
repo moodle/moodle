@@ -1,0 +1,106 @@
+<div id="block07-2-s" class="block07-2 educard-block educard-font">
+    <div class="block07-bg block-start-end-space">
+        <div class="container">
+            <div class="educard-sub-title">
+                <h6>{{block07headline}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block07header}}<span> {{block07maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="mt-60">
+                <div id="block07-2-slider" class="splide block07-2-slider">
+                    <div class="splide__track" >
+                        <ul class="splide__list">
+                        {{#block07}}  
+                            <li class="splide__slide">
+                            <div class="card h-100 educard-course-card block-shadow block-hover-shadow educard-rounded">
+                                {{#block07imgenabled}}
+                                <div class="course-img-2">
+                                    <img src="{{{imgurl}}}" class="card-img-top" alt="#" >
+                                </div>
+                                <div class="educard-course-category" data-toggle="tooltip" data-placement="top" 
+                                        title="{{#str}}category, core{{/str}}">
+                                    <a href="{{categorylink}}"><h5 class="pl-2">{{categoryName}}</h5></a>
+                                </div>
+                                {{/block07imgenabled}}
+                                {{^block07imgenabled}}
+                                <div class="course-noimg">
+                                    <div class="educard-course-category-noimg" data-toggle="tooltip" data-placement="top" 
+                                            title="{{#str}}category, core{{/str}}">
+                                        <a href="{{categorylink}}">
+                                            <h5 class="text-truncate-1 pl-2">{{categoryName}}</h5>
+                                        </a>
+                                    </div>
+                                </div>
+                                {{/block07imgenabled}}
+                                <div class="card-body educard-card-body">
+                                    <div class="name-price">
+                                        <div class="block07-2-teacher-bg"></div>
+                                        {{#teachername}}
+                                        <div class="block07-2-teacher">
+                                            {{{userpicture}}}
+                                            <div class="user-name {{^block07imgenabled}}user-name-noimg{{/block07imgenabled}}">
+                                                <span>{{#str}} defaultcourseteacher, moodle {{/str}}</span><br>
+                                                <span> {{{teachername}}}</span>
+                                            </div>    
+                                        </div>
+                                        {{/teachername}}
+                                        {{#block07priceshow}}
+                                        <div class="price-2 font-weight-500">
+                                            <span>{{format}}</span>
+                                            <span class="float-right">{{cost}} {{currency}}</span>
+                                        </div>
+                                        {{/block07priceshow}}
+                                    </div>
+                                    <h4 class="pt-3"> 
+                                        <a href="{{courselink}}">
+                                            {{#block07shortname}}{{shortname}}{{/block07shortname}}
+                                            {{#block07fullname}}{{fullname}}{{/block07fullname}}
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div class="card-footer educard-course-footer soft-color font-weight-500 educard-rounded">
+                                    <span data-toggle="tooltip" data-placement="top" title="{{#str}}block07tooltipenrolled, theme_educard {{/str}}">
+                                        <i class="fa fa-user-o" aria-hidden="true"></i>
+                                        {{studentscount}}
+                                    </span>
+                                    <span class="float-right" data-toggle="tooltip" data-placement="top" title="{{#str}}block07tooltiplastdate, theme_educard {{/str}}">
+                                        <i class="fa fa-calendar-o" aria-hidden="true"></i>
+                                        {{update}}
+                                    </span>
+                                </div>
+                                <div class="card-caption text-white">
+                                    <div class="pt-2"></div>
+                                    <h4 class="text-center pt-3 "> 
+                                        <a class="text-white" href="{{courselink}}">
+                                            {{#block07shortname}}{{shortname}}{{/block07shortname}}
+                                            {{#block07fullname}}{{fullname}}{{/block07fullname}}
+                                        </a>
+                                    </h4>
+                                    <div class="text-justify">
+                                        {{#block07imgenabled}}
+                                        <div>{{#shortentext}} 420, {{{summary}}} {{/shortentext}}</div>
+                                        {{/block07imgenabled}}
+                                        {{^block07imgenabled}}
+                                        <div>{{#shortentext}} 300, {{{summary}}} {{/shortentext}}</div>
+                                        {{/block07imgenabled}}
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        {{/block07}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                {{#block07button}}
+                <a class="educard-btn btn mt-3 text-white border-0" href="{{block07buttonlink}}">
+                    <span>{{block07button}}</span>
+                </a>
+                {{/block07button}}
+            </div>
+        </div>
+    </div>   
+</div>

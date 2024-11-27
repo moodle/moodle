@@ -1,0 +1,7 @@
+
+@media (min-width: 768px) {
+    .pagelayout-standard #page.drawers .footer-popover, body.limitedwidth #page.drawers .footer-popover {
+        max-width: 100%;
+        border-radius: 0;
+    }
+}

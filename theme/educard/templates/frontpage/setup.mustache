@@ -1,0 +1,38 @@
+{{! Frontpage settings orjinal column1.mustache }}
+<div class="educardsetup">    
+    <div class="modal fade" id="setupModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="font-weight-500">EduCard Theme</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class= "hy-pt-1">
+                        <div id="navbarHeader">
+                            <div id="page-wrapper" class="container">
+                                {{{ output.standard_top_of_body_html }}}
+                                <div id="page" class="">
+                                    <div id="page-content" class="row d-print-block">
+                                        <div id="region-main-box" class="col-12">
+                                            <section id="region-main" aria-label="{{#str}}content{{/str}}">
+                                                {{{ output.course_content_header }}}
+                                                {{{ output.main_content }}}
+                                                {{{ output.activity_navigation }}}
+                                                {{{ output.course_content_footer }}}
+                                            </section>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{{ output.standard_after_main_region_html }}}
+                            </div>
+                            {{{ output.standard_end_of_body_html }}}    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>    

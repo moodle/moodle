@@ -1,0 +1,21 @@
+// Frontpage banners scss.
+@import "banner01";
+@import "banner02";
+@import "banner03";
+@import "banner04";
+@import "banner05";
+@import "banner06";
+
+.educard-opacity {
+    &:before {
+        position: absolute;
+        content: "";
+        background : #000;
+        opacity: 0.3;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        max-width: 100%;
+    }
+}

@@ -1,0 +1,176 @@
+/* Splide slider customize. */
+.block03-1,
+.block03-2,
+.block03-3,
+.block04-2,
+.block07-1,
+.block07-2,
+.block07-3,
+.block07-4,
+.block08-1,
+.block08-2,
+.block08-3,
+.block08-4,
+.block09-1,
+.block09-2,
+.block09-3,
+.block09-4,
+.block10-2,
+.block10-3,
+.block11-1,
+.block11-2,
+.block11-3,
+.block19-1, 
+.block19-2,
+.block14-1,
+.block21-1,
+.block21-2,
+.block21-3,
+.block21-4 {
+    .splide {
+        visibility: hidden;
+        position: relative;
+        outline: none;
+        .splide__container {
+            position: relative;
+            box-sizing: border-box;
+        }
+        .splide__list {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: -webkit-max-content;
+            width: max-content;
+            will-change: auto;
+        }
+        &.is-active .splide__list {
+            display: flex;
+            align-items: flex-start;
+            width: 25px;
+        }
+        .splide__pagination {
+            display: inline-flex;
+            align-items: center;
+            width: 40%;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 40px;
+            li {
+                list-style-type: none;
+                display: inline-block;
+                line-height: 1;
+                margin: 0;
+                button {
+                    background-color: transparent;
+                    border: 1px solid var( --theme-color );
+                    height: 10px;
+                    margin: 0 7px;
+                    width: 10px;
+                    border-radius: 50%;
+                    &.is-active {
+                        background-color: var( --theme-color );
+                    }
+                }
+            }
+        }
+        .splide__slide {
+            position: relative;
+            outline: none;
+            box-sizing: border-box;
+            list-style-type: none !important;
+            margin: 0;
+            padding: 0 0 20px 2px;
+            flex-shrink: 0;
+            img {
+                vertical-align: bottom;
+                object-fit: cover;
+            }
+        }
+        .splide__slider {
+            position: relative;
+        }
+        .splide__track {
+            position: relative;
+            z-index: 0;
+            overflow: hidden;
+            padding-top: 2em;
+            padding-bottom: 2em;
+        }
+        .splide--draggable > .splide__track > .splide__list > .splide__slide {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        .splide--ttb > .splide__track > .splide__list {
+            display: block;
+        }
+        .splide--ttb > .splide__pagination {
+            width: auto;
+        }
+        .splide__arrow--next {
+            right: 0em;
+        }
+        .splide__arrow--prev {
+            left: 0em;
+        }
+        .splide__arrow {
+            top: 1%;
+            border-radius: 15%;
+            background:  var( --theme-color );
+            svg {
+                fill: white;
+            }
+        }
+        
+    }
+}
+.blockslider {
+    .splide {
+        .splide__arrow {
+            height: auto;
+            width: auto;
+            padding: 10px;
+            border-radius: 15%;
+            background:  var( --theme-color );
+            display: none;
+            svg {
+                fill: white;
+            }
+            &.arrow-none {
+                display: none;
+            }
+            &.arrow-top {
+                top: 100px;
+            }
+            &.arrow-center {
+                top: 50%;
+            }
+            &.arrow-bottom {
+                top: unset;
+                bottom: 10px;
+            }
+        } 
+        .splide__slide {
+            img {
+                object-fit: cover;
+                &.full-page {
+                    height: 100vh;
+                }
+            }
+        }
+        .splide__pagination__page {
+            width: 10px;
+            height: 10px;
+            margin: 10px;
+            border-radius: 2px;
+            transition: .5s;
+            &.is-active {
+                width: 25px;
+            }
+ 
+        }
+    }
+    &:hover {
+        .splide__arrow {
+            display: block;
+        }
+    }
+}

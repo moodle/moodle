@@ -1,0 +1,206 @@
+// Bootstrap variables.
+$white:    #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #8f959e !default;
+$gray-600: #6c757d !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black:    #000 !default;
+
+$blue:    #0f6fc5 !default;
+$indigo:  #6610f2 !default;
+$purple:  #613d7c !default;
+$pink:    #e83e8c !default;
+$red:     #ca3120 !default;
+$orange:  #f0ad4e !default;
+$yellow:  #ff7518 !default;
+$green:   #357a32 !default;
+$teal:    #20c997 !default;
+$cyan:    #008196 !default;
+
+$primary:       $blue !default;
+$success:       $green !default;
+$info:          $cyan !default;
+$warning:       $orange !default;
+$danger:        $red !default;
+$secondary:     $gray-400 !default;
+
+// Template color.
+$hythemecolor:          #4272d7 !default;
+$hythemecolor2:         $hythemecolor !default;
+$hybackcolor:           $white !default;
+$navbarlogobackcolor:   transparent !default;
+$navbarcolor:           $white  !default;
+$navbarlinkcolor:       $gray-900  !default;
+$navbarlinkhovercolor:  $gray-500  !default;
+$navbarcolordark:          $white  !default;
+$navbarlinkcolordark:      $gray-900  !default;
+$navbarlinkhovercolordark: $gray-500  !default;
+$hyfooterbackcolor: #4272d7 !default;
+
+// Template bg img.
+//$block01bgurl : "";
+
+$info-outline:    #1f7e9a;
+$warning-outline: #a6670e;
+
+// Options.
+$enable-rounded:                true !default;
+$enable-responsive-font-sizes:  true !default;
+$enable-shadows:                false !default;
+$enable-gradients:              true !default;
+
+// Body.
+$body-color:    $gray-900 !default;
+
+// Fonts.
+$font-size-base: 0.9375rem !default;
+$rfs-base-font-size: 0.9rem !default;
+$headings-font-weight:  400 !default;
+
+// Navbar.
+$navbar-height: 70px !default;
+$navbar-font-weight: 500 !default;
+$navbar-font-size: 1.0625rem !default;
+$navbar-dark-color:                 rgba($white, .8) !default;
+$navbar-dark-hover-color:           rgba($white, 1) !default;//rgba($white, 1) !default;
+$navbar-light-color:                rgba($black, 0.6) !default;
+$navbar-light-hover-color:          rgba($black, .9) !default;
+// Dropdown menu.
+$dropdown-bg:                       $gray-300 !default;
+$dropdown-box-shadow:  0 50px 100px rgba(50,50,93,.1),0 15px 35px rgba(50,50,93,.15),0 5px 15px rgba(0,0,0,.1);
+
+// Breadcrumbs.
+$breadcrumb-padding-y:              .25rem !default;
+$breadcrumb-padding-x:              0 !default;
+$breadcrumb-item-padding:           .5rem !default;
+$breadcrumb-margin-bottom:          0 !default;
+$breadcrumb-divider: "/" !default;
+$breadcrumb-divider-rtl: "/" !default;
+$breadcrumb-bg: $white !default;
+$breadcrumb-bg-hover: $gray-200 !default;
+$breadcrumb-text-color: $hythemecolor !default;
+$breadcrumbdash: $gray-200 !default;
+$breadcrumbdimmed: $black !default;
+
+// Floating elements positions.
+$gototop-bottom-position: 50px !default;
+
+// Alerts.
+$alert-border-width: 0 !default;
+$card-group-margin: .25rem;
+
+// Toasts.
+$toast-color:                       $white !default;
+$toast-background-color:            rgba($gray-900, .95) !default;
+$toast-header-color:                $gray-100 !default;
+$toast-header-background-color:     rgba($white, .1) !default;
+
+// Custom control size.
+$custom-control-indicator-size: 1.25rem;
+$input-btn-focus-color: rgba($primary, .09) !default;
+$input-border-color: $gray-500 !default;
+
+$dropdown-link-hover-color : $white;
+$dropdown-link-hover-bg    : $hythemecolor !default; //$primary;
+$component-active-bg       : $hythemecolor !default;
+
+// stylelint-disable.
+$theme-colors: () !default;
+$theme-colors: map-merge((
+    primary: $primary,
+    secondary: $secondary,
+    success: $success,
+    info: $info,
+    warning: $warning,
+    danger: $danger,
+    navbarcolor:$navbarcolor,
+    navbarcolordark:$navbarcolordark,
+    hybackcolor: $hybackcolor,
+), $theme-colors);
+// Stylelint-enable.
+$spacer: 1rem !default;
+$spacers: (
+    0: 0,
+    1: ($spacer * .25),
+    2: ($spacer * .5),
+    3: $spacer,
+    4: ($spacer * 1.5),
+    5: ($spacer * 2),
+    6: ($spacer * 3)
+) !default;
+
+// Theme opasite color.
+$hythemecolor-obs-1 : rgba($hythemecolor, .1);
+$hythemecolor-obs-2 : rgba($hythemecolor, .2);
+$hythemecolor-obs-3 : rgba($hythemecolor, .3);
+$hythemecolor-obs-4 : rgba($hythemecolor, .4);
+$hythemecolor-obs-5 : rgba($hythemecolor, .5);
+$hythemecolor-obs-6 : rgba($hythemecolor, .6);
+$hythemecolor-obs-7 : rgba($hythemecolor, .7);
+$hythemecolor-obs-8 : rgba($hythemecolor, .8);
+
+// İmg height.
+$single-course-img-height   : 550px !default;
+$single-blog-img-height     : 550px !default;
+$course-category-img-height : 300px !default;
+$dashboard-card-img-height  : 11.25rem !default; // orj 7rem
+// Boost variables.
+$course-content-maxwidth:   1320px !default;
+$input-btn-padding-y    :   1rem !default;
+$input-btn-padding-x    :   1.5rem !default;
+$card-deck-margin       :   0.938rem !default;
+// Import FontAwesome.
+@import "fontawesome";
+
+// Import All of Bootstrap
+@import "bootstrap";
+
+// Import Core moodle CSS
+@import "moodle";
+
+// Preset CSS.
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+/*
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .03);
+}
+*/
+.dashboard-header-area {
+    border-top: 5px solid $hythemecolor-obs-5;
+}
+// Rounded user pictures
+.userpicture {
+    border-radius: 50%;
+}
+// Reset the default styling back to the bootstrap defaults for
+// the secondary outline button because gray-200 is much too light
+// for an outline button.
+.btn-outline-secondary {
+    @include button-outline-variant($gray-600);
+    border-color: $gray-600;
+}
+
+.btn-outline-info {
+    @include button-outline-variant($info-outline);
+}
+
+.btn-outline-warning {
+    @include button-outline-variant($warning-outline);
+}
+
+@include bg-variant(".bg-gray", $gray-200, true);
+
+$body-bg:                  $gray-100 !default;
+$body-color:               $gray-900 !default;
+$hydarklight : rgba($navbarcolor, .1) !default;
+
+// Import Educard theme SCSS
+@import "educard";

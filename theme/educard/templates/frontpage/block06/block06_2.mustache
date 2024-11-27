@@ -1,0 +1,37 @@
+<div id="block06-2" class="block06-2 educard-block educard-font {{#block06color}}block06-bg-color{{/block06color}}">           
+        <div class="bg-educard-gradiant block-start-end-space-m">
+            <div class="waves-bg">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="educard-sub-title">
+                                <h6>{{block06headline}}</h6>
+                            </div>
+                            <div class="h1"> {{block06header}} <br>
+                                {{#block06maintitle}}
+                                <span class="typewrite" data-period="2000" data-type='[{{block06maintitle}}]'></span>
+                                {{/block06maintitle}}
+                            </div>
+                            <div class="h5 soft-color pb-2">{{{block06caption}}}</div>
+                            {{#block06button}}
+                            <a class="btn educard-btn mt-2 mb-3 text-white border-0" href="{{{block06buttonlink}}}">
+                                <span>{{block06button}}</span>
+                            </a>
+                            {{/block06button}}
+                        </div>
+                        <div class="col-md-5 text-center mt-4 middle-image">
+                            <img class="img-fluid"
+                                {{# block06image }}
+                                src="{{{block06image}}}" 
+                                {{/ block06image }}
+                                {{^ block06image }}
+                                src="{{frontpageimglink}}block06/d2/1.jpg" 
+                                {{/ block06image }}
+                                alt="#"  onerror="this.style.display='none'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+<script src="theme/educard/js/typewrite.min.js"></script>

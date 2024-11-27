@@ -1,0 +1,120 @@
+/*-----------------------
+  Block 13 Course filter
+-------------------------*/
+.dark-frontpage,
+.dark-dashboard {
+    .block13-bg {
+        background-image: none;
+    }
+    .block13-1 {
+        .btn {
+            border: none;
+            outline: none;
+            padding: 12px 16px;
+            background-color: var(--warning);
+        }
+        .badge-light {
+            color: #fff;
+            background-color: #343a40;
+        }
+        .card {
+            background-color: var(--color-dl-grey-b);
+            border: 1px solid var(--color-dl-yellow-a);
+        
+            .card-body {
+                .ctg-header {
+                    a {
+                        color: var(--color-dl-yellow-a) !important;
+                        background-color: var(--color-dl-bg-black) !important;  
+                    }
+                }
+                .ctg-heart {
+                    display: none;
+                }
+                .card-title {
+                    a {
+                        color: var(--color-dl-yellow-a) !important;
+                        &:hover {
+                            color: var(--theme-color) !important;
+                        }
+                    }
+                }
+
+            }
+            .card-footer {
+                span { 
+                    color: var(--color-dl-yellow-a) !important;
+                }
+                hr {
+                    border-top: 1px solid var(--color-dl-yellow-a);
+                }
+            }
+        }
+        img.atto_image_button_text-bottom {
+            display: none;
+        }
+    }
+}
+.block13-1 {
+    .coursefilterdiv {
+        display: none;
+        transition: ease-in-out 0.3s;
+    }
+
+    .show {
+        transition: ease-in-out 0.3s;
+        display: block;
+    }
+
+    .btn {
+        border: none;
+        outline: none;
+        padding: 12px 16px;
+        background-color: #f1f1f1;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: medium;
+        font-weight: 500;
+        &:hover {
+            background-color: #ddd;
+        }
+    }
+    .btn.fltactive {
+        background-color: var( --theme-color );
+        color: white;
+        &:hover {
+            background-color: var( --theme-color-ops-7 ) !important;
+            color: white !important;
+        }
+    }
+
+    .card {
+        transition: all 0.3s ease-in-out;
+        img {
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .card-footer {
+            border-top: none;
+            span, i {
+                font-weight: 500;
+            }
+        }
+    }
+
+    .nav-pills-bg-soft {
+        background-color: rgba(6, 106, 201, 0.1);
+        padding: 0.625rem 0;
+        border-radius: 0.625rem;
+    }
+    img.atto_image_button_text-bottom {
+        display: none;
+    }
+
+    @include media-breakpoint-down(sm) {
+        .btn {
+            font-size: small;
+        }
+    }
+}

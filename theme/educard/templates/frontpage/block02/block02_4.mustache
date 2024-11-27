@@ -1,0 +1,34 @@
+<div id="block02-4" class="block02-4 educard-block educard-font">
+    <div class="block02-bg block-start-end-space">
+        <div class="container">
+            <div class="row">
+                {{#block02}}
+                <div class="{{{count}}} position-relative mb-4 ">
+                    <div class="bg-{{counter}} bg-opacity-10 educard-rounded p-5 h-100 shadow block02-4-card">
+                        <!-- Image -->
+                        <div class="position-absolute bottom-0 end-0 me-3">
+                            {{#block02image}}
+                            <img src="{{{block02image}}}" class="h-100px h-sm-200px" alt="img">
+                            {{/block02image}}
+                            {{^block02image}}
+                            <img src="{{frontpageimglink}}block02/d4/{{counter}}.svg" class="h-100px h-sm-200px" alt="img">
+                            {{/block02image}}
+
+                        </div>
+                        <!-- Content -->
+                        <div class="row">
+                            <div class="col-sm-8 position-relative">
+                                <h3 class="mb-1">{{{title}}}</h3>
+                                <div class="mb-3 text-truncate-3">{{{caption}}}</div>
+                                {{#button}}
+                                <a href="{{buttonurl}}" class="btn btn-{{counter}} mb-0">{{button}}</a>
+                                {{/button}}
+                            </div>
+                        </div>
+                    </div>
+                </div>      
+                {{/block02}}
+            </div>
+        </div>
+    </div>
+</div>

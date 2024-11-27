@@ -1,0 +1,30 @@
+<div class="banner-4 educard-header-4 educardcircle educard-block educard-font position-relative">
+    {{#banner4shape}}
+    <div class="educard-shape">
+        <img class="educard-shape-1" src="{{shape1}}" alt="shape-1">
+        <img class="educard-shape-2" src="{{shape2}}" alt="shape-2">
+        <img class="educard-shape-3" src="{{shape3}}" alt="shape-3">
+        <img class="educard-shape-4" src="{{shape4}}" alt="shape-4">
+    </div>
+    {{/banner4shape}}
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 col-md-7 col-sm-12 info-detail align-self-center">
+                <div>
+                    <div class="h1">{{banner4caption1}} <span> {{banner4caption2}}</span></div>
+                    <div class="educard-heading-line-left"></div>
+                </div>
+                <h3 class="subtitle">{{banner4caption3}}</h3>
+                {{#banner4btn}}
+                <a class="btn educard-btn mt-3 mb-3" href="{{banner4btnlnk}}">
+                    <span>{{banner4btn}}</span>
+                </a>
+                {{/banner4btn}}
+            </div>
+            <div class="col-lg-6 col-md-5">
+                <div class="hero" style="background-image:url({{imgbanner4}})">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

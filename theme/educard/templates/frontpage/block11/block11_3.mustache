@@ -1,0 +1,45 @@
+<div id="block11-3" class="block11-3 educard-block educard-font">
+    <div class="block11-bg block-start-end-space">
+        <div class="container">
+            <div class="educard-sub-title">
+                <h6>{{block11headline}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{{block11header}}} <span>{{block11maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="row mt-60">
+                {{#block11}}
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="blog-item block-shadow block-hover-shadow educard-rounded">
+                            {{#tag}}
+                            <div class="blog-tag align-middle">
+                                {{{tag}}}
+                            </div>
+                            {{/tag}}
+                            <div class="img">
+                                {{#imgurl}}<img src="{{imgurl}}" alt="image">{{/imgurl}}
+                            </div>
+                            <div class="details position-relative">
+                                <div class="crt-date">
+                                    <h6><i class="fa fa-calendar"></i> {{shortdate}} </h6>
+                                </div>    
+                                <div class="icon block-shadow">
+                                    <span class="align-middle" data-toggle="tooltip" data-placement="top" title="{{{username}}}">
+                                        {{{userpicture}}}
+                                    </span>    
+                                </div>
+                                <a href="{{postURL}}">
+                                    <h4 class="text-truncate-1">
+                                        {{subject}}
+                                    </h4>
+                                </a>
+                                <div class="font-size-m text-truncate-4">{{{summary}}}</div>
+                            </div>
+                        </div>
+                    </div>
+                {{/block11}}
+            </div>
+        </div>
+    </div>
+</div>

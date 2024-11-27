@@ -1,0 +1,44 @@
+<div id="block08-1" class="block08-1 educard-block educard-font">
+    <div class="block08-bg block-start-end-space">
+        <div class="container">
+            <div class="educard-sub-title">
+                <h6>{{block08headline}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block08header}} <span>{{block08maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="teachers mt-60">
+                <div class="row ">
+                    {{#block08}}
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="single-teacher">
+                            <div class="teacher-head overlay block-hover-shadow educard-rounded">
+                                <img class="educard-rounded" src="{{userpictureURL}}" alt="#">
+                                {{#block08total}}
+                                <ul class="social educard-rounded">
+                                    <li><a class="educard-rounded" href="#"><i class="fa fa-user-o"><span class="count" data-toggle="tooltip" data-placement="top"
+                                        title="{{#str}}block08tooltipstudents, theme_educard {{/str}}"> {{studentscount}}</span></i> </a></li>
+                                    <li><a class="educard-rounded" href="#"><i class="fa fa-graduation-cap"><span class="count" data-toggle="tooltip" data-placement="top"
+                                        title="{{#str}}block08tooltipcourse, theme_educard {{/str}}"> {{coursecount}}</span></i></a></li>
+                                </ul>
+                                {{/block08total}}
+                            </div>
+                            <div class="teacher-content educard-rounded">
+                                <a href="{{userURL}}">
+                                    <h4>{{teachername}}</h4>
+                                </a>
+                                {{#job}}
+                                <h4>
+                                    <span>{{job}}</span>
+                                </h4>
+                                {{/job}}
+                            </div>
+                        </div>
+                    </div>
+                    {{/block08}}
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>    

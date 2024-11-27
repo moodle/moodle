@@ -1,0 +1,27 @@
+/* Theme Educard scroll bar settings. Theme color scroll bar */
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background-color: var(--color-dl-red);
+    border-radius: 20px;
+    border: 1px solid transparent;
+    &:hover {
+        background-color: var(--color-dl-grey-b);
+        border: 1px solid var(--color-dl-yellow-a);
+    }
+}
+.dark-frontpage {
+    ::-webkit-scrollbar-thumb {
+        background-color: var(--color-dl-grey-a);
+        border-radius: 20px;
+        border: 1px solid transparent;
+        &:hover {
+            border: 1px solid var(--color-dl-yellow-a);
+        }
+    }
+}
+::-webkit-scrollbar {
+    width: 8px;
+}
+/* Scroll bar end */

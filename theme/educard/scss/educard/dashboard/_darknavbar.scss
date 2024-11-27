@@ -1,0 +1,154 @@
+/* Dashboard Navbar */
+.dark-dashboard {
+    .navbar {
+        #usernavigation {
+            label {
+                font-weight: 700;
+            }
+            .langmenu .btn, .simplesearchform .btn {
+                color: var(--color-dl-grey-a);
+            }
+            .popover-region {
+                .popover-region-container {
+                    background-color: var(--color-dl-bg-black-dark);
+                    border-radius: 5px;
+                    top: 40px;
+                    .popover-region-footer-container {
+                        background-color: initial;
+                    }
+                    .popover-region-header-container {
+                        height: 35px;
+                        line-height: 35px;
+                    }
+                    .popover-region-header-text {
+                        line-height: 35px;
+                    }
+                    .popover-region-content-container {
+                        height: calc(100% - 65px);
+                    }
+                }
+                .content-item-container.unread {
+                    background-color: var(--color-dl-grey-b);
+                }
+            }
+            #usermenu-carousel {
+                .carousel-item {
+                    .header {
+                        color : var(--color-dl-yellow-a);
+                        .btn {
+                            background-color: var(--color-dl-grey-a);
+                        }
+                    }
+
+                }
+            }
+            .searchform-navbar .form-control {
+                background-color: var(--light);
+            }
+        }
+    }
+    .primary-navigation {
+        .navigation  {
+            font-weight: 700;
+        }
+    }
+    .primary-navigation .navigation .nav-link,
+    .generaltable {
+        color: var(--color-dl-white-bsc) !important;
+    }
+    .secondary-navigation .navigation,
+    .moremenu .nav-tabs {
+        background-color: var(--color-dl-bg-black);
+        .nav-link.active,
+        .nav-item.show .nav-link {
+            color:var(--color-dl-grey-a);
+            background-color: initial;
+            border-color: #dee2e6 #dee2e6 #fff;
+        }
+    }
+    .moremenu {
+        .nav-link {
+            &:hover, &:focus {
+                background-color: var(--color-dl-bg-black-dark);
+                color: var(--color-dl-white-bsc);
+
+            }
+            &.active {
+                &:hover, &:focus {
+                    background-color: var(--color-dl-bg-black-dark);
+                }
+            }
+        }
+        .dropdownmoremenu > .dropdown-menu .dropdown-menu .dropdown-item {
+            background-color: var(--color-dl-grey-b);
+        }
+        .dropdown-item[aria-current="true"] {
+            color: var(--color-dl-yellow-a);
+        }
+
+    }
+    .navbar.top-nav,
+    .generaltable tbody tr:hover {
+        background-color: var(--color-dl-grey-b) !important;
+        color: var(--color-dl-white-bsc) !important;
+    }
+    .moremenu .nav-link.active {
+        border-bottom-color: var(--color-dl-white-bsc) !important;
+    }
+    .navbar.fixed-top {
+        border-bottom: none;
+    }
+    /* Dropdown menu */
+    .dropdown-item {
+        color: var(--color-dl-yellow-a);
+    }
+    .dropdown-menu {
+        background-color: var(--color-dl-grey-b);
+        border-radius: 0;
+        width: auto;
+    }
+    .activity-item .activity-completion .completion-dialog {
+        color: inherit;
+        img {
+            background-color: var(--color-dl-yellow-a);
+            padding: 0.01em;
+            border-radius: 100%;
+        }
+        .editcompletion a {
+            color: var(--color-dl-yellow-a);
+            &:hover {
+                background-color: var(--color-dl-grey-b);
+            }
+        }
+    }
+    .fa {
+        color: var(--color-dl-grey-a) !important;
+    }
+    .secondary-navigation {
+        max-width: inherit !important;
+    }
+    .navbar-light .navbar-nav .nav-link {
+        color: inherit !important;
+        &:hover, &:focus {
+            color: var(--color-dl-yellow-a);
+        }
+    }
+    .navbar-light .navbar-brand {
+        color: var(--color-dl-yellow-b);
+        &:hover, &:focus {
+            color: var(--color-dl-white-bsc);
+        }
+    }
+    .navbar-toggler {
+        background-color: var(--color-dl-yellow-a);
+    }
+    .navbar-light .nav-link,
+    .navbar-light .langbutton,
+    .navbar-light .dropdown-toggle::after {
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+    .custom-control-input:checked ~ .custom-control-label::before {
+        border-color: var(--color-dl-yellow-b);
+        background-color: var(--color-dl-grey-b);
+    }
+}

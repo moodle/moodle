@@ -1,0 +1,22 @@
+
+/* Educard theme bagde settings */
+.badge {
+    font-weight: 600;
+    font-size: 11px;
+    padding: 4px 4px;
+}
+.badge.badge-pill {
+    border-radius: 0.25rem;
+}
+.badge-info {
+    color: $hythemecolor;
+    background-color: $hythemecolor-obs-3;
+}
+a.badge-info:hover, a.badge-info:focus {
+    color: #fff;
+    background-color: $hythemecolor;
+}
+.badge-secondary {
+    background-color: $hythemecolor-obs-3;
+    padding: 0.4em;
+}

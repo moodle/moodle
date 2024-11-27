@@ -1,0 +1,30 @@
+<div id="block03-1" class="block03-1 educard-block educard-font">
+    <div class="block03-bg block-start-end-space">
+        <div class="container">
+            <div class="educard-sub-title">
+                <h6>{{block03headline}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block03header}}<span> {{block03maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="row mt-60">
+                {{#block03}}
+                {{#empty_content}}
+                <div class="col-lg-{{block03_grid}} col-md-6">
+                    <div class="mb-40 d-flex">
+                        <div class="item-icon">
+                            <a href="{{link}}"><i class="{{icon}} educard-rounded"></i></a>
+                        </div>
+                        <div class="pl-3">
+                            <h4><a href="{{link}}">{{title}}</a></h4>
+                            <div class="font-size-m">{{#shortentext}} 100, {{caption}} {{/shortentext}}</div>
+                        </div>
+                    </div>
+                </div>
+                {{/empty_content}}
+                {{/block03}}
+            </div>
+        </div>
+    </div>    
+</div>

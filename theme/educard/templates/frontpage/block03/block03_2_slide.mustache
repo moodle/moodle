@@ -1,0 +1,39 @@
+<div id="block03-2-s" class="block03-2 educard-block educard-font">
+    <div class="block03-bg block-start-end-space">
+        <div class="container">
+            <div class="educard-sub-title">
+                <h6>{{block03headline}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block03header}}<span> {{block03maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="mt-60">
+                <div id="block03-2-slider" class="splide block03-2-slider">
+                    <div class="splide__track" >
+                        <ul class="splide__list">
+                            {{#block03}}
+                            {{#empty_content}}
+                            <li class="splide__slide">
+                                <div class="features-card mt-70 shadow educard-rounded">
+                                    <div class="card h-100 text-center">
+                                        <a href="{{link}}">
+                                            <div class="card-icon">
+                                                <span class="count-text">{{count}}</span>
+                                                <i class="{{icon}}"></i>
+                                            </div>    
+                                        </a>
+                                        <h4 class="p-1"><a href="{{link}}">{{title}}</a></h4>
+                                        <p class="p-1">{{#shortentext}} 100, {{{caption}}} {{/shortentext}}</p>
+                                    </div>
+                                </div>
+                            </li>
+                            {{/empty_content}}
+                            {{/block03}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>  
+    </div> 
+</div>	

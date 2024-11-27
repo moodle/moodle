@@ -1,0 +1,37 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_fullpage/alert
+
+    Fullpage alert template.
+
+    Context variables required for this template:
+    * fullpage_alert - Warning message
+
+    Example context (json):
+    {
+        "title": "Favourite cheeses",
+        "fullpage_alert": "Warning!",
+    }
+}}
+<div class="mt-5 p-5">
+    <div class="fullpage-alert  p-5 bg-warning rounded">
+        <div class="col-lg-12 text-center">
+                <h4>{{#pix}}warning, local_fullpage{{/pix}}  {{fullpage_alert}}</h4>
+        </div>
+    </div>
+</div>

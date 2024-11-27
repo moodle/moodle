@@ -1,0 +1,131 @@
+/* Dashboard */
+.dark-dashboard {
+    .block_timeline,
+    .block_calendar_month {
+        border: 1px solid var(--color-dl-yellow-b);
+        &.card {
+            background-color: var(--color-dl-bg-black-dark);
+        }
+        .maincalendar .calendarmonth .clickable:hover,
+        .list-group-item {
+            background-color: var(--color-dl-grey-b);
+        }
+        .list-group-item {
+            border-radius: 0.5rem;
+            .border-bottom {
+                border-bottom: none !important;
+            }
+        }
+    }
+    .maincalendar .calendarmonth .clickable:hover {
+        background-color: var(--color-dl-grey-b);
+    }
+    .block_starredcourses {
+        .card-body {
+            color: var(--color-dl-white-bsc);
+            background-color: var(--color-dl-bg-black);
+            border-radius: 0.5rem;
+        }
+    }
+    .block-recentlyaccessedcourses,
+    .block_starredcourses {
+        .card-header {
+            display: none;
+        }
+        .dashboard-card-deck.one-row {
+            overflow-x: auto;
+        }
+    }
+    .block-recentlyaccessedcourses {
+        .card.course-card {
+            background-color: var(--color-dl-grey-b);
+        }
+    }
+    .block_admin_bookmarks,
+    .block_comments,
+    .block_globalsearch,
+    .block_news_items,
+    .block_badges,
+    .block_lp,
+    .block_myprofile,
+    .block_mentees,
+    .block_online_users,
+    .block_private_files,
+    .block_glossary_random,
+    .block_tags,
+    .block_html,
+    .block_calendar_upcoming,
+    .block_starredcourses,
+    .block_recentlyaccesseditems {
+        &.card {
+            background-color: var(--color-dl-bg-black-dark);
+            color: var(--color-dl-white-bsc);
+        }
+        border: 1px solid var(--color-dl-yellow-b);
+    }
+    .block_starredcourses .card-grid {
+        .card.course-card {
+            background-color: var(--color-dl-grey-b);
+            color: var(--color-dl-white-bsc);
+            .card-body {
+                background-color: var(--color-dl-grey-b);
+            }
+        }
+
+    }
+    .block_recentlyaccesseditems {
+        .dashboard-card-deck .card {
+            background-color: var(--color-dl-grey-b);
+        }
+    }
+
+    .block_calendar_upcoming {
+        .activityiconcontainer {
+            background-color: var(--color-dl-grey-b);
+        }
+    }
+    .block_comments {
+        textarea[name="content"] {
+            border-radius: 5px;
+        }
+    }
+    .table {
+        color: var(--color-dl-white-bsc);
+    }
+    .calendarwrapper .eventlist .card {
+        background-color: var(--color-dl-bg-black-dark);
+        color: var(--color-dl-white-bsc);
+    }
+    .maincalendar {
+        .calendar_event_user {
+            .commands a {
+                color: var(--color-dl-yellow-b);
+            }
+            &:hover a {
+                color: var(--color-dl-white-bsc);
+                text-decoration: none;
+            }
+        }
+
+    }
+    .calendar_filters {
+        .calendar_event_site,
+        .calendar_event_category,
+        .calendar_event_course,
+        .calendar_event_group,
+        .calendar_event_user,
+        .calendar_event_other {
+            border-radius: 4px;
+        }
+    }
+    .popover-header {
+        background-color: var(--color-dl-grey-a);
+        color: var(--color-dl-grey-b);
+    }
+    @media (min-width: 768px) {
+        section:not(#region-main) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td.clickable:not(.today):hover .day-number-circle {
+            border-radius: 50%;
+            background-color: var(--color-dl-bg-black-dark);
+        }
+    }
+}

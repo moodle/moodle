@@ -1,0 +1,49 @@
+<div id="block10-2" class="block10-2 educard-block educard-font">
+    <div class="block10-bg block-start-end-space">
+        <div class="container">
+            <div class="educard-sub-title">
+                <h6>{{{block10headline}}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block10header}} <span>{{block10maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="row mt-60">
+                {{#block10}}
+                <div class="col-lg-4 col-md-6">
+                    <div class="testimonial mb-4 educard-rounded block-shadow block-hover-shadow border-0">
+                        <div class="card h-100 p-4">
+                            <div class="pb-4 font-size-m">
+                                <i class='bx bxs-quote-alt-left site-color'></i>
+                                {{#shortentext}} 150, {{{block10caption}}} {{/shortentext}} 
+                                <i class='bx bxs-quote-alt-right site-color' ></i>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="picture">
+                                    <div class="img-bg"></div>
+                                    <img {{# block10image }} src="{{{block10image}}}"  {{/ block10image }}
+                                        {{^ block10image }} src="{{frontpageimglink}}block10/d2/{{block10count}}.jpg" {{/ block10image }}
+                                        alt="user-img" onerror="this.style.display='none'">
+                                </div>
+                                <div class="name-job pl-3">
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    {{#block10name}}
+                                    <h4 class="site-color">
+                                        {{block10name}}
+                                    </h4>
+                                    {{/block10name}}
+                                    <span>{{block10job}}</span> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>   
+                {{/block10}}
+            </div>
+        </div>
+    </div>
+</div>

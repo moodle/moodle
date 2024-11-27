@@ -1,0 +1,64 @@
+<div id="block05-1" class="block05-1 educard-block educard-font">
+    <div class="block05-bg block-start-end-space">
+        <div class="container">
+            <div class="educard-sub-title">
+                <h6>{{block05headline}}</h6>
+            </div>
+            <div>
+                <div class="h1">{{block05header}}<span> {{block05maintitle}}</span></div>
+                <div class="educard-heading-line-left"></div>
+            </div>
+            <div class="mt-60">
+                <div class="video-img-thumbnail text-center educard-rounded block-shadow block05-1-bg-img">
+                    <div class="play-btn">
+                        <a class="video-play" href="#Block05VideoModal" data-toggle="modal"><i class="fa fa-play-circle"></i></a>
+                    </div>
+                </div>
+            </div>    
+            <div class="bg-dots-horizontal"></div>
+            <div class="row mt-20">
+            {{#block05}}
+                 <div class="col-lg-6">
+                    <div class="single-choose-item">
+                        <a href="{{link}}">
+                        <i class="{{icon}}"></i>
+                        <h5 class="font-weight-600 mt-3">{{{title}}}</h5>
+                        </a>
+                        <p>{{#shortentext}} 90, {{{caption}}} {{/shortentext}}</p>
+                    </div>
+                </div>
+            {{/block05}}    
+            </div>
+        </div>
+        <div id="Block05VideoModal" class="modal fade block051modal">
+            <div class="modal-dialog modal-lg">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div class="modal-content">
+                    <div class="modal-body">
+                        {{#block05_youtube}}
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe class="embed-responsive-item" title="video" width="650" 
+                                src="{{{block05videolink}}}" allowfullscreen>
+                            </iframe>
+                        </div>
+                        {{/block05_youtube}}
+                        {{#block05_vimeo}}
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe width="650"
+                                src="{{{block05videolink}}}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen>
+                            </iframe>
+                        </div>    
+                        {{/block05_vimeo}}
+                        {{#block05_custom}}
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <video controls pause muted playsinline width="650"> 
+                                <source src="{{{block05videolink}}}"  type="video/mp4">
+                            </video>
+                        </div>
+                        {{/block05_custom}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>     
+</div>

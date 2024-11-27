@@ -1,0 +1,27 @@
+<div id="block02-2" class="block02-2 educard-block educard-font">
+    <div class="block02-bg block-start-end-space">
+        <div class="container">
+            <div class="row">
+                {{#block02}}
+                <div class="{{{count}}} mb-4">
+                    <div class="p-3 educard-wrap-iconbox block-shadow block-hover-shadow educard-rounded">
+                    <div class="card h-100 text-white">
+                        <div class="corner"></div>
+                        <div class="card-body ">
+                            <i class="icon {{icon}}"></i>
+                            <h4 class="pt-5 mb-3 pr-5">{{{title}}}</h4>
+                            {{#shortentext}} 150, {{{caption}}} {{/shortentext}}
+                        </div>
+                        {{#button}}
+                        <div class="card-footer pb-5">
+                            <a href="{{{buttonurl}}}" class="linking educard-rounded p-2">{{{button}}} <i class="fa fa-arrow-right"></i></a>
+                        </div>
+                        {{/button}}
+                    </div>
+                    </div>
+                </div>
+                {{/block02}}
+            </div>
+        </div>
+    </div>
+</div>

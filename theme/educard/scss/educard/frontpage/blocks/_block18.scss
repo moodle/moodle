@@ -1,0 +1,174 @@
+/*-----------------------
+    Banner HTML Block 18
+-------------------------*/
+.block18 {
+    .educard-banner {
+        background-color: #0071dc;
+        padding: 40px;
+        background-image: url(https://www.themesalmond.com/image/bg-banner.jpg);
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+    .educard-banner-item {
+        text-align: center;
+    }
+    .educard-banner-icon {
+        margin-top: 15px;
+        size:36px;
+    }
+    .educard-banner-content {
+        margin-top: 22px;
+    }
+    .educard-banner-title {
+        margin-bottom: 5px;
+        color: #fff;
+        font-size: 18px;
+    }
+    .educard-banner-subtitle {
+        color: #fff;
+    }
+}
+/* ------------------------
+    All HTML Blocks 
+---------------------------*/
+.educard-header2 {
+    background-color: #FDFAF1;
+  }
+  .educard-header2 .educard-shape img {
+    position: absolute;
+  }
+  .educard-header2 .educard-shape-1 {
+    bottom: 29%;
+    right: 77%;
+    width: 50%;
+    height: 50%;
+  }
+  .educard-header2 .educard-shape-2 {
+  top: 80%;
+  left: 55%;
+    -webkit-animation: mover 3s infinite  alternate;
+    animation: mover 3s infinite  alternate;
+  }
+  .educard-header2 .educard-shape-3 {
+    opacity:0.1;
+  }
+  .educard-header2 .educard-shape-4 {
+    bottom: 10%;
+    left: 15%;
+    width: 25%;
+    height: 25%;
+  }
+  .educard-header2 .bg-img {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 600px;
+    position: relative;
+    margin-left: -600px;
+    margin-top: 90px;
+    z-index: -1;
+    opacity: 0.2;
+  }
+  .educard-header2 .container {
+    z-index: 1;
+  }
+  .educard-header2 .info-detail {
+    padding: 15% 15px;
+  }
+  .educard-header2 .info-detail .title {
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 50px;
+  }
+  .educard-header2 .info-detail .subtitle {
+    margin: 50px 0;
+  }
+  .educard-header2 .adv-img {
+    padding-top: 100px;
+  }
+  .educard-header2 .educard-search {
+    margin-top: 20px;
+  }
+  .educard-header2 .educard-search .form-control {
+    padding: 18px 130px 18px 55px;
+    box-shadow: none;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 0 20px 0 rgb(62 28 131 / 10%);
+  }
+  .educard-header2 .educard-search i {
+    position: absolute;
+    left: 20px;
+    top: 22px;
+    font-size: 18px;
+    color: #757f95;
+  }
+  .educard-header2 .educard-search .form-group {
+    position: relative;
+    padding: 12px;
+    background-color: orange;
+  }
+  .educard-header2 .educard-search form button {
+    position: absolute;
+    background: orange;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: 500;
+    border-radius: 5px;
+    border: none;
+    padding: 19px 42px;
+    right: -2px;
+    top: 0px;
+    transition: all .5s ease-in-out;
+  }
+  .educard-header2 .educard-search-list {
+    padding-left: 0;
+    list-style-type: none;
+    margin-bottom: 0;
+    margin-top: 20px;
+  }
+  .educard-header2 .educard-search-list li {
+    display: inline-block;
+    font-weight: 600;
+  }
+  .educard-header2 .educard-search-list li a {
+    text-decoration: none;
+    margin-top: 5px;
+    margin-right: 5px;
+    display: inline-block;
+    line-height: 25px;
+    color: #fff;
+    font-size: 90%;
+    font-weight: 500;
+    padding: 0 6px;
+    border-radius: 4px;
+    background: rgba(249,128,18,.8);
+  }
+  @-webkit-keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(50px); }
+  }
+  @keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(50px); }
+  }
+  @media (max-width: 991px){
+    .educard-header2 .bg-img {
+      display: none;
+    }
+    .educard-header2 .educard-shape-2 {
+      left: 69%;
+    }
+    }
+  @media (max-width: 767px){
+    .educard-header2 .educard-shape-2 {
+      display: none;
+    }
+    .educard-header2 .educard-shape-3 {
+      display: none;
+    }
+    .educard-header2 .educard-search form button {
+      padding: 12px 8px;
+    }
+  }

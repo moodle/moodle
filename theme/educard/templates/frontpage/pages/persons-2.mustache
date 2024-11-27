@@ -1,0 +1,73 @@
+<div id="page02-2" class="page02-2 educard-block educard-font">
+    {{> theme_educard/frontpage/pages/person-header}}
+    {{#frontpagenavchoice1}}
+        {{> theme_educard/frontpage/header/header1}}
+    {{/frontpagenavchoice1}}
+    <div class="page02-bg block-start-end-space mb-50">
+        <div class="container educard-teacher-block">
+            {{#page02explanation}}
+                {{{page02explanation}}}
+            {{/page02explanation}}
+            <div class="row mt-60 mb-60">
+                {{#page02}}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <div class="educard-teacher-boxes block-shadow block-hover-shadow educard-rounded">
+                        <div class="overlay-image view-overlay">
+                            <img src="{{userpictureURL}}" class="img-fluid" alt="#">
+                            <div class="clear"></div>
+                            <div class="mask educard-teacher-desc">
+                                <div class="educard-zoom-link text-white">
+                                    {{#showdescription}}
+                                    <h4> {{teachername}} </h4>
+                                    <div class="text-truncate-3">{{{description}}}</div>
+                                    {{/showdescription}}
+                                    <div class="educard-teacher-social">
+                                        {{#usersocial1}}
+                                        <a href="{{usersocial1link}}" target="_blank"><i class="{{usersocial1}}"></i></a>
+                                        {{/usersocial1}}
+                                        {{#usersocial2}}
+                                        <a href="{{usersocial2link}}" target="_blank"><i class="{{usersocial2}}"></i></a>
+                                        {{/usersocial2}}
+                                        {{#usersocial3}}
+                                        <a href="{{usersocial3link}}" target="_blank"><i class="{{usersocial3}}"></i></a>
+                                        {{/usersocial3}}
+                                        {{#usersocial4}}
+                                        <a href="{{usersocial4link}}" target="_blank"><i class="{{usersocial4}}"></i></a>
+                                        {{/usersocial4}}
+                                        {{#usersocial5}}
+                                        <a href="{{usersocial5link}}" target="_blank"><i class="{{usersocial5}}"></i></a>
+                                        {{/usersocial5}}
+                                        {{#usersocial6}}
+                                        <a href="{{usersocial6link}}" target="_blank"><i class="{{usersocial6}}"></i></a>
+                                        {{/usersocial6}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="educard-teacher-info card-body">
+                            <a href="{{userURL}}">
+                                <h4 class="text-truncate-1">{{teachername}}</h4>
+                            </a>
+                            <p>{{job}}	&nbsp;</p>
+                            {{#page02total}}
+                            <div class="educard-teacher-footer soft-color font-weight-500 mt-2 pt-1">
+                                <span class="educard-teacher-student">
+                                    <i class="fa fa-user-o" aria-hidden="true"></i>
+                                    {{studentscount}} 
+                                    <span>{{#str}} student, grades {{/str}} </span>
+                                </span>
+                                <span class="educard-teacher-courses float-right">
+                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                    {{coursecount}} 
+                                    <span>{{#str}} course, core {{/str}} </span>
+                                </span>
+                            </div>
+                            {{/page02total}}
+                        </div>        
+                    </div>
+                </div>
+                {{/page02}}
+            </div>
+        </div>
+    </div>
+</div>
