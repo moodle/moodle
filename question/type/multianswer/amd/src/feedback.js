@@ -22,7 +22,7 @@
  */
 
 import 'theme_boost/popover';
-import $ from 'jquery';
+import Popover from 'theme_boost/bootstrap/popover';
 
 /** @property {object} Contains the list of selectors for this module. */
 const SELECTORS = {
@@ -37,7 +37,8 @@ let feedbackInitialised = false;
  */
 const initPopovers = () => {
     if (!feedbackInitialised) {
-        $(SELECTORS.FEEDBACK_TRIGGER).popover();
+        const popoverTriggers = document.querySelectorAll(SELECTORS.FEEDBACK_TRIGGER);
+        [...popoverTriggers].map((trigger) => new Popover(trigger));
 
         document.addEventListener('click', (e) => {
             if (e.target.closest(SELECTORS.FEEDBACK_TRIGGER)) {

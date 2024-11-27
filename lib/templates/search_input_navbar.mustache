@@ -90,25 +90,27 @@ require(
 function(
     $
 ) {
-    var uniqid = "{{uniqid}}";
-    var container = $('#searchinput-navbar-' + uniqid);
-    var opensearch = container.find('[data-action="opensearch"]');
-    var input = container.find('[data-region="input"]');
-    var submit = container.find('[data-action="submit"]');
+    const container = document.getElementById('searchform-navbar');
+    const opensearch = container.parentElement.querySelector('[data-action="opensearch"]');
+    const input = container.querySelector('[data-region="input"]');
+    const submit = container.querySelector('[data-action="submit"]');
 
-    submit.on('click', function(e) {
-        if (input.val() === '') {
+    submit.addEventListener('click', (e) => {
+        if (input.valUE === '') {
             e.preventDefault();
         }
     });
-    container.on('hidden.bs.collapse', function() {
-        opensearch.removeClass('d-none');
-        input.val('');
+
+    container.addEventListener('hidden.bs.collapse', () => {
+        opensearch.classList.remove('d-none');
+        input.value = '';
     });
-    container.on('show.bs.collapse', function() {
-        opensearch.addClass('d-none');
+
+    container.addEventListener('show.bs.collapse', () => {
+        opensearch.classList.add('d-none');
     });
-    container.on('shown.bs.collapse', function() {
+
+    container.addEventListener('shown.bs.collapse', () => {
         input.focus();
     });
 });

@@ -139,8 +139,8 @@ echo '</div>';
 
 $inlinejs = <<<EOF
 require(
-    ['core/local/dropdown/dialog', 'jquery'],
-    (Module, jQuery) => {
+    ['core/local/dropdown/dialog'],
+    (Module) => {
         const dialog = Module.getDropdownDialog('#dialogjscontrols');
 
         document.querySelector('#buttontext').addEventListener('click', () => {
@@ -163,12 +163,10 @@ require(
         }
         visibility();
 
-
-        // Bootstrap 4 events are still jQuery.
-        jQuery(dialog.getElement()).on('shown.bs.dropdown', (e) => {
+        dialog.getElement().addEventListener('shown.bs.dropdown', (e) => {
             visibility();
         });
-        jQuery(dialog.getElement()).on('hidden.bs.dropdown', (e) => {
+        dialog.getElement().addEventListener('hidden.bs.dropdown', (e) => {
             visibility();
         });
     }

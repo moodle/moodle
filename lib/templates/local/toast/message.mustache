@@ -51,13 +51,14 @@
     </div>
 </div>
 {{#js}}
-require(['jquery', 'theme_boost/bootstrap/toast'], function(jQuery) {
+require(['theme_boost/bootstrap/toast'], function(Toast) {
     // Show the toast.
-    // Bootstrap toast components are not shown automatically.
-    jQuery('#toast-{{uniqid}}').toast('show');
+    const toastTrigger = document.getElementById('toast-{{uniqid}}');
+    new Toast(toastTrigger).show();
 
-    jQuery('#toast-{{uniqid}}').on('hidden.bs.toast', function(e) {
-        e.target.remove();
+    // Remove the toast from the DOM when it is hidden.
+    toastTrigger.addEventListener('hidden.bs.toast', function() {
+        toastTrigger.remove();
     });
 });
 {{/js}}

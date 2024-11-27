@@ -26,6 +26,7 @@ import * as View from 'block_timeline/view';
 import * as Notification from 'core/notification';
 import * as Utils from 'core/utils';
 import * as UserRepository from 'core_user/repository';
+import {getFirst} from 'core/normalise';
 
 const SELECTORS = {
     TIMELINE_DAY_FILTER: '[data-region="day-filter"]',
@@ -107,9 +108,11 @@ const registerViewSelector = function(root, timelineViewRoot) {
 
     // Listen for when the user changes tab so that we can show the first set of courses
     // and load their events when they request the sort by courses view for the first time.
-    viewSelector.on('shown shown.bs.tab', function(e) {
-        View.shown(timelineViewRoot);
-        $(e.target).removeClass('active');
+    getFirst(viewSelector).querySelectorAll('[data-bs-toggle="tab"]').forEach((tab) => {
+        tab.addEventListener('shown.bs.tab', (e) => {
+            View.shown(timelineViewRoot);
+            $(e.target).removeClass('active');
+        });
     });
 
 

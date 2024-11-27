@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import $ from 'jquery';
+import Carousel from 'theme_boost/bootstrap/carousel';
 import * as ModalEvents from 'core/modal_events';
 import selectors from 'core_course/local/activitychooser/selectors';
 import * as Templates from 'core/templates';
@@ -30,13 +30,14 @@ import {addIconToContainer} from 'core/loadingicon';
 import * as Repository from 'core_course/local/activitychooser/repository';
 import Notification from 'core/notification';
 import {debounce} from 'core/utils';
+import {getFirst} from 'core/normalise';
 const getPlugin = pluginName => import(pluginName);
 
 /**
  * Given an event from the main module 'page' navigate to it's help section via a carousel.
  *
  * @method showModuleHelp
- * @param {jQuery} carousel Our initialized carousel to manipulate
+ * @param {Element} carousel Our initialized carousel to manipulate
  * @param {Object} moduleData Data of the module to carousel to
  * @param {jQuery} modal We need to figure out if the current modal has a footer.
  */
@@ -45,7 +46,7 @@ const showModuleHelp = (carousel, moduleData, modal = null) => {
     if (modal !== null && moduleData.showFooter === true) {
         modal.setFooter(Templates.render('core_course/local/activitychooser/footer_partial', moduleData));
     }
-    const help = carousel.find(selectors.regions.help)[0];
+    const help = carousel.querySelector(selectors.regions.help);
     help.innerHTML = '';
     help.classList.add('m-auto');
 
@@ -71,11 +72,11 @@ const showModuleHelp = (carousel, moduleData, modal = null) => {
         .catch(Notification.exception);
 
     // Move to the next slide, and resolve the transition promise when it's done.
-    carousel.one('slid.bs.carousel', () => {
+    carousel.addEventListener('slid.bs.carousel', () => {
         transitionPromiseResolver();
-    });
+    }, {once: true});
     // Trigger the transition between 'pages'.
-    carousel.carousel('next');
+    Carousel.getInstance(carousel).next();
 };
 
 /**
@@ -115,9 +116,10 @@ const manageFavouriteState = async(modalBody, caller, partialFavourite) => {
  * @param {Object} footerData Our base footer object.
  */
 const registerListenerEvents = (modal, mappedModules, partialFavourite, footerData) => {
+    const modalBody = getFirst(modal.getBody());
     const bodyClickListener = async(e) => {
         if (e.target.closest(selectors.actions.optionActions.showSummary)) {
-            const carousel = $(modal.getBody()[0].querySelector(selectors.regions.carousel));
+            const carousel = modalBody.querySelector(selectors.regions.carousel);
 
             const module = e.target.closest(selectors.regions.chooserOption.container);
             const moduleName = module.dataset.modname;
@@ -129,24 +131,24 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite, footerDa
 
         if (e.target.closest(selectors.actions.optionActions.manageFavourite)) {
             const caller = e.target.closest(selectors.actions.optionActions.manageFavourite);
-            await manageFavouriteState(modal.getBody()[0], caller, partialFavourite);
-            const activeSectionId = modal.getBody()[0].querySelector(selectors.elements.activetab).getAttribute("href");
-            const sectionChooserOptions = modal.getBody()[0]
+            await manageFavouriteState(modalBody, caller, partialFavourite);
+            const activeSectionId = modalBody.querySelector(selectors.elements.activetab).getAttribute("href");
+            const sectionChooserOptions = modalBody
                 .querySelector(selectors.regions.getSectionChooserOptions(activeSectionId));
             const firstChooserOption = sectionChooserOptions
                 .querySelector(selectors.regions.chooserOption.container);
             toggleFocusableChooserOption(firstChooserOption, true);
-            initChooserOptionsKeyboardNavigation(modal.getBody()[0], mappedModules, sectionChooserOptions, modal);
+            initChooserOptionsKeyboardNavigation(modalBody, mappedModules, sectionChooserOptions, modal);
         }
 
         // From the help screen go back to the module overview.
         if (e.target.matches(selectors.actions.closeOption)) {
-            const carousel = $(modal.getBody()[0].querySelector(selectors.regions.carousel));
+            const carousel = modalBody.querySelector(selectors.regions.carousel);
 
             // Trigger the transition between 'pages'.
-            carousel.carousel('prev');
-            carousel.on('slid.bs.carousel', () => {
-                const allModules = modal.getBody()[0].querySelector(selectors.regions.modules);
+            Carousel.getInstance(carousel).prev();
+            carousel.addEventListener('slid.bs.carousel', () => {
+                const allModules = modalBody.querySelector(selectors.regions.modules);
                 const caller = allModules.querySelector(selectors.regions.getModuleSelector(e.target.dataset.modname));
                 caller.focus();
             });
@@ -155,7 +157,7 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite, footerDa
         // The "clear search" button is triggered.
         if (e.target.closest(selectors.actions.clearSearch)) {
             // Clear the entered search query in the search bar and hide the search results container.
-            const searchInput = modal.getBody()[0].querySelector(selectors.actions.search);
+            const searchInput = modalBody.querySelector(selectors.actions.search);
             searchInput.value = "";
             searchInput.focus();
             toggleSearchResultsView(modal, mappedModules, searchInput.value);
@@ -180,12 +182,12 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite, footerDa
 
     // Set up the carousel.
     .then(body => {
-        $(body.querySelector(selectors.regions.carousel))
-            .carousel({
+        const carousel = document.querySelector(selectors.regions.carousel);
+        new Carousel(carousel, {
                 interval: false,
                 pause: true,
                 keyboard: false
-            });
+        });
 
         return body;
     })
@@ -219,7 +221,7 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite, footerDa
 
         return body;
     })
-    .catch();
+    .catch(Notification.exception);
 
     modal.getFooterPromise()
 
@@ -230,7 +232,7 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite, footerDa
         footer.addEventListener('click', footerClickListener);
         return footer;
     })
-    .catch();
+    .catch(Notification.exception);
 };
 
 /**
@@ -255,8 +257,8 @@ const initChooserOptionsKeyboardNavigation = (body, mappedModules, chooserOption
                     const module = e.target.closest(selectors.regions.chooserOption.container);
                     const moduleName = module.dataset.modname;
                     const moduleData = mappedModules.get(moduleName);
-                    const carousel = $(body.querySelector(selectors.regions.carousel));
-                    carousel.carousel({
+                    const carousel = document.querySelector(selectors.regions.carousel);
+                    new Carousel({
                         interval: false,
                         pause: true,
                         keyboard: false
@@ -458,21 +460,23 @@ const setupKeyboardAccessibility = (modal, mappedModules) => {
     modal.getModal()[0].tabIndex = -1;
 
     modal.getBodyPromise().then(body => {
-        $(selectors.elements.tab).on('shown.bs.tab', (e) => {
-            const activeSectionId = e.target.getAttribute("href");
-            const activeSectionChooserOptions = body[0]
-                .querySelector(selectors.regions.getSectionChooserOptions(activeSectionId));
-            const firstChooserOption = activeSectionChooserOptions
-                .querySelector(selectors.regions.chooserOption.container);
-            const prevActiveSectionId = e.relatedTarget.getAttribute("href");
-            const prevActiveSectionChooserOptions = body[0]
-                .querySelector(selectors.regions.getSectionChooserOptions(prevActiveSectionId));
+        document.querySelectorAll(selectors.elements.tab).forEach((tab) => {
+            tab.addEventListener('shown.bs.tab', (e) => {
+                const activeSectionId = e.target.getAttribute("href");
+                const activeSectionChooserOptions = body[0]
+                    .querySelector(selectors.regions.getSectionChooserOptions(activeSectionId));
+                const firstChooserOption = activeSectionChooserOptions
+                    .querySelector(selectors.regions.chooserOption.container);
+                const prevActiveSectionId = e.relatedTarget.getAttribute("href");
+                const prevActiveSectionChooserOptions = body[0]
+                    .querySelector(selectors.regions.getSectionChooserOptions(prevActiveSectionId));
 
-            // Disable the focus of every chooser option in the previous active section.
-            disableFocusAllChooserOptions(prevActiveSectionChooserOptions);
-            // Enable the focus of the first chooser option in the current active section.
-            toggleFocusableChooserOption(firstChooserOption, true);
-            initChooserOptionsKeyboardNavigation(body[0], mappedModules, activeSectionChooserOptions, modal);
+                // Disable the focus of every chooser option in the previous active section.
+                disableFocusAllChooserOptions(prevActiveSectionChooserOptions);
+                // Enable the focus of the first chooser option in the current active section.
+                toggleFocusableChooserOption(firstChooserOption, true);
+                initChooserOptionsKeyboardNavigation(body[0], mappedModules, activeSectionChooserOptions, modal);
+            });
         });
         return;
     }).catch(Notification.exception);
@@ -520,5 +524,5 @@ export const displayChooser = (modalPromise, sectionModules, partialFavourite, f
         });
 
         return modal;
-    }).catch();
+    }).catch(Notification.exception);
 };

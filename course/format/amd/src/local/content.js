@@ -23,6 +23,7 @@
  */
 
 import {BaseComponent} from 'core/reactive';
+import Collapse from 'theme_boost/bootstrap/collapse';
 import {throttle, debounce} from 'core/utils';
 import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
 import Config from 'core/config';
@@ -33,8 +34,6 @@ import Fragment from 'core/fragment';
 import Templates from 'core/templates';
 import DispatchActions from 'core_courseformat/local/content/actions';
 import * as CourseEvents from 'core_course/events';
-// The jQuery module is only used for interacting with Boostrap 4. It can we removed when MDL-71979 is integrated.
-import jQuery from 'jquery';
 import Pending from 'core/pending';
 import log from "core/log";
 
@@ -270,9 +269,9 @@ export default class Component extends BaseComponent {
     }
 
     /**
-     * Update section collapsed state via bootstrap 4 if necessary.
+     * Update section collapsed state via bootstrap if necessary.
      *
-     * Formats that do not use bootstrap 4 must override this method in order to keep the section
+     * Formats that do not use bootstrap must override this method in order to keep the section
      * toggling working.
      *
      * @param {object} args
@@ -298,11 +297,11 @@ export default class Component extends BaseComponent {
             if (!collapsible) {
                 return;
             }
-
-            // Course index is based on Bootstrap 4 collapsibles. To collapse them we need jQuery to
-            // interact with collapsibles methods. Hopefully, this will change in Bootstrap 5 because
-            // it does not require jQuery anymore (when MDL-71979 is integrated).
-            jQuery(collapsible).collapse(element.contentcollapsed ? 'hide' : 'show');
+            if (element.contentcollapsed) {
+                Collapse.getOrCreateInstance(collapsible, {toggle: false}).hide();
+            } else {
+                Collapse.getOrCreateInstance(collapsible, {toggle: false}).show();
+            }
         }
 
         this._refreshAllSectionsToggler(state);

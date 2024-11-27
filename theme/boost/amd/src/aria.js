@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import $ from 'jquery';
+import Tab from 'theme_boost/bootstrap/tab';
 import Pending from 'core/pending';
 import * as FocusLockManager from 'core/local/aria/focuslock';
 
@@ -194,7 +194,7 @@ const dropdownFix = () => {
     });
 
     // Trap focus if the dropdown is a dialog.
-    $(document).on('shown.bs.dropdown', e => {
+    document.addEventListener('shown.bs.dropdown', e => {
         const dialog = e.target.querySelector('.dropdown-menu[role="dialog"]');
         if (dialog) {
             // Use setTimeout to make sure the dialog is positioned correctly to prevent random scrolling.
@@ -205,7 +205,7 @@ const dropdownFix = () => {
     });
 
     // Untrap focus when the dialog dropdown is closed.
-    $(document).on('hidden.bs.dropdown', e => {
+    document.addEventListener('hidden.bs.dropdown', e => {
         const dialog = e.target.querySelector('.dropdown-menu[role="dialog"]');
         if (dialog) {
             FocusLockManager.untrapFocus();
@@ -233,7 +233,7 @@ const dropdownFix = () => {
  * A lot of Bootstrap's out of the box features don't work if dropdown items are not focusable.
  */
 const comboboxFix = () => {
-    $(document).on('show.bs.dropdown', e => {
+    document.addEventListener('show.bs.dropdown', e => {
         if (e.relatedTarget.matches('[role="combobox"]')) {
             const combobox = e.relatedTarget;
             const listbox = document.querySelector(`#${combobox.getAttribute('aria-controls')}[role="listbox"]`);
@@ -257,7 +257,7 @@ const comboboxFix = () => {
         }
     });
 
-    $(document).on('hidden.bs.dropdown', e => {
+    document.addEventListener('hidden.bs.dropdown', e => {
         if (e.relatedTarget.matches('[role="combobox"]')) {
             const combobox = e.relatedTarget;
             const listbox = document.querySelector(`#${combobox.getAttribute('aria-controls')}[role="listbox"]`);
@@ -486,7 +486,7 @@ const tabElementFix = () => {
         if (e.target.matches('[role="tablist"] [data-bs-toggle="tab"], [role="tablist"] [data-bs-toggle="pill"]')) {
             const tabs = e.target.closest('[role="tablist"]').querySelectorAll('[data-bs-toggle="tab"], [data-bs-toggle="pill"]');
             e.preventDefault();
-            $(e.target).tab('show');
+            Tab.getOrCreateInstance(e.target).show();
             tabs.forEach(tab => {
                 tab.tabIndex = -1;
             });
