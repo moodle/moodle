@@ -123,6 +123,11 @@ class manager {
     const SEARCH_AREA_CATEGORY_OTHER = 'core-other';
 
     /**
+     * @var int To avoid race conditions, do not index documents newer than this many seconds.
+     */
+    const INDEXING_DELAY = 5;
+
+    /**
      * @var \core_search\base[] Enabled search areas.
      */
     protected static $enabledsearchareas = null;
@@ -1194,7 +1199,7 @@ class manager {
      * @return bool Whether there was any updated document or not.
      */
     public function index($fullindex = false, $timelimit = 0, ?\progress_trace $progress = null) {
-        global $DB;
+        global $DB, $CFG;
 
         // Cannot combine time limit with reindex.
         if ($timelimit && $fullindex) {
@@ -1229,6 +1234,11 @@ class manager {
             $stopat = self::get_current_time() + $timelimit;
         }
 
+        // Work out if we are in test mode, in which case we disable the indexing delay (because
+        // the normal pattern is to add a document and immediately index it).
+        $testmode = (PHPUNIT_TEST || defined('BEHAT_TEST')) &&
+            empty($CFG->searchindexingdelayfortestscript);
+
         foreach ($searchareas as $areaid => $searcharea) {
 
             $progress->output('Processing area: ' . $searcharea->get_visible_name());
@@ -1243,6 +1253,17 @@ class manager {
             list($componentconfigname, $varname) = $searcharea->get_config_var_name();
 
             $prevtimestart = intval(get_config($componentconfigname, $varname . '_indexingstart'));
+
+            // The effective start time of previous indexing was some seconds earlier because we
+            // only index data up to that time, to avoid race conditions (if it takes a while to
+            // write a document to the database and the timecreated for that document ends up being
+            // a second or two out of date). This mechanism is disabled for tests.
+            if (!$testmode) {
+                // The -1 here is because for example, if _indexingstart is 123, we will have
+                // indexed everything up to 123 - 5 = 118 (inclusive). So next time, we can start
+                // at 119 = 123 - 4 and we don't have to repeat 118.
+                $prevtimestart -= (self::INDEXING_DELAY - 1);
+            }
 
             if ($fullindex === true) {
                 $referencestarttime = 0;
@@ -1278,8 +1299,13 @@ class manager {
                 $options['stopat'] = $stopat;
             }
             $options['progress'] = $progress;
-            $iterator = new skip_future_documents_iterator(new \core\dml\recordset_walk(
-                    $recordset, array($searcharea, 'get_document'), $options));
+            // Skip 'future' documents, also any written very recently (to avoid race conditions).
+            // The exception is for PHPunit and Behat (step 'I update the global search index')
+            // where we allow it to index recent documents as well, we don't want it to have to wait.
+            $iterator = new skip_future_documents_iterator(
+                new \core\dml\recordset_walk($recordset, [$searcharea, 'get_document'], $options),
+                $indexingstart - ($testmode ? 0 : self::INDEXING_DELAY),
+            );
             $result = $this->engine->add_documents($iterator, $searcharea, $options);
             $recordset->close();
             $batchinfo = '';
