@@ -17,6 +17,14 @@ Feature: Use the TinyMCE editor to upload an image
     And I click on "Browse repositories" "button" in the "Insert image" "dialogue"
     Then "File picker" "dialogue" should exist
 
+  Scenario: Focus returns to the correct location after closing a nested FilePicker
+    Given I log in as "admin"
+    And I open my profile in edit mode
+    When I click on the "Image" button for the "Description" TinyMCE editor
+    And I press "Browse repositories"
+    When I press the escape key
+    Then the focused element is "Browse repositories" "button"
+
   @_file_upload @test_tiny
   Scenario: Browsing repositories in the TinyMCE editor shows the FilePicker and upload url image
     Given I log in as "admin"
