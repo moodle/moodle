@@ -23,6 +23,7 @@
  */
 
 namespace auth_iomadsaml2\admin;
+
 use admin_setting_heading;
 use html_writer;
 
@@ -37,7 +38,9 @@ require_once($CFG->libdir . '/moodlelib.php');
  * @copyright  Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class setting_button extends admin_setting_heading {
+#[\AllowDynamicProperties]
+class setting_button extends admin_setting_heading
+{
     /**
      * A button element
      *
@@ -47,7 +50,8 @@ class setting_button extends admin_setting_heading {
      * @param string $label       what is written on the button
      * @param string $href        the URL directed to on click
      */
-    public function __construct($name, $visiblename, $description, $label, $href) {
+    public function __construct($name, $visiblename, $description, $label, $href)
+    {
         $this->nosave = true;
         $this->label = $label;
         $this->href = $href;
@@ -60,7 +64,8 @@ class setting_button extends admin_setting_heading {
      * @param string $query
      * @return string Returns an HTML string
      */
-    public function output_html($data, $query = '') {
+    public function output_html($data, $query = '')
+    {
         if (moodle_major_version() < '3.3') {
             $params = [
                 'type'    => 'button',

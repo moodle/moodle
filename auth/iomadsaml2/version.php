@@ -25,12 +25,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->release  = '4.2.2 (Build: 20230814)'; // Human-friendly version name
-$plugin->version   = 2022111702;    // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2022111703;    // The current plugin version (Date: YYYYMMDDXX).
 $plugin->release   = 2022111701;    // Match release exactly to version.
 $plugin->requires  = 2017051509;    // Requires PHP 7, 2017051509 = T12. M3.3
-                                    // Strictly we require either Moodle 3.5 OR
-                                    // we require Totara 3.3, but the version number
-                                    // for Totara 3.3 is the same as Moodle 3.3.
+// Strictly we require either Moodle 3.5 OR
+// we require Totara 3.3, but the version number
+// for Totara 3.3 is the same as Moodle 3.3.
 $plugin->component = 'auth_iomadsaml2';  // Full name of the plugin (used for diagnostics).
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->supported = [39, 401];     // A range of branch numbers of supported moodle versions.

@@ -40,9 +40,9 @@ use company;
 use context_system;
 
 global $CFG;
-require_once($CFG->libdir.'/authlib.php');
-require_once($CFG->dirroot.'/login/lib.php');
-require_once(__DIR__.'/../locallib.php');
+require_once($CFG->libdir . '/authlib.php');
+require_once($CFG->dirroot . '/login/lib.php');
+require_once(__DIR__ . '/../locallib.php');
 
 /**
  * Plugin for Saml2 authentication.
@@ -50,7 +50,10 @@ require_once(__DIR__.'/../locallib.php');
  * @copyright  Brendan Heywood <brendan@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class auth extends \auth_plugin_base {
+
+#[\AllowDynamicProperties]
+class auth extends \auth_plugin_base
+{
     /**
      * @var array $metadataentities List of configured active IdPs.
      */
@@ -97,7 +100,8 @@ class auth extends \auth_plugin_base {
     /**
      * Constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         global $CFG, $DB;
 
         // Add username field to the list of data mapping to be able to update it on user creation if required.
@@ -122,7 +126,7 @@ class auth extends \auth_plugin_base {
         }
 
         $fullconfig = (array) get_config('auth_iomadsaml2');
-        $myconfig = array_merge($this->defaults, $fullconfig );
+        $myconfig = array_merge($this->defaults, $fullconfig);
         // Do we have anything company specific?
         if (!empty($companyid)) {
             foreach ($this->defaults as $defaultidetifier => $ignore) {
@@ -162,7 +166,8 @@ class auth extends \auth_plugin_base {
      *
      * @return bool
      */
-    public function is_debugging() {
+    public function is_debugging()
+    {
         return (bool) $this->config->debug;
     }
 
@@ -171,7 +176,8 @@ class auth extends \auth_plugin_base {
      *
      * @return string
      */
-    public function get_iomadsaml2_directory() {
+    public function get_iomadsaml2_directory()
+    {
         global $CFG;
         $directory = "{$CFG->dataroot}/iomadsaml2";
         if (!file_exists($directory)) {
@@ -186,7 +192,8 @@ class auth extends \auth_plugin_base {
      * @param string $file
      * @return string
      */
-    public function get_file($file) {
+    public function get_file($file)
+    {
         return $this->get_iomadsaml2_directory() . '/' . $file;
     }
 
@@ -195,7 +202,8 @@ class auth extends \auth_plugin_base {
      *
      * @return string
      */
-    public function get_file_sp_metadata_file() {
+    public function get_file_sp_metadata_file()
+    {
         return $this->get_file($this->spname . '.xml');
     }
 
@@ -205,7 +213,8 @@ class auth extends \auth_plugin_base {
      * @param string|array $url The string with the URL or an array with all URLs as keys.
      * @return string Metadata file path.
      */
-    public function get_file_idp_metadata_file($url) {
+    public function get_file_idp_metadata_file($url)
+    {
         if (is_object($url)) {
             $url = (array)$url;
         }
@@ -224,14 +233,15 @@ class auth extends \auth_plugin_base {
      *
      * @param string $msg Log message
      */
-    private function log($msg) {
+    private function log($msg)
+    {
         if ($this->is_debugging()) {
             // @codingStandardsIgnoreLine
             error_log('auth_iomadsaml2: ' . $msg);
 
             // If SSP logs to tmp file we want these to also go there.
             if ($this->config->logtofile) {
-                require_once(__DIR__.'/../setup.php');
+                require_once(__DIR__ . '/../setup.php');
                 \SimpleSAML\Logger::debug('auth_iomadsaml2: ' . $msg);
             }
         }
@@ -245,7 +255,8 @@ class auth extends \auth_plugin_base {
      *
      * @return array of IdP's
      */
-    public function loginpage_idp_list($wantsurl) {
+    public function loginpage_idp_list($wantsurl)
+    {
         $conf = $this->config;
 
         // If we have disabled the visibility of the idp link, return with an empty array right away.
@@ -272,8 +283,12 @@ class auth extends \auth_plugin_base {
 
             // Moodle Workplace - Check IdP's tenant availability.
             // Check if function exists required for Totara 12 compatibility.
-            if (class_exists(\tool_tenant\local\auth\iomadsaml2\manager::class) && !component_class_callback('\tool_tenant\local\auth\iomadsaml2\manager',
-                    'issuer_available', [$idp->md5entityid], true)) {
+            if (class_exists(\tool_tenant\local\auth\iomadsaml2\manager::class) && !component_class_callback(
+                '\tool_tenant\local\auth\iomadsaml2\manager',
+                'issuer_available',
+                [$idp->md5entityid],
+                true
+            )) {
                 continue;
             }
 
@@ -335,7 +350,8 @@ class auth extends \auth_plugin_base {
      *
      * @return bool Always false
      */
-    public function is_internal() {
+    public function is_internal()
+    {
         return false;
     }
 
@@ -344,7 +360,8 @@ class auth extends \auth_plugin_base {
      *
      * @return bool
      */
-    public function is_configured() {
+    public function is_configured()
+    {
         $file = $this->certcrt;
         if (!file_exists($file)) {
             $this->log(__FUNCTION__ . ' file not found, ' . $file);
@@ -379,7 +396,8 @@ class auth extends \auth_plugin_base {
      *
      * @param string $msg The error message.
      */
-    public function error_page($msg) {
+    public function error_page($msg)
+    {
         global $PAGE, $OUTPUT, $SESSION;
 
         // Clean up $SESSION->wantsurl that was set explicitly in {@see auth_iomadsaml2\login},
@@ -401,7 +419,8 @@ class auth extends \auth_plugin_base {
     /**
      * All the checking happens before the login page in this hook
      */
-    public function pre_loginpage_hook() {
+    public function pre_loginpage_hook()
+    {
 
         global $SESSION;
 
@@ -422,7 +441,8 @@ class auth extends \auth_plugin_base {
     /**
      * All the checking happens before the login page in this hook
      */
-    public function loginpage_hook() {
+    public function loginpage_hook()
+    {
         global $SESSION;
 
         $this->execute_callback('auth_iomadsaml2_loginpage_hook');
@@ -431,8 +451,10 @@ class auth extends \auth_plugin_base {
 
         // For Behat tests, clear the wantsurl if it has ended up pointing to the fixture. This
         // happens in older browsers which don't support the Referrer-Policy header used by fixture.
-        if (defined('BEHAT_SITE_RUNNING') && !empty($SESSION->wantsurl) &&
-                strpos($SESSION->wantsurl, '/auth/iomadsaml2/tests/fixtures/') !== false) {
+        if (
+            defined('BEHAT_SITE_RUNNING') && !empty($SESSION->wantsurl) &&
+            strpos($SESSION->wantsurl, '/auth/iomadsaml2/tests/fixtures/') !== false
+        ) {
             unset($SESSION->wantsurl);
         }
 
@@ -450,7 +472,6 @@ class auth extends \auth_plugin_base {
             $this->log(__FUNCTION__ . ' exit');
             return;
         }
-
     }
 
     /**
@@ -458,7 +479,8 @@ class auth extends \auth_plugin_base {
      *
      * @return bool|string If this returns true then we redirect to the SAML login.
      */
-    public function should_login_redirect() {
+    public function should_login_redirect()
+    {
         global $SESSION;
 
         $this->log(__FUNCTION__ . ' enter');
@@ -572,10 +594,11 @@ class auth extends \auth_plugin_base {
     /**
      * All the checking happens before the login page in this hook
      */
-    public function saml_login() {
+    public function saml_login()
+    {
         global $CFG, $SESSION;
 
-        require_once(__DIR__.'/../setup.php');
+        require_once(__DIR__ . '/../setup.php');
         require_once("$CFG->dirroot/login/lib.php");
 
         // Set the default IdP to be the first in the list. Used when dual login is disabled.
@@ -643,7 +666,8 @@ class auth extends \auth_plugin_base {
      *
      * @param array $attributes
      */
-    public function saml_login_complete($attributes) {
+    public function saml_login_complete($attributes)
+    {
         global $CFG, $USER, $SESSION;
 
         if ($this->config->attrsimple) {
@@ -653,16 +677,20 @@ class auth extends \auth_plugin_base {
         $attr = $this->config->idpattr;
         if (empty($attributes[$attr])) {
             // Missing mapping IdP attribute. Login failed.
-            $event = \core\event\user_login_failed::create(['other' => ['username' => 'unknown',
-                'reason' => AUTH_LOGIN_NOUSER]]);
+            $event = \core\event\user_login_failed::create(['other' => [
+                'username' => 'unknown',
+                'reason' => AUTH_LOGIN_NOUSER
+            ]]);
             $event->trigger();
             $this->error_page(get_string('noattribute', 'auth_iomadsaml2', $attr));
         }
 
         // Testing user's groups and allow access according to preferences.
         if (!$this->is_access_allowed_for_member($attributes)) {
-            $event = \core\event\user_login_failed::create(['other' => ['username' => 'unknown',
-                'reason' => AUTH_LOGIN_UNAUTHORISED]]);
+            $event = \core\event\user_login_failed::create(['other' => [
+                'username' => 'unknown',
+                'reason' => AUTH_LOGIN_UNAUTHORISED
+            ]]);
             $event->trigger();
             $this->handle_blocked_access();
         }
@@ -694,8 +722,11 @@ class auth extends \auth_plugin_base {
         // Moodle Workplace - Check IdP's tenant availability, for new user pre-allocate to tenant.
         // Check if function exists required for Totara 12 compatibility.
         if (class_exists(\tool_tenant\local\auth\iomadsaml2\manager::class)) {
-            component_class_callback('\tool_tenant\local\auth\iomadsaml2\manager', 'complete_login_hook',
-                [$SESSION->iomadsaml2idp ?? '', $uid, $user]);
+            component_class_callback(
+                '\tool_tenant\local\auth\iomadsaml2\manager',
+                'complete_login_hook',
+                [$SESSION->iomadsaml2idp ?? '', $uid, $user]
+            );
         }
 
         $newuser = false;
@@ -705,8 +736,10 @@ class auth extends \auth_plugin_base {
                 $email = $this->get_email_from_attributes($attributes);
                 // If can't have accounts with the same emails, check if email is taken before create a new user.
                 if (empty($CFG->allowaccountssameemail) && $this->is_email_taken($email)) {
-                    $event = \core\event\user_login_failed::create(['other' => ['username' => $uid,
-                        'reason' => AUTH_LOGIN_FAILED]]);
+                    $event = \core\event\user_login_failed::create(['other' => [
+                        'username' => $uid,
+                        'reason' => AUTH_LOGIN_FAILED
+                    ]]);
                     $event->trigger();
 
                     $this->log(__FUNCTION__ . " user '$uid' can't be autocreated as email '$email' is taken");
@@ -715,8 +748,10 @@ class auth extends \auth_plugin_base {
 
                 // Honor the core allowemailaddresses setting.
                 if ($error = email_is_not_allowed($email)) {
-                    $event = \core\event\user_login_failed::create(['other' => ['username' => $uid,
-                        'reason' => AUTH_LOGIN_FAILED]]);
+                    $event = \core\event\user_login_failed::create(['other' => [
+                        'username' => $uid,
+                        'reason' => AUTH_LOGIN_FAILED
+                    ]]);
                     $event->trigger();
 
                     $this->log(__FUNCTION__ . " '$email' " . $error);
@@ -736,7 +771,7 @@ class auth extends \auth_plugin_base {
                 }
 
                 $this->log(__FUNCTION__ . " user '$user->username' is not in moodle so autocreating");
-                require_once($CFG->dirroot.'/user/lib.php');
+                require_once($CFG->dirroot . '/user/lib.php');
 
                 // Various values that user_create_user doesn't validate or set.
                 $user->confirmed = 1;
@@ -753,8 +788,10 @@ class auth extends \auth_plugin_base {
                 $user = \core_user::get_user($user->id);
             } else {
                 // Moodle user does not exist and settings prevent creating new accounts.
-                $event = \core\event\user_login_failed::create(['other' => ['username' => $uid,
-                    'reason' => AUTH_LOGIN_NOUSER]]);
+                $event = \core\event\user_login_failed::create(['other' => [
+                    'username' => $uid,
+                    'reason' => AUTH_LOGIN_NOUSER
+                ]]);
                 $event->trigger();
                 $this->log(__FUNCTION__ . " user '$uid' is not in moodle so error");
                 $this->error_page(get_string('nouser', 'auth_iomadsaml2', $uid));
@@ -774,7 +811,7 @@ class auth extends \auth_plugin_base {
                 $this->error_page(get_string('suspendeduser', 'auth_iomadsaml2', $uid));
             }
 
-            $this->log(__FUNCTION__ . ' found user '.$user->username);
+            $this->log(__FUNCTION__ . ' found user ' . $user->username);
         }
 
         if (!$this->config->anyauth && $user->auth != 'iomadsaml2') {
@@ -803,7 +840,8 @@ class auth extends \auth_plugin_base {
 
             $this->log(__FUNCTION__ . " user $uid's auth type: $user->auth is not enabled");
             $this->error_page(get_string('anyauthotherdisabled', 'auth_iomadsaml2', [
-                'username' => $uid, 'auth' => $user->auth,
+                'username' => $uid,
+                'auth' => $user->auth,
             ]));
         }
 
@@ -829,13 +867,13 @@ class auth extends \auth_plugin_base {
 
         $wantsurl = core_login_get_return_url();
         // If we are not on the page we want, then redirect to it (unless this is CLI).
-        if ( qualified_me() !== false && qualified_me() !== $wantsurl ) {
+        if (qualified_me() !== false && qualified_me() !== $wantsurl) {
             $this->log(__FUNCTION__ . " redirecting to $wantsurl");
             unset($SESSION->wantsurl);
             redirect($wantsurl);
             exit;
         } else {
-            $this->log(__FUNCTION__ . " continuing onto " . qualified_me() );
+            $this->log(__FUNCTION__ . " continuing onto " . qualified_me());
         }
 
         return;
@@ -846,7 +884,8 @@ class auth extends \auth_plugin_base {
      *
      * @throws \moodle_exception
      */
-    protected function redirect_blocked_access() {
+    protected function redirect_blocked_access()
+    {
 
         if (!empty($this->config->flagredirecturl)) {
             redirect(new moodle_url($this->config->flagredirecturl));
@@ -860,13 +899,14 @@ class auth extends \auth_plugin_base {
     /**
      * Handles blocked access based on configuration.
      */
-    protected function handle_blocked_access() {
+    protected function handle_blocked_access()
+    {
         switch ($this->config->flagresponsetype) {
-            case iomadsaml2_settings::OPTION_FLAGGED_LOGIN_REDIRECT :
+            case iomadsaml2_settings::OPTION_FLAGGED_LOGIN_REDIRECT:
                 $this->redirect_blocked_access();
                 break;
-            case iomadsaml2_settings::OPTION_FLAGGED_LOGIN_MESSAGE :
-            default :
+            case iomadsaml2_settings::OPTION_FLAGGED_LOGIN_MESSAGE:
+            default:
                 $this->error_page($this->config->flagmessage);
                 break;
         }
@@ -881,7 +921,8 @@ class auth extends \auth_plugin_base {
      *
      * @return bool|string
      */
-    protected function check_whitelisted_ip_redirect() {
+    protected function check_whitelisted_ip_redirect()
+    {
         foreach ($this->metadataentities as $idpentity) {
             if (\core\ip_utils::is_ip_in_subnet_list(getremoteaddr(), $idpentity->whitelist)) {
                 return $idpentity->md5entityid;
@@ -896,10 +937,11 @@ class auth extends \auth_plugin_base {
      * @param array $attributes A list of attributes from the request
      * @return bool
      */
-    public function is_access_allowed_for_member($attributes) {
+    public function is_access_allowed_for_member($attributes)
+    {
 
         // If there is no encumberance attribute configured in Moodle, let them pass.
-        if (empty($this->config->grouprules) ) {
+        if (empty($this->config->grouprules)) {
             return true;
         }
 
@@ -946,7 +988,8 @@ class auth extends \auth_plugin_base {
      *
      * @param array $attributes A list of attributes from the request
      */
-    public function simplify_attr($attributes) {
+    public function simplify_attr($attributes)
+    {
 
         foreach ($attributes as $key => $val) {
             if (preg_match("/\W/", $key)) {
@@ -971,7 +1014,8 @@ class auth extends \auth_plugin_base {
      * @throws Exception
      * @throws coding_exception
      */
-    public function update_user_record_from_attribute_map(&$user, $attributes, $newuser= false) {
+    public function update_user_record_from_attribute_map(&$user, $attributes, $newuser = false)
+    {
         global $CFG;
 
         $mapconfig = get_config('auth_iomadsaml2');
@@ -981,9 +1025,9 @@ class auth extends \auth_plugin_base {
         foreach ($allkeys as $key) {
             if (preg_match('/^field_updatelocal_(.+)$/', $key, $match)) {
                 $field = $match[1];
-                if (!empty($mapconfig->{'field_map_'.$field})) {
-                    $attr = $mapconfig->{'field_map_'.$field};
-                    $updateonlogin = $mapconfig->{'field_updatelocal_'.$field} === 'onlogin';
+                if (!empty($mapconfig->{'field_map_' . $field})) {
+                    $attr = $mapconfig->{'field_map_' . $field};
+                    $updateonlogin = $mapconfig->{'field_updatelocal_' . $field} === 'onlogin';
 
                     if ($newuser || $updateonlogin) {
                         // Basic error handling, check to see if the attributes exist before mapping the data.
@@ -1039,10 +1083,11 @@ class auth extends \auth_plugin_base {
      * @param bool $newuser If this user does not yet exist in the database
      * @return bool true on success
      */
-    public function update_user_profile_fields(&$user, $attributes, $newuser = false) {
+    public function update_user_profile_fields(&$user, $attributes, $newuser = false)
+    {
         global $CFG;
         if ($this->update_user_record_from_attribute_map($user, $attributes, $newuser)) {
-            require_once($CFG->dirroot.'/user/lib.php');
+            require_once($CFG->dirroot . '/user/lib.php');
             if ($user->description === true) {
                 // Function get_complete_user_data() sets description = true to avoid keeping in memory.
                 // If set to true - don't update based on data from this call.
@@ -1065,7 +1110,8 @@ class auth extends \auth_plugin_base {
      *
      * @return bool|string
      */
-    public function get_email_from_attributes(array $attributes) {
+    public function get_email_from_attributes(array $attributes)
+    {
         if (!empty($this->config->field_map_email) && !empty($attributes[$this->config->field_map_email])) {
             return $attributes[$this->config->field_map_email][0];
         }
@@ -1080,7 +1126,8 @@ class auth extends \auth_plugin_base {
      *
      * @return bool|string
      */
-    private function get_username_from_attributes(array $attributes) {
+    private function get_username_from_attributes(array $attributes)
+    {
         if (!empty($this->config->field_map_username) && !empty($attributes[$this->config->field_map_username])) {
             return strtolower($attributes[$this->config->field_map_username][0]);
         }
@@ -1096,7 +1143,8 @@ class auth extends \auth_plugin_base {
      *
      * @return bool
      */
-    public function is_email_taken($email, $excludeusername = null) {
+    public function is_email_taken($email, $excludeusername = null)
+    {
         global $CFG, $DB;
 
         if (!empty($email)) {
@@ -1131,7 +1179,8 @@ class auth extends \auth_plugin_base {
      * 2) The SimpleSAML SP session.
      * 3) The IdP session, if the IdP supports SingleSignout.
      */
-    public function logoutpage_hook() {
+    public function logoutpage_hook()
+    {
         global $CFG, $SESSION, $redirect, $iomadsaml2config;
 
         $this->execute_callback('auth_iomadsaml2_logoutpage_hook');
@@ -1147,7 +1196,7 @@ class auth extends \auth_plugin_base {
         // gets called by the normal core process.
         require_logout();
 
-        require_once(__DIR__.'/../setup.php');
+        require_once(__DIR__ . '/../setup.php');
 
         // We just loaded the SP session which replaces the Moodle so we lost
         // the session data, lets temporarily restore the IdP.
@@ -1158,8 +1207,15 @@ class auth extends \auth_plugin_base {
         // still delete the local SP cookie so we force auth again next time.
         $cookiename = $iomadsaml2config['session.cookie.name'];
         $cookiesecure = is_moodle_cookie_secure();
-        setcookie($cookiename, '', time() - HOURSECS, $CFG->sessioncookiepath, $CFG->sessioncookiedomain,
-              $cookiesecure, $CFG->cookiehttponly);
+        setcookie(
+            $cookiename,
+            '',
+            time() - HOURSECS,
+            $CFG->sessioncookiepath,
+            $CFG->sessioncookiedomain,
+            $cookiesecure,
+            $CFG->cookiehttponly
+        );
 
         // Do not attempt to log out of the IdP.
         if (!$this->config->attemptsignout) {
@@ -1194,7 +1250,8 @@ class auth extends \auth_plugin_base {
      * @param string $username
      * @param string $password
      */
-    public function user_login($username, $password) {
+    public function user_login($username, $password)
+    {
         return false;
     }
 
@@ -1204,7 +1261,8 @@ class auth extends \auth_plugin_base {
      * @param object $config
      * @return boolean
      */
-    public function process_config($config) {
+    public function process_config($config)
+    {
         $haschanged = false;
 
         foreach (array_keys($this->defaults) as $key) {
@@ -1224,7 +1282,8 @@ class auth extends \auth_plugin_base {
     /**
      * A simple GUI tester which shows the raw API output
      */
-    public function test_settings() {
+    public function test_settings()
+    {
         global $OUTPUT;
 
         if ($this->is_configured() && $this->is_debugging() && api::is_enabled()) {
@@ -1232,9 +1291,11 @@ class auth extends \auth_plugin_base {
             $mform = new \auth_iomadsaml2\form\testidpselect($action, ['metadataentities' => $this->metadataentities]);
             $mform->display();
         } else {
-            echo $OUTPUT->render(new notification(get_string('test_noticetestrequirements', 'auth_iomadsaml2'),
-                notification::NOTIFY_WARNING, false));
-
+            echo $OUTPUT->render(new notification(
+                get_string('test_noticetestrequirements', 'auth_iomadsaml2'),
+                notification::NOTIFY_WARNING,
+                false
+            ));
         }
     }
 
@@ -1243,7 +1304,8 @@ class auth extends \auth_plugin_base {
      *
      * @return string
      */
-    public function get_ssp_version() {
+    public function get_ssp_version()
+    {
         // To get the version there is no need to create key files and
         // perform the full initialization. For better performance
         // we only make sure \SimpleSAML\Configuration is accessible
@@ -1256,7 +1318,8 @@ class auth extends \auth_plugin_base {
     /**
      * Allow iomadsaml2 auth method to be manually set for users e.g. bulk uploading users.
      */
-    public function can_be_manually_set() {
+    public function can_be_manually_set()
+    {
         return true;
     }
 
@@ -1265,25 +1328,40 @@ class auth extends \auth_plugin_base {
      *
      * @param string $idp a md5 encoded IdP entityid
      */
-    public function set_idp_cookie($idp) {
+    public function set_idp_cookie($idp)
+    {
         global $CFG;
 
         if (NO_MOODLE_COOKIES) {
             return;
         }
 
-        $cookiename = 'MOODLEIDP1_'.$CFG->sessioncookie;
+        $cookiename = 'MOODLEIDP1_' . $CFG->sessioncookie;
 
         $cookiesecure = is_moodle_cookie_secure();
 
         // Delete old cookie.
-        setcookie($cookiename, '', time() - HOURSECS, $CFG->sessioncookiepath, $CFG->sessioncookiedomain,
-                  $cookiesecure, $CFG->cookiehttponly);
+        setcookie(
+            $cookiename,
+            '',
+            time() - HOURSECS,
+            $CFG->sessioncookiepath,
+            $CFG->sessioncookiedomain,
+            $cookiesecure,
+            $CFG->cookiehttponly
+        );
 
         if ($idp !== '') {
             // Set username cookie for 60 days.
-            setcookie($cookiename, $idp, time() + (DAYSECS * 60), $CFG->sessioncookiepath, $CFG->sessioncookiedomain,
-                      $cookiesecure, $CFG->cookiehttponly);
+            setcookie(
+                $cookiename,
+                $idp,
+                time() + (DAYSECS * 60),
+                $CFG->sessioncookiepath,
+                $CFG->sessioncookiedomain,
+                $cookiesecure,
+                $CFG->cookiehttponly
+            );
         }
     }
 
@@ -1292,14 +1370,15 @@ class auth extends \auth_plugin_base {
      *
      * @return string $idp a md5 encoded IdP entityid
      */
-    public function get_idp_cookie() {
+    public function get_idp_cookie()
+    {
         global $CFG;
 
         if (NO_MOODLE_COOKIES) {
             return '';
         }
 
-        $cookiename = 'MOODLEIDP1_'.$CFG->sessioncookie;
+        $cookiename = 'MOODLEIDP1_' . $CFG->sessioncookie;
 
         if (empty($_COOKIE[$cookiename])) {
             return '';
@@ -1313,7 +1392,8 @@ class auth extends \auth_plugin_base {
      * @param string $function name of the callback function to be executed
      * @param string $file file to find the function
      */
-    private function execute_callback($function, $file = 'lib.php') {
+    private function execute_callback($function, $file = 'lib.php')
+    {
         if (function_exists('get_plugins_with_function')) {
             $pluginsfunction = get_plugins_with_function($function, $file);
             foreach ($pluginsfunction as $plugintype => $plugins) {

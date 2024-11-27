@@ -29,7 +29,7 @@ use \iomad;
 use \company;
 use \moodle_url;
 use context_system;
-
+#[\AllowDynamicProperties]
 class company_edit_form extends \company_moodleform {
     protected $firstcompany;
     protected $isadding;
@@ -421,7 +421,7 @@ class company_edit_form extends \company_moodleform {
             if (iomad::has_capability('block/iomad_company_admin:company_add', $this->context)) {
 
                 // Get the list of themes.
-                $themes = get_plugin_list('theme');
+                $themes = \core_component::get_plugin_list('theme');
                 $themeselectarray = array();
                 foreach ($themes as $themename => $themedir) {
 

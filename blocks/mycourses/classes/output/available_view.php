@@ -22,6 +22,7 @@
  */
 
 namespace block_mycourses\output;
+
 defined('MOODLE_INTERNAL') || die();
 
 use renderable;
@@ -35,9 +36,13 @@ use core_course\external\course_summary_exporter;
  * @copyright  2017 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class available_view implements renderable, templatable {
+
+#[\AllowDynamicProperties]
+class available_view implements renderable, templatable
+{
     /** Quantity of courses per page. */
     const COURSES_PER_PAGE = 6;
+
 
     /**
      * The courses_view constructor.
@@ -45,7 +50,8 @@ class available_view implements renderable, templatable {
      * @param array $courses list of courses.
      * @param array $coursesprogress list of courses progress.
      */
-    public function __construct($mycompletion) {
+    public function __construct($mycompletion)
+    {
         $this->mycompletion = $mycompletion;
     }
 
@@ -55,9 +61,10 @@ class available_view implements renderable, templatable {
      * @param \renderer_base $output
      * @return array
      */
-    public function export_for_template(renderer_base $output) {
+    public function export_for_template(renderer_base $output)
+    {
         global $CFG, $DB, $OUTPUT;
-        require_once($CFG->dirroot.'/course/lib.php');
+        require_once($CFG->dirroot . '/course/lib.php');
 
         // Build courses view data structure.
         $availableview = [];
@@ -65,7 +72,7 @@ class available_view implements renderable, templatable {
         foreach ($this->mycompletion->mynotstartedenrolled as $mid => $notstarted) {
             // get the course display info.
             $context = \context_course::instance($notstarted->courseid);
-            $course = $DB->get_record("course", array("id"=>$notstarted->courseid));
+            $course = $DB->get_record("course", array("id" => $notstarted->courseid));
             $courseobj = new \core_course_list_element($course);
 
             $exporter = new course_summary_exporter($course, ['context' => $context]);
@@ -90,7 +97,7 @@ class available_view implements renderable, templatable {
         foreach ($this->mycompletion->mynotstartedlicense as $mid => $notstarted) {
             // get the course display info.
             $context = \context_course::instance($notstarted->courseid);
-            $course = $DB->get_record("course", array("id"=>$notstarted->courseid));
+            $course = $DB->get_record("course", array("id" => $notstarted->courseid));
             $courseobj = new \core_course_list_element($course);
 
             $exporter = new course_summary_exporter($course, ['context' => $context]);
