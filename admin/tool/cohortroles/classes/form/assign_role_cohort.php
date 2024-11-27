@@ -63,11 +63,9 @@ class assign_role_cohort extends moodleform {
         $mform->addElement('select', 'roleid', get_string('selectrole', 'tool_cohortroles'), $options);
         $mform->addRule('roleid', null, 'required');
 
-        $context = context_system::instance();
         $options = array(
             'multiple' => true,
-            'data-contextid' => $context->id,
-            'data-includes' => 'all'
+            'includes' => 'all',
         );
         $mform->addElement('cohort', 'cohortids', get_string('selectcohorts', 'tool_cohortroles'), $options);
         $mform->addRule('cohortids', null, 'required');
