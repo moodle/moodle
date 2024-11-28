@@ -157,16 +157,17 @@ class provider_test extends provider_testcase {
         $info = (object) reset($result);
         // Ensure the correct data has been returned.
         $this->assertNotEmpty($info->statedata);
-        $this->assertNotEmpty(transform::datetime($info->timecreated));
-        $this->assertNotEmpty(transform::datetime($info->timemodified));
+
+        $this->assertNotEmpty($info->timecreated);
+        $this->assertNotEmpty($info->timemodified);
 
         // Get the states info for user2 in the system context.
         $result = provider::get_xapi_states_for_user($user2->id, 'fake_component', $systemcontext->id);
         $info = (object) reset($result);
         // Ensure the correct data has been returned.
         $this->assertNotEmpty($info->statedata);
-        $this->assertNotEmpty(transform::datetime($info->timecreated));
-        $this->assertNotEmpty(transform::datetime($info->timemodified));
+        $this->assertNotEmpty($info->timecreated);
+        $this->assertNotEmpty($info->timemodified);
 
         // Get the states info for user3 in the system context (it should be empty).
         $info = provider::get_xapi_states_for_user($user3->id, 'fake_component', $systemcontext->id);
