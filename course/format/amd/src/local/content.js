@@ -36,6 +36,7 @@ import * as CourseEvents from 'core_course/events';
 // The jQuery module is only used for interacting with Boostrap 4. It can we removed when MDL-71979 is integrated.
 import jQuery from 'jquery';
 import Pending from 'core/pending';
+import log from "core/log";
 
 export default class Component extends BaseComponent {
 
@@ -93,8 +94,14 @@ export default class Component extends BaseComponent {
      * @return {Component}
      */
     static init(target, selectors, sectionReturn) {
+        let element = document.querySelector(target);
+        // TODO Remove this if condition as part of MDL-83851.
+        if (!element) {
+            log.debug('Init component with id is deprecated, use a query selector instead.');
+            element = document.getElementById(target);
+        }
         return new Component({
-            element: document.getElementById(target),
+            element,
             reactive: getCurrentCourseEditor(),
             selectors,
             sectionReturn,

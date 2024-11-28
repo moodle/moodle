@@ -49,7 +49,7 @@
 {{! The home page should be as fast as possible, we only load the editor when needed.}}
 {{#editing}}
 require(['core_courseformat/local/content'], function(component) {
-    component.init('courseformat-frontpage-main-topic', {});
+    component.init('#courseformat-frontpage-main-topic', {});
 });
 {{/editing}}
 {{/js}}
