@@ -36,7 +36,7 @@ final class structure_test extends \advanced_testcase {
      * Test the timestamp_to_date_string method with different input values.
      *
      * @dataProvider timestamp_to_date_string_provider
-     * @param string $lang
+     * @param string $locale
      * @param int $timestamp
      * @param string $format
      * @param string $timezone
