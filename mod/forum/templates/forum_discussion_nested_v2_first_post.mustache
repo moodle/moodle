@@ -85,7 +85,7 @@
                                             <span class="text-danger">
                                                 {{#str}}
                                                     authorreplyingprivatelytoauthor, mod_forum, {
-                                                        "respondant":"<a class='font-weight-bold author-name' data-region='author-name' href='{{{urls.profile}}}'>{{fullname}}</a>",
+                                                        "respondant":"<a class='fw-bold author-name' data-region='author-name' href='{{{urls.profile}}}'>{{fullname}}</a>",
                                                         "author":"{{parentauthorname}}"
                                                     }
                                                 {{/str}}
@@ -94,14 +94,14 @@
                                         {{^isprivatereply}}
                                             {{#str}}
                                                 authorreplyingtoauthor, mod_forum, {
-                                                    "respondant":"<a class='font-weight-bold author-name' data-region='author-name' href='{{{urls.profile}}}'>{{fullname}}</a>",
+                                                    "respondant":"<a class='fw-bold author-name' data-region='author-name' href='{{{urls.profile}}}'>{{fullname}}</a>",
                                                     "author":"{{parentauthorname}}"
                                                 }
                                             {{/str}}
                                         {{/isprivatereply}}
                                     {{/parentauthorname}}
                                     {{^parentauthorname}}
-                                        <a class='font-weight-bold author-name' data-region='author-name' href="{{{urls.profile}}}">{{fullname}}</a>
+                                        <a class='fw-bold author-name' data-region='author-name' href="{{{urls.profile}}}">{{fullname}}</a>
                                     {{/parentauthorname}}
                                 </h4>
                             {{/author}}
@@ -241,7 +241,7 @@
                 {{/isdeleted}}
                 {{$subject}}
                     <h2
-                        class="h1 font-weight-bold post-subject mt-n2"
+                        class="h1 fw-bold post-subject mt-n2"
                         data-region-content="forum-post-core-subject"
                         data-reply-subject="{{replysubject}}"
                     >{{{subject}}}</h2>
@@ -284,7 +284,7 @@
                                 <a
                                     href="{{{url}}}"
                                     aria-label="{{#str}} attachmentname, mod_forum, {{filename}} {{/str}}"
-                                    class="font-weight-bold"
+                                    class="fw-bold"
                                 >
                                     {{#str}} attachmentnameandfilesize, mod_forum, {"name": "{{filename}}", "size": "{{filesizeformatted}}"} {{/str}}
                                 </a>
@@ -326,7 +326,7 @@
                         <div class="d-flex mt-3">
                             {{#capabilities.reply}}
                                 <button
-                                    class="btn btn-primary btn-lg font-weight-bold px-4"
+                                    class="btn btn-primary btn-lg fw-bold px-4"
                                     data-href="{{{urls.reply}}}"
                                     data-post-id="{{id}}"
                                     data-action="create-inpage-reply"

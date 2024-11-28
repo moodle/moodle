@@ -169,7 +169,7 @@ export default class UserSearch extends search_combobox {
                         const escapedValueString = valueString.replace(/</g, '&lt;');
                         const escapedMatchingField = escapedValueString.replace(
                             preppedSearchTerm.replace(/</g, '&lt;'),
-                            `<span class="font-weight-bold">${searchTerm.replace(/</g, '&lt;')}</span>`
+                            `<span class="fw-bold">${searchTerm.replace(/</g, '&lt;')}</span>`
                         );
 
                         if (user.email) {

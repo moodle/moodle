@@ -35,7 +35,7 @@
             }}aria-label="{{.}}" {{!
         }}{{/accessibledescription}}>
         {{#pix}}i/checked{{/pix}}
-        <strong>{{#str}}completion_automatic:done, core_course{{/str}}</strong> <span class="font-weight-normal">{{description}}</span>
+        <strong>{{#str}}completion_automatic:done, core_course{{/str}}</strong> <span class="fw-normal">{{description}}</span>
     </div>
     {{/statuscomplete}}
     {{#statuscompletefail}}
@@ -45,7 +45,7 @@
             }}aria-label="{{.}}" {{!
         }}{{/accessibledescription}}>
         {{#pix}}e/cancel{{/pix}}
-        <strong>{{#str}}completion_automatic:failed, core_course{{/str}}</strong> <span class="font-weight-normal">{{description}}</span>
+        <strong>{{#str}}completion_automatic:failed, core_course{{/str}}</strong> <span class="fw-normal">{{description}}</span>
     </div>
     {{/statuscompletefail}}
     {{#statusincomplete}}
@@ -54,12 +54,12 @@
             }}title="{{.}}" {{!
             }}aria-label="{{.}}" {{!
         }}{{/accessibledescription}}>
-        <strong>{{#str}}completion_automatic:todo, core_course{{/str}}</strong> <span class="font-weight-normal">{{description}}</span>
+        <strong>{{#str}}completion_automatic:todo, core_course{{/str}}</strong> <span class="fw-normal">{{description}}</span>
     </div>
     {{/statusincomplete}}
 {{/istrackeduser}}
 {{^istrackeduser}}
     <div class="badge rounded-pill bg-light text-dark" role="listitem">
-        <span class="font-weight-normal">{{description}}</span>
+        <span class="fw-normal">{{description}}</span>
     </div>
 {{/istrackeduser}}

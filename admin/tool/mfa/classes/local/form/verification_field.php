@@ -53,7 +53,7 @@ class verification_field extends \MoodleQuickForm_text {
         $attributes['inputmode'] = 'numeric';
         $attributes['pattern'] = '[0-9]*';
         // Overwrite default classes if set.
-        $attributes['class'] = isset($attributes['class']) ? $attributes['class'] : 'tool-mfa-verification-code font-weight-bold';
+        $attributes['class'] = isset($attributes['class']) ? $attributes['class'] : 'tool-mfa-verification-code fw-bold';
         $attributes['maxlength'] = 6;
 
         // If we aren't on the auth page, this might be part of a larger form such as for setup.

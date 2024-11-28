@@ -90,7 +90,7 @@ if ($data = $mform->get_data()) {
 
 echo $OUTPUT->header();
 echo $OUTPUT->notification(get_string('pagenotexist', 'error', s($ME)), 'error');
-echo $OUTPUT->supportemail(['class' => 'text-center d-block mb-3 font-weight-bold']);
+echo $OUTPUT->supportemail(['class' => 'text-center d-block mb-3 fw-bold']);
 
 if ($canmessage) {
     echo \html_writer::tag('h4', get_string('sendmessage', 'error'));

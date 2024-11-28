@@ -1729,7 +1729,7 @@ function print_object($item, array $expandclasses = ['/./'], bool $textonly = fa
         switch (gettype($item)) {
             case 'NULL':
             case 'boolean':
-                return 'font-italic';
+                return 'fst-italic';
             case 'integer':
             case 'double':
                 return 'text-primary';
@@ -1874,11 +1874,11 @@ function print_object($item, array $expandclasses = ['/./'], bool $textonly = fa
                 switch ($access) {
                     case 'protected':
                         // Protected is in normal font.
-                        $bootstrapstyle = ' font-weight-normal';
+                        $bootstrapstyle = ' fw-normal';
                         break;
                     case 'private':
                         // Private is italic.
-                        $bootstrapstyle = ' font-weight-normal font-italic';
+                        $bootstrapstyle = ' fw-normal fst-italic';
                         break;
                     default:
                         // Public is bold, same for array keys.

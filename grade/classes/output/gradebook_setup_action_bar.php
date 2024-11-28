@@ -100,7 +100,7 @@ class gradebook_setup_action_bar extends action_bar {
         );
 
         $addmenu = new \action_menu($actions);
-        $addmenu->set_menu_trigger(get_string('add'), 'btn font-weight-bold');
+        $addmenu->set_menu_trigger(get_string('add'), 'btn fw-bold');
         $data['addmenu'] = $addmenu->export_for_template($output);
 
         return $data;

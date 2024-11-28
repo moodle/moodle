@@ -122,3 +122,23 @@ $alert-color-scale: 50% !default;
 .rounded-3 {
     @extend .rounded-lg;
 }
+
+// Generate all font-weight and font-style classes.
+.fw-light {
+    @extend .font-weight-light;
+}
+.fw-lighter {
+    @extend .font-weight-lighter;
+}
+.fw-normal {
+    @extend .font-weight-normal;
+}
+.fw-bold {
+    @extend .font-weight-bold;
+}
+.fw-bolder {
+    @extend .font-weight-bolder;
+}
+.fst-italic {
+    @extend .font-italic;
+}

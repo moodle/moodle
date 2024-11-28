@@ -43,7 +43,7 @@
                         ##user##<br/><span class="data-timeinfo">##timeadded##</span>
                     </div>
                     <div class="col-4 col-md-6 text-end align-self-center data-timeinfo">
-                        <span class="font-weight-bold ">{{#str}}datemodified, mod_data{{/str}}&nbsp;</span>##timemodified##
+                        <span class="fw-bold ">{{#str}}datemodified, mod_data{{/str}}&nbsp;</span>##timemodified##
                     </div>
                     <div class="col-4 col-md-3 ms-auto align-self-center d-flex flex-row-reverse">
                         <div>##actionsmenu##</div>
@@ -57,14 +57,14 @@
         <div class="my-6">
         {{#fields}}
             <div class="mt-4">
-                <span class="font-weight-bold">{{fieldname}}</span>
+                <span class="fw-bold">{{fieldname}}</span>
                 <p class="mt-2">{{{fieldcontent}}}</p>
             </div>
         {{/fields}}
         ##otherfields##
         {{#tags}}
             <div class="mt-4">
-                <span class="font-weight-bold">{{#str}}tags{{/str}}</span>
+                <span class="fw-bold">{{#str}}tags{{/str}}</span>
                 <p class="mt-2">{{.}}</p>
             </div>
         {{/tags}}

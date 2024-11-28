@@ -156,7 +156,7 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
             $legendclass = 'sr-only';
         }
         $legendattrs = [
-            'class' => 'prompt h6 font-weight-normal ' . $legendclass,
+            'class' => 'prompt h6 fw-normal ' . $legendclass,
         ];
         $result .= html_writer::tag('legend', $questionnumber, $legendattrs);
 

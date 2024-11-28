@@ -22744,27 +22744,27 @@ button.bg-dark:focus {
   text-transform: capitalize !important;
 }
 
-.font-weight-light {
+.font-weight-light, .fw-light {
   font-weight: 300 !important;
 }
 
-.font-weight-lighter {
+.font-weight-lighter, .fw-lighter {
   font-weight: lighter !important;
 }
 
-.font-weight-normal {
+.font-weight-normal, .fw-normal {
   font-weight: 400 !important;
 }
 
-.font-weight-bold {
+.font-weight-bold, .fw-bold {
   font-weight: 700 !important;
 }
 
-.font-weight-bolder {
+.font-weight-bolder, .fw-bolder {
   font-weight: bolder !important;
 }
 
-.font-italic {
+.font-italic, .fst-italic {
   font-style: italic !important;
 }
 

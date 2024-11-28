@@ -856,7 +856,7 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
         $categorycell = parent::get_category_cell($category, $levelclass, $params);
         $categorycell->colspan = ($this->deepest_level + 2) - $params['level'];
         $rowtitle = html_writer::div($params['name'], 'rowtitle');
-        $categorycell->text = html_writer::div($mastercheckbox . $visibilitytoggle . $moveaction . $rowtitle, 'font-weight-bold');
+        $categorycell->text = html_writer::div($mastercheckbox . $visibilitytoggle . $moveaction . $rowtitle, 'fw-bold');
         return $categorycell;
     }
 
