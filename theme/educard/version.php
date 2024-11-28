@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 $plugin->component = 'theme_educard';
-$plugin->version = 2024110200;
+$plugin->version = 2024110201;
 $plugin->requires = 2024100100;
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = '450.24.1102';
