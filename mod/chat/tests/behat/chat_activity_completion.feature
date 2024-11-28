@@ -37,7 +37,7 @@ Feature: View activity completion information in the chat activity
     Then the "View" completion condition of "Music history" is displayed as "done"
 
   @javascript
-  Scenario: Use manual completion
+  Scenario: A student can manually mark the chat activity as done but a teacher cannot
     Given I log in as "teacher1"
     And the following "activity" exists:
       | activity       | chat          |
