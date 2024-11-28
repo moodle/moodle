@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,18 +14,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Feedback version information
+ * Module to handle feedback AJAX requests
  *
- * @package mod_feedback
- * @author     Andreas Grabs
+ * @module     mod_feedback/local/repository
+ * @copyright  2024 Mikel Martín <mikel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+import Ajax from 'core/ajax';
 
-$plugin->version   = 2024100701;       // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2024100100;    // Requires this Moodle version.
-$plugin->component = 'mod_feedback';   // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 0;
+/**
+ * Reorder questions for a given feedback course module
+ *
+ * @param {Number} moduleId
+ * @param {String} itemOrder
+ * @return {Promise}
+ */
+export const reorderQuestions = (moduleId, itemOrder) => {
+    const request = {
+        methodname: 'mod_feedback_questions_reorder',
+        args: {cmid: moduleId, itemorder: itemOrder}
+    };
 
-$feedback_version_intern = 1; //this version is used for restore older backups
+    return Ajax.call([request])[0];
+};

@@ -2867,7 +2867,7 @@ function feedback_page_type_list($pagetype, $parentcontext, $currentcontext) {
 
 /**
  * Move save the items of the given $feedback in the order of $itemlist.
- * @param string $itemlist a comma separated list with item ids
+ * @param array $itemlist a list with item ids
  * @param stdClass $feedback
  * @return bool true if success
  */

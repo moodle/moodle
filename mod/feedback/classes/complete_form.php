@@ -68,8 +68,10 @@ class mod_feedback_complete_form extends moodleform {
         $this->structure = $structure;
         $this->gopage = isset($customdata['gopage']) ? $customdata['gopage'] : 0;
         $isanonymous = $this->structure->is_anonymous() ? ' ianonymous' : '';
-        parent::__construct(null, $customdata, 'POST', '',
-                array('id' => $formid, 'class' => 'feedback_form' . $isanonymous), true);
+        parent::__construct(
+            customdata: $customdata,
+            attributes: ['id' => $formid, 'class' => 'feedback_form' . $isanonymous],
+        );
         $this->set_display_vertical();
     }
 
@@ -167,10 +169,12 @@ class mod_feedback_complete_form extends moodleform {
      * This will add all items to the form, including pagebreaks as horizontal rules.
      */
     protected function definition_preview() {
+        $this->_form->addElement('html', html_writer::start_div('', ['data-region' => 'questions-sortable-list']));
         foreach ($this->structure->get_items() as $feedbackitem) {
             $itemobj = feedback_get_item_class($feedbackitem->typ);
             $itemobj->complete_form_element($feedbackitem, $this);
         }
+        $this->_form->addElement('html', html_writer::end_div());
     }
 
     /**
@@ -319,6 +323,7 @@ class mod_feedback_complete_form extends moodleform {
         $attributes = $element->getAttributes();
         $class = !empty($attributes['class']) ? ' ' . $attributes['class'] : '';
         $attributes['class'] = $this->get_suggested_class($item) . $class;
+
         $element->setAttributes($attributes);
 
         // Add required rule.
@@ -468,13 +473,13 @@ class mod_feedback_complete_form extends moodleform {
             $menu->add($action);
         }
         $editmenu = $OUTPUT->render($menu);
+        $draghandle = $OUTPUT->render_from_template('core/drag_handle',
+                ['movetitle' => get_string('move_item', 'mod_feedback')]);
 
-        $name = $element->getLabel();
-
-        $name = html_writer::span('', 'itemdd', array('id' => 'feedback_item_box_' . $item->id)) .
-                html_writer::span($name, 'itemname') .
-                html_writer::span($editmenu, 'itemactions');
-        $element->setLabel(html_writer::span($name, 'itemtitle', ['class' => 'mx-5']));
+        $name = html_writer::div($draghandle, 'itemhandle', ['data-drag-type' => 'move']) .
+                html_writer::div($element->getLabel(), 'itemname', ['data-region' => 'item-title']) .
+                html_writer::div($editmenu, 'itemactions');
+        $element->setLabel(html_writer::div($name, 'itemtitle d-flex'));
     }
 
     /**
@@ -580,9 +585,5 @@ class mod_feedback_complete_form extends moodleform {
         }
 
         $this->_form->display();
-
-        if ($this->mode == self::MODE_EDIT) {
-            $PAGE->requires->js_call_amd('mod_feedback/edit', 'setup');
-        }
     }
 }
