@@ -1,0 +1,5 @@
+issueNumber: MDL-82937
+notes:
+  mod_lesson:
+    - message: Remove unused /mod/lesson/tabs.php
+      type: removed

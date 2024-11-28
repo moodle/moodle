@@ -456,8 +456,6 @@ $string['practice_help'] = 'A practice lesson does not appear in the gradebook.'
 $string['preprocesserror'] = 'Error occurred during pre-processing!';
 $string['prerequisiteisobsolete'] = 'The prerequisite lesson option is due to be removed. Please use access restrictions instead.';
 $string['prerequisitelesson'] = 'Prerequisite lesson';
-$string['preview'] = 'Preview';
-$string['previewlesson'] = 'Preview {$a}';
 $string['previewpagenamed'] = 'Preview page: {$a}';
 $string['previouspage'] = 'Previous page';
 $string['privacy:metadata:attempts:userid'] = 'The user ID';
@@ -595,7 +593,6 @@ $string['usersnone'] = 'No students have access to this lesson';
 $string['viewessayanswers'] = 'View essay answers';
 $string['viewgrades'] = 'View grades';
 $string['viewreports'] = 'View {$a->attempts} completed {$a->student} attempts';
-$string['viewreports2'] = 'View {$a} completed attempts';
 $string['warning'] = 'Warning';
 $string['welldone'] = 'Well done!';
 $string['whatdofirst'] = 'What would you like to do first?';
@@ -618,3 +615,8 @@ $string['grade'] = 'Grade';
 // Deprecated since Moodle 4.5.
 $string['useroverridesdeleted'] = 'User overrides deleted';
 $string['groupoverridesdeleted'] = 'Group overrides deleted';
+
+// Deprecated since Moodle 5.0.
+$string['preview'] = 'Preview';
+$string['previewlesson'] = 'Preview {$a}';
+$string['viewreports2'] = 'View {$a} completed attempts';
