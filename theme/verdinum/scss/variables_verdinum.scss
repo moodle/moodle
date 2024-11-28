@@ -17,7 +17,9 @@ $dropdown-link-active-bg:$secondary;
 
 @mixin hover-navbar {
     background-color: $secondary!important;
+    color:$verdinum-white!important;
 }
+$emphasized-link-hover-darken-percentage:0;
 
 
 $theme-colors: () !default;
@@ -26,9 +28,15 @@ $theme-colors: map-merge((
     secondary: $secondary,
     success: $success,
     info: $info,
+ 
     // warning: $warning,
     // danger: $danger,
     navbarcolor:$navbarcolor,
     navbarcolordark:$navbarcolor,
     hybackcolor: $hybackcolor,
 ), $theme-colors);
+
+@mixin btn-secondary {
+    color: $verdinum-white !important;
+}
+
