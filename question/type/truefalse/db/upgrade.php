@@ -29,9 +29,6 @@
  * @return bool
  */
 function xmldb_qtype_truefalse_upgrade(int $oldversion): bool {
-    // Automatically generated Moodle v4.1.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v4.2.0 release upgrade line.
     // Put any upgrade step following this.
 
