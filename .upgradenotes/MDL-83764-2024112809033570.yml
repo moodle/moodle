@@ -1,0 +1,8 @@
+issueNumber: MDL-83764
+notes:
+  core_courseformat:
+    - message: >-
+        The externservercourse.php feature used to override the course view page has
+        been deprecated in favor of using hooks. The following hooks are available to do 
+        something similar: \core_course\hook\before_course_viewed.
+      type: deprecated
