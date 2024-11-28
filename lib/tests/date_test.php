@@ -697,6 +697,11 @@ class date_test extends advanced_testcase {
         $this->assertEqualsIgnoringWhitespace($expected, core_date::strftime($format, $input));
     }
 
+    /**
+     * Data provider for ::test_strftime_locale.
+     *
+     * @return array[]
+     */
     public static function get_strftime_locale_provider(): array {
         return [
             'Month Year only' => [

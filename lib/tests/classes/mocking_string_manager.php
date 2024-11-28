@@ -17,14 +17,13 @@
 namespace core\tests;
 
 /**
- * A string manager which supports mocking individaul strings.
+ * A string manager which supports mocking individual strings.
  *
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
- class mocking_string_manager extends \core_string_manager_standard {
+class mocking_string_manager extends \core_string_manager_standard {
     /** @var array<string, string> The list of strings */
     private $strings = [];
 
@@ -37,6 +36,14 @@ namespace core\tests;
         return parent::get_string($identifier, $component, $a, $lang);
     }
 
+     /**
+      * Mock a string.
+      *
+      * @param string $identifier
+      * @param string $component
+      * @param string $value
+      * @return void
+      */
     public function mock_string(
         string $identifier,
         string $component,
