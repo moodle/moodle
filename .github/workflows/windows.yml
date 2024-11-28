@@ -128,7 +128,7 @@ jobs:
 
       - name: Setting up redis service
         run: |
-          choco install redis-64 --version 3.0.503 --no-progress
+          choco install redis --version 5.0.7 --no-progress
           nssm install redis redis-server
           nssm start redis
 

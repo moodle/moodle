@@ -1349,10 +1349,10 @@ final class component_test extends \advanced_testcase {
 
                     foreach ($paths as $path) {
                         // The composer.json can specify any arbitrary directory within the folder.
-                        // It always contains a leading slash (/).
+                        // It always contains a leading slash (/) or backslash (\) on Windows.
                         // It may also have an optional trailing slash (/).
                         // Concatenate the parts and removes the slashes.
-                        $relativenamespacepath = trim("{$relativepath}/{$path}", '/');
+                        $relativenamespacepath = trim("{$relativepath}/{$path}", '/\\');
 
                         // The Moodle PSR-4 autoloader data has two formats:
                         // - a string, for a single source; or
@@ -1377,7 +1377,7 @@ final class component_test extends \advanced_testcase {
                 // The Moodle composer file autoloads are a simple string[].
                 $autoloadnamefiles = $rc->getProperty('composerautoloadfiles')->getValue(null);
                 foreach ($composer['autoload']['files'] as $file) {
-                    $this->assertContains(trim($relativepath, '/') . "/{$file}", $autoloadnamefiles);
+                    $this->assertContains(trim($relativepath, '/\\') . "/{$file}", $autoloadnamefiles);
                 }
             }
         }

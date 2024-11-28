@@ -282,22 +282,24 @@ class dml_pgsql_read_replica_test extends \advanced_testcase {
         $this->resetDebugging();
         $db2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
         $db2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
-        $this->assertTrue(count($db2->get_records('user')) > 0);
+        $this->assertNotEmpty($db2->get_records('user'));
 
         $debugging = array_map(function ($d) {
             return $d->message;
         }, $this->getDebuggingMessages());
         $this->resetDebugging();
-        $this->assertEquals(2, count($debugging));
+        $this->assertCount(2, $debugging);
+        // Attempt to connect to the non-existent replica host will fail.
+        // Note: The expected regex pattern is a bit generic because the actual error message may vary between operating systems.
         $this->assertMatchesRegularExpression(
             sprintf(
                 '/%s%s/',
                 preg_quote("Readonly db connection failed for host {$invalidhost}: "),
-                '.* Name or service not known',
-                $cfg->dbname
+                '.*'
             ),
             $debugging[0]
         );
+        // Attempt to connect to the existing DB host will succeed.
         $this->assertEquals("Readwrite db connection succeeded for host {$cfg->dbhost}", $debugging[1]);
     }
 }

@@ -158,19 +158,18 @@ final class dml_mysqli_read_replica_test extends \database_driver_testcase {
         $this->resetDebugging();
         $db2 = \moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
         $db2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
-        $this->assertTrue(count($db2->get_records('user')) > 0);
+        $this->assertNotEmpty($db2->get_records('user'));
 
         $debugging = array_map(function ($d) {
             return $d->message;
         }, $this->getDebuggingMessages());
         $this->resetDebugging();
-        $this->assertEquals(2, count($debugging));
+        $this->assertCount(2, $debugging);
         $this->assertMatchesRegularExpression(
             sprintf(
                 '/%s%s/',
                 preg_quote("Readonly db connection failed for host {$invalidhost}:"),
-                '.* Name or service not known',
-                $cfg->dbname
+                '.*'
             ),
             $debugging[0]
         );
@@ -214,22 +213,23 @@ final class dml_mysqli_read_replica_test extends \database_driver_testcase {
             return $d->message;
         }, $this->getDebuggingMessages());
         $this->resetDebugging();
-        $this->assertEquals(2, count($debugging));
+        $this->assertCount(2, $debugging);
+        // Read-only attempt to connect to the non-existent replica database will fail.
+        // Note: The expected regex pattern is a bit generic because the actual error message may vary between operating systems.
         $this->assertMatchesRegularExpression(
             sprintf(
                 '/%s%s/',
                 preg_quote("Readonly db connection failed for host {$cfg->dbhost}: "),
-                "Access denied for user .* to database '$invaliddb'",
-                $cfg->dbname
+                ".* database '$invaliddb'"
             ),
             $debugging[0]
         );
+        // Read-write attempt to connect to the non-existent replica database will also fail.
         $this->assertMatchesRegularExpression(
             sprintf(
                 '/%s%s/',
                 preg_quote("Readwrite db connection failed for host {$cfg->dbhost}: "),
-                'Access denied for user .* '.preg_quote("to database '$invaliddb'"),
-                $cfg->dbname
+                ".* '$invaliddb"
             ),
             $debugging[1]
         );
