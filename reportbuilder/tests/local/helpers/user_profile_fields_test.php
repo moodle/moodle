@@ -87,6 +87,13 @@ final class user_profile_fields_test extends core_reportbuilder_testcase {
             $userentity->get_entity_name(),
         ))->get_columns();
 
+        // Create a field which will duplicate one of the subsequently generated fields (case-insensitive shortname).
+        $this->getDataGenerator()->create_custom_profile_field([
+            'shortname' => 'CHECKBOX',
+            'name' => 'Duplicate checkbox field',
+            'datatype' => 'checkbox',
+        ]);
+
         // Add new custom profile fields.
         $userprofilefields = $this->generate_userprofilefields();
 
@@ -206,6 +213,13 @@ final class user_profile_fields_test extends core_reportbuilder_testcase {
             $userentity->get_table_alias('user') . '.id',
             $userentity->get_entity_name(),
         ))->get_filters();
+
+        // Create a field which will duplicate one of the subsequently generated fields (case-insensitive shortname).
+        $this->getDataGenerator()->create_custom_profile_field([
+            'shortname' => 'CHECKBOX',
+            'name' => 'Duplicate checkbox field',
+            'datatype' => 'checkbox',
+        ]);
 
         // Add new custom profile fields.
         $userprofilefields = $this->generate_userprofilefields();
