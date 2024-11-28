@@ -20,7 +20,10 @@ namespace core_reportbuilder\local\aggregation;
 
 use core_reportbuilder_testcase;
 use core_reportbuilder_generator;
+use core_reportbuilder\manager;
+use core_reportbuilder\local\report\column;
 use core_user\reportbuilder\datasource\users;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -66,6 +69,75 @@ final class max_test extends core_reportbuilder_testcase {
         $this->assertEquals([
             ['Bob', 'Yes'],
             ['Admin', 'No'],
+        ], array_map('array_values', $content));
+    }
+
+    /**
+     * Data provider for {@see test_column_aggregation_with_callback}
+     *
+     * @return array[]
+     */
+    public static function column_aggregation_with_callback_provider(): array {
+        return [
+            [column::TYPE_INTEGER, [
+                '0 (max)',
+                '1 (max)',
+            ]],
+            [column::TYPE_FLOAT, [
+                '0.0 (max)',
+                '1.0 (max)',
+            ]],
+            [column::TYPE_TIMESTAMP, [
+                '0 (max)',
+                '1 (max)',
+            ]],
+            [column::TYPE_BOOLEAN, [
+                'false (max)',
+                'true (max)',
+            ]],
+        ];
+    }
+
+    /**
+     * Test aggregation when applied to column with callback
+     *
+     * @param int $columntype
+     * @param string[] $expected
+     *
+     * @dataProvider column_aggregation_with_callback_provider
+     */
+    public function test_column_aggregation_with_callback(int $columntype, array $expected): void {
+        $this->resetAfterTest();
+
+        // Test subjects.
+        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'suspended' => 1]);
+        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'suspended' => 0]);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
+
+        // First column, sorted.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname', 'sortenabled' => 1]);
+
+        // This is the column we'll aggregate.
+        $generator->create_column(
+            ['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:suspended', 'aggregation' => max::get_class_name()]
+        );
+
+        // Set callback to format the column (hack column definition to ensure callbacks are executed).
+        $instance = manager::get_report_from_persistent($report);
+        $instance->get_column('user:suspended')
+            ->set_type($columntype)
+            ->set_callback(static function(int|float|bool $value, stdClass $row, $arguments, ?string $aggregation): string {
+                // Simple callback to return the given value, and append aggregation type.
+                return var_export($value, true) . " ({$aggregation})";
+            });
+
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertEquals([
+            ['Admin', $expected[0]],
+            ['Bob', $expected[1]],
         ], array_map('array_values', $content));
     }
 }

@@ -67,6 +67,16 @@ class count extends base {
     }
 
     /**
+     * Returns aggregated column type
+     *
+     * @param int $columntype
+     * @return int
+     */
+    public static function get_column_type(int $columntype): int {
+        return column::TYPE_INTEGER;
+    }
+
+    /**
      * Return formatted value for column when applying aggregation
      *
      * @param mixed $value
