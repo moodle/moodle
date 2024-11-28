@@ -304,7 +304,7 @@ class structure extends type_base {
         // The documentation for strftime notes that for the "%l" and "%e" specifiers where
         // no leading zero is used, a space is used instead.
         // As a result we switch to the new format specifiers "%l" and "%e", wrap them in placeholders
-        //  and then remove the spaces
+        // and then remove the spaces.
 
         if (empty($CFG->nofixday) && $fixday) {
             // Config.php can force %d not to be fixed, but only if the format did not specify it.
