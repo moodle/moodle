@@ -65,7 +65,7 @@ Feature: View activity completion information in the Workshop activity
     And the "Receive a grade" completion condition of "Music history" is displayed as "done"
 
   @javascript
-  Scenario: Use manual completion
+  Scenario: A student can manually mark the workshop activity as done but a teacher cannot
     Given I am on the "Music history" "workshop activity" page
     And I am on the "Music history" "workshop activity editing" page
     And I expand all fieldsets

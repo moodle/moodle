@@ -140,7 +140,7 @@ Feature: View activity completion information in the URL resource
     Then the "View" completion condition of "Music history" is displayed as "done"
 
   @javascript
-  Scenario: Use manual completion with automatic URL as teacher
+  Scenario: A teacher cannot manually mark the url activity as done
     Given the following "activity" exists:
       | activity       | url                 |
       | course         | C1                  |
@@ -155,7 +155,7 @@ Feature: View activity completion information in the URL resource
     Then the manual completion button for "Music history" should be disabled
 
   @javascript
-  Scenario: Use manual completion with automatic URL as student
+  Scenario: A student can manually mark the url activity as done
     Given the following "activity" exists:
       | activity       | url                 |
       | course         | C1                  |

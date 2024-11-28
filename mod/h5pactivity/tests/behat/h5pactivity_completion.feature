@@ -25,7 +25,7 @@ Feature: View activity completion information in the h5p activity
       | completionusegrade | 1                                    |
       | packagefilepath    | h5p/tests/fixtures/filltheblanks.h5p |
 
-  Scenario: Use manual completion
+  Scenario: A student can manually mark the h5p activity as done but a teacher cannot
     Given I am on the "Music history" "h5pactivity activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
