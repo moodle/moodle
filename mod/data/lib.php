@@ -512,7 +512,6 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
      * @return bool|string
      */
     function display_browse_field($recordid, $template) {
-        global $DB;
         $content = $this->get_data_content($recordid);
         if (!$content || !isset($content->content)) {
             return '';
@@ -523,7 +522,8 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
             $options->filter = false;
         }
         $options->para = false;
-        $str = format_text($content->content, $content->content1, $options);
+        $format = !empty($content->content1) && !empty(trim($content->content1)) ? $content->content1 : null;
+        $str = format_text($content->content, $format, $options);
         return $str;
     }
 
