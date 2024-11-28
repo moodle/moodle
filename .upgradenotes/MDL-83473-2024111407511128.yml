@@ -1,0 +1,11 @@
+issueNumber: MDL-83473
+notes:
+  core:
+    - message: >-
+        The deprecated implementation in course/view.php, which uses the
+        extern_server_course function to handle routing between internal and
+        external courses, can be improved by utilizing the Hook API. This
+        enhancement is essential for a project involving multiple universities,
+        as the Hook API provides a more generalized and flexible approach to
+        route users to external courses from within other plugins.
+      type: improved

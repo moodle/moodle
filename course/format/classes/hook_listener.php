@@ -16,6 +16,7 @@
 
 namespace core_courseformat;
 
+use core_course\hook\before_course_viewed;
 use core_group\hook\after_group_membership_added;
 use core_group\hook\after_group_membership_removed;
 
@@ -51,5 +52,22 @@ class hook_listener {
         $group = $hook->groupinstance;
         $course = get_course($group->courseid);
         base::invalidate_all_session_caches_for_course($course);
+    }
+
+    /**
+     * Redirect to external course url using the before_course_viewed hook.
+     *
+     * @param before_course_viewed $hook The hook object containing course data.
+     */
+    public static function before_course_viewed(before_course_viewed $hook): void {
+        global $CFG;
+        if (file_exists($CFG->dirroot . '/course/externservercourse.php')) {
+            include($CFG->dirroot . '/course/externservercourse.php');
+            if (function_exists('extern_server_course')) {
+                if ($externurl = extern_server_course($hook->course)) {
+                    redirect($externurl);
+                }
+            }
+        }
     }
 }

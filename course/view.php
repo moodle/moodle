@@ -107,14 +107,8 @@ if ($switchrole > 0 && confirm_sesskey() &&
 
 // If course is hosted on an external server, redirect to corresponding
 // url with appropriate authentication attached as parameter.
-if (file_exists($CFG->dirroot . '/course/externservercourse.php')) {
-    include($CFG->dirroot . '/course/externservercourse.php');
-    if (function_exists('extern_server_course')) {
-        if ($externurl = extern_server_course($course)) {
-            redirect($externurl);
-        }
-    }
-}
+$hook = new \core_course\hook\before_course_viewed($course);
+\core\hook\manager::get_instance()->dispatch($hook);
 
 require_once($CFG->dirroot.'/calendar/lib.php'); // This is after login because it needs $USER.
 
