@@ -1,0 +1,34 @@
+$primary: #001B4D;
+$secondary: #6FCEA6;
+$tertiary: #7391FF;
+$navbarcolor: #001B4D;
+$verdinum-black: #212121;
+$verdinum-white: #FFFFFF;
+
+$success: $primary;
+$info: $secondary;
+$warning: $tertiary;
+$hybackcolor: $tertiary;
+
+$hythemecolor: $tertiary;
+$hythemecolor2: $hythemecolor;
+
+$dropdown-link-active-bg:$secondary;
+
+@mixin hover-navbar {
+    background-color: $secondary!important;
+}
+
+
+$theme-colors: () !default;
+$theme-colors: map-merge((
+    primary: $primary,
+    secondary: $secondary,
+    success: $success,
+    info: $info,
+    // warning: $warning,
+    // danger: $danger,
+    navbarcolor:$navbarcolor,
+    navbarcolordark:$navbarcolor,
+    hybackcolor: $hybackcolor,
+), $theme-colors);

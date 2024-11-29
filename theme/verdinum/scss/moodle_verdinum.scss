@@ -1,0 +1,11 @@
+.btn-outline-secondary:not(:disabled):not(.disabled):active, .btn-outline-secondary:not(:disabled):not(.disabled).active, .show > .btn-outline-secondary.dropdown-toggle {
+    color: $verdinum-white!important;
+    background-color: $secondary!important;
+    border-color: $primary!important;
+}
+
+.btn-outline-secondary{
+    color: $verdinum-white!important;
+    border:$primary!important;
+    background-color: $secondary!important;
+}

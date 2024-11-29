@@ -1,0 +1,29 @@
+ .navbar.fixed-top{
+        background-color: $navbarcolor!important;
+        .nav-link, .navbar-brand, form{
+            color: $verdinum-white!important;
+        }
+    }
+
+    &.active {
+        border-bottom-color: $secondary!important;
+        &:focus,
+        &:hover {
+            border-bottom-color: $secondary!important;
+        }
+    }
+
+
+    .nav-link {
+        &:hover,
+        &:focus {
+            @include hover-navbar();
+        }
+    }
+
+    .dropdown-item:hover, .dropdown-item:focus{
+        background:$tertiary!important;
+    }
+
+   
+
