@@ -40,6 +40,7 @@ $string['premiumplugin:export'] = 'Export';
 $string['premiumplugin:footnotes'] = 'Footnotes';
 $string['premiumplugin:formatpainter'] = 'Format Painter';
 $string['premiumplugin:linkchecker'] = 'Link Checker';
+$string['premiumplugin:math'] = 'Math Tool';
 $string['premiumplugin:pageembed'] = 'Page Embed';
 $string['premiumplugin:permanentpen'] = 'Permanent Pen';
 $string['premiumplugin:powerpaste'] = 'Powerpaste';
