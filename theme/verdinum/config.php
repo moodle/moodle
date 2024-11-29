@@ -25,6 +25,7 @@ $THEME->scss = function($theme) {
     return $scss ;
 };
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
+$THEME->extrascsscallback = 'theme_verdinum_get_extra_scss';
 // $THEME->requiredblocks = '';
 // $THEME->scss = function ($theme) {
 //     return theme_educard_get_main_scss_content($theme);

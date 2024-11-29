@@ -34,6 +34,7 @@ use \moodleform;
  * Course search form used on the IOMAD pages.
  *
  */
+#[\AllowDynamicProperties]
 class course_search_form extends moodleform {
     protected $params = [];
     protected $customfields = [];

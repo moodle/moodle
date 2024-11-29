@@ -35,6 +35,7 @@ use \context_system;
  * User search form used on the IOMAD pages.
  *
  */
+ #[\AllowDynamicProperties]
 class user_search_form extends moodleform {
     protected $companyid;
     protected $useshowall;

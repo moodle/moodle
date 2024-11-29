@@ -39,6 +39,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tablelib.php');
 
+#[\AllowDynamicProperties]
 class editusers_table extends table_sql {
 
     protected $departments;
