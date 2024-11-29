@@ -21,14 +21,12 @@ $dropdown-link-active-bg:$secondary;
 }
 $emphasized-link-hover-darken-percentage:0;
 
-
 $theme-colors: () !default;
 $theme-colors: map-merge((
     primary: $primary,
     secondary: $secondary,
     success: $success,
     info: $info,
- 
     // warning: $warning,
     // danger: $danger,
     navbarcolor:$navbarcolor,
@@ -39,4 +37,3 @@ $theme-colors: map-merge((
 @mixin btn-secondary {
     color: $verdinum-white !important;
 }
-
