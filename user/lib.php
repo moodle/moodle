@@ -1295,14 +1295,23 @@ function user_get_tagged_users($tag, $exclusivemode = false, $fromctx = 0, $ctx 
     }
     $perpage = $exclusivemode ? 24 : 5;
     $content = '';
-    $totalpages = ceil($usercount / $perpage);
+    $excludedusers = 0;
 
     if ($usercount) {
         $userlist = $tag->get_tagged_items('core', 'user', $page * $perpage, $perpage,
                 'it.deleted=:notdeleted', array('notdeleted' => 0));
+        foreach ($userlist as $user) {
+            if (!user_can_view_profile($user)) {
+                unset($userlist[$user->id]);
+                $excludedusers++;
+            }
+        }
         $renderer = $PAGE->get_renderer('core', 'user');
         $content .= $renderer->user_list($userlist, $exclusivemode);
     }
+
+    // Calculate the total number of pages.
+    $totalpages = ceil(($usercount - $excludedusers) / $perpage);
 
     return new core_tag\output\tagindex($tag, 'core', 'user', $content,
             $exclusivemode, $fromctx, $ctx, $rec, $page, $totalpages);
