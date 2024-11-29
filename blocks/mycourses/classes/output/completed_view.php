@@ -22,6 +22,7 @@
  */
 
 namespace block_mycourses\output;
+
 defined('MOODLE_INTERNAL') || die();
 
 use renderable;
@@ -35,7 +36,10 @@ use core_course\external\course_summary_exporter;
  * @copyright  2017 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class completed_view implements renderable, templatable {
+
+#[\AllowDynamicProperties]
+class completed_view implements renderable, templatable
+{
     /** Quantity of courses per page. */
     const COURSES_PER_PAGE = 6;
 
@@ -45,7 +49,8 @@ class completed_view implements renderable, templatable {
      * @param array $courses list of courses.
      * @param array $coursesprogress list of courses progress.
      */
-    public function __construct($mycompletion) {
+    public function __construct($mycompletion)
+    {
         $this->mycompletion = $mycompletion;
     }
 
@@ -55,29 +60,32 @@ class completed_view implements renderable, templatable {
      * @param \renderer_base $output
      * @return array
      */
-    public function export_for_template(renderer_base $output) {
+    public function export_for_template(renderer_base $output)
+    {
         global $CFG, $DB, $USER, $OUTPUT;
-        require_once($CFG->dirroot.'/course/lib.php');
+        require_once($CFG->dirroot . '/course/lib.php');
 
         // Build courses view data structure.
         $completedview = [];
 
         foreach ($this->mycompletion->mycompleted as $mid => $completed) {
-            if (!$course = $DB->get_record("course", array("id"=>$completed->courseid))) {
+            if (!$course = $DB->get_record("course", array("id" => $completed->courseid))) {
                 $context = \context_system::instance();
                 $linkurl = new \moodle_url('/my');
-                $exportedcourse = (object) ['id' => 0,
-                                            'fullname' => $completed->coursefullname,
-                                            'shortname' => $completed->coursefullname,
-                                            'summary' => '',
-                                            'summaryformat' => 1,
-                                            'visible' => 0,
-                                            'fullnamedisplay' => 0,
-                                            'courseimage' => 0,
-                                            'viewurl' => $linkurl->out(),
-                                            'image' => $OUTPUT->get_generated_image_for_id(SITEID),
-                                            'url' => $linkurl->out(),
-                                            'coursecategory' => ''];
+                $exportedcourse = (object) [
+                    'id' => 0,
+                    'fullname' => $completed->coursefullname,
+                    'shortname' => $completed->coursefullname,
+                    'summary' => '',
+                    'summaryformat' => 1,
+                    'visible' => 0,
+                    'fullnamedisplay' => 0,
+                    'courseimage' => 0,
+                    'viewurl' => $linkurl->out(),
+                    'image' => $OUTPUT->get_generated_image_for_id(SITEID),
+                    'url' => $linkurl->out(),
+                    'coursecategory' => ''
+                ];
             } else {
                 $context = \context_course::instance($completed->courseid);
                 $courseobj = new \core_course_list_element($course);
@@ -108,7 +116,7 @@ class completed_view implements renderable, templatable {
             $exportedcourse->timecompleted = date($CFG->iomad_date_format, $completed->timecompleted);
             if ($iomadcourserec = $DB->get_record('iomad_courses', array('courseid' => $completed->courseid))) {
                 if (!empty($iomadcourserec->validlength)) {
-                    $exportedcourse->timeexpires = date($CFG->iomad_date_format, $completed->timecompleted + $iomadcourserec->validlength * 24 * 60 * 60 );
+                    $exportedcourse->timeexpires = date($CFG->iomad_date_format, $completed->timecompleted + $iomadcourserec->validlength * 24 * 60 * 60);
                 }
             }
             $exportedcourse->progress = 100;

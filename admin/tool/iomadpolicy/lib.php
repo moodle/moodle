@@ -40,7 +40,8 @@ use tool_iomadpolicy\iomadpolicy_version;
  * @throws dml_exception
  * @throws moodle_exception
  */
-function tool_iomadpolicy_myprofile_navigation(tree $tree, $user, $iscurrentuser, $course) {
+function tool_iomadpolicy_myprofile_navigation(tree $tree, $user, $iscurrentuser, $course)
+{
     global $CFG;
 
     // Do nothing if we are not set as the site policies handler.
@@ -63,66 +64,78 @@ function tool_iomadpolicy_myprofile_navigation(tree $tree, $user, $iscurrentuser
     $usercontext = \context_user::instance($user->id);
     if ($iscurrentuser || has_capability('tool/iomadpolicy:acceptbehalf', $usercontext)) {
         $url = new moodle_url('/admin/tool/iomadpolicy/user.php', ['userid' => $user->id]);
-        $node = new core_user\output\myprofile\node('privacyandpolicies', 'tool_iomadpolicy',
-            get_string('policiesagreements', 'tool_iomadpolicy'), null, $url);
+        $node = new core_user\output\myprofile\node(
+            'privacyandpolicies',
+            'tool_iomadpolicy',
+            get_string('policiesagreements', 'tool_iomadpolicy'),
+            null,
+            $url
+        );
         $category->add_node($node);
     }
 
     return true;
 }
 
-/**
- * Load iomadpolicy message for guests.
- *
- * @return string The HTML code to insert before the head.
- */
-function tool_iomadpolicy_before_standard_html_head() {
-    global $CFG, $PAGE, $USER;
+// /**
+//  * Load iomadpolicy message for guests.
+//  *
+//  * @return string The HTML code to insert before the head. poxel
+//  */
+// function tool_iomadpolicy_before_standard_html_head()
+// {
+//     global $CFG, $PAGE, $USER;
 
-    $message = null;
-    if (!empty($CFG->sitepolicyhandler)
-            && $CFG->sitepolicyhandler == 'tool_iomadpolicy'
-            && empty($USER->policyagreed)
-            && (isguestuser() || !isloggedin())) {
-        $output = $PAGE->get_renderer('tool_iomadpolicy');
-        try {
-            $page = new \tool_iomadpolicy\output\guestconsent();
-            $message = $output->render($page);
-        } catch (dml_read_exception $e) {
-            // During upgrades, the new plugin code with new SQL could be in place but the DB not upgraded yet.
-            $message = null;
-        }
-    }
+//     $message = null;
+//     if (
+//         !empty($CFG->sitepolicyhandler)
+//         && $CFG->sitepolicyhandler == 'tool_iomadpolicy'
+//         && empty($USER->policyagreed)
+//         && (isguestuser() || !isloggedin())
+//     ) {
+//         $output = $PAGE->get_renderer('tool_iomadpolicy');
+//         try {
+//             $page = new \tool_iomadpolicy\output\guestconsent();
+//             $message = $output->render($page);
+//         } catch (dml_read_exception $e) {
+//             // During upgrades, the new plugin code with new SQL could be in place but the DB not upgraded yet.
+//             $message = null;
+//         }
+//     }
 
-    return $message;
-}
+//     return $message;
+// }
 
-/**
- * Callback to add footer elements.
- *
- * @return string HTML footer content
- */
-function tool_iomadpolicy_standard_footer_html() {
-    global $CFG, $PAGE;
+// /**
+//  * Callback to add footer elements.
+//  *
+//  * @return string HTML footer content
+//  */
+// function tool_iomadpolicy_standard_footer_html()
+// {
+//     global $CFG, $PAGE;
 
-    $output = '';
-    if (!empty($CFG->sitepolicyhandler)
-            && $CFG->sitepolicyhandler == 'tool_iomadpolicy') {
-        $policies = api::get_current_versions_ids();
-        if (!empty($policies)) {
-            $url = new moodle_url('/admin/tool/iomadpolicy/viewall.php', ['returnurl' => $PAGE->url]);
-            $output .= html_writer::link($url, get_string('useriomadpolicysettings', 'tool_iomadpolicy'));
-            $output = html_writer::div($output, 'policiesfooter');
-        }
-    }
+//     $output = '';
+//     if (
+//         !empty($CFG->sitepolicyhandler)
+//         && $CFG->sitepolicyhandler == 'tool_iomadpolicy'
+//     ) {
+//         $policies = api::get_current_versions_ids();
+//         if (!empty($policies)) {
+//             $url = new moodle_url('/admin/tool/iomadpolicy/viewall.php', ['returnurl' => $PAGE->url]);
+//             $output .= html_writer::link($url, get_string('useriomadpolicysettings', 'tool_iomadpolicy'));
+//             $output = html_writer::div($output, 'policiesfooter');
+//         }
+//     }
 
-    return $output;
-}
+//     return $output;
+// }
 
 /**
  * Hooks redirection to iomadpolicy acceptance pages before sign up.
  */
-function tool_iomadpolicy_pre_signup_requests() {
+function tool_iomadpolicy_pre_signup_requests()
+{
     global $CFG;
 
     // Do nothing if we are not set as the site policies handler.
@@ -151,7 +164,8 @@ function tool_iomadpolicy_pre_signup_requests() {
  * @param array $options additional options affecting the file serving
  * @return bool false if the file not found, just send the file otherwise and do not return anything
  */
-function tool_iomadpolicy_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function tool_iomadpolicy_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array())
+{
     global $CFG, $PAGE;
 
     // Do not allow access to files if we are not set as the site iomadpolicy handler.
@@ -186,7 +200,7 @@ function tool_iomadpolicy_pluginfile($course, $cm, $context, $filearea, $args, $
     if (!$args) {
         $filepath = '/';
     } else {
-        $filepath = '/'.implode('/', $args).'/';
+        $filepath = '/' . implode('/', $args) . '/';
     }
 
     $fs = get_file_storage();
@@ -202,7 +216,8 @@ function tool_iomadpolicy_pluginfile($course, $cm, $context, $filearea, $args, $
 /**
  * Map icons for font-awesome themes.
  */
-function tool_iomadpolicy_get_fontawesome_icon_map() {
+function tool_iomadpolicy_get_fontawesome_icon_map()
+{
     return [
         'tool_iomadpolicy:agreed' => 'fa-check text-success',
         'tool_iomadpolicy:declined' => 'fa-times text-danger',
@@ -218,7 +233,8 @@ function tool_iomadpolicy_get_fontawesome_icon_map() {
  * @param array $args List of named arguments for the fragment loader.
  * @return string
  */
-function tool_iomadpolicy_output_fragment_accept_on_behalf($args) {
+function tool_iomadpolicy_output_fragment_accept_on_behalf($args)
+{
     $args = (object) $args;
 
     $data = [];

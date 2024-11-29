@@ -22,6 +22,7 @@
  */
 
 namespace block_mycourses\output;
+
 defined('MOODLE_INTERNAL') || die();
 
 use renderable;
@@ -36,7 +37,9 @@ use completion_info;
  * @copyright  2017 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class inprogress_view implements renderable, templatable {
+#[\AllowDynamicProperties]
+class inprogress_view implements renderable, templatable
+{
     /** Quantity of courses per page. */
     const COURSES_PER_PAGE = 6;
 
@@ -46,7 +49,8 @@ class inprogress_view implements renderable, templatable {
      * @param array $courses list of courses.
      * @param array $coursesprogress list of courses progress.
      */
-    public function __construct($mycompletion) {
+    public function __construct($mycompletion)
+    {
         $this->mycompletion = $mycompletion;
     }
 
@@ -56,9 +60,10 @@ class inprogress_view implements renderable, templatable {
      * @param \renderer_base $output
      * @return array
      */
-    public function export_for_template(renderer_base $output) {
+    public function export_for_template(renderer_base $output)
+    {
         global $CFG, $DB, $USER, $OUTPUT;
-        require_once($CFG->dirroot.'/course/lib.php');
+        require_once($CFG->dirroot . '/course/lib.php');
 
         // Build courses view data structure.
         $inprogressview = [];
@@ -66,22 +71,23 @@ class inprogress_view implements renderable, templatable {
         $completed = 0;
 
         foreach ($this->mycompletion->myinprogress as $mid => $inprogress) {
-            if (!$course = $DB->get_record("course", array("id"=>$inprogress->courseid))) {
+            if (!$course = $DB->get_record("course", array("id" => $inprogress->courseid))) {
                 $context = \context_system::instance();
                 $linkurl = new \moodle_url('/my');
-                $exportedcourse = (object) ['id' => 0,
-                                            'fullname' => $inprogress->coursefullname,
-                                            'shortname' => $inprogress->coursefullname,
-                                            'summary' => '',
-                                            'summaryformat' => 1,
-                                            'visible' => 0,
-                                            'fullnamedisplay' => 0,
-                                            'courseimage' => 0,
-                                            'viewurl' => $linkurl->out(),
-                                            'image' => $OUTPUT->get_generated_image_for_id(SITEID),
-                                            'url' => $linkurl->out(),
-                                            'coursecategory' => ''];
-
+                $exportedcourse = (object) [
+                    'id' => 0,
+                    'fullname' => $inprogress->coursefullname,
+                    'shortname' => $inprogress->coursefullname,
+                    'summary' => '',
+                    'summaryformat' => 1,
+                    'visible' => 0,
+                    'fullnamedisplay' => 0,
+                    'courseimage' => 0,
+                    'viewurl' => $linkurl->out(),
+                    'image' => $OUTPUT->get_generated_image_for_id(SITEID),
+                    'url' => $linkurl->out(),
+                    'coursecategory' => ''
+                ];
             } else {
                 $context = \context_course::instance($inprogress->courseid);
                 $courseobj = new \core_course_list_element($course);
@@ -129,23 +135,29 @@ class inprogress_view implements renderable, templatable {
                     } else {
                         $completestring = " - " . get_string('no');
                     }
-        
+
                     if (!empty($criteria->moduleinstance)) {
                         $modinfo = get_coursemodule_from_id('', $criteria->moduleinstance);
                         $gradestring = "";
-                        if ($showgrade &&
-                            $gradeinfo = $DB->get_record_sql("SELECT gg.* FROM {grade_grades} gg
+                        if (
+                            $showgrade &&
+                            $gradeinfo = $DB->get_record_sql(
+                                "SELECT gg.* FROM {grade_grades} gg
                                                               JOIN {grade_items} gi ON (gg.itemid = gi.id)
                                                               JOIN {course_modules} cm ON (gi.courseid = cm.course AND gi.iteminstance = cm.instance)
                                                               JOIN {modules} m ON (m.id = cm.module AND m.name = gi.itemmodule)
                                                               WHERE gg.userid = :userid
                                                               AND gi.courseid = :courseid
                                                               AND cm.id = :moduleid",
-                                                              ['userid' => $USER->id,
-                                                               'courseid' => $course->id,
-                                                               'moduleid' => $criteria->moduleinstance])) {
+                                [
+                                    'userid' => $USER->id,
+                                    'courseid' => $course->id,
+                                    'moduleid' => $criteria->moduleinstance
+                                ]
+                            )
+                        ) {
                             if (!empty($gradeinfo->finalgrade) && $gradeinfo->finalgrade != 0) {
-                                $gradestring = " - " . format_string(round($gradeinfo->finalgrade/$gradeinfo->rawgrademax * 100, $CFG->iomad_report_grade_places)."%");
+                                $gradestring = " - " . format_string(round($gradeinfo->finalgrade / $gradeinfo->rawgrademax * 100, $CFG->iomad_report_grade_places) . "%");
                             }
                         }
                         $tooltip .= $criteria->get_title() . " " . format_string($modinfo->name) . "$gradestring $completestring\r\n";
@@ -153,9 +165,9 @@ class inprogress_view implements renderable, templatable {
                         $tooltip = $criteria->get_title() . "$completestring \r\n" . $tooltip;
                     }
                 }
-        
+
                 // Add in the modified time.
-                $tooltip .= format_string(get_string('lastmodified') . " - " .date($CFG->iomad_date_format, $inprogress->modifiedtime));
+                $tooltip .= format_string(get_string('lastmodified') . " - " . date($CFG->iomad_date_format, $inprogress->modifiedtime));
                 $exportedcourse->progresstooltip = $tooltip;
             }
             $inprogressview['courses'][] = $exportedcourse;

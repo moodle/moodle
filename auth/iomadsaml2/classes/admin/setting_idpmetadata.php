@@ -35,17 +35,20 @@ require_once("{$CFG->libdir}/adminlib.php");
  * @copyright   Matt Porritt <mattp@catalyst-au.net>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class setting_idpmetadata extends admin_setting_configtextarea {
+#[\AllowDynamicProperties]
+class setting_idpmetadata extends admin_setting_configtextarea
+{
     /**
      * Constructor
      */
-    public function __construct($postfix = "") {
+    public function __construct($postfix = "")
+    {
 
         // IOMAD set the postfix.
         $this->postfix = $postfix;
         $this->companyid = 0;
         if ("" != $postfix) {
-            list ($drop, $companyid) = explode('_', $postfix);
+            list($drop, $companyid) = explode('_', $postfix);
             $this->companyid = $companyid;
         }
 
@@ -58,7 +61,8 @@ class setting_idpmetadata extends admin_setting_configtextarea {
             '',
             PARAM_RAW,
             80,
-            5);
+            5
+        );
     }
 
     /**
@@ -68,7 +72,8 @@ class setting_idpmetadata extends admin_setting_configtextarea {
      * @return true|string Error message in case of error, true otherwise.
      * @throws \coding_exception
      */
-    public function validate($value) {
+    public function validate($value)
+    {
         $value = trim($value);
         if (empty($value)) {
             return true;
@@ -89,7 +94,8 @@ class setting_idpmetadata extends admin_setting_configtextarea {
      *
      * @param idp_data[] $idps
      */
-    private function process_all_idps_metadata($idps) {
+    private function process_all_idps_metadata($idps)
+    {
         global $DB;
 
         $currentidpsrs = $DB->get_records('auth_iomadsaml2_idps', ['companyid' => $this->companyid]);
@@ -117,7 +123,8 @@ class setting_idpmetadata extends admin_setting_configtextarea {
      * @param mixed $oldidps
      * @throws setting_idpmetadata_exception
      */
-    private function process_idp_metadata(idp_data $idp, &$oldidps) {
+    private function process_idp_metadata(idp_data $idp, &$oldidps)
+    {
         $xpath = $this->get_idp_xml_path($idp);
         $idpelements = $this->find_all_idp_sso_descriptors($xpath);
 
@@ -141,8 +148,13 @@ class setting_idpmetadata extends admin_setting_configtextarea {
      * @param mixed $oldidps
      * @param int $activedefault
      */
-    private function process_idp_xml(idp_data $idp, DOMElement $idpelements, DOMXPath $xpath,
-                                        &$oldidps, $activedefault = 0) {
+    private function process_idp_xml(
+        idp_data $idp,
+        DOMElement $idpelements,
+        DOMXPath $xpath,
+        &$oldidps,
+        $activedefault = 0
+    ) {
         global $DB;
         $entityid = $idpelements->getAttribute('entityID');
 
@@ -197,7 +209,8 @@ class setting_idpmetadata extends admin_setting_configtextarea {
      *
      * @param mixed $oldidps
      */
-    private function remove_old_idps($oldidps) {
+    private function remove_old_idps($oldidps)
+    {
         global $DB;
 
         foreach ($oldidps as $metadataidps) {
@@ -213,10 +226,11 @@ class setting_idpmetadata extends admin_setting_configtextarea {
      * @param string $value
      * @return idp_data[]
      */
-    public function get_idps_data($value) {
+    public function get_idps_data($value)
+    {
         global $CFG;
 
-        require_once($CFG->libdir.'/filelib.php');
+        require_once($CFG->libdir . '/filelib.php');
 
         $parser = new idp_parser();
         $idps = $parser->parse($value);
@@ -245,7 +259,8 @@ class setting_idpmetadata extends admin_setting_configtextarea {
      * @param idp_data $idp
      * @return DOMXPath
      */
-    private function get_idp_xml_path(idp_data $idp) {
+    private function get_idp_xml_path(idp_data $idp)
+    {
         $xml = new DOMDocument();
 
         libxml_use_internal_errors(true);
@@ -276,7 +291,8 @@ class setting_idpmetadata extends admin_setting_configtextarea {
      * @param DOMXPath $xpath
      * @return DOMNodeList
      */
-    private function find_all_idp_sso_descriptors(DOMXPath $xpath) {
+    private function find_all_idp_sso_descriptors(DOMXPath $xpath)
+    {
         $idpelements = $xpath->query('//md:EntityDescriptor[//md:IDPSSODescriptor]');
         return $idpelements;
     }
@@ -287,7 +303,8 @@ class setting_idpmetadata extends admin_setting_configtextarea {
      * @param string $url
      * @param string $xml
      */
-    private function save_idp_metadata_xml($url, $xml) {
+    private function save_idp_metadata_xml($url, $xml)
+    {
         global $CFG, $iomadsaml2auth;
         require_once("{$CFG->dirroot}/auth/iomadsaml2/setup.php");
 

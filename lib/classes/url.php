@@ -39,7 +39,8 @@ use Psr\Http\Message\UriInterface;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package core
  */
-class url {
+class url
+{
     /**
      * Scheme, ex.: http, https
      * @var string
@@ -183,7 +184,8 @@ class url {
      * @return array Array of Params for url.
      * @throws coding_exception
      */
-    public function params(?array $params = null) {
+    public function params(?array $params = null)
+    {
         $params = (array)$params;
 
         foreach ($params as $key => $value) {
@@ -213,7 +215,8 @@ class url {
      * @param string[]|string ...$params either an array of param names, or 1..n string params to remove as args.
      * @return array url parameters
      */
-    public function remove_params(...$params) {
+    public function remove_params(...$params)
+    {
         if (empty($params)) {
             return $this->params;
         }
@@ -234,7 +237,8 @@ class url {
      *
      * @param array $unused Unused param
      */
-    public function remove_all_params($unused = null) {
+    public function remove_all_params($unused = null)
+    {
         $this->params = [];
         $this->slashargument = '';
     }
@@ -248,7 +252,8 @@ class url {
      * @param string $newvalue Param value. If new value specified current value is overriden or parameter is added
      * @return mixed string parameter value, null if parameter does not exist
      */
-    public function param($paramname, $newvalue = '') {
+    public function param($paramname, $newvalue = '')
+    {
         if (func_num_args() > 1) {
             // Set new value.
             $this->params([$paramname => $newvalue]);
@@ -267,7 +272,8 @@ class url {
      * @return array merged parameters
      * @throws coding_exception
      */
-    protected function merge_overrideparams(?array $overrideparams = null) {
+    protected function merge_overrideparams(?array $overrideparams = null)
+    {
         $overrideparams = (array)$overrideparams;
         $params = $this->params;
         foreach ($overrideparams as $key => $value) {
@@ -295,7 +301,8 @@ class url {
      *      override existing ones with the same name.
      * @return string query string that can be added to a url.
      */
-    public function get_query_string($escaped = true, ?array $overrideparams = null) {
+    public function get_query_string($escaped = true, ?array $overrideparams = null)
+    {
         $arr = [];
         if ($overrideparams !== null) {
             $params = $this->merge_overrideparams($overrideparams);
@@ -329,7 +336,8 @@ class url {
      *
      * @return array params array for templates.
      */
-    public function export_params_for_template(): array {
+    public function export_params_for_template(): array
+    {
         $data = [];
         foreach ($this->params as $key => $val) {
             if (is_array($val)) {
@@ -348,7 +356,8 @@ class url {
      *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->out(true);
     }
 
@@ -362,7 +371,8 @@ class url {
      * @param null|array $overrideparams params to add to the output url, these override existing ones with the same name.
      * @return string Resulting URL
      */
-    public function out($escaped = true, ?array $overrideparams = null) {
+    public function out($escaped = true, ?array $overrideparams = null)
+    {
 
         global $CFG;
 
@@ -393,7 +403,8 @@ class url {
      * @param null|array $overrideparams params to add to the output url, these override existing ones with the same name.
      * @return string Resulting URL
      */
-    public function raw_out($escaped = true, ?array $overrideparams = null) {
+    public function raw_out($escaped = true, ?array $overrideparams = null)
+    {
         if (!is_bool($escaped)) {
             debugging('Escape parameter must be of type boolean, ' . gettype($escaped) . ' given instead.');
         }
@@ -415,7 +426,8 @@ class url {
      *
      * @return string The encoded anchor
      */
-    public function get_encoded_anchor(): string {
+    public function get_encoded_anchor(): string
+    {
         if (is_null($this->anchor)) {
             return '';
         }
@@ -443,7 +455,7 @@ class url {
             // The first part can go through our preg_replace_callback to quote any relevant characters.
             $anchor .= preg_replace_callback(
                 '/[^' . $allowed . ']/',
-                fn ($matches) => rawurlencode($matches[0]),
+                fn($matches) => rawurlencode($matches[0]),
                 $anchorparts,
             );
 
@@ -472,7 +484,8 @@ class url {
      * @param bool $includeanchor if {@see self::anchor} is defined, should it be returned?
      * @return string
      */
-    public function out_omit_querystring($includeanchor = false) {
+    public function out_omit_querystring($includeanchor = false)
+    {
 
         $uri = $this->scheme ? $this->scheme . ':' . ((strtolower($this->scheme) == 'mailto') ? '' : '//') : '';
         $uri .= $this->user ? $this->user . ($this->pass ? ':' . $this->pass : '') . '@' : '';
@@ -495,7 +508,8 @@ class url {
      * @param int $matchtype The type of comparison (URL_MATCH_BASE, URL_MATCH_PARAMS, URL_MATCH_EXACT)
      * @return bool
      */
-    public function compare(self $url, $matchtype = URL_MATCH_EXACT) {
+    public function compare(self $url, $matchtype = URL_MATCH_EXACT)
+    {
 
         $baseself = $this->out_omit_querystring();
         $baseother = $url->out_omit_querystring();
@@ -552,7 +566,8 @@ class url {
      *
      * @param string $anchor null means remove previous
      */
-    public function set_anchor($anchor) {
+    public function set_anchor($anchor)
+    {
         if (is_null($anchor)) {
             // Remove.
             $this->anchor = null;
@@ -566,7 +581,8 @@ class url {
      *
      * @param string $scheme
      */
-    public function set_scheme($scheme) {
+    public function set_scheme($scheme)
+    {
         // See http://www.ietf.org/rfc/rfc3986.txt part 3.1.
         if (preg_match('/^[a-zA-Z][a-zA-Z0-9+.-]*$/', $scheme)) {
             $this->scheme = $scheme;
@@ -582,7 +598,8 @@ class url {
      * @param string $parameter name of page parameter if slasharguments not supported
      * @param bool $supported usually null, then it depends on $CFG->slasharguments, use true or false for other servers
      */
-    public function set_slashargument($path, $parameter = 'file', $supported = null) {
+    public function set_slashargument($path, $parameter = 'file', $supported = null)
+    {
         global $CFG;
         if (is_null($supported)) {
             $supported = !empty($CFG->slasharguments);
@@ -608,7 +625,8 @@ class url {
      * @param UriInterface $uri
      * @return self
      */
-    public static function from_uri(UriInterface $uri): self {
+    public static function from_uri(UriInterface $uri): self
+    {
         $url = new self(
             url: $uri->getScheme() . '://' . $uri->getAuthority() . $uri->getPath(),
             anchor: $uri->getFragment() ?: null,
@@ -652,7 +670,8 @@ class url {
      * @param bool $forcedownload
      * @return self
      */
-    public static function make_file_url($urlbase, $path, $forcedownload = false) {
+    public static function make_file_url($urlbase, $path, $forcedownload = false)
+    {
         $params = [];
         if ($forcedownload) {
             $params['forcedownload'] = 1;
@@ -765,7 +784,8 @@ class url {
      * @param bool $forcedownload
      * @return url
      */
-    public static function make_draftfile_url($draftid, $pathname, $filename, $forcedownload = false) {
+    public static function make_draftfile_url($draftid, $pathname, $filename, $forcedownload = false)
+    {
         global $CFG, $USER;
         $urlbase = "$CFG->wwwroot/draftfile.php";
         $context = context_user::instance($USER->id);
@@ -781,7 +801,8 @@ class url {
      * @param bool $forcedownload
      * @return url
      */
-    public static function make_legacyfile_url($courseid, $filepath, $forcedownload = false) {
+    public static function make_legacyfile_url($courseid, $filepath, $forcedownload = false)
+    {
         global $CFG;
 
         $urlbase = "$CFG->wwwroot/file.php";
@@ -793,12 +814,13 @@ class url {
      *
      * @return bool True if URL is relative to $CFG->wwwroot; otherwise, false.
      */
-    public function is_local_url(): bool {
+    public function is_local_url(): bool
+    {
         global $CFG;
 
         $url = $this->out();
         // Does URL start with wwwroot? Otherwise, URL isn't relative to wwwroot.
-        return ( ($url === $CFG->wwwroot) || (strpos($url, $CFG->wwwroot . '/') === 0) );
+        return (($url === $CFG->wwwroot) || (strpos($url, $CFG->wwwroot . '/') === 0));
     }
 
     /**
@@ -811,7 +833,8 @@ class url {
      * @return string Resulting URL
      * @throws coding_exception if called on a non-local url
      */
-    public function out_as_local_url($escaped = true, ?array $overrideparams = null) {
+    public function out_as_local_url($escaped = true, ?array $overrideparams = null)
+    {
         global $CFG;
 
         // URL should be relative to wwwroot. If not then throw exception.
@@ -839,7 +862,8 @@ class url {
      * @param bool $includeslashargument If true, includes slash arguments
      * @return string Path of URL
      */
-    public function get_path($includeslashargument = true) {
+    public function get_path($includeslashargument = true)
+    {
         return $this->path . ($includeslashargument ? $this->slashargument : '');
     }
 
@@ -849,7 +873,8 @@ class url {
      * @param string $name Name of parameter
      * @return string Value of parameter or null if not set
      */
-    public function get_param($name) {
+    public function get_param($name)
+    {
         if (array_key_exists($name, $this->params)) {
             return $this->params[$name];
         } else {
@@ -864,7 +889,8 @@ class url {
      *
      * @return string Scheme of the URL.
      */
-    public function get_scheme() {
+    public function get_scheme()
+    {
         return $this->scheme;
     }
 
@@ -875,7 +901,8 @@ class url {
      *
      * @return string Host of the URL.
      */
-    public function get_host() {
+    public function get_host()
+    {
         return $this->host;
     }
 
@@ -886,7 +913,8 @@ class url {
      *
      * @return string Port of the URL.
      */
-    public function get_port() {
+    public function get_port()
+    {
         return $this->port;
     }
 }
@@ -894,4 +922,6 @@ class url {
 // Alias this class to the old name.
 // This file will be autoloaded by the legacyclasses autoload system.
 // In future all uses of this class will be corrected and the legacy references will be removed.
-class_alias(url::class, \moodle_url::class);
+if (!class_exists(\moodle_url::class)) {
+    class_alias(url::class, \moodle_url::class);
+}
