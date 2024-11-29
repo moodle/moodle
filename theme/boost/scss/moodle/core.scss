@@ -2943,6 +2943,8 @@ body.dragging {
     content: none;
 }
 
+
+// TODO: Check if these are still needed.
 .dropleft .dropdown-toggle::before {
     border: 0;
     @extend .fa-solid;
