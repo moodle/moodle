@@ -25,5 +25,11 @@
         background:$tertiary!important;
     }
 
-   
+    .btn-secondary,.bg-secondary.text-dark {
+        @include btn-secondary;
+    }
+
+    .iomad_company_admin{
+        margin-top:40px;
+    }
 
