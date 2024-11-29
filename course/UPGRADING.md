@@ -1,5 +1,13 @@
 # core_course (subsystem) Upgrade notes
 
+## 5.0dev
+
+### Deprecated
+
+- The course_format_ajax_support function is now deprecated. Use course_get_format($course)->supports_ajax() instead.
+
+  For more information see [MDL-82351](https://tracker.moodle.org/browse/MDL-82351)
+
 ## 4.5
 
 ### Added

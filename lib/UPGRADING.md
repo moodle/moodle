@@ -7,6 +7,9 @@
 - The `core/sortable_list` Javascript module now emits native events, removing the jQuery dependency from calling code that wants to listen for the events. Backwards compatibility with existing code using jQuery is preserved
 
   For more information see [MDL-72293](https://tracker.moodle.org/browse/MDL-72293)
+- The deprecated implementation in course/view.php, which uses the extern_server_course function to handle routing between internal and external courses, can be improved by utilizing the Hook API. This enhancement is essential for a project involving multiple universities, as the Hook API provides a more generalized and flexible approach to route users to external courses from within other plugins.
+
+  For more information see [MDL-83473](https://tracker.moodle.org/browse/MDL-83473)
 
 ### Changed
 
@@ -32,6 +35,22 @@
 - The trait `moodle_read_slave_trait` has been deprecated in favour of a functionally identical version called `moodle_read_replica_trait`. The renamed trait substitutes the terminology of `slave` with `replica`, and `master` with `primary`.
 
   For more information see [MDL-71257](https://tracker.moodle.org/browse/MDL-71257)
+- question_make_default_categories()
+
+  No longer creates a default category in either CONTEXT_SYSTEM, CONTEXT_COURSE, or CONTEXT_COURSECAT.
+  Superceded by question_get_default_category which can optionally create one if it does not exist.
+
+  For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
+- question_delete_course()
+
+  No replacement. Course contexts no longer hold question categories.
+
+  For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
+- question_delete_course_category()
+
+  Course category contexts no longer hold question categories.
+
+  For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
 
 ### Removed
 

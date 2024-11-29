@@ -15,6 +15,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `core/sortable_list` Javascript module now emits native events, removing the jQuery dependency from calling code that wants to listen for the events. Backwards compatibility with existing code using jQuery is preserved
 
   For more information see [MDL-72293](https://tracker.moodle.org/browse/MDL-72293)
+- The deprecated implementation in course/view.php, which uses the extern_server_course function to handle routing between internal and external courses, can be improved by utilizing the Hook API. This enhancement is essential for a project involving multiple universities, as the Hook API provides a more generalized and flexible approach to route users to external courses from within other plugins.
+
+  For more information see [MDL-83473](https://tracker.moodle.org/browse/MDL-83473)
 
 #### Changed
 
@@ -40,6 +43,22 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The trait `moodle_read_slave_trait` has been deprecated in favour of a functionally identical version called `moodle_read_replica_trait`. The renamed trait substitutes the terminology of `slave` with `replica`, and `master` with `primary`.
 
   For more information see [MDL-71257](https://tracker.moodle.org/browse/MDL-71257)
+- question_make_default_categories()
+
+  No longer creates a default category in either CONTEXT_SYSTEM, CONTEXT_COURSE, or CONTEXT_COURSECAT.
+  Superceded by question_get_default_category which can optionally create one if it does not exist.
+
+  For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
+- question_delete_course()
+
+  No replacement. Course contexts no longer hold question categories.
+
+  For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
+- question_delete_course_category()
+
+  Course category contexts no longer hold question categories.
+
+  For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
 
 #### Removed
 
@@ -57,6 +76,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Remove all MODE_HUB related code.
 
   For more information see [MDL-66873](https://tracker.moodle.org/browse/MDL-66873)
+
+### core_course
+
+#### Deprecated
+
+- The course_format_ajax_support function is now deprecated. Use course_get_format($course)->supports_ajax() instead.
+
+  For more information see [MDL-82351](https://tracker.moodle.org/browse/MDL-82351)
 
 ### core_courseformat
 
@@ -78,6 +105,16 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   The base enrolment `enrol_plugin::send_course_welcome_message_to_user` method also now accepts a `$roleid` parameter in order to correctly populate the `courserole` placeholder
 
   For more information see [MDL-83432](https://tracker.moodle.org/browse/MDL-83432)
+
+### core_question
+
+#### Deprecated
+
+- question_type::generate_test
+
+  No replacement, not used anywhere in core.
+
+  For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
 
 ### core_reportbuilder
 
@@ -123,6 +160,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### mod_feedback
 
+#### Added
+
+- Added new `mod_feedback_questions_reorder` external function
+
+  For more information see [MDL-81745](https://tracker.moodle.org/browse/MDL-81745)
+
 #### Deprecated
 
 - The 'mode' parameter has been deprecated from 'edit_template_action_bar' and 'templates_table' contructors.
@@ -156,6 +199,36 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   Both the existing instance property and the new static method can co-exist.
 
   For more information see [MDL-81521](https://tracker.moodle.org/browse/MDL-81521)
+
+### qbank_bulkmove
+
+#### Deprecated
+
+- qbank_bulkmove/helper::get_displaydata
+
+  Superceded by a modal and webservice, see qbank_bulkmove/modal_question_bank_bulkmove and core_question_external\move_questions
+
+  For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
+- qbank_bulkmove\output\renderer::render_bulk_move_form
+
+  Superceded by qbank_bulkmove\output\bulk_move
+
+  For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
+
+### tool_brickfield
+
+#### Deprecated
+
+- tool_brickfield\local\areas\core_question\answerbase::find_system_areas
+
+  No replacement. System context no longer a valid context to assign a question category
+
+  For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
+- tool_brickfield\local\areas\core_question\base::find_system_areas
+
+  No replacement. System context no longer a valid context to assign a question category
+
+  For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
 
 ## 4.5
 

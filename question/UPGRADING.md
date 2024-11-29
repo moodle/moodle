@@ -1,5 +1,15 @@
 # core_question (subsystem) Upgrade notes
 
+## 5.0dev
+
+### Deprecated
+
+- question_type::generate_test
+
+  No replacement, not used anywhere in core.
+
+  For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
+
 ## 4.5
 
 ### Added

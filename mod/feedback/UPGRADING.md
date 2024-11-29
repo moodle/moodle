@@ -2,6 +2,12 @@
 
 ## 5.0dev
 
+### Added
+
+- Added new `mod_feedback_questions_reorder` external function
+
+  For more information see [MDL-81745](https://tracker.moodle.org/browse/MDL-81745)
+
 ### Deprecated
 
 - The 'mode' parameter has been deprecated from 'edit_template_action_bar' and 'templates_table' contructors.
