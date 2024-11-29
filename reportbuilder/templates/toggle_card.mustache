@@ -35,8 +35,8 @@
                 <span class="me-1">{{$header}}{{/header}}</span> {{$helpicon}}{{/helpicon}}
             </div>
             <button class="btn toggle-card-button ms-auto {{$collapsed}}{{/collapsed}}"
-                    data-toggle="collapse"
-                    data-target="#{{$id}}{{uniqid}}{{/id}}"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#{{$id}}{{uniqid}}{{/id}}"
                     aria-expanded="true"
                     aria-controls="{{$id}}{{uniqid}}{{/id}}"
                     title="{{#str}}showhide, core_reportbuilder, {{$header}}{{/header}}{{/str}}"

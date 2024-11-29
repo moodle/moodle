@@ -31,7 +31,7 @@
         &:focus {
             position: relative;
         }
-        &[data-toggle="tab"] {
+        &[data-bs-toggle="tab"] {
             display: inline-flex;
             flex-direction: column;
             align-items: center;

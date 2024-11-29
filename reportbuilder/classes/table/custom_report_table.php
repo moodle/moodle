@@ -348,7 +348,7 @@ class custom_report_table extends base_report_table {
                 'type' => 'button',
                 'class' => 'btn collapsed',
                 'title' => $buttontitle,
-                'data-toggle' => 'collapse',
+                'data-bs-toggle' => 'collapse',
                 'data-action' => 'toggle-card'
             ]);
             $html .= html_writer::tag('td', $button, ['class' => 'card-toggle d-none']);

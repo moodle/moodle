@@ -52,7 +52,7 @@ function(
         GROUP_MESSAGES: '[data-region="view-overview-group-messages"]',
         MESSAGES: '[data-region="view-overview-messages"]',
         SEARCH_INPUT: '[data-region="view-overview-search-input"]',
-        SECTION_TOGGLE_BUTTON: '[data-toggle]'
+        SECTION_TOGGLE_BUTTON: '[data-bs-toggle]'
     };
 
     // Categories displayed in the message drawer. Some methods (such as filterCountsByType) are expecting their value

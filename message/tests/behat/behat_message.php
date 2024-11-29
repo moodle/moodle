@@ -67,7 +67,7 @@ XPATH
             ], false),
             new behat_component_named_selector('Message tab', [
                 <<<XPATH
-    .//*[@data-region='message-drawer']//button[@data-toggle='collapse' and contains(string(), %locator%)]
+    .//*[@data-region='message-drawer']//button[@data-bs-toggle='collapse' and contains(string(), %locator%)]
 XPATH
             ], false),
             new behat_component_named_selector('Message list area', [

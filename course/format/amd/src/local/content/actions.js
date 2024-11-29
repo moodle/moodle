@@ -78,11 +78,11 @@ export default class extends BaseComponent {
             SECTIONLINK: `[data-for='section']`,
             CMLINK: `[data-for='cm']`,
             SECTIONNODE: `[data-for='sectionnode']`,
-            MODALTOGGLER: `[data-toggle='collapse']`,
+            MODALTOGGLER: `[data-bs-toggle='collapse']`,
             ADDSECTION: `[data-action='addSection']`,
             CONTENTTREE: `#destination-selector`,
             ACTIONMENU: `.action-menu`,
-            ACTIONMENUTOGGLER: `[data-toggle="dropdown"]`,
+            ACTIONMENUTOGGLER: `[data-bs-toggle="dropdown"]`,
             // Availability modal selectors.
             OPTIONSRADIO: `[type='radio']`,
             COURSEADDSECTION: `#course-addsection`,

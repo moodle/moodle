@@ -267,13 +267,13 @@ class manage_table extends \table_sql {
             $OUTPUT->pix_icon('enrolinstancewarning', get_string('deletedactivityalt' , 'enrol_lti'), 'enrol_lti'), [
                 "class" => "btn btn-link p-0",
                 "role" => "button",
-                "data-container" => "body",
-                "data-toggle" => "popover",
-                "data-placement" => right_to_left() ? "left" : "right",
-                "data-content" => get_string('deletedactivitydescription', 'enrol_lti'),
-                "data-html" => "true",
+                "data-bs-container" => "body",
+                "data-bs-toggle" => "popover",
+                "data-bs-placement" => right_to_left() ? "left" : "right",
+                "data-bs-content" => get_string('deletedactivitydescription', 'enrol_lti'),
+                "data-bs-html" => "true",
                 "tabindex" => "0",
-                "data-trigger" => "focus"
+                "data-bs-trigger" => "focus",
             ]
         );
         $name = \html_writer::span($icon . get_string('deletedactivity', 'enrol_lti'));

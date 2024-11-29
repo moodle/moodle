@@ -8,8 +8,8 @@
 
 // Button styles when a toggle button is active.
 .reportbuilder-wrapper {
-    .btn-outline-secondary[data-toggle="collapse"]:not(.collapsed),
-    .dropdown.show .btn-outline-secondary[data-toggle="dropdown"] {
+    .btn-outline-secondary[data-bs-toggle="collapse"]:not(.collapsed),
+    .dropdown.show .btn-outline-secondary[data-bs-toggle="dropdown"] {
         color: color-contrast($gray-600);
         background-color: $gray-600;
         border-color: $gray-600;

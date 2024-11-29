@@ -53,7 +53,7 @@
     <div class="py-3">
         {{#forum.capabilities.create}}
             {{#enablediscussioncreation}}
-                <a class="btn btn-primary" data-toggle="collapse" href="#collapseAddForm">
+                <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseAddForm">
                     {{$discussion_create_text}}
                         {{#str}}addanewdiscussion, forum{{/str}}
                     {{/discussion_create_text}}
@@ -221,9 +221,9 @@
                                             {{#discussion.timed.istimed}}
                                             <span>
                                                  <button class="btn badge bg-primary text-white rounded border-0" data-region="timed-label"
-                                                    data-toggle="popover" data-container="body" data-placement="right" data-html="true"
-                                                    data-content="{{#discussion.timed}}{{#discussion.times}}{{> mod_forum/discussion_times}}{{/discussion.times}}{{/discussion.timed}}"
-                                                    data-trigger="click" aria-label="{{#str}}timeddiscussion, forum{{/str}}" title="{{#str}}timeddiscussion, forum{{/str}}">
+                                                    data-bs-toggle="popover" data-bs-container="body" data-bs-placement="right" data-bs-html="true"
+                                                    data-bs-content="{{#discussion.timed}}{{#discussion.times}}{{> mod_forum/discussion_times}}{{/discussion.times}}{{/discussion.timed}}"
+                                                    data-bs-trigger="click" aria-label="{{#str}}timeddiscussion, forum{{/str}}" title="{{#str}}timeddiscussion, forum{{/str}}">
                                                      {{#str}}timed, forum{{/str}}
                                                  </button>
                                             </span>

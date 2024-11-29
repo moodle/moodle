@@ -232,7 +232,7 @@ class hook_list_table extends flexible_table {
         }
 
         if ($tooltip) {
-            $attributes['data-toggle'] = 'tooltip';
+            $attributes['data-bs-toggle'] = 'tooltip';
             $attributes['title'] = $tooltip;
         }
         return html_writer::span($tag, "badge badge-{$type}", $attributes);

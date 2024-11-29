@@ -42,7 +42,7 @@ export default class Component extends BaseComponent {
             SECTION_CMLIST: `[data-for='cmlist']`,
             CM: `[data-for='cm']`,
             TOGGLER: `[data-action="togglecourseindexsection"]`,
-            COLLAPSE: `[data-toggle="collapse"]`,
+            COLLAPSE: `[data-bs-toggle="collapse"]`,
             DRAWER: `.drawer`,
         };
         // Default classes to toggle on refresh.

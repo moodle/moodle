@@ -66,12 +66,12 @@ Feature: Collapse course sections
     And I click on "Edit" "link" in the "region-main" "region"
     And I set the field "Section name" to "New section name"
     When I press "Save changes"
-    Then "[data-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
+    Then "[data-bs-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
 
   @javascript
   Scenario: Expand/collapse sections for Custom sections format.
     Given I am on the "Course 1" course page logged in as student1
-    And "[data-toggle=collapse]" "css_element" should exist in the "region-main" "region"
+    And "[data-bs-toggle=collapse]" "css_element" should exist in the "region-main" "region"
     And I should see "Assignment 1" in the "region-main" "region"
     And I should see "Assignment 2" in the "region-main" "region"
     And I should see "Book 2" in the "region-main" "region"
@@ -156,10 +156,10 @@ Feature: Collapse course sections
     And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save and display"
-    And "[data-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
+    And "[data-bs-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
     And I click on "Section 2" "link" in the "region-main" "region"
     And I should see "Assignment 2" in the "region-main" "region"
-    And "[data-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
+    And "[data-bs-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
     Then "Section 1" "section" should not exist
     And "Section 3" "section" should not exist
     And I am on "Course 1" course homepage with editing mode on
@@ -177,10 +177,10 @@ Feature: Collapse course sections
     And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save and display"
-    And "[data-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
+    And "[data-bs-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
     And I click on "8 May - 14 May" "link" in the "region-main" "region"
     And I should see "Assignment 2" in the "region-main" "region"
-    And "[data-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
+    And "[data-bs-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
     Then "1 May - 7 May" "section" should not exist
     And "15 May - 21 May" "section" should not exist
     And I am on the "Course 1" course page logged in as student1

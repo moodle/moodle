@@ -56,7 +56,7 @@ export default class Component extends BaseComponent {
             COURSE_SECTIONLIST: `[data-for='course_sectionlist']`,
             CM: `[data-for='cmitem']`,
             TOGGLER: `[data-action="togglecoursecontentsection"]`,
-            COLLAPSE: `[data-toggle="collapse"]`,
+            COLLAPSE: `[data-bs-toggle="collapse"]`,
             TOGGLEALL: `[data-toggle="toggleall"]`,
             // Formats can override the activity tag but a default one is needed to create new elements.
             ACTIVITYTAG: 'li',

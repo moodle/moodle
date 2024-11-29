@@ -26,7 +26,7 @@ import $ from 'jquery';
 
 /** @property {object} Contains the list of selectors for this module. */
 const SELECTORS = {
-    FEEDBACK_TRIGGER: '.feedbacktrigger[data-toggle="popover"]',
+    FEEDBACK_TRIGGER: '.feedbacktrigger[data-bs-toggle="popover"]',
 };
 
 /** @property {boolean} Flag to indicate whether the feedback popovers have been already initialised. */

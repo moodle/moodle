@@ -36,7 +36,7 @@
         "closebutton": true
     }
 }}
-<div id="toast-{{uniqid}}" class="toast mx-auto {{#type}}toast-{{type}}{{/type}}" data-delay="{{delay}}" {{^autohide}}data-autohide="false"{{/autohide}}>
+<div id="toast-{{uniqid}}" class="toast mx-auto {{#type}}toast-{{type}}{{/type}}" data-bs-delay="{{delay}}" {{^autohide}}data-bs-autohide="false"{{/autohide}}>
     {{#title}}
     <div class="toast-header">
         <span class="toast-title">{{{title}}}</span>
@@ -46,7 +46,7 @@
     <div class="toast-body d-flex">
         <div class="toast-message px-1">{{{message}}}</div>
         {{#closeButton}}
-        <button type="button" class="ms-auto align-self-baseline btn-close" data-dismiss="toast" aria-label="{{#str}}dismissnotification, core{{/str}}">
+        <button type="button" class="ms-auto align-self-baseline btn-close" data-bs-dismiss="toast" aria-label="{{#str}}dismissnotification, core{{/str}}">
             <span aria-hidden="true">&times;</span>
         </button>
         {{/closeButton}}

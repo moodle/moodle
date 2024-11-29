@@ -39686,8 +39686,8 @@ div.editor_atto_toolbar button .icon {
 /**
 * Reportbuilder styles.
 */
-.reportbuilder-wrapper .btn-outline-secondary[data-toggle=collapse]:not(.collapsed),
-.reportbuilder-wrapper .dropdown.show .btn-outline-secondary[data-toggle=dropdown] {
+.reportbuilder-wrapper .btn-outline-secondary[data-bs-toggle=collapse]:not(.collapsed),
+.reportbuilder-wrapper .dropdown.show .btn-outline-secondary[data-bs-toggle=dropdown] {
   color: #fff;
   background-color: #6a737b;
   border-color: #6a737b;
@@ -40346,13 +40346,13 @@ div.editor_atto_toolbar button .icon {
 .moremenu .nav-link.focus, .moremenu .nav-link:focus {
   position: relative;
 }
-.moremenu .nav-link[data-toggle=tab] {
+.moremenu .nav-link[data-bs-toggle=tab] {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
-.moremenu .nav-link[data-toggle=tab]::after {
+.moremenu .nav-link[data-bs-toggle=tab]::after {
   content: attr(data-text)/"";
   height: 0;
   visibility: hidden;
@@ -40362,7 +40362,7 @@ div.editor_atto_toolbar button .icon {
   font-weight: bold;
 }
 @media speech {
-  .moremenu .nav-link[data-toggle=tab]::after {
+  .moremenu .nav-link[data-bs-toggle=tab]::after {
     display: none;
   }
 }

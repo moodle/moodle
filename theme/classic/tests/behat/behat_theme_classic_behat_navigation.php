@@ -376,7 +376,7 @@ class behat_theme_classic_behat_navigation extends behat_navigation {
             $menuxpath = $this->find_header_administration_menu() ?: $this->find_page_administration_menu();
         }
         if ($menuxpath && $this->running_javascript()) {
-            $node = $this->find('xpath', $menuxpath . '//a[@data-toggle=\'dropdown\']');
+            $node = $this->find('xpath', $menuxpath . '//a[@data-bs-toggle=\'dropdown\']');
             $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
         }
     }

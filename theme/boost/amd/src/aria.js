@@ -135,7 +135,7 @@ const dropdownFix = () => {
 
         // We only want to set focus when users access the dropdown via keyboard as per
         // guidelines defined in w3 aria practices 1.1 menu-button.
-        if (e.target.matches('[data-toggle="dropdown"]')) {
+        if (e.target.matches('[data-bs-toggle="dropdown"]')) {
             handleMenuButton(e);
         }
 
@@ -212,7 +212,7 @@ const dropdownFix = () => {
         }
 
         // We need to focus on the menu trigger.
-        const trigger = e.target.querySelector('[data-toggle="dropdown"]');
+        const trigger = e.target.querySelector('[data-bs-toggle="dropdown"]');
         // If it's a click event, then no element is focused because the clicked element is inside a closed dropdown.
         const focused = e.clickEvent?.target || (document.activeElement !== document.body ? document.activeElement : null);
         if (trigger && focused && e.target.contains(focused)) {
@@ -483,8 +483,8 @@ const tabElementFix = () => {
     });
 
     document.addEventListener('click', e => {
-        if (e.target.matches('[role="tablist"] [data-toggle="tab"], [role="tablist"] [data-toggle="pill"]')) {
-            const tabs = e.target.closest('[role="tablist"]').querySelectorAll('[data-toggle="tab"], [data-toggle="pill"]');
+        if (e.target.matches('[role="tablist"] [data-bs-toggle="tab"], [role="tablist"] [data-bs-toggle="pill"]')) {
+            const tabs = e.target.closest('[role="tablist"]').querySelectorAll('[data-bs-toggle="tab"], [data-bs-toggle="pill"]');
             e.preventDefault();
             $(e.target).tab('show');
             tabs.forEach(tab => {
@@ -502,7 +502,7 @@ const tabElementFix = () => {
  */
 const collapseFix = () => {
     document.addEventListener('keydown', e => {
-        if (e.target.matches('[data-toggle="collapse"]')) {
+        if (e.target.matches('[data-bs-toggle="collapse"]')) {
             // Pressing space should toggle expand/collapse.
             if (e.key === ' ') {
                 e.preventDefault();

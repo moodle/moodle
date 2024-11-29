@@ -115,7 +115,7 @@ const registerViewSelector = function(root, timelineViewRoot) {
 
     // Event selector for user_sort
     CustomEvents.define(viewSelector, [CustomEvents.events.activate]);
-    viewSelector.on(CustomEvents.events.activate, "[data-toggle='tab']", function(e) {
+    viewSelector.on(CustomEvents.events.activate, "[data-bs-toggle='tab']", function(e) {
         var filtername = $(e.currentTarget).data('filtername');
         var type = 'block_timeline_user_sort_preference';
         UserRepository.setUserPreference(type, filtername)
