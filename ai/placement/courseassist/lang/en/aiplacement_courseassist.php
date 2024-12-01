@@ -22,10 +22,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['aiexplain'] = 'AI explain';
+$string['aifeatures'] = 'AI features';
 $string['aisummary'] = 'AI summary';
 $string['courseassist:explain_text'] = 'Explain text';
 $string['courseassist:summarise_text'] = 'Summarise text';
 $string['copy'] = 'Copy';
+$string['explain'] = 'Explain';
+$string['explain_tooltips'] = 'Create an AI-generated explanation of the page content';
 $string['generatefailtitle'] = 'Something went wrong';
 $string['generating'] = 'Generating your response';
 $string['nocourseassist'] = 'An AI-generated summary is not available for this context.';

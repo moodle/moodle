@@ -1,0 +1,56 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template aiplacement_courseassist/actions_dropdown
+
+    Template to display AI action in a dropdown for the course assist.
+
+    Context variables required for this template:
+    * actions - List of actions to generate buttons for
+
+    Example context (json):
+    {
+        "actions": [
+            {
+                "action": "summarise",
+                "buttontext": "Summarise",
+                "title": "Create an AI-generated summary of the page content"
+            },
+            {
+                "action": "explain",
+                "buttontext": "Explain",
+                "title": "Create an AI-generated explanation of the page content"
+            }
+        ]
+    }
+}}
+<button
+    class="btn btn-outline-secondary dropdown-toggle ai-action"
+    type="button"
+    title="{{#str}} aifeatures, aiplacement_courseassist {{/str}}"
+    data-bs-toggle="dropdown"
+    aria-haspopup="true"
+    aria-expanded="false"
+>
+    {{> aiplacement_courseassist/sparkles_icon }}
+    {{#str}} aifeatures, aiplacement_courseassist {{/str}}
+</button>
+<div class="dropdown-menu">
+    {{#actions}}
+        {{> aiplacement_courseassist/action_button }}
+    {{/actions}}
+</div>

@@ -1,0 +1,6 @@
+issueNumber: MDL-82942
+notes:
+  aiplacement_courseassist:
+    - message: The `aiplacement_courseassist` templates and CSS have been modified.
+        These changes allow for multiple actions to be nested in a dropdown menu.
+      type: improved

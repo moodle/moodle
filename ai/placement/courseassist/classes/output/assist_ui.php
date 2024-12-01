@@ -51,19 +51,30 @@ class assist_ui {
     }
 
     /**
-     * Bootstrap the summarise button.
+     * Determine if we should be loading a single button or a dropdown.
      *
      * @param after_http_headers $hook
      */
-    public static function load_summarise_button(after_http_headers $hook): void {
-        global $OUTPUT;
+    public static function action_buttons_handler(after_http_headers $hook): void {
+        global $PAGE, $OUTPUT;
 
         // Preflight checks.
         if (!self::preflight_checks()) {
             return;
         }
 
-        $html = $OUTPUT->render_from_template('aiplacement_courseassist/summarise_button', []);
+        $actions['actions'] = utils::get_actions_available($PAGE->context);
+
+        // No actions available.
+        if (empty($actions['actions'])) {
+            return;
+        }
+
+        if (count($actions['actions']) > 1) {
+            $actions['isdropdown'] = true;
+        }
+
+        $html = $OUTPUT->render_from_template('aiplacement_courseassist/actions', $actions);
         $hook->add_html($html);
     }
 
