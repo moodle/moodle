@@ -33,4 +33,4 @@ Feature: Quiz start with Safe Exam Browser access rule
       | seb_requiresafeexambrowser | 1 |
     And I press "Save and return to course"
     And I am on the "Quiz 1" "mod_quiz > View" page logged in as "student1"
-    Then the "target" attribute of "a[title='Download Safe Exam Browser']" "css_element" should contain "_blank"
+    Then the "target" attribute of "//a[text()='Download Safe Exam Browser']" "xpath_element" should contain "_blank"
