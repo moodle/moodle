@@ -46,6 +46,7 @@ if (file_exists($configfile)) {
 define('CLI_SCRIPT', false); // prevents some warnings later
 define('AJAX_SCRIPT', false); // prevents some warnings later
 define('CACHE_DISABLE_ALL', true); // Disables caching.. just in case.
+define('NO_DEBUG_DISPLAY', false);
 define('PHPUNIT_TEST', false);
 define('IGNORE_COMPONENT_CACHE', true);
 define('MDL_PERF_TEST', false);
