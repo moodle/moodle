@@ -234,3 +234,25 @@ Feature: Attempt a quiz
     And I press "Continue your attempt"
     Then I should see "First question"
     And I should not see "First question version 2"
+
+  @javascript
+  Scenario: User image in the quiz navigation in normal mode.
+    Given I am on the "Quiz 1" "quiz activity editing" page logged in as "admin"
+    And I expand all fieldsets
+    And I set the field "Show the user's picture" to "Large image"
+    And I press "Save and return to course"
+    And I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    And I press "Attempt quiz"
+    Then "Student One" "link" should exist in the "Quiz navigation" "block"
+
+  @javascript
+  Scenario: User image in the quiz navigation in secure layout.
+    Given I am on the "Quiz 1" "quiz activity editing" page logged in as "admin"
+    And I expand all fieldsets
+    And I set the field "Show the user's picture" to "Large image"
+    And I set the field "Browser security" to "Full screen pop-up with some JavaScript security"
+    And I press "Save and return to course"
+    And I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    And I press "Attempt quiz"
+    And I switch to a second window
+    Then "Student One" "link" should not exist in the "Quiz navigation" "block"
