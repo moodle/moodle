@@ -30,15 +30,6 @@
 .qbank_managecategories-item .qbank_managecategories-item:first-child {
     border-top-color: #dee2e6;
 }
-.qbank_managecategories-item.qbank_managecategories-droptarget-before,
-.qbank_managecategories-item .qbank_managecategories-item.qbank_managecategories-droptarget-before,
-.qbank_managecategories-categorylist.qbank_managecategories-droptarget-before > .qbank_managecategories-item:first-child {
-    border-top-color: black;
-}
-.qbank_managecategories-item.qbank_managecategories-droptarget,
-.qbank_managecategories-categorylist.qbank_managecategories-droptarget > .qbank_managecategories-item:last-child {
-    border-bottom-color: black;
-}
 .qbank_managecategories-details p:last-child {
     margin-bottom: 0;
 }
@@ -93,10 +84,6 @@
 /* Show the drop target if it's directly inside a highlighted category, but not if its inside a child of that category */
 .qbank_managecategories-droptarget-before > .container > .row > .qbank_managecategories-contentcontainer > :not(.qbank_managecategories-childlistcontainer) .qbank_managecategories-newchild {
     display: unset;
-}
-.qbank_managecategories-newchild.qbank_managecategories-droptarget {
-    border-color: black;
-    color: black;
 }
 /* Hidden descriptions */
 .qbank_managecategories-description {
