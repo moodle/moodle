@@ -29,7 +29,9 @@
     {{progress}}% complete
 </div>
 
-<div class="progress-container">
-    <div class="progress-bar" style="width: {{progress}}%;">
-    </div>
-</div>
+    <meter min="0" max="100" value="{{progress}}"
+           low="33"
+           high="66"
+           optimum="100">
+        {{progress}}%
+    </meter>
