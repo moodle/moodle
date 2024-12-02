@@ -104,3 +104,20 @@ Feature: The various checks that may happen when an attept is started
     And I press "Cancel"
     Then I should see "Quiz 1 description"
     And "Attempt quiz" "button" should be visible
+
+  @javascript
+  Scenario: Quiz attempt page reloads upon navigating back using the browser's back button
+    Given the following "activities" exist:
+      | activity   | name   | intro              | course | idnumber | timelimit |
+      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    | 3600      |
+    And quiz "Quiz 1" contains the following questions:
+      | question | page |
+      | TF1      | 1    |
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    And I press "Attempt quiz"
+    And I should see "Your attempt will have a time limit of 1 hour. When you " in the "Start attempt" "dialogue"
+    And I start watching to see if a new page loads
+    And I click on "Start attempt" "button" in the "Start attempt" "dialogue"
+    And I press the "back" button in the browser
+    Then a new page should have loaded since I started watching
+    And I should see "Continue your attempt"
