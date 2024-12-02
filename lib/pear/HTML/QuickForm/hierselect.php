@@ -496,7 +496,7 @@ JAVASCRIPT;
             $ret = parent::onQuickFormEvent($event, $arg, $caller);
             // add onreset handler to form to properly reset hierselect (see bug #2970)
             if ('addElement' == $event) {
-                $onReset = $caller->getAttribute('onreset');
+                $onReset = $caller->getAttribute('onreset') ?? '';
                 if (strlen($onReset)) {
                     if (strpos($onReset, '_hs_setupOnReset')) {
                         $caller->updateAttributes(array('onreset' => str_replace('_hs_setupOnReset(this, [', "_hs_setupOnReset(this, ['" . $this->_escapeString($this->getName()) . "', ", $onReset)));
