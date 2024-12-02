@@ -31,9 +31,18 @@ export default class extends GenericFilter {
         includeSubcategories: 'input[name=category-subcategories]',
     };
 
-    constructor(filterType, rootNode, initialValues, filterOptions = {includeSubcategories: false}) {
+    /**
+     * Construct a new categoires filter
+     *
+     * @param {String} filterType The type of filter that this relates to (categories)
+     * @param {HTMLElement} rootNode The root node for the participants filterset
+     * @param {Array} initialValues The currently selected category IDs.
+     * @param {Object} filterOptions An object containing the additional options for the filter, currently "includesubcategories"
+     *     is supported, which if true will display the "Also show questions from subcategories" checkbox as checked.
+     */
+    constructor(filterType, rootNode, initialValues, filterOptions = {includesubcategories: false}) {
         super(filterType, rootNode, initialValues);
-        this.addSubcategoryCheckbox(filterOptions.includeSubcategories);
+        this.addSubcategoryCheckbox(filterOptions.includesubcategories);
     }
 
     async addSubcategoryCheckbox(checked = false) {
