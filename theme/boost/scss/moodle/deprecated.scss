@@ -60,3 +60,13 @@
 .path-course-view li.activity form.togglecompletion img {
     max-width: none; /* The width is 0 so ensure we don't end up with a relative max-width */
 }
+
+//
+// Deprecated since Moodle 5.0.
+//
+
+// In 6.0 all YUI section spinners wont be needed.
+.course-content .stateready .section .spinner {
+    @include deprecated-styles();
+    display: none;
+}

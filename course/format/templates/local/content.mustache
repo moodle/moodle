@@ -53,7 +53,8 @@
                 "id": 35,
                 "header": {
                     "name": "Section title",
-                    "url": "#"
+                    "url": "#",
+                    "headinglevel": 3
                 },
                 "cmlist": {
                     "cms": [
@@ -83,7 +84,8 @@
                 "id": 36,
                 "header": {
                     "name": "Section 2 title",
-                    "url": "#"
+                    "url": "#",
+                    "headinglevel": 3
                 },
                 "cmlist": {
                     "cms": [
@@ -139,7 +141,8 @@
             "id": 37,
             "header": {
                 "name": "Single Section Example",
-                "url": "#"
+                "url": "#",
+                "headinglevel": 3
             },
             "cmlist": {
                 "cms": [
@@ -169,7 +172,7 @@
 <div id="course-format-{{uniqid}}">
     <h2 class="accesshide">{{{title}}}</h2>
     {{{completionhelp}}}
-    <ul class="{{format}}" data-for="course_sectionlist">
+    <ul class="{{format}} section-list" data-for="course_sectionlist">
         {{#initialsection}}
             {{$ core_courseformat/local/content/section }}
                 {{> core_courseformat/local/content/section }}
@@ -188,7 +191,7 @@
                 {{> core_courseformat/local/content/sectionnavigation }}
             {{/ core_courseformat/local/content/sectionnavigation }}
         {{/sectionnavigation}}
-        <ul class="{{format}}">
+        <ul class="{{format}} section-list">
         {{#singlesection}}
             {{$ core_courseformat/local/content/section }}
                 {{> core_courseformat/local/content/section }}

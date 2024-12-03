@@ -333,6 +333,10 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width * 0.5 );
     color: $text-muted;
 }
 
+.block_tree .tree_item.branch {
+    margin-left: 8px;
+}
+
 //
 // Fake blocks
 //

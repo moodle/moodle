@@ -221,18 +221,6 @@ button.btn-close,
     padding: 0;
 }
 
-.section li.movehere a {
-    display: block;
-    width: 100%;
-    height: 2rem;
-    border: 2px dashed $gray-800;
-}
-
-.editing .course-content .hidden.sectionname {
-    visibility: hidden;
-    display: initial;
-}
-
 .inline,
 .inline-list li {
     display: inline;
@@ -1022,40 +1010,6 @@ tr.flagged-tag a {
     position: fixed;
     top: 50%;
     left: 50%;
-}
-
-.mod-indent-outer {
-    display: table;
-}
-
-.mod-indent {
-    display: table-cell;
-}
-
-.label .mod-indent {
-    float: left;
-    padding-top: 20px;
-}
-
-.activity.label.modtype_label .mod-indent {
-    float: none;
-}
-
-@include media-breakpoint-up(sm) {
-    $mod-indent-size: 30px;
-    /* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
-
-    @for $i from 1 through 16 {
-        $width: ($i * $mod-indent-size);
-
-        .mod-indent-#{$i} {
-            width: $width;
-        }
-    }
-
-    .mod-indent-huge {
-        width: (16 * $mod-indent-size);
-    }
 }
 
 /* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
@@ -2045,6 +1999,19 @@ dd:after {
             left: 0;
             right: auto;
             white-space: nowrap;
+            position: absolute;
+            top: 0;
+            font-size: $font-size-sm;
+            padding: .1em .4em;
+            text-decoration: none;
+            z-index: 9999;
+            border: $alert-border-width solid transparent;
+            width: fit-content;
+            @include alert-variant(
+                shift-color($info, $alert-bg-scale),
+                shift-color($info, $alert-border-scale),
+                shift-color($info, $alert-color-scale)
+            );
         }
         @include media-breakpoint-up(sm) {
             input {
@@ -2083,10 +2050,6 @@ dd:after {
     &.inplaceeditable-autocomplete {
         display: block;
     }
-}
-
-h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
-    margin-top: -20px;
 }
 
 /** Chart area. */

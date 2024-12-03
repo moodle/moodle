@@ -1627,7 +1627,7 @@ class core_course_renderer extends plugin_renderer_base {
                 $subtext = get_string('subscribe', 'forum');
             }
             $suburl = new moodle_url('/mod/forum/subscribe.php', array('id' => $forum->id, 'sesskey' => sesskey()));
-            $output .= html_writer::tag('div', html_writer::link($suburl, $subtext), array('class' => 'subscribelink'));
+            $output .= html_writer::tag('div', html_writer::link($suburl, $subtext), ['class' => 'subscribelink text-end']);
         }
 
         $coursemodule = get_coursemodule_from_instance('forum', $forum->id);
