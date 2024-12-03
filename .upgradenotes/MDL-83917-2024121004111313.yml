@@ -1,0 +1,7 @@
+issueNumber: MDL-83917
+notes:
+  core_completion:
+    - message: >-
+        The method `count_modules_completed` now delegate the logic to count the
+        completed modules to the DBMS improving the performance of the method.
+      type: improved
