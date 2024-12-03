@@ -175,7 +175,7 @@ class tag extends base {
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_BOOLEAN)
             ->add_field("CASE WHEN {$tagalias}.flag > 0 THEN 1 ELSE {$tagalias}.flag END", 'flag')
-            ->set_is_sortable(true, ["{$tagalias}.flag"])
+            ->set_is_sortable(true)
             ->add_callback([format::class, 'boolean_as_text']);
 
         // Flag count.
