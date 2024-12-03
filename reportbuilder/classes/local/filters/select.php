@@ -74,20 +74,47 @@ class select extends base {
      * @param MoodleQuickForm $mform
      */
     public function setup_form(MoodleQuickForm $mform): void {
-        $elements = [];
-        $elements['operator'] = $mform->createElement('select', $this->name . '_operator',
-            get_string('filterfieldoperator', 'core_reportbuilder', $this->get_header()), $this->get_operators());
-
-        // If a multi-dimensional array is passed, we need to use a different element type.
+        $operators = $this->get_operators();
         $options = $this->get_select_options();
-        $element = (count($options) == count($options, COUNT_RECURSIVE) ? 'select' : 'selectgroups');
-        $elements['value'] = $mform->createElement($element, $this->name . '_value',
-            get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header()), $options);
 
-        $mform->addGroup($elements, $this->name . '_group', $this->get_header(), '', false)
-            ->setHiddenLabel(true);
+        // If a multidimensional array is passed, we need to use a different element type.
+        $optioncountrecursive = count($options, COUNT_RECURSIVE);
+        $element = (count($options) === $optioncountrecursive ? 'select' : 'selectgroups');
 
-        $mform->hideIf($this->name . '_value', $this->name . '_operator', 'eq', self::ANY_VALUE);
+        // If operators are unrestricted, and we have upto two options, then simplify the filter to list only those.
+        if (count($operators) === 3 && $optioncountrecursive <= 2) {
+            $mform->addElement('hidden', "{$this->name}_operator");
+            $mform->setType("{$this->name}_operator", PARAM_INT);
+            $mform->setConstant("{$this->name}_operator", self::EQUAL_TO);
+
+            $mform->addElement(
+                $element,
+                "{$this->name}_value",
+                get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header()),
+                ['' => $operators[self::ANY_VALUE]] + $options,
+            )->setHiddenLabel(true);
+        } else {
+            $elements = [];
+
+            $elements[] = $mform->createElement(
+                'select',
+                "{$this->name}_operator",
+                get_string('filterfieldoperator', 'core_reportbuilder', $this->get_header()),
+                $operators,
+            );
+
+            $elements[] = $mform->createElement(
+                $element,
+                "{$this->name}_value",
+                get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header()),
+                $options,
+            );
+
+            $mform->addGroup($elements, "{$this->name}_group", $this->get_header(), '', false)
+                ->setHiddenLabel(true);
+
+            $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'eq', self::ANY_VALUE);
+        }
     }
 
     /**
@@ -101,15 +128,14 @@ class select extends base {
     public function get_sql_filter(array $values): array {
         $name = database::generate_param_name();
 
-        $operator = $values["{$this->name}_operator"] ?? self::ANY_VALUE;
-        $value = $values["{$this->name}_value"] ?? 0;
+        $operator = (int) ($values["{$this->name}_operator"] ?? self::ANY_VALUE);
+        $value = $values["{$this->name}_value"] ?? '';
 
         $fieldsql = $this->filter->get_field_sql();
         $params = $this->filter->get_field_params();
 
         // Validate filter form values.
-        if (!$this->validate_filter_values((int) $operator, $value)) {
-            // Filter configuration is invalid. Ignore the filter.
+        if ($value === '') {
             return ['', []];
         }
 
@@ -126,17 +152,6 @@ class select extends base {
                 return ['', []];
         }
         return [$fieldsql, $params];
-    }
-
-    /**
-     * Validate filter form values
-     *
-     * @param int|null $operator
-     * @param mixed|null $value
-     * @return bool
-     */
-    private function validate_filter_values(?int $operator, $value): bool {
-        return !($operator === null || $value === '');
     }
 
     /**
