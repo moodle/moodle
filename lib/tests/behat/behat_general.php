@@ -2649,7 +2649,7 @@ EOF;
      * Good for clicking links on tables where links have repeated text in diiferent rows.
      *
      * Example:
-     * - I click on the "Settings" link in the row containing "HTML Text Editor Placement"
+     * - I click on the "Settings" link in the row containing "Text editor placement"
      *
      * @Given /^I click on the "(?P<linktext>(?:[^"]|\\")*)" link in the table row containing "(?P<rowtext>(?:[^"]|\\")*)"$/
      * @param string $linktext
