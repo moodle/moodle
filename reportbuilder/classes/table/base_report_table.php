@@ -214,7 +214,7 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
      */
     public function get_sql_sort() {
         $columnsbyalias = $this->report->get_active_columns_by_alias();
-        $columnsortby = [];
+        $columnsortby = $columnsortbyalias = [];
 
         // First pass over sorted columns, to extract all the fullname fields from table_sql.
         $sortedcolumns = $this->get_sort_columns();
@@ -239,14 +239,20 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
         }
 
         // Now ensure that any fullname sorted columns have duplicated aliases removed.
-        $columnsortby = array_filter($columnsortby, static function(string $alias) use ($sortedcolumnsfullname): bool {
-            if (preg_match('/^c[\d]+_(?<column>.*)$/', $alias, $matches)) {
-                return !array_key_exists($matches['column'], $sortedcolumnsfullname);
+        foreach ($columnsortby as $sortfield => $dir) {
+            if (array_key_exists($sortfield, $sortedcolumnsfullname)) {
+                $sortfieldalias = array_filter(
+                    $columnsortby,
+                    fn(string $key) => preg_match("/^c[\d]+_{$sortfield}$/", $key),
+                    ARRAY_FILTER_USE_KEY,
+                );
+                $columnsortbyalias[array_key_first($sortfieldalias)] = $dir;
+            } else if (!array_key_exists($sortfield, $columnsortbyalias)) {
+                $columnsortbyalias[$sortfield] = $dir;
             }
-            return true;
-        }, ARRAY_FILTER_USE_KEY);
+        }
 
-        return static::construct_order_by($columnsortby);
+        return static::construct_order_by($columnsortbyalias);
     }
 
     /**
