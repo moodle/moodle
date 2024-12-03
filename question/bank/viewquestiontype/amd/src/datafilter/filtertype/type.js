@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,31 +13,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace qbank_viewquestiontype;
-
-use core_question\local\bank\plugin_features_base;
-use core_question\local\bank\view;
-
 /**
- * Class plugin_feature is the entrypoint for the columns.
+ * Filter managing hidden questions.
  *
- * @package    qbank_viewquestiontype
- * @copyright  2021 Catalyst IT Australia Pty Ltd
- * @author     Safat Shahin <safatshahin@catalyst-au.net>
+ * @module     qbank_viewquestiontype/datafilter/filtertypes/type
+ * @author     Mark Johnson <mark.johnson@catalyst-eu.net>
+ * @copyright  2024 Catalyst IT Europe Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plugin_feature extends plugin_features_base {
-    #[\Override]
-    public function get_question_columns($qbank): array {
-        return [
-           new question_type_column($qbank),
-        ];
-    }
 
-    #[\Override]
-    public function get_question_filters(?view $qbank = null): array {
-        return [
-            new type_condition($qbank),
-        ];
+import Filter from 'core/datafilter/filtertype';
+
+export default class extends Filter {
+    /**
+     * Get the list of values for this filter type.
+     *
+     * Overrides the default behaviour of running parseInt on the raw values, since we have textual
+     * plugin identifiers and not numeric IDs.
+     *
+     * @returns {Array}
+     */
+    get values() {
+        return this.rawValues;
     }
 }
