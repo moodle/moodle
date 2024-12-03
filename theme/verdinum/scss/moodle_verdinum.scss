@@ -9,3 +9,11 @@
     border:$primary!important;
     background-color: $secondary!important;
 }
+
+.page-my-courses{
+    .dashboard-card-img{    
+        background-size: contain!important;
+        background-repeat: no-repeat!important;
+        background-position-x: center!important;
+    }
+}
