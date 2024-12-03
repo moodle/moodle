@@ -77,7 +77,6 @@ class custom_report_data_exporter extends exporter {
      * @return array
      */
     protected function get_other_values(renderer_base $output): array {
-        global $DB;
 
         /** @var datasource $report */
         $report = $this->related['report'];
@@ -101,7 +100,7 @@ class custom_report_data_exporter extends exporter {
         return [
             'headers' => $table->headers,
             'rows' => $tablerows,
-            'totalrowcount' => $DB->count_records_sql($table->countsql, $table->countparams),
+            'totalrowcount' => $table->totalrows,
         ];
     }
 }

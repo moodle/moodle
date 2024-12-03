@@ -143,12 +143,11 @@ class schedule {
      * @return int
      */
     public static function get_schedule_report_count(model $schedule): int {
-        global $DB;
-
         $table = custom_report_table_view::create($schedule->get('reportid'));
         $table->setup();
+        $table->query_db(0, false);
 
-        return $DB->count_records_sql($table->countsql, $table->countparams);
+        return $table->totalrows;
     }
 
     /**
@@ -163,7 +162,6 @@ class schedule {
         require_once("{$CFG->libdir}/filelib.php");
 
         $table = custom_report_table_view::create($schedule->get('reportid'));
-
         $table->setup();
         $table->query_db(0, false);
 

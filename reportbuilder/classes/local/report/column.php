@@ -578,14 +578,11 @@ final class column {
             }
 
             // Check whether sortfield refers to field SQL.
-            foreach ($fieldsalias as $field) {
-                if (strcasecmp($sortfield, $field['sql']) === 0) {
-                    $sortfield = $field['alias'];
-                    break;
-                }
-            }
-
-            return $sortfield;
+            return str_ireplace(
+                array_column($fieldsalias, 'sql'),
+                array_column($fieldsalias, 'alias'),
+                $sortfield,
+            );
         }, $this->sortfields);
     }
 
