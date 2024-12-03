@@ -37,14 +37,12 @@ $table-accent-bg:             rgba($black, .03) !default;
 
 // Options
 $enable-rounded: true !default;
-$enable-responsive-font-sizes: true !default;
 
 // Body
 $body-color:    $gray-900 !default;
 
 // Fonts
 $font-size-base: 0.9375rem !default;
-$rfs-base-font-size: 0.9rem !default;
 $headings-font-weight:   300 !default;
 
 // Navbar
@@ -101,6 +99,11 @@ $spacers: (
     5: ($spacer * 2),
     6: ($spacer * 3)
 ) !default;
+
+// Behat site specific variable values.
+$behatsite: false !default;
+$enable-transitions: not $behatsite !default;
+$enable-smooth-scroll: not $behatsite !default;
 
 // Import FontAwesome.
 @import "fontawesome";

@@ -34,7 +34,7 @@ Feature: Use the activity chooser to insert activities anywhere in a section
     Given I change window size to "large"
     And I hover "Insert content before 'Test Forum'" "button"
     And I press "Insert content before 'Test Forum'"
-    And I click on "Activity or resource" "button" in the ".dropdown .show" "css_element"
+    And I click on "Activity or resource" "button" in the ".dropdown-menu.show" "css_element"
     When I click on "Add a new Assignment" "link" in the "Add an activity or resource" "dialogue"
     And I set the following fields to these values:
       | Assignment name | Test Assignment |
