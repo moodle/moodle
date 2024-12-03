@@ -158,7 +158,6 @@ function tool_policy_get_fontawesome_icon_map() {
     return [
         'tool_policy:agreed' => 'fa-check text-success',
         'tool_policy:declined' => 'fa-xmark text-danger',
-        'tool_policy:level' => 'fa-turn-up fa-rotate-90 text-muted',
         'tool_policy:partial' => 'fa-triangle-exclamation text-warning',
         'tool_policy:pending' => 'fa-regular fa-clock text-warning',
     ];
