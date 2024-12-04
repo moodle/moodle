@@ -128,7 +128,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Search for users.',
         'type'         => 'read',
-        'capabilities' => '',
+        'capabilities' => 'moodle/competency:templatemanage',
         'ajax'         => true,
     ),
     // This function was originally in this plugin but has been moved to core.
