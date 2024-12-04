@@ -26,22 +26,24 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$enabled = new admin_setting_configcheckbox('factor_token/enabled',
-    new lang_string('settings:enablefactor', 'tool_mfa'),
-    new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
-$enabled->set_updatedcallback(function () {
-    \tool_mfa\manager::do_factor_action('token', get_config('factor_token', 'enabled') ? 'enable' : 'disable');
-});
-$settings->add($enabled);
+if ($ADMIN->fulltree) {
+    $enabled = new admin_setting_configcheckbox('factor_token/enabled',
+        new lang_string('settings:enablefactor', 'tool_mfa'),
+        new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
+    $enabled->set_updatedcallback(function () {
+        \tool_mfa\manager::do_factor_action('token', get_config('factor_token', 'enabled') ? 'enable' : 'disable');
+    });
+    $settings->add($enabled);
 
-$settings->add(new admin_setting_configtext('factor_token/weight',
-    new lang_string('settings:weight', 'tool_mfa'),
-    new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
+    $settings->add(new admin_setting_configtext('factor_token/weight',
+        new lang_string('settings:weight', 'tool_mfa'),
+        new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
-$settings->add(new admin_setting_configduration('factor_token/expiry',
-    new lang_string('settings:expiry', 'factor_token'),
-    new lang_string('settings:expiry_help', 'factor_token'), DAYSECS));
+    $settings->add(new admin_setting_configduration('factor_token/expiry',
+        new lang_string('settings:expiry', 'factor_token'),
+        new lang_string('settings:expiry_help', 'factor_token'), DAYSECS));
 
-$settings->add(new admin_setting_configcheckbox('factor_token/expireovernight',
-    new lang_string('settings:expireovernight', 'factor_token'),
-    new lang_string('settings:expireovernight_help', 'factor_token'), 1));
+    $settings->add(new admin_setting_configcheckbox('factor_token/expireovernight',
+        new lang_string('settings:expireovernight', 'factor_token'),
+        new lang_string('settings:expireovernight_help', 'factor_token'), 1));
+}
