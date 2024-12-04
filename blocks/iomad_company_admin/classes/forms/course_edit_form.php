@@ -34,6 +34,7 @@ use \context_coursecat;
 use \DateTime;
 use \core_course;
 
+#[\AllowDynamicProperties]
 class course_edit_form extends moodleform {
     protected $title = '';
     protected $description = '';

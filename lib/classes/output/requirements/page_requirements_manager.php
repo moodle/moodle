@@ -481,7 +481,7 @@ class page_requirements_manager {
                 'Please use core_question/question_engine', DEBUG_DEVELOPER);
         }
 	
-	error_log("icii".$url);
+	// error_log("icii".$url);
         // echo $url;
         // die();
         // stexem
