@@ -150,6 +150,14 @@
     background: url([[pix:quiz|navflagged]]) no-repeat top right;
 }
 
+.qnbutton.flagged .thispageholder {
+    background: transparent url([[pix:quiz|flag-on]]) 15px 0 no-repeat;
+}
+
+.qnbutton.invalidanswer .trafficlight {
+    background-image: url([[pix:quiz|warningtriangle]]) !important; /* stylelint-disable-line declaration-no-important */
+}
+
 .path-mod-quiz .qnbutton.blocked,
 .path-mod-quiz .qnbutton.notyetanswered,
 .path-mod-quiz .qnbutton.requiresgrading,
