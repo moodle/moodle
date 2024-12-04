@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace tool_mfa;
+namespace tool_mfa\tests;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir.'/adminlib.php');
-require_once(__DIR__ . '/../lib.php');
+require_once(__DIR__ . '../../../lib.php');
 
 /**
  * Trait for testing this plugin
@@ -31,7 +31,7 @@ require_once(__DIR__ . '/../lib.php');
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-trait tool_mfa_trait {
+trait mfa_settings_trait {
 
     /**
      * Sets the state of the factor, in particular the weight and whether it is enabled

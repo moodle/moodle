@@ -26,5 +26,6 @@
 $string['info'] = 'This factor allows for NOT being an administrator to count as a factor. Its intended use is to ensure administators require tighter security, so regular users get the weight for free, while admins must use other factors.';
 $string['pluginname'] = 'Non-administrator';
 $string['privacy:metadata'] = 'The Non-administrator factor plugin does not store any personal data.';
+$string['settings:shortdescription'] = 'Require additional authentication factors for administrators.';
 $string['settings:weight_help'] = 'Weight is given to regular users for this factor, so admins must have more factors than a regular user to pass.';
 $string['summarycondition'] = 'is not an admin';

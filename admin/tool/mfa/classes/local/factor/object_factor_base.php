@@ -135,6 +135,18 @@ abstract class object_factor_base implements object_factor {
     }
 
     /**
+     * Returns factor short description from language string.
+     *
+     * Base class implementation.
+     *
+     * @return string
+     * @throws \coding_exception
+     */
+    public function get_short_description(): string {
+        return get_string('settings:shortdescription', 'factor_'.$this->name);
+    }
+
+    /**
      * Returns factor help from language string.
      *
      * Base class implementation.

@@ -37,5 +37,6 @@ $string['settings:graceperiod'] = 'Grace period';
 $string['settings:graceperiod_help'] = 'Period of time when users can access the site without configured and enabled factors.';
 $string['settings:ignorelist'] = 'Ignored factors';
 $string['settings:ignorelist_help'] = 'Grace period will not give points if there are other factors that users can use to authenticate with multi-factor authentication. Any factors here will not be counted by Grace period when deciding whether to give points. This can allow Grace period to allow authentication if another factor like email, has configuration or system issues.';
+$string['settings:shortdescription'] = 'Allow users to log in without MFA for a specified period, giving them time to set up authentication factors.';
 $string['setupfactors'] = 'You are currently in the grace period, and may not have enough factors set up to log in once the grace period expires. Go to {$a->url} to check your authentication status and set up more authentication factors. Your grace period expires in {$a->time}.';
 $string['summarycondition'] = 'is within grace period';

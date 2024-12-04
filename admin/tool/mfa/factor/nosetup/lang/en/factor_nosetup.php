@@ -27,4 +27,5 @@ $string['deleteunusablefactors'] = 'Delete unusable Nosetup factors';
 $string['info'] = 'This factor passes if the user has no other factors set up.';
 $string['pluginname'] = 'No other factors';
 $string['privacy:metadata'] = 'The No other factors plugin does not store any personal data';
+$string['settings:shortdescription'] = 'Allow users to bypass MFA if they have not set up any other authentication factor.';
 $string['summarycondition'] = 'has no other factors set up';
