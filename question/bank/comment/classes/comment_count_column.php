@@ -84,16 +84,29 @@ class comment_count_column extends column_base {
      */
     protected function display_content($question, $rowclasses): void {
         global $DB;
+
         $syscontext = \context_system::instance();
-        $args = [
-            'component' => 'qbank_comment',
-            'commentarea' => 'question',
-            'itemid' => $question->id,
-            'contextid' => $syscontext->id,
+
+        $args = new \stdClass;
+        $args->contextid = $syscontext->id;
+        $args->courseid  = $this->qbank->course->id;
+        $args->area      = 'question';
+        $args->itemid    = $question->id;
+        $args->component = 'qbank_comment';
+
+        $params = [
+            'component' => $args->component,
+            'commentarea' => $args->area,
+            'itemid' => $args->itemid,
+            'contextid' => $args->contextid,
         ];
-        $commentcount = $DB->count_records('comments', $args);
+        $commentcount = $DB->count_records('comments', $params);
         $attributes = [];
-        if (question_has_capability_on($question, 'comment')) {
+
+        // Build up the comment object to see if we have correct permissions to post.
+        $comment = new \comment($args);
+        if (question_has_capability_on($question, 'comment') && $comment->can_post()) {
+            $tag = 'a';
             $target = 'questioncommentpreview_' . $question->id;
             $attributes = [
                 'href' => '#',
@@ -102,8 +115,10 @@ class comment_count_column extends column_base {
                 'data-courseid' => $this->qbank->course->id,
                 'data-contextid' => $syscontext->id,
             ];
+        } else {
+            $tag = 'span';
         }
-        echo \html_writer::tag('a', $commentcount, $attributes);
+        echo \html_writer::tag($tag, $commentcount, $attributes);
     }
 
     public function get_extra_classes(): array {
