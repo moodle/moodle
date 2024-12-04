@@ -806,10 +806,6 @@ const Tour = class {
         if (this.isStepActuallyVisible(stepConfig)) {
             let targetNode = this.getStepTarget(stepConfig);
 
-            if (targetNode.parents('[data-usertour="scroller"]').length) {
-                animationTarget = targetNode.parents('[data-usertour="scroller"]');
-            }
-
             targetNode.data('flexitour', 'target');
 
             // Add the backdrop.
@@ -1266,6 +1262,25 @@ const Tour = class {
     }
 
     /**
+     * Check whether the target node has a fixed position, or is nested within one.
+     *
+     * @param {Object} targetNode The target element to check.
+     * @return {Boolean} Return true if fixed position found.
+     */
+    hasFixedPosition = (targetNode) => {
+        let currentElement = targetNode[0];
+        while (currentElement) {
+            const computedStyle = window.getComputedStyle(currentElement);
+            if (computedStyle.position === 'fixed') {
+                return true;
+            }
+            currentElement = currentElement.parentElement;
+        }
+
+        return false;
+    };
+
+    /**
      * Calculate scrollTop.
      *
      * @method  calculateScrollTop
@@ -1282,7 +1297,9 @@ const Tour = class {
         }
         let scrollTop = scrollParent.scrollTop();
 
-        if (stepConfig.placement === 'top') {
+        if (this.hasFixedPosition(targetNode)) {
+            // Target must be in a fixed or custom position. No need to modify the scrollTop.
+        } else if (stepConfig.placement === 'top') {
             // If the placement is top, center scroll at the top of the target.
             scrollTop = targetNode.offset().top - (viewportHeight / 2);
         } else if (stepConfig.placement === 'bottom') {
