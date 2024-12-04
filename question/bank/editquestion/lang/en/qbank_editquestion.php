@@ -23,6 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['filter:status'] = 'Status of latest version';
+$string['filter:invalidstatus'] = 'Invalid value "{$a}" for status filter.';
+
 $string['pluginname'] = 'Edit questions';
 $string['privacy:metadata'] = 'The Edit questions question bank plugin does not store any personal data.';
 

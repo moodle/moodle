@@ -71,4 +71,10 @@ class plugin_feature extends \core_question\local\bank\plugin_features_base {
         ];
     }
 
+    #[\Override]
+    public function get_question_filters(?view $qbank = null): array {
+        return [
+            new status_condition($qbank),
+        ];
+    }
 }
