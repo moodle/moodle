@@ -3,9 +3,15 @@ Feature: Use the qbank plugin manager page for deletequestion
   In order to check the plugin behaviour with enable and disable
 
   Background:
-    Given the following "courses" exist:
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
     And the following "activities" exist:
       | activity   | name      | course | idnumber |
       | quiz       | Test quiz | C1     | quiz1    |
@@ -69,3 +75,29 @@ Feature: Use the qbank plugin manager page for deletequestion
     When I click on "Delete" "button" in the "Delete question?" "dialogue"
     Then I should not see "Third question"
     And "foo" "autocomplete_selection" should exist
+
+  @javascript
+  Scenario: Questions can be bulk deleted from the question bank
+    Given the following "questions" exist:
+      | questioncategory | qtype       | name       | questiontext              |
+      | Test questions   | truefalse   | Question 1 | Answer the first question |
+      | Test questions   | missingtype | Question 2 | Write something           |
+      | Test questions   | essay       | Question 3 | frog                      |
+    # Navigate to question bank.
+    And I am on the "Course 1" "core_question > course question bank" page logged in as teacher1
+    # Select questions to be deleted.
+    And I click on "Question 1" "checkbox"
+    And I click on "Question 2" "checkbox"
+    And I click on "With selected" "button"
+    When I press "Delete"
+    # Confirm that delete confirmation message is displayed.
+    Then I should see "This will delete the following questions and all their versions:"
+    # Confirm that selected questions are listed on the confirmation dialog.
+    And I should see "Question 1 v1"
+    And I should see "Question 2 v1"
+    # Delete selected questions.
+    And I press "Delete"
+    # Confirm that selected questions are deleted while unselected questions still exist.
+    And I should not see "Question 1"
+    And I should not see "Question 2"
+    And I should see "Question 3"
