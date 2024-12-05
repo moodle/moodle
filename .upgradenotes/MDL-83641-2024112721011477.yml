@@ -1,0 +1,8 @@
+issueNumber: MDL-83641
+notes:
+  core_form:
+    - message: >-
+        The `cohort` form element now accepts new `includes` option, which is
+        passed to the corresponding external service to determine which cohorts
+        to return (self, parents, all)
+      type: changed
