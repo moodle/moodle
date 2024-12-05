@@ -31,8 +31,8 @@ require_once($CFG->dirroot . '/user/lib.php');
  */
 function cancel_email_update($userid) {
     unset_user_preference('newemail', $userid);
-    unset_user_preference('newemailkey', $userid);
     unset_user_preference('newemailattemptsleft', $userid);
+    delete_user_key('core_user/email_change', $userid);
 }
 
 /**
