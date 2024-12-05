@@ -38,7 +38,7 @@ $string['auth_changepasswordhelp'] = 'Change password help';
 $string['auth_changepasswordhelp_expl'] = 'Display lost password help to users who have lost their {$a} password. This will be displayed either as well as or instead of the <strong>Change Password URL</strong> or Internal Moodle password change.';
 $string['auth_changepasswordurl'] = 'Change password URL';
 $string['auth_changepasswordurl_expl'] = 'Specify the url to send users who have lost their {$a} password. Set <strong>Use standard Change Password page</strong> to <strong>No</strong>.';
-$string['auth_changingemailaddress'] = 'You have requested a change of email address, from {$a->oldemail} to {$a->newemail}. For security reasons, we are sending you an email message at the new address to confirm that it belongs to you. Your email address will be updated as soon as you open the URL sent to you in that message.';
+$string['auth_changingemailaddress'] = 'You have requested a change of email address, from {$a->oldemail} to {$a->newemail}. For security reasons, we are sending you an email message at the new address to confirm that it belongs to you. Your email address will be updated as soon as you open the URL sent to you in that message. The confirmation link will expire in <b>10 minutes</b>';
 $string['authinstructions'] = 'Leave this blank for the default login instructions to be displayed on the login page. If you want to provide custom login instructions, enter them here.';
 $string['auth_invalidnewemailkey'] = 'Error: if you are trying to confirm a change of email address, you may have made a mistake in copying the URL we sent you by email. Please copy the address and try again.';
 $string['auth_loginpasswordtoggle'] = 'Password visibility toggle';
@@ -82,6 +82,7 @@ $string['emailupdatemessage'] = 'Dear {$a->fullname},
 You have requested a change of your email address for your account on {$a->site}. To confirm this change, please go to the following web address:
 
 {$a->url}
+The confirmation link will expire in <b>10 minutes</b>.
 
 {$a->supportemail}';
 $string['emailupdatesuccess'] = 'Email address of user <em>{$a->fullname}</em> was successfully updated to <em>{$a->email}</em>.';

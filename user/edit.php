@@ -199,9 +199,11 @@ if ($userform->is_cancelled()) {
         // Other users require a confirmation email.
         if (isset($usernew->email) and $user->email != $usernew->email && !has_capability('moodle/user:update', $systemcontext)) {
             $a = new stdClass();
-            $emailchangedkey = random_string(20);
+            // Set the key to expire in 10 minutes.
+            $validuntil = time() + 600;
+            $emailchangedkey = create_user_key('core_user/email_change', $user->id, null, null, $validuntil);
+
             set_user_preference('newemail', $usernew->email, $user->id);
-            set_user_preference('newemailkey', $emailchangedkey, $user->id);
             set_user_preference('newemailattemptsleft', 3, $user->id);
 
             $a->newemail = $emailchanged = $usernew->email;
