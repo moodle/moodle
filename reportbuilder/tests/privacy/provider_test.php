@@ -21,18 +21,12 @@ namespace core_reportbuilder\privacy;
 use context_system;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\metadata\types\database_table;
-use core_privacy\local\metadata\types\user_preference;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use core_privacy\tests\provider_testcase;
 use core_reportbuilder_generator;
-use core_reportbuilder\manager;
 use core_reportbuilder\local\helpers\user_filter_manager;
-use core_reportbuilder\local\models\audience;
-use core_reportbuilder\local\models\column;
-use core_reportbuilder\local\models\filter;
-use core_reportbuilder\local\models\report;
-use core_reportbuilder\local\models\schedule;
+use core_reportbuilder\local\models\{audience, column, filter, report, schedule, user_filter};
 use core_user\reportbuilder\datasource\users;
 
 /**
@@ -43,7 +37,7 @@ use core_user\reportbuilder\datasource\users;
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /**
      * Test provider metadata
@@ -53,23 +47,14 @@ class provider_test extends provider_testcase {
         $metadata = provider::get_metadata($collection)->get_collection();
 
         $this->assertCount(6, $metadata);
+        $this->assertContainsOnlyInstancesOf(database_table::class, $metadata);
 
-        $this->assertInstanceOf(database_table::class, $metadata[0]);
         $this->assertEquals(report::TABLE, $metadata[0]->get_name());
-
-        $this->assertInstanceOf(database_table::class, $metadata[1]);
         $this->assertEquals(column::TABLE, $metadata[1]->get_name());
-
-        $this->assertInstanceOf(database_table::class, $metadata[2]);
         $this->assertEquals(filter::TABLE, $metadata[2]->get_name());
-
-        $this->assertInstanceOf(database_table::class, $metadata[3]);
-        $this->assertEquals(audience::TABLE, $metadata[3]->get_name());
-
-        $this->assertInstanceOf(database_table::class, $metadata[4]);
-        $this->assertEquals(schedule::TABLE, $metadata[4]->get_name());
-
-        $this->assertInstanceOf(user_preference::class, $metadata[5]);
+        $this->assertEquals(user_filter::TABLE, $metadata[3]->get_name());
+        $this->assertEquals(audience::TABLE, $metadata[4]->get_name());
+        $this->assertEquals(schedule::TABLE, $metadata[5]->get_name());
     }
 
     /**
@@ -84,6 +69,28 @@ class provider_test extends provider_testcase {
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $generator->create_report(['name' => 'Users', 'source' => users::class]);
+
+        $contextlist = $this->get_contexts_for_userid((int) $user->id, 'core_reportbuilder');
+        $this->assertCount(1, $contextlist);
+        $this->assertInstanceOf(context_system::class, $contextlist->current());
+    }
+
+    /**
+     * Test getting contexts for user who created a user filter for a report by another user
+     */
+    public function test_get_contexts_for_userid_user_filter(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Users', 'source' => users::class]);
+
+        // Switch user, create a report audience.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        user_filter_manager::set($report->get('id'), ['entity:filter_name' => 1]);
 
         $contextlist = $this->get_contexts_for_userid((int) $user->id, 'core_reportbuilder');
         $this->assertCount(1, $contextlist);
@@ -149,6 +156,12 @@ class provider_test extends provider_testcase {
 
         $report = $generator->create_report(['name' => 'Users', 'source' => users::class]);
 
+        // Switch user, create a user filter.
+        $filteruser  = $this->getDataGenerator()->create_user();
+        $this->setUser($filteruser);
+
+        user_filter_manager::set($report->get('id'), ['entity:filter_name' => 1]);
+
         // Switch user, create a report audience.
         $audienceuser = $this->getDataGenerator()->create_user();
         $this->setUser($audienceuser);
@@ -166,6 +179,7 @@ class provider_test extends provider_testcase {
 
         $this->assertEqualsCanonicalizing([
             $reportuser->id,
+            $filteruser->id,
             $audienceuser->id,
             $scheduleuser->id,
         ], $userlist->get_userids());
@@ -192,6 +206,8 @@ class provider_test extends provider_testcase {
             'name' => 'My schedule',
         ]);
 
+        user_filter_manager::set($report->get('id'), ['entity:filter_name' => 1]);
+
         $context = context_system::instance();
         $this->export_context_data_for_user((int) $user->id, $context, 'core_reportbuilder');
 
@@ -209,6 +225,16 @@ class provider_test extends provider_testcase {
         $this->assertEquals($user->id, $reportdata->usermodified);
         $this->assertNotEmpty($reportdata->timecreated);
         $this->assertNotEmpty($reportdata->timemodified);
+
+        // Exported user filter data.
+        $userfilterdata = $writer->get_related_data($subcontext, 'userfilters')->data;
+
+        $this->assertCount(1, $userfilterdata);
+        $userfilterdata = reset($userfilterdata);
+
+        $this->assertEquals('{"entity:filter_name":1}', $userfilterdata->filterdata);
+        $this->assertNotEmpty($userfilterdata->timecreated);
+        $this->assertNotEmpty($userfilterdata->timemodified);
 
         // Exported audience data.
         $audiencedata = $writer->get_related_data($subcontext, 'audiences')->data;
@@ -261,64 +287,5 @@ class provider_test extends provider_testcase {
         $this->export_context_data_for_user((int) $user->id, $context, 'core_reportbuilder');
 
         $this->assertFalse(writer::with_context($context)->has_any_data());
-    }
-
-    /**
-     * Test to check export_user_preferences.
-     */
-    public function test_export_user_preferences(): void {
-        $this->resetAfterTest();
-
-        $user1 = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
-        $this->setUser($user1);
-
-        // Create report and set some filters for the user.
-        $report1 = manager::create_report_persistent((object) [
-            'type' => 1,
-            'source' => 'class',
-        ]);
-        $filtervalues1 = [
-            'task_log:name_operator' => 0,
-            'task_log:name_value' => 'My task logs',
-        ];
-        user_filter_manager::set($report1->get('id'), $filtervalues1);
-
-        // Add a filter for user2.
-        $filtervalues1user2 = [
-            'task_log:name_operator' => 0,
-            'task_log:name_value' => 'My task logs user2',
-        ];
-        user_filter_manager::set($report1->get('id'), $filtervalues1user2, (int)$user2->id);
-
-        // Create a second report and set some filters for the user.
-        $report2 = manager::create_report_persistent((object) [
-            'type' => 1,
-            'source' => 'class',
-        ]);
-        $filtervalues2 = [
-            'config_change:setting_operator' => 0,
-            'config_change:setting_value' => str_repeat('A', 3000),
-        ];
-        user_filter_manager::set($report2->get('id'), $filtervalues2);
-
-        // Switch to admin user (so we can validate preferences of our test user are still exported).
-        $this->setAdminUser();
-
-        // Export user preferences.
-        provider::export_user_preferences((int)$user1->id);
-        $writer = writer::with_context(context_system::instance());
-        $prefs = $writer->get_user_preferences('core_reportbuilder');
-
-        // Check that user preferences only contain the 2 preferences from user1.
-        $this->assertCount(2, (array)$prefs);
-
-        // Check that exported user preferences for report1 are correct.
-        $report1key = 'reportbuilder-report-' . $report1->get('id');
-        $this->assertEquals(json_encode($filtervalues1, JSON_PRETTY_PRINT), $prefs->$report1key->value);
-
-        // Check that exported user preferences for report2 are correct.
-        $report2key = 'reportbuilder-report-' . $report2->get('id');
-        $this->assertEquals(json_encode($filtervalues2, JSON_PRETTY_PRINT), $prefs->$report2key->value);
     }
 }

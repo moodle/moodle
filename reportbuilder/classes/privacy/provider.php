@@ -27,16 +27,10 @@ use core_privacy\local\request\contextlist;
 use core_privacy\local\request\core_userlist_provider;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\userlist;
-use core_privacy\local\request\user_preference_provider;
 use core_privacy\local\request\writer;
 use core_reportbuilder\manager;
-use core_reportbuilder\local\helpers\user_filter_manager;
 use core_reportbuilder\local\helpers\schedule as schedule_helper;
-use core_reportbuilder\local\models\audience;
-use core_reportbuilder\local\models\column;
-use core_reportbuilder\local\models\filter;
-use core_reportbuilder\local\models\report;
-use core_reportbuilder\local\models\schedule;
+use core_reportbuilder\local\models\{audience, column, filter, report, schedule, user_filter};
 
 /**
  * Privacy Subsystem for core_reportbuilder
@@ -48,8 +42,7 @@ use core_reportbuilder\local\models\schedule;
 class provider implements
     \core_privacy\local\metadata\provider,
     \core_privacy\local\request\plugin\provider,
-    core_userlist_provider,
-    user_preference_provider {
+    core_userlist_provider {
 
     /**
      * Returns metadata about the component
@@ -82,6 +75,12 @@ class provider implements
             'usermodified' => 'privacy:metadata:filter:usermodified',
         ], 'privacy:metadata:filter');
 
+        $collection->add_database_table(user_filter::TABLE, [
+            'filterdata' => 'privacy:metadata:user_filter:filterdata',
+            'timecreated' => 'privacy:metadata:user_filter:timecreated',
+            'timemodified' => 'privacy:metadata:user_filter:timemodified',
+        ], 'privacy:metadata:user_filter');
+
         $collection->add_database_table(audience::TABLE, [
             'classname' => 'privacy:metadata:audience:classname',
             'configdata' => 'privacy:metadata:audience:configdata',
@@ -109,27 +108,7 @@ class provider implements
             'timemodified' => 'privacy:metadata:schedule:timemodified',
         ], 'privacy:metadata:schedule');
 
-        $collection->add_user_preference('core_reportbuilder', 'privacy:metadata:preference:reportfilter');
-
         return $collection;
-    }
-
-    /**
-     * Export all user preferences for the component
-     *
-     * @param int $userid
-     */
-    public static function export_user_preferences(int $userid): void {
-        $preferencestring = get_string('privacy:metadata:preference:reportfilter', 'core_reportbuilder');
-
-        $filters = user_filter_manager::get_all_for_user($userid);
-        foreach ($filters as $key => $filter) {
-            writer::export_user_preference('core_reportbuilder',
-                $key,
-                json_encode($filter, JSON_PRETTY_PRINT),
-                $preferencestring
-            );
-        }
     }
 
     /**
@@ -156,7 +135,7 @@ class provider implements
     public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new contextlist();
 
-        // Locate all contexts for reports the user has created, or reports they have created audience/schedules for.
+        // Locate all contexts for reports the user has created, or reports they have created ancillary data for.
         $sql = '
             SELECT r.contextid
               FROM {' . report::TABLE . '} r
@@ -164,6 +143,10 @@ class provider implements
                AND (r.usercreated = ?
                  OR r.usermodified = ?
                  OR r.id IN (
+                    SELECT f.reportid
+                      FROM {' . user_filter::TABLE . '} f
+                     WHERE f.usercreated = ?
+                     UNION
                     SELECT a.reportid
                       FROM {' . audience::TABLE . '} a
                      WHERE a.usercreated = ? OR a.usermodified = ?
@@ -174,7 +157,7 @@ class provider implements
                     )
                    )';
 
-        return $contextlist->add_from_sql($sql, array_fill(0, 6, $userid));
+        return $contextlist->add_from_sql($sql, array_fill(0, 7, $userid));
     }
 
     /**
@@ -192,6 +175,13 @@ class provider implements
                 WHERE ' . $select;
         $userlist->add_from_sql('usercreated', $sql, $params);
         $userlist->add_from_sql('usermodified', $sql, $params);
+
+        // Users who have created user filters.
+        $sql = 'SELECT f.usercreated
+                  FROM {' . user_filter::TABLE . '} f
+                  JOIN {' . report::TABLE . '} r ON r.id = f.reportid
+                WHERE ' . $select;
+        $userlist->add_from_sql('usercreated', $sql, $params);
 
         // Users who have created audiences.
         $sql = 'SELECT a.usercreated, a.usermodified
@@ -224,6 +214,10 @@ class provider implements
 
         // We need to get all reports that the user has created, or reports they have created audience/schedules for.
         $select = 'type = 0 AND (usercreated = ? OR usermodified = ? OR id IN (
+            SELECT f.reportid
+              FROM {' . user_filter::TABLE . '} f
+             WHERE f.usercreated = ?
+             UNION
             SELECT a.reportid
               FROM {' . audience::TABLE . '} a
              WHERE a.usercreated = ? OR a.usermodified = ?
@@ -232,12 +226,17 @@ class provider implements
               FROM {' . schedule::TABLE . '} s
              WHERE s.usercreated = ? OR s.usermodified = ?
         ))';
-        $params = array_fill(0, 6, $user->id);
+        $params = array_fill(0, 7, $user->id);
 
         foreach (report::get_records_select($select, $params) as $report) {
             $subcontext = static::get_export_subcontext($report);
 
             self::export_report($subcontext, $report);
+
+            // User filters.
+            if ($userfilters = user_filter::get_records(['reportid' => $report->get('id'), 'usercreated' => $user->id])) {
+                static::export_user_filters($report->get_context(), $subcontext, $userfilters);
+            }
 
             $select = 'reportid = ? AND (usercreated = ? OR usermodified = ?)';
             $params = [$report->get('id'), $user->id, $user->id];
@@ -307,6 +306,25 @@ class provider implements
         ];
 
         writer::with_context($report->get_context())->export_data($subcontext, $reportdata);
+    }
+
+    /**
+     * Export given user filters in context
+     *
+     * @param context $context
+     * @param array $subcontext
+     * @param user_filter[] $userfilters
+     */
+    protected static function export_user_filters(context $context, array $subcontext, array $userfilters): void {
+        $userfilterdata = array_map(static function(user_filter $userfilter): stdClass {
+            return (object) [
+                'filterdata' => $userfilter->get('filterdata'),
+                'timecreated' => transform::datetime($userfilter->get('timecreated')),
+                'timemodified' => transform::datetime($userfilter->get('timemodified')),
+            ];
+        }, $userfilters);
+
+        writer::with_context($context)->export_related_data($subcontext, 'userfilters', (object) ['data' => $userfilterdata]);
     }
 
     /**

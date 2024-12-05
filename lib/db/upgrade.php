@@ -1236,5 +1236,72 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024111500.04);
     }
 
+    if ($oldversion < 2024112900.01) {
+
+        // Define table reportbuilder_user_filter to be created.
+        $table = new xmldb_table('reportbuilder_user_filter');
+
+        // Adding fields to table reportbuilder_user_filter.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('reportid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('filterdata', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('usercreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table reportbuilder_user_filter.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('reportid', XMLDB_KEY_FOREIGN, ['reportid'], 'reportbuilder_report', ['id']);
+        $table->add_key('usercreated', XMLDB_KEY_FOREIGN, ['usercreated'], 'user', ['id']);
+        $table->add_key('usermodified', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
+
+        // Adding indexes to table reportbuilder_user_filter.
+        $table->add_index('report-user', XMLDB_INDEX_UNIQUE, ['reportid', 'usercreated']);
+
+        // Conditionally launch create table for reportbuilder_user_filter.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024112900.01);
+    }
+
+    if ($oldversion < 2024112900.02) {
+
+        // Structure to collect current user filter preferences.
+        $userfilterdata = [];
+
+        $select = $DB->sql_like('name', '?');
+        $params = [$DB->sql_like_escape('reportbuilder-report-') . '%'];
+
+        $preferences = $DB->get_records_select('user_preferences', $select, $params, 'userid, name');
+        foreach ($preferences as $preference) {
+            preg_match('/^reportbuilder-report-(?<reportid>\d+)-/', $preference->name, $matches);
+            $userfilterdata[$preference->userid][$matches['reportid']][] = $preference->value;
+        }
+
+        // Migrate user filter preferences to new schema (combining previously chunked values due to size limitation).
+        foreach ($userfilterdata as $userid => $reportfilterdata) {
+            foreach ($reportfilterdata as $reportid => $filterdata) {
+                $DB->insert_record('reportbuilder_user_filter', (object) [
+                    'reportid' => $reportid,
+                    'filterdata' => implode('', $filterdata),
+                    'usercreated' => $userid,
+                    'usermodified' => $userid,
+                    'timecreated' => time(),
+                    'timemodified' => time(),
+                ]);
+            }
+        }
+
+        // Clean up old user filter preferences.
+        $DB->delete_records_select('user_preferences', $select, $params);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024112900.02);
+    }
+
     return true;
 }
