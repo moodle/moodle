@@ -119,18 +119,17 @@ class report_helper {
         $course = get_course($courseid);
         $groupmode = groups_get_course_groupmode($course);
         $groupid = $filterparams->groupid ?? 0;
-        if ($groupmode == SEPARATEGROUPS || $groupid) {
-            $context = context_course::instance($courseid);
+        $context = context_course::instance($courseid);
+        if ($groupid || ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context))) {
             if ($groupid) {
                 $cgroups = [(int) $groupid];
             } else {
-                $cgroups = groups_get_all_groups(
-                    $courseid,
-                    has_capability('moodle/site:accessallgroups', $context) ? 0 : $USER->id
-                );
+                $cgroups = groups_get_all_groups($courseid, $USER->id);
                 $cgroups = array_keys($cgroups);
-                // If that's the case, limit the users to be in the groups only, defined by the filter.
-                if (has_capability('moodle/site:accessallgroups', $context) || empty($cgroups)) {
+                // If you are not in any groups you can still view users without group. This may
+                // perform poorly because it will list all users in the entire system who do not
+                // belong to a group on this course.
+                if (empty($cgroups)) {
                     $cgroups[] = USERSWITHOUTGROUP;
                 }
             }
