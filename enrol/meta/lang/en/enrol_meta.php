@@ -23,8 +23,8 @@
  */
 
 $string['addgroup'] = 'Add to group';
-$string['coursesort'] = 'Sort course list';
-$string['coursesort_help'] = 'This determines whether the list of courses that can be linked are sorted by sort order (i.e. the order set in Site administration > Courses > Manage courses and categories) or alphabetically by course setting.';
+$string['coursesort'] = 'Source course list order';
+$string['coursesort_help'] = 'When linking the source course to the target course, how should source courses be ordered?';
 $string['creategroup'] = 'Create new group';
 $string['defaultgroupnametext'] = '{$a->name} course {$a->increment}';
 $string['enrolmetasynctask'] = 'Meta enrolment sync task';
@@ -33,15 +33,15 @@ $string['meta:config'] = 'Configure meta enrol instances';
 $string['meta:selectaslinked'] = 'Select course as meta linked';
 $string['meta:unenrol'] = 'Unenrol suspended users';
 $string['nosyncroleids'] = 'Roles that are not synchronised';
-$string['nosyncroleids_desc'] = 'By default all course level role assignments are synchronised from parent to child courses. Roles that are selected here will not be included in the synchronisation process. The roles available for synchronisation will be updated in the next cron execution.';
+$string['nosyncroleids_desc'] = 'Select any roles that should not be synchronised between the source course to the target course.';
 $string['pluginname'] = 'Course meta link';
-$string['pluginname_desc'] = 'Course meta link enrolment plugin synchronises enrolments and roles in two different courses.';
+$string['pluginname_desc'] = 'The course meta link synchronises enrolments and roles from the source course to the target course.';
 $string['syncall'] = 'Synchronise all enrolled users';
 $string['samemetacourse'] = 'You can\'t add a meta link to the same course.';
-$string['syncall_desc'] = 'If enabled all enrolled users are synchronised even if they have no role in parent course, if disabled only users that have at least one synchronised role are enrolled in child course.';
-$string['privacy:metadata:core_group'] = 'Enrol meta plugin can create a new group or use an existing group to add all the participants of the course linked.';
+$string['syncall_desc'] = 'If enabled, all enrolled users are synchronised from the source course even if they have no role in it. Otherwise, only users that have at least one role are enrolled in the target course.';
+$string['privacy:metadata:core_group'] = 'The course meta link enrolment plugin can create a new group or use an existing group to add participants from the source course.';
 $string['unknownmetacourse'] = 'Unknown meta course shortname';
 $string['wscannotcreategroup'] = 'No permission to create group in linked course id = {$a}.';
-$string['wsinvalidcourse'] = 'Course id = {$a} does not exist or no permission to link in meta enrolment.';
-$string['wsinvalidmetacourse'] = 'Meta course id = {$a} does not exist or no permission to add enrolment instance.';
+$string['wsinvalidcourse'] = 'Course ID = {$a} doesn\'t exist or you don\'t have permission to add a course meta link.';
+$string['wsinvalidmetacourse'] = 'Meta course ID = {$a} doesn\'t exist or you don\'t have permission to add an enrolment instance.';
 $string['wsnoinstancesspecified'] = 'No instances specified';
