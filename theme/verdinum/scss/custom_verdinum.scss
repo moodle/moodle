@@ -33,3 +33,25 @@
         margin-top:40px;
     }
 
+    .pagelayout-frontpage{
+        .block09-3 {
+        h5 > a:hover {
+            color: $secondary!important;
+        }
+
+
+        h5 > a {
+            color: $tertiary!important;
+            }
+        }
+
+        .educard-sub-title{
+        color: $tertiary!important;
+    }
+
+        .block07-bg{
+            .h1{
+                color: $primary!important;
+            }
+        }
+    }
