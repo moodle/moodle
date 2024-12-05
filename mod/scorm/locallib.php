@@ -704,7 +704,7 @@ function scorm_get_sco_runtime($scormid, $scoid, $userid, $attempt=1) {
     global $DB;
 
     $params = array('userid' => $userid, 'scormid' => $scormid, 'attempt' => $attempt);
-    $sql = "SELECT min(timemodified) as start, max(timemodified) as finish
+    $sql = "SELECT MIN(timemodified) AS timemin, MAX(timemodified) AS timemax
               FROM {scorm_scoes_value} v
               JOIN {scorm_attempt} a on a.id = v.attemptid
               WHERE a.userid = :userid AND a.scormid = :scormid AND a.attempt = :attempt";
@@ -712,9 +712,12 @@ function scorm_get_sco_runtime($scormid, $scoid, $userid, $attempt=1) {
         $params['scoid'] = $scoid;
         $sql .= " AND v.scoid = :scoid";
     }
-    $timedata = $DB->get_record_sql($sql, $params);
-    if (!empty($timedata)) {
-        return $timedata;
+
+    if ($timedata = $DB->get_record_sql($sql, $params)) {
+        return (object) [
+            'start' => $timedata->timemin,
+            'finish' => $timedata->timemax,
+        ];
     } else {
         $timedata = new stdClass();
         $timedata->start = false;
