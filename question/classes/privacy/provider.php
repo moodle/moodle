@@ -169,7 +169,7 @@ class provider implements
         ]);
 
         foreach ($quba->get_attempt_iterator() as $qa) {
-            $question = $qa->get_question(false);
+            $question = $qa->get_question();
             $slotno = $qa->get_slot();
             $questionnocontext = array_merge($questionscontext, [$slotno]);
 
@@ -302,7 +302,7 @@ class provider implements
                             $step->get_id()
                         );
 
-                    $stepdata->comment = $qa->get_behaviour(false)->format_comment($comment, $commentformat);
+                    $stepdata->comment = $qa->get_behaviour()->format_comment($comment, $commentformat);
                 }
 
                 // Export any response files associated with this step.
