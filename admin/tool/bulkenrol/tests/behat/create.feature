@@ -8,8 +8,13 @@ Feature: An admin can create courses using a CSV file
     Given the following "courses" exist:
       | fullname | shortname | category |
       | First course | C1 | 0 |
+
+    And the following "users" exist:
+      | username | firstname | lastname | email |
+      | studentOne | Student | One | s1@g.com |
+      | studentTwo | Student | Two | s2@g.com |
     And I log in as "admin"
-    And I navigate to "Courses > Upload courses" in site administration
+    And I navigate to "Courses > Enrol Users" in site administration
 
   @javascript
   Scenario: Creation of unexisting courses

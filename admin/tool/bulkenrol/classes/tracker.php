@@ -52,7 +52,7 @@ class tool_bulkenrol_tracker {
     /**
      * @var array columns to display.
      */
-    protected $columns = array('line', 'result', 'id', 'shortname', 'fullname', 'idnumber', 'status');
+    protected $columns = array('line', 'result', 'user', 'course', 'role', 'status');
 
     /**
      * @var int row number.
@@ -101,22 +101,18 @@ class tool_bulkenrol_tracker {
      *
      * @param int $total total courses.
      * @param int $created count of courses created.
-     * @param int $updated count of courses updated.
-     * @param int $deleted count of courses deleted.
      * @param int $errors count of errors.
      * @return void
      */
-    public function results($total, $created, $updated, $deleted, $errors) {
+    public function results($total, $created, $errors) {
         if ($this->outputmode == self::NO_OUTPUT) {
             return;
         }
 
         $message = array(
-            get_string('coursestotal', 'tool_bulkenrol', $total),
-            get_string('coursescreated', 'tool_bulkenrol', $created),
-            get_string('coursesupdated', 'tool_bulkenrol', $updated),
-            get_string('coursesdeleted', 'tool_bulkenrol', $deleted),
-            get_string('courseserrors', 'tool_bulkenrol', $errors)
+            get_string('enrollmenttotal', 'tool_bulkenrol', $total),
+            get_string('enrollmentcreated', 'tool_bulkenrol', $created),
+            get_string('enrollmenterrors', 'tool_bulkenrol', $errors)
         );
 
         if ($this->outputmode == self::OUTPUT_PLAIN) {
@@ -151,10 +147,9 @@ class tool_bulkenrol_tracker {
             $message = array(
                 $line,
                 $outcome ? 'OK' : 'NOK',
-                isset($data['id']) ? $data['id'] : '',
-                isset($data['shortname']) ? $data['shortname'] : '',
-                isset($data['fullname']) ? $data['fullname'] : '',
-                isset($data['idnumber']) ? $data['idnumber'] : ''
+                isset($data['user']) ? $data['user'].$data['user_more'] : '',
+                isset($data['course']) ? $data['course'].$data['course_more'] : '',
+                isset($data['role']) ? $data['role'].$data['role_more'] : '',
             );
             $this->buffer->output(implode("\t", $message));
             if (!empty($status)) {
@@ -177,12 +172,11 @@ class tool_bulkenrol_tracker {
             echo html_writer::start_tag('tr', array('class' => 'r' . $this->rownb % 2));
             echo html_writer::tag('td', $line, array('class' => 'c' . $ci++));
             echo html_writer::tag('td', $outcome, array('class' => 'c' . $ci++));
-            echo html_writer::tag('td', isset($data['id']) ? $data['id'] : '', array('class' => 'c' . $ci++));
 
             // Ensure our data is suitable for HTML output.
-            echo html_writer::tag('td', isset($data['shortname']) ? s($data['shortname']) : '', array('class' => 'c' . $ci++));
-            echo html_writer::tag('td', isset($data['fullname']) ? s($data['fullname']) : '', array('class' => 'c' . $ci++));
-            echo html_writer::tag('td', isset($data['idnumber']) ? s($data['idnumber']) : '', array('class' => 'c' . $ci++));
+            echo html_writer::tag('td', isset($data['user']) ? s($data['user'].$data['user_more']) : '', array('class' => 'c' . $ci++));
+            echo html_writer::tag('td', isset($data['course']) ? s($data['course'].$data['course_more']) : '', array('class' => 'c' . $ci++));
+            echo html_writer::tag('td', isset($data['role']) ? s($data['role'].$data['role_more']) : '', array('class' => 'c' . $ci++));
             echo html_writer::tag('td', $status, array('class' => 'c' . $ci++));
             echo html_writer::end_tag('tr');
         }
@@ -211,10 +205,9 @@ class tool_bulkenrol_tracker {
             echo html_writer::tag('th', get_string('csvline', 'tool_bulkenrol'),
                 array('class' => 'c' . $ci++, 'scope' => 'col'));
             echo html_writer::tag('th', get_string('result', 'tool_bulkenrol'), array('class' => 'c' . $ci++, 'scope' => 'col'));
-            echo html_writer::tag('th', get_string('id', 'tool_bulkenrol'), array('class' => 'c' . $ci++, 'scope' => 'col'));
-            echo html_writer::tag('th', get_string('shortname'), array('class' => 'c' . $ci++, 'scope' => 'col'));
-            echo html_writer::tag('th', get_string('fullname'), array('class' => 'c' . $ci++, 'scope' => 'col'));
-            echo html_writer::tag('th', get_string('idnumber'), array('class' => 'c' . $ci++, 'scope' => 'col'));
+            echo html_writer::tag('th', get_string('user'), array('class' => 'c' . $ci++, 'scope' => 'col'));
+            echo html_writer::tag('th', get_string('course'), array('class' => 'c' . $ci++, 'scope' => 'col'));
+            echo html_writer::tag('th', get_string('role'), array('class' => 'c' . $ci++, 'scope' => 'col'));
             echo html_writer::tag('th', get_string('status'), array('class' => 'c' . $ci++, 'scope' => 'col'));
             echo html_writer::end_tag('tr');
         }

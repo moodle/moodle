@@ -55,44 +55,32 @@ class tool_bulkenrol_base_form extends moodleform {
         $mform->setExpanded('importoptionshdr', true);
 
         $choices = array(
-            tool_bulkenrol_processor::MODE_CREATE_NEW => get_string('createnew', 'tool_bulkenrol'),
-            tool_bulkenrol_processor::MODE_CREATE_ALL => get_string('createall', 'tool_bulkenrol'),
-            tool_bulkenrol_processor::MODE_CREATE_OR_UPDATE => get_string('createorupdate', 'tool_bulkenrol'),
-            tool_bulkenrol_processor::MODE_UPDATE_ONLY => get_string('updateonly', 'tool_bulkenrol')
+            'id' => 'ID',
+            'email' => 'Email',
+            'idnumber' => 'ID Number',
+            'username' => 'Username',
         );
-        $mform->addElement('select', 'options[mode]', get_string('mode', 'tool_bulkenrol'), $choices);
-        $mform->addHelpButton('options[mode]', 'mode', 'tool_bulkenrol');
+        $mform->addElement('select', 'options[resolveuser]', get_string('resolveuser', 'tool_bulkenrol'), $choices);
+        $mform->setType('options[resolveuser]', PARAM_STRINGID);
+        $mform->addHelpButton('options[resolveuser]', 'resolveuser', 'tool_bulkenrol');
 
         $choices = array(
-            tool_bulkenrol_processor::UPDATE_NOTHING => get_string('nochanges', 'tool_bulkenrol'),
-            tool_bulkenrol_processor::UPDATE_ALL_WITH_DATA_ONLY => get_string('updatewithdataonly', 'tool_bulkenrol'),
-            tool_bulkenrol_processor::UPDATE_ALL_WITH_DATA_OR_DEFAUTLS =>
-                get_string('updatewithdataordefaults', 'tool_bulkenrol'),
-            tool_bulkenrol_processor::UPDATE_MISSING_WITH_DATA_OR_DEFAUTLS => get_string('updatemissing', 'tool_bulkenrol')
+            'id' => 'ID',
+            'shortname' => 'Short Name',
+            'idnumber' => 'ID Number',
         );
-        $mform->addElement('select', 'options[updatemode]', get_string('updatemode', 'tool_bulkenrol'), $choices);
-        $mform->setDefault('options[updatemode]', tool_bulkenrol_processor::UPDATE_NOTHING);
-        $mform->hideIf('options[updatemode]', 'options[mode]', 'eq', tool_bulkenrol_processor::MODE_CREATE_NEW);
-        $mform->hideIf('options[updatemode]', 'options[mode]', 'eq', tool_bulkenrol_processor::MODE_CREATE_ALL);
-        $mform->addHelpButton('options[updatemode]', 'updatemode', 'tool_bulkenrol');
+        $mform->addElement('select', 'options[resolvecourse]', get_string('resolvecourse', 'tool_bulkenrol'), $choices);
+        $mform->setType('options[resolvecourse]', PARAM_STRINGID);
+        $mform->addHelpButton('options[resolvecourse]', 'resolvecourse', 'tool_bulkenrol');
 
-        $mform->addElement('selectyesno', 'options[allowdeletes]', get_string('allowdeletes', 'tool_bulkenrol'));
-        $mform->setDefault('options[allowdeletes]', 0);
-        $mform->hideIf('options[allowdeletes]', 'options[mode]', 'eq', tool_bulkenrol_processor::MODE_CREATE_NEW);
-        $mform->hideIf('options[allowdeletes]', 'options[mode]', 'eq', tool_bulkenrol_processor::MODE_CREATE_ALL);
-        $mform->addHelpButton('options[allowdeletes]', 'allowdeletes', 'tool_bulkenrol');
+        $choices = array(
+            'id' => 'ID',
+            'shortname' => 'Short Name',
+        );
+        $mform->addElement('select', 'options[resolverole]', get_string('resolverole', 'tool_bulkenrol'), $choices);
+        $mform->setType('options[resolverole]', PARAM_STRINGID);
+        $mform->addHelpButton('options[resolverole]', 'resolverole', 'tool_bulkenrol');
 
-        $mform->addElement('selectyesno', 'options[allowrenames]', get_string('allowrenames', 'tool_bulkenrol'));
-        $mform->setDefault('options[allowrenames]', 0);
-        $mform->hideIf('options[allowrenames]', 'options[mode]', 'eq', tool_bulkenrol_processor::MODE_CREATE_NEW);
-        $mform->hideIf('options[allowrenames]', 'options[mode]', 'eq', tool_bulkenrol_processor::MODE_CREATE_ALL);
-        $mform->addHelpButton('options[allowrenames]', 'allowrenames', 'tool_bulkenrol');
-
-        $mform->addElement('selectyesno', 'options[allowresets]', get_string('allowresets', 'tool_bulkenrol'));
-        $mform->setDefault('options[allowresets]', 0);
-        $mform->hideIf('options[allowresets]', 'options[mode]', 'eq', tool_bulkenrol_processor::MODE_CREATE_NEW);
-        $mform->hideIf('options[allowresets]', 'options[mode]', 'eq', tool_bulkenrol_processor::MODE_CREATE_ALL);
-        $mform->addHelpButton('options[allowresets]', 'allowresets', 'tool_bulkenrol');
     }
 
 }

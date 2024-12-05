@@ -44,9 +44,9 @@ class tool_bulkenrol_step1_form extends tool_bulkenrol_base_form {
 
         $mform->addElement('header', 'generalhdr', get_string('general'));
 
-        $mform->addElement('filepicker', 'coursefile', get_string('coursefile', 'tool_bulkenrol'));
-        $mform->addRule('coursefile', null, 'required');
-        $mform->addHelpButton('coursefile', 'coursefile', 'tool_bulkenrol');
+        $mform->addElement('filepicker', 'enrolfile', get_string('enrolfile', 'tool_bulkenrol'));
+        $mform->addRule('enrolfile', null, 'required');
+        $mform->addHelpButton('enrolfile', 'enrolfile', 'tool_bulkenrol');
 
         $choices = csv_import_reader::get_delimiter_list();
         $mform->addElement('select', 'delimiter_name', get_string('csvdelimiter', 'tool_bulkenrol'), $choices);

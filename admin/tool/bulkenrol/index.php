@@ -76,21 +76,9 @@ if ($form2data = $mform2->is_cancelled()) {
 } else if ($form2data = $mform2->get_data()) {
 
     $options = (array) $form2data->options;
-    $defaults = (array) $form2data->defaults;
+    // $defaults = (array) $form2data->defaults;
 
-    // Custom field defaults.
-    $customfields = tool_bulkenrol_helper::get_custom_course_field_names();
-    foreach ($customfields as $customfield) {
-        $defaults[$customfield] = $form2data->{$customfield};
-    }
-
-    // Restorefile deserves its own logic because formslib does not really appreciate
-    // when the name of a filepicker is an array...
-    $options['restorefile'] = '';
-    if (!empty($form2data->restorefile)) {
-        $options['restorefile'] = $mform2->save_temp_file('restorefile');
-    }
-    $processor = new tool_bulkenrol_processor($cir, $options, $defaults);
+    $processor = new tool_bulkenrol_processor($cir, $options);
 
     echo $OUTPUT->header();
     if (isset($form2data->showpreview)) {
@@ -103,10 +91,10 @@ if ($form2data = $mform2->is_cancelled()) {
         echo $OUTPUT->continue_button($returnurl);
     }
 
-    // Deleting the file after processing or preview.
-    if (!empty($options['restorefile'])) {
-        @unlink($options['restorefile']);
-    }
+    // // Deleting the file after processing or preview.
+    // if (!empty($options['restorefile'])) {
+    //     @unlink($options['restorefile']);
+    // }
 
 } else {
     if (!empty($form1data)) {
@@ -115,9 +103,9 @@ if ($form2data = $mform2->is_cancelled()) {
         $options = (array)$submitteddata->options;
     } else {
         // Weird but we still need to provide a value, setting the default step1_form one.
-        $options = array('mode' => tool_bulkenrol_processor::MODE_CREATE_NEW);
+        $options = array();
     }
-    $processor = new tool_bulkenrol_processor($cir, $options, array());
+    $processor = new tool_bulkenrol_processor($cir, $options);
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('bulkenrolspreview', 'tool_bulkenrol'));
     $processor->preview($previewrows, new tool_bulkenrol_tracker(tool_bulkenrol_tracker::OUTPUT_HTML));
