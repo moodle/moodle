@@ -30,9 +30,9 @@ export default {
     ACTIONS: {
         SUMMARY: '[data-action="course-summarise"]',
         RETRY: '[data-action="course-summarise-retry"]',
-        DECLINE: '[data-action="course-summarise-policy-decline"]',
+        DECLINE: '.ai-policy-block [data-action="decline"]',
         ACCEPT: '.ai-policy-block [data-action="accept"]',
         REGENERATE: '[data-action="course-summarise-regenerate"]',
-        CANCEL: '.ai-policy-block [data-action="decline"]',
+        CANCEL: '[data-action="course-summarise-cancel"]',
     }
 };
