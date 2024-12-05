@@ -14,4 +14,3 @@
   No replacement. System context no longer a valid context to assign a question category
 
   For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
-

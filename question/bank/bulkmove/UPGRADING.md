@@ -14,4 +14,3 @@
   Superceded by qbank_bulkmove\output\bulk_move
 
   For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
-

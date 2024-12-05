@@ -1,5 +1,13 @@
 # core_form (subsystem) Upgrade notes
 
+## 5.0dev
+
+### Changed
+
+- The `cohort` form element now accepts new `includes` option, which is passed to the corresponding external service to determine which cohorts to return (self, parents, all)
+
+  For more information see [MDL-83641](https://tracker.moodle.org/browse/MDL-83641)
+
 ## 4.5
 
 ### Added

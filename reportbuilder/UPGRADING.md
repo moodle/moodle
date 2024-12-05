@@ -13,6 +13,9 @@
 - The `get_active_conditions` method of the base report class has a new `$checkavailable` parameter to determine whether to check the returned conditions availability
 
   For more information see [MDL-82809](https://tracker.moodle.org/browse/MDL-82809)
+- Report table instances no longer populate the `countsql` and `countparams` class properties. Instead calling code can access `totalrows` to obtain the same value, rather than manually counting via the prior properties
+
+  For more information see [MDL-83718](https://tracker.moodle.org/browse/MDL-83718)
 
 ### Removed
 

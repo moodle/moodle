@@ -7,6 +7,14 @@
 - The `core/sortable_list` Javascript module now emits native events, removing the jQuery dependency from calling code that wants to listen for the events. Backwards compatibility with existing code using jQuery is preserved
 
   For more information see [MDL-72293](https://tracker.moodle.org/browse/MDL-72293)
+- `\core\output\activity_header` now uses the `is_title_allowed()` method when setting the title in the constructor.
+
+  This method has been improved to give priority to the 'notitle' option in the theme config for the current page layout, over the top-level option in the theme.
+
+  For example, the Boost theme sets `$THEME->activityheaderconfig['notitle'] = true;` by default, but in its `secure` pagelayout, it has `'notitle' = false`.
+  This prevents display of the title in all layouts except `secure`.
+
+  For more information see [MDL-75610](https://tracker.moodle.org/browse/MDL-75610)
 - The deprecated implementation in course/view.php, which uses the extern_server_course function to handle routing between internal and external courses, can be improved by utilizing the Hook API. This enhancement is essential for a project involving multiple universities, as the Hook API provides a more generalized and flexible approach to route users to external courses from within other plugins.
 
   For more information see [MDL-83473](https://tracker.moodle.org/browse/MDL-83473)
