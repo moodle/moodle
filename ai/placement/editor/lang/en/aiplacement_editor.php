@@ -22,15 +22,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['generatecontent'] = 'Generate AI Content';
+$string['generatecontent'] = 'Generate AI content';
 $string['generateimage'] = 'AI generate image';
 $string['generateimagesetting'] = 'Enable generate image';
 $string['generateimagesetting_desc'] = 'Enable or disable the generation of images from a text prompt.';
 $string['generatetext'] = 'AI generate text';
 $string['generatetextsetting'] = 'Enable generate text';
 $string['generatetextsetting_desc'] = 'Enable or disable the generation of text from a text prompt.';
-$string['noeditor'] = 'HTML Text Editor Placement is not available for this context';
-$string['pluginname'] = 'HTML Text Editor Placement';
-$string['privacy:metadata'] = 'The HTML text editor placement plugin does not store any personal data.';
-$string['editor:generate_image'] = 'Generate AI Images in HTML Text Editor';
-$string['editor:generate_text'] = 'Generate AI Text in HTML Text Editor';
+$string['noeditor'] = 'Text editor placement is not available for this context.';
+$string['pluginname'] = 'Text editor placement';
+$string['privacy:metadata'] = 'The Text editor placement plugin does not store any personal data.';
+$string['editor:generate_image'] = 'Generate AI images in text editor';
+$string['editor:generate_text'] = 'Generate AI text in text editor';

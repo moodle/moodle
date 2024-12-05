@@ -44,8 +44,8 @@ $string['prefix_help'] = 'This prefix is used for all key names on the Redis ser
 $string['prefixinvalid'] = 'Invalid prefix. You can only use a-z A-Z 0-9-_.';
 $string['privacy:metadata:redis'] = 'The Redis cachestore plugin stores data briefly as part of its caching functionality. This data is stored on an Redis server where data is regularly removed.';
 $string['privacy:metadata:redis:data'] = 'The various data stored in the cache';
-$string['serializer_igbinary'] = 'The igbinary serializer.';
-$string['serializer_php'] = 'The default PHP serializer.';
+$string['serializer_igbinary'] = 'Igbinary serializer';
+$string['serializer_php'] = 'Default PHP serializer';
 $string['server'] = 'Server(s)';
 $string['server_help'] = 'Redis server to use for testing.
 
