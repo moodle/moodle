@@ -20,7 +20,7 @@ use core_ai\aiactions\generate_image;
 use core_ai\aiactions\generate_text;
 
 /**
- * HTML Text Editor Placement utils test.
+ * Text editor placement utils test.
  *
  * @package    aiplacement_editor
  * @copyright  2024 Huong Nguyen <huongnv13@gmail.com>
