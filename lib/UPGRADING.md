@@ -2,6 +2,17 @@
 
 ## 4.5+
 
+### Added
+
+- `\core\output\activity_header` now uses the `is_title_allowed()` method when setting the title in the constructor.
+
+  This method has been improved to give priority to the 'notitle' option in the theme config for the current page layout, over the top-level option in the theme.
+
+  For example, the Boost theme sets `$THEME->activityheaderconfig['notitle'] = true;` by default, but in its `secure` pagelayout, it has `'notitle' = false`.
+  This prevents display of the title in all layouts except `secure`.
+
+  For more information see [MDL-75610](https://tracker.moodle.org/browse/MDL-75610)
+
 ### Changed
 
 - All uses of the following PHPUnit methods have been removed as these methods are
