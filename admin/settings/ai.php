@@ -67,3 +67,14 @@ if ($hassiteconfig) {
         $plugin->load_settings($ADMIN, 'ai', $hassiteconfig);
     }
 }
+
+// AI reports category.
+$ADMIN->add('reports', new admin_category('aireports', get_string('aireports', 'core_ai')));
+// Add AI policy acceptance report.
+$aipolicyacceptance = new admin_externalpage(
+    'aipolicyacceptancereport',
+    get_string('aipolicyacceptance', 'core_ai'),
+    new moodle_url('/ai/policy_acceptance_report.php'),
+    'moodle/ai:viewaipolicyacceptancereport'
+);
+$ADMIN->add('aireports', $aipolicyacceptance);
