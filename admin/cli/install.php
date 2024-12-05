@@ -30,6 +30,7 @@
  */
 
 define('CLI_SCRIPT', true);
+define('NO_DEBUG_DISPLAY', false);
 
 // extra execution prevention - we can not just require config.php here
 if (isset($_SERVER['REMOTE_ADDR'])) {
