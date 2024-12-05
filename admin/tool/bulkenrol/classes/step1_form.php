@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/formslib.php');
 
 /**
- * Upload a file CVS file with course information.
+ * Upload a file CVS file with bulk enrollment information.
  *
  * @package    tool_bulkenrol
  * @copyright  2011 Piers Harding

@@ -99,8 +99,8 @@ class tool_bulkenrol_tracker {
     /**
      * Output the results.
      *
-     * @param int $total total courses.
-     * @param int $created count of courses created.
+     * @param int $total total enrollment items.
+     * @param int $created count of enrollments items created.
      * @param int $errors count of errors.
      * @return void
      */

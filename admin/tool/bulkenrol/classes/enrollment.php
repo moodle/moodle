@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * File containing the course class.
+ * File containing the bulk enrollment class.
  *
  * @package    tool_bulkenrol
  * @copyright  2013 Frédéric Massart
@@ -42,25 +42,25 @@ class tool_bulkenrol_enrollment {
     /** @var array errors. */
     protected $errors = array();
 
-    /** @var array course import options. */
+    /** @var array enrollment import options. */
     protected $options = array();
 
-    /** @var bool set to true once we have prepared the course */
+    /** @var bool set to true once we have prepared the enrollment */
     protected $prepared = false;
 
-    /** @var bool set to true once we have started the process of the course */
+    /** @var bool set to true once we have started the process of the enrollment */
     protected $processstarted = false;
 
-    /** @var array course import data. */
+    /** @var array enrollment import data. */
     protected $rawdata = array();
 
     /** @var array errors. */
     protected $statuses = array();
 
-    /** @var array fields allowed as course data. */
+    /** @var array fields allowed as enrollment data. */
     static protected $validfields = array('user', 'course', 'role');
 
-    /** @var array fields required on course creation. */
+    /** @var array fields required on enrollment creation. */
     static protected $mandatoryfields = array('user', 'course', 'role');
 
     /**
@@ -68,8 +68,8 @@ class tool_bulkenrol_enrollment {
      *
      * @param int $mode import mode, constant matching tool_bulkenrol_processor::MODE_*
      * @param int $updatemode update mode, constant matching tool_bulkenrol_processor::UPDATE_*
-     * @param array $rawdata raw course data.
-     * @param array $defaults default course data.
+     * @param array $rawdata raw enrollment data.
+     * @param array $defaults default enrollment data.
      * @param array $importoptions import options.
      */
     public function __construct($rawdata, $options = array()) {
@@ -136,7 +136,7 @@ class tool_bulkenrol_enrollment {
     }
 
     /**
-     * Return whether there were errors with this course.
+     * Return whether there were errors with this enrollment.
      *
      * @return boolean
      */
@@ -215,7 +215,7 @@ class tool_bulkenrol_enrollment {
     }
 
     /**
-     * Proceed with the import of the course.
+     * Proceed with the import of the enrollment.
      *
      * @return void
      */
@@ -224,7 +224,7 @@ class tool_bulkenrol_enrollment {
         global $DB, $CFG, $USER;
 
         if (!$this->prepared) {
-            throw new coding_exception('The course has not been prepared.');
+            throw new coding_exception('The enrollment has not been prepared.');
         } else if ($this->has_errors()) {
             throw new moodle_exception('Cannot proceed, errors were detected.');
         } else if ($this->processstarted) {

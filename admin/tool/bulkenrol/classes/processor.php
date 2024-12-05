@@ -128,9 +128,9 @@ class tool_bulkenrol_processor {
     }
 
     /**
-     * Return a course import object.
+     * Return a bulk enrollment object.
      *
-     * @param array $data data to import the course with.
+     * @param array $data data to import the bulk enrollment with.
      * @return tool_bulkenrol_enrollment
      */
     protected function get_enrollment($data) {

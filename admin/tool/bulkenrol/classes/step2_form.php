@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Bulk course upload step 2.
+ * Bulk enrollment upload step 2.
  *
  * @package    tool_bulkenrol
  * @copyright  2011 Piers Harding
@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/course/lib.php');
 
 /**
- * Specify course upload details.
+ * Specify bulk enrollment upload details.
  *
  * @package    tool_bulkenrol
  * @copyright  2011 Piers Harding

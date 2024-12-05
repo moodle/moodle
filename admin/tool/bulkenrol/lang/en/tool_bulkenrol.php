@@ -42,7 +42,7 @@ $string['canonlyresetcourseinupdatemode'] = 'Can only reset a course in update m
 $string['couldnotresolveuser'] = 'Could not resolve user by {$a}';
 $string['couldnotresolvecourse'] = 'Could not resolve course by {$a}';
 $string['couldnotresolverole'] = 'Could not resolve role by {$a}';
-$string['enrollmentcreated'] = 'Enrollment created';
+$string['enrollmentcreated'] = 'Enrollment items created';
 $string['coursedeleted'] = 'Course deleted';
 $string['coursedeletionnotallowed'] = 'Course deletion is not allowed';
 $string['coursedoesnotexistandcreatenotallowed'] = 'The course does not exist and creating course is not allowed';
@@ -50,8 +50,8 @@ $string['enrollmentexists'] = 'The user is already enrolled to this course';
 $string['enrolfile'] = 'File';
 $string['enrolfile_help'] = 'This file must be a CSV file.';
 $string['enrollmentprocess'] = 'Enrollment process';
-$string['enrollmenttotal'] = 'Enrollment total: {$a}';
-$string['enrollmentcreated'] = 'Enrollment created: {$a}';
+$string['enrollmenttotal'] = 'Total enrollment items: {$a}';
+$string['enrollmentcreated'] = 'Sucessful enrollments: {$a}';
 $string['enrollmenterrors'] = 'Enrollment errors: {$a}';
 $string['coursetemplatename_help'] = 'Enter an existing course shortname to use as a template for the creation of all courses.';
 $string['coursetorestorefromdoesnotexist'] = 'The course to restore from does not exist';
@@ -120,13 +120,13 @@ $string['updatemodedoessettonothing'] = 'Update mode does not allow anything to 
 $string['updateonly'] = 'Only update existing courses';
 $string['updatewithdataordefaults'] = 'Update with CSV data and defaults';
 $string['updatewithdataonly'] = 'Update with CSV data only';
-$string['bulkenrols'] = 'Enrol Users';
+$string['bulkenrols'] = 'Bulk Enrollment';
 $string['bulkenrols_help'] = 'Users may be enrolled into courses via text file. The format of the file should be as follows:
 
 * Each line of the file contains one record
 * Each record is a series of data separated by the selected separator
 * The first record contains a list of fieldnames defining the format of the rest of the file
 * Required fieldnames are user id, instructor id, role';
-$string['bulkenrolspreview'] = 'Upload courses preview';
-$string['bulkenrolsresult'] = 'Upload courses results';
-$string['privacy:metadata'] = 'The Course upload plugin does not store any personal data.';
+$string['bulkenrolspreview'] = 'Bulk enrollment preview';
+$string['bulkenrolsresult'] = 'Bulk enrollment results';
+$string['privacy:metadata'] = 'The bulk enrollment plugin does not store any personal data.';
