@@ -458,8 +458,6 @@ class comment {
                 $collapsedimage= 't/collapsed';
                 if (right_to_left()) {
                     $collapsedimage= 't/collapsed_rtl';
-                } else {
-                    $collapsedimage= 't/collapsed';
                 }
                 $html .= html_writer::start_tag('a', array(
                     'class' => 'comment-link',
@@ -468,7 +466,8 @@ class comment {
                     'role' => 'button',
                     'aria-expanded' => 'false')
                 );
-                $html .= $OUTPUT->pix_icon($collapsedimage, $this->linktext);
+                $html .= html_writer::img($OUTPUT->image_url($collapsedimage), $this->linktext,
+                    ['id' => 'comment-img-' . $this->cid, 'class' => 'icon']);
                 $html .= html_writer::tag('span', $this->linktext.' '.$countstring, array('id' => 'comment-link-text-'.$this->cid));
                 $html .= html_writer::end_tag('a');
             }
