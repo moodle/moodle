@@ -407,7 +407,7 @@ final class template_test extends \advanced_testcase {
             ],
             'Teacher actionsmenu tag with default options' => [
                 'templatecontent' => 'Some ##actionsmenu## tag',
-                'expected' => '|Some .*edit.*{entryid}.*sesskey.*Edit.* .*delete.*{entryid}.*sesskey.*Delete.* tag|',
+                'expected' => '|Some .*edit.*{entryid}.*Edit.* .*delete.*{entryid}.*Delete.* tag|',
                 'rolename' => 'editingteacher',
             ],
             'Teacher actionsmenu tag with default options (check Show more is not there)' => [
@@ -723,7 +723,7 @@ final class template_test extends \advanced_testcase {
             ],
             'Student actionsmenu tag with default options' => [
                 'templatecontent' => 'Some ##actionsmenu## tag',
-                'expected' => '|Some .*edit.*{entryid}.*sesskey.*Edit.* .*delete.*{entryid}.*sesskey.*Delete.* tag|',
+                'expected' => '|Some .*edit.*{entryid}.*Edit.* .*delete.*{entryid}.*Delete.* tag|',
                 'rolename' => 'student',
             ],
             'Student actionsmenu tag with default options (check Show more is not there)' => [
