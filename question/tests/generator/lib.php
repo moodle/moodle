@@ -161,14 +161,14 @@ class core_question_generator extends component_generator_base {
 
         $question = question_bank::get_qtype($qtype)->save_question($question, $fromform);
 
-        if ($overrides && (array_key_exists('createdby', $overrides) || array_key_exists('modifiedby', $overrides))) {
-            // Manually update the createdby and modifiedby because questiontypebase forces
-            // current user and some tests require a specific user.
-            if (array_key_exists('createdby', $overrides)) {
-                $question->createdby = $overrides['createdby'];
-            }
-            if (array_key_exists('modifiedby', $overrides)) {
-                $question->modifiedby = $overrides['modifiedby'];
+        $validoverrides = ['createdby', 'modifiedby', 'timemodified'];
+        if ($overrides && !empty(array_intersect($validoverrides, array_keys($overrides)))) {
+            // Manually update the createdby, modifiedby and timemodified because questiontypebase forces
+            // current user and time and some tests require a specific user or time.
+            foreach ($validoverrides as $validoverride) {
+                if (array_key_exists($validoverride, $overrides)) {
+                    $question->{$validoverride} = $overrides[$validoverride];
+                }
             }
             $DB->update_record('question', $question);
         }
