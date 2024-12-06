@@ -231,7 +231,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             );
         } else {
             $icon = $this->output->pix_icon(
-                    'i/empty',
+                    'i/navigationitem',
                     '',
                     'moodle',
                     array('class' => 'tree-icon'));
