@@ -1,7 +1,13 @@
  .navbar.fixed-top{
+        > .container{
+            max-width: 97%!important;
+        }
         background-color: $navbarcolor!important;
         .nav-link, .navbar-brand, form, .companybutton{
             color: $verdinum-white!important;
+        }
+        .popover-region, .popover-region-toggle{
+            display:none!important;
         }
     }
 

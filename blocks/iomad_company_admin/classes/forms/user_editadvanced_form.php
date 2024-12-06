@@ -32,6 +32,7 @@ use \core_text;
 use \core_component;
 use \webservice;
 
+#[\AllowDynamicProperties]
 class user_editadvanced_form extends moodleform {
 
     /**

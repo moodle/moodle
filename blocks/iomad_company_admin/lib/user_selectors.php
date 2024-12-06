@@ -26,6 +26,7 @@ require_once(dirname(__FILE__) . '/../../../enrol/locallib.php');
 /**
  * base class for selecting users of a company
  */
+#[\AllowDynamicProperties]
 abstract class company_user_selector_base extends user_selector_base {
 
     protected $companyid;

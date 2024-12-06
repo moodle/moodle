@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die;
  * User Filter form used on the Iomad pages.
  *
  */
+#[\AllowDynamicProperties]
 class iomad_company_filter_form extends \moodleform {
     protected $companyid;
 

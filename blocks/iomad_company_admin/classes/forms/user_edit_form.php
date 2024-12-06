@@ -29,8 +29,8 @@ use \company;
 use \iomad;
 
 //class user_edit_form extends company_moodleform {
+#[\AllowDynamicProperties]
 class user_edit_form extends \moodleform {
-
     protected $title = '';
     protected $description = '';
     protected $context = null;

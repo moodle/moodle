@@ -26,6 +26,7 @@ namespace block_iomad_company_admin\forms;
 use \company_moodleform;
 use \company;
 
+#[\AllowDynamicProperties]
 class group_edit_form extends company_moodleform {
     protected $selectedcompany = 0;
     protected $company = null;

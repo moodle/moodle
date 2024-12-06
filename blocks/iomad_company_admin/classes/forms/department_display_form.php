@@ -29,6 +29,7 @@ use \iomad;
 use \context_system;
 use \context_coursecat;
 
+#[\AllowDynamicProperties]
 class department_display_form extends company_moodleform {
     protected $selectedepartmentdcompany = 0;
     protected $context = null;
