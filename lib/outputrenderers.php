@@ -4941,11 +4941,12 @@ EOD;
      *               will be appended to the end, JS will toggle the rest of the tags
      * @param context $pagecontext specify if needed to overwrite the current page context for the view tag link
      * @param bool $accesshidelabel if true, the label should have class="accesshide" added.
+     * @param bool $displaylink Indicates whether the tag should be displayed as a link.
      * @return string
      */
     public function tag_list($tags, $label = null, $classes = '', $limit = 10,
-            $pagecontext = null, $accesshidelabel = false) {
-        $list = new \core_tag\output\taglist($tags, $label, $classes, $limit, $pagecontext, $accesshidelabel);
+            $pagecontext = null, $accesshidelabel = false, $displaylink = true) {
+        $list = new \core_tag\output\taglist($tags, $label, $classes, $limit, $pagecontext, $accesshidelabel, $displaylink);
         return $this->render_from_template('core_tag/taglist', $list->export_for_template($this));
     }
 

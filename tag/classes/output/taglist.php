@@ -54,6 +54,9 @@ class taglist implements templatable {
     /** @var int */
     protected $limit;
 
+    /** @var bool */
+    protected $displaylink;
+
     /**
      * Constructor
      *
@@ -65,15 +68,17 @@ class taglist implements templatable {
      *               will be appended to the end, JS will toggle the rest of the tags. 0 means no limit.
      * @param context $pagecontext specify if needed to overwrite the current page context for the view tag link
      * @param bool $accesshidelabel if true, the label should have class="accesshide" added.
+     * @param bool $displaylink Indicates whether the tag should be displayed as a link.
      */
     public function __construct($tags, $label = null, $classes = '',
-            $limit = 10, $pagecontext = null, $accesshidelabel = false) {
+            $limit = 10, $pagecontext = null, $accesshidelabel = false, $displaylink = true) {
         global $PAGE;
         $canmanagetags = has_capability('moodle/tag:manage', \context_system::instance());
 
         $this->label = ($label === null) ? get_string('tags') : $label;
         $this->accesshidelabel = $accesshidelabel;
         $this->classes = $classes;
+        $this->displaylink = $displaylink;
         $fromctx = $pagecontext ? $pagecontext->id :
                 (($PAGE->context->contextlevel == CONTEXT_SYSTEM) ? 0 : $PAGE->context->id);
 
@@ -87,8 +92,10 @@ class taglist implements templatable {
                 $this->tags[$idx]->flag = 1;
             }
 
-            $viewurl = core_tag_tag::make_url($tag->tagcollid, $tag->rawname, 0, $fromctx);
-            $this->tags[$idx]->viewurl = $viewurl->out(false);
+            if ($displaylink) {
+                $viewurl = core_tag_tag::make_url($tag->tagcollid, $tag->rawname, 0, $fromctx);
+                $this->tags[$idx]->viewurl = $viewurl->out(false);
+            }
 
             if (isset($tag->isstandard)) {
                 $this->tags[$idx]->isstandard = $tag->isstandard ? 1 : 0;
@@ -116,6 +123,7 @@ class taglist implements templatable {
             'tagscount' => $cnt,
             'overflow' => ($this->limit && $cnt > $this->limit) ? 1 : 0,
             'classes' => $this->classes,
+            'displaylink' => $this->displaylink,
         );
     }
 }

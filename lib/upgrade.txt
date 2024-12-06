@@ -8,6 +8,8 @@ information provided here is intended especially for developers.
     - `willReturnConsecutive`
     - `onConsecutive`
   Any plugin using these methods must update their uses.
+* The `core_renderer::tag_list` function now has a new parameter named `displaylink`. When `displaylink` is set to `true`,
+  the tag name will be displayed as a clickable hyperlink. Otherwise, it will be rendered as plain text.
 
 === 4.4.4 ===
 
