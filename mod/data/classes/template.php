@@ -745,7 +745,6 @@ class template {
             $editurl = new moodle_url('/mod/data/edit.php', $this->baseurl->params());
             $editurl->params([
                 'rid' => $entry->id,
-                'sesskey' => sesskey(),
                 'backto' => urlencode($backurl->out(false))
             ]);
 
@@ -758,7 +757,6 @@ class template {
             // Delete entry.
             $deleteurl = new moodle_url($this->baseurl, [
                 'delete' => $entry->id,
-                'sesskey' => sesskey(),
                 'mode' => 'single',
             ]);
 
