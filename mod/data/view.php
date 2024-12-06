@@ -243,7 +243,7 @@ if (!empty(trim($search))) {
 $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
 $PAGE->set_heading($course->fullname);
 $PAGE->force_settings_menu(true);
-if ($delete && confirm_sesskey() && (data_user_can_manage_entry($delete, $data, $context))) {
+if ($delete && data_user_can_manage_entry($delete, $data, $context)) {
     $PAGE->activityheader->disable();
 }
 
@@ -284,8 +284,10 @@ if ($data->intro and empty($page) and empty($record) and $mode != 'single') {
 
 /// Delete any requested records
 
-if ($delete && confirm_sesskey() && (data_user_can_manage_entry($delete, $data, $context))) {
+if ($delete && data_user_can_manage_entry($delete, $data, $context)) {
     if ($confirm) {
+        require_sesskey();
+
         if (data_delete_record($delete, $data, $course->id, $cm->id)) {
             echo $OUTPUT->notification(get_string('recorddeleted','data'), 'notifysuccess');
         }
@@ -324,8 +326,10 @@ if ($serialdelete) {
     $multidelete = json_decode($serialdelete);
 }
 
-if ($multidelete && confirm_sesskey() && $canmanageentries) {
-    if ($confirm = optional_param('confirm', 0, PARAM_INT)) {
+if ($multidelete && $canmanageentries) {
+    if ($confirm) {
+        require_sesskey();
+
         foreach ($multidelete as $value) {
             data_delete_record($value, $data, $course->id, $cm->id);
         }
@@ -373,7 +377,8 @@ if ($showactivity) {
         // Approve or disapprove any requested records
         $approvecap = has_capability('mod/data:approve', $context);
 
-        if (($approve || $disapprove) && confirm_sesskey() && $approvecap) {
+        if (($approve || $disapprove) && $approvecap) {
+            require_sesskey();
             $newapproved = $approve ? true : false;
             $recordid = $newapproved ? $approve : $disapprove;
             if ($approverecord = $DB->get_record('data_records', array('id' => $recordid))) {   // Need to check this is valid

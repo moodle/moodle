@@ -80,11 +80,6 @@ if ($manager->can_manage_templates()) {
     }
 }
 
-if ($rid) {
-    // When editing an existing record, we require the session key.
-    require_sesskey();
-}
-
 // Get Group information for permission testing and record creation.
 $currentgroup = groups_get_activity_group($cm);
 $groupmode = groups_get_activity_groupmode($cm);
