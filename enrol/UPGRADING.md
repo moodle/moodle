@@ -1,6 +1,6 @@
 # core_enrol (subsystem / plugintype) Upgrade notes
 
-## 4.5+
+## 4.5.1
 
 ### Changed
 
