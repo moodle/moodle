@@ -47,3 +47,33 @@ Feature: Block tags displaying tag cloud
     And I should see "User interests" in the ".tag-index-items h3" "css_element"
     And I should see "Teacher 1"
     And I log out
+
+  @javascript
+  Scenario: Tag block configuration allows to select from searchable tag collections only
+    When I log in as "student1"
+    And I turn editing mode on
+    And I add the "Tags" block
+    And I configure the "Tags" block
+    Then I should not see "Tag collection"
+    And I press "Save changes"
+    And I log out
+    And I log in as "admin"
+    And I navigate to "Appearance > Manage tags" in site administration
+    And I follow "Add tag collection"
+    And I set the following fields to these values:
+      | Name       | Collection1 |
+      | Searchable | 1           |
+    And I press "Create"
+    And I follow "Add tag collection"
+    And I set the following fields to these values:
+      | Name       | Collection2 |
+      | Searchable | 0           |
+    And I press "Create"
+    And I log out
+    And I log in as "student1"
+    And I turn editing mode on
+    And I am on homepage
+    And I configure the "Tags" block
+    And the "Tag collection" select box should contain "Collection1"
+    And the "Tag collection" select box should not contain "Collection2"
+    And I press "Save changes"
