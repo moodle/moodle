@@ -19,6 +19,7 @@ namespace core_tag;
 use core_tag_area;
 use core_tag_collection;
 use core_tag_tag;
+use core_tag;
 
 /**
  * Tag related unit tests.
@@ -1939,5 +1940,52 @@ final class taglib_test extends \advanced_testcase {
         $record['timecreated'] = time();
         $record['id'] = $DB->insert_record('tag_instance', $record);
         return (object) $record;
+    }
+
+    /**
+     * Checks the contents of the a tagcloud
+     *
+     * @param array $tags
+     * @param \core_tag\output\tagcloud $tagcloud
+     */
+    protected function assert_tag_cloud_contains_tags(array $tags, \core_tag\output\tagcloud $tagcloud) {
+        global $PAGE;
+        $renderer = $PAGE->get_renderer('core', 'tag');
+        $result = $tagcloud->export_for_template($renderer);
+        $result = json_decode(json_encode($result), true);
+        $this->assertEqualsCanonicalizing($tags, array_values(array_column($result['tags'], 'name')));
+    }
+
+    public function test_get_tag_cloud(): void {
+        global $DB, $PAGE;
+        $this->resetAfterTest();
+
+        // Create a course and a user with tags.
+        $this->getDataGenerator()->create_course(['tags' => 'cats,animals']);
+        $this->getDataGenerator()->create_user(['interests' => 'dogs,animals']);
+
+        // Default tag cloud contains all three tags.
+        $tagcloud = core_tag_collection::get_tag_cloud(0);
+        $this->assert_tag_cloud_contains_tags(['animals', 'cats', 'dogs'], $tagcloud);
+
+        // Create two new tag collections, move course tags to C1 and user tags to C2.
+        $c1 = core_tag_collection::create((object)['name' => 'C1', 'searchable' => 1]);
+        $c2 = core_tag_collection::create((object)['name' => 'C2', 'searchable' => 1]);
+        $tagareacourse = $DB->get_record('tag_area', ['component' => 'core', 'itemtype' => 'course'], '*', MUST_EXIST);
+        core_tag_area::update($tagareacourse, ['tagcollid' => $c1->id]);
+        $tagareauser = $DB->get_record('tag_area', ['component' => 'core', 'itemtype' => 'user'], '*', MUST_EXIST);
+        core_tag_area::update($tagareauser, ['tagcollid' => $c2->id]);
+
+        // Tag cloud still has all tags and you can also search by a collection. Tag 'animals' now has two different view links.
+        $this->assert_tag_cloud_contains_tags(['animals', 'animals', 'cats', 'dogs'], core_tag_collection::get_tag_cloud(0));
+        $this->assert_tag_cloud_contains_tags(['animals', 'cats'], core_tag_collection::get_tag_cloud($c1->id));
+        $this->assert_tag_cloud_contains_tags(['animals', 'dogs'], core_tag_collection::get_tag_cloud($c2->id));
+
+        // Make user interest tag area not searchable.
+        core_tag_collection::update($c2, ['searchable' => 0]);
+        // Check that the user interest tags do not appear in the tagclouds.
+        $this->assert_tag_cloud_contains_tags(['animals', 'cats'], core_tag_collection::get_tag_cloud(0));
+        $this->assert_tag_cloud_contains_tags(['animals', 'cats'], core_tag_collection::get_tag_cloud($c1->id));
+        $this->assert_tag_cloud_contains_tags([], core_tag_collection::get_tag_cloud($c2->id));
     }
 }
