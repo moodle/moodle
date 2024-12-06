@@ -224,7 +224,7 @@ class core_tag_collection {
         $defaulttagcollid = self::get_default();
         $allowedfields = array('name', 'searchable', 'customurl');
         if ($tagcoll->id == $defaulttagcollid) {
-            $allowedfields = array('name');
+            $allowedfields = array('name', 'searchable');
         }
 
         $updatedata = array();

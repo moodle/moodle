@@ -118,3 +118,16 @@ Feature: Managers can create and manage tag collections
     And I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Tags" "link" in the "Navigation" "block"
     And "Select tag collection" "select" should not exist
+
+  Scenario: Making default tag collection not searchable
+    Given the following "courses" exist:
+      | fullname | shortname | tags      |
+      | C1       | C1        | cats,dogs |
+    And I visit "/tag/search.php"
+    Then I should see "cats"
+    Then I should see "dogs"
+    And I navigate to "Appearance > Manage tags" in site administration
+    When I click on "Change searchable" "link" in the "Default collection" "table_row"
+    And I visit "/tag/search.php"
+    Then I should not see "cats"
+    Then I should not see "dogs"

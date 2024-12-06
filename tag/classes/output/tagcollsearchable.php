@@ -43,9 +43,7 @@ class tagcollsearchable extends \core\output\inplace_editable {
      * @param \stdClass $tagcoll
      */
     public function __construct($tagcoll) {
-        $defaultid = core_tag_collection::get_default();
-        $editable = $tagcoll->id != $defaultid &&
-                has_capability('moodle/tag:manage', context_system::instance());
+        $editable = has_capability('moodle/tag:manage', context_system::instance());
         $edithint = new lang_string('editsearchable', 'core_tag');
         $value = $tagcoll->searchable ? 1 : 0;
 
