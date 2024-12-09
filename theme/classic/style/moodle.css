@@ -33617,6 +33617,7 @@ textarea[data-auto-rows] {
   padding: 3rem;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
   margin-bottom: 2rem;
+  border-radius: 0.25rem;
 }
 .login-container .login-languagemenu {
   display: flex;
@@ -33657,7 +33658,6 @@ textarea[data-auto-rows] {
 @media (min-width: 768px) {
   .login-container {
     width: 500px !important; /* stylelint-disable-line declaration-no-important */
-    border-radius: 0.25rem;
   }
 }
 /* modules.less */
