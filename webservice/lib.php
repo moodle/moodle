@@ -454,11 +454,14 @@ class webservice {
      */
     public function get_token_by_id_with_details($tokenid) {
         global $DB;
+
         $sql = "SELECT t.id, t.token, u.id AS userid, u.firstname, u.lastname, s.name, t.creatorid
-                FROM {external_tokens} t, {user} u, {external_services} s
-                WHERE t.id=? AND t.tokentype = ? AND s.id = t.externalserviceid AND t.userid = u.id";
-        $token = $DB->get_record_sql($sql, array($tokenid, EXTERNAL_TOKEN_PERMANENT), MUST_EXIST);
-        return $token;
+                  FROM {external_tokens} t
+             LEFT JOIN {user} u ON u.id = t.userid
+             LEFT JOIN {external_services} s ON s.id = t.externalserviceid
+                 WHERE t.id = ? AND t.tokentype = ?";
+
+        return $DB->get_record_sql($sql, [$tokenid, EXTERNAL_TOKEN_PERMANENT], MUST_EXIST);
     }
 
     /**
