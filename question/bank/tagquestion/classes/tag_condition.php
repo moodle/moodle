@@ -49,20 +49,7 @@ class tag_condition extends condition {
             return;
         }
         parent::__construct($qbank);
-        $cat = $qbank->get_pagevars('cat');
-        if (is_array($cat)) {
-            foreach ($cat as $value) {
-                [, $contextid] = explode(',', $value);
-                $catcontext = \context::instance_by_id($contextid);
-                $this->contexts[] = $catcontext;
-            }
-        } else {
-            [, $contextid] = explode(',', $qbank->get_pagevars('cat'));
-            $catcontext = \context::instance_by_id($contextid);
-            $this->contexts[] = $catcontext;
-        }
-        $thiscontext = $qbank->get_most_specific_context();
-        $this->contexts[] = $thiscontext;
+        $this->contexts = $qbank->contexts->all();
         $this->selectedtagids = $this->filter->values ?? [];
     }
 
