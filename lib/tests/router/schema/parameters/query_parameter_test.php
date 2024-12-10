@@ -20,7 +20,7 @@ use core\param;
 use core\router\route;
 use core\router\schema\referenced_object;
 use core\router\schema\specification;
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 use GuzzleHttp\Psr7\ServerRequest;
 
 /**

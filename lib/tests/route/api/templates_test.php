@@ -16,7 +16,7 @@
 
 namespace core\route\api;
 
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 
 /**
  * Tests for Templates API.
