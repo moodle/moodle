@@ -34,7 +34,8 @@
         "beforelabel": "Modified time before",
         "filtertype": "datetime",
         "aftervalue": "2024-01-01T12:00",
-        "beforevalue": "2025-01-01T12:00"
+        "beforevalue": "2025-01-01T12:00",
+        "now": "2024-01-01T12:00"
     }
 }}
 <div class="d-flex flex-column flex-md-row align-items-md-center" data-required="{{required}}">
@@ -49,6 +50,7 @@
             value="{{aftervalue}}"
             data-filterfield="{{filtertype}}1"
             data-field-title="{{afterlabel}}"
+            max="{{now}}"
         >
     </span>
     <span class="{{filtertype}}-betweenwrapper ms-2 me-2">
@@ -64,6 +66,7 @@
             value="{{beforevalue}}"
             data-filterfield="{{filtertype}}2"
             data-field-title="{{beforelabel}}"
+            max="{{now}}"
         >
     </span>
 </div>
