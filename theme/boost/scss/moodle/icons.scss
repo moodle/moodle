@@ -2,21 +2,32 @@
 // Standardize the size, padding and alignment for all icons in Moodle.
 
 // Size of default icons.
-$icon-width: 16px;
+$icon-width: 20px;
 $icon-height: 16px;
 // Size of medium icons.
-$icon-medium-width: 32px;
+$icon-medium-width: 40px;
 $icon-medium-height: 32px;
 // Size of big icons.
-$icon-big-width: 64px;
+$icon-big-width: 80px;
 $icon-big-height: 64px;
 // Size of icon boxes.
-$icon-box-width: 48px;
+$icon-box-width: 60px;
 $icon-box-height: 48px;
 
 // stylelint-disable
 $iconsizes: () !default;
 $iconsizes: map-merge((
+  0: 0,
+  1: ($icon-height * .25),
+  2: ($icon-height * .5),
+  3: $icon-height,
+  4: ($icon-height * 1.5),
+  5: ($icon-height * 2),
+  6: ($icon-height * 2.5),
+  7: ($icon-height * 3)
+), $iconsizes);
+$iconwidthsizes: () !default;
+$iconwidthsizes: map-merge((
   0: 0,
   1: ($icon-width * .25),
   2: ($icon-width * .5),
@@ -25,7 +36,8 @@ $iconsizes: map-merge((
   5: ($icon-width * 2),
   6: ($icon-width * 2.5),
   7: ($icon-width * 3)
-), $iconsizes);
+), $iconwidthsizes);
+
 // stylelint-enable
 
 // This mixin change an icon color using filters.
@@ -56,8 +68,12 @@ $iconsizes: map-merge((
     filter: url($svg-url);
 }
 
+a i.icon {
+    color: $body-color;
+}
+
 .icon {
-    max-width: map-get($iconsizes, 4);
+    max-width: map-get($iconwidthsizes, 4);
     max-height: map-get($iconsizes, 4);
     margin: 0;
     padding: 0;
@@ -85,14 +101,14 @@ $iconsizes: map-merge((
     }
 
     &.emoticon {
-        max-width: map-get($iconsizes, 3);
+        max-width: map-get($iconwidthsizes, 3);
         max-height: map-get($iconsizes, 3);
     }
 }
 
 // Force size for the SVG icons.
 img.icon {
-    width: 16px;
+    width: 20px;
     height: 16px;
 }
 
@@ -144,7 +160,7 @@ img.icon {
     .icon-size-#{$size} {
         .icon {
             height: $length !important; /* stylelint-disable-line declaration-no-important */
-            width: $length !important; /* stylelint-disable-line declaration-no-important */
+            width: map-get($iconwidthsizes, $size) !important; /* stylelint-disable-line declaration-no-important */
             font-size: $length !important; /* stylelint-disable-line declaration-no-important */
         }
     }
@@ -191,11 +207,11 @@ img.icon {
     .activityicon,
     .icon {
         margin: 0;
-        font-size: $icon-medium-width;
-        height: $icon-medium-width;
-        width: $icon-medium-height;
-        max-height: $icon-medium-width;
-        max-width: $icon-medium-height;
+        font-size: $icon-medium-height;
+        height: $icon-medium-height;
+        width: $icon-medium-width;
+        max-height: $icon-medium-height;
+        max-width: $icon-medium-width;
     }
     &.small {
         width: $activity-iconcontainer-width - 10px;
@@ -205,9 +221,9 @@ img.icon {
     }
     &.smaller {
         width: $activity-iconcontainer-width - 20px;
-        height: $activity-iconcontainer-width - 20px;
+        height: $activity-iconcontainer-height - 20px;
         max-width: $activity-iconcontainer-width - 20px;
-        max-height: $activity-iconcontainer-width - 20px;
+        max-height: $activity-iconcontainer-height - 20px;
         .activityicon {
             width: $icon-medium-width;
             height: $icon-medium-height;

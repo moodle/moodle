@@ -499,7 +499,7 @@ $message-day-color: color-yiq($message-app-bg) !default;
     }
 
     .btn.btn-link.btn-icon {
-        height: $icon-width;
+        height: $icon-height;
         width: $icon-width;
         padding: 0;
         border-radius: 50%;
@@ -508,7 +508,7 @@ $message-day-color: color-yiq($message-app-bg) !default;
         @each $size, $length in $iconsizes {
             &.icon-size-#{$size} {
                 height: ($length + 20px) !important; /* stylelint-disable-line declaration-no-important */
-                width: ($length + 20px) !important; /* stylelint-disable-line declaration-no-important */
+                width: (map-get($iconwidthsizes, $size) + 20px) !important; /* stylelint-disable-line declaration-no-important */
             }
         }
     }

@@ -382,7 +382,7 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width * 0.5 );
     .pluscontainer {
         border: $border-width solid $primary-light-border;
         border-radius: 50%;
-        width: map-get($iconsizes, 5);
+        width: map-get($iconwidthsizes, 5);
         height: map-get($iconsizes, 5);
     }
     &:hover {

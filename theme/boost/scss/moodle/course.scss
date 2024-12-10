@@ -197,7 +197,7 @@ $divider-hover-color: $primary !default;
     .action-menu {
         .btn.btn-icon {
             height: map-get($iconsizes, 5);
-            width: map-get($iconsizes, 5);
+            width: map-get($iconwidthsizes, 5);
             @include border-radius();
         }
         &.section-actions .btn.btn-icon {
@@ -433,7 +433,7 @@ $divider-hover-color: $primary !default;
         justify-self: end;
         .groupmode-information {
             height: map-get($iconsizes, 5);
-            width: map-get($iconsizes, 5);
+            width: map-get($iconwidthsizes, 5);
             @include border-radius();
         }
         .groupmode-icon-info {
@@ -780,7 +780,7 @@ $divider-hover-color: $primary !default;
         }
         .icons-collapse-expand:has(+ h4) {
             height: map-get($iconsizes, 4);
-            width: map-get($iconsizes, 4);
+            width: map-get($iconwidthsizes, 4);
             font-size: $font-size-sm;
         }
         h4 {
