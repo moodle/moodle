@@ -341,6 +341,7 @@ class page_requirements_manager {
                 'deprecationignorelist'       => !empty($CFG->jsdeprecationignorelist) ? $CFG->jsdeprecationignorelist : [],
                 'traceId'               => \core\telemetry::get_trace_parent_id(),
                 'batchFetchRequests'    => $CFG->batch_fetch_requests ?? true,
+                'batchApiAssetRequests' => (bool) ($CFG->batch_api_asset_requests ?? false),
             ];
             if ($CFG->debugdeveloper) {
                 $this->M_cfg['developerdebug'] = true;

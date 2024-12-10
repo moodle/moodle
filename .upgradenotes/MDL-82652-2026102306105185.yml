@@ -1,0 +1,5 @@
+issueNumber: MDL-82652
+notes:
+  core:
+    - message: Add support for deprecation of API routes
+      type: improved

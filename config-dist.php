@@ -829,6 +829,17 @@ $CFG->admin = 'admin';
 // This allows multiple API requests to be combined into a single batch, reducing the number of HTTP requests made by the client.
 // If this is set to false, API requests will not be batched and will be sent individually.//
 //
+// Batch API Asset Requests
+//
+//      $CFG->batch_api_asset_requests = false;
+//
+// By default API assets are not batched in production environments to improve performance.
+// Set this to true to enable batching of API asset requests in production environments.
+// By batching requests the URI of multiple asset requests can be combined into a single request, reducing the number of HTTP requests made by the client.
+// However this removes the ability request-level caching to take place in places such as reverse proxies, proxies, and in-browser.
+//
+// Note: Assets are batched for development environments.
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================

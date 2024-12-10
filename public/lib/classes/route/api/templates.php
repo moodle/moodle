@@ -20,8 +20,8 @@ use core\exception;
 use core\param;
 use core\router\route;
 use core\output\mustache_template_source_loader;
+use core\route\responses\template_response;
 use core\router\schema\response\payload_response;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -35,9 +35,66 @@ class templates {
     use \core\router\route_controller;
 
     /**
+     * Fetch a single template for a component in a theme with the language specified.
+     *
+     * @param ServerRequestInterface $request
+     * @param string $themename
+     * @param string $component
+     * @param null|string $identifier
+     * @return payload_response
+     */
+    #[route(
+        path: '/templates/{themename}:{language}/{component}/{identifier:.*}',
+        method: ['GET'],
+        title: 'Fetch a single template',
+        description: 'Fetch a single template for a component in a theme specifying the language',
+        security: [],
+        cookies: false,
+        cachelifetime: '90 days',
+        pathtypes: [
+            new \core\router\parameters\path_language(),
+            new \core\router\parameters\path_themename(),
+            new \core\router\parameters\path_component(),
+            new \core\router\schema\parameters\path_parameter(
+                name: 'identifier',
+                type: param::SAFEPATH,
+            ),
+        ],
+        queryparams: [
+            new \core\router\schema\parameters\query_parameter(
+                name: 'includecomments',
+                type: param::BOOL,
+                description: 'Include comments in the template',
+                default: false,
+            ),
+        ],
+        responses: [
+            new template_response(),
+        ],
+    )]
+    #[\core\router\scope\unscoped_resource]
+    public function get_templates_with_language(
+        ServerRequestInterface $request,
+        mustache_template_source_loader $loader,
+        string $language,
+        string $themename,
+        string $component,
+        string $identifier,
+    ): payload_response {
+        return $this->template_provider(
+            $request,
+            $loader,
+            $language,
+            $themename,
+            $component,
+            $identifier,
+        );
+    }
+
+    /**
      * Fetch a single template for a component in a theme.
      *
-     * @param ResponseInterface $response
+     * @param ServerRequestInterface $request
      * @param string $themename
      * @param string $component
      * @param null|string $identifier
@@ -70,48 +127,49 @@ class templates {
             new \core\router\parameters\header_language(),
         ],
         responses: [
-            new \core\router\schema\response\response(
-                statuscode: 200,
-                description: 'OK',
-                content: [
-                    new \core\router\schema\response\content\json_media_type(
-                        schema:  new \core\router\schema\objects\schema_object(
-                            content: [
-                                'templates' => new \core\router\schema\objects\array_of_strings(
-                                    keyparamtype: param::TEXT,
-                                    valueparamtype: param::RAW,
-                                ),
-                                'strings' => new \core\router\schema\objects\array_of_strings(
-                                    keyparamtype: param::TEXT,
-                                    valueparamtype: param::RAW,
-                                ),
-                            ],
-                        ),
-                        examples: [
-                            new \core\router\schema\example(
-                                name: 'Single template value',
-                                summary: 'A json response containing the template for a single template',
-                                value: [
-                                    'templates' => [
-                                        "mod_example/template_identifier" => "<div class=\"example\">Hello World</div>",
-                                        "mod_example/other_template" => "<div class=\"example\">Hello World</div>",
-                                    ],
-                                    'strings' => [
-                                        'core/loading' => 'Loading',
-                                    ],
-                                ],
-                            ),
-                        ]
-                    ),
-                ],
-            ),
+            new template_response(),
         ],
     )]
     #[\core\router\scope\unscoped_resource]
+    #[\core\attribute\deprecated(
+        'Use get_templates_with_language instead',
+        '6.0',
+        'Language should be included in the path to prevent cache poisoning',
+        'MDL-82652',
+    )]
     public function get_templates(
         ServerRequestInterface $request,
-        ResponseInterface $response,
         mustache_template_source_loader $loader,
+        string $themename,
+        string $component,
+        string $identifier,
+    ): payload_response {
+        return $this->template_provider(
+            $request,
+            $loader,
+            $request->getHeaderLine('language'),
+            $themename,
+            $component,
+            $identifier,
+        );
+    }
+
+    /**
+     * Provides the template and its dependencies for a given component and identifier within a specific theme and language.
+     *
+     * @param ServerRequestInterface $request
+     * @param mustache_template_source_loader $loader
+     * @param string $language
+     * @param string $themename
+     * @param string $component
+     * @param string $identifier
+     * @throws exception\not_found_exception
+     * @return payload_response
+     */
+    protected function template_provider(
+        ServerRequestInterface $request,
+        mustache_template_source_loader $loader,
+        string $language,
         string $themename,
         string $component,
         string $identifier,
@@ -129,7 +187,7 @@ class templates {
                 templatename: $identifier,
                 themename: $themename,
                 includecomments: $comments,
-                lang: $request->getHeaderLine('language'),
+                lang: $language,
             );
         } catch (\moodle_exception $e) {
             throw new exception\not_found_exception('template', "{$component}/{$identifier}");
@@ -140,14 +198,14 @@ class templates {
             'strings' => [],
         ];
 
-        foreach ($dependencies['templates'] as $component => $templates) {
+        foreach ($dependencies['templates'] as $templatecomponent => $templates) {
             foreach ($templates as $template => $value) {
-                $result['templates']["{$component}/{$template}"] = $value;
+                $result['templates']["{$templatecomponent}/{$template}"] = $value;
             }
         }
-        foreach ($dependencies['strings'] as $component => $templates) {
+        foreach ($dependencies['strings'] as $stringcomponent => $templates) {
             foreach ($templates as $template => $value) {
-                $result['strings']["{$component}/{$template}"] = $value;
+                $result['strings']["{$stringcomponent}/{$template}"] = $value;
             }
         }
 

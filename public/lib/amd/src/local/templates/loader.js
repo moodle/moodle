@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 import $ from 'jquery';
-import ajax from 'core/ajax';
+import Fetch from 'core/fetch';
 import * as str from 'core/str';
 import * as config from 'core/config';
 import mustache from 'core/mustache';
@@ -158,8 +158,8 @@ export default class Loader {
     static prefetchTemplate(templateName, themeName) {
         const searchKey = this.getSearchKey(themeName, templateName);
 
-        // If we haven't already seen this template then buffer it.
-        if (this.hasTemplateInCache(searchKey)) {
+        if (this.hasTemplateInAnyCache(searchKey)) {
+            // This template is in one of our caches already, so no need to add it to the buffer.
             return;
         }
 
@@ -320,9 +320,9 @@ export default class Loader {
         this.isLoadingTemplates = true;
         // Grab any templates waiting in the buffer.
         const templatesToLoad = this.loadTemplateBuffer.slice();
-        // This will be resolved with the list of promises for the server request.
-        const serverRequestsDeferred = $.Deferred();
-        const requests = [];
+
+        const batcher = Fetch.getBatcher();
+
         // Get a list of promises for each of the templates we need to load.
         const templatePromises = templatesToLoad.map((templateData) => {
             const component = getNormalisedComponent(templateData.component);
@@ -330,100 +330,69 @@ export default class Loader {
             const searchKey = templateData.searchKey;
             const theme = templateData.theme;
             const templateDeferred = templateData.deferred;
-            let promise = null;
 
             // Double check to see if this template happened to have landed in the
             // cache as a dependency of an earlier template.
             if (this.hasTemplateInCache(searchKey)) {
                 // We've seen this template so immediately resolve the existing promise.
-                promise = this.getTemplatePromiseFromCache(searchKey);
+                return Promise.resolve(this.getTemplateFromCache(searchKey));
             } else {
                 // We haven't seen this template yet so we need to request it from
                 // the server.
-                requests.push({
-                    methodname: 'core_output_load_template_with_dependencies',
-                    args: {
-                        component,
-                        template: name,
-                        themename: theme,
-                        lang: config.language,
+                return batcher.performGet(
+                    'core',
+                    `/templates/${theme}:${config.language}/${component}/${name}`,
+                    {
+                        cachekey: config.templaterev,
+                    },
+                )
+                .then((response) => response.json())
+                .then((response) => {
+                    // Process all of the template dependencies for this template and add
+                    // them to the caches so that we don't request them again later.
+                    for (const [key, templateContent] of Object.entries(response.templates)) {
+                        const match = key.match(/^(?<component>[^/]*)\/(?<template>.*)$/);
+                        const component = getNormalisedComponent(match.groups.component);
+
+                        const tempSearchKey = this.getSearchKey(
+                            theme,
+                            [component, match.groups.template].join('/'),
+                        );
+
+                        // Cache all of the dependent templates because we'll need them to render
+                        // the requested template.
+                        this.setTemplateInCache(tempSearchKey, templateContent);
+
+                        if (config.templaterev > 0) {
+                            // The template cache is enabled - set the value there.
+                            storage.set(`core_template/${config.templaterev}:${tempSearchKey}`, templateContent);
+                        }
                     }
-                });
-                // Remember the index in the requests list for this template so that
-                // we can get the appropriate promise back.
-                const index = requests.length - 1;
 
-                // The server deferred will be resolved with a list of all of the promises
-                // that were sent in the order that they were added to the requests array.
-                promise = serverRequestsDeferred.promise()
-                    .then((promises) => {
-                        // The promise for this template will be the one that matches the index
-                        // for it's entry in the requests array.
-                        //
-                        // Make sure the promise is added to the promises cache for this template
-                        // search key so that we don't request it again.
-                        templatePromises[searchKey] = promises[index].then((response) => {
-                            // Process all of the template dependencies for this template and add
-                            // them to the caches so that we don't request them again later.
-                            response.templates.forEach((data) => {
-                                data.component = getNormalisedComponent(data.component);
-                                const tempSearchKey = this.getSearchKey(
-                                    theme,
-                                    [data.component, data.name].join('/'),
-                                );
+                    if (response.strings) {
+                        // If we have strings that the template needs then warm the string cache
+                        // with them now so that we don't need to re-fetch them.
+                        str.cache_strings(Object.entries(response.strings).map(([key, value]) => {
+                            const match = key.match(/^(?<component>[^/]*)\/(?<name>.*)$/);
+                            return {
+                                component: getNormalisedComponent(match.groups.component),
+                                key: match.groups.name,
+                                value,
+                            };
+                        }));
+                    }
 
-                                // Cache all of the dependent templates because we'll need them to render
-                                // the requested template.
-                                this.setTemplateInCache(tempSearchKey, data.value);
+                    // Return the original template source that the user requested.
+                    if (this.hasTemplateInCache(searchKey)) {
+                        return this.getTemplateFromCache(searchKey);
+                    }
 
-                                if (config.templaterev > 0) {
-                                    // The template cache is enabled - set the value there.
-                                    storage.set(`core_template/${config.templaterev}:${tempSearchKey}`, data.value);
-                                }
-                            });
-
-                            if (response.strings.length) {
-                                // If we have strings that the template needs then warm the string cache
-                                // with them now so that we don't need to re-fetch them.
-                                str.cache_strings(response.strings.map(({component, name, value}) => ({
-                                    component: getNormalisedComponent(component),
-                                    key: name,
-                                    value,
-                                })));
-                            }
-
-                            // Return the original template source that the user requested.
-                            if (this.hasTemplateInCache(searchKey)) {
-                                return this.getTemplateFromCache(searchKey);
-                            }
-
-                            return null;
-                        });
-
-                        return templatePromises[searchKey];
-                    });
-            }
-
-            return promise
-                // When we've successfully loaded the template then resolve the deferred
-                // in the buffer so that all of the calling code can proceed.
+                    return null;
+                })
                 .then((source) => templateDeferred.resolve(source))
-                .catch((error) => {
-                    // If there was an error loading the template then reject the deferred
-                    // in the buffer so that all of the calling code can proceed.
-                    templateDeferred.reject(error);
-                    // Rethrow for anyone else listening.
-                    throw error;
-                });
+                .catch((error) => templateDeferred.reject(error));
+            }
         });
-
-        if (requests.length) {
-            // We have requests to send so resolve the deferred with the promises.
-            serverRequestsDeferred.resolve(ajax.call(requests, true, false, false, 0, config.templaterev));
-        } else {
-            // Nothing to load so we can resolve our deferred.
-            serverRequestsDeferred.resolve();
-        }
 
         // Once we've finished loading all of the templates then recurse to process
         // any templates that may have been added to the buffer in the time that we
@@ -442,6 +411,37 @@ export default class Loader {
                 this.isLoadingTemplates = false;
                 this.processLoadTemplateBuffer();
             });
+    }
+
+    /**
+     * Check if a template exists in any of the caches (promise cache, module cache, or local storage).
+     *
+     * @param {*} searchKey
+     * @returns {Boolean} True if the template exists in any of the caches, false otherwise.
+     */
+    static hasTemplateInAnyCache(searchKey) {
+        // First try the cache of promises.
+        if (searchKey in this.templatePromises) {
+            return true;
+        }
+
+        // Check the module cache.
+        if (this.hasTemplateInCache(searchKey)) {
+            return true;
+        }
+
+        if (config.templaterev <= 0) {
+            // Template caching is disabled. Do not store in persistent storage.
+            return false;
+        }
+
+        // Now try local storage.
+        const cached = storage.get(`core_template/${config.templaterev}:${searchKey}`);
+        if (cached) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
