@@ -521,6 +521,126 @@ describe('@moodle/lms/core/fetch', () => {
             expect(await secondResponse.json()).toEqual({id: 1});
         });
 
+        describe('requests with a cache key', () => {
+            afterEach(() => {
+                (globalThis as any).M.cfg.batchApiAssetRequests = false;
+            });
+
+            it('are sent individually, bypassing the batch queue, by default', async() => {
+                (globalThis as any).M.cfg.batchFetchRequests = true;
+                (globalThis as any).M.cfg.batchApiAssetRequests = false;
+                const batcher = new Fetch();
+
+                await Promise.all([
+                    batcher.performGet('core', '/templates/boost/core/loading', {cachekey: 5}),
+                    batcher.performGet('core', '/strings/en/core/save', {cachekey: 5}),
+                ]);
+
+                expect(mockFetch).toHaveBeenCalledTimes(2);
+                expect(mockFetch.mock.calls[0][0].url)
+                    .toBe('https://example.com/rest/v2/cachekey:5/core/templates/boost/core/loading');
+                expect(mockFetch.mock.calls[1][0].url)
+                    .toBe('https://example.com/rest/v2/cachekey:5/core/strings/en/core/save');
+                mockFetch.mock.calls.forEach(([req]) => expect(req.url).not.toContain('$batch'));
+            });
+
+            it('do not wait for execute() to be called', async() => {
+                (globalThis as any).M.cfg.batchFetchRequests = true;
+                const batcher = new Fetch();
+
+                await batcher.performGet('core', 'cached', {cachekey: 5});
+
+                expect(mockFetch).toHaveBeenCalledTimes(1);
+            });
+
+            it('are not included in a batch alongside uncached requests', async() => {
+                (globalThis as any).M.cfg.batchFetchRequests = true;
+                const batcher = new Fetch();
+
+                const cached = batcher.performGet('core', 'cached', {cachekey: 5});
+                const first = batcher.performGet('mod_example', 'list');
+                const second = batcher.performGet('mod_example', 'other');
+
+                mockFetch.mockImplementation(async(req: MockRequest) => {
+                    if (!req.url.includes('$batch')) {
+                        return new MockResponse(JSON.stringify({}));
+                    }
+                    const ids = getRequestIds(req.body);
+                    expect(ids).toHaveLength(2);
+                    return new MockResponse(
+                        buildBatchResponseBody('resp-boundary', [
+                            {id: ids[0], body: JSON.stringify({})},
+                            {id: ids[1], body: JSON.stringify({})},
+                        ]),
+                        {headers: {'Content-Type': 'multipart/mixed;boundary=resp-boundary'}},
+                    );
+                });
+
+                await batcher.execute();
+                await Promise.all([cached, first, second]);
+
+                const urls = mockFetch.mock.calls.map(([req]) => req.url);
+                expect(urls).toHaveLength(2);
+                expect(urls).toContain('https://example.com/rest/v2/cachekey:5/core/cached');
+                expect(urls).toContain('https://example.com/$batch');
+            });
+
+            it('are batched when batchApiAssetRequests is enabled', async() => {
+                (globalThis as any).M.cfg.batchFetchRequests = true;
+                (globalThis as any).M.cfg.batchApiAssetRequests = true;
+                const batcher = new Fetch();
+
+                const first = batcher.performGet('core', 'one', {cachekey: 5});
+                const second = batcher.performGet('core', 'two', {cachekey: 5});
+
+                expect(mockFetch).not.toHaveBeenCalled();
+
+                mockFetch.mockImplementation(async(req: MockRequest) => {
+                    const ids = getRequestIds(req.body);
+                    return new MockResponse(
+                        buildBatchResponseBody('resp-boundary', [
+                            {id: ids[0], body: JSON.stringify({})},
+                            {id: ids[1], body: JSON.stringify({})},
+                        ]),
+                        {headers: {'Content-Type': 'multipart/mixed;boundary=resp-boundary'}},
+                    );
+                });
+
+                await batcher.execute();
+                await Promise.all([first, second]);
+
+                expect(mockFetch).toHaveBeenCalledTimes(1);
+                expect(mockFetch.mock.calls[0][0].url).toBe('https://example.com/$batch');
+            });
+
+            it.each([null, 0, 1, -1])('with a cache key of %s are still batched', async(cachekey) => {
+                (globalThis as any).M.cfg.batchFetchRequests = true;
+                const batcher = new Fetch();
+
+                const first = batcher.performGet('core', 'one', {cachekey});
+                const second = batcher.performGet('core', 'two', {cachekey});
+
+                expect(mockFetch).not.toHaveBeenCalled();
+
+                mockFetch.mockImplementation(async(req: MockRequest) => {
+                    const ids = getRequestIds(req.body);
+                    return new MockResponse(
+                        buildBatchResponseBody('resp-boundary', [
+                            {id: ids[0], body: JSON.stringify({})},
+                            {id: ids[1], body: JSON.stringify({})},
+                        ]),
+                        {headers: {'Content-Type': 'multipart/mixed;boundary=resp-boundary'}},
+                    );
+                });
+
+                await batcher.execute();
+                await Promise.all([first, second]);
+
+                expect(mockFetch).toHaveBeenCalledTimes(1);
+                expect(mockFetch.mock.calls[0][0].url).toBe('https://example.com/$batch');
+            });
+        });
+
         it('rejects all queued requests when the batch response is not ok', async() => {
             (globalThis as any).M.cfg.batchFetchRequests = true;
             const batcher = new Fetch();

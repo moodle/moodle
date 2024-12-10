@@ -54,6 +54,7 @@
         traceId: 'test-trace-id',
         developerdebug: true,
         batchFetchRequests: false,
+        batchApiAssetRequests: false,
     },
     str: {} as Record<string, Record<string, string>>,
     util: {

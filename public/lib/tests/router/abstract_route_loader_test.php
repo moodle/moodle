@@ -60,7 +60,12 @@ final class abstract_route_loader_test extends \advanced_testcase {
             $this->assertArrayHasKey('methods', $route);
             $this->assertArrayHasKey('pattern', $route);
             $this->assertArrayHasKey('callable', $route);
-            $this->assertStringStartsWith('/path/to/', $route['pattern']);
+
+            if (str_starts_with($route['pattern'], '/cachekey')) {
+                $this->assertStringStartsWith('/cachekey:{cachekey}/path/to/', $route['pattern']);
+            } else {
+                $this->assertStringStartsWith('/path/to/', $route['pattern']);
+            }
         }
     }
 

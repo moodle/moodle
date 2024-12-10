@@ -410,6 +410,9 @@ class Fetch {
   /**
    * Add a request to the batch queue.
    *
+   * Requests with a cache key (greater than 1) are cacheable assets and bypass the queue, unless
+   * the `batchApiAssetRequests` config value is enabled.
+   *
    * @param component The frankenstyle component name.
    * @param endpoint The endpoint within the component to call.
    * @param options Request options, including the optional batch request `id`.
@@ -576,7 +579,9 @@ class Fetch {
       ...prologue,
       // Now add the actual request bodies.
       ...requestBodies.map((requestBody) => requestBody.join("")),
+      // The final boundary marker.
       getBoundaryMarker(true)
+      // No epilogue here. Our API does support one if we need to add one later.
     ];
     return new Request(
       `${config.apibase}/$batch`,
@@ -601,8 +606,9 @@ class Fetch {
     const body = bodyParts.length > 0 ? bodyParts.join("\r\n\r\n").trim() : null;
     const headers = headerText.split("\r\n");
     const statusLine = headers.shift() ?? "";
-    const [, status, ...statusTextParts] = statusLine.split(" ");
-    const statusText = statusTextParts.join(" ");
+    const statusRegexp = /HTTP\/(?<protocol>[^ ]*) (?<status>\d{3}) (?<statusText>.*)$/u;
+    const matches = statusRegexp.exec(statusLine);
+    const { status, statusText } = matches?.groups ?? { status: void 0, statusText: void 0 };
     const headerList = headers.filter((header) => header.includes(":")).map((header) => {
       const index = header.indexOf(":");
       return [header.slice(0, index).trim(), header.slice(index + 1).trim()];

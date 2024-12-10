@@ -20,6 +20,7 @@ use core\exception\not_found_exception;
 use core\exception\response_aware_exception;
 use core\router\error_renderer;
 use core\router\middleware\api_validation_middleware;
+use core\router\middleware\cache_control_middleware;
 use core\router\middleware\cors_middleware;
 use core\router\middleware\error_handling_middleware;
 use core\router\middleware\moodle_api_authentication_middleware;
@@ -269,7 +270,10 @@ class router {
             ->add(di::get(cors_middleware::class))
             ->add(di::get(api_validation_middleware::class))
             ->add(di::get(moodle_api_authentication_middleware::class))
-            ->add(di::get(error_handling_middleware::class));
+            ->add(di::get(error_handling_middleware::class))
+            
+            // Add a Middleware to set the Cache-Control headers for all REST Responses.
+            ->add(di::get(cache_control_middleware::class));
     }
 
     /**

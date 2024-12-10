@@ -564,6 +564,9 @@ export default class Fetch {
     /**
      * Add a request to the batch queue.
      *
+     * Requests with a cache key (greater than 1) are cacheable assets and bypass the queue, unless
+     * the `batchApiAssetRequests` config value is enabled.
+     *
      * @param component The frankenstyle component name.
      * @param endpoint The endpoint within the component to call.
      * @param options Request options, including the optional batch request `id`.
@@ -581,7 +584,7 @@ export default class Fetch {
             id = null,
         }: AddRequestOptions,
     ): Promise<Response> {
-        if (cachekey !== null && cachekey > 1) {
+        if (cachekey !== null && cachekey > 1 && !config.batchApiAssetRequests) {
             // Requests with a cache key are cacheable assets. Send them individually so that each URL can be cached
             // by the browser and any reverse proxy, rather than being hidden inside a generic $batch request.
             if (id !== null) {
@@ -754,7 +757,9 @@ export default class Fetch {
             ...prologue,
             // Now add the actual request bodies.
             ...requestBodies.map(requestBody => requestBody.join('')),
+            // The final boundary marker.
             getBoundaryMarker(true),
+            // No epilogue here. Our API does support one if we need to add one later.
         ];
 
         return new Request(
@@ -797,8 +802,9 @@ export default class Fetch {
 
         // Extract the status from the rest of the headers.
         const statusLine = headers.shift() ?? '';
-        const [, status, ...statusTextParts] = statusLine.split(' ');
-        const statusText = statusTextParts.join(' ');
+        const statusRegexp = /HTTP\/(?<protocol>[^ ]*) (?<status>\d{3}) (?<statusText>.*)$/u;
+        const matches = statusRegexp.exec(statusLine);
+        const {status, statusText} = matches?.groups ?? {status: undefined, statusText: undefined};
 
         const headerList: Array<[string, string]> = headers
             .filter(header => header.includes(':'))

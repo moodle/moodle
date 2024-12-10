@@ -82,17 +82,22 @@ abstract class abstract_route_loader {
         string $componentpath,
         \ReflectionClass $classinfo,
     ): array {
-        // Filter out any methods which are public but do not have any route attached.
-        return array_filter(
-            array_map(
-                fn ($methodinfo) => $this->get_route_data_for_method(
-                    componentpath: $componentpath,
-                    classinfo: $classinfo,
-                    methodinfo: $methodinfo,
-                ),
-                $classinfo->getMethods(\ReflectionMethod::IS_PUBLIC),
-            )
+        // Fetch all routes for each method in the class.
+        // Note: Each method can have multiple routes.
+        $routes = array_map(
+            fn ($methodinfo): array|\Iterator|null => $this->get_route_data_for_method(
+                componentpath: $componentpath,
+                classinfo: $classinfo,
+                methodinfo: $methodinfo,
+            ),
+            $classinfo->getMethods(\ReflectionMethod::IS_PUBLIC),
         );
+
+        // Flatten the array.
+        $routes = array_merge(...array_map('iterator_to_array', $routes));
+
+        // Filter out any methods which are public but do not have any route attached.
+        return array_filter($routes);
     }
 
     /**
@@ -107,7 +112,7 @@ abstract class abstract_route_loader {
         string $componentpath,
         \ReflectionClass $classinfo,
         \ReflectionMethod $methodinfo,
-    ): ?array {
+    ): ?\Iterator {
         $routeattribute = $this->get_route_attribute_for_method(
             $classinfo,
             $methodinfo,
@@ -128,11 +133,20 @@ abstract class abstract_route_loader {
         // Get the HTTP methods for this route.
         $httpmethods = $routeattribute->get_methods(['GET']);
 
-        return [
+        $routedata = [
             'methods' => $httpmethods,
             'pattern' => $pattern,
             'callable' => [$classinfo->getName(), $methodinfo->getName()],
         ];
+
+        // Return the base route.
+        yield $routedata;
+
+        // If the route has a cache lifetime, add a route for the cache key.
+        if ($routeattribute->cachelifetime) {
+            $routedata['pattern'] = "/cachekey:{cachekey}{$pattern}";
+            yield $routedata;
+        }
     }
 
     /**

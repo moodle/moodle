@@ -119,17 +119,19 @@ class mocking_route_loader extends abstract_route_loader implements route_loader
         string $grouppath,
         \ReflectionMethod $method,
     ) {
-        $mapdata = $this->get_route_data_for_method(
+        $routesdata = $this->get_route_data_for_method(
             componentpath: '',
             classinfo: $method->getDeclaringClass(),
             methodinfo: $method,
         );
 
-        $this->add_groupdata(
-            $grouppath,
-            $mapdata,
-            implode('::', $mapdata['callable']),
-        );
+        foreach ($routesdata as $routedata) {
+            $this->add_groupdata(
+                $grouppath,
+                $routedata,
+                implode('::', $routedata['callable']),
+            );
+        }
     }
 
     /**
