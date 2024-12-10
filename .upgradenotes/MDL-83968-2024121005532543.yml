@@ -1,0 +1,16 @@
+issueNumber: MDL-83968
+notes:
+  core:
+    - message: >
+        The following test classes have been moved into autoloadable locations:
+
+
+        | Old location | New classname |
+
+        | --- | --- |
+
+        | `\core\tests\route_testcase` | `\core\tests\router\route_testcase` |
+
+        | `\core\router\mocking_route_loader` |
+        `\core\tests\router\mocking_route_loader` |
+      type: changed
