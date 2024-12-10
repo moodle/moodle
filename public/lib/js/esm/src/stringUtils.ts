@@ -15,9 +15,7 @@
 
 import config from './config';
 import {localStore} from './storage';
-import {
-    fetchMany,
-} from '@moodle/lms/core/ajax';
+import Fetch from '@moodle/lms/core/fetch';
 
 // --- Global type declarations ---
 
@@ -95,7 +93,9 @@ const getResolvedPromise = (value: string): Promise<string> =>
  */
 export const getRequestedStrings = (requests: StringRequest[]): Array<Promise<string>> => {
     type PendingFetch = {
-        request: {methodname: string; args: Record<string, unknown>};
+        component: string;
+        key: string;
+        lang: string;
         resolve: (value: string) => void;
         reject: (reason: unknown) => void;
     };
@@ -141,14 +141,7 @@ export const getRequestedStrings = (requests: StringRequest[]): Array<Promise<st
         // 4. Need to fetch from server — create a deferred promise.
         const fetchPromise = new Promise<string>((resolve, reject) => {
             pendingFetches.push({
-                request: {
-                    methodname: 'core_get_string',
-                    args: {
-                        stringid: key, stringparams: [], component, lang,
-                    },
-                },
-                resolve,
-                reject,
+                component, key, lang, resolve, reject,
             });
         });
 
@@ -167,26 +160,24 @@ export const getRequestedStrings = (requests: StringRequest[]): Array<Promise<st
     }
 
     if (pendingFetches.length > 0) {
-        const ajaxRequests = pendingFetches.map(pf => pf.request);
+        // The batcher automatically sends requests with a cache key individually so that they can be cached.
+        const batcher = Fetch.getBatcher();
 
-        fetchMany<string>(ajaxRequests, {
-            loginrequired: false,
-            nosessionupdate: true,
-            timeout: 0,
-            cachekey: config.langrev,
-        })
-            .then(results => {
-                for (const [index, result] of results.entries()) {
-                    pendingFetches[index].resolve(result);
-                }
-
-                return results;
-            })
-            .catch((error: unknown) => {
-                for (const pf of pendingFetches) {
-                    pf.reject(error);
-                }
-            });
+        for (const {component, key, lang, resolve, reject} of pendingFetches) {
+            batcher.performGet(
+                'core',
+                `/strings/${lang}/${component}/${key}`,
+                {cachekey: config.langrev},
+            )
+                .then(async response => response.json() as {strings: Record<string, string>})
+                .then(({strings}) => strings)
+                .then(strings => {
+                    resolve(strings[`${component}/${key}`]);
+                })
+                .catch((error: unknown) => {
+                    reject(error);
+                });
+        }
     }
 
     return stringPromises;
@@ -200,6 +191,41 @@ export const getRequestedStrings = (requests: StringRequest[]): Array<Promise<st
  */
 export const getStrings = async (requests: StringRequest[]): Promise<string[]> =>
     Promise.all(getRequestedStrings(requests));
+
+/**
+ * Fetch and cache all strings for a component in a given language.
+ *
+ * This is used to bulk pre-populate the string caches for a component, for example before
+ * rendering a set of templates which are known to require many strings from the component.
+ *
+ * @param component The component to fetch strings for.
+ * @param lang The language to fetch strings for. Defaults to current page language.
+ * @returns A Promise that resolves once the component strings have been cached, or null on failure.
+ */
+export const getComponentStrings = async (
+    component: string,
+    lang: string = config.language,
+): Promise<void | null> =>
+    Fetch.performGet(
+        'core',
+        `/strings/${lang}/${component}`,
+        {cachekey: config.langrev},
+    )
+        .then(async response => response.json() as {strings: Record<string, string>})
+        .then(({strings}) => strings)
+        .then(strings => {
+            cacheStrings(Object.entries(strings).map(([identifier, value]) => {
+                const regex = /^(?<component>[^/]+)\/(?<stringid>[^/]+)$/u;
+                const match = regex.exec(identifier);
+                return {
+                    component: match?.groups?.component ?? component,
+                    key: match?.groups?.stringid ?? identifier,
+                    value,
+                    lang,
+                };
+            }));
+        })
+        .catch(() => null);
 
 /**
  * Pre-populate the string caches with known values.

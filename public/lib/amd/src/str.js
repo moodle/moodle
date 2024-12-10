@@ -144,6 +144,18 @@ export const get_strings = (requests) => {
 };
 
 /**
+ * Fetch and cache all strings for a component in a given language.
+ *
+ * This is used to bulk pre-populate the string caches for a component, for example before
+ * rendering a set of templates which are known to require many strings from a component.
+ *
+ * @param {string} component The component to fetch strings for
+ * @param {string} [lang] The users language - if not passed it is deduced.
+ * @return {Promise<void>} A native Promise that resolves once the component strings have been cached
+ */
+export const getComponentStrings = (component, lang) => stringUtils.getComponentStrings(component, lang);
+
+/**
  * Add a list of strings to the caches.
  *
  * This function should typically only be called from core APIs to pre-cache values.

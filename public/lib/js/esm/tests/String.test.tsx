@@ -23,8 +23,8 @@
 import {render, screen, act} from '@testing-library/react';
 import String from '@moodle/lms/core/String';
 import {getString, getStrings, getRequestedStrings, cacheStrings} from '@moodle/lms/core/stringUtils';
-import * as Ajax from '@moodle/lms/core/ajax';
 import {localStore} from '@moodle/lms/core/storage';
+import Fetch from '@moodle/lms/core/fetch';
 
 describe('@moodle/lms/core/String', () => {
     describe('getString', () => {
@@ -63,15 +63,16 @@ describe('@moodle/lms/core/String', () => {
             // Restore original implementation to test the actual batching logic, which is mocked in globalSetup.
             (getRequestedStrings as jest.Mock).mockRestore();
 
-            (Ajax.fetchMany as jest.Mock).mockImplementation((requests) => {
-                // Simulate successful fetch responses for requested strings.
-                const responses = requests.map(({args}: { args: { stringid: string, component?: string } }) => {
-                    const stringid = args.stringid;
-                    const component = args.component || 'core';
-                    const value = `[${stringid}, ${component}]`; // Default response format.
-                    return Promise.resolve(value); // Simulate AJAX response structure.
-                });
-                return Promise.all(responses);
+            // Simulate successful fetch responses for requested strings from the langstring REST API.
+            jest.spyOn(Fetch.getBatcher(), 'performGet').mockImplementation((_component: string, action: string) => {
+                const match = action.match(/^\/strings\/[^/]+\/([^/]+)\/(.+)$/);
+                const component = match?.[1] ?? 'core';
+                const stringid = match?.[2] ?? '';
+                const value = `[${stringid}, ${component}]`; // Default response format.
+
+                return Promise.resolve({
+                    json: () => Promise.resolve({ strings: { [`${component}/${stringid}`]: value } }),
+                } as unknown as Response);
             });
         });
 

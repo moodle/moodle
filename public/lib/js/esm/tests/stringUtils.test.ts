@@ -20,8 +20,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {getString, getStrings, cacheStrings, getRequestedStrings} from '@moodle/lms/core/stringUtils';
-import * as Ajax from '@moodle/lms/core/ajax';
+import {getString, getStrings, cacheStrings, getRequestedStrings, getComponentStrings} from '@moodle/lms/core/stringUtils';
+import Fetch from '@moodle/lms/core/fetch';
 
 describe('@moodle/lms/core/stringUtils', () => {
     beforeEach(() => {
@@ -62,21 +62,74 @@ describe('@moodle/lms/core/stringUtils', () => {
         await expect(getString('precached', 'mod_forum')).resolves.toBe('Pre-cached');
     });
 
-    it('fetches uncached strings without requiring login and without updating the session', async() => {
-        const fetchManySpy = jest.spyOn(Ajax, 'fetchMany');
-        fetchManySpy.mockImplementation((requests) => Promise.resolve(
-            requests.map(() => 'Fetched value'),
-        ));
+    it('fetches uncached strings from the langstring REST API, batched via the Fetch batcher', async() => {
+        const performGetSpy = jest.spyOn(Fetch.getBatcher(), 'performGet');
+        performGetSpy.mockResolvedValue({
+            json: () => Promise.resolve({strings: {'core/uncached': 'Fetched value'}}),
+        } as unknown as Response);
 
         await expect(getString('uncached', 'core')).resolves.toBe('Fetched value');
 
-        expect(fetchManySpy).toHaveBeenCalledWith(
-            expect.anything(),
-            expect.objectContaining({
-                loginrequired: false,
-                nosessionupdate: true,
-            }),
+        expect(performGetSpy).toHaveBeenCalledWith(
+            'core',
+            '/strings/en/core/uncached',
+            {cachekey: 1},
         );
+    });
+
+    it('passes the language revision as the cache key when fetching uncached strings', async() => {
+        (globalThis as any).M.cfg.langrev = 2;
+
+        const performGetSpy = jest.spyOn(Fetch.getBatcher(), 'performGet');
+        performGetSpy.mockResolvedValue({
+            json: () => Promise.resolve({strings: {'core/revisioned': 'Revisioned value'}}),
+        } as unknown as Response);
+
+        await expect(getString('revisioned', 'core')).resolves.toBe('Revisioned value');
+
+        expect(performGetSpy).toHaveBeenCalledWith(
+            'core',
+            '/strings/en/core/revisioned',
+            {cachekey: 2},
+        );
+
+        (globalThis as any).M.cfg.langrev = 1;
+    });
+
+    it('fetches and caches all strings for a component via getComponentStrings', async() => {
+        const performGetSpy = jest.spyOn(Fetch, 'performGet');
+        performGetSpy.mockResolvedValue({
+            json: () => Promise.resolve({
+                strings: {
+                    'mod_forum/modulename': 'Forum',
+                    'mod_forum/modulenameplural': 'Forums',
+                },
+            }),
+        } as unknown as Response);
+        (globalThis as any).M.cfg.langrev = 2;
+
+        await getComponentStrings('mod_forum', 'en');
+
+        expect(performGetSpy).toHaveBeenCalledWith(
+            'core',
+            '/strings/en/mod_forum',
+            {cachekey: 2},
+        );
+
+        (globalThis as any).M.cfg.langrev = 1;
+
+        await expect(getString('modulename', 'mod_forum')).resolves.toBe('Forum');
+        await expect(getString('modulenameplural', 'mod_forum')).resolves.toBe('Forums');
+    });
+
+    it('resolves to null when getComponentStrings fails to fetch', async() => {
+        const performGetSpy = jest.spyOn(Fetch, 'performGet');
+        performGetSpy.mockRejectedValue(new Error('Network error'));
+        (globalThis as any).M.cfg.langrev = 2;
+
+        await expect(getComponentStrings('mod_forum', 'en')).resolves.toBeNull();
+
+        (globalThis as any).M.cfg.langrev = 1;
     });
 
     describe('params', () => {

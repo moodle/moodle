@@ -2,9 +2,7 @@ var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 import config from "./config";
 import { localStore } from "./storage";
-import {
-  fetchMany
-} from "@moodle/lms/core/ajax";
+import Fetch from "@moodle/lms/core/fetch";
 const promiseCache = /* @__PURE__ */ new Map();
 const stringPromiseCache = /* @__PURE__ */ new Map();
 const getCacheKey = /* @__PURE__ */ __name((key, component, lang) => `core_str/${key}/${component}/${lang}`, "getCacheKey");
@@ -43,15 +41,9 @@ const getRequestedStrings = /* @__PURE__ */ __name((requests) => {
     }
     const fetchPromise = new Promise((resolve, reject) => {
       pendingFetches.push({
-        request: {
-          methodname: "core_get_string",
-          args: {
-            stringid: key,
-            stringparams: [],
-            component,
-            lang
-          }
-        },
+        component,
+        key,
+        lang,
         resolve,
         reject
       });
@@ -67,26 +59,38 @@ const getRequestedStrings = /* @__PURE__ */ __name((requests) => {
     });
   }
   if (pendingFetches.length > 0) {
-    const ajaxRequests = pendingFetches.map((pf) => pf.request);
-    fetchMany(ajaxRequests, {
-      loginrequired: false,
-      nosessionupdate: true,
-      timeout: 0,
-      cachekey: config.langrev
-    }).then((results) => {
-      for (const [index, result] of results.entries()) {
-        pendingFetches[index].resolve(result);
-      }
-      return results;
-    }).catch((error) => {
-      for (const pf of pendingFetches) {
-        pf.reject(error);
-      }
-    });
+    const batcher = Fetch.getBatcher();
+    for (const { component, key, lang, resolve, reject } of pendingFetches) {
+      batcher.performGet(
+        "core",
+        `/strings/${lang}/${component}/${key}`,
+        { cachekey: config.langrev }
+      ).then(async (response) => response.json()).then(({ strings }) => strings).then((strings) => {
+        resolve(strings[`${component}/${key}`]);
+      }).catch((error) => {
+        reject(error);
+      });
+    }
   }
   return stringPromises;
 }, "getRequestedStrings");
 const getStrings = /* @__PURE__ */ __name(async (requests) => Promise.all(getRequestedStrings(requests)), "getStrings");
+const getComponentStrings = /* @__PURE__ */ __name(async (component, lang = config.language) => Fetch.performGet(
+  "core",
+  `/strings/${lang}/${component}`,
+  { cachekey: config.langrev }
+).then(async (response) => response.json()).then(({ strings }) => strings).then((strings) => {
+  cacheStrings(Object.entries(strings).map(([identifier, value]) => {
+    const regex = /^(?<component>[^/]+)\/(?<stringid>[^/]+)$/u;
+    const match = regex.exec(identifier);
+    return {
+      component: match?.groups?.component ?? component,
+      key: match?.groups?.stringid ?? identifier,
+      value,
+      lang
+    };
+  }));
+}).catch(() => null), "getComponentStrings");
 const cacheStrings = /* @__PURE__ */ __name((strings) => {
   for (const { key, component = "core", value, lang = config.language } of strings) {
     const cacheKey = getCacheKey(key, component, lang);
@@ -118,6 +122,7 @@ const resetStringCache = /* @__PURE__ */ __name(() => {
 }, "resetStringCache");
 export {
   cacheStrings,
+  getComponentStrings,
   getRequestedStrings,
   getString,
   getStrings,
