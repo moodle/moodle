@@ -31,7 +31,7 @@ import {getNormalisedComponent} from 'core/utils';
  */
 export default class Loader {
     /** @var {String} themeName for the current render */
-    currentThemeName = '';
+    currentThemeName = undefined;
 
     /** @var {Object[]} loadTemplateBuffer - List of templates to be loaded */
     static loadTemplateBuffer = [];

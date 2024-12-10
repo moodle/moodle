@@ -61,7 +61,7 @@ export default class Renderer {
     requiredJS = null;
 
     /** @var {String} themeName for the current render */
-    currentThemeName = '';
+    currentThemeName = undefined;
 
     /** @var {Number} uniqInstances Count of times this constructor has been called. */
     static uniqInstances = 0;
@@ -109,7 +109,7 @@ export default class Renderer {
         this.requiredStrings = [];
         this.requiredJS = [];
         this.requiredDates = [];
-        this.currentThemeName = '';
+        this.currentThemeName = undefined;
     }
 
     /**
