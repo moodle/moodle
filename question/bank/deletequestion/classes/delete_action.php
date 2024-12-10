@@ -72,7 +72,7 @@ class delete_action extends question_action_base {
     }
 
     public function get_menu_position(): int {
-        return 400;
+        return 2000;
     }
 
     protected function get_url_icon_and_label(\stdClass $question): array {
@@ -98,5 +98,19 @@ class delete_action extends question_action_base {
             $url = new \moodle_url($this->deletequestionurl, $deleteparams);
             return [$url, 't/delete', $this->strdelete];
         }
+    }
+
+    /**
+     * Override method to get url and label for delete action to add the text-danger class.
+     *
+     * @param \stdClass $question
+     * @return \action_menu_link|null
+     */
+    public function get_action_menu_link(\stdClass $question): ?\action_menu_link {
+        $deletelink = parent::get_action_menu_link($question);
+        if ($deletelink !== null) {
+            $deletelink->add_class('text-danger');
+        }
+        return $deletelink;
     }
 }
