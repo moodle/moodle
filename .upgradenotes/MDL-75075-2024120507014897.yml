@@ -13,3 +13,9 @@ notes:
         the tag name will be displayed as a clickable hyperlink. If `displaylink` is set to `false`,
         the tag name will be rendered as plain text instead.
       type: changed
+  mod_quiz:
+    - message: >-
+        The `quiz_question_tostring` method now includes a new boolean parameter, `displaytaglink`.
+        This parameter specifies whether the tag name in the question bank should be displayed
+        as a clickable hyperlink (`true`) or as plain text (`false`).
+      type: changed

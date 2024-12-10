@@ -1637,10 +1637,11 @@ function quiz_get_js_module() {
  * @param bool $showidnumber If true, show the question's idnumber, if any. False by default.
  * @param core_tag_tag[]|bool $showtags if array passed, show those tags. Else, if true, get and show tags,
  *       else, don't show tags (which is the default).
+ * @param bool $displaytaglink Indicates whether the tag should be displayed as a link.
  * @return string HTML fragment.
  */
 function quiz_question_tostring($question, $showicon = false, $showquestiontext = true,
-        $showidnumber = false, $showtags = false) {
+        $showidnumber = false, $showtags = false, $displaytaglink = true) {
     global $OUTPUT;
     $result = '';
 
@@ -1667,7 +1668,7 @@ function quiz_question_tostring($question, $showicon = false, $showquestiontext 
         $tags = [];
     }
     if ($tags) {
-        $result .= $OUTPUT->tag_list($tags, null, 'd-inline', 0, null, true);
+        $result .= $OUTPUT->tag_list($tags, null, 'd-inline', 0, null, true, $displaytaglink);
     }
 
     // Question text.
