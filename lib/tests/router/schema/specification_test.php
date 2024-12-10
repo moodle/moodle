@@ -22,7 +22,7 @@ use core\router\schema\parameters\path_parameter;
 use core\router\schema\response\content\payload_response_type;
 use core\router\schema\response\response;
 use core\router\schema\specification;
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 
 /**
  * Tests for the specification.

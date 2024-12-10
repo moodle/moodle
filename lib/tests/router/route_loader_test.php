@@ -16,7 +16,7 @@
 
 namespace core\router;
 
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 use Slim\Routing\RoutingResults;
 
 /**

@@ -17,7 +17,7 @@
 namespace core\router;
 
 use core\router\middleware\moodle_route_attribute_middleware;
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 use GuzzleHttp\Psr7\ServerRequest;
 use Slim\Middleware\RoutingMiddleware;
 

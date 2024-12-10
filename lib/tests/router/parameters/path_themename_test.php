@@ -16,7 +16,7 @@
 
 namespace core\router\parameters;
 
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 use invalid_parameter_exception;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;

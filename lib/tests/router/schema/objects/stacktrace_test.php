@@ -17,7 +17,7 @@
 namespace core\router\schema\objects;
 
 use core\router\schema\specification;
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 
 /**
  * Tests for a stacktrace.

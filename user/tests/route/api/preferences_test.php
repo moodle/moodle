@@ -16,7 +16,7 @@
 
 namespace core_user\route\api;
 
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 use GuzzleHttp\Psr7\Utils;
 
 /**

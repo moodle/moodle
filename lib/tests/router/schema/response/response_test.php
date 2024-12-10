@@ -23,7 +23,7 @@ use core\router\schema\referenced_object;
 use core\router\schema\response\content\json_media_type;
 use core\router\schema\response\content\payload_response_type;
 use core\router\schema\specification;
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 
 /**
  * Tests for the response schema definition.
