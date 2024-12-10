@@ -1024,6 +1024,7 @@ class qformat_default {
 
         // Did we actually process anything? Then continue path for following error checks.
         if ($count==0) {
+            $contextid = $DB->get_field('question_categories', 'contextid', ['id' => $this->category->id]);
             $context = context::instance_by_id($contextid);
             $continuepath = "{$CFG->wwwroot}/question/bank/exportquestions/export.php?cmid={$context->instanceid}";
             throw new \moodle_exception('noquestions', 'question', $continuepath);
