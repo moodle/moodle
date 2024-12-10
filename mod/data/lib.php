@@ -4124,7 +4124,7 @@ function data_view($data, $course, $cm, $context) {
  * Get the list of deprecated icons.
  *
  * @return array with the deprecated key icons.
- * @todo Final deprecation on Moodle 6.0 MDL-83465. 
+ * @todo Final deprecation on Moodle 6.0 MDL-83465.
  */
 function mod_data_get_deprecated_icons() {
     return [
