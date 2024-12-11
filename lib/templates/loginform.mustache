@@ -103,7 +103,7 @@
     {{#logourl}}
         <div id="loginlogo" class="login-logo">
             <img id="logoimage" src="{{logourl}}" class="img-fluid" alt="{{sitename}}"/>
-            <h1 class="login-heading sr-only">{{#str}} loginto, core, {{sitename}} {{/str}}</h1>
+            <h1 class="login-heading visually-hidden">{{#str}} loginto, core, {{sitename}} {{/str}}</h1>
         </div>
     {{/logourl}}
     {{^logourl}}
@@ -115,15 +115,15 @@
         </div>
     {{/maintenance}}
     {{#error}}
-        <a href="#" id="loginerrormessage" class="sr-only">{{error}}</a>
+        <a href="#" id="loginerrormessage" class="visually-hidden">{{error}}</a>
         <div class="alert alert-danger" role="alert">{{error}}</div>
     {{/error}}
     {{#info}}
-        <a href="#" id="logininfomessage" class="sr-only">{{info}}</a>
+        <a href="#" id="logininfomessage" class="visually-hidden">{{info}}</a>
         <div class="alert alert-info" role="alert">{{info}}</div>
     {{/info}}
     {{#cansignup}}
-        <a href="{{signupurl}}" class="sr-only">{{#str}} tocreatenewaccount {{/str}}</a>
+        <a href="{{signupurl}}" class="visually-hidden">{{#str}} tocreatenewaccount {{/str}}</a>
     {{/cansignup}}
     {{#showloginform}}
         <form class="login-form" action="{{loginurl}}" method="post" id="login">
@@ -131,7 +131,7 @@
             <script>document.getElementById('anchor').value = location.hash;</script>
             <input type="hidden" name="logintoken" value="{{logintoken}}">
             <div class="login-form-username mb-3">
-                <label for="username" class="sr-only">
+                <label for="username" class="visually-hidden">
                     {{^canloginbyemail}}
                         {{#str}} username {{/str}}
                     {{/canloginbyemail}}
@@ -147,7 +147,7 @@
                     !}}autocomplete="username">
             </div>
             <div class="login-form-password mb-3">
-                <label for="password" class="sr-only">{{#str}} password {{/str}}</label>
+                <label for="password" class="visually-hidden">{{#str}} password {{/str}}</label>
                 <input type="password" name="password" id="password" value="" {{!
                     !}}class="form-control form-control-lg" {{!
                     !}}placeholder="{{#cleanstr}}password{{/cleanstr}}" {{!

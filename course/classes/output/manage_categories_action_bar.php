@@ -88,7 +88,7 @@ class manage_categories_action_bar implements \renderable {
 
         if ($content) {
             $urlselect = new \url_select($content, $activeurl, null);
-            $urlselect->set_label(get_string('viewing'), ['class' => 'sr-only']);
+            $urlselect->set_label(get_string('viewing'), ['class' => 'visually-hidden']);
             return $urlselect->export_for_template($output);
         }
 
@@ -117,7 +117,7 @@ class manage_categories_action_bar implements \renderable {
             }
 
             $select = new \url_select($options, $currenturl);
-            $select->set_label(get_string('category'), ['class' => 'sr-only']);
+            $select->set_label(get_string('category'), ['class' => 'visually-hidden']);
             $select->class .= ' text-truncate w-100';
             return $select->export_for_template($output);
         }

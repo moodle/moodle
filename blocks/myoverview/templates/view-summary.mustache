@@ -45,7 +45,7 @@
             <div class="col-md-2 d-flex align-items-center mb-sm-3 mb-md-0">
                 <a href="{{viewurl}}" tabindex="-1" class="mw-100 w-100">
                     <div class="summary-image rounded mw-100" style='background-image: url("{{{courseimage}}}");'>
-                        <span class="sr-only">{{fullname}}</span>
+                        <span class="visually-hidden">{{fullname}}</span>
                     </div>
                 </a>
             </div>
@@ -55,7 +55,7 @@
                         {{#showcoursecategory}}
                             <div class="px-1">|</div>
                         {{/showcoursecategory}}
-                        <span class="sr-only">
+                        <span class="visually-hidden">
                             {{#str}}aria:courseshortname, core_course{{/str}}
                         </span>
                         <div>{{{shortname}}}</div>
@@ -63,13 +63,13 @@
                 {{/showshortname}}
                 <a href="{{viewurl}}" class="aalink coursename">
                     {{> core_course/favouriteicon }}
-                    <span class="sr-only">
+                    <span class="visually-hidden">
                         {{#str}}aria:coursename, core_course{{/str}}
                     </span>
                     {{{fullname}}}
                 </a>
                 {{$coursecategory}}
-                    <span class="sr-only">
+                    <span class="visually-hidden">
                         {{#str}}aria:coursecategory, core_course{{/str}}
                     </span>
                     {{#showcoursecategory}}
@@ -86,7 +86,7 @@
                     </div>
                 {{/visible}}
                 <div class="summary">
-                    <span class="sr-only">{{#str}}aria:coursesummary, block_myoverview{{/str}}</span>
+                    <span class="visually-hidden">{{#str}}aria:coursesummary, block_myoverview{{/str}}</span>
                     {{{summary}}}
                 </div>
                 {{#hasprogress}}

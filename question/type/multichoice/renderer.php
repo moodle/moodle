@@ -153,7 +153,7 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
             $questionnumber = $options->add_question_identifier_to_label($this->prompt(), true, true);
         } else {
             $questionnumber = $options->add_question_identifier_to_label(get_string('answer'), true, true);
-            $legendclass = 'sr-only';
+            $legendclass = 'visually-hidden';
         }
         $legendattrs = [
             'class' => 'prompt h6 fw-normal ' . $legendclass,
@@ -312,7 +312,7 @@ class qtype_multichoice_single_renderer extends qtype_multichoice_renderer_base 
             'name' => $qa->get_qt_field_name('answer'),
             'id' => $clearchoiceid,
             'value' => -1,
-            'class' => 'sr-only',
+            'class' => 'visually-hidden',
             'aria-hidden' => 'true'
         ];
         $clearchoicewrapperattrs = [
@@ -321,11 +321,11 @@ class qtype_multichoice_single_renderer extends qtype_multichoice_renderer_base 
         ];
 
         // When no choice selected during rendering, then hide the clear choice option.
-        // We are using .sr-only and aria-hidden together so while the element is hidden
+        // We are using .visually-hidden and aria-hidden together so while the element is hidden
         // from both the monitor and the screen-reader, it is still tabbable.
         $linktabindex = 0;
         if (!$hascheckedchoice && $response == -1) {
-            $clearchoicewrapperattrs['class'] .= ' sr-only';
+            $clearchoicewrapperattrs['class'] .= ' visually-hidden';
             $clearchoicewrapperattrs['aria-hidden'] = 'true';
             $clearchoiceradioattrs['checked'] = 'checked';
             $linktabindex = -1;

@@ -245,7 +245,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::start_div('float-start ' . $checkboxclass);
         $html .= html_writer::start_div('custom-control custom-checkbox me-1 ');
         $html .= html_writer::empty_tag('input', $bcatinput);
-        $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'sr-only');
+        $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'visually-hidden');
         $html .= html_writer::tag('label', $labeltext, array(
             'class' => 'custom-control-label',
             'for' => 'categorylistitem' . $category->id));
@@ -626,7 +626,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::start_div('float-start ' . $checkboxclass);
         $html .= html_writer::start_div('custom-control custom-checkbox me-1 ');
         $html .= html_writer::empty_tag('input', $bulkcourseinput);
-        $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'sr-only');
+        $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'visually-hidden');
         $html .= html_writer::tag('label', $labeltext, array(
             'class' => 'custom-control-label',
             'for' => 'courselistitem' . $course->id));
@@ -1205,7 +1205,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         if ($bulkcourseinput) {
             $html .= html_writer::start_div('custom-control custom-checkbox me-1');
             $html .= html_writer::empty_tag('input', $bulkcourseinput);
-            $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'sr-only');
+            $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'visually-hidden');
             $html .= html_writer::tag('label', $labeltext, array(
                 'class' => 'custom-control-label',
                 'for' => 'coursesearchlistitem' . $course->id));

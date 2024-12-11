@@ -71,7 +71,7 @@ class edit_action_area implements templatable, renderable {
 
         $selectmenu = new \url_select($menu, $this->currenturl->out(false), null, 'mod_lesson_navigation_select');
         $selectmenu->label = get_string('displaymode', 'mod_lesson');
-        $selectmenu->labelattributes = ['class' => 'sr-only'];
+        $selectmenu->labelattributes = ['class' => 'visually-hidden'];
 
         $headinglevel = $PAGE->activityheader->get_heading_level();
         return [

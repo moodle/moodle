@@ -29,7 +29,7 @@
   <form autocomplete="off" action="{{action}}" method="get" accept-charset="utf-8" class="mform d-flex flex-wrap align-items-center simplesearchform">
     <div class="input-group">
       <label for="searchinput-{{uniqid}}">
-        <span class="sr-only">{{#str}} search, core {{/str}}</span>
+        <span class="visually-hidden">{{#str}} search, core {{/str}}</span>
       </label>
       <input type="text"
              id="searchinput-{{uniqid}}"
@@ -44,7 +44,7 @@
       <div class="input-group-append">
         <button type="submit" class="btn btn-primary search-icon">
           {{#pix}} a/search, core {{/pix}}
-          <span class="sr-only">{{#str}} search, core {{/str}}</span>
+          <span class="visually-hidden">{{#str}} search, core {{/str}}</span>
         </button>
       </div>
     </div>

@@ -65,7 +65,7 @@ class category_action_bar extends manage_categories_action_bar {
                 }
                 $currenturl = new moodle_url($this->page->url, ['categoryid' => $this->category->id]);
                 $select = new \url_select($options, $currenturl, null);
-                $select->set_label(get_string('categories'), ['class' => 'sr-only']);
+                $select->set_label(get_string('categories'), ['class' => 'visually-hidden']);
                 $select->class .= ' text-truncate w-100';
                 return $select->export_for_template($output);
             }

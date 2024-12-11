@@ -115,7 +115,7 @@ class base_setting_ui {
             return null;
         }
         $renderer = $PAGE->get_renderer('core_backup');
-        return $renderer->sr_text($this->altlabel);
+        return $renderer->visually_hidden_text($this->altlabel);
     }
 
     /**

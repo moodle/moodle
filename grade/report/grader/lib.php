@@ -1520,7 +1520,7 @@ class grade_report_grader extends grade_report {
             'class' => 'gradeitemheader',
             'aria-describedby' => $describedbyid
         ]);
-        $courseheader .= html_writer::div($showing, 'sr-only', [
+        $courseheader .= html_writer::div($showing, 'visually-hidden', [
             'id' => $describedbyid
         ]);
 

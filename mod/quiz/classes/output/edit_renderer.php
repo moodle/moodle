@@ -410,9 +410,9 @@ class edit_renderer extends \plugin_renderer_base {
             $sectionheadingtext = format_string($section->heading);
             $sectionheading = html_writer::span($sectionheadingtext, 'instancesection');
         } else {
-            // Use a sr-only default section heading, so we don't end up with an empty section heading.
+            // Use a visually-hidden default section heading, so we don't end up with an empty section heading.
             $sectionheadingtext = get_string('sectionnoname', 'quiz');
-            $sectionheading = html_writer::span($sectionheadingtext, 'instancesection sr-only');
+            $sectionheading = html_writer::span($sectionheadingtext, 'instancesection visually-hidden');
         }
 
         $output .= html_writer::start_tag('li', ['id' => 'section-'.$section->id,
@@ -829,7 +829,7 @@ class edit_renderer extends \plugin_renderer_base {
                 'name' => 'selectquestion[]',
                 'classes' => 'select-multiple-checkbox',
                 'label' => get_string('selectquestionslot', 'quiz', $questionslot),
-                'labelclasses' => 'sr-only',
+                'labelclasses' => 'visually-hidden',
             ]);
 
         return $this->render($checkbox);

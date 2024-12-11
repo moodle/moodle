@@ -40,7 +40,7 @@
             {{/hiddenfields}}
             <div class="input-group">
                 <label for="searchinput-{{uniqid}}">
-                    <span class="sr-only">{{{ searchstring }}}</span>
+                    <span class="visually-hidden">{{{ searchstring }}}</span>
                 </label>
                     <input type="text"
                        id="searchinput-{{uniqid}}"
@@ -58,12 +58,12 @@
                         role="button"
                     >
                         {{#pix}} e/cancel, core {{/pix}}
-                        <span class="sr-only">{{#str}} closebuttontitle {{/str}}</span>
+                        <span class="visually-hidden">{{#str}} closebuttontitle {{/str}}</span>
                     </a>
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-submit" data-action="submit">
                         {{#pix}} a/search, core {{/pix}}
-                        <span class="sr-only">{{{ searchstring }}}</span>
+                        <span class="visually-hidden">{{{ searchstring }}}</span>
                     </button>
                 </div>
             </div>
@@ -80,7 +80,7 @@
         title="{{#str}} togglesearch {{/str}}"
     >
         {{#pix}} a/search, core {{/pix}}
-        <span class="sr-only">{{#str}} togglesearch {{/str}}</span>
+        <span class="visually-hidden">{{#str}} togglesearch {{/str}}</span>
     </a>
 </div>
 

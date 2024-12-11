@@ -2953,12 +2953,26 @@ EOD;
      *
      * @param string $contents The contents of the paragraph
      * @return string the HTML to output.
+     * @deprecated since 5.0. Use visually_hidden_text() instead.
+     * @todo Final deprecation in Moodle 6.0. See MDL-83671.
      */
+    #[\core\attribute\deprecated('core_renderer::visually_hidden_text()', since: '5.0', mdl: 'MDL-81825')]
     public function sr_text(string $contents): string {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        return $this->visually_hidden_text($contents);
+    }
+
+    /**
+     * Outputs a visually hidden inline text (but accessible to assistive technologies).
+     *
+     * @param string $contents The contents of the paragraph
+     * @return string the HTML to output.
+     */
+    public function visually_hidden_text(string $contents): string {
         return html_writer::tag(
             'span',
             $contents,
-            ['class' => 'sr-only']
+            ['class' => 'visually-hidden']
         ) . ' ';
     }
 
@@ -3812,10 +3826,10 @@ EOD;
             'data-droptarget' => '1',
         ];
         if ($this->page->blocks->region_has_content($displayregion, $this)) {
-            $content = html_writer::tag('h2', get_string('blocks'), ['class' => 'sr-only']) .
+            $content = html_writer::tag('h2', get_string('blocks'), ['class' => 'visually-hidden']) .
                 $this->blocks_for_region($displayregion, $fakeblocksonly);
         } else {
-            $content = html_writer::tag('h2', get_string('blocks'), ['class' => 'sr-only']);
+            $content = html_writer::tag('h2', get_string('blocks'), ['class' => 'visually-hidden']);
         }
         return html_writer::tag($tag, $content, $attributes);
     }
@@ -4222,9 +4236,10 @@ EOD;
             }
         }
 
-        // Return the heading wrapped in an sr-only element so it is only visible to screen-readers for nocontextheader layouts.
+        // Return the heading wrapped in an visually-hidden element so it is only visible to screen-readers
+        // for nocontextheader layouts.
         if (!empty($this->page->layout_options['nocontextheader'])) {
-            return html_writer::div($heading, 'sr-only');
+            return html_writer::div($heading, 'visually-hidden');
         }
 
         $contextheader = new context_header($heading, $headinglevel, $imagedata, $userbuttons);

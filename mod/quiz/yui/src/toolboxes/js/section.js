@@ -213,12 +213,12 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
             var instancesection = activity.one(SELECTOR.INSTANCESECTION);
             var instancesectiontext = newtext;
             if (newtext.trim() === '') {
-                // Add a sr-only default section heading text to make sure we don't end up with an empty section heading.
+                // Add a visually-hidden default section heading text to make sure we don't end up with an empty section heading.
                 instancesectiontext = M.util.get_string('sectionnoname', 'quiz');
-                instancesection.addClass('sr-only');
+                instancesection.addClass('visually-hidden');
             } else {
                 // Show the section heading when a non-empty value is set.
-                instancesection.removeClass('sr-only');
+                instancesection.removeClass('visually-hidden');
             }
             instancesection.setContent(instancesectiontext);
 
@@ -234,13 +234,13 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
                     // e.g. filters were applied, the update failed, etc.
                     if (newtext !== response.instancesection) {
                         if (response.instancesection.trim() === '') {
-                            // Add a sr-only default section heading text.
+                            // Add a visually-hidden default section heading text.
                             instancesectiontext = M.util.get_string('sectionnoname', 'quiz');
-                            instancesection.addClass('sr-only');
+                            instancesection.addClass('visually-hidden');
                         } else {
                             instancesectiontext = response.instancesection;
                             // Show the section heading when a non-empty value is set.
-                            instancesection.removeClass('sr-only');
+                            instancesection.removeClass('visually-hidden');
                         }
                         instancesection.setContent(instancesectiontext);
                     }

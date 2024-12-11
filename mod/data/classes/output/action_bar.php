@@ -151,7 +151,7 @@ class action_bar {
         }
 
         $urlselect = new url_select($menu, $activeurl->out(false), null, 'viewactionselect');
-        $urlselect->set_label(get_string('viewnavigation', 'mod_data'), ['class' => 'sr-only']);
+        $urlselect->set_label(get_string('viewnavigation', 'mod_data'), ['class' => 'visually-hidden']);
         $renderer = $PAGE->get_renderer('mod_data');
         $viewactionbar = new view_action_bar($this->id, $urlselect, $hasentries, $mode);
 
@@ -188,7 +188,7 @@ class action_bar {
         ];
 
         $selectmenu = new \core\output\select_menu('presetsactions', $menu, $this->currenturl->out(false));
-        $selectmenu->set_label(get_string('templatesnavigation', 'mod_data'), ['class' => 'sr-only']);
+        $selectmenu->set_label(get_string('templatesnavigation', 'mod_data'), ['class' => 'visually-hidden']);
 
         $renderer = $PAGE->get_renderer('mod_data');
 
@@ -268,7 +268,7 @@ class action_bar {
             }
         }
         $urlselect = new url_select($menu, $selected, null);
-        $urlselect->set_label(get_string('templatesnavigation', manager::PLUGINNAME), ['class' => 'sr-only']);
+        $urlselect->set_label(get_string('templatesnavigation', manager::PLUGINNAME), ['class' => 'visually-hidden']);
 
         $data = [
             'title' => get_string('preview', manager::PLUGINNAME, preset::get_name_from_plugin($fullname)),

@@ -557,7 +557,7 @@ $calendarCurrentDateBackground: $primary;
                 }
                 .calendarwrapper {
                     .arrow_text {
-                        @include sr-only;
+                        @include visually-hidden;
                     }
                 }
             }

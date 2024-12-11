@@ -182,7 +182,7 @@ class course_external_tools_list extends system_report {
                     'disabled' => $disabled,
                     'dataattributes' => $attributes,
                     'label' => $label,
-                    'labelclasses' => 'sr-only'
+                    'labelclasses' => 'visually-hidden',
                 ]);
             })
         );

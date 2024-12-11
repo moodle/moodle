@@ -24,7 +24,7 @@
 <form>
     <div class="alert alert-warning">
         {{#str}}unsavedataalert, gradereport_singleview{{/str}}
-        <span class="sr-only">{{#str}}unsaveddatawarning, gradereport_singleview{{/str}}</span>
+        <span class="visually-hidden">{{#str}}unsaveddatawarning, gradereport_singleview{{/str}}</span>
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="checkbox" value="1" id="override">
             <label class="form-check-label" for="override">
@@ -47,7 +47,7 @@
         <p class ="fw-bold">
             {{#str}}bulkinsertvalue, gradereport_singleview{{/str}}
         </p>
-        <label for="{{name}}" class="sr-only">{{#str}}bulkinsertvalue, gradereport_singleview{{/str}}</label>
+        <label for="{{name}}" class="visually-hidden">{{#str}}bulkinsertvalue, gradereport_singleview{{/str}}</label>
         <input type="text" name="{{name}}" id="{{id}}" value="0" class="form-control text-ltr" disabled {{#readonly}}readonly{{/readonly}}>
     </div>
 

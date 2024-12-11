@@ -46,12 +46,12 @@
     <div class="col-md-3 col-form-label d-flex pb-0 pe-md-0">
         {{# label}}{{$ label }}
             {{^element.staticlabel}}
-                <label id="{{element.id}}_label" class="d-inline word-break {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
+                <label id="{{element.id}}_label" class="d-inline word-break {{#element.hiddenlabel}}visually-hidden{{/element.hiddenlabel}}" for="{{element.id}}">
                     {{{label}}}
                 </label>
             {{/element.staticlabel}}
             {{#element.staticlabel}}
-                <span class="d-inline-block {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}">
+                <span class="d-inline-block {{#element.hiddenlabel}}visually-hidden{{/element.hiddenlabel}}">
                     {{{label}}}
                 </span>
             {{/element.staticlabel}}

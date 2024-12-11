@@ -226,7 +226,7 @@ Multiple add-ons are supported and can be mixed with checkbox and radio input ve
   <div class="input-group-prepend">
     <button type="button" class="btn btn-outline-secondary">Action</button>
     <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-expanded="false">
-      <span class="sr-only">Toggle Dropdown</span>
+      <span class="visually-hidden">Toggle Dropdown</span>
     </button>
     <div class="dropdown-menu">
       <a class="dropdown-item" href="#">Action</a>
@@ -244,7 +244,7 @@ Multiple add-ons are supported and can be mixed with checkbox and radio input ve
   <div class="input-group-append">
     <button type="button" class="btn btn-outline-secondary">Action</button>
     <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-expanded="false">
-      <span class="sr-only">Toggle Dropdown</span>
+      <span class="visually-hidden">Toggle Dropdown</span>
     </button>
     <div class="dropdown-menu">
       <a class="dropdown-item" href="#">Action</a>
@@ -367,11 +367,11 @@ Ensure that all form controls have an appropriate accessible name so that their 
 
 For situations where it's not possible to include a visible `<label>` or appropriate text content, there are alternative ways of still providing an accessible name, such as:
 
-- `<label>` elements hidden using the `.sr-only` class
+- `<label>` elements hidden using the `.visually-hidden` class
 - Pointing to an existing element that can act as a label using `aria-labelledby`
 - Providing a `title` attribute
 - Explicitly setting the accessible name on an element using `aria-label`
 
 If none of these are present, assistive technologies may resort to using the `placeholder` attribute as a fallback for the accessible name on `<input>` and `<textarea>` elements. The examples in this section provide a few suggested, case-specific approaches.
 
-While using visually hidden content (`.sr-only`, `aria-label`, and even `placeholder` content, which disappears once a form field has content) will benefit assistive technology users, a lack of visible label text may still be problematic for certain users. Some form of visible label is generally the best approach, both for accessibility and usability.
+While using visually hidden content (`.visually-hidden`, `aria-label`, and even `placeholder` content, which disappears once a form field has content) will benefit assistive technology users, a lack of visible label text may still be problematic for certain users. Some form of visible label is generally the best approach, both for accessibility and usability.

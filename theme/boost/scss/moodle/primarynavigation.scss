@@ -14,7 +14,7 @@
         display: none;
     }
     .editmode-switch-form label {
-        @include sr-only();
+        @include visually-hidden();
     }
 }
 

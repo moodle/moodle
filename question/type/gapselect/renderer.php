@@ -73,7 +73,7 @@ class qtype_gapselect_renderer extends qtype_elements_embedded_in_question_text_
 
         $label = $options->add_question_identifier_to_label(get_string('blanknumber', 'qtype_gapselect', $place));
         // Use non-breaking space instead of 'Choose...'.
-        $selecthtml = html_writer::label($label, $attributes['id'], false, ['class' => 'sr-only']);
+        $selecthtml = html_writer::label($label, $attributes['id'], false, ['class' => 'visually-hidden']);
         $selecthtml .= html_writer::select($selectoptions, $qa->get_qt_field_name($fieldname),
                         $value, '&nbsp;', $attributes) . ' ' . $feedbackimage;
         return html_writer::tag('span', $selecthtml, ['class' => 'control '.$groupclass]);

@@ -55,9 +55,9 @@ define(['jquery', 'core/custom_interaction_events'], function($, CustomEvents) {
      * @param {Object} clearChoiceContainer The clear choice option container.
      */
     var hideClearChoiceOption = function(clearChoiceContainer) {
-        // We are using .sr-only and aria-hidden together so while the element is hidden
+        // We are using .visually-hidden and aria-hidden together so while the element is hidden
         // from both the monitor and the screen-reader, it is still tabbable.
-        clearChoiceContainer.addClass('sr-only');
+        clearChoiceContainer.addClass('visually-hidden');
         clearChoiceContainer.attr('aria-hidden', true);
         clearChoiceContainer.find(SELECTORS.LINK).attr('tabindex', -1);
     };
@@ -68,7 +68,7 @@ define(['jquery', 'core/custom_interaction_events'], function($, CustomEvents) {
      * @param {Object} clearChoiceContainer The clear choice option container.
      */
     var showClearChoiceOption = function(clearChoiceContainer) {
-        clearChoiceContainer.removeClass('sr-only');
+        clearChoiceContainer.removeClass('visually-hidden');
         clearChoiceContainer.removeAttr('aria-hidden');
         clearChoiceContainer.find(SELECTORS.LINK).attr('tabindex', 0);
         clearChoiceContainer.find(SELECTORS.RADIO).prop('disabled', true);

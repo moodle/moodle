@@ -66,7 +66,7 @@
                 {{/isdeleted}}
                 <div class="d-flex flex-column">
                     {{#parentauthorname}}
-                        <span class="sr-only">{{#str}} inreplyto, mod_forum, {{.}} {{/str}}</span>
+                        <span class="visually-hidden">{{#str}} inreplyto, mod_forum, {{.}} {{/str}}</span>
                     {{/parentauthorname}}
                     {{$subjectheading}}
                         <h3 {{!
@@ -93,7 +93,7 @@
                         </div>
                     {{/isprivatereply}}
                     {{#hasreplycount}}
-                        <span class="sr-only">{{#str}} numberofreplies, mod_forum, {{replycount}} {{/str}}</span>
+                        <span class="visually-hidden">{{#str}} numberofreplies, mod_forum, {{replycount}} {{/str}}</span>
                     {{/hasreplycount}}
                 </div>
             </header>

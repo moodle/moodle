@@ -111,7 +111,7 @@ class visibility implements named_templatable, renderable {
      * @return array
      */
     protected function get_visibility_dropdown(\renderer_base $output): array {
-        $badgetext = $output->sr_text(get_string('availability'));
+        $badgetext = $output->visually_hidden_text(get_string('availability'));
         $badgetext .= get_string('hiddenfromstudents');
         $icon = $this->get_icon('hide');
 

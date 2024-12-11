@@ -35,7 +35,7 @@
 }}
 <div data-filterregion="filter" data-filter-type="">
     <fieldset>
-        <legend class="sr-only">{{#str}}filterrowlegend, core, {{rownumber}}{{/str}}</legend>
+        <legend class="visually-hidden">{{#str}}filterrowlegend, core, {{rownumber}}{{/str}}</legend>
         <div class="border-radius my-2 p-2 bg-white border d-flex flex-column flex-md-row align-items-md-stretch mx-0 row">
             <div class="d-flex flex-column flex-md-row align-items-md-center my-1">
                 <label for="core-filter_row-jointype-{{uniqid}}" class="me-md-2 mb-md-0">{{#str}}match{{/str}}</label>
@@ -46,7 +46,7 @@
                 </select>
             </div>
 
-            <label class="sr-only pt-2  my-1" for="core-filter_row-filtertype-{{uniqid}}">{{#str}}filtertype{{/str}}</label>
+            <label class="visually-hidden pt-2  my-1" for="core-filter_row-filtertype-{{uniqid}}">{{#str}}filtertype{{/str}}</label>
             <select class="custom-select my-1 mb-md-0 me-md-2" data-filterfield="type" id="core-filter_row-filtertype-{{uniqid}}">
                 <option value="">{{#str}}selectfiltertype{{/str}}</option>
                 {{#filtertypes}}

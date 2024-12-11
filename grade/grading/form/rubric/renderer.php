@@ -404,7 +404,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
             'class' => 'criteria',
             'id' => '{NAME}-criteria',
         ];
-        $caption = html_writer::tag('caption', get_string('rubric', 'gradingform_rubric'), ['class' => 'sr-only']);
+        $caption = html_writer::tag('caption', get_string('rubric', 'gradingform_rubric'), ['class' => 'visually-hidden']);
         $rubrictable = html_writer::tag('table', $caption . $criteriastr, $rubrictableparams);
         $rubrictemplate .= $rubrictable;
         if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FULL) {

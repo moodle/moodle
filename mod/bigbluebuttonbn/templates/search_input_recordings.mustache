@@ -41,7 +41,7 @@
 <div id="searchform-auto-{{uniqid}}" class="d-flex flex-wrap align-items-center simplesearchform">
     <div class="input-group searchbar" role="search">
         <label for="mod_bigbluebutton_search-{{uniqid}}">
-            <span class="sr-only">{{$label}}{{#str}} search, core {{/str}}{{/label}}</span>
+            <span class="visually-hidden">{{$label}}{{#str}} search, core {{/str}}{{/label}}</span>
         </label>
         <input
            type="text"
@@ -56,7 +56,7 @@
         >
         <button type="submit" class="btn {{^btnclass}}btn-submit{{/btnclass}} {{ btnclass }} search-icon">
             {{#pix}} a/search, core {{/pix}}
-            <span class="sr-only">{{ searchstring }}</span>
+            <span class="visually-hidden">{{ searchstring }}</span>
         </button>
     </div>
 </div>

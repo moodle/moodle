@@ -43,7 +43,7 @@
     {{/ core/search_input_auto }}
     <form class="columnsdropdownform flex-column h-100">
         <fieldset>
-            <legend class="sr-only">{{#str}} aria:dropdowncolumns, gradereport_grader {{/str}}</legend>
+            <legend class="visually-hidden">{{#str}} aria:dropdowncolumns, gradereport_grader {{/str}}</legend>
             <ul id="collapse-{{instance}}-listbox" class="searchresultitemscontainer overflow-auto py-2 px-1 list-group mx-0 text-truncate" data-region="search-result-items-container">
                 {{>gradereport_grader/collapse/collapseresults}}
             </ul>
