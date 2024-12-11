@@ -193,7 +193,8 @@ class dml_missing_record_exception extends dml_exception implements response_awa
      * @param array $params Optional SQL query's parameters.
      */
     function __construct($tablename, $sql='', ?array $params=null) {
-        if (empty($tablename)) {
+        // If the debug is disabled the database information should not be displayed.
+        if (empty($tablename) || !debugging()) {
             $tablename = null;
         }
         $this->tablename = $tablename;
