@@ -55,6 +55,9 @@ final class transfer_question_categories_test extends \advanced_testcase {
     /** @var \core\context\module  test quiz mod context */
     private \core\context\module $quizcontext;
 
+    /** @var \core\context\course Course context with used and unused questions. */
+    private \core\context\course $usedunusedcontext;
+
     /** @var stdClass[] test stale questions */
     private array $stalequestions;
 
@@ -69,7 +72,7 @@ final class transfer_question_categories_test extends \advanced_testcase {
 
         [$insql, $inparams] = $DB->get_in_or_equal($categoryids);
 
-        $sql = "SELECT q.id, qbe.questioncategoryid AS categoryid
+        $sql = "SELECT q.id, qbe.questioncategoryid AS categoryid, qv.status
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
                   JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
@@ -171,11 +174,16 @@ final class transfer_question_categories_test extends \advanced_testcase {
         // Create 2 nested categories with questions in them at course context level.
         $course = self::getDataGenerator()->create_course();
         $this->coursecontext = context_course::instance($course->id);
-        $courseparentcat1 = $this->create_question_category('Course Parent Cat', $this->coursecontext->id);
+        $coursegrandparentcat = $this->create_question_category('Course Grandparent Cat', $this->coursecontext->id);
+        $courseparentcat1 = $this->create_question_category(
+            'Course Parent Cat',
+            $this->coursecontext->id,
+            $coursegrandparentcat->id,
+        );
         $coursechildcat1 = $this->create_question_category(
             'Course Child Cat',
             $this->coursecontext->id,
-            $courseparentcat1->id
+            $courseparentcat1->id,
         );
 
         $question4 = $questiongenerator->create_question('shortanswer', null, ['category' => $courseparentcat1->id]);
@@ -185,6 +193,15 @@ final class transfer_question_categories_test extends \advanced_testcase {
         $quiz = $quizgenerator->create_instance(['course' => $course->id, 'grade' => 100.0, 'sumgrades' => 2, 'layout' => '1,0']);
         quiz_add_quiz_question($question4->id, $quiz, 1);
         quiz_add_quiz_question($question5->id, $quiz, 1);
+
+        // Include a stale question, which should not be migrated with the others.
+        $question6 = $questiongenerator->create_question('shortanswer', null, ['category' => $coursechildcat1->id]);
+        $DB->set_field(
+            'question_versions',
+            'status',
+            question_version_status::QUESTION_STATUS_HIDDEN,
+            ['questionid' => $question6->id],
+        );
 
         // Create some nested categories with no questions in use.
         $course = self::getDataGenerator()->create_course();
@@ -226,6 +243,11 @@ final class transfer_question_categories_test extends \advanced_testcase {
             );
         }
 
+        // Create additional versions of a stale question, all hidden.
+        $staleversionquestion = reset($this->stalequestions);
+        $questiongenerator->update_question($staleversionquestion, overrides: (array) $staleversionquestion);
+        $questiongenerator->update_question($staleversionquestion, overrides: (array) $staleversionquestion);
+
         // Set up a quiz with some categories and questions attached to it.
         $course = self::getDataGenerator()->create_course();
         $quiz = $quizgenerator->create_instance(['course' => $course->id, 'grade' => 100.0, 'sumgrades' => 2, 'layout' => '1,0']);
@@ -236,6 +258,22 @@ final class transfer_question_categories_test extends \advanced_testcase {
         $question2 = $questiongenerator->create_question('shortanswer', null, ['category' => $quizchildcat1->id]);
         quiz_add_quiz_question($question1->id, $quiz, 1);
         quiz_add_quiz_question($question2->id, $quiz, 1);
+
+        // Set up a course with three categories
+        // - One contains questions including 1 that is used in a quiz.
+        // - One contains questions that are not used anywhere, but are in "ready" state.
+        // - One contains no questions.
+        $course = self::getDataGenerator()->create_course(['shortname' => 'Used-Unused-Empty']);
+        $this->usedunusedcontext = context_course::instance($course->id);
+        $usedcategory = $this->create_question_category(name: 'Used Question Cat', contextid: $this->usedunusedcontext->id);
+        $unusedcategory = $this->create_question_category('Unused Question Cat', $this->usedunusedcontext->id);
+        $emptycategory = $this->create_question_category('Empty Cat', $this->usedunusedcontext->id);
+        $question1 = $questiongenerator->create_question('shortanswer', null, ['category' => $usedcategory->id]);
+        $question2 = $questiongenerator->create_question('shortanswer', null, ['category' => $usedcategory->id]);
+        $question3 = $questiongenerator->create_question('shortanswer', null, ['category' => $unusedcategory->id]);
+        $question4 = $questiongenerator->create_question('shortanswer', null, ['category' => $unusedcategory->id]);
+        $quiz = $quizgenerator->create_instance(['course' => $course->id, 'grade' => 100.0, 'sumgrades' => 2, 'layout' => '1,0']);
+        quiz_add_quiz_question($question1->id, $quiz, 1);
     }
 
     /**
@@ -279,14 +317,17 @@ final class transfer_question_categories_test extends \advanced_testcase {
         $question = reset($questions);
         $this->assertEquals($parentcat->id, $question->categoryid);
 
-        // Make sure we have 3 question categories at course level (including 'top') with some questions in them.
+        // Make sure we have 4 question categories at course level (including 'top') with some questions in them.
         $allcoursecats = $DB->get_records('question_categories', ['contextid' => $this->coursecontext->id], 'id ASC');
-        $this->assertCount(3, $allcoursecats);
+        $this->assertCount(4, $allcoursecats);
+        $grandparentcat = next($allcoursecats);
         $parentcat = next($allcoursecats);
+        $this->assertEquals($grandparentcat->id, $parentcat->parent);
         $childcat = end($allcoursecats);
         $this->assertEquals($parentcat->id, $childcat->parent);
         $questions = $this->get_question_data(array_map(static fn($cat) => $cat->id, $allcoursecats));
-        $this->assertCount(2, $questions);
+        // 2 active questions and 1 stale question, for a total of 3.
+        $this->assertCount(3, $questions);
 
         // Make sure we have 6 stale question categories at course level (including 'top') with some questions in them.
         $questioncats = $DB->get_records('question_categories', ['contextid' => $this->stalecoursecontext->id], 'id ASC');
@@ -302,8 +343,22 @@ final class transfer_question_categories_test extends \advanced_testcase {
         $this->assertEquals($parentcat1->id, $childcat1->parent);
         $this->assertEquals($parentcat2->id, $childcat2->parent);
         $this->assertEquals($childcat2->id, $grandchildcat1->parent);
+        // There should be 4 question bank entries with 1 version each, and 1 with 3 versions, for a total of 7.
         $questionids = $this->get_question_data(array_map(static fn($cat) => $cat->id, $questioncats));
-        $this->assertCount(5, $questionids);
+        $this->assertCount(7, $questionids);
+
+        // Make sure the "Used-Unused-Empty" course has 4 question categories (including 'top') with 0, 2, 2, and 0
+        // questions respectively.
+        $questioncats = $DB->get_records('question_categories', ['contextid' => $this->usedunusedcontext->id], 'id ASC');
+        $this->assertCount(4, $questioncats);
+        $topcat = reset($questioncats);
+        $this->assertEmpty($this->get_question_data([$topcat->id]));
+        $usedcat = next($questioncats);
+        $this->assertCount(2, $this->get_question_data([$usedcat->id]));
+        $unusedcat = next($questioncats);
+        $this->assertCount(2, $this->get_question_data([$unusedcat->id]));
+        $emptycat = next($questioncats);
+        $this->assertCount(0, $this->get_question_data([$emptycat->id]));
     }
 
     /**
@@ -414,10 +469,18 @@ final class transfer_question_categories_test extends \advanced_testcase {
             ['contextid' => $courseqbank->context->id],
             'id ASC'
         );
-        $parentcat = reset($courseqcats);
+        $grandparentcat = reset($courseqcats);
+        $parentcat = next($courseqcats);
         $childcat = next($courseqcats);
-        $this->assertEquals($topcat->id, $parentcat->parent);
+        $this->assertEquals($topcat->id, $grandparentcat->parent);
+        $this->assertEquals($grandparentcat->id, $parentcat->parent);
         $this->assertEquals($parentcat->id, $childcat->parent);
+        // Make sure the two active questions were migrated with their categories, but not the stale question.
+        $migratedquestions = $this->get_question_data([$parentcat->id, $childcat->id]);
+        $this->assertCount(2, $migratedquestions);
+        foreach ($migratedquestions as $migratedquestion) {
+            $this->assertTrue($migratedquestion->status === question_version_status::QUESTION_STATUS_READY);
+        }
 
         // Stale course context checks.
 
@@ -426,6 +489,8 @@ final class transfer_question_categories_test extends \advanced_testcase {
         foreach ($this->stalequestions as $stalequestion) {
             $this->assertFalse($DB->record_exists('question', ['id' => $stalequestion->id]));
         }
+        // Make sure the we did not create a qbank in the stale course.
+        $this->assertEmpty(get_fast_modinfo($this->stalecoursecontext->instanceid)->get_instances_of('qbank'));
 
         // Quiz module checks.
 
@@ -434,5 +499,30 @@ final class transfer_question_categories_test extends \advanced_testcase {
         $this->assertCount(3, $quizcategories);
         $questions = $this->get_question_data(array_map(static fn($cat) => $cat->id, $quizcategories));
         $this->assertCount(2, $questions);
+
+        // Used-Unused-Empty checks.
+        // The empty category should have been removed. The other categories should both have been migrated to a qbank module,
+        // with all of their questions.
+        $usedunusedmodinfo = get_fast_modinfo($this->usedunusedcontext->instanceid);
+        $usedunusedcourse = $usedunusedmodinfo->get_course();
+        $usedunusedqbanks = $usedunusedmodinfo->get_instances_of('qbank');
+        $usedunusedqbank = reset($usedunusedqbanks);
+        $this->assertEquals("{$usedunusedcourse->shortname} shared question bank", $usedunusedqbank->name);
+
+        // We should now only have 3 categories. Top, used and unused.
+        $usedunusedcats = $DB->get_records(
+            'question_categories',
+            ['contextid' => $usedunusedqbank->context->id],
+            fields: 'name, id',
+        );
+        $this->assertCount(3, $usedunusedcats);
+        $this->assertTrue(array_key_exists('top', $usedunusedcats));
+        $this->assertTrue(array_key_exists('Used Question Cat', $usedunusedcats));
+        $this->assertTrue(array_key_exists('Unused Question Cat', $usedunusedcats));
+        $this->assertFalse(array_key_exists('Empty Question Cat', $usedunusedcats));
+
+        $this->assertEmpty($this->get_question_data([$usedunusedcats['top']->id]));
+        $this->assertCount(2, $this->get_question_data([$usedunusedcats['Used Question Cat']->id]));
+        $this->assertCount(2, $this->get_question_data([$usedunusedcats['Unused Question Cat']->id]));
     }
 }

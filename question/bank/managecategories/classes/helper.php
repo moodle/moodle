@@ -46,18 +46,16 @@ class helper {
     /**
      * Remove stale questions from a category.
      *
-     * While questions should not be left behind when they are not used any more,
-     * it does happen, maybe via restore, or old logic, or uncovered scenarios. When
-     * this happens, the users are unable to delete the question category unless
-     * they move those stale questions to another one category, but to them the
-     * category is empty as it does not contain anything. The purpose of this function
-     * is to detect the questions that may have gone stale and remove them.
+     * This finds and removes any old-style random questions (qtype = random),
+     * or any questions that were deleted while they were in use by a quiz (status = hidden),
+     * but those usages have since been removed.
+     *
+     * If a category only contains stale questions, the users are unable to delete the question
+     * category unless they move those stale questions to another one category, but to them the
+     * category may appear empty. The purpose of this function is to detect the questions that
+     * may have gone stale and remove them.
      *
      * You will typically use this prior to checking if the category contains questions.
-     *
-     * The stale questions (unused and hidden to the user) handled are:
-     * - hidden questions
-     * - random questions
      *
      * @param int $categoryid The category ID.
      * @throws \dml_exception

@@ -82,9 +82,17 @@ class transfer_question_categories extends adhoc_task {
             $subcategories = array_reverse(\sort_categories_by_tree($subcategories, $oldtopcategory->id));
             foreach ($subcategories as $subcategory) {
                 \qbank_managecategories\helper::question_remove_stale_questions_from_category($subcategory->id);
-                if (!question_category_in_use($subcategory->id)) {
+                if ($this->question_category_is_empty($subcategory->id)) {
                     question_category_delete_safe($subcategory);
                 }
+            }
+
+            // If the top category no longer has any subcategories, because they only contained stale questions,
+            // delete the top category and stop here without creating a new qbank.
+            if (!$DB->record_exists('question_categories', ['parent' => $oldtopcategory->id])) {
+                $DB->delete_records('question_categories', ['id' => $oldtopcategory->id]);
+                $trans->allow_commit();
+                continue;
             }
 
             // We don't want to transfer any categories at valid contexts i.e. quiz modules.
@@ -165,5 +173,29 @@ class transfer_question_categories extends adhoc_task {
 
         // Move the parent from the old top category to the new one.
         $DB->set_field('question_categories', 'parent', $newtopcategory->id, ['parent' => $oldtopcategory->id]);
+    }
+
+    /**
+     * Recursively check if a question category or its children contain any questions.
+     *
+     * @param int $categoryid The parent category to check from.
+     * @return bool True if neither the category nor its children contain any questions.
+     * @throws \dml_exception
+     */
+    protected function question_category_is_empty(int $categoryid): bool {
+        global $DB;
+
+        if ($DB->record_exists('question_bank_entries', ['questioncategoryid' => $categoryid])) {
+            return false;
+        }
+        // If this category is empty, recursively check child categories.
+        $childcategoryids = $DB->get_fieldset('question_categories', 'id', ['parent' => $categoryid]);
+        foreach ($childcategoryids as $childcategoryid) {
+            if (!$this->question_category_is_empty($childcategoryid)) {
+                // If we found questions in a child, we don't want to check any other children.
+                return false;
+            }
+        }
+        return true;
     }
 }
