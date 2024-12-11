@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
  * @copyright  2021 Mikhail Golenkov <mikhailgolenkov@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_cleanup_task_test extends \advanced_testcase {
+final class backup_cleanup_task_test extends \advanced_testcase {
 
     /**
      * Set up tasks for all tests.

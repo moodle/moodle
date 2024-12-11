@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/form/course.php');
  * @copyright  2020 Ruslan Kabalin
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_test extends \basic_testcase {
+final class course_test extends \basic_testcase {
 
     /**
      * Test constructor supports all declared attributes.

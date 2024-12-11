@@ -33,7 +33,7 @@ use core_external\external_api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_contentbank\external\copy_content
  */
-class copy_content_test extends \externallib_advanced_testcase {
+final class copy_content_test extends \externallib_advanced_testcase {
 
     /**
      * Test the behaviour of copy_content() for users with permission.

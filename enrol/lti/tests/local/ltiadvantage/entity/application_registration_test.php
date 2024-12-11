@@ -24,7 +24,7 @@ namespace enrol_lti\local\ltiadvantage\entity;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\entity\application_registration
  */
-class application_registration_test extends \advanced_testcase {
+final class application_registration_test extends \advanced_testcase {
 
     /**
      * Test the creation of an application_registration instance.

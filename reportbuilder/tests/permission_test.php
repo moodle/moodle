@@ -34,8 +34,7 @@ use core_reportbuilder\reportbuilder\audience\manual;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class permission_test extends advanced_testcase {
-
+final class permission_test extends advanced_testcase {
     /**
      * Test whether user can view reports list
      */

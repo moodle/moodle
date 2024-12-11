@@ -26,7 +26,7 @@ use mod_lesson\local\numeric\helper;
  * @copyright 2020 Peter Dias
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class numeric_helper_test extends \advanced_testcase {
+final class numeric_helper_test extends \advanced_testcase {
     /**
      * Test the lesson_unformat_numeric_value function.
      *

@@ -23,7 +23,7 @@ namespace tool_dataprivacy;
  * @copyright  2018 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class expired_contexts_test extends \advanced_testcase {
+final class expired_contexts_test extends \advanced_testcase {
 
     /**
      * Setup the basics with the specified retention period.

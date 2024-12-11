@@ -28,7 +28,7 @@ use assign;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_assign\downloader
  */
-class downloader_test extends \advanced_testcase {
+final class downloader_test extends \advanced_testcase {
     /**
      * Setup to ensure that fixtures are loaded.
      */

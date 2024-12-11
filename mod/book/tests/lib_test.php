@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/mod/book/lib.php');
  * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     public function setUp(): void {
         parent::setUp();

@@ -26,7 +26,7 @@ use core\moodlenet\share_recorder;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\moodlenet\share_recorder
  */
-class share_recorder_test extends \advanced_testcase {
+final class share_recorder_test extends \advanced_testcase {
 
     /**
      * Test inserting and updating an activity share progress to MoodleNet.

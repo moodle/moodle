@@ -42,7 +42,7 @@ require_once($CFG->libdir.'/moodlelib.php');
  * @copyright 2013 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class string_manager_standard_test extends \advanced_testcase {
+final class string_manager_standard_test extends \advanced_testcase {
 
     public function test_string_manager_instance(): void {
         $this->resetAfterTest();

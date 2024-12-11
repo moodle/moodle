@@ -27,7 +27,7 @@ use core_privacy\local\metadata\types\subsystem_link;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\metadata\types\subsystem_link
  */
-class types_subsystem_link_test extends \advanced_testcase {
+final class types_subsystem_link_test extends \advanced_testcase {
 
     /**
      * Ensure that warnings are thrown if string identifiers contain invalid characters.

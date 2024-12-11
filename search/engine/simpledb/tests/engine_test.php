@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/search/tests/fixtures/mock_search_area.php');
  * @copyright   2016 David Monllao {@link http://www.davidmonllao.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class engine_test extends \advanced_testcase {
+final class engine_test extends \advanced_testcase {
 
     /**
      * @var \core_search::manager

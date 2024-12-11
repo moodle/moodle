@@ -25,7 +25,7 @@ use core_calendar\local\event\entities\action_interface;
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class action_factory_test extends \advanced_testcase {
+final class action_factory_test extends \advanced_testcase {
     /**
      * Test action factory.
      */

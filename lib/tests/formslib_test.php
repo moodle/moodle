@@ -48,7 +48,7 @@ require_once($CFG->libdir . '/form/text.php');
  * @copyright 2011 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class formslib_test extends \advanced_testcase {
+final class formslib_test extends \advanced_testcase {
 
     public function test_require_rule(): void {
         global $CFG;

@@ -23,7 +23,7 @@ namespace core_auth;
  * @copyright  2018 Mihail Geshoski
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class digital_consent_test extends \advanced_testcase {
+final class digital_consent_test extends \advanced_testcase {
 
     public function test_is_age_digital_consent_verification_enabled(): void {
         global $CFG;

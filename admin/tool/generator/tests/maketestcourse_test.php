@@ -26,7 +26,7 @@ use tool_generator_course_backend;
  * @copyright 2013 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class maketestcourse_test extends \advanced_testcase {
+final class maketestcourse_test extends \advanced_testcase {
     /**
      * Creates a small test course and checks all the components have been put in place.
      */

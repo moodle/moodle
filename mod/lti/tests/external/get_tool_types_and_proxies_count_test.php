@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/mod/lti/tests/mod_lti_testcase.php');
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_tool_types_and_proxies_count_test extends \mod_lti_testcase {
+final class get_tool_types_and_proxies_count_test extends \mod_lti_testcase {
 
     /**
      * This method runs before every test.

@@ -32,7 +32,7 @@ use stdClass;
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class comment_created_deleted_test extends advanced_testcase {
+final class comment_created_deleted_test extends advanced_testcase {
 
     /** @var stdClass Keeps course object */
     private $course;

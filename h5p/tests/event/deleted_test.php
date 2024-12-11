@@ -27,7 +27,7 @@ use core_h5p\local\library\autoloader;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.8
  */
-class deleted_test extends \advanced_testcase {
+final class deleted_test extends \advanced_testcase {
 
     /**
      * Setup test.

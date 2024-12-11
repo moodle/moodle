@@ -31,7 +31,7 @@ use moodle_url;
  * @copyright   2021 onwards Peter Dias
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class secondary_test extends \advanced_testcase {
+final class secondary_test extends \advanced_testcase {
     /**
      * Test the get_leaf_nodes function
      * @param float $siteorder The order for the siteadmin node

@@ -23,7 +23,7 @@
  * @author     T.J.Hunt@open.ac.uk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class weblib_test extends advanced_testcase {
+final class weblib_test extends advanced_testcase {
     /**
      * @covers ::s
      */

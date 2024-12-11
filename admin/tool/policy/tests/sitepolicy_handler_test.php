@@ -27,7 +27,7 @@ use tool_policy\test\helper;
  * @copyright 2018 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sitepolicy_handler_test extends \advanced_testcase {
+final class sitepolicy_handler_test extends \advanced_testcase {
 
     /**
      * Test behaviour of the {@link \tool_policy\privacy\local\sitepolicy\handler::get_redirect_url()} method.

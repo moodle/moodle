@@ -24,7 +24,7 @@ use core_external\external_api;
  * @package enrol_guest
  * @covers \enrol_guest\external\validate_password
  */
-class validate_password_test extends \advanced_testcase {
+final class validate_password_test extends \advanced_testcase {
 
     public function test_execute(): void {
         global $DB;

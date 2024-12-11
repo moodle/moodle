@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright 2012 Andrew Davis
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class grades_external_test extends \externallib_advanced_testcase {
+final class grades_external_test extends \externallib_advanced_testcase {
 
     /**
      * Load initial test information

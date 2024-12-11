@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/course/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \format_weeks
  */
-class format_weeks_test extends \advanced_testcase {
+final class format_weeks_test extends \advanced_testcase {
 
     /**
      * Tests for format_weeks::get_section_name method with default section names.

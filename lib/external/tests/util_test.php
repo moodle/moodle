@@ -25,7 +25,7 @@ namespace core_external;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @covers      \core_external\util
  */
-class util_test extends \advanced_testcase {
+final class util_test extends \advanced_testcase {
     /** @var \moodle_database The database connection */
     protected $db;
 

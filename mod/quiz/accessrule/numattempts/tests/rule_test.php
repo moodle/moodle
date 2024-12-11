@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/numattempts/rule.php');
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class rule_test extends \basic_testcase {
+final class rule_test extends \basic_testcase {
     public function test_num_attempts_access_rule(): void {
         $quiz = new \stdClass();
         $quiz->attempts = 3;

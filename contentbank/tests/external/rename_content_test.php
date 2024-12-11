@@ -43,7 +43,7 @@ use core_external\external_api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_contentbank\external\rename_content
  */
-class rename_content_test extends \externallib_advanced_testcase {
+final class rename_content_test extends \externallib_advanced_testcase {
 
     /**
      * Data provider for test_rename_content.

@@ -25,7 +25,7 @@ namespace qbank_customfields\event;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \qbank_customfields\event\question_deleted_observer
  */
-class question_deleted_observer_test extends \advanced_testcase {
+final class question_deleted_observer_test extends \advanced_testcase {
 
     /**
      * Deleting a question with customfield data should also delete the data.

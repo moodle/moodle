@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/question/editlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \qbank_bulkmove\helper
  */
-class helper_test extends \advanced_testcase {
+final class helper_test extends \advanced_testcase {
 
     /**
      * @var false|object|\stdClass|null $cat

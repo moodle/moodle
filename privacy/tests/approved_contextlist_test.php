@@ -36,7 +36,7 @@ use \core_privacy\local\request\approved_contextlist;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\request\approved_contextlist
  */
-class approved_contextlist_test extends advanced_testcase {
+final class approved_contextlist_test extends advanced_testcase {
 
     /**
      * The approved contextlist should not be modifiable once set.

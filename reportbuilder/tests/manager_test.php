@@ -40,7 +40,7 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
  * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manager_test extends core_reportbuilder_testcase {
+final class manager_test extends core_reportbuilder_testcase {
 
     /**
      * Test creating a report instance from persistent

@@ -27,7 +27,7 @@ use stdClass;
  * @copyright  2022 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class stateactions_test extends \advanced_testcase {
+final class stateactions_test extends \advanced_testcase {
 
     /**
      * Enrol a user into a course and login as this user.

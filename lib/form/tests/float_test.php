@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/form/float.php');
  * @copyright  2019 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class float_test extends \advanced_testcase {
+final class float_test extends \advanced_testcase {
 
     /**
      * Define a local decimal separator.

@@ -86,7 +86,7 @@ class testable_mod_quiz_external extends mod_quiz_external {
  * @since      Moodle 3.1
  * @covers \mod_quiz_external
  */
-class external_test extends externallib_advanced_testcase {
+final class external_test extends externallib_advanced_testcase {
 
     use \quiz_question_helper_test_trait;
 

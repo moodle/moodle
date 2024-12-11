@@ -24,7 +24,7 @@ namespace factor_role;
  * @copyright   2023 Stevani Andolo <stevani@hotmail.com.au>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class factor_test extends \advanced_testcase {
+final class factor_test extends \advanced_testcase {
 
     /**
      * Tests getting the summary condition

@@ -24,7 +24,7 @@ namespace core;
  * @copyright  2016 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ip_utils_test extends \basic_testcase {
+final class ip_utils_test extends \basic_testcase {
     /**
      * Test for \core\ip_utils::is_domain_name().
      *

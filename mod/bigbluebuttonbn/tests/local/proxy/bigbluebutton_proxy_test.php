@@ -29,7 +29,7 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @covers  \mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy
  * @coversDefaultClass \mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy
  */
-class bigbluebutton_proxy_test extends \advanced_testcase {
+final class bigbluebutton_proxy_test extends \advanced_testcase {
     /**
      * Test poll interval value
      *

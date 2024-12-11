@@ -61,7 +61,7 @@ class test_response_answer_comparer implements \question_response_answer_compare
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_first_matching_answer_grading_strategy_test extends \advanced_testcase {
+final class question_first_matching_answer_grading_strategy_test extends \advanced_testcase {
     protected function setUp(): void {
         parent::setUp();
     }

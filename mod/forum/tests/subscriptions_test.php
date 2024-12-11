@@ -31,7 +31,7 @@ require_once("{$CFG->dirroot}/mod/forum/lib.php");
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class subscriptions_test extends \advanced_testcase {
+final class subscriptions_test extends \advanced_testcase {
     // Include the mod_forum test helpers.
     // This includes functions to create forums, users, discussions, and posts.
     use mod_forum_tests_generator_trait;

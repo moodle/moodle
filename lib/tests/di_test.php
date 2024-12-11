@@ -27,7 +27,7 @@ use Psr\Container\ContainerInterface;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \core\di
  */
-class di_test extends \advanced_testcase {
+final class di_test extends \advanced_testcase {
     /**
      * Test that the get_container method returns the Container Instance and stores it statically.
      */

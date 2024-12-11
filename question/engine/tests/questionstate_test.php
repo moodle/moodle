@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/questionlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \question_state
  */
-class questionstate_test extends \advanced_testcase {
+final class questionstate_test extends \advanced_testcase {
     public function test_is_active(): void {
         $this->assertFalse(question_state::$notstarted->is_active());
         $this->assertFalse(question_state::$unprocessed->is_active());

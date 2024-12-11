@@ -24,7 +24,7 @@ namespace format_social;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \format_social
  */
-class format_social_test extends \advanced_testcase {
+final class format_social_test extends \advanced_testcase {
 
     /**
      * Test for get_view_url().

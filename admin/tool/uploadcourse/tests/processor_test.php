@@ -30,7 +30,7 @@ require_once($CFG->libdir . '/csvlib.class.php');
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class processor_test extends \advanced_testcase {
+final class processor_test extends \advanced_testcase {
 
     public function test_basic(): void {
         global $DB;

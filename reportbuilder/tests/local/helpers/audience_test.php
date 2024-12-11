@@ -34,8 +34,7 @@ use invalid_parameter_exception;
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class audience_test extends advanced_testcase {
-
+final class audience_test extends advanced_testcase {
      /**
       * Test reports list is empty for a normal user without any audience records configured
       */

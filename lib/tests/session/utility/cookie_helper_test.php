@@ -24,7 +24,7 @@ namespace core\session\utility;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core\session\utility\cookie_helper
  */
-class cookie_helper_test extends \advanced_testcase {
+final class cookie_helper_test extends \advanced_testcase {
 
     /**
      * Testing cookie_response_headers_add_attributes().

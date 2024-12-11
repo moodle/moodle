@@ -31,7 +31,7 @@ use invalid_response_exception;
  *
  * @runTestsInSeparateProcesses
  */
-class h5p_core_test extends \advanced_testcase {
+final class h5p_core_test extends \advanced_testcase {
 
     /** @var core */
     protected $core;

@@ -35,8 +35,7 @@ use core_user\reportbuilder\datasource\users;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_test extends advanced_testcase {
-
+final class report_test extends advanced_testcase {
     /**
      * Test creation report
      */

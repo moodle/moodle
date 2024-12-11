@@ -49,7 +49,7 @@ require_once($CFG->libdir . '/filestorage/stored_file.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \file_storage
  */
-class file_storage_test extends \advanced_testcase {
+final class file_storage_test extends \advanced_testcase {
 
     /**
      * Files can be created from strings.

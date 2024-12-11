@@ -24,7 +24,7 @@ namespace core;
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class htmlpurifier_test extends \basic_testcase {
+final class htmlpurifier_test extends \basic_testcase {
 
     /**
      * Verify _blank target is allowed.

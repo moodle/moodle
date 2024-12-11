@@ -23,7 +23,7 @@ namespace core_competency;
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class api_test extends \advanced_testcase {
+final class api_test extends \advanced_testcase {
 
     public function test_get_framework_related_contexts(): void {
         $this->resetAfterTest(true);

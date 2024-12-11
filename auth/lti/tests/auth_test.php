@@ -24,7 +24,7 @@ namespace auth_lti;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \auth_plugin_lti
  */
-class auth_test extends \advanced_testcase {
+final class auth_test extends \advanced_testcase {
 
     /** @var string issuer URL used for test cases. */
     protected static string $issuer = 'https://lms.example.org';

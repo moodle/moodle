@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/type/gapselect/tests/helper.php');
  * @covers \qtype_gapselect_question_base
  * @covers \qtype_gapselect_question
  */
-class question_test extends \basic_testcase {
+final class question_test extends \basic_testcase {
 
     public function test_get_question_summary(): void {
         $gapselect = \test_question_maker::make_question('gapselect');

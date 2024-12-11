@@ -23,7 +23,7 @@
  * @covers     \core_courseformat\base
  * @coversDefaultClass \core_courseformat\base
  */
-class base_test extends advanced_testcase {
+final class base_test extends advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.

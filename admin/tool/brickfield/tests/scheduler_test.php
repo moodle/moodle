@@ -24,7 +24,7 @@ namespace tool_brickfield;
  * @author     Jay Churchward (jay@brickfieldlabs.ie)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class scheduler_test extends \advanced_testcase {
+final class scheduler_test extends \advanced_testcase {
 
     public function test_request_analysis(): void {
         $this->resetAfterTest();

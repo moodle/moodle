@@ -38,7 +38,7 @@ global $CFG;
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     public function test_comment_add_user_competency(): void {
         global $DB, $PAGE;

@@ -25,7 +25,7 @@ use backup;
  * @copyright 2023 Ferran Recio <ferran@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_stepslib_test extends \advanced_testcase {
+final class restore_stepslib_test extends \advanced_testcase {
     /**
      * Setup to include all libraries.
      */

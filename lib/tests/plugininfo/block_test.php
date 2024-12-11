@@ -28,7 +28,7 @@ use advanced_testcase;
  * @copyright   2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_test extends advanced_testcase {
+final class block_test extends advanced_testcase {
 
     /**
      * Test the get_enabled_plugins method.

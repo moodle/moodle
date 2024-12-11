@@ -23,7 +23,7 @@ namespace enrol_lti;
  * @copyright 2016 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class helper_test extends \advanced_testcase {
+final class helper_test extends \advanced_testcase {
 
     /**
      * @var \stdClass $user1 A user.

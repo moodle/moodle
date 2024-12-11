@@ -26,7 +26,7 @@ namespace core;
  * @copyright 2015 onwards Ankit Agarwal
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class message_test extends \advanced_testcase {
+final class message_test extends \advanced_testcase {
 
     /**
      * Test the method get_eventobject_for_processor().

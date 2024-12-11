@@ -30,7 +30,7 @@ require_once(__DIR__ . '/fixtures/testable_core_media_player.php');
  * @copyright 2012 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class medialib_test extends \advanced_testcase {
+final class medialib_test extends \advanced_testcase {
 
     /**
      * Pre-test setup. Preserves $CFG.

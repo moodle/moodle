@@ -31,7 +31,7 @@ global $CFG;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\metadata\types\database_table
  */
-class types_database_table_test extends \advanced_testcase {
+final class types_database_table_test extends \advanced_testcase {
 
     /**
      * Ensure that warnings are thrown if string identifiers contain invalid characters.

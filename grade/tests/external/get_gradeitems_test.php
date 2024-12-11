@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2023 Mathew May <Mathew.solutions>
  * @covers     \core_grades\external\get_gradeitems
  */
-class get_gradeitems_test extends \externallib_advanced_testcase {
+final class get_gradeitems_test extends \externallib_advanced_testcase {
     public function test_execute(): void {
         $this->resetAfterTest();
         $this->setAdminUser();

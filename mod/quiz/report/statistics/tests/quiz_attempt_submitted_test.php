@@ -34,7 +34,7 @@ use quiz_statistics\tests\statistics_test_trait;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \quiz_statistics\hook_callbacks::quiz_attempt_submitted_or_deleted
  */
-class quiz_attempt_submitted_test extends \advanced_testcase {
+final class quiz_attempt_submitted_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
     use statistics_test_trait;
 

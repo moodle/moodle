@@ -36,7 +36,7 @@ require_once($CFG->libdir . '/licenselib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @group      tool_licensemanager
  */
-class manager_test extends advanced_testcase {
+final class manager_test extends advanced_testcase {
 
     /**
      * Test editing a license.

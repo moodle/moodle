@@ -36,7 +36,7 @@ use core_course\test\mock_hooks;
 /**
  * Functional test for class core_course_category methods invoking hooks.
  */
-class category_hooks_test extends \advanced_testcase {
+final class category_hooks_test extends \advanced_testcase {
 
     protected function setUp(): void {
         parent::setUp();

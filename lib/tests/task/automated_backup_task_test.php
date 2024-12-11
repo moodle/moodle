@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/backup/util/helper/backup_cron_helper.class.php')
  * @copyright  2024 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class automated_backup_task_test extends \advanced_testcase {
+final class automated_backup_task_test extends \advanced_testcase {
 
     use task_trait;
 

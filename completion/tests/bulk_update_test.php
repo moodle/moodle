@@ -30,7 +30,7 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright  2017 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class bulk_update_test extends \advanced_testcase {
+final class bulk_update_test extends \advanced_testcase {
 
     /**
      * Provider for test_bulk_form_submit_single

@@ -34,7 +34,7 @@ use dndupload_handler;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_courseformat\external\file_handlers
  */
-class file_handlers_test extends \externallib_advanced_testcase {
+final class file_handlers_test extends \externallib_advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.

@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_dbops_test extends \advanced_testcase {
+final class restore_dbops_test extends \advanced_testcase {
 
     /**
      * Verify the xxx_ids_cached (in-memory backup_ids cache) stuff works as expected.

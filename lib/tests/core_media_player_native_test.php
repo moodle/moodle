@@ -30,7 +30,7 @@ require_once(__DIR__ . '/fixtures/testable_core_media_player_native.php');
  * @copyright 2019 Ruslan Kabalin
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_media_player_native_test extends \advanced_testcase {
+final class core_media_player_native_test extends \advanced_testcase {
 
     /**
      * Pre-test setup.

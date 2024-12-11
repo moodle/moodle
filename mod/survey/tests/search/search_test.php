@@ -37,7 +37,7 @@ namespace mod_survey\search;
  * @copyright 2017 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class search_test extends \advanced_testcase {
+final class search_test extends \advanced_testcase {
 
     /**
      * Setup testcase.

@@ -36,7 +36,7 @@ use qtype_numerical_answer_processor;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \qtype_numerical_answer_processor
  */
-class answerprocessor_test extends \advanced_testcase {
+final class answerprocessor_test extends \advanced_testcase {
     /**
      * Test setup.
      */

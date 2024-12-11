@@ -24,7 +24,7 @@ namespace tool_monitor;
  * @copyright  2014 onwards Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class rule_manager_test extends \advanced_testcase {
+final class rule_manager_test extends \advanced_testcase {
 
     /**
      * Set up method.

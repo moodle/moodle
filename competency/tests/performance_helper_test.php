@@ -25,7 +25,7 @@ use core_competency\external\performance_helper;
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class performance_helper_test extends \advanced_testcase {
+final class performance_helper_test extends \advanced_testcase {
 
     public function test_get_context_from_competency(): void {
         global $DB;

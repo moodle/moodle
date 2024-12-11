@@ -24,7 +24,7 @@ namespace antivirus_clamav;
  * @copyright  2016 Ruslan Kabalin, Lancaster University.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class scanner_test extends \advanced_testcase {
+final class scanner_test extends \advanced_testcase {
     /** @var string temporary file used in testing */
     protected $tempfile;
 

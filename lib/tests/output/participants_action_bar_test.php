@@ -25,7 +25,7 @@ use ReflectionMethod;
  * @copyright   2021 onwards Peter Dias
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class participants_action_bar_test extends \advanced_testcase {
+final class participants_action_bar_test extends \advanced_testcase {
 
     /**
      * Test the get_content_for_select function

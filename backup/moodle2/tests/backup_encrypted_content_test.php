@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/backup/moodle2/backup_custom_fields.php');
  * @copyright 2016 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_encrypted_content_test extends \advanced_testcase {
+final class backup_encrypted_content_test extends \advanced_testcase {
 
     public function setUp(): void {
         parent::setUp();

@@ -25,7 +25,7 @@ namespace tool_langimport;
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class controller_test extends \advanced_testcase {
+final class controller_test extends \advanced_testcase {
 
     /**
      * Test uninstall of language with invalid values.

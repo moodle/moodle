@@ -32,7 +32,7 @@ require_once(__DIR__.'/fixtures/testable_update_checker.php');
  * @copyright 2012, 2015 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class update_checker_test extends \advanced_testcase {
+final class update_checker_test extends \advanced_testcase {
 
     public function test_core_available_update(): void {
         $provider = testable_checker::instance();

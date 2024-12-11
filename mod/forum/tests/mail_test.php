@@ -35,7 +35,7 @@ require_once(__DIR__ . '/generator_trait.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  */
-class mail_test extends \advanced_testcase {
+final class mail_test extends \advanced_testcase {
     // Make use of the cron tester trait.
     use mod_forum_tests_cron_trait;
 

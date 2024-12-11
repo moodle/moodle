@@ -37,7 +37,7 @@ require_once("$CFG->dirroot/repository/lib.php");
  * @copyright  2020 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class search_test extends \advanced_testcase {
+final class search_test extends \advanced_testcase {
 
     /**
      * Test get_search_contents() by searching through some existing content using different search terms.

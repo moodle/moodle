@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class table_summary_does_not_duplicate_caption_test
  */
-class table_summary_does_not_duplicate_caption_test extends all_checks {
+final class table_summary_does_not_duplicate_caption_test extends all_checks {
     /** @var string Check type */
     public $checktype = 'table_summary_does_not_duplicate_caption';
 

@@ -25,7 +25,7 @@ namespace auth_oauth2;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \auth_oauth2\auth
  */
-class auth_test extends \advanced_testcase {
+final class auth_test extends \advanced_testcase {
 
     public function test_get_password_change_info(): void {
         $this->resetAfterTest();

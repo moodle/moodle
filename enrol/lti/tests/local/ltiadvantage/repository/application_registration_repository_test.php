@@ -26,7 +26,7 @@ use enrol_lti\local\ltiadvantage\entity\deployment;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\repository\application_registration_repository
  */
-class application_registration_repository_test extends \advanced_testcase {
+final class application_registration_repository_test extends \advanced_testcase {
     /**
      * Helper to generate a new application_registration object.
      *

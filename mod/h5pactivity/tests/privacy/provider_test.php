@@ -42,7 +42,7 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \mod_h5pactivity\privacy\provider
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /** @var stdClass User without any attempt. */
     protected $student0;

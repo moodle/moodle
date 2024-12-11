@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/externallib_advanced_testcase.ph
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class start_submission_test extends \mod_assign\externallib_advanced_testcase {
+final class start_submission_test extends \mod_assign\externallib_advanced_testcase {
     /** @var \stdClass $course New course created to hold the assignments */
     protected $course = null;
 

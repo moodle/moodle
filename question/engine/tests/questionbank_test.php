@@ -35,7 +35,7 @@ require_once(__DIR__ . '/../lib.php');
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class questionbank_test extends \advanced_testcase {
+final class questionbank_test extends \advanced_testcase {
 
     public function test_sort_qtype_array(): void {
         $config = new \stdClass();

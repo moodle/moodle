@@ -23,7 +23,7 @@ namespace core_competency;
  * @copyright  2016 Serge Gauthier - <serge.gauthier.2@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_evidence_competency_test extends \advanced_testcase {
+final class user_evidence_competency_test extends \advanced_testcase {
 
     public function test_get_user_competencies_by_userevidenceid(): void {
         global $CFG, $DB;
