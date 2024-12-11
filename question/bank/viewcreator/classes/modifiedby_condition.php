@@ -14,19 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Strings for component qbank_viewcreator, language 'en'
- *
- * @package    qbank_viewcreator
- * @copyright  2021 Catalyst IT Australia Pty Ltd
- * @author     Ghaly Marc-Alexandre <marc-alexandreghaly@catalyst-ca.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-$string['history'] = 'History';
-$string['modifiedby'] = 'Modified by';
-$string['timemodified'] = 'Time modified';
-$string['pluginname'] = 'View creator';
-$string['privacy:metadata'] = 'The View creator question bank plugin does not store any personal data.';
+namespace qbank_viewcreator;
 
-// Deprecated since Moodle 4.5.
-$string['version'] = 'Version {$a}';
+/**
+ * Filter condition for filtering on modifier name
+ *
+ * @package   qbank_viewcreator
+ * @copyright 2025 onwards Catalyst IT EU {@link https://catalyst-eu.net}
+ * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class modifiedby_condition extends user_condition {
+    #[\Override]
+    public function get_title() {
+        return get_string('modifiedby', 'qbank_viewcreator');
+    }
+
+    #[\Override]
+    public static function get_condition_key() {
+        return 'modifiername';
+    }
+
+    #[\Override]
+    protected static function get_table_alias(): string {
+        return 'um';
+    }
+}

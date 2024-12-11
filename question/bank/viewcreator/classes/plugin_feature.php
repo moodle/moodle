@@ -40,6 +40,8 @@ class plugin_feature extends plugin_features_base {
     public function get_question_filters(?view $qbank = null): array {
         return [
             new timemodified_condition($qbank),
+            new createdby_condition($qbank),
+            new modifiedby_condition($qbank),
         ];
     }
 }
