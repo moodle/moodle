@@ -1,0 +1,9 @@
+issueNumber: MDL-84000
+notes:
+  core_reportbuilder:
+    - message: >-
+        The `core_reportbuilder_testcase` class has been moved to new autoloaded
+        `core_reportbuilder\tests\core_reportbuilder_testcase` location,
+        affected tests no longer have to manually require
+        `/reportbuilder/tests/helpers.php`
+      type: improved
