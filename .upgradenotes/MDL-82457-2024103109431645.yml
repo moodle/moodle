@@ -1,0 +1,5 @@
+issueNumber: MDL-82457
+notes:
+  mod:
+    - message: Remove mod_survey for Moodle 5.0
+      type: removed

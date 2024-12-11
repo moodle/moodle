@@ -193,14 +193,12 @@ class helper {
         // Set Activity chooser tabs to "Starred, Recommended, All".
         static::add_item($presetid, 'activitychoosertabmode', '4');
 
-        // Modules: Hide chat, database, external tool (lti), IMS content package (imscp), lesson, SCORM, survey, wiki, workshop.
-        static::add_plugin($presetid, 'mod', 'chat', false);
+        // Modules: Hide database, external tool (lti), IMS content package (imscp), lesson, SCORM, wiki, workshop.
         static::add_plugin($presetid, 'mod', 'data', false);
         static::add_plugin($presetid, 'mod', 'lti', false);
         static::add_plugin($presetid, 'mod', 'imscp', false);
         static::add_plugin($presetid, 'mod', 'lesson', false);
         static::add_plugin($presetid, 'mod', 'scorm', false);
-        static::add_plugin($presetid, 'mod', 'survey', false);
         static::add_plugin($presetid, 'mod', 'wiki', false);
         static::add_plugin($presetid, 'mod', 'workshop', false);
 

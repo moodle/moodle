@@ -1,0 +1,5 @@
+issueNumber: MDL-82457
+notes:
+  tool_mobile:
+    - message: Remove chat and survey support from tool_mobile.
+      type: removed

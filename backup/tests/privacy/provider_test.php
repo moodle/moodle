@@ -312,7 +312,7 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         $component = 'core_backup';
 
         $course = $this->getDataGenerator()->create_course();
-        $activity = $this->getDataGenerator()->create_module('chat', ['course' => $course->id]);
+        $activity = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
 
         $user = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
@@ -408,7 +408,7 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         $course2 = $this->getDataGenerator()->create_course();
         $coursecontext2 = \context_course::instance($course2->id);
         // Create an activity.
-        $activity = $this->getDataGenerator()->create_module('chat', ['course' => $course1->id]);
+        $activity = $this->getDataGenerator()->create_module('assign', ['course' => $course1->id]);
         $activitycontext = \context_module::instance($activity->cmid);
         // Create user1.
         $user1 = $this->getDataGenerator()->create_user();

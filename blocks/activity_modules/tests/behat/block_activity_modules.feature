@@ -4,16 +4,11 @@ Feature: Block activity modules
   As a manager
   I can add activities block in a course or on the frontpage
 
-  Background:
-    Given I enable "chat" "mod" plugin
-    And I enable "survey" "mod" plugin
-
   Scenario: Add activities block on the frontpage
     Given the following "activities" exist:
       | activity   | name                        | intro                              | course               | idnumber    |
       | assign     | Frontpage assignment name   | Frontpage assignment description   | Acceptance test site | assign0     |
       | book       | Frontpage book name         | Frontpage book description         | Acceptance test site | book0       |
-      | chat       | Frontpage chat name         | Frontpage chat description         | Acceptance test site | chat0       |
       | choice     | Frontpage choice name       | Frontpage choice description       | Acceptance test site | choice0     |
       | data       | Frontpage database name     | Frontpage database description     | Acceptance test site | data0       |
       | feedback   | Frontpage feedback name     | Frontpage feedback description     | Acceptance test site | feedback0   |
@@ -28,7 +23,6 @@ Feature: Block activity modules
       | glossary   | Frontpage glossary name     | Frontpage glossary description     | Acceptance test site | glossary0   |
       | scorm      | Frontpage scorm name        | Frontpage scorm description        | Acceptance test site | scorm0      |
       | lesson     | Frontpage lesson name       | Frontpage lesson description       | Acceptance test site | lesson0     |
-      | survey     | Frontpage survey name       | Frontpage survey description       | Acceptance test site | survey0     |
       | url        | Frontpage url name          | Frontpage url description          | Acceptance test site | url0        |
       | wiki       | Frontpage wiki name         | Frontpage wiki description         | Acceptance test site | wiki0       |
       | workshop   | Frontpage workshop name     | Frontpage workshop description     | Acceptance test site | workshop0   |
@@ -39,9 +33,6 @@ Feature: Block activity modules
     And I add the "Activities" block
     And I click on "Assignments" "link" in the "Activities" "block"
     Then I should see "Frontpage assignment name"
-    And I am on site homepage
-    And I click on "Chats" "link" in the "Activities" "block"
-    And I should see "Frontpage chat name"
     And I am on site homepage
     And I click on "Choices" "link" in the "Activities" "block"
     And I should see "Frontpage choice name"
@@ -92,7 +83,6 @@ Feature: Block activity modules
       | activity   | name                   | intro                         | course | idnumber    |
       | assign     | Test assignment name   | Test assignment description   | C1     | assign1     |
       | book       | Test book name         | Test book description         | C1     | book1       |
-      | chat       | Test chat name         | Test chat description         | C1     | chat1       |
       | choice     | Test choice name       | Test choice description       | C1     | choice1     |
       | data       | Test database name     | Test database description     | C1     | data1       |
       | feedback   | Test feedback name     | Test feedback description     | C1     | feedback1   |
@@ -107,7 +97,6 @@ Feature: Block activity modules
       | quiz       | Test quiz name         | Test quiz description         | C1     | quiz1       |
       | resource   | Test resource name     | Test resource description     | C1     | resource1   |
       | scorm      | Test scorm name        | Test scorm description        | C1     | scorm1      |
-      | survey     | Test survey name       | Test survey description       | C1     | survey1     |
       | url        | Test url name          | Test url description          | C1     | url1        |
       | wiki       | Test wiki name         | Test wiki description         | C1     | wiki1       |
       | workshop   | Test workshop name     | Test workshop description     | C1     | workshop1   |
@@ -117,9 +106,6 @@ Feature: Block activity modules
     And I add the "Activities" block
     And I click on "Assignments" "link" in the "Activities" "block"
     Then I should see "Test assignment name"
-    And I am on "Course 1" course homepage
-    And I click on "Chats" "link" in the "Activities" "block"
-    And I should see "Test chat name"
     And I am on "Course 1" course homepage
     And I click on "Choices" "link" in the "Activities" "block"
     And I should see "Test choice name"

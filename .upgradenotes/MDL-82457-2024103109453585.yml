@@ -1,0 +1,5 @@
+issueNumber: MDL-82457
+notes:
+  mod:
+    - message: Remove mod_chat from Moodle 5.0
+      type: removed

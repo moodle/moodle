@@ -142,3 +142,5 @@ configgeneralquestionbank,core_backup
 generalquestionbank,core_backup
 cannotdeletecategoryquestions,core_error
 errordeletingquestionsfromcategory,core_question
+importantupdates_content,core_admin
+importantupdates_title,core_admin

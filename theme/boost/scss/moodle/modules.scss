@@ -967,10 +967,6 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
     text-align: inherit;
 }
 
-#page-mod-chat-gui_basic input#message {
-    max-width: 100%;
-}
-
 #page-mod-data-view #singleimage {
     width: auto;
 }
@@ -1052,25 +1048,6 @@ div#dock {
 
 .path-mod-wiki .wiki_contentbox {
     width: 100%;
-}
-
-// Survey module
-
-.path-mod-survey {
-    .surveytable {
-        > tbody > tr:nth-of-type(odd) {
-            background-color: $table-bg;
-        }
-
-        > tbody > tr:nth-of-type(even) {
-            background-color: $table-accent-bg;
-        }
-
-        .rblock label {
-            text-align: center;
-        }
-    }
-
 }
 
 .nav .caret {

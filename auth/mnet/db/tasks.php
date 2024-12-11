@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Definition of chat scheduled tasks.
+ * Definition of mnet scheduled tasks.
  *
  * @package   auth_mnet
  * @copyright 2019 Simey Lameze <simey@moodle.com>

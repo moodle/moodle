@@ -1,0 +1,5 @@
+issueNumber: MDL-82457
+notes:
+  core_analytics:
+    - message: Remove chat and survey from core_analytics.
+      type: removed

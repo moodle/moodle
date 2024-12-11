@@ -18,13 +18,10 @@ Feature: Activity navigation
       | student1  | C1      | student         |
       | teacher1  | C1      | editingteacher  |
       | student1  | C2      | student         |
-    And I enable "chat" "mod" plugin
-    And I enable "survey" "mod" plugin
     And the following "activities" exist:
       | activity   | name         | intro                       | course | idnumber  | section |
       | assign     | Assignment 1 | Test assignment description | C1     | assign1   | 0       |
       | book       | Book 1       | Test book description       | C1     | book1     | 0       |
-      | chat       | Chat 1       | Test chat description       | C1     | chat1     | 0       |
       | choice     | Choice 1     | Test choice description     | C1     | choice1   | 1       |
       | data       | Database 1   | Test database description   | C1     | data1     | 1       |
       | feedback   | Feedback 1   | Test feedback description   | C1     | feedback1 | 1       |
@@ -39,7 +36,6 @@ Feature: Activity navigation
       | quiz       | Quiz 1       | Test quiz description       | C1     | quiz1     | 4       |
       | resource   | Resource 1   | Test resource description   | C1     | resource1 | 5       |
       | scorm      | Scorm 1      | Test scorm description      | C1     | scorm1    | 5       |
-      | survey     | Survey 1     | Test survey description     | C1     | survey1   | 5       |
       | url        | Url 1        | Test url description        | C1     | url1      | 6       |
       | wiki       | Wiki 1       | Test wiki description       | C1     | wiki1     | 6       |
       | workshop   | Workshop 1   | Test workshop description   | C1     | workshop1 | 6       |
@@ -74,12 +70,9 @@ Feature: Activity navigation
     And I should see "Book 1" in the "#next-activity-link" "css_element"
     And I follow "Book 1"
     And I should see "Assignment" in the "#prev-activity-link" "css_element"
-    And I should see "Chat 1" in the "#next-activity-link" "css_element"
-    And I follow "Chat 1"
-    And I should see "Book 1" in the "#prev-activity-link" "css_element"
     And I should see "Choice 1" in the "#next-activity-link" "css_element"
     And I follow "Choice 1"
-    And I should see "Chat 1" in the "#prev-activity-link" "css_element"
+    And I should see "Book 1" in the "#prev-activity-link" "css_element"
     And I should see "Database 1" in the "#next-activity-link" "css_element"
     And I follow "Database 1"
     And I should see "Choice 1" in the "#prev-activity-link" "css_element"
@@ -117,12 +110,9 @@ Feature: Activity navigation
     And I should see "Scorm 1 (hidden)" in the "#next-activity-link" "css_element"
     And I follow "Scorm 1 (hidden)"
     And I should see "Resource 1 (hidden)" in the "#prev-activity-link" "css_element"
-    And I should see "Survey 1 (hidden)" in the "#next-activity-link" "css_element"
-    And I follow "Survey 1 (hidden)"
-    And I should see "Scorm 1 (hidden)" in the "#prev-activity-link" "css_element"
     And I should see "Url 1" in the "#next-activity-link" "css_element"
     And I follow "Url 1"
-    And I should see "Survey 1 (hidden)" in the "#prev-activity-link" "css_element"
+    And I should see "Scorm 1 (hidden)" in the "#prev-activity-link" "css_element"
     And I should see "Wiki 1" in the "#next-activity-link" "css_element"
     And I follow "Wiki 1"
     And I should see "Url 1" in the "#prev-activity-link" "css_element"
@@ -141,12 +131,9 @@ Feature: Activity navigation
     And I should see "Book 1" in the "#next-activity-link" "css_element"
     And I follow "Book 1"
     And I should see "Assignment" in the "#prev-activity-link" "css_element"
-    And I should see "Chat 1" in the "#next-activity-link" "css_element"
-    And I follow "Chat 1"
-    And I should see "Book 1" in the "#prev-activity-link" "css_element"
     And I should see "Choice 1" in the "#next-activity-link" "css_element"
     And I follow "Choice 1"
-    And I should see "Chat 1" in the "#prev-activity-link" "css_element"
+    And I should see "Book 1" in the "#prev-activity-link" "css_element"
     And I should see "Database 1" in the "#next-activity-link" "css_element"
     And I follow "Database 1"
     And I should see "Choice 1" in the "#prev-activity-link" "css_element"
@@ -200,7 +187,6 @@ Feature: Activity navigation
     And the "Jump to..." select box should not contain "Label 1"
     # Check drop down menu contents.
     And the "Jump to..." select box should contain "Book 1"
-    And the "Jump to..." select box should contain "Chat 1"
     And the "Jump to..." select box should contain "Choice 1"
     And the "Jump to..." select box should contain "Database 1"
     And the "Jump to..." select box should contain "Feedback 1"
@@ -218,7 +204,6 @@ Feature: Activity navigation
     # Activities in hidden sections will be rendered with a '(hidden)' text.
     And the "Jump to..." select box should contain "Resource 1 (hidden)"
     And the "Jump to..." select box should contain "Scorm 1 (hidden)"
-    And the "Jump to..." select box should contain "Survey 1 (hidden)"
     # Jump to an activity somewhere in the middle.
     When I select "Page 1" from the "Jump to..." singleselect
     Then I should see "Page 1"
@@ -253,10 +238,8 @@ Feature: Activity navigation
     # Activities in hidden sections will not be listed for students.
     And the "Jump to..." select box should not contain "Resource 1"
     And the "Jump to..." select box should not contain "Scorm 1"
-    And the "Jump to..." select box should not contain "Survey 1"
     # Only activities visible to students will be listed.
     And the "Jump to..." select box should contain "Book 1"
-    And the "Jump to..." select box should contain "Chat 1"
     And the "Jump to..." select box should contain "Choice 1"
     And the "Jump to..." select box should contain "Database 1"
     And the "Jump to..." select box should contain "Feedback 1"

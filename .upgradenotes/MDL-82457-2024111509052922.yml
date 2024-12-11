@@ -1,0 +1,10 @@
+issueNumber: MDL-82457
+notes:
+  theme_boost:
+    - message: >-
+        Remove chat and survey styles. Important note: the styles have been
+        moved to the plugins as CSS files (and not SCSS) so themes might now
+        need to override the mod_chat and mod_survey styles specifically as css
+        does not have any definition for primary, gray and other colors
+        accessible in the original scss version.
+      type: removed
