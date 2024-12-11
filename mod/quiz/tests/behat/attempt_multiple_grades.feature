@@ -44,9 +44,8 @@ Feature: Attempt a quiz with multiple grades
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
     And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
-
-    Then I should see "1.00 out of 1.00" in the "Grade for reading" "table_row"
-    And I should see "0.00 out of 1.00" in the "Grade for listening" "table_row"
+    Then I should see "1.00 out of 1.00 (100%)" in the "Grade for reading" "table_row"
+    And I should see "0.00 out of 1.00 (0%)" in the "Grade for listening" "table_row"
     And I should not see "Unused grade item"
     And I should see "1.00/2.00" in the "Marks" "table_row"
     # Funny order because 'Grade' also appears in other rows.
@@ -55,3 +54,24 @@ Feature: Attempt a quiz with multiple grades
     And I should not see "Unused grade item"
     And I should see "1.00/2.00" in the "Marks" "table_row"
     And I should see "Grade" in the "50.00 out of 100.00" "table_row"
+
+  @javascript
+  Scenario: The grade item should not show a percentage in sectional scoring if the question's max mark is 100
+    Given the following "questions" exist:
+      | questioncategory | qtype     | name      | questiontext       |
+      | Test questions   | truefalse | Reading   | Can you read this? |
+    And the following "mod_quiz > grade items" exist:
+      | quiz   | name                |
+      | Quiz 1 | Grade for reading   |
+    And quiz "Quiz 1" contains the following questions:
+      | question | page | grade item        |
+      | Reading  | 1    | Grade for reading |
+    When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "admin"
+    And I set the max mark for question "Reading" to "100.0"
+    And I am on the "Quiz 1" "quiz activity" page logged in as "student"
+    And I click on "Attempt quiz" "button"
+    And I set the field "True" in the "Can you read this?" "question" to "1"
+    And I press "Finish attempt ..."
+    And I press "Submit all and finish"
+    And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
+    Then I should see "100.00 out of 100.00" in the "Grade for reading" "table_row"
