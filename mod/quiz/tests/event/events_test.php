@@ -39,7 +39,7 @@ use mod_quiz\external\submit_question_version;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_quiz\external\submit_question_version
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Set up a quiz.

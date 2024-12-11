@@ -35,7 +35,7 @@ use stdClass;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers      \core\content\export\exportable_items\exportable_textarea
  */
-class exportable_textarea_test extends advanced_testcase {
+final class exportable_textarea_test extends advanced_testcase {
 
     /**
      * Ensure that an exportable textarea which does not relate to any content, does not attempt to export any content.

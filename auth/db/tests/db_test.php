@@ -25,7 +25,7 @@ namespace auth_db;
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class db_test extends \advanced_testcase {
+final class db_test extends \advanced_testcase {
     /** @var string Original error log */
     protected $oldlog;
 

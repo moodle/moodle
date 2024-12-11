@@ -28,7 +28,7 @@ require_once($CFG->libdir . '/filestorage/file_progress.php');
  * @copyright 2013 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mbz_packer_test extends \advanced_testcase {
+final class mbz_packer_test extends \advanced_testcase {
 
     public function test_archive_with_both_options(): void {
         global $CFG;

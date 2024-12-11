@@ -31,7 +31,7 @@ use context_user;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core_question\local\bank\context_to_string_translator
  */
-class context_to_string_translator_test extends \advanced_testcase {
+final class context_to_string_translator_test extends \advanced_testcase {
 
     public function test_context_to_string_translator_test_good_case(): void {
         $this->resetAfterTest();

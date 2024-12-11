@@ -30,7 +30,7 @@ require_once(__DIR__.'/fixtures/testable_update_validator.php');
  * @copyright 2013, 2015 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class update_validator_test extends \advanced_testcase {
+final class update_validator_test extends \advanced_testcase {
 
     public function test_validate_files_layout(): void {
         $fixtures = __DIR__.'/fixtures/update_validator';

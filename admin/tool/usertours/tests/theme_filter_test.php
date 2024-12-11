@@ -24,7 +24,7 @@ namespace tool_usertours;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \tool_usertours\local\filter\theme
  */
-class theme_filter_test extends \advanced_testcase {
+final class theme_filter_test extends \advanced_testcase {
     /**
      * Data Provider for filter_matches function.
      *

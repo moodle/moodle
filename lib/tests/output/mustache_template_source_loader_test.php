@@ -25,7 +25,7 @@ namespace core\output;
  * @copyright 2018 Ryan Wyllie <ryan@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mustache_template_source_loader_test extends \advanced_testcase {
+final class mustache_template_source_loader_test extends \advanced_testcase {
     /**
      * Ensure that stripping comments from templates does not mutilate the template body.
      */

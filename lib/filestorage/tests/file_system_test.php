@@ -35,7 +35,7 @@ require_once($CFG->libdir . '/filestorage/file_system.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \file_system
  */
-class file_system_test extends \advanced_testcase {
+final class file_system_test extends \advanced_testcase {
 
     public function setUp(): void {
         parent::setUp();

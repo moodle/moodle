@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/user/selector/lib.php');
  * @copyright   2019 Huong Nguyen <huongnv13@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class group_non_members_selector_test extends \advanced_testcase {
+final class group_non_members_selector_test extends \advanced_testcase {
 
     /**
      * Test find_users that only return group non members

@@ -29,7 +29,7 @@ require_once(__DIR__ . '/fixtures/mock_search_area.php');
  * @copyright   2015 David Monllao {@link http://www.davidmonllao.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class engine_test extends \advanced_testcase {
+final class engine_test extends \advanced_testcase {
 
     public function setUp(): void {
         parent::setUp();

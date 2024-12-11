@@ -25,7 +25,7 @@ namespace communication_matrix;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \communication_matrix\matrix_room
  */
-class matrix_room_test extends \advanced_testcase {
+final class matrix_room_test extends \advanced_testcase {
     /**
      * Test for load_by_processor_id with no record.
      *

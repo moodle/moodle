@@ -30,7 +30,7 @@ use Behat\Gherkin\Node\StepNode;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \tool_generator\local\testscenario\steprunner
  */
-class steprunner_test extends \advanced_testcase {
+final class steprunner_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
         // Call the init method to include all behat libraries and attributes.

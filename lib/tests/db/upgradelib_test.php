@@ -26,7 +26,7 @@ namespace core\db;
  * @copyright 2022 Andrew Lyons <andrew@thelyons.family>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class upgradelib_test extends \advanced_testcase {
+final class upgradelib_test extends \advanced_testcase {
 
     /**
      * Shared setup for the testcase.

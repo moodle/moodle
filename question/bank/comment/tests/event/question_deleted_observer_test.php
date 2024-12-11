@@ -25,7 +25,7 @@ namespace qbank_comment\event;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \qbank_comment\event\question_deleted_observer
  */
-class question_deleted_observer_test extends \advanced_testcase {
+final class question_deleted_observer_test extends \advanced_testcase {
 
     /**
      * Deleting a question with comments should also delete the comments

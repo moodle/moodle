@@ -64,7 +64,7 @@ class qtype_gapselect_edit_form_base_testable extends \qtype_gapselect_edit_form
  * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class edit_form_test extends \advanced_testcase {
+final class edit_form_test extends \advanced_testcase {
 
     /**
      * Helper method.

@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @since      Moodle 4.2
  * @covers \core_grades\external\get_feedback
  */
-class get_feedback_test extends \externallib_advanced_testcase {
+final class get_feedback_test extends \externallib_advanced_testcase {
 
     /**
      * Test get_feedback.

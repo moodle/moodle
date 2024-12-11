@@ -35,7 +35,7 @@ require_once($CFG->libdir . '/form/duration.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \MoodleQuickForm_duration
  */
-class duration_test extends \basic_testcase {
+final class duration_test extends \basic_testcase {
 
     /**
      * Get a form that can be used for testing.

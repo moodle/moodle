@@ -30,7 +30,7 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright 2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_gradebook_structure_step_test extends \advanced_testcase {
+final class restore_gradebook_structure_step_test extends \advanced_testcase {
 
     /**
      * Provide tests for rewrite_step_backup_file_for_legacy_freeze based upon fixtures.

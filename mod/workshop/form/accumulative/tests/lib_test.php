@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/workshop/form/accumulative/lib.php');
 /**
  * Unit tests for Accumulative grading strategy lib.php
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
     /** workshop instance emulation */
     protected $workshop;
 

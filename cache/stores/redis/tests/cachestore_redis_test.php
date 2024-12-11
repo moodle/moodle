@@ -39,7 +39,7 @@ require_once(__DIR__.'/../lib.php');
  *
  * @coversDefaultClass \cachestore_redis
  */
-class cachestore_redis_test extends \cachestore_tests {
+final class cachestore_redis_test extends \cachestore_tests {
     /** @var cachestore_redis $store Redis Cache Store. */
     protected $store;
 

@@ -34,7 +34,7 @@ require_once(dirname(__DIR__) . '/matrix_client_test_trait.php');
  * @covers \communication_matrix\local\command
  * @coversDefaultClass \communication_matrix\local\command
  */
-class command_test extends \advanced_testcase {
+final class command_test extends \advanced_testcase {
     use \communication_matrix\matrix_client_test_trait;
 
     /**

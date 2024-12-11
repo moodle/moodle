@@ -30,7 +30,7 @@ namespace core;
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class jquery_test extends \basic_testcase {
+final class jquery_test extends \basic_testcase {
 
     public function test_plugins_file(): void {
         global $CFG;

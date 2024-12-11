@@ -37,7 +37,7 @@ use \core_privacy\local\request\userlist;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\request\approved_userlist
  */
-class approved_userlist_test extends advanced_testcase {
+final class approved_userlist_test extends advanced_testcase {
     /**
      * The approved userlist should not be modifiable once set.
      *

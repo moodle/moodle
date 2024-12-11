@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_quiz\question\display_options
  */
-class display_options_test extends \basic_testcase {
+final class display_options_test extends \basic_testcase {
     public function test_num_attempts_access_rule(): void {
         $quiz = new \stdClass();
         $quiz->decimalpoints = 2;

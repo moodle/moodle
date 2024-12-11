@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_quiz\quiz_settings
  */
-class quizobj_test extends basic_testcase {
+final class quizobj_test extends basic_testcase {
     /**
      * Test cases for {@see test_cannot_review_message()}.
      *

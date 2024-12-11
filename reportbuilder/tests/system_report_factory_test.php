@@ -31,7 +31,7 @@ use core_reportbuilder\exception\{source_invalid_exception, source_unavailable_e
  * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class system_report_factory_test extends advanced_testcase {
+final class system_report_factory_test extends advanced_testcase {
 
     /**
      * Test creating a valid/available system report

@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/backup/util/helper/restore_structure_parser_proce
  * @copyright 2017 Dmitrii Metelkin (dmitriim@catalyst-au.net)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_structure_parser_processor_test extends advanced_testcase {
+final class restore_structure_parser_processor_test extends advanced_testcase {
 
     /**
      * Initial set up.

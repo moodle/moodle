@@ -25,7 +25,7 @@ namespace core_question;
  * @copyright 2023 Jun Pataleta
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_display_options_test extends \advanced_testcase {
+final class question_display_options_test extends \advanced_testcase {
 
     /**
      * Data provider for {@see self::test_has_question_identifier()}

@@ -29,7 +29,7 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @covers  \mod_bigbluebuttonbn\local\proxy\recording_proxy
  * @coversDefaultClass \mod_bigbluebuttonbn\local\proxy\recording_proxy
  */
-class recording_proxy_test extends \advanced_testcase {
+final class recording_proxy_test extends \advanced_testcase {
     use testcase_helper_trait;
 
     /**

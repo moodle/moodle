@@ -25,7 +25,7 @@ use core_media_manager;
  * @copyright 2016 Marina Glancy
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class player_test extends \advanced_testcase {
+final class player_test extends \advanced_testcase {
 
     /**
      * Pre-test setup. Preserves $CFG.

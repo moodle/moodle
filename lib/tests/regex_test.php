@@ -24,7 +24,7 @@ namespace core;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Petr Skoda <petr.skoda@totaralms.com>
  */
-class regex_test extends \advanced_testcase {
+final class regex_test extends \advanced_testcase {
     public function test_whitespace_replacement_with_u(): void {
         $unicode = "Теорія і практика використання системи управління навчанням Moo
 dleКиївський національний університет будівництва і архітектури, 21-22 тра

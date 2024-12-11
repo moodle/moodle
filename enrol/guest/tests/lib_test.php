@@ -24,7 +24,7 @@
  */
 namespace enrol_guest;
 
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of validate_enrol_plugin_data().

@@ -39,7 +39,7 @@ use core_privacy\local\request\userlist;
  * @author    Jesus Federico  (jesus [at] blindsidenetworks [dt] com)
  * @covers \mod_bigbluebuttonbn\privacy\provider
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Test for provider::get_metadata().

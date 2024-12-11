@@ -28,7 +28,7 @@ use tool_moodlenet\local\url;
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class import_info_test extends \advanced_testcase {
+final class import_info_test extends \advanced_testcase {
 
     /**
      * Create some test objects.

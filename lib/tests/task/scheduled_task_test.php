@@ -28,7 +28,7 @@ require_once(__DIR__ . '/../fixtures/task_fixtures.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core\task\scheduled_task
  */
-class scheduled_task_test extends \advanced_testcase {
+final class scheduled_task_test extends \advanced_testcase {
 
     /**
      * Data provider for {@see test_eval_cron_field}

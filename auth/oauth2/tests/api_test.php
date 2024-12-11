@@ -25,7 +25,7 @@ namespace auth_oauth2;
  *
  * @covers \auth_oauth2\api
  */
-class api_test extends \advanced_testcase {
+final class api_test extends \advanced_testcase {
 
     /**
      * Test the cleaning of orphaned linked logins for all issuers.

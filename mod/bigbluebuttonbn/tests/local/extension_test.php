@@ -37,7 +37,7 @@ use restore_dbops;
  * @author    Laurent David (laurent@call-learning.fr)
  * @coversDefaultClass \mod_bigbluebuttonbn\extension
  */
-class extension_test extends \advanced_testcase {
+final class extension_test extends \advanced_testcase {
     use subplugins_test_helper_trait;
     use testcase_helper_trait;
 

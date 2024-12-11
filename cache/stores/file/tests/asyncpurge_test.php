@@ -29,7 +29,7 @@ use cachestore_file;
  * @author    Jackson D'Souza <jackson.dsouza@catalyst-eu.net>
  * @coversDefaultClass \cachestore_file
  */
-class asyncpurge_test extends \advanced_testcase {
+final class asyncpurge_test extends \advanced_testcase {
 
     /**
      * Testing Asynchronous file store cache purge

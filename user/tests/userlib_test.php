@@ -29,7 +29,7 @@ require_once($CFG->dirroot.'/user/lib.php');
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class userlib_test extends \advanced_testcase {
+final class userlib_test extends \advanced_testcase {
     /**
      * Test user_get_user_details_courses
      */

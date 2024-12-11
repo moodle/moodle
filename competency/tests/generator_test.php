@@ -24,7 +24,7 @@ namespace core_competency;
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_test extends \advanced_testcase {
+final class generator_test extends \advanced_testcase {
 
     public function test_create_framework(): void {
         $this->resetAfterTest(true);

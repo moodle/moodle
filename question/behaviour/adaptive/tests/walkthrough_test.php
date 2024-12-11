@@ -32,7 +32,7 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class walkthrough_test extends \qbehaviour_walkthrough_test_base {
+final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     protected function get_contains_penalty_info_expectation($penalty) {
         $penaltyinfo = get_string('gradingdetailspenalty', 'qbehaviour_adaptive',
                                   format_float($penalty, $this->displayoptions->markdp));

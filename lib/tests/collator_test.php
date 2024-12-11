@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2011 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class collator_test extends \advanced_testcase {
+final class collator_test extends \advanced_testcase {
 
     /**
      * @var string The initial lang, stored because we change it during testing

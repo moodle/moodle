@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/filestorage/file_progress.php');
  * @copyright 2013 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tgz_packer_test extends \advanced_testcase implements file_progress {
+final class tgz_packer_test extends \advanced_testcase implements file_progress {
     /**
      * @var array Progress information passed to the progress reporter
      */

@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2023 Ilya Tregubov <ilya.a.tregubov@gmail.com>
  * @covers     \core_grades\external\get_gradable_users
  */
-class get_gradable_users_test extends \externallib_advanced_testcase {
+final class get_gradable_users_test extends \externallib_advanced_testcase {
 
     /**
      * Test the behaviour of get_gradable_users.

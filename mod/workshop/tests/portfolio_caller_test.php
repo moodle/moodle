@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/mod/workshop/classes/portfolio_caller.php');
  * @copyright  2016 An Pham Van <an.phamvan@harveynash.vn>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class portfolio_caller_test extends \advanced_testcase {
+final class portfolio_caller_test extends \advanced_testcase {
 
     /** @var \stdClass $workshop Basic workshop data stored in an object. */
     protected $workshop;

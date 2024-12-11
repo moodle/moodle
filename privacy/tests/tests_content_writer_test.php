@@ -36,7 +36,7 @@ use \core_privacy\tests\request\content_writer;
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tests_content_writer_test extends advanced_testcase {
+final class tests_content_writer_test extends advanced_testcase {
 
     /**
      * It should be possible to store and retrieve data.

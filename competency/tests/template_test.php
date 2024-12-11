@@ -23,7 +23,7 @@ namespace core_competency;
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class template_test extends \advanced_testcase {
+final class template_test extends \advanced_testcase {
 
     public function test_validate_duedate(): void {
         global $DB;

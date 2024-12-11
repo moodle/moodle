@@ -24,7 +24,7 @@ namespace mod_data\backup;
  * @copyright  2024 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_type_test extends \advanced_testcase {
+final class restore_type_test extends \advanced_testcase {
 
     /**
      * Data provider for test_duplicating_data_remove_unwanted_types.

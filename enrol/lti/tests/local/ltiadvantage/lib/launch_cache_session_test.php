@@ -24,7 +24,7 @@ namespace enrol_lti\local\ltiadvantage\lib;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\lib\launch_cache_session
  */
-class launch_cache_session_test extends \advanced_testcase {
+final class launch_cache_session_test extends \advanced_testcase {
 
     /**
      * Test that the session cache, and in particular distinct object instances, can cache and retrieve launch data.
