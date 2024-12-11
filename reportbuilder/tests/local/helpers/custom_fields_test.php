@@ -20,16 +20,11 @@ namespace core_reportbuilder\local\helpers;
 
 use core_customfield_generator;
 use core_reportbuilder_generator;
-use core_reportbuilder_testcase;
 use core_reportbuilder\local\entities\course;
 use core_reportbuilder\local\filters\{boolean_select, date, select, text};
 use core_reportbuilder\local\report\{column, filter};
+use core_reportbuilder\tests\core_reportbuilder_testcase;
 use core_course\reportbuilder\datasource\{categories, courses};
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
 
 /**
  * Unit tests for custom fields helper
