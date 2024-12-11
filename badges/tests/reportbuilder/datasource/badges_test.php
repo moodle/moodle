@@ -20,12 +20,7 @@ namespace core_badges\reportbuilder\datasource;
 
 use core_badges_generator;
 use core_reportbuilder_generator;
-use core_reportbuilder_testcase;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
+use core_reportbuilder\tests\core_reportbuilder_testcase;
 
 /**
  * Unit tests for badges datasource

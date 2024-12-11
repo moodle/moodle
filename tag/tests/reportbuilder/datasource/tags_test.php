@@ -22,14 +22,8 @@ use context_course;
 use context_user;
 use core_collator;
 use core_reportbuilder_generator;
-use core_reportbuilder_testcase;
-use core_reportbuilder\local\filters\{boolean_select, date, select};
-use core_reportbuilder\local\filters\tags as tags_filter;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
+use core_reportbuilder\local\filters\{boolean_select, date, select, tags as tags_filter};
+use core_reportbuilder\tests\core_reportbuilder_testcase;
 
 /**
  * Unit tests for tags datasource
@@ -55,7 +49,7 @@ final class tags_test extends core_reportbuilder_testcase {
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
-        $report = $generator->create_report(['name' => 'Notes', 'source' => tags::class, 'default' => 1]);
+        $report = $generator->create_report(['name' => 'Tags', 'source' => tags::class, 'default' => 1]);
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(2, $content);
@@ -90,7 +84,7 @@ final class tags_test extends core_reportbuilder_testcase {
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
-        $report = $generator->create_report(['name' => 'Notes', 'source' => tags::class, 'default' => 0]);
+        $report = $generator->create_report(['name' => 'Tags', 'source' => tags::class, 'default' => 0]);
 
         // Collection.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'collection:default']);

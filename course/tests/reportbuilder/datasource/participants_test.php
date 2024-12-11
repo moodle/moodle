@@ -19,17 +19,14 @@ declare(strict_types=1);
 namespace core_course\reportbuilder\datasource;
 
 use completion_completion;
-use core_reportbuilder\local\filters\boolean_select;
-use core_reportbuilder\local\filters\date;
-use core_reportbuilder\local\filters\select;
 use core_reportbuilder_generator;
-use core_reportbuilder_testcase;
+use core_reportbuilder\local\filters\{boolean_select, date, select};
+use core_reportbuilder\tests\core_reportbuilder_testcase;
 use grade_item;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
 require_once("{$CFG->libdir}/gradelib.php");
 
 /**

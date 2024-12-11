@@ -21,13 +21,8 @@ namespace core_comment\reportbuilder\datasource;
 use comment;
 use context_course;
 use core_reportbuilder_generator;
-use core_reportbuilder_testcase;
 use core_reportbuilder\local\filters\{date, text};
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
+use core_reportbuilder\tests\core_reportbuilder_testcase;
 
 /**
  * Unit tests for comments datasource
@@ -66,7 +61,7 @@ final class comments_test extends core_reportbuilder_testcase {
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
-        $report = $generator->create_report(['name' => 'Blogs', 'source' => comments::class, 'default' => 1]);
+        $report = $generator->create_report(['name' => 'Comments', 'source' => comments::class, 'default' => 1]);
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(1, $content);
@@ -100,7 +95,7 @@ final class comments_test extends core_reportbuilder_testcase {
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
-        $report = $generator->create_report(['name' => 'Blogs', 'source' => comments::class, 'default' => 0]);
+        $report = $generator->create_report(['name' => 'Comments', 'source' => comments::class, 'default' => 0]);
 
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'comment:contexturl']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'comment:component']);

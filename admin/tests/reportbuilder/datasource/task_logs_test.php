@@ -20,14 +20,9 @@ namespace core_admin\reportbuilder\datasource;
 
 use core\task\database_logger;
 use core_reportbuilder_generator;
-use core_reportbuilder_testcase;
 use core_reportbuilder\local\filters\{boolean_select, date, duration, number, select, text};
 use core_reportbuilder\task\send_schedules;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
+use core_reportbuilder\tests\core_reportbuilder_testcase;
 
 /**
  * Unit tests for task logs datasource

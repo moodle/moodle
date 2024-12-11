@@ -20,16 +20,11 @@ namespace core_reportbuilder;
 
 use context_system;
 use core_reportbuilder_generator;
-use core_reportbuilder_testcase;
-use core_user\reportbuilder\datasource\users;
-use stdClass;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\base;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
+use core_reportbuilder\tests\core_reportbuilder_testcase;
+use core_user\reportbuilder\datasource\users;
+use stdClass;
 
 /**
  * Unit tests for the report manager class
