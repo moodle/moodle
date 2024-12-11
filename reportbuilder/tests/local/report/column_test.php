@@ -32,7 +32,7 @@ use core_reportbuilder\local\helpers\database;
  * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class column_test extends advanced_testcase {
+final class column_test extends advanced_testcase {
 
     /**
      * Test column name getter/setter

@@ -28,7 +28,7 @@ require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
  * @copyright Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_override_test extends \restore_date_testcase {
+final class restore_override_test extends \restore_date_testcase {
 
     /**
      * Test restore overrides.

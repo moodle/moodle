@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/calendar/lib.php');
  * @copyright 2014 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class rrule_manager_test extends \advanced_testcase {
+final class rrule_manager_test extends \advanced_testcase {
 
     /** @var calendar_event a dummy event */
     protected $event;

@@ -32,7 +32,7 @@ use advanced_testcase;
  *
  * @coversDefaultClass \core\output\choicelist
  */
-class choicelist_test extends advanced_testcase {
+final class choicelist_test extends advanced_testcase {
     /**
      * Test for a choice without options.
      *

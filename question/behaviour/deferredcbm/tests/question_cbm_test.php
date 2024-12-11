@@ -30,7 +30,7 @@ require_once(__DIR__ . '/../../../engine/lib.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_cbm_test extends \basic_testcase {
+final class question_cbm_test extends \basic_testcase {
 
     public function test_adjust_fraction(): void {
         $this->assertEqualsWithDelta( 1,   question_cbm::adjust_fraction( 1,    question_cbm::LOW), 0.0000001);

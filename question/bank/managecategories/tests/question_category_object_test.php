@@ -37,7 +37,7 @@ use stdClass;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \qbank_managecategories\question_category_object
  */
-class question_category_object_test extends \advanced_testcase {
+final class question_category_object_test extends \advanced_testcase {
 
     /**
      * @var question_category_object used in the tests.

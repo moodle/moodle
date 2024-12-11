@@ -26,7 +26,7 @@ use core\context\user;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\moodlenet\course_packager
  */
-class course_packager_test extends \advanced_testcase {
+final class course_packager_test extends \advanced_testcase {
 
     /**
      * Test fetching and overriding a backup task setting.

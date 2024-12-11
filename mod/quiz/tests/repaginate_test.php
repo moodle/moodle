@@ -62,7 +62,7 @@ class mod_quiz_repaginate_testable extends repaginate {
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class repaginate_test extends \advanced_testcase {
+final class repaginate_test extends \advanced_testcase {
 
     /** @var array stores the slots. */
     private $quizslots;

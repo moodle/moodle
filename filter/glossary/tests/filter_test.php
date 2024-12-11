@@ -28,7 +28,7 @@ namespace filter_glossary;
 /**
  * Test case for glossary.
  */
-class filter_test extends \advanced_testcase {
+final class filter_test extends \advanced_testcase {
 
     public function test_link_to_entry_with_alias(): void {
         global $CFG;

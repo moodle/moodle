@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @covers     \qtype_multichoice_single_question
  * @covers     \qtype_multichoice_single_base
  */
-class walkthrough_test extends \qbehaviour_walkthrough_test_base {
+final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     public function test_deferredfeedback_feedback_multichoice_single(): void {
 
         // Create a multichoice, single question.

@@ -49,7 +49,7 @@ require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_content.php')
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_contentbank\contentbank
  */
-class contentbank_test extends advanced_testcase {
+final class contentbank_test extends advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.

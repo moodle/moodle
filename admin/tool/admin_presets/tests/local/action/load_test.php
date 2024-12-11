@@ -25,7 +25,7 @@ namespace tool_admin_presets\local\action;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \tool_admin_presets\local\action\load
  */
-class load_test extends \advanced_testcase {
+final class load_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of show() method when the preset id doesn't exist.

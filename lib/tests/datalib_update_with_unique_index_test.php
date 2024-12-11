@@ -24,7 +24,7 @@ namespace core;
  * @copyright 2014 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class datalib_update_with_unique_index_test extends \advanced_testcase {
+final class datalib_update_with_unique_index_test extends \advanced_testcase {
 
     public function test_decompose_update_into_safe_changes_identity(): void {
         $this->assertEquals(array(), decompose_update_into_safe_changes(

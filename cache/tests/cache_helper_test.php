@@ -25,7 +25,7 @@ namespace core_cache;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \cache_helper
  */
-class cache_helper_test extends \advanced_testcase {
+final class cache_helper_test extends \advanced_testcase {
     /**
      * Test the result_found method.
      *

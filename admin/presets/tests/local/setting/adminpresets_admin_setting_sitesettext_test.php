@@ -25,7 +25,7 @@ namespace core_adminpresets\local\setting;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_adminpresets\local\setting\adminpresets_admin_setting_sitesettext
  */
-class adminpresets_admin_setting_sitesettext_test extends \advanced_testcase {
+final class adminpresets_admin_setting_sitesettext_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of save_value() method.

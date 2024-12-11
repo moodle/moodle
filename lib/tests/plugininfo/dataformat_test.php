@@ -28,7 +28,7 @@ use advanced_testcase;
  * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class dataformat_test extends advanced_testcase {
+final class dataformat_test extends advanced_testcase {
 
     /**
      * Helper method, to allow easy filtering of default formats in order to perform assertions without any third-party

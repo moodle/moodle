@@ -28,7 +28,7 @@ use backup_section_task;
  * @copyright 2023 Ferran Recio <ferran@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_stepslib_test extends \advanced_testcase {
+final class backup_stepslib_test extends \advanced_testcase {
     /**
      * Setup to include all libraries.
      */

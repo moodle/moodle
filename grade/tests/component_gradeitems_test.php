@@ -39,7 +39,7 @@ namespace core_grades {
      * @copyright 2019 Andrew Nicols <andrew@nicols.co.uk>
      * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
      */
-    class component_gradeitems_test extends advanced_testcase {
+    final class component_gradeitems_test extends advanced_testcase {
 
         /**
          * Ensure that a component which does not implement the mapping class excepts.

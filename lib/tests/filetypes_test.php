@@ -30,7 +30,7 @@ require_once($CFG->libdir . '/filelib.php');
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filetypes_test extends \advanced_testcase {
+final class filetypes_test extends \advanced_testcase {
 
     public function test_add_type(): void {
         $this->resetAfterTest();

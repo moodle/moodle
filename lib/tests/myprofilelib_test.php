@@ -23,7 +23,7 @@ namespace core;
  * @copyright  2015 onwards Ankit agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class myprofilelib_test extends \advanced_testcase {
+final class myprofilelib_test extends \advanced_testcase {
 
     /**
      * @var stdClass The user.

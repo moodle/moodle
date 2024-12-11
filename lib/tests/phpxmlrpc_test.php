@@ -30,7 +30,7 @@ use PhpXmlRpc\Value;
  * @copyright 2022 onwards Eloy Lafuente (stronk7) {@link https://stronk7.com}
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class phpxmlrpc_test extends \basic_testcase {
+final class phpxmlrpc_test extends \basic_testcase {
 
     /**
      * Ensure PhpXmlRpc availability.

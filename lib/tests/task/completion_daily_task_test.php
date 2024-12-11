@@ -25,7 +25,7 @@ use advanced_testcase;
  * @copyright 2020 Jun Pataleta
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class completion_daily_task_test extends advanced_testcase {
+final class completion_daily_task_test extends advanced_testcase {
 
     /**
      * Test calendar cron task with a broken subscription URL.

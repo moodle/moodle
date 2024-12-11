@@ -26,7 +26,7 @@ use mod_forum\local\exporters\author as author_exporter;
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class exporters_author_test extends \advanced_testcase {
+final class exporters_author_test extends \advanced_testcase {
     /**
      * Test the export function returns expected values.
      */

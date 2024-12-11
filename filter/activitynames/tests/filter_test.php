@@ -31,7 +31,7 @@ namespace filter_activitynames;
  * @copyright 2018 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_test extends \advanced_testcase {
+final class filter_test extends \advanced_testcase {
 
     public function test_links(): void {
         $this->resetAfterTest(true);

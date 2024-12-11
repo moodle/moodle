@@ -23,7 +23,7 @@ namespace auth_oauth2;
  * @copyright   2017 Damyon Wiese
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class api_test extends \advanced_testcase {
+final class api_test extends \advanced_testcase {
 
     /**
      * Test the cleaning of orphaned linked logins for all issuers.

@@ -46,7 +46,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class xmlformat_test extends \question_testcase {
+final class xmlformat_test extends \question_testcase {
     public function make_test_question() {
         global $USER;
         $q = new \stdClass();

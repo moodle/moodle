@@ -32,7 +32,7 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @author    Laurent David (laurent@call-learning.fr)
  * @covers \mod_bigbluebuttonbn\completion\custom_completion
  */
-class completion_test extends \advanced_testcase {
+final class completion_test extends \advanced_testcase {
     use testcase_helper_trait;
 
     /**

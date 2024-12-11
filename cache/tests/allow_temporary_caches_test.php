@@ -25,8 +25,7 @@ namespace core_cache;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core_cache\allow_temporary_caches
  */
-class allow_temporary_caches_test extends \advanced_testcase {
-
+final class allow_temporary_caches_test extends \advanced_testcase {
     /**
      * Tests whether temporary caches are allowed.
      */

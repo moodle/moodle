@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/course/format/tests/fixtures/format_theunittest.p
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_test extends \advanced_testcase {
+final class restore_test extends \advanced_testcase {
 
     /**
      * Backup a course and return its backup ID.

@@ -36,8 +36,7 @@ require_once($CFG->libdir . '/outputcomponents.php');
  * @covers \html_writer
  * @coversDefaultClass \html_writer
  */
-class html_writer_test extends basic_testcase {
-
+final class html_writer_test extends basic_testcase {
     /**
      * @covers ::start_tag
      */

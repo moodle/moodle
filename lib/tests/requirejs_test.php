@@ -26,7 +26,7 @@ use core_requirejs;
  * @copyright 2016 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class requirejs_test extends \advanced_testcase {
+final class requirejs_test extends \advanced_testcase {
 
     /**
      * Test requirejs loader

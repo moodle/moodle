@@ -33,7 +33,7 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
  * @copyright  2015 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behaviour_type_test extends \qbehaviour_walkthrough_test_base {
+final class behaviour_type_test extends \qbehaviour_walkthrough_test_base {
 
     /** @var qbehaviour_deferredfeedback_type */
     protected $behaviourtype;

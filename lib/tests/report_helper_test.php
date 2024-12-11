@@ -33,7 +33,7 @@ use core\report_helper;
  *
  * @covers \core\report_helper
  */
-class report_helper_test extends \advanced_testcase {
+final class report_helper_test extends \advanced_testcase {
     /** @var int[] Array of created user ids */
     protected array $userids;
 

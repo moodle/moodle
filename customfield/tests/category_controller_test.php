@@ -27,8 +27,7 @@ use core_customfield_generator;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \core_customfield\category_controller
  */
-class category_controller_test extends \advanced_testcase {
-
+final class category_controller_test extends \advanced_testcase {
     /**
      * Get generator.
      *

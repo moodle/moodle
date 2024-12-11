@@ -24,7 +24,7 @@ namespace tool_brickfield\local\tool;
  * @author     Jay Churchward (jay.churchward@poetopensource.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class printable_test extends \advanced_testcase {
+final class printable_test extends \advanced_testcase {
 
     /**
      * Test tool name.

@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/mod/glossary/locallib.php');
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     public function test_glossary_view(): void {
         global $CFG;

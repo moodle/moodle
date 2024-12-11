@@ -24,7 +24,7 @@ namespace tool_generator\local\testscenario;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \tool_generator\local\testscenario\runner
  */
-class runner_test extends \advanced_testcase {
+final class runner_test extends \advanced_testcase {
 
     /**
      * Test for parse_feature.

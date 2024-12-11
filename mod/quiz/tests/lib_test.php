@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
 
     public function test_quiz_has_grades(): void {

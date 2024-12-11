@@ -40,8 +40,7 @@ require_once($CFG->libdir . '/outputcomponents.php');
  * @copyright 2011 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class outputcomponents_test extends \advanced_testcase {
-
+final class outputcomponents_test extends \advanced_testcase {
     /**
      * Tests user_picture::fields.
      *

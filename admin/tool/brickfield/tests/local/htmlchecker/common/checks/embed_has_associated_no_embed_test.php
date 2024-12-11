@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class embed_has_associated_no_embed_testcase
  */
-class embed_has_associated_no_embed_test extends all_checks {
+final class embed_has_associated_no_embed_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'embed_has_associated_no_embed';
 

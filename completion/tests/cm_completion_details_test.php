@@ -43,7 +43,7 @@ require_once($CFG->libdir . '/completionlib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_completion\cm_completion_details
  */
-class cm_completion_details_test extends advanced_testcase {
+final class cm_completion_details_test extends advanced_testcase {
 
     /** @var completion_info A completion object. */
     protected $completioninfo = null;

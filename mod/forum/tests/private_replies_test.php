@@ -32,7 +32,7 @@ require_once(__DIR__ . '/generator_trait.php');
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class private_replies_test extends \advanced_testcase {
+final class private_replies_test extends \advanced_testcase {
 
     use mod_forum_tests_generator_trait;
 

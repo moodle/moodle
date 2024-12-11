@@ -25,7 +25,7 @@ namespace core;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \advanced_testcase
  */
-class advanced_test extends \advanced_testcase {
+final class advanced_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once(__DIR__ . '/fixtures/adhoc_test_task.php');

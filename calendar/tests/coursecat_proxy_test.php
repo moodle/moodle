@@ -25,7 +25,7 @@ use core_calendar\local\event\proxies\coursecat_proxy;
  * @copyright   2017 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class coursecat_proxy_test extends \advanced_testcase {
+final class coursecat_proxy_test extends \advanced_testcase {
 
     public function test_valid_coursecat(): void {
         global $DB;

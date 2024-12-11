@@ -40,7 +40,7 @@ require_once($CFG->dirroot . '/filter/tex/filter.php');
  * @copyright  2014 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_test extends \advanced_testcase {
+final class filter_test extends \advanced_testcase {
 
     protected $filter;
 

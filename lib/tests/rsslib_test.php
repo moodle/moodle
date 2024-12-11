@@ -36,7 +36,7 @@ require_once($CFG->libdir . '/rsslib.php');
  * @copyright  2009 Dan Poltawski
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class rsslib_test extends \advanced_testcase {
+final class rsslib_test extends \advanced_testcase {
 
     // The number of seconds tests should wait for the server to respond (high to prevent false positives).
     const TIMEOUT = 10;

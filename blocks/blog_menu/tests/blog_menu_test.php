@@ -29,7 +29,7 @@ use context_course;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \block_blog_menu
  */
-class blog_menu_test extends advanced_testcase {
+final class blog_menu_test extends advanced_testcase {
     public static function setUpBeforeClass(): void {
         require_once(__DIR__ . '/../../moodleblock.class.php');
         require_once(__DIR__ . '/../block_blog_menu.php');

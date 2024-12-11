@@ -32,7 +32,7 @@ use stdClass;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class action_test extends advanced_testcase {
+final class action_test extends advanced_testcase {
 
     /**
      * Test adding a callback that returns true

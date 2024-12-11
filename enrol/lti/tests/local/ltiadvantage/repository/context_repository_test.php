@@ -26,7 +26,7 @@ use enrol_lti\local\ltiadvantage\entity\application_registration;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\repository\context_repository
  */
-class context_repository_test extends \advanced_testcase {
+final class context_repository_test extends \advanced_testcase {
     /**
      * Helper to create test context objects for use with the repository tests.
      *

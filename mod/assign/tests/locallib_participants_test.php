@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class locallib_participants_test extends \advanced_testcase {
+final class locallib_participants_test extends \advanced_testcase {
     use mod_assign_test_generator;
 
     public function test_list_participants_blind_marking(): void {

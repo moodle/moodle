@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class submit_tags_test extends \externallib_advanced_testcase {
+final class submit_tags_test extends \externallib_advanced_testcase {
 
     /** @var \stdClass course record. */
     protected $course;

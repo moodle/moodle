@@ -24,7 +24,7 @@ namespace tool_usertours;
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \tool_usertours\tour
  */
-class tour_test extends \advanced_testcase {
+final class tour_test extends \advanced_testcase {
     /**
      * @var moodle_database
      */

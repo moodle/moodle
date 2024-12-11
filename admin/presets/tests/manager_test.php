@@ -28,7 +28,7 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_adminpresets\manager
  */
-class manager_test extends \advanced_testcase {
+final class manager_test extends \advanced_testcase {
     /**
      * Include required libraries.
      */

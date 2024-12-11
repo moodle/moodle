@@ -45,7 +45,7 @@ require_once($CFG->libdir . '/adminlib.php');
  * @copyright   Catalyst IT, 2023
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_result_admintree_test extends externallib_advanced_testcase {
+final class get_result_admintree_test extends externallib_advanced_testcase {
 
     /**
      * Sets up admin tree for the given settings.

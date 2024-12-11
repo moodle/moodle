@@ -24,7 +24,7 @@ namespace ltiservice_gradebookservices\task;
  * @copyright 2018 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cleanup_test extends \advanced_testcase {
+final class cleanup_test extends \advanced_testcase {
 
     /**
      * Test set up.

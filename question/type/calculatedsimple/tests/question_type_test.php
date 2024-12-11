@@ -44,7 +44,7 @@ require_once($CFG->dirroot . '/question/type/calculatedsimple/edit_calculatedsim
  * @covers \qtype_calculatedsimple_edit_form
  *
  */
-class question_type_test extends \advanced_testcase {
+final class question_type_test extends \advanced_testcase {
     protected $qtype;
 
     protected function setUp(): void {

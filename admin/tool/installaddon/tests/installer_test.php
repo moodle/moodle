@@ -33,7 +33,7 @@ require_once(__DIR__.'/fixtures/testable_installer.php');
  * @copyright 2013 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class installer_test extends \advanced_testcase {
+final class installer_test extends \advanced_testcase {
 
     public function test_get_addons_repository_url(): void {
         $installer = testable_tool_installaddon_installer::instance();

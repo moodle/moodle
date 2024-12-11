@@ -32,8 +32,7 @@ require_once($CFG->libdir . '/tests/fixtures/test_renderer_factory.php');
  * @copyright 2014 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class outputfactories_test extends \advanced_testcase {
-
+final class outputfactories_test extends \advanced_testcase {
     public function test_nonautoloaded_classnames(): void {
         global $PAGE;
         $renderer = $PAGE->get_renderer('mod_assign');

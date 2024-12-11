@@ -50,7 +50,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external_test extends externallib_advanced_testcase {
+final class external_test extends externallib_advanced_testcase {
 
     /** @var \stdClass $creator User with enough permissions to create insystem context. */
     protected $creator = null;

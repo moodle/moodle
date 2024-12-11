@@ -31,7 +31,7 @@ use lang_string;
  * @copyright   2023 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filesize_test extends advanced_testcase {
+final class filesize_test extends advanced_testcase {
 
     /**
      * Data provider for {@see test_get_sql_filter}

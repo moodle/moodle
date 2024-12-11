@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @covers     \restore_qtype_plugin
  * @covers     \restore_create_categories_and_questions
  */
-class backup_test extends \advanced_testcase {
+final class backup_test extends \advanced_testcase {
 
     /**
      * Makes a backup of the course.

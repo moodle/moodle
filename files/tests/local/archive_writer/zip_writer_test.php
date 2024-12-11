@@ -30,7 +30,7 @@ use ZipArchive;
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @covers \core_files\local\archive_writer\zip_writer
  */
-class zip_writer_test extends advanced_testcase {
+final class zip_writer_test extends advanced_testcase {
 
     /**
      * Test add_file_from_filepath().

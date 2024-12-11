@@ -36,7 +36,7 @@ use \core_privacy\local\request\transform;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\request\transform
  */
-class request_transform_test extends advanced_testcase {
+final class request_transform_test extends advanced_testcase {
     /**
      * Test that user translation currently does nothing.
      *

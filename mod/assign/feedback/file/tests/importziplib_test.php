@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/mod/assign/feedback/file/importziplib.php');
  * @copyright  2020 Eric Merrill <merrill@oakland.edu>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class importziplib_test extends \advanced_testcase {
+final class importziplib_test extends \advanced_testcase {
 
     // Use the generator helper.
     use mod_assign_test_generator;

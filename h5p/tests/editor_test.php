@@ -43,7 +43,7 @@ use Moodle\H5PCore;
  *
  * @runTestsInSeparateProcesses
  */
-class editor_test extends advanced_testcase {
+final class editor_test extends advanced_testcase {
 
     /**
      * Form object to be used in test case.

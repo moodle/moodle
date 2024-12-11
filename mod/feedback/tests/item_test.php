@@ -27,7 +27,7 @@ use ReflectionClass;
  * @author     2023 David Woloszyn <david.woloszyn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class item_test extends advanced_testcase {
+final class item_test extends advanced_testcase {
 
     /**
      * Test that get_analysed() for textarea item returns correctly formatted data for exporting to Excel.

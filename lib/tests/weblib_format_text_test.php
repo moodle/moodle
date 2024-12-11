@@ -27,7 +27,7 @@ namespace core;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @covers ::format_text
  */
-class weblib_format_text_test extends \advanced_testcase {
+final class weblib_format_text_test extends \advanced_testcase {
 
     public function test_format_text_format_html(): void {
         $this->resetAfterTest();

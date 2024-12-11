@@ -34,7 +34,7 @@ require_once(__DIR__ . '/helpers.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class questionattemptstep_db_test extends \data_loading_method_test_base {
+final class questionattemptstep_db_test extends \data_loading_method_test_base {
     public function test_load_with_data(): void {
         $records = new question_test_recordset(array(
             array('attemptstepid', 'questionattemptid', 'sequencenumber', 'state', 'fraction', 'timecreated', 'userid', 'name', 'value', 'qtype', 'contextid'),

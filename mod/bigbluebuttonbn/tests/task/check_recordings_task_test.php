@@ -31,7 +31,7 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @covers \mod_bigbluebuttonbn\task\check_pending_recordings
  * @covers \mod_bigbluebuttonbn\recording::sync_pending_recordings_from_server
  */
-class check_recordings_task_test extends advanced_testcase {
+final class check_recordings_task_test extends advanced_testcase {
 
     use testcase_helper_trait;
 

@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Note: execution may take many minutes especially on slower servers.
  */
-class accesslib_test extends advanced_testcase {
+final class accesslib_test extends advanced_testcase {
 
     /**
      * Setup.
