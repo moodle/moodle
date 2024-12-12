@@ -69,6 +69,12 @@ function core_question_output_fragment_question_data(array $args): string {
     if (!empty($args['lastchanged'])) {
         $thispageurl->param('lastchanged', clean_param($args['lastchanged'], PARAM_INT));
     }
+    if (!empty($args['view'])) {
+        $thispageurl->param('view', clean_param($args['view'], PARAM_NOTAGS));
+    }
+    if (!empty($args['extraparams'])) {
+        $thispageurl->param('extraparams', clean_param($args['extraparams'], PARAM_RAW));
+    }
     // This is highly suspicious, but it is the same approach taken in /question/edit.php. See MDL-79281.
     $thispageurl->param('deleteall', 1);
     $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams);
