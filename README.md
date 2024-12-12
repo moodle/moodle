@@ -1,20 +1,20 @@
-# Moodle
+# Learning Hub Moodle
 
-<p align="center"><a href="https://moodle.org" target="_blank" title="Moodle Website">
-  <img src="https://raw.githubusercontent.com/moodle/moodle/main/.github/moodlelogo.svg" alt="The Moodle Logo">
-</a></p>
+Learning Hub is the NHS England learning management and delivery platform developed and maintained by the Technology Enhanced Learning team. This repository houses the code for the Moodle component of the Learning Hub application.
+
+## Moodle
 
 [Moodle][1] is the World's Open Source Learning Platform, widely used around the world by countless universities, schools, companies, and all manner of organisations and individuals.
 
 Moodle is designed to allow educators, administrators and learners to create personalised learning environments with a single robust, secure and integrated system.
 
-## Documentation
+### Documentation
 
 - Read our [User documentation][3]
 - Discover our [developer documentation][5]
 - Take a look at our [demo site][4]
 
-## Community
+### Community
 
 [moodle.org][1] is the central hub for the Moodle Community, with spaces for educators, administrators and developers to meet and work together.
 
@@ -24,13 +24,13 @@ You may also be interested in:
 - our regular series of [developer meetings][7]
 - the [Moodle User Association][8]
 
-## Installation and hosting
+### Installation and hosting
 
 Moodle is Free, and Open Source software. You can easily [download Moodle][9] and run it on your own web server, however you may prefer to work with one of our experienced [Moodle Partners][10].
 
 Moodle also offers hosting through both [MoodleCloud][11], and our [partner network][10].
 
-## License
+### License
 
 Moodle is provided freely as open source software, under version 3 of the GNU General Public License. For more information on our license see
 
