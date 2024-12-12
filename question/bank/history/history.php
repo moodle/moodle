@@ -36,7 +36,15 @@ list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
         question_edit_setup('questions', '/question/bank/history/history.php');
 $pagevars['entryid'] = $entryid;
 $pagevars['returnurl'] = $returnurl;
-$url = new moodle_url($thispageurl, ['entryid' => $entryid, 'returnurl' => $returnurl]);
+$url = new moodle_url(
+    $thispageurl,
+    [
+        'entryid' => $entryid,
+        'returnurl' => $returnurl,
+        'view' => '\qbank_history\question_history_view',
+        'extraparams' => json_encode(['entryid' => $entryid, 'returnurl' => $returnurl]),
+    ],
+);
 $PAGE->set_url($url);
 
 // Additional param to differentiate with other question bank view.
