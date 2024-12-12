@@ -93,6 +93,11 @@ class restore_glossary_activity_structure_step extends restore_activity_structur
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->sourceglossaryid = $this->get_mappingid('glossary', $data->sourceglossaryid);
 
+        $context = context_module::instance($this->task->get_moduleid());
+        if (!empty($data->definitiontrust) && !trusttext_trusted($context)) {
+            $data->definitiontrust = 0;
+        }
+
         // insert the entry record
         $newitemid = $DB->insert_record('glossary_entries', $data);
         $this->set_mapping('glossary_entry', $oldid, $newitemid, true); // childs and files by itemname
