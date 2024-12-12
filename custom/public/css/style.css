@@ -1,0 +1,113 @@
+.main_img,
+.main_img img{
+    width: 100%;
+    height: 75vh;
+    object-fit: cover;
+}
+.content_title{
+    font-size: 40px;
+    font-weight: bold;
+    color: #272727;
+}
+.content_sub_title{
+    font-size: 20px;
+    font-weight: bold;
+    color: #2D287F; 
+}
+.content_title_area{
+    padding: 0 8vw 0 10vw;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 10vh;
+}
+.list_button{
+    margin-left: auto;
+    background-color: #fff;
+    color: #2D287F; 
+}
+.list_button:hover{
+    color: #fff; 
+}
+.event_name{
+    font-weight: bold;
+    margin-top: 2vh;
+    font-size: 18px;
+    color: #272727;
+}
+.event_period{
+    font-size: 14px;
+    margin-top: 2vh;
+    color: #7d7d7d;
+}
+.event_period span{
+    padding-right: 1.5vw;
+}
+a{
+    text-decoration: none;
+}
+.slider-img p:last-child{
+    margin-top : 10px;
+}
+.status{
+    width: 7vw;
+    text-align: center;
+    margin-top: 1.5vh;
+    color: #fff;
+    background: #454276;
+    padding: 2px;
+    border-radius: 5px;
+}
+
+
+/* イベント詳細画面 */
+.event_detail_area{
+    margin-top: 70px; 
+    padding: 0 80px;
+    max-width: 1500px;
+    padding: 0 190px;
+}
+.event_detail_title{
+    font-size: 30px;
+    font-weight: bold;
+    margin: 20px 0 10px 0;
+}
+.event_detail_container img{
+    width: 50%;
+}
+table{
+    width: 50%;
+    margin-top: 3rem;
+}
+table, table td, table th {
+    border-collapse: collapse; 
+    border: 1px solid #666;
+    font-size: 13px;
+}
+table th{
+    color: #990033;
+    background-color: #f5f5f5;
+}
+table td{
+    padding: .5rem;
+}
+table button{
+    width: 130px;
+}
+.slick-slider{
+    margin-bottom: 12vh;
+}
+.slick-next{
+    right: 20px !important;
+}
+.slick-prev {
+    left: 19px !important;
+    z-index: 200 !important;
+}
+.slick-next, .slick-prev{
+    top: 36% !important;
+}
+.slick-next:before, .slick-prev:before{
+    opacity: 100 !important;
+    font-size: 43px !important;
+}
