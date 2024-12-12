@@ -1,0 +1,7 @@
+issueNumber: MDL-83765
+notes:
+  core:
+    - message: >-
+        set_alignment(), set_constraint() and do_not_enhance() functions have
+        been fully removed from action_menu class.
+      type: removed
