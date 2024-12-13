@@ -40,17 +40,18 @@ class helper {
         $questionversions = [];
         $countselectedquestion = count($questionids);
 
-        if ($deleteallversions) {
-            $versionsofeachquestionbankentry = \question_bank::get_all_versions_of_questions($questionids);
-            foreach ($versionsofeachquestionbankentry as $entryid => $versions) {
-                // Re-order to oldest first.
-                $versionsofeachquestionbankentry[$entryid] = array_reverse($versions, true);
-                // Flip the array to list question by question id. [ qid => version ].
-                $questionversions += array_flip($versions);
-            }
-            // Flatten an array.
-            $questionids = array_merge(...$versionsofeachquestionbankentry);
+        $versionsofeachquestionbankentry = $deleteallversions
+            ? \question_bank::get_all_versions_of_questions($questionids)
+            : \question_bank::get_version_of_questions($questionids);
+
+        foreach ($versionsofeachquestionbankentry as $entryid => $versions) {
+            // Re-order to the oldest first.
+            $versionsofeachquestionbankentry[$entryid] = array_reverse($versions, true);
+            // Flip the array to list question by question id. [ qid => version ].
+            $questionversions += array_flip($versions);
         }
+        // Flatten an array.
+        $questionids = array_merge(...$versionsofeachquestionbankentry);
 
         // Get the names of all the questions.
         $questions = $DB->get_records_list('question', 'id', $questionids, '', 'id, name');
@@ -62,15 +63,11 @@ class helper {
                 $inuse = true;
             }
             $questionname = format_string($questions[$questionid]->name);
-            if (isset($questionversions[$questionid])) {
-                $a = new \stdClass();
-                $a->name = $questionname;
-                $a->version = $questionversions[$questionid];
-                $questionnames .= get_string('questionnameandquestionversion',
-                    'question', $a) . '<br />';
-            } else {
-                $questionnames .= $questionname . '<br />';
-            }
+
+            $a = new \stdClass();
+            $a->name = $questionname;
+            $a->version = $questionversions[$questionid];
+            $questionnames .= get_string('questionnameandquestionversion', 'question', $a) . '<br />';
         }
 
         // Add the in-use message if required.
