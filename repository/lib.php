@@ -536,6 +536,9 @@ abstract class repository implements cacheable_object {
     /** @var bool true if the super construct is called, otherwise false. */
     public $super_called;
 
+    /** @var array List of file ids currently being synced, to avoid endless recursion */
+    protected static $syncfileids = [];
+
     /**
      * Constructor
      *
@@ -2759,14 +2762,29 @@ abstract class repository implements cacheable_object {
             if ($file->get_referencelastsync()) {
                 return false;
             }
-            $fs = get_file_storage();
-            $params = file_storage::unpack_reference($file->get_reference(), true);
-            if (!is_array($params) || !($storedfile = $fs->get_file($params['contextid'],
-                    $params['component'], $params['filearea'], $params['itemid'], $params['filepath'],
-                    $params['filename']))) {
-                $file->set_missingsource();
-            } else {
-                $file->set_synchronized($storedfile->get_contenthash(), $storedfile->get_filesize(), 0, $storedfile->get_timemodified());
+
+            if (in_array($file->get_id(), self::$syncfileids)) {
+                throw new \coding_exception('File references itself: ' . $file->get_id());
+            }
+            try {
+                array_push(self::$syncfileids, $file->get_id());
+
+                $fs = get_file_storage();
+                $params = file_storage::unpack_reference($file->get_reference(), true);
+                if (!is_array($params) || !($storedfile = $fs->get_file($params['contextid'],
+                        $params['component'], $params['filearea'], $params['itemid'], $params['filepath'],
+                        $params['filename']))) {
+                    $file->set_missingsource();
+                } else {
+                    $file->set_synchronized(
+                        $storedfile->get_contenthash(),
+                        $storedfile->get_filesize(),
+                        0,
+                        $storedfile->get_timemodified(),
+                    );
+                }
+            } finally {
+                array_pop(self::$syncfileids);
             }
             return true;
         }
