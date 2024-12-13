@@ -67,6 +67,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   Course category contexts no longer hold question categories.
 
   For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
+- The 'core_renderer::sr_text()' function has been deprecated, use 'core_renderer::visually_hidden_text()' instead.
+
+  For more information see [MDL-81825](https://tracker.moodle.org/browse/MDL-81825)
 
 #### Removed
 
@@ -76,6 +79,25 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Final deprecation of methods `task_base::is_blocking` and `task_base::set_blocking`.
 
   For more information see [MDL-81509](https://tracker.moodle.org/browse/MDL-81509)
+- set_alignment(), set_constraint() and do_not_enhance() functions have been fully removed from action_menu class.
+
+  For more information see [MDL-83765](https://tracker.moodle.org/browse/MDL-83765)
+
+### core_adminpresets
+
+#### Removed
+
+- Remove chat and survey from Adminpresets.
+
+  For more information see [MDL-82457](https://tracker.moodle.org/browse/MDL-82457)
+
+### core_analytics
+
+#### Removed
+
+- Remove chat and survey from core_analytics.
+
+  For more information see [MDL-82457](https://tracker.moodle.org/browse/MDL-82457)
 
 ### core_backup
 
@@ -169,6 +191,22 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-80430](https://tracker.moodle.org/browse/MDL-80430)
 
+### block_site_main_menu
+
+#### Removed
+
+- 'Activity' selector in site_main_menu block has been deleted.
+
+  For more information see [MDL-83733](https://tracker.moodle.org/browse/MDL-83733)
+
+### block_social_activities
+
+#### Removed
+
+- 'Activity' selector in social_activities block has been deleted.
+
+  For more information see [MDL-83733](https://tracker.moodle.org/browse/MDL-83733)
+
 ### gradereport_grader
 
 #### Deprecated
@@ -176,6 +214,31 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The method `gradereport_grader::get_right_avg_row()` has been finally deprecated and will now throw an exception if called.
 
   For more information see [MDL-78890](https://tracker.moodle.org/browse/MDL-78890)
+
+### mod
+
+#### Removed
+
+- Remove mod_survey for Moodle 5.0
+
+  For more information see [MDL-82457](https://tracker.moodle.org/browse/MDL-82457)
+- Remove mod_chat from Moodle 5.0
+
+  For more information see [MDL-82457](https://tracker.moodle.org/browse/MDL-82457)
+
+### mod_assign
+
+#### Fixed
+
+- The unit test for the privacy provider has been marked as final.
+
+  A number of core tests had been incorrectly configured to extend this test
+  but should instead be extending `\mod_assign\tests\provider_testcase`.
+
+  Any community plugins extending the `\mod_assign\privacy\provider_test` test
+  class should be updated to extend `\mod_assign\tests\provider_testcase` instead.
+
+  For more information see [MDL-81520](https://tracker.moodle.org/browse/MDL-81520)
 
 ### mod_feedback
 
@@ -234,6 +297,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
 
+### theme_boost
+
+#### Removed
+
+- Remove chat and survey styles. Important note: the styles have been moved to the plugins as CSS files (and not SCSS) so themes might now need to override the mod_chat and mod_survey styles specifically as css does not have any definition for primary, gray and other colors accessible in the original scss version.
+
+  For more information see [MDL-82457](https://tracker.moodle.org/browse/MDL-82457)
+
 ### tool_brickfield
 
 #### Deprecated
@@ -248,6 +319,20 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   No replacement. System context no longer a valid context to assign a question category
 
   For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
+
+#### Removed
+
+- Remove chat and survey support from tool_brickfield.
+
+  For more information see [MDL-82457](https://tracker.moodle.org/browse/MDL-82457)
+
+### tool_mobile
+
+#### Removed
+
+- Remove chat and survey support from tool_mobile.
+
+  For more information see [MDL-82457](https://tracker.moodle.org/browse/MDL-82457)
 
 ## 4.5
 

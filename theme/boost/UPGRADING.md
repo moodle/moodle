@@ -1,5 +1,13 @@
 # theme_boost Upgrade notes
 
+## 5.0dev
+
+### Removed
+
+- Remove chat and survey styles. Important note: the styles have been moved to the plugins as CSS files (and not SCSS) so themes might now need to override the mod_chat and mod_survey styles specifically as css does not have any definition for primary, gray and other colors accessible in the original scss version.
+
+  For more information see [MDL-82457](https://tracker.moodle.org/browse/MDL-82457)
+
 ## 4.5
 
 ### Added

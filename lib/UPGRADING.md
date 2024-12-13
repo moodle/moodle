@@ -59,6 +59,9 @@
   Course category contexts no longer hold question categories.
 
   For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
+- The 'core_renderer::sr_text()' function has been deprecated, use 'core_renderer::visually_hidden_text()' instead.
+
+  For more information see [MDL-81825](https://tracker.moodle.org/browse/MDL-81825)
 
 ### Removed
 
@@ -68,6 +71,9 @@
 - Final deprecation of methods `task_base::is_blocking` and `task_base::set_blocking`.
 
   For more information see [MDL-81509](https://tracker.moodle.org/browse/MDL-81509)
+- set_alignment(), set_constraint() and do_not_enhance() functions have been fully removed from action_menu class.
+
+  For more information see [MDL-83765](https://tracker.moodle.org/browse/MDL-83765)
 
 ## 4.5
 
