@@ -79,9 +79,9 @@ $string['pathsunsecuredataroot'] = 'La ubicació del dataroot no és segura.';
 $string['pathswrongadmindir'] = 'No existeix el directori d\'administració';
 $string['phpextension'] = 'Extensió PHP {$a}';
 $string['phpversion'] = 'Versió PHP';
-$string['phpversionhelp'] = '<p>Moodle necessita una versió de PHP 4.3.0 o 5.1.0 (les versions 5.0.x tenien uns quants problemes coneguts).</p>
-<p>A hores d\'ara esteu utilitzant la versió {$a}.</p>
-<p>Us cal actualitzar el PHP o traslladar Moodle a un ordinador amb una versió de PHP més recent.<br />(Si esteu utilitzant la versió 5.0.x, alternativament també podríeu tornar enrere a la 4.4.x)</p>';
+$string['phpversionhelp'] = '<p>El Moodle requereix una versió de PHP almenys 5.6.5 o 7.1 (7.0.x té algunes limitacions del motor).</p>
+<p>Actualment esteu executant la versió {$a}.</p>
+<p>Heu d\'actualitzar el PHP o canviar a un servidor amb una versió més nova del PHP.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Esteu veient aquesta pàgina perquè heu instal·lat amb èxit i heu executat el paquet <strong>{$a->packname} {$a->packversion}</strong>. Felicitacions.';
 $string['welcomep30'] = 'Aquesta versió de <strong>{$a->installername}</strong> inclou les aplicacions necessàries per crear un entorn en el qual funcioni <strong>Moodle</strong>, concretament:';
