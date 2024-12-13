@@ -6,6 +6,22 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
+## 4.5.1+
+
+### mod_assign
+
+#### Fixed
+
+- The unit test for the privacy provider has been marked as final.
+
+  A number of core tests had been incorrectly configured to extend this test
+  but should instead be extending `\mod_assign\tests\provider_testcase`.
+
+  Any community plugins extending the `\mod_assign\privacy\provider_test` test
+  class should be updated to extend `\mod_assign\tests\provider_testcase` instead.
+
+  For more information see [MDL-81520](https://tracker.moodle.org/browse/MDL-81520)
+
 ## 4.5.1
 
 ### core
