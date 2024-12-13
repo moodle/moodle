@@ -50,7 +50,7 @@ class wikimedia {
         } else {
             $this->api = $url;
         }
-        $this->_param['format'] = 'php';
+        $this->_param['format'] = 'json';
         $this->_param['redirects'] = true;
         $this->_conn = new curl(array('cache'=>true, 'debug'=>false));
     }
@@ -59,7 +59,7 @@ class wikimedia {
         $this->_param['lgname']   = $user;
         $this->_param['lgpassword'] = $pass;
         $content = $this->_conn->post($this->api, $this->_param);
-        $result = unserialize($content);
+        $result = json_decode($content, true);
         if (!empty($result['result']['sessionid'])) {
             $this->userid = $result['result']['lguserid'];
             $this->username = $result['result']['lgusername'];
@@ -87,7 +87,7 @@ class wikimedia {
         $this->_param['prop']   = 'imageinfo';
         $this->_param['iiprop'] = 'url';
         $content = $this->_conn->post($this->api, $this->_param);
-        $result = unserialize($content);
+        $result = json_decode($content, true);
         foreach ($result['query']['pages'] as $page) {
             if (!empty($page['imageinfo'][0]['url'])) {
                 $image_urls[] = $page['imageinfo'][0]['url'];
@@ -103,7 +103,7 @@ class wikimedia {
         $this->_param['prop']   = 'images|info|imageinfo';
         $this->_param['iiprop'] = 'url';
         $content = $this->_conn->post($this->api, $this->_param);
-        $result = unserialize($content);
+        $result = json_decode($content, true);
         if (!empty($result['query']['pages'])) {
             foreach ($result['query']['pages'] as $page) {
                 $image_urls[$page['title']] = $page['imageinfo'][0]['url'];
@@ -174,7 +174,7 @@ class wikimedia {
             'iiurlheight' => WIKIMEDIA_IMAGE_SIDE_LENGTH);
         //didn't work with POST
         $content = $this->_conn->get($this->api, $this->_param);
-        $result = unserialize($content);
+        $result = json_decode($content, true);
         if (!empty($result['query']['pages'])) {
             foreach ($result['query']['pages'] as $page) {
                 $title = $page['title'];
