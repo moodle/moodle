@@ -54,6 +54,13 @@ class behat_form_select extends behat_form_field {
 
         // Here we select the option(s).
         if ($multiple) {
+            // Is the value empty?
+            if (empty(trim($value))) {
+                // Reset selection to nothing.
+                $this->field->setValue([]);
+                return;
+            }
+
             // Split and decode values. Comma separated list of values allowed. With valuable commas escaped with backslash.
             $options = preg_replace('/\\\,/', ',',  preg_split('/(?<!\\\),/', trim($value)));
             // This is a multiple select, let's pass the multiple flag after first option.
