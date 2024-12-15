@@ -14,19 +14,38 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_backup\hook;
+
 /**
  * Hook used by copy_helper::process_formdata() to expand the list of required fields.
- *
  * This should be used together with core_backup\hook\after_copy_form_definition.
  *
  * @package core_backup
  * @copyright 2024 Monash University (https://www.monash.edu)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\core\attribute\label('Able to add extra fields to the copy course.')]
+#[\core\attribute\tags('backup')]
+final class copy_helper_process_formdata {
 
-namespace core_backup\hook;
+    /** @var array List of extra fields to be added. */
+    protected $extrafields = [];
 
-defined('MOODLE_INTERNAL') || die();
+    /**
+     * Add an extra field.
+     *
+     * @param string $extrafield
+     */
+    public function add_extra_field(string $extrafield) {
+        $this->extrafields[] = $extrafield;
+    }
 
-// This file  is a placeholder. Remove when MDL-83618 is available.
-require_once(__DIR__.'/../../../../classes/hook/copy_helper_process_formdata.php');
+    /**
+     * Get the extra fields.
+     *
+     * @return array
+     */
+    public function get_extrafields(): array {
+        return $this->extrafields;
+    }
+}

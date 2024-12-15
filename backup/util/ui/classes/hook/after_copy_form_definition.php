@@ -14,20 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_backup\hook;
+
+use MoodleQuickForm;
+
 /**
  * Hook to allow adding extra fields to the copy course form.
- *
  * This should be used together with core_backup\hook\copy_helper_process_formdata
  *
  * @package core_backup
  * @copyright 2024 Monash University (https://www.monash.edu)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\core\attribute\label('Use to add extra elements to the copy course form.')]
+#[\core\attribute\tags('backup')]
+final class after_copy_form_definition {
 
-namespace core_backup\hook;
+    /** @var MoodleQuickForm */
+    public readonly MoodleQuickForm $mform;
 
-defined('MOODLE_INTERNAL') || die();
-
-// This file is a placeholder. Remove when MDL-83618 is available.
-require_once(__DIR__.'/../../../../classes/hook/after_copy_form_definition.php');
-
+    /**
+     * Constructor.
+     *
+     * @param MoodleQuickForm $mform
+     */
+    public function __construct(MoodleQuickForm $mform) {
+        $this->mform = $mform;
+    }
+}

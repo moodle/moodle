@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_backup\hook;
+
+use restore_root_task;
+
 /**
  * Hook to allow extra settings to be defined for the course restore process.
  *
@@ -21,10 +25,19 @@
  * @copyright 2024 Monash University (https://www.monash.edu)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\core\attribute\label('Use to add extra elements to the settings tab of the restore process.')]
+#[\core\attribute\tags('backup')]
+final class after_restore_root_define_settings {
 
-namespace core_backup\hook;
+    /** @var restore_root_task */
+    public readonly restore_root_task $task;
 
-defined('MOODLE_INTERNAL') || die();
-
-// This file is a placeholder. Remove when MDL-83618 is available.
-require_once(__DIR__.'/../../../../classes/hook/after_restore_root_define_settings.php');
+    /**
+     * Constructor.
+     *
+     * @param restore_root_task $task
+     */
+    public function __construct(restore_root_task $task) {
+        $this->task = $task;
+    }
+}

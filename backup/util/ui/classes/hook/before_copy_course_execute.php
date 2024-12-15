@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_backup\hook;
+
+use stdClass;
+use restore_plan;
+
 /**
  * Hook used to allow interaction with the copy task, before the actual task execution takes place.
  *
@@ -21,10 +26,24 @@
  * @copyright 2024 Monash University (https://www.monash.edu)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\core\attribute\label('Use to interact with the copy course task before the actual execution takes place.')]
+#[\core\attribute\tags('backup')]
+final class before_copy_course_execute {
 
-namespace core_backup\hook;
+    /** @var restore_plan */
+    public readonly restore_plan $plan;
 
-defined('MOODLE_INTERNAL') || die();
+    /** @var stdClass */
+    public readonly stdClass $copyinfo;
 
-// This file is a placeholder. Remove when MDL-83618 is available.
-require_once(__DIR__.'/../../../../classes/hook/before_copy_course_execute.php');
+    /**
+     * Hook constructor.
+     *
+     * @param restore_plan $plan
+     * @param stdClass $copyinfo
+     */
+    public function __construct(restore_plan $plan, stdClass $copyinfo) {
+        $this->plan = $plan;
+        $this->copyinfo = $copyinfo;
+    }
+}
