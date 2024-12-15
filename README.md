@@ -1,4 +1,4 @@
-# Moodle
+# Moodle.
 
 <p align="center"><a href="https://moodle.org" target="_blank" title="Moodle Website">
   <img src="https://raw.githubusercontent.com/moodle/moodle/main/.github/moodlelogo.svg" alt="The Moodle Logo">
