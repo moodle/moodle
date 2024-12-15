@@ -29,7 +29,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['admindirname'] = 'Adminディレクトリ';
+$string['admindirname'] = 'adminディレクトリ';
 $string['availablelangs'] = '利用可能な言語パック';
 $string['chooselanguagehead'] = '言語を選択してください。';
 $string['chooselanguagesub'] = 'インストールにのみ使用する言語を選択してください。この言語はサイトのデフォルト言語としても使用されます。後でサイト言語を変更することができます。';
