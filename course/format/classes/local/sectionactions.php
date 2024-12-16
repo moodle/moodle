@@ -409,8 +409,8 @@ class sectionactions extends baseactions {
         $cmids = [];
 
         // In case the section is delegated by a module, we change also the visibility for the source module.
-        if ($sectioninfo->is_delegated()) {
-            $delegateinstance = $sectioninfo->get_component_instance();
+        $delegateinstance = $sectioninfo->get_component_instance();
+        if ($delegateinstance) {
             // We only return sections delegated by course modules. Sections delegated to other
             // types of components must implement their own methods to get the section.
             if ($delegateinstance && ($delegateinstance instanceof \core_courseformat\sectiondelegatemodule)) {
