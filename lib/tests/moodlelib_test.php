@@ -5489,38 +5489,83 @@ EOT;
         return [
             'Proxybypass contains the same IP as the beginning of the URL' => [
                 'http://192.168.5.5-fake-app-7f000101.nip.io',
-                '192.168.5.5, 127.0.0.1',
-                false
+                '192.168.5.5,127.0.0.1',
+                false,
+            ],
+            'Proxybypass contains some extra whitespaces (test with hostname)' => [
+                'store.mydomain.com',
+                'store.mydomain.com , 192.168.5.5',
+                false,
+            ],
+            'Proxybypass contains some extra whitespaces (test with IP)' => [
+                '192.168.5.5',
+                'store.mydomain.com , 192.168.5.5',
+                false,
             ],
             'Proxybypass contains the last part of the URL' => [
                 'http://192.168.5.5-fake-app-7f000101.nip.io',
                 'app-7f000101.nip.io',
-                false
+                false,
             ],
             'Proxybypass contains the last part of the URL 2' => [
                 'http://store.mydomain.com',
                 'mydomain.com',
-                false
+                false,
             ],
             'Proxybypass contains part of the url' => [
                 'http://myweb.com',
                 'store.myweb.com',
-                false
+                false,
+            ],
+            'Proxybypass with a wildcard contains part of the url' => [
+                'http://myweb.com',
+                '*.myweb.com',
+                false,
             ],
             'Different IPs used in proxybypass' => [
                 'http://192.168.5.5',
                 '192.168.5.3',
-                false
+                false,
+            ],
+            'Different partial IPs used in proxybypass' => [
+                'http://192.168.5.5',
+                '192.16',
+                false,
+            ],
+            'Different partial IPs used in proxybypass with ending dot' => [
+                'http://192.168.5.5',
+                '192.16.',
+                false,
             ],
             'Proxybypass and URL matchs' => [
                 'http://store.mydomain.com',
                 'store.mydomain.com',
-                true
+                true,
+            ],
+            'Proxybypass with a wildcard value covers any subdomain' => [
+                'http://store.mydomain.com',
+                '*.mydomain.com',
+                true,
+            ],
+            'Proxybypass with a wildcard value covers any higher level subdomain' => [
+                'http://another.store.mydomain.com',
+                '*.mydomain.com',
+                true,
+            ],
+            'Proxybypass with multiple domains' => [
+                'http://store.mydomain.com',
+                '127.0.0.1,*.mydomain.com',
+                true,
             ],
             'IP used in proxybypass' => [
                 'http://192.168.5.5',
                 '192.168.5.5',
-                true
+                true,
+            ],
+            'Partial IP used in proxybypass' => [
+                'http://192.168.5.5',
+                '192.168.',
+                true,
             ],
         ];
     }
