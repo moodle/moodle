@@ -343,6 +343,31 @@ abstract class question_bank {
     }
 
     /**
+     * Retrieves version information for a list of questions.
+     *
+     * @param array $questionids Array of question ids.
+     * @return array An array question_bank_entries.id => version number => question.id.
+     */
+    public static function get_version_of_questions(array $questionids): array {
+        global $DB;
+
+        [$listquestionid, $params] = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED);
+        $sql = "SELECT qv.questionid, qv.version, qv.questionbankentryid
+                  FROM {question_versions} qv
+                  JOIN {question_bank_entries} qbe ON qv.questionbankentryid = qbe.id
+                 WHERE qv.questionid $listquestionid
+              ORDER BY qv.version DESC";
+
+        $rows = $DB->get_recordset_sql($sql, $params);
+        $result = [];
+        foreach ($rows as $row) {
+            $result[$row->questionbankentryid][$row->version] = $row->questionid;
+        }
+
+        return $result;
+    }
+
+    /**
      * @return question_finder a question finder.
      */
     public static function get_finder() {
