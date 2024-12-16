@@ -263,4 +263,94 @@ final class ip_utils {
 
         return null;
     }
+
+    /**
+     * Normalize internet address.
+     *
+     * Accepted input formats are :
+     * - a valid range or full ip address (e.g.: 192.168.0.0/16, fe80::ffff, 127.0.0.1 or fe80:fe80:fe80:fe80:fe80:fe80:fe80:fe80)
+     * - a valid domain name or pattern (e.g.: www.moodle.com or *.moodle.org)
+     *
+     * Convert forbidden syntaxes since MDL-74289 to allowed values. For examples:
+     * - 192.168. => 192.168.0.0/16
+     * - .domain.tld => *.domain.tld
+     *
+     * @param string $address The input string to normalize.
+     *
+     * @return string If $address is not normalizable, an empty string is returned.
+     */
+    public static function normalize_internet_address(string $address): string {
+        $address = str_replace([" ", "\n", "\r", "\t", "\v", "\x00"], '', strtolower($address));
+
+        // Replace previous allowed "192.168." format to CIDR format (192.168.0.0/16).
+        if (str_ends_with($address, '.') && preg_match('/^[0-9\.]+$/', $address) === 1) {
+            $count = substr_count($address, '.');
+
+            // Remove final dot.
+            $address = substr($address, 0, -1);
+
+            // Fill address with missing ".0".
+            $address .= str_repeat('.0', 4 - $count);
+
+            // Add subnet mask.
+            $address .= '/' . ($count * 8);
+        }
+
+        if (self::is_ip_address($address) ||
+            self::is_ipv4_range($address) || self::is_ipv6_range($address)) {
+
+            // Keep full or range ip addresses.
+            return $address;
+        }
+
+        // Replace previous allowed ".domain.tld" format to "*.domain.tld" format.
+        if (str_starts_with($address, '.')) {
+            $address = '*'.$address;
+        }
+
+        // Usually the trailing dot (null label) is omitted, but is valid if supplied. We'll just remove it and validate as normal.
+        $address = rtrim($address, '.');
+
+        if (self::is_domain_name($address) || self::is_domain_matching_pattern($address)) {
+            // Keep valid or pattern domain name.
+            return $address;
+        }
+
+        // Return empty string for invalid values.
+        return '';
+    }
+
+    /**
+     * Normalize a list of internet addresses.
+     *
+     * This function will:
+     * - normalize internet addresses {@see normalize_internet_address()}
+     * - remove invalid values
+     * - remove duplicate values
+     *
+     * @param string $addresslist A string representing a list of internet addresses separated by a common value.
+     * @param string $separator A separator character used within the list string.
+     *
+     * @return string
+     */
+    public static function normalize_internet_address_list(string $addresslist, string $separator = ','): string {
+        $addresses = [];
+        foreach (explode($separator, $addresslist) as $value) {
+            $address = self::normalize_internet_address($value);
+
+            if (empty($address)) {
+                // Ignore invalid input.
+                continue;
+            }
+
+            if (in_array($address, $addresses, true)) {
+                // Ignore duplicate value.
+                continue;
+            }
+
+            $addresses[] = $address;
+        }
+
+        return implode($separator, $addresses);
+    }
 }

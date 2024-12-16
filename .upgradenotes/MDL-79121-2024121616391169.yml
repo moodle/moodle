@@ -1,0 +1,20 @@
+issueNumber: MDL-79121
+notes:
+  core:
+    - message: >
+        A new core\ip_utils::normalize_internet_address() method is created to
+        sanitize an IP address, a range of IP addresses, a domain name or a
+        wildcard domain matching pattern.
+
+
+        Moodle previously allowed entries such as 192.168. or .moodle.org for
+        certain variables (eg: $CFG->proxybypass). Since MDL-74289, these
+        formats are no longer allowed. This method converts this informations
+        into an authorized format. For example, 192.168. becomes 192.168.0.0/16
+        and .moodle.org becomes *.moodle.org.
+
+
+        Also a new core\ip_utils::normalize_internet_address_list() method is
+        created. Based on core\ip_utils::normalize_internet_address(), this
+        method normalizes a string containing a series of Internet addresses.
+      type: improved
