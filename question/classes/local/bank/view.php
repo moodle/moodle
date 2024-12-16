@@ -1145,6 +1145,16 @@ class view {
 
         [$categoryid, $contextid] = category_condition::validate_category_param($this->pagevars['cat']);
         $catcontext = \context::instance_by_id($contextid);
+        // Update the question in the list with correct category context when we have selected category filter.
+        if (isset($this->pagevars['filter']['category']['values'])) {
+            $categoryid = $this->pagevars['filter']['category']['values'][0];
+            foreach ($this->contexts->all() as $context) {
+                if ((int) $context->instanceid === (int) $categoryid) {
+                    $catcontext = $context;
+                    break;
+                }
+            }
+        }
 
         echo \html_writer::start_tag(
             'div',
