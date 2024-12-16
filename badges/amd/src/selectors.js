@@ -40,7 +40,7 @@ export default {
         disablebadge: getDataSelector('action', 'disablebadge'),
     },
     elements: {
-        clearsearch: '.input-group-append .clear-icon',
+        clearsearch: '.input-group .clear-icon',
         main: '#backpacklist',
         backpackurl: '[data-backpackurl]',
     },

@@ -35,7 +35,7 @@ M.availability_profile.form.getNode = function(json) {
     // Create HTML structure.
     var html = '<span class="availability-group"><label><span class="pe-3">' +
             M.util.get_string('conditiontitle', 'availability_profile') + '</span> ' +
-            '<select name="field" class="custom-select">' +
+            '<select name="field" class="form-select">' +
             '<option value="choose">' + M.util.get_string('choosedots', 'moodle') + '</option>';
     var fieldInfo;
     for (var i = 0; i < this.standardFields.length; i++) {
@@ -50,7 +50,7 @@ M.availability_profile.form.getNode = function(json) {
     }
     html += '</select></label> <label><span class="accesshide">' + M.util.get_string('label_operator', 'availability_profile') +
             ' </span><select name="op" title="' + M.util.get_string('label_operator', 'availability_profile') + '"' +
-                     ' class="custom-select">';
+                     ' class="form-select">';
     var operators = ['isequalto', 'contains', 'doesnotcontain', 'startswith', 'endswith',
             'isempty', 'isnotempty'];
     for (i = 0; i < operators.length; i++) {

@@ -39,33 +39,31 @@
                 <input type="hidden" name="{{ name }}" value="{{ value }}">
             {{/hiddenfields}}
             <div class="input-group">
+
+                <input type="text"
+                    id="searchinput-{{uniqid}}"
+                    class="form-control withclear"
+                    placeholder="{{{ searchstring }}}"
+                    aria-label="{{{ searchstring }}}"
+                    name="{{{ inputname }}}"
+                    data-region="input"
+                    autocomplete="off"
+                >
                 <label for="searchinput-{{uniqid}}">
                     <span class="visually-hidden">{{{ searchstring }}}</span>
                 </label>
-                    <input type="text"
-                       id="searchinput-{{uniqid}}"
-                       class="form-control withclear"
-                       placeholder="{{{ searchstring }}}"
-                       aria-label="{{{ searchstring }}}"
-                       name="{{{ inputname }}}"
-                       data-region="input"
-                       autocomplete="off"
-                    >
-                    <a class="btn btn-close"
-                        data-action="closesearch"
-                        data-bs-toggle="collapse"
-                        href="#searchform-navbar"
-                        role="button"
-                    >
-                        {{#pix}} e/cancel, core {{/pix}}
-                        <span class="visually-hidden">{{#str}} closebuttontitle {{/str}}</span>
-                    </a>
-                <div class="input-group-append">
-                    <button type="submit" class="btn btn-submit" data-action="submit">
-                        {{#pix}} a/search, core {{/pix}}
-                        <span class="visually-hidden">{{{ searchstring }}}</span>
-                    </button>
-                </div>
+                <a class="btn btn-close"
+                    data-action="closesearch"
+                    data-bs-toggle="collapse"
+                    href="#searchform-navbar"
+                    role="button"
+                >
+                    <span class="visually-hidden">{{#str}} closebuttontitle {{/str}}</span>
+                </a>
+                <button type="submit" class="btn btn-submit" data-action="submit">
+                    {{#pix}} a/search, core {{/pix}}
+                    <span class="visually-hidden">{{{ searchstring }}}</span>
+                </button>
             </div>
         </form>
     </div>

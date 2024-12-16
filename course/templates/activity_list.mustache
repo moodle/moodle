@@ -24,18 +24,16 @@
 {{#search}}
     <form class="row">
         <div class="input-group pt-4 pb-1 col-md-6">
-            <label for="search">
-                <span class="visually-hidden">{{#str}} searchactivitiesbyname, course {{/str}}</span>
-            </label>
             <input type="text" name="search" id="search" class="form-control rounded-start" autocomplete="off"
                    placeholder="{{#str}}search, core {{/str}}" {{#query}} value="{{query}}" autofocus {{/query}}
             >
-            <div class="input-group-append">
-                <button type="submit" class="btn btn-outline-secondary rounded-end">
-                    <i class="icon fa fa-search fa-fw m-0" aria-hidden="true"></i>
-                    <span class="visually-hidden">{{#str}}submitsearch, course {{/str}}</span>
-                </button>
-          </div>
+            <label for="search">
+                <span class="visually-hidden">{{#str}} searchactivitiesbyname, course {{/str}}</span>
+            </label>
+            <button type="submit" class="btn btn-outline-secondary rounded-end">
+                <i class="icon fa fa-search fa-fw m-0" aria-hidden="true"></i>
+                <span class="visually-hidden">{{#str}}submitsearch, course {{/str}}</span>
+            </button>
         </div>
     </form>
     {{#query}}

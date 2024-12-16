@@ -60,7 +60,7 @@
         <div data-region="rule-base" class="form">
             <div data-region="rule-outcome" class="mb-3">
                 <label>{{#str}}outcome, tool_lp{{/str}}</label>
-                <select name="outcome" class="custom-select">
+                <select name="outcome" class="form-select">
                     {{#outcomes}}
                     <option value="{{code}}" {{#selected}}selected{{/selected}}>{{name}}</option>
                     {{/outcomes}}
@@ -68,7 +68,7 @@
             </div>
             <div data-region="rule-type" class="mb-3">
                 <label>{{#str}}when, tool_lp{{/str}}</label>
-                <select name="rule" class="custom-select">
+                <select name="rule" class="form-select">
                     <option value="-1">{{#str}}choosedots{{/str}}</option>
                     {{#rules}}
                     <option value="{{type}}" {{#selected}}selected{{/selected}}>{{name}}</option>

@@ -47,7 +47,7 @@ const registerEventListeners = () => {
         const isEnabled = lockedElement.checked || false;
         const enabledId = lockedElement.id.replace('_locked[', '_enabled[');
 
-        const enabledElement = document.getElementById(enabledId).closest('div.custom-control');
+        const enabledElement = document.getElementById(enabledId).closest('div.form-check');
         enabledElement.classList.toggle('dimmed_text', isEnabled);
     };
 

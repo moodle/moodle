@@ -36,7 +36,7 @@
 <div>
     {{#hasformats}}
         <label for="menu{{name}}format" class="visually-hidden">{{formatlabel}}</label>
-        <select name="{{name}}[format]" id="menu{{name}}format" class="custom-select">
+        <select name="{{name}}[format]" id="menu{{name}}format" class="form-select">
         {{#formats}}
             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{text}}</option>
         {{/formats}}

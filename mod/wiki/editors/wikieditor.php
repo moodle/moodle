@@ -145,7 +145,7 @@ class MoodleQuickForm_wikieditor extends MoodleQuickForm_textarea {
             $html .= "</a>";
         }
         $html .= "<label class='accesshide' for='addtags'>" . get_string('insertimage', 'wiki')  . "</label>";
-        $html .= "<select id='addtags' class='custom-select mx-1' " .
+        $html .= "<select id='addtags' class='form-select mx-1' " .
                  "onchange=\"insertTags('{$imagetag[0]}', '{$imagetag[1]}', this.value)\">";
         $html .= "<option value='" . s(get_string('wikiimage', 'wiki')) . "'>" . get_string('insertimage', 'wiki') . '</option>';
         foreach ($this->files as $filename) {

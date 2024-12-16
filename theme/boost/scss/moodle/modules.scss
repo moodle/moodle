@@ -161,7 +161,7 @@ select {
 }
 
 .discussion-settings-container {
-    .custom-select {
+    .form-select {
         width: 100%;
     }
 
@@ -1024,7 +1024,7 @@ div#dock {
             margin-top: 1rem;
         }
     }
-    .fitem .felement .custom-select {
+    .fitem .felement .form-select {
         align-self: flex-start;
     }
 }

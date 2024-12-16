@@ -42,15 +42,15 @@
         <fieldset>
             <legend class="visually-hidden">{{#str}} contactableprivacy, message {{/str}}</legend>
             {{#privacy}}
-                <div class="custom-control custom-radio mb-2">
+                <div class="form-check custom-radio mb-2">
                     <input
                         type="radio"
                         name="message_blocknoncontacts"
-                        class="custom-control-input"
+                        class="form-check-input"
                         id="block-noncontacts-{{uniqid}}-{{value}}"
                         value="{{value}}"
                     >
-                    <label class="custom-control-label ms-2" for="block-noncontacts-{{uniqid}}-{{value}}">
+                    <label class="form-check-label ms-2" for="block-noncontacts-{{uniqid}}-{{value}}">
                         {{text}}
                     </label>
                 </div>
@@ -64,9 +64,9 @@
 
     <h3 class="mb-2 mt-4 h6 fw-bold">{{#str}} general, core {{/str}}</h3>
     <div data-preference="entertosend">
-        <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="enter-to-send-{{uniqid}}" {{#entertosend}}checked{{/entertosend}}>
-            <label class="custom-control-label" for="enter-to-send-{{uniqid}}">
+        <div class="form-check form-switch">
+            <input type="checkbox" class="form-check-input" id="enter-to-send-{{uniqid}}" {{#entertosend}}checked{{/entertosend}}>
+            <label class="form-check-label" for="enter-to-send-{{uniqid}}">
                 {{#str}} useentertosend, core_message {{/str}}
             </label>
         </div>

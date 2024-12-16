@@ -31,7 +31,7 @@
     }
 }}
 <label for="{{id}}" class="visually-hidden">{{label}}</label>
-<select name="{{name}}" id="{{id}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}} class="form-control custom-select">
+<select name="{{name}}" id="{{id}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}} class="form-control form-select">
     {{#options}}
         <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
     {{/options}}

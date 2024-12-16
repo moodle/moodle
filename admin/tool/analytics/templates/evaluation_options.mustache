@@ -45,14 +45,14 @@
 {{#trainedexternally}}
     <div class="box mb-4">{{#str}} evaluationmodeinfo, tool_analytics {{/str}}</div>
 
-    <div class="custom-control custom-radio">
-        <input class="custom-control-input" type="radio" name="evaluationmode" id="id-mode-trainedmodel" value="trainedmodel" checked>
-        <label class="custom-control-label" for="id-mode-trainedmodel">{{#str}} evaluationmodetrainedmodel, tool_analytics {{/str}}</label>
+    <div class="form-check custom-radio">
+        <input class="form-check-input" type="radio" name="evaluationmode" id="id-mode-trainedmodel" value="trainedmodel" checked>
+        <label class="form-check-label" for="id-mode-trainedmodel">{{#str}} evaluationmodetrainedmodel, tool_analytics {{/str}}</label>
     </div>
 
-    <div class="custom-control custom-radio">
-        <input class="custom-control-input" type="radio" name="evaluationmode" id="id-mode-configuration" value="configuration">
-        <label class="custom-control-label" for="id-mode-configuration">{{#str}} evaluationmodeconfiguration, tool_analytics {{/str}}</label>
+    <div class="form-check custom-radio">
+        <input class="form-check-input" type="radio" name="evaluationmode" id="id-mode-configuration" value="configuration">
+        <label class="form-check-label" for="id-mode-configuration">{{#str}} evaluationmodeconfiguration, tool_analytics {{/str}}</label>
     </div>
 {{/trainedexternally}}
 
@@ -60,7 +60,7 @@
 <div id="id-evaluation-timesplitting-container" class="mt-3 {{#trainedexternally}}hidden{{/trainedexternally}}">
     {{#str}} selecttimesplittingforevaluation, tool_analytics {{/str}}
     <div>
-        <select id="id-evaluation-timesplitting" name="timesplitting" class="custom-select mt-3">
+        <select id="id-evaluation-timesplitting" name="timesplitting" class="form-select mt-3">
             {{#timesplittingmethods}}
                 <option value="{{id}}">{{text}}</option>
             {{/timesplittingmethods}}

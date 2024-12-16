@@ -163,10 +163,6 @@
         > .lastpage .listitem:last-child > div .item-actions .action-movedown {
             display: none;
         }
-
-        .bulk-action-checkbox {
-            margin: -2px 6px 0 0;
-        }
     }
 
     #category-listing {
@@ -186,10 +182,6 @@
             margin-right: 2rem;
             min-width: 3.5em;
             display: inline-block;
-        }
-
-        .bulk-action-checkbox {
-            margin-right: -3px;
         }
 
         .category-listing > ul > .listitem:first-child {

@@ -37,7 +37,7 @@ M.availability_grade.form.getNode = function(json) {
     // Create HTML structure.
     var html = '<label class="mb-3"><span class="pe-3">' + M.util.get_string('title', 'availability_grade') + '</span> ' +
             '<span class="availability-group">' +
-            '<select name="id" class="custom-select"><option value="0">' + M.util.get_string('choosedots', 'moodle') + '</option>';
+            '<select name="id" class="form-select"><option value="0">' + M.util.get_string('choosedots', 'moodle') + '</option>';
     for (var i = 0; i < this.grades.length; i++) {
         var grade = this.grades[i];
         // String has already been escaped using format_string.

@@ -120,7 +120,7 @@ class category_condition extends condition {
         $catmenu = helper::question_category_options($this->contexts, true, 0,
                 true, -1, false);
         $displaydata['categoryselect'] = \html_writer::select($catmenu, 'category', $this->cat, [],
-                array('class' => 'searchoptions custom-select', 'id' => 'id_selectacategory'));
+                ['class' => 'searchoptions form-select', 'id' => 'id_selectacategory']);
         $displaydata['categorydesc'] = '';
         if ($this->category) {
             $displaydata['categorydesc'] = $this->print_category_info($this->category);
@@ -162,7 +162,7 @@ class category_condition extends condition {
         $catmenu = question_category_options($contexts, true, 0, true, -1, false);
         echo \html_writer::label(get_string('selectacategory', 'question'), 'id_selectacategory', true, ["class" => "me-1"]);
         echo \html_writer::select($catmenu, 'category', $current, [],
-                array('class' => 'searchoptions custom-select', 'id' => 'id_selectacategory'));
+                ['class' => 'searchoptions form-select', 'id' => 'id_selectacategory']);
         echo \html_writer::end_div() . "\n";
     }
 

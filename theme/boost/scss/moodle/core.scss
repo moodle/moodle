@@ -2636,9 +2636,6 @@ $picker-emojis-per-row: 7 !default;
         flex-wrap: wrap;
         justify-content: center;
     }
-    .custom-select {
-        max-width: 100%;
-    }
     .card .card-body {
         padding: $card-spacer-x * 0.5;
     }
@@ -2700,8 +2697,8 @@ $picker-emojis-per-row: 7 !default;
         }
     }
 }
-.core_payment_gateways_modal .custom-control-label::before,
-.core_payment_gateways_modal .custom-control-label::after {
+.core_payment_gateways_modal .form-check-label::before,
+.core_payment_gateways_modal .form-check-label::after {
     top: 45%;
 }
 

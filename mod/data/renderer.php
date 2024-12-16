@@ -82,7 +82,7 @@ class mod_data_renderer extends plugin_renderer_base {
             foreach ($newfields as $nid => $newfield) {
                 $row = array();
                 $row[0] = html_writer::tag('label', $newfield->name, array('for'=>'id_'.$newfield->name));
-                $attrs = array('name' => 'field_' . $nid, 'id' => 'id_' . $newfield->name, 'class' => 'custom-select');
+                $attrs = ['name' => 'field_' . $nid, 'id' => 'id_' . $newfield->name, 'class' => 'form-select'];
                 $row[1] = html_writer::start_tag('select', $attrs);
 
                 $selected = false;

@@ -42,7 +42,7 @@
 <fieldset class="d-flex flex-wrap align-items-center">
     <legend class="accesshide">{{label}}</legend>
     <label for="{{menuname}}">{{menulabel}}</label>
-    <select name="{{menuname}}" id="{{menuname}}" class="form-control custom-select">
+    <select name="{{menuname}}" id="{{menuname}}" class="form-control form-select">
         {{#menuoptions}}
             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
         {{/menuoptions}}

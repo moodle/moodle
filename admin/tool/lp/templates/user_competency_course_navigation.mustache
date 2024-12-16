@@ -44,7 +44,7 @@
 {{#hasusers}}
 <span>
 <label for="user-nav-{{uniqid}}" class="accesshide">{{#str}}jumptouser, tool_lp{{/str}}</label>
-<select id="user-nav-{{uniqid}}" class="custom-select">
+<select id="user-nav-{{uniqid}}" class="form-select">
 {{#users}}
 <option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{fullname}}</option>
 {{/users}}
@@ -55,7 +55,7 @@
 {{#hascompetencies}}
 <span>
 <label for="competency-nav-{{uniqid}}" class="accesshide">{{#str}}jumptocompetency, tool_lp{{/str}}</label>
-<select id="competency-nav-{{uniqid}}" class="custom-select">
+<select id="competency-nav-{{uniqid}}" class="form-select">
 {{#competencies}}
 <option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{{shortname}}} {{idnumber}}</option>
 {{/competencies}}

@@ -193,7 +193,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 'type' => 'checkbox',
                 'name' => 'bcat[]',
                 'value' => $category->id,
-                'class' => 'bulk-action-checkbox custom-control-input',
+                'class' => 'bulk-action-checkbox form-check-input',
                 'data-action' => 'select'
         );
 
@@ -243,11 +243,11 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html = html_writer::start_tag('li', $attributes);
         $html .= html_writer::start_div('clearfix');
         $html .= html_writer::start_div('float-start ' . $checkboxclass);
-        $html .= html_writer::start_div('custom-control custom-checkbox me-1 ');
+        $html .= html_writer::start_div('form-check custom-checkbox me-1 ');
         $html .= html_writer::empty_tag('input', $bcatinput);
         $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'visually-hidden');
         $html .= html_writer::tag('label', $labeltext, array(
-            'class' => 'custom-control-label',
+            'class' => 'form-check-label',
             'for' => 'categorylistitem' . $category->id));
         $html .= html_writer::end_div();
         $html .= html_writer::end_div();
@@ -603,7 +603,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 'type' => 'checkbox',
                 'name' => 'bc[]',
                 'value' => $course->id,
-                'class' => 'bulk-action-checkbox custom-control-input',
+                'class' => 'bulk-action-checkbox form-check-input',
                 'data-action' => 'select'
         );
 
@@ -624,11 +624,11 @@ class core_course_management_renderer extends plugin_renderer_base {
         }
 
         $html .= html_writer::start_div('float-start ' . $checkboxclass);
-        $html .= html_writer::start_div('custom-control custom-checkbox me-1 ');
+        $html .= html_writer::start_div('form-check custom-checkbox me-1 ');
         $html .= html_writer::empty_tag('input', $bulkcourseinput);
         $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'visually-hidden');
         $html .= html_writer::tag('label', $labeltext, array(
-            'class' => 'custom-control-label',
+            'class' => 'form-check-label',
             'for' => 'courselistitem' . $course->id));
         $html .= html_writer::end_div();
         $html .= html_writer::end_div();
@@ -1192,7 +1192,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                     'id' => 'coursesearchlistitem' . $course->id,
                     'name' => 'bc[]',
                     'value' => $course->id,
-                    'class' => 'bulk-action-checkbox custom-control-input',
+                    'class' => 'bulk-action-checkbox form-check-input',
                     'data-action' => 'select'
             );
         }
@@ -1203,11 +1203,11 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::start_div('clearfix');
         $html .= html_writer::start_div('float-start');
         if ($bulkcourseinput) {
-            $html .= html_writer::start_div('custom-control custom-checkbox me-1');
+            $html .= html_writer::start_div('form-check custom-checkbox me-1');
             $html .= html_writer::empty_tag('input', $bulkcourseinput);
             $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'visually-hidden');
             $html .= html_writer::tag('label', $labeltext, array(
-                'class' => 'custom-control-label',
+                'class' => 'form-check-label',
                 'for' => 'coursesearchlistitem' . $course->id));
             $html .= html_writer::end_div();
         }

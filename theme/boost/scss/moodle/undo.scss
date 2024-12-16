@@ -142,8 +142,8 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
     }
 }
 
-// Fixes an issue on Safari when the .custom-select is inside a .card class.
-.custom-select {
+// Fixes an issue on Safari when the .form-select is inside a .card class.
+.form-select {
     word-wrap: normal;
 }
 

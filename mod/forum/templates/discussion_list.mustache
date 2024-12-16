@@ -316,10 +316,10 @@
                                 {{#forum.capabilities.subscribe}}
                                     <td class="text-center align-middle fit-content px-2">
                                         {{#discussion}}
-                                            <div class="d-inline custom-control custom-switch mb-1">
+                                            <div class="d-inline form-check form-switch mb-1">
                                                 <input
                                                     type="checkbox"
-                                                    class="custom-control-input"
+                                                    class="form-check-input"
                                                     id="subscription-toggle-{{id}}"
                                                     data-type="subscription-toggle"
                                                     data-action="toggle"
@@ -327,7 +327,7 @@
                                                     data-forumid="{{forumid}}"
                                                     {{#userstate.subscribed}}data-targetstate="0" checked{{/userstate.subscribed}}
                                                     {{^userstate.subscribed}}data-targetstate="1"{{/userstate.subscribed}}>
-                                                <label class="custom-control-label" for="subscription-toggle-{{id}}">
+                                                <label class="form-check-label" for="subscription-toggle-{{id}}">
                                                     <span class="visually-hidden">
                                                         {{#userstate.subscribed}}
                                                             {{#str}}unsubscribediscussion, forum{{/str}}

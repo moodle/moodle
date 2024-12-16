@@ -28,9 +28,6 @@
 <div class="simplesearchform d-flex justify-content-end">
   <form autocomplete="off" action="{{action}}" method="get" accept-charset="utf-8" class="mform d-flex flex-wrap align-items-center simplesearchform">
     <div class="input-group">
-      <label for="searchinput-{{uniqid}}">
-        <span class="visually-hidden">{{#str}} search, core {{/str}}</span>
-      </label>
       <input type="text"
              id="searchinput-{{uniqid}}"
              class="form-control"
@@ -41,12 +38,13 @@
              autocomplete="off"
              {{#query}}value="{{.}}"{{/query}}
       >
-      <div class="input-group-append">
-        <button type="submit" class="btn btn-primary search-icon">
-          {{#pix}} a/search, core {{/pix}}
-          <span class="visually-hidden">{{#str}} search, core {{/str}}</span>
-        </button>
-      </div>
+      <label for="searchinput-{{uniqid}}">
+        <span class="visually-hidden">{{#str}} search, core {{/str}}</span>
+      </label>
+      <button type="submit" class="btn btn-primary search-icon">
+        {{#pix}} a/search, core {{/pix}}
+        <span class="visually-hidden">{{#str}} search, core {{/str}}</span>
+      </button>
     </div>
   </form>
 </div>

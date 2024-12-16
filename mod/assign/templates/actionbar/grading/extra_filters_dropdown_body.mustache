@@ -75,7 +75,7 @@
                     <label class="w-100" for="filter-workflow-{{uniqid}}">
                         {{#str}}markingstate, mod_assign{{/str}}
                     </label>
-                    <select name="workflowfilter" id="filter-workflow-{{uniqid}}" class="custom-select w-100">
+                    <select name="workflowfilter" id="filter-workflow-{{uniqid}}" class="form-select w-100">
                     {{#workflowfilteroptions}}
                         <option value="{{key}}" {{#active}}selected="selected"{{/active}}>{{name}}</option>
                     {{/workflowfilteroptions}}
@@ -87,7 +87,7 @@
                     <label class="w-100" for="filter-marking-allocation-{{uniqid}}">
                         {{#str}}marker, mod_assign{{/str}}
                     </label>
-                    <select name="markingallocationfilter" id="filter-marking-allocation-{{uniqid}}" class="custom-select w-100">
+                    <select name="markingallocationfilter" id="filter-marking-allocation-{{uniqid}}" class="form-select w-100">
                     {{#markingallocationoptions}}
                         <option value="{{key}}" {{#active}}selected="selected"{{/active}}>{{name}}</option>
                     {{/markingallocationoptions}}

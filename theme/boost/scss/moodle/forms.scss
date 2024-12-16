@@ -44,13 +44,13 @@
     }
 }
 
-// Override the default bootstrap custom-select width.
-.custom-select {
+// Override the default bootstrap form-select width.
+.form-select {
     width: auto;
     max-width: 100%;
 }
 
-#jump-to-activity.custom-select {
+#jump-to-activity.form-select {
     width: 100%;
 }
 
@@ -278,8 +278,8 @@ div#dateselector-calendar-panel {
     z-index: 3;
 }
 
-$custom-select-disabled-color: $gray-600 !default;
-$custom-select-disabled-bg: $gray-200 !default;
+$form-select-disabled-color: $gray-600 !default;
+$form-select-disabled-bg: $gray-200 !default;
 
 .form-autocomplete-suggestions li {
     list-style-type: none;
@@ -298,8 +298,8 @@ $custom-select-disabled-bg: $gray-200 !default;
     }
     &[aria-disabled="true"] {
         pointer-events: none;
-        color: $custom-select-disabled-color;
-        background-color: $custom-select-disabled-bg;
+        color: $form-select-disabled-color;
+        background-color: $form-select-disabled-bg;
     }
     &.suggestions-heading {
         pointer-events: none;
@@ -505,7 +505,7 @@ textarea[data-auto-rows] {
         .form-control-lg:not(:last-child) {
             @include border-radius($input-border-radius-lg);
         }
-        .input-group-append .toggle-sensitive-btn {
+        .toggle-sensitive-btn {
             display: none;
         }
     }

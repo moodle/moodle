@@ -36,22 +36,6 @@ body.behat-site {
         transition: initial;
         position: absolute;
     }
-    .custom-control,
-    .custom-switch {
-        padding-left: 0;
-    }
-    .custom-control-input {
-        position: static;
-        z-index: 0;
-        opacity: 1;
-        width: auto;
-    }
-    .custom-control-label {
-        &::before,
-        &::after {
-            content: none;
-        }
-    }
 
     // Workaround for MDL-70411.
     // Pad the side of the message drawer out slightly to ensure that Firefox scroll bar does not cover controls at the
