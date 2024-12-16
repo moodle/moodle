@@ -39,6 +39,9 @@ This file describes API changes in the quiz code.
   quiz_grade_items and a new column quizgradeitemid in quiz_slots. There are new methods in structure grade_calculator
   and quiz_attempt to support this, and the new grades are shown on review.php, view.php and in some of the quiz reports.
   Also, the external functions get_attempt_review and get_user_attempts return the information about the extra grades if applicable.
+* The `quiz_question_tostring` method now includes a new boolean parameter, `displaytaglink`.
+  This parameter specifies whether the tag name in the question bank should be displayed
+  as a clickable hyperlink (`true`) or as plain text (`false`).
 
 === 4.3 ===
 
