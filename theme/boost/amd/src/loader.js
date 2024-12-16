@@ -58,7 +58,7 @@ const enablePopovers = () => {
     $('body').popover({
         container: 'body',
         selector: '[data-toggle="popover"]',
-        trigger: 'focus click',
+        trigger: 'focus',
         whitelist: Object.assign(DefaultWhitelist, {
             table: [],
             thead: [],
@@ -76,6 +76,9 @@ const enablePopovers = () => {
         if (e.key === 'Enter' && e.target.closest('[data-toggle="popover"]')) {
             $(e.target).popover('show');
         }
+    });
+    document.addEventListener('click', e => {
+        $(e.target).closest('[data-toggle="popover"]').popover('show');
     });
 };
 
