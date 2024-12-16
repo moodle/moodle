@@ -1,0 +1,105 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/user_menu
+
+    Action link template.
+
+    Context variables required for this template:
+    * unauthenticateduseruser - (Optional) Items to be displayed if an an unautheticated user is accessing the site
+        * content - The content to be displayed in the header.
+        * url - The login url
+    * items - Array of user menu items used in user_action_menu_items. Required if the above not provided.
+    * metadata - Array of additional metadata to be displayed in the dropdown button.
+    * avatardata - Array of avatars to be displayed. Usually only the current user's avatar. If viewing as another user,
+        includes that user's avatar.
+    * userfullname - The name of the logged in user
+    * submenus - Array of submenus within the user menu.
+      * id - The id of the submenu.
+      * title - The title of the submenu.
+      * items - Array of the submenu items used in core/user_action_menu_submenu_items.
+
+    Example context (json):
+    {
+        "unauthenticateduser": {
+            "content": "You are not logged in",
+            "url": "https://yourmoodlesite/login/index.php"
+        },
+        "items": [],
+        "metadata": [],
+        "avatardata": [],
+        "userfullname": "Admin User",
+        "submenus": [
+            {
+                "id": "86cebd87",
+                "title": "Submenu title",
+                "items": []
+            }
+        ]
+    }
+}}
+<div class="usermenu">
+    {{#unauthenticateduser}}
+        <span class="login pl-2">
+            {{content}}
+            {{#url}}
+                (<a href="{{url}}">{{#str}} login, core {{/str}}</a>)
+            {{/url}}
+        </span>
+    {{/unauthenticateduser}}
+    {{^unauthenticateduser}}
+        <div class="dropdown show">
+            <a href="#" role="button" id="user-menu-toggle" data-toggle="dropdown" aria-label="{{#str}}usermenu{{/str}}"
+               aria-haspopup="true" aria-controls="user-action-menu" class="btn dropdown-toggle">
+                <span class="userbutton">
+                    {{> core/user_menu_metadata }}
+                </span>
+            </a>
+            <div id="user-action-menu" class="dropdown-menu dropdown-menu-right">
+                <div id="usermenu-carousel" class="carousel slide" data-touch="false" data-interval="false" data-keyboard="false">
+                    <div class="carousel-inner">
+                        <div id="carousel-item-main" class="carousel-item active" role="menu" tabindex="-1" aria-label="{{#str}}user{{/str}}">
+                            {{> core/user_action_menu_items }}
+                        </div>
+                        {{#submenus}}
+                            <div id="carousel-item-{{id}}" class="carousel-item submenu" tabindex="-1" aria-label="{{title}}">
+                                <div class="d-flex flex-column h-100">
+                                    <div class="header">
+                                        <button type="button" class="btn btn-icon carousel-navigation-link text-decoration-none text-body" data-carousel-target-id="carousel-item-main" aria-label="{{#str}}usermenugoback{{/str}}">
+                                            <span class="dir-rtl-hide">{{#pix}}i/arrow-left{{/pix}}</span>
+                                            <span class="dir-ltr-hide">{{#pix}}i/arrow-right{{/pix}}</span>
+                                        </button>
+                                        <span class="pl-2" id="carousel-item-title-{{id}}">{{title}}</span>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="items h-100 overflow-auto" role="menu" aria-labelledby="carousel-item-title-{{id}}">
+                                        {{> core/user_action_menu_submenu_items }}
+                                    </div>
+                                </div>
+                            </div>
+                        {{/submenus}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{/unauthenticateduser}}
+</div>
+{{#js}}
+    require(['core/usermenu'], function(UserMenu) {
+        UserMenu.init();
+    });
+{{/js}}
