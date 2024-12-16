@@ -23,5 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['typefilter'] = 'Type';
 $string['pluginname'] = 'View question type';
 $string['privacy:metadata'] = 'The View question type question bank plugin does not store any personal data.';
