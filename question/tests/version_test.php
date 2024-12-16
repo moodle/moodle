@@ -328,6 +328,42 @@ final class version_test extends \advanced_testcase {
     }
 
     /**
+     * Test the get_version_of_questions function.
+     *
+     * @covers ::get_version_of_questions
+     */
+    public function test_get_version_of_questions(): void {
+        global $DB;
+
+        $qcategory = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
+        $question = $this->qgenerator->create_question('shortanswer', null, ['category' => $qcategory->id]);
+
+        // Update the question to create new versions.
+        $question = $this->qgenerator->update_question($question, null, ['name' => 'Version 2']);
+
+        // Get the current version of the question.
+        $currentversions = question_bank::get_version_of_questions([$question->id]);
+
+        // Get questionbankentryid for assertion.
+        $questionbankentryid = $DB->get_field('question_versions', 'questionbankentryid',
+            ['questionid' => $question->id]);
+
+        // Assert that the structure matches.
+        $this->assertArrayHasKey($questionbankentryid, $currentversions);
+        $this->assertArrayHasKey(2, $currentversions[$questionbankentryid]);
+        $this->assertEquals($question->id, $currentversions[$questionbankentryid][2]);
+
+        // Update the question to create new versions.
+        $question = $this->qgenerator->update_question($question, null, ['name' => 'Version 3']);
+        $currentversions = question_bank::get_version_of_questions([$question->id]);
+
+        // Assert the updated version.
+        $this->assertArrayHasKey($questionbankentryid, $currentversions);
+        $this->assertArrayHasKey(3, $currentversions[$questionbankentryid]);
+        $this->assertEquals($question->id, $currentversions[$questionbankentryid][3]);
+    }
+
+    /**
      * Test population of latestversion field in question_definition objects
      *
      * When an instance of question_definition is created, it is added to an array of pending definitions which
