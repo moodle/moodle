@@ -1,0 +1,21 @@
+issueNumber: MDL-75075
+notes:
+  core:
+    - message: >-
+        The `core_renderer::tag_list` function now has a new parameter named `displaylink`.
+        When `displaylink` is set to `true`, the tag name will be displayed as a clickable hyperlink.
+        Otherwise, it will be rendered as plain text.
+      type: changed
+  core_tag:
+    - message: >-
+        The `core_tag\taglist` class now includes a new property called `displaylink`,
+        which has a default value of `true`. When `displaylink` is set to `true`,
+        the tag name will be displayed as a clickable hyperlink. If `displaylink` is set to `false`,
+        the tag name will be rendered as plain text instead.
+      type: changed
+  mod_quiz:
+    - message: >-
+        The `quiz_question_tostring` method now includes a new boolean parameter, `displaytaglink`.
+        This parameter specifies whether the tag name in the question bank should be displayed
+        as a clickable hyperlink (`true`) or as plain text (`false`).
+      type: changed
