@@ -85,7 +85,7 @@ body {
     }
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     #page-wrapper {
         height: 100%;
         display: flex;

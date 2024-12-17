@@ -31,7 +31,7 @@ $font-size-xs: ($font-size-base * .75) !default;
     }
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     .context-header-settings-menu,
     .region-main-settings-menu {
         display: flex;
@@ -284,7 +284,7 @@ a.autolink {
     margin-top: -1px;
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     .pagelayout-mydashboard,
     .pagelayout-login {
         #region-main-box {
@@ -1429,7 +1429,7 @@ audio.mediaplugin_html5audio {
 }
 
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
     .jsenabled .choosercontainer #chooseform .alloptions {
         max-width: 100%;
     }
@@ -1551,7 +1551,7 @@ audio.mediaplugin_html5audio {
     }
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
     .path-course-view .modal-dialog.modal-lg,
     .path-course-view .modal-content,
     .modchooser .modal-body,
@@ -2166,7 +2166,7 @@ dd:after {
         margin-right: $grid-gutter-width * 0.5;
         background-color: $card-bg;
     }
-    @include media-breakpoint-down(sm) {
+    @include media-breakpoint-down(md) {
         .nav {
             margin-top: $grid-gutter-width;
             margin-right: 0;
@@ -2553,7 +2553,7 @@ $picker-emojis-per-row: 7 !default;
         line-height: $picker-row-height * 0.5;
     }
 
-    @include media-breakpoint-down(xs) {
+    @include media-breakpoint-down(sm) {
         width: $picker-width-xs;
     }
 }
@@ -2604,7 +2604,7 @@ $picker-emojis-per-row: 7 !default;
     padding: 0;
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     #page-navbar {
         width: 100%;
     }

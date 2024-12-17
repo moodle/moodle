@@ -47,7 +47,7 @@ $rb-filters-footer-height: 4rem;
     padding: 0 0 $rb-filters-footer-height 0;
     z-index: $zindex-modal;
     overflow: hidden;
-    @include media-breakpoint-down(sm) {
+    @include media-breakpoint-down(md) {
         width: 100%;
     }
 }
@@ -444,7 +444,7 @@ $rb-sortable-list-drag-color: lighten($primary, 40%);
 
 .reportbuilder-report[data-report-type="0"]:not([data-editing]) {
     // Report card view for small screens (if not forcing table).
-    @include media-breakpoint-down(xs) {
+    @include media-breakpoint-down(sm) {
         &:not([data-force-table]) {
             @include table-cards;
         }

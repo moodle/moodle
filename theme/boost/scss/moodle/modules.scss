@@ -313,7 +313,7 @@ $author-image-margin-sm: 8px;
         height: auto;
         border-radius: 10rem;
 
-        @include media-breakpoint-down(sm) {
+        @include media-breakpoint-down(md) {
             margin-top: .5rem;
         }
     }
@@ -425,7 +425,7 @@ $author-image-margin-sm: 8px;
 }
 
 /** Extra small devices (portrait phones, less than 576px). */
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     #page-mod-forum-discuss.nested-v2-display-mode {
         .forum-post-container {
             .author-image-container {
@@ -943,7 +943,7 @@ $input-line-height-lg:  1.5 !default;
     }
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
     .path-mod-forum .unified-grader {
         .grader-grading-panel {
             width: 100%;
@@ -1163,7 +1163,7 @@ img.userpicture {
     margin-right: $spacer * 0.25;
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     .usertext {
         display: none;
     }

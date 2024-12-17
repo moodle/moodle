@@ -141,7 +141,7 @@ $right-drawer-width: 320px;
     }
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     [data-region=right-hand-drawer] {
         &.drawer {
             top: 0;
@@ -168,7 +168,7 @@ $right-drawer-width: 320px;
     // and lower to the message drawer.
     z-index: $zindex-sticky - 5;
 
-    @include media-breakpoint-down(md) {
+    @include media-breakpoint-down(lg) {
         // In small screens the drawer goes over the top navbar with a modal with a backdrop effect.
         z-index: $zindex-fixed + 5;
     }
@@ -277,7 +277,7 @@ $right-drawer-width: 320px;
     box-shadow: 0 8px 11px -7px $drawer-shadow-color;
 }
 
-@include media-breakpoint-down(md) {
+@include media-breakpoint-down(lg) {
     .drawer-md {
         display: block;
         @include drawer();
@@ -285,7 +285,7 @@ $right-drawer-width: 320px;
     }
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     .drawer-sm {
         display: block;
         @include drawer();

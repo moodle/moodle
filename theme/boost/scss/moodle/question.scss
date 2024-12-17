@@ -671,7 +671,7 @@ body.path-question-type .mform fieldset.hidden {
     position: relative;
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     .que .info {
         float: none;
         width: auto;

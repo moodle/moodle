@@ -186,7 +186,7 @@ $allow-reset-style: true !default;
                 }
 
                 .card-body {
-                    @include media-breakpoint-down(sm) {
+                    @include media-breakpoint-down(md) {
                         padding-left: 0;
                         padding-right: 0;
                     }
@@ -225,12 +225,12 @@ $allow-reset-style: true !default;
                     &.has-blocks {
                         width: calc(100% - #{$blocks-plus-gutter});
 
-                        @include media-breakpoint-down(lg) {
+                        @include media-breakpoint-down(xl) {
                             width: 100%;
                         }
                     }
 
-                    @include media-breakpoint-down(sm) {
+                    @include media-breakpoint-down(md) {
                         padding-left: 0;
                         padding-right: 0;
                     }
@@ -240,7 +240,7 @@ $allow-reset-style: true !default;
                     margin-left: auto;
                 }
 
-                @include media-breakpoint-down(lg) {
+                @include media-breakpoint-down(xl) {
                     display: flex;
                     flex-direction: column;
                 }

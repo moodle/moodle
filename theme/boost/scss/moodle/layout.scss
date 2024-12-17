@@ -140,7 +140,7 @@
     display: none;
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     //the scroll to top button
     .drawer-toggles {
         z-index: 100;

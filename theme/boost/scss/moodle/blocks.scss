@@ -67,7 +67,7 @@ $blocks-plus-gutter: calc(#{$blocks-column-width} + (#{$grid-gutter-width} * 0.5
     }
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     #region-main-settings-menu .menubar {
         justify-content: flex-end;
     }
@@ -77,7 +77,7 @@ $blocks-plus-gutter: calc(#{$blocks-column-width} + (#{$grid-gutter-width} * 0.5
 #region-main.has-blocks {
     display: inline-block;
     width: calc(100% - #{$blocks-plus-gutter});
-    @include media-breakpoint-down(lg) {
+    @include media-breakpoint-down(xl) {
         width: 100%;
         /* MDL-63102 - Remove extra space at bottom.
         If modifying make sure block-region is horizontally stacked when in full screen */
@@ -100,7 +100,7 @@ $blocks-plus-gutter: calc(#{$blocks-column-width} + (#{$grid-gutter-width} * 0.5
 }
 
 [data-region="blocks-column"] {
-    @include media-breakpoint-down(lg) {
+    @include media-breakpoint-down(xl) {
         width: 100%;
     }
 }
@@ -196,7 +196,7 @@ $blocks-plus-gutter: calc(#{$blocks-column-width} + (#{$grid-gutter-width} * 0.5
         padding-right: 0.5rem;
         justify-content: flex-end;
     }
-    @include media-breakpoint-down(xs) {
+    @include media-breakpoint-down(sm) {
         .paging-bar-container {
             margin-top: 0;
         }
@@ -261,7 +261,7 @@ $blocks-plus-gutter: calc(#{$blocks-column-width} + (#{$grid-gutter-width} * 0.5
         width: 20rem;
         background-position: center;
         background-size: cover;
-        @include media-breakpoint-down(lg) {
+        @include media-breakpoint-down(xl) {
             width: 100%;
         }
     }

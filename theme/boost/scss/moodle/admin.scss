@@ -400,7 +400,7 @@
     }
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     .jsenabled .admin_colourpicker {
         height: 150px;
         margin-bottom: 10px;

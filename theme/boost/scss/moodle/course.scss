@@ -313,7 +313,7 @@ $divider-hover-color: $primary !default;
             "icon   altcontent    altcontent     altcontent    altcontent"
             "icon   afterlink     afterlink      afterlink     afterlink"
             "icon   availability  availability   availability  availability";
-        @include media-breakpoint-down(xs) {
+        @include media-breakpoint-down(sm) {
             grid-template-columns: min-content 1fr min-content min-content min-content;
             grid-template-rows: 1fr repeat(4, min-content);
             grid-template-areas:
@@ -335,7 +335,7 @@ $divider-hover-color: $primary !default;
             "altcontent    altcontent       altcontent    altcontent"
             "afterlink     afterlink        afterlink     afterlink"
             "availability  availability     availability  availability";
-        @include media-breakpoint-down(xs) {
+        @include media-breakpoint-down(sm) {
             grid-template-columns: 1fr min-content;
             grid-template-areas:
                 "visibility    actions"
@@ -365,7 +365,7 @@ $divider-hover-color: $primary !default;
         display: flex;
         flex-wrap: wrap;
         column-gap: 0.75rem;
-        @include media-breakpoint-down(xs) {
+        @include media-breakpoint-down(sm) {
             margin-top: map-get($spacers, 2);
         }
     }
@@ -399,7 +399,7 @@ $divider-hover-color: $primary !default;
         a[role="button"] {
             @include completion-button();
         }
-        @include media-breakpoint-down(xs) {
+        @include media-breakpoint-down(sm) {
             width: 100%;
             margin-top: map-get($spacers, 2);
             button {
@@ -439,7 +439,7 @@ $divider-hover-color: $primary !default;
         .groupmode-icon-info {
             display: none;
         }
-        @include media-breakpoint-down(xs) {
+        @include media-breakpoint-down(sm) {
             width: 100%;
             margin-top: map-get($spacers, 2);
             padding-top: map-get($spacers, 2);
@@ -650,7 +650,7 @@ $divider-hover-color: $primary !default;
         position: relative;
         width: 0;
     }
-    @include media-breakpoint-down(sm) {
+    @include media-breakpoint-down(md) {
         .course-content {
             margin-left: 2rem;
         }
@@ -659,7 +659,7 @@ $divider-hover-color: $primary !default;
 
 // Custom styles for bulk actions sticky footer in small devices.
 .sticky-footer-content.bulkactions {
-    @include media-breakpoint-down(sm) {
+    @include media-breakpoint-down(md) {
         position: relative;
         .form-check,
         .bulkaction-name,
