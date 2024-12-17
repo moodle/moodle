@@ -543,8 +543,8 @@ class util {
             return ['', $textformat ?? FORMAT_MOODLE];
         }
 
-        if (empty($itemid)) {
-            $itemid = null;
+        if ($itemid !== null) {
+            $itemid = (int) $itemid;
         }
 
         // Get settings (singleton).
