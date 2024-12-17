@@ -346,6 +346,25 @@ class sqlsrv_native_moodle_database extends moodle_database {
                 $info['version'] = $server_info['SQLServerVersion'];
                 $info['database'] = $server_info['CurrentDatabase'];
             }
+
+             // Get database compatibility version. Use as server version.
+            $dbcompatlevel = null;
+            $sql = "SELECT compatibility_level AS cl
+                      FROM sys.databases
+                     WHERE name = '{$this->dbname}'";
+            $this->query_start($sql, null, SQL_QUERY_AUX);
+            $result = sqlsrv_query($this->sqlsrv, $sql);
+            $this->query_end($result);
+            if ($result) {
+                if ($row = sqlsrv_fetch_array($result)) {
+                    $dbcompatlevel = $row['cl'];
+                }
+            }
+            $this->free_result($result);
+
+            if ($dbcompatlevel) {
+                $info['version'] = $dbcompatlevel;
+            }
         }
         return $info;
     }
