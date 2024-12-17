@@ -2237,6 +2237,10 @@ $footer-link-color: $bg-inverse-link-color !default;
     bottom: calc(4rem + #{$stickyfooter-height});
 }
 
+.hasstickyfooter .maintenancewarning {
+    bottom: #{$stickyfooter-height};
+}
+
 .popover.footer {
     .popover-body {
         padding: 0;
@@ -2267,6 +2271,10 @@ $footer-link-color: $bg-inverse-link-color !default;
     .jsenabled .btn-footer-communication {
         display: block;
         z-index: $zindex-dropdown;
+    }
+    .jsenabled .maintenancewarning,
+    .jsenabled.hasstickyfooter:has(.drawer-right-toggle) .maintenancewarning {
+        right: 5rem;
     }
 }
 
