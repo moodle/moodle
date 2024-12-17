@@ -22,6 +22,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['check_indextoobig'] = 'Index larger than specified size';
+$string['check_nocore'] = 'Cannot find index on Solr server';
+$string['check_nosize'] = 'Unable to determine index size on Solr server';
+$string['check_notconnected'] = 'Cannot connect to Solr server';
+$string['check_time'] = 'Server responded with status in {$a}';
 $string['connectionerror'] = 'The specified Solr server is not available or the specified index does not exist';
 $string['connectionsettings'] = 'Connection settings';
 $string['errorcreatingschema'] = 'Error creating the Solr schema: {$a}';
@@ -32,6 +37,9 @@ $string['fileindexing'] = 'Enable file indexing';
 $string['fileindexing_help'] = 'If your Solr install supports it, this feature allows Moodle to send files to be indexed.<br/>
 You will need to reindex all site contents after enabling this option for all files to be added.';
 $string['fileindexsettings'] = 'File indexing settings';
+$string['indexsize'] = 'The index is using {$a} on the Solr server.';
+$string['indexsizelimit'] = 'Index size limit';
+$string['indexsizelimit_desc'] = 'Shows an error on the status report page if the search index grows larger than this size (in bytes), and a warning if it exceeds 90%. 0 means no monitoring.';
 $string['maxindexfilekb'] = 'Maximum file size to index (kB)';
 $string['maxindexfilekb_help'] = 'Files larger than this number of kilobytes will not be included in search indexing. If set to zero, files of any size will be indexed.';
 $string['minimumsolr4'] = 'Solr 4.0 is the minimum version required for Moodle';

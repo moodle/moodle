@@ -1340,6 +1340,102 @@ class engine extends \core_search\engine {
         return function_exists('solr_get_version');
     }
 
+    /** @var int When using the capath option, we generate a bundle containing all the pem files, cached 10 mins. */
+    const CA_PATH_CACHE_TIME = 600;
+
+    /** @var int Expired cache files are deleted after this many seconds. */
+    const CA_PATH_CACHE_DELETE_AFTER = 60;
+
+    /**
+     * Gets status of Solr server.
+     *
+     * The result has the following fields:
+     * - connected - true if we got a valid JSON response from server
+     * - foundcore - true if we found the core defined in config (this could be false if schema not set up)
+     *
+     * It may have these other fields:
+     * - error - text if anything went wrong
+     * - exception - if an exception was thrown
+     * - indexsize - index size in bytes if we found what it is
+     *
+     * @param int $timeout Optional timeout in seconds, otherwise uses config value
+     * @return array Array with information about status
+     * @since Moodle 5.0
+     */
+    public function get_status($timeout = 0): array {
+        $result = ['connected' => false, 'foundcore' => false];
+        try {
+            $options = [];
+            if ($timeout) {
+                $options['connect_timeout'] = $timeout;
+                $options['read_timeout'] = $timeout;
+            }
+            $before = microtime(true);
+            try {
+                $response = $this->raw_get_request('admin/cores', $options);
+            } finally {
+                $result['time'] = microtime(true) - $before;
+            }
+            $status = $response->getStatusCode();
+            if ($status !== 200) {
+                $result['error'] = 'Unsuccessful status code: ' . $status;
+                return $result;
+            }
+            $decoded = json_decode($response->getBody()->getContents());
+            if (!$decoded) {
+                $result['error'] = 'Invalid JSON';
+                return $result;
+            }
+            // Provided we get some valid JSON then probably Solr exists and is responding.
+            // Any following errors we don't count as not connected (ERROR display in the check)
+            // because maybe it happens if Solr changes their JSON format in a future version.
+            $result['connected'] = true;
+            if (!property_exists($decoded, 'status')) {
+                $result['error'] = 'Unexpected JSON: no core status';
+                return $result;
+            }
+            foreach ($decoded->status as $core) {
+                $match = false;
+                if (!property_exists($core, 'name')) {
+                    $result['error'] = 'Unexpected JSON: core has no name';
+                    return $result;
+                }
+                if ($core->name === $this->config->indexname) {
+                    $match = true;
+                }
+                if (!$match && property_exists($core, 'cloud')) {
+                    if (!property_exists($core->cloud, 'collection')) {
+                        $result['error'] = 'Unexpected JSON: core cloud has no name';
+                        return $result;
+                    }
+                    if ($core->cloud->collection === $this->config->indexname) {
+                        $match = true;
+                    }
+                }
+
+                if ($match) {
+                    $result['foundcore'] = true;
+                    if (!property_exists($core, 'index')) {
+                        $result['error'] = 'Unexpected JSON: core has no index';
+                        return $result;
+                    }
+                    if (!property_exists($core->index, 'sizeInBytes')) {
+                        $result['error'] = 'Unexpected JSON: core index has no sizeInBytes';
+                        return $result;
+                    }
+                    $result['indexsize'] = $core->index->sizeInBytes;
+                    return $result;
+                }
+            }
+            $result['error'] = 'Could not find core matching ' . $this->config->indexname;;
+            return $result;
+        } catch (\Throwable $t) {
+            $result['error'] = 'Exception occurred: ' . $t->getMessage();
+            $result['exception'] = $t;
+            return $result;
+        }
+    }
+
     /**
      * Returns the solr client instance.
      *
@@ -1453,21 +1549,126 @@ class engine extends \core_search\engine {
     }
 
     /**
-     * Return a Moodle url object for the server connection.
+     * Return a Moodle url object for the raw server URL (containing all indexes).
      *
      * @param string $path The solr path to append.
      * @return \moodle_url
      */
-    public function get_connection_url($path) {
+    public function get_server_url(string $path): \moodle_url {
         // Must use the proper protocol, or SSL will fail.
         $protocol = !empty($this->config->secure) ? 'https' : 'http';
         $url = $protocol . '://' . rtrim($this->config->server_hostname, '/');
         if (!empty($this->config->server_port)) {
             $url .= ':' . $this->config->server_port;
         }
-        $url .= '/solr/' . $this->config->indexname . '/' . ltrim($path, '/');
-
+        $url .= '/solr/' . ltrim($path, '/');
         return new \moodle_url($url);
+    }
+
+    /**
+     * Return a Moodle url object for the server connection including the search index.
+     *
+     * @param string $path The solr path to append.
+     * @return \moodle_url
+     */
+    public function get_connection_url($path) {
+        return $this->get_server_url($this->config->indexname . '/' . ltrim($path, '/'));
+    }
+
+    /**
+     * Calls the Solr engine with a GET request (for things the Solr extension doesn't support).
+     *
+     * This has similar result to get_curl_object but uses the newer (mockable) Guzzle HTTP client.
+     *
+     * @param string $path URL path (after /solr/) e.g. 'admin/cores?action=STATUS&core=frog'
+     * @param array $overrideoptions Optional array of Guzzle options, will override config
+     * @return \Psr\Http\Message\ResponseInterface Response message from Guzzle
+     * @throws \GuzzleHttp\Exception\GuzzleException If any problem connecting
+     * @since Moodle 5.0
+     */
+    public function raw_get_request(
+        string $path,
+        array $overrideoptions = [],
+    ): \Psr\Http\Message\ResponseInterface {
+        $client = \core\di::get(\core\http_client::class);
+        return $client->get(
+            $this->get_server_url($path)->out(false),
+            $this->get_http_client_options($overrideoptions),
+        );
+    }
+
+    /**
+     * Gets the \core\http_client options for a connection.
+     *
+     * @param array $overrideoptions Optional array to override some of the options
+     * @return array Array of http_client options
+     */
+    protected function get_http_client_options(array $overrideoptions = []): array {
+        $options = [
+            'connect_timeout' => !empty($this->config->server_timeout) ? (int)$this->config->server_timeout : 30,
+        ];
+        $options['read_timeout'] = $options['connect_timeout'];
+        if (!empty($this->config->server_username)) {
+            $options['auth'] = [$this->config->server_username, $this->config->server_password];
+        }
+        if (!empty($this->config->ssl_cert)) {
+            $options['cert'] = $this->config->ssl_cert;
+        }
+        if (!empty($this->config->ssl_key)) {
+            if (!empty($this->config->ssl_keypassword)) {
+                $options['ssl_key'] = [$this->config->ssl_key, $this->config->ssl_keypassword];
+            } else {
+                $options['ssl_key'] = $this->config->ssl_key;
+            }
+        }
+        if (!empty($this->config->ssl_cainfo)) {
+            $options['verify'] = $this->config->ssl_cainfo;
+        } else if (!empty($this->config->ssl_capath)) {
+            // Guzzle doesn't support a whole path of CA certs, so we have to make a single file
+            // with all the *.pem files in that directory. It needs to be in filesystem so we can
+            // use it directly, let's put it in local cache for 10 minutes.
+            $cachefolder = make_localcache_directory('search_solr');
+            $prefix = 'capath.' . sha1($this->config->ssl_capath);
+            $now = \core\di::get(\core\clock::class)->time();
+            $got = false;
+            foreach (scandir($cachefolder) as $filename) {
+                // You are not allowed to overwrite files in localcache folders so we use files
+                // with the time in, and delete old files with a 1 minute delay to avoid race
+                // conditions.
+                if (preg_match('~^(.*)\.([0-9]+)$~', $filename, $matches)) {
+                    [1 => $fileprefix, 2 => $time] = $matches;
+                    $pathname = $cachefolder . '/' . $filename;
+                    if ($time > $now - self::CA_PATH_CACHE_TIME && $fileprefix === $prefix) {
+                        $options['verify'] = $pathname;
+                        $got = true;
+                        break;
+                    } else if ($time <= $now - self::CA_PATH_CACHE_TIME - self::CA_PATH_CACHE_DELETE_AFTER) {
+                        unlink($pathname);
+                    }
+                }
+            }
+
+            if (!$got) {
+                // If we don't have it yet, we need to make the cached file.
+                $allpems = '';
+                foreach (scandir($this->config->ssl_capath) as $filename) {
+                    if (preg_match('~\.pem$~', $filename)) {
+                        $pathname = $this->config->ssl_capath . '/' . $filename;
+                        $allpems .= file_get_contents($pathname) . "\n\n";
+                    }
+                }
+                $pathname = $cachefolder . '/' . $prefix . '.' . $now;
+                file_put_contents($pathname, $allpems);
+                $options['verify'] = $pathname;
+            }
+        }
+
+        // Apply other/overridden options.
+        foreach ($overrideoptions as $name => $value) {
+            $options[$name] = $value;
+        }
+
+        return $options;
     }
 
     /**
