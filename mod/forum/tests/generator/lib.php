@@ -254,7 +254,7 @@ class mod_forum_generator extends testing_module_generator {
         $this->forumpostcount++;
 
         // Variable to store time.
-        $time = time() + $this->forumpostcount;
+        $time = time();
 
         $record = (array) $record;
 
