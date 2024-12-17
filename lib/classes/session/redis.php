@@ -108,8 +108,8 @@ class redis extends handler implements SessionHandlerInterface {
     /** @var int Maximum number of retries for cache store operations. */
     const MAX_RETRIES = 5;
 
-    /** @var int The number of seconds to wait for a connection or response from the Redis server. */
-    const CONNECTION_TIMEOUT = 10;
+    /** @var int $connectiontimeout The number of seconds to wait for a connection or response from the Redis server. */
+    protected int $connectiontimeout = 3;
 
     /**
      * Create new instance of handler.
@@ -203,6 +203,10 @@ class redis extends handler implements SessionHandlerInterface {
         if (isset($CFG->session_redis_compressor)) {
             $this->compressor = $CFG->session_redis_compressor;
         }
+
+        if (isset($CFG->session_redis_connection_timeout)) {
+            $this->connectiontimeout = (int)$CFG->session_redis_connection_timeout;
+        }
     }
 
     /**
@@ -294,8 +298,8 @@ class redis extends handler implements SessionHandlerInterface {
                     $this->connection = new \RedisCluster(
                         null,
                         $trimmedservers,
-                        self::CONNECTION_TIMEOUT, // Timeout.
-                        self::CONNECTION_TIMEOUT, // Read timeout.
+                        $this->connectiontimeout, // Timeout.
+                        $this->connectiontimeout, // Read timeout.
                         true,
                         $this->auth,
                         !empty($opts) ? $opts : null,
@@ -306,10 +310,10 @@ class redis extends handler implements SessionHandlerInterface {
                     $this->connection->connect(
                         $server,
                         $port,
-                        self::CONNECTION_TIMEOUT, // Timeout.
+                        $this->connectiontimeout, // Timeout.
                         null,
                         $delay, // Retry interval.
-                        self::CONNECTION_TIMEOUT, // Read timeout.
+                        $this->connectiontimeout, // Read timeout.
                         $opts,
                     );
                     if ($this->auth !== '' && !$this->connection->auth($this->auth)) {
