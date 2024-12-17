@@ -35,6 +35,7 @@ use \core\notification;
 use qbank_previewquestion\form\preview_options_form;
 use qbank_previewquestion\question_preview_options;
 use qbank_previewquestion\helper;
+use core_question\local\bank\version_options;
 
 /**
  * The maximum number of variants previewable. If there are more variants than this for a question
@@ -130,13 +131,15 @@ if ($previewid) {
 $options->behaviour = $quba->get_preferred_behaviour();
 $options->maxmark = $quba->get_question_max_mark($slot);
 
+// Load the question versions and convert to a simple array for select menu.
+$versions = version_options::get_version_menu_options($question->id);
 $versionids = helper::load_versions($question->questionbankentryid);
 // Create the settings form, and initialise the fields.
 $optionsform = new preview_options_form(helper::question_preview_form_url($question->id, $context, $previewid, $returnurl),
         [
             'quba' => $quba,
             'maxvariant' => $maxvariant,
-            'versions' => array_combine(array_values($versionids), array_values($versionids)),
+            'versions' => $versions,
             'restartversion' => $restartversion,
         ]);
 $optionsform->set_data($options);

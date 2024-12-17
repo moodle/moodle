@@ -88,6 +88,7 @@ final class qbank_helper_test extends \advanced_testcase {
         $slots = $structure->get_slots();
         $slot = reset($slots);
         $this->assertEquals(3, count(qbank_helper::get_version_options($question->id)));
+        $this->assertDebuggingCalled();
         $this->assertEquals($question->id, qbank_helper::choose_question_for_redo(
                 $quiz->id, $context, $slot->id, new \qubaid_list([])));
 

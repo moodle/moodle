@@ -19,6 +19,7 @@ namespace mod_quiz;
 use coding_exception;
 use context_module;
 use core\output\inplace_editable;
+use core_question\local\bank\version_options;
 use mod_quiz\event\quiz_grade_item_created;
 use mod_quiz\event\quiz_grade_item_deleted;
 use mod_quiz\event\quiz_grade_item_updated;
@@ -813,32 +814,19 @@ class structure {
         $slot = $this->get_slot_by_number($slotnumber);
 
         // Get all the versions which exist.
-        $versions = qbank_helper::get_version_options($slot->questionid);
-        $latestversion = reset($versions);
+        $versions = version_options::get_version_menu_options($slot->questionid);
+        $versioninfo = [];
 
-        // Format the choices for display.
-        $versionoptions = [];
-        foreach ($versions as $version) {
-            $version->selected = $version->version === $slot->requestedversion;
-
-            if ($version->version === $latestversion->version) {
-                $version->versionvalue = get_string('questionversionlatest', 'quiz', $version->version);
-            } else {
-                $version->versionvalue = get_string('questionversion', 'quiz', $version->version);
-            }
-
-            $versionoptions[] = $version;
+        // Loop through them and set which one is selected.
+        foreach ($versions as $versionnumber => $version) {
+            $versioninfo[] = (object)[
+                'version' => $versionnumber,
+                'versionvalue' => $version,
+                'selected' => ($versionnumber == $slot->requestedversion),
+            ];
         }
 
-        // Make a choice for 'Always latest'.
-        $alwaysuselatest = new stdClass();
-        $alwaysuselatest->versionid = 0;
-        $alwaysuselatest->version = 0;
-        $alwaysuselatest->versionvalue = get_string('alwayslatest', 'quiz');
-        $alwaysuselatest->selected = $slot->requestedversion === null;
-        array_unshift($versionoptions, $alwaysuselatest);
-
-        return $versionoptions;
+        return $versioninfo;
     }
 
     /**

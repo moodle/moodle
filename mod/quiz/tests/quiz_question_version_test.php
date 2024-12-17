@@ -97,6 +97,7 @@ final class quiz_question_version_test extends \advanced_testcase {
         $this->assertEquals(4, $slot->version);
         // Now change the version using the external service.
         $versions = qbank_helper::get_version_options($slot->questionid);
+        $this->assertDebuggingCalled();
         // We don't want the current version.
         $selectversions = [];
         foreach ($versions as $version) {
@@ -157,6 +158,7 @@ final class quiz_question_version_test extends \advanced_testcase {
         $slot = reset($slots);
         // Now change the version using the external service.
         $versions = qbank_helper::get_version_options($slot->questionid);
+        $this->assertDebuggingCalled();
         // We dont want the current version.
         $selectversions = [];
         foreach ($versions as $version) {
