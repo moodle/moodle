@@ -39,6 +39,8 @@ Feature: Set up and manage user factors
       | enabled | 1 | factor_webauthn |
     And the following config values are set as admin:
       | enabled | 1 | factor_sms     |
+    And the following config values are set as admin:
+      | enabled | 0 | factor_email |
     And the following "tool_mfa > User factors" exist:
     | username | factor   | label                |
     | admin    | sms      | +409111222           |

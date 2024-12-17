@@ -15,18 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Installation code for factor_email.
  *
- * @package     factor_email
- * @subpackage  tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    factor_email
+ * @copyright  2024 David Woloszyn <david.woloszyn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version      = 2024122400;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires     = 2024100100;   // Requires this Moodle version.
-$plugin->component    = 'factor_email';  // Full name of the plugin (used for diagnostics).
-$plugin->maturity     = MATURITY_STABLE;
+/**
+ * Perform install procedures for factor_email.
+ */
+function xmldb_factor_email_install(): void {
+    // The factor_email should be enabled by default. Just ensure it is ordered too.
+    set_config('factor_order', 'email', 'tool_mfa');
+}

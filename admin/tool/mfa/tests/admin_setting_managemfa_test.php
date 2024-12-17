@@ -32,6 +32,16 @@ final class admin_setting_managemfa_test extends \advanced_testcase {
     use \tool_mfa\tests\mfa_settings_trait;
 
     /**
+     * Setup testcase.
+     */
+    public function setUp(): void {
+        parent::setUp();
+        $this->resetAfterTest();
+        // Disable email factor (enabled by default).
+        $this->set_factor_state('email', 0);
+    }
+
+    /**
      * Tests getting the factor combinations
      */
     public function test_get_factor_combinations_default(): void {
@@ -137,7 +147,6 @@ final class admin_setting_managemfa_test extends \advanced_testcase {
      * @param int $combinationscount expected count of available combinations
      */
     public function test_get_factor_combinations_with_data_provider(array $factorset, int $combinationscount): void {
-        $this->resetAfterTest();
         $enabledcount = 0;
 
         foreach ($factorset as $factor) {
@@ -168,7 +177,6 @@ final class admin_setting_managemfa_test extends \advanced_testcase {
      * Tests checking the factor combinations
      */
     public function test_factor_combination_checker(): void {
-        $this->resetAfterTest();
         $managemfa = new \tool_mfa\table\admin_setting_managemfa();
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
