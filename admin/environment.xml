@@ -3367,7 +3367,7 @@
       <VENDOR name="mariadb" version="10.2.29" />
       <VENDOR name="mysql" version="5.7" />
       <VENDOR name="postgres" version="9.6" />
-      <VENDOR name="mssql" version="14.0" />
+      <VENDOR name="mssql" version="140" />
       <VENDOR name="oracle" version="11.2" />
     </DATABASE>
     <PHP version="7.3.0" level="required">
@@ -3554,7 +3554,7 @@
       <VENDOR name="mariadb" version="10.2.29" />
       <VENDOR name="mysql" version="5.7" />
       <VENDOR name="postgres" version="10" />
-      <VENDOR name="mssql" version="14.0" />
+      <VENDOR name="mssql" version="140" />
       <VENDOR name="oracle" version="11.2" />
     </DATABASE>
     <PHP version="7.3.0" level="required">
@@ -3747,7 +3747,7 @@
       <VENDOR name="mariadb" version="10.4" />
       <VENDOR name="mysql" version="5.7" />
       <VENDOR name="postgres" version="12" />
-      <VENDOR name="mssql" version="14.0" />
+      <VENDOR name="mssql" version="140" />
       <VENDOR name="oracle" version="19" />
     </DATABASE>
     <PHP version="7.4.0" level="required">
@@ -3937,7 +3937,7 @@
       <VENDOR name="mariadb" version="10.6.7" />
       <VENDOR name="mysql" version="8.0" />
       <VENDOR name="postgres" version="13" />
-      <VENDOR name="mssql" version="14.0" />
+      <VENDOR name="mssql" version="140" />
       <VENDOR name="oracle" version="19" />
     </DATABASE>
     <PHP version="8.0.0" level="required">
@@ -4129,7 +4129,7 @@
       <VENDOR name="mariadb" version="10.6.7" />
       <VENDOR name="mysql" version="8.0" />
       <VENDOR name="postgres" version="13" />
-      <VENDOR name="mssql" version="14.0" />
+      <VENDOR name="mssql" version="140" />
       <VENDOR name="oracle" version="19" />
     </DATABASE>
     <PHP version="8.0.0" level="required">
@@ -4323,7 +4323,7 @@
       <VENDOR name="mariadb" version="10.6.7" />
       <VENDOR name="mysql" version="8.0" />
       <VENDOR name="postgres" version="13" />
-      <VENDOR name="mssql" version="14.0" />
+      <VENDOR name="mssql" version="140" />
       <VENDOR name="oracle" version="19" />
     </DATABASE>
     <PHP version="8.1.0" level="required">
@@ -4518,7 +4518,7 @@
       <VENDOR name="mariadb" version="10.6.7" />
       <VENDOR name="mysql" version="8.0" />
       <VENDOR name="postgres" version="13" />
-      <VENDOR name="mssql" version="14.0" />
+      <VENDOR name="mssql" version="140" />
       <VENDOR name="oracle" version="19" />
     </DATABASE>
     <PHP version="8.1.0" level="required">
@@ -4713,7 +4713,7 @@
       <VENDOR name="mariadb" version="10.11.0" />
       <VENDOR name="mysql" version="8.4" />
       <VENDOR name="postgres" version="14" />
-      <VENDOR name="mssql" version="14.0" />
+      <VENDOR name="mssql" version="140" />
       <VENDOR name="oracle" version="19" />
     </DATABASE>
     <PHP version="8.2.0" level="required">
