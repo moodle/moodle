@@ -44,9 +44,8 @@ abstract class xml_database_importer extends database_importer {
      */
     protected function get_parser() {
         $parser = xml_parser_create();
-        xml_set_object($parser, $this);
-        xml_set_element_handler($parser, 'tag_open', 'tag_close');
-        xml_set_character_data_handler($parser, 'cdata');
+        xml_set_element_handler($parser, [$this, 'tag_open'], [$this, 'tag_close']);
+        xml_set_character_data_handler($parser, [$this, 'cdata']);
         xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, false);
         return $parser;
     }

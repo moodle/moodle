@@ -662,9 +662,8 @@ class webdav_client {
                         unset($this->_xmltree[$this->_parserid]);
                         xml_parser_set_option($this->_parser,XML_OPTION_SKIP_WHITE,0);
                         xml_parser_set_option($this->_parser,XML_OPTION_CASE_FOLDING,0);
-                        xml_set_object($this->_parser, $this);
-                        xml_set_element_handler($this->_parser, "_lock_startElement", "_endElement");
-                        xml_set_character_data_handler($this->_parser, "_lock_cdata");
+                        xml_set_element_handler($this->_parser, [$this, "_lock_startElement"], [$this, "_endElement"]);
+                        xml_set_character_data_handler($this->_parser, [$this, "_lock_cdata"]);
 
                         if (!xml_parse($this->_parser, $response['body'])) {
                             die(sprintf("XML error: %s at line %d",
@@ -760,9 +759,8 @@ class webdav_client {
                         unset($this->_xmltree[$this->_parserid]);
                         xml_parser_set_option($this->_parser,XML_OPTION_SKIP_WHITE,0);
                         xml_parser_set_option($this->_parser,XML_OPTION_CASE_FOLDING,0);
-                        xml_set_object($this->_parser, $this);
-                        xml_set_element_handler($this->_parser, "_delete_startElement", "_endElement");
-                        xml_set_character_data_handler($this->_parser, "_delete_cdata");
+                        xml_set_element_handler($this->_parser, [$this, "_delete_startElement"], [$this, "_endElement"]);
+                        xml_set_character_data_handler($this->_parser, [$this, "_delete_cdata"]);
 
                         if (!xml_parse($this->_parser, $response['body'])) {
                             die(sprintf("XML error: %s at line %d",
@@ -853,9 +851,8 @@ EOD;
                         xml_parser_set_option($this->_parser,XML_OPTION_SKIP_WHITE,0);
                         xml_parser_set_option($this->_parser,XML_OPTION_CASE_FOLDING,0);
                         // xml_parser_set_option($this->_parser,XML_OPTION_TARGET_ENCODING,'UTF-8');
-                        xml_set_object($this->_parser, $this);
-                        xml_set_element_handler($this->_parser, "_propfind_startElement", "_endElement");
-                        xml_set_character_data_handler($this->_parser, "_propfind_cdata");
+                        xml_set_element_handler($this->_parser, [$this, "_propfind_startElement"], [$this, "_endElement"]);
+                        xml_set_character_data_handler($this->_parser, [$this, "_propfind_cdata"]);
 
 
                         if (!xml_parse($this->_parser, $response['body'])) {

@@ -916,10 +916,9 @@ class xml2Array {
      */
     public function parse($strinputxml) {
         $this->resparser = xml_parser_create ('UTF-8');
-        xml_set_object($this->resparser, $this);
-        xml_set_element_handler($this->resparser, "tagopen", "tagclosed");
+        xml_set_element_handler($this->resparser, [$this, "tagopen"], [$this, "tagclosed"]);
 
-        xml_set_character_data_handler($this->resparser, "tagdata");
+        xml_set_character_data_handler($this->resparser, [$this, "tagdata"]);
 
         $this->strxmldata = xml_parse($this->resparser, $strinputxml );
         if (!$this->strxmldata) {
