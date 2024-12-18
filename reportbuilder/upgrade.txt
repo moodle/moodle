@@ -1,6 +1,11 @@
 This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
+=== 4.1.16 ===
+
+* The `core_reportbuilder_testcase` class has been moved to new autoloaded `core_reportbuilder\tests\core_reportbuilder_testcase`
+  location, affected tests no longer have to manually require `/reportbuilder/tests/helpers.php`
+
 === 4.1.3 ===
 
 * New database helper method `sql_replace_parameter_names` to help ensure uniqueness of parameters within an expression (where
