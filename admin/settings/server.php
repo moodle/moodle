@@ -181,8 +181,16 @@ if ($hassiteconfig) {
         new lang_string('configproxyuser', 'admin'), ''));
     $temp->add(new admin_setting_configpasswordunmask('proxypassword', new lang_string('proxypassword', 'admin'),
         new lang_string('configproxypassword', 'admin'), ''));
-    $temp->add(new admin_setting_configtext('proxybypass', new lang_string('proxybypass', 'admin'),
-        new lang_string('configproxybypass', 'admin'), 'localhost, 127.0.0.1'));
+
+    $setting = new admin_setting_configtext('proxybypass', new lang_string('proxybypass', 'admin'),
+        new lang_string('configproxybypass', 'admin'), 'localhost,127.0.0.1');
+    $setting->set_updatedcallback(function() {
+        // Normalize $CFG->proxybypass value.
+        $normalizedvalue = \core\ip_utils::normalize_internet_address_list(get_config('core', 'proxybypass'));
+        set_config('proxybypass', $normalizedvalue);
+    });
+    $temp->add($setting);
+
     $temp->add(new admin_setting_configcheckbox('proxylogunsafe', new lang_string('proxylogunsafe', 'admin'),
         new lang_string('configproxylogunsafe_help', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('proxyfixunsafe', new lang_string('proxyfixunsafe', 'admin'),
