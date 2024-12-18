@@ -96,7 +96,8 @@ if ($data = $mform->get_data()) {
     $manager = \core\di::get(\core_sms\manager::class);
     $smsgateway = $data->smsgateway;
     $gatewayname = $data->name;
-    unset($data->smsgateway, $data->name, $data->id);
+    // The $data will go into the database config column. If any data is not needed, unset it here.
+    unset($data->smsgateway, $data->name, $data->id, $data->saveandreturn, $data->returnurl);
     if (!empty($id)) {
         $gatewayinstance = $manager->get_gateway_instances(['id' => $id]);
         $gatewayinstance = reset($gatewayinstance);
