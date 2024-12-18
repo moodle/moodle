@@ -25,14 +25,14 @@
 
 <div id="block-timeline-{{uniqid}}-{{timelineinstanceid}}" class="block-timeline" data-region="timeline">
     <div class="p-0 px-2">
-        <div class="row g-0">
-            <div class="me-2 mb-1">
+        <div class="d-flex flex-wrap gap-1 g-0">
+            <div>
                 {{> block_timeline/nav-day-filter }}
             </div>
-            <div class="me-auto mb-1">
+            <div>
                 {{> block_timeline/nav-view-selector }}
             </div>
-            <div class="col-md-6 col-sm-8 col-12 mb-1 d-flex justify-content-end nav-search">
+            <div class="flex-grow-1 d-flex justify-content-end nav-search">
                 {{> block_timeline/nav-search }}
             </div>
         </div>

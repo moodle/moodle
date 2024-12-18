@@ -63,7 +63,7 @@
 </a>
 <div data-region="configure-filters" id="filter-configuration-{{uniqid}}" class="card card-large p-2">
     <form>
-        <span class="row px-3 py-1">
+        <span class="d-flex flex-wrap px-3 py-1">
             <label class="text-end w-25 p-2 m-0" for="filter-general-{{uniqid}}">
                 {{#str}}filter, mod_assign{{/str}}
             </label>
@@ -74,7 +74,7 @@
             </select>
         </span>
         {{#hasmarkingallocation}}
-        <span class="row px-3 py-1">
+        <span class="d-flex flex-wrap px-3 py-1">
             <label class="text-end w-25 p-2 m-0" for="filter-marker-{{uniqid}}">
                 {{#str}}markerfilter, mod_assign{{/str}}
             </label>
@@ -86,7 +86,7 @@
         </span>
         {{/hasmarkingallocation}}
         {{#hasmarkingworkflow}}
-        <span class="row px-3 py-1">
+        <span class="d-flex flex-wrap px-3 py-1">
             <label class="text-end w-25 p-2 m-0" for="filter-workflow-{{uniqid}}">
                 {{#str}}workflowfilter, mod_assign{{/str}}
             </label>

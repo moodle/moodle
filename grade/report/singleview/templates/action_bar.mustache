@@ -71,7 +71,7 @@
     }
 }}
 <div class="container-fluid tertiary-navigation full-width-bottom-border">
-    <div class="row">
+    <div class="d-flex">
         {{#generalnavselector}}
             <div class="navitem order-1">
                 {{>core/tertiary_navigation_selector}}
@@ -91,7 +91,7 @@
             <div class="navitem-divider d-none d-sm-flex order-3"></div>
         {{/itemselector}}
         {{#pagetoggler}}
-            <div class="d-flex row ms-0 ms-sm-auto order-4 px-0">
+            <div class="d-flex ms-0 ms-sm-auto order-4 px-0">
                 {{#bulkactions}}
                     <div class="d-flex navitem ms-0 ms-sm-auto me-3">{{{bulkactions}}}</div>
                     {{#js}}

@@ -59,7 +59,7 @@
     <div id="page" class="container-fluid d-print-block">
         {{{ output.full_header }}}
 
-        <div id="page-content" class="row {{#haspreblocks}} blocks-pre {{/haspreblocks}} {{#haspostblocks}} blocks-post {{/haspostblocks}} d-print-block">
+        <div id="page-content" class="d-flex {{#haspreblocks}} blocks-pre {{/haspreblocks}} {{#haspostblocks}} blocks-post {{/haspostblocks}} d-print-block">
             <div id="region-main-box" class="region-main">
                 {{#hasregionmainsettingsmenu}}
                 <div id="region-main-settings-menu" class="d-print-none {{#hasblocks}}has-blocks{{/hasblocks}}">
