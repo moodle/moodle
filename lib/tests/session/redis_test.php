@@ -360,8 +360,8 @@ final class redis_test extends \advanced_testcase {
         // Therefore, to get the host, we need to explode it.
         list($host, ) = explode(':', TEST_SESSION_REDIS_HOST);
 
-        $expected = "Failed to connect (try 5 out of 5) to Redis at $host:111111";
-        $this->assertDebuggingCalledCount(5);
+        $expected = "Failed to connect (try 3 out of 3) to Redis at $host:111111";
+        $this->assertDebuggingCalledCount(3);
         $this->assertStringContainsString($expected, $actual);
     }
 
