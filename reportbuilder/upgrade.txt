@@ -1,6 +1,11 @@
 This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
+=== 4.4.6 ===
+
+* The `core_reportbuilder_testcase` class has been moved to new autoloaded `core_reportbuilder\tests\core_reportbuilder_testcase`
+  location, affected tests no longer have to manually require `/reportbuilder/tests/helpers.php`
+
 === 4.4.5 ===
 
 * The `get_active_conditions` method of the base report class has a new `$checkavailable` parameter to determine whether to check
