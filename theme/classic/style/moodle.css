@@ -28408,6 +28408,7 @@ blockquote {
 .usersearchdropdown.dropdown-menu,
 .gradesearchdropdown.dropdown-menu,
 .groupsearchdropdown.dropdown-menu {
+  top: 100%;
   width: 350px;
 }
 .usersearchdropdown.dropdown-menu .searchresultitemscontainer,
@@ -34725,7 +34726,7 @@ body.path-question-type .mform fieldset.hidden {
   top: 0;
   right: 0;
   color: #6a737b;
-  z-index: 4;
+  z-index: 6;
 }
 .simplesearchform .btn-close {
   right: 2.5rem;

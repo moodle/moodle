@@ -3098,6 +3098,7 @@ blockquote {
 .gradesearchdropdown,
 .groupsearchdropdown {
     &.dropdown-menu {
+        top: 100%;
         width: 350px;
         .searchresultitemscontainer {
             max-height: 170px;
