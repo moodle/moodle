@@ -663,12 +663,13 @@ final class column {
      */
     public function format_value(array $row) {
         $values = $this->get_values($row);
-        $value = self::get_default_value($values, $this->get_type());
 
         // If column is being aggregated then defer formatting to them, otherwise loop through all column callbacks.
         if (!empty($this->aggregation)) {
+            $value = self::get_default_value($values, $this->aggregation::get_column_type($this->get_type()));
             $value = $this->aggregation::format_value($value, $values, $this->callbacks, $this->get_type());
         } else {
+            $value = self::get_default_value($values, $this->get_type());
             foreach ($this->callbacks as $callback) {
                 [$callable, $arguments] = $callback;
                 $value = ($callable)($value, (object) $values, $arguments, null);

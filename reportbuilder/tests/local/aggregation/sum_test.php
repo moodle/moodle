@@ -68,9 +68,36 @@ final class sum_test extends core_reportbuilder_testcase {
     }
 
     /**
-     * Test aggregation when applied to column with callback
+     * Data provider for {@see test_column_aggregation_with_callback}
+     *
+     * @return array[]
      */
-    public function test_column_aggregation_with_callback(): void {
+    public static function column_aggregation_with_callback_provider(): array {
+        return [
+            [column::TYPE_INTEGER, [
+                '0 (sum)',
+                '2 (sum)',
+            ]],
+            [column::TYPE_FLOAT, [
+                '0.0 (sum)',
+                '2.0 (sum)',
+            ]],
+            [column::TYPE_BOOLEAN, [
+                '0',
+                '2',
+            ]],
+        ];
+    }
+
+    /**
+     * Test aggregation when applied to column with callback
+     *
+     * @param int $columntype
+     * @param string[] $expected
+     *
+     * @dataProvider column_aggregation_with_callback_provider
+     */
+    public function test_column_aggregation_with_callback(int $columntype, array $expected): void {
         $this->resetAfterTest();
 
         // Test subjects.
@@ -92,22 +119,16 @@ final class sum_test extends core_reportbuilder_testcase {
         // Set callback to format the column (hack column definition to ensure callbacks are executed).
         $instance = manager::get_report_from_persistent($report);
         $instance->get_column('user:suspended')
-            ->set_type(column::TYPE_INTEGER)
-            ->set_callback(static function(int $value, stdClass $row, $arguments, ?string $aggregation): string {
+            ->set_type($columntype)
+            ->set_callback(static function(int|float $value, stdClass $row, $arguments, ?string $aggregation): string {
                 // Simple callback to return the given value, and append aggregation type.
-                return "{$value} ({$aggregation})";
+                return var_export($value, true) . " ({$aggregation})";
             });
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
-            [
-                'c0_firstname' => 'Admin',
-                'c1_suspended' => '0 (sum)',
-            ],
-            [
-                'c0_firstname' => 'Bob',
-                'c1_suspended' => '2 (sum)',
-            ],
-        ], $content);
+            ['Admin', $expected[0]],
+            ['Bob', $expected[1]],
+        ], array_map('array_values', $content));
     }
 }

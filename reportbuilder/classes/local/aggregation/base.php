@@ -129,6 +129,19 @@ abstract class base {
     }
 
     /**
+     * Return aggregated column type, that being one of the column TYPE_* constants like {@see column::get_type}
+     *
+     * Classes should override this method to define the type of data that the aggregated column value returns (e.g 'count'
+     * returns a numeric value, regardless of the original column type to which it is applied)
+     *
+     * @param int $columntype The type of the column to which the aggregation is applied
+     * @return int
+     */
+    public static function get_column_type(int $columntype): int {
+        return column::TYPE_TEXT;
+    }
+
+    /**
      * Return formatted value for column when applying aggregation, by default executing all callbacks on the value
      *
      * Should be overridden in child classes that need to format the column value differently (e.g. 'sum' would just show

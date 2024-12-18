@@ -64,4 +64,14 @@ class max extends base {
     public static function get_field_sql(string $field, int $columntype): string {
         return "MAX({$field})";
     }
+
+    /**
+     * Returns aggregated column type
+     *
+     * @param int $columntype
+     * @return int
+     */
+    public static function get_column_type(int $columntype): int {
+        return $columntype;
+    }
 }
