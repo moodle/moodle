@@ -1444,7 +1444,10 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024100100.02);
     }
 
-    if ($oldversion < 2024100701.01) {
+    // Automatically generated Moodle v4.5.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2024100701.02) {
         $smsgateways = $DB->get_records('sms_gateways');
         foreach ($smsgateways as $gateway) {
             $newconfig = json_decode($gateway->config);
@@ -1460,11 +1463,8 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2024100701.01);
+        upgrade_main_savepoint(true, 2024100701.02);
     }
-
-    // Automatically generated Moodle v4.5.0 release upgrade line.
-    // Put any upgrade step following this.
 
     return true;
 }
