@@ -20,13 +20,8 @@ namespace core_group\reportbuilder\datasource;
 
 use core_customfield_generator;
 use core_reportbuilder_generator;
-use core_reportbuilder_testcase;
 use core_reportbuilder\local\filters\{boolean_select, date, select, text};
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
+use core_reportbuilder\tests\core_reportbuilder_testcase;
 
 /**
  * Unit tests for groups datasource
@@ -362,7 +357,7 @@ final class groups_test extends core_reportbuilder_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
 
         // Create report containing single column, and given filter.
-        $report = $generator->create_report(['name' => 'Tasks', 'source' => groups::class, 'default' => 0]);
+        $report = $generator->create_report(['name' => 'Groups', 'source' => groups::class, 'default' => 0]);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'group:idnumber']);
 
         // Add filter, set it's values.

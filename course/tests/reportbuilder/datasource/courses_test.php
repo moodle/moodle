@@ -18,20 +18,10 @@ declare(strict_types=1);
 
 namespace core_course\reportbuilder\datasource;
 
-use context_course;
-use core_reportbuilder_testcase;
+use core\context\course;
 use core_reportbuilder_generator;
-use core_reportbuilder\local\filters\boolean_select;
-use core_reportbuilder\local\filters\category;
-use core_reportbuilder\local\filters\date;
-use core_reportbuilder\local\filters\select;
-use core_reportbuilder\local\filters\tags;
-use core_reportbuilder\local\filters\text;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
+use core_reportbuilder\local\filters\{boolean_select, category, date, select, tags, text};
+use core_reportbuilder\tests\core_reportbuilder_testcase;
 
 /**
  * Unit tests for courses datasources
@@ -97,7 +87,7 @@ final class courses_test extends core_reportbuilder_testcase {
 
         // Add a course image.
         get_file_storage()->create_file_from_string([
-            'contextid' => context_course::instance($course->id)->id,
+            'contextid' => course::instance($course->id)->id,
             'component' => 'course',
             'filearea' => 'overviewfiles',
             'itemid' => 0,
@@ -406,7 +396,7 @@ final class courses_test extends core_reportbuilder_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
 
         // Create report containing single column, and given filter.
-        $report = $generator->create_report(['name' => 'Tasks', 'source' => courses::class, 'default' => 0]);
+        $report = $generator->create_report(['name' => 'Courses', 'source' => courses::class, 'default' => 0]);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:fullname']);
 
         // Add filter, set it's values.
