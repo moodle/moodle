@@ -106,7 +106,7 @@ class redis extends handler implements SessionHandlerInterface {
     protected bool $clustermode = false;
 
     /** @var int Maximum number of retries for cache store operations. */
-    const MAX_RETRIES = 5;
+    protected int $maxretries = 3;
 
     /** @var int $connectiontimeout The number of seconds to wait for a connection or response from the Redis server. */
     protected int $connectiontimeout = 3;
@@ -207,6 +207,10 @@ class redis extends handler implements SessionHandlerInterface {
         if (isset($CFG->session_redis_connection_timeout)) {
             $this->connectiontimeout = (int)$CFG->session_redis_connection_timeout;
         }
+
+        if (isset($CFG->session_redis_max_retries)) {
+            $this->maxretries = (int)$CFG->session_redis_max_retries;
+        }
     }
 
     /**
@@ -286,10 +290,10 @@ class redis extends handler implements SessionHandlerInterface {
             }
         }
 
-        // MDL-59866: Add retries for connections (up to 5 times) to make sure it goes through.
+        // Add retries for connections to make sure it goes through.
         $counter = 1;
         $exceptionclass = $this->clustermode ? 'RedisClusterException' : 'RedisException';
-        while ($counter <= self::MAX_RETRIES) {
+        while ($counter <= $this->maxretries) {
             $this->connection = null;
             // Make a connection to Redis server(s).
             try {
@@ -351,7 +355,7 @@ class redis extends handler implements SessionHandlerInterface {
                 return true;
             } catch (RedisException | RedisClusterException $e) {
                 $redishost = $this->clustermode ? implode(',', $this->host) : $server. ':'. $port;
-                $logstring = "Failed to connect (try {$counter} out of " . self::MAX_RETRIES . ") to Redis ";
+                $logstring = "Failed to connect (try {$counter} out of " . $this->maxretries . ") to Redis ";
                 $logstring .= "at ". $redishost .", the error returned was: {$e->getMessage()}";
                 debugging($logstring);
             }
