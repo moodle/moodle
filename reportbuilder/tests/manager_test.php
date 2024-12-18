@@ -18,19 +18,14 @@ declare(strict_types=1);
 
 namespace core_reportbuilder;
 
-use context_system;
+use core\context\system;
 use core_reportbuilder_generator;
-use core_reportbuilder_testcase;
-use core_user\reportbuilder\datasource\users;
-use stdClass;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\base;
 use core_reportbuilder\exception\{source_invalid_exception, source_unavailable_exception};
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
+use core_reportbuilder\tests\core_reportbuilder_testcase;
+use core_user\reportbuilder\datasource\users;
+use stdClass;
 
 /**
  * Unit tests for the report manager class
@@ -173,7 +168,7 @@ final class manager_test extends core_reportbuilder_testcase {
         $this->assertInstanceOf(report::class, $report);
         $this->assertEquals(base::TYPE_SYSTEM_REPORT, $report->get('type'));
         $this->assertEquals(system_report_available::class, $report->get('source'));
-        $this->assertInstanceOf(context_system::class, $report->get_context());
+        $this->assertInstanceOf(system::class, $report->get_context());
     }
 
     /**

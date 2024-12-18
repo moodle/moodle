@@ -18,14 +18,9 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\aggregation;
 
-use core_reportbuilder_testcase;
 use core_reportbuilder_generator;
+use core_reportbuilder\tests\core_reportbuilder_testcase;
 use core_user\reportbuilder\datasource\users;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
 
 /**
  * Unit tests for date aggregation

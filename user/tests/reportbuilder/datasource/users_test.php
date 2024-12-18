@@ -18,19 +18,9 @@ declare(strict_types=1);
 
 namespace core_user\reportbuilder\datasource;
 
-use core_reportbuilder_testcase;
 use core_reportbuilder_generator;
-use core_reportbuilder\local\filters\boolean_select;
-use core_reportbuilder\local\filters\date;
-use core_reportbuilder\local\filters\select;
-use core_reportbuilder\local\filters\tags;
-use core_reportbuilder\local\filters\text;
-use core_reportbuilder\local\filters\user as user_filter;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
+use core_reportbuilder\local\filters\{boolean_select, date, select, tags, text, user as user_filter};
+use core_reportbuilder\tests\core_reportbuilder_testcase;
 
 /**
  * Unit tests for users datasource
@@ -527,7 +517,7 @@ final class users_test extends core_reportbuilder_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
 
         // Create report containing single column, and given filter.
-        $report = $generator->create_report(['name' => 'Tasks', 'source' => users::class, 'default' => 0]);
+        $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:username']);
 
         // Add filter, set it's values.
