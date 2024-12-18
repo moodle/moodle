@@ -25,6 +25,6 @@
 defined('MOODLE_INTERNAL') || die;
 
 $plugin->component = 'customfield_number';
-$plugin->version   = 2024100703;
+$plugin->version   = 2024121800;
 $plugin->requires  = 2024100100;
 $plugin->maturity  = MATURITY_STABLE;
