@@ -1,5 +1,13 @@
 # core_reportbuilder (subsystem) Upgrade notes
 
+## 4.5.1+
+
+### Added
+
+- The `core_reportbuilder_testcase` class has been moved to new autoloaded `core_reportbuilder\tests\core_reportbuilder_testcase` location, affected tests no longer have to manually require `/reportbuilder/tests/helpers.php`
+
+  For more information see [MDL-84000](https://tracker.moodle.org/browse/MDL-84000)
+
 ## 4.5.1
 
 ### Changed

@@ -1,5 +1,13 @@
 # mod_quiz Upgrade notes
 
+## 4.5.1+
+
+### Changed
+
+- The `quiz_question_tostring` method now includes a new boolean parameter, `displaytaglink`. This parameter specifies whether the tag name in the question bank should be displayed as a clickable hyperlink (`true`) or as plain text (`false`).
+
+  For more information see [MDL-75075](https://tracker.moodle.org/browse/MDL-75075)
+
 ## 4.5.1
 
 ### Changed
