@@ -41,10 +41,8 @@ $context = context_course::instance($course->id);
 $sort = optional_param('sort','',PARAM_ALPHA);
 $firstnamesort = $sort == 'firstname';
 
-// CSV format
-$format = optional_param('format','',PARAM_ALPHA);
-$excel = $format == 'excelcsv';
-$csv = $format == 'csv' || $excel;
+// Download format.
+$dataformat = optional_param('dataformat', '', PARAM_ALPHA);
 
 // Paging, sorting and filtering.
 $page   = optional_param('page', 0, PARAM_INT);
@@ -59,23 +57,13 @@ $activitysection = optional_param('activitysection', -1, PARAM_INT);
 $userfields = \core_user\fields::for_identity($context);
 $extrafields = $userfields->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
 $leftcols = 1 + count($extrafields);
-
-function csv_quote($value) {
-    global $excel;
-    if ($excel) {
-        return core_text::convert('"'.str_replace('"',"'",$value).'"','UTF-8','UTF-16LE');
-    } else {
-        return '"'.str_replace('"',"'",$value).'"';
-    }
-}
-
 $url = new moodle_url('/report/progress/index.php', array('course'=>$id));
 $PAGE->navigation->override_active_url($url);
 if ($sort !== '') {
     $url->param('sort', $sort);
 }
-if ($format !== '') {
-    $url->param('format', $format);
+if ($dataformat !== '') {
+    $url->param('dataformat', $dataformat);
 }
 if ($page !== 0) {
     $url->param('page', $page);
@@ -176,68 +164,151 @@ if ($total) {
         $where_params,
         $group,
         $firstnamesort ? 'u.firstname ASC, u.lastname ASC' : 'u.lastname ASC, u.firstname ASC',
-        $csv ? 0 : helper::COMPLETION_REPORT_PAGE,
-        $csv ? 0 : $page * helper::COMPLETION_REPORT_PAGE,
+        $dataformat ? 0 : helper::COMPLETION_REPORT_PAGE,
+        $dataformat ? 0 : $page * helper::COMPLETION_REPORT_PAGE,
         $context
     );
 }
 
-if ($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are some users/actvs
+if ($dataformat !== '' && $grandtotal && count($activities) > 0) {
+    $columnnames = [''];
+    $alldata = [];
 
-    $shortname = format_string($course->shortname, true, array('context' => $context));
-    header('Content-Disposition: attachment; filename=progress.'.
-        preg_replace('/[^a-z0-9-]/','_',core_text::strtolower(strip_tags($shortname))).'.csv');
-    // Unicode byte-order mark for Excel
-    if ($excel) {
-        header('Content-Type: text/csv; charset=UTF-16LE');
-        print chr(0xFF).chr(0xFE);
-        $sep="\t".chr(0);
-        $line="\n".chr(0);
-    } else {
-        header('Content-Type: text/csv; charset=UTF-8');
-        $sep=",";
-        $line="\n";
+    // Adding extra fields column names.
+    foreach ($extrafields as $field) {
+        $columnnames[] = \core_user\fields::get_display_name($field);
     }
-} else {
-
-    // Navigation and header
-    $strreports = get_string("reports");
-    $strcompletion = get_string('activitycompletion', 'completion');
-
-    $PAGE->set_title($strcompletion);
-    $PAGE->set_heading($course->fullname);
-    echo $OUTPUT->header();
-
-    // Print the selected dropdown.
-    $pluginname = get_string('pluginname', 'report_progress');
-    report_helper::print_report_selector($pluginname);
-    $PAGE->requires->js_call_amd('report_progress/completion_override', 'init', [fullname($USER)]);
-
-    // Handle groups (if enabled).
-    echo $output->render_groups_select($url, $course, $group);
-
-    // Display include activity filter.
-    echo $output->render_include_activity_select($url, $activitytypes, $activityinclude);
-
-    // Display activity order options.
-    echo $output->render_activity_order_select($url, $activityorder);
-
-    // Display section selector.
-    $modinfo = get_fast_modinfo($course);
-    $sections = [];
-    $cmids = array_keys($completion->get_activities());
-    foreach ($modinfo->get_sections() as $sectionnum => $section) {
-        if (empty(array_intersect($section, $cmids))) {
-            continue;
+    foreach ($activities as $activity) {
+        // Handling date display formatting.
+        if ($activity->completionexpected) {
+            $datetext = $dataformat
+                ? userdate($activity->completionexpected, "%F %T")
+                : userdate($activity->completionexpected, get_string('strftimedate', 'langconfig'));
+        } else {
+            $datetext = '';
         }
-        $sectionname = get_section_name($course, $sectionnum);
-        if (empty($sectionname)) {
-            $sectionname = get_string('section') . ' ' . $sectionnum;
-        }
-        $sections[$sectionnum] = $sectionname;
+
+        // Shorten long names/labels (URLs).
+        $displayname = format_string($activity->name, true, ['context' => $activity->context]);
+
+        // Add column names for activity.
+        $columnnames[] = $displayname;
+        $columnnames[] = $datetext;
     }
-    echo $output->render_activity_section_select($url, $activitysection, $sections);
+
+    foreach ($progress as $user) {
+        $row = [];
+        $row['fullname'] = fullname($user, has_capability('moodle/site:viewfullnames', $context));
+
+        // Adding user extra fields to the row.
+        foreach ($extrafields as $field) {
+            $row[$field] = $user->{$field};
+        }
+        $i = 0;
+        foreach ($activities as $activity) {
+            // Check if there's progress for this activity.
+            if (array_key_exists($activity->id, $user->progress)) {
+                $thisprogress = $user->progress[$activity->id];
+                $overrideby = $thisprogress->overrideby;
+                $date = userdate($thisprogress->timemodified, "%F %T");
+                $state = $thisprogress->completionstate;
+            } else {
+                $overrideby = 0;
+                $state = COMPLETION_INCOMPLETE;
+                $date = '';
+            }
+
+            // Determine the completion type.
+            switch ($state) {
+                case COMPLETION_INCOMPLETE:
+                    $completiontype = 'n' . ($overrideby ? '-override' : '');
+                    break;
+                case COMPLETION_COMPLETE:
+                    $completiontype = 'y' . ($overrideby ? '-override' : '');
+                    break;
+                case COMPLETION_COMPLETE_PASS:
+                    $completiontype = 'pass';
+                    break;
+                case COMPLETION_COMPLETE_FAIL:
+                    $completiontype = 'fail';
+                    break;
+            }
+
+            // Describe the completion status.
+            if ($overrideby) {
+                $overridebyuser = \core_user::get_user($overrideby, '*', MUST_EXIST);
+                $describe = get_string('completion-' . $completiontype, 'completion', fullname($overridebyuser));
+            } else {
+                $describe = get_string('completion-' . $completiontype, 'completion');
+            }
+
+            $row[$i++] = $describe;
+            $row[$i++] = $date;
+        }
+        // Add the row to alldata.
+        $alldata[] = $row;
+    }
+    // Download the data in the specified format.
+    \core\dataformat::download_data(
+        'progress.' . preg_replace(
+            '/[^a-z0-9-]/',
+            '_',
+            core_text::strtolower(
+                strip_tags(
+                    format_string(
+                        $course->shortname,
+                        true,
+                        ['context' => $context]
+                    )
+                )
+            )
+        ),
+        $dataformat,
+        $columnnames,
+        $alldata
+    );
+
+    // Stop further script execution.
+    die;
 }
+// Navigation and header.
+$strreports = get_string("reports");
+$strcompletion = get_string('activitycompletion', 'completion');
+
+$PAGE->set_title($strcompletion);
+$PAGE->set_heading($course->fullname);
+echo $OUTPUT->header();
+
+// Print the selected dropdown.
+$pluginname = get_string('pluginname', 'report_progress');
+report_helper::print_report_selector($pluginname);
+$PAGE->requires->js_call_amd('report_progress/completion_override', 'init', [fullname($USER)]);
+
+// Handle groups (if enabled).
+echo $output->render_groups_select($url, $course, $group);
+
+// Display include activity filter.
+echo $output->render_include_activity_select($url, $activitytypes, $activityinclude);
+
+// Display activity order options.
+echo $output->render_activity_order_select($url, $activityorder);
+
+// Display section selector.
+$modinfo = get_fast_modinfo($course);
+$sections = [];
+$cmids = array_keys($completion->get_activities());
+foreach ($modinfo->get_sections() as $sectionnum => $section) {
+    if (empty(array_intersect($section, $cmids))) {
+        continue;
+    }
+    $sectionname = get_section_name($course, $sectionnum);
+    if (empty($sectionname)) {
+        $sectionname = get_string('section') . ' ' . $sectionnum;
+    }
+    $sections[$sectionnum] = $sectionname;
+}
+echo $output->render_activity_section_select($url, $activitysection, $sections);
+
 
 if (count($activities)==0) {
     echo $OUTPUT->container(get_string('err_noactivities', 'completion'), 'errorbox errorboxcontent');
@@ -275,47 +346,41 @@ $pagingbar .= $OUTPUT->paging_bar($total, $page, helper::COMPLETION_REPORT_PAGE,
 
 // Okay, let's draw the table of progress info,
 
-// Start of table
-if (!$csv) {
-    print '<br class="clearer"/>'; // ugh
+// Start of table.
+print '<br class="clearer"/>'; // Ugh.
 
-    print $pagingbar;
+print $pagingbar;
 
-    if (!$total) {
-        echo $OUTPUT->notification(get_string('nothingtodisplay'), 'info', false);
-        echo $OUTPUT->footer();
-        exit;
-    }
+if (!$total) {
+    echo $OUTPUT->notification(get_string('nothingtodisplay'), 'info', false);
+    echo $OUTPUT->footer();
+    exit;
+}
 
     print '<div id="completion-progress-wrapper" class="no-overflow">';
     print '<table id="completion-progress" class="table generaltable flexible">';
     print '<thead><tr style="vertical-align:top">';
 
-    // User heading / sort option
-    print '<th scope="col" class="completion-sortchoice">';
+// User heading / sort option.
+print '<th scope="col" class="completion-sortchoice">';
 
-    $sorturl = fullclone($url);
-    if ($firstnamesort) {
-        $sorturl->param('sort', 'lastname');
-        $sortlink = html_writer::link($sorturl, get_string('lastname'));
-        print
-            get_string('firstname') . " / $sortlink";
-    } else {
-        $sorturl->param('sort', 'firstname');
-        $sortlink = html_writer::link($sorturl, get_string('firstname'));
-        print "$sortlink / " . get_string('lastname');
-    }
-    print '</th>';
-
-    // Print user identity columns
-    foreach ($extrafields as $field) {
-        echo '<th scope="col" class="completion-identifyfield">' .
-                \core_user\fields::get_display_name($field) . '</th>';
-    }
+$sorturl = fullclone($url);
+if ($firstnamesort) {
+    $sorturl->param('sort', 'lastname');
+    $sortlink = html_writer::link($sorturl, get_string('lastname'));
+    print
+        get_string('firstname') . " / $sortlink";
 } else {
-    foreach ($extrafields as $field) {
-        echo $sep . csv_quote(\core_user\fields::get_display_name($field));
-    }
+    $sorturl->param('sort', 'firstname');
+    $sortlink = html_writer::link($sorturl, get_string('firstname'));
+    print "$sortlink / " . get_string('lastname');
+}
+print '</th>';
+
+// Print user identity columns.
+foreach ($extrafields as $field) {
+    echo '<th scope="col" class="completion-identifyfield">' .
+            \core_user\fields::get_display_name($field) . '</th>';
 }
 
 // Activities
@@ -324,7 +389,7 @@ foreach($activities as $activity) {
     $datepassed = $activity->completionexpected && $activity->completionexpected <= time();
     $datepassedclass = $datepassed ? 'completion-expired' : '';
 
-    if ($activity->completionexpected && !$csv) {
+    if ($activity->completionexpected && !$dataformat) {
         $datetext = userdate($activity->completionexpected, get_string('strftimedate', 'langconfig'));
     } else {
         $datetext = get_string('completed');
@@ -332,51 +397,34 @@ foreach($activities as $activity) {
 
     // Some names (labels) come URL-encoded and can be very long, so shorten them
     $displayname = format_string($activity->name, true, array('context' => $activity->context));
-
-    if ($csv) {
-        print $sep.csv_quote($displayname).$sep.csv_quote($datetext);
-    } else {
-        $shortenedname = shorten_text($displayname);
-        print '<th scope="col" class="completion-header '.$datepassedclass.'">'.
-            '<a href="'.$CFG->wwwroot.'/mod/'.$activity->modname.
-            '/view.php?id='.$activity->id.'" title="' . s($displayname) . '">'.
-            '<div class="rotated-text-container"><span class="rotated-text">'.$shortenedname.'</span></div>'.
-            '<div class="modicon">'.
-            $OUTPUT->image_icon('monologo', get_string('modulename', $activity->modname), $activity->modname) .
-            '</div>'.
-            '</a>';
-        if ($activity->completionexpected) {
-            print '<div class="completion-expected"><span>'.$datetext.'</span></div>';
-        }
-        print '</th>';
+    $shortenedname = shorten_text($displayname);
+    print '<th scope="col" class="completion-header ' . $datepassedclass . '">' .
+        '<a href="' . $CFG->wwwroot . '/mod/' . $activity->modname .
+        '/view.php?id=' . $activity->id . '" title="' . s($displayname) . '">' .
+        '<div class="rotated-text-container"><span class="rotated-text">' . $shortenedname . '</span></div>' .
+        '<div class="modicon">' .
+        $OUTPUT->image_icon('monologo', get_string('modulename', $activity->modname), $activity->modname) .
+        '</div>' .
+        '</a>';
+    if ($activity->completionexpected) {
+        print '<div class="completion-expected"><span>' . $datetext . '</span></div>';
     }
+    print '</th>';
     $formattedactivities[$activity->id] = (object)array(
         'datepassedclass' => $datepassedclass,
         'displayname' => $displayname,
     );
 }
-
-if ($csv) {
-    print $line;
-} else {
-    print '</tr></thead><tbody>';
-}
+print '</tr></thead><tbody>';
 
 // Row for each user
 foreach($progress as $user) {
     // User name
-    if ($csv) {
-        print csv_quote(fullname($user, has_capability('moodle/site:viewfullnames', $context)));
-        foreach ($extrafields as $field) {
-            echo $sep . csv_quote($user->{$field});
-        }
-    } else {
-        print '<tr><th scope="row"><a href="' . $CFG->wwwroot . '/user/view.php?id=' .
-            $user->id . '&amp;course=' . $course->id . '">' .
-            fullname($user, has_capability('moodle/site:viewfullnames', $context)) . '</a></th>';
-        foreach ($extrafields as $field) {
-            echo '<td>' . s($user->{$field}) . '</td>';
-        }
+    print '<tr><th scope="row"><a href="' . $CFG->wwwroot . '/user/view.php?id=' .
+        $user->id . '&amp;course=' . $course->id . '">' .
+        fullname($user, has_capability('moodle/site:viewfullnames', $context)) . '</a></th>';
+    foreach ($extrafields as $field) {
+        echo '<td>' . s($user->{$field}) . '</td>';
     }
 
     // Progress for each activity
@@ -425,43 +473,32 @@ foreach($progress as $user) {
         $a->activity = $formattedactivities[$activity->id]->displayname;
         $fulldescribe=get_string('progress-title','completion',$a);
 
-        if ($csv) {
-            if ($date != '') {
-                $date = userdate($thisprogress->timemodified, "%F %T");
-            }
-            print $sep.csv_quote($describe).$sep.csv_quote($date);
-        } else {
-            $celltext = $OUTPUT->pix_icon('i/' . $completionicon, s($fulldescribe));
-            if (has_capability('moodle/course:overridecompletion', $context) &&
-                    $state != COMPLETION_COMPLETE_PASS && $state != COMPLETION_COMPLETE_FAIL) {
-                $newstate = ($state == COMPLETION_COMPLETE) ? COMPLETION_INCOMPLETE : COMPLETION_COMPLETE;
-                $changecompl = $user->id . '-' . $activity->id . '-' . $newstate;
-                $url = new moodle_url($PAGE->url, ['sesskey' => sesskey()]);
-                $celltext = html_writer::link($url, $celltext, array('class' => 'changecompl', 'data-changecompl' => $changecompl,
-                                                                     'data-activityname' => $a->activity,
-                                                                     'data-userfullname' => $a->user,
-                                                                     'data-completiontracking' => $completiontrackingstring,
-                                                                     'role' => 'button'));
-            }
-            print '<td class="completion-progresscell '.$formattedactivities[$activity->id]->datepassedclass.'">'.
-                $celltext . '</td>';
+        $celltext = $OUTPUT->pix_icon('i/' . $completionicon, s($fulldescribe));
+        if (
+            has_capability('moodle/course:overridecompletion', $context) &&
+            $state != COMPLETION_COMPLETE_PASS && $state != COMPLETION_COMPLETE_FAIL
+        ) {
+            $newstate = ($state == COMPLETION_COMPLETE) ? COMPLETION_INCOMPLETE : COMPLETION_COMPLETE;
+            $changecompl = $user->id . '-' . $activity->id . '-' . $newstate;
+            $url = new moodle_url($PAGE->url, ['sesskey' => sesskey()]);
+            $celltext = html_writer::link($url, $celltext, ['class' => 'changecompl', 'data-changecompl' => $changecompl,
+                                                                 'data-activityname' => $a->activity,
+                                                                 'data-userfullname' => $a->user,
+                                                                 'data-completiontracking' => $completiontrackingstring,
+                                                                 'role' => 'button']);
         }
+        print '<td class="completion-progresscell ' . $formattedactivities[$activity->id]->datepassedclass . '">' .
+            $celltext . '</td>';
     }
-
-    if ($csv) {
-        print $line;
-    } else {
-        print '</tr>';
-    }
-}
-
-if ($csv) {
-    exit;
+    print '</tr>';
 }
 print '</tbody></table>';
 print '</div>';
 
-echo $output->render_download_buttons($url);
-
+// Add buttons for exporting report.
+if ($grandtotal && count($activities) > 0) {
+    echo $OUTPUT->download_dataformat_selector(get_string('downloadas', 'table'), $url, 'dataformat', [
+        'course' => $course->id,
+    ]);
+}
 echo $OUTPUT->footer();
-
