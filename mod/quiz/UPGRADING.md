@@ -4,6 +4,9 @@
 
 ### Changed
 
+- The `quiz_question_tostring` method now includes a new boolean parameter, `displaytaglink`. This parameter specifies whether the tag name in the question bank should be displayed as a clickable hyperlink (`true`) or as plain text (`false`).
+
+  For more information see [MDL-75075](https://tracker.moodle.org/browse/MDL-75075)
 - The `\mod_quiz\attempt_walkthrough_from_csv_test` unit test has been marked as final and should not be extended by other tests.
 
   All shared functionality has been moved to a new autoloadable test-case:

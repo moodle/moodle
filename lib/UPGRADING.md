@@ -15,6 +15,13 @@
   This prevents display of the title in all layouts except `secure`.
 
   For more information see [MDL-75610](https://tracker.moodle.org/browse/MDL-75610)
+- A new core\ip_utils::normalize_internet_address() method is created to sanitize an IP address, a range of IP addresses, a domain name or a wildcard domain matching pattern.
+
+  Moodle previously allowed entries such as 192.168. or .moodle.org for certain variables (eg: $CFG->proxybypass). Since MDL-74289, these formats are no longer allowed. This method converts this informations into an authorized format. For example, 192.168. becomes 192.168.0.0/16 and .moodle.org becomes *.moodle.org.
+
+  Also a new core\ip_utils::normalize_internet_address_list() method is created. Based on core\ip_utils::normalize_internet_address(), this method normalizes a string containing a series of Internet addresses.
+
+  For more information see [MDL-79121](https://tracker.moodle.org/browse/MDL-79121)
 - The deprecated implementation in course/view.php, which uses the extern_server_course function to handle routing between internal and external courses, can be improved by utilizing the Hook API. This enhancement is essential for a project involving multiple universities, as the Hook API provides a more generalized and flexible approach to route users to external courses from within other plugins.
 
   For more information see [MDL-83473](https://tracker.moodle.org/browse/MDL-83473)
@@ -24,6 +31,9 @@
 - The {user_preferences}.value database field is now TEXT instead of CHAR. This means that any queries with a condition on this field in a WHERE or JOIN statement will need updating to use `$DB->sql_compare_text()`. See the `$newusers` query in `\core\task\send_new_users_password_task::execute` for an example.
 
   For more information see [MDL-46739](https://tracker.moodle.org/browse/MDL-46739)
+- The `core_renderer::tag_list` function now has a new parameter named `displaylink`. When `displaylink` is set to `true`, the tag name will be displayed as a clickable hyperlink. Otherwise, it will be rendered as plain text.
+
+  For more information see [MDL-75075](https://tracker.moodle.org/browse/MDL-75075)
 - All uses of the following PHPUnit methods have been removed as these methods are
   deprecated upstream without direct replacement:
 
@@ -34,6 +44,24 @@
   Any plugin using these methods must update their uses.
 
   For more information see [MDL-81308](https://tracker.moodle.org/browse/MDL-81308)
+- The Moodle subplugins.json format has been updated to accept a new `subplugintypes` object.
+
+  This should have the same format as the current `plugintypes` format, except that the paths should be relative to the _plugin_ root instead of the Moodle document root.
+
+  Both options can co-exist, but if both are present they must be kept in-sync.
+
+  ```json
+  {
+      "subplugintypes": {
+          "tiny": "plugins"
+      },
+      "plugintypes": {
+          "tiny": "lib/editor/tiny/plugins"
+      }
+  }
+  ```
+
+  For more information see [MDL-83705](https://tracker.moodle.org/browse/MDL-83705)
 
 ### Deprecated
 
@@ -68,9 +96,15 @@
 - moodle_process_email() has been deprecated with the removal of the unused and non-functioning admin/process_email.php.
 
   For more information see [MDL-61232](https://tracker.moodle.org/browse/MDL-61232)
+- The method `site_registration_form::add_select_with_email()` has been finally deprecated and will now throw an exception if called.
+
+  For more information see [MDL-71472](https://tracker.moodle.org/browse/MDL-71472)
 - Final deprecation of methods `task_base::is_blocking` and `task_base::set_blocking`.
 
   For more information see [MDL-81509](https://tracker.moodle.org/browse/MDL-81509)
+- Support for `subplugins.php` files has been removed. All subplugin metadata must be created in a `subplugins.json` file.
+
+  For more information see [MDL-83703](https://tracker.moodle.org/browse/MDL-83703)
 - set_alignment(), set_constraint() and do_not_enhance() functions have been fully removed from action_menu class.
 
   For more information see [MDL-83765](https://tracker.moodle.org/browse/MDL-83765)

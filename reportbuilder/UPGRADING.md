@@ -7,6 +7,15 @@
 - New `get_deprecated_tables` method in base entity, to be overridden when an entity no longer uses a table (due to column/filter re-factoring, etc) in order to avoid breaking third-party reports
 
   For more information see [MDL-78118](https://tracker.moodle.org/browse/MDL-78118)
+- The base aggregation class has a new `column_groupby` method, to be implemented in aggregation types to determime whether report tables should group by the fields of the aggregated column
+
+  For more information see [MDL-83361](https://tracker.moodle.org/browse/MDL-83361)
+- There is a new `date` aggregation type, that can be applied in custom and system reports
+
+  For more information see [MDL-83361](https://tracker.moodle.org/browse/MDL-83361)
+- The `core_reportbuilder_testcase` class has been moved to new autoloaded `core_reportbuilder\tests\core_reportbuilder_testcase` location, affected tests no longer have to manually require `/reportbuilder/tests/helpers.php`
+
+  For more information see [MDL-84000](https://tracker.moodle.org/browse/MDL-84000)
 
 ### Changed
 
