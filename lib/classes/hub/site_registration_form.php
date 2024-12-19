@@ -27,6 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 
 use context_course;
 use stdClass;
+use html_writer;
+use moodle_url;
 
 global $CFG;
 require_once($CFG->libdir . '/formslib.php');
@@ -139,11 +141,14 @@ class site_registration_form extends \moodleform {
 
         $this->add_checkbox_with_email('emailalert', 'siteregistrationemail', false, get_string('registrationyes'));
 
+        $privacyurl = new moodle_url('https://moodle.com/privacy-notice/');
+        $experttipsandinsightsdesc = html_writer::span(get_string('experttipsandinsightsdesc', 'hub', $privacyurl->out()));
         $this->add_checkbox_with_email(
-            'commnews',
-            'sitecommnews',
-            in_array('commnews', $highlightfields),
-            get_string('sitecommnewsyes', 'hub')
+            elementname: 'commnews',
+            stridentifier: 'experttipsandinsights',
+            highlight: in_array('commnews', $highlightfields),
+            checkboxtext: $experttipsandinsightsdesc,
+            showhelp: false,
         );
 
         // TODO site logo.
@@ -238,8 +243,15 @@ class site_registration_form extends \moodleform {
      * @param string $stridentifier
      * @param bool $highlight highlight as a new field
      * @param string $checkboxtext The text to show after the text.
+     * @param bool $showhelp Show the help icon.
      */
-    protected function add_checkbox_with_email($elementname, $stridentifier, $highlight = false, string $checkboxtext = '') {
+    protected function add_checkbox_with_email(
+        string $elementname,
+        string $stridentifier,
+        bool $highlight = false,
+        string $checkboxtext = '',
+        bool $showhelp = true,
+    ): void {
         $mform = $this->_form;
 
         $group = [
@@ -259,7 +271,9 @@ class site_registration_form extends \moodleform {
         $mform->hideif($elementname . 'email', $elementname . 'newemail', 'notchecked');
         $mform->setType($elementname, PARAM_INT);
         $mform->setType($elementname . 'email', PARAM_RAW_TRIMMED); // E-mail will be validated in validation().
-        $mform->addHelpButton($elementname . 'group', $stridentifier, 'hub');
+        if ($showhelp) {
+            $mform->addHelpButton($elementname . 'group', $stridentifier, 'hub');
+        }
 
     }
 

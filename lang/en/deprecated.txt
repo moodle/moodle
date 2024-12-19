@@ -144,3 +144,6 @@ cannotdeletecategoryquestions,core_error
 errordeletingquestionsfromcategory,core_question
 importantupdates_content,core_admin
 importantupdates_title,core_admin
+sitecommnews,core_hub
+sitecommnews_help,core_hub
+sitecommnewsyes,core_hub
