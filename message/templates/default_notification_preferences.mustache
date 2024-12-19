@@ -59,7 +59,8 @@
                                 "lockedlabel": "Sending Assignment via Web locked status",
                                 "enabledsetting": "mod_assign_assign_notification_enabled[popup]",
                                 "enabled": 1,
-                                "enabledlabel": "Sending Assignment via Web enabled status"
+                                "enabledlabel": "Sending Assignment via Web enabled status",
+                                "supportsprocessor": true
                             }
                         ]
                     }
@@ -106,34 +107,41 @@
                             </td>
                             {{#settings}}
                                 <td class="text-start">
-                                    <div data-preference="{{{enabledsetting}}}">
-                                        <div class="form-check form-switch {{#locked}} dimmed_text{{/locked}} pb-1">
-                                            <input type="checkbox"
-                                                id="{{{enabledsetting}}}"
-                                                name="{{{enabledsetting}}}"
-                                                class="form-check-input enabled_message_setting"
-                                                {{#enabled}}checked{{/enabled}}
-                                            >
-                                            <label for="{{{enabledsetting}}}" class="form-check-label"
-                                                title="{{enabledlabel}}">
-                                                {{#str}} enabled, core_message {{/str}}
-                                            </label>
+                                    {{#supportsprocessor}}
+                                        <div data-preference="{{{enabledsetting}}}">
+                                            <div class="form-check form-switch {{#locked}} dimmed_text{{/locked}} pb-1">
+                                                <input type="checkbox"
+                                                       id="{{{enabledsetting}}}"
+                                                       name="{{{enabledsetting}}}"
+                                                       class="form-check-input enabled_message_setting"
+                                                       {{#enabled}}checked{{/enabled}}
+                                                >
+                                                <label for="{{{enabledsetting}}}" class="form-check-label"
+                                                       title="{{enabledlabel}}">
+                                                    {{#str}} enabled, core_message {{/str}}
+                                                </label>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div data-preference="{{{lockedsetting}}}">
-                                        <div class="form-check form-switch pt-1">
-                                            <input type="checkbox"
-                                                id="{{{lockedsetting}}}"
-                                                name="{{{lockedsetting}}}"
-                                                class="form-check-input locked_message_setting"
-                                                {{#locked}}checked{{/locked}}
-                                            >
-                                            <label for="{{{lockedsetting}}}" class="form-check-label"
-                                                title="{{lockedlabel}}">
-                                                {{#str}} forced, core_message {{/str}}
-                                            </label>
+                                        <div data-preference="{{{lockedsetting}}}">
+                                            <div class="form-check form-switch pt-1">
+                                                <input type="checkbox"
+                                                       id="{{{lockedsetting}}}"
+                                                       name="{{{lockedsetting}}}"
+                                                       class="form-check-input locked_message_setting"
+                                                       {{#locked}}checked{{/locked}}
+                                                >
+                                                <label for="{{{lockedsetting}}}" class="form-check-label"
+                                                       title="{{lockedlabel}}">
+                                                    {{#str}} forced, core_message {{/str}}
+                                                </label>
+                                            </div>
                                         </div>
-                                    </div>
+                                    {{/supportsprocessor}}
+                                    {{^supportsprocessor}}
+                                        <div class="text-center">
+                                            {{#str}} notsupported, core_message {{/str}}
+                                        </div>
+                                    {{/supportsprocessor}}
                                 </td>
                             {{/settings}}
                         </tr>
