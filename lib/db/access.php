@@ -2819,4 +2819,13 @@ $capabilities = array(
             'manager' => CAP_ALLOW,
         ],
     ],
+    // Allow managers to view the AI usage report.
+    'moodle/ai:viewaiusagereport' => [
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 );

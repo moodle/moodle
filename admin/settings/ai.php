@@ -78,3 +78,11 @@ $aipolicyacceptance = new admin_externalpage(
     'moodle/ai:viewaipolicyacceptancereport'
 );
 $ADMIN->add('aireports', $aipolicyacceptance);
+// Add AI usage report.
+$aiusage = new admin_externalpage(
+    'aiusagereport',
+    get_string('aiusage', 'core_ai'),
+    new moodle_url('/ai/usage_report.php'),
+    'moodle/ai:viewaiusagereport',
+);
+$ADMIN->add('aireports', $aiusage);
