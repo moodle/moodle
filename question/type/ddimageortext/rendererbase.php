@@ -109,6 +109,7 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
                     ['placeinput', 'place' . $placeno, 'group' . $place->group]);
             $output .= $html;
             $question->places[$placeno]->fieldname = $fieldname;
+            $question->places[$placeno]->text = format_string($place->text);
         }
 
         $output .= html_writer::end_div();
