@@ -359,6 +359,7 @@ class notification_helper {
             'subject' => get_string('assignmentduesoonsubject', 'mod_assign', $stringparams),
             'assignmentname' => $assignmentobj->get_instance()->name,
             'html' => get_string('assignmentduesoonhtml', 'mod_assign', $stringparams),
+            'sms' => get_string('assignmentduesoonsms', 'mod_assign', $stringparams),
         ];
 
         $message = new \core\message\message();
@@ -370,6 +371,7 @@ class notification_helper {
         $message->fullmessageformat = FORMAT_HTML;
         $message->fullmessage = html_to_text($messagedata['html']);
         $message->fullmessagehtml = $messagedata['html'];
+        $message->fullmessagesms = $messagedata['sms'];
         $message->smallmessage = $messagedata['subject'];
         $message->notification = 1;
         $message->contexturl = $messagedata['url'];
@@ -446,6 +448,7 @@ class notification_helper {
             'subject' => get_string('assignmentoverduesubject', 'mod_assign', $stringparams),
             'assignmentname' => $assignmentobj->get_instance()->name,
             'html' => get_string('assignmentoverduehtml', 'mod_assign', $stringparams),
+            'sms' => get_string('assignmentoverduesms', 'mod_assign', $stringparams),
         ];
 
         $message = new \core\message\message();
@@ -457,6 +460,7 @@ class notification_helper {
         $message->fullmessageformat = FORMAT_HTML;
         $message->fullmessage = html_to_text($messagedata['html']);
         $message->fullmessagehtml = $messagedata['html'];
+        $message->fullmessagesms = $messagedata['sms'];
         $message->smallmessage = $messagedata['subject'];
         $message->notification = 1;
         $message->contexturl = $messagedata['url'];
@@ -544,6 +548,7 @@ class notification_helper {
             'user' => $userobject,
             'subject' => get_string('assignmentduedigestsubject', 'mod_assign'),
             'html' => get_string('assignmentduedigesthtml', 'mod_assign', $stringparams),
+            'sms' => get_string('assignmentduedigestsms', 'mod_assign', $stringparams),
         ];
 
         $message = new \core\message\message();
@@ -555,6 +560,7 @@ class notification_helper {
         $message->fullmessageformat = FORMAT_HTML;
         $message->fullmessage = html_to_text($messagedata['html']);
         $message->fullmessagehtml = $messagedata['html'];
+        $message->fullmessagesms = $messagedata['sms'];
         $message->smallmessage = $messagedata['subject'];
         $message->notification = 1;
 
