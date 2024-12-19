@@ -15,10 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace tool_mfa;
-use tool_mfa\tool_mfa_trait;
-
-defined('MOODLE_INTERNAL') || die();
-require_once(__DIR__ . '/tool_mfa_trait.php');
 
 /**
  * Tests for base factor implementation methods.
@@ -30,7 +26,7 @@ require_once(__DIR__ . '/tool_mfa_trait.php');
  */
 final class object_factor_base_test extends \advanced_testcase {
 
-    use tool_mfa_trait;
+    use \tool_mfa\tests\mfa_settings_trait;
 
     /**
      * Test deleting user's configured factors

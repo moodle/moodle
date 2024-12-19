@@ -32,7 +32,12 @@ if ($hassiteconfig) {
     new moodle_url('/admin/tool/mfa/reset_factor.php')));
 
     $settings = new admin_settingpage('managemfa', new lang_string('mfasettings', 'tool_mfa'));
-    $settings->add(new \tool_mfa\local\admin_setting_managemfa());
+    $settings->add(new \core_admin\admin\admin_setting_plugin_manager(
+        plugintype: 'factor',
+        tableclass: \tool_mfa\table\admin_setting_managemfa::class,
+        name: 'managemfatable',
+        visiblename: new lang_string('manageaiproviders', 'core_ai'),
+    ));
 
     $heading = new lang_string('settings:general', 'tool_mfa');
     $settings->add(new admin_setting_heading('tool_mfa/settings', $heading, ''));

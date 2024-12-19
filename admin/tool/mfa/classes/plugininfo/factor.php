@@ -126,6 +126,30 @@ class factor extends \core\plugininfo\base {
         return $return;
     }
 
+    #[\Override]
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        $enabledfactors = array_map(fn($f) => $f->name, self::get_enabled_factors());
+        $currentlyenabled = in_array($pluginname, $enabledfactors);
+
+        // Determine if there's a change in the enabled status.
+        if ($enabled && !$currentlyenabled) {
+            $action = 'enable';
+        } else if (!$enabled && $currentlyenabled) {
+            $action = 'disable';
+        } else {
+            return false; // No change needed.
+        }
+
+        // Execute the configuration and action based on the determined action.
+        \tool_mfa\manager::set_factor_config(['enabled' => $enabled], 'factor_' . $pluginname);
+        \tool_mfa\manager::do_factor_action($pluginname, $action);
+
+        \core\session\manager::gc(); // Remove stale sessions.
+        \core_plugin_manager::reset_caches();
+
+        return true;
+    }
+
     /**
      * Finds active factors for a user.
      * If user is not specified, current user is used.
@@ -320,6 +344,16 @@ class factor extends \core\plugininfo\base {
         return $this->name !== 'nosetup';
     }
 
+    #[\Override]
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
+    #[\Override]
+    public static function plugintype_supports_ordering(): bool {
+        return true;
+    }
+
     /**
      * Pre-uninstall hook.
      *
@@ -382,5 +416,43 @@ class factor extends \core\plugininfo\base {
         }));
 
         return $count > 1;
+    }
+
+    #[\Override]
+    public static function get_sorted_plugins(bool $enabledonly = false): ?array {
+        $pluginmanager = \core_plugin_manager::instance();
+        $plugins = $pluginmanager->get_plugins_of_type('factor');
+        $orders = self::get_factors();
+        $sortedplugins = [];
+        foreach ($orders as $order) {
+            $sortedplugins[$order->name] = $plugins[$order->name];
+        }
+
+        return $sortedplugins;
+    }
+
+    #[\Override]
+    public static function change_plugin_order(string $pluginname, int $direction): bool {
+        $activefactors = array_keys(self::get_sorted_plugins(true));
+        $key = array_search($pluginname, $activefactors);
+
+        if ($key === false) {
+            return false;
+        }
+
+        if ($direction === self::MOVE_DOWN && $key < (count($activefactors) - 1)) {
+            $action = 'down';
+        } else if ($direction === self::MOVE_UP && $key >= 1) {
+            $action = 'up';
+        } else {
+            return false;
+        }
+
+        \tool_mfa\manager::do_factor_action($pluginname, $action);
+
+        \core\session\manager::gc(); // Remove stale sessions.
+        \core_plugin_manager::reset_caches();
+
+        return true;
     }
 }

@@ -31,5 +31,6 @@ $string['settings:expireovernight'] = 'Expire trust overnight';
 $string['settings:expireovernight_help'] = 'This forces tokens to expire overnight, preventing midday interruptions for users. Instead they will be asked to multi-factor authenticate at the start of a day after expiry.';
 $string['settings:expiry'] = 'Trust duration';
 $string['settings:expiry_help'] = 'The duration a device is trusted before requiring a new multi-factor authentication.';
+$string['settings:shortdescription'] = 'Allow users to bypass authentication on devices marked as trusted. Needs to be combined with other factors.';
 $string['summarycondition'] = 'the user has previously trusted this device';
 $string['tokenstoredindevice'] = 'The user with ID {$a->userid} has a multi-factor authentication token stored on their device. <br> Information: {$a->string}.';

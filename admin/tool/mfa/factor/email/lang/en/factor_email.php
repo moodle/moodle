@@ -55,6 +55,7 @@ $string['pluginname'] = 'Email';
 $string['privacy:metadata'] = 'The Email factor plugin does not store any personal data';
 $string['settings:duration'] = 'Validity duration';
 $string['settings:duration_help'] = 'The period of time that the code is valid.';
+$string['settings:shortdescription'] = 'Require users to enter a code received via email during login.';
 $string['settings:suspend'] = 'Suspend unauthorised accounts';
 $string['settings:suspend_help'] = 'Check this to suspend user accounts if an unauthorised email verification is received.';
 $string['setupfactor'] = 'Set up email';

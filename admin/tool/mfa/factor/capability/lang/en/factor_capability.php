@@ -30,4 +30,5 @@ $string['settings:adminpasses'] = 'Site admins can pass this factor';
 $string['settings:adminpasses_help'] = 'By default admins pass all capability checks, including this one which uses \'factor/capability:cannotpassfactor\', which means they will fail this factor.
     If checked then all site admins will pass this factor if they do not have this capability from another role.
     If unchecked site admins will fail this factor.';
+$string['settings:shortdescription'] = 'Specify which users must use other factors to authenticate. Must be combined with other factors.';
 $string['summarycondition'] = 'does NOT have the factor/capability:cannotpassfactor capability in any role including site administrator.';
