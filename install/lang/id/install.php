@@ -51,8 +51,8 @@ $string['installation'] = 'Instalasi';
 $string['langdownloaderror'] = 'Sayangnya bahasa "{$a}" tidak dapat diunduh. Proses instalasi akan dilanjutkan dalam bahasa Inggris.';
 $string['memorylimithelp'] = '<p> Batas memori PHP untuk server Anda saat ini diatur ke {$a}. </p> <p> Ini dapat menyebabkan Moodle memiliki masalah memori di kemudian hari, terutama jika Anda memiliki banyak modul yang diaktifkan dan/atau banyak pengguna. </p> <p> Kami menyarankan Anda mengkonfigurasi PHP dengan batas yang lebih tinggi jika memungkinkan, seperti 40M. Ada beberapa cara untuk melakukan ini yang dapat Anda coba: </p>
 <ol> <li> Jika Anda bisa, kompilasi ulang PHP dengan <i> --enable-memory-limit </i>. Ini memungkinkan Moodle untuk mengatur batas memori itu sendiri. </li>
- <li> Jika Anda memiliki akses ke file php.ini, Anda dapat mengubah pengaturan <b> memory_limit </b> di sana menjadi sekitar 40M. Jika Anda tidak memiliki akses, Anda mungkin dapat meminta administrator untuk melakukan ini untuk Anda. </li>
-<li> Pada beberapa server PHP, Anda dapat membuat file .htaccess di direktori Moodle yang berisi baris ini: <blockquote> <div> php_value memory_limit 40M </div> </blockquote> <p> Namun, pada beberapa server ini tidak diizinkan <b> semua </b> halaman PHP tidak berfungsi (Anda akan melihat kesalahan ketika Anda melihat halaman) sehingga Anda Anda harus menghapus file .htaccess. </p> </li> </ol>';
+ <li> Jika Anda memiliki akses ke berkas php.ini, Anda dapat mengubah setelan <b> memory_limit </b> di sana menjadi sekitar 40M. Jika Anda tidak memiliki akses, Anda mungkin dapat meminta administrator untuk melakukan ini untuk Anda. </li>
+<li> Pada beberapa server PHP, Anda dapat membuat berkas .htaccess di direktori Moodle yang berisi baris ini: <blockquote> <div> php_value memory_limit 40M </div> </blockquote> <p> Namun, pada beberapa server ini tidak diizinkan <b> semua </b> halaman PHP tidak berfungsi (Anda akan melihat kesalahan ketika Anda melihat halaman) sehingga Anda Anda harus menghapus berkas .htaccess. </p> </li> </ol>';
 $string['paths'] = 'Jalur';
 $string['pathserrcreatedataroot'] = 'Direktori data ({$a->dataroot}) tidak dapat dibuat  oleh installer.';
 $string['pathshead'] = 'Konfirmasi jalur';
@@ -72,6 +72,6 @@ $string['welcomep20'] = 'Anda melihat halaman ini karena Anda telah berhasil mem
 $string['welcomep30'] = 'Rilis <strong> {$a->installername}</strong> ini mencakup aplikasi untuk menciptakan lingkungan tempat <strong> Moodle </strong> yang akan digunakan, yaitu:';
 $string['welcomep40'] = 'Paket juga termasuk <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'Penggunaan semua aplikasi dalam paket ini diatur oleh lisensi masing-masing. Paket lengkap <strong>{$a->installername}</strong> adalah <a href="https://www.opensource.org/docs/definition_plain.html"> open source </a> dan didistribusikan di bawah lisensi <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a>.';
-$string['welcomep60'] = 'Halaman berikut akan menuntun Anda melalui beberapa langkah yang mudah diikuti untuk mengonfigurasi dan menyiapkan <strong> Moodle </strong> di komputer Anda. Anda dapat menerima pengaturan bawaan atau, secara opsional, mengubahnya sesuai dengan kebutuhan Anda.';
+$string['welcomep60'] = 'Halaman berikut akan menuntun Anda melalui beberapa langkah yang mudah diikuti untuk mengonfigurasi dan menyiapkan <strong> Moodle </strong> di komputer Anda. Anda dapat menerima setelan bawaan atau, secara opsional, mengubahnya sesuai dengan kebutuhan Anda.';
 $string['welcomep70'] = 'Klik tombol "Selanjutnya" di bawah untuk melanjutkan instalasi <strong> Moodle </strong>.';
 $string['wwwroot'] = 'Alamat web';
