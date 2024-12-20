@@ -126,7 +126,12 @@ class mod_assign_generator extends testing_module_generator {
             if (array_key_exists($pluginname, $data)) {
                 $plugingenerator = $this->datagenerator->get_plugin_generator("assignsubmission_{$pluginname}");
                 $plugingenerator->add_submission_data($submission, $assign, $data);
+                $plugin->enable();
             }
+        }
+
+        if (isset($data['status'])) {
+            $submission->status = $data['status'];
         }
 
         $assign->save_submission($submission, $notices);
