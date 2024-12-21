@@ -21,6 +21,7 @@ $yellow:  #ff7518 !default;
 $green:   #357a32 !default;
 $teal:    #20c997 !default;
 $cyan:    #008196 !default;
+$green-lms: #29BA85 !default;
 
 $primary:       $blue !default;
 $success:       $green !default;
@@ -88,6 +89,7 @@ $theme-colors: map-merge((
     info: $info,
     warning: $warning,
     danger: $danger,
+    lms: $green-lms
 ), $theme-colors);
 // stylelint-enable
 

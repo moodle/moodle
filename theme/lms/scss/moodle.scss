@@ -38,3 +38,24 @@ img.userpicture {
 #page-footer .purgecaches {
     padding-bottom: 5px;
 }
+
+.moremenu .nav-link.active {
+    background-color: #f8f9fa;
+    border-color: transparent;
+    border-bottom-color: #29BA85;
+    color: #29BA85 !important;
+}
+
+.moremenu .nav-link.active:focus,
+.moremenu .nav-link.active:hover {
+    background-color: #f8f9fa;
+    border-bottom-color: #29BA85;
+}
+
+.primary-navigation .navigation .nav-link {
+    font-weight: 600;
+}
+
+.color-lms {
+    color: $green-lms;
+}
