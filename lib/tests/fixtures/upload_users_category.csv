@@ -1,9 +1,0 @@
-username,password,firstname,lastname,email,category1,categoryrole1,course1,role1
-jonest,verysecret,Tom,Jones,jonest@example.com,MGMT,manager,management1,student
-reznor,somesecret,Trent,Reznor,reznor@example.com,MGMT,manager,management1,student
-aurora,topsecret,Aurora,Jiang,aurora@example.com,MGMT,coursecreator,management1,student
-fellini,mysecret,Federico,Fellini,fellini@example.com,Film,coursecreator,film1,student
-ivanov,secret,Ivan,Ivanov,ivanov@example.com,Film,notcoursecreator,film1,student
-smith,notsecret,John,Smith,smith@example.com,Movie,coursecreator,movie1,student
-cool,simplepass,Warm,Cool,cool@example.com,MGMT,,management1,student
-bond,secret007,James,Bond,bond@example.com,,manager,management1,student

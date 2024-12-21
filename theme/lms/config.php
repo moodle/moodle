@@ -29,7 +29,9 @@ $THEME->name = 'lms';
 
 $THEME->sheets = [];
 
-$THEME->layouts = $THEME->parents['boost']->layouts;
+$THEME->layouts = [
+
+];
 
 $THEME->editor_sheets = [];
 $THEME->parents = ['boost'];
