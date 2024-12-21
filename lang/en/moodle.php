@@ -174,6 +174,7 @@ $string['autosubscribeno'] = 'No: don\'t automatically subscribe me to forum dis
 $string['autosubscribeyes'] = 'Yes: when I post, subscribe me to that forum discussion';
 $string['availability'] = 'Availability';
 $string['availablecourses'] = 'Available courses';
+$string['continuepractice'] = 'Continue Practice';
 $string['back'] = 'Back';
 $string['backto'] = 'Back to {$a}';
 $string['backtocourselisting'] = 'Back to course listing';

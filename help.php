@@ -18,13 +18,15 @@
 /**
  * Displays help via AJAX call or in a new page
  *
- * Use {@link core_renderer::help_icon()} or {@link addHelpButton()} to display
+ * Use {@link \theme_classic\output\core_renderer::help_icon()} or {@link addHelpButton()} to display
  * the help icon.
  *
  * @copyright 2002 onwards Martin Dougiamas
  * @package   core
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+use theme_classic\output\core_renderer;
 
 define('NO_MOODLE_COOKIES', true);
 

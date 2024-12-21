@@ -2,39 +2,61 @@
 @import "../../boost/scss/moodle";
 
 img.userpicture {
-    margin-right: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 .path-mod-forum {
-    // Style for the forum subscription mode node.
-    .subscriptionmode {
-        color: $body-color;
-    }
+  // Style for the forum subscription mode node.
+  .subscriptionmode {
+    color: $body-color;
+  }
 
-    // Style for the currently selected subscription mode.
-    .activesetting {
-        color: $body-color;
-        font-weight: bold;
-    }
+  // Style for the currently selected subscription mode.
+  .activesetting {
+    color: $body-color;
+    font-weight: bold;
+  }
 }
 
 .tertiary-navigation {
 
-    &.full-width-bottom-border {
-        width: calc(100% + 2.5rem);
-        margin-left: -1.25rem;
-        margin-right: -1.25rem;
+  &.full-width-bottom-border {
+    width: calc(100% + 2.5rem);
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
 
-        @include media-breakpoint-down(sm) {
-            width: calc(100% + 2rem);
-            margin-left: -1rem;
-            margin-right: -1rem;
-        }
+    @include media-breakpoint-down(sm) {
+      width: calc(100% + 2rem);
+      margin-left: -1rem;
+      margin-right: -1rem;
     }
+  }
 }
 
 #page-footer .homelink,
 #page-footer .tool_dataprivacy,
 #page-footer .purgecaches {
-    padding-bottom: 5px;
+  padding-bottom: 5px;
+}
+
+.customize-course-home {
+  flex-wrap: wrap;
+  display: flex;
+  justify-content: space-between;
+  flex-shrink: 3;
+}
+
+.btn-primary {
+  color: #FFFFFF !important;
+  border-color: #29BA85 !important;
+  background-color: #29BA85 !important;
+}
+
+.btn-outline-primary {
+  border-color: #29BA85 !important;
+  color: #29BA85 !important;
+}
+
+.btn-outline-primary:hover{
+  background-color: #29BA85 !important;
 }

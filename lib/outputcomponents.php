@@ -26,6 +26,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use theme_classic\output\core_renderer;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**

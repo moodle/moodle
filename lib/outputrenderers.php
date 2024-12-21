@@ -449,7 +449,7 @@ class plugin_renderer_base extends renderer_base {
     /**
      * @var renderer_base|core_renderer A reference to the current renderer.
      * The renderer provided here will be determined by the page but will in 90%
-     * of cases by the {@link core_renderer}
+     * of cases by the {@link \theme_classic\output\core\\theme_classic\output\core_renderer}
      */
     protected $output;
 
@@ -566,19 +566,19 @@ class core_renderer extends renderer_base {
      * Do NOT use, please use <?php echo $OUTPUT->main_content() ?>
      * in layout files instead.
      * @deprecated
-     * @var string used in {@link core_renderer::header()}.
+     * @var string used in {@link \theme_classic\output\core\\theme_classic\output\core_renderer::header()}.
      */
     const MAIN_CONTENT_TOKEN = '[MAIN CONTENT GOES HERE]';
 
     /**
-     * @var string Used to pass information from {@link core_renderer::doctype()} to
-     * {@link core_renderer::standard_head_html()}.
+     * @var string Used to pass information from {@link \theme_classic\output\core\\theme_classic\output\core_renderer::doctype()} to
+     * {@link \theme_classic\output\core\\theme_classic\output\core_renderer::standard_head_html()}.
      */
     protected $contenttype;
 
     /**
-     * @var string Used by {@link core_renderer::redirect_message()} method to communicate
-     * with {@link core_renderer::header()}.
+     * @var string Used by {@link \theme_classic\output\core\\theme_classic\output\core_renderer::redirect_message()} method to communicate
+     * with {@link \theme_classic\output\core\\theme_classic\output\core_renderer::header()}.
      */
     protected $metarefreshtag = '';
 
@@ -1695,7 +1695,7 @@ class core_renderer extends renderer_base {
     /**
      * Returns lang menu or '', this method also checks forcing of languages in courses.
      *
-     * This function calls {@link core_renderer::render_single_select()} to actually display the language menu.
+     * This function calls {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_single_select()} to actually display the language menu.
      *
      * @return string The lang menu HTML or empty string
      */
@@ -1965,7 +1965,7 @@ class core_renderer extends renderer_base {
      * Renders a special html link with attached action
      *
      * Theme developers: DO NOT OVERRIDE! Please override function
-     * {@link core_renderer::render_action_link()} instead.
+     * {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_action_link()} instead.
      *
      * @param string|moodle_url $url
      * @param string $text HTML fragment
@@ -1987,7 +1987,7 @@ class core_renderer extends renderer_base {
      * Renders an action_link object.
      *
      * The provided link is renderer and the HTML returned. At the same time the
-     * associated actions are setup in JS by {@link core_renderer::add_action_handler()}
+     * associated actions are setup in JS by {@link \theme_classic\output\core\\theme_classic\output\core_renderer::add_action_handler()}
      *
      * @param action_link $link
      * @return string HTML fragment
@@ -1999,13 +1999,13 @@ class core_renderer extends renderer_base {
     /**
      * Renders an action_icon.
      *
-     * This function uses the {@link core_renderer::action_link()} method for the
+     * This function uses the {@link \theme_classic\output\core\\theme_classic\output\core_renderer::action_link()} method for the
      * most part. What it does different is prepare the icon as HTML and use it
      * as the link text.
      *
      * Theme developers: If you want to change how action links and/or icons are rendered,
-     * consider overriding function {@link core_renderer::render_action_link()} and
-     * {@link core_renderer::render_pix_icon()}.
+     * consider overriding function {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_action_link()} and
+     * {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_pix_icon()}.
      *
      * @param string|moodle_url $url A string URL or moodel_url
      * @param pix_icon $pixicon
@@ -2106,7 +2106,7 @@ class core_renderer extends renderer_base {
      * Returns a form with a single button.
      *
      * Theme developers: DO NOT OVERRIDE! Please override function
-     * {@link core_renderer::render_single_button()} instead.
+     * {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_single_button()} instead.
      *
      * @param string|moodle_url $url
      * @param string $label button text
@@ -2147,7 +2147,7 @@ class core_renderer extends renderer_base {
      * Returns a form with a single select widget.
      *
      * Theme developers: DO NOT OVERRIDE! Please override function
-     * {@link core_renderer::render_single_select()} instead.
+     * {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_single_select()} instead.
      *
      * @param moodle_url $url form action target, includes hidden fields
      * @param string $name name of selection field - the changing parameter in url
@@ -2230,7 +2230,7 @@ class core_renderer extends renderer_base {
      * Returns a form with a url select widget.
      *
      * Theme developers: DO NOT OVERRIDE! Please override function
-     * {@link core_renderer::render_url_select()} instead.
+     * {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_url_select()} instead.
      *
      * @param array $urls list of urls - array('/course/view.php?id=1'=>'Frontpage', ....)
      * @param string $selected selected element
@@ -2283,7 +2283,7 @@ class core_renderer extends renderer_base {
      * Return HTML for an image_icon.
      *
      * Theme developers: DO NOT OVERRIDE! Please override function
-     * {@link core_renderer::render_image_icon()} instead.
+     * {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_image_icon()} instead.
      *
      * @param string $pix short pix name
      * @param string $alt mandatory alt attribute
@@ -2311,7 +2311,7 @@ class core_renderer extends renderer_base {
      * Return HTML for a pix_icon.
      *
      * Theme developers: DO NOT OVERRIDE! Please override function
-     * {@link core_renderer::render_pix_icon()} instead.
+     * {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_pix_icon()} instead.
      *
      * @param string $pix short pix name
      * @param string $alt mandatory alt attribute
@@ -2490,7 +2490,7 @@ class core_renderer extends renderer_base {
      * Returns HTML to display a help icon.
      *
      * Theme developers: DO NOT OVERRIDE! Please override function
-     * {@link core_renderer::render_help_icon()} instead.
+     * {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_help_icon()} instead.
      *
      * @param string $identifier The keyword that defines a help page
      * @param string $component component name
@@ -2585,7 +2585,7 @@ class core_renderer extends renderer_base {
      * </pre>
      *
      * Theme developers: DO NOT OVERRIDE! Please override function
-     * {@link core_renderer::render_user_picture()} instead.
+     * {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_user_picture()} instead.
      *
      * @param stdClass $user Object with at least fields id, picture, imagealt, firstname, lastname
      *     If any of these are missing, the database is queried. Avoid this
@@ -2746,7 +2746,7 @@ class core_renderer extends renderer_base {
      * </pre>
      *
      * Theme developers: DO NOT OVERRIDE! Please override function
-     * {@link core_renderer::render_file_picker()} instead.
+     * {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_file_picker()} instead.
      *
      * @param array $options associative array with file manager options
      *   options are:
@@ -3146,7 +3146,7 @@ EOD;
      * Returns HTML to display a single paging bar to provide access to other pages  (usually in a search)
      *
      * Theme developers: DO NOT OVERRIDE! Please override function
-     * {@link core_renderer::render_paging_bar()} instead.
+     * {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_paging_bar()} instead.
      *
      * @param int $totalcount The total number of entries available to be paged through
      * @param int $page The page you are currently viewing
@@ -3778,7 +3778,7 @@ EOD;
      * and then configuring the custommenu config setting as described.
      *
      * Theme developers: DO NOT OVERRIDE! Please override function
-     * {@link core_renderer::render_custom_menu()} instead.
+     * {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_custom_menu()} instead.
      *
      * @param string $custommenuitems - custom menuitems set by theme instead of global theme settings
      * @return string
@@ -3982,7 +3982,7 @@ EOD;
      * This function replaces print_tabs() used before Moodle 2.5 but with slightly different arguments
      *
      * Theme developers: In order to change how tabs are displayed please override functions
-     * {@link core_renderer::render_tabtree()} and/or {@link core_renderer::render_tabobject()}
+     * {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_tabtree()} and/or {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_tabobject()}
      *
      * @param array $tabs array of tabs, each of them may have it's own ->subtree
      * @param string|null $selected which tab to mark as selected, all parent tabs will
@@ -4012,7 +4012,7 @@ EOD;
     /**
      * Renders tabobject (part of tabtree)
      *
-     * This function is called from {@link core_renderer::render_tabtree()}
+     * This function is called from {@link \theme_classic\output\core\\theme_classic\output\core_renderer::render_tabtree()}
      * and also it calls itself when printing the $tabobject subtree recursively.
      *
      * Property $tabobject->level indicates the number of row of tabs.
