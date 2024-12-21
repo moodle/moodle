@@ -22,7 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace theme_classic\output;
+namespace theme_lms\output;
+use theme_boost\output\core_renderer as boot_core_renderer;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -36,6 +37,4 @@ defined('MOODLE_INTERNAL') || die;
  * @copyright  2018 Bas Brands
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_renderer extends \core_renderer {
-
-}
+class core_renderer extends boot_core_renderer {}

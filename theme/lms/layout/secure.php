@@ -42,5 +42,5 @@ $templatecontext = [
     'bodyattributes' => $bodyattributes
 ];
 
-echo $OUTPUT->render_from_template('theme_classic/secure', $templatecontext);
+echo $OUTPUT->render_from_template('theme_lms/secure', $templatecontext);
 
