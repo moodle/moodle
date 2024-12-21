@@ -22,7 +22,7 @@
  * @author      Bas Brands <bas@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace theme_classic\output;
+namespace theme_lms\output;
 
 defined('MOODLE_INTERNAL') || die();
 

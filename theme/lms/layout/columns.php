@@ -46,5 +46,5 @@ $templatecontext = [
     'headercontent' => $headercontent,
 ];
 
-echo $OUTPUT->render_from_template('theme_classic/columns', $templatecontext);
+echo $OUTPUT->render_from_template('theme_lms/columns', $templatecontext);
 

@@ -14,28 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * A one column layout for the classic theme.
+ * A login page layout for the boost theme.
  *
- * @package   theme_classic
- * @copyright 2018 Bas Brands
+ * @package   theme_boost
+ * @copyright 2016 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$bodyattributes = $OUTPUT->body_attributes([]);
+$bodyattributes = $OUTPUT->body_attributes();
 
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
     'output' => $OUTPUT,
     'bodyattributes' => $bodyattributes
 ];
-if (empty($PAGE->layout_options['noactivityheader'])) {
-    $header = $PAGE->activityheader;
-    $renderer = $PAGE->get_renderer('core');
-    $templatecontext['headercontent'] = $header->export_for_template($renderer);
-}
 
-echo $OUTPUT->render_from_template('theme_lms/contentonly', $templatecontext);
+echo $OUTPUT->render_from_template('theme_lms/login', $templatecontext);
 
