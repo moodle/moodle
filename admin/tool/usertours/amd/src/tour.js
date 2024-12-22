@@ -47,6 +47,7 @@ import PendingPromise from 'core/pending';
  * @type {number}
  */
 const MINSPACING = 10;
+const BUFFER = 10;
 
 /**
  * A user tour.
@@ -805,20 +806,7 @@ const Tour = class {
         if (this.isStepActuallyVisible(stepConfig)) {
             let targetNode = this.getStepTarget(stepConfig);
 
-            if (targetNode.parents('[data-usertour="scroller"]').length) {
-                animationTarget = targetNode.parents('[data-usertour="scroller"]');
-            }
-
             targetNode.data('flexitour', 'target');
-
-            let zIndex = this.calculateZIndex(targetNode);
-            if (zIndex) {
-                stepConfig.zIndex = zIndex + 1;
-            }
-
-            if (stepConfig.zIndex) {
-                currentStepNode.css('zIndex', stepConfig.zIndex + 1);
-            }
 
             // Add the backdrop.
             this.positionBackdrop(stepConfig);
@@ -1209,9 +1197,8 @@ const Tour = class {
             this.currentStepConfig = null;
         }
 
-        // Remove the backdrop features.
-        $('[data-flexitour="step-background"]').remove();
-        $('[data-flexitour="step-backdrop"]').removeAttr('data-flexitour');
+        // Remove the highlight attribute when the hide occurs.
+        $('[data-flexitour="highlight"]').removeAttr('data-flexitour');
 
         const backdrop = $('[data-flexitour="backdrop"]');
         if (backdrop.length) {
@@ -1275,6 +1262,25 @@ const Tour = class {
     }
 
     /**
+     * Check whether the target node has a fixed position, or is nested within one.
+     *
+     * @param {Object} targetNode The target element to check.
+     * @return {Boolean} Return true if fixed position found.
+     */
+    hasFixedPosition = (targetNode) => {
+        let currentElement = targetNode[0];
+        while (currentElement) {
+            const computedStyle = window.getComputedStyle(currentElement);
+            if (computedStyle.position === 'fixed') {
+                return true;
+            }
+            currentElement = currentElement.parentElement;
+        }
+
+        return false;
+    };
+
+    /**
      * Calculate scrollTop.
      *
      * @method  calculateScrollTop
@@ -1291,7 +1297,9 @@ const Tour = class {
         }
         let scrollTop = scrollParent.scrollTop();
 
-        if (stepConfig.placement === 'top') {
+        if (this.hasFixedPosition(targetNode)) {
+            // Target must be in a fixed or custom position. No need to modify the scrollTop.
+        } else if (stepConfig.placement === 'top') {
             // If the placement is top, center scroll at the top of the target.
             scrollTop = targetNode.offset().top - (viewportHeight / 2);
         } else if (stepConfig.placement === 'bottom') {
@@ -1381,6 +1389,12 @@ const Tour = class {
                 break;
         }
 
+        let offset = '0';
+        if (stepConfig.backdrop) {
+            // Offset the arrow so that it points to the cut-out in the backdrop.
+            offset = `-${BUFFER}, ${BUFFER}`;
+        }
+
         let target = this.getStepTarget(stepConfig);
         var config = {
             placement: stepConfig.placement + '-start',
@@ -1392,6 +1406,9 @@ const Tour = class {
                 arrow: {
                     element: '[data-role="arrow"]',
                 },
+                offset: {
+                    offset: offset
+                }
             },
             onCreate: function(data) {
                 recalculateArrowPosition(data);
@@ -1404,6 +1421,8 @@ const Tour = class {
                     thisT.possitionNeedToBeRecalculated = false;
                     recalculateStepPosition(data);
                 }
+                // Reset backdrop position when things update.
+                thisT.recalculateBackdropPosition(stepConfig);
             },
         };
 
@@ -1537,7 +1556,7 @@ const Tour = class {
             thisT.currentStepPopper.update();
         };
 
-        let background = $('[data-flexitour="step-background"]');
+        let background = $('[data-flexitour="highlight"]');
         if (background.length) {
             target = background;
         }
@@ -1556,21 +1575,35 @@ const Tour = class {
      * @return  {String}                    The placement after recalculate
      */
     recalculatePlacement(stepConfig) {
-        const buffer = 10;
         const arrowWidth = 16;
         let target = this.getStepTarget(stepConfig);
         let widthContent = this.currentStepNode.width() + arrowWidth;
-        let targetOffsetLeft = target.offset().left - buffer;
-        let targetOffsetRight = target.offset().left + target.width() + buffer;
+        let targetOffsetLeft = target.offset().left - BUFFER;
+        let targetOffsetRight = target.offset().left + target.width() + BUFFER;
         let placement = stepConfig.placement;
 
         if (['left', 'right'].indexOf(placement) !== -1) {
-            if ((targetOffsetLeft < (widthContent + buffer)) &&
-                ((targetOffsetRight + widthContent + buffer) > document.documentElement.clientWidth)) {
+            if ((targetOffsetLeft < (widthContent + BUFFER)) &&
+                ((targetOffsetRight + widthContent + BUFFER) > document.documentElement.clientWidth)) {
                 placement = 'top';
             }
         }
         return placement;
+    }
+
+    /**
+     * Recaculate where the backdrop and its cut-out should be.
+     *
+     * This is needed when highlighted elements are off the page.
+     * This can be called on update to recalculate it all.
+     *
+     * @method recalculateBackdropPosition
+     * @param  {Object} stepConfig The step configuration of the step
+     */
+    recalculateBackdropPosition(stepConfig) {
+        if (stepConfig.backdrop) {
+            this.positionBackdrop(stepConfig);
+        }
     }
 
     /**
@@ -1584,192 +1617,123 @@ const Tour = class {
     positionBackdrop(stepConfig) {
         if (stepConfig.backdrop) {
             this.currentStepConfig.hasBackdrop = true;
-            let backdrop = $('<div data-flexitour="backdrop"></div>');
 
-            if (stepConfig.zIndex) {
-                if (stepConfig.attachPoint === 'append') {
-                    stepConfig.attachTo.append(backdrop);
-                } else {
-                    backdrop.insertAfter(stepConfig.attachTo);
-                }
-            } else {
+            // Position our backdrop above everything else.
+            let backdrop = $('div[data-flexitour="backdrop"]');
+            if (!backdrop.length) {
+                backdrop = $('<div data-flexitour="backdrop"></div>');
                 $('body').append(backdrop);
             }
 
             if (this.isStepActuallyVisible(stepConfig)) {
-                // The step has a visible target.
-                // Punch a hole through the backdrop.
-                let background = $('[data-flexitour="step-background"]');
-                if (!background.length) {
-                    background = $('<div data-flexitour="step-background"></div>');
-                }
-
                 let targetNode = this.getStepTarget(stepConfig);
+                targetNode.attr('data-flexitour', 'highlight');
 
-                let buffer = 10;
+                let distanceFromTop = targetNode[0].getBoundingClientRect().top;
+                let relativeTop = targetNode.offset().top - distanceFromTop;
 
-                let colorNode = targetNode;
-                if (buffer) {
-                    colorNode = $('body');
-                }
+                /*
+                Draw a clip-path that makes the backdrop a window.
+                The clip-path is drawn with x/y coordinates in the following sequence.
 
-                let drawertop = 0;
+                1--------------------------------------------------2
+                11                                                 |
+                |                                                  |
+                |        8-----------------------------7           |
+                |        |                             |           |
+                |        |                             |           |
+                |        |                             |           |
+                10-------9                             |           |
+                5--------------------------------------6           |
+                |                                                  |
+                |                                                  |
+                4--------------------------------------------------3
+                */
+
+                // These values will help us draw the backdrop.
+                const viewportHeight = $(window).height();
+                const viewportWidth = $(window).width();
+                const elementWidth = targetNode.outerWidth() + (BUFFER * 2);
+                let elementHeight = targetNode.outerHeight() + (BUFFER * 2);
+                const elementLeft = targetNode.offset().left - BUFFER;
+                let elementTop = targetNode.offset().top - BUFFER - relativeTop;
+
+                // Check the amount of navbar overlap the highlight element has.
+                // We will adjust the backdrop shape to compensate for the fixed navbar.
+                let navbarOverlap = 0;
                 if (targetNode.parents('[data-usertour="scroller"]').length) {
+                    // Determine the navbar height.
                     const scrollerElement = targetNode.parents('[data-usertour="scroller"]');
-                    const navigationBuffer = scrollerElement.offset().top;
-                    if (scrollerElement.scrollTop() >= navigationBuffer) {
-                        drawertop = scrollerElement.scrollTop() - navigationBuffer;
-                        background.css({
-                            position: 'fixed'
-                        });
-                    }
+                    const navbarHeight = scrollerElement.offset().top;
+                    navbarOverlap = Math.max(Math.ceil(navbarHeight - elementTop), 0);
+                    elementTop = elementTop + navbarOverlap;
+                    elementHeight = elementHeight - navbarOverlap;
                 }
 
-                background.css({
-                    width: targetNode.outerWidth() + buffer + buffer,
-                    height: targetNode.outerHeight() + buffer + buffer,
-                    left: targetNode.offset().left - buffer,
-                    top: targetNode.offset().top + drawertop - buffer,
-                    backgroundColor: this.calculateInherittedBackgroundColor(colorNode),
-                });
-
-                if (targetNode.offset().left < buffer) {
-                    background.css({
-                        width: targetNode.outerWidth() + targetNode.offset().left + buffer,
-                        left: targetNode.offset().left,
-                    });
-                }
-
-                if ((targetNode.offset().top + drawertop) < buffer) {
-                    background.css({
-                        height: targetNode.outerHeight() + targetNode.offset().top + buffer,
-                        top: targetNode.offset().top,
-                    });
-                }
-
-                let targetRadius = targetNode.css('borderRadius');
-                if (targetRadius && targetRadius !== $('body').css('borderRadius')) {
-                    background.css('borderRadius', targetRadius);
-                }
-
-                let targetPosition = this.calculatePosition(targetNode);
-                if (targetPosition === 'absolute') {
-                    background.css('position', 'fixed');
-                }
-
-                let fader = background.clone();
-                fader.css({
-                    backgroundColor: backdrop.css('backgroundColor'),
-                    opacity: backdrop.css('opacity'),
-                });
-                fader.attr('data-flexitour', 'step-background-fader');
-
-                if (!stepConfig.zIndex) {
-                    let targetClone = targetNode.clone();
-                    background.append(targetClone.first());
-                    $('body').append(fader);
-                    $('body').append(background);
-                } else {
-                    if (stepConfig.attachPoint === 'append') {
-                        stepConfig.attachTo.append(background);
+                // Check if the step container is in the 'top' position.
+                // We will re-anchor the step container to the shifted backdrop edge as opposed to the actual element.
+                if (this.currentStepNode && this.currentStepNode.length) {
+                    const xPlacement = this.currentStepNode[0].getAttribute('x-placement');
+                    if (xPlacement === 'top-start') {
+                        this.currentStepNode[0].style.top = `${navbarOverlap}px`;
                     } else {
-                        fader.insertAfter(stepConfig.attachTo);
-                        background.insertAfter(stepConfig.attachTo);
+                        this.currentStepNode[0].style.top = '0px';
                     }
                 }
 
-                // Add the backdrop data to the actual target.
-                // This is the part which actually does the work.
-                targetNode.attr('data-flexitour', 'step-backdrop');
+                let backdropPath = document.querySelector('div[data-flexitour="backdrop"]');
+                const radius = 10;
 
-                if (stepConfig.zIndex) {
-                    backdrop.css('zIndex', stepConfig.zIndex);
-                    background.css('zIndex', stepConfig.zIndex + 1);
-                    targetNode.css('zIndex', stepConfig.zIndex + 2);
-                }
+                const bottomRight = {
+                    'x1': elementLeft + elementWidth - radius,
+                    'y1': elementTop + elementHeight,
+                    'x2': elementLeft + elementWidth,
+                    'y2': elementTop + elementHeight - radius,
+                };
 
-                fader.fadeOut('2000', function() {
-                    $(this).remove();
-                });
+                const topRight = {
+                    'x1': elementLeft + elementWidth,
+                    'y1': elementTop + radius,
+                    'x2': elementLeft + elementWidth - radius,
+                    'y2': elementTop,
+                };
+
+                const topLeft = {
+                    'x1': elementLeft + radius,
+                    'y1': elementTop,
+                    'x2': elementLeft,
+                    'y2': elementTop + radius,
+                };
+
+                const bottomLeft = {
+                    'x1': elementLeft,
+                    'y1': elementTop + elementHeight - radius,
+                    'x2': elementLeft + radius,
+                    'y2': elementTop + elementHeight,
+                };
+
+                // L = line.
+                // C = Bezier curve.
+                // Z = Close path.
+                backdropPath.style.clipPath = `path('M 0 0 \
+                    L ${viewportWidth} 0 \
+                    L ${viewportWidth} ${viewportHeight} \
+                    L 0 ${viewportHeight} \
+                    L 0 ${elementTop + elementHeight} \
+                    L ${bottomRight.x1} ${bottomRight.y1} \
+                    C ${bottomRight.x1} ${bottomRight.y1} ${bottomRight.x2} ${bottomRight.y1} ${bottomRight.x2} ${bottomRight.y2} \
+                    L ${topRight.x1} ${topRight.y1} \
+                    C ${topRight.x1} ${topRight.y1} ${topRight.x1} ${topRight.y2} ${topRight.x2} ${topRight.y2} \
+                    L ${topLeft.x1} ${topLeft.y1} \
+                    C ${topLeft.x1} ${topLeft.y1} ${topLeft.x2} ${topLeft.y1} ${topLeft.x2} ${topLeft.y2} \
+                    L ${bottomLeft.x1} ${bottomLeft.y1} \
+                    C ${bottomLeft.x1} ${bottomLeft.y1} ${bottomLeft.x1} ${bottomLeft.y2} ${bottomLeft.x2} ${bottomLeft.y2} \
+                    L 0 ${elementTop + elementHeight} \
+                    Z'
+                )`;
             }
         }
         return this;
-    }
-
-    /**
-     * Calculate the inheritted z-index.
-     *
-     * @method  calculateZIndex
-     * @param   {jQuery}    elem                        The element to calculate z-index for
-     * @return  {Number}                                Calculated z-index
-     */
-    calculateZIndex(elem) {
-        elem = $(elem);
-        if (this.requireDefaultTourZindex(elem)) {
-            return 0;
-        }
-        while (elem.length && elem[0] !== document) {
-            // Ignore z-index if position is set to a value where z-index is ignored by the browser
-            // This makes behavior of this function consistent across browsers
-            // WebKit always returns auto if the element is positioned.
-            let position = elem.css("position");
-            if (position === "absolute" || position === "fixed") {
-                // IE returns 0 when zIndex is not specified
-                // other browsers return a string
-                // we ignore the case of nested elements with an explicit value of 0
-                // <div style="z-index: -10;"><div style="z-index: 0;"></div></div>
-                let value = parseInt(elem.css("zIndex"), 10);
-                if (!isNaN(value) && value !== 0) {
-                    return value;
-                }
-            }
-            elem = elem.parent();
-        }
-
-        return 0;
-    }
-
-    /**
-     * Check if the element require the default tour z-index.
-     *
-     * Some page elements have fixed z-index. However, their weight is not enough to cover
-     * other page elements like the top navbar or a sticky footer so they use the default
-     * tour z-index instead.
-     *
-     * @param {jQuery} elem the page element to highlight
-     * @return {Boolean} true if the element requires the default tour z-index instead of the calculated one
-     */
-    requireDefaultTourZindex(elem) {
-        if (elem.parents('[data-region="fixed-drawer"]').length !== 0) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Calculate the inheritted background colour.
-     *
-     * @method  calculateInherittedBackgroundColor
-     * @param   {jQuery}    elem                        The element to calculate colour for
-     * @return  {String}                                Calculated background colour
-     */
-    calculateInherittedBackgroundColor(elem) {
-        // Use a fake node to compare each element against.
-        let fakeNode = $('<div>').hide();
-        $('body').append(fakeNode);
-        let fakeElemColor = fakeNode.css('backgroundColor');
-        fakeNode.remove();
-
-        elem = $(elem);
-        while (elem.length && elem[0] !== document) {
-            let color = elem.css('backgroundColor');
-            if (color !== fakeElemColor) {
-                return color;
-            }
-            elem = elem.parent();
-        }
-
-        return null;
     }
 
     /**
