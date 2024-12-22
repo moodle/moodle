@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/behat/lib.php');
 require_once($CFG->dirroot . '/course/lib.php');
+require_once($CFG->dirroot.'/theme/lms/classes/output/core/activity_quizzes.php');
 
 // Add block button in editing mode.
 $addblockbutton = $OUTPUT->addblockbutton();
@@ -81,7 +82,8 @@ $primarymenu = $primary->export_for_template($renderer);
 $buildregionmainsettings = !$PAGE->include_region_main_settings_in_header_actions() && !$PAGE->has_secondary_navigation();
 // If the settings menu will be included in the header then don't add it here.
 $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settings_menu() : false;
-
+$activity_quizzes = ['quizzes' => render_user_active_quizzes($USER->id)];
+//$activity_quizzes = $OUTPUT->render_from_template('lms/activity_quizzes', $activity_quizzes);
 $header = $PAGE->activityheader;
 $headercontent = $header->export_for_template($renderer);
 $templatecontext = [
@@ -103,7 +105,8 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'overflow' => $overflow,
     'headercontent' => $headercontent,
-    'addblockbutton' => $addblockbutton
+    'addblockbutton' => $addblockbutton,
+    'activity_quizzes' => $activity_quizzes,
 ];
 
 echo $OUTPUT->render_from_template('theme_lms/drawers', $templatecontext);
