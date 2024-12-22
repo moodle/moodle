@@ -71,3 +71,12 @@ body#page-question-type-calculatedmulti div[id^=fitem_id_][id*=feedback_] {
     border: 1px solid #bbb;
     border-top: 0;
 }
+
+/* stylelint-disable declaration-no-important  */
+
+div[id^="fgroup_id_answeroptions_"].mb-3,
+div[id^="fgroup_id_answertolerance_"].mb-3,
+div[id^="fgroup_id_answerdisplay_"].mb-3 {
+    margin-bottom: 0 !important;
+}
+/* stylelint-enable declaration-no-important  */
