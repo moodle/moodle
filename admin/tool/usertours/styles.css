@@ -33,19 +33,6 @@ span[data-flexitour="container"].orphan div[data-role="arrow"] {
     display: none;
 }
 
-body div[data-flexitour="step-background-fader"],
-body div[data-flexitour="step-background"] {
-    position: absolute;
-    background: inherit;
-    background-image: none;
-}
-
-div[data-flexitour="step-background-fader"],
-[data-flexitour="step-backdrop"] > td,
-[data-flexitour="step-backdrop"] {
-    position: relative;
-}
-
 span[data-flexitour="container"].orphan div[data-role="arrow"] {
     display: none;
 }
