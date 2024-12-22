@@ -37110,11 +37110,9 @@ body {
 /**
  * Tour step must sit above all other UI components.
  * The backdrop is the lowest point in the tour.
- * Everything else is in the container, and the target background should be at the same z-index.
  * ----- moodle
  *  ---- step backdrop
  *   --- step container
- *   --- step target background
  */
 div[data-flexitour=backdrop] {
   background-color: #000;
@@ -37122,18 +37120,8 @@ div[data-flexitour=backdrop] {
   z-index: 1040;
 }
 
-div[data-flexitour=step-background-fader],
-div[data-flexitour=step-background] {
-  border-radius: 0.6rem;
-  padding: 10px;
+span[data-flexitour=container] {
   z-index: 1041;
-}
-
-span[data-flexitour=container],
-div[data-flexitour=step-background-fader],
-[data-flexitour=step-backdrop] > td,
-[data-flexitour=step-backdrop] {
-  z-index: 1042;
 }
 
 span[data-flexitour=container] .modal-dialog {
