@@ -18,6 +18,7 @@ namespace core_question\output;
 
 use action_link;
 use renderer_base;
+use core_courseformat\output\local\content\cm\controlmenu;
 
 /**
  * Create a list of question bank type links to manage their respective instances.
@@ -51,7 +52,9 @@ class question_bank_list implements \renderable, \templatable {
         $banks = [];
         foreach ($this->bankinstances as $instance) {
             if (plugin_supports('mod', $instance->cminfo->modname, FEATURE_PUBLISHES_QUESTIONS)) {
-                $actions = course_get_cm_edit_actions($instance->cminfo);
+                $format = course_get_format($instance->cminfo->course);
+                $controlmenu = new controlmenu($format, $instance->cminfo->get_section_info(), $instance->cminfo);
+                $actions = $controlmenu->get_cm_control_items();
                 $actionmenu = new \action_menu();
                 $actionmenu->set_kebab_trigger(get_string('edit'));
                 $actionmenu->add_secondary_action($actions['update']);
