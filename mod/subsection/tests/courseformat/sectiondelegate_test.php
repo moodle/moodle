@@ -47,9 +47,6 @@ final class sectiondelegate_test extends \advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
-        $manager::enable_plugin('subsection', 1);
-
         $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 1]);
         $this->getDataGenerator()->create_module('subsection', ['course' => $course->id, 'section' => 1]);
 

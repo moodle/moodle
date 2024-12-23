@@ -43,7 +43,8 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
       | completionview_assign     | 0 |
     And I click on "Save changes" "button" in the "[data-region='activitycompletion-assign']" "css_element"
     And I am on "Course 1" course homepage with editing mode on
-    And I click on "Add an activity or resource" "button" in the "New section" "section"
+    And I click on "Add content" "button" in the "New section" "section"
+    And I click on "Activity or resource" "button" in the "New section" "section"
     And I click on "Add a new Assignment" "link" in the "Add an activity or resource" "dialogue"
     And I expand all fieldsets
     # Completion tracking 2 = Add requirements.
@@ -83,7 +84,8 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
     And I click on "Save changes" "button" in the "[data-region='activitycompletion-forum']" "css_element"
     Then I should see "Changes saved"
     And I am on "Course 1" course homepage with editing mode on
-    And I click on "Add an activity or resource" "button" in the "New section" "section"
+    And I click on "Add content" "button" in the "New section" "section"
+    And I click on "Activity or resource" "button" in the "New section" "section"
     And I click on "Add a new Forum" "link" in the "Add an activity or resource" "dialogue"
     And I expand all fieldsets
     # Completion tracking 2 = Add requirements.
@@ -122,7 +124,8 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
     And I click on "Save changes" "button" in the "[data-region='activitycompletion-glossary']" "css_element"
     Then I should see "Changes saved"
     And I am on "Course 1" course homepage with editing mode on
-    And I click on "Add an activity or resource" "button" in the "New section" "section"
+    And I click on "Add content" "button" in the "New section" "section"
+    And I click on "Activity or resource" "button" in the "New section" "section"
     And I click on "Add a new Glossary" "link" in the "Add an activity or resource" "dialogue"
     And I expand all fieldsets
     # Completion tracking 2 = Add requirements.

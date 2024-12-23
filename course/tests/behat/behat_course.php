@@ -275,8 +275,10 @@ class behat_course extends behat_base {
 
         $this->require_javascript('Please use the \'the following "activity" exists:\' data generator instead.');
 
+        $infrontpage = false;
         if ($this->getSession()->getPage()->find('css', 'body#page-site-index') && (int) $sectionnum <= 1) {
             // We are on the frontpage.
+            $infrontpage = true;
             if ($sectionnum) {
                 // Section 1 represents the contents on the frontpage.
                 $sectionxpath = "//body[@id='page-site-index']" .
@@ -292,6 +294,14 @@ class behat_course extends behat_base {
 
         // Clicks add activity or resource section link.
         $sectionnode = $this->find('xpath', $sectionxpath);
+        if (!$infrontpage) {
+            $this->execute('behat_general::i_click_on_in_the', [
+                    "//button[@data-action='open-addingcontent' and not(@data-beforemod)]",
+                    'xpath',
+                    $sectionnode,
+                    'NodeElement',
+            ]);
+        }
         $this->execute('behat_general::i_click_on_in_the', [
             "//button[@data-action='open-chooser' and not(@data-beforemod)]",
             'xpath',
@@ -2157,8 +2167,11 @@ class behat_course extends behat_base {
      * @Given /^I open the activity chooser$/
      */
     public function i_open_the_activity_chooser() {
+        // Open the "Activity or resource and Subsection" dropdown first.
         $this->execute('behat_general::i_click_on',
-            array('//button[@data-action="open-chooser"]', 'xpath_element'));
+                ['//button[@data-action="open-addingcontent"]', 'xpath_element']);
+        $this->execute('behat_general::i_click_on',
+            ['//button[@data-action="open-chooser"]', 'xpath_element']);
 
         $node = $this->get_selected_node('xpath_element', '//div[@data-region="modules"]');
         $this->ensure_node_is_visible($node);

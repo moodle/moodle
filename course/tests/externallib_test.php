@@ -1907,8 +1907,6 @@ final class externallib_test extends externallib_advanced_testcase {
         list($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm) = $this->prepare_get_course_contents_test();
 
         // Add subsection.
-        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
-        $manager::enable_plugin('subsection', 1);
         $modsubsection = $this->getDataGenerator()->create_module('subsection', ['course' => $course->id, 'section' => 2]);
 
         // This is needed until MDL-76728 is resolved.

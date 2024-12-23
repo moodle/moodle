@@ -14,7 +14,6 @@ Feature: Edit format course to Single Activity format
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And I enable "subsection" "mod" plugin
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     When I navigate to "Settings" in current page administration

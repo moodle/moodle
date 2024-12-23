@@ -1341,5 +1341,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024121800.00);
     }
 
+    if ($oldversion < 2024121900.01) {
+        // Enable mod_subsection unless 'keepsubsectiondisabled' is set.
+        if ((empty($CFG->keepsubsectiondisabled) || !$CFG->keepsubsectiondisabled)
+                && $DB->get_record('modules', ['name' => 'subsection'])) {
+            $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+            $manager::enable_plugin('subsection', 1);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024121900.01);
+    }
+
     return true;
 }

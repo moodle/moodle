@@ -20,7 +20,7 @@ Feature: Teachers can enable comments only if comments are enabled at site level
 
   @javascript
   Scenario: Teacher can enable comments if they are enabled at site level
-    Given I press "Add an activity or resource"
+    Given I open the activity chooser
     And I click on "Add a new Database" "link" in the "Add an activity or resource" "dialogue"
     When I expand all fieldsets
     And "Allow comments on entries" "field" should exist
@@ -34,7 +34,7 @@ Feature: Teachers can enable comments only if comments are enabled at site level
     # Disable comments in site config.
     Given the following config values are set as admin:
       | usecomments | 0 |
-    And I press "Add an activity or resource"
+    And I open the activity chooser
     And I click on "Add a new Database" "link" in the "Add an activity or resource" "dialogue"
     When I expand all fieldsets
     And I set the field "Name" to "Test Database name 2"

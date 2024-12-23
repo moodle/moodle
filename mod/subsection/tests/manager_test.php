@@ -47,9 +47,6 @@ final class manager_test extends \advanced_testcase {
 
         $this->resetAfterTest();
 
-        $pluginmanager = \core_plugin_manager::resolve_plugininfo_class('mod');
-        $pluginmanager::enable_plugin('subsection', 1);
-
         // Set up the availability settings.
         $availabilityjson = null;
         if ($hasavailability) {
@@ -83,6 +80,7 @@ final class manager_test extends \advanced_testcase {
         // When subsections are disabled, all subsections are considered orphaned
         // and can be removed without affecting the course_module. This should regenerate
         // the delegated section once the module is re-enabled.
+        $pluginmanager = \core_plugin_manager::resolve_plugininfo_class('mod');
         $pluginmanager::enable_plugin('subsection', 0);
         formatactions::section($course)->delete($sectioninfo);
         rebuild_course_cache($course->id, true);

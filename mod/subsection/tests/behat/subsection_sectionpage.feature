@@ -5,8 +5,7 @@ Feature: Teachers create and destroy subsections on section page
   I need to create and destroy subsections
 
   Background:
-    Given I enable "subsection" "mod" plugin
-    And the following "users" exist:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
@@ -34,9 +33,10 @@ Feature: Teachers create and destroy subsections on section page
     Given the following "activities" exist:
       | activity   | name         | course | idnumber | section |
       | subsection | Subsection1  | C1     | forum1   | 1       |
-    When I am on "Course 1" course homepage with editing mode on
-    And I click on "Subsection1" "link" in the "region-main" "region"
-    And I add a "Assignment" to section "3" using the activity chooser
+    When I am on the "C1 > Subsection1" "course > section" page
+    And I turn editing mode on
+    And I click on "Add an activity or resource" "button"
+    And I click on "Add a new Assignment" "link"
     And I set the following fields to these values:
       | Assignment name | Test assignment name        |
       | ID number       | Test assignment name        |
