@@ -51,6 +51,7 @@ $string['privacy:metadata'] = 'The Authenticator app factor plugin does not stor
 $string['replacefactor'] = 'Replace authenticator app';
 $string['replacefactorconfirmation'] = 'Replace \'{$a}\' authenticator app?';
 $string['revokefactorconfirmation'] = 'Remove \'{$a}\' authenticator app?';
+$string['settings:description'] = 'Users will need an authenticator app installed on their mobile devices to generate a code, which they must enter during login.';
 $string['settings:shortdescription'] = 'Require users to enter a code from an authenticator app on their devices during login.';
 $string['settings:totplink'] = 'Show mobile app setup link';
 $string['settings:totplink_help'] = 'If enabled the user will see a 3rd setup option with a direct otpauth:// link';

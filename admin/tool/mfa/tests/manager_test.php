@@ -86,6 +86,9 @@ final class manager_test extends \advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
+        // Disable the email factor (enabled by default).
+        set_config('enabled', 0, 'factor_email');
+
         // Check for fail status with no factors.
         $this->assertEquals(\tool_mfa\plugininfo\factor::STATE_FAIL, \tool_mfa\manager::get_status());
 
@@ -369,6 +372,8 @@ final class manager_test extends \advanced_testcase {
         $this->setUser($user);
         set_config('enabled', 1, 'factor_nosetup');
         set_config('enabled', 1, 'tool_mfa');
+        // Disable the email factor (enabled by default).
+        set_config('enabled', 0, 'factor_email');
 
         // Capability Check.
         $this->assertTrue(\tool_mfa\manager::is_ready());

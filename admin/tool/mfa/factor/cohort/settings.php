@@ -26,6 +26,10 @@
 defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/../../../../../cohort/lib.php');
 
+$settings->add(new admin_setting_heading('factor_cohort/description', '',
+    new lang_string('settings:description', 'factor_cohort')));
+$settings->add(new admin_setting_heading('factor_cohort/settings', new lang_string('settings', 'moodle'), ''));
+
 $enabled = new admin_setting_configcheckbox('factor_cohort/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
     new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);

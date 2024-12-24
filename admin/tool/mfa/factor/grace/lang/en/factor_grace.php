@@ -31,6 +31,7 @@ $string['redirectsetup'] = 'You must complete setup for Multi-factor authenticat
 $string['revokeexpiredfactors'] = 'Revoke expired grace period factors';
 $string['settings:customwarning'] = 'Warning banner content';
 $string['settings:customwarning_help'] = 'Add content here to replace the grace warning notification with custom HTML contents. Adding {timeremaining} in text will replace it with the current grace duration for the user, and {setuplink} will replace with the URL of the setup page for the user.';
+$string['settings:description'] = 'Allow users to log in without MFA for a specified period of time, giving them time to set up their authentication factors. After the grace period expires, users must use MFA to log in.';
 $string['settings:forcesetup'] = 'Force factor setup';
 $string['settings:forcesetup_help'] = 'Forces a user to the preferences page to set up multi-factor authentication when the grace period expires. If unchecked, users will be unable to authenticate when the grace period expires.';
 $string['settings:graceperiod'] = 'Grace period';

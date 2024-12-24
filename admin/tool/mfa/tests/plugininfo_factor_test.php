@@ -44,6 +44,9 @@ final class plugininfo_factor_test extends \advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
+        // Disable the email factor (enabled by default).
+        set_config('enabled', 0, 'factor_email');
+
         // Test that with no enabled factors, fallback is returned.
         $this->assertEquals('fallback', \tool_mfa\plugininfo\factor::get_next_user_login_factor()->name);
 
@@ -90,21 +93,13 @@ final class plugininfo_factor_test extends \advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        // Create two active user factors.
+        // Add another factor (email factor is enabled by default).
         set_config('enabled', 1, 'factor_totp');
-        set_config('enabled', 1, 'factor_webauthn');
 
         $data = new \stdClass();
         $data->userid = $user->id;
         $data->factor = 'totp';
         $data->label = 'testtotp';
-        $data->revoked = 0;
-        $DB->insert_record('tool_mfa', $data);
-
-        $data = new \stdClass();
-        $data->userid = $user->id;
-        $data->factor = 'webauthn';
-        $data->label = 'testwebauthn';
         $data->revoked = 0;
         $factorid = $DB->insert_record('tool_mfa', $data);
 

@@ -27,6 +27,7 @@ $string['event:token_created'] = 'MFA token created.';
 $string['form:trust'] = 'Trust this device for {$a}.';
 $string['pluginname'] = 'Trust this device';
 $string['privacy:metadata'] = 'The Trust this device factor plugin does not store any personal data.';
+$string['settings:description'] = 'Allow users to bypass extra authentication on devices marked as trusted after the first authentication.';
 $string['settings:expireovernight'] = 'Expire trust overnight';
 $string['settings:expireovernight_help'] = 'This forces tokens to expire overnight, preventing midday interruptions for users. Instead they will be asked to multi-factor authenticate at the start of a day after expiry.';
 $string['settings:expiry'] = 'Trust duration';

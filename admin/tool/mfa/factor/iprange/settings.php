@@ -27,6 +27,10 @@ defined('MOODLE_INTERNAL') || die();
 
 global $OUTPUT;
 
+$settings->add(new admin_setting_heading('factor_iprange/description', '',
+    new lang_string('settings:description', 'factor_iprange')));
+$settings->add(new admin_setting_heading('factor_iprange/settings', new lang_string('settings', 'moodle'), ''));
+
 $enabled = new admin_setting_configcheckbox('factor_iprange/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
     new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);

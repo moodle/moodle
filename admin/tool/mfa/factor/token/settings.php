@@ -26,6 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$settings->add(new admin_setting_heading('factor_token/description', '', new lang_string('settings:description', 'factor_token')));
+$settings->add(new admin_setting_heading('factor_token/settings', new lang_string('settings', 'moodle'), ''));
+
 $enabled = new admin_setting_configcheckbox('factor_token/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
     new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);

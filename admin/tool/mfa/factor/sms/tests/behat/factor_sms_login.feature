@@ -16,6 +16,8 @@ Feature: Login user with sms authentication factor
       | enabled  | 1    | factor_sms |
       | weight   | 100  | factor_sms |
       | duration | 1800 | factor_sms |
+    And the following config values are set as admin:
+      | enabled | 0 | factor_email |
     And I navigate to "Plugins > Admin tools > Multi-factor authentication" in site administration
     And I follow "Edit settings for the SMS mobile phone factor"
     And I set the field "SMS gateway" to "Dummy gateway (AWS)"

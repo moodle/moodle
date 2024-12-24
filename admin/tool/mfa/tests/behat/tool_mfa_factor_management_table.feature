@@ -24,3 +24,7 @@ Feature: Manage factor plugins
     And "Grace period" "table_row" should appear before "Trust this device" "table_row"
     And I click on "Move down" "link" in the "Grace period" "table_row"
     And "Grace period" "table_row" should appear after "Trust this device" "table_row"
+
+  Scenario: Email factor is enabled by default
+    Given I navigate to "Plugins > Admin tools > Multi-factor authentication" in site administration
+    And I should see "Disable Email" in the "Email" "table_row"

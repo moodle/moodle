@@ -25,9 +25,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$settings->add(new admin_setting_heading('factor_email/description', '', new lang_string('settings:description', 'factor_email')));
+$settings->add(new admin_setting_heading('factor_email/settings', new lang_string('settings', 'moodle'), ''));
+
 $enabled = new admin_setting_configcheckbox('factor_email/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
-    new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
+    new lang_string('settings:enablefactor_help', 'tool_mfa'), 1);
 $enabled->set_updatedcallback(function () {
     \tool_mfa\manager::do_factor_action('email', get_config('factor_email', 'enabled') ? 'enable' : 'disable');
 });

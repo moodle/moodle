@@ -37,6 +37,9 @@ final class factor_test extends \advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
+        // Disable the email factor (enabled by default).
+        set_config('enabled', 0, 'factor_email');
+
         $grace = \tool_mfa\plugininfo\factor::get_factor('grace');
         $affecting = $grace->get_affecting_factors();
         $this->assertEquals(0, count($affecting));
