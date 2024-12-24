@@ -5482,8 +5482,25 @@ class restore_move_module_questions_categories extends restore_execution_step {
         foreach ($contexts as $contextid => $contextlevel) {
             if (!$newcontext = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'context', $contextid)) {
                 // The bank for the question categories required by this module was not included in the backup,
-                // but if that context still exists on the site then don't move them.
-                if (context::instance_by_id($contextid, IGNORE_MISSING)) {
+                // but if that context still exists on the site and the user has access then point question references
+                // to the originals.
+                $originalcontext = context::instance_by_id($contextid, IGNORE_MISSING);
+                if ($originalcontext && has_capability('mod/qbank:view', $originalcontext)) {
+                    $originalquestions = get_questions_category(question_get_top_category($contextid), false);
+                    foreach ($originalquestions as $originalquestion) {
+                        $backupids = restore_dbops::get_backup_ids_record(
+                            $this->get_restoreid(),
+                            'question',
+                            $originalquestion->id,
+                        );
+                        $DB->set_field_select(
+                            'question_references',
+                            'questionbankentryid',
+                            $DB->get_field('question_versions', 'questionbankentryid', ['questionid' => $backupids->itemid]),
+                            'questionbankentryid = (SELECT questionbankentryid FROM {question_versions} WHERE questionid = ?)',
+                            [$backupids->newitemid],
+                        );
+                    }
                     continue;
                 }
                 // We have no target question bank so create a default bank for categories without a module to attach to.
@@ -5588,6 +5605,20 @@ class restore_move_module_questions_categories extends restore_execution_step {
                 );
             }
         }
+        // Remove any remaining course-level question categories from the restored course.
+        $coursecatsql = "
+            SELECT qc.id AS categoryid
+              FROM {question_categories} qc
+              JOIN {context} c ON c.id = qc.contextid
+             WHERE c.contextlevel = :courselevel AND c.instanceid = :courseid
+        ";
+        $DB->delete_records_subquery(
+            'question_categories',
+            'id',
+            'categoryid',
+            $coursecatsql,
+            ['courselevel' => context_course::LEVEL, 'courseid' => $this->task->get_courseid()]
+        );
     }
 }
 

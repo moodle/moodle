@@ -17,6 +17,7 @@
 namespace core_question;
 
 use context_course;
+use mod_quiz\quiz_settings;
 use moodle_url;
 use question_bank;
 
@@ -40,6 +41,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \restore_qtype_plugin
  * @covers     \restore_create_categories_and_questions
+ * @covers     \restore_move_module_questions_categories
  */
 final class backup_test extends \advanced_testcase {
 
@@ -545,11 +547,9 @@ final class backup_test extends \advanced_testcase {
 
     /**
      * If the backup contains ONLY a quiz but that quiz uses questions from a qbank module and itself,
+     * and the original course does not exist on the target system,
      * then the non-quiz context categories and questions should restore to a default qbank module on the new course
      * if the old qbank no longer exists.
-     *
-     * @return void
-     * @covers \restore_controller::execute_plan()
      */
     public function test_quiz_activity_restore_to_new_course(): void {
         global $DB;
@@ -603,6 +603,117 @@ final class backup_test extends \advanced_testcase {
         $this->assertCount(1, $bankqs);
         $bankq = reset($bankqs);
         $this->assertEquals('bank question', $bankq->name);
+    }
+
+    /**
+     * If the backup contains ONLY a quiz but that quiz uses questions from a qbank module and itself,
+     * and the original course does exist on the target system but you dont have permission to view the original qbank,
+     * then the non-quiz context categories and questions should restore to a default qbank module on the new course
+     * if the old qbank no longer exists.
+     */
+    public function test_quiz_activity_restore_to_new_course_no_permission(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        self::setAdminUser();
+
+        // Create a course to make a backup.
+        $data = $this->add_course_quiz_and_qbank();
+        $oldquiz = $data->quiz;
+
+        // Backup ONLY the quiz module.
+        $backupid = $this->backup_course_module($oldquiz->cmid);
+
+        // Create a new course to restore to.
+        $newcourse = self::getDataGenerator()->create_course();
+        $restoreuser = self::getDataGenerator()->create_user();
+        self::getDataGenerator()->enrol_user($restoreuser->id, $newcourse->id, 'manager');
+        $this->setUser($restoreuser);
+
+        $this->restore_to_course($backupid, $newcourse->id);
+        $modinfo = get_fast_modinfo($newcourse);
+
+        // Assert we have our quiz including the category and question.
+        $newquizzes = $modinfo->get_instances_of('quiz');
+        $this->assertCount(1, $newquizzes);
+        $newquiz = reset($newquizzes);
+        $newquizcontext = \context_module::instance($newquiz->id);
+
+        $quizcats = $DB->get_records_select('question_categories',
+            'parent <> 0 AND contextid = :contextid',
+            ['contextid' => $newquizcontext->id]
+        );
+        $this->assertCount(1, $quizcats);
+        $quizcat = reset($quizcats);
+        $quizcatqs = get_questions_category($quizcat, false);
+        $this->assertCount(1, $quizcatqs);
+        $quizq = reset($quizcatqs);
+        $this->assertEquals('quiz question', $quizq->name);
+
+        // The backup did not contain the qbank that held the categories, but it is dependant.
+        // So make sure the categories and questions got restored to a qbank module on the course.
+        $defaultbanks = $modinfo->get_instances_of('qbank');
+        $this->assertCount(1, $defaultbanks);
+        $defaultbank = reset($defaultbanks);
+        $defaultbankcontext = \context_module::instance($defaultbank->id);
+        $bankcats = $DB->get_records_select('question_categories',
+            'parent <> 0 AND contextid = :contextid',
+            ['contextid' => $defaultbankcontext->id]
+        );
+        $bankcat = reset($bankcats);
+        $bankqs = get_questions_category($bankcat, false);
+        $this->assertCount(1, $bankqs);
+        $bankq = reset($bankqs);
+        $this->assertEquals('bank question', $bankq->name);
+    }
+
+    /**
+     * If the backup contains ONLY a quiz but that quiz uses questions from a qbank module and itself,
+     * and that qbank still exists on the system, and the restoring user can access that qbank, then
+     * the quiz should be restored with a copy of the quiz question, and a reference to the original qbank question.
+     */
+    public function test_quiz_activity_restore_to_new_course_by_reference(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        self::setAdminUser();
+
+        // Create a course to make a backup.
+        $data = $this->add_course_quiz_and_qbank();
+        $oldquiz = $data->quiz;
+
+        // Backup ONLY the quiz module.
+        $backupid = $this->backup_course_module($oldquiz->cmid);
+
+        // Create a new course to restore to.
+        $newcourse = self::getDataGenerator()->create_course();
+
+        $this->restore_to_course($backupid, $newcourse->id);
+        $modinfo = get_fast_modinfo($newcourse);
+
+        // Assert we have our new quiz with the expected questions.
+        $newquizzes = $modinfo->get_instances_of('quiz');
+        $this->assertCount(1, $newquizzes);
+        /** @var \cm_info $newquiz */
+        $newquiz = reset($newquizzes);
+        $quiz = $DB->get_record('quiz', ['id' => $newquiz->instance], '*', MUST_EXIST);
+        [$course, $cm] = get_course_and_cm_from_instance($quiz, 'quiz');
+        $newquizsettings = new quiz_settings($quiz, $cm, $course);
+        $newq1 = $newquizsettings->get_structure()->get_question_in_slot(1);
+        $newq2 = $newquizsettings->get_structure()->get_question_in_slot(2);
+
+        $newquizcontext = \context_module::instance($newquiz->id);
+        $qbankcontext = \context_module::instance($data->qbank->cmid);
+
+        // Check we've got a copy of the quiz question in the new context.
+        $this->assertEquals($data->quizquestion->name, $newq2->name);
+        $this->assertEquals($newquizcontext->id, $newq2->contextid);
+        // Check we've got a reference to the qbank question in the original context.
+        $this->assertEquals($data->qbankquestion->name, $newq1->name);
+        $this->assertEquals($qbankcontext->id, $newq1->contextid);
+        // Check we have the expected restored categories.
+        $this->assertEquals(2, $DB->count_records('question_categories', ['stamp' => $data->quizcategory->stamp]));
+        $this->assertEquals(1, $DB->count_records('question_categories', ['stamp' => $data->qbankcategory->stamp]));
     }
 
     /**
