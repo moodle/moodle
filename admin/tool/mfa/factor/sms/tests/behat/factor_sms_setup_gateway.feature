@@ -14,7 +14,7 @@ Feature: Set up SMS factor when relevant gateway is not configured
       | weight   | 100  | factor_sms |
       | duration | 1800 | factor_sms |
     When I navigate to "Plugins > Admin tools > Multi-factor authentication" in site administration
-    And I follow "Edit settings for the SMS mobile phone factor"
+    And I follow "Edit settings for the SMS factor"
     Then I should see "To use SMS as an authentication factor, you first need to set up an SMS gateway."
     And I should see "set up an SMS gateway"
     And I follow "set up an SMS gateway"
@@ -27,7 +27,7 @@ Feature: Set up SMS factor when relevant gateway is not configured
       | Secret access key         | secret456         |
       | Amazon API gateway region | ap-southeast-2    |
     And I press "Save changes"
-    And I should see "SMS mobile phone"
+    And I should see "SMS"
     And the "SMS gateway" select box should contain "First AWS gateway (AWS)"
     And I follow "create a new gateway"
     And I should see "Create new SMS gateway"
@@ -39,6 +39,6 @@ Feature: Set up SMS factor when relevant gateway is not configured
       | Secret access key         | secret4567        |
       | Amazon API gateway region | ap-southeast-2    |
     And I press "Save changes"
-    And I should see "SMS mobile phone"
+    And I should see "SMS"
     And the "SMS gateway" select box should contain "First AWS gateway (AWS)"
     And the "SMS gateway" select box should contain "Second one (AWS)"

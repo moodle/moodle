@@ -26,5 +26,6 @@ Feature: Manage factor plugins
     And "Grace period" "table_row" should appear after "Trust this device" "table_row"
 
   Scenario: Email factor is enabled by default
-    Given I navigate to "Plugins > Admin tools > Multi-factor authentication" in site administration
-    And I should see "Disable Email" in the "Email" "table_row"
+    Given I am logged in as "admin"
+    When I navigate to "Plugins > Admin tools > Multi-factor authentication > Manage multi-factor authentication" in site administration
+    Then I should see "Disable Email" in the "Email" "table_row"
