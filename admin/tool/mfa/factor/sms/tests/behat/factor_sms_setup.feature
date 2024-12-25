@@ -22,7 +22,7 @@ Feature: Set up SMS factor in user preferences
       | weight     | 100    | factor_sms |
       | duration   | 1800   | factor_sms |
     And I navigate to "Plugins > Admin tools > Multi-factor authentication" in site administration
-    And I follow "Edit settings for the SMS mobile phone factor"
+    And I follow "Edit settings for the SMS factor"
     And I set the field "SMS gateway" to "Dummy gateway (AWS)"
     And I press "Save changes"
     And I should see "Changes saved"

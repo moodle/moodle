@@ -19,7 +19,7 @@ Feature: Login user with sms authentication factor
     And the following config values are set as admin:
       | enabled | 0 | factor_email |
     And I navigate to "Plugins > Admin tools > Multi-factor authentication" in site administration
-    And I follow "Edit settings for the SMS mobile phone factor"
+    And I follow "Edit settings for the SMS factor"
     And I set the field "SMS gateway" to "Dummy gateway (AWS)"
     And I press "Save changes"
     And I should see "Changes saved"
