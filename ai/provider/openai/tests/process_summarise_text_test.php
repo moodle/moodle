@@ -16,7 +16,7 @@
 
 namespace aiprovider_openai;
 
-use aiprovider_openai\process_summarise_text;
+use aiprovider_openai\test\testcase_helper_trait;
 use core_ai\aiactions\base;
 use core_ai\provider;
 use GuzzleHttp\Psr7\Response;
@@ -32,6 +32,9 @@ use GuzzleHttp\Psr7\Response;
  * @covers     \aiprovider_openai\abstract_processor
  */
 final class process_summarise_text_test extends \advanced_testcase {
+
+    use testcase_helper_trait;
+
     /** @var string A successful response in JSON format. */
     protected string $responsebodyjson;
 
@@ -52,27 +55,14 @@ final class process_summarise_text_test extends \advanced_testcase {
         $this->resetAfterTest();
         // Load a response body from a file.
         $this->responsebodyjson = file_get_contents(self::get_fixture_path('aiprovider_openai', 'text_request_success.json'));
-        $this->create_provider();
-        $this->create_action();
-    }
-
-    /**
-     * Create the provider object.
-     */
-    private function create_provider(): void {
         $this->manager = \core\di::get(\core_ai\manager::class);
-        $config = [
-            'apikey' => '123',
-            'enableuserratelimit' => true,
-            'userratelimit' => 1,
-            'enableglobalratelimit' => true,
-            'globalratelimit' => 1,
-        ];
-        $this->provider = $this->manager->create_provider_instance(
-            classname: '\aiprovider_openai\provider',
-            name: 'dummy',
-            config: $config,
+        $this->provider = $this->create_provider(
+            actionclass: \core_ai\aiactions\summarise_text::class,
+            actionconfig: [
+                'systeminstruction' => get_string('action_summarise_text_instruction', 'core_ai'),
+            ],
         );
+        $this->create_action();
     }
 
     /**
@@ -103,6 +93,51 @@ final class process_summarise_text_test extends \advanced_testcase {
         $this->assertEquals(get_string('action_summarise_text_instruction', 'core_ai'), $body->messages[0]->content);
         $this->assertEquals('This is a test prompt', $body->messages[1]->content);
         $this->assertEquals('user', $body->messages[1]->role);
+    }
+
+    /**
+     * Test create_request_object with extra model settings.
+     */
+    public function test_create_request_object_with_model_settings(): void {
+        $this->provider = $this->create_provider(
+            actionclass: \core_ai\aiactions\summarise_text::class,
+            actionconfig: [
+                'systeminstruction' => get_string('action_summarise_text_instruction', 'core_ai'),
+                'temperature' => '0.5',
+                'max_tokens' => '100',
+            ],
+        );
+        $processor = new process_summarise_text($this->provider, $this->action);
+
+        // We're working with a private method here, so we need to use reflection.
+        $method = new \ReflectionMethod($processor, 'create_request_object');
+        $request = $method->invoke($processor, 1);
+
+        $body = (object) json_decode($request->getBody()->getContents());
+
+        $this->assertEquals('gpt-4o', $body->model);
+        $this->assertEquals('0.5', $body->temperature);
+        $this->assertEquals('100', $body->max_tokens);
+
+        $this->provider = $this->create_provider(
+            actionclass: \core_ai\aiactions\summarise_text::class,
+            actionconfig: [
+                'model' => 'my-custom-gpt',
+                'systeminstruction' => get_string('action_summarise_text_instruction', 'core_ai'),
+                'modelextraparams' => '{"temperature": 0.5,"max_tokens": 100}',
+            ],
+        );
+        $processor = new process_summarise_text($this->provider, $this->action);
+
+        // We're working with a private method here, so we need to use reflection.
+        $method = new \ReflectionMethod($processor, 'create_request_object');
+        $request = $method->invoke($processor, 1);
+
+        $body = (object) json_decode($request->getBody()->getContents());
+
+        $this->assertEquals('my-custom-gpt', $body->model);
+        $this->assertEquals('0.5', $body->temperature);
+        $this->assertEquals('100', $body->max_tokens);
     }
 
     /**
@@ -319,6 +354,15 @@ final class process_summarise_text_test extends \advanced_testcase {
             classname: '\aiprovider_openai\provider',
             name: 'dummy',
             config: $config,
+            actionconfig: [
+                \core_ai\aiactions\summarise_text::class => [
+                    'settings' => [
+                        'model' => 'gpt-4o',
+                        'endpoint' => "https://api.openai.com/v1/chat/completions",
+                        'systeminstruction' => get_string('action_summarise_text_instruction', 'core_ai'),
+                    ],
+                ],
+            ],
         );
 
         // Mock the http client to return a successful response.
@@ -403,6 +447,15 @@ final class process_summarise_text_test extends \advanced_testcase {
             classname: '\aiprovider_openai\provider',
             name: 'dummy',
             config: $config,
+            actionconfig: [
+                \core_ai\aiactions\summarise_text::class => [
+                    'settings' => [
+                        'model' => 'gpt-4o',
+                        'endpoint' => "https://api.openai.com/v1/chat/completions",
+                        'systeminstruction' => get_string('action_summarise_text_instruction', 'core_ai'),
+                    ],
+                ],
+            ],
         );
 
         // Mock the http client to return a successful response.

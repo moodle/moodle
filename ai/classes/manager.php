@@ -366,6 +366,7 @@ class manager {
      * @param string $name The name of the provider config.
      * @param bool $enabled The enabled state of the provider.
      * @param array|null $config The config json.
+     * @param array|null $actionconfig The action config json.
      * @return provider
      */
     public function create_provider_instance(
@@ -373,6 +374,7 @@ class manager {
         string $name,
         bool $enabled = false,
         ?array $config = null,
+        ?array $actionconfig = null,
     ): provider {
         if (!class_exists($classname) || !is_a($classname, provider::class, true)) {
             throw new \coding_exception("Provider class not valid: {$classname}");
@@ -381,6 +383,7 @@ class manager {
             enabled: $enabled,
             name: $name,
             config: json_encode($config ?? []),
+            actionconfig: $actionconfig ? json_encode($actionconfig) : '',
         );
 
         $id = $this->db->insert_record('ai_providers', $provider->to_record());

@@ -57,6 +57,12 @@ class process_generate_text extends abstract_processor {
             $requestobj->messages = [$userobj];
         }
 
+        // Append the extra model settings.
+        $modelsettings = $this->get_model_settings();
+        foreach ($modelsettings as $setting => $value) {
+            $requestobj->$setting = $value;
+        }
+
         return new Request(
             method: 'POST',
             uri: '',

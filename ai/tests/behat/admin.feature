@@ -64,9 +64,10 @@ Feature: An administrator can manage AI subsystem settings
     And I should see "Configure provider instance"
     And I click on the "Settings" link in the table row containing "Generate text"
     And I should see "Generate text action settings"
+    And I set the field "AI model" to "Custom"
     And I set the following fields to these values:
-        | AI model     | gpt-3                                               |
-        | API endpoint | https://api.openai.com/v1/engines/gpt-3/completions |
+      | Custom model name | gpt-3                                               |
+      | API endpoint      | https://api.openai.com/v1/engines/gpt-3/completions |
     And I click on "Save changes" "button"
     Then I should see "Generate text action settings updated"
 

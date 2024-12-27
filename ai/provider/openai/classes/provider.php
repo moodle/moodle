@@ -94,6 +94,7 @@ class provider extends \core_ai\provider {
         $customdata = [
             'actionname' => $actionname,
             'action' => $action,
+            'providername' => 'aiprovider_openai',
         ];
         if ($actionname === 'generate_text' || $actionname === 'summarise_text') {
             $mform = new form\action_generate_text_form(customdata: $customdata);
