@@ -131,74 +131,23 @@
             <input type="text" name="username" id="username" {{!
                 !}}class="form-control form-control-lg" {{!
                 !}}value="{{username}}" {{!
-                !}}placeholder="{{^canloginbyemail}}{{#cleanstr}}username{{/cleanstr}}{{/canloginbyemail}}{{!
-                !}}{{#canloginbyemail}}{{#cleanstr}}usernameemail{{/cleanstr}}{{/canloginbyemail}}" {{!
+                !}}placeholder="Nhập tên đăng nhập" {{!
                 !}}autocomplete="username">
         </div>
         <div class="login-form-password form-group">
             <label for="password" class="sr-only">{{#str}} password {{/str}}</label>
             <input type="password" name="password" id="password" value="" {{!
                 !}}class="form-control form-control-lg" {{!
-                !}}placeholder="{{#cleanstr}}password{{/cleanstr}}" {{!
+                !}}placeholder="Nhập mật khẩu" {{!
                 !}}autocomplete="current-password">
         </div>
         <div class="login-form-forgotpassword form-group text-right">
             <a class="color-lms" href="{{forgotpasswordurl}}">Quên mật khẩu?</a>
         </div>
         <div class="login-form-submit form-group text-center">
-            <button class="btn btn-lms btn-lg" type="submit" id="loginbtn">Đăng nhập</button>
+            <button class="btn btn-lms btn-lg w-100" type="submit" id="loginbtn">Đăng nhập</button>
         </div>
     </form>
-    {{#hasidentityproviders}}
-        <div class="login-divider"></div>
-        <div class="login-identityproviders">
-            <h2 class="login-heading">{{#str}} potentialidps, auth {{/str}}</h2>
-            {{#identityproviders}}
-                <a class="btn login-identityprovider-btn btn-block" href="{{url}}">
-                    {{#iconurl}}
-                        <img src="{{iconurl}}" alt="" width="24" height="24"/>
-                    {{/iconurl}}
-                    {{name}}
-                </a>
-            {{/identityproviders}}
-        </div>
-    {{/hasidentityproviders}}
-    {{#hasinstructions}}
-        <div class="login-divider"></div>
-        <div class="login-instructions {{#cansignup}}mb-3{{/cansignup}}">
-            <h2 class="login-heading">{{#str}}firsttime{{/str}}</h2>
-            {{{instructions}}}
-        </div>
-    {{/hasinstructions}}
-    {{#cansignup}}
-        <div class="login-signup">
-            <a class="btn btn-secondary" href="{{signupurl}}">{{#str}}startsignup{{/str}}</a>
-        </div>
-    {{/cansignup}}
-    {{#canloginasguest}}
-        <div class="login-divider"></div>
-        <h2 class="login-heading">{{#str}}someallowguest{{/str}}</h2>
-        <form action="{{loginurl}}" method="post" id="guestlogin">
-            <input type="hidden" name="logintoken" value="{{logintoken}}">
-            <input type="hidden" name="username" value="guest" />
-            <input type="hidden" name="password" value="guest" />
-            <button class="btn btn-secondary" type="submit" id="loginguestbtn">{{#str}}loginguest{{/str}}</button>
-        </form>
-    {{/canloginasguest}}
-    <div class="login-divider"></div>
-    <div class="d-flex">
-        {{#languagemenu}}
-            <div class="login-languagemenu">
-                {{>core/action_menu}}
-            </div>
-            <div class="divider border-left align-self-center mx-3"></div>
-        {{/languagemenu}}
-        <button type="button" class="btn btn-secondary" {{!
-        }} data-modal="alert"{{!
-        }} data-modal-title-str='["cookiesenabled", "core"]' {{!
-        }} data-modal-content-str='["cookiesenabled_help_html", "core"]'{{!
-        }}>{{#str}}cookiesnotice{{/str}}</button>
-    </div>
 </div>
 
 {{#js}}
