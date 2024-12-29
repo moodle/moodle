@@ -28,22 +28,25 @@ use core_courseformat\base as course_format;
 use core_courseformat\output\local\courseformat_named_templatable;
 
 /**
- * Base class to render course module completion.
+ * Base class to render course module completion with optimizations for scalability.
  *
  * @package   core_courseformat
- * @copyright 2023 Mikel Martin <mikel@moodle.com>
+ * @copyright 2023 Mikel Martin
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class completion implements named_templatable, renderable {
 
     use courseformat_named_templatable;
 
+    // Cache for completion details to reduce redundant database queries.
+    protected static array $completionDetailsCache = [];
+
     /**
      * Constructor.
      *
      * @param course_format $format the course format
      * @param section_info $section the section info
-     * @param cm_info $mod the course module ionfo
+     * @param cm_info $mod the course module info
      */
     public function __construct(
         protected course_format $format,
@@ -65,13 +68,17 @@ class completion implements named_templatable, renderable {
             return null;
         }
 
-        $course = $this->mod->get_course();
+        // Check if completion details are cached.
+        $cacheKey = $this->mod->id . '-' . $USER->id;
+        if (!isset(self::$completionDetailsCache[$cacheKey])) {
+            $course = $this->mod->get_course();
+            $showcompletionconditions = $course->showcompletionconditions == COMPLETION_SHOW_CONDITIONS;
+            self::$completionDetailsCache[$cacheKey] = cm_completion_details::get_instance($this->mod, $USER->id, $showcompletionconditions);
+        }
 
-        $showcompletionconditions = $course->showcompletionconditions == COMPLETION_SHOW_CONDITIONS;
-        $completiondetails = cm_completion_details::get_instance($this->mod, $USER->id, $showcompletionconditions);
-
+        $completiondetails = self::$completionDetailsCache[$cacheKey];
         $showcompletioninfo = $completiondetails->has_completion() &&
-            ($showcompletionconditions || $completiondetails->show_manual_completion());
+            ($completiondetails->show_manual_completion() || $completiondetails->isautomatic);
         if (!$showcompletioninfo) {
             return null;
         }
@@ -122,5 +129,5 @@ class completion implements named_templatable, renderable {
         ]);
 
         return $completiondialog->export_for_template($output);
-    }
+    }
 }
