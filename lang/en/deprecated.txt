@@ -144,3 +144,4 @@ cannotdeletecategoryquestions,core_error
 errordeletingquestionsfromcategory,core_question
 importantupdates_content,core_admin
 importantupdates_title,core_admin
+advancedelement,core_form

@@ -1240,10 +1240,6 @@ img.userpicture {
         border-width: 1px;
     }
 
-    .qnbutton.flagged .thispageholder {
-        background: transparent url([[pix:theme|mod/quiz/flag-on]]) 15px 0 no-repeat;
-    }
-
     .qnbutton .trafficlight {
         border: 0;
         background: $card-bg none center / 10px no-repeat scroll;
@@ -1293,10 +1289,6 @@ img.userpicture {
     .qnbutton.notyetanswered .trafficlight,
     .qnbutton.invalidanswer .trafficlight {
         background-color: $card-bg;
-    }
-
-    .qnbutton.invalidanswer .trafficlight {
-        background-image: url([[pix:theme|mod/quiz/warningtriangle]]);
     }
 
     .qnbutton.correct .trafficlight {
