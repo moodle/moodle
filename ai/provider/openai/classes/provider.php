@@ -72,6 +72,7 @@ class provider extends \core_ai\provider {
             \core_ai\aiactions\generate_text::class,
             \core_ai\aiactions\generate_image::class,
             \core_ai\aiactions\summarise_text::class,
+            \core_ai\aiactions\improve_text::class
         ];
     }
 
@@ -156,7 +157,7 @@ class provider extends \core_ai\provider {
     ): array {
         $actionname = substr($action, (strrpos($action, '\\') + 1));
         $settings = [];
-        if ($actionname === 'generate_text' || $actionname === 'summarise_text') {
+        if ($actionname === 'generate_text' || $actionname === 'summarise_text' || $actionname === 'improve_text') {
             // Add the model setting.
             $settings[] = new \admin_setting_configtext(
                 "aiprovider_openai/action_{$actionname}_model",

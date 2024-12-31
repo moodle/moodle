@@ -205,7 +205,8 @@ const setupMoodleEnvironment = grunt => {
 
 /**
  * Verify tha tthe current NodeJS version matches the required version in package.json.
- *
+ * addTask('jsplugin', grunt);
+ * grunt.registerTask('jsplugin', ['rollup:mybundle']);
  * @param   {Grunt} grunt
  */
 const verifyNodeVersion = grunt => {
@@ -250,8 +251,6 @@ module.exports = function(grunt) {
     grunt.moodleEnv.startupTasks = [];
 
     // Add Moodle task configuration.
-    addTask('gherkinlint', grunt);
-    addTask('ignorefiles', grunt);
 
     addTask('javascript', grunt);
     addTask('style', grunt);

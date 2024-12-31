@@ -1,0 +1,77 @@
+.ai-drawer {
+    position: fixed;
+    top: 60px;
+    bottom: 0;
+    right: calc(-315px + -10px);
+    width: 315px;
+    background-color: #f8f9fa;
+    z-index: 1016;
+    transition: right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease, transform 0.5s ease;
+    visibility: hidden;
+}
+.ai-drawer.show {
+    right: 0;
+    visibility: visible;
+}
+
+.ai-drawer-header {
+    padding: 0;
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.ai-drawer-header .ai-drawer-button {
+    margin-left: auto;
+    margin-right: 5px;
+}
+
+.ai-drawer-body {
+    position: relative;
+    height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    padding: 0.4rem;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #6a737b #f8f9fa;
+}
+
+#course-summarise-response {
+    font-size: 0.875em;
+}
+
+.course-summarise-response-controls button .icon,
+.course-summarise-response-watermark img.icon {
+    margin-right: 0;
+}
+
+.ai-course-summarise-controls button.btn.btn-outline-secondary {
+    color: unset;
+}
+
+.ai-course-summarise-controls button.btn.btn-outline-secondary span.ai-course-summarise-sparkles-icon {
+    display: inline-block;
+}
+
+.ai-course-summarise-controls button.btn.btn-outline-secondary span.ai-course-summarise-sparkles-icon.white {
+    display: none;
+}
+
+.ai-course-summarise-controls button.btn.btn-outline-secondary:not([disabled]):hover {
+    color: #fff;
+}
+
+.ai-course-summarise-controls button.btn.btn-outline-secondary:not([disabled]):hover span.ai-course-summarise-sparkles-icon {
+    display: none;
+}
+
+.ai-course-summarise-controls button.btn.btn-outline-secondary:not([disabled]):hover span.ai-course-summarise-sparkles-icon.white {
+    display: inline-block;
+}
+
+.ai-course-summarise-controls button img.icon {
+    width: auto;
+    vertical-align: sub;
+}

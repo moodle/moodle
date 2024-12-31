@@ -25,14 +25,13 @@ import Templates from 'core/templates';
 import Ajax from 'core/ajax';
 import 'core/copy_to_clipboard';
 import Notification from 'core/notification';
-import Selectors from 'aiplacement_courseassist/selectors';
+import Selectors from 'aiplacement_courseassistimprove/selectors';
 import Policy from 'core_ai/policy';
 import AIHelper from 'core_ai/helper';
 import DrawerEvents from 'core/drawer_events';
 import {subscribe} from 'core/pubsub';
 import * as MessageDrawerHelper from 'core_message/message_drawer_helper';
-
-console.log("iccii original");
+console.log("iccii courseassistimprove");
 const AICourseAssist = class {
 
     /**
@@ -52,7 +51,7 @@ const AICourseAssist = class {
      * @param {Integer} contextId The context ID.
      */
     constructor(userId, contextId) {
-        console.log('startplugin');
+        console.log('in courseassistimprove');
         this.userId = userId;
         this.contextId = contextId;
 
@@ -68,7 +67,7 @@ const AICourseAssist = class {
      */
     registerEventListeners() {
         document.addEventListener('click', async(e) => {
-            console.log('in original');
+            console.log('in courseassitance');
             const summariseAction = e.target.closest(Selectors.ACTIONS.SUMMARY);
             if (summariseAction) {
                 e.preventDefault();
@@ -305,7 +304,7 @@ const AICourseAssist = class {
             // Clear the drawer content to prevent sending some unnecessary content.
             this.aiDrawerBodyElement.innerHTML = '';
             const request = {
-                methodname: 'aiplacement_courseassist_summarise_text',
+                methodname: 'aiplacement_courseassistimprove_improve_text',
                 args: {
                     contextid: this.contextId,
                     prompttext: this.getTextContent(),
@@ -338,7 +337,7 @@ const AICourseAssist = class {
      * @param {String} content The content to display.
      */
     displayResponse(content) {
-        Templates.render('aiplacement_courseassist/response', {content: content}).then((html) => {
+        Templates.render('aiplacement_courseassistimprove/response', {content: content}).then((html) => {
             this.aiDrawerBodyElement.innerHTML = html;
             this.aiDrawerBodyElement.dataset.hasdata = '1';
             this.registerResponseEventListeners();

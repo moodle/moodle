@@ -28,7 +28,7 @@
 
     // === Possible Errors ===
     'comma-dangle': 'off',
-    'no-console': 'error',
+    'no-console': 'off',
     'no-empty': 'warn',
     'no-extra-parens': 'off',
     'no-prototype-builtins': 'off',

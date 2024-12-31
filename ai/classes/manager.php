@@ -119,6 +119,12 @@ class manager {
         $actionname = $action::class;
         $responseclassname = 'core_ai\\aiactions\\responses\\response_' . $action->get_basename();
 
+        // error_log("actionname" . $action->get_basename());
+
+        // exit();
+        // die();
+
+
         // Get the providers that support the action.
         $providers = self::get_providers_for_actions([$actionname], true);
 

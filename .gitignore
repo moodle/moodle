@@ -59,5 +59,9 @@ moodle-plugin-ci.phar
 phpcs.xml
 #temp
 /local/coursecatalog/
+/course/yui/build/
+/mod/quiz/yui/
+/mod/wordcards
+/question/type/aitext
 jsconfig.json
 UPGRADING-CURRENT.md
