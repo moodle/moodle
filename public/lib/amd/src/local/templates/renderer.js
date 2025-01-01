@@ -571,12 +571,14 @@ export default class Renderer {
             Renderer.getLoader().getTemplate(iconTemplate, themeName),
         ]);
 
-        this.addHelpers(context, themeName);
+        // Clone context object to avoid manipulating the original context object.
+        const templateContext = {...context};
+        this.addHelpers(templateContext, themeName);
 
         // Render the template.
         const renderedContent = await mustache.render(
             templateSource,
-            context,
+            templateContext,
             // Note: The third parameter is a function that will be called to process partials.
             (partialName) => Renderer.getLoader().partialHelper(partialName, themeName),
         );
