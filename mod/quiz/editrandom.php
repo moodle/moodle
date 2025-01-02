@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_question\question_reference_manager;
 use mod_quiz\quiz_settings;
 use mod_quiz\question\bank\random_question_view;
 
@@ -56,6 +57,7 @@ $PAGE->add_body_class('limitedwidth');
 $setreference = $DB->get_record('question_set_references',
     ['itemid' => $slot->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
 $filterconditions = json_decode($setreference->filtercondition, true);
+$filterconditions = question_reference_manager::convert_legacy_set_reference_filter_condition($filterconditions);
 
 $params = $filterconditions;
 $params['cmid'] = $cm->id;
