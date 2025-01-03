@@ -55,6 +55,26 @@ Feature: Use the qbank plugin manager page for question history
     And I should see "Second question"
     And "Second question" "table_row" should exist
 
+  Scenario: Viewing history for a Question in a Subcategory
+    Given the following "question categories" exist:
+      | contextlevel | reference | questioncategory | name          |
+      | Course       | C1        | Test questions   | Subcategory 1 |
+    And the following "questions" exist:
+      | questioncategory | qtype     | name          | questiontext       |
+      | Subcategory 1    | truefalse | Question (v1) | Question version 1 |
+    When I am on the "Course 1" "core_question > course question categories" page logged in as "admin"
+    And I should see "Subcategory 1"
+    And I click on "Subcategory 1" "link"
+    Then I should see "Question (v1)"
+    And I choose "Edit question" action for "Question (v1)" in the question bank
+    And I set the following fields to these values:
+      | Question name | Question (v2)      |
+      | Question text | Question version 2 |
+    And I press "id_submitbutton"
+    And I choose "History" action for "Question (v2)" in the question bank
+    And "Question (v1)" "table_row" should exist
+    And "Question (v2)" "table_row" should exist
+
   @javascript
   Scenario: Delete question from the history using Edit question menu
     Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
