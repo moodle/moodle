@@ -1,0 +1,15 @@
+.tiny_ai-footer-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .tiny_ai-footer-left,
+    .tiny_ai-footer-right {
+        display: flex;
+        gap: 0.625rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+}

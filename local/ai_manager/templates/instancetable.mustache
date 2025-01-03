@@ -1,0 +1,106 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_ai_manager/instancetable
+
+    Template for the table that shows the current instances.
+
+    Example context (json):
+    {
+        "tenant": "sometenantname",
+        "purposesheading": "Purposes (3 of 6 configured)",
+        "instances": [
+            {
+                "name": "my first instance",
+                "toolname": "chatgpt",
+                "model": "chatgpt4o",
+                "purposes": [
+                    {
+                        "fullname": "Chat"
+                    },
+                    {
+                        "fullname": "Translate"
+                    }
+                ],
+                "nopurposeslink": "<a href=\"...\">Not assigned to any purposes</a>"
+            },
+            {
+                "name": "my second instance",
+                "toolname": "dalle",
+                "model": "dalle-3",
+                "purposes": [
+                    {
+                        "fullname": "Image generation"
+                    }
+                ],
+                "nopurposeslink": "<a href=\"...\">Not assigned to any purposes</a>"
+            }
+        ]
+    }
+}}
+<hr>
+<div id="local_ai_manager-instancetable-{{uniqid}}" class="local_ai_manager-instancetable" data-tenant="{{tenant}}">
+    <div class="d-flex justify-content-between mb-5 align-items-center">
+        <div><h3>{{#str}} currentlyusedaitools, local_ai_manager {{/str}}</h3></div>
+        <div>
+            <button id="local_ai_manager-instanceadd_button" class="btn btn-primary"><i class="fa fa-plus"></i> {{#str}}addinstance, local_ai_manager{{/str}}</button>
+        </div>
+    </div>
+    <div class="table-rensposive">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">{{#str}} instancename, local_ai_manager {{/str}}</th>
+                <th scope="col">{{#str}} aitool, local_ai_manager {{/str}}</th>
+                <th scope="col">{{#str}} model, local_ai_manager {{/str}}</th>
+                <th scope="col">{{purposesheadingrolebasic}}</th>
+                <th scope="col">{{purposesheadingroleextended}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#instances}}
+                <tr>
+                        <td>{{{name}}}</td>
+                        <td>{{toolname}}</td>
+                        <td>{{model}}</td>
+                    <td>
+                        {{#purposesrolebasic}}
+                            <span class="badge badge-pill badge-secondary">{{fullname}}</span>
+                        {{/purposesrolebasic}}
+                        {{^purposesrolebasic}}
+                            {{{nopurposeslink}}}
+                        {{/purposesrolebasic}}
+                    </td>
+                    <td>
+                        {{#purposesroleextended}}
+                            <span class="badge badge-pill badge-secondary">{{fullname}}</span>
+                        {{/purposesroleextended}}
+                        {{^purposesroleextended}}
+                            {{{nopurposeslink}}}
+                        {{/purposesroleextended}}
+                    </td>
+                </tr>
+            {{/instances}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{#js}}
+    require(['local_ai_manager/instanceaddmodal'], function(InstanceAddModal) {
+        InstanceAddModal.renderInstanceAddModal('#local_ai_manager-instancetable-{{uniqid}}');
+    });
+{{/js}}

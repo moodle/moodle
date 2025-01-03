@@ -1,0 +1,95 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_ai_manager/purpose_info
+
+    Template for showing the purpose info.
+
+    Example context (json):
+    {
+        "termsofuse": "This are the terms of use which you need to accept",
+        "purposes": [
+            {
+                "highlight": true,
+                "purpose": "chat",
+                "name": "Instance for ChatGPT 4o",
+                "model": "chatgpt4o",
+                "infolink": "https://someexternallinkwithadditionalinfo.com/chatgpt"
+            },
+            {
+                "highlight": false,
+                "purpose": "translate",
+                "name": "Instance for Google Gemini",
+                "model": "gemini-flash-1.5",
+                "infolink": "https://someexternallinkwithadditionalinfo.com/googlegemini"
+            }
+        ]
+    }
+}}
+<div class="local_ai_manager-purposeinfo">
+    <div class="local_ai_manager-ai_tool_explanation">
+        <h4>{{#str}}general_information_heading, local_ai_manager{{/str}}</h4>
+        <p>{{#str}}general_information_text, local_ai_manager{{/str}}</p>
+
+        <h4>{{#str}}technical_function_heading, local_ai_manager{{/str}}</h4>
+        <p>{{#str}}technical_function_text, local_ai_manager{{/str}}</p>
+        <ul>
+            <li>{{#str}}technical_function_step1, local_ai_manager{{/str}}</li>
+            <li>{{#str}}technical_function_step2, local_ai_manager{{/str}}</li>
+            <li>{{#str}}technical_function_step3, local_ai_manager{{/str}}</li>
+            <li>
+                {{#str}}technical_function_step4, local_ai_manager{{/str}}
+                <em>{{#str}}technical_function_step4_emphasized, local_ai_manager{{/str}}</em>
+            </li>
+            <li>{{#str}}technical_function_step5, local_ai_manager{{/str}}</li>
+        </ul>
+
+        <h4>{{#str}}privacy_terms_heading, local_ai_manager{{/str}}</h4>
+        {{#showtermsofuse}}
+            <p class="alert alert-info">{{#str}}privacy_terms_description, local_ai_manager{{/str}}</p>
+            <div class="border border-dark m-3 p-3">
+                {{{termsofuse}}}
+            </div>
+        {{/showtermsofuse}}
+        {{^showtermsofuse}}
+            <p>{{#str}}privacy_terms_missing, local_ai_manager{{/str}}</p>
+        {{/showtermsofuse}}
+    </div>
+
+    <p>{{#str}}privacy_table_description, local_ai_manager{{/str}}</p>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>{{#str}}table_heading_purpose, local_ai_manager{{/str}}</th>
+                <th>{{#str}}table_heading_instance_name, local_ai_manager{{/str}}</th>
+                <th>{{#str}}table_heading_model, local_ai_manager{{/str}}</th>
+                <th>{{#str}}table_heading_infolink, local_ai_manager{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{#purposes}}
+            <tr class="{{#highlight}}alert-info{{/highlight}}">
+                <td>{{purpose}}</td>
+                <td>{{name}}</td>
+                <td>{{model}}</td>
+                <td><a href="{{{infolink}}}">{{infolink}}</a></td>
+            </tr>
+        {{/purposes}}
+        </tbody>
+    </table>
+    <div class="alert alert-info mt-3 small">{{#str}}ai_info_table_row_highlighted, local_ai_manager{{/str}}</div>
+</div>

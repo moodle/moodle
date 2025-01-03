@@ -1,0 +1,29 @@
+.tiny_ai-textarea {
+
+    display: flex;
+    padding: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    flex: 1 0 0;
+    align-self: stretch;
+    min-height: 120px;
+    height: 100%;
+    width: 100%;
+    resize: none; /* Prevent manual resizing */
+    overflow-y: auto; /* Enable vertical scroll */
+
+    border-radius: 4px;
+    border: 1px solid $neutral-grey-100;
+    background: $neutral-white;
+
+    @include custom-scrollbar;
+}
+
+.dark {
+    .tiny_ai-textarea {
+        border-color: $lernplattform-400;
+        background: $neutral-grey-500;
+        color: $neutral-white;
+    }
+}

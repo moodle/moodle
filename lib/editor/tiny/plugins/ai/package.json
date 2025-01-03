@@ -1,0 +1,9 @@
+{
+  "name": "moodle-tiny_ai",
+  "scripts": {
+    "compile-sass": "sass --no-source-map styles.scss styles.css"
+  },
+  "devDependencies": {
+    "sass": "^1.77.2"
+  }
+}

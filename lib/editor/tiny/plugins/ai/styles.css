@@ -1,0 +1,701 @@
+/* tiny ai icon font */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "Tiny AI Icons";
+  font-style: normal;
+  font-weight: 400;
+  src: url([[font:tiny_ai|tiny-ai-icons.woff]]) format("woff"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+[class^=icon-tiny_ai_],
+[class*=" icon-tiny_ai_"] {
+  font-family: "Tiny AI Icons" !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  font-size: 24px;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-tiny_ai_shorten:before {
+  content: "\e900";
+}
+
+.icon-tiny_ai_extend:before {
+  content: "\e901";
+}
+
+.icon-tiny_ai_text-insert-last:before {
+  content: "\e902";
+}
+
+.icon-tiny_ai_sparkle:before {
+  content: "\e905";
+}
+
+.tiny_ai-footer-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.tiny_ai-footer-wrapper .tiny_ai-footer-left,
+.tiny_ai-footer-wrapper .tiny_ai-footer-right {
+  display: flex;
+  gap: 0.625rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.tiny_ai-card-button {
+  display: flex;
+  padding: 16px 20px;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  border-radius: 8px;
+  border: 1px solid #D33F01;
+  background: #FFF;
+  text-decoration: none;
+  transition: background-color ease-in-out 0.5s;
+}
+.tiny_ai-card-button:hover {
+  border-radius: 8px;
+  border: 1px solid #D33F01;
+  background: #E99F80;
+  text-decoration: none;
+  transition: background-color ease-in-out 0.5s;
+}
+.tiny_ai-card-button.disabled {
+  border-radius: 8px;
+  border: 1px solid #A4A5AC;
+  background: #FFF;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+.tiny_ai-card-button.disabled .tiny_ai-card-button--tool,
+.tiny_ai-card-button.disabled .tiny_ai-card-button--description {
+  color: #A4A5AC;
+}
+.tiny_ai-card-button.disabled [class^=icon-tiny_ai_],
+.tiny_ai-card-button.disabled [class^=fa-] {
+  color: #A4A5AC;
+}
+.tiny_ai-card-button .tiny_ai-card-button--text-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+.tiny_ai-card-button .tiny_ai-card-button--tool,
+.tiny_ai-card-button .tiny_ai-card-button--description {
+  color: #00091E;
+  text-align: center;
+  font-family: "Atkinson Hyperlegible";
+  font-size: 18px;
+  font-style: normal;
+  line-height: 26px; /* 144.444% */
+  text-decoration: none;
+}
+.tiny_ai-card-button .tiny_ai-card-button--tool {
+  font-weight: 700;
+}
+.tiny_ai-card-button .tiny_ai-card-button--description {
+  font-weight: 400;
+}
+.tiny_ai-card-button [class^=icon-tiny_ai_],
+.tiny_ai-card-button [class^=fa-] {
+  font-size: 24px;
+  color: #00091E;
+}
+@media (max-width: 480px) {
+  .tiny_ai-card-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+  }
+}
+
+.dark .tiny_ai-card-button {
+  border-radius: 8px;
+  border: 1px solid #D33F01;
+  background: #00091E;
+}
+.dark .tiny_ai-card-button:hover {
+  border-radius: 8px;
+  border: 1px solid #D33F01;
+  background: #A93201;
+}
+.dark .tiny_ai-card-button.disabled {
+  border-radius: 8px;
+  border: 1px solid #60616D;
+}
+.dark .tiny_ai-card-button.disabled .tiny_ai-card-button--tool,
+.dark .tiny_ai-card-button.disabled .tiny_ai-card-button--description {
+  color: #60616D;
+}
+.dark .tiny_ai-card-button.disabled [class^=icon-tiny_ai_],
+.dark .tiny_ai-card-button.disabled [class^=fa-] {
+  color: #60616D;
+}
+.dark .tiny_ai-card-button .tiny_ai-card-button--tool,
+.dark .tiny_ai-card-button .tiny_ai-card-button--description {
+  color: #FFF;
+}
+.dark .tiny_ai-card-button [class^=icon-tiny_ai_],
+.dark .tiny_ai-card-button [class^=fa-] {
+  color: #FFF;
+}
+
+.tiny_ai-input-container {
+  display: flex;
+  align-items: flex-end;
+  border: 1px solid #E8E8EA;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #FFF;
+  position: relative;
+}
+.tiny_ai-input-container.has-error {
+  border-color: #F00;
+}
+.tiny_ai-input-container.has-error ~ .tiny_ai-input-error {
+  color: #F00;
+  font-family: "Atkinson Hyperlegible";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+}
+.tiny_ai-input-container.disabled {
+  border-color: #A4A5AC;
+}
+.tiny_ai-input-container.disabled .tiny_ai-input-icon {
+  color: #A4A5AC;
+}
+.tiny_ai-input-container.disabled .tiny_ai-input-field {
+  background: none;
+}
+.tiny_ai-input-container.disabled .tiny_ai-input-field::placeholder {
+  color: #A4A5AC;
+}
+.tiny_ai-input-container:focus-within {
+  border-color: #60616D;
+}
+.tiny_ai-input-container .tiny_ai-input-icon {
+  margin-right: 10px;
+  font-size: 18px;
+  color: #00091E;
+}
+.tiny_ai-input-container .tiny_ai-input-field {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  color: #00091E;
+  resize: none; /* Prevent manual resizing */
+  overflow-y: auto; /* Enable vertical scroll */
+  height: 40px;
+  min-height: 32px;
+  max-height: 342px;
+  line-height: 1.5;
+  padding: 8px;
+  box-sizing: border-box;
+}
+.tiny_ai-input-container .tiny_ai-input-field::-webkit-scrollbar {
+  width: 12px;
+}
+.tiny_ai-input-container .tiny_ai-input-field::-webkit-scrollbar-thumb {
+  background-color: #00091E;
+  border-radius: 20px;
+  border: 3px solid #FFF;
+}
+.tiny_ai-input-container .tiny_ai-input-field::-webkit-scrollbar-track {
+  background: #FFF;
+}
+.tiny_ai-input-container .tiny_ai-input-field::placeholder {
+  color: #60616D;
+}
+
+.dark .tiny_ai-input-container {
+  border: 1px solid #A4A5AC;
+  background: #00091E;
+}
+.dark .tiny_ai-input-container.has-error {
+  border-color: #F00;
+}
+.dark .tiny_ai-input-container .tiny_ai-input-field {
+  background: #00091E;
+  color: #FFF;
+}
+.dark .tiny_ai-input-container .tiny_ai-input-field::placeholder {
+  color: #A4A5AC;
+}
+.dark .tiny_ai-input-container .tiny_ai-input-icon {
+  color: #FFF;
+}
+.dark .tiny_ai-input-container.disabled {
+  border-color: #60616D;
+}
+.dark .tiny_ai-input-container.disabled .tiny_ai-input-icon {
+  color: #60616D;
+}
+.dark .tiny_ai-input-container.disabled .tiny_ai-input-field {
+  background: none;
+}
+.dark .tiny_ai-input-container.disabled .tiny_ai-input-field::placeholder {
+  color: #60616D;
+}
+
+.tiny_ai-modal--dialog {
+  max-width: 640px;
+  min-height: 640px;
+}
+
+.tiny_ai-modal--dialog {
+  background: #FFF;
+  border-radius: 8px;
+  padding: 0px;
+  position: relative;
+  border: 1px solid #E8E8EA;
+}
+.tiny_ai-modal--dialog .modal-content {
+  border: none;
+  overflow: visible !important;
+}
+.tiny_ai-modal--dialog .tiny_ai-modal--header {
+  padding: 24px 24px 16px 24px;
+  border: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.tiny_ai-modal--dialog .tiny_ai-modal--header .tiny_ai-headline-wrapper {
+  display: flex;
+}
+.tiny_ai-modal--dialog .tiny_ai-modal--header .icon-tiny_ai_sparkle {
+  align-content: center;
+  margin-right: 8px;
+}
+.tiny_ai-modal--dialog .tiny_ai-modal--header .close {
+  align-self: start;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+}
+.tiny_ai-modal--dialog [data-region=body]::-webkit-scrollbar {
+  width: 12px;
+}
+.tiny_ai-modal--dialog [data-region=body]::-webkit-scrollbar-thumb {
+  background-color: #00091E;
+  border-radius: 20px;
+  border: 3px solid #FFF;
+}
+.tiny_ai-modal--dialog [data-region=body]::-webkit-scrollbar-track {
+  background: #FFF;
+}
+.tiny_ai-modal--dialog [data-region=body] :first-child[id^=tiny_ai_] {
+  display: flex;
+  padding: 8px 24px 0px 24px;
+  flex-direction: column;
+}
+@media (max-width: 480px) {
+  .tiny_ai-modal--dialog [data-region=body] :first-child[id^=tiny_ai_] {
+    padding: 0;
+  }
+}
+.tiny_ai-modal--dialog [data-region=body] :first-child[id^=tiny_ai_].tiny_ai_wrapper-l {
+  gap: 24px;
+}
+.tiny_ai-modal--dialog [data-region=body] :first-child[id^=tiny_ai_].tiny_ai_wrapper-m {
+  gap: 16px;
+}
+.tiny_ai-modal--dialog [data-region=body] :first-child[id^=tiny_ai_].tiny_ai_wrapper-s {
+  gap: 10px;
+}
+.tiny_ai-modal--dialog [data-region=body] .tiny_ai-prompt-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+}
+.tiny_ai-modal--dialog [data-region=body] .tiny_ai-modal--button-wrapper {
+  display: flex;
+  align-items: flex-start;
+  align-content: flex-start;
+  align-self: stretch;
+  flex-wrap: wrap;
+}
+.tiny_ai-modal--dialog [data-region=footer] {
+  padding: 16px 24px;
+  border: 0;
+  text-align: center;
+}
+.tiny_ai-modal--dialog [data-region=footer] .tiny_ai-usage-info {
+  margin: 0;
+  text-align: right;
+  color: #60616D;
+  font-family: "Atkinson Hyperlegible";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px; /* 133.333% */
+}
+
+.dark .tiny_ai--dialog {
+  background: #00091E;
+}
+.dark .tiny_ai--dialog .tiny_ai-modal--header .close {
+  color: #FFF;
+}
+.dark .tiny_ai--dialog [data-region=footer] .tiny_ai-usage-info {
+  color: #A4A5AC;
+}
+
+.tiny_ai-button {
+  display: flex;
+  padding: 11px 20px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  color: #FFF;
+  cursor: pointer;
+  border-radius: 8px;
+  background: #D33F01;
+}
+.tiny_ai-button.secondary {
+  background-color: #FFF;
+  border: 1px solid #D33F01;
+  color: #00091E;
+}
+.tiny_ai-button.secondary:hover {
+  color: #FFF;
+}
+.tiny_ai-button.tertiary {
+  background-color: unset;
+  border: none;
+  color: #00091E;
+  padding: 0;
+}
+.tiny_ai-button.tertiary:hover {
+  background-color: unset;
+  color: #D33F01;
+}
+.tiny_ai-button [class^=fa-] {
+  font-size: 20px;
+}
+.tiny_ai-button:hover {
+  background-color: #A93201;
+}
+.tiny_ai-button.left .tiny_ai-icon-left {
+  margin-right: 8px;
+}
+.tiny_ai-button.right .tiny_ai-icon-right {
+  margin-left: 8px;
+}
+.tiny_ai-button .tiny_ai-button-text {
+  flex-grow: 1;
+  text-align: center;
+  font-family: "Atkinson Hyperlegible";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 26px;
+}
+.tiny_ai-button.has-icon .tiny_ai-button-text {
+  flex-grow: 0;
+}
+.tiny_ai-button.disabled {
+  background: #A4A5AC;
+  cursor: no-drop;
+}
+.tiny_ai-button.disabled .tiny_ai-button-text {
+  color: #FFF;
+}
+
+.dark .tiny_ai-button.secondary {
+  background-color: #00091E;
+  color: #FFF;
+}
+.dark .tiny_ai-button.secondary:hover {
+  background-color: #A93201;
+}
+.dark .tiny_ai-button.tertiary {
+  background-color: unset;
+  border: none;
+  color: #FFF;
+}
+.dark .tiny_ai-button.tertiary:hover {
+  background-color: unset;
+  color: #D33F01;
+}
+
+.tiny_ai-dropdown-label {
+  font-family: "Atkinson Hyperlegible";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.tiny_ai-dropdown {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.tiny_ai-dropdown .tiny_ai-btn {
+  width: 100%;
+  padding: 10px 15px;
+  background-color: #FFF;
+  border: 1px solid #E8E8EA;
+  border-radius: 4px;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  color: #00091E;
+  font-family: "Atkinson Hyperlegible";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 26px;
+}
+.tiny_ai-dropdown .tiny_ai-btn:after {
+  display: none;
+}
+.tiny_ai-dropdown .tiny_ai-btn:focus {
+  outline: none;
+}
+.tiny_ai-dropdown .tiny_ai-icon {
+  font-size: 16px;
+  color: #00091E;
+  transition: transform ease-in-out 0.2s;
+}
+.tiny_ai-dropdown .tiny_ai-dropdown-menu {
+  display: none;
+  position: absolute;
+  width: 100%;
+  top: 100%;
+  left: 0;
+  background-color: #FFF;
+  border-radius: 4px;
+  z-index: 1000;
+  padding: 5px 0;
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.tiny_ai-dropdown .tiny_ai-dropdown-menu::-webkit-scrollbar {
+  width: 12px;
+}
+.tiny_ai-dropdown .tiny_ai-dropdown-menu::-webkit-scrollbar-thumb {
+  background-color: #00091E;
+  border-radius: 20px;
+  border: 3px solid #FFF;
+}
+.tiny_ai-dropdown .tiny_ai-dropdown-menu::-webkit-scrollbar-track {
+  background: #FFF;
+}
+.tiny_ai-dropdown .tiny_ai-dropdown-menu.show {
+  display: block;
+}
+.tiny_ai-dropdown .tiny_ai-dropdown-menu .tiny_ai-dropdown-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+  color: #00091E;
+  font-family: "Atkinson Hyperlegible";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 26px;
+}
+.tiny_ai-dropdown .tiny_ai-dropdown-menu .tiny_ai-dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+.tiny_ai-dropdown.dropup .tiny_ai-dropdown-menu {
+  margin-top: -4px;
+}
+.tiny_ai-dropdown.dropup .tiny_ai-btn::after {
+  content: unset;
+}
+.tiny_ai-dropdown.show .tiny_ai-btn .tiny_ai-icon {
+  transform: rotate(180deg);
+  transition: transform ease-in-out 0.2s;
+}
+
+.dark .tiny_ai-dropdown-label {
+  font-family: "Atkinson Hyperlegible";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+}
+.dark .tiny_ai-dropdown {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.dark .tiny_ai-dropdown .tiny_ai-btn {
+  background-color: #00091E;
+  border: 1px solid #FFF;
+  color: #FFF;
+}
+.dark .tiny_ai-dropdown .tiny_ai-icon {
+  font-size: 16px;
+  color: #FFF;
+}
+.dark .tiny_ai-dropdown .tiny_ai-dropdown-menu {
+  background-color: #00091E;
+  border-color: #FFF;
+}
+.dark .tiny_ai-dropdown .tiny_ai-dropdown-menu .tiny_ai-dropdown-item {
+  color: #FFF;
+}
+.dark .tiny_ai-dropdown .tiny_ai-dropdown-menu .tiny_ai-dropdown-item:hover {
+  background-color: #f5f5f5;
+  color: #00091E;
+}
+
+.tiny_ai_dropzone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-width: 2px;
+  border-radius: 2px;
+  border-color: #eeeeee;
+  border-style: dashed;
+  background-color: #fafafa;
+  color: #bdbdbd;
+  outline: none;
+  transition: border 0.24s ease-in-out;
+  height: 15rem;
+  /* Hide the cursor, because we need to set contenteditable on the div for pasting, but do not want editing */
+  caret-color: transparent;
+}
+
+.tiny_ai_dragover {
+  background-color: #63676c;
+}
+
+.tiny_ai_dropzone_filled {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.tiny_ai_dropzone_preview_container {
+  max-width: 80%;
+  max-height: 80%;
+}
+.tiny_ai_dropzone_preview_container img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.tiny_ai-icon-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: #E8E8EA;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+.tiny_ai-icon-button .tiny_ai-icon {
+  font-size: 20px;
+  color: #00091E;
+}
+.tiny_ai-icon-button:hover {
+  background-color: #dcdcdc;
+}
+.tiny_ai-icon-button:active {
+  background-color: #c5c5c5;
+}
+
+.tiny_ai-result-text {
+  display: flex;
+  padding: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  align-self: stretch;
+  border-radius: 4px;
+  border: 1px solid #E8E8EA;
+  background: #FFF;
+}
+.tiny_ai-result-text p {
+  margin: 0;
+}
+.tiny_ai-result-text img {
+  max-height: 50vh;
+}
+
+.dark .tiny_ai-result-text {
+  border: 1px solid #D33F01;
+  background: #00091E;
+}
+
+.tiny_ai-textarea {
+  display: flex;
+  padding: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  flex: 1 0 0;
+  align-self: stretch;
+  min-height: 120px;
+  height: 100%;
+  width: 100%;
+  resize: none; /* Prevent manual resizing */
+  overflow-y: auto; /* Enable vertical scroll */
+  border-radius: 4px;
+  border: 1px solid #E8E8EA;
+  background: #FFF;
+}
+.tiny_ai-textarea::-webkit-scrollbar {
+  width: 12px;
+}
+.tiny_ai-textarea::-webkit-scrollbar-thumb {
+  background-color: #00091E;
+  border-radius: 20px;
+  border: 3px solid #FFF;
+}
+.tiny_ai-textarea::-webkit-scrollbar-track {
+  background: #FFF;
+}
+
+.dark .tiny_ai-textarea {
+  border-color: #D33F01;
+  background: #00091E;
+  color: #FFF;
+}
+
+.tiny_ai-headline {
+  margin: 0;
+  color: #00091E;
+  /* h5/medium */
+  font-family: Lexend;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 30px; /* 150% */
+}
+
+.dark .tiny_ai-headline {
+  color: #FFF;
+}

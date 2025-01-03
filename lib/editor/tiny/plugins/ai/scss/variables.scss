@@ -1,0 +1,20 @@
+$breakpoints: (
+    'mobile': 480px,
+    'tablet': 768px,
+    'desktop': 1024px,
+    'large-desktop': 1200px
+);
+
+// colors
+$neutral-grey-100: #E8E8EA;
+$neutral-grey-200: #A4A5AC;
+$neutral-grey-300: #60616D;
+$neutral-grey-500: #00091E;
+$neutral-white: #FFF;
+
+$lernplattform-200: #E99F80;
+$lernplattform-400: #D33F01;
+$lernplattform-500: #A93201;
+
+$feedback-error-200: #F00;
+$feedback-warning-100: #FFF8E0;

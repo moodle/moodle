@@ -1,0 +1,15 @@
+include:
+  - project: 'mebis-moodle/local_pipeline_docker'
+    file:
+      - 'plugin-ci.yml'
+
+variables:
+  TO_REMOVE: "mbs"
+
+trigger_pipeline_docker_rebuild:
+  image: alpine:latest
+  script:
+    - "apk --no-cache add curl"
+    - "curl -X POST --fail -F token=$PIPELINE_TRIGGER_TOKEN -F ref=master https://gitlab.mebis.alp.dillingen.de/api/v4/projects/461/trigger/pipeline"
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'

@@ -1,0 +1,146 @@
+.tiny_ai-dropdown-label {
+    font-family: "Atkinson Hyperlegible";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.tiny_ai-dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+
+    .tiny_ai-btn {
+        width: 100%;
+        padding: 10px 15px;
+        background-color: $neutral-white;
+        border: 1px solid $neutral-grey-100;
+        border-radius: 4px;
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        color: $neutral-grey-500;
+        font-family: "Atkinson Hyperlegible";
+        font-size: 18px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 26px;
+
+        &:after {
+        display: none;
+        }
+
+        &:focus {
+        outline: none;
+        }
+    }
+
+    .tiny_ai-icon {
+        font-size: 16px;
+        color: $neutral-grey-500;
+        transition: transform ease-in-out 0.2s;
+    }
+
+    .tiny_ai-dropdown-menu {
+        display: none;
+        position: absolute;
+        width: 100%;
+        top: 100%;
+        left: 0;
+        background-color: $neutral-white;
+        border-radius: 4px;
+        z-index: 1000;
+        padding: 5px 0;
+        margin-top: 4px;
+        max-height: 200px;
+        overflow-y: auto;
+        
+        @include custom-scrollbar;
+
+        &.show {
+            display: block;
+        }
+
+        .tiny_ai-dropdown-item {
+        padding: 10px 15px;
+        cursor: pointer;
+        text-align: left;
+        white-space: nowrap;
+        color: $neutral-grey-500;
+        font-family: "Atkinson Hyperlegible";
+        font-size: 18px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 26px; 
+
+        &:hover {
+            background-color: #f5f5f5;
+        }
+        }
+    }
+
+    &.dropup {
+        .tiny_ai-dropdown-menu {
+            margin-top: -4px;
+        }
+
+        .tiny_ai-btn {
+            &::after {
+                content: unset;
+            }
+        }
+    }
+
+    &.show {
+        .tiny_ai-btn {
+            .tiny_ai-icon {
+                transform: rotate(180deg);
+                transition: transform ease-in-out 0.2s;
+            }
+        }
+    }
+}
+
+.dark {
+    .tiny_ai-dropdown-label {
+        font-family: "Atkinson Hyperlegible";
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 20px;
+    }
+
+    .tiny_ai-dropdown {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+
+        .tiny_ai-btn {
+            background-color: $neutral-grey-500;
+            border: 1px solid $neutral-white;
+            color: $neutral-white;
+        }
+
+        .tiny_ai-icon {
+            font-size: 16px;
+            color: $neutral-white;
+        }
+
+        .tiny_ai-dropdown-menu {
+            background-color: $neutral-grey-500;
+            border-color: $neutral-white;
+
+            .tiny_ai-dropdown-item {
+            color: $neutral-white;
+
+            &:hover {
+                background-color: #f5f5f5;
+                color: $neutral-grey-500;
+            }
+            }
+        }
+    }
+}

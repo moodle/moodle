@@ -1,0 +1,37 @@
+/* tiny ai icon font */
+@font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Tiny AI Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url([[font:tiny_ai|tiny-ai-icons.woff]]) format("woff"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+[class^='icon-tiny_ai_'],
+[class*=' icon-tiny_ai_'] {
+    font-family: 'Tiny AI Icons' !important;
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    font-size: 24px;
+    line-height: 1;
+
+  /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-tiny_ai_shorten:before {
+    content: '\e900';
+}
+.icon-tiny_ai_extend:before {
+    content: '\e901';
+}
+.icon-tiny_ai_text-insert-last:before {
+    content: "\e902";
+}
+.icon-tiny_ai_sparkle:before {
+    content: '\e905';
+}

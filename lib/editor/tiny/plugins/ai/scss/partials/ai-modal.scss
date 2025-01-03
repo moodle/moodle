@@ -1,0 +1,120 @@
+.tiny_ai-modal--dialog {
+    max-width: 640px;
+    min-height: 640px;
+}
+
+.tiny_ai-modal--dialog {
+    background: $neutral-white;
+    border-radius: 8px;
+    padding: 0px;
+    position: relative;
+    border: 1px solid $neutral-grey-100;
+
+    .modal-content {
+        border: none;
+        overflow: visible!important;
+    }
+
+    .tiny_ai-modal--header {
+        padding: 24px 24px 16px 24px;
+        border: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+
+        .tiny_ai-headline-wrapper {
+            display: flex;
+        }
+
+        .icon-tiny_ai_sparkle {
+            align-content: center;
+            margin-right: 8px;
+        }
+
+        .close {
+            align-self: start;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+        }
+    }
+
+    [data-region="body"] {
+
+        @include custom-scrollbar;
+
+        :first-child[id^="tiny_ai_"] {
+            display: flex;
+            padding: 8px 24px 0px 24px;
+            flex-direction: column;
+
+            @include respond-to('mobile') {
+                padding: 0;
+            }
+
+            &.tiny_ai_wrapper-l {
+                gap: 24px;
+            }
+            &.tiny_ai_wrapper-m {
+                gap: 16px;
+            }
+            &.tiny_ai_wrapper-s {
+                gap: 10px;
+            }
+        }
+
+        .tiny_ai-prompt-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .tiny_ai-modal--button-wrapper {
+            display: flex;
+            align-items: flex-start;
+            align-content: flex-start;
+            align-self: stretch;
+            flex-wrap: wrap;
+        }
+    }
+
+    [data-region="footer"] {
+        padding: 16px 24px;
+        border: 0;
+        text-align: center;
+
+        .tiny_ai-usage-info {
+            margin: 0;
+            text-align: right;
+            color: $neutral-grey-300;
+            font-family: "Atkinson Hyperlegible";
+            font-size: 12px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 16px; /* 133.333% */
+        }
+    }
+}
+
+.dark {
+    .tiny_ai--dialog {
+        background: $neutral-grey-500;
+
+        .tiny_ai-modal--header {
+            .close {
+                color: $neutral-white;
+            }
+        }
+
+        [data-region="footer"] {
+
+            .tiny_ai-usage-info {
+                color: $neutral-grey-200;
+            }
+        }
+    }
+}

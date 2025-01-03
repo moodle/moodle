@@ -1,0 +1,156 @@
+@font-face {
+    font-display: swap;
+    font-family: 'Atkinson Hyperlegible';
+    font-style: normal;
+    font-weight: 700;
+    src: url('[[font:local_ai_manager|AtkinsonHyperlegible-Bold.ttf]]') format('truetype');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Atkinson Hyperlegible';
+    font-style: normal;
+    font-weight: 400;
+    src: url('[[font:local_ai_manager|AtkinsonHyperlegible-BoldItalic.ttf]]') format('truetype');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Atkinson Hyperlegible';
+    font-style: normal;
+    font-weight: 400;
+    src: url('[[font:local_ai_manager|AtkinsonHyperlegible-Italic.ttf]]') format('truetype');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Atkinson Hyperlegible';
+    font-style: normal;
+    font-weight: 400;
+    src: url('[[font:local_ai_manager|AtkinsonHyperlegible-Regular.ttf]]') format('truetype');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Lexend';
+    font-style: normal;
+    font-weight: 200;
+    src: url('[[font:local_ai_manager|Lexend-ExtraLight.ttf]]') format('truetype');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Lexend';
+    font-style: normal;
+    font-weight: 300;
+    src: url('[[font:local_ai_manager|Lexend-Light.ttf]]') format('truetype');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Lexend';
+    font-style: normal;
+    font-weight: 400;
+    src: url('[[font:local_ai_manager|Lexend-Regular.ttf]]') format('truetype');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Lexend';
+    font-style: normal;
+    font-weight: 600;
+    src: url('[[font:local_ai_manager|Lexend-SemiBold.ttf]]') format('truetype');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Lexend';
+    font-style: normal;
+    font-weight: 700;
+    src: url('[[font:local_ai_manager|Lexend-Bold.ttf]]') format('truetype');
+}
+
+.local_ai_manager-green {
+    color: #00bf00;
+}
+
+.local_ai_manager-red {
+    color: #f00;
+}
+
+.local_ai_manager-infobox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #60616d;
+    font-family: "Atkinson Hyperlegible";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.local_ai_manager-userquota_limitreached {
+    color: #f00;
+}
+
+.local_ai_manager-infobox p {
+    margin: 0;
+}
+
+.rights-table-selection_info {
+    font-weight: normal;
+}
+
+.local_ai_manager-idmgroupfilter_select {
+    min-width: 20rem;
+}
+
+#page-local-ai_manager-purpose_config #region-main select {
+    width: 100%;
+}
+
+body.path-local-ai_manager .secondary-navigation {
+    padding-bottom: 3.5rem;
+}
+
+body.limitcontentwidth #page-content {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.local_ai_manager-info-warning {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: "Atkinson Hyperlegible";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    padding-top: 0.5rem;
+}
+
+.local_ai_manager-info-warning .local_ai_manager-info-warning-text {
+    margin: 0;
+}
+
+.local_ai_manager-info-warning .local_ai_manager-info-warning-link {
+    color: #a4a5ac;
+}
+
+.dark .local_ai_manager-info-warning .local_ai_manager-info-warning-link {
+    color: #60616d;
+}
+
+.local_ai_manager-caching_enabled {
+    color: #f00;
+}
+
+.local_ai_manager-caching_disabled {
+    color: #00bf00;
+}
+
+#page-local-ai_manager-edit_instance [data-name="vertexcachestatus"] {
+    width: 100%;
+}

@@ -1,0 +1,51 @@
+{{!
+This file is part of Moodle - http://moodle.org/
+
+Moodle is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Moodle is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Moodle. If not, see
+<http: //www.gnu.org/licenses />.
+}}
+{{!
+@template tiny_ai/components/ai-input
+
+Modal to select ai actions within the Tiny Editor.
+
+Classes required for JS:
+* none
+
+Data attributes required for JS:
+* none
+
+Context variables required for this template:
+
+Example context (json):
+{}
+}}
+<div class="tiny_ai-input-container {{#hasError}}has-error{{/hasError}} {{#disabled}}disabled{{/disabled}}">
+    <div class="tiny_ai-input-icon">
+        {{> tiny_ai/components/ai-icon }}
+    </div>
+    <textarea id="tiny_ai-input-field-{{uniqid}}" {{#disabled}}disabled{{/disabled}} class="tiny_ai-input-field" {{!
+    }} data-type="freepromptinput" placeholder="{{#str}}freeprompt_placeholder, tiny_ai{{/str}}"></textarea>
+    {{#button}}
+        {{> tiny_ai/components/ai-button}}
+    {{/button}}
+</div>
+{{#hasError}}
+    <span class="tiny_ai-input-error">{{{errorMessage}}}</span>
+{{/hasError}}
+{{#js}}
+    require(['tiny_ai/controllers/textarea'], function(TextareaController) {
+        TextareaController.init('#tiny_ai-input-field-{{uniqid}}');
+    });
+{{/js}}

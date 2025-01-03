@@ -1,0 +1,16 @@
+.tiny_ai-headline {
+    margin: 0;
+    color: $neutral-grey-500;
+    /* h5/medium */
+    font-family: Lexend;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 30px; /* 150% */
+}
+
+.dark {
+    .tiny_ai-headline {
+        color: $neutral-white;
+    }
+}

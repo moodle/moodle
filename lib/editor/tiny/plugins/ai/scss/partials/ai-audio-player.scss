@@ -1,0 +1,89 @@
+.tiny_ai-audio-label {
+    font-family: "Atkinson Hyperlegible";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+}
+.tiny_ai-audio-player {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: $neutral-white;
+    border: 1px solid $neutral-grey-100;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 500px;
+
+    audio {
+        display: none;
+    }
+
+    .tiny_ai-play-pause-button {
+        background: none;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        font-size: 24px;
+        color: $neutral-grey-500;
+        margin-right: 10px;
+
+        i {
+            display: inline-block;
+        }
+    }
+
+    .tiny_ai-progress-bar {
+        flex: 1;
+        height: 4px;
+        background: $neutral-grey-100;
+        position: relative;
+        margin: 0 10px;
+        cursor: pointer;
+        border-radius: 2px;
+
+        .tiny_ai-progress-bar-filled {
+            height: 100%;
+            background: $neutral-grey-500;
+            width: 0;
+            border-radius: 2px;
+        }
+
+        .tiny_ai-progress-bar-thumb {
+            width: 12px;
+            height: 12px;
+            background: $neutral-grey-500;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            left: 0;
+            cursor: pointer;
+        }
+    }
+
+    .tiny_ai-time {
+        min-width: 75px;
+        text-align: right;
+        font-family: "Atkinson Hyperlegible";
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 20px;
+        color: $neutral-grey-500;
+    }
+}
+
+.dark {
+    .tiny_ai-audio-player {
+        background-color: $neutral-grey-500;
+        border-color: $lernplattform-400;
+        .tiny_ai-play-pause-button {
+            color: $neutral-white;
+        }
+
+        .tiny_ai-time {
+            color: $neutral-white;
+        }
+    }
+}

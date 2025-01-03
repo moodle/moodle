@@ -1,0 +1,103 @@
+.tiny_ai-button {
+    display: flex;
+    padding: 11px 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    color: $neutral-white;
+    cursor: pointer;
+    border-radius: 8px;
+    background: $lernplattform-400;
+
+    &.secondary {
+        background-color: $neutral-white;
+        border: 1px solid $lernplattform-400;
+        color: $neutral-grey-500;
+
+        &:hover {
+            color: $neutral-white;
+        }
+    }
+
+    &.tertiary {
+        background-color: unset;
+        border: none;
+        color: $neutral-grey-500;
+        padding: 0;
+
+        &:hover {
+            background-color: unset;
+            color: $lernplattform-400;
+        }
+    }
+
+    [class^="fa-"] {
+        font-size: 20px;
+    }
+
+    &:hover {
+        background-color: $lernplattform-500;
+    }
+
+    &.left {
+        .tiny_ai-icon-left {
+            margin-right: 8px;
+        }
+    }
+
+    &.right {
+        .tiny_ai-icon-right {
+            margin-left: 8px;
+        }
+    }
+
+    .tiny_ai-button-text {
+        flex-grow: 1;
+        text-align: center;
+        font-family: "Atkinson Hyperlegible";
+        font-size: 18px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 26px;
+    }
+
+    &.has-icon {
+        .tiny_ai-button-text {
+            flex-grow: 0;
+        }
+    }
+
+    &.disabled {
+        background: $neutral-grey-200;
+        cursor: no-drop;
+        .tiny_ai-button-text {
+            color: $neutral-white;
+        }
+    }
+}
+
+.dark {
+    .tiny_ai-button {
+        &.secondary {
+            background-color: $neutral-grey-500;
+            color: $neutral-white;
+
+            &:hover {
+                background-color: $lernplattform-500;
+            }
+        }
+
+        &.tertiary {
+            background-color: unset;
+            border: none;
+            color: $neutral-white;
+
+            &:hover {
+                background-color: unset;
+                color: $lernplattform-400;
+            }
+        }
+    }
+
+}

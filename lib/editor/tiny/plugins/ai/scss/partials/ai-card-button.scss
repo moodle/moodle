@@ -1,0 +1,113 @@
+.tiny_ai-card-button {
+    display: flex;
+    padding: 16px 20px;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    border-radius: 8px;
+    border: 1px solid $lernplattform-400;
+    background: $neutral-white;
+    text-decoration: none;
+    transition: background-color ease-in-out 0.5s;
+
+    &:hover {
+        border-radius: 8px;
+        border: 1px solid $lernplattform-400;
+        background: $lernplattform-200;
+        text-decoration: none;
+
+        transition: background-color ease-in-out 0.5s;
+    }
+
+    &.disabled {
+        border-radius: 8px;
+        border: 1px solid $neutral-grey-200;
+        background: $neutral-white;
+        pointer-events: none;
+        cursor: not-allowed;
+
+        .tiny_ai-card-button--tool,
+        .tiny_ai-card-button--description {
+            color: $neutral-grey-200;
+        }
+
+        [class^="icon-tiny_ai_"],
+        [class^="fa-"] {
+            color: $neutral-grey-200;
+        }
+    }
+
+    .tiny_ai-card-button--text-wrapper {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tiny_ai-card-button--tool,
+    .tiny_ai-card-button--description {
+        color: $neutral-grey-500;
+        text-align: center;
+        font-family: "Atkinson Hyperlegible";
+        font-size: 18px;
+        font-style: normal;
+        line-height: 26px; /* 144.444% */
+        text-decoration: none;
+    }
+    .tiny_ai-card-button--tool {
+        font-weight: 700;
+    }
+    .tiny_ai-card-button--description {
+        font-weight: 400;
+    }
+
+    [class^="icon-tiny_ai_"],
+    [class^="fa-"] {
+        font-size: 24px;
+        color: $neutral-grey-500;
+    }
+
+    @include respond-to('mobile') {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+    }
+}
+
+.dark {
+    .tiny_ai-card-button {
+        border-radius: 8px;
+        border: 1px solid $lernplattform-400;
+        background: $neutral-grey-500;
+
+        &:hover {
+            border-radius: 8px;
+            border: 1px solid $lernplattform-400;
+            background: $lernplattform-500;
+        }
+
+        &.disabled {
+            border-radius: 8px;
+            border: 1px solid $neutral-grey-300;
+
+            .tiny_ai-card-button--tool,
+            .tiny_ai-card-button--description {
+                color: $neutral-grey-300;
+            }
+
+            [class^="icon-tiny_ai_"],
+            [class^="fa-"] {
+                color: $neutral-grey-300;
+            }
+        }
+
+        .tiny_ai-card-button--tool,
+        .tiny_ai-card-button--description {
+            color: $neutral-white;
+        }
+
+        [class^="icon-tiny_ai_"],
+        [class^="fa-"] {
+            color: $neutral-white;
+        }
+    }
+}

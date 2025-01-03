@@ -1,0 +1,27 @@
+@mixin respond-to($breakpoint) {
+    $value: map-get($breakpoints, $breakpoint);
+
+    @if $value {
+    @media (max-width: $value) {
+        @content;
+    }
+    } @else {
+    @warn "No value found for breakpoint: #{$breakpoint}";
+    }
+}
+
+@mixin custom-scrollbar {
+    &::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: $neutral-grey-500;
+        border-radius: 20px;
+        border: 3px solid $neutral-white;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $neutral-white;
+    }
+}

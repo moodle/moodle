@@ -1,0 +1,40 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_ai_manager/toggle
+
+    Example context (json):
+    {
+        "checked": true,
+        "targetwhenchecked": "https://thispage.mymoodle.com/editpage/enable=0",
+        "targetwhennotchecked": "https://thispage.mymoodle.com/editpage/enable=1",
+        "text": "Toggle this to enable/disable what you want"
+    }
+}}
+<div id="local_ai_manager_toggle-{{uniqid}}" class="custom-control custom-switch">
+    <input type="checkbox" class="custom-control-input"{{!
+                }} {{#checked}}checked{{/checked}}{{!
+                }} data-targetwhenchecked="{{{targetwhenchecked}}}"{{!
+                }} data-targetwhennotchecked="{{{targetwhennotchecked}}}"{{!>
+                }}>
+    <span class="custom-control-label">{{text}}</span>
+</div>
+{{#js}}
+    require(['local_ai_manager/toggle_handler'], function(ToggleHandler) {
+        ToggleHandler.init('local_ai_manager_toggle-{{uniqid}}');
+    });
+{{/js}}

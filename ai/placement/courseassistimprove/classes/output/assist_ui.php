@@ -46,6 +46,7 @@ class assist_ui {
             'userid' => $USER->id,
             'contextid' => $PAGE->context->id,
         ];
+        // error_log("page context id: " . $PAGE->context->id);
         $html = $OUTPUT->render_from_template('aiplacement_courseassistimprove/drawer', $params);
         $hook->add_html($html);
     }
@@ -57,13 +58,10 @@ class assist_ui {
      */
     public static function load_summarise_button(after_http_headers $hook): void {
         global $OUTPUT;
-        error_log("in load_summarise_button");
-        error_log('in improve_button');
         // Preflight checks.
         if (!self::preflight_checks()) {
             return;
         }
-        error_log('improve_button 2');
         $html = $OUTPUT->render_from_template('aiplacement_courseassistimprove/summarise_button', []);
         $hook->add_html($html);
     }
@@ -87,10 +85,13 @@ class assist_ui {
             return false;
         }
         // Check we are in the right context, exit if not activity.
+        //CONTEXT_USER
         if ($PAGE->context->contextlevel != CONTEXT_MODULE) {
             return false;
         }
 
+        // error_log("page context here: " . json_encode($PAGE->context->id));
+        // error_log("page course here: " . json_encode($PAGE->course->id));
         // Check if the user has permission to use the AI service.
         return utils::is_course_assist_available($PAGE->context);
     }

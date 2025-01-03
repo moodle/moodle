@@ -1,0 +1,110 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_ai_manager/tenantnavbar
+
+    Example context (json):
+    {
+        "tenantidentifier": "tenantname",
+        "homeactive": true,
+        "purposeconfigactive": false,
+        "userconfigactive": false,
+        "quotaconfigactive": false,
+        "rightsconfigactive": false,
+        "statisticsactive": false,
+        "statisticsoverviewactive": false,
+        "showstatistics": true,
+        "showuserstatistics": true,
+        "statisticspurposes": [
+            {
+                "pluginname": "chat",
+                "fullname": "Chat",
+                "active": true
+            },
+            {
+                "pluginname": "imggen",
+                "fullname": "Image Generation",
+                "active": false
+            }
+        ]
+    }
+}}
+<div class="secondary-navigation">
+    <nav class="local_ai_manager-tenantconfig-nav moremenu navigation observed">
+        <ul class="nav more-nav nav-tabs mr-auto">
+            <li class="navitem">
+                <a class="nav-link{{#homeactive}} active active_tree_node{{/homeactive}}" href="{{config.wwwroot}}/local/ai_manager/tenant_config.php?tenant={{tenantidentifier}}">
+                {{#str}} heading_home, local_ai_manager {{/str}}
+                </a>
+            </li>
+            <li class="navitem">
+                <a class="nav-link{{#purposeconfigactive}} active active_tree_node{{/purposeconfigactive}}"
+                   href="{{config.wwwroot}}/local/ai_manager/purpose_config.php?tenant={{tenantidentifier}}">
+                {{#str}} heading_purposes, local_ai_manager {{/str}}
+                </a>
+            </li>
+
+            <li class="navitem dropdown">
+                <a class="nav-link dropdown-toggle{{#userconfigactive}} active active_tree_node{{/userconfigactive}}" href="#" id="local_ai_manager_user_configuration_dropdown"
+                   role="button" data-toggle="dropdown" aria-haspopup="true"
+                   aria-expanded="false">
+                    {{#str}} userconfig, local_ai_manager {{/str}}
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item{{#quotaconfigactive}} active active_tree_node{{/quotaconfigactive}}"{{!
+                       }} href="{{config.wwwroot}}/local/ai_manager/quota_config.php?tenant={{tenantidentifier}}">
+                    {{#str}} quotaconfig, local_ai_manager {{/str}}
+                    </a>
+                    <a class="dropdown-item{{#rightsconfigactive}} active active_tree_node{{/rightsconfigactive}}"{{!
+                       }} href="{{config.wwwroot}}/local/ai_manager/rights_config.php?tenant={{tenantidentifier}}">
+                    {{#str}} rightsconfig, local_ai_manager {{/str}}
+                    </a>
+                </div>
+            </li>
+
+            {{#showstatistics}}
+                <li class="navitem dropdown">
+                    <a class="nav-link dropdown-toggle{{#statisticsactive}} active active_tree_node{{/statisticsactive}}" href="#" id="local_ai_manager_statistics_configuration_dropdown"
+                       role="button" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false">{{!
+                       }} {{#str}} heading_statistics, local_ai_manager {{/str}}
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item{{#statisticsoverviewactive}} active active_tree_node{{/statisticsoverviewactive}}"{{!
+                           }} href="{{config.wwwroot}}/local/ai_manager/statistics.php?tenant={{tenantidentifier}}&tsort=requestcount&tdir=3">
+                        {{#str}} statisticsoverview, local_ai_manager {{/str}}
+                        </a>
+                        {{#showuserstatistics}}
+                        <a class="dropdown-item{{#active}} active active_tree_node{{/active}}"{{!
+                               }} href="{{config.wwwroot}}/local/ai_manager/user_statistics.php?tenant={{tenantidentifier}}">
+                        {{#str}} userstatistics, local_ai_manager{{/str}}
+                        {{/showuserstatistics}}
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        {{#statisticspurposes}}
+                            <a class="dropdown-item{{#active}} active active_tree_node{{/active}}"{{!
+                               }} href="{{config.wwwroot}}/local/ai_manager/purpose_statistics.php?tenant={{tenantidentifier}}&purpose={{pluginname}}">
+                            {{fullname}}
+                            </a>
+                        {{/statisticspurposes}}
+                    </div>
+                </li>
+
+            {{/showstatistics}}
+        </ul>
+    </nav>
+</div>
