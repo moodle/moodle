@@ -1,0 +1,46 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_ai_chat/headeroptions
+
+    TODO describe template headeroptions
+
+    Example context (json):
+    {
+    }
+}}
+<div class="headeroptions">
+    {{#badge}} <span class="badge badge-pill badge-dark" title="{{title}}"><i class="fa fa-lock mr-1"></i>{{text}}</span> {{/badge}}
+
+    <div class="dropdown block_ai_chat_action_menu">
+        <button class="btn btn-icon icon-no-margin p-0 ml-2" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis"></i></button>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="#" id="block_ai_chat_new_dialog">{{#pix}} t/messages, core, {{#str}} newdialog, block_ai_chat {{/str}} {{/pix}}{{#str}} newdialog, block_ai_chat {{/str}}</a>
+            <a class="dropdown-item" href="#" id="block_ai_chat_show_history">{{#pix}} t/reload, core, {{#str}} showhistory, block_ai_chat {{/str}} {{/pix}}{{#str}} history, block_ai_chat {{/str}}</a>
+            <a class="dropdown-item" href="#" id="block_ai_chat_delete_dialog">{{#pix}} t/delete, core, {{#str}} delete, block_ai_chat {{/str}} {{/pix}}{{#str}} delete, block_ai_chat {{/str}}</a>
+        </div>
+    </div>
+
+    <div class="dropdown block_ai_chat_action_menu views">
+        <button class="btn btn-icon icon-no-margin p-0 ml-2" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-window-restore"></i></button>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="#" id="block_ai_chat_chatwindow"><i class="icon fa fa-window-restore"></i>{{#str}} chatwindow, block_ai_chat {{/str}}</a>
+            <a class="dropdown-item" href="#" id="block_ai_chat_openfull"><i class="icon fa fa-up-right-and-down-left-from-center"></i>{{#str}} openfull, block_ai_chat {{/str}}</a>
+            <a class="dropdown-item" href="#" id="block_ai_chat_dockright"><i class="icon fa fa-window-restore"></i>{{#str}} dockright, block_ai_chat {{/str}}</a>
+        </div>
+    </div>
+</div>

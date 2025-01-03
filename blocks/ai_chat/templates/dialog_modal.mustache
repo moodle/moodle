@@ -1,0 +1,72 @@
+{{!
+This file is part of Moodle - http://moodle.org/
+
+Moodle is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Moodle is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_ai_chat/dialog_modal
+
+    Template for iconpicker.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+        "history": {
+            "message":"content",
+            "sender":"user"
+        }
+    }
+}}
+
+
+{{< core/modal }}
+    {{$title}}
+        <div class="block_ai_chat_title">{{title}}</div>
+        {{> block_ai_chat/headeroptions }}
+    {{/title}}
+    {{$body}}
+        <div class="block_ai_chat_modal_body">
+            <div class="block_ai_chat-dialog">
+                <div class="block_ai_chat-output-wrapper">
+                    <div class="gradient-overlay"></div>
+                    <div class="infobox">
+                        <div data-content="local_ai_manager_infobox"></div>
+                    </div>
+                    <div class="block_ai_chat-output">
+                    </div>
+                </div>
+                <div class="block_ai_chat-input-wrapper">
+                    <div class="block_ai_chat-input">
+                        <img src="{{globals.config.wwwroot}}/blocks/ai_chat/pix/ai-icon.svg" alt="" class="ai_chat_icon">
+                        <textarea class="form-control" id="block_ai_chat-input-id" rows="1" placeholder="{{#str}} input, block_ai_chat {{/str}}"></textarea>
+                        <button type="submit" id="block_ai_chat-submit-id" class="btn btn-primary">
+                            <i class="icon fa fa-arrow-right ml-2" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div id="block_ai_chat_userquota"></div>
+                </div>
+            </div>
+        </div>
+    {{/body}}
+    {{$footer}}
+    {{/footer}}
+{{/ core/modal }}
