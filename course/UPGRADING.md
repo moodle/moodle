@@ -4,6 +4,12 @@
 
 ### Deprecated
 
+- The core_course_edit_module and core_course_edit_section external functions are now deprecated. Use core_courseformat_update_course instead
+
+  For more information see [MDL-82342](https://tracker.moodle.org/browse/MDL-82342)
+- The core_course_get_module external function is now deprecated. Use fragment API using component core_courseformat and fragment cmitem instead
+
+  For more information see [MDL-82342](https://tracker.moodle.org/browse/MDL-82342)
 - The course_format_ajax_support function is now deprecated. Use course_get_format($course)->supports_ajax() instead.
 
   For more information see [MDL-82351](https://tracker.moodle.org/browse/MDL-82351)

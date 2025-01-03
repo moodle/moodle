@@ -16,4 +16,3 @@
 - The two language strings in the tool_mfa plugin, namely `inputrequired` and `setuprequired`, are deprecated.
 
   For more information see [MDL-83516](https://tracker.moodle.org/browse/MDL-83516)
-

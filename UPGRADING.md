@@ -145,6 +145,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Deprecated
 
+- The core_course_edit_module and core_course_edit_section external functions are now deprecated. Use core_courseformat_update_course instead
+
+  For more information see [MDL-82342](https://tracker.moodle.org/browse/MDL-82342)
+- The core_course_get_module external function is now deprecated. Use fragment API using component core_courseformat and fragment cmitem instead
+
+  For more information see [MDL-82342](https://tracker.moodle.org/browse/MDL-82342)
 - The course_format_ajax_support function is now deprecated. Use course_get_format($course)->supports_ajax() instead.
 
   For more information see [MDL-82351](https://tracker.moodle.org/browse/MDL-82351)
@@ -159,6 +165,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Add core_courseformat\base::invalidate_all_session_caches to reset course editor cache for all users when course is changed. This method can be used as an alternative to core_courseformat\base::session_cache_reset for resetting the cache for the current user  in case the change in the course should be reflected for all users.
 
   For more information see [MDL-83185](https://tracker.moodle.org/browse/MDL-83185)
+
+#### Deprecated
+
+- All course editing YUI modules are now deprecated. All course formats not using components must migrate before 6.0. Follow the devdocs guide https://moodledev.io/docs/5.0/apis/plugintypes/format/migration to know how to proceed.
+
+  For more information see [MDL-82341](https://tracker.moodle.org/browse/MDL-82341)
 
 ### core_enrol
 

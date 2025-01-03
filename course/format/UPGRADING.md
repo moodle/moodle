@@ -11,6 +11,12 @@
 
   For more information see [MDL-83185](https://tracker.moodle.org/browse/MDL-83185)
 
+### Deprecated
+
+- All course editing YUI modules are now deprecated. All course formats not using components must migrate before 6.0. Follow the devdocs guide https://moodledev.io/docs/5.0/apis/plugintypes/format/migration to know how to proceed.
+
+  For more information see [MDL-82341](https://tracker.moodle.org/browse/MDL-82341)
+
 ## 4.5
 
 ### Added
