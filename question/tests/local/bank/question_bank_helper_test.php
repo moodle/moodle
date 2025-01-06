@@ -201,6 +201,28 @@ final class question_bank_helper_test extends \advanced_testcase {
     }
 
     /**
+     * Create a default instance, passing a name that is too long for the database.
+     *
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    public function test_create_default_open_instance_with_long_name(): void {
+        $this->resetAfterTest();
+        self::setAdminUser();
+
+        $coursename = random_string(question_bank_helper::BANK_NAME_MAX_LENGTH);
+        $course = self::getDataGenerator()->create_course(['shortname' => $coursename]);
+
+        $this->expectExceptionMessage('The provided bankname is too long for the database field.');
+        question_bank_helper::create_default_open_instance(
+            $course,
+            get_string('defaultbank', 'core_question', ['coursename' => $coursename]),
+        );
+    }
+
+    /**
      * Assert that viewing a question bank logs the view for that user up to a maximum of 5 unique bank views.
      *
      * @return void
@@ -309,5 +331,81 @@ final class question_bank_helper_test extends \advanced_testcase {
         $this->assertEquals(get_string('systembank', 'question'), $qbank->get_name());
         $modrecord = $DB->get_record('qbank', ['id' => $qbank->instance]);
         $this->assertEquals(question_bank_helper::TYPE_SYSTEM, $modrecord->type);
+    }
+
+    /**
+     * Assert that get_bank_name_string returns suitably truncated strings.
+     *
+     * @dataProvider bank_name_strings
+     * @param string $identifier
+     * @param string $component
+     * @param mixed $params
+     * @param string $expected
+     */
+    public function test_get_bank_name_string(string $identifier, string $component, mixed $params, string $expected): void {
+        $this->assertEquals($expected, question_bank_helper::get_bank_name_string($identifier, $component, $params));
+    }
+
+    /**
+     * Get string examples with different parameter types and lengths.
+     *
+     * @return array[]
+     */
+    public static function bank_name_strings(): array {
+        $longname = 'One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen ' .
+            'eighteen nineteen twenty twenty-one twenty-two twenty-three twenty-four twenty-five twenty-six twenty-seven ' .
+            'twenty-eight twenty-nine thirty thirty-one';
+        return [
+            'String with no parameters' => [
+                'systembank',
+                'question',
+                null,
+                'System shared question bank',
+            ],
+            'String with short string parameter' => [
+                'topfor',
+                'question',
+                'Test course',
+                'Top for Test course',
+            ],
+            'String with long string parameter' => [
+                'topfor',
+                'question',
+                $longname,
+                'Top for One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen ' .
+                    'seventeen eighteen nineteen twenty twenty-one twenty-two twenty-three twenty-four twenty-five twenty-six ' .
+                    'twenty-seven twenty-eight ...',
+            ],
+            'String with short array parameter' => [
+                'defaultbank',
+                'question',
+                ['coursename' => 'Test course'],
+                'Test course course question bank',
+            ],
+            'String with long array parameter' => [
+                'defaultbank',
+                'question',
+                ['coursename' => $longname],
+                'One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen ' .
+                    'eighteen nineteen twenty twenty-one twenty-two twenty-three twenty-four twenty-five twenty-six ' .
+                    'twenty-seven twenty-eight ... course question bank',
+            ],
+            'String with multiple long array parameters' => [
+                'markoutofmax',
+                'question',
+                ['mark' => $longname, 'max' => $longname],
+                'Mark One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen ' .
+                    'eighteen ... out of One two three four five six seven eight nine ten eleven twelve thirteen fourteen ' .
+                    'fifteen sixteen seventeen eighteen ...',
+            ],
+            'Long lang string' => [
+                'howquestionsbehave_help',
+                'question',
+                null,
+                'Students can interact with the questions in the quiz in various different ways. For example, you may wish the ' .
+                    'students to enter an answer to each question and then submit the entire quiz, before anything is graded or ' .
+                    'they get any feedback. That would ...',
+            ],
+        ];
     }
 }
