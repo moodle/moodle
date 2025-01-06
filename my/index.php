@@ -94,6 +94,7 @@ $params = array();
 $PAGE->set_context($context);
 $PAGE->set_url('/my/index.php', $params);
 $PAGE->set_pagelayout('mydashboard');
+$PAGE->set_docs_path('dashboard');
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_pagetype('my-index');
 $PAGE->blocks->add_region('content');
