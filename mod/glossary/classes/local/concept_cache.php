@@ -122,9 +122,9 @@ class concept_cache {
         $concepts = array();
         $rs = $DB->get_recordset_sql($sql);
         foreach ($rs as $concept) {
-            $currentconcept = trim(strip_tags($concept->concept));
+            $currentconcept = trim($concept->concept);
 
-            // Concept must be HTML-escaped, so do the same as format_string to turn ampersands into &amp;.
+            // Turn ampersands into &amp; but keep HTML format for filters.
             $currentconcept = replace_ampersands_not_followed_by_entity($currentconcept);
 
             if (empty($currentconcept)) {
@@ -188,7 +188,7 @@ class concept_cache {
             }
             foreach ($glossaries as $id => $name) {
                 $name = str_replace(':', '-', $name);
-                $glossaries[$id] = replace_ampersands_not_followed_by_entity(strip_tags($name));
+                $glossaries[$id] = $name;
             }
 
             $allconcepts = self::fetch_concepts(array_keys($glossaries));
@@ -254,7 +254,7 @@ class concept_cache {
             }
             foreach ($glossaries as $id => $name) {
                 $name = str_replace(':', '-', $name);
-                $glossaries[$id] = replace_ampersands_not_followed_by_entity(strip_tags($name));
+                $glossaries[$id] = replace_ampersands_not_followed_by_entity($name);
             }
             $allconcepts = self::fetch_concepts(array_keys($glossaries));
             foreach ($glossaries as $gid => $unused) {

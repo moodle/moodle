@@ -217,24 +217,6 @@ class mod_glossary_entry_query_builder {
     }
 
     /**
-     * Filter the concept by letter.
-     *
-     * @param string  $letter         The letter.
-     */
-    public function filter_by_concept_letter($letter) {
-        $this->filter_by_letter($letter, self::resolve_field('concept', 'entries'));
-    }
-
-    /**
-     * Filter the concept by special characters.
-     *
-     * @return void
-     */
-    public function filter_by_concept_non_letter() {
-        $this->filter_by_non_letter(self::resolve_field('concept', 'entries'));
-    }
-
-    /**
      * Filter non approved entries.
      *
      * @param string $constant One of the NON_APPROVED_* constants.
@@ -273,11 +255,11 @@ class mod_glossary_entry_query_builder {
      * @param string $term What the concept or aliases should be.
      */
     public function filter_by_term($term) {
-        $this->where[] = sprintf("(%s = :filterterma OR %s = :filtertermb)",
+        $this->where[] = sprintf("(%s LIKE :filterterma OR %s LIKE :filtertermb)",
             self::resolve_field('concept', 'entries'),
             self::resolve_field('alias', 'alias'));
-        $this->params['filterterma'] = $term;
-        $this->params['filtertermb'] = $term;
+        $this->params['filterterma'] = "%" . $term . "%";
+        $this->params['filtertermb'] = "%" . $term . "%";
     }
 
     /**
