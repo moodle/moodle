@@ -282,7 +282,7 @@ class phpunit_dataset {
         rewind($fh);
 
         // We just accept default, delimiter = comma, enclosure = double quote.
-        while ( ($row = fgetcsv($fh) ) !== false ) {
+        while ( ($row = fgetcsv($fh, escape: '\\') ) !== false ) {
             if (empty($this->columns[$tablename])) {
                 $this->columns[$tablename] = $row;
             } else {

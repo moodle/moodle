@@ -85,7 +85,7 @@ class brickfield_accessibility_guideline {
         $csv = fopen(dirname(__FILE__) .'/guidelines/translations/'. $domain .'.txt', 'r');
 
         if ($csv) {
-            while ($translation = fgetcsv($csv)) {
+            while ($translation = fgetcsv($csv, escape: '\\')) {
                 if (count($translation) == 4) {
                     $this->translations[$translation[0]] = [
                         'title'       => $translation[1],

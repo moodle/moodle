@@ -115,7 +115,7 @@ class recording_row_playback implements renderable, templatable {
         $issafeformat = false;
         // Now check the list of safe formats.
         if ($safeformats = config::get('recording_safe_formats')) {
-            $safeformatarray = str_getcsv($safeformats);
+            $safeformatarray = str_getcsv($safeformats, escape: '\\');
             $issafeformat = in_array($playback['type'], $safeformatarray);
         }
         return ($canmanagerecordings && $canviewallformats) || $issafeformat;

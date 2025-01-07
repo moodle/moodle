@@ -209,7 +209,7 @@ class behat_core_competency_generator extends behat_generator_base {
      */
     protected function preprocess_plan(array $data): array {
         if (isset($data['competencies'])) {
-            $competencies = array_map('trim', str_getcsv($data['competencies']));
+            $competencies = array_map('trim', str_getcsv($data['competencies'], escape: '\\'));
             $data['competencyids'] = array_map([$this, 'get_competency_id'], $competencies);
 
             unset($data['competencies']);

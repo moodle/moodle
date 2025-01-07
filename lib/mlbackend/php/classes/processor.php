@@ -126,7 +126,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
 
         $samples = array();
         $targets = array();
-        while (($data = fgetcsv($fh)) !== false) {
+        while (($data = fgetcsv($fh, escape: '\\')) !== false) {
             $sampledata = array_map('floatval', $data);
             $samples[] = array_slice($sampledata, 0, $metadata['nfeatures']);
             $targets[] = intval($data[$metadata['nfeatures']]);
@@ -189,7 +189,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
         $sampleids = array();
         $samples = array();
         $predictions = array();
-        while (($data = fgetcsv($fh)) !== false) {
+        while (($data = fgetcsv($fh, escape: '\\')) !== false) {
             $sampledata = array_map('floatval', $data);
             $sampleids[] = $data[0];
             $samples[] = array_slice($sampledata, 1, $metadata['nfeatures']);
@@ -270,7 +270,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
 
         $samples = array();
         $targets = array();
-        while (($data = fgetcsv($fh)) !== false) {
+        while (($data = fgetcsv($fh, escape: '\\')) !== false) {
             $sampledata = array_map('floatval', $data);
 
             $samples[] = array_slice($sampledata, 0, $metadata['nfeatures']);
@@ -535,8 +535,8 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
      * @return array
      */
     protected function extract_metadata($fh) {
-        $metadata = fgetcsv($fh);
-        return array_combine($metadata, fgetcsv($fh));
+        $metadata = fgetcsv($fh, escape: '\\');
+        return array_combine($metadata, fgetcsv($fh, escape: '\\'));
     }
 
     /**
