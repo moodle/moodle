@@ -357,7 +357,6 @@ class manager {
 
         // We want to present all potential users.
         $capjoin = get_enrolled_with_capabilities_join($context, '', 'mod/h5pactivity:view', $currentgroup);
-
         if ($capjoin->cannotmatchanyrows) {
             return $capjoin;
         }
@@ -368,11 +367,13 @@ class manager {
             return $capjoin;
         }
 
-        $capjoin = new sql_join(
-            $capjoin->joins . "\n LEFT " . str_replace('ra', 'reviewer', $reviewersjoin->joins),
-            $capjoin->wheres . " AND reviewer.userid IS NULL",
-            $capjoin->params
-        );
+        if (str_contains($reviewersjoin->joins, 'ra')) {
+            $capjoin = new sql_join(
+                $capjoin->joins . "\n LEFT " . str_replace('ra', 'reviewer', $reviewersjoin->joins),
+                $capjoin->wheres . " AND reviewer.userid IS NULL",
+                $capjoin->params
+            );
+        }
 
         if ($allpotentialusers) {
             return $capjoin;
