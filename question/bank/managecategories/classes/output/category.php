@@ -90,7 +90,7 @@ class category implements renderable, templatable {
         // Each section adds html to be displayed as part of this list item.
         $questionbankurl = new moodle_url('/question/edit.php', $params);
         $questionbankurl->param('cat', helper::combine_id_context($this->category));
-        $categoryname = format_string($this->category->name, true, ['context' => $this->context]);
+        $categoryname = format_string($this->category->name, true, ['context' => $this->context, 'escape' => false]);
         $idnumber = null;
         if ($this->category->idnumber !== null && $this->category->idnumber !== '') {
             $idnumber = $this->category->idnumber;

@@ -15,13 +15,13 @@ Feature: A teacher can put questions in categories in the question bank
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
     And the following "question categories" exist:
-      | contextlevel | reference | questioncategory | name              | sortorder | desciption                     |
-      | Course       | C1        | Top              | top               | 0         |                                |
-      | Course       | C1        | top              | Default for C1    | 0         | Description for default for C1 |
-      | Course       | C1        | Default for C1   | Subcategory       | 0         | Description for Subcategory    |
-      | Course       | C1        | Default for C1   | Another subcat    | 1         | Description for Another subcat |
-      | Course       | C1        | top              | Used category     | 1         |                                |
-      | Course       | C1        | top              | Default & testing | 2         |                                |
+      | contextlevel | reference | questioncategory | name                        | sortorder | desciption                                  |
+      | Course       | C1        | Top              | top                         | 0         |                                             |
+      | Course       | C1        | top              | Default for C1              | 0         | Description for default for C1              |
+      | Course       | C1        | Default for C1   | Subcategory & < > " ' &amp; | 0         | Description for Subcategory & < > " ' &amp; |
+      | Course       | C1        | Default for C1   | Another subcat              | 1         | Description for Another subcat              |
+      | Course       | C1        | top              | Used category               | 1         |                                             |
+      | Course       | C1        | top              | Default & testing           | 2         |                                             |
     And the following "questions" exist:
       | questioncategory | qtype | name                      | questiontext                  |
       | Used category    | essay | Test question to be moved | Write about whatever you want |
@@ -50,9 +50,9 @@ Feature: A teacher can put questions in categories in the question bank
     When I am on the "Course 1" "core_question > course question categories" page
     # There have been bugs which only happened if a question category was not empty, so add a question.
     And the following "questions" exist:
-      | questioncategory | qtype | name                                | questiontext                  |
-      | Subcategory      | essay | Test question for renaming category | Write about whatever you want |
-    And I open the action menu in "Subcategory" "list_item"
+      | questioncategory            | qtype | name                                | questiontext                  |
+      | Subcategory & < > " ' &amp; | essay | Test question for renaming category | Write about whatever you want |
+    And I open the action menu in "Subcategory & < > \" ' &amp;" "list_item"
     And I choose "Edit settings" in the open action menu
     And the field "parent" matches value "&nbsp;&nbsp;&nbsp;Default for C1"
     And I set the following fields to these values:
@@ -65,10 +65,12 @@ Feature: A teacher can put questions in categories in the question bank
 
   Scenario: An empty question category can be deleted
     When I am on the "Course 1" "core_question > course question categories" page
-    And I open the action menu in "Subcategory" "list_item"
+    And I should see "Subcategory & < > \" ' &amp;"
+    And the "title" attribute of "span.qbank_managecategories-newchild.dropready" "css_element" should contain "As new child of Subcategory & < > \" ' &amp;"
+    And I open the action menu in "Subcategory & < > \" ' &amp;" "list_item"
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete" "dialogue"
-    Then I should not see "Subcategory"
+    Then I should not see "Subcategory & < > \" ' &amp;"
 
   Scenario: An non-empty question category can be deleted if you move the contents elsewhere
     When I am on the "Course 1" "core_question > course question categories" page
