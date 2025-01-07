@@ -104,6 +104,8 @@ $spacers: (
     6: ($spacer * 3)
 ) !default;
 
+$progress-bar-bg: $green-lms;
+
 // Import FontAwesome.
 @import "fontawesome";
 

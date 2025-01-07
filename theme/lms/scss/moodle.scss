@@ -125,3 +125,25 @@ body {
 #region-main {
   background-color: #F4F6F4 !important;
 }
+
+.card-grade {
+  // display: flex;
+  // justify-content: space-between;
+  border: none;
+  border-radius: 12px;
+  width: 240px;
+  // height: 130px;
+}
+
+.grade-percent {
+  font-size: 3rem;
+}
+
+.grade-min-percent {
+  color: #8E8E8E;
+}
+
+.wrap-card {
+  display: flex;
+  justify-content: space-between;
+}
