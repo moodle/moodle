@@ -181,7 +181,7 @@ class progress_bar implements renderable, templatable {
         $this->lastupdate = microtime(true);
 
         if ($this->autoupdate) {
-            echo $OUTPUT->render_progress_bar_update($this->idnumber, sprintf("%.1f", $this->percent), $msg, $estimatemsg);
+            echo $OUTPUT->render_progress_bar_update($this->idnumber, $this->percent, $msg, $estimatemsg);
             flush();
         }
     }
@@ -307,7 +307,7 @@ class progress_bar implements renderable, templatable {
         $this->message = $errormsg;
 
         if ($this->autoupdate) {
-            echo $OUTPUT->render_progress_bar_update($this->idnumber, sprintf("%.1f", $this->percent), $errormsg, '', true);
+            echo $OUTPUT->render_progress_bar_update($this->idnumber, $this->percent, $errormsg, '', true);
             flush();
         }
     }

@@ -299,7 +299,7 @@ class stored_progress_bar extends progress_bar {
         // If we want the screen to auto update, render it.
         if ($this->autoupdate) {
             echo $OUTPUT->render_progress_bar_update(
-                $this->idnumber, sprintf("%.1f", $this->percent), $this->message, $this->get_estimate_message($this->percent)
+                $this->idnumber, $this->percent, $this->message, $this->get_estimate_message($this->percent)
             );
         }
     }
