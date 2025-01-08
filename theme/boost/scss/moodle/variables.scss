@@ -46,28 +46,16 @@ $activity-icon-communication-bg:      #eb6200 !default;
 $activity-icon-content-bg:            #0099ad !default;
 $activity-icon-interactivecontent-bg: #8d3d1b !default;
 
-$activity-icon-administration-filter:
-    invert(45%) sepia(46%) saturate(3819%) hue-rotate(260deg) brightness(101%) contrast(87%) !default;
-$activity-icon-assessment-filter:
-    invert(36%) sepia(98%) saturate(6969%) hue-rotate(315deg) brightness(90%) contrast(119%) !default;
-$activity-icon-collaboration-filter:
-    invert(25%) sepia(54%) saturate(6226%) hue-rotate(245deg) brightness(100%) contrast(102%) !default;
-$activity-icon-communication-filter:
-    invert(48%) sepia(74%) saturate(4887%) hue-rotate(11deg) brightness(102%) contrast(101%) !default;
-$activity-icon-content-filter:
-    invert(49%) sepia(52%) saturate(4675%) hue-rotate(156deg) brightness(89%) contrast(102%) !default;
-$activity-icon-interactivecontent-filter:
-    invert(25%) sepia(63%) saturate(1152%) hue-rotate(344deg) brightness(94%) contrast(91%) !default;
-
+// This is just to make it easier to iterate the colors.
 $activity-icon-colors: () !default;
 $activity-icon-colors: map-merge(
     (
-        "administration": $activity-icon-administration-filter,
-        "assessment": $activity-icon-assessment-filter,
-        "collaboration": $activity-icon-collaboration-filter,
-        "communication": $activity-icon-communication-filter,
-        "content": $activity-icon-content-filter,
-        "interactivecontent": $activity-icon-interactivecontent-filter,
+        "administration": $activity-icon-administration-bg,
+        "assessment": $activity-icon-assessment-bg,
+        "collaboration": $activity-icon-collaboration-bg,
+        "communication": $activity-icon-communication-bg,
+        "content": $activity-icon-content-bg,
+        "interactivecontent": $activity-icon-interactivecontent-bg,
     ),
     $activity-icon-colors
 );

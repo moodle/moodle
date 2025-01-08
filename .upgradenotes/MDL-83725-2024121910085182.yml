@@ -1,0 +1,12 @@
+issueNumber: MDL-83725
+notes:
+  theme_boost:
+    - message: >-
+        From now on, themes can customise the activity icon colours using simple
+        CSS variables. The new variables are $activity-icon-administration-bg,
+        $activity-icon-assessment-bg, $activity-icon-collaboration-bg,
+        $activity-icon-communication-bg, $activity-icon-content-bg,
+        $activity-icon-interactivecontent-bg. All previous
+        `$activity-icon-*-filter` elements can be removed, as they are no longer
+        in use.
+      type: changed
