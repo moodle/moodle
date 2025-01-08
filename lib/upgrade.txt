@@ -17,6 +17,9 @@ Also a new core\ip_utils::normalize_internet_address_list() method is
 created. Based on core\ip_utils::normalize_internet_address(), this
 method normalizes a string containing a series of Internet addresses.
 
+* The method `count_modules_completed` now delegate the logic to count the
+completed modules to the DBMS improving the performance of the method.
+
 === 4.4.5 ===
 
 * All uses of the following PHPUnit methods have been removed as these methods are deprecated upstream without direct replacement:
