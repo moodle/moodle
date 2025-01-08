@@ -1780,8 +1780,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     $context = context_module::instance($cm->id);
     echo '<div class="datapreferences my-5">';
     echo '<form id="options" action="view.php" method="get">';
-    echo '<div class="d-flex">';
-    echo '<div>';
+    echo '<div class="d-flex flex-wrap align-items-center gap-1">';
     echo '<input type="hidden" name="d" value="'.$data->id.'" />';
     if ($mode =='asearch') {
         $advanced = 1;
@@ -1861,8 +1860,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '<input type="checkbox" id="advancedcheckbox" name="advanced" value="1" ' . $checked . ' ' .
          'onchange="showHideAdvSearch(this.checked);" class="mx-1" />' .
          '<label for="advancedcheckbox">' . get_string('advancedsearch', 'data') . '</label>';
-    echo '</div>';
-    echo '<div id="advsearch-save-sec" class="ms-auto '. $regsearchclass . '">';
+    echo '<div id="advsearch-save-sec" class="ms-3 '. $regsearchclass . '">';
     echo '<input type="submit" class="btn btn-secondary" value="' . get_string('savesettings', 'data') . '" />';
     echo '</div>';
     echo '</div>';
