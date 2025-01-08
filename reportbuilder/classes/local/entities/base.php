@@ -75,6 +75,9 @@ abstract class base {
      * Database tables that the entity once used but now no longer does. To prevent errors in third-party code, rather than
      * simply removing the table from {@see get_default_tables} you can override this method, which will emit developer debug
      *
+     * Returns a simple list of table names, ['t1', 't2'] if they have no replacement; or ['t3' => 't1'] if an equivalent
+     * replacement table name exists, where 't3' replaces 't1'
+     *
      * @return string[]
      */
     protected function get_deprecated_tables(): array {
@@ -154,19 +157,30 @@ abstract class base {
     /**
      * Validate the given table is expected by the entity
      *
+     * Emits developer debugging for deprecated tables, will return replacement for deprecated table if specified
+     * by the entity
+     *
      * @param string $tablename
+     * @return string
      * @throws coding_exception For invalid table name
      */
-    private function validate_table_name(string $tablename): void {
+    private function validate_table_name(string $tablename): string {
         $deprecatedtables = $this->get_deprecated_tables();
         if (!in_array($tablename, array_merge($this->get_default_tables(), $deprecatedtables))) {
             throw new coding_exception('Invalid table name', $tablename);
         }
 
         // Emit debugging if table is marked as deprecated by the entity.
-        if (in_array($tablename, $deprecatedtables)) {
+        if (($tablenamereplacement = array_search($tablename, $deprecatedtables)) !== false) {
             debugging("The table '{$tablename}' is deprecated, please do not use it any more.", DEBUG_DEVELOPER);
+
+            // An associative array contains the replacement table name as the key, so return that.
+            if (!array_is_list($deprecatedtables)) {
+                return $tablenamereplacement;
+            }
         }
+
+        return $tablename;
     }
 
     /**
@@ -178,7 +192,7 @@ abstract class base {
      * @return self
      */
     final public function set_table_alias(string $tablename, string $alias): self {
-        $this->validate_table_name($tablename);
+        $tablename = $this->validate_table_name($tablename);
         $this->tablealiases[$tablename] = $alias;
 
         return $this;
@@ -204,7 +218,7 @@ abstract class base {
      * @return string
      */
     final public function get_table_alias(string $tablename): string {
-        $this->validate_table_name($tablename);
+        $tablename = $this->validate_table_name($tablename);
 
         // We don't have the alias yet, generate a new one.
         if (!array_key_exists($tablename, $this->tablealiases)) {
