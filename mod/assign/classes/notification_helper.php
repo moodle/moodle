@@ -220,7 +220,8 @@ class notification_helper {
 
         foreach ($users as $key => $user) {
             // Check if the user has submitted already.
-            if ($assignmentobj->get_user_submission($user->id, false)) {
+            $submission = $assignmentobj->get_user_submission($user->id, false);
+            if ($submission && $submission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
                 unset($users[$key]);
                 continue;
             }
@@ -320,7 +321,8 @@ class notification_helper {
         }
 
         // Check if the user has submitted already.
-        if ($assignmentobj->get_user_submission($userid, false)) {
+        $submission = $assignmentobj->get_user_submission($userid, false);
+        if ($submission && $submission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
             return;
         }
 
@@ -400,7 +402,8 @@ class notification_helper {
         }
 
         // Check if the user has submitted already.
-        if ($assignmentobj->get_user_submission($userid, false)) {
+        $submission = $assignmentobj->get_user_submission($userid, false);
+        if ($submission && $submission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
             return;
         }
 
@@ -471,7 +474,8 @@ class notification_helper {
             $assignmentobj = self::get_assignment_data($assignment->id);
 
             // Check if the user has submitted already.
-            if ($assignmentobj->get_user_submission($userid, false)) {
+            $submission = $assignmentobj->get_user_submission($userid, false);
+            if ($submission && $submission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
                 continue;
             }
 
