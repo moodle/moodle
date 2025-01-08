@@ -129,6 +129,10 @@ class mod_assign_generator extends testing_module_generator {
             }
         }
 
+        if (isset($data['status'])) {
+            $submission->status = $data['status'];
+        }
+
         $assign->save_submission($submission, $notices);
 
         $this->set_user($currentuser);
