@@ -39,14 +39,22 @@ Feature: Glossary can set autolinked entries in text and media areas
     And "Anglais" "link" should not exist in the ".modtype_label" "css_element"
     And "Inglés" "link" should not exist in the ".modtype_label" "css_element"
     And the "title" attribute of ".glossary.autolink" "css_element" should contain "Test glossary: English"
-    And I follow "Language" in the user menu
-    And I click on "//a[contains(@href, 'lang=es')]" "xpath"
+    And I follow "Preferences" in the user menu
+    And I follow "Preferred language"
+    # Change preferred language to Spanish.
+    And I set the field "Preferred language" to "es"
+    And I press "Save changes"
+    And I am on "Course 1" course homepage
     Then "English" "link" should not exist in the ".modtype_label" "css_element"
     And "Anglais" "link" should not exist in the ".modtype_label" "css_element"
     And "Inglés" "link" should exist in the ".modtype_label" "css_element"
     And the "title" attribute of ".glossary.autolink" "css_element" should contain "Test glossario: inglés"
-    And I follow "Idioma" in the user menu
-    And I click on "//a[contains(@href, 'lang=fr')]" "xpath"
+    And I follow "Preferencias" in the user menu
+    And I follow "Idioma preferido"
+    # Change preferred language to French.
+    And I set the field "Idioma preferido" to "fr"
+    And I press "Guardar cambios"
+    And I am on "Course 1" course homepage
     Then "English" "link" should not exist in the ".modtype_label" "css_element"
     And "Anglais" "link" should exist in the ".modtype_label" "css_element"
     And "Inglés" "link" should not exist in the ".modtype_label" "css_element"
