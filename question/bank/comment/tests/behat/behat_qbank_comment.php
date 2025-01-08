@@ -165,4 +165,26 @@ class behat_qbank_comment extends behat_question_base {
         $this->getSession()->wait(4 * 1000);
     }
 
+    /**
+     * Define named selectors for the comments column.
+     *
+     * Supported selectors are:
+     * - "qbank_comment > Comment count link" a comment count displayed as a link.
+     * - "qbank_comment > Comment count text" a comment count displayed as un-linked text.
+     *
+     * @return behat_component_named_selector[]
+     */
+    public static function get_exact_named_selectors(): array {
+        $commentcountxpath = "//table/tbody/tr/td[contains(@class, 'commentcount')]/%s[text() = %%locator%%]";
+        return [
+            new behat_component_named_selector(
+                'Comment count link',
+                [sprintf($commentcountxpath, 'a')]
+            ),
+            new behat_component_named_selector(
+                'Comment count text',
+                [sprintf($commentcountxpath, 'span')]
+            ),
+        ];
+    }
 }
