@@ -107,6 +107,7 @@ final class notification_helper_test extends \advanced_testcase {
             'course' => $course->id,
             'duedate' => $duedate,
             'submissiondrafts' => 0,
+            'assignsubmission_onlinetext_enabled' => 1,
         ]);
 
         // User1 will have a user override, giving them an extra 1 hour for 'duedate'.
@@ -142,6 +143,7 @@ final class notification_helper_test extends \advanced_testcase {
             'status' => 'submitted',
             'timemodified' => $clock->time(),
             'onlinetext' => 'Some text',
+            'assignsubmission_onlinetext_enabled' => 1,
         ]);
 
         // There should be 3 users with the teacher excluded.
@@ -174,6 +176,7 @@ final class notification_helper_test extends \advanced_testcase {
             'course' => $course->id,
             'duedate' => $duedate,
             'submissiondrafts' => 0,
+            'assignsubmission_onlinetext_enabled' => 1,
         ]);
         $clock->bump(5);
 
@@ -337,6 +340,7 @@ final class notification_helper_test extends \advanced_testcase {
             'course' => $course->id,
             'duedate' => $duedate,
             'submissiondrafts' => 0,
+            'assignsubmission_onlinetext_enabled' => 1,
         ]);
 
         // User1 will have a user override, giving them an extra minute for 'duedate'.
@@ -373,6 +377,7 @@ final class notification_helper_test extends \advanced_testcase {
             'status' => 'submitted',
             'timemodified' => $clock->time(),
             'onlinetext' => 'Some text',
+            'assignsubmission_onlinetext_enabled' => 1,
         ]);
 
         // User6 will have a cut-off date override that has already lapsed, excluding them from the results.
@@ -416,6 +421,7 @@ final class notification_helper_test extends \advanced_testcase {
             'duedate' => $duedate,
             'cutoffdate' => $cutoffdate,
             'submissiondrafts' => 0,
+            'assignsubmission_onlinetext_enabled' => 1,
         ]);
         $clock->bump(5);
 
@@ -490,6 +496,7 @@ final class notification_helper_test extends \advanced_testcase {
             'status' => 'submitted',
             'timemodified' => $clock->time(),
             'onlinetext' => 'Some text',
+            'assignsubmission_onlinetext_enabled' => 1,
         ]);
 
         // Clear sink.
@@ -551,6 +558,7 @@ final class notification_helper_test extends \advanced_testcase {
             'course' => $course->id,
             'duedate' => $duedate,
             'submissiondrafts' => 0,
+            'assignsubmission_onlinetext_enabled' => 1,
         ]);
 
         // User1 will have a user override, giving them an extra 1 day for 'duedate', excluding them from the results.
@@ -579,6 +587,7 @@ final class notification_helper_test extends \advanced_testcase {
             'status' => 'submitted',
             'timemodified' => $clock->time(),
             'onlinetext' => 'Some text',
+            'assignsubmission_onlinetext_enabled' => 1,
         ]);
 
         // There should be 1 user with the teacher excluded.
@@ -610,18 +619,21 @@ final class notification_helper_test extends \advanced_testcase {
             'course' => $course->id,
             'duedate' => $duedate1,
             'submissiondrafts' => 0,
+            'assignsubmission_onlinetext_enabled' => 1,
         ]);
         $duedate2 = $clock->time() + WEEKSECS;
         $assignment2 = $assignmentgenerator->create_instance([
             'course' => $course->id,
             'duedate' => $duedate2,
             'submissiondrafts' => 0,
+            'assignsubmission_onlinetext_enabled' => 1,
         ]);
         $duedate3 = $clock->time() + WEEKSECS + DAYSECS;
         $assignment3 = $assignmentgenerator->create_instance([
             'course' => $course->id,
             'duedate' => $duedate3,
             'submissiondrafts' => 0,
+            'assignsubmission_onlinetext_enabled' => 1,
         ]);
         $clock->bump(5);
 
@@ -675,6 +687,7 @@ final class notification_helper_test extends \advanced_testcase {
             'status' => 'submitted',
             'timemodified' => $clock->time(),
             'onlinetext' => 'Some text',
+            'assignsubmission_onlinetext_enabled' => 1,
         ]);
         $clock->bump(5);
 
