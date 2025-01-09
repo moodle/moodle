@@ -4652,9 +4652,17 @@ class core_course_external extends external_api {
         $coursecontext = context_course::instance($courseid);
         self::validate_context($coursecontext);
 
-        $activeplugin = get_config('core', 'activitychooseractivefooter');
+        // The active plugin must be set, and be present on the site.
+        $activeplugin = clean_param(
+            get_config('core', 'activitychooseractivefooter'),
+            PARAM_COMPONENT,
+        );
 
-        if ($activeplugin !== COURSE_CHOOSER_FOOTER_NONE) {
+        if (
+            $activeplugin !== COURSE_CHOOSER_FOOTER_NONE &&
+            !empty($activeplugin) &&
+            core_component::get_component_directory($activeplugin) !== null
+        ) {
             $footerdata = component_callback($activeplugin, 'custom_chooser_footer', [$courseid, $sectionid]);
             return [
                 'footer' => true,
