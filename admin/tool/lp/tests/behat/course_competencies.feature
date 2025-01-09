@@ -5,8 +5,8 @@ Feature: See the competencies for an activity on the course competencies page.
 
   Background:
     Given the following "core_competency > frameworks" exist:
-      | shortname | idnumber |
-      | Test-Framework | ID-FW1 |
+      | shortname      | idnumber |
+      | Test-Framework | ID-FW1   |
     And the following "core_competency > competencies" exist:
       | shortname  | competencyframework |
       | Test-Comp1 | ID-FW1              |

@@ -30,8 +30,8 @@ Feature: Manage competency frameworks
 
   Scenario: Read a framework
     Given the following "core_competency > frameworks" exist:
-      | shortname | idnumber |
-      | Science Year-2 | sc-y-2 |
+      | shortname      | idnumber |
+      | Science Year-2 | sc-y-2   |
     And I navigate to "Competencies > Competency frameworks" in site administration
     And I should see "Science Year-2"
     When I click on "Science Year-2" "link"
@@ -39,8 +39,8 @@ Feature: Manage competency frameworks
 
   Scenario: Edit a framework
     Given the following "core_competency > frameworks" exist:
-      | shortname | idnumber |
-      | Science Year-3 | sc-y-3 |
+      | shortname      | idnumber |
+      | Science Year-3 | sc-y-3   |
     And I navigate to "Competencies > Competency frameworks" in site administration
     And I should see "Science Year-3"
     And I click on "Edit" of edit menu in the "Science Year-3" row
@@ -53,8 +53,8 @@ Feature: Manage competency frameworks
 
   Scenario: Delete a framework
     Given the following "core_competency > frameworks" exist:
-      | shortname | idnumber |
-      | Science Year-4 | sc-y-4 |
+      | shortname      | idnumber |
+      | Science Year-4 | sc-y-4   |
     And I navigate to "Competencies > Competency frameworks" in site administration
     And I should see "Science Year-4"
     And I should see "sc-y-4"
@@ -71,23 +71,23 @@ Feature: Manage competency frameworks
 
   Scenario: Edit a framework with competencies in user competency
     Given the following "core_competency > frameworks" exist:
-      | shortname | idnumber |
-      | Science Year-5 | sc-y-5 |
+      | shortname      | idnumber |
+      | Science Year-5 | sc-y-5   |
     And the following "core_competency > competencies" exist:
-      | shortname | competencyframework |
-      | Comp1     | sc-y-5              |
-      | Comp2     | sc-y-5              |
+      | shortname | competencyframework | idnumber |
+      | Comp1     | sc-y-5              | Comp1    |
+      | Comp2     | sc-y-5              | Comp2    |
     And the following "core_competency > plans" exist:
-      | name | user | description |
+      | name           | user  | description      |
       | Plan Science-5 | admin | Plan description |
-    And the following lp "plancompetencies" exist:
-      | plan | competency |
-      | Plan Science-5 | Comp1 |
-      | Plan Science-5 | Comp2 |
-    And the following lp "usercompetencies" exist:
-      | user | competency |
-      | admin | Comp1 |
-      | admin | Comp2 |
+    And the following "core_competency > plan_competency" exist:
+      | plan           | competency |
+      | Plan Science-5 | Comp1      |
+      | Plan Science-5 | Comp2      |
+    And the following "core_competency > user_competency" exist:
+      | user  | competency |
+      | admin | Comp1      |
+      | admin | Comp2      |
     And I navigate to "Competencies > Competency frameworks" in site administration
     And I should see "Science Year-5"
     And I click on "Edit" of edit menu in the "Science Year-5" row
@@ -101,23 +101,23 @@ Feature: Manage competency frameworks
 
   Scenario: Edit a framework with competencies in user competency plan
     Given the following "core_competency > frameworks" exist:
-      | shortname | idnumber |
-      | Science Year-6 | sc-y-6 |
+      | shortname      | idnumber |
+      | Science Year-6 | sc-y-6   |
     And the following "core_competency > competencies" exist:
-      | shortname | competencyframework |
-      | Comp1     | sc-y-6              |
-      | Comp2     | sc-y-6              |
+      | shortname | competencyframework | idnumber |
+      | Comp1     | sc-y-6              | Comp1    |
+      | Comp2     | sc-y-6              | Comp2    |
     And the following "core_competency > plans" exist:
-      | name | user | description |
+      | name           | user  | description      |
       | Plan Science-6 | admin | Plan description |
-    And the following lp "plancompetencies" exist:
-      | plan | competency |
-      | Plan Science-6 | Comp1 |
-      | Plan Science-6 | Comp2 |
-    And the following lp "usercompetencyplans" exist:
-      | user | competency | plan |
-      | admin | Comp1 | Plan Science-6 |
-      | admin | Comp2 | Plan Science-6 |
+    And the following "core_competency > plan_competency" exist:
+      | plan           | competency |
+      | Plan Science-6 | Comp1      |
+      | Plan Science-6 | Comp2      |
+    And the following "core_competency > user_competency_plans" exist:
+      | user  | competency | plan           |
+      | admin | Comp1      | Plan Science-6 |
+      | admin | Comp2      | Plan Science-6 |
     And I navigate to "Competencies > Competency frameworks" in site administration
     And I should see "Science Year-6"
     And I click on "Edit" of edit menu in the "Science Year-6" row
