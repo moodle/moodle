@@ -15,8 +15,8 @@ Feature: Award badges based on competency completion
       | user | course | role |
       | user1 | C1 | student |
     And the following "core_competency > frameworks" exist:
-      | shortname | idnumber |
-      | Framework 1 | sc-y-2 |
+      | shortname   | idnumber |
+      | Framework 1 | sc-y-2   |
     And the following "core_competency > competencies" exist:
       | shortname | competencyframework |
       | comp1     | sc-y-2              |
