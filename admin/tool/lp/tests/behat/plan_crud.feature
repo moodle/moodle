@@ -22,8 +22,8 @@ Feature: Manage plearning plan
     And I should see "Science plan"
 
   Scenario: Create a learning plan based on template
-    Given the following lp "templates" exist:
-      | shortname | description |
+    Given the following "core_competency > templates" exist:
+      | shortname        | description                  |
       | Science template | science template description |
     And I am on homepage
     And I navigate to "Competencies > Learning plan templates" in site administration
@@ -36,8 +36,8 @@ Feature: Manage plearning plan
     And I should see "Admin User" in the "Science template" "table_row"
 
   Scenario: Create a learning plan from template cohort
-    Given the following lp "templates" exist:
-      | shortname | description |
+    Given the following "core_competency > templates" exist:
+      | shortname               | description                  |
       | Science template cohort | science template description |
     And the following "users" exist:
       | username | firstname | lastname | email |
@@ -63,7 +63,7 @@ Feature: Manage plearning plan
 
   Scenario: Read a learning plan
     Given the following "core_competency > plans" exist:
-      | name | user | description |
+      | name                | user  | description              |
       | Science plan Year-1 | admin | science plan description |
     And I follow "Learning plans"
     And I should see "Science plan Year-1"
@@ -73,7 +73,7 @@ Feature: Manage plearning plan
 
   Scenario: Manage a learning plan competencies
     Given the following "core_competency > plans" exist:
-      | name | user | description |
+      | name                     | user  | description              |
       | Science plan Year-manage | admin | science plan description |
     And the following "core_competency > frameworks" exist:
       | shortname | idnumber |
@@ -99,7 +99,7 @@ Feature: Manage plearning plan
 
   Scenario: Edit a learning plan
     Given the following "core_competency > plans" exist:
-      | name | user | description |
+      | name                | user  | description              |
       | Science plan Year-2 | admin | science plan description |
       | Science plan Year-3 | admin | science plan description |
     And I follow "Learning plans"
@@ -114,7 +114,7 @@ Feature: Manage plearning plan
 
   Scenario: Delete a learning plan
     Given the following "core_competency > plans" exist:
-      | name | user | description |
+      | name                | user  | description              |
       | Science plan Year-4 | admin | science plan description |
     And I follow "Learning plans"
     And I should see "Science plan Year-4"
@@ -131,11 +131,11 @@ Feature: Manage plearning plan
 
   Scenario: See a learning plan from a course
     Given the following "core_competency > plans" exist:
-      | name | user | description |
+      | name                     | user  | description              |
       | Science plan Year-manage | admin | science plan description |
     And the following "core_competency > frameworks" exist:
-      | shortname | idnumber |
-      | Framework 1 | sc-y-2 |
+      | shortname   | idnumber |
+      | Framework 1 | sc-y-2   |
     And the following "core_competency > competencies" exist:
       | shortname | competencyframework |
       | comp1     | sc-y-2              |
