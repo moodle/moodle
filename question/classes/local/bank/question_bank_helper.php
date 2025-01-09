@@ -66,6 +66,11 @@ class question_bank_helper {
     private const CATEGORY_DELIMITER = '<->';
 
     /**
+     * Maximum length for the question bank name database field.
+     */
+    public const BANK_NAME_MAX_LENGTH = 255;
+
+    /**
      * Modules that share questions via FEATURE_PUBLISHES_QUESTIONS.
      *
      * @return array
@@ -411,7 +416,11 @@ class question_bank_helper {
         }
 
         if (!$systembank && $createifnotexists) {
-            $systembank = self::create_default_open_instance($course, get_string('systembank', 'question'), self::TYPE_SYSTEM);
+            $systembank = self::create_default_open_instance(
+                $course,
+                self::get_bank_name_string('systembank', 'question'),
+                self::TYPE_SYSTEM,
+            );
         }
 
         return $systembank;
@@ -440,7 +449,11 @@ class question_bank_helper {
         }
 
         if (!$previewbank && $createifnotexists) {
-            $previewbank = self::create_default_open_instance($site, get_string('previewbank', 'question'), self::TYPE_PREVIEW);
+            $previewbank = self::create_default_open_instance(
+                $site,
+                self::get_bank_name_string('previewbank', 'question'),
+                self::TYPE_PREVIEW
+            );
         }
 
         return $previewbank;
@@ -521,6 +534,13 @@ class question_bank_helper {
             }
         }
 
+        if (strlen($bankname) > self::BANK_NAME_MAX_LENGTH) {
+            throw new \coding_exception(
+                'The provided bankname is too long for the database field.',
+                'Use question_bank_helper::get_bank_name_string to get a suitably truncated name.',
+            );
+        }
+
         $data = new stdClass();
         $data->section = 0;
         $data->visible = 0;
@@ -584,5 +604,40 @@ class question_bank_helper {
     public static function get_default_question_bank_activity_name(): string {
         global $CFG;
         return $CFG->corequestion_defaultqbankmod ?? 'qbank';
+    }
+
+    /**
+     * Get the requested language string, with parameters truncated to ensure the result fits in the database.
+     *
+     * Since we may be generating a question bank name based on an existing course or category name, we need to ensure
+     * that the resulting string isn't longer than the maximum module name.
+     *
+     * @param string $identifier The string identifier
+     * @param string $component The string component
+     * @param mixed|null $params The string parameters (a single string, array or object as accepted by get_string)
+     * @return string The string truncated to a length that will fit in the database.
+     */
+    public static function get_bank_name_string(string $identifier, string $component, mixed $params = null): string {
+        if (is_object($params)) {
+            $shortparams = (array) $params;
+        } else {
+            $shortparams = $params;
+        }
+        $bankname = get_string($identifier, $component, $shortparams);
+        if (!is_null($shortparams)) {
+            $trimlength = self::BANK_NAME_MAX_LENGTH - 4;
+            while (\core_text::strlen($bankname) > self::BANK_NAME_MAX_LENGTH && $trimlength > 0) {
+                // Gradually shorten the string parameters until the resulting string is short enough.
+                if (is_array($shortparams)) {
+                    $shortparams = array_map(fn($param) => shorten_text(trim($param), $trimlength), $shortparams);
+                } else {
+                    $shortparams = shorten_text(trim($shortparams), $trimlength);
+                }
+                $bankname = get_string($identifier, $component, $shortparams);
+                $trimlength -= 10;
+            }
+        }
+        // As a failsafe, limit the length of the final string in case the lang string is too long.
+        return shorten_text($bankname, self::BANK_NAME_MAX_LENGTH);
     }
 }

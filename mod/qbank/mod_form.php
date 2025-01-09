@@ -55,6 +55,7 @@ class mod_qbank_mod_form extends moodleform_mod {
         }
         $mform->addHelpButton('name', 'qbankname', 'mod_qbank');
         $mform->addRule('name', null, 'required', null, 'client');
+        $mform->addRule('name', null, 'maxlength', \core_question\local\bank\question_bank_helper::BANK_NAME_MAX_LENGTH, 'client');
 
         // Add intro editor.
         $mform->addElement('editor', 'introeditor', get_string('moduleintro'), ['rows' => 10], [

@@ -105,17 +105,17 @@ class transfer_question_categories extends adhoc_task {
             switch ($oldcontext->contextlevel) {
                 case CONTEXT_SYSTEM:
                     $course = get_site();
-                    $bankname = get_string('systembank', 'question');
+                    $bankname = question_bank_helper::get_bank_name_string('systembank', 'question');
                     break;
                 case CONTEXT_COURSECAT:
                     $coursecategory = core_course_category::get($oldcontext->instanceid);
                     $courseshortname = "{$coursecategory->name}-{$coursecategory->id}";
                     $course = $this->create_course($coursecategory, $courseshortname);
-                    $bankname = get_string("sharedbank", "mod_qbank", $coursecategory->name);
+                    $bankname = question_bank_helper::get_bank_name_string('sharedbank', 'mod_qbank', $coursecategory->name);
                     break;
                 case CONTEXT_COURSE:
                     $course = get_course($oldcontext->instanceid);
-                    $bankname = get_string("sharedbank", "mod_qbank", $course->shortname);
+                    $bankname = question_bank_helper::get_bank_name_string('sharedbank', 'mod_qbank', $course->shortname);
                     break;
                 default:
                     // This shouldn't be possible, so we can't really transfer it.
