@@ -140,17 +140,21 @@ class provider implements
                     break;
                 default:
                     if (strpos($name, 'grade_report_grader_collapsed_categories') === 0) {
-                        $prefname = 'grade_report_grader_collapsed_categories';
+                        $prefname = $name;
                         $courseid = substr($name, strlen('grade_report_grader_collapsed_categories'));
                         $transformedvalue = $value;
-                        $course = get_course($courseid);
-                        $prefdescription = get_string(
-                            'privacy:request:preference:'.$prefname,
-                            'gradereport_grader',
-                            (object) [
-                                'name' => $course->fullname,
-                            ]
-                        );
+                        try {
+                            $course = get_course($courseid);
+                            $prefdescription = get_string(
+                                'privacy:request:preference:grade_report_grader_collapsed_categories',
+                                'gradereport_grader',
+                                (object) [
+                                    'name' => $course->fullname,
+                                ]
+                            );
+                        } catch (\dml_missing_record_exception $exception) {
+                            continue 2;
+                        }
                     }
             }
 
