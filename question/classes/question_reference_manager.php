@@ -86,6 +86,7 @@ class question_reference_manager {
      * @return array Post-4.3 filter condition.
      */
     public static function convert_legacy_set_reference_filter_condition(array $filtercondition): array {
+        global $DB;
         if (!isset($filtercondition['filter'])) {
             $filtercondition['filter'] = [];
 
@@ -96,8 +97,6 @@ class question_reference_manager {
                     'values' => [$filtercondition['questioncategoryid']],
                     'filteroptions' => ['includesubcategories' => $filtercondition['includingsubcategories']],
                 ];
-                unset($filtercondition['questioncategoryid']);
-                unset($filtercondition['includingsubcategories']);
             }
 
             // Tag filters.
@@ -115,10 +114,20 @@ class question_reference_manager {
                 unset($filtercondition['tags']);
             }
             // Add additional default properties to the filtercondition.
+            if (isset($filtercondition['questioncategoryid'])) {
+                $category = $DB->get_record('question_categories', ['id' => $filtercondition['questioncategoryid']]);
+                if ($category) {
+                    $filtercondition['cat'] = "{$category->id},{$category->contextid}";
+                } else {
+                    $filtercondition['cat'] = '';
+                }
+            }
             $filtercondition['tabname'] = 'questions';
             $filtercondition['qpage'] = 0;
             $filtercondition['qperpage'] = 100;
             $filtercondition['jointype'] = \core\output\datafilter::JOINTYPE_ALL;
+            unset($filtercondition['questioncategoryid']);
+            unset($filtercondition['includingsubcategories']);
         } else if (isset($filtercondition['filter']['category']['includesubcategories'])) {
             $filtercondition['filter']['category']['filteroptions'] =
                 ['includesubcategories' => $filtercondition['filter']['category']['includesubcategories']];
