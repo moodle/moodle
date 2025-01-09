@@ -1,5 +1,13 @@
 # core_completion (subsystem) Upgrade notes
 
+## 4.5.1+
+
+### Added
+
+- The method `count_modules_completed` now delegate the logic to count the completed modules to the DBMS improving the performance of the method.
+
+  For more information see [MDL-83917](https://tracker.moodle.org/browse/MDL-83917)
+
 ## 4.5
 
 ### Added

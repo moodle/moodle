@@ -26,6 +26,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-75075](https://tracker.moodle.org/browse/MDL-75075)
 
+### core_completion
+
+#### Added
+
+- The method `count_modules_completed` now delegate the logic to count the completed modules to the DBMS improving the performance of the method.
+
+  For more information see [MDL-83917](https://tracker.moodle.org/browse/MDL-83917)
+
 ### core_reportbuilder
 
 #### Added
