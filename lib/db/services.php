@@ -1645,7 +1645,8 @@ $functions = array(
     ],
     'core_message_set_default_notification' => [
         'classname'   => 'core_message\external\message_set_default_notification',
-        'description' => 'Set the default notification preferences toggle',
+        'description' => 'Set the default value for a given notification preference',
+        'capabilities' => 'moodle/site:config',
         'type'        => 'write',
         'ajax'        => true,
     ],
