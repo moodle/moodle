@@ -43,61 +43,6 @@ $providers = get_message_providers();
 $preferences = get_message_output_default_preferences();
 
 if (($form = data_submitted()) && confirm_sesskey()) {
-    $newpreferences = array();
-    // Prepare default message outputs settings.
-    foreach ($providers as $provider) {
-        $componentproviderbase = $provider->component.'_'.$provider->name;
-        $disableprovidersetting = $componentproviderbase.'_disable';
-        if (!isset($form->$disableprovidersetting)) {
-            $newpreferences[$disableprovidersetting] = 1;
-        } else {
-            $newpreferences[$disableprovidersetting] = 0;
-        }
-
-        $componentprovidersetting = $componentproviderbase.'_locked';
-        foreach ($processors as $processor) {
-            $value = 0;
-            if (isset($form->{$componentprovidersetting}[$processor->name])) {
-                $value = $form->{$componentprovidersetting}[$processor->name];
-                if ($value == 'on') {
-                    $value = 1;
-                }
-            }
-
-            // Record the site preference.
-            $newpreferences[$processor->name.'_provider_'.$componentprovidersetting] = $value;
-        }
-
-        $componentprovidersetting = $componentproviderbase.'_enabled';
-        $newsettings = [];
-        if (isset($form->$componentprovidersetting)) {
-            // Store defined comma-separated processors as setting value.
-            // Using array_filter eliminates elements set to 0 above.
-            $newsettings = array_keys(array_filter($form->{$componentprovidersetting}));
-        }
-
-        // Let's join existing setting values for disabled processors.
-        $property = 'message_provider_'.$componentprovidersetting;
-        if (property_exists($preferences, $property)) {
-            $existingsetting = $preferences->$property;
-            foreach ($disabledprocessors as $disable) {
-                if (strpos($existingsetting, $disable->name) > -1) {
-                    $newsettings[] = $disable->name;
-                }
-            }
-        }
-
-        $value = join(',', $newsettings);
-        if (empty($value)) {
-            $value = null;
-        }
-
-        // Record the site preference.
-        $newpreferences['message_provider_'.$componentprovidersetting] = $value;
-    }
-
-    // Update database.
-    $transaction = $DB->start_delegated_transaction();
 
     // Save processors enabled/disabled status.
     foreach ($allprocessors as $processor) {
@@ -106,24 +51,11 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         $class::enable_plugin($processor->name, $enabled);
     }
 
-    foreach ($newpreferences as $name => $value) {
-        $old = isset($preferences->$name) ? $preferences->$name : '';
-
-        if ($old != $value) {
-            add_to_config_log($name, $old, $value, 'core');
-        }
-
-        set_config($name, $value, 'message');
-    }
-    $transaction->allow_commit();
-
-    core_plugin_manager::reset_caches();
-
     $url = new moodle_url('message.php');
     redirect($url);
 }
 
-// Page settings
+// Page settings.
 $PAGE->set_context(context_system::instance());
 $renderer = $PAGE->get_renderer('core', 'message');
 

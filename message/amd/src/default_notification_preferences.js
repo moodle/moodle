@@ -23,6 +23,8 @@
  * @author     Pau Ferrer Ocaña <pau@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+import * as Ajax from 'core/ajax';
+import Notification from 'core/notification';
 
 const selectors = {
     provider: '.defaultmessageoutputs .provider_enabled',
@@ -64,6 +66,30 @@ const registerEventListeners = () => {
         });
     };
 
+    /**
+     * AJAX call to update the default notification element status on the server.
+     *
+     * @param {Boolean} isEnabled
+     * @param {string} preference
+     */
+    const setDefaultNotification = (isEnabled, preference) => {
+        // AJAX call to update the provider's enable status on the server.
+        Ajax.call([{
+            methodname: 'core_message_set_default_notification',
+            args: {
+                preference: preference,
+                state: isEnabled ? 1 : 0
+            }
+        }])[0].done((data) => {
+            // Display success notification.
+            Notification.addNotification({
+                message: data.successmessage,
+                type: 'success'
+            });
+        })
+        .fail(Notification.exception);
+    };
+
     const container = document.querySelector('.preferences-container');
 
     container.querySelectorAll(selectors.provider).forEach((providerEnabledElement) => {
@@ -74,6 +100,10 @@ const registerEventListeners = () => {
 
         providerEnabledElement.addEventListener('change', (e) => {
             toggleEnableProviderSettings(e.target);
+
+            setDefaultNotification(
+                e.target.checked,
+                providerEnabledElement.parentElement.parentElement.dataset.preference);
         });
     });
 
@@ -85,6 +115,18 @@ const registerEventListeners = () => {
 
         lockedElement.addEventListener('change', (e) => {
             toggleLockSetting(e.target);
+
+            setDefaultNotification(
+                e.target.checked,
+                lockedElement.parentElement.parentElement.dataset.preference);
+        });
+    });
+
+    container.querySelectorAll(selectors.enabledSetting).forEach((enabledElement) => {
+        enabledElement.addEventListener('change', (e) => {
+            setDefaultNotification(
+                e.target.checked,
+                enabledElement.parentElement.parentElement.dataset.preference);
         });
     });
 };

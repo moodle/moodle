@@ -1643,6 +1643,12 @@ $functions = array(
         'type'          => 'read',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+    'core_message_set_default_notification' => [
+        'classname'   => 'core_message\external\message_set_default_notification',
+        'description' => 'Set the default notification preferences toggle',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
     'core_my_view_page' => [
         'classname'     => '\core_my\external\view_page',
         'methodname'    => 'execute',
