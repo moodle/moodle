@@ -141,6 +141,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-66873](https://tracker.moodle.org/browse/MDL-66873)
 
+### core_completion
+
+#### Added
+
+- The method `count_modules_completed` now delegate the logic to count the completed modules to the DBMS improving the performance of the method.
+
+  For more information see [MDL-83917](https://tracker.moodle.org/browse/MDL-83917)
+
 ### core_course
 
 #### Deprecated
@@ -210,6 +218,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Deprecated method `mod_quiz\question\bank\qbank_helper::get_version_options` in favour of `core_question\local\bank\version_options::get_version_options` so that the method is in core rather than a module, and can safely be used from anywhere as required.
 
   For more information see [MDL-77713](https://tracker.moodle.org/browse/MDL-77713)
+- Behat steps `behat_qbank_comment::i_should_see_on_the_column` and `behat_qbank_comment::i_click_on_the_row_containing` have been deprecated in favour of the new component named selectors, `qbank_comment > Comment count link` and `qbank_comment > Comment count text` which can be used with the standard `should exist` and `I click on` steps to replace the custom steps.
+
+  For more information see [MDL-79122](https://tracker.moodle.org/browse/MDL-79122)
 
 ### core_reportbuilder
 
@@ -375,6 +386,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
 
 ### theme_boost
+
+#### Changed
+
+- From now on, themes can customise the activity icon colours using simple CSS variables. The new variables are $activity-icon-administration-bg, $activity-icon-assessment-bg, $activity-icon-collaboration-bg, $activity-icon-communication-bg, $activity-icon-content-bg, $activity-icon-interactivecontent-bg. All previous `$activity-icon-*-filter` elements can be removed, as they are no longer in use.
+
+  For more information see [MDL-83725](https://tracker.moodle.org/browse/MDL-83725)
 
 #### Removed
 

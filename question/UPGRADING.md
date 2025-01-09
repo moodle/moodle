@@ -20,6 +20,9 @@
 - Deprecated method `mod_quiz\question\bank\qbank_helper::get_version_options` in favour of `core_question\local\bank\version_options::get_version_options` so that the method is in core rather than a module, and can safely be used from anywhere as required.
 
   For more information see [MDL-77713](https://tracker.moodle.org/browse/MDL-77713)
+- Behat steps `behat_qbank_comment::i_should_see_on_the_column` and `behat_qbank_comment::i_click_on_the_row_containing` have been deprecated in favour of the new component named selectors, `qbank_comment > Comment count link` and `qbank_comment > Comment count text` which can be used with the standard `should exist` and `I click on` steps to replace the custom steps.
+
+  For more information see [MDL-79122](https://tracker.moodle.org/browse/MDL-79122)
 
 ## 4.5
 
