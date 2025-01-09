@@ -195,4 +195,43 @@ class mod_quiz_renderer extends \mod_quiz_renderer {
 
         return $wrap;
     }
+
+  protected function render_quiz_nav_question_button(quiz_nav_question_button $button) {
+    $classes = array('qnbutton', $button->stateclass, $button->navmethod, 'btn');
+    $extrainfo = array();
+
+    if ($button->currentpage) {
+      $classes[] = 'thispage';
+      $extrainfo[] = get_string('onthispage', 'quiz');
+    }
+
+    // Flagged?
+    if ($button->flagged) {
+      $classes[] = 'flagged';
+      $flaglabel = get_string('flagged', 'question');
+    } else {
+      $flaglabel = '';
+    }
+    $extrainfo[] = html_writer::tag('span', $flaglabel, array('class' => 'flagstate'));
+
+    if (is_numeric($button->number)) {
+      $qnostring = 'questionnonav';
+    } else {
+      $qnostring = 'questionnonavinfo';
+    }
+
+    $a = new stdClass();
+    $a->number = $button->number;
+    $a->attributes = implode(' ', $extrainfo);
+    $tagcontents = html_writer::tag('span', '', array('class' => 'thispageholder')) .
+      get_string($qnostring, 'quiz', $a);
+    $tagattributes = array('class' => implode(' ', $classes), 'id' => $button->id,
+                           'title' => $button->statestring, 'data-quiz-page' => $button->page);
+
+    if ($button->url) {
+      return html_writer::link($button->url, $tagcontents, $tagattributes);
+    } else {
+      return html_writer::tag('span', $tagcontents, $tagattributes);
+    }
+  }
 }

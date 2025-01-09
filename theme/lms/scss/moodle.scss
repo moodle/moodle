@@ -148,12 +148,20 @@ body {
   justify-content: space-between;
 }
 
-.path-mod-quiz #mod_quiz_navblock .qnbutton.thispage .thispageholder {
-  border: 1px solid #34D399;
-  border-radius: 6px;
-}
-
 .path-mod-quiz #mod_quiz_navblock .qnbutton {
   width: 40px;
   height: 40px;
+  line-height: 3px;
+  border-radius: 6px;
+}
+
+.trafficlight {
+
+}
+
+.notyetanswered {
+  border: 1px solid #DFDFDF;
+}
+.answersaved{
+  border: 1px solid #34D399;
 }
