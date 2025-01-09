@@ -62,10 +62,10 @@ $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリ制限が {$a}
 <p>しかし、この設定が<b>すべての</b>PHPページの動作を妨げる場合もあります。ページ閲覧中にエラーが表示される場合、.htaccessファイルを削除してください。</p></li>
 </ol>';
 $string['paths'] = 'パス';
-$string['pathserrcreatedataroot'] = 'データディレクトリ ({$a->dataroot}) はインストーラーで作成できません。';
+$string['pathserrcreatedataroot'] = 'データディレクトリ ({$a->dataroot}) はインストーラで作成できません。';
 $string['pathshead'] = 'パスを確認する';
 $string['pathsrodataroot'] = 'datarootディレクトリに書き込み権がありません。';
-$string['pathsroparentdataroot'] = '親ディレクトリ ({$a->parent}) に書き込み権がありません。データディレクトリ ({$a->dataroot}) はインストーラーで作成できません。';
+$string['pathsroparentdataroot'] = '親ディレクトリ ({$a->parent}) に書き込み権がありません。データディレクトリ ({$a->dataroot}) はインストーラで作成できません。';
 $string['pathssubadmindir'] = 'まれに、コントロールパネルまたはその他の管理ツールにアクセスするためのURLとして/adminディレクトリを使用しているウェブホストがあります。残念ですが、これはMoodle管理ページの標準的なロケーションと衝突します。あなたはインストール時にadminディレクトリをリネームすることができます。ここに新しいディレクトリ名を入力してください。例: <br /> <br /><b>moodleadmin</b><br /> <br />
 これでMoodleでのadminへのリンクを変更します。';
 $string['pathssubdataroot'] = '<p>ユーザによってアップロードされたファイルコンテンツすべてをMoodleが保存するディレクトリです。</p>
