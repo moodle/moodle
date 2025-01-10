@@ -180,7 +180,11 @@ export default class Component extends BaseComponent {
 
             const section = event.target.closest(this.selectors.SECTION);
             const toggler = section.querySelector(this.selectors.COLLAPSE);
-            const isCollapsed = toggler?.classList.contains(this.classes.COLLAPSED) ?? false;
+            let isCollapsed = toggler?.classList.contains(this.classes.COLLAPSED) ?? false;
+            // If the click was on the chevron, Bootstrap already toggled the section before this event.
+            if (isChevron) {
+                isCollapsed = !isCollapsed;
+            }
 
             const sectionId = section.getAttribute('data-id');
             this.reactive.dispatch(
