@@ -385,6 +385,30 @@ final class advanced_test extends \advanced_testcase {
         $this->assertTrue($DB->record_exists('user', array('username' => 'onemore')));
     }
 
+    /**
+     * Some basic tests for the getExternalTestFileUrl() method.
+     */
+    public function test_external_file_url(): void {
+        $url = self::getExternalTestFileUrl('testfile.txt');
+        // There should only be a // after the protocol.
+        $this->assertCount(2, explode('//', $url));
+
+        if (defined('TEST_EXTERNAL_FILES_HTTP_URL')) {
+            $this->assertStringContainsString(TEST_EXTERNAL_FILES_HTTP_URL, $url);
+        } else {
+            $this->assertStringContainsString('http://download.moodle.org/unittest', $url);
+        }
+
+        $url = self::getExternalTestFileUrl('testfile.txt', true);
+        $this->assertCount(2, explode('//', $url));
+
+        if (defined('TEST_EXTERNAL_FILES_HTTPS_URL')) {
+            $this->assertStringContainsString(TEST_EXTERNAL_FILES_HTTPS_URL, $url);
+        } else {
+            $this->assertStringContainsString('https://download.moodle.org/unittest', $url);
+        }
+    }
+
     public function test_assert_time_current() {
         $this->assertTimeCurrent(time());
 

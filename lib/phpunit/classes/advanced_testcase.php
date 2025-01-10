@@ -637,7 +637,7 @@ abstract class advanced_testcase extends base_testcase {
                 }
                 return TEST_EXTERNAL_FILES_HTTPS_URL.$path;
             }
-            return "https://download.moodle.org/unittest/{$path}";
+            return "https://download.moodle.org/unittest{$path}";
         }
 
         if (defined('TEST_EXTERNAL_FILES_HTTP_URL')) {
@@ -646,7 +646,7 @@ abstract class advanced_testcase extends base_testcase {
             }
             return TEST_EXTERNAL_FILES_HTTP_URL.$path;
         }
-        return "http://download.moodle.org/unittest/{$path}";
+        return "http://download.moodle.org/unittest{$path}";
     }
 
     /**
