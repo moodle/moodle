@@ -17,20 +17,28 @@
 /**
  * Form class for editing badges preferences.
  *
- * @package    core
+ * @package    core_badges
  * @subpackage badges
  * @copyright  2013 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
-class badges_preferences_form extends moodleform {
+/**
+ * Form to edit preferences.
+ *
+ * @copyright  2018 Tung Thai
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author     Tung Thai <Tung.ThaiDuc@nashtechglobal.com>
+ */
+class preferences extends moodleform {
+    /**
+     * Defines the form.
+     */
     public function definition() {
         global $USER, $CFG;
 
