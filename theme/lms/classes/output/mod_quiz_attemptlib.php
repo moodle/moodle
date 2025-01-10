@@ -2,6 +2,8 @@
 
 namespace theme_lms\output;
 
+use block_contents;
+use mod_quiz_display_options;
 use stdClass;
 
 
@@ -60,4 +62,35 @@ class mod_quiz_attemptlib extends \quiz_attempt_nav_panel
 //
 //    return $buttons;
 //  }
+  public function get_display_options($reviewing) {
+    if ($reviewing) {
+      if (is_null($this->reviewoptions)) {
+        $this->reviewoptions = quiz_get_review_options($this->get_quiz(),
+          $this->attempt, $this->quizobj->get_context());
+        if ($this->is_own_preview()) {
+          // It should  always be possible for a teacher to review their
+          // own preview irrespective of the review options settings.
+          $this->reviewoptions->attempt = true;
+        }
+      }
+      return $this->reviewoptions;
+
+    } else {
+      $options = mod_quiz_display_options::make_from_quiz($this->get_quiz(),
+        mod_quiz_display_options::DURING);
+      $options->flags = quiz_get_flag_option($this->attempt, $this->quizobj->get_context());
+      return $options;
+    }
+  }
+  public function get_navigation_panel(mod_quiz_renderer $output,
+                                                         $panelclass, $page, $showall = false) {
+    $panel = new $panelclass($this, $this->get_display_options(true), $page, $showall);
+
+    $bc = new block_contents();
+    $bc->attributes['id'] = 'mod_quiz_navblock';
+    $bc->attributes['role'] = 'navigation';
+    $bc->title = get_string('quiznavigation', 'quiz');
+    $bc->content = $output->navigation_panel($panel);
+    return $bc;
+  }
 }

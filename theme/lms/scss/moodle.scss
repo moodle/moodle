@@ -151,7 +151,7 @@ body {
 .path-mod-quiz #mod_quiz_navblock .qnbutton {
   width: 40px;
   height: 40px;
-  line-height: 3px;
+  line-height: 40px;
   border-radius: 6px;
 }
 
@@ -159,9 +159,51 @@ body {
 
 }
 
-.notyetanswered {
-  border: 1px solid #DFDFDF;
+.qnbutton.notyetanswered.thispage {
+  color: #1D1D1D !important;
+  border: #1D1D1D !important;
 }
-.answersaved{
-  border: 1px solid #34D399;
+
+.qnbutton.notyetanswered {
+  border: 1px solid #DFDFDF !important;
+  color: #9CA3AF !important;
 }
+
+//
+//.qnbutton.answersaved.thispage {
+//  color: #1D1D1D !important;
+//  border: 1px solid #1D1D1D !important;
+//
+//}
+
+
+.qnbutton.answersaved {
+  border: 1px solid #34D399 !important;
+  color: #34D399 !important;
+}
+
+.qnbutton.answersaved.flagged {
+  border: 1px solid #FBBF24 !important;
+  color: #FBBF24 !important;
+}
+
+.path-mod-quiz .qnbutton.thispage {
+
+}
+
+.path-mod-quiz #mod_quiz_navblock .qnbutton .thispageholder {
+  border-radius: 6px !important;
+}
+
+.path-mod-quiz #mod_quiz_navblock .qnbutton.thispage .thispageholder {
+  border-width: 1px;
+}
+
+.qnbutton.notyetanswered.flagged {
+  color: #A78BFA !important;
+  border: 1px solid #A78BFA !important;
+}
+
+//.path-mod-quiz .qnbutton.thispage {
+//  color: #1D1D1D !important;
+//}

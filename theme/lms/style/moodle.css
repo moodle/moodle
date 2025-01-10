@@ -23580,9 +23580,6 @@ img.userpicture {
 .path-mod-quiz #mod_quiz_navblock .allquestionsononepage .qnbutton.thispage .thispageholder {
   border-width: 1px;
 }
-.path-mod-quiz #mod_quiz_navblock .qnbutton.flagged .thispageholder {
-  background: transparent url([[pix:theme|mod/quiz/flag-on]]) 15px 0 no-repeat;
-}
 .path-mod-quiz #mod_quiz_navblock .qnbutton .trafficlight {
   border: 0;
   background: #fff none center/10px no-repeat scroll;
